@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="up_server">Servers: </string>
+    <string name="lstver">Server version: </string>
+    <string name="isinst">Installed: </string>
+    <string name="instver">Installed version: </string>
+    <string name="install">Install </string>
+    <string name="rem">Uninstall </string>
+    <string name="update">Update!</string>
+    
+</resources>
