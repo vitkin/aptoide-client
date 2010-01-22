@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aptoide</string>
+    <string name="ver_str">"1.0.4"</string>
+    
+    <string name="no_found">No application found!</string>
+    <string name="no_repo">There are no repositories!</string>
+ 
+ 	<string name="not_inst">Not Installed</string>
+    <string name="installed">Installed - Ver.:</string>
+    <string name="installed_update">Update possible - Ver.:</string>
+    
+    <string name="srch_label">Aptoide</string>
+    <string name="srch_hint">Name of the application</string>
+    
+    <string name="about_txt1">Your package installer to Android phone.\n</string>
+    
+    <string name="about_txt11">Version: 1.0.4\n(released under Gnu GPL v2 licence)\n
+    \nCredits: Roberto Jacinto - Caixa Mágica\n</string>
+    
+    <string name="about_site">Home: </string>
+    
+    <string name="about_mail">Contact: </string>
+    
+    <string name="about_txt2"> www.aptoide.com</string>
+    <string name="about_txt3"> aptoide@aptoide.com</string>
+    
+    
+    
+
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+    	android:text="Uri to repository"
+    	android:layout_width="wrap_content"
+        android:ems="20"
+        android:layout_height="wrap_content"/>
+    
+    <EditText
+        android:id="@+id/edit_uri"
+        android:maxLines="1"
+        android:layout_width="wrap_content"
+        android:ems="20"
+        android:layout_height="wrap_content"
+        android:text="http://"/>
+</LinearLayout>

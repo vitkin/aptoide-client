@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RadioGroup android:layout_width="fill_parent"
+          android:layout_height="wrap_content" android:orientation="vertical"
+          android:id="@+id/groupbtn">
+          <TextView android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:text="Align application list by:" 
+               android:textStyle="bold" />
+          <RadioButton android:checked="false"
+               android:text="Alphabetically" 
+               android:id="@+id/org_abc" />
+          <RadioButton android:checked="false"
+               android:text="Installed / Not Installed" 
+               android:id="@+id/org_iu" />
+          <RadioButton android:checked="false"
+               android:text="Most recent first" 
+               android:id="@+id/org_rct" />
+          <RadioButton android:checked="false"
+               android:text="Rating" 
+               android:id="@+id/org_rat" />
+     </RadioGroup> 
+     
+     <View android:layout_width="fill_parent" android:layout_height="2dip" android:background="#FFFFFFFF" />
+      
+      <RadioGroup android:layout_width="fill_parent"
+          android:layout_height="wrap_content" android:orientation="vertical"
+          android:id="@+id/groupshow">
+          <TextView android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:text="Show applications:" 
+               android:textStyle="bold" />
+          <RadioButton android:checked="false"
+               android:text="By category" 
+               android:id="@+id/shw_ct" />
+          <RadioButton android:checked="true"
+               android:text="All applications" 
+               android:id="@+id/shw_all" />
+     </RadioGroup>
+     
+     <Button android:layout_width="100px"
+               android:layout_height="wrap_content" 
+               android:text="Save"
+               android:id="@+id/btn_save" /> 
+
+</LinearLayout>
