@@ -1,0 +1,99 @@
+package cm.aptoide.pt;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URL;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.view.Window;
+import android.view.WindowManager;
+
+public class Aptoide extends Activity { 
+    
+	private static final int OUT = 0;
+    private static final long START = 3000;
+    private static final String TMP_SRV_FILE = "/sdcard/.aptoide/server";
+    
+    
+    private Handler startHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch(msg.what){
+			case OUT:
+				Intent i = new Intent(Aptoide.this, RemoteInTab.class);
+				Intent get = getIntent();
+				if(get.getData() != null){
+					Uri uri = get.getData();
+					downloadServ(uri.toString());
+					i.putExtra("uri", TMP_SRV_FILE);
+				}
+				startActivityForResult(i,0);
+				break;
+			}
+			// TODO Auto-generated method stub
+			super.handleMessage(msg);
+		} 
+    }; 
+	
+	
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.start);
+        Message msg = new Message();
+        startHandler.sendMessageDelayed(msg, START);
+    }
+
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		this.finish();
+	}
+    
+	private void downloadServ(String srv){
+		try{
+			BufferedInputStream getit = new BufferedInputStream(new URL(srv).openStream());
+
+			File file_teste = new File(TMP_SRV_FILE);
+			if(file_teste.exists())
+				file_teste.delete();
+			
+			FileOutputStream saveit = new FileOutputStream(TMP_SRV_FILE);
+			BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
+			byte data[] = new byte[1024];
+			
+			int readed = getit.read(data,0,1024);
+			while(readed != -1) {
+				bout.write(data,0,readed);
+				readed = getit.read(data,0,1024);
+			}
+			bout.close();
+			getit.close();
+			saveit.close();
+		} catch(Exception e){
+			AlertDialog p = new AlertDialog.Builder(this).create();
+			p.setTitle("Erro");
+			p.setMessage("Não foi possivel conectar ao servidor remoto.");
+			p.setButton("Ok", new DialogInterface.OnClickListener() {
+			      public void onClick(DialogInterface dialog, int which) {
+			          return;
+			        } });
+			p.show();
+		}
+	}
+    
+}
