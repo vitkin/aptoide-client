@@ -65,7 +65,7 @@ public class DbHandler {
 			String[] db_ver = tmp_ver.split("\\.");
 			String[] new_ver = ver.split("\\.");
 			
-			for(int i = 0; i<java.lang.Math.min(db_ver.length, new_ver.length); i++){
+			for(int i = 0; i<Math.min(db_ver.length, new_ver.length); i++){
 				if(Integer.parseInt(db_ver[i]) < Integer.parseInt(new_ver[i])){
 					db.delete(TABLE_NAME, "apkid=\""+apkid+"\"",null);
 					break;
@@ -73,7 +73,7 @@ public class DbHandler {
 					return false;
 				}
 			}
-			if(db_ver.length > new_ver.length){
+			if(db_ver.length < new_ver.length){
 				db.delete(TABLE_NAME, "apkid=\""+apkid+"\"",null);
 			}
 		}
@@ -198,7 +198,7 @@ public class DbHandler {
 							}
 						}
 						if(!isupdate){
-							if(c.getString(2).length() < c.getString(3).length()){
+							if(tmp1.length < tmp2.length){
 								node.status = 2;
 								node.ver = c.getString(2) + "/ new: " + c.getString(3);
 							}else{
@@ -262,8 +262,27 @@ public class DbHandler {
 						node.status = 1;
 						node.ver = c.getString(2);
 					}else{
-						node.status = 2;
-						node.ver = c.getString(2) + "/" + c.getString(3);
+						boolean isupdate = false;
+						String[] tmp1 = c.getString(2).split("\\.");
+						String[] tmp2 = c.getString(3).split("\\.");
+						int sizei = Math.min(tmp1.length, tmp2.length);
+						for(int x=0; x<sizei; x++){
+							if(Integer.parseInt(tmp1[x]) < Integer.parseInt(tmp2[x])){
+								isupdate = true;
+							}
+						}
+						if(!isupdate){
+							if(tmp1.length < tmp2.length){
+								node.status = 2;
+								node.ver = c.getString(2) + "/ new: " + c.getString(3);
+							}else{
+								node.status = 1;
+								node.ver = c.getString(2);
+							}
+						}else{
+							node.status = 2;
+							node.ver = c.getString(2) + "/ new: " + c.getString(3);
+						}
 					}
 				}
 				node.rat = c.getFloat(5);
