@@ -1,3 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="icons_path">/sdcard/.aptoide/icons/</string>
+
+</resources>
 <!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
@@ -16,9 +21,3 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
-
-<?xml version="1.0" encoding="UTF-8"?>
-<resources>
-    <string name="icons_path">/sdcard/.aptoide/icons/</string>
-
-</resources>

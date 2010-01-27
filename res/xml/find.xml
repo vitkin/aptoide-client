@@ -1,3 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<searchable xmlns:android="http://schemas.android.com/apk/res/android"
+        android:label="@string/srch_label"
+        android:hint="@string/srch_hint"
+        android:searchSuggestIntentAction="android.intent.action.VIEW">
+</searchable>
 <!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
@@ -16,10 +22,3 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
-
-<?xml version="1.0" encoding="UTF-8"?>
-<searchable xmlns:android="http://schemas.android.com/apk/res/android"
-        android:label="@string/srch_label"
-        android:hint="@string/srch_hint"
-        android:searchSuggestIntentAction="android.intent.action.VIEW">
-</searchable>
