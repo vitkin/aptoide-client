@@ -180,7 +180,8 @@ public class DbHandler {
 				if(c.getString(2) == null){
 					node.status = 0;
 				}else{
-					if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					//if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					if(c.getInt(4) == c.getInt(5)){
 						node.status = 1;
 						node.ver = c.getString(2);
 					}else{
@@ -243,7 +244,8 @@ public class DbHandler {
 				if(c.getString(2) == null){
 					node.status = 0;
 				}else{
-					if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					//if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					if(c.getInt(4) == c.getInt(5)){
 						node.status = 1;
 						node.ver = c.getString(2);
 					}else{
@@ -308,7 +310,8 @@ public class DbHandler {
 				if(c.getString(2) == null){
 					node.status = 0;
 				}else{
-					if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					//if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					if(c.getInt(4) == c.getInt(5)){
 						node.status = 1;
 						node.ver = c.getString(2);
 					}else{
