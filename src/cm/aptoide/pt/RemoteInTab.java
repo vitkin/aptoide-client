@@ -95,6 +95,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	/* ****************************************************************************** */
 	private static final int SETTINGS_FLAG = 0;
 	private static final int NEWREPO_FLAG = 0;
+	private static final int UPDATE_LIST_FLAG = 0;
 	/* Horrible Hack!!! onActivityResult will be find by returned Intent, not flag... */
 	
 	private DbHandler db = null;
@@ -270,12 +271,14 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			if(data.hasExtra("align"))
 				order_lst = data.getStringExtra("align");
 			redraw(false);
+		}else if(data != null && data.hasExtra("updates")){
+			redraw(false);
 		}else if(data != null && data.hasExtra("newrepo")){
 			if(data.hasExtra("update")){
 				AlertDialog.Builder ask_alrt = new AlertDialog.Builder(this);
 				ask_alrt.setTitle("Update repositories");
 				ask_alrt.setIcon(android.R.drawable.ic_menu_rotate);
-				ask_alrt.setMessage("The list of repositories in use has been changed.\nDo you wish to update them?");
+				ask_alrt.setMessage(getString(R.string.repo_alrt));
 				ask_alrt.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int	whichButton) {
 						updateRepos();
@@ -306,6 +309,8 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	 * Retira a lista da base de dados e apresenta-a
 	 */
 	private void redraw(boolean update){
+		boolean updates = false;
+		
 		Vector<ApkNode> tmp = db.getAll(order_lst);
 		if(update){
 			//Applications have been installed or removed outside Aptoide?
@@ -319,8 +324,11 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		for(ApkNode node: tmp){
 			if(node.status == 0)
 				apk_lst_un.add(node);
-			else
+			else{
 				apk_lst_iu.add(node);
+				if(node.status == 2)
+					updates = true;
+			}
 		}
 		
 		myTabHost.setCurrentTabByTag(TAB_UN);
@@ -403,6 +411,28 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
         
         myTabHost.addTab(ts1);
         myTabHost.addTab(ts);
+        
+        if(updates){
+        	//If there are updates to any program, ask user
+        	AlertDialog.Builder update_alrt = new AlertDialog.Builder(this);
+			update_alrt.setTitle("Updates available");
+			update_alrt.setIcon(android.R.drawable.ic_dialog_info);
+			update_alrt.setMessage(getString(R.string.update_alrt));
+			update_alrt.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int	whichButton) {
+					//call update list activity
+					//Intent call = new Intent(RemoteInTab.this, UpdateList.class);
+					//startActivityForResult(call,UPDATE_LIST_FLAG);
+				}
+			});
+			update_alrt.setNegativeButton("No", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					return;
+				}
+			});
+			AlertDialog alert = update_alrt.create();
+			alert.show();
+        }
 
 	}
 
