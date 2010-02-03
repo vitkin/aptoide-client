@@ -274,10 +274,8 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			if(data.hasExtra("align"))
 				order_lst = data.getStringExtra("align");
 			redraw(false, false);
-			update_verbose = false;
 		}else if(data != null && data.hasExtra("updates")){
 			redraw(false, false);
-			update_verbose = false;
 		}else if(data != null && data.hasExtra("newrepo")){
 			if(data.hasExtra("update")){
 				AlertDialog.Builder ask_alrt = new AlertDialog.Builder(this);
@@ -307,7 +305,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				db.insertInstalled(apk_lst_un.get(requestCode).apkid);
 			}
 			redraw(false, true);
-			update_verbose = false;
 
 		}
 	}
@@ -319,8 +316,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		
 		boolean updates = false;
 		
-		System.out.println("######################## redraw com verbose = " + verbose + " e com updates = " + updates);
-
 		Vector<ApkNode> tmp = db.getAll(order_lst);
 		if(update){
 			//Applications have been installed or removed outside Aptoide?
@@ -328,7 +323,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			getUpdates(tmp);
 			tmp = db.getAll(order_lst);
 		}
-		
+			
 		apk_lst_un.clear();
 		apk_lst_iu.clear();
 		for(ApkNode node: tmp){
@@ -608,7 +603,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
         @Override
         public void handleMessage(Message msg) {
         	redraw(true, true);
-        	update_verbose = false;
         	if(pd.isShowing())
         		pd.dismiss();
         }
