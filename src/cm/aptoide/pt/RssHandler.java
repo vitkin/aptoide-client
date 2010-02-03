@@ -38,6 +38,7 @@ public class RssHandler extends DefaultHandler{
 		private String apkid;
 		private String path;
 		private String ver;
+		private int vercode;
 		private String date;
 		private float rat;
 	}
@@ -51,6 +52,7 @@ public class RssHandler extends DefaultHandler{
 	private boolean apk_name = false;
 	private boolean apk_path = false;
 	private boolean apk_ver = false;
+	private boolean apk_vercode = false;
 	private boolean apk_id = false;
 	private boolean apk_icon = false;
 	private boolean apk_date = false;
@@ -65,6 +67,7 @@ public class RssHandler extends DefaultHandler{
 		db = new DbHandler(mctx);
 		tmp_apk.name = "unknown";
 		tmp_apk.ver = "0.0";
+		tmp_apk.vercode = 0;
 		tmp_apk.rat = 3.0f;
 		tmp_apk.date = "2000-01-01";
 	}
@@ -82,6 +85,8 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.path = new String(ch).substring(start, start + length);
 		}else if(apk_ver){
 			tmp_apk.ver = new String(ch).substring(start, start + length);
+		}else if (apk_vercode){
+			tmp_apk.vercode = new Integer(new String(ch).substring(start, start + length));
 		}else if(apk_icon){
 			File icn = new File(mctx.getString(R.string.icons_path)+tmp_apk.apkid);
 			if(!icn.exists()){
@@ -103,9 +108,10 @@ public class RssHandler extends DefaultHandler{
 			new_apk = false;
 			if(tmp_apk.name.equalsIgnoreCase("Unknown"))
 				tmp_apk.name = tmp_apk.apkid;
-			db.insertApk(tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver);
+			db.insertApk(tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver);
 			tmp_apk.name = "Unknown";
 			tmp_apk.ver = "0.0";
+			tmp_apk.vercode = 0;
 			tmp_apk.rat = 3.0f;
 			tmp_apk.date = "2000-01-01";
 		}else if(localName.trim().equals("name")){
@@ -114,6 +120,8 @@ public class RssHandler extends DefaultHandler{
 			apk_path = false;
 		}else if(localName.trim().equals("ver")){
 			apk_ver = false;
+		}else if(localName.trim().equals("vercode")){
+			apk_vercode = false;
 		}else if(localName.trim().equals("apkid")){
 			apk_id = false;
 		}else if(localName.trim().equals("icon")){
@@ -138,6 +146,8 @@ public class RssHandler extends DefaultHandler{
 			apk_path = true;
 		}else if(localName.trim().equals("ver")){
 			apk_ver = true;
+		}else if(localName.trim().equals("vercode")){
+			apk_vercode = true;
 		}else if(localName.trim().equals("apkid")){
 			apk_id = true;
 		}else if(localName.trim().equals("icon")){

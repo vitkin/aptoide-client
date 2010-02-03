@@ -37,10 +37,10 @@ public class DbHandler {
 	private SQLiteDatabase db;
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
-	            + "name text not null, path text not null, lastver text not null, server text, primary key(apkid, server));";
+	            + "name text not null, path text not null, lastver text not null, lastvercode number not null ,server text, primary key(apkid, server));";
 	
 	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text primary key, "
-				+ "instver text not null);";
+				+ "instver text not null, instvercode number not null);";
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null);";
@@ -58,23 +58,15 @@ public class DbHandler {
 			//db.close();
 	}
 	
-	public boolean insertApk(String name, String path, String ver, String apkid, String date, Float rat, String serv){
-		Cursor c = db.query(TABLE_NAME, new String[] {"lastver"}, "apkid=\""+apkid+"\"", null, null, null, null);
-		if(c.moveToFirst()){
-			String tmp_ver = c.getString(0);
-			String[] db_ver = tmp_ver.split("\\.");
-			String[] new_ver = ver.split("\\.");
+	public boolean insertApk(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv){
 			
-			for(int i = 0; i<Math.min(db_ver.length, new_ver.length); i++){
-				if(Integer.parseInt(db_ver[i]) < Integer.parseInt(new_ver[i])){
-					db.delete(TABLE_NAME, "apkid=\""+apkid+"\"",null);
-					break;
-				}else if(Integer.parseInt(db_ver[i]) > Integer.parseInt(new_ver[i])){
-					return false;
-				}
-			}
-			if(db_ver.length < new_ver.length){
+		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
+		if(c.moveToFirst()){
+			int db_ver = c.getInt(0);
+			if (db_ver < vercode){
 				db.delete(TABLE_NAME, "apkid=\""+apkid+"\"",null);
+			}else if(db_ver > vercode){
+				return false;
 			}
 		}
 		
@@ -83,6 +75,7 @@ public class DbHandler {
 		tmp.put("name", name);
 		tmp.put("path", path);
 		tmp.put("lastver", ver);
+		tmp.put("lastvercode", vercode);
 		tmp.put("server", serv);
 		try{
 			db.insert(TABLE_NAME, null, tmp);
@@ -122,20 +115,23 @@ public class DbHandler {
 	public boolean insertInstalled(String apkid){
 		ContentValues tmp = new ContentValues();
 		tmp.put("apkid", apkid);
-		Cursor c = db.query(TABLE_NAME, new String[] {"lastver"}, "apkid=\""+apkid+"\"", null, null, null, null);
+		Cursor c = db.query(TABLE_NAME, new String[] {"lastver", "lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
 		c.moveToFirst();
 		String ver = c.getString(0);
+		int vercode = c.getInt(1);
 		tmp.put("instver", ver);
+		tmp.put("instvercode", vercode);
 		return (db.insert(TABLE_NAME_LOCAL, null, tmp) > 0); 
 	}
 	
 	/*
 	 * Same as above, but with explicit version
 	 */
-	public boolean insertInstalled(String apkid, String ver){
+	public boolean insertInstalled(String apkid, String ver, int vercode){
 		ContentValues tmp = new ContentValues();
 		tmp.put("apkid", apkid);
 		tmp.put("instver", ver);
+		tmp.put("instvercode", vercode);
 		return (db.insert(TABLE_NAME_LOCAL, null, tmp) > 0); 
 	}
 	
@@ -151,8 +147,8 @@ public class DbHandler {
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, b.dt, b.rat from "
-				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, a.lastver as lastver from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
 			
@@ -188,30 +184,19 @@ public class DbHandler {
 						node.status = 1;
 						node.ver = c.getString(2);
 					}else{
-						boolean isupdate = false;
-						String[] tmp1 = c.getString(2).split("\\.");
-						String[] tmp2 = c.getString(3).split("\\.");
-						int sizei = Math.min(tmp1.length, tmp2.length);
-						for(int x=0; x<sizei; x++){
-							if(Integer.parseInt(tmp1[x]) < Integer.parseInt(tmp2[x])){
-								isupdate = true;
-							}
-						}
-						if(!isupdate){
-							if(tmp1.length < tmp2.length){
-								node.status = 2;
-								node.ver = c.getString(2) + "/ new: " + c.getString(3);
-							}else{
-								node.status = 1;
-								node.ver = c.getString(2);
-							}
-						}else{
+						int instvercode = c.getInt(4);
+						int lastvercode = c.getInt(5);
+						if(instvercode < lastvercode){
 							node.status = 2;
 							node.ver = c.getString(2) + "/ new: " + c.getString(3);
+						}else{
+							node.status = 1;
+							node.ver = c.getString(2);
 						}
 					}
+					
 				}
-				node.rat = c.getFloat(5);
+				node.rat = c.getFloat(7);
 				tmp.add(node);
 				c.moveToNext();
 			}
@@ -227,8 +212,8 @@ public class DbHandler {
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, b.dt, b.rat from "
-				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, a.lastver as lastver from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode, b.dt, b.rat from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, a.lastver as lastver, l.instvercode as instvercode, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid where name like '%" + exp + "%'";
 			
@@ -262,35 +247,89 @@ public class DbHandler {
 						node.status = 1;
 						node.ver = c.getString(2);
 					}else{
-						boolean isupdate = false;
-						String[] tmp1 = c.getString(2).split("\\.");
-						String[] tmp2 = c.getString(3).split("\\.");
-						int sizei = Math.min(tmp1.length, tmp2.length);
-						for(int x=0; x<sizei; x++){
-							if(Integer.parseInt(tmp1[x]) < Integer.parseInt(tmp2[x])){
-								isupdate = true;
-							}
-						}
-						if(!isupdate){
-							if(tmp1.length < tmp2.length){
-								node.status = 2;
-								node.ver = c.getString(2) + "/ new: " + c.getString(3);
-							}else{
-								node.status = 1;
-								node.ver = c.getString(2);
-							}
-						}else{
+						int instvercode = c.getInt(4);
+						int lastvercode = c.getInt(5);
+						if(instvercode < lastvercode){
 							node.status = 2;
 							node.ver = c.getString(2) + "/ new: " + c.getString(3);
+						}else{
+							node.status = 1;
+							node.ver = c.getString(2);
 						}
 					}
 				}
-				node.rat = c.getFloat(5);
+				node.rat = c.getFloat(7);
 				tmp.add(node);
 				c.moveToNext();
 			}
 
 		}catch (Exception e){ }
+		return tmp;
+	}
+	
+	/*
+	 * Same function as above, used in list of updates
+	 */
+	
+	public Vector<ApkNode> getUpdates(String type){
+		Vector<ApkNode> tmp = new Vector<ApkNode>();
+		try{
+			
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
+				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
+				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid where c.instvercode < c.lastvercode";
+			
+			final String iu = " order by instver desc";
+			final String rat = " order by rat desc";
+			final String mr = " order by dt desc";
+			final String alfb = " order by name collate nocase";
+						
+			String search;
+			if(type.equalsIgnoreCase("abc")){
+				search = basic_query+alfb;
+			}else if(type.equalsIgnoreCase("iu")){
+				search = basic_query+iu;
+			}else if(type.equalsIgnoreCase("recent")){
+				search = basic_query+mr;
+			}else if(type.equalsIgnoreCase("rating")){
+				search = basic_query+rat;
+			}else{
+				search = basic_query;
+			}
+			Cursor c = db.rawQuery(search, null);
+			c.moveToFirst();
+			
+			
+			for(int i = 0; i< c.getCount(); i++){
+				ApkNode node = new ApkNode();
+				node.apkid = c.getString(0);
+				node.name = c.getString(1);
+				if(c.getString(2) == null){
+					node.status = 0;
+				}else{
+					if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+						node.status = 1;
+						node.ver = c.getString(2);
+					}else{
+						int instvercode = c.getInt(4);
+						int lastvercode = c.getInt(5);
+						if(instvercode < lastvercode){
+							node.status = 2;
+							node.ver = c.getString(2) + "/ new: " + c.getString(3);
+						}else{
+							node.status = 1;
+							node.ver = c.getString(2);
+						}
+					}
+					
+				}
+				node.rat = c.getFloat(7);
+				tmp.add(node);
+				c.moveToNext();
+			}
+			
+		}catch (Exception e){ 	}
 		return tmp;
 	}
 	

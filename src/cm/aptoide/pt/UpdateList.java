@@ -268,7 +268,7 @@ public class UpdateList extends ListActivity{
 	 */
 	private void redraw(){
 
-		apk_lst = db.getSearch(query,order_lst);
+		apk_lst = db.getUpdates(order_lst);
 		
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         Map<String, Object> apk_line;
