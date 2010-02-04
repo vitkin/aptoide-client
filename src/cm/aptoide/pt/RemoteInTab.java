@@ -263,6 +263,11 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		Intent intent = new Intent();
     	intent.setAction(android.content.Intent.ACTION_VIEW);
     	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
+    	
+    	Message msg = new Message();
+		msg.arg1 = 1;
+		download_handler.sendMessage(msg);
+    	
     	startActivityForResult(intent,position);
 	}
 	
@@ -556,7 +561,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		Vector<String> tmp_serv = new Vector<String>();
 		String getserv = new String();
 		try{
-			//tmp_serv = db.getPath(apk_lst_un.get(position).apkid);
 			tmp_serv = db.getPath(apkid);
 
 			for(String serv: tmp_serv){
@@ -571,7 +575,12 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			if(getserv.length() == 0)
 				throw new TimeoutException();
 			
-            Toast.makeText(RemoteInTab.this, "Getting aplication from:\n " + getserv, Toast.LENGTH_LONG).show(); 
+            //Toast.makeText(RemoteInTab.this, "Getting aplication from:\n " + getserv, Toast.LENGTH_LONG).show();
+			
+			Message msg = new Message();
+			msg.arg1 = 0;
+			msg.obj = new String(getserv);
+			download_handler.sendMessage(msg);
 			
 			BufferedInputStream getit = new BufferedInputStream(new URL(getserv).openStream());
 
@@ -625,6 +634,24 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			p.show();
 		}
 	};
+	
+	private Handler download_handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	if(msg.arg1 == 0){
+        		pd = ProgressDialog.show(mctx, "Download", "Getting aplication from:\n " + msg.obj.toString(), true);
+        	}else{
+        		pd.dismiss();
+        	}
+        }
+	};
+	
+	private Handler download_error_handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	Toast.makeText(mctx, "Could not connect to server!", Toast.LENGTH_LONG).show();
+        }
+	};
 
 	
 	/*
@@ -639,7 +666,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			pkgi = apk_lst_un.get(arg2);
 		}
 		Vector<String> tmp_get = db.getApk(pkgi.apkid);
-		AlertDialog p = new AlertDialog.Builder(this).create();
+		final AlertDialog p = new AlertDialog.Builder(this).create();
 		String tmp_path = this.getString(R.string.icons_path)+pkgi.apkid;
 		File test_icon = new File(tmp_path);
 		if(test_icon.exists()){
@@ -659,12 +686,20 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		if(tmp_get.get(2).equalsIgnoreCase("no")){
 			p.setButton2(getString(R.string.install), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					String apk_pkg = downloadFile(pkgi.apkid);
-					if(apk_pkg == null){
-			               Toast.makeText(RemoteInTab.this, "Could not connect to server!", Toast.LENGTH_LONG).show(); 
-					}else{
-						installApk(apk_pkg, arg2);
-					}
+					p.dismiss();					
+					new Thread() {
+						public void run() {
+							String apk_pkg = downloadFile(pkgi.apkid);
+							if(apk_pkg == null){
+								Message msg = new Message();
+								msg.arg1 = 1;
+								download_handler.sendMessage(msg);
+								download_error_handler.sendEmptyMessage(0);
+							}else{
+								installApk(apk_pkg, arg2);
+							}
+						}
+					}.start(); 	
 				} });
 		}else{
 			p.setButton2(getString(R.string.rem), new DialogInterface.OnClickListener() {
@@ -675,13 +710,21 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			if(pkgi.status == 2){
 				p.setButton3(getString(R.string.update), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
-						String apk_pkg = downloadFile(pkgi.apkid);
-						if(apk_pkg == null){
-				               Toast.makeText(RemoteInTab.this, "Could not connect to server!", Toast.LENGTH_LONG).show(); 
-						}else{
-							idTab = TAB_UP;
-							installApk(apk_pkg, arg2);
-						}
+						p.dismiss();
+						new Thread() {
+							public void run() {
+								String apk_pkg = downloadFile(pkgi.apkid);
+								if(apk_pkg == null){
+									Message msg = new Message();
+									msg.arg1 = 1;
+									download_handler.sendMessage(msg);
+									download_error_handler.sendEmptyMessage(0);
+								}else{
+									idTab = TAB_UP;
+									installApk(apk_pkg, arg2);
+								}
+							}
+						}.start();
 					} });
 			}
 		}
