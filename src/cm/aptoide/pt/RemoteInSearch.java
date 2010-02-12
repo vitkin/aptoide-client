@@ -216,7 +216,6 @@ public class RemoteInSearch extends ListActivity{
 						public void run() {
 							String apk_pkg = downloadFile(position);
 							if(apk_pkg == null){
-								//Toast.makeText(RemoteInSearch.this, "Could not connect to server!", Toast.LENGTH_LONG).show();
 								Message msg = new Message();
 								msg.arg1 = 1;
 								download_handler.sendMessage(msg);
@@ -357,9 +356,7 @@ public class RemoteInSearch extends ListActivity{
 			
 			if(getserv.length() == 0)
 				throw new TimeoutException();
-			
-            //Toast.makeText(RemoteInSearch.this, "Getting aplication from:\n " + getserv, Toast.LENGTH_LONG).show();
-			
+					
 			Message msg = new Message();
 			msg.arg1 = 0;
 			msg.obj = new String(getserv);

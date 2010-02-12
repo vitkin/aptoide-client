@@ -50,14 +50,30 @@ public class DbHandler {
 	
 
 	public DbHandler(Context ctx) {
-			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
-			db.execSQL(CREATE_TABLE_APTOIDE);
-			db.execSQL(CREATE_TABLE_LOCAL);
-			db.execSQL(CREATE_TABLE_URI);
-			db.execSQL(CREATE_TABLE_EXTRA);
-			//db.close();
+		db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
+		db.execSQL(CREATE_TABLE_URI);
+		db.execSQL(CREATE_TABLE_EXTRA);
+		db.execSQL(CREATE_TABLE_APTOIDE);
+		db.execSQL(CREATE_TABLE_LOCAL);
+		//db.close();
 	}
 	
+	/*
+	 * Code for DB update on new version of aptoide
+	 */
+	public void UpdateTables(){
+		try{
+			// What you want to check
+			db.query(TABLE_NAME, new String[] {"lastvercode"}, null, null, null, null, null);
+		}catch(Exception e){
+			// What you want to update
+			db.execSQL("drop table " + TABLE_NAME + ";");
+			db.execSQL("drop table " + TABLE_NAME_LOCAL + ";");
+			db.execSQL(CREATE_TABLE_APTOIDE);
+			db.execSQL(CREATE_TABLE_LOCAL);
+		}
+	}
+
 	public boolean insertApk(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv){
 			
 		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
