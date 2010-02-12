@@ -42,6 +42,10 @@ public class Aptoide extends Activity {
     private static final long START = 3000;
     private static final String TMP_SRV_FILE = "/sdcard/.aptoide/server";
     
+    // Used for Aptoide version update
+	private DbHandler db = null;
+
+    
     
     private Handler startHandler = new Handler() {
 
@@ -68,6 +72,11 @@ public class Aptoide extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        db = new DbHandler(this);
+        db.UpdateTables();
+        db = null;
+        
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.start);
