@@ -138,7 +138,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				tmpr.setText(textRepresentation);
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
 				ImageView tmpr = (ImageView)view;	
-				
 				File icn = new File(textRepresentation);
              	if(icn.exists() && icn.length() > 0){
              		new Uri.Builder().build();
@@ -146,10 +145,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
              	}else{
              		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
              	}
-				
-				
-				/*new Uri.Builder().build();
-				tmpr.setImageURI(Uri.parse(textRepresentation));*/
 			}else{
 				return false;
 			}
@@ -244,11 +239,17 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
             return true;
 		case ABOUT:
 			LayoutInflater li = LayoutInflater.from(this);
-			View view = li.inflate(R.layout.about, null);
+			View view = li.inflate(R.layout.about, null);			
 			Builder p = new AlertDialog.Builder(this).setView(view);
 			final AlertDialog alrt = p.create();
 			alrt.setIcon(R.drawable.icon);
 			alrt.setTitle("APTOIDE");
+			alrt.setButton("ChangeLog", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int	whichButton) {
+					Uri uri = Uri.parse("http://aptoide.com/changelog.html");
+					startActivity(new Intent( Intent.ACTION_VIEW, uri));
+				}
+			});
 			alrt.show();
 			return true;
 		case SETTINGS:
@@ -375,12 +376,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
                  		apk_line.put("status", getString(R.string.installed_update) + " " + node.ver);
                  	}
                  	String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
-                 	/*File icn = new File(iconpath);
-                 	if(icn.exists() && icn.length() > 0){
-                 		apk_line.put("icon", iconpath);
-                 	}else{
-                 		apk_line.put("icon", android.R.drawable.sym_def_app_icon);
-                 	}*/
                  	apk_line.put("icon", iconpath);
                  	apk_line.put("rat", node.rat);
                  	result.add(apk_line);
@@ -411,12 +406,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
                  	apk_line.put("name", node.name);
             		apk_line.put("status", getString(R.string.not_inst));
                  	String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
-                 	File icn = new File(iconpath);
-                 	if(icn.exists() && icn.length() > 0){
-                 		apk_line.put("icon", iconpath);
-                 	}else{
-                 		apk_line.put("icon", android.R.drawable.sym_def_app_icon);
-                 	}
+                 	apk_line.put("icon", iconpath);
                  	apk_line.put("rat", node.rat);
                  	result.add(apk_line);
                  }
