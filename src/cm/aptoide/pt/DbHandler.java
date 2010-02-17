@@ -59,7 +59,7 @@ public class DbHandler {
 	}
 	
 	/*
-	 * Code for DB update on new version of aptoide
+	 * Code for DB update on new version of Aptoide
 	 */
 	public void UpdateTables(){
 		try{
@@ -85,7 +85,7 @@ public class DbHandler {
 				return false;
 			}
 		}
-		
+		c.close();
 		ContentValues tmp = new ContentValues();
 		tmp.put("apkid", apkid);
 		tmp.put("name", name);
@@ -122,8 +122,9 @@ public class DbHandler {
 			}
 			tmp.put("apkid", apkid);
 			db.insert(TABLE_NAME_EXTRA, null, tmp);
+			c2.close();
 			return true;
-		}catch (Exception e){ 
+		}catch (Exception e){
 			return false;
 		}
 	}
@@ -137,6 +138,7 @@ public class DbHandler {
 		int vercode = c.getInt(1);
 		tmp.put("instver", ver);
 		tmp.put("instvercode", vercode);
+		c.close();
 		return (db.insert(TABLE_NAME_LOCAL, null, tmp) > 0); 
 	}
 	
@@ -217,7 +219,7 @@ public class DbHandler {
 				tmp.add(node);
 				c.moveToNext();
 			}
-			
+			c.close();
 		}catch (Exception e){ 	}
 		return tmp;
 	}
@@ -280,7 +282,7 @@ public class DbHandler {
 				tmp.add(node);
 				c.moveToNext();
 			}
-
+			c.close();
 		}catch (Exception e){ }
 		return tmp;
 	}
@@ -347,7 +349,7 @@ public class DbHandler {
 				tmp.add(node);
 				c.moveToNext();
 			}
-			
+			c.close();
 		}catch (Exception e){ 	}
 		return tmp;
 	}
@@ -381,6 +383,7 @@ public class DbHandler {
 				c.moveToFirst();
 				tmp.add(c.getString(0));
 			}
+			c.close();
 		}catch (Exception e){
 			System.out.println(e.toString());
 		}
@@ -395,6 +398,7 @@ public class DbHandler {
 			for(int i =0; i<c.getCount(); i++){
 				out.add(c.getString(0)+"/"+c.getString(1));
 			}
+			c.close();
 		}catch(Exception e){
 			System.out.println(e.toString());
 		}
@@ -407,6 +411,7 @@ public class DbHandler {
 			Cursor c = db.query(TABLE_NAME, new String[] {"name"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
 			out = c.getString(0);
+			c.close();
 		}catch (Exception e){ }
 		return out;
 	}
@@ -427,6 +432,7 @@ public class DbHandler {
 			out.add(node);
 			c.moveToNext();
 		}
+		c.close();
 		return out;
 	}
 	
@@ -442,6 +448,7 @@ public class DbHandler {
 		else
 			tmp.put("inuse", 1);
 		db.insert(TABLE_NAME_URI, null, tmp);
+		c.close();
 	}
 	
 	/*
