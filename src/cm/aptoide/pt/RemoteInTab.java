@@ -110,9 +110,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	private Context mctx = this; 
 	
 	private String order_lst = "abc";
-	
-	private boolean update_verbose = true;
-	
+		
 	private String idTab;
 	private static final String TAB_IN = "INST";
 	private static final String TAB_UN = "UNIN";
@@ -200,8 +198,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		// TODO Auto-generated method stub
 		super.onResume();
 		idTab = TAB_UN;
-		redraw(true, update_verbose);
-		update_verbose = false;
+		redraw(true, false);
 	}
 
 	@Override
@@ -291,7 +288,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				order_lst = data.getStringExtra("align");
 			redraw(false, false);
 		}else if(data != null && data.hasExtra("updates")){
-			redraw(false, false);
+			redraw(false, true);
 		}else if(data != null && data.hasExtra("newrepo")){
 			if(data.hasExtra("update")){
 				AlertDialog.Builder ask_alrt = new AlertDialog.Builder(this);
@@ -320,7 +317,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			}else{
 				db.insertInstalled(apk_lst_un.get(requestCode).apkid);
 			}
-			redraw(false, true);
+			redraw(false, false);
 
 		}
 	}
@@ -558,15 +555,12 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	}
 	
 	private String downloadFile(String apkid){
-		int timeOut = 15000;
 		Vector<String> tmp_serv = new Vector<String>();
 		String getserv = new String();
 		try{
 			tmp_serv = db.getPath(apkid);
 
 			for(String serv: tmp_serv){
-				String[] tmp = tmp_serv.get(0).split("/");
-				//boolean status = InetAddress.getByName(tmp[2].trim()).isReachable(timeOut);	
 				boolean status = true;
 				if(status){
 					getserv = serv;
