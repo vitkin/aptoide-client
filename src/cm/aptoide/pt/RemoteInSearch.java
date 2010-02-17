@@ -97,9 +97,14 @@ public class RemoteInSearch extends ListActivity{
 				TextView tmpr = (TextView)view;
 				tmpr.setText(textRepresentation);
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
-				ImageView tmpr = (ImageView)view;				
-				new Uri.Builder().build();
-				tmpr.setImageURI(Uri.parse(textRepresentation));
+				ImageView tmpr = (ImageView)view;	
+				File icn = new File(textRepresentation);
+             	if(icn.exists() && icn.length() > 0){
+             		new Uri.Builder().build();
+    				tmpr.setImageURI(Uri.parse(textRepresentation));
+             	}else{
+             		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
+             	}
 			}else{
 				return false;
 			}
@@ -174,6 +179,12 @@ public class RemoteInSearch extends ListActivity{
 			final AlertDialog alrt = p.create();
 			alrt.setIcon(R.drawable.icon);
 			alrt.setTitle("APTOIDE");
+			alrt.setButton("ChangeLog", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int	whichButton) {
+					Uri uri = Uri.parse("http://aptoide.com/changelog.html");
+					startActivity(new Intent( Intent.ACTION_VIEW, uri));
+				}
+			});
 			alrt.show();
 			return true;
 		case SETTINGS:
@@ -323,12 +334,7 @@ public class RemoteInSearch extends ListActivity{
         		apk_line.put("status", getString(R.string.installed_update) + " " + node.ver);
         	}
         	String iconpath = new String(this.getString(R.string.icons_path)+node.apkid);
-        	File icn = new File(iconpath);
-        	if(icn.exists()){
-        		apk_line.put("icon", iconpath);
-        	}else{
-        		apk_line.put("icon", android.R.drawable.sym_def_app_icon);
-        	}
+        	apk_line.put("icon", iconpath);
          	apk_line.put("rat", node.rat);
         	result.add(apk_line);
         }
