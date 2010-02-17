@@ -288,7 +288,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				order_lst = data.getStringExtra("align");
 			redraw(false, false);
 		}else if(data != null && data.hasExtra("updates")){
-			redraw(false, true);
+			redraw(false, false);
 		}else if(data != null && data.hasExtra("newrepo")){
 			if(data.hasExtra("update")){
 				AlertDialog.Builder ask_alrt = new AlertDialog.Builder(this);

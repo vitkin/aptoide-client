@@ -71,8 +71,6 @@ public class UpdateList extends ListActivity{
 	private PackageInfo pkginfo;
 
 	private static final int SETTINGS_FLAG = 0;
-
-	private String query;
 	
 	private String order_lst = "abc";
 	
