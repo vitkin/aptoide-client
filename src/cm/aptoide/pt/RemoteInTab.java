@@ -137,9 +137,19 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				TextView tmpr = (TextView)view;
 				tmpr.setText(textRepresentation);
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
-				ImageView tmpr = (ImageView)view;				
-				new Uri.Builder().build();
-				tmpr.setImageURI(Uri.parse(textRepresentation));
+				ImageView tmpr = (ImageView)view;	
+				
+				File icn = new File(textRepresentation);
+             	if(icn.exists() && icn.length() > 0){
+             		new Uri.Builder().build();
+    				tmpr.setImageURI(Uri.parse(textRepresentation));
+             	}else{
+             		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
+             	}
+				
+				
+				/*new Uri.Builder().build();
+				tmpr.setImageURI(Uri.parse(textRepresentation));*/
 			}else{
 				return false;
 			}
@@ -365,12 +375,13 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
                  		apk_line.put("status", getString(R.string.installed_update) + " " + node.ver);
                  	}
                  	String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
-                 	File icn = new File(iconpath);
-                 	if(icn.exists()){
+                 	/*File icn = new File(iconpath);
+                 	if(icn.exists() && icn.length() > 0){
                  		apk_line.put("icon", iconpath);
                  	}else{
                  		apk_line.put("icon", android.R.drawable.sym_def_app_icon);
-                 	}
+                 	}*/
+                 	apk_line.put("icon", iconpath);
                  	apk_line.put("rat", node.rat);
                  	result.add(apk_line);
                  }
@@ -401,7 +412,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
             		apk_line.put("status", getString(R.string.not_inst));
                  	String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
                  	File icn = new File(iconpath);
-                 	if(icn.exists()){
+                 	if(icn.exists() && icn.length() > 0){
                  		apk_line.put("icon", iconpath);
                  	}else{
                  		apk_line.put("icon", android.R.drawable.sym_def_app_icon);
