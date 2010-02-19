@@ -479,11 +479,15 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 						Vector<ServerNode> serv = db.getServers();
 						for(ServerNode node: serv){
 							if(node.inuse){
+								System.out.println("==================================== SERVER: " + node.uri);
 								downloadList(node.uri);
 								xmlPass(node.uri);
 							}
 						}
-					} catch (Exception e) { }
+					} catch (Exception e) { System.out.println("===================================== BARRACA AQUI!!!!!");
+											e.printStackTrace();
+											System.out.println("====================================== WEEEEE\n" + e.toString());
+											}
 					update_handler.sendEmptyMessage(0);
 				}
 			}.start(); 
