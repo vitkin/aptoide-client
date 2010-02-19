@@ -86,7 +86,11 @@ public class RssHandler extends DefaultHandler{
 		}else if(apk_ver){
 			tmp_apk.ver = new String(ch).substring(start, start + length);
 		}else if (apk_vercode){
-			tmp_apk.vercode = new Integer(new String(ch).substring(start, start + length));
+			try{
+				tmp_apk.vercode = new Integer(new String(ch).substring(start, start + length));
+			}catch(Exception e){
+				tmp_apk.vercode = 0;
+			}
 		}else if(apk_icon){
 			File icn = new File(mctx.getString(R.string.icons_path)+tmp_apk.apkid);
 			if(!icn.exists()){
