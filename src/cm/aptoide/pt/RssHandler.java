@@ -99,7 +99,11 @@ public class RssHandler extends DefaultHandler{
 		}else if(apk_date){
 			tmp_apk.date = new String(ch).substring(start, start + length);
 		}else if(apk_rat){
-			tmp_apk.rat = new Float(new String(ch).substring(start, start + length));
+			try{
+				tmp_apk.rat = new Float(new String(ch).substring(start, start + length));
+			}catch(Exception e){
+				tmp_apk.rat = 3.0f;
+			}
 		}
 	}
 
