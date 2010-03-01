@@ -33,7 +33,9 @@ import java.util.concurrent.TimeoutException;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -42,6 +44,8 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,6 +73,10 @@ public class UpdateList extends ListActivity{
 	
 	private PackageManager mPm;
 	private PackageInfo pkginfo;
+	
+	private ProgressDialog pd;
+	
+	private Context mctx = this;
 
 	private static final int SETTINGS_FLAG = 0;
 	
@@ -172,7 +180,7 @@ public class UpdateList extends ListActivity{
 		super.onListItemClick(l, v, position, id);
 		
 		Vector<String> tmp_get = db.getApk(apk_lst.get(position).apkid);
-		AlertDialog p = new AlertDialog.Builder(this).create();
+		final AlertDialog p = new AlertDialog.Builder(this).create();
 		String tmp_path = this.getString(R.string.icons_path)+apk_lst.get(position).apkid;
 		File test_icon = new File(tmp_path);
 		if(test_icon.exists()){
@@ -189,37 +197,36 @@ public class UpdateList extends ListActivity{
 		      public void onClick(DialogInterface dialog, int which) {
 		          return;
 		        } });
-		if(tmp_get.get(2).equalsIgnoreCase("no")){
-			p.setButton2(getString(R.string.install), new DialogInterface.OnClickListener() {
+
+		p.setButton2(getString(R.string.rem), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				String apk_pkg = apk_lst.get(position).apkid;
+				removeApk(apk_pkg, position);
+			} });
+		if(apk_lst.get(position).status == 2){
+			p.setButton3(getString(R.string.update), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					String apk_pkg = downloadFile(position);
-					if(apk_pkg == null){
-			               Toast.makeText(UpdateList.this, "Could not connect to server!", Toast.LENGTH_LONG).show(); 
-					}else{
-						installApk(apk_pkg, position);
-					}
-				} });
-		}else{ 
-			p.setButton2(getString(R.string.rem), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					String apk_pkg = apk_lst.get(position).apkid;
-					removeApk(apk_pkg, position);
-				} });
-			if(apk_lst.get(position).status == 2){
-				p.setButton3(getString(R.string.update), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						String apk_pkg = downloadFile(position);
-						if(apk_pkg == null){
-				               Toast.makeText(UpdateList.this, "Could not connect to server!", Toast.LENGTH_LONG).show(); 
-						}else{
-							installApk(apk_pkg, position);
+					p.dismiss();
+					new Thread() {
+						public void run() {
+							String apk_pkg = downloadFile(position);
+							if(apk_pkg == null){
+								Message msg = new Message();
+								msg.arg1 = 1;
+								download_handler.sendMessage(msg);
+								download_error_handler.sendEmptyMessage(0);
+							}else{
+								installApk(apk_pkg, position);
+							}
 						}
-					} });
-			}
+					}.start();
+
+				} });
 		}
+
 		p.show();
 	}
-	
+
 	private void removeApk(String apk_pkg, int position){
 		try {
 			pkginfo = mPm.getPackageInfo(apk_pkg, 0);
@@ -234,6 +241,11 @@ public class UpdateList extends ListActivity{
 		Intent intent = new Intent();
     	intent.setAction(android.content.Intent.ACTION_VIEW);
     	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
+    	
+    	Message msg = new Message();
+		msg.arg1 = 1;
+		download_handler.sendMessage(msg);
+    	
     	startActivityForResult(intent,position);
 	}
 	
@@ -316,7 +328,10 @@ public class UpdateList extends ListActivity{
 			if(getserv.length() == 0)
 				throw new TimeoutException();
 			
-            Toast.makeText(UpdateList.this, "Getting aplication from:\n " + getserv, Toast.LENGTH_LONG).show(); 
+			Message msg = new Message();
+			msg.arg1 = 0;
+			msg.obj = new String(getserv);
+			download_handler.sendMessage(msg);
 			
 			BufferedInputStream getit = new BufferedInputStream(new URL(getserv).openStream());
 
@@ -347,6 +362,28 @@ public class UpdateList extends ListActivity{
 		this.setResult(RESULT_OK, rtrn);
 		super.finish();
 	}
+	
+	/*
+	 * Handlers for GUI functions
+	 */
+	
+	private Handler download_handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	if(msg.arg1 == 0){
+        		pd = ProgressDialog.show(mctx, "Download", "Getting aplication from:\n " + msg.obj.toString(), true);
+        	}else{
+        		pd.dismiss();
+        	}
+        }
+	};
+	
+	private Handler download_error_handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	Toast.makeText(mctx, "Could not connect to server!", Toast.LENGTH_LONG).show();
+        }
+	};
 	
 	
 }

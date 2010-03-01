@@ -569,9 +569,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			
 			if(getserv.length() == 0)
 				throw new TimeoutException();
-			
-            //Toast.makeText(RemoteInTab.this, "Getting aplication from:\n " + getserv, Toast.LENGTH_LONG).show();
-			
+						
 			Message msg = new Message();
 			msg.arg1 = 0;
 			msg.obj = new String(getserv);
