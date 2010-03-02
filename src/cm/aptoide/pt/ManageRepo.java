@@ -76,9 +76,9 @@ public class ManageRepo extends ListActivity{
 		if(i.hasExtra("empty")){
 			final String uri = i.getStringExtra("uri");
 			AlertDialog alrt = new AlertDialog.Builder(this).create();
-			alrt.setTitle("Attention");
+			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
-			alrt.setMessage("It looks like you don't have any added repository.\nWe suggest you use ours.\nDo you want to add our repository?\n\n" +
+			alrt.setMessage(getString(R.string.myrepo_alrt) +
 					uri);
 			alrt.setButton("Yes", new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
@@ -97,9 +97,9 @@ public class ManageRepo extends ListActivity{
 			Vector<String> new_serv_lst = getRemoteServLst(uri);
 			for(final String srv: new_serv_lst){
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
-				alrt.setTitle("Attention");
+				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
-				alrt.setMessage("Do you want to add this repository to your list?\n\n" + srv);
+				alrt.setMessage(getString(R.string.newrepo_alrt) + srv);
 				alrt.setButton("Yes", new DialogInterface.OnClickListener() {
 				      public void onClick(DialogInterface dialog, int which) {
 				    	  db.addServer(srv);
