@@ -82,6 +82,8 @@ public class UpdateList extends ListActivity{
 	
 	private String order_lst = "abc";
 	
+	private boolean isupdate = false;
+	
 	private Intent rtrn = new Intent();
 	
 	class LstBinder implements ViewBinder
@@ -233,6 +235,7 @@ public class UpdateList extends ListActivity{
 		} catch (NameNotFoundException e) {	}
 		Uri uri = Uri.fromParts("package", pkginfo.packageName, null);
 	    Intent intent = new Intent(Intent.ACTION_DELETE, uri);
+	    isupdate = false;
 	    startActivityForResult(intent,position); 
 	}
 	
@@ -246,6 +249,7 @@ public class UpdateList extends ListActivity{
 		msg.arg1 = 1;
 		download_handler.sendMessage(msg);
     	
+		isupdate = true;
     	startActivityForResult(intent,position);
 	}
 	
@@ -259,7 +263,7 @@ public class UpdateList extends ListActivity{
 				order_lst = data.getStringExtra("align");
 			redraw();
 		}else{
-			List<PackageInfo> getapks = mPm.getInstalledPackages(0);
+			/*List<PackageInfo> getapks = mPm.getInstalledPackages(0);
 			for(PackageInfo node: getapks){
 				if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
 					db.insertInstalled(apk_lst.get(requestCode).apkid);
@@ -267,7 +271,12 @@ public class UpdateList extends ListActivity{
 					return;
 				}
 			}
+			db.removeInstalled(apk_lst.get(requestCode).apkid);*/
+			
 			db.removeInstalled(apk_lst.get(requestCode).apkid);
+			if(isupdate){
+				db.insertInstalled(apk_lst.get(requestCode).apkid);
+			}
 			redraw();
 		}
 	}
