@@ -65,9 +65,10 @@ public class RemoteInSearch extends ListActivity{
 	private String APK_PATH = LOCAL_PATH+"/";
 	
 	private static final int MANAGE_REPO = Menu.FIRST;
-	private static final int SD_INSTALL = 2;
-	private static final int SETTINGS = 3;
-	private static final int ABOUT = 4;
+	private static final int SEARCH_MENU = 2;
+	private static final int SD_INSTALL = 3;
+	private static final int SETTINGS = 4;
+	private static final int ABOUT = 5;
 	
 	private DbHandler db = null;
 	private Vector<ApkNode> apk_lst = null;
@@ -150,11 +151,13 @@ public class RemoteInSearch extends ListActivity{
 		super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, MANAGE_REPO, 1, R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, SD_INSTALL,2,R.string.menu_sdcard_read)
+		menu.add(Menu.NONE, SEARCH_MENU,2,R.string.menu_search)
+			.setIcon(android.R.drawable.ic_menu_search);
+		menu.add(Menu.NONE, SD_INSTALL,3,R.string.menu_sdcard_read)
 			.setIcon(android.R.drawable.ic_menu_save);
-		menu.add(Menu.NONE, SETTINGS, 3, R.string.menu_settings)
+		menu.add(Menu.NONE, SETTINGS, 4, R.string.menu_settings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, ABOUT,4,R.string.menu_about)
+		menu.add(Menu.NONE, ABOUT,5,R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
 	}
@@ -167,6 +170,9 @@ public class RemoteInSearch extends ListActivity{
 		case MANAGE_REPO:
 			Intent i = new Intent(this, ManageRepo.class);
 			startActivity(i);
+			return true;
+		case SEARCH_MENU:
+			onSearchRequested();
 			return true;
 		case SD_INSTALL:
 			Intent y = new Intent(this, SdIn.class);
@@ -350,7 +356,7 @@ public class RemoteInSearch extends ListActivity{
 		String md5hash = null;
 		String[] srv_hash;
 		try{
-			tmp_serv = db.getPath(apk_lst.get(position).apkid);
+			tmp_serv = db.getPathHash(apk_lst.get(position).apkid);
 
 			/*for(String serv: tmp_serv){
 				String[] tmp = tmp_serv.get(0).split("/");

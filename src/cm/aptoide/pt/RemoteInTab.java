@@ -88,9 +88,10 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	
 	private static final int UPDATE_REPO = Menu.FIRST;
 	private static final int MANAGE_REPO = 2;
-	private static final int SD_INSTALL = 3;
-	private static final int SETTINGS = 4;
-	private static final int ABOUT = 5;
+	private static final int SEARCH_MENU = 3;
+	private static final int SD_INSTALL = 4;
+	private static final int SETTINGS = 5;
+	private static final int ABOUT = 6;
 	
 	/* ****************************************************************************** */
 	private static final int SETTINGS_FLAG = 0;
@@ -209,11 +210,13 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			.setIcon(android.R.drawable.ic_menu_rotate);
 		menu.add(Menu.NONE, MANAGE_REPO, 2, R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, SD_INSTALL,3,R.string.menu_sdcard_read)
+		menu.add(Menu.NONE, SEARCH_MENU,3,R.string.menu_search)
+			.setIcon(android.R.drawable.ic_menu_search);
+		menu.add(Menu.NONE, SD_INSTALL,4,R.string.menu_sdcard_read)
 			.setIcon(android.R.drawable.ic_menu_save);
-		menu.add(Menu.NONE, SETTINGS, 4, R.string.menu_settings)
+		menu.add(Menu.NONE, SETTINGS, 5, R.string.menu_settings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, ABOUT,5,R.string.menu_about)
+		menu.add(Menu.NONE, ABOUT,6,R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
 	}
@@ -234,6 +237,9 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			Intent y = new Intent(this, SdIn.class);
             startActivity(y);
             return true;
+		case SEARCH_MENU:
+			onSearchRequested();
+			return true;
 		case ABOUT:
 			LayoutInflater li = LayoutInflater.from(this);
 			View view = li.inflate(R.layout.about, null);			

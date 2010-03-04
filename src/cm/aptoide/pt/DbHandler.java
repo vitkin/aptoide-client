@@ -391,7 +391,7 @@ public class DbHandler {
 		return tmp;
 	}
 	
-	public Vector<String> getPath(String id){
+	/*public Vector<String> getPath(String id){
 		Vector<String> out = new Vector<String>();
 		try{
 			Cursor c = db.query(TABLE_NAME, new String[] {"server", "path"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
@@ -404,7 +404,7 @@ public class DbHandler {
 			System.out.println(e.toString());
 		}
 		return out;
-	}
+	}*/
 	
 	public Vector<String> getPathHash(String id){
 		Vector<String> out = new Vector<String>();
