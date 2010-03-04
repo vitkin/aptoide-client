@@ -557,13 +557,30 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	private String downloadFile(String apkid){
 		Vector<String> tmp_serv = new Vector<String>();
 		String getserv = new String();
+		String md5hash = null;
+		String[] srv_hash;
 		try{
-			tmp_serv = db.getPath(apkid);
+			
+			tmp_serv = db.getPathHash(apkid);
 
-			for(String serv: tmp_serv){
+			/*for(String serv: tmp_serv){
 				boolean status = true;
 				if(status){
 					getserv = serv;
+				}
+			}*/
+			
+			
+			for(String serv: tmp_serv){
+				srv_hash = serv.split("\\*");
+				if(srv_hash[0] != null){
+					getserv = srv_hash[0];
+					//if(srv_hash.length > 1){
+						md5hash = srv_hash[1];
+					//}else{
+					//	md5hash = null;
+					//}
+					break;
 				}
 			}
 			
@@ -591,7 +608,14 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			bout.close();
 			getit.close();
 			saveit.close();
-			return path;
+			File f = new File(path);
+			Md5Handler hash = new Md5Handler();
+
+			if(md5hash.equalsIgnoreCase("null") || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+				return path;
+			}else{
+				return null;
+			}
 		} catch(Exception e){
 			return null;
 		}
@@ -632,7 +656,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
         @Override
         public void handleMessage(Message msg) {
         	if(msg.arg1 == 0){
-        		pd = ProgressDialog.show(mctx, "Download", "Getting aplication from:\n " + msg.obj.toString(), true);
+        		pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
         	}else{
         		pd.dismiss();
         	}
@@ -642,7 +666,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	private Handler download_error_handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	Toast.makeText(mctx, "Could not connect to server!", Toast.LENGTH_LONG).show();
+        	Toast.makeText(mctx, getString(R.string.error_download_alrt), Toast.LENGTH_LONG).show();
         }
 	};
 

@@ -37,7 +37,7 @@ public class DbHandler {
 	private SQLiteDatabase db;
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
-	            + "name text not null, path text not null, lastver text not null, lastvercode number not null ,server text, primary key(apkid, server));";
+	            + "name text not null, path text not null, lastver text not null, lastvercode number not null ,server text, md5hash text, primary key(apkid, server));";
 	
 	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text primary key, "
 				+ "instver text not null, instvercode number not null);";
@@ -64,7 +64,7 @@ public class DbHandler {
 	public void UpdateTables(){
 		try{
 			// What you want to check
-			db.query(TABLE_NAME, new String[] {"lastvercode"}, null, null, null, null, null);
+			db.query(TABLE_NAME, new String[] {"lastvercode", "md5hash"}, null, null, null, null, null);
 		}catch(Exception e){
 			// What you want to update
 			db.execSQL("drop table " + TABLE_NAME + ";");
@@ -74,7 +74,7 @@ public class DbHandler {
 		}
 	}
 
-	public boolean insertApk(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv){
+	public boolean insertApk(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash){
 			
 		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
 		if(c.moveToFirst()){
@@ -93,6 +93,7 @@ public class DbHandler {
 		tmp.put("lastver", ver);
 		tmp.put("lastvercode", vercode);
 		tmp.put("server", serv);
+		tmp.put("md5hash", md5hash);
 		try{
 			db.insert(TABLE_NAME, null, tmp);
 			tmp.clear();
@@ -405,6 +406,24 @@ public class DbHandler {
 		return out;
 	}
 	
+	public Vector<String> getPathHash(String id){
+		Vector<String> out = new Vector<String>();
+		try{
+			Cursor c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c.moveToFirst();
+			for(int i =0; i<c.getCount(); i++){
+				if(c.isNull(2)){
+					out.add(c.getString(0)+"/"+c.getString(1)+"*"+null);
+				}else{
+					out.add(c.getString(0)+"/"+c.getString(1)+"*"+c.getString(2));
+				}
+			}
+			c.close();
+		}catch(Exception e){
+		}
+		return out;
+	}
+	
 	public String getName(String id){
 		String out = new String();
 		try{
@@ -468,4 +487,5 @@ public class DbHandler {
 			db.delete(TABLE_NAME_URI, "uri=\""+node+"\"", null);
 		}
 	}
+	
 }

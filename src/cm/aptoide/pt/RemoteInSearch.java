@@ -345,18 +345,32 @@ public class RemoteInSearch extends ListActivity{
 	}
 	
 	private String downloadFile(int position){
-		int timeOut = 15000;
 		Vector<String> tmp_serv = new Vector<String>();
 		String getserv = new String();
+		String md5hash = null;
+		String[] srv_hash;
 		try{
 			tmp_serv = db.getPath(apk_lst.get(position).apkid);
 
-			for(String serv: tmp_serv){
+			/*for(String serv: tmp_serv){
 				String[] tmp = tmp_serv.get(0).split("/");
 				//boolean status = InetAddress.getByName(tmp[2]).isReachable(timeOut);
 				boolean status = true;
 				if(status){
 					getserv = serv;
+				}
+			}*/
+			
+			for(String serv: tmp_serv){
+				srv_hash = serv.split("\\*");
+				if(srv_hash[0] != null){
+					getserv = srv_hash[0];
+					if(srv_hash.length > 1){
+						md5hash = srv_hash[1];
+					}else{
+						md5hash = null;
+					}
+					break;
 				}
 			}
 			
@@ -384,7 +398,13 @@ public class RemoteInSearch extends ListActivity{
 			bout.close();
 			getit.close();
 			saveit.close();
-			return path;
+			File f = new File(path);
+			Md5Handler hash = new Md5Handler();
+			if(md5hash.equals(null) || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+				return path;
+			}else{
+				return null;
+			}
 		} catch(Exception e){
 			return null;
 		}
@@ -398,7 +418,7 @@ public class RemoteInSearch extends ListActivity{
         @Override
         public void handleMessage(Message msg) {
         	if(msg.arg1 == 0){
-        		pd = ProgressDialog.show(mctx, "Download", "Getting aplication from:\n " + msg.obj.toString(), true);
+        		pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
         	}else{
         		pd.dismiss();
         	}
@@ -408,7 +428,7 @@ public class RemoteInSearch extends ListActivity{
 	private Handler download_error_handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	Toast.makeText(mctx, "Could not connect to server!", Toast.LENGTH_LONG).show();
+        	Toast.makeText(mctx, getString(R.string.error_download_alrt), Toast.LENGTH_LONG).show();
         }
 	};
 }
