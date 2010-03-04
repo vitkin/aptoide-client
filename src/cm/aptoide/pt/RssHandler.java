@@ -41,6 +41,7 @@ public class RssHandler extends DefaultHandler{
 		private int vercode;
 		private String date;
 		private float rat;
+		private String md5hash;
 	}
 	
 	private Apk tmp_apk = new Apk();
@@ -57,6 +58,7 @@ public class RssHandler extends DefaultHandler{
 	private boolean apk_icon = false;
 	private boolean apk_date = false;
 	private boolean apk_rat = false;
+	private boolean apk_md5hash = false;
 	
 	private DbHandler db = null;
 
@@ -70,6 +72,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.vercode = 0;
 		tmp_apk.rat = 3.0f;
 		tmp_apk.date = "2000-01-01";
+		tmp_apk.md5hash = null;
 	}
 	
 	@Override
@@ -104,6 +107,8 @@ public class RssHandler extends DefaultHandler{
 			}catch(Exception e){
 				tmp_apk.rat = 3.0f;
 			}
+		}else if(apk_md5hash){
+			tmp_apk.md5hash = new String(ch).substring(start, start + length);
 		}
 	}
 
@@ -116,12 +121,13 @@ public class RssHandler extends DefaultHandler{
 			new_apk = false;
 			if(tmp_apk.name.equalsIgnoreCase("Unknown"))
 				tmp_apk.name = tmp_apk.apkid;
-			db.insertApk(tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver);
+			db.insertApk(tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash);
 			tmp_apk.name = "Unknown";
 			tmp_apk.ver = "0.0";
 			tmp_apk.vercode = 0;
 			tmp_apk.rat = 3.0f;
 			tmp_apk.date = "2000-01-01";
+			tmp_apk.md5hash = null;
 		}else if(localName.trim().equals("name")){
 			apk_name = false;
 		}else if(localName.trim().equals("path")){
@@ -138,6 +144,8 @@ public class RssHandler extends DefaultHandler{
 			apk_date = false;
 		}else if(localName.trim().equals("rat")){
 			apk_rat = false;
+		}else if(localName.trim().equals("md5h")){
+			apk_md5hash = false;
 		}
 	}
 
@@ -164,6 +172,8 @@ public class RssHandler extends DefaultHandler{
 			apk_date = true;
 		}else if(localName.trim().equals("rat")){
 			apk_rat = true;
+		}else if(localName.trim().equals("md5h")){
+			apk_md5hash = true;
 		}
 	}
 	
