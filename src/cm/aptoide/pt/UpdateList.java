@@ -374,7 +374,7 @@ public class UpdateList extends ListActivity{
 			saveit.close();
 			File f = new File(path);
 			Md5Handler hash = new Md5Handler();
-			if(md5hash.equals(null) || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+			if(md5hash.equalsIgnoreCase("null") || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
 				return path;
 			}else{
 				return null;
