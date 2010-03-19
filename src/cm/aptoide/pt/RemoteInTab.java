@@ -53,6 +53,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -102,6 +103,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	private DbHandler db = null;
 	private Vector<ApkNode> apk_lst_iu = new Vector<ApkNode>();
 	private Vector<ApkNode> apk_lst_un = new Vector<ApkNode>();
+	private Vector<ApkNode> apk_lst_up = new Vector<ApkNode>();
 	
 	private PackageManager mPm;
 	private PackageInfo pkginfo;
@@ -116,11 +118,14 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	private static final String TAB_IN = "INST";
 	private static final String TAB_UN = "UNIN";
 	private static final String TAB_UP = "UPDT";
+	private static final String TAB_IN_UP = "INUPDT";
 	private ListView ls1;
     private ListView ls2;   
+    private ListView ls3;
     private TabHost myTabHost;
     private TabSpec ts;
     private TabSpec ts1;
+    private TabSpec ts2;
 
 
     
@@ -134,7 +139,12 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				tmpr.setRating(new Float(textRepresentation));
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
 				TextView tmpr = (TextView)view;
-				tmpr.setText(textRepresentation);
+				if(textRepresentation.startsWith("*up*")){
+					tmpr.setText(textRepresentation.substring(4));
+					tmpr.setTextColor(Color.YELLOW);
+				}else{
+					tmpr.setText(textRepresentation);
+				}
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
 				ImageView tmpr = (ImageView)view;	
 				File icn = new File(textRepresentation);
@@ -177,6 +187,8 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
         ls2 = new ListView(this);
         ls1.setOnItemClickListener(this);
         ls2.setOnItemClickListener(this);
+        ls3 = new ListView(this);
+        ls3.setOnItemClickListener(this);
         
         Vector<ServerNode> srv_lst = db.getServers();
         if (srv_lst.isEmpty()){
@@ -289,6 +301,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
+		mPm = getPackageManager();
 		if(data != null && data.hasExtra("settings")){
 			if(data.hasExtra("align"))
 				order_lst = data.getStringExtra("align");
@@ -318,8 +331,21 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			if(idTab.equalsIgnoreCase(TAB_IN)){
 				db.removeInstalled(apk_lst_iu.get(requestCode).apkid);
 			}else if (idTab.equalsIgnoreCase(TAB_UP)){
+				try{
+					pkginfo = mPm.getPackageInfo(apk_lst_up.get(requestCode).apkid, 0);
+				}catch(Exception e){ }
+				String vers = pkginfo.versionName;
+				int verscode = pkginfo.versionCode;
+				db.removeInstalled(apk_lst_up.get(requestCode).apkid);
+				db.insertInstalled(apk_lst_up.get(requestCode).apkid, vers, verscode);
+			}else if (idTab.equalsIgnoreCase(TAB_IN_UP)){
+				try{
+					pkginfo = mPm.getPackageInfo(apk_lst_iu.get(requestCode).apkid, 0);
+				}catch(Exception e){ }
+				String vers = pkginfo.versionName;
+				int verscode = pkginfo.versionCode;
 				db.removeInstalled(apk_lst_iu.get(requestCode).apkid);
-				db.insertInstalled(apk_lst_iu.get(requestCode).apkid);
+				db.insertInstalled(apk_lst_iu.get(requestCode).apkid, vers, verscode);
 			}else{
 				db.insertInstalled(apk_lst_un.get(requestCode).apkid);
 			}
@@ -350,7 +376,8 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				apk_lst_un.add(node);
 			else{
 				apk_lst_iu.add(node);
-				if(verbose && node.status == 2)
+				//if(verbose && node.status == 2)
+				if(node.status == 2)
 					updates = true;
 			}
 		}
@@ -362,7 +389,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		myTabHost.setup();
 		ts = myTabHost.newTabSpec(TAB_IN);
         
-        ts.setIndicator("Installed");               
+        ts.setIndicator("Installed", getResources().getDrawable(R.drawable.installed));               
                   
         ts.setContent(new TabHost.TabContentFactory(){
              public View createTabContent(String tag)
@@ -372,11 +399,12 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
                  
                  for(ApkNode node: apk_lst_iu){
                  	apk_line = new HashMap<String, Object>();
-                 	apk_line.put("name", node.name);
                  	if(node.status == 1){
                  		apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+                 		apk_line.put("name", node.name);
                  	}else{
                  		apk_line.put("status", getString(R.string.installed_update) + " " + node.ver);
+                 		apk_line.put("name", "*up*"+node.name);
                  	}
                  	String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
                  	apk_line.put("icon", iconpath);
@@ -396,7 +424,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 
         ts1 = myTabHost.newTabSpec(TAB_UN);
         
-        ts1.setIndicator("Uninstalled");               
+        ts1.setIndicator("Uninstalled", getResources().getDrawable(android.R.drawable.ic_input_add));
                   
         ts1.setContent(new TabHost.TabContentFactory(){
              public View createTabContent(String tag)
@@ -407,7 +435,8 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
                  for(ApkNode node: apk_lst_un){
                  	apk_line = new HashMap<String, Object>();
                  	apk_line.put("name", node.name);
-            		apk_line.put("status", getString(R.string.not_inst));
+            		//apk_line.put("status", getString(R.string.not_inst));
+                 	apk_line.put("status", getString(R.string.srv_version) + " " + node.ver);
                  	String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
                  	apk_line.put("icon", iconpath);
                  	apk_line.put("rat", node.rat);
@@ -426,7 +455,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
         myTabHost.addTab(ts1);
         myTabHost.addTab(ts);
         
-        if(updates){
+        /*if(updates){
         	//If there are updates to any program, ask user
         	AlertDialog.Builder update_alrt = new AlertDialog.Builder(this);
 			update_alrt.setTitle("Updates available");
@@ -446,6 +475,37 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			});
 			AlertDialog alert = update_alrt.create();
 			alert.show();
+        }*/
+        if(updates){
+        	apk_lst_up = db.getUpdates(order_lst);
+        	ts2 = myTabHost.newTabSpec(TAB_UP);
+            ts2.setIndicator("Updates", getResources().getDrawable(R.drawable.updates));
+            ts2.setContent(new TabHost.TabContentFactory(){
+            	public View createTabContent(String tag)
+            	{                                            
+            		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+            		Map<String, Object> apk_line;
+
+            		for(ApkNode node: apk_lst_up){
+            			apk_line = new HashMap<String, Object>();
+            			apk_line.put("name", node.name);
+            			//apk_line.put("status", getString(R.string.not_inst));
+            			apk_line.put("status", getString(R.string.srv_version) + " " + node.ver);
+            			String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
+            			apk_line.put("icon", iconpath);
+            			apk_line.put("rat", node.rat);
+            			result.add(apk_line);
+            		}
+            		SimpleAdapter show_out = new SimpleAdapter(RemoteInTab.this, result, R.layout.listicons, 
+            				new String[] {"name", "status", "icon", "rat"}, new int[] {R.id.name, R.id.isinst, R.id.appicon, R.id.rating});
+
+            		show_out.setViewBinder(new RemoteInTab.LstBinder());
+
+            		ls3.setAdapter(show_out);
+            		return ls3;
+            	}         
+            }); 
+            myTabHost.addTab(ts2);
         }
 
 	}
@@ -569,23 +629,13 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			
 			tmp_serv = db.getPathHash(apkid);
 
-			/*for(String serv: tmp_serv){
-				boolean status = true;
-				if(status){
-					getserv = serv;
-				}
-			}*/
 			
 			
 			for(String serv: tmp_serv){
 				srv_hash = serv.split("\\*");
 				if(srv_hash[0] != null){
 					getserv = srv_hash[0];
-					//if(srv_hash.length > 1){
-						md5hash = srv_hash[1];
-					//}else{
-					//	md5hash = null;
-					//}
+					md5hash = srv_hash[1];
 					break;
 				}
 			}
@@ -685,14 +735,16 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		final ApkNode pkgi;
 		if(idTab.equalsIgnoreCase(TAB_IN)){
 			pkgi = apk_lst_iu.get(arg2);
-		}else{
+		}else if(idTab.equalsIgnoreCase(TAB_UN)){
 			pkgi = apk_lst_un.get(arg2);
+		}else{
+			pkgi = apk_lst_up.get(arg2);
 		}
 		Vector<String> tmp_get = db.getApk(pkgi.apkid);
 		final AlertDialog p = new AlertDialog.Builder(this).create();
 		String tmp_path = this.getString(R.string.icons_path)+pkgi.apkid;
 		File test_icon = new File(tmp_path);
-		if(test_icon.exists()){
+		if(test_icon.exists() && test_icon.length() > 0){
 			p.setIcon(new BitmapDrawable(tmp_path));
 		}else{
 			p.setIcon(android.R.drawable.sym_def_app_icon);
@@ -743,7 +795,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 									download_handler.sendMessage(msg);
 									download_error_handler.sendEmptyMessage(0);
 								}else{
-									idTab = TAB_UP;
+									idTab = TAB_IN_UP;
 									installApk(apk_pkg, arg2);
 								}
 							}
@@ -756,9 +808,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 
 	public void onTabChanged(String tabId) {
 		// TODO Auto-generated method stub
-		idTab = tabId;
-		
+		idTab = tabId;		
 	}
-	
-	
 }

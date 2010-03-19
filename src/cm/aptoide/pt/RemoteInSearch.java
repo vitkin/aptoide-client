@@ -300,6 +300,7 @@ public class RemoteInSearch extends ListActivity{
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
+		mPm = getPackageManager();
 		if(data != null && data.hasExtra("settings")){
 			if(data.hasExtra("align"))
 				order_lst = data.getStringExtra("align");

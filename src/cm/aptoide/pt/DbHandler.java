@@ -75,7 +75,7 @@ public class DbHandler {
 	}
 
 	public boolean insertApk(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash){
-			
+		Cursor c2 = null;
 		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
 		if(c.moveToFirst()){
 			int db_ver = c.getInt(0);
@@ -97,7 +97,7 @@ public class DbHandler {
 		try{
 			db.insert(TABLE_NAME, null, tmp);
 			tmp.clear();
-			Cursor c2 = db.query(TABLE_NAME_EXTRA, new String[] {"dt", "rat"}, "apkid=\""+apkid+"\"", null, null, null, null);
+			c2 = db.query(TABLE_NAME_EXTRA, new String[] {"dt", "rat"}, "apkid=\""+apkid+"\"", null, null, null, null);
 			c2.moveToFirst();
 			if(c2.getCount()>0){
 				float tmp_rat = c2.getFloat(1);
@@ -123,10 +123,11 @@ public class DbHandler {
 			}
 			tmp.put("apkid", apkid);
 			db.insert(TABLE_NAME_EXTRA, null, tmp);
-			c2.close();
 			return true;
 		}catch (Exception e){
 			return false;
+		}finally{
+			c2.close();
 		}
 	}
 	
@@ -164,6 +165,7 @@ public class DbHandler {
 	
 	public Vector<ApkNode> getAll(String type){
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
+		Cursor c = null;
 		try{
 			
 			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat from "
@@ -188,7 +190,7 @@ public class DbHandler {
 			}else{
 				search = basic_query;
 			}
-			Cursor c = db.rawQuery(search, null);
+			c = db.rawQuery(search, null);
 			c.moveToFirst();
 			
 			
@@ -198,6 +200,7 @@ public class DbHandler {
 				node.name = c.getString(1);
 				if(c.getString(2) == null){
 					node.status = 0;
+					node.ver = c.getString(3);
 				}else{
 					//if(c.getString(2).equalsIgnoreCase(c.getString(3))){
 					if(c.getInt(4) == c.getInt(5)){
@@ -220,8 +223,10 @@ public class DbHandler {
 				tmp.add(node);
 				c.moveToNext();
 			}
+		}catch (Exception e){ }
+		finally{
 			c.close();
-		}catch (Exception e){ 	}
+		}
 		return tmp;
 	}
 	
@@ -230,6 +235,7 @@ public class DbHandler {
 	 */
 	public Vector<ApkNode> getSearch(String exp, String type){
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
+		Cursor c = null;
 		try{
 			
 			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode, b.dt, b.rat from "
@@ -254,7 +260,7 @@ public class DbHandler {
 			}else{
 				search = basic_query;
 			}
-			Cursor c = db.rawQuery(search, null);
+			c = db.rawQuery(search, null);
 			c.moveToFirst();
 			for(int i = 0; i< c.getCount(); i++){
 				ApkNode node = new ApkNode();
@@ -283,8 +289,11 @@ public class DbHandler {
 				tmp.add(node);
 				c.moveToNext();
 			}
-			c.close();
+			//c.close();
 		}catch (Exception e){ }
+		finally{
+			c.close();
+		}
 		return tmp;
 	}
 	
@@ -294,6 +303,7 @@ public class DbHandler {
 	
 	public Vector<ApkNode> getUpdates(String type){
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
+		Cursor c = null;
 		try{
 			
 			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat from "
@@ -318,7 +328,7 @@ public class DbHandler {
 			}else{
 				search = basic_query;
 			}
-			Cursor c = db.rawQuery(search, null);
+			c = db.rawQuery(search, null);
 			c.moveToFirst();
 			
 			
@@ -350,8 +360,10 @@ public class DbHandler {
 				tmp.add(node);
 				c.moveToNext();
 			}
-			c.close();
 		}catch (Exception e){ 	}
+		finally{
+			c.close();
+		}
 		return tmp;
 	}
 	
@@ -364,8 +376,9 @@ public class DbHandler {
 	 */
 	public Vector<String> getApk(String id){
 		Vector<String> tmp = new Vector<String>();
+		Cursor c = null;
 		try{
-			Cursor c = db.query(TABLE_NAME, new String[] {"server", "lastver"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"server", "lastver"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
 			String tmp_serv = new String();
 			for(int i=0; i<c.getCount(); i++){
@@ -386,30 +399,19 @@ public class DbHandler {
 			}
 			c.close();
 		}catch (Exception e){
-			System.out.println(e.toString());
+			//System.out.println(e.toString());
+		}finally{
+			c.close();
 		}
 		return tmp;
 	}
 	
-	/*public Vector<String> getPath(String id){
-		Vector<String> out = new Vector<String>();
-		try{
-			Cursor c = db.query(TABLE_NAME, new String[] {"server", "path"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
-			c.moveToFirst();
-			for(int i =0; i<c.getCount(); i++){
-				out.add(c.getString(0)+"/"+c.getString(1));
-			}
-			c.close();
-		}catch(Exception e){
-			System.out.println(e.toString());
-		}
-		return out;
-	}*/
 	
 	public Vector<String> getPathHash(String id){
 		Vector<String> out = new Vector<String>();
+		Cursor c = null;
 		try{
-			Cursor c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
 				if(c.isNull(2)){
@@ -420,38 +422,48 @@ public class DbHandler {
 			}
 			c.close();
 		}catch(Exception e){
+		}finally{
+			c.close();
 		}
 		return out;
 	}
 	
 	public String getName(String id){
 		String out = new String();
+		Cursor c = null;
 		try{
-			Cursor c = db.query(TABLE_NAME, new String[] {"name"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"name"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
 			out = c.getString(0);
 			c.close();
 		}catch (Exception e){ }
+		finally{
+			c.close();
+		}
 		return out;
 	}
 	
 	public Vector<ServerNode> getServers(){
 		Vector<ServerNode> out = new Vector<ServerNode>();
-		
-		Cursor c = db.rawQuery("select uri, inuse from " + TABLE_NAME_URI + " order by uri collate nocase", null);
-		c.moveToFirst();
-		for(int i=0; i<c.getCount(); i++){
-			ServerNode node = new ServerNode();
-			node.uri = c.getString(0);
-			if(c.getInt(1) == 1){
-				node.inuse = true;
-			}else{
-				node.inuse = false;
+		Cursor c = null;
+		try {
+			c = db.rawQuery("select uri, inuse from " + TABLE_NAME_URI + " order by uri collate nocase", null);
+			c.moveToFirst();
+			for(int i=0; i<c.getCount(); i++){
+				ServerNode node = new ServerNode();
+				node.uri = c.getString(0);
+				if(c.getInt(1) == 1){
+					node.inuse = true;
+				}else{
+					node.inuse = false;
+				}
+				out.add(node);
+				c.moveToNext();
 			}
-			out.add(node);
-			c.moveToNext();
+		}catch (Exception e){ }
+		finally{
+			c.close();
 		}
-		c.close();
 		return out;
 	}
 	
