@@ -39,7 +39,7 @@ import android.view.WindowManager;
 public class Aptoide extends Activity { 
     
 	private static final int OUT = 0;
-    private static final long START = 3000;
+    private static final long START = 2000;
     private static final String TMP_SRV_FILE = "/sdcard/.aptoide/server";
     
     // Used for Aptoide version update
@@ -74,7 +74,8 @@ public class Aptoide extends Activity {
         super.onCreate(savedInstanceState);
         
         db = new DbHandler(this);
-        db.UpdateTables();
+		db.UpdateTables();
+		db.UpdateTables2();
         db = null;
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);

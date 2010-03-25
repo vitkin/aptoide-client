@@ -20,6 +20,7 @@
 package cm.aptoide.pt;
 
 import java.util.Vector;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -46,7 +47,7 @@ public class DbHandler {
 				+ " (uri text primary key, inuse integer not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, primary key(apkid));";
+				+ " (apkid text, rat number, dt date, desc text, primary key(apkid));";
 	
 
 	public DbHandler(Context ctx) {
@@ -71,6 +72,15 @@ public class DbHandler {
 			db.execSQL("drop table " + TABLE_NAME_LOCAL + ";");
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
+		}
+	}
+	
+	public void UpdateTables2(){
+		try{
+			db.query(TABLE_NAME_EXTRA, new String[] {"desc"}, null, null, null, null, null);
+		}catch(Exception e){
+			db.execSQL("drop table " + TABLE_NAME_EXTRA + ";");
+			db.execSQL(CREATE_TABLE_EXTRA);
 		}
 	}
 
@@ -498,6 +508,38 @@ public class DbHandler {
 		for(String node: serv){
 			db.delete(TABLE_NAME_URI, "uri=\""+node+"\"", null);
 		}
+	}
+	
+	public void addExtraXML(String apkid, String cmt, String srv){
+		Cursor c = null;
+		try{
+			c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "server=\""+srv+"\" and apkid=\""+apkid+"\"", null, null, null, null);
+			if(c.getCount() > 0){
+				ContentValues extra = new ContentValues();
+				extra.put("desc", cmt);
+				db.update(TABLE_NAME_EXTRA, extra, "apkid=\""+apkid+"\"", null);
+			}
+		}catch(Exception e) { }
+		finally{
+			c.close();
+		}
+	}
+	
+	public String getDescript(String apkid){
+		Cursor c = null;
+		String ret = null;
+		try{
+			c = db.query(TABLE_NAME_EXTRA, new String[] {"desc"}, "apkid=\""+apkid+"\"", null, null, null, null);
+			if(c.getCount() > 0){
+				c.moveToFirst();
+				ret = c.getString(0);
+			}
+		}
+		catch(Exception e) { }
+		finally{
+			c.close();
+		}
+		return ret;
 	}
 	
 }

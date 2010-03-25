@@ -83,9 +83,11 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	private String LOCAL_PATH = "/sdcard/.aptoide";
 	private String ICON_PATH = LOCAL_PATH+"/icons";
 	private String XML_PATH = LOCAL_PATH+"/remapklst.xml";
+	private String EXTRAS_XML_PATH = LOCAL_PATH+"/extras.xml";
 	private String APK_PATH = LOCAL_PATH+"/";
 	
 	private String REMOTE_FILE = "/info.xml";
+	private String REMOTE_EXTRAS_FILE = "/extras.xml";
 	
 	private static final int UPDATE_REPO = Menu.FIRST;
 	private static final int MANAGE_REPO = 2;
@@ -141,15 +143,18 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				TextView tmpr = (TextView)view;
 				if(textRepresentation.startsWith("*up*")){
 					tmpr.setText(textRepresentation.substring(4));
-					tmpr.setTextColor(Color.YELLOW);
+					tmpr.setTextColor(Color.parseColor("#FFFFAA"));
+				}else if(textRepresentation.startsWith("Update")){
+					tmpr.setText(textRepresentation);
+					tmpr.setTextColor(Color.parseColor("#FFFFAA"));
 				}else{
 					tmpr.setText(textRepresentation);
 				}
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
 				ImageView tmpr = (ImageView)view;	
 				File icn = new File(textRepresentation);
-             	if(icn.exists() && icn.length() > 0){
-             		new Uri.Builder().build();
+				if(icn.exists() && icn.length() > 0){
+					new Uri.Builder().build();
     				tmpr.setImageURI(Uri.parse(textRepresentation));
              	}else{
              		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
@@ -490,7 +495,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
             			apk_line = new HashMap<String, Object>();
             			apk_line.put("name", node.name);
             			//apk_line.put("status", getString(R.string.not_inst));
-            			apk_line.put("status", getString(R.string.srv_version) + " " + node.ver);
+            			apk_line.put("status", getString(R.string.installed_update) + " " + node.ver);
             			String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
             			apk_line.put("icon", iconpath);
             			apk_line.put("rat", node.rat);
@@ -546,7 +551,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 						for(ServerNode node: serv){
 							if(node.inuse){
 								downloadList(node.uri);
-								xmlPass(node.uri);
+								xmlPass(node.uri,true);
 							}
 						}
 					} catch (Exception e) { }
@@ -563,20 +568,28 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	
 	/*
 	 * Pass XML info to BD
-	 * a xml file must exists...
+	 * @type: true - info.xml
+	 * 		  false - extras.xml
 	 */
-	private void xmlPass(String srv){
+	private void xmlPass(String srv, boolean type){
 	    SAXParserFactory spf = SAXParserFactory.newInstance();
 	    try {
+	    	File xml_file = null;
 	    	SAXParser sp = spf.newSAXParser();
 	    	XMLReader xr = sp.getXMLReader();
-	    	RssHandler handler = new RssHandler(this,srv);
-	    	xr.setContentHandler(handler);
+	    	if(type){
+	    		RssHandler handler = new RssHandler(this,srv);
+	    		xr.setContentHandler(handler);
+	    		xml_file = new File(XML_PATH);
+	    	}else{
+	    		ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
+	    		xr.setContentHandler(handler);
+	    		xml_file = new File(EXTRAS_XML_PATH);
+	    	}
 	    	
-	    	InputStreamReader isr = new FileReader(new File(XML_PATH));
+	    	InputStreamReader isr = new FileReader(xml_file);
 	    	InputSource is = new InputSource(isr);
 	    	xr.parse(is);
-	    	File xml_file = new File(XML_PATH);
 	    	xml_file.delete();
 	    } catch (IOException e) {
 	    	// TODO Auto-generated catch block
@@ -591,7 +604,37 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	}
 	
 	/*
-	 * Vai buscar o ficheiro ao servidor e guarda-o no SD card
+	 * Get extras.xml file from server and save it in the SD card 
+	 */
+	private void downloadExtras(String srv){
+		try{
+			BufferedInputStream getit = new BufferedInputStream(new URL(srv+REMOTE_EXTRAS_FILE).openStream());
+
+			File file_teste = new File(LOCAL_PATH+REMOTE_EXTRAS_FILE);
+			if(file_teste.exists())
+				file_teste.delete();
+			
+			FileOutputStream saveit = new FileOutputStream(LOCAL_PATH+REMOTE_EXTRAS_FILE);
+			BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
+			byte data[] = new byte[1024];
+			
+			int readed = getit.read(data,0,1024);
+			while(readed != -1) {
+				bout.write(data,0,readed);
+				readed = getit.read(data,0,1024);
+			}
+			bout.close();
+			getit.close();
+			saveit.close();
+		}catch (UnknownHostException e){
+			Message msg = new Message();
+			msg.obj = new String(srv);
+			error_handler.sendMessage(msg);
+		}catch(Exception e){ }
+	}
+	
+	/*
+	 * Get info.xml file from server and save it in the SD card
 	 */
 	private void downloadList(String srv){
 		try{
@@ -687,6 +730,19 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
         	redraw(true, true);
         	if(pd.isShowing())
         		pd.dismiss();
+        	new Thread() {
+				public void run() {
+					try{
+						Vector<ServerNode> serv = db.getServers();
+						for(ServerNode node: serv){
+							if(node.inuse){
+								downloadExtras(node.uri);
+								xmlPass(node.uri, false);
+							}
+						}
+					} catch (Exception e) { }
+				}
+			}.start(); 
         }
 	};
 
@@ -731,7 +787,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	 * Tab related functions
 	 */
 	public void onItemClick(AdapterView<?> arg0, View arg1, final int arg2, long arg3) {
-		// TODO Auto-generated method stub
 		final ApkNode pkgi;
 		if(idTab.equalsIgnoreCase(TAB_IN)){
 			pkgi = apk_lst_iu.get(arg2);
@@ -753,7 +808,8 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		p.setMessage(getString(R.string.up_server) + tmp_get.firstElement() + 
 						"\n\n"+ getString(R.string.lstver) + " " + tmp_get.get(1) +
 						"\n\n"+ getString(R.string.isinst) + " " + tmp_get.get(2) + 
-						"\n\n"+ getString(R.string.instver)+ " " + tmp_get.get(3));
+						"\n\n"+ getString(R.string.instver)+ " " + tmp_get.get(3) + 
+						"\n\nAbout: " + db.getDescript(pkgi.apkid));
 		p.setButton("Ok", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		          return;
@@ -775,6 +831,15 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 							}
 						}
 					}.start(); 	
+				} });
+			
+			p.setButton3("Search Market", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					p.dismiss();					
+					Intent intent = new Intent();
+			    	intent.setAction(android.content.Intent.ACTION_VIEW);
+			    	intent.setData(Uri.parse("market://details?id="+pkgi.apkid));
+			    	startActivity(intent);
 				} });
 		}else{
 			p.setButton2(getString(R.string.rem), new DialogInterface.OnClickListener() {
@@ -807,7 +872,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 	}
 
 	public void onTabChanged(String tabId) {
-		// TODO Auto-generated method stub
 		idTab = tabId;		
 	}
 }
