@@ -34,6 +34,7 @@ import android.widget.ListView;
 public class SdIn extends ListActivity {
 	
 	private static final int RESCAN_SD_MENU = Menu.FIRST;
+	private static final int CLEAN_SD_APTOIDE = 2;
 	
 	
 	private Vector<SdApkNode> apk_lst = new Vector<SdApkNode>();
@@ -60,6 +61,8 @@ public class SdIn extends ListActivity {
 		super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE,RESCAN_SD_MENU,1,R.string.menu_update_sdcard)
 			.setIcon(android.R.drawable.ic_menu_rotate);
+		menu.add(Menu.NONE,CLEAN_SD_APTOIDE,2,R.string.menu_clean_sdcard)
+			.setIcon(android.R.drawable.ic_menu_delete);
 		return true;
 	}
 
@@ -75,6 +78,15 @@ public class SdIn extends ListActivity {
             	tlst.add(node.name);
             setListAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, tlst));
     		return true;
+        case CLEAN_SD_APTOIDE:
+        	files.cleanAll();
+        	files.rescan();
+        	apk_lst = files.getAll();
+            Vector<String> done = new Vector<String>();
+            for(SdApkNode node: apk_lst)
+            	done.add(node.name);
+            setListAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, done));
+        	return true;
 		}
 		return  true;
 	}
