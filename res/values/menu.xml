@@ -2,6 +2,8 @@
 <resources>
     
     <string name="menu_update_sdcard">Rescan Card</string>
+    <string name="menu_clean_sdcard">Empty aptoide downloads</string>
+    
     
     <string name="menu_update_repo">Update</string>
     <string name="menu_manage">Manage Repo</string>

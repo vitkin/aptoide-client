@@ -93,4 +93,14 @@ public class SearchFiles {
 			return return_vec;
 		}
 	}
+	
+	public void cleanAll(){
+		File home = new File(dir+"/.aptoide");
+		File[] allfiles = home.listFiles();
+		for(File fl: allfiles){
+			if(fl.getName().endsWith(".apk")){
+				fl.delete();
+			}
+		}
+	}
 }
