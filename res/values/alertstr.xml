@@ -5,6 +5,7 @@
     <string name="isinst">Installed: </string>
     <string name="instver">Installed version: </string>
     <string name="install">Install </string>
+    <string name="about_alrt">About: </string>
     <string name="rem">Uninstall </string>
     <string name="update">Update!</string>
     
