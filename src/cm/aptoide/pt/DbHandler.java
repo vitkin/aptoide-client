@@ -392,20 +392,20 @@ public class DbHandler {
 			c.moveToFirst();
 			String tmp_serv = new String();
 			for(int i=0; i<c.getCount(); i++){
-				tmp_serv = tmp_serv.concat("\n"+c.getString(0));
+				tmp_serv = tmp_serv.concat(c.getString(0)+"\n");
 				c.moveToNext();
 			}
 			tmp.add(tmp_serv);
 			c.moveToPrevious();
-			tmp.add(c.getString(1));
+			tmp.add("\t" + c.getString(1)+"\n");
 			c = db.query(TABLE_NAME_LOCAL, new String[] {"instver"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			if(c.getCount() == 0){
-				tmp.add("no");
-				tmp.add(" --- ");
+				tmp.add("\tno\n");
+				tmp.add("\t--- \n");
 			}else{
-				tmp.add("yes");
+				tmp.add("\tyes\n");
 				c.moveToFirst();
-				tmp.add(c.getString(0));
+				tmp.add("\t"+c.getString(0)+"\n");
 			}
 			c.close();
 		}catch (Exception e){

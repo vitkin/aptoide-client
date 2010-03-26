@@ -43,6 +43,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -796,20 +797,43 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			pkgi = apk_lst_up.get(arg2);
 		}
 		Vector<String> tmp_get = db.getApk(pkgi.apkid);
-		final AlertDialog p = new AlertDialog.Builder(this).create();
+		//final AlertDialog p = new AlertDialog.Builder(this).create();
 		String tmp_path = this.getString(R.string.icons_path)+pkgi.apkid;
 		File test_icon = new File(tmp_path);
+		/*if(test_icon.exists() && test_icon.length() > 0){
+			p.setIcon(new BitmapDrawable(tmp_path));
+		}else{
+			p.setIcon(android.R.drawable.sym_def_app_icon);
+		}*/
+		/*p.setTitle(pkgi.name);
+		p.setMessage(getString(R.string.up_server) + tmp_get.firstElement() + 
+						"\n\n"+ getString(R.string.lstver) + " " + tmp_get.get(1) +
+						"\n\n"+ getString(R.string.isinst) + " " + tmp_get.get(2) + 
+						"\n\n"+ getString(R.string.instver)+ " " + tmp_get.get(3) + 
+						"\n\n"+ getString(R.string.about_alrt) + db.getDescript(pkgi.apkid));*/
+		
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.alertscroll, null);
+		Builder alrt = new AlertDialog.Builder(this).setView(view);
+		final AlertDialog p = alrt.create();
 		if(test_icon.exists() && test_icon.length() > 0){
 			p.setIcon(new BitmapDrawable(tmp_path));
 		}else{
 			p.setIcon(android.R.drawable.sym_def_app_icon);
 		}
 		p.setTitle(pkgi.name);
-		p.setMessage(getString(R.string.up_server) + tmp_get.firstElement() + 
-						"\n\n"+ getString(R.string.lstver) + " " + tmp_get.get(1) +
-						"\n\n"+ getString(R.string.isinst) + " " + tmp_get.get(2) + 
-						"\n\n"+ getString(R.string.instver)+ " " + tmp_get.get(3) + 
-						"\n\nAbout: " + db.getDescript(pkgi.apkid));
+		TextView t1 = (TextView) view.findViewById(R.id.n11);
+		t1.setText(tmp_get.firstElement());
+		TextView t2 = (TextView) view.findViewById(R.id.n22);
+		t2.setText(tmp_get.get(1));
+		TextView t3 = (TextView) view.findViewById(R.id.n33);
+		t3.setText(tmp_get.get(2));
+		TextView t4 = (TextView) view.findViewById(R.id.n44);
+		t4.setText(tmp_get.get(3));
+		TextView t5 = (TextView) view.findViewById(R.id.n55);
+		t5.setText(db.getDescript(pkgi.apkid));
+		
+		
 		p.setButton("Ok", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		          return;
