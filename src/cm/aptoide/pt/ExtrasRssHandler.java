@@ -22,7 +22,6 @@ public class ExtrasRssHandler extends DefaultHandler{
 	private String e_cmt = null;
 	
 	public ExtrasRssHandler(Context ctx, String srv){
-		System.out.println("=========================================== ExtrasRssHandler com servidor: " + srv);
 		mctx = ctx;
 		server = srv;
 		db = new DbHandler(mctx);
@@ -49,8 +48,6 @@ public class ExtrasRssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("pkg")){
 			pkg = false;
 			// Add fetched information to DB
-			System.out.println("====================3 no server: " + server);
-			System.out.println("#####################3 apkid: " + e_apkid + " comment: " + e_cmt);
 			db.addExtraXML(e_apkid, e_cmt, server);
 			e_apkid = null;
 			e_cmt = null;
