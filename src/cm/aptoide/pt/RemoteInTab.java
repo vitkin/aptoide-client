@@ -710,7 +710,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 			saveit.close();
 			File f = new File(path);
 			Md5Handler hash = new Md5Handler();
-
+			
 			if(md5hash.equalsIgnoreCase("null") || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
 				return path;
 			}else{
@@ -831,14 +831,19 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 		TextView t4 = (TextView) view.findViewById(R.id.n44);
 		t4.setText(tmp_get.get(3));
 		TextView t5 = (TextView) view.findViewById(R.id.n55);
-		t5.setText(db.getDescript(pkgi.apkid));
+		String tmpi = db.getDescript(pkgi.apkid);
+		if(!(tmpi == null)){
+			t5.setText(tmpi);
+		}else{
+			t5.setText("No info availale on server. Search market by pressing the button below for more info.");
+		}
 		
 		
 		p.setButton("Ok", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		          return;
 		        } });
-		if(tmp_get.get(2).equalsIgnoreCase("no")){
+		if(tmp_get.get(2).equalsIgnoreCase("\tno\n")){
 			p.setButton2(getString(R.string.install), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					p.dismiss();					
@@ -856,7 +861,6 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 						}
 					}.start(); 	
 				} });
-			
 			p.setButton3("Search Market", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					p.dismiss();					
@@ -889,6 +893,15 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 								}
 							}
 						}.start();
+					} });
+			}else{
+				p.setButton3("Search Market", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						p.dismiss();					
+						Intent intent = new Intent();
+				    	intent.setAction(android.content.Intent.ACTION_VIEW);
+				    	intent.setData(Uri.parse("market://details?id="+pkgi.apkid));
+				    	startActivity(intent);
 					} });
 			}
 		}

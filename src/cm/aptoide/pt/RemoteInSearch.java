@@ -208,10 +208,10 @@ public class RemoteInSearch extends ListActivity{
 		super.onListItemClick(l, v, position, id);
 		
 		Vector<String> tmp_get = db.getApk(apk_lst.get(position).apkid);
-		final AlertDialog p = new AlertDialog.Builder(this).create();
+		//final AlertDialog p = new AlertDialog.Builder(this).create();
 		String tmp_path = this.getString(R.string.icons_path)+apk_lst.get(position).apkid;
 		File test_icon = new File(tmp_path);
-		if(test_icon.exists()){
+		/*if(test_icon.exists()){
 			p.setIcon(new BitmapDrawable(tmp_path));
 		}else{
 			p.setIcon(android.R.drawable.sym_def_app_icon);
@@ -220,12 +220,39 @@ public class RemoteInSearch extends ListActivity{
 		p.setMessage(getString(R.string.up_server) + tmp_get.firstElement() + 
 						"\n\n"+ getString(R.string.lstver) + " " + tmp_get.get(1) +
 						"\n\n"+ getString(R.string.isinst) + " " + tmp_get.get(2) + 
-						"\n\n"+ getString(R.string.instver)+ " " + tmp_get.get(3));
+						"\n\n"+ getString(R.string.instver)+ " " + tmp_get.get(3));*/
+		
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.alertscroll, null);
+		Builder alrt = new AlertDialog.Builder(this).setView(view);
+		final AlertDialog p = alrt.create();
+		if(test_icon.exists() && test_icon.length() > 0){
+			p.setIcon(new BitmapDrawable(tmp_path));
+		}else{
+			p.setIcon(android.R.drawable.sym_def_app_icon);
+		}
+		p.setTitle(apk_lst.get(position).name);
+		TextView t1 = (TextView) view.findViewById(R.id.n11);
+		t1.setText(tmp_get.firstElement());
+		TextView t2 = (TextView) view.findViewById(R.id.n22);
+		t2.setText(tmp_get.get(1));
+		TextView t3 = (TextView) view.findViewById(R.id.n33);
+		t3.setText(tmp_get.get(2));
+		TextView t4 = (TextView) view.findViewById(R.id.n44);
+		t4.setText(tmp_get.get(3));
+		TextView t5 = (TextView) view.findViewById(R.id.n55);
+		String tmpi = db.getDescript(apk_lst.get(position).apkid);
+		if(!(tmpi == null)){
+			t5.setText(tmpi);
+		}else{
+			t5.setText("No info availale on server. Search market by pressing the button below for more info.");
+		}
+		
 		p.setButton("Ok", new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		          return;
 		        } });
-		if(tmp_get.get(2).equalsIgnoreCase("no")){
+		if(tmp_get.get(2).equalsIgnoreCase("\tno\n")){
 			p.setButton2(getString(R.string.install), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					p.dismiss();
@@ -242,6 +269,14 @@ public class RemoteInSearch extends ListActivity{
 							}
 						}
 					}.start();
+				} });
+			p.setButton3("Search Market", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					p.dismiss();					
+					Intent intent = new Intent();
+			    	intent.setAction(android.content.Intent.ACTION_VIEW);
+			    	intent.setData(Uri.parse("market://details?id="+apk_lst.get(position).apkid));
+			    	startActivity(intent);
 				} });
 		}else{ 
 			p.setButton2(getString(R.string.rem), new DialogInterface.OnClickListener() {
@@ -267,6 +302,15 @@ public class RemoteInSearch extends ListActivity{
 								}
 							}
 						}.start();
+					} });
+			}else{
+				p.setButton3("Search Market", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						p.dismiss();					
+						Intent intent = new Intent();
+				    	intent.setAction(android.content.Intent.ACTION_VIEW);
+				    	intent.setData(Uri.parse("market://details?id="+apk_lst.get(position).apkid));
+				    	startActivity(intent);
 					} });
 			}
 		}
