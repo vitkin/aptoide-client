@@ -12,25 +12,45 @@
         android:cropToPadding ="true"
         android:scaleType = "centerInside" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView android:id="@+id/name"
             android:textSize="21sp"
+            android:layout_alignParentTop="true"
             android:textStyle="bold"
             android:singleLine="true"
             android:ellipsize="marquee"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
-
-        <TextView android:id="@+id/isinst"
-            android:textSize="12sp"
+            
+		<TextView android:id="@+id/nameup"
+            android:textSize="21sp"
+            android:layout_alignParentTop="true"
+            android:textStyle="bold"
+            android:textColor="#FFFFAA"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
             
+        <TextView android:id="@+id/isinst"
+            android:textSize="12sp"
+            android:layout_below="@id/name" 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+            
+		<TextView android:id="@+id/isupdt"
+            android:textSize="12sp"
+            android:layout_below="@id/name" 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFAA"/>
+            
         <RelativeLayout
+        	android:layout_below="@id/isupdt"
         	android:layout_width="fill_parent"
         	android:layout_height="fill_parent"
         	android:orientation="horizontal"
@@ -47,7 +67,7 @@
 	    </RelativeLayout>
             
             
-     </LinearLayout>
+     </RelativeLayout>
      
  
 </LinearLayout>

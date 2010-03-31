@@ -42,6 +42,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -376,13 +377,15 @@ public class RemoteInSearch extends ListActivity{
         
         for(ApkNode node: apk_lst){
         	apk_line = new HashMap<String, Object>();
-        	apk_line.put("name", node.name);
         	if(node.status == 0){
         		apk_line.put("status", getString(R.string.not_inst));
+        		apk_line.put("name", node.name);
         	}else if(node.status == 1){
         		apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+        		apk_line.put("name", node.name);
         	}else{
-        		apk_line.put("status", getString(R.string.installed_update) + " " + node.ver);
+        		apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
+        		apk_line.put("name2", node.name);
         	}
         	String iconpath = new String(this.getString(R.string.icons_path)+node.apkid);
         	apk_line.put("icon", iconpath);
@@ -390,7 +393,7 @@ public class RemoteInSearch extends ListActivity{
         	result.add(apk_line);
         }
         SimpleAdapter show_out = new SimpleAdapter(this, result, R.layout.listicons, 
-        		new String[] {"name", "status", "icon", "rat"}, new int[] {R.id.name, R.id.isinst, R.id.appicon, R.id.rating});
+        		new String[] {"name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.name, R.id.nameup,  R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
         show_out.setViewBinder(new RemoteInSearch.LstBinder());
         setListAdapter(show_out);
 	}
