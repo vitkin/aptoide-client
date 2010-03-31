@@ -142,15 +142,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
 				tmpr.setRating(new Float(textRepresentation));
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
 				TextView tmpr = (TextView)view;
-				if(textRepresentation.startsWith("*up*")){
-					tmpr.setText(textRepresentation.substring(4));
-					tmpr.setTextColor(Color.parseColor("#FFFFAA"));
-				}else if(textRepresentation.startsWith("Update")){
-					tmpr.setText(textRepresentation);
-					tmpr.setTextColor(Color.parseColor("#FFFFAA"));
-				}else{
-					tmpr.setText(textRepresentation);
-				}
+				tmpr.setText(textRepresentation);
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
 				ImageView tmpr = (ImageView)view;	
 				File icn = new File(textRepresentation);
@@ -409,8 +401,8 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
                  		apk_line.put("status", getString(R.string.installed) + " " + node.ver);
                  		apk_line.put("name", node.name);
                  	}else{
-                 		apk_line.put("status", getString(R.string.installed_update) + " " + node.ver);
-                 		apk_line.put("name", "*up*"+node.name);
+                 		apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
+                 		apk_line.put("name2", node.name);
                  	}
                  	String iconpath = new String(RemoteInTab.this.getString(R.string.icons_path)+node.apkid);
                  	apk_line.put("icon", iconpath);
@@ -418,7 +410,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
                  	result.add(apk_line);
                  }
                  SimpleAdapter show_out = new SimpleAdapter(RemoteInTab.this, result, R.layout.listicons, 
-                 		new String[] {"name", "status", "icon", "rat"}, new int[] {R.id.name, R.id.isinst, R.id.appicon, R.id.rating});
+                 		new String[] {"name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
                  
                  show_out.setViewBinder(new RemoteInTab.LstBinder());
                  
@@ -503,7 +495,7 @@ public class RemoteInTab extends TabActivity implements  OnItemClickListener, On
             			result.add(apk_line);
             		}
             		SimpleAdapter show_out = new SimpleAdapter(RemoteInTab.this, result, R.layout.listicons, 
-            				new String[] {"name", "status", "icon", "rat"}, new int[] {R.id.name, R.id.isinst, R.id.appicon, R.id.rating});
+            				new String[] {"name", "status", "icon", "rat"}, new int[] {R.id.nameup, R.id.isupdt, R.id.appicon, R.id.rating});
 
             		show_out.setViewBinder(new RemoteInTab.LstBinder());
 

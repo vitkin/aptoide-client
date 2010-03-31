@@ -516,7 +516,11 @@ public class DbHandler {
 			c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "server=\""+srv+"\" and apkid=\""+apkid+"\"", null, null, null, null);
 			if(c.getCount() > 0){
 				ContentValues extra = new ContentValues();
-				extra.put("desc", cmt);
+				if(cmt.length() > 1){
+					extra.put("desc", cmt);
+				}else{
+					extra.putNull("desc");
+				}
 				db.update(TABLE_NAME_EXTRA, extra, "apkid=\""+apkid+"\"", null);
 			}
 		}catch(Exception e) { }
