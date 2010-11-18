@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vw1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">    
+
+    <ImageView android:id="@+id/appicon"
+        android:layout_width="50px"
+        android:layout_height="50px"
+        android:cropToPadding ="true"
+        android:scaleType = "centerInside" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView android:id="@+id/name"
+            android:textSize="21sp"
+            android:layout_alignParentTop="true"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+            
+		<TextView android:id="@+id/nameup"
+            android:textSize="21sp"
+            android:layout_alignParentTop="true"
+            android:textStyle="bold"
+            android:textColor="#FFFFAA"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+            
+        <TextView android:id="@+id/isinst"
+            android:textSize="12sp"
+            android:layout_below="@id/name" 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+            
+		<TextView android:id="@+id/isupdt"
+            android:textSize="12sp"
+            android:layout_below="@id/name" 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFAA"/>
+            
+        <RelativeLayout
+        	android:layout_below="@id/isupdt"
+        	android:layout_width="fill_parent"
+        	android:layout_height="fill_parent"
+        	android:orientation="horizontal"
+        	android:gravity="right">
+            
+        	<RatingBar android:id="@+id/rating"
+        		style="?android:attr/ratingBarStyleSmall"
+        		android:layout_width="wrap_content"
+        		android:layout_height="fill_parent"
+        		android:isIndicator="true"
+        		android:numStars="5"
+        		/>
+
+	    </RelativeLayout>
+            
+            
+     </RelativeLayout>
+     
+ 
+</LinearLayout>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
