@@ -91,16 +91,20 @@ public class DbHandler {
 	 */
 	public void UpdateTables(){
 		String[] repos = null;
+		int[] inuser = null;
 		try{
 			Cursor c;
-			c = db.query(TABLE_NAME_URI, new String[] {"uri"}, null, null, null, null, null);
+			c = db.query(TABLE_NAME_URI, new String[] {"uri","inuse"}, null, null, null, null, null);
 			if(c.moveToFirst()){
 				int i = 0;
 				repos = new String[c.getCount()];
+				inuser = new int[c.getCount()];
 				repos[i] = c.getString(0);
+				inuser[i] = c.getInt(1);
 				while(c.moveToNext()){
 					i++;
 					repos[i] = c.getString(0);
+					inuser[i] = c.getInt(1);
 				}
 			}
 			db.execSQL("drop table if exists " + TABLE_NAME);
@@ -112,10 +116,16 @@ public class DbHandler {
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
 			
-			for(String uri: repos){
+			/*for(String uri: repos){
 				ContentValues tmp = new ContentValues();
 				tmp.put("uri", uri);
 				tmp.put("inuse", 0);
+				db.insert(TABLE_NAME_URI, null, tmp);
+			}*/
+			for(int z = 0; z < repos.length; z++){
+				ContentValues tmp = new ContentValues();
+				tmp.put("uri", repos[z]);
+				tmp.put("inuse", inuser[z]);
 				db.insert(TABLE_NAME_URI, null, tmp);
 			}
 			
