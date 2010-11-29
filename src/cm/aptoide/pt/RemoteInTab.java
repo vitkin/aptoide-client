@@ -62,6 +62,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -277,6 +278,7 @@ public class RemoteInTab extends TabActivity {
 						Vector<ServerNode> serv = db.getServers();
 						for(ServerNode node: serv){
 							if(node.inuse){
+								Log.d("Aptoide", "=== " + node.uri);
 								downloadList(node.uri);
 								xmlPass(node.uri,true);
 							}
@@ -377,7 +379,7 @@ public class RemoteInTab extends TabActivity {
     		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
     		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
             HttpGet mHttpGet = new HttpGet(url);
-            
+                       
             String[] logins = null; 
     		logins = db.getLogin(srv);
     		if(logins != null){

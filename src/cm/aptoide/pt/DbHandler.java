@@ -60,14 +60,12 @@ public class DbHandler {
 	public DbHandler(Context ctx) {
 		mctx = ctx;
 		if(db == null){
-			System.out.println("\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ====== SATRT DB");
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
 			db.execSQL(CREATE_TABLE_URI);
 			db.execSQL(CREATE_TABLE_EXTRA);
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
 		}else if(!db.isOpen()){
-			System.out.println("\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ====== OPEN DB");
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
 		}
 	}
@@ -107,6 +105,7 @@ public class DbHandler {
 					inuser[i] = c.getInt(1);
 				}
 			}
+			c.close();
 			db.execSQL("drop table if exists " + TABLE_NAME);
 			db.execSQL("drop table if exists " + TABLE_NAME_EXTRA);
 			db.execSQL("drop table if exists " + TABLE_NAME_LOCAL);
@@ -282,8 +281,8 @@ public class DbHandler {
 					tmp.add(node);
 				}
 			}
-			
-		}catch (Exception e) {return null;}
+		c.close();	
+		}catch (Exception e) {c.close(); return null;}
 		return tmp;
 	}
 	
@@ -524,7 +523,7 @@ public class DbHandler {
 				c.moveToFirst();
 				tmp.add("\t"+c.getString(0)+"\n");
 			}
-			c.close();
+			//c.close();
 		}catch (Exception e){
 			//System.out.println(e.toString());
 		}finally{
@@ -551,7 +550,7 @@ public class DbHandler {
 				}
 				out.add(node);
 			}
-			c.close();
+			//c.close();
 		}catch(Exception e){
 		}finally{
 			c.close();
@@ -572,7 +571,7 @@ public class DbHandler {
 					out.add(c.getString(0)+"/"+c.getString(1)+"*"+c.getString(2));
 				}
 			}
-			c.close();
+			//c.close();
 		}catch(Exception e){
 		}finally{
 			c.close();
