@@ -30,6 +30,9 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -251,13 +254,10 @@ public class RssHandler extends DefaultHandler{
 								node = iconFetchList.remove(0);
 							}
 							String test_file = mctx.getString(R.string.icons_path) + node.name;
-							//Log.d("Aptoide"," Testing: " + test_file);
 							
 							File exists = new File(test_file);
 							if(exists.exists()){
-								//Log.d("Aptoide"," ============= JA EXISTE!");
 							}else {
-								//Log.d("Aptoide"," ============= NEW ICON!");
 								synchronized(iconFinalFetchList){
 									iconFinalFetchList.add(node);
 								}
@@ -266,16 +266,13 @@ public class RssHandler extends DefaultHandler{
 						}
 						Thread.sleep(1000);						
 					}
-					//Log.d("Aptoide","============= Acabou os testes iniciais de icons!");
-				} catch (Exception e) { //Log.d("Aptoide"," ============= ASNEIRA: ");
-				//Log.d("Aptoide",e.toString());
+				} catch (Exception e) { 
 				}
 			}
 		}.start(); 
 		
 		new Thread() {
 			public void run() {
-				//Log.d("Aptoide"," ============= I AM STARTING: " + Thread.currentThread().getId());
 				IconNode node = null;
 				try{
 					while(true){
@@ -286,15 +283,12 @@ public class RssHandler extends DefaultHandler{
 							synchronized(iconFinalFetchList){
 								node = iconFinalFetchList.remove(0);
 							}
-							//Log.d("Aptoide"," ============= I AM HERE!!!!! " + node.name);
 							getIcon(node.url, node.name);
 						}
 					}
-					//Log.d("Aptoide"," ============= I AM EXITING!!! " + Thread.currentThread().getId());
 
 				}catch (Exception e){
-					//No icon to fecth... does nothing
-					//Log.d("Aptoide","=== ASNEIRA: " + e.toString());
+
 				}
 			}
 		}.start();
@@ -321,20 +315,13 @@ public class RssHandler extends DefaultHandler{
 
 					Log.d("Aptoide","A lancar threads...");
 					Thread main_icon_thread = new Thread(new FetchIcons(), "T1");
-					//Thread main_icon_thread2 = new Thread(new FetchIcons(), "T2");
-					/*Thread main_icon_thread3 = new Thread(new FetchIcons(), "T3");
-					Thread main_icon_thread4 = new Thread(new FetchIcons(), "T4");*/
 
 					main_icon_thread.start();						
-					//main_icon_thread2.start();
-					/*main_icon_thread3.start();
-					main_icon_thread4.start();*/
 					
 				} catch (Exception e) { /*Log.d("Aptoide", "UPS!");*/ }
 			}
 		}.start();
 		
-		//Log.d("Aptoide"," ============= I AM STARTING: " + Thread.currentThread().getId());
 		IconNode node = null;
 		try{
 			while(true){
@@ -344,15 +331,11 @@ public class RssHandler extends DefaultHandler{
 					synchronized(iconFinalFetchList){
 						node = iconFinalFetchList.remove(0);
 					}
-					//Log.d("Aptoide"," ============= I AM HERE!!!!! " + node.name);
 					getIcon(node.url, node.name);
 				}
 			}
-			//Log.d("Aptoide"," ============= I AM EXITING!!! " + Thread.currentThread().getId());
 
 		}catch (Exception e){
-			//No icon to fecth... does nothing
-			//Log.d("Aptoide","=== ASNEIRA: " + e.toString());
 		}
 		
 		super.endDocument();
@@ -366,7 +349,7 @@ public class RssHandler extends DefaultHandler{
 	private void getIcon(String uri, String name){
 		String url = mserver + "/" + uri;
 		String file = mctx.getString(R.string.icons_path) + name;
-
+		
 		/*File exists = new File(file);
 		if(exists.exists()){
 			return;
@@ -374,11 +357,14 @@ public class RssHandler extends DefaultHandler{
 		
 		try {
 			FileOutputStream saveit = new FileOutputStream(file);
-			DefaultHttpClient mHttpClient = new DefaultHttpClient();
+			HttpParams httpParameters = new BasicHttpParams();
+    		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
+    		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			HttpGet mHttpGet = new HttpGet(url);
 
 			
-			if(requireLogin){
+			if(requireLogin){ 
 				URL mUrl = new URL(url);
 				mHttpClient.getCredentialsProvider().setCredentials(
 						new AuthScope(mUrl.getHost(), mUrl.getPort()),
@@ -394,6 +380,7 @@ public class RssHandler extends DefaultHandler{
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 				saveit.write(buffer);
 			}
+			
 		}catch (IOException e) { }
 		catch (IllegalArgumentException e) { }
 

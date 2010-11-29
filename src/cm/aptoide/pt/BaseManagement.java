@@ -2,6 +2,7 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,7 +16,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -298,8 +299,15 @@ public class BaseManagement extends Activity {
 			 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				 return null;
 			 }else{
-				 byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				 saveit.write(buffer);
+				 /*byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+				 saveit.write(buffer);*/
+				 InputStream getit = mHttpResponse.getEntity().getContent();
+                 byte data[] = new byte[8096];
+				 int readed;
+				 while((readed = getit.read(data, 0, 8096)) != -1) {
+					 saveit.write(data,0,readed);
+				 }
+
 			 }
 			 File f = new File(path);
 			 Md5Handler hash = new Md5Handler();
