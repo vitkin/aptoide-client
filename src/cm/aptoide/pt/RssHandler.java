@@ -22,6 +22,7 @@ package cm.aptoide.pt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Vector;
 
@@ -264,7 +265,7 @@ public class RssHandler extends DefaultHandler{
 
 							}
 						}
-						Thread.sleep(1000);						
+						Thread.sleep(1000);
 					}
 				} catch (Exception e) { 
 				}
@@ -286,9 +287,7 @@ public class RssHandler extends DefaultHandler{
 							getIcon(node.url, node.name);
 						}
 					}
-
 				}catch (Exception e){
-
 				}
 			}
 		}.start();
@@ -299,6 +298,7 @@ public class RssHandler extends DefaultHandler{
 
 	@Override
 	public void endDocument() throws SAXException {
+		Log.d("Aptoide","Done parsing XML from " + mserver + " ...");
 		db.updateServerNApk(mserver, napk);
 		db.endTrans();
 		new Thread() {
@@ -313,12 +313,11 @@ public class RssHandler extends DefaultHandler{
 						Thread.sleep(2000);
 					}
 
-					Log.d("Aptoide","A lancar threads...");
 					Thread main_icon_thread = new Thread(new FetchIcons(), "T1");
 
 					main_icon_thread.start();						
 					
-				} catch (Exception e) { /*Log.d("Aptoide", "UPS!");*/ }
+				} catch (Exception e) {  }
 			}
 		}.start();
 		
@@ -334,10 +333,8 @@ public class RssHandler extends DefaultHandler{
 					getIcon(node.url, node.name);
 				}
 			}
-
 		}catch (Exception e){
 		}
-		
 		super.endDocument();
 	}
 	
@@ -377,8 +374,14 @@ public class RssHandler extends DefaultHandler{
 			}else if(mHttpResponse.getStatusLine().getStatusCode() == 403){
 				return;
 			}else{
-				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				saveit.write(buffer);
+				/*byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+				saveit.write(buffer);*/
+				InputStream getit = mHttpResponse.getEntity().getContent();
+				byte data[] = new byte[8096];
+				int readed;
+				while((readed = getit.read(data, 0, 8096)) != -1) {
+					saveit.write(data,0,readed);
+				}
 			}
 			
 		}catch (IOException e) { }
@@ -390,7 +393,6 @@ public class RssHandler extends DefaultHandler{
 		public FetchIcons() {	}
 		
 		public void run() {
-			//Log.d("Aptoide"," ============= I AM STARTING: " + Thread.currentThread().getId());
 			IconNode node = null;
 			try{
 				while(true){
@@ -400,15 +402,11 @@ public class RssHandler extends DefaultHandler{
 						synchronized(iconFinalFetchList){
 							node = iconFinalFetchList.remove(0);
 						}
-						//Log.d("Aptoide"," ============= I AM HERE!!!!! " + node.name);
 						getIcon(node.url, node.name);
 					}
 				}
-				//Log.d("Aptoide"," ============= I AM EXITING!!! " + Thread.currentThread().getId());
 
 			}catch (Exception e){
-				//No icon to fecth... does nothing
-				//Log.d("Aptoide","=== ASNEIRA: " + e.toString());
 			}
 		}
 	}
