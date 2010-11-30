@@ -95,8 +95,8 @@ public class DbHandler {
 			c = db.query(TABLE_NAME_URI, new String[] {"uri","inuse"}, null, null, null, null, null);
 			if(c.moveToFirst()){
 				int i = 0;
-				repos = new String[c.getCount()];
-				inuser = new int[c.getCount()];
+				repos = new String[c.getCount()+1];
+				inuser = new int[c.getCount()+1];
 				repos[i] = "http://apps.aptoide.org";
 				inuser[i] = 1;
 				i++;
