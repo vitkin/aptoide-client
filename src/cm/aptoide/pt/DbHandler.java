@@ -97,6 +97,9 @@ public class DbHandler {
 				int i = 0;
 				repos = new String[c.getCount()];
 				inuser = new int[c.getCount()];
+				repos[i] = "http://apps.aptoide.org";
+				inuser[i] = 1;
+				i++;
 				repos[i] = c.getString(0);
 				inuser[i] = c.getInt(1);
 				while(c.moveToNext()){

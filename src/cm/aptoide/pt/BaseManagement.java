@@ -29,7 +29,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -307,7 +306,6 @@ public class BaseManagement extends Activity {
 				 while((readed = getit.read(data, 0, 8096)) != -1) {
 					 saveit.write(data,0,readed);
 				 }
-
 			 }
 			 File f = new File(path);
 			 Md5Handler hash = new Md5Handler();
