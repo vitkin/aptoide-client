@@ -103,6 +103,8 @@ public class RemoteInTab extends TabActivity {
     
     private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
+	
+	private Vector<String> failed_repo = new Vector<String>();
 
     
 	@Override
@@ -276,11 +278,16 @@ public class RemoteInTab extends TabActivity {
 				public void run() {
 					try{
 						Vector<ServerNode> serv = db.getServers();
+						boolean parse = false;
 						for(ServerNode node: serv){
 							if(node.inuse){
-								Log.d("Aptoide", "=== " + node.uri);
-								downloadList(node.uri);
-								xmlPass(node.uri,true);
+								Log.d("Aptoide", "Updating repo: " + node.uri);
+								parse = downloadList(node.uri);
+								if(parse){
+									xmlPass(node.uri,true);
+								}else{
+									failed_repo.add(node.uri);
+								}
 							}
 						}
 					} catch (Exception e) { }
@@ -332,7 +339,7 @@ public class RemoteInTab extends TabActivity {
 	/*
 	 * Get extras.xml file from server and save it in the SD card 
 	 */
-	private void downloadExtras(String srv){
+	private boolean downloadExtras(String srv){
 		String url = srv+REMOTE_EXTRAS_FILE;
 		
         try {
@@ -353,30 +360,40 @@ public class RemoteInTab extends TabActivity {
     		}
             
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				/*Message msg = new Message();
-				msg.obj = new String(srv);
-				secure_error_handler.sendMessage(msg);*/
+			/*if(mHttpResponse.getStatusLine().getStatusCode() == 401){
+				
+			}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
+				
 			}else{
-                byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
                 saveit.write(buffer);
+			}*/
+			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
+				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+                saveit.write(buffer);
+			}else{
+				return false;
+				//Does nothing...
 			}
-		} catch (UnknownHostException e){ } 
-		  catch (ClientProtocolException e) { } 
-		  catch (IOException e) { }
+			return true;
+		} catch (UnknownHostException e){ return false;} 
+		  catch (ClientProtocolException e) { return false;} 
+		  catch (IOException e) { return false;}
 	}
 	
 	/*
 	 * Get info.xml file from server and save it in the SD card
 	 */
-	private void downloadList(String srv){
+	private boolean downloadList(String srv){
 		String url = srv+REMOTE_FILE;
-		
+		Log.d("Aptoide","Fetching file: " + url);
         try {
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
+        	
         	HttpParams httpParameters = new BasicHttpParams();
     		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
     		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+    		
     		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
             HttpGet mHttpGet = new HttpGet(url);
                        
@@ -390,20 +407,33 @@ public class RemoteInTab extends TabActivity {
     		}
             
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				Message msg = new Message();
-				msg.obj = new String(srv);
-				secure_error_handler.sendMessage(msg);
+			/*if(mHttpResponse.getStatusLine().getStatusCode() == 401){
+				
+			}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
+				
 			}else{
-                byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-                saveit.write(buffer);
+				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+				saveit.write(buffer);
+			}*/
+			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
+				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+				saveit.write(buffer);
+			}else{
+				Log.d("Aptoide","Server error");
+				return false;
+				//Does nothing
 			}
+			Log.d("Aptoide","Done!");
+			return true;
 		} catch (UnknownHostException e){
-			Message msg = new Message();
+			/*Message msg = new Message();
 			msg.obj = new String(srv);
-			error_handler.sendMessage(msg);
-		} catch (ClientProtocolException e) { } 
-		  catch (IOException e) { }
+			error_handler.sendMessage(msg);*/
+			Log.d("Aptoide","Error 1");
+			return false;
+		} catch (ClientProtocolException e) {Log.d("Aptoide","Error 2"); return false;} 
+		  catch (IOException e) { Log.d("Aptoide","Error 3"); return false;}
+		  catch (IllegalArgumentException e) {Log.d("Aptoide","Error 4"); return false;}
 	}
 	
 	
@@ -418,14 +448,32 @@ public class RemoteInTab extends TabActivity {
         	myTabHost.setCurrentTabByTag("avail");
     		if(pd.isShowing())
         		pd.dismiss();
+    		if(failed_repo.size() > 0){
+    			AlertDialog p = new AlertDialog.Builder(mctx).create();
+    			p.setTitle("Errors");
+    			p.setIcon(android.R.drawable.ic_dialog_alert);
+    			String report = "The update process could not be made on the following repositories:\n";
+    			for(String node: failed_repo){
+    				report = report.concat(node+"\n");
+    			}
+    			p.setMessage(report);
+    			p.setButton("Ok", new DialogInterface.OnClickListener() {
+    			      public void onClick(DialogInterface dialog, int which) {
+    			          return;
+    			        } });
+    			p.show();
+    		}
         	new Thread() {
 				public void run() {
 					try{
 						Vector<ServerNode> serv = db.getServers();
+						boolean parse = false;
 						for(ServerNode node: serv){
 							if(node.inuse){
-								downloadExtras(node.uri);
-								xmlPass(node.uri, false);
+								parse = downloadExtras(node.uri);
+								if(parse){
+									xmlPass(node.uri, false);
+								}
 							}
 						}
 					} catch (Exception e) { }
