@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +56,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -261,7 +261,7 @@ public class ManageRepo extends ListActivity{
 						}else if (result == 401){
 							sec_msg2.setText("Login is wrong");
 							sec_msg2.setVisibility(View.VISIBLE);
-							msg.obj = 1;
+							msg.obj = 1;			
 						}else{
 							sec_msg.setText("Can't connect to server");
 							sec_msg.setVisibility(View.VISIBLE);
@@ -472,9 +472,9 @@ public class ManageRepo extends ListActivity{
         	}
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
 			return mHttpResponse.getStatusLine().getStatusCode();
-		} catch (ClientProtocolException e) {return -1;} 
-		catch (IOException e) {return -1;}
-		catch (IllegalArgumentException e) {return -1;}
+		} catch (ClientProtocolException e) {Log.d("Aptoide","Error 1"); return -1;} 
+		catch (IOException e) {Log.d("Aptoide","Error 2"); return -1;}
+		catch (IllegalArgumentException e) {Log.d("Aptoide","Error 3"); return -1;}
 	}
 	
 	
