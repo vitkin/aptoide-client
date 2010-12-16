@@ -34,7 +34,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.util.EntityUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -174,7 +173,6 @@ public class RssHandler extends DefaultHandler{
 			
 			readed++;
 			if(readed >= 10){
-				//Log.d("Aptoide", "============================================================= A Limpar!!");
 				readed = 0;
 				cleanTransHeap();
 			}

@@ -21,6 +21,7 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +35,6 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -70,9 +70,10 @@ public class RemoteInSearch extends ListActivity{
 	private String APK_PATH = LOCAL_PATH+"/";
 	
 	private static final int MANAGE_REPO = Menu.FIRST;
-	private static final int SEARCH_MENU = 2;
-	private static final int SETTINGS = 3;
-	private static final int ABOUT = 4;
+	private static final int CHANGE_FILTER = 2;
+	private static final int SEARCH_MENU = 3;
+	private static final int SETTINGS = 4;
+	private static final int ABOUT = 5;
 	
 	private DbHandler db = null;
 	private Vector<ApkNode> apk_lst = null;
@@ -154,11 +155,13 @@ public class RemoteInSearch extends ListActivity{
 		super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, MANAGE_REPO, 1, R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, SEARCH_MENU,2,R.string.menu_search)
+		menu.add(Menu.NONE, CHANGE_FILTER, 2, R.string.menu_order)
+		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(Menu.NONE, SEARCH_MENU,3,R.string.menu_search)
 			.setIcon(android.R.drawable.ic_menu_search);
-		menu.add(Menu.NONE, SETTINGS, 3, R.string.menu_settings)
+		menu.add(Menu.NONE, SETTINGS, 4, R.string.menu_settings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, ABOUT,4,R.string.menu_about)
+		menu.add(Menu.NONE, ABOUT,5,R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
 	}
@@ -194,6 +197,15 @@ public class RemoteInSearch extends ListActivity{
 			Intent s = new Intent(RemoteInSearch.this, Settings.class);
 			s.putExtra("order", order_lst);
 			startActivityForResult(s,SETTINGS_FLAG);
+			return true;
+		case CHANGE_FILTER:
+			if(order_lst.equalsIgnoreCase("abc"))
+				order_lst = "iu";
+			else if(order_lst.equalsIgnoreCase("iu"))
+				order_lst = "recent";
+			else
+				order_lst = "abc";
+			redraw();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -442,8 +454,15 @@ public class RemoteInSearch extends ListActivity{
 			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				return null;
 			}else{
-				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				saveit.write(buffer);
+				InputStream getit = mHttpResponse.getEntity().getContent();
+				byte data[] = new byte[8096];
+				int readed;
+				while((readed = getit.read(data, 0, 8096)) != -1) {
+					 saveit.write(data,0,readed);
+				 }
+				
+				/*byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+				saveit.write(buffer);*/
 			}
 
 
