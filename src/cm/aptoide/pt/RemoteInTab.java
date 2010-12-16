@@ -84,9 +84,10 @@ public class RemoteInTab extends TabActivity {
 	
 	private static final int UPDATE_REPO = Menu.FIRST;
 	private static final int MANAGE_REPO = 2;
-	private static final int SEARCH_MENU = 3;
-	private static final int SETTINGS = 4;
-	private static final int ABOUT = 5;
+	private static final int CHANGE_FILTER = 3;
+	private static final int SEARCH_MENU = 4;
+	private static final int SETTINGS = 5;
+	private static final int ABOUT = 6;
 	
 	private static final int SETTINGS_FLAG = 31;
 	private static final int NEWREPO_FLAG = 33;
@@ -162,11 +163,13 @@ public class RemoteInTab extends TabActivity {
 			.setIcon(android.R.drawable.ic_menu_rotate);
 		menu.add(Menu.NONE, MANAGE_REPO, 2, R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, SEARCH_MENU,3,R.string.menu_search)
+		/*menu.add(Menu.NONE, CHANGE_FILTER, 3, R.string.menu_order)
+		.setIcon(android.R.drawable.ic_menu_sort_by_size);*/
+		menu.add(Menu.NONE, SEARCH_MENU,4,R.string.menu_search)
 			.setIcon(android.R.drawable.ic_menu_search);
-		menu.add(Menu.NONE, SETTINGS, 4, R.string.menu_settings)
+		menu.add(Menu.NONE, SETTINGS, 5, R.string.menu_settings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, ABOUT,5,R.string.menu_about)
+		menu.add(Menu.NONE, ABOUT,6,R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
 	}
@@ -229,6 +232,16 @@ public class RemoteInTab extends TabActivity {
 			Intent s = new Intent(RemoteInTab.this, Settings.class);
 			s.putExtra("order", order_lst);
 			startActivityForResult(s,SETTINGS_FLAG);
+			return true;
+		case CHANGE_FILTER:
+			if(order_lst.equalsIgnoreCase("abc"))
+				order_lst = "recent";
+			else
+				order_lst = "abc";
+			prefEdit.putString("order_lst", order_lst);
+        	prefEdit.commit();
+
+        	
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -261,6 +274,7 @@ public class RemoteInTab extends TabActivity {
 				order_lst = data.getExtras().getString("align");
 				prefEdit.putString("order_lst", order_lst);
 	        	prefEdit.commit();
+	        	onResume();
 			}
 		}
 	}

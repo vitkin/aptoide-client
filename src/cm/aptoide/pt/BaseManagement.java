@@ -54,6 +54,8 @@ public class BaseManagement extends Activity {
 	static private Vector<ApkNode> apk_lst = null;
 	static private String order_lst = "abc";
 	
+	private String my_order = "abc";
+	
 	static protected SimpleAdapter availAdpt = null;
 	static protected SimpleAdapter instAdpt = null;
 	static protected SimpleAdapter updateAdpt = null;
@@ -75,8 +77,24 @@ public class BaseManagement extends Activity {
 		prefEdit = sPref.edit();
 		
 	}
-
 	
+	protected boolean resumeMe(){
+		String istype;
+		if(my_order.equalsIgnoreCase("abc")){
+			my_order = "recent";
+			istype = "Most recent first";
+		}else{
+			my_order = "abc";
+			istype = "Alphabetically";
+		}
+		if(!order_lst.equalsIgnoreCase(my_order)){
+			order_lst = my_order;
+			redraw();
+		}
+		Toast.makeText(mctx, istype, Toast.LENGTH_SHORT).show();
+		return true;
+	}
+		
 	@Override
 	protected void onResume() {
 		super.onResume();

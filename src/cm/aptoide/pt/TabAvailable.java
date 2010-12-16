@@ -14,7 +14,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -32,7 +35,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	private Context mctx = null;
 	
 	private int pos = -1;
-	
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +49,29 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	}
 
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(Menu.NONE, 3, 3, R.string.menu_order)
+		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case 3:
+			Log.d("Aptoide", "I am here!!!");
+			if(resumeMe()){
+				lv.setAdapter(availAdpt);
+				setContentView(lv);
+				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				lv.setSelection(pos-1);
+			}
+				
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
