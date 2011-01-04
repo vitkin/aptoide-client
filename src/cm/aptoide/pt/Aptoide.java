@@ -23,8 +23,19 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Vector;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,23 +52,29 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 
+
 public class Aptoide extends Activity { 
+	
+
     
 	private static final int OUT = 0;
     private static final String TMP_SRV_FILE = "/sdcard/.aptoide/server";
+    
+    private Vector<String> server_lst = null;
+    private Vector<String[]> get_apks = null;
     
     // Used for Aptoide version update
 	private DbHandler db = null;
 
 	private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
-	
-	 private ProgressBar mProgress;
-     private int mProgressStatus = 0;
-     private Handler mHandler = new Handler();
 
-    
-    private Handler startHandler = new Handler() {
+	private ProgressBar mProgress;
+	private int mProgressStatus = 0;
+	private Handler mHandler = new Handler();
+
+
+	private Handler startHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
@@ -72,7 +89,13 @@ public class Aptoide extends Activity {
 						i.putExtra("newrepo", repo);
 					}else{
 						downloadServ(uri);
-						i.putExtra("uri", TMP_SRV_FILE);
+						getRemoteServLst(TMP_SRV_FILE);
+						i.putExtra("uri", server_lst);
+						if(get_apks.size() > 0){
+							//i.putExtra("uri", TMP_SRV_FILE);
+							i.putExtra("apks", get_apks);
+
+						}
 					}
 				}
 				startActivityForResult(i,0);
@@ -187,6 +210,30 @@ public class Aptoide extends Activity {
 			          return;
 			        } });
 			p.show();
+		}
+	}
+	
+	private void getRemoteServLst(String file){
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+	    try {
+	    	SAXParser sp = spf.newSAXParser();
+	    	XMLReader xr = sp.getXMLReader();
+	    	NewServerRssHandler handler = new NewServerRssHandler(this);
+	    	xr.setContentHandler(handler);
+	    	
+	    	InputStreamReader isr = new FileReader(new File(file));
+	    	InputSource is = new InputSource(isr);
+	    	xr.parse(is);
+	    	File xml_file = new File(file);
+	    	xml_file.delete();
+	    	server_lst = handler.getNewSrvs();
+	    	get_apks = handler.getNewApks();
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	    } catch (SAXException e) {
+	    	e.printStackTrace();
+	    } catch (ParserConfigurationException e) {
+			e.printStackTrace();
 		}
 	}
 }

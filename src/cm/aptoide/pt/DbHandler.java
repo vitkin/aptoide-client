@@ -664,7 +664,7 @@ public class DbHandler {
 	
 	public void removeServer(Vector<String> serv){
 		for(String node: serv){
-			db.delete(TABLE_NAME_URI, "uri=\""+node+"\"", null);
+			db.delete(TABLE_NAME_URI, "uri='"+node+"'", null);
 		}
 	}
 	
