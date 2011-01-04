@@ -23,24 +23,31 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -62,6 +69,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StatFs;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -91,12 +99,13 @@ public class RemoteInTab extends TabActivity {
 	
 	private static final int SETTINGS_FLAG = 31;
 	private static final int NEWREPO_FLAG = 33;
+	private static final int FETCH_APK = 35;
 	
 	private DbHandler db = null;
 
 	private ProgressDialog pd;
 	
-	private Context mctx = this; 
+	private Context mctx;
 	
 	private String order_lst = "abc";
 	
@@ -105,57 +114,188 @@ public class RemoteInTab extends TabActivity {
     private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
 	
+	private ConnectivityManager netstate = null; 
+	
 	private Vector<String> failed_repo = new Vector<String>();
+	
+	private Intent intp;
+	private Intent intserver;
 
+	
+	private Handler fetchHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			if(pd.isShowing())
+				pd.dismiss();
+			
+	    	startActivityForResult(intp, FETCH_APK);
+			super.handleMessage(msg);
+		}
+		
+	};
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-								
-		File local_path = new File(LOCAL_PATH);
-		if(!local_path.exists())
-			local_path.mkdir();
 		
-		File icon_path = new File(ICON_PATH);
-		if(!icon_path.exists())
-			icon_path.mkdir();
-						
+		mctx = this;
+		
 		db = new DbHandler(this);
-		
+
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
 		prefEdit.putBoolean("update", true);
-    	prefEdit.commit();
-		
+		prefEdit.commit();
+
 		myTabHost = getTabHost();
 		myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator("Available",getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
 		myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator("Installed",getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)));
 		myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator("Updates",getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
-		
+
 		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
+
+		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		      
-        Vector<ServerNode> srv_lst = db.getServers();
-        if (srv_lst.isEmpty()){
-        	Intent call = new Intent(this, ManageRepo.class);
-        	call.putExtra("empty", true);
-			call.putExtra("uri", "http://apps.aptoide.org");
-			startActivityForResult(call,NEWREPO_FLAG);
-        }
-        
-		Intent i = getIntent();
-		if(i.hasExtra("uri")){
-			Intent call = new Intent(this, ManageRepo.class);
-			call.putExtra("uri", i.getStringExtra("uri"));
-			startActivityForResult(call,NEWREPO_FLAG);
-		}else if(i.hasExtra("newrepo")){
-			Intent call = new Intent(this, ManageRepo.class);
-			call.putExtra("newrepo", i.getStringExtra("newrepo"));
-			startActivityForResult(call,NEWREPO_FLAG);
+		File sdcard_file = new File("/sdcard");
+		if(!sdcard_file.exists()){
+			final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
+			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+			upd_alrt.setTitle("No memory");
+			upd_alrt.setMessage("You don't have a SDcard.\nPlease insert one and try again.");
+			upd_alrt.setButton("Ok", new OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			upd_alrt.show();
+		}else{
+			StatFs stat = new StatFs(sdcard_file.getPath());
+			long blockSize = stat.getBlockSize();
+			long totalBlocks = stat.getBlockCount();
+			long availableBlocks = stat.getAvailableBlocks();
+
+			long total = (blockSize * totalBlocks)/1024/1024;
+			long avail = (blockSize * availableBlocks)/1024/1024;
+			Log.d("Aptoide","* * * * * * * * * *");
+			Log.d("Aptoide", "Total: " + total + " Mb");
+			Log.d("Aptoide", "Available: " + avail + " Mb");
+
+			if((total - avail) < 10 ){
+				Log.d("Aptoide","No space left on SDCARD...");
+				Log.d("Aptoide","* * * * * * * * * *");
+
+				final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
+				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+				upd_alrt.setTitle("No memory");
+				upd_alrt.setMessage("You don't have enough space on your SDcard to use Aptoide\nPlease free some space and try again.");
+				upd_alrt.setButton("Ok", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
+				upd_alrt.show();
+			}else{
+				Log.d("Aptoide","Ok!");
+				Log.d("Aptoide","* * * * * * * * * *");
+
+				File local_path = new File(LOCAL_PATH);
+				if(!local_path.exists())
+					local_path.mkdir();
+
+				File icon_path = new File(ICON_PATH);
+				if(!icon_path.exists())
+					icon_path.mkdir();
+
+
+				Vector<ServerNode> srv_lst = db.getServers();
+				if (srv_lst.isEmpty()){
+					Intent call = new Intent(this, ManageRepo.class);
+					call.putExtra("empty", true);
+					call.putExtra("uri", "http://apps.aptoide.org");
+					startActivityForResult(call,NEWREPO_FLAG);
+				}
+
+				Intent i = getIntent();
+				if(i.hasExtra("uri")){
+					if(i.hasExtra("apks")){
+						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("uri");
+						if(servers_lst != null && servers_lst.size() > 0){
+							intserver = new Intent(this, ManageRepo.class);
+							intserver.putExtra("uri", i.getSerializableExtra("uri"));
+						}else{
+							intserver = null;
+						}
+						
+						final String[] nodi = ((ArrayList<String[]>) i.getSerializableExtra("apks")).get(0);
+						final AlertDialog alrt = new AlertDialog.Builder(this).create();
+						alrt.setTitle("Install");
+						alrt.setMessage("Do you wish to install: " + nodi[1] + " ?");
+						alrt.setButton("Yes", new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								alrt.dismiss();
+								pd = ProgressDialog.show(mctx, "Download", "Fetching application: " + nodi[1], true);
+								pd.setIcon(android.R.drawable.ic_dialog_info);
+								
+								new Thread(new Runnable() {
+									public void run() {
+										installFromLink(nodi[0]);
+									}
+								}).start();
+
+							}
+						});
+						alrt.setButton2("No", new OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+								alrt.dismiss();
+							}
+						});
+						alrt.show();
+					}else{
+						Intent call = new Intent(this, ManageRepo.class);
+						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("uri");
+						if(servers_lst != null && servers_lst.size() > 0){
+							call.putExtra("uri", i.getSerializableExtra("uri"));
+							startActivityForResult(call,NEWREPO_FLAG);
+						}
+					}
+				}else if(i.hasExtra("newrepo")){
+					Intent call = new Intent(this, ManageRepo.class);
+					call.putExtra("newrepo", i.getStringExtra("newrepo"));
+					startActivityForResult(call,NEWREPO_FLAG);
+				}
+			}
 		}
 	}
-	
-	
+
+	private void installFromLink(String path){
+		try{
+			String file_out = new String("/sdcard/.aptoide/fetched.apk");
+			FileOutputStream saveit = new FileOutputStream(file_out);
+			DefaultHttpClient mHttpClient = new DefaultHttpClient();
+			HttpGet mHttpGet = new HttpGet(path);
+
+			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			
+			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
+				 Log.d("Aptoide", "NOT FOUND!!!");
+				 return;
+			 }
+
+			InputStream getit = mHttpResponse.getEntity().getContent();
+			byte data[] = new byte[8096];
+			int readed;
+			while((readed = getit.read(data, 0, 8096)) != -1) {
+				saveit.write(data,0,readed);
+			}
+			
+			intp = new Intent();
+	    	intp.setAction(android.content.Intent.ACTION_VIEW);
+	    	intp.setDataAndType(Uri.parse("file://" + file_out), "application/vnd.android.package-archive");
+	    	fetchHandler.sendEmptyMessage(0);
+		}catch(IOException e) { }
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -190,19 +330,23 @@ public class RemoteInTab extends TabActivity {
 					}
 				});
 			}else{
-				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-				upd_alrt.setTitle("Update repositories");
-				upd_alrt.setMessage("Do you wish to update repositories?\nThis can take a while (WiFi is advised)...");
-				upd_alrt.setButton("Yes", new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						updateRepos();
-					}
-				});
-				upd_alrt.setButton2("No", new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						upd_alrt.dismiss();
-					}
-				});
+				if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED){
+					updateRepos();
+				}else{
+					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+					upd_alrt.setTitle("Update repositories");
+					upd_alrt.setMessage("Do you wish to update repositories?\nThis can take a while (WiFi is advised)...");
+					upd_alrt.setButton("Yes", new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							updateRepos();
+						}
+					});
+					upd_alrt.setButton2("No", new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							upd_alrt.dismiss();
+						}
+					});
+				}
 			}
 			upd_alrt.show();
 			return true;
@@ -251,7 +395,6 @@ public class RemoteInTab extends TabActivity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
 		if(requestCode == NEWREPO_FLAG){
 			if(data != null && data.hasExtra("update")){
 				final AlertDialog alrt = new AlertDialog.Builder(this).create();
@@ -276,6 +419,9 @@ public class RemoteInTab extends TabActivity {
 	        	prefEdit.commit();
 	        	onResume();
 			}
+		}else if(requestCode == FETCH_APK){
+			if(intserver != null)
+				startActivityForResult(intserver, NEWREPO_FLAG);
 		}
 	}
 	
@@ -284,8 +430,8 @@ public class RemoteInTab extends TabActivity {
 		pd.setIcon(android.R.drawable.ic_dialog_info);
 		
 		//Check for connection first!
-		ConnectivityManager netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE); 
-		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED){		
+		
+		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED){
 			db.removeAll();
 			myTabHost.setCurrentTabByTag("inst");
 			new Thread() {
@@ -293,6 +439,7 @@ public class RemoteInTab extends TabActivity {
 					try{
 						Vector<ServerNode> serv = db.getServers();
 						boolean parse = false;
+						failed_repo.clear();
 						for(ServerNode node: serv){
 							if(node.inuse){
 								Log.d("Aptoide", "Updating repo: " + node.uri);
@@ -304,8 +451,10 @@ public class RemoteInTab extends TabActivity {
 								}
 							}
 						}
-					} catch (Exception e) { }
-					update_handler.sendEmptyMessage(0);
+					} catch (Exception e) { Log.d("Aptoide", "Major exception...");}
+					finally{
+						update_handler.sendEmptyMessage(0);
+					}
 				}
 			}.start(); 
 			return true;
@@ -358,7 +507,9 @@ public class RemoteInTab extends TabActivity {
 		
         try {
         	FileOutputStream saveit = new FileOutputStream(LOCAL_PATH+REMOTE_EXTRAS_FILE);
-        	HttpParams httpParameters = new BasicHttpParams();
+        	
+        	
+        	/*HttpParams httpParameters = new BasicHttpParams();
     		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
     		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
     		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
@@ -373,7 +524,10 @@ public class RemoteInTab extends TabActivity {
                         new UsernamePasswordCredentials(logins[0], logins[1]));
     		}
             
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);*/
+        	
+        	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
+        	
 			/*if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				
 			}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
@@ -404,23 +558,59 @@ public class RemoteInTab extends TabActivity {
         try {
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
         	
-        	HttpParams httpParameters = new BasicHttpParams();
+        	/*HttpParams httpParameters = new BasicHttpParams();
     		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
     		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
     		
     		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
-            HttpGet mHttpGet = new HttpGet(url);
+    		mHttpClient.setRedirectHandler(new RedirectHandler() {
+				
+				public boolean isRedirectRequested(HttpResponse response,
+						HttpContext context) {
+					return false;
+				}
+				
+				public URI getLocationURI(HttpResponse response, HttpContext context)
+						throws ProtocolException {
+					return null;
+				}
+			});
+    		
+            HttpGet mHttpGet = new HttpGet(url);*/
                        
-            String[] logins = null; 
+           /* String[] logins = null; 
     		logins = db.getLogin(srv);
     		if(logins != null){
+    			Log.d("Aptoide", "Using login: " + logins[0] + " and " + logins[1]);
     			URL mUrl = new URL(url);
     			mHttpClient.getCredentialsProvider().setCredentials(
                         new AuthScope(mUrl.getHost(), mUrl.getPort()),
                         new UsernamePasswordCredentials(logins[0], logins[1]));
     		}
             
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);*/
+			
+			// Redirect used... 
+			/*Header[] azz = mHttpResponse.getHeaders("Location");
+			if(azz.length > 0){
+				String newurl = azz[0].getValue();
+				Log.d("Aptoide", "Now to: " + newurl);
+				mHttpGet = null;
+				mHttpGet = new HttpGet(newurl);
+				
+				if(logins != null){
+	    			Log.d("Aptoide", "Using login: " + logins[0] + " and " + logins[1]);
+	    			URL mUrl = new URL(newurl);
+	    			mHttpClient.getCredentialsProvider().setCredentials(
+	                        new AuthScope(mUrl.getHost(), mUrl.getPort()),
+	                        new UsernamePasswordCredentials(logins[0], logins[1]));
+	    		}
+				
+				mHttpResponse = null;
+				mHttpResponse = mHttpClient.execute(mHttpGet);
+			}*/
+			
+
 			/*if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				
 			}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
@@ -429,6 +619,10 @@ public class RemoteInTab extends TabActivity {
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 				saveit.write(buffer);
 			}*/
+        	
+        	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
+        	
+			Log.d("Aptoide","Return: " + mHttpResponse.getStatusLine().getStatusCode());
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 				saveit.write(buffer);
@@ -459,11 +653,14 @@ public class RemoteInTab extends TabActivity {
         public void handleMessage(Message msg) {
     		prefEdit.putBoolean("update", true);
         	prefEdit.commit();
-        	myTabHost.setCurrentTabByTag("avail");
-    		if(pd.isShowing())
+        	if(pd.isShowing()){
+        		Log.d("Aptoide", "Dismiss...");
         		pd.dismiss();
+        	}
+        	myTabHost.setCurrentTabByTag("avail");
+    		
     		if(failed_repo.size() > 0){
-    			AlertDialog p = new AlertDialog.Builder(mctx).create();
+    			final AlertDialog p = new AlertDialog.Builder(mctx).create();
     			p.setTitle("Errors");
     			p.setIcon(android.R.drawable.ic_dialog_alert);
     			String report = "The update process could not be made on the following repositories:\n";
@@ -473,7 +670,7 @@ public class RemoteInTab extends TabActivity {
     			p.setMessage(report);
     			p.setButton("Ok", new DialogInterface.OnClickListener() {
     			      public void onClick(DialogInterface dialog, int which) {
-    			          return;
+    			          p.dismiss();
     			        } });
     			p.show();
     		}

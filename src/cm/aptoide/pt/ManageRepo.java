@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,15 +35,19 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HttpContext;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -117,8 +122,9 @@ public class ManageRepo extends ListActivity{
 			      }});
 			alrt.show();
 		}else if(i.hasExtra("uri")){
-			String uri = i.getStringExtra("uri");
-			Vector<String> new_serv_lst = getRemoteServLst(uri);
+			//String uri = i.getStringExtra("uri");
+			//Vector<String> new_serv_lst = getRemoteServLst(uri);
+			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
 			for(final String srv: new_serv_lst){
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle(getString(R.string.title_repo_alrt));
@@ -462,6 +468,19 @@ public class ManageRepo extends ListActivity{
 		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
 		
 		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
+		
+		mHttpClient.setRedirectHandler(new RedirectHandler() {
+			public boolean isRedirectRequested(HttpResponse response,
+					HttpContext context) {
+				return false;
+			}
+
+			public URI getLocationURI(HttpResponse response, HttpContext context)
+			throws ProtocolException {
+				return null;
+			}
+		});
+		
         HttpGet mHttpGet = new HttpGet(uri+"/info.xml");
         try {
         	if(user != null && pwd != null){
@@ -470,7 +489,29 @@ public class ManageRepo extends ListActivity{
         				new AuthScope(mUrl.getHost(), mUrl.getPort()),
         				new UsernamePasswordCredentials(user, pwd));
         	}
+        	
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			
+			Header[] azz = mHttpResponse.getHeaders("Location");
+			if(azz.length > 0){
+				String newurl = azz[0].getValue();
+				Log.d("Aptoide", "Now to: " + newurl);
+				Log.d("Aptoide", "Login " + user + " - " + pwd);
+
+				mHttpGet = null;
+				mHttpGet = new HttpGet(newurl);
+				
+				if(user != null && pwd != null){
+	        		URL mUrl = new URL(newurl);
+	        		mHttpClient.getCredentialsProvider().setCredentials(
+	        				new AuthScope(mUrl.getHost(), mUrl.getPort()),
+	        				new UsernamePasswordCredentials(user, pwd));
+	        	}
+				
+				mHttpResponse = null;
+				mHttpResponse = mHttpClient.execute(mHttpGet);
+			}
+
 			return mHttpResponse.getStatusLine().getStatusCode();
 		} catch (ClientProtocolException e) {Log.d("Aptoide","Error 1"); return -1;} 
 		catch (IOException e) {Log.d("Aptoide","Error 2"); return -1;}

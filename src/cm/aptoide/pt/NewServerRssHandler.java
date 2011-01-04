@@ -19,6 +19,7 @@
 
 package cm.aptoide.pt;
 
+import java.io.Serializable;
 import java.util.Vector;
 
 import org.xml.sax.Attributes;
@@ -29,12 +30,19 @@ import android.content.Context;
 
 public class NewServerRssHandler extends DefaultHandler{
 	
-	Context mctx;
+	private String[] node = null;
+	
+	private Context mctx;
 	
 	private Vector<String> servers = new Vector<String>();
+	private Vector<String[]> apks = new Vector<String[]>();
 	
 	private boolean new_serv_lst = false;
 	private boolean new_serv = false;
+	
+	private boolean app_list = false;
+	private boolean app_apk = false;
+	private boolean app_name = false;
 	
 	public NewServerRssHandler(Context ctx){
 		mctx = ctx;
@@ -43,39 +51,60 @@ public class NewServerRssHandler extends DefaultHandler{
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-		// TODO Auto-generated method stub
 		super.characters(ch, start, length);
 		if(new_serv){
 			servers.add(new String(ch).substring(start, start + length));
+		}else if(app_apk){
+			//apks.add(new String(ch).substring(start, start + length));
+			node[0] = new String(ch).substring(start, start + length);
+		}else if(app_name){
+			node[1] = new String(ch).substring(start, start + length);
 		}
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		// TODO Auto-generated method stub
 		super.endElement(uri, localName, qName);
 		if(localName.trim().equals("newserver")){
 			new_serv_lst = false;
 		}else if(localName.trim().equals("server")){
 			new_serv = false;
+		}else if(localName.trim().equals("getapp")){
+			app_list = false;
+			apks.add(node);
+			node = null;
+		}else if(localName.trim().equals("get")){
+			app_apk = false;
+		}else if(localName.trim().equals("name")){
+			app_name = false;
 		}
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		// TODO Auto-generated method stub
 		super.startElement(uri, localName, qName, attributes);
 		if(localName.trim().equals("newserver")){
 			new_serv_lst = true;
 		}else if(localName.trim().equals("server")){
 			new_serv = true;
+		}else if(localName.trim().equals("getapp")){
+			app_list = true;
+			node = new String[2];
+		}else if(localName.trim().equals("get")){
+			app_apk = true;
+		}else if(localName.trim().equals("name")){
+			app_name = true;
 		}
 	}
 	
 	public Vector<String> getNewSrvs(){
 		return servers;
+	}
+	
+	public Vector<String[]> getNewApks(){
+		return apks;
 	}
 
 }
