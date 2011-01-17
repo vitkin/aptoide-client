@@ -44,6 +44,8 @@ public class NetworkApis {
 				}
 			});
 
+			Log.d("Aptoide","URL: " + url);
+			
 			HttpGet mHttpGet = new HttpGet(url);
 
 			String[] logins = null; 
@@ -84,6 +86,73 @@ public class NetworkApis {
 		}catch(IOException e) {return null; }
 		
 	}
+	
+	
+	public static HttpResponse getHttpResponse(String url, String usr, String pwd, Context mctx){
+		try{
+			//DbHandler db = new DbHandler(mctx);
+
+			HttpParams httpParameters = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
+			HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+
+			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
+			mHttpClient.setRedirectHandler(new RedirectHandler() {
+
+				public boolean isRedirectRequested(HttpResponse response,
+						HttpContext context) {
+					return false;
+				}
+
+				public URI getLocationURI(HttpResponse response, HttpContext context)
+				throws ProtocolException {
+					return null;
+				}
+			});
+
+			Log.d("Aptoide","URL: " + url);
+			
+			HttpGet mHttpGet = new HttpGet(url);
+
+			//String[] logins = null; 
+			//logins = db.getLogin(srv);
+			if(usr != null || pwd != null){
+				Log.d("Aptoide", "Using login: " + usr + " and " + pwd);
+				URL mUrl = new URL(url);
+				mHttpClient.getCredentialsProvider().setCredentials(
+						new AuthScope(mUrl.getHost(), mUrl.getPort()),
+						new UsernamePasswordCredentials(usr, pwd));
+			}
+
+			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			
+			
+			// Redirect used... 
+			Header[] azz = mHttpResponse.getHeaders("Location");
+			if(azz.length > 0){
+				String newurl = azz[0].getValue();
+				Log.d("Aptoide", "Now to: " + newurl);
+				mHttpGet = null;
+				mHttpGet = new HttpGet(newurl);
+				
+				if(usr != null || pwd != null){
+	    			Log.d("Aptoide", "Using login: " + usr + " and " + pwd);
+	    			URL mUrl = new URL(newurl);
+	    			mHttpClient.getCredentialsProvider().setCredentials(
+	                        new AuthScope(mUrl.getHost(), mUrl.getPort()),
+	                        new UsernamePasswordCredentials(usr, pwd));
+	    		}
+				
+				mHttpResponse = null;
+				mHttpResponse = mHttpClient.execute(mHttpGet);
+				
+				
+			}
+			return mHttpResponse;
+		}catch(IOException e) {return null; }
+		
+	}
+	
 	
 	
 }
