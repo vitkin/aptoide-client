@@ -23,17 +23,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Vector;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -352,7 +344,9 @@ public class RssHandler extends DefaultHandler{
 		
 		try {
 			FileOutputStream saveit = new FileOutputStream(file);
-			HttpParams httpParameters = new BasicHttpParams();
+			
+			
+			/*HttpParams httpParameters = new BasicHttpParams();
     		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
     		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
@@ -364,9 +358,12 @@ public class RssHandler extends DefaultHandler{
 				mHttpClient.getCredentialsProvider().setCredentials(
 						new AuthScope(mUrl.getHost(), mUrl.getPort()),
 						new UsernamePasswordCredentials(usern, passwd));
-			}
+			}*/
 
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			//HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			
+			HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, usern, passwd, mctx);
+			
 			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				return;
 			}else if(mHttpResponse.getStatusLine().getStatusCode() == 403){

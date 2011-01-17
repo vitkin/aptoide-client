@@ -3,7 +3,6 @@ package cm.aptoide.pt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,10 +11,6 @@ import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -25,6 +20,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -300,7 +296,9 @@ public class BaseManagement extends Activity {
 
 			 String path = new String(APK_PATH+db.getName(apkid)+".apk");
 			 FileOutputStream saveit = new FileOutputStream(path);
-			 DefaultHttpClient mHttpClient = new DefaultHttpClient();
+			 
+			 
+			 /*DefaultHttpClient mHttpClient = new DefaultHttpClient();
 			 HttpGet mHttpGet = new HttpGet(getserv);
 
 			 String[] logins = null; 
@@ -312,7 +310,11 @@ public class BaseManagement extends Activity {
 						 new UsernamePasswordCredentials(logins[0], logins[1]));
 			 }
 
-			 HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			 HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);*/
+			 
+			 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
+			 
+			 
 			 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				 return null;
 			 }else{
@@ -355,4 +357,9 @@ public class BaseManagement extends Activity {
 			 Toast.makeText(mctx, getString(R.string.error_download_alrt), Toast.LENGTH_LONG).show();
 		 }
 	 };
+	 
+	 @Override
+		public void onConfigurationChanged(Configuration newConfig) {
+			super.onConfigurationChanged(newConfig);
+		}	
 }
