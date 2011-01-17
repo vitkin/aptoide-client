@@ -320,11 +320,23 @@ public class RemoteInTab extends TabActivity {
 				});
 			}else{
 				if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED){
-					updateRepos();
+					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+					upd_alrt.setTitle("Update repositories");
+					upd_alrt.setMessage("Confirm Aptoide repositories update?");
+					upd_alrt.setButton("Yes", new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							updateRepos();
+						}
+					});
+					upd_alrt.setButton2("No", new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							upd_alrt.dismiss();
+						}
+					});
 				}else{
 					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 					upd_alrt.setTitle("Update repositories");
-					upd_alrt.setMessage("Do you wish to update repositories?\nThis can take a while (WiFi is advised)...");
+					upd_alrt.setMessage("You are connected by 3G. It is advised to update with WiFi connection.\nUpdate anyway?");
 					upd_alrt.setButton("Yes", new OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							updateRepos();
