@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="icons_path">/sdcard/.aptoide/icons/</string>
-    <string name="base_path">/sdcard/.aptoide/</string>
-
+   
+    
+    <string name="menu_update_repo">Update</string>
+    <string name="menu_manage">Gerir repos</string>
+    <string name="menu_order">Alterar ordem</string>
+    <string name="menu_settings">Definições</string>
+    <string name="menu_about">Sobre</string>
+    <string name="menu_search">Procurar</string>
+    
+    
+    <string name="menu_add_repo">Adicionar Repositório</string>
+    <string name="menu_rem_repo">Remover Repositório</string>
+    <string name="menu_edit_repo">Editar Repositório</string>
+    
+    <string name="btn_yes">Sim</string>
+    <string name="btn_no">Não</string>
+    
 </resources>
 <!--
  * Copyright (C) 2009  Roberto Jacinto

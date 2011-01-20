@@ -41,6 +41,7 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -184,8 +185,8 @@ public class RemoteInSearch extends ListActivity{
 			Builder p = new AlertDialog.Builder(this).setView(view);
 			final AlertDialog alrt = p.create();
 			alrt.setIcon(R.drawable.icon);
-			alrt.setTitle("APTOIDE");
-			alrt.setButton("ChangeLog", new DialogInterface.OnClickListener() {
+			alrt.setTitle(getText(R.string.app_name));
+			alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int	whichButton) {
 					Uri uri = Uri.parse("http://aptoide.com/changelog.html");
 					startActivity(new Intent( Intent.ACTION_VIEW, uri));
@@ -244,10 +245,10 @@ public class RemoteInSearch extends ListActivity{
 		if(!(tmpi == null)){
 			t5.setText(tmpi);
 		}else{
-			t5.setText("No info availale on server. Search market by pressing the button below for more info.");
+			t5.setText(getText(R.string.app_pop_up_no_info));
 		}
 		
-		p.setButton2("Ok", new DialogInterface.OnClickListener() {
+		p.setButton2(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		          return;
 		        } });
@@ -269,13 +270,17 @@ public class RemoteInSearch extends ListActivity{
 						}
 					}.start();
 				} });
-			p.setButton3("Search Market", new DialogInterface.OnClickListener() {
+			p.setButton3(getText(R.string.btn_search_market), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					p.dismiss();					
 					Intent intent = new Intent();
 			    	intent.setAction(android.content.Intent.ACTION_VIEW);
 			    	intent.setData(Uri.parse("market://details?id="+apk_lst.get(position).apkid));
-			    	startActivity(intent);
+			    	try{
+						startActivity(intent);
+					}catch (ActivityNotFoundException e){
+						Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+					}
 				} });
 		}else{ 
 			p.setButton(getString(R.string.rem), new DialogInterface.OnClickListener() {
@@ -303,14 +308,18 @@ public class RemoteInSearch extends ListActivity{
 						}.start();
 					} });
 			}else{
-				p.setButton3("Search Market", new DialogInterface.OnClickListener() {
+				p.setButton3(getText(R.string.btn_search_market), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						p.dismiss();					
 						Intent intent = new Intent();
 				    	intent.setAction(android.content.Intent.ACTION_VIEW);
 				    	intent.setData(Uri.parse("market://details?id="+apk_lst.get(position).apkid));
-				    	startActivity(intent);
-					} });
+				    	try{
+							startActivity(intent);
+						}catch (ActivityNotFoundException e){
+							Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+						}
+				} });
 			}
 		}
 		p.show();

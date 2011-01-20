@@ -203,9 +203,9 @@ public class Aptoide extends Activity {
 			saveit.close();
 		} catch(Exception e){
 			AlertDialog p = new AlertDialog.Builder(this).create();
-			p.setTitle("Erro");
-			p.setMessage("Não foi possivel conectar ao servidor remoto.");
-			p.setButton("Ok", new DialogInterface.OnClickListener() {
+			p.setTitle(getText(R.string.top_error));
+			p.setMessage(getText(R.string.aptoide_error));
+			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			          return;
 			        } });

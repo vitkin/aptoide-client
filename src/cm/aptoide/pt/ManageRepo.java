@@ -109,14 +109,14 @@ public class ManageRepo extends ListActivity{
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			alrt.setMessage(getString(R.string.myrepo_alrt) +
 					uri);
-			alrt.setButton("Yes", new DialogInterface.OnClickListener() {
+			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			    	  db.addServer(uri);
 			    	  change = true;
 			    	  redraw();
 			    	  return;
 			      } }); 
-			alrt.setButton2("No", new DialogInterface.OnClickListener() {
+			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			    	  return;
 			      }});
@@ -130,14 +130,14 @@ public class ManageRepo extends ListActivity{
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				alrt.setMessage(getString(R.string.newrepo_alrt) + srv);
-				alrt.setButton("Yes", new DialogInterface.OnClickListener() {
+				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 				      public void onClick(DialogInterface dialog, int which) {
 				    	  db.addServer(srv);
 				    	  change = true;
 				    	  redraw();
 				    	  return;
 				      } }); 
-				alrt.setButton2("No", new DialogInterface.OnClickListener() {
+				alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
 				      public void onClick(DialogInterface dialog, int which) {
 				    	  return;
 				      }});
@@ -149,14 +149,14 @@ public class ManageRepo extends ListActivity{
 			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			alrt.setMessage(getString(R.string.newrepo_alrt) + repo);
-			alrt.setButton("Yes", new DialogInterface.OnClickListener() {
+			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			    	  db.addServer(repo);
 			    	  change = true;
 			    	  redraw();
 			    	  return;
 			      } }); 
-			alrt.setButton2("No", new DialogInterface.OnClickListener() {
+			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			    	  //exit
 			      }});
@@ -245,9 +245,9 @@ public class ManageRepo extends ListActivity{
 			Builder p = new AlertDialog.Builder(this).setView(view);
 			alrt = p.create();
 			alrt.setIcon(android.R.drawable.ic_menu_add);
-			alrt.setTitle("Add new repository");
+			alrt.setTitle(getText(R.string.manage_repo_add));
 
-			alrt.setButton("Add", new DialogInterface.OnClickListener() {
+			alrt.setButton(getText(R.string.btn_add), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					Message msg = new Message();
 					EditText uri = (EditText) alrt.findViewById(R.id.edit_uri);
@@ -265,11 +265,11 @@ public class ManageRepo extends ListActivity{
 							change = true;
 							redraw();
 						}else if (result == 401){
-							sec_msg2.setText("Login is wrong");
+							sec_msg2.setText(getText(R.string.manage_repo_answ_wrongl));
 							sec_msg2.setVisibility(View.VISIBLE);
 							msg.obj = 1;			
 						}else{
-							sec_msg.setText("Can't connect to server");
+							sec_msg.setText(getText(R.string.manage_repo_answ_cc));
 							sec_msg.setVisibility(View.VISIBLE);
 							msg.obj = 1;
 						}
@@ -281,11 +281,11 @@ public class ManageRepo extends ListActivity{
 							change = true;
 							redraw();
 						}else if (result == 401){
-							sec_msg2.setText("Login required");
+							sec_msg2.setText(getText(R.string.manage_repo_answ_lr));
 							sec_msg2.setVisibility(View.VISIBLE);
 							msg.obj = 1;
 						}else{
-							sec_msg.setText("Can't connect to server");
+							sec_msg.setText(getText(R.string.manage_repo_answ_cc));
 							sec_msg.setVisibility(View.VISIBLE);
 							msg.obj = 1;
 						}
@@ -293,7 +293,7 @@ public class ManageRepo extends ListActivity{
 					new_repo.sendMessage(msg);
 				} });
 
-			alrt.setButton2("Cancel", new DialogInterface.OnClickListener() {
+			alrt.setButton2(getText(R.string.btn_cancel), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					alrt.dismiss();
 				} });
@@ -403,7 +403,7 @@ public class ManageRepo extends ListActivity{
 	
 		alrt.setIcon(android.R.drawable.ic_menu_add);
 		alrt.setTitle("Edit repository");
-		alrt.setButton("Done", new DialogInterface.OnClickListener() {
+		alrt.setButton(getText(R.string.btn_done), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				String new_repo = uri.getText().toString();
 				db.updateServer(repo, new_repo);
@@ -416,7 +416,7 @@ public class ManageRepo extends ListActivity{
 				redraw();
 			} });
 
-		alrt.setButton2("Cancel", new DialogInterface.OnClickListener() {
+		alrt.setButton2(getText(R.string.btn_cancel), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				return;
 			} });

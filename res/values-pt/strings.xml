@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.0.2"</string>
+    <string name="ver_str">"2.0.3"</string>
     
-    <string name="tab_avail">Available</string>
-    <string name="tab_inst">Installed</string>
-    <string name="tab_updt">Updates</string>
-    
-    <string name="no_found">No application found!</string>
-    <string name="no_repo">There are no repositories!</string>
+    <string name="no_found">Nenhuma aplicação encontrada!</string>
+    <string name="no_repo">Não existem repositórios.</string>
  
- 	<string name="not_inst">Not Installed</string>
-    <string name="installed">Installed - Ver.:</string>
-    <string name="installed_update">Update possible - Ver.:</string>
-    <string name="srv_version">Available version:</string>
+ 	<string name="not_inst">Não instalado</string>
+    <string name="installed">Instalado - Ver.:</string>
+    <string name="installed_update">Possivel update - Ver.:</string>
+    <string name="srv_version">Versão diponível</string>
     
     <string name="srch_label">Aptoide</string>
-    <string name="srch_hint">Name of the application</string>
+    <string name="srch_hint">Nome da aplicação</string>
     
-    <string name="about_txt1">Your package installer to Android phone.\n</string>
+    <string name="about_txt1">Instalador de pacotes para Android.\n</string>
     
-    <string name="about_txt11">Version: 2.0.2\n(released under GNU GPL v2 license)\n
-    \nCredits: Roberto Jacinto - Caixa Mágica\n</string>
+    <string name="about_txt11">Versão: 2.0.3\n(diponibilizado ao abrigo da licença GNU GPL v2)\n
+    \nCréditos: Roberto Jacinto - Caixa Mágica\n</string>
 
     
-    <string name="about_site">Home: </string>
+    <string name="about_site">Portal: </string>
     
-    <string name="about_mail">Contact: </string>
+    <string name="about_mail">Contactos: </string>
     
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>

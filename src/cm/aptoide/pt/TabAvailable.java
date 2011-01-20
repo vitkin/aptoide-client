@@ -14,7 +14,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -60,7 +59,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 3:
-			Log.d("Aptoide", "I am here!!!");
 			if(resumeMe()){
 				lv.setAdapter(availAdpt);
 				setContentView(lv);
@@ -120,11 +118,11 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		if(!(tmpi == null)){
 			t5.setText(tmpi);
 		}else{
-			t5.setText("No info availale on server. Search market by pressing the button below, for more info.");
+			t5.setText(getText(R.string.app_pop_up_no_info));
 		}
 
 
-		p.setButton2("Ok", new DialogInterface.OnClickListener() {
+		p.setButton2(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				return;
 			} });
@@ -146,7 +144,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 					}
 				}.start(); 	
 			} });
-		p.setButton3("Search Market", new DialogInterface.OnClickListener() {
+		p.setButton3(getText(R.string.btn_search_market), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				p.dismiss();					
 				Intent intent = new Intent();
@@ -155,7 +153,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 				try{
 					startActivity(intent);
 				}catch (ActivityNotFoundException e){
-					Toast.makeText(mctx, "You don't have Google Market installed!", Toast.LENGTH_LONG).show();
+					Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
 				}
 			} });
 

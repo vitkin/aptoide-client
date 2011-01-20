@@ -7,7 +7,7 @@
     <string name="install">Install </string>
     <string name="about_alrt">About: </string>
     <string name="rem">Uninstall </string>
-    <string name="update">Update!</string>
+    <string name="update">Update</string>
     
     <string name="update_alrt">There updates available for some installed applications.\nDo you wish to see them?</string>
     <string name="repo_alrt">The list of repositories in use has been changed.\nDo you wish to update them?</string>
