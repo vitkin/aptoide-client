@@ -3,6 +3,10 @@
     <string name="app_name">Aptoide</string>
     <string name="ver_str">"2.0.3"</string>
     
+    <string name="tab_avail">Disponiveis</string>
+    <string name="tab_inst">Instaladas</string>
+    <string name="tab_updt">Updates</string>
+    
     <string name="no_found">Nenhuma aplicação encontrada!</string>
     <string name="no_repo">Não existem repositórios.</string>
  
