@@ -16,6 +16,12 @@
     
     <string name="btn_yes">Sim</string>
     <string name="btn_no">Não</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_add">Adicionar</string>
+    <string name="btn_cancel">Cancelar</string>
+    <string name="btn_done">Feito</string>
+    <string name="btn_chlog">Changelog</string>
+    <string name="btn_search_market">Procurar no Market</string>
     
 </resources>
 <!--
