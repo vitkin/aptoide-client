@@ -223,7 +223,7 @@ public class RemoteInTab extends TabActivity {
 						alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								alrt.dismiss();
-								pd = ProgressDialog.show(mctx, "Download", "Fetching application: " + nodi[1], true);
+								pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + nodi[1], true);
 								pd.setIcon(android.R.drawable.ic_dialog_info);
 								
 								new Thread(new Runnable() {
@@ -311,8 +311,8 @@ public class RemoteInTab extends TabActivity {
 			final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
 			if(!db.areServers()){
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-				upd_alrt.setTitle("Empty");
-				upd_alrt.setMessage("There are no enabled repositories in your list.\nPlease add repository or enable the ones you have!");
+				upd_alrt.setTitle(getText(R.string.update_repos));
+				upd_alrt.setMessage(getText(R.string.updating_norepos));
 				upd_alrt.setButton(getText(R.string.btn_ok), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						
@@ -321,8 +321,8 @@ public class RemoteInTab extends TabActivity {
 			}else{
 				if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED){
 					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-					upd_alrt.setTitle("Update repositories");
-					upd_alrt.setMessage("Confirm Aptoide repositories update?");
+					upd_alrt.setTitle(getText(R.string.update_repos));
+					upd_alrt.setMessage(getText(R.string.updating_cfrm));
 					upd_alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							updateRepos();
@@ -335,8 +335,8 @@ public class RemoteInTab extends TabActivity {
 					});
 				}else{
 					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-					upd_alrt.setTitle("Update repositories");
-					upd_alrt.setMessage("You are connected by 3G. It is advised to update with WiFi connection.\nUpdate anyway?");
+					upd_alrt.setTitle(getText(R.string.update_repos));
+					upd_alrt.setMessage(getText(R.string.updating_3g));
 					upd_alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							updateRepos();
@@ -399,8 +399,8 @@ public class RemoteInTab extends TabActivity {
 		if(requestCode == NEWREPO_FLAG){
 			if(data != null && data.hasExtra("update")){
 				final AlertDialog alrt = new AlertDialog.Builder(this).create();
-				alrt.setTitle("Update repositories");
-				alrt.setMessage("The list of repositories in use has been changed.\nDo you wish to update them?");
+				alrt.setTitle(getText(R.string.update_repos));
+				alrt.setMessage(getText(R.string.update_main));
 				alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						updateRepos();
