@@ -3,7 +3,9 @@
 
 	<string name="top_please_wait">Please Wait</string>
 	<string name="top_error">Error</string>
+	<string name="top_download">Download</string>
 
+	<string name="fetch_apk">Fetching application</string>
 
 	<string name="aptoide_error">Can\'t connect to the remote server</string>
 	
@@ -24,6 +26,13 @@
     <string name="error_on_update">The update process could not be made on the following repositories:\n</string>
     
     <string name="updating_msg">Updating applications list...</string>
+    <string name="update_repos">Update repositories</string>
+    <string name="update_main">The list of repositories in use has been changed.\nDo you wish to update them?</string>
+    
+    <string name="updating_3g">You are connected by 3G. It is advised to update with WiFi connection.\nUpdate anyway?</string>
+    <string name="updating_cfrm">Confirm Aptoide repositories update?</string>
+    <string name="updating_norepos">There are no enabled repositories in your list.\nPlease add repository or enable the ones you have.</string>
+    
     
 </resources>
 
