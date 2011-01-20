@@ -138,9 +138,9 @@ public class RemoteInTab extends TabActivity {
 		prefEdit.commit();
 
 		myTabHost = getTabHost();
-		myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator("Available",getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
-		myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator("Installed",getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)));
-		myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator("Updates",getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
+		myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
+		myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)));
+		myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
 
 		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
 
@@ -150,9 +150,9 @@ public class RemoteInTab extends TabActivity {
 		if(!sdcard_file.exists()){
 			final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-			upd_alrt.setTitle("No memory");
-			upd_alrt.setMessage("You don't have a SDcard.\nPlease insert one and try again.");
-			upd_alrt.setButton("Ok", new OnClickListener() {
+			upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
+			upd_alrt.setMessage(getText(R.string.remote_in_noSD));
+			upd_alrt.setButton(getText(R.string.btn_ok), new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					finish();
 				}
@@ -176,9 +176,9 @@ public class RemoteInTab extends TabActivity {
 
 				final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-				upd_alrt.setTitle("No memory");
-				upd_alrt.setMessage("You don't have enough space on your SDcard to use Aptoide\nPlease free some space and try again.");
-				upd_alrt.setButton("Ok", new OnClickListener() {
+				upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
+				upd_alrt.setMessage(getText(R.string.remote_in_noSDspace));
+				upd_alrt.setButton(getText(R.string.btn_ok), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						finish();
 					}
@@ -220,7 +220,7 @@ public class RemoteInTab extends TabActivity {
 						final AlertDialog alrt = new AlertDialog.Builder(this).create();
 						alrt.setTitle("Install");
 						alrt.setMessage("Do you wish to install: " + nodi[1] + " ?");
-						alrt.setButton("Yes", new OnClickListener() {
+						alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								alrt.dismiss();
 								pd = ProgressDialog.show(mctx, "Download", "Fetching application: " + nodi[1], true);
@@ -234,7 +234,7 @@ public class RemoteInTab extends TabActivity {
 
 							}
 						});
-						alrt.setButton2("No", new OnClickListener() {
+						alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								alrt.dismiss();
 							}
@@ -313,7 +313,7 @@ public class RemoteInTab extends TabActivity {
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				upd_alrt.setTitle("Empty");
 				upd_alrt.setMessage("There are no enabled repositories in your list.\nPlease add repository or enable the ones you have!");
-				upd_alrt.setButton("Ok", new OnClickListener() {
+				upd_alrt.setButton(getText(R.string.btn_ok), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						
 					}
@@ -323,12 +323,12 @@ public class RemoteInTab extends TabActivity {
 					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 					upd_alrt.setTitle("Update repositories");
 					upd_alrt.setMessage("Confirm Aptoide repositories update?");
-					upd_alrt.setButton("Yes", new OnClickListener() {
+					upd_alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							updateRepos();
 						}
 					});
-					upd_alrt.setButton2("No", new OnClickListener() {
+					upd_alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							upd_alrt.dismiss();
 						}
@@ -337,12 +337,12 @@ public class RemoteInTab extends TabActivity {
 					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 					upd_alrt.setTitle("Update repositories");
 					upd_alrt.setMessage("You are connected by 3G. It is advised to update with WiFi connection.\nUpdate anyway?");
-					upd_alrt.setButton("Yes", new OnClickListener() {
+					upd_alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							updateRepos();
 						}
 					});
-					upd_alrt.setButton2("No", new OnClickListener() {
+					upd_alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							upd_alrt.dismiss();
 						}
@@ -364,8 +364,8 @@ public class RemoteInTab extends TabActivity {
 			Builder p = new AlertDialog.Builder(this).setView(view);
 			final AlertDialog alrt = p.create();
 			alrt.setIcon(R.drawable.icon);
-			alrt.setTitle("APTOIDE");
-			alrt.setButton("ChangeLog", new DialogInterface.OnClickListener() {
+			alrt.setTitle(R.string.app_name);
+			alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int	whichButton) {
 					Uri uri = Uri.parse("http://aptoide.com/changelog.html");
 					startActivity(new Intent( Intent.ACTION_VIEW, uri));
@@ -401,12 +401,12 @@ public class RemoteInTab extends TabActivity {
 				final AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle("Update repositories");
 				alrt.setMessage("The list of repositories in use has been changed.\nDo you wish to update them?");
-				alrt.setButton("Yes", new OnClickListener() {
+				alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						updateRepos();
 					}
 				});
-				alrt.setButton2("No", new OnClickListener() {
+				alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						alrt.dismiss();
 					}
@@ -427,7 +427,7 @@ public class RemoteInTab extends TabActivity {
 	}
 	
 	public boolean updateRepos(){
-		pd = ProgressDialog.show(this, "Please Wait", "Updating applications list...", true);
+		pd = ProgressDialog.show(this, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
 		pd.setIcon(android.R.drawable.ic_dialog_info);
 		
 		//Check for connection first!
@@ -461,7 +461,7 @@ public class RemoteInTab extends TabActivity {
 			return true;
 		}else{
 			pd.dismiss();
-            Toast.makeText(RemoteInTab.this, "Could not connect to the network.", Toast.LENGTH_LONG).show(); 
+            Toast.makeText(RemoteInTab.this, getText(R.string.aptoide_error), Toast.LENGTH_LONG).show(); 
 			return false;
 		}
 	}
@@ -662,14 +662,14 @@ public class RemoteInTab extends TabActivity {
     		
     		if(failed_repo.size() > 0){
     			final AlertDialog p = new AlertDialog.Builder(mctx).create();
-    			p.setTitle("Errors");
+    			p.setTitle(getText(R.string.top_error));
     			p.setIcon(android.R.drawable.ic_dialog_alert);
-    			String report = "The update process could not be made on the following repositories:\n";
+    			String report = getText(R.string.error_on_update).toString();
     			for(String node: failed_repo){
     				report = report.concat(node+"\n");
     			}
     			p.setMessage(report);
-    			p.setButton("Ok", new DialogInterface.OnClickListener() {
+    			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
     			      public void onClick(DialogInterface dialog, int which) {
     			          p.dismiss();
     			        } });
@@ -695,7 +695,7 @@ public class RemoteInTab extends TabActivity {
 	};
 
 	
-	private Handler secure_error_handler = new Handler() {
+	/*private Handler secure_error_handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
 			if(pd.isShowing())
@@ -704,7 +704,7 @@ public class RemoteInTab extends TabActivity {
 			p.setTitle("Login required");
 			p.setIcon(android.R.drawable.ic_dialog_alert);
 			p.setMessage("Server: \"" + msg.obj.toString() + "\" requests login.\nCheck your username/password.");
-			p.setButton("Ok", new DialogInterface.OnClickListener() {
+			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			          return;
 			        } });
@@ -721,13 +721,13 @@ public class RemoteInTab extends TabActivity {
 			p.setTitle("Time out");
 			p.setIcon(android.R.drawable.ic_dialog_alert);
 			p.setMessage("Could not connect to server: " + msg.obj.toString());
-			p.setButton("Ok", new DialogInterface.OnClickListener() {
+			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
 			          p.dismiss();
 			        } });
 			p.show();
 		}
-	};
+	};*/
 
 
 	@Override

@@ -100,18 +100,18 @@ public class Settings extends Activity implements OnCheckedChangeListener, OnCli
 		clear_cache = (Button) findViewById(R.id.clear_cache);
 		clear_cache.setOnClickListener(new OnClickListener() {
 			public void onClick(View v) {
-				pd = ProgressDialog.show(mctx, "Please Wait", "Clearing cache...", true);
+				pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.settings_cache), true);
 				pd.setIcon(android.R.drawable.ic_dialog_info);
 				
 				new Thread() {
 					public void run() {
-						File aptoide_dir = new File("/sdcard/.aptoide/");
+						File aptoide_dir = new File(getText(R.string.base_path).toString());
 						for(File fl: aptoide_dir.listFiles()){
 							if(fl.isFile() && fl.getName().toLowerCase().endsWith("apk")){
 								fl.delete();
 							}
 						}
-						File icons_dir = new File("/sdcard/.aptoide/icons/");
+						File icons_dir = new File(getText(R.string.icons_path).toString());
 						for(File fl: icons_dir.listFiles()){
 							fl.delete();
 						}
