@@ -252,6 +252,8 @@ public class RemoteInTab extends TabActivity {
 					Intent call = new Intent(this, ManageRepo.class);
 					call.putExtra("newrepo", i.getStringExtra("newrepo"));
 					startActivityForResult(call,NEWREPO_FLAG);
+				}else if(i.hasExtra("linkxml")){
+					
 				}
 			}
 		}
