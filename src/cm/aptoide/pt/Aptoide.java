@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.Vector;
 
@@ -48,6 +49,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -87,6 +89,17 @@ public class Aptoide extends Activity {
 					if(uri.startsWith("aptoiderepo")){
 						String repo = uri.substring(14);
 						i.putExtra("newrepo", repo);
+					}else if(uri.startsWith("aptoidexml")){
+						String repo = uri.substring(13);
+						Log.d("Aptoide",repo);
+						parseXmlString(repo);
+						i.putExtra("uri", server_lst);
+						if(get_apks.size() > 0){
+							//i.putExtra("uri", TMP_SRV_FILE);
+							i.putExtra("apks", get_apks);
+
+						}
+						//i.putExtra("linkxml", repo);
 					}else{
 						downloadServ(uri);
 						getRemoteServLst(TMP_SRV_FILE);
@@ -236,4 +249,28 @@ public class Aptoide extends Activity {
 			e.printStackTrace();
 		}
 	}
+	
+	private void parseXmlString(String file){
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+	    try {
+	    	SAXParser sp = spf.newSAXParser();
+	    	XMLReader xr = sp.getXMLReader();
+	    	NewServerRssHandler handler = new NewServerRssHandler(this);
+	    	xr.setContentHandler(handler);
+	    	Log.d("Aptoide","Got here....");
+	    	InputSource is = new InputSource();
+	    	is.setCharacterStream(new StringReader(file));
+	    	xr.parse(is);
+	    	server_lst = handler.getNewSrvs();
+	    	get_apks = handler.getNewApks();
+	    } catch (IOException e) {
+	    	Log.d("Aptoide",e.toString());
+	    } catch (SAXException e) {
+	    	Log.d("Aptoide",e.toString());
+	    } catch (ParserConfigurationException e) {
+	    	Log.d("Aptoide",e.toString());
+		}
+	}
+	
+	
 }
