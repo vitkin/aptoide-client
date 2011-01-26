@@ -53,7 +53,7 @@ public class DbHandler {
 				+ " secure integer default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, primary key(apkid));";
+				+ " (apkid text, rat number, dt date, desc text, dwn number, primary key(apkid));";
 	
 	
 
@@ -135,7 +135,7 @@ public class DbHandler {
 	}
 	
 
-	public void insertApk2(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash){
+	/*public void insertApk3(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash){
 		boolean is_there = false;
 		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
 		if(c.moveToFirst()){
@@ -187,9 +187,9 @@ public class DbHandler {
 			tmp.put("dt", date);
 			db.insert(TABLE_NAME_EXTRA, null, tmp);
 		}
-	}
+	}*/
 	
-	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash){
+	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down){
 
 		if(delfirst){
 			db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
@@ -207,8 +207,22 @@ public class DbHandler {
 		db.insert(TABLE_NAME, null, tmp);
 		tmp.clear();
 		tmp.put("apkid", apkid);
-		tmp.put("rat", rat);
+		
+		float test_rat = 0;
+		if(rat<10)
+			test_rat = 1;
+		else if(rat<100)
+			test_rat = 2;
+		else if(rat<1000)
+			test_rat = 3;
+		else if(rat<10000)
+			test_rat = 4;
+		else if(rat<100000)
+			test_rat = 5;
+		
+		tmp.put("rat", test_rat);
 		tmp.put("dt", date);
+		tmp.put("dwn", down);
 		db.insert(TABLE_NAME_EXTRA, null, tmp);
 		
    		PackageManager mPm = mctx.getPackageManager();
@@ -294,7 +308,7 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn from "
 				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
@@ -303,6 +317,7 @@ public class DbHandler {
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
 			final String alfb = " order by name collate nocase";
+			final String down = " order by dwn desc";
 						
 			String search;
 			if(type.equalsIgnoreCase("abc")){
@@ -349,7 +364,6 @@ public class DbHandler {
 				c.moveToNext();
 			}
 		}catch (Exception e){ 
-			System.out.println("\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ===========QQQQQ");
 			e.printStackTrace();
 		}
 		finally{
@@ -366,7 +380,7 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode, b.dt, b.rat from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode, b.dt, b.rat, b.dwn from "
 				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, a.lastver as lastver, l.instvercode as instvercode, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid where name like '%" + exp + "%'";
@@ -375,6 +389,8 @@ public class DbHandler {
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
 			final String alfb = " order by name collate nocase";
+			final String down = " order by dwn desc";
+
 			
 			String search;
 			if(type.equalsIgnoreCase("abc")){
@@ -434,7 +450,7 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn from "
 				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid where c.instvercode < c.lastvercode";
@@ -443,7 +459,9 @@ public class DbHandler {
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
 			final String alfb = " order by name collate nocase";
-						
+			final String down = " order by dwn desc";
+			
+			
 			String search;
 			if(type.equalsIgnoreCase("abc")){
 				search = basic_query+alfb;
