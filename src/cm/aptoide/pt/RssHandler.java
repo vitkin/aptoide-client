@@ -43,6 +43,7 @@ public class RssHandler extends DefaultHandler{
 		private int vercode;
 		private String date;
 		private float rat;
+		private int down;
 		private String md5hash;
 	}
 	
@@ -65,6 +66,7 @@ public class RssHandler extends DefaultHandler{
 	private boolean apk_date = false;
 	private boolean apk_rat = false;
 	private boolean apk_md5hash = false;
+	private boolean apk_down = false;
 	
 	private DbHandler db = null;
 
@@ -89,6 +91,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.ver = "0.0";
 		tmp_apk.vercode = 0;
 		tmp_apk.rat = 3.0f;
+		tmp_apk.down = 0;
 		tmp_apk.date = "2000-01-01";
 		tmp_apk.md5hash = null;
 	}
@@ -116,14 +119,6 @@ public class RssHandler extends DefaultHandler{
 			synchronized(iconFetchList) {
 				iconFetchList.add(a);
 			}
-			/*new Thread() {
-				public void run() {
-					try{
-						getIcon(new String(ch).substring(start, start + length), tmp_apk.apkid);
-					} catch (Exception e) { }
-				}
-			}.start();*/
-			
 		}else if(apk_date){
 			tmp_apk.date = new String(ch).substring(start, start + length);
 		}else if(apk_rat){
@@ -134,6 +129,8 @@ public class RssHandler extends DefaultHandler{
 			}
 		}else if(apk_md5hash){
 			tmp_apk.md5hash = new String(ch).substring(start, start + length);
+		}else if(apk_down){
+			tmp_apk.down = new Integer(new String(ch).substring(start, start + length));
 		}
 	}
 
@@ -151,13 +148,13 @@ public class RssHandler extends DefaultHandler{
 			//db.insertApk(tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash);
 			ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
 			if(!listapks.contains(node)){
-				db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash);
+				db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down);
 				listapks.add(node);
 			}else{
 				int pos = listapks.indexOf(node);
 				ApkNode list = listapks.get(pos);
 				if(list.vercode <= node.vercode){
-					db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash);
+					db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down);
 					listapks.remove(pos);
 					listapks.add(node);
 				}
@@ -174,6 +171,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.vercode = 0;
 			tmp_apk.rat = 3.0f;
 			tmp_apk.date = "2000-01-01";
+			tmp_apk.down = 0;
 			tmp_apk.md5hash = null;
 		}else if(localName.trim().equals("name")){
 			apk_name = false;
@@ -193,6 +191,8 @@ public class RssHandler extends DefaultHandler{
 			apk_rat = false;
 		}else if(localName.trim().equals("md5h")){
 			apk_md5hash = false;
+		}else if(localName.trim().equals("dwn")){
+			apk_down = false;
 		}
 	}
 
@@ -220,6 +220,8 @@ public class RssHandler extends DefaultHandler{
 			apk_rat = true;
 		}else if(localName.trim().equals("md5h")){
 			apk_md5hash = true;
+		}else if(localName.trim().equals("dwn")){
+			apk_down = true;
 		}
 	}
 	
@@ -337,30 +339,8 @@ public class RssHandler extends DefaultHandler{
 		String url = mserver + "/" + uri;
 		String file = mctx.getString(R.string.icons_path) + name;
 		
-		/*File exists = new File(file);
-		if(exists.exists()){
-			return;
-		}*/
-		
 		try {
 			FileOutputStream saveit = new FileOutputStream(file);
-			
-			
-			/*HttpParams httpParameters = new BasicHttpParams();
-    		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
-    		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
-			HttpGet mHttpGet = new HttpGet(url);
-
-			
-			if(requireLogin){ 
-				URL mUrl = new URL(url);
-				mHttpClient.getCredentialsProvider().setCredentials(
-						new AuthScope(mUrl.getHost(), mUrl.getPort()),
-						new UsernamePasswordCredentials(usern, passwd));
-			}*/
-
-			//HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
 			
 			HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, usern, passwd, mctx);
 			
@@ -369,8 +349,6 @@ public class RssHandler extends DefaultHandler{
 			}else if(mHttpResponse.getStatusLine().getStatusCode() == 403){
 				return;
 			}else{
-				/*byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				saveit.write(buffer);*/
 				InputStream getit = mHttpResponse.getEntity().getContent();
 				byte data[] = new byte[8096];
 				int readed;
