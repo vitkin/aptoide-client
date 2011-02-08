@@ -31,6 +31,7 @@ public class ApkNode extends Object{
 	 * 2 - installed need update
 	 */
 	public float rat;
+	public int down;
 	
 	//Only used for update 
 	public int vercode;
@@ -53,7 +54,4 @@ public class ApkNode extends Object{
 		}
 		return false;
 	}
-	
-	
-	
 }

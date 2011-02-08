@@ -53,9 +53,17 @@ public class DbHandler {
 				+ " secure integer default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, dwn number, primary key(apkid));";
+				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text, catg_ord number, primary key(apkid));";
 	
-	
+	/*
+	 * catg_ord: game (0) /application (1)
+	 * 
+	 * catg: category for the application:
+	 *  - Comics, Communication, Entertainment, Finance, Health, Lifestyle, Multimedia, 
+	 *  - News & Weather, Productivity, Reference, Shopping, Social, Sports, Themes, Tools, 
+	 *  - Travel, Demo, Software Libraries, Arcade & Action, Brain & Puzzle, Cards & Casinon, Casual,
+	 *  - Other
+	 */
 
 	public DbHandler(Context ctx) {
 		mctx = ctx;
@@ -134,60 +142,6 @@ public class DbHandler {
 		}catch(Exception e){ }
 	}
 	
-
-	/*public void insertApk3(String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash){
-		boolean is_there = false;
-		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
-		if(c.moveToFirst()){
-			int db_ver = c.getInt(0);
-			if (db_ver < vercode){
-				//Em vez de apagar... fazer Update!
-				is_there = true;
-			}else if(db_ver >= vercode){
-				return;
-			}
-		}
-		c.close();
-		
-   		PackageManager mPm = mctx.getPackageManager();
-		try {
-			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
-			String vers = pkginfo.versionName;
-		    int verscode = pkginfo.versionCode;
-			insertInstalled(apkid, vers, verscode);
-		} catch (NameNotFoundException e) {
-			//Not installed... do nothing
-		}
-		
-		if(is_there){
-			ContentValues extra = new ContentValues();
-			extra.put("path", path);
-			extra.put("lastver", ver);
-			extra.put("lastvercode", vercode);
-			extra.put("server", serv);
-			extra.put("md5hash", md5hash);
-			db.update(TABLE_NAME, extra, "apkid='"+apkid+"'", null);
-			extra.clear();
-			extra.put("rat", rat);
-			extra.put("dt", date);
-			db.update(TABLE_NAME_EXTRA, extra, "apkid='"+apkid+"'", null);
-		}else{
-			ContentValues tmp = new ContentValues();
-			tmp.put("apkid", apkid);
-			tmp.put("name", name);
-			tmp.put("path", path);
-			tmp.put("lastver", ver);
-			tmp.put("lastvercode", vercode);
-			tmp.put("server", serv);
-			tmp.put("md5hash", md5hash);
-			db.insert(TABLE_NAME, null, tmp);
-			tmp.clear();
-			tmp.put("apkid", apkid);
-			tmp.put("rat", rat);
-			tmp.put("dt", date);
-			db.insert(TABLE_NAME_EXTRA, null, tmp);
-		}
-	}*/
 	
 	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down){
 
@@ -208,7 +162,7 @@ public class DbHandler {
 		tmp.clear();
 		tmp.put("apkid", apkid);
 		
-		float test_rat = 0;
+		float test_rat = 5;
 		if(rat<10)
 			test_rat = 1;
 		else if(rat<100)
