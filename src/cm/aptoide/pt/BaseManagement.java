@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +63,11 @@ public class BaseManagement extends Activity {
 	private static final String APK_PATH = "/sdcard/.aptoide/";
 	
 	
+	private SimpleAdapter main_catg_adpt = null;
+	private SimpleAdapter app_catg_adpt = null;
+	private SimpleAdapter game_catg_adpt = null;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -72,6 +78,46 @@ public class BaseManagement extends Activity {
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
 		
+		List<Map<String, Object>> main_catg = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> app_catg = new ArrayList<Map<String, Object>>();
+		List<Map<String, Object>> game_catg = new ArrayList<Map<String, Object>>();
+        Map<String, Object> apk_line = null;
+
+        String[] main_ctg = {"Applications", "Games", "Others"};
+        
+        for (String node : main_ctg) {
+        	apk_line = new HashMap<String, Object>();
+        	apk_line.put("name", node);
+            apk_line.put("cat_count","Extra tags");
+            main_catg.add(apk_line);
+		}
+        main_catg_adpt = new SimpleAdapter(mctx, main_catg, R.layout.catglist, 
+         		new String[] {"name", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
+        
+        String[] app_ctg = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
+        		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
+        		 "Travel", "Demo", "Software Libraries", "Other"};
+        
+        for (String node : app_ctg) {
+        	apk_line = new HashMap<String, Object>();
+        	apk_line.put("name", node);
+            apk_line.put("cat_count","...");
+            app_catg.add(apk_line);
+		}
+        app_catg_adpt = new SimpleAdapter(mctx, app_catg, R.layout.catglist, 
+         		new String[] {"name", "cat_count"}, new int[] {R.id.name, R.id.cat_count});
+        
+        String[] game_ctg = {"Arcade & Action", "Brain & Puzzle", "Cards & Casinon", "Casual", "Other"};
+       
+       for (String node : game_ctg) {
+       	apk_line = new HashMap<String, Object>();
+       	apk_line.put("name", node);
+           apk_line.put("cat_count","...");
+           game_catg.add(apk_line);
+		}
+       game_catg_adpt = new SimpleAdapter(mctx, game_catg, R.layout.catglist, 
+        		new String[] {"name", "cat_count"}, new int[] {R.id.name, R.id.cat_count});
+        
 	}
 	
 	protected boolean resumeMe(){
@@ -122,12 +168,16 @@ public class BaseManagement extends Activity {
 	
 	protected void installApk(String apk_path){
 		pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
-		Intent intent = new Intent();
-    	intent.setAction(android.content.Intent.ACTION_VIEW);
-    	intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
-    	prefEdit.putString("pkg", pkginfo.packageName);
-    	prefEdit.commit();
-    	startActivityForResult(intent,INSTALL);
+		if(pkginfo == null){
+			// Ficheiro está corrupto, temos de verificar!
+		}else{
+			Intent intent = new Intent();
+			intent.setAction(android.content.Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
+			prefEdit.putString("pkg", pkginfo.packageName);
+			prefEdit.commit();
+			startActivityForResult(intent,INSTALL);
+		}
 	}
 	
 	protected void updateApk(String apk_path, String apk_id){	
@@ -218,7 +268,7 @@ public class BaseManagement extends Activity {
          		new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
          
          availAdpt.setViewBinder(new LstBinder());
-         
+                
          instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
           		new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
           
@@ -266,6 +316,22 @@ public class BaseManagement extends Activity {
 			}
 		}
 
+	 class SimpeLstBinder implements ViewBinder
+		{
+			public boolean setViewValue(View view, Object data, String textRepresentation)
+			{
+				if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
+					TextView tmpr = (TextView)view;
+					tmpr.setText(textRepresentation);
+				}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
+					LinearLayout tmpr = (LinearLayout)view;
+					tmpr.setTag(textRepresentation);
+				}else{
+					return false;
+				}
+				return true;
+			}
+		}
 	 
 	 protected String downloadFile(String apkid){
 		 Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();
@@ -338,6 +404,28 @@ public class BaseManagement extends Activity {
 		 } catch(Exception e){
 			 return null;
 		 }
+	 }
+	 
+	 
+	 protected SimpleAdapter getRootCtg(){
+		 return main_catg_adpt;
+	 }
+	 
+	 protected SimpleAdapter getAppCtg(){
+		 return app_catg_adpt;
+	 }
+	 
+	 protected SimpleAdapter getGamesCtg(){
+		 return game_catg_adpt;
+	 }
+	 
+	 protected SimpleAdapter getAvailable(){
+		 if(sPref.getBoolean("mode", false)){
+        	 main_catg_adpt.setViewBinder(new SimpeLstBinder());
+        	 return main_catg_adpt;
+         }
+		 Log.d("Aptoide","AvailAdpt in back...");
+		 return availAdpt;
 	 }
 	 
 	 protected Handler download_handler = new Handler() {

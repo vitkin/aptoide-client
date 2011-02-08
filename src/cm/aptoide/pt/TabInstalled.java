@@ -82,9 +82,9 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
-		
-		pos = arg2;
-		
+
+		//pos = arg2;
+
 		Vector<String> tmp_get = db.getApk(pkg_id);
 		String tmp_path = this.getString(R.string.icons_path)+pkg_id;
 		File test_icon = new File(tmp_path);
@@ -140,7 +140,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 
 		p.show();
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);

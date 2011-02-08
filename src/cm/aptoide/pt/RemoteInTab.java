@@ -29,7 +29,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -39,7 +38,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
@@ -97,6 +95,7 @@ public class RemoteInTab extends TabActivity {
 	private Context mctx;
 	
 	private String order_lst = "abc";
+	//private String lst_mode = "mix";
 	
     private TabHost myTabHost;
     
@@ -416,12 +415,22 @@ public class RemoteInTab extends TabActivity {
 				alrt.show();
 			}
 		}else if(requestCode == SETTINGS_FLAG){
+			boolean q = false;
 			if(data != null && data.hasExtra("align")){
 				order_lst = data.getExtras().getString("align");
 				prefEdit.putString("order_lst", order_lst);
 	        	prefEdit.commit();
-	        	onResume();
+	        	q = true;
 			}
+			if(data != null && data.hasExtra("mode")){
+				prefEdit.putBoolean("mode", data.getExtras().getBoolean("mode"));
+	        	prefEdit.commit();
+	        	prefEdit.putBoolean("update", true);
+	        	prefEdit.commit();
+	        	q = true;
+			}
+			if(q)
+				onResume();
 		}else if(requestCode == FETCH_APK){
 			if(intserver != null)
 				startActivityForResult(intserver, NEWREPO_FLAG);
@@ -454,7 +463,7 @@ public class RemoteInTab extends TabActivity {
 								}
 							}
 						}
-					} catch (Exception e) { Log.d("Aptoide", "Major exception...");}
+					} catch (Exception e) { Log.d("Aptoide", "Major exception..."); e.printStackTrace();}
 					finally{
 						update_handler.sendEmptyMessage(0);
 					}
@@ -475,13 +484,16 @@ public class RemoteInTab extends TabActivity {
 	 */
 	private void xmlPass(String srv, boolean type){
 	    SAXParserFactory spf = SAXParserFactory.newInstance();
+	    File xml_file = null;
+	    SAXParser sp = null;
+    	XMLReader xr = null;
 	    try {
-	    	File xml_file = null;
-	    	SAXParser sp = spf.newSAXParser();
-	    	XMLReader xr = sp.getXMLReader();
+	    	sp = spf.newSAXParser();
+	    	xr = sp.getXMLReader();
 	    	if(type){
 	    		RssHandler handler = new RssHandler(this,srv);
 	    		xr.setContentHandler(handler);
+	    		xr.setErrorHandler(handler);
 	    		xml_file = new File(XML_PATH);
 	    	}else{
 	    		ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
@@ -491,16 +503,19 @@ public class RemoteInTab extends TabActivity {
 	    	
 	    	InputStreamReader isr = new FileReader(xml_file);
 	    	InputSource is = new InputSource(isr);
+	    	Log.d("Aptoide","Yup1");
 	    	xr.parse(is);
-	    	xml_file.delete();
-	    } catch (IOException e) {
-	    	e.printStackTrace();
-	    } catch (SAXException e) {
-	    	e.printStackTrace();
-	    } catch (ParserConfigurationException e) {
-			e.printStackTrace();
+	    	Log.d("Aptoide","Yup2");
+	    	
+	    } catch (Exception e){
+	    	Log.d("Aptoide", "Que raio!!!!!");
+	    	xr = null;
+		}finally{
+			Log.d("Aptoide", "I delete!");
+			xml_file.delete();
 		}
 	}
+	
 	
 	/*
 	 * Get extras.xml file from server and save it in the SD card 
@@ -560,69 +575,7 @@ public class RemoteInTab extends TabActivity {
 		Log.d("Aptoide","Fetching file: " + url);
         try {
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
-        	
-        	/*HttpParams httpParameters = new BasicHttpParams();
-    		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
-    		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-    		
-    		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
-    		mHttpClient.setRedirectHandler(new RedirectHandler() {
-				
-				public boolean isRedirectRequested(HttpResponse response,
-						HttpContext context) {
-					return false;
-				}
-				
-				public URI getLocationURI(HttpResponse response, HttpContext context)
-						throws ProtocolException {
-					return null;
-				}
-			});
-    		
-            HttpGet mHttpGet = new HttpGet(url);*/
-                       
-           /* String[] logins = null; 
-    		logins = db.getLogin(srv);
-    		if(logins != null){
-    			Log.d("Aptoide", "Using login: " + logins[0] + " and " + logins[1]);
-    			URL mUrl = new URL(url);
-    			mHttpClient.getCredentialsProvider().setCredentials(
-                        new AuthScope(mUrl.getHost(), mUrl.getPort()),
-                        new UsernamePasswordCredentials(logins[0], logins[1]));
-    		}
-            
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);*/
-			
-			// Redirect used... 
-			/*Header[] azz = mHttpResponse.getHeaders("Location");
-			if(azz.length > 0){
-				String newurl = azz[0].getValue();
-				Log.d("Aptoide", "Now to: " + newurl);
-				mHttpGet = null;
-				mHttpGet = new HttpGet(newurl);
-				
-				if(logins != null){
-	    			Log.d("Aptoide", "Using login: " + logins[0] + " and " + logins[1]);
-	    			URL mUrl = new URL(newurl);
-	    			mHttpClient.getCredentialsProvider().setCredentials(
-	                        new AuthScope(mUrl.getHost(), mUrl.getPort()),
-	                        new UsernamePasswordCredentials(logins[0], logins[1]));
-	    		}
-				
-				mHttpResponse = null;
-				mHttpResponse = mHttpClient.execute(mHttpGet);
-			}*/
-			
-
-			/*if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				
-			}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
-				
-			}else{
-				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				saveit.write(buffer);
-			}*/
-        	
+        	        	
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
         	
 			Log.d("Aptoide","Return: " + mHttpResponse.getStatusLine().getStatusCode());

@@ -25,6 +25,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +37,8 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 public class Settings extends Activity implements OnCheckedChangeListener, OnClickListener{
+	
+	private SharedPreferences sPref;
 	
 	private boolean rating = false;
 	private boolean iu = false;
@@ -53,8 +56,13 @@ public class Settings extends Activity implements OnCheckedChangeListener, OnCli
 	private Context mctx = null;
 	
 	private Button clear_cache = null;
-
-
+	
+	private RadioGroup grp2 = null;
+	private boolean catg = false;
+	private boolean mix = false;
+	private int ctg_id;
+	private int mix_id;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,10 +70,23 @@ public class Settings extends Activity implements OnCheckedChangeListener, OnCli
 		
 		mctx = this;
 		
+		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+		
 		Intent i = getIntent();
 		
+		grp2 = (RadioGroup) findViewById(R.id.groupshow);
+		grp2.setOnCheckedChangeListener(this);
+		
 		RadioButton btn1 = (RadioButton) findViewById(R.id.shw_ct);
-		btn1.setEnabled(false);
+		RadioButton btn2 = (RadioButton) findViewById(R.id.shw_all);
+		
+		ctg_id = btn1.getId();
+		mix_id = btn2.getId();
+		
+		if(sPref.getBoolean("mode", false))
+			btn1.setChecked(true);
+		else
+			btn2.setChecked(true);
 		
 		RadioGroup grp1 = (RadioGroup) findViewById(R.id.groupbtn);
 		grp1.setOnCheckedChangeListener(this);
@@ -123,19 +144,30 @@ public class Settings extends Activity implements OnCheckedChangeListener, OnCli
 	}
 
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		rating  = false;
-		iu = false;
-		recent = false;
-		abc = false;
 		
-		if(checkedId == rating_id){
-			rating = true;
-		}else if(checkedId == iu_id){
-			iu = true;
-		}else if(checkedId == recent_id){
-			recent = true;
-		}else if(checkedId == abc_id){
-			abc = true;
+		if(group.equals(grp2)){
+			catg = false;
+			mix = false;
+			
+			if(checkedId == ctg_id)
+				catg = true;
+			else if(checkedId == mix_id)
+				mix = true;
+		}else{		
+			rating  = false;
+			iu = false;
+			recent = false;
+			abc = false;
+
+			if(checkedId == rating_id){
+				rating = true;
+			}else if(checkedId == iu_id){
+				iu = true;
+			}else if(checkedId == recent_id){
+				recent = true;
+			}else if(checkedId == abc_id){
+				abc = true;
+			}
 		}
 	}
 	
@@ -150,6 +182,10 @@ public class Settings extends Activity implements OnCheckedChangeListener, OnCli
 		}else if (abc == true){
 			rtrn.putExtra("align", "abc");
 		}
+		if(catg == true)
+			rtrn.putExtra("mode", true);
+		else if(mix == true)
+			rtrn.putExtra("mode", false);
 		finish();
 	}
 
