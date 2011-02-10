@@ -19,6 +19,8 @@
 
 package cm.aptoide.pt;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import android.content.ContentValues;
@@ -53,10 +55,49 @@ public class DbHandler {
 				+ " secure integer default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text, catg_ord number, primary key(apkid));";
+				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, catg_ord integer default 2 not null, primary key(apkid));";
+	
+	
+	
+	Map<String, Object> getCountSecCatg(int ord){
+		final String basic_query = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " order by catg;";
+		Map<String, Object> count_lst = new HashMap<String, Object>();
+		Cursor q = null;
+
+		q = db.rawQuery(basic_query, null);
+		if(q.moveToFirst()){
+			count_lst.put(q.getString(0), q.getInt(1));
+			while(q.moveToNext()){
+				count_lst.put(q.getString(0), q.getInt(1));
+			}
+			return count_lst;
+		}else{
+			return null;
+		}
+	}
+	
+	int[] getCountMainCtg(){
+		final String basic_query = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " order by catg_ord;";
+		int[] rtn = new int[3];
+		Cursor q = null;
+
+		q = db.rawQuery(basic_query, null);
+		if(q.moveToFirst()){
+			rtn[q.getInt(0)] = q.getInt(1);
+			while(q.moveToNext()){
+				rtn[q.getInt(0)] = q.getInt(1);
+			}
+			return rtn;
+		}else{
+			return null;
+		}
+	}
+	
+	
+	
 	
 	/*
-	 * catg_ord: game (0) /application (1)
+	 * catg_ord: game (0) / application (1) / others(2) 
 	 * 
 	 * catg: category for the application:
 	 *  - Comics, Communication, Entertainment, Finance, Health, Lifestyle, Multimedia, 
@@ -262,7 +303,7 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord from "
 				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
@@ -314,6 +355,64 @@ public class DbHandler {
 					
 				}
 				node.rat = c.getFloat(7);
+				node.down = c.getInt(8);
+				node.catg = c.getString(9);
+				node.catg_ord = c.getInt(10);
+				tmp.add(node);
+				c.moveToNext();
+			}
+		}catch (Exception e){ 
+			e.printStackTrace();
+		}
+		finally{
+			c.close();
+		}
+		return tmp;
+	}
+	
+	public Vector<ApkNode> getAll(String type, String ctg, int ord){
+		Vector<ApkNode> tmp = new Vector<ApkNode>();
+		Cursor c = null;
+		try{
+			String catgi = "d.catg = '" + ctg + "' and";
+			if(ctg == null)
+				catgi = "";
+			
+			String basic_query = "select * from (select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
+				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
+				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid) as d where " + catgi + " d.catg_ord = " + ord + " and d.instver is null";
+			
+			final String iu = " order by instver desc";
+			final String rat = " order by rat desc";
+			final String mr = " order by dt desc";
+			final String alfb = " order by name collate nocase";
+			final String down = " order by dwn desc";
+						
+			String search;
+			if(type.equalsIgnoreCase("abc")){
+				search = basic_query+alfb;
+			}else if(type.equalsIgnoreCase("iu")){
+				search = basic_query+iu;
+			}else if(type.equalsIgnoreCase("recent")){
+				search = basic_query+mr;
+			}else if(type.equalsIgnoreCase("rating")){
+				search = basic_query+rat;
+			}else{
+				search = basic_query;
+			}
+			c = db.rawQuery(search, null);
+			c.moveToFirst();
+			
+			
+			for(int i = 0; i< c.getCount(); i++){
+				ApkNode node = new ApkNode();
+				node.apkid = c.getString(0);
+				node.name = c.getString(1);
+				node.status = 0;
+				node.ver = c.getString(3);
+				node.rat = c.getFloat(7);
+				node.down = c.getInt(8);
 				tmp.add(node);
 				c.moveToNext();
 			}

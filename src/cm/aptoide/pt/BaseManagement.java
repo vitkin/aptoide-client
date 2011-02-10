@@ -63,9 +63,15 @@ public class BaseManagement extends Activity {
 	private static final String APK_PATH = "/sdcard/.aptoide/";
 	
 	
-	private SimpleAdapter main_catg_adpt = null;
-	private SimpleAdapter app_catg_adpt = null;
-	private SimpleAdapter game_catg_adpt = null;
+	private static SimpleAdapter main_catg_adpt = null;
+	private static SimpleAdapter app_catg_adpt = null;
+	private static SimpleAdapter game_catg_adpt = null;
+	
+	private static final String[] main_ctg = {"Applications", "Games", "Others"};
+	private static final String[] app_ctg = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
+   		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
+		 "Travel", "Demo", "Software Libraries", "Other"};
+	private static final String[] game_ctg = {"Arcade & Action", "Brain & Puzzle", "Cards & Casinon", "Casual", "Other"};
 	
 	
 	@Override
@@ -77,46 +83,54 @@ public class BaseManagement extends Activity {
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
+			
+		int[] main_ctg_count = db.getCountMainCtg();
+        Map<String, Object> count_lst_app = db.getCountSecCatg(1);
+        Map<String, Object> count_lst_games = db.getCountSecCatg(0);
 		
 		List<Map<String, Object>> main_catg = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> app_catg = new ArrayList<Map<String, Object>>();
 		List<Map<String, Object>> game_catg = new ArrayList<Map<String, Object>>();
         Map<String, Object> apk_line = null;
-
-        String[] main_ctg = {"Applications", "Games", "Others"};
         
+        int p = 0;
         for (String node : main_ctg) {
         	apk_line = new HashMap<String, Object>();
         	apk_line.put("name", node);
-            apk_line.put("cat_count","Extra tags");
+            apk_line.put("cat_count",main_ctg_count[p] + " available");
             main_catg.add(apk_line);
+            p++;
 		}
         main_catg_adpt = new SimpleAdapter(mctx, main_catg, R.layout.catglist, 
          		new String[] {"name", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
         
-        String[] app_ctg = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
-        		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
-        		 "Travel", "Demo", "Software Libraries", "Other"};
         
         for (String node : app_ctg) {
+        	Integer count = (Integer)count_lst_app.get(node);
+        	if (count == null)
+        		count = 0;
         	apk_line = new HashMap<String, Object>();
+        	apk_line.put("cntrl", "apps");
         	apk_line.put("name", node);
-            apk_line.put("cat_count","...");
+            apk_line.put("cat_count",count + " available");
             app_catg.add(apk_line);
 		}
         app_catg_adpt = new SimpleAdapter(mctx, app_catg, R.layout.catglist, 
-         		new String[] {"name", "cat_count"}, new int[] {R.id.name, R.id.cat_count});
+         		new String[] {"cntrl", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
         
-        String[] game_ctg = {"Arcade & Action", "Brain & Puzzle", "Cards & Casinon", "Casual", "Other"};
-       
-       for (String node : game_ctg) {
-       	apk_line = new HashMap<String, Object>();
-       	apk_line.put("name", node);
-           apk_line.put("cat_count","...");
-           game_catg.add(apk_line);
-		}
+        
+        for (String node : game_ctg) {
+        	Integer count = (Integer)count_lst_games.get(node);
+        	if (count == null)
+        		count = 0;
+        	apk_line = new HashMap<String, Object>();
+        	apk_line.put("cntrl", "games");
+        	apk_line.put("name", node);
+        	apk_line.put("cat_count",count + " files");
+        	game_catg.add(apk_line);
+        }
        game_catg_adpt = new SimpleAdapter(mctx, game_catg, R.layout.catglist, 
-        		new String[] {"name", "cat_count"}, new int[] {R.id.name, R.id.cat_count});
+        		new String[] {"cntrl", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
         
 	}
 	
@@ -363,29 +377,12 @@ public class BaseManagement extends Activity {
 			 String path = new String(APK_PATH+db.getName(apkid)+".apk");
 			 FileOutputStream saveit = new FileOutputStream(path);
 			 
-			 
-			 /*DefaultHttpClient mHttpClient = new DefaultHttpClient();
-			 HttpGet mHttpGet = new HttpGet(getserv);
-
-			 String[] logins = null; 
-			 logins = db.getLogin(repo);
-			 if(logins != null){
-				 URL mUrl = new URL(getserv);
-				 mHttpClient.getCredentialsProvider().setCredentials(
-						 new AuthScope(mUrl.getHost(), mUrl.getPort()),
-						 new UsernamePasswordCredentials(logins[0], logins[1]));
-			 }
-
-			 HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);*/
-			 
 			 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
 			 
 			 
 			 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				 return null;
 			 }else{
-				 /*byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				 saveit.write(buffer);*/
 				 InputStream getit = mHttpResponse.getEntity().getContent();
                  byte data[] = new byte[8096];
 				 int readed;
@@ -408,14 +405,17 @@ public class BaseManagement extends Activity {
 	 
 	 
 	 protected SimpleAdapter getRootCtg(){
+		 main_catg_adpt.setViewBinder(new SimpeLstBinder());
 		 return main_catg_adpt;
 	 }
 	 
 	 protected SimpleAdapter getAppCtg(){
+		 app_catg_adpt.setViewBinder(new SimpeLstBinder());
 		 return app_catg_adpt;
 	 }
 	 
 	 protected SimpleAdapter getGamesCtg(){
+		 game_catg_adpt.setViewBinder(new SimpeLstBinder());
 		 return game_catg_adpt;
 	 }
 	 
@@ -424,10 +424,41 @@ public class BaseManagement extends Activity {
         	 main_catg_adpt.setViewBinder(new SimpeLstBinder());
         	 return main_catg_adpt;
          }
-		 Log.d("Aptoide","AvailAdpt in back...");
 		 return availAdpt;
 	 }
 	 
+	 protected SimpleAdapter getGivenCatg(String ctg, int ord){
+		 Log.d("Aptoide","Fetch: " + ctg);
+		 List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
+		 Map<String, Object> apk_line;
+		 Vector<ApkNode> tmp_lst = null;
+		 SimpleAdapter rtnadp = null;
+
+		 if(tmp_lst != null)
+			 tmp_lst.clear();
+		 tmp_lst = db.getAll(order_lst, ctg, ord);
+
+
+		 for(ApkNode node: tmp_lst){
+			 apk_line = new HashMap<String, Object>();
+			 apk_line.put("pkg", node.apkid);
+			 String iconpath = new String(getString(R.string.icons_path)+node.apkid);
+			 apk_line.put("icon", iconpath);
+			 apk_line.put("rat", node.rat);
+			 apk_line.put("status", "Version: " + node.ver);
+			 apk_line.put("name", node.name);
+			 availMap.add(apk_line);
+		 }
+
+
+		 rtnadp = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
+				 new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+
+		 rtnadp.setViewBinder(new LstBinder());
+
+		 return rtnadp;
+	 }
+
 	 protected Handler download_handler = new Handler() {
 		 @Override
 		 public void handleMessage(Message msg) {

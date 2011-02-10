@@ -32,6 +32,8 @@ public class ApkNode extends Object{
 	 */
 	public float rat;
 	public int down;
+	public String catg;
+	public int catg_ord;
 	
 	//Only used for update 
 	public int vercode;
