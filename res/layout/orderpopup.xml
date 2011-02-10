@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RadioGroup android:layout_width="fill_parent"
+          android:layout_height="wrap_content" android:orientation="vertical"
+          android:id="@+id/groupbtn">
+          <TextView android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:text="Align application list by:" 
+               android:textStyle="bold" />
+          <RadioButton android:checked="false"
+               android:text="Most recent first" 
+               android:id="@+id/org_rct" />
+          <RadioButton android:checked="false"
+               android:text="Alphabetically" 
+               android:id="@+id/org_abc" />
+          <RadioButton android:checked="false"
+               android:text="Rating" 
+               android:id="@+id/org_rat" />
+          <RadioButton android:checked="false"
+               android:text="Donwload number" 
+               android:id="@+id/org_dwn" />
+     </RadioGroup> 
+     
+     <View android:layout_width="fill_parent" android:layout_height="0.2dip" android:background="#FF666666" 
+     		android:layout_marginBottom="9sp" android:layout_marginTop="9sp"/>
+      
+      <RadioGroup android:layout_width="fill_parent"
+          android:layout_height="wrap_content" android:orientation="vertical"
+          android:id="@+id/groupshow">
+          <TextView android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:text="Show applications:" 
+               android:textStyle="bold" />
+          <RadioButton android:checked="false"
+               android:text="By category" 
+               android:id="@+id/shw_ct" />
+          <RadioButton android:checked="true"
+               android:text="List all" 
+               android:id="@+id/shw_all" />
+     </RadioGroup>
+     
+</LinearLayout>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

@@ -13,8 +13,11 @@ import java.util.concurrent.TimeoutException;
 import org.apache.http.HttpResponse;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -26,13 +29,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
 
 public class BaseManagement extends Activity {
@@ -134,9 +141,57 @@ public class BaseManagement extends Activity {
         
 	}
 	
-	protected boolean resumeMe(){
+	protected AlertDialog resumeMe(){
 		String istype;
-		if(my_order.equalsIgnoreCase("abc")){
+		
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.orderpopup, null);
+		Builder alrt = new AlertDialog.Builder(this).setView(view);
+		final AlertDialog p = alrt.create();
+		p.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		p.setTitle("List options");
+		
+		p.setButton("Ok", new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				prefEdit.commit();
+				//redraw();
+				p.dismiss();
+			}
+		});
+		
+		// ***********************************************************
+		// Categories
+		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
+		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
+		if(sPref.getBoolean("mode", false)){
+			btn1.setChecked(true);
+		}else{
+			btn2.setChecked(true);
+		}
+		final RadioGroup grp2 = (RadioGroup) view.findViewById(R.id.groupshow);
+		grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				if(checkedId == btn1.getId())
+					prefEdit.putBoolean("mode", true);
+				else
+					prefEdit.putBoolean("mode", false);
+				
+			}
+		});
+
+		// ***********************************************************
+		
+		// ***********************************************************
+		// Order
+		
+		
+		
+		
+		// ***********************************************************
+		
+		return p;
+		/*if(my_order.equalsIgnoreCase("abc")){
 			my_order = "recent";
 			istype = "Most recent first";
 		}else{
@@ -145,11 +200,10 @@ public class BaseManagement extends Activity {
 		}
 		if(!order_lst.equalsIgnoreCase(my_order)){
 			order_lst = my_order;
-			Log.d("Aptoide","--- ResumeMe");
 			redraw();
 		}
 		Toast.makeText(mctx, istype, Toast.LENGTH_SHORT).show();
-		return true;
+		return true;*/
 	}
 		
 	@Override
