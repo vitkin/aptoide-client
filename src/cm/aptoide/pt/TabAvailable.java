@@ -40,6 +40,9 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	
 	private int deep = 0;
 		
+	private String shown_now = null;
+	private int main_shown_now = -1;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -67,12 +70,20 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		switch (item.getItemId()) {
 		case 3:
 			if(resumeMe()){
-				lv.setAdapter(getAvailable());
-				setContentView(lv);
-				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-				lv.setSelection(pos-1);
+				if(sPref.getBoolean("mode", false)){
+					if(!(shown_now == null) || main_shown_now == 2){
+						lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
+						setContentView(lv);
+						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						lv.setSelection(pos-1);
+					}
+				}else{
+					lv.setAdapter(availAdpt);
+					setContentView(lv);
+					lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+					lv.setSelection(pos-1);
+				}
 			}
-				
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -91,9 +102,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		}
 	}
 
-	
-	
-	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && sPref.getBoolean("mode", false) && deep > 0) {
@@ -128,26 +136,32 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
 		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 
-		if(pkg_id.equals("Applications")){ 
+		if(pkg_id.equals("Applications")){
+			shown_now = null;
 			Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
 			lv.setAdapter(getAppCtg());
 			setContentView(lv);
 			lv.setSelection(pos-1);
 			deep = 1;
 		}else if(pkg_id.equals("Games")){
+			shown_now = null;
 			Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
 			lv.setAdapter(getGamesCtg());
 			setContentView(lv);
 			lv.setSelection(pos-1);
 			deep = 1;
 		}else if(pkg_id.equals("Others")){
+			shown_now = null;
+			main_shown_now = 2;
 			Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
-			lv.setAdapter(availAdpt);
+			lv.setAdapter(getGivenCatg(null, 2));
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
 			deep = 1;
 		}else if(pkg_id.equals("apps")){
+			shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+			main_shown_now = 1;
 			Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
 			lv.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
 			setContentView(lv);
@@ -155,6 +169,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			lv.setSelection(pos-1);
 			deep = 2;
 		}else if(pkg_id.equals("games")){
+			shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+			main_shown_now = 0;
 			Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
 			lv.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
 			setContentView(lv);
