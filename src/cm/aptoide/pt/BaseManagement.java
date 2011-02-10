@@ -67,8 +67,6 @@ public class BaseManagement extends Activity {
 	private static SimpleAdapter app_catg_adpt = null;
 	private static SimpleAdapter game_catg_adpt = null;
 	
-	private static SimpleAdapter context_catg_adpt = null;
-	
 	private static final String[] main_ctg = {"Applications", "Games", "Others"};
 	private static final String[] app_ctg = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
    		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
