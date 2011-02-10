@@ -67,6 +67,8 @@ public class BaseManagement extends Activity {
 	private static SimpleAdapter app_catg_adpt = null;
 	private static SimpleAdapter game_catg_adpt = null;
 	
+	private static SimpleAdapter context_catg_adpt = null;
+	
 	private static final String[] main_ctg = {"Applications", "Games", "Others"};
 	private static final String[] app_ctg = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
    		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
@@ -145,6 +147,7 @@ public class BaseManagement extends Activity {
 		}
 		if(!order_lst.equalsIgnoreCase(my_order)){
 			order_lst = my_order;
+			Log.d("Aptoide","--- ResumeMe");
 			redraw();
 		}
 		Toast.makeText(mctx, istype, Toast.LENGTH_SHORT).show();
@@ -155,17 +158,22 @@ public class BaseManagement extends Activity {
 	protected void onResume() {
 		super.onResume();
 
-		if(sPref.contains("order_lst")){
+		if(sPref.getBoolean("update", false)){
+			prefEdit.remove("update");
+			prefEdit.commit();
+			if(sPref.contains("order_lst")){
+				order_lst = sPref.getString("order_lst", "abc");
+				prefEdit.remove("order_lst");
+				prefEdit.commit();
+			}
+			Log.d("Aptoide","--- update");
+			redraw();
+		}else if(sPref.contains("order_lst")){
 			order_lst = sPref.getString("order_lst", "abc");
 			prefEdit.remove("order_lst");
 			prefEdit.commit();
+			Log.d("Aptoide","--- order_lst");
 			redraw();
-		}
-		
-		if(sPref.getBoolean("update", false)){
-			redraw();
-			prefEdit.remove("update");
-			prefEdit.commit();
 		}
 	}
 
@@ -216,6 +224,7 @@ public class BaseManagement extends Activity {
 				db.insertInstalled(apkid);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
+				Log.d("Aptoide","--- install");
 				redraw();
 			} catch (NameNotFoundException e) {	}
 		}else if(requestCode == REMOVE){
@@ -226,6 +235,7 @@ public class BaseManagement extends Activity {
 				db.removeInstalled(apkid);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
+				Log.d("Aptoide","--- remove");
 				redraw();
 			}
 		}else if(requestCode == UPDATE){
@@ -239,6 +249,7 @@ public class BaseManagement extends Activity {
 				db.insertInstalled(apkid);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
+				Log.d("Aptoide","--- update");
 				redraw();
 			}
 		}
@@ -246,53 +257,67 @@ public class BaseManagement extends Activity {
 
 	protected void redraw(){
 		
-		List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> instMap = new ArrayList<Map<String, Object>>();
-		List<Map<String, Object>> updtMap = new ArrayList<Map<String, Object>>();
-        Map<String, Object> apk_line;
-        
-        if(apk_lst != null)
-        	apk_lst.clear();
-        apk_lst = db.getAll(order_lst);
-        
-        
-		for(ApkNode node: apk_lst){
-         	apk_line = new HashMap<String, Object>();
-         	apk_line.put("pkg", node.apkid);
-         	String iconpath = new String(getString(R.string.icons_path)+node.apkid);
-         	apk_line.put("icon", iconpath);
-         	apk_line.put("rat", node.rat);
-         	if(node.status == 1){
-         		apk_line.put("status", getString(R.string.installed) + " " + node.ver);
-         		apk_line.put("name", node.name);
-         		instMap.add(apk_line);
-         	}else if(node.status == 2){
-         		apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
-         		apk_line.put("name2", node.name);
-         		updtMap.add(apk_line);
-         		instMap.add(apk_line);
-         	}else{
-         		apk_line.put("status", "Version: " + node.ver);
-         		apk_line.put("name", node.name);
-         		availMap.add(apk_line);
-         	}
-         }
+		Log.d("Aptoide","Tick");
+		pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
+		pd.setIcon(android.R.drawable.ic_dialog_info);
 		
-         availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
-         		new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
-         
-         availAdpt.setViewBinder(new LstBinder());
-                
-         instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
-          		new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
-          
-         instAdpt.setViewBinder(new LstBinder());
-         
-         updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.listicons, 
-          		new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
-         
-         updateAdpt.setViewBinder(new LstBinder());
-         
+		new Thread() {
+
+			public void run(){
+
+				List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
+				List<Map<String, Object>> instMap = new ArrayList<Map<String, Object>>();
+				List<Map<String, Object>> updtMap = new ArrayList<Map<String, Object>>();
+				Map<String, Object> apk_line;
+
+				if(apk_lst != null)
+					apk_lst.clear();
+				apk_lst = db.getAll(order_lst);
+
+
+				for(ApkNode node: apk_lst){
+					apk_line = new HashMap<String, Object>();
+					apk_line.put("pkg", node.apkid);
+					String iconpath = new String(getString(R.string.icons_path)+node.apkid);
+					apk_line.put("icon", iconpath);
+					apk_line.put("rat", node.rat);
+					if(node.status == 1){
+						apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+						apk_line.put("name", node.name);
+						instMap.add(apk_line);
+					}else if(node.status == 2){
+						apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
+						apk_line.put("name2", node.name);
+						updtMap.add(apk_line);
+						instMap.add(apk_line);
+					}else{
+						apk_line.put("status", "Version: " + node.ver);
+						apk_line.put("name", node.name);
+						availMap.add(apk_line);
+					}
+				}
+
+				availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
+						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+
+				availAdpt.setViewBinder(new LstBinder());
+
+				instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
+						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+
+				instAdpt.setViewBinder(new LstBinder());
+
+				updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.listicons, 
+						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+
+				updateAdpt.setViewBinder(new LstBinder());
+
+				stop_pd.sendEmptyMessage(0);
+		         Log.d("Aptoide", "Tock!");
+
+				
+			}
+		}.start();
 		 prefEdit.putBoolean("changeavail", true);
 		 prefEdit.putBoolean("changeinst", true);
 		 prefEdit.putBoolean("changeupdt", true);
@@ -475,6 +500,19 @@ public class BaseManagement extends Activity {
 		 public void handleMessage(Message msg) {
 			 Toast.makeText(mctx, getString(R.string.error_download_alrt), Toast.LENGTH_LONG).show();
 		 }
+	 };
+	 
+	 protected Handler stop_pd = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			while(pd.isShowing()){
+				Log.d("Aptoide","AM I HERE?!?!?");
+				pd.dismiss();
+			}
+			super.handleMessage(msg);
+		}
+		 
 	 };
 	 
 	 @Override

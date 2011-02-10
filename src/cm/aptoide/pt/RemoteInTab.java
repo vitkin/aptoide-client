@@ -416,21 +416,28 @@ public class RemoteInTab extends TabActivity {
 			}
 		}else if(requestCode == SETTINGS_FLAG){
 			boolean q = false;
-			if(data != null && data.hasExtra("align")){
-				order_lst = data.getExtras().getString("align");
-				prefEdit.putString("order_lst", order_lst);
-	        	prefEdit.commit();
-	        	q = true;
-			}
+			
 			if(data != null && data.hasExtra("mode")){
 				prefEdit.putBoolean("mode", data.getExtras().getBoolean("mode"));
 	        	prefEdit.commit();
 	        	prefEdit.putBoolean("update", true);
 	        	prefEdit.commit();
+	        	if(data.hasExtra("align")){
+					prefEdit.putString("order_lst", data.getExtras().getString("align"));
+		        	prefEdit.commit();
+	        	}
 	        	q = true;
+			}else if(data != null && data.hasExtra("align")){
+				String tmp_align = data.getExtras().getString("align");
+				if(!order_lst.equals(tmp_align)){ 
+					prefEdit.putString("order_lst", tmp_align);
+					prefEdit.commit();
+					q = true;
+				}
 			}
-			if(q)
+			if(q){
 				onResume();
+			}
 		}else if(requestCode == FETCH_APK){
 			if(intserver != null)
 				startActivityForResult(intserver, NEWREPO_FLAG);
