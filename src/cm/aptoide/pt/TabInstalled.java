@@ -13,6 +13,8 @@ import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,12 +58,28 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 3:
-			if(resumeMe()){
+			/*if(resumeMe()){
 				lv.setAdapter(instAdpt);
 				setContentView(lv);
 				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				lv.setSelection(pos-1);
-			}
+			}*/
+			
+			final AlertDialog p = resumeMe();
+			p.show();
+			
+			new Thread(){
+				@Override
+				public void run() {
+					super.run();
+					while(p.isShowing()){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {	}
+					}
+					displayRefresh.sendEmptyMessage(0);
+				}
+			}.start();
 				
 		}
 		return super.onOptionsItemSelected(item);
@@ -141,6 +159,21 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		p.show();
 	}
 
+	protected Handler displayRefresh = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			redraw();
+			lv.setAdapter(instAdpt);
+			setContentView(lv);
+			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			lv.setSelection(pos-1);
+		}
+		 
+	 };
+	
+	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);

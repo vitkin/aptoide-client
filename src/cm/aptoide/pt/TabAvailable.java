@@ -14,7 +14,9 @@ import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
@@ -43,11 +46,14 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	private String shown_now = null;
 	private int main_shown_now = -1;
 	
+	private SimpleAdapter handler_adpt = null;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 			
 		lv = new ListView(this);
+		lv.setAdapter(getAvailable());
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
 		db = new DbHandler(this);
@@ -69,7 +75,44 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 3:
-			if(resumeMe()){
+			final AlertDialog p = resumeMe();
+			p.show();
+			
+			new Thread(){
+				@Override
+				public void run() {
+					super.run();
+					while(p.isShowing()){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {	}
+					}
+					if(sPref.getBoolean("mode", false)){
+						Log.d("Aptoide","Nice 1...");
+						if(!(shown_now == null) || main_shown_now == 2){
+							Log.d("Aptoide","Nice 2...");
+							handler_adpt = getGivenCatg(shown_now, main_shown_now);
+							//lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
+						}else{
+							Log.d("Aptoide","Nice 3...");
+							handler_adpt = getRootCtg();
+							//lv.setAdapter(getRootCtg());
+						}
+						/*setContentView(lv);
+						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						lv.setSelection(pos-1);*/
+						displayRefresh.sendEmptyMessage(0);
+					}else{
+						//lv.setAdapter(availAdpt);
+						handler_adpt = availAdpt;
+						/*setContentView(lv);
+						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						lv.setSelection(pos-1);*/
+						displayRefresh.sendEmptyMessage(0);
+					}
+				}	
+			}.start();
+			/*if(resumeMe()){
 				if(sPref.getBoolean("mode", false)){
 					if(!(shown_now == null) || main_shown_now == 2){
 						lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
@@ -83,7 +126,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 					lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 					lv.setSelection(pos-1);
 				}
-			}
+			}*/
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -248,8 +291,23 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			p.show();
 		}
 	}
+	
+	
+	protected Handler displayRefresh = new Handler(){
 
-
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			redraw();
+			lv.setAdapter(handler_adpt);
+			setContentView(lv);
+			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			lv.setSelection(pos-1);
+		}
+		 
+	 };
+	
+	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
