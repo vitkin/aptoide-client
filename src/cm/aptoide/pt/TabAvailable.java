@@ -15,6 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -129,25 +130,39 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
 		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 
-		//pos = arg2;
-
 		if(pkg_id.equals("Applications")){ 
+			Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
 			lv.setAdapter(getAppCtg());
 			setContentView(lv);
 			lv.setSelection(pos-1);
 			deep = 1;
 		}else if(pkg_id.equals("Games")){
+			Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
 			lv.setAdapter(getGamesCtg());
 			setContentView(lv);
 			lv.setSelection(pos-1);
 			deep = 1;
 		}else if(pkg_id.equals("Others")){
-			Toast.makeText(mctx, "At the moment... all!", Toast.LENGTH_LONG).show();
+			Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
 			lv.setAdapter(availAdpt);
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
 			deep = 1;
+		}else if(pkg_id.equals("apps")){
+			Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+			lv.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
+			setContentView(lv);
+			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			lv.setSelection(pos-1);
+			deep = 2;
+		}else if(pkg_id.equals("games")){
+			Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+			lv.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
+			setContentView(lv);
+			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			lv.setSelection(pos-1);
+			deep = 3;
 		}else{
 
 			Vector<String> tmp_get = db.getApk(pkg_id);
