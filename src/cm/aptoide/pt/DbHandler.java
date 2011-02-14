@@ -30,10 +30,16 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class DbHandler {
 	
 	private Context mctx = null;
+
+	private static final String[] CATGS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
+		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
+		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casinon", "Casual"};
+	
 	
 	private static final String DATABASE_NAME = "aptoide_db";
 	private static final String TABLE_NAME_LOCAL = "local";
@@ -60,7 +66,7 @@ public class DbHandler {
 	
 	
 	Map<String, Object> getCountSecCatg(int ord){
-		final String basic_query = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " order by catg;";
+		final String basic_query = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " group by catg;";
 		Map<String, Object> count_lst = new HashMap<String, Object>();
 		Cursor q = null;
 
@@ -77,14 +83,16 @@ public class DbHandler {
 	}
 	
 	int[] getCountMainCtg(){
-		final String basic_query = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " order by catg_ord;";
+		final String basic_query = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " group by catg_ord;";		
 		int[] rtn = new int[3];
 		Cursor q = null;
 
 		q = db.rawQuery(basic_query, null);
 		if(q.moveToFirst()){
+			Log.d("Aptoide", "In: " + q.getInt(0) + " there is: " + q.getInt(1));
 			rtn[q.getInt(0)] = q.getInt(1);
 			while(q.moveToNext()){
+				Log.d("Aptoide", "In: " + q.getInt(0) + " there is: " + q.getInt(1));
 				rtn[q.getInt(0)] = q.getInt(1);
 			}
 			return rtn;
@@ -184,7 +192,7 @@ public class DbHandler {
 	}
 	
 	
-	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down){
+	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type){
 
 		if(delfirst){
 			db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
@@ -202,22 +210,16 @@ public class DbHandler {
 		db.insert(TABLE_NAME, null, tmp);
 		tmp.clear();
 		tmp.put("apkid", apkid);
-		
-		float test_rat = 5;
-		if(rat<10)
-			test_rat = 1;
-		else if(rat<100)
-			test_rat = 2;
-		else if(rat<1000)
-			test_rat = 3;
-		else if(rat<10000)
-			test_rat = 4;
-		else if(rat<100000)
-			test_rat = 5;
-		
-		tmp.put("rat", test_rat);
+		tmp.put("rat", rat);
 		tmp.put("dt", date);
 		tmp.put("dwn", down);
+		tmp.put("catg_ord", catg_type);
+		for (String node : CATGS) {
+			if(node.equals(catg)){
+				tmp.put("catg", node);
+				break;
+			}
+		}
 		db.insert(TABLE_NAME_EXTRA, null, tmp);
 		
    		PackageManager mPm = mctx.getPackageManager();
@@ -276,6 +278,7 @@ public class DbHandler {
 	}
 	
 	public boolean removeAll(){
+		db.delete(TABLE_NAME_EXTRA, null, null);
 		return (db.delete(TABLE_NAME, null, null) > 0);
 	}
 	

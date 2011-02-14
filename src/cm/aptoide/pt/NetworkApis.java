@@ -18,7 +18,6 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 import android.content.Context;
-import android.util.Log;
 
 public class NetworkApis {
 
@@ -43,15 +42,12 @@ public class NetworkApis {
 					return null;
 				}
 			});
-
-			Log.d("Aptoide","URL: " + url);
 			
 			HttpGet mHttpGet = new HttpGet(url);
 
 			String[] logins = null; 
 			logins = db.getLogin(srv);
 			if(logins != null){
-				Log.d("Aptoide", "Using login: " + logins[0] + " and " + logins[1]);
 				URL mUrl = new URL(url);
 				mHttpClient.getCredentialsProvider().setCredentials(
 						new AuthScope(mUrl.getHost(), mUrl.getPort()),
@@ -65,12 +61,10 @@ public class NetworkApis {
 			Header[] azz = mHttpResponse.getHeaders("Location");
 			if(azz.length > 0){
 				String newurl = azz[0].getValue();
-				Log.d("Aptoide", "Now to: " + newurl);
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
 				
 				if(logins != null){
-	    			Log.d("Aptoide", "Using login: " + logins[0] + " and " + logins[1]);
 	    			URL mUrl = new URL(newurl);
 	    			mHttpClient.getCredentialsProvider().setCredentials(
 	                        new AuthScope(mUrl.getHost(), mUrl.getPort()),
@@ -109,15 +103,12 @@ public class NetworkApis {
 					return null;
 				}
 			});
-
-			Log.d("Aptoide","URL: " + url);
 			
 			HttpGet mHttpGet = new HttpGet(url);
 
 			//String[] logins = null; 
 			//logins = db.getLogin(srv);
 			if(usr != null || pwd != null){
-				Log.d("Aptoide", "Using login: " + usr + " and " + pwd);
 				URL mUrl = new URL(url);
 				mHttpClient.getCredentialsProvider().setCredentials(
 						new AuthScope(mUrl.getHost(), mUrl.getPort()),
@@ -131,12 +122,10 @@ public class NetworkApis {
 			Header[] azz = mHttpResponse.getHeaders("Location");
 			if(azz.length > 0){
 				String newurl = azz[0].getValue();
-				Log.d("Aptoide", "Now to: " + newurl);
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
 				
 				if(usr != null || pwd != null){
-	    			Log.d("Aptoide", "Using login: " + usr + " and " + pwd);
 	    			URL mUrl = new URL(newurl);
 	    			mHttpClient.getCredentialsProvider().setCredentials(
 	                        new AuthScope(mUrl.getHost(), mUrl.getPort()),

@@ -88,13 +88,10 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 						} catch (InterruptedException e) {	}
 					}
 					if(sPref.getBoolean("mode", false)){
-						Log.d("Aptoide","Nice 1...");
 						if(!(shown_now == null) || main_shown_now == 2){
-							Log.d("Aptoide","Nice 2...");
 							handler_adpt = getGivenCatg(shown_now, main_shown_now);
 							//lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
 						}else{
-							Log.d("Aptoide","Nice 3...");
 							handler_adpt = getRootCtg();
 							//lv.setAdapter(getRootCtg());
 						}

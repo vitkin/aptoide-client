@@ -19,6 +19,7 @@
 
 package cm.aptoide.pt;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,18 +34,6 @@ import android.content.Context;
 import android.util.Log;
 
 public class RssHandler extends DefaultHandler{
-	
-	/*private class Apk {
-		private String name;
-		private String apkid;
-		private String path;
-		private String ver;
-		private int vercode;
-		private String date;
-		private float rat;
-		private int down;
-		private String md5hash;
-	}*/
 	
 	private ApkNodeFull tmp_apk = new ApkNodeFull();
 	
@@ -66,6 +55,8 @@ public class RssHandler extends DefaultHandler{
 	private boolean apk_rat = false;
 	private boolean apk_md5hash = false;
 	private boolean apk_down = false;
+	private boolean apk_ctg = false;
+	private boolean apk_ctg2 = false;
 	
 	private DbHandler db = null;
 
@@ -92,6 +83,8 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.down = 0;
 		tmp_apk.date = "2000-01-01";
 		tmp_apk.md5hash = null;
+		tmp_apk.catg="";
+		tmp_apk.catg_type = 2;
 		
 	}
 	
@@ -130,6 +123,20 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.md5hash = new String(ch).substring(start, start + length);
 		}else if(apk_down){
 			tmp_apk.down = new Integer(new String(ch).substring(start, start + length));
+		}else if(apk_ctg){
+			String tmp = new String(ch).substring(start, start + length);
+			if(tmp.equals("Applications")){
+				Log.d("Aptoide", "Aplications");
+				tmp_apk.catg_type = 1;
+			}else if(tmp.equals("Games")){
+				tmp_apk.catg_type = 0;
+				Log.d("Aptoide", "Games");
+			}else
+				tmp_apk.catg_type = 2;
+		}else if(apk_ctg2){
+			tmp_apk.catg = tmp_apk.catg.concat(new String(ch).substring(start, start + length));
+			//String tmp = new String(ch).substring(start, start + length);
+			//Log.d("Aptoide","======== " + tmp);
 		}
 	}
 
@@ -140,14 +147,13 @@ public class RssHandler extends DefaultHandler{
 		if(localName.trim().equals("package")){
 			napk++;
 			new_apk = false;
+			
 			if(tmp_apk.name.equalsIgnoreCase("Unknown"))
 				tmp_apk.name = tmp_apk.apkid;
-			
-			
-			
+						
 			ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
 			if(!listapks.contains(node)){
-				db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down);
+				db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type);
 				//tmp_apk.isnew = false;
 				//updateTable.add(tmp_apk);
 				listapks.add(node);
@@ -155,7 +161,7 @@ public class RssHandler extends DefaultHandler{
 				int pos = listapks.indexOf(node);
 				ApkNode list = listapks.get(pos);
 				if(list.vercode < node.vercode){
-					db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down);
+					db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type);
 					//tmp_apk.isnew = true;
 					//updateTable.remove(new ApkNodeFull(list.apkid));
 					//updateTable.add(tmp_apk);
@@ -177,6 +183,8 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.date = "2000-01-01";
 			tmp_apk.down = 0;
 			tmp_apk.md5hash = null;
+			tmp_apk.catg="";
+			tmp_apk.catg_type = 2;
 		}else if(localName.trim().equals("name")){
 			apk_name = false;
 		}else if(localName.trim().equals("path")){
@@ -197,6 +205,10 @@ public class RssHandler extends DefaultHandler{
 			apk_md5hash = false;
 		}else if(localName.trim().equals("dwn")){
 			apk_down = false;
+		}else if(localName.trim().equals("catg")){
+			apk_ctg = false;
+		}else if(localName.trim().equals("catg2")){
+			apk_ctg2 = false;
 		}
 	}
 
@@ -226,6 +238,10 @@ public class RssHandler extends DefaultHandler{
 			apk_md5hash = true;
 		}else if(localName.trim().equals("dwn")){
 			apk_down = true;
+		}else if(localName.trim().equals("catg")){
+			apk_ctg = true;
+		}else if(localName.trim().equals("catg2")){
+			apk_ctg2 = true;
 		}
 	}
 	
@@ -241,7 +257,7 @@ public class RssHandler extends DefaultHandler{
 			usern = logins[0];
 			passwd = logins[1];
 		}
-		/*new Thread() {
+		new Thread() {
 			public void run() {
 				try{
 					while(iconsInPool){
@@ -266,9 +282,9 @@ public class RssHandler extends DefaultHandler{
 				} catch (Exception e) { 
 				}
 			}
-		}.start();*/ 
+		}.start();
 		
-		/*new Thread() {
+		new Thread() {
 			public void run() {
 				IconNode node = null;
 				try{
@@ -286,7 +302,7 @@ public class RssHandler extends DefaultHandler{
 				}catch (Exception e){
 				}
 			}
-		}.start();*/
+		}.start();
 		
 		db.startTrans();
 		super.startDocument();
@@ -297,7 +313,7 @@ public class RssHandler extends DefaultHandler{
 		Log.d("Aptoide","Done parsing XML from " + mserver + " ...");
 		db.updateServerNApk(mserver, napk);
 		db.endTrans();
-		/*new Thread() {
+		new Thread() {
 			public void run() {
 				try{
 					
@@ -315,10 +331,10 @@ public class RssHandler extends DefaultHandler{
 					
 				} catch (Exception e) {  }
 			}
-		}.start();*/
+		}.start();
 		
 		IconNode node = null;
-		/*try{
+		try{
 			while(true){
 				if(iconFinalFetchList.isEmpty()){
 					break;
@@ -330,7 +346,7 @@ public class RssHandler extends DefaultHandler{
 				}
 			}
 		}catch (Exception e){
-		}*/
+		}
 		super.endDocument();
 	}
 	

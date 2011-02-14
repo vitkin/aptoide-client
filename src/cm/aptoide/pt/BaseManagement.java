@@ -74,7 +74,7 @@ public class BaseManagement extends Activity {
 	private static SimpleAdapter app_catg_adpt = null;
 	private static SimpleAdapter game_catg_adpt = null;
 	
-	private static final String[] main_ctg = {"Applications", "Games", "Others"};
+	private static final String[] main_ctg = {"Games", "Applications", "Others"};
 	private static final String[] app_ctg = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
    		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
 		 "Travel", "Demo", "Software Libraries", "Other"};
@@ -91,7 +91,9 @@ public class BaseManagement extends Activity {
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
 			
+		Log.d("Aptoide","AHAHAHAHAH1");
 		int[] main_ctg_count = db.getCountMainCtg();
+		Log.d("Aptoide","AHAHAHAHAH2");
         Map<String, Object> count_lst_app = db.getCountSecCatg(1);
         Map<String, Object> count_lst_games = db.getCountSecCatg(0);
 		
@@ -104,7 +106,10 @@ public class BaseManagement extends Activity {
         for (String node : main_ctg) {
         	apk_line = new HashMap<String, Object>();
         	apk_line.put("name", node);
-            apk_line.put("cat_count",main_ctg_count[p] + " available");
+        	if(main_ctg_count == null)
+        		apk_line.put("cat_count","0 available");
+        	else
+        		apk_line.put("cat_count",main_ctg_count[p] + " available");
             main_catg.add(apk_line);
             p++;
 		}
@@ -113,9 +118,12 @@ public class BaseManagement extends Activity {
         
         
         for (String node : app_ctg) {
-        	Integer count = (Integer)count_lst_app.get(node);
-        	if (count == null)
-        		count = 0;
+        	Integer count = new Integer(0);
+        	if(count_lst_app != null){
+        		count = (Integer)count_lst_app.get(node);
+        		if(count == null)
+        			count = 0;
+        	}
         	apk_line = new HashMap<String, Object>();
         	apk_line.put("cntrl", "apps");
         	apk_line.put("name", node);
@@ -127,9 +135,16 @@ public class BaseManagement extends Activity {
         
         
         for (String node : game_ctg) {
-        	Integer count = (Integer)count_lst_games.get(node);
+        	/*Integer count = (Integer)count_lst_games.get(node);
         	if (count == null)
-        		count = 0;
+        		count = 0;*/
+        	Integer count = new Integer(0);
+        	if(count_lst_games != null){
+        		count = (Integer)count_lst_app.get(node);
+        		if(count == null)
+        			count = 0;
+        	}
+        	
         	apk_line = new HashMap<String, Object>();
         	apk_line.put("cntrl", "games");
         	apk_line.put("name", node);
