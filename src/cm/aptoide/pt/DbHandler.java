@@ -600,6 +600,20 @@ public class DbHandler {
 				c.moveToFirst();
 				tmp.add("\t"+c.getString(0)+"\n");
 			}
+			
+			c = db.query(TABLE_NAME_EXTRA, new String[] {"dwn", "rat"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c.moveToPrevious();
+			int downloads = c.getInt(0);
+			float rat = c.getFloat(1);
+			
+			if(downloads < 0){
+				tmp.add("No information available.");
+			}else{
+				tmp.add(Integer.toString(downloads));
+			}
+			
+			tmp.add(Float.toString(rat));
+			
 			//c.close();
 		}catch (Exception e){
 			//System.out.println(e.toString());

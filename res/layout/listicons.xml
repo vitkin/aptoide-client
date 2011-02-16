@@ -51,20 +51,20 @@
             android:textColor="#FFFFAA"/>
             
         <RelativeLayout
-        	android:layout_below="@id/isupdt"
         	android:layout_width="fill_parent"
         	android:layout_height="fill_parent"
-        	android:orientation="horizontal"
+        	android:orientation="vertical"
         	android:gravity="right">
+        	
             
         	<RatingBar android:id="@+id/rating"
         		style="?android:attr/ratingBarStyleSmall"
         		android:layout_width="wrap_content"
-        		android:layout_height="fill_parent"
+        		android:layout_height="wrap_content"
         		android:isIndicator="true"
         		android:numStars="5"
         		/>
-
+        		
 	    </RelativeLayout>
             
             
