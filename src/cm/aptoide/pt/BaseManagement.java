@@ -91,9 +91,7 @@ public class BaseManagement extends Activity {
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
 			
-		Log.d("Aptoide","AHAHAHAHAH1");
 		int[] main_ctg_count = db.getCountMainCtg();
-		Log.d("Aptoide","AHAHAHAHAH2");
         Map<String, Object> count_lst_app = db.getCountSecCatg(1);
         Map<String, Object> count_lst_games = db.getCountSecCatg(0);
 		
@@ -140,7 +138,7 @@ public class BaseManagement extends Activity {
         		count = 0;*/
         	Integer count = new Integer(0);
         	if(count_lst_games != null){
-        		count = (Integer)count_lst_app.get(node);
+        		count = (Integer)count_lst_games.get(node);
         		if(count == null)
         			count = 0;
         	}
