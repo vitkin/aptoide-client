@@ -80,7 +80,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.ver = "0.0";
 		tmp_apk.vercode = 0;
 		tmp_apk.rat = 3.0f;
-		tmp_apk.down = 0;
+		tmp_apk.down = -1;
 		tmp_apk.date = "2000-01-01";
 		tmp_apk.md5hash = null;
 		tmp_apk.catg="";
@@ -181,7 +181,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.vercode = 0;
 			tmp_apk.rat = 3.0f;
 			tmp_apk.date = "2000-01-01";
-			tmp_apk.down = 0;
+			tmp_apk.down = -1;
 			tmp_apk.md5hash = null;
 			tmp_apk.catg="";
 			tmp_apk.catg_type = 2;

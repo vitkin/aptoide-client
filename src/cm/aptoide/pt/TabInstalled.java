@@ -133,6 +133,8 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			t5.setText(getText(R.string.app_pop_up_no_info));
 		}
 
+		TextView t6 = (TextView) view.findViewById(R.id.down_n);
+		t6.setText(tmp_get.get(4));
 
 		p.setButton2(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
