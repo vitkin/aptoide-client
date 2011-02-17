@@ -94,7 +94,7 @@ public class RemoteInTab extends TabActivity {
 	
 	private Context mctx;
 	
-	private String order_lst = "abc";
+	//private String order_lst = "abc";
 	//private String lst_mode = "mix";
 	
     private TabHost myTabHost;
@@ -375,17 +375,17 @@ public class RemoteInTab extends TabActivity {
 			alrt.show();
 			return true;
 		case SETTINGS:
-			Intent s = new Intent(RemoteInTab.this, Settings.class);
+			/*Intent s = new Intent(RemoteInTab.this, Settings.class);
 			s.putExtra("order", order_lst);
-			startActivityForResult(s,SETTINGS_FLAG);
+			startActivityForResult(s,SETTINGS_FLAG);*/
 			return true;
 		case CHANGE_FILTER:
-			if(order_lst.equalsIgnoreCase("abc"))
+			/*if(order_lst.equalsIgnoreCase("abc"))
 				order_lst = "recent";
 			else
 				order_lst = "abc";
 			prefEdit.putString("order_lst", order_lst);
-        	prefEdit.commit();
+        	prefEdit.commit();*/
 
         	
 		}
@@ -417,7 +417,7 @@ public class RemoteInTab extends TabActivity {
 		}else if(requestCode == SETTINGS_FLAG){
 			boolean q = false;
 			
-			if(data != null && data.hasExtra("mode")){
+			/*if(data != null && data.hasExtra("mode")){
 				prefEdit.putBoolean("mode", data.getExtras().getBoolean("mode"));
 	        	prefEdit.commit();
 	        	prefEdit.putBoolean("update", true);
@@ -437,7 +437,7 @@ public class RemoteInTab extends TabActivity {
 			}
 			if(q){
 				onResume();
-			}
+			}*/
 		}else if(requestCode == FETCH_APK){
 			if(intserver != null)
 				startActivityForResult(intserver, NEWREPO_FLAG);
