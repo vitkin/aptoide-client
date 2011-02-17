@@ -311,7 +311,6 @@ public class DbHandler {
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
 			
-			final String iu = " order by instver desc";
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
 			final String alfb = " order by name collate nocase";
@@ -320,11 +319,11 @@ public class DbHandler {
 			String search;
 			if(type.equalsIgnoreCase("abc")){
 				search = basic_query+alfb;
-			}else if(type.equalsIgnoreCase("iu")){
-				search = basic_query+iu;
-			}else if(type.equalsIgnoreCase("recent")){
+			}else if(type.equalsIgnoreCase("dwn")){
+				search = basic_query+down;
+			}else if(type.equalsIgnoreCase("rct")){
 				search = basic_query+mr;
-			}else if(type.equalsIgnoreCase("rating")){
+			}else if(type.equalsIgnoreCase("rat")){
 				search = basic_query+rat;
 			}else{
 				search = basic_query;
@@ -386,7 +385,6 @@ public class DbHandler {
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid) as d where " + catgi + " d.catg_ord = " + ord + " and d.instver is null";
 			
-			final String iu = " order by instver desc";
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
 			final String alfb = " order by name collate nocase";
@@ -395,11 +393,11 @@ public class DbHandler {
 			String search;
 			if(type.equalsIgnoreCase("abc")){
 				search = basic_query+alfb;
-			}else if(type.equalsIgnoreCase("iu")){
-				search = basic_query+iu;
-			}else if(type.equalsIgnoreCase("recent")){
+			}else if(type.equalsIgnoreCase("dwn")){
+				search = basic_query+down;
+			}else if(type.equalsIgnoreCase("rct")){
 				search = basic_query+mr;
-			}else if(type.equalsIgnoreCase("rating")){
+			}else if(type.equalsIgnoreCase("rat")){
 				search = basic_query+rat;
 			}else{
 				search = basic_query;
@@ -511,7 +509,6 @@ public class DbHandler {
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid where c.instvercode < c.lastvercode";
 			
-			final String iu = " order by instver desc";
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
 			final String alfb = " order by name collate nocase";
@@ -521,11 +518,11 @@ public class DbHandler {
 			String search;
 			if(type.equalsIgnoreCase("abc")){
 				search = basic_query+alfb;
-			}else if(type.equalsIgnoreCase("iu")){
-				search = basic_query+iu;
-			}else if(type.equalsIgnoreCase("recent")){
+			}else if(type.equalsIgnoreCase("dwn")){
+				search = basic_query+down;
+			}else if(type.equalsIgnoreCase("rct")){
 				search = basic_query+mr;
-			}else if(type.equalsIgnoreCase("rating")){
+			}else if(type.equalsIgnoreCase("rat")){
 				search = basic_query+rat;
 			}else{
 				search = basic_query;
@@ -602,14 +599,14 @@ public class DbHandler {
 			}
 			
 			c = db.query(TABLE_NAME_EXTRA, new String[] {"dwn", "rat"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
-			c.moveToPrevious();
+			c.moveToFirst();
 			int downloads = c.getInt(0);
 			float rat = c.getFloat(1);
 			
 			if(downloads < 0){
-				tmp.add("No information available.");
+				tmp.add("\tNo information available.\n");
 			}else{
-				tmp.add(Integer.toString(downloads));
+				tmp.add("\t"+Integer.toString(downloads)+"\n");
 			}
 			
 			tmp.add(Float.toString(rat));

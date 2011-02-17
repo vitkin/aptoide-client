@@ -56,8 +56,10 @@ public class BaseManagement extends Activity {
 	static private ProgressDialog pd;
 	
 	static private Vector<ApkNode> apk_lst = null;
-	static private String order_lst = "abc";
 	
+	static private boolean pop_change = false;
+	
+	static private String order_lst = "abc";
 	private String my_order = "abc";
 	
 	static protected SimpleAdapter availAdpt = null;
@@ -90,7 +92,11 @@ public class BaseManagement extends Activity {
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
-			
+		
+		redrawCatgList();
+	}
+	
+	private void redrawCatgList(){
 		int[] main_ctg_count = db.getCountMainCtg();
         Map<String, Object> count_lst_app = db.getCountSecCatg(1);
         Map<String, Object> count_lst_games = db.getCountSecCatg(0);
@@ -133,9 +139,6 @@ public class BaseManagement extends Activity {
         
         
         for (String node : game_ctg) {
-        	/*Integer count = (Integer)count_lst_games.get(node);
-        	if (count == null)
-        		count = 0;*/
         	Integer count = new Integer(0);
         	if(count_lst_games != null){
         		count = (Integer)count_lst_games.get(node);
@@ -151,11 +154,11 @@ public class BaseManagement extends Activity {
         }
        game_catg_adpt = new SimpleAdapter(mctx, game_catg, R.layout.catglist, 
         		new String[] {"cntrl", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
-        
 	}
 	
+	
 	protected AlertDialog resumeMe(){
-		String istype;
+		//String istype;
 		
 		LayoutInflater li = LayoutInflater.from(this);
 		View view = li.inflate(R.layout.orderpopup, null);
@@ -167,8 +170,11 @@ public class BaseManagement extends Activity {
 		p.setButton("Ok", new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
-				prefEdit.commit();
-				//redraw();
+				if(pop_change){
+					prefEdit.putBoolean("pop_changes", true);
+					prefEdit.commit();
+					pop_change = false;
+				}
 				p.dismiss();
 			}
 		});
@@ -185,10 +191,15 @@ public class BaseManagement extends Activity {
 		final RadioGroup grp2 = (RadioGroup) view.findViewById(R.id.groupshow);
 		grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				if(checkedId == btn1.getId())
+				if(checkedId == btn1.getId()){
+					Log.d("Aptoide","Mode on");
+					pop_change = true;
 					prefEdit.putBoolean("mode", true);
-				else
+				}else{
+					Log.d("Aptoide","Mode off");
+					pop_change = true;
 					prefEdit.putBoolean("mode", false);
+				}
 				
 			}
 		});
@@ -197,9 +208,38 @@ public class BaseManagement extends Activity {
 		
 		// ***********************************************************
 		// Order
+		final RadioButton ord_rct = (RadioButton) view.findViewById(R.id.org_rct);
+		final RadioButton ord_abc = (RadioButton) view.findViewById(R.id.org_abc);
+		final RadioButton ord_rat = (RadioButton) view.findViewById(R.id.org_rat);
+		final RadioButton ord_dwn = (RadioButton) view.findViewById(R.id.org_dwn);
 		
+		if(order_lst.equals("abc"))
+			ord_abc.setChecked(true);
+		else if(order_lst.equals("rct"))
+			ord_rct.setChecked(true);
+		else if(order_lst.equals("rat"))
+			ord_rat.setChecked(true);
+		else if(order_lst.equals("dwn"))
+			ord_dwn.setChecked(true);
 		
-		
+		final RadioGroup grp1 = (RadioGroup) view.findViewById(R.id.groupbtn);
+		grp1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				if(checkedId == ord_rct.getId()){
+					pop_change = true;
+					order_lst = "rct";
+				}else if(checkedId == ord_abc.getId()){
+					pop_change = true;
+					order_lst = "abc";
+				}else if(checkedId == ord_rat.getId()){
+					pop_change = true;
+					order_lst = "rat";
+				}else if(checkedId == ord_dwn.getId()){
+					pop_change = true;
+					order_lst = "dwn";
+				}
+			}
+		});
 		
 		// ***********************************************************
 		
@@ -231,13 +271,13 @@ public class BaseManagement extends Activity {
 				prefEdit.remove("order_lst");
 				prefEdit.commit();
 			}
-			Log.d("Aptoide","--- update");
 			redraw();
+			redrawCatgList();
+			
 		}else if(sPref.contains("order_lst")){
 			order_lst = sPref.getString("order_lst", "abc");
 			prefEdit.remove("order_lst");
 			prefEdit.commit();
-			Log.d("Aptoide","--- order_lst");
 			redraw();
 		}
 	}
@@ -511,9 +551,11 @@ public class BaseManagement extends Activity {
 	 
 	 protected SimpleAdapter getAvailable(){
 		 if(sPref.getBoolean("mode", false)){
+			 Log.d("Aptoide","Category mode on!");
         	 main_catg_adpt.setViewBinder(new SimpeLstBinder());
         	 return main_catg_adpt;
          }
+		 Log.d("Aptoide","Category mode off!");
 		 return availAdpt;
 	 }
 	 

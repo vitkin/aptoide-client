@@ -75,6 +75,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 3:
+			Log.d("Aptoide","Estamos aqui...");
 			final AlertDialog p = resumeMe();
 			p.show();
 			
@@ -87,27 +88,33 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {	}
 					}
-					if(sPref.getBoolean("mode", false)){
-						if(!(shown_now == null) || main_shown_now == 2){
-							handler_adpt = getGivenCatg(shown_now, main_shown_now);
-							//lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
+					if(sPref.getBoolean("pop_changes", false)){
+						Log.d("Aptoide","We enter pop stuf...");
+						if(sPref.getBoolean("mode", false)){
+							Log.d("Aptoide","We enter pop mod on!");
+							if(!(shown_now == null) || main_shown_now == 2){
+								handler_adpt = getGivenCatg(shown_now, main_shown_now);
+								//lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
+							}else{
+								handler_adpt = getRootCtg();
+								//lv.setAdapter(getRootCtg());
+							}
+							/*setContentView(lv);
+						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						lv.setSelection(pos-1);*/
+							displayRefresh.sendEmptyMessage(0);
 						}else{
-							handler_adpt = getRootCtg();
-							//lv.setAdapter(getRootCtg());
+							//lv.setAdapter(availAdpt);
+							shown_now = null;
+							handler_adpt = null;
+							/*setContentView(lv);
+						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						lv.setSelection(pos-1);*/
+							displayRefresh.sendEmptyMessage(0);
 						}
-						/*setContentView(lv);
-						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						lv.setSelection(pos-1);*/
-						displayRefresh.sendEmptyMessage(0);
-					}else{
-						//lv.setAdapter(availAdpt);
-						handler_adpt = availAdpt;
-						/*setContentView(lv);
-						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						lv.setSelection(pos-1);*/
-						displayRefresh.sendEmptyMessage(0);
+						prefEdit.remove("pop_changes");
 					}
-				}	
+				}
 			}.start();
 			/*if(resumeMe()){
 				if(sPref.getBoolean("mode", false)){
@@ -125,14 +132,17 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 				}
 			}*/
 		}
+		Log.d("Aptoide","Estamos aqui 2...");
 		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.d("Aptoide","Estamos aqui onResume...");
 
 		if(sPref.getBoolean("changeavail", false)){
+			Log.d("Aptoide","Estamos aqui onResume dentro...");
 			lv.setAdapter(getAvailable());
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -248,6 +258,9 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			}else{
 				t5.setText(getText(R.string.app_pop_up_no_info));
 			}
+			
+			TextView t6 = (TextView) view.findViewById(R.id.down_n);
+			t6.setText(tmp_get.get(4));
 
 
 			p.setButton2(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
@@ -295,11 +308,15 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			Log.d("Aptoide","Estamos aqui4...");
 			redraw();
+			if(handler_adpt == null)
+				handler_adpt = availAdpt;
 			lv.setAdapter(handler_adpt);
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
+			Log.d("Aptoide","Estamos aqui tufas...");
 		}
 		 
 	 };
