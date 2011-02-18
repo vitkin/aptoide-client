@@ -62,10 +62,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -81,6 +84,9 @@ public class ManageRepo extends ListActivity{
 	private final int ADD_REPO = 1;
 	private final int REM_REPO = 2;
 	private final int EDIT_REPO = 3;
+	
+	private final int REM_REPO_POP = 4;
+	private final int EDIT_REPO_POP = 5;
 	
 	private boolean change = false;
 	
@@ -98,6 +104,8 @@ public class ManageRepo extends ListActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.repolist);
+		
+		registerForContextMenu(this.getListView());
 		
 		db = new DbHandler(this);
 		
@@ -211,6 +219,60 @@ public class ManageRepo extends ListActivity{
 		menu.add(Menu.NONE, REM_REPO, 3, R.string.menu_rem_repo)
 		.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		return true;
+	}
+
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		menu.setHeaderTitle("Options");  
+		menu.add(0, EDIT_REPO_POP, 0, "Edit");  
+		menu.add(0, REM_REPO_POP, 0, "Remove"); 
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+		TextView tmp = (TextView) ((View)(info.targetView)).findViewById(R.id.uri);
+		final String repo_selected = tmp.getText().toString();
+		switch (item.getItemId()) {
+		case EDIT_REPO_POP:
+			editRepo(repo_selected);
+			break;
+
+		case REM_REPO_POP:
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle("Remove Repository");
+			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+			builder.setMessage("Do you want to remove repository " + repo_selected + " ?");
+			builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                		public void onClick(DialogInterface dialog, int	whichButton) {
+                			db.removeServer(repo_selected);
+                			change = true;
+                			redraw();
+                		}
+            });
+			builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                		public void onClick(DialogInterface dialog, int whichButton) {
+                			return;
+                		}
+            }); 
+			AlertDialog alert = builder.create();
+			alert.show();
+			
+			
+			break;
+			
+		default:
+			break;
+		}
+		
+		Log.d("Aptoide","On ---> " + tmp.getText());
+		
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -351,6 +413,7 @@ public class ManageRepo extends ListActivity{
 			}); 
 			builder2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int	whichButton) {
+					alert2.dismiss();
 					editRepo(updt_repo);
 					return;
 				}
@@ -420,7 +483,7 @@ public class ManageRepo extends ListActivity{
 			public void onClick(DialogInterface dialog, int which) {
 				return;
 			} });
-		alert2.dismiss();
+		//alert2.dismiss();
 		alrt.show();
 	}
 

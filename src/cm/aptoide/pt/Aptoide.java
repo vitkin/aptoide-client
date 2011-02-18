@@ -133,6 +133,7 @@ public class Aptoide extends Activity {
 			PackageInfo pkginfo = mPm.getPackageInfo("cm.aptoide.pt", 0);
 			if(sPref.getInt("version", 0) < pkginfo.versionCode){
 		   		db.UpdateTables();
+		   		prefEdit.putBoolean("mode", true);
 		   		prefEdit.putInt("version", pkginfo.versionCode);
 		   		prefEdit.commit();
 			}
