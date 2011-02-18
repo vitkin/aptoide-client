@@ -360,7 +360,6 @@ public class BaseManagement extends Activity {
 
 	protected void redraw(){
 		
-		Log.d("Aptoide","Tick");
 		pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
 		pd.setIcon(android.R.drawable.ic_dialog_info);
 		
@@ -416,15 +415,10 @@ public class BaseManagement extends Activity {
 				updateAdpt.setViewBinder(new LstBinder());
 
 				stop_pd.sendEmptyMessage(0);
-		         Log.d("Aptoide", "Tock!");
 
 				
 			}
 		}.start();
-		 prefEdit.putBoolean("changeavail", true);
-		 prefEdit.putBoolean("changeinst", true);
-		 prefEdit.putBoolean("changeupdt", true);
-		 prefEdit.commit();
 		 
 	}
 	
@@ -615,6 +609,10 @@ public class BaseManagement extends Activity {
 				Log.d("Aptoide","AM I HERE?!?!?");
 				pd.dismiss();
 			}
+			prefEdit.putBoolean("changeavail", true);
+			prefEdit.putBoolean("changeinst", true);
+			prefEdit.putBoolean("changeupdt", true);
+			prefEdit.commit();
 			super.handleMessage(msg);
 		}
 		 
