@@ -753,6 +753,10 @@ public class DbHandler {
 		}
 	}
 	
+	public void removeServer(String serv){
+		db.delete(TABLE_NAME_URI, "uri='"+serv+"'", null);
+	}
+	
 	public void updateServer(String old, String repo){
 		db.execSQL("update " + TABLE_NAME_URI + " set uri='" + repo + "' where uri='" + old + "'");
 	}

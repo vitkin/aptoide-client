@@ -79,7 +79,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.name = "unknown";
 		tmp_apk.ver = "0.0";
 		tmp_apk.vercode = 0;
-		tmp_apk.rat = 3.0f;
+		tmp_apk.rat = 0.0f;
 		tmp_apk.down = -1;
 		tmp_apk.date = "2000-01-01";
 		tmp_apk.md5hash = null;
@@ -117,7 +117,7 @@ public class RssHandler extends DefaultHandler{
 			try{
 				tmp_apk.rat = new Float(new String(ch).substring(start, start + length));
 			}catch(Exception e){
-				tmp_apk.rat = 3.0f;
+				tmp_apk.rat = 0.0f;
 			}
 		}else if(apk_md5hash){
 			tmp_apk.md5hash = new String(ch).substring(start, start + length);
@@ -179,7 +179,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.name = "Unknown";
 			tmp_apk.ver = "0.0";
 			tmp_apk.vercode = 0;
-			tmp_apk.rat = 3.0f;
+			tmp_apk.rat = 0.0f;
 			tmp_apk.date = "2000-01-01";
 			tmp_apk.down = -1;
 			tmp_apk.md5hash = null;

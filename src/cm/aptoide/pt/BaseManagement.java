@@ -192,11 +192,9 @@ public class BaseManagement extends Activity {
 		grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(RadioGroup group, int checkedId) {
 				if(checkedId == btn1.getId()){
-					Log.d("Aptoide","Mode on");
 					pop_change = true;
 					prefEdit.putBoolean("mode", true);
 				}else{
-					Log.d("Aptoide","Mode off");
 					pop_change = true;
 					prefEdit.putBoolean("mode", false);
 				}
