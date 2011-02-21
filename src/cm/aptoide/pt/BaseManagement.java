@@ -545,9 +545,12 @@ public class BaseManagement extends Activity {
 		 return game_catg_adpt;
 	 }
 	 
-	 protected SimpleAdapter getAvailable(){
+	 protected SimpleAdapter getAvailable(String show_now, int main_show_now){
 		 if(sPref.getBoolean("mode", false)){
 			 Log.d("Aptoide","Category mode on!");
+			 if(!(show_now == null) || main_show_now == 2){
+				 return getGivenCatg(show_now, main_show_now);
+			 }
         	 main_catg_adpt.setViewBinder(new SimpeLstBinder());
         	 return main_catg_adpt;
          }
