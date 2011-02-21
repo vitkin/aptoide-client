@@ -66,7 +66,9 @@ public class DbHandler {
 	
 	
 	Map<String, Object> getCountSecCatg(int ord){
-		final String basic_query = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " group by catg;";
+		final String basic_query = "select a.catg, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where a.catg_ord = " + ord + " and not exists" +
+								   " (select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg;"; 
+		//final String basic_query2 = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " group by catg;";
 		Map<String, Object> count_lst = new HashMap<String, Object>();
 		Cursor q = null;
 
@@ -83,7 +85,9 @@ public class DbHandler {
 	}
 	
 	int[] getCountMainCtg(){
-		final String basic_query = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " group by catg_ord;";		
+		final String basic_query = "select a.catg_ord, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where not exists " +
+				                   "(select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg_ord;";
+		//final String basic_query2 = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " group by catg_ord;";		
 		int[] rtn = new int[3];
 		Cursor q = null;
 
