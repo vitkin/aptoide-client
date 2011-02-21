@@ -151,22 +151,45 @@ public class DbHandler {
 	public void UpdateTables(){
 		String[] repos = null;
 		int[] inuser = null;
+		boolean[] secure = null;
+		String[] login_user = null;
+		String[] login_pwd = null;
 		try{
 			Cursor c;
-			c = db.query(TABLE_NAME_URI, new String[] {"uri","inuse"}, null, null, null, null, null);
+			c = db.query(TABLE_NAME_URI, new String[] {"uri","inuse","user","psd","secure"}, null, null, null, null, null);
 			if(c.moveToFirst()){
 				int i = 0;
 				repos = new String[c.getCount()+1];
 				inuser = new int[c.getCount()+1];
+				secure = new boolean[c.getCount()+1];
+				login_pwd = new String[c.getCount()+1];
+				login_user = new String[c.getCount()+1];
 				repos[i] = "http://apps.aptoide.org";
 				inuser[i] = 1;
+				secure[i] = false;
+				
 				i++;
 				repos[i] = c.getString(0);
 				inuser[i] = c.getInt(1);
+				if(c.getInt(4) == 1){
+					secure[i] = true;
+					login_user[i] = c.getString(2);
+					login_pwd[i] = c.getString(3);
+				}else{
+					secure[i] = false;
+				}
+				
 				while(c.moveToNext()){
 					i++;
 					repos[i] = c.getString(0);
 					inuser[i] = c.getInt(1);
+					if(c.getInt(4) == 1){
+						secure[i] = true;
+						login_user[i] = c.getString(2);
+						login_pwd[i] = c.getString(3);
+					}else{
+						secure[i] = false;
+					}
 				}
 			}
 			c.close();
@@ -189,6 +212,11 @@ public class DbHandler {
 				ContentValues tmp = new ContentValues();
 				tmp.put("uri", repos[z]);
 				tmp.put("inuse", inuser[z]);
+				if(secure[z]){
+					tmp.put("secure", 1);
+					tmp.put("user", login_user[z]);
+					tmp.put("psd", login_pwd[z]);
+				}
 				db.insert(TABLE_NAME_URI, null, tmp);
 			}
 			
