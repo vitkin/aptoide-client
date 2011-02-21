@@ -51,6 +51,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -67,7 +68,7 @@ import android.widget.SimpleAdapter.ViewBinder;
 
 public class RemoteInSearch extends ListActivity{
 	
-	private String LOCAL_PATH = "/sdcard/.aptoide";
+	private String LOCAL_PATH = Environment.getExternalStorageDirectory()+"/.aptoide";
 	private String APK_PATH = LOCAL_PATH+"/";
 	
 	private static final int MANAGE_REPO = Menu.FIRST;

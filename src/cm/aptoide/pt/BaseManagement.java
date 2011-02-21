@@ -26,6 +26,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -69,7 +70,7 @@ public class BaseManagement extends Activity {
 	protected static final int INSTALL = 127;
 	protected static final int REMOVE = 128;
 	protected static final int UPDATE = 129;
-	private static final String APK_PATH = "/sdcard/.aptoide/";
+	private static final String APK_PATH = Environment.getExternalStorageDirectory()+"/.aptoide/";
 	
 	
 	private static SimpleAdapter main_catg_adpt = null;
@@ -328,6 +329,7 @@ public class BaseManagement extends Activity {
 				prefEdit.remove("pkg");
 				prefEdit.commit();
 				Log.d("Aptoide","--- install");
+				redrawCatgList();
 				redraw();
 			} catch (NameNotFoundException e) {	}
 		}else if(requestCode == REMOVE){
@@ -339,6 +341,7 @@ public class BaseManagement extends Activity {
 				prefEdit.remove("pkg");
 				prefEdit.commit();
 				Log.d("Aptoide","--- remove");
+				redrawCatgList();
 				redraw();
 			}
 		}else if(requestCode == UPDATE){
@@ -353,6 +356,7 @@ public class BaseManagement extends Activity {
 				prefEdit.remove("pkg");
 				prefEdit.commit();
 				Log.d("Aptoide","--- update");
+				redrawCatgList();
 				redraw();
 			}
 		}

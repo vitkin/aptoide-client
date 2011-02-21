@@ -54,6 +54,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.StatFs;
@@ -68,7 +69,8 @@ import android.widget.Toast;
 
 public class RemoteInTab extends TabActivity {
 
-	private String LOCAL_PATH = "/sdcard/.aptoide";
+	private final String SDCARD = Environment.getExternalStorageDirectory()+"";
+	private String LOCAL_PATH = SDCARD+"/.aptoide";
 	private String ICON_PATH = LOCAL_PATH+"/icons";
 	private String XML_PATH = LOCAL_PATH+"/remapklst.xml";
 	private String EXTRAS_XML_PATH = LOCAL_PATH+"/extras.xml";
@@ -145,7 +147,7 @@ public class RemoteInTab extends TabActivity {
 
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		File sdcard_file = new File("/sdcard");
+		File sdcard_file = new File(SDCARD);
 		if(!sdcard_file.exists()){
 			final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -260,7 +262,7 @@ public class RemoteInTab extends TabActivity {
 
 	private void installFromLink(String path){
 		try{
-			String file_out = new String("/sdcard/.aptoide/fetched.apk");
+			String file_out = new String(SDCARD+"/.aptoide/fetched.apk");
 			FileOutputStream saveit = new FileOutputStream(file_out);
 			DefaultHttpClient mHttpClient = new DefaultHttpClient();
 			HttpGet mHttpGet = new HttpGet(path);

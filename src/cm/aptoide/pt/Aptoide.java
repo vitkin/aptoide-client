@@ -47,6 +47,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -60,7 +61,7 @@ public class Aptoide extends Activity {
 
     
 	private static final int OUT = 0;
-    private static final String TMP_SRV_FILE = "/sdcard/.aptoide/server";
+    private static final String TMP_SRV_FILE = Environment.getExternalStorageDirectory() + "/.aptoide/server";
     
     private Vector<String> server_lst = null;
     private Vector<String[]> get_apks = null;
@@ -122,6 +123,8 @@ public class Aptoide extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        Log.d("Aptoie","We have: " + Environment.getExternalStorageDirectory());
 
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();

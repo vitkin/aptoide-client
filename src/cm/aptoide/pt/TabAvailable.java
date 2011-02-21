@@ -51,15 +51,32 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-			
-		lv = new ListView(this);
-		lv.setAdapter(getAvailable());
-		lv.setFastScrollEnabled(true);
-		lv.setOnItemClickListener(this);
+		
 		db = new DbHandler(this);
 		mctx = this;
-		
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+		lv = new ListView(this);
+		lv.setOnItemClickListener(this);
+		lv.setFastScrollEnabled(true);
+
+		
+		new Thread(){
+
+			@Override
+			public void run() {
+				super.run();
+				if(getAvailable() == null){
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) { }
+				}else{
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) { }
+					onResumeHandler.sendEmptyMessage(0);
+				}
+			}			
+		}.start();
 		
 	}
 
@@ -139,10 +156,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Log.d("Aptoide","Estamos aqui onResume...");
 
 		if(sPref.getBoolean("changeavail", false)){
-			Log.d("Aptoide","Estamos aqui onResume dentro...");
 			lv.setAdapter(getAvailable());
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -184,6 +199,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
+		pos = arg2;
+		
 		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 
 		if(pkg_id.equals("Applications")){
@@ -308,7 +325,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			Log.d("Aptoide","Estamos aqui4...");
 			redraw();
 			if(handler_adpt == null)
 				handler_adpt = availAdpt;
@@ -316,7 +332,17 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
-			Log.d("Aptoide","Estamos aqui tufas...");
+		}
+		 
+	 };
+	 
+	 protected Handler onResumeHandler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			lv.setAdapter(getAvailable());
+			setContentView(lv);
 		}
 		 
 	 };
