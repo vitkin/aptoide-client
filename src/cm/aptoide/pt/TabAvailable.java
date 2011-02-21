@@ -65,7 +65,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			@Override
 			public void run() {
 				super.run();
-				if(getAvailable() == null){
+				if(getAvailable(null,-1) == null){
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) { }
@@ -77,7 +77,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 				}
 			}			
 		}.start();
-		
 	}
 
 
@@ -158,7 +157,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		super.onResume();
 
 		if(sPref.getBoolean("changeavail", false)){
-			lv.setAdapter(getAvailable());
+			lv.setAdapter(getAvailable(shown_now,main_shown_now));
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
@@ -341,7 +340,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			lv.setAdapter(getAvailable());
+			lv.setAdapter(getAvailable(null,-1));
 			setContentView(lv);
 		}
 		 
