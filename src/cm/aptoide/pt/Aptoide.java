@@ -61,7 +61,7 @@ public class Aptoide extends Activity {
 
     
 	private static final int OUT = 0;
-    private static final String TMP_SRV_FILE = Environment.getExternalStorageDirectory() + "/.aptoide/server";
+    private static final String TMP_SRV_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
     
     private Vector<String> server_lst = null;
     private Vector<String[]> get_apks = null;
@@ -124,7 +124,7 @@ public class Aptoide extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        Log.d("Aptoie","We have: " + Environment.getExternalStorageDirectory());
+        Log.d("Aptoide","******* \n Downloads will be made to: " + Environment.getExternalStorageDirectory().getPath() + "\n ********");
 
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();

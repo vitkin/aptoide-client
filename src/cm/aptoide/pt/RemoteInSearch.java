@@ -68,7 +68,7 @@ import android.widget.SimpleAdapter.ViewBinder;
 
 public class RemoteInSearch extends ListActivity{
 	
-	private String LOCAL_PATH = Environment.getExternalStorageDirectory()+"/.aptoide";
+	private String LOCAL_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide";
 	private String APK_PATH = LOCAL_PATH+"/";
 	
 	private static final int MANAGE_REPO = Menu.FIRST;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.3.1"</string>
+    <string name="ver_str">"2.3.2"</string>
     
     <string name="tab_avail">Disponiveis</string>
     <string name="tab_inst">Instaladas</string>
@@ -20,7 +20,7 @@
     
     <string name="about_txt1">Instalador de pacotes para Android.\n</string>
     
-    <string name="about_txt11">Versão: 2.3.1\n(diponibilizado ao abrigo da licença GNU GPL v2)\n
+    <string name="about_txt11">Versão: 2.3.2\n(diponibilizado ao abrigo da licença GNU GPL v2)\n
     \nCréditos: Roberto Jacinto - Caixa Mágica\n</string>
 
     
