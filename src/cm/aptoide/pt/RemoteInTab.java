@@ -69,7 +69,7 @@ import android.widget.Toast;
 
 public class RemoteInTab extends TabActivity {
 
-	private final String SDCARD = Environment.getExternalStorageDirectory()+"";
+	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 	private String LOCAL_PATH = SDCARD+"/.aptoide";
 	private String ICON_PATH = LOCAL_PATH+"/icons";
 	private String XML_PATH = LOCAL_PATH+"/remapklst.xml";
