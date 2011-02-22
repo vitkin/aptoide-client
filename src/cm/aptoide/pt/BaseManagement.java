@@ -70,7 +70,7 @@ public class BaseManagement extends Activity {
 	protected static final int INSTALL = 127;
 	protected static final int REMOVE = 128;
 	protected static final int UPDATE = 129;
-	private static final String APK_PATH = Environment.getExternalStorageDirectory()+"/.aptoide/";
+	private static final String APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
 	
 	private static SimpleAdapter main_catg_adpt = null;
