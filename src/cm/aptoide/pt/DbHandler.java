@@ -408,14 +408,15 @@ public class DbHandler {
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
 		Cursor c = null;
 		try{
-			String catgi = "d.catg = '" + ctg + "' and";
+			String catgi = "d.catg = '" + ctg + "' and ";
 			if(ctg == null)
 				catgi = "";
 			
-			String basic_query = "select * from (select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord from "
+			final String basic_query = "select * from (select distinct c.apkid, c.name as name, c.instver as instver, c.lastver, c.instvercode, c.lastvercode ,b.dt as dt, b.rat as rat, b.dwn as dwn, b.catg as catg, b.catg_ord as catg_ord from "
 				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
-				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid) as d where " + catgi + " d.catg_ord = " + ord + " and d.instver is null";
+				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid) as d where " + catgi + "d.catg_ord = " + ord + " and d.instver is null";
+			
 			
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
@@ -453,7 +454,8 @@ public class DbHandler {
 			e.printStackTrace();
 		}
 		finally{
-			c.close();
+			if(c != null)
+				c.close();
 		}
 		return tmp;
 	}
