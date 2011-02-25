@@ -38,7 +38,7 @@ public class DbHandler {
 
 	private static final String[] CATGS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
 		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
-		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casinon", "Casual"};
+		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
 	
 	
 	private static final String DATABASE_NAME = "aptoide_db";
@@ -114,7 +114,7 @@ public class DbHandler {
 	 * catg: category for the application:
 	 *  - Comics, Communication, Entertainment, Finance, Health, Lifestyle, Multimedia, 
 	 *  - News & Weather, Productivity, Reference, Shopping, Social, Sports, Themes, Tools, 
-	 *  - Travel, Demo, Software Libraries, Arcade & Action, Brain & Puzzle, Cards & Casinon, Casual,
+	 *  - Travel, Demo, Software Libraries, Arcade & Action, Brain & Puzzle, Cards & Casino, Casual,
 	 *  - Other
 	 */
 
