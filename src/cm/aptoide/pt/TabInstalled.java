@@ -89,13 +89,19 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	protected void onResume() {
 		super.onResume();
 		
-		if(sPref.getBoolean("changeinst", false)){
-			lv.setAdapter(instAdpt);
-			setContentView(lv);
-			lv.setSelection(pos-1);
-			prefEdit.remove("changeinst");
-			prefEdit.commit();
-		}
+		new Thread(){
+			@Override
+			public void run() {
+				super.run();
+				while(sPref.getBoolean("redrawis", false)){
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) { }
+				}
+				displayRefresh2.sendEmptyMessage(0);
+			}
+			
+		}.start();	
 	}
 
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -176,6 +182,22 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	 };
 	
 	
+	protected Handler displayRefresh2 = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			if(sPref.getBoolean("changeinst", false)){
+				lv.setAdapter(instAdpt);
+				setContentView(lv);
+				lv.setSelection(pos-1);
+				prefEdit.remove("changeinst");
+				prefEdit.commit();
+			}
+		}
+		
+	};
+	 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);

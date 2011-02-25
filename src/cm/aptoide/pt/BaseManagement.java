@@ -364,8 +364,12 @@ public class BaseManagement extends Activity {
 
 	protected void redraw(){
 		
+		prefEdit.putBoolean("redrawis", true);
+    	prefEdit.commit();
+		
 		pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
 		pd.setIcon(android.R.drawable.ic_dialog_info);
+		
 		
 		new Thread() {
 
@@ -612,6 +616,7 @@ public class BaseManagement extends Activity {
 
 		@Override
 		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
 			while(pd.isShowing()){
 				Log.d("Aptoide","AM I HERE?!?!?");
 				pd.dismiss();
@@ -619,8 +624,8 @@ public class BaseManagement extends Activity {
 			prefEdit.putBoolean("changeavail", true);
 			prefEdit.putBoolean("changeinst", true);
 			prefEdit.putBoolean("changeupdt", true);
+			prefEdit.putBoolean("redrawis", false);
 			prefEdit.commit();
-			super.handleMessage(msg);
 		}
 		 
 	 };
