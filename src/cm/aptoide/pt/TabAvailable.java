@@ -105,6 +105,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 						} catch (InterruptedException e) {	}
 					}
 					if(sPref.getBoolean("pop_changes", false)){
+						prefEdit.remove("pop_changes");
+						prefEdit.commit();
 						Log.d("Aptoide","We enter pop stuf...");
 						if(sPref.getBoolean("mode", false)){
 							Log.d("Aptoide","We enter pop mod on!");
@@ -117,9 +119,17 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 						}else{
 							shown_now = null;
 							handler_adpt = null;
+							redrawHandler.sendEmptyMessage(0);
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e1) { }
+							while(sPref.getBoolean("redrawis", false)){
+								try {
+									Thread.sleep(500);
+								} catch (InterruptedException e) { }
+							}
 							displayRefresh.sendEmptyMessage(0);
 						}
-						prefEdit.remove("pop_changes");
 					}
 				}
 			}.start();
@@ -304,13 +314,23 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			redraw();
-			if(handler_adpt == null)
+			if(handler_adpt == null){
 				handler_adpt = availAdpt;
+			}
 			lv.setAdapter(handler_adpt);
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
+		}
+		 
+	 };
+	 
+	 protected Handler redrawHandler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			redraw();
 		}
 		 
 	 };
