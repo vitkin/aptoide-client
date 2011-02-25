@@ -110,60 +110,40 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 							Log.d("Aptoide","We enter pop mod on!");
 							if(!(shown_now == null) || main_shown_now == 2){
 								handler_adpt = getGivenCatg(shown_now, main_shown_now);
-								//lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
 							}else{
 								handler_adpt = getRootCtg();
-								//lv.setAdapter(getRootCtg());
 							}
-							/*setContentView(lv);
-						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						lv.setSelection(pos-1);*/
 							displayRefresh.sendEmptyMessage(0);
 						}else{
-							//lv.setAdapter(availAdpt);
 							shown_now = null;
 							handler_adpt = null;
-							/*setContentView(lv);
-						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						lv.setSelection(pos-1);*/
 							displayRefresh.sendEmptyMessage(0);
 						}
 						prefEdit.remove("pop_changes");
 					}
 				}
 			}.start();
-			/*if(resumeMe()){
-				if(sPref.getBoolean("mode", false)){
-					if(!(shown_now == null) || main_shown_now == 2){
-						lv.setAdapter(getGivenCatg(shown_now, main_shown_now));
-						setContentView(lv);
-						lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						lv.setSelection(pos-1);
-					}
-				}else{
-					lv.setAdapter(availAdpt);
-					setContentView(lv);
-					lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-					lv.setSelection(pos-1);
-				}
-			}*/
 		}
-		Log.d("Aptoide","Estamos aqui 2...");
 		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		if(sPref.getBoolean("changeavail", false)){
-			lv.setAdapter(getAvailable(shown_now,main_shown_now));
-			setContentView(lv);
-			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-			lv.setSelection(pos-1);
-			prefEdit.remove("changeavail");
-			prefEdit.commit();
-		}
+		
+		new Thread(){
+			@Override
+			public void run() {
+				super.run();
+				while(sPref.getBoolean("redrawis", false)){
+					try {
+						Thread.sleep(500);
+					} catch (InterruptedException e) { }
+				}
+				displayRefresh2.sendEmptyMessage(0);
+			}
+			
+		}.start();
 	}
 
 	@Override
@@ -346,6 +326,23 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		 
 	 };
 	
+	 
+	 protected Handler displayRefresh2 = new Handler(){
+
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				if(sPref.getBoolean("changeavail", false)){
+					lv.setAdapter(getAvailable(shown_now,main_shown_now));
+					setContentView(lv);
+					lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+					lv.setSelection(pos-1);
+					prefEdit.remove("changeavail");
+					prefEdit.commit();
+				}
+			}
+			
+		};
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {

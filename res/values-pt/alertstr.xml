@@ -17,7 +17,7 @@
     <string name="newrepo_alrt">Deseja adicionar este repositório à sua lista?\n\n</string>
     
     <string name="error_download_alrt">Impossivel ligar ao servidor ou o pacote está corrupto!</string>
-    <string name="download_alrt">A fazer downlod de:\n </string>
+    <string name="download_alrt">A fazer download de:\n </string>
     
     
     
