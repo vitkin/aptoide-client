@@ -182,7 +182,7 @@ public class BaseManagement extends Activity {
 		
 		// ***********************************************************
 		// Categories
-		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
+		/*final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
 		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
 		if(sPref.getBoolean("mode", false)){
 			btn1.setChecked(true);
@@ -201,7 +201,7 @@ public class BaseManagement extends Activity {
 				}
 				
 			}
-		});
+		});*/
 
 		// ***********************************************************
 		
@@ -243,19 +243,6 @@ public class BaseManagement extends Activity {
 		// ***********************************************************
 		
 		return p;
-		/*if(my_order.equalsIgnoreCase("abc")){
-			my_order = "recent";
-			istype = "Most recent first";
-		}else{
-			my_order = "abc";
-			istype = "Alphabetically";
-		}
-		if(!order_lst.equalsIgnoreCase(my_order)){
-			order_lst = my_order;
-			redraw();
-		}
-		Toast.makeText(mctx, istype, Toast.LENGTH_SHORT).show();
-		return true;*/
 	}
 		
 	@Override

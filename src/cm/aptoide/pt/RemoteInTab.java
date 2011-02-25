@@ -81,7 +81,6 @@ public class RemoteInTab extends TabActivity {
 	
 	private static final int UPDATE_REPO = Menu.FIRST;
 	private static final int MANAGE_REPO = 2;
-	private static final int CHANGE_FILTER = 3;
 	private static final int SEARCH_MENU = 4;
 	private static final int SETTINGS = 5;
 	private static final int ABOUT = 6;
@@ -295,8 +294,6 @@ public class RemoteInTab extends TabActivity {
 			.setIcon(android.R.drawable.ic_menu_rotate);
 		menu.add(Menu.NONE, MANAGE_REPO, 2, R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		/*menu.add(Menu.NONE, CHANGE_FILTER, 3, R.string.menu_order)
-		.setIcon(android.R.drawable.ic_menu_sort_by_size);*/
 		menu.add(Menu.NONE, SEARCH_MENU,4,R.string.menu_search)
 			.setIcon(android.R.drawable.ic_menu_search);
 		menu.add(Menu.NONE, SETTINGS, 5, R.string.menu_settings)
@@ -377,19 +374,9 @@ public class RemoteInTab extends TabActivity {
 			alrt.show();
 			return true;
 		case SETTINGS:
-			/*Intent s = new Intent(RemoteInTab.this, Settings.class);
-			s.putExtra("order", order_lst);
-			startActivityForResult(s,SETTINGS_FLAG);*/
-			return true;
-		case CHANGE_FILTER:
-			/*if(order_lst.equalsIgnoreCase("abc"))
-				order_lst = "recent";
-			else
-				order_lst = "abc";
-			prefEdit.putString("order_lst", order_lst);
-        	prefEdit.commit();*/
-
-        	
+			Intent s = new Intent(RemoteInTab.this, Settings.class);
+			startActivityForResult(s,SETTINGS_FLAG);
+			return true;	
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -417,29 +404,15 @@ public class RemoteInTab extends TabActivity {
 				alrt.show();
 			}
 		}else if(requestCode == SETTINGS_FLAG){
-			boolean q = false;
 			
-			/*if(data != null && data.hasExtra("mode")){
+			if(data != null && data.hasExtra("mode")){
 				prefEdit.putBoolean("mode", data.getExtras().getBoolean("mode"));
 	        	prefEdit.commit();
 	        	prefEdit.putBoolean("update", true);
 	        	prefEdit.commit();
-	        	if(data.hasExtra("align")){
-					prefEdit.putString("order_lst", data.getExtras().getString("align"));
-		        	prefEdit.commit();
-	        	}
-	        	q = true;
-			}else if(data != null && data.hasExtra("align")){
-				String tmp_align = data.getExtras().getString("align");
-				if(!order_lst.equals(tmp_align)){ 
-					prefEdit.putString("order_lst", tmp_align);
-					prefEdit.commit();
-					q = true;
-				}
+	        	onResume();
 			}
-			if(q){
-				onResume();
-			}*/
+
 		}else if(requestCode == FETCH_APK){
 			if(intserver != null)
 				startActivityForResult(intserver, NEWREPO_FLAG);
