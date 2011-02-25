@@ -171,7 +171,7 @@ public class RemoteInTab extends TabActivity {
 			Log.d("Aptoide", "Total: " + total + " Mb");
 			Log.d("Aptoide", "Available: " + avail + " Mb");
 
-			if((total - avail) < 10 ){
+			if(avail < 10 ){
 				Log.d("Aptoide","No space left on SDCARD...");
 				Log.d("Aptoide","* * * * * * * * * *");
 
