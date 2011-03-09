@@ -61,7 +61,6 @@ public class BaseManagement extends Activity {
 	static private boolean pop_change = false;
 	
 	static private String order_lst = "abc";
-	private String my_order = "abc";
 	
 	static protected SimpleAdapter availAdpt = null;
 	static protected SimpleAdapter instAdpt = null;
@@ -182,7 +181,7 @@ public class BaseManagement extends Activity {
 		
 		// ***********************************************************
 		// Categories
-		/*final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
+		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
 		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
 		if(sPref.getBoolean("mode", false)){
 			btn1.setChecked(true);
@@ -201,7 +200,7 @@ public class BaseManagement extends Activity {
 				}
 				
 			}
-		});*/
+		});
 
 		// ***********************************************************
 		
@@ -490,8 +489,8 @@ public class BaseManagement extends Activity {
 			 msg.arg1 = 0;
 			 msg.obj = new String(getserv);
 			 download_handler.sendMessage(msg);
-
-			 String path = new String(APK_PATH+db.getName(apkid)+".apk");
+			 
+			 String path = new String(APK_PATH+apkid+".apk");
 			 FileOutputStream saveit = new FileOutputStream(path);
 			 
 			 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
@@ -509,13 +508,21 @@ public class BaseManagement extends Activity {
 			 }
 			 File f = new File(path);
 			 Md5Handler hash = new Md5Handler();
-			 
+			 Log.d("Aptoide","The path is: " + path);
 			 if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+				 Log.d("Aptoide","All ok!");
 				 return path;
 			 }else{
-				 return null;
+				 Log.d("Aptoide","MD5 error...");
+				 Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
+				 return "*md5*";
 			 }
 		 } catch(Exception e){
+			 Log.d("Aptoide","Big Error!!!");
+			 Log.d("Aptoide",e.toString());
+			 System.out.println("*************************************** \n");
+			 e.printStackTrace();
+			 System.out.println("*************************************** \n");
 			 return null;
 		 }
 	 }
@@ -595,7 +602,11 @@ public class BaseManagement extends Activity {
 	 protected Handler download_error_handler = new Handler() {
 		 @Override
 		 public void handleMessage(Message msg) {
-			 Toast.makeText(mctx, getString(R.string.error_download_alrt), Toast.LENGTH_LONG).show();
+			 if(msg.arg1 == 1){
+				 Toast.makeText(mctx, "Ocorreu uma excepção no download do ficheiro!", Toast.LENGTH_LONG).show();
+			 }else{
+	        	Toast.makeText(mctx, "O hash md5 do download não é igual ao da BD!", Toast.LENGTH_LONG).show();
+			 }
 		 }
 	 };
 	 

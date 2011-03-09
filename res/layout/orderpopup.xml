@@ -31,6 +31,25 @@
                android:id="@+id/org_dwn" />
      </RadioGroup> 
      
+     <View android:layout_width="fill_parent" android:layout_height="1dip" android:background="#FFFFFFFF" 
+     		android:layout_marginBottom="9sp" android:layout_marginTop="9sp" android:layout_marginLeft="10sp"
+     		android:layout_marginRight="10sp"/>
+      
+      <RadioGroup android:layout_width="fill_parent"
+          android:layout_height="wrap_content" android:orientation="vertical"
+          android:id="@+id/groupshow">
+          <TextView android:layout_width="fill_parent"
+               android:layout_height="wrap_content"
+               android:text="Show applications:" 
+               android:textStyle="bold" />
+          <RadioButton android:checked="false"
+               android:text="By category" 
+               android:id="@+id/shw_ct" />
+          <RadioButton android:checked="true"
+               android:text="All applications" 
+               android:id="@+id/shw_all" />
+     </RadioGroup>
+     
 </LinearLayout>
 
 </ScrollView>
