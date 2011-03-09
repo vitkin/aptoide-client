@@ -82,7 +82,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.rat = 0.0f;
 		tmp_apk.down = -1;
 		tmp_apk.date = "2000-01-01";
-		tmp_apk.md5hash = null;
+		tmp_apk.md5hash = "";
 		tmp_apk.catg="";
 		tmp_apk.catg_type = 2;
 		
@@ -120,17 +120,15 @@ public class RssHandler extends DefaultHandler{
 				tmp_apk.rat = 0.0f;
 			}
 		}else if(apk_md5hash){
-			tmp_apk.md5hash = new String(ch).substring(start, start + length);
+			tmp_apk.md5hash = tmp_apk.md5hash.concat(new String(ch).substring(start, start + length));
 		}else if(apk_down){
 			tmp_apk.down = new Integer(new String(ch).substring(start, start + length));
 		}else if(apk_ctg){
 			String tmp = new String(ch).substring(start, start + length);
 			if(tmp.equals("Applications")){
-				Log.d("Aptoide", "Aplications");
 				tmp_apk.catg_type = 1;
 			}else if(tmp.equals("Games")){
 				tmp_apk.catg_type = 0;
-				Log.d("Aptoide", "Games");
 			}else
 				tmp_apk.catg_type = 2;
 		}else if(apk_ctg2){
@@ -182,7 +180,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.rat = 0.0f;
 			tmp_apk.date = "2000-01-01";
 			tmp_apk.down = -1;
-			tmp_apk.md5hash = null;
+			tmp_apk.md5hash = "";
 			tmp_apk.catg="";
 			tmp_apk.catg_type = 2;
 		}else if(localName.trim().equals("name")){

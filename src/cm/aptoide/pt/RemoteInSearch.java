@@ -54,6 +54,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -263,11 +264,20 @@ public class RemoteInSearch extends ListActivity{
 					new Thread() {
 						public void run() {
 							String apk_pkg = downloadFile(position);
+							Message msg_alt = new Message();
 							if(apk_pkg == null){
+								Log.d("Aptoide","Here 1");
 								Message msg = new Message();
 								msg.arg1 = 1;
 								download_handler.sendMessage(msg);
-								download_error_handler.sendEmptyMessage(0);
+								msg_alt.arg1 = 1;
+								download_error_handler.sendMessage(msg_alt);
+							}else if(apk_pkg.equals("*md5*")){
+								Message msg = new Message();
+								msg.arg1 = 1;
+								download_handler.sendMessage(msg);
+								msg_alt.arg1 = 0;
+								download_error_handler.sendMessage(msg_alt);
 							}else{
 								installApk(apk_pkg, position);
 							}
@@ -299,12 +309,21 @@ public class RemoteInSearch extends ListActivity{
 						new Thread() {
 							public void run() {
 								String apk_pkg = downloadFile(position);
+								Message msg_alt = new Message();
 								if(apk_pkg == null){
+									Log.d("Aptoide","Here 2");
 									//Toast.makeText(RemoteInSearch.this, "Could not connect to server!", Toast.LENGTH_LONG).show();
 									Message msg = new Message();
 									msg.arg1 = 1;
 									download_handler.sendMessage(msg);
-									download_error_handler.sendEmptyMessage(0);
+									msg_alt.arg1 = 1;
+									download_error_handler.sendMessage(msg_alt);
+								}else if(apk_pkg.equals("*md5*")){
+									Message msg = new Message();
+									msg.arg1 = 1;
+									download_handler.sendMessage(msg);
+									msg_alt.arg1 = 0;
+									download_error_handler.sendMessage(msg_alt);
 								}else{
 									installApk(apk_pkg, position);
 								}
@@ -432,24 +451,7 @@ public class RemoteInSearch extends ListActivity{
 			msg.obj = new String(getserv);
 			download_handler.sendMessage(msg);
 
-			/*BufferedInputStream getit = new BufferedInputStream(new URL(getserv).openStream());
-
-			String path = new String(APK_PATH+apk_lst.get(position).name+".apk");
-
-			FileOutputStream saveit = new FileOutputStream(path);
-			BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
-			byte data[] = new byte[1024];
-
-			int readed = getit.read(data,0,1024);
-			while(readed != -1) {
-				bout.write(data,0,readed);
-				readed = getit.read(data,0,1024);
-			}
-			bout.close();
-			getit.close();
-			saveit.close();*/
-
-			String path = new String(APK_PATH+apk_lst.get(position).name+".apk");
+			String path = new String(APK_PATH+apk_lst.get(position).apkid+".apk");
 			FileOutputStream saveit = new FileOutputStream(path);
 			DefaultHttpClient mHttpClient = new DefaultHttpClient();
 			HttpGet mHttpGet = new HttpGet(getserv);
@@ -473,20 +475,22 @@ public class RemoteInSearch extends ListActivity{
 				while((readed = getit.read(data, 0, 8096)) != -1) {
 					 saveit.write(data,0,readed);
 				 }
-				
-				/*byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				saveit.write(buffer);*/
 			}
 
 
 			File f = new File(path);
 			Md5Handler hash = new Md5Handler();
+			Log.d("Aptoide","Returning path: " + path);
 			if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+				Log.d("Aptoide","Ok all.");
 				return path;
 			}else{
-				return null;
+				Log.d("Aptoide","MD5Hash problem...");
+				Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
+				return "*md5*";
 			}
 		} catch(Exception e){
+			Log.d("Aptoide","WHAT?: ****** " + e.toString());
 			return null;
 		}
 	}
@@ -509,7 +513,11 @@ public class RemoteInSearch extends ListActivity{
 	private Handler download_error_handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	Toast.makeText(mctx, getString(R.string.error_download_alrt), Toast.LENGTH_LONG).show();
+        	if(msg.arg1 == 1){
+        		Toast.makeText(mctx, "Ocorreu uma excepção no download do ficheiro!", Toast.LENGTH_LONG).show();
+        	}else{
+        		Toast.makeText(mctx, "O hash md5 do download não é igual ao da BD!", Toast.LENGTH_LONG).show();
+        	}
         }
 	};
 }
