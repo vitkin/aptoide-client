@@ -9,13 +9,13 @@
           android:id="@+id/groupshow">
           <TextView android:layout_width="fill_parent"
                android:layout_height="wrap_content"
-               android:text="Show applications:" 
+               android:text="@string/order_popup_title2" 
                android:textStyle="bold" />
           <RadioButton android:checked="false"
-               android:text="By category" 
+               android:text="@string/order_popup_catg1" 
                android:id="@+id/shw_ct" />
           <RadioButton android:checked="true"
-               android:text="All applications" 
+               android:text="@string/order_popup_catg2" 
                android:id="@+id/shw_all" />
      </RadioGroup>
      
@@ -27,13 +27,13 @@
     android:layout_marginTop="20sp">
      <Button android:layout_width="fill_parent"
                android:layout_height="wrap_content" 
-               android:text="Save"
+               android:text="@string/save_btn"
                android:id="@+id/btn_save"
                android:layout_weight="0.5" /> 
                
      <Button android:layout_width="fill_parent"
                android:layout_height="wrap_content" 
-               android:text="Clear Cache"
+               android:text="@string/clear_cache_btn"
                android:id="@+id/clear_cache"
                android:layout_weight="0.5" />
                

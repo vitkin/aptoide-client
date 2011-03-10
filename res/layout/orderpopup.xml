@@ -15,19 +15,19 @@
           android:id="@+id/groupbtn">
           <TextView android:layout_width="fill_parent"
                android:layout_height="wrap_content"
-               android:text="Align application list by:" 
+               android:text="@string/order_popup_title1" 
                android:textStyle="bold" />
           <RadioButton android:checked="false"
-               android:text="Most recent first" 
+               android:text="@string/order_popup_lst1" 
                android:id="@+id/org_rct" />
           <RadioButton android:checked="false"
-               android:text="Alphabetically" 
+               android:text="@string/order_popup_lst2" 
                android:id="@+id/org_abc" />
           <RadioButton android:checked="false"
-               android:text="Rating" 
+               android:text="@string/order_popup_lst3" 
                android:id="@+id/org_rat" />
           <RadioButton android:checked="false"
-               android:text="Donwload number" 
+               android:text="@string/order_popup_lst4" 
                android:id="@+id/org_dwn" />
      </RadioGroup> 
      
@@ -40,13 +40,13 @@
           android:id="@+id/groupshow">
           <TextView android:layout_width="fill_parent"
                android:layout_height="wrap_content"
-               android:text="Show applications:" 
+               android:text="@string/order_popup_title2" 
                android:textStyle="bold" />
           <RadioButton android:checked="false"
-               android:text="By category" 
+               android:text="@string/order_popup_catg1" 
                android:id="@+id/shw_ct" />
           <RadioButton android:checked="true"
-               android:text="All applications" 
+               android:text="@string/order_popup_catg2" 
                android:id="@+id/shw_all" />
      </RadioGroup>
      
