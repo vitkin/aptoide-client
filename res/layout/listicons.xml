@@ -22,7 +22,7 @@
             android:textSize="21sp"
             android:layout_alignParentTop="true"
             android:textStyle="bold"
-            android:singleLine="true"
+            android:maxLines="1"
             android:ellipsize="marquee"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
@@ -32,7 +32,7 @@
             android:layout_alignParentTop="true"
             android:textStyle="bold"
             android:textColor="#FFFFAA"
-            android:singleLine="true"
+            android:maxLines="1"
             android:ellipsize="marquee"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
@@ -56,9 +56,16 @@
         	android:orientation="vertical"
         	android:gravity="right">
         	
+        	<TextView android:id="@+id/dwn"
+            	android:textSize="12sp"
+				android:gravity="right"
+            	android:layout_width="wrap_content"
+            	android:layout_height="wrap_content"
+            	/>
             
         	<RatingBar android:id="@+id/rating"
         		style="?android:attr/ratingBarStyleSmall"
+        		android:layout_below="@id/dwn"
         		android:layout_width="wrap_content"
         		android:layout_height="wrap_content"
         		android:isIndicator="true"
