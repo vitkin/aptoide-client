@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
     <TextView
-    	android:text="Uri to repository"
+    	android:text="@string/add_repo_text"
     	android:layout_width="wrap_content"
         android:ems="20"
         android:textSize="16dip"
@@ -56,7 +56,7 @@
   	android:id="@+id/secure_chk"
   	android:layout_width="wrap_content"
   	android:layout_height="wrap_content"
-  	android:text="Private"
+  	android:text="@string/add_repo_private"
   	/>
 	
    <EditText

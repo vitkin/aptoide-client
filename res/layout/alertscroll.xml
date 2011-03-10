@@ -37,7 +37,7 @@
             				android:textStyle="bold"
             				android:layout_width="wrap_content"
             				android:layout_height="wrap_content"
-            				android:text="Number of downloads:"
+            				android:text="@string/dwn_n"
             				android:textColor="#FFFFBB"/>
             			
             			<TextView android:id="@+id/down_n"

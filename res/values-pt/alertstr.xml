@@ -2,6 +2,7 @@
 <resources>
     <string name="up_server">Servidores: </string>
     <string name="lstver">Versão no Servidor: </string>
+    <string name="dwn_n">Número de downloads: </string>
     <string name="isinst">Instalada: </string>
     <string name="instver">Versão Instalada: </string>
     <string name="install">Instalar </string>
