@@ -377,6 +377,8 @@ public class BaseManagement extends Activity {
 					String iconpath = new String(getString(R.string.icons_path)+node.apkid);
 					apk_line.put("icon", iconpath);
 					apk_line.put("rat", node.rat);
+					if(node.down >= 0)
+						apk_line.put("down", node.down + " Down.");
 					if(node.status == 1){
 						apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 						apk_line.put("name", node.name);
@@ -394,7 +396,7 @@ public class BaseManagement extends Activity {
 				}
 
 				availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
-						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
 
 				availAdpt.setViewBinder(new LstBinder());
 
