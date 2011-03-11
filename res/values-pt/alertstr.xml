@@ -21,6 +21,9 @@
     <string name="download_alrt">A fazer download de:\n </string>
     
     
+    <string name="md5_error">O hash md5 do download não é igual ao da base de dados.\nPor favor faça update antes de voltar a tentar.</string>
+    <string name="network_error">Ocorreu uma excepção no download do ficheiro.\nTente novamente.</string>
+    
     
 </resources>
 <!--

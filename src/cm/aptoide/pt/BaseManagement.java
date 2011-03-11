@@ -486,17 +486,35 @@ public class BaseManagement extends Activity {
 			 
 			 if(getserv.length() == 0)
 				 throw new TimeoutException();
-
+			 
 			 Message msg = new Message();
 			 msg.arg1 = 0;
 			 msg.obj = new String(getserv);
 			 download_handler.sendMessage(msg);
 			 
 			 String path = new String(APK_PATH+apkid+".apk");
+			 
+			 // If file exists, removes it...
+			 File f_chk = new File(path);
+			 if(f_chk.exists()){
+				 Log.d("Aptoide","Exists... deleting...");
+				 f_chk.delete();
+			 }
+			 Log.d("Aptoide","File dont exists (or was deleted)");
+			 f_chk = null;
+			 
 			 FileOutputStream saveit = new FileOutputStream(path);
 			 
 			 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
 			 
+			 if(mHttpResponse == null){
+				 Log.d("Aptoide","Problem in network... retry...");	
+				 mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
+				 if(mHttpResponse == null){
+					 Log.d("Aptoide","Major network exception... Exiting!");
+					 return null;
+				 }
+			 }
 			 
 			 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				 return null;
@@ -578,12 +596,14 @@ public class BaseManagement extends Activity {
 			 apk_line.put("rat", node.rat);
 			 apk_line.put("status", "Version: " + node.ver);
 			 apk_line.put("name", node.name);
+			 if(node.down >= 0)
+				 apk_line.put("down", node.down + " Down.");
 			 availMap.add(apk_line);
 		 }
 
 
 		 rtnadp = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
-				 new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+				 new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
 
 		 rtnadp.setViewBinder(new LstBinder());
 
@@ -604,10 +624,13 @@ public class BaseManagement extends Activity {
 	 protected Handler download_error_handler = new Handler() {
 		 @Override
 		 public void handleMessage(Message msg) {
+			 while(pd.isShowing())
+				 pd.dismiss();
+			
 			 if(msg.arg1 == 1){
-				 Toast.makeText(mctx, "Ocorreu uma excepção no download do ficheiro!", Toast.LENGTH_LONG).show();
+				 Toast.makeText(mctx, getString(R.string.network_error), Toast.LENGTH_LONG).show();
 			 }else{
-	        	Toast.makeText(mctx, "O hash md5 do download não é igual ao da BD!", Toast.LENGTH_LONG).show();
+	        	Toast.makeText(mctx, getString(R.string.md5_error), Toast.LENGTH_LONG).show();
 			 }
 		 }
 	 };
@@ -618,7 +641,6 @@ public class BaseManagement extends Activity {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			while(pd.isShowing()){
-				Log.d("Aptoide","AM I HERE?!?!?");
 				pd.dismiss();
 			}
 			prefEdit.putBoolean("changeavail", true);
