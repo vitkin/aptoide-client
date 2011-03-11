@@ -85,6 +85,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.md5hash = "";
 		tmp_apk.catg="";
 		tmp_apk.catg_type = 2;
+		tmp_apk.path="";
 		
 	}
 	
@@ -97,7 +98,7 @@ public class RssHandler extends DefaultHandler{
 		}else if(apk_id){
 			tmp_apk.apkid = new String(ch).substring(start, start + length);
 		}else if(apk_path){
-			tmp_apk.path = new String(ch).substring(start, start + length);
+			tmp_apk.path = tmp_apk.path.concat(new String(ch).substring(start, start + length));
 		}else if(apk_ver){
 			tmp_apk.ver = new String(ch).substring(start, start + length);
 		}else if (apk_vercode){
@@ -183,6 +184,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.md5hash = "";
 			tmp_apk.catg="";
 			tmp_apk.catg_type = 2;
+			tmp_apk.path="";
 		}else if(localName.trim().equals("name")){
 			apk_name = false;
 		}else if(localName.trim().equals("path")){

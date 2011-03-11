@@ -281,9 +281,9 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 						public void run() {
 							String apk_path = downloadFile(pkg_id);
 							Message msg_alt = new Message();
-							Message msg = new Message();
+							/*Message msg = new Message();
 							msg.arg1 = 1;
-							download_handler.sendMessage(msg);
+							download_handler.sendMessage(msg);*/
 							if(apk_path == null){
 								msg_alt.arg1= 1;
 								download_error_handler.sendMessage(msg_alt);
@@ -291,6 +291,9 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 								msg_alt.arg1 = 0;
 								download_error_handler.sendMessage(msg_alt);
 							}else{
+								Message msg = new Message();
+								msg.arg1 = 1;
+								download_handler.sendMessage(msg);
 								installApk(apk_path);
 							}
 						}

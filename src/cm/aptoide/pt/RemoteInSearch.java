@@ -452,6 +452,16 @@ public class RemoteInSearch extends ListActivity{
 			download_handler.sendMessage(msg);
 
 			String path = new String(APK_PATH+apk_lst.get(position).apkid+".apk");
+			
+			// If file exists, removes it...
+			 File f_chk = new File(path);
+			 if(f_chk.exists()){
+				 Log.d("Aptoide","Exists... deleting...");
+				 f_chk.delete();
+			 }
+			 Log.d("Aptoide","File dont exists (or was deleted)");
+			 f_chk = null;
+			
 			FileOutputStream saveit = new FileOutputStream(path);
 			DefaultHttpClient mHttpClient = new DefaultHttpClient();
 			HttpGet mHttpGet = new HttpGet(getserv);
@@ -466,6 +476,16 @@ public class RemoteInSearch extends ListActivity{
 			}
 
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			
+			if(mHttpResponse == null){
+				 Log.d("Aptoide","Problem in network... retry...");	
+				 mHttpResponse = mHttpClient.execute(mHttpGet);
+				 if(mHttpResponse == null){
+					 Log.d("Aptoide","Major network exception... Exiting!");
+					 return null;
+				 }
+			 }
+			
 			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				return null;
 			}else{
