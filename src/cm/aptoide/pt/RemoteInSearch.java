@@ -45,6 +45,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -77,6 +78,9 @@ public class RemoteInSearch extends ListActivity{
 	private static final int SEARCH_MENU = 3;
 	private static final int SETTINGS = 4;
 	private static final int ABOUT = 5;
+	
+	static protected SharedPreferences sPref;
+	static protected SharedPreferences.Editor prefEdit;
 	
 	private DbHandler db = null;
 	private Vector<ApkNode> apk_lst = null;
@@ -131,6 +135,9 @@ public class RemoteInSearch extends ListActivity{
 		db = new DbHandler(this);
 		
 		mPm = getPackageManager();
+		
+		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+		prefEdit = sPref.edit();
 		
 		getListView().setFastScrollEnabled(true);
 
@@ -384,11 +391,15 @@ public class RemoteInSearch extends ListActivity{
 			for(PackageInfo node: getapks){
 				if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
 					db.insertInstalled(apk_lst.get(requestCode).apkid);
+					prefEdit.putBoolean("search_updt", true);
+					prefEdit.commit();
 					redraw();
 					return;
 				}
 			}
 			db.removeInstalled(apk_lst.get(requestCode).apkid);
+			prefEdit.putBoolean("search_updt", true);
+			prefEdit.commit();
 			redraw();
 		}
 	}
