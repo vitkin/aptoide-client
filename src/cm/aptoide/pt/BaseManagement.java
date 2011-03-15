@@ -165,7 +165,7 @@ public class BaseManagement extends Activity {
 		Builder alrt = new AlertDialog.Builder(this).setView(view);
 		final AlertDialog p = alrt.create();
 		p.setIcon(android.R.drawable.ic_menu_sort_by_size);
-		p.setTitle("List options");
+		p.setTitle(getString(R.string.order_popup_title));
 		
 		p.setButton("Ok", new DialogInterface.OnClickListener() {
 			
