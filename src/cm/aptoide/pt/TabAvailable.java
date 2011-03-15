@@ -106,9 +106,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 					if(sPref.getBoolean("pop_changes", false)){
 						prefEdit.remove("pop_changes");
 						prefEdit.commit();
-						Log.d("Aptoide","We enter pop stuf...");
 						if(sPref.getBoolean("mode", false)){
-							Log.d("Aptoide","We enter pop mod on!");
 							if(!(shown_now == null) || main_shown_now == 2){
 								handler_adpt = getGivenCatg(shown_now, main_shown_now);
 							}else{

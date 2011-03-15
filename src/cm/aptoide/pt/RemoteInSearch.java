@@ -273,7 +273,6 @@ public class RemoteInSearch extends ListActivity{
 							String apk_pkg = downloadFile(position);
 							Message msg_alt = new Message();
 							if(apk_pkg == null){
-								Log.d("Aptoide","Here 1");
 								Message msg = new Message();
 								msg.arg1 = 1;
 								download_handler.sendMessage(msg);
@@ -318,7 +317,6 @@ public class RemoteInSearch extends ListActivity{
 								String apk_pkg = downloadFile(position);
 								Message msg_alt = new Message();
 								if(apk_pkg == null){
-									Log.d("Aptoide","Here 2");
 									//Toast.makeText(RemoteInSearch.this, "Could not connect to server!", Toast.LENGTH_LONG).show();
 									Message msg = new Message();
 									msg.arg1 = 1;
@@ -467,10 +465,8 @@ public class RemoteInSearch extends ListActivity{
 			// If file exists, removes it...
 			 File f_chk = new File(path);
 			 if(f_chk.exists()){
-				 Log.d("Aptoide","Exists... deleting...");
 				 f_chk.delete();
 			 }
-			 Log.d("Aptoide","File dont exists (or was deleted)");
 			 f_chk = null;
 			
 			FileOutputStream saveit = new FileOutputStream(path);
@@ -511,17 +507,13 @@ public class RemoteInSearch extends ListActivity{
 
 			File f = new File(path);
 			Md5Handler hash = new Md5Handler();
-			Log.d("Aptoide","Returning path: " + path);
 			if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
-				Log.d("Aptoide","Ok all.");
 				return path;
 			}else{
-				Log.d("Aptoide","MD5Hash problem...");
 				Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
 				return "*md5*";
 			}
 		} catch(Exception e){
-			Log.d("Aptoide","WHAT?: ****** " + e.toString());
 			return null;
 		}
 	}

@@ -317,7 +317,6 @@ public class BaseManagement extends Activity {
 				db.insertInstalled(apkid);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
-				Log.d("Aptoide","--- install");
 				redrawCatgList();
 				redraw();
 			} catch (NameNotFoundException e) {	}
@@ -329,7 +328,6 @@ public class BaseManagement extends Activity {
 				db.removeInstalled(apkid);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
-				Log.d("Aptoide","--- remove");
 				redrawCatgList();
 				redraw();
 			}
@@ -344,7 +342,6 @@ public class BaseManagement extends Activity {
 				db.insertInstalled(apkid);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
-				Log.d("Aptoide","--- update");
 				redrawCatgList();
 				redraw();
 			}
@@ -500,10 +497,8 @@ public class BaseManagement extends Activity {
 			 // If file exists, removes it...
 			 File f_chk = new File(path);
 			 if(f_chk.exists()){
-				 Log.d("Aptoide","Exists... deleting...");
 				 f_chk.delete();
 			 }
-			 Log.d("Aptoide","File dont exists (or was deleted)");
 			 f_chk = null;
 			 
 			 FileOutputStream saveit = new FileOutputStream(path);
@@ -531,21 +526,13 @@ public class BaseManagement extends Activity {
 			 }
 			 File f = new File(path);
 			 Md5Handler hash = new Md5Handler();
-			 Log.d("Aptoide","The path is: " + path);
 			 if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
-				 Log.d("Aptoide","All ok!");
 				 return path;
 			 }else{
-				 Log.d("Aptoide","MD5 error...");
 				 Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
 				 return "*md5*";
 			 }
 		 } catch(Exception e){
-			 Log.d("Aptoide","Big Error!!!");
-			 Log.d("Aptoide",e.toString());
-			 System.out.println("*************************************** \n");
-			 e.printStackTrace();
-			 System.out.println("*************************************** \n");
 			 return null;
 		 }
 	 }
@@ -568,19 +555,16 @@ public class BaseManagement extends Activity {
 	 
 	 protected SimpleAdapter getAvailable(String show_now, int main_show_now){
 		 if(sPref.getBoolean("mode", false)){
-			 Log.d("Aptoide","Category mode on!");
 			 if(!(show_now == null) || main_show_now == 2){
 				 return getGivenCatg(show_now, main_show_now);
 			 }
         	 main_catg_adpt.setViewBinder(new SimpeLstBinder());
         	 return main_catg_adpt;
          }
-		 Log.d("Aptoide","Category mode off!");
 		 return availAdpt;
 	 }
 	 
 	 protected SimpleAdapter getGivenCatg(String ctg, int ord){
-		 Log.d("Aptoide","Fetch: " + ctg);
 		 List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
 		 Map<String, Object> apk_line;
 		 Vector<ApkNode> tmp_lst = null;
