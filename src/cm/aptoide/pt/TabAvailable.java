@@ -91,7 +91,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case 3:
-			Log.d("Aptoide","Estamos aqui...");
 			final AlertDialog p = resumeMe();
 			p.show();
 			

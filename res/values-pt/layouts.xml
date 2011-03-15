@@ -13,6 +13,8 @@
     <string name="order_popup_catg1">Por categoria </string>
     <string name="order_popup_catg2">Todas as aplicações </string>
     
+    <string name="order_popup_title">Opções de Exibição </string>
+    
     <string name="save_btn">Guardar </string>
     <string name="clear_cache_btn">Limpar Cache </string>
     
