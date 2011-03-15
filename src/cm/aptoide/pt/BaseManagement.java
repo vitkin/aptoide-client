@@ -247,8 +247,12 @@ public class BaseManagement extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		if(sPref.getBoolean("update", false)){
+		if(sPref.getBoolean("search_updt", false)){
+			prefEdit.remove("search_updt");
+			prefEdit.commit();
+			redraw();
+			redrawCatgList();
+		}else if(sPref.getBoolean("update", false)){
 			prefEdit.remove("update");
 			prefEdit.commit();
 			if(sPref.contains("order_lst")){
@@ -306,7 +310,6 @@ public class BaseManagement extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
 		if(requestCode == INSTALL){
 			String apkid = sPref.getString("pkg", null);
 			try {
