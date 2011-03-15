@@ -270,7 +270,6 @@ public class ManageRepo extends ListActivity{
 			break;
 		}
 		
-		Log.d("Aptoide","On ---> " + tmp.getText());
 		
 		return super.onContextItemSelected(item);
 	}
@@ -558,8 +557,6 @@ public class ManageRepo extends ListActivity{
 			Header[] azz = mHttpResponse.getHeaders("Location");
 			if(azz.length > 0){
 				String newurl = azz[0].getValue();
-				Log.d("Aptoide", "Now to: " + newurl);
-				Log.d("Aptoide", "Login " + user + " - " + pwd);
 
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
@@ -576,9 +573,9 @@ public class ManageRepo extends ListActivity{
 			}
 
 			return mHttpResponse.getStatusLine().getStatusCode();
-		} catch (ClientProtocolException e) {Log.d("Aptoide","Error 1"); return -1;} 
-		catch (IOException e) {Log.d("Aptoide","Error 2"); return -1;}
-		catch (IllegalArgumentException e) {Log.d("Aptoide","Error 3"); return -1;}
+		} catch (ClientProtocolException e) { return -1;} 
+		catch (IOException e) { return -1;}
+		catch (IllegalArgumentException e) { return -1;}
 	}
 	
 	

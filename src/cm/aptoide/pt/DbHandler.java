@@ -93,10 +93,8 @@ public class DbHandler {
 
 		q = db.rawQuery(basic_query, null);
 		if(q.moveToFirst()){
-			Log.d("Aptoide", "In: " + q.getInt(0) + " there is: " + q.getInt(1));
 			rtn[q.getInt(0)] = q.getInt(1);
 			while(q.moveToNext()){
-				Log.d("Aptoide", "In: " + q.getInt(0) + " there is: " + q.getInt(1));
 				rtn[q.getInt(0)] = q.getInt(1);
 			}
 			return rtn;

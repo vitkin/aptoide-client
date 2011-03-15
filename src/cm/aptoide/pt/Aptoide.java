@@ -92,7 +92,6 @@ public class Aptoide extends Activity {
 						i.putExtra("newrepo", repo);
 					}else if(uri.startsWith("aptoidexml")){
 						String repo = uri.substring(13);
-						Log.d("Aptoide",repo);
 						parseXmlString(repo);
 						i.putExtra("uri", server_lst);
 						if(get_apks.size() > 0){
@@ -261,18 +260,14 @@ public class Aptoide extends Activity {
 	    	XMLReader xr = sp.getXMLReader();
 	    	NewServerRssHandler handler = new NewServerRssHandler(this);
 	    	xr.setContentHandler(handler);
-	    	Log.d("Aptoide","Got here....");
 	    	InputSource is = new InputSource();
 	    	is.setCharacterStream(new StringReader(file));
 	    	xr.parse(is);
 	    	server_lst = handler.getNewSrvs();
 	    	get_apks = handler.getNewApks();
 	    } catch (IOException e) {
-	    	Log.d("Aptoide",e.toString());
 	    } catch (SAXException e) {
-	    	Log.d("Aptoide",e.toString());
 	    } catch (ParserConfigurationException e) {
-	    	Log.d("Aptoide",e.toString());
 		}
 	}
 	

@@ -269,7 +269,6 @@ public class RemoteInTab extends TabActivity {
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
 			
 			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				 Log.d("Aptoide", "NOT FOUND!!!");
 				 return;
 			 }
 
@@ -367,7 +366,7 @@ public class RemoteInTab extends TabActivity {
 			alrt.setTitle(R.string.app_name);
 			alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int	whichButton) {
-					Uri uri = Uri.parse("http://aptoide.com/changelog.html");
+					Uri uri = Uri.parse(getString(R.string.change_log_url));
 					startActivity(new Intent( Intent.ACTION_VIEW, uri));
 				}
 			});
@@ -445,7 +444,7 @@ public class RemoteInTab extends TabActivity {
 								}
 							}
 						}
-					} catch (Exception e) { Log.d("Aptoide", "Major exception..."); e.printStackTrace();}
+					} catch (Exception e) { e.printStackTrace();}
 					finally{
 						update_handler.sendEmptyMessage(0);
 					}
@@ -485,15 +484,11 @@ public class RemoteInTab extends TabActivity {
 	    	
 	    	InputStreamReader isr = new FileReader(xml_file);
 	    	InputSource is = new InputSource(isr);
-	    	Log.d("Aptoide","Yup1");
 	    	xr.parse(is);
-	    	Log.d("Aptoide","Yup2");
 	    	
 	    } catch (Exception e){
-	    	Log.d("Aptoide", "Que raio!!!!!");
 	    	xr = null;
 		}finally{
-			Log.d("Aptoide", "I delete!");
 			xml_file.delete();
 		}
 	}
@@ -554,32 +549,27 @@ public class RemoteInTab extends TabActivity {
 	 */
 	private boolean downloadList(String srv){
 		String url = srv+REMOTE_FILE;
-		Log.d("Aptoide","Fetching file: " + url);
         try {
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
         	        	
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
         	
-			Log.d("Aptoide","Return: " + mHttpResponse.getStatusLine().getStatusCode());
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 				saveit.write(buffer);
 			}else{
-				Log.d("Aptoide","Server error");
 				return false;
 				//Does nothing
 			}
-			Log.d("Aptoide","Done!");
 			return true;
 		} catch (UnknownHostException e){
 			/*Message msg = new Message();
 			msg.obj = new String(srv);
 			error_handler.sendMessage(msg);*/
-			Log.d("Aptoide","Error 1");
 			return false;
-		} catch (ClientProtocolException e) {Log.d("Aptoide","Error 2"); return false;} 
-		  catch (IOException e) { Log.d("Aptoide","Error 3"); return false;}
-		  catch (IllegalArgumentException e) {Log.d("Aptoide","Error 4"); return false;}
+		} catch (ClientProtocolException e) { return false;} 
+		  catch (IOException e) {  return false;}
+		  catch (IllegalArgumentException e) { return false;}
 	}
 	
 	
@@ -592,7 +582,6 @@ public class RemoteInTab extends TabActivity {
     		prefEdit.putBoolean("update", true);
         	prefEdit.commit();
         	if(pd.isShowing()){
-        		Log.d("Aptoide", "Dismiss...");
         		pd.dismiss();
         	}
         	myTabHost.setCurrentTabByTag("avail");

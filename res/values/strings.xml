@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">Aptoide</string>
     <string name="ver_str">"2.3.6"</string>
+    <string name="change_log_url">http://aptoide.com/changelog_2_4.html</string>
     
     <string name="tab_avail">Available</string>
     <string name="tab_inst">Installed</string>
