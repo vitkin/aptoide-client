@@ -25,17 +25,17 @@ public class ExtrasRssHandler extends DefaultHandler{
 		mctx = ctx;
 		server = srv;
 		db = new DbHandler(mctx);
-		e_apkid = null;
-		e_cmt = null;
+		e_apkid = "";
+		e_cmt = "";
 	}
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		super.characters(ch, start, length);
 		if(apkid){
-			e_apkid = new String(ch).substring(start, start + length);
+			e_apkid = e_apkid.concat(new String(ch).substring(start, start + length));
 		}else if(cmt){
-			e_cmt = new String(ch).substring(start, start + length);
+			e_cmt = e_cmt.concat(new String(ch).substring(start, start + length));
 		}
 	}
 
@@ -49,8 +49,8 @@ public class ExtrasRssHandler extends DefaultHandler{
 			pkg = false;
 			// Add fetched information to DB
 			db.addExtraXML(e_apkid, e_cmt, server);
-			e_apkid = null;
-			e_cmt = null;
+			e_apkid = "";
+			e_cmt = "";
 		}else if(localName.trim().equals("apkid")){
 			apkid = false;
 		}else if(localName.trim().equals("cmt")){

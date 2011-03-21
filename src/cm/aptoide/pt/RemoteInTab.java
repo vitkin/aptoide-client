@@ -502,35 +502,9 @@ public class RemoteInTab extends TabActivity {
 		
         try {
         	FileOutputStream saveit = new FileOutputStream(LOCAL_PATH+REMOTE_EXTRAS_FILE);
-        	
-        	
-        	/*HttpParams httpParameters = new BasicHttpParams();
-    		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
-    		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
-    		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
-            HttpGet mHttpGet = new HttpGet(url);
-            
-            String[] logins = null; 
-    		logins = db.getLogin(srv);
-    		if(logins != null){
-    			URL mUrl = new URL(url);
-    			mHttpClient.getCredentialsProvider().setCredentials(
-                        new AuthScope(mUrl.getHost(), mUrl.getPort()),
-                        new UsernamePasswordCredentials(logins[0], logins[1]));
-    		}
-            
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);*/
-        	
+
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
         	
-			/*if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				
-			}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
-				
-			}else{
-				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-                saveit.write(buffer);
-			}*/
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
                 saveit.write(buffer);
