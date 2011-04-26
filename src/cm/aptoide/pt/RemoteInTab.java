@@ -25,13 +25,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.UnknownHostException;
+import java.security.DigestException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -529,6 +534,54 @@ public class RemoteInTab extends TabActivity {
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
         	
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
+				
+				// see last-modified...
+				MessageDigest md5hash = MessageDigest.getInstance("MD5");
+				Header lst_modif = mHttpResponse.getLastHeader("Last-Modified");
+				String lst_modif_str = lst_modif.getValue();
+				Log.d("Aptoide","date is: " + lst_modif_str);
+				
+				
+				Log.d("Aptoide","hash date: " + new BigInteger(1,lst_modif_str.getBytes()).toString(16));
+				
+				/*String datei = lst_modif_str.substring(5, 16);
+				
+				Log.d("Aptoide","date parsed: " + datei);
+				
+				
+				String tmp_db = "";
+				tmp_db = tmp_db.concat(datei.substring(6));
+				String month_date = datei.substring(3,6);
+				if(month_date.equalsIgnoreCase("Jan")){
+					tmp_db = tmp_db.concat("1");
+				}else if(month_date.equalsIgnoreCase("Fev")){
+					tmp_db = tmp_db.concat("2");
+				}else if(month_date.equalsIgnoreCase("Mar")){
+					tmp_db = tmp_db.concat("3");
+				}else if(month_date.equalsIgnoreCase("Apr")){
+					tmp_db = tmp_db.concat("4");
+				}else if(month_date.equalsIgnoreCase("Mai")){
+					tmp_db = tmp_db.concat("5");
+				}else if(month_date.equalsIgnoreCase("Jun")){
+					tmp_db = tmp_db.concat("6");
+				}else if(month_date.equalsIgnoreCase("Jul")){
+					tmp_db = tmp_db.concat("7");
+				}else if(month_date.equalsIgnoreCase("Ago")){
+					tmp_db = tmp_db.concat("8");
+				}else if(month_date.equalsIgnoreCase("Sep")){
+					tmp_db = tmp_db.concat("9");
+				}else if(month_date.equalsIgnoreCase("Oct")){
+					tmp_db = tmp_db.concat("10");
+				}else if(month_date.equalsIgnoreCase("Nov")){
+					tmp_db = tmp_db.concat("11");
+				}else if(month_date.equalsIgnoreCase("Dec")){
+					tmp_db = tmp_db.concat("12");
+				}
+				tmp_db = tmp_db.concat(datei.substring(0, 2));
+				
+				Log.d("Aptoide","parsed db = " + tmp_db);*/
+				
+				
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 				saveit.write(buffer);
 			}else{
@@ -543,7 +596,8 @@ public class RemoteInTab extends TabActivity {
 			return false;
 		} catch (ClientProtocolException e) { return false;} 
 		  catch (IOException e) {  return false;}
-		  catch (IllegalArgumentException e) { return false;}
+		  catch (IllegalArgumentException e) { return false;} 
+		  catch (NoSuchAlgorithmException e) { return false;}
 	}
 	
 	
