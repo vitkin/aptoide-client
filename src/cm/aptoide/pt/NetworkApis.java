@@ -26,8 +26,8 @@ public class NetworkApis {
 			DbHandler db = new DbHandler(mctx);
 
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
-			HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 7000);
+			HttpConnectionParams.setSoTimeout(httpParameters, 7000);
 
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {
@@ -78,6 +78,7 @@ public class NetworkApis {
 			}
 			return mHttpResponse;
 		}catch(IOException e) {return null; }
+		
 		
 	}
 	
