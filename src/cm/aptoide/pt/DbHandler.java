@@ -30,7 +30,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 public class DbHandler {
 	
@@ -58,7 +57,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default 0 not null, user text, psd text,"
-				+ " secure integer default 0 not null);";
+				+ " secure integer default 0 not null, updatetime text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
 				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, catg_ord integer default 2 not null, primary key(apkid));";
@@ -867,5 +866,34 @@ public class DbHandler {
 	
 	void clodeDb(){
 		db.close();
+	}
+	
+	/*
+	 * Tag is the md5 hash of server last-modified
+	 */
+	String getUpdateTime(String repo){
+		String updt = null;
+		Cursor c = null;
+		try{
+			c = db.query(TABLE_NAME_URI, new String[] {"updatetime"}, "uri='" + repo + "'", null, null, null, null);
+			if(c.moveToFirst()){
+				updt = c.getString(0);
+			}
+		}
+		catch(Exception e) { return null;}
+		finally{
+			c.close();
+		}
+		return updt;
+	}
+	
+	void setUpdateTime(String updt, String repo){
+		ContentValues tmp = new ContentValues();
+		tmp.put("updatetime", updt);
+		db.update(TABLE_NAME_URI, tmp, "uri='" + repo + "'", null);
+	}
+	
+	void cleanRepoApps(String repo){
+		db.delete(TABLE_NAME, "server='"+repo+"'", null);
 	}
 }

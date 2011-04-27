@@ -430,26 +430,31 @@ public class RemoteInTab extends TabActivity {
 		//Check for connection first!
 		
 		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED){
-			db.removeAll();
 			myTabHost.setCurrentTabByTag("inst");
 			new Thread() {
 				public void run() {
+					//boolean db_clear = true;
 					try{
 						Vector<ServerNode> serv = db.getServers();
-						boolean parse = false;
+						int parse = -1;
 						failed_repo.clear();
 						for(ServerNode node: serv){
 							if(node.inuse){
 								Log.d("Aptoide", "Updating repo: " + node.uri);
 								parse = downloadList(node.uri);
-								if(parse){
+								if(parse == 0){
+									/*if(db_clear){
+										db_clear = false;
+										db.removeAll();
+									}*/
+									db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
-								}else{
+								}else if(parse == -1){
 									failed_repo.add(node.uri);
 								}
 							}
 						}
-					} catch (Exception e) { e.printStackTrace();}
+					} catch (Exception e) { }
 					finally{
 						update_handler.sendEmptyMessage(0);
 					}
@@ -526,7 +531,7 @@ public class RemoteInTab extends TabActivity {
 	/*
 	 * Get info.xml file from server and save it in the SD card
 	 */
-	private boolean downloadList(String srv){
+	private int downloadList(String srv){
 		String url = srv+REMOTE_FILE;
         try {
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
@@ -538,12 +543,26 @@ public class RemoteInTab extends TabActivity {
 				// see last-modified...
 				MessageDigest md5hash = MessageDigest.getInstance("MD5");
 				Header lst_modif = mHttpResponse.getLastHeader("Last-Modified");
-				String lst_modif_str = lst_modif.getValue();
-				Log.d("Aptoide","date is: " + lst_modif_str);
 				
-				
-				Log.d("Aptoide","hash date: " + new BigInteger(1,lst_modif_str.getBytes()).toString(16));
-				
+				if(lst_modif != null){
+					String lst_modif_str = lst_modif.getValue();
+					String hash_lst_modif = new BigInteger(1,md5hash.digest(lst_modif_str.getBytes())).toString(16);
+					Log.d("Aptoide","date is: " + lst_modif_str);
+					Log.d("Aptoide","hash date: " + hash_lst_modif);
+
+					String db_lst_modify = db.getUpdateTime(srv);
+					if(db_lst_modify == null){
+						db.setUpdateTime(hash_lst_modif, srv);
+					}else{
+						if(!db_lst_modify.equalsIgnoreCase(hash_lst_modif)){
+							db.setUpdateTime(hash_lst_modif, srv);
+						}else{
+							Log.d("Aptoide","No update needed!");
+							return 1;
+						}
+					}
+				}
+
 				/*String datei = lst_modif_str.substring(5, 16);
 				
 				Log.d("Aptoide","date parsed: " + datei);
@@ -585,19 +604,19 @@ public class RemoteInTab extends TabActivity {
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 				saveit.write(buffer);
 			}else{
-				return false;
+				return -1;
 				//Does nothing
 			}
-			return true;
+			return 0;
 		} catch (UnknownHostException e){
 			/*Message msg = new Message();
 			msg.obj = new String(srv);
 			error_handler.sendMessage(msg);*/
-			return false;
-		} catch (ClientProtocolException e) { return false;} 
-		  catch (IOException e) {  return false;}
-		  catch (IllegalArgumentException e) { return false;} 
-		  catch (NoSuchAlgorithmException e) { return false;}
+			return -1;
+		} catch (ClientProtocolException e) { return -1;} 
+		  catch (IOException e) {  return -1;}
+		  catch (IllegalArgumentException e) { return -1;} 
+		  catch (NoSuchAlgorithmException e) { return -1;}
 	}
 	
 	
