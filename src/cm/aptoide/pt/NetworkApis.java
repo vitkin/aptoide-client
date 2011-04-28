@@ -21,6 +21,9 @@ import android.content.Context;
 
 public class NetworkApis {
 
+	private static final String terminal_info = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"+";"+System.getProperty("os.version")
+	+";Android "+android.os.Build.VERSION.RELEASE;
+	
 	public static HttpResponse getHttpResponse(String url, String srv, Context mctx){
 		try{
 			DbHandler db = new DbHandler(mctx);
@@ -28,7 +31,7 @@ public class NetworkApis {
 			HttpParams httpParameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParameters, 7000);
 			HttpConnectionParams.setSoTimeout(httpParameters, 7000);
-
+			
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {
 
@@ -44,7 +47,9 @@ public class NetworkApis {
 			});
 			
 			HttpGet mHttpGet = new HttpGet(url);
-
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"
+					+ terminal_info);
+			
 			String[] logins = null; 
 			logins = db.getLogin(srv);
 			if(logins != null){
@@ -106,6 +111,7 @@ public class NetworkApis {
 			});
 			
 			HttpGet mHttpGet = new HttpGet(url);
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";fetch icon");
 
 			//String[] logins = null; 
 			//logins = db.getLogin(srv);
