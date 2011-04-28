@@ -452,6 +452,8 @@ public class RemoteInTab extends TabActivity {
 								}else if(parse == -1){
 									failed_repo.add(node.uri);
 								}
+							}else{
+								db.cleanRepoApps(node.uri);
 							}
 						}
 					} catch (Exception e) { }
