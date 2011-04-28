@@ -56,7 +56,7 @@ public class DbHandler {
 				+ "instver text not null, instvercode number not null);";
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
-				+ " (uri text primary key, inuse integer not null, napk integer default 0 not null, user text, psd text,"
+				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
 				+ " secure integer default 0 not null, updatetime text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
@@ -755,6 +755,13 @@ public class DbHandler {
 			c.close();
 		}
 		return rt;
+	}
+	
+	public void resetServerCacheUse(String repo){
+		ContentValues tmp = new ContentValues();
+		tmp.put("napk", -1);
+		tmp.put("updatetime", "0");
+		db.update(TABLE_NAME_URI, tmp, "uri='" + repo + "'", null);
 	}
 	
 	public void changeServerStatus(String uri){
