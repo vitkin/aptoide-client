@@ -21,8 +21,8 @@ import android.content.Context;
 
 public class NetworkApis {
 
-	private static final String terminal_info = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"+";"+System.getProperty("os.version")
-	+";Android "+android.os.Build.VERSION.RELEASE;
+	private static final String terminal_info = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"
+	+";v"+android.os.Build.VERSION.RELEASE+";"+System.getProperty("os.arch");
 	
 	public static HttpResponse getHttpResponse(String url, String srv, Context mctx){
 		try{
@@ -47,8 +47,7 @@ public class NetworkApis {
 			});
 			
 			HttpGet mHttpGet = new HttpGet(url);
-			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"
-					+ terminal_info);
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info);
 			
 			String[] logins = null; 
 			logins = db.getLogin(srv);
@@ -61,13 +60,13 @@ public class NetworkApis {
 
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
 			
-			
 			// Redirect used... 
 			Header[] azz = mHttpResponse.getHeaders("Location");
 			if(azz.length > 0){
 				String newurl = azz[0].getValue();
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
+				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info);
 				
 				if(logins != null){
 	    			URL mUrl = new URL(newurl);
@@ -111,7 +110,7 @@ public class NetworkApis {
 			});
 			
 			HttpGet mHttpGet = new HttpGet(url);
-			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";fetch icon");
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";fetch_icon");
 
 			//String[] logins = null; 
 			//logins = db.getLogin(srv);

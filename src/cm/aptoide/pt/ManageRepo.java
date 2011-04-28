@@ -61,7 +61,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -93,6 +92,9 @@ public class ManageRepo extends ListActivity{
 	private Intent rtrn = new Intent();
 	
 	private Vector<ServerNode> server_lst = new Vector<ServerNode>();
+	
+	private Vector<String> server_to_reset_count = new Vector<String>();
+	
 	
 	private String updt_repo;
 	private AlertDialog alert2;
@@ -192,7 +194,10 @@ public class ManageRepo extends ListActivity{
         	}else{
         		server_line.put("inuse", R.drawable.btn_check_off);
         	}
-        	server_line.put("napk", "Applications: " + node.napk);
+        	if(node.napk >= 0)
+        		server_line.put("napk", "Applications: " + node.napk);
+        	else
+        		server_line.put("napk", "No information");
         	result.add(server_line);
         }
         SimpleAdapter show_out = new SimpleAdapter(this, result, R.layout.repolisticons, 
@@ -205,7 +210,12 @@ public class ManageRepo extends ListActivity{
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		db.changeServerStatus(server_lst.get(position).uri);
+		String node = server_lst.get(position).uri;
+		if(!v.isSelected())
+			server_to_reset_count.add(node);
+		else
+			server_to_reset_count.remove(node);
+		db.changeServerStatus(node);
 		change = true;
 		redraw();
 	}
@@ -589,8 +599,12 @@ public class ManageRepo extends ListActivity{
 
 	@Override
 	public void finish() {
-		if(change)
+		if(change){
 			rtrn.putExtra("update", true);
+			for (String node: server_to_reset_count) {
+				db.resetServerCacheUse(node);
+			}
+		}
 		this.setResult(RESULT_OK, rtrn);
 		super.finish();
 	}
