@@ -19,6 +19,7 @@
 
 package cm.aptoide.pt;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -31,6 +32,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Vector;
+import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -432,7 +434,6 @@ public class RemoteInTab extends TabActivity {
 			myTabHost.setCurrentTabByTag("inst");
 			new Thread() {
 				public void run() {
-					//boolean db_clear = true;
 					try{
 						Vector<ServerNode> serv = db.getServers();
 						int parse = -1;
@@ -442,10 +443,6 @@ public class RemoteInTab extends TabActivity {
 								Log.d("Aptoide", "Updating repo: " + node.uri);
 								parse = downloadList(node.uri);
 								if(parse == 0){
-									/*if(db_clear){
-										db_clear = false;
-										db.removeAll();
-									}*/
 									db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
 								}else if(parse == -1){
@@ -539,6 +536,8 @@ public class RemoteInTab extends TabActivity {
         	        	
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
         	
+        	Log.d("Aptoide","Returned in: " + mHttpResponse.getFirstHeader("Content-Encoding"));
+        	
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				
 				// see last-modified...
@@ -564,46 +563,35 @@ public class RemoteInTab extends TabActivity {
 					}
 				}
 
-				/*String datei = lst_modif_str.substring(5, 16);
-				
-				Log.d("Aptoide","date parsed: " + datei);
+				Log.d("Aptoide","lol: " + mHttpResponse.getEntity().getContentEncoding());
 				
 				
-				String tmp_db = "";
-				tmp_db = tmp_db.concat(datei.substring(6));
-				String month_date = datei.substring(3,6);
-				if(month_date.equalsIgnoreCase("Jan")){
-					tmp_db = tmp_db.concat("1");
-				}else if(month_date.equalsIgnoreCase("Fev")){
-					tmp_db = tmp_db.concat("2");
-				}else if(month_date.equalsIgnoreCase("Mar")){
-					tmp_db = tmp_db.concat("3");
-				}else if(month_date.equalsIgnoreCase("Apr")){
-					tmp_db = tmp_db.concat("4");
-				}else if(month_date.equalsIgnoreCase("Mai")){
-					tmp_db = tmp_db.concat("5");
-				}else if(month_date.equalsIgnoreCase("Jun")){
-					tmp_db = tmp_db.concat("6");
-				}else if(month_date.equalsIgnoreCase("Jul")){
-					tmp_db = tmp_db.concat("7");
-				}else if(month_date.equalsIgnoreCase("Ago")){
-					tmp_db = tmp_db.concat("8");
-				}else if(month_date.equalsIgnoreCase("Sep")){
-					tmp_db = tmp_db.concat("9");
-				}else if(month_date.equalsIgnoreCase("Oct")){
-					tmp_db = tmp_db.concat("10");
-				}else if(month_date.equalsIgnoreCase("Nov")){
-					tmp_db = tmp_db.concat("11");
-				}else if(month_date.equalsIgnoreCase("Dec")){
-					tmp_db = tmp_db.concat("12");
+				
+				if((mHttpResponse.getEntity().getContentEncoding() != null) && (mHttpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
+
+					//byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+
+					Log.d("Aptoide","with gzip");
+
+					InputStream instream = new GZIPInputStream(mHttpResponse.getEntity().getContent());
+
+					ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+					int nRead;
+					byte[] data = new byte[1024];
+
+					while ((nRead = instream.read(data, 0, data.length)) != -1) {
+						buffer.write(data, 0, nRead);
+					}
+
+					buffer.flush();
+
+					saveit.write(buffer.toByteArray());
+				}else{
+					Log.d("Aptoide","No gzip");
+					byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+					saveit.write(buffer);
 				}
-				tmp_db = tmp_db.concat(datei.substring(0, 2));
-				
-				Log.d("Aptoide","parsed db = " + tmp_db);*/
-				
-				
-				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-				saveit.write(buffer);
 			}else{
 				return -1;
 				//Does nothing

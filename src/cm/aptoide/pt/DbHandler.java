@@ -30,6 +30,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class DbHandler {
 	
@@ -77,8 +78,10 @@ public class DbHandler {
 			while(q.moveToNext()){
 				count_lst.put(q.getString(0), q.getInt(1));
 			}
+			q.close();
 			return count_lst;
 		}else{
+			q.close();
 			return null;
 		}
 	}
@@ -96,8 +99,10 @@ public class DbHandler {
 			while(q.moveToNext()){
 				rtn[q.getInt(0)] = q.getInt(1);
 			}
+			q.close();
 			return rtn;
 		}else{
+			q.close();
 			return null;
 		}
 	}
@@ -306,10 +311,10 @@ public class DbHandler {
 		return (db.delete(TABLE_NAME_LOCAL, "apkid='"+apkid+"'", null) > 0);
 	}
 	
-	public boolean removeAll(){
+	/*public boolean removeAlli(){
 		db.delete(TABLE_NAME_EXTRA, null, null);
 		return (db.delete(TABLE_NAME, null, null) > 0);
-	}
+	}*/
 	
 	public Vector<ApkNode> getForUpdate(){
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
@@ -901,6 +906,12 @@ public class DbHandler {
 	}
 	
 	void cleanRepoApps(String repo){
-		db.delete(TABLE_NAME, "server='"+repo+"'", null);
+		/*String query = "delete from " + TABLE_NAME_EXTRA + " where exists (select * from " + TABLE_NAME + " where " + 
+						TABLE_NAME + ".apkid = " + TABLE_NAME_EXTRA + ".apkid and server='"+repo+"')";*/
+		//db.rawQuery(query, null).close();
+		int del = db.delete(TABLE_NAME_EXTRA, "exists (select * from "+TABLE_NAME+" where "+TABLE_NAME+".apkid = "+TABLE_NAME_EXTRA+".apkid and server='"+repo+"')", null);
+		Log.d("Aptoide","remved: " + del);
+		int a = db.delete(TABLE_NAME, "server='"+repo+"'", null);
+		Log.d("Aptoide","Removed: " + a);
 	}
 }
