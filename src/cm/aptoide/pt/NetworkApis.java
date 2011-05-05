@@ -49,6 +49,8 @@ public class NetworkApis {
 			HttpGet mHttpGet = new HttpGet(url);
 			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info);
 			
+			mHttpGet.setHeader("Accept-Encoding", "gzip");
+			
 			String[] logins = null; 
 			logins = db.getLogin(srv);
 			if(logins != null){
@@ -67,6 +69,7 @@ public class NetworkApis {
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
 				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info);
+				mHttpGet.setHeader("Accept-Encoding", "gzip");
 				
 				if(logins != null){
 	    			URL mUrl = new URL(newurl);
