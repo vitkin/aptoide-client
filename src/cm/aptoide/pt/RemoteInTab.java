@@ -112,6 +112,7 @@ public class RemoteInTab extends TabActivity {
 	private ConnectivityManager netstate = null; 
 	
 	private Vector<String> failed_repo = new Vector<String>();
+	private Vector<ServerNode> extras_repo = new Vector<ServerNode>();
 	
 	private Intent intp;
 	private Intent intserver;
@@ -445,6 +446,7 @@ public class RemoteInTab extends TabActivity {
 								if(parse == 0){
 									db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
+									extras_repo.add(node);
 								}else if(parse == -1){
 									failed_repo.add(node.uri);
 								}
@@ -514,8 +516,33 @@ public class RemoteInTab extends TabActivity {
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
         	
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
-				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-                saveit.write(buffer);
+				
+				Log.d("Aptoide","extras.xml: " + mHttpResponse.getEntity().getContentEncoding());
+				
+				if((mHttpResponse.getEntity().getContentEncoding() != null) && (mHttpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
+
+					//byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+
+					Log.d("Aptoide","with gzip");
+
+					InputStream instream = new GZIPInputStream(mHttpResponse.getEntity().getContent());
+
+					ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+					int nRead;
+					byte[] data = new byte[1024];
+
+					while ((nRead = instream.read(data, 0, data.length)) != -1) {
+						buffer.write(data, 0, nRead);
+					}
+
+					buffer.flush();
+
+					saveit.write(buffer.toByteArray());
+				}else{
+					byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+					saveit.write(buffer);
+				}
 			}else{
 				return false;
 				//Does nothing...
@@ -563,7 +590,7 @@ public class RemoteInTab extends TabActivity {
 					}
 				}
 
-				Log.d("Aptoide","lol: " + mHttpResponse.getEntity().getContentEncoding());
+				Log.d("Aptoide","info.xml: " + mHttpResponse.getEntity().getContentEncoding());
 				
 				
 				
@@ -636,13 +663,24 @@ public class RemoteInTab extends TabActivity {
     			          p.dismiss();
     			        } });
     			p.show();
+    		}else{
+    			final AlertDialog p = new AlertDialog.Builder(mctx).create();
+    			p.setIcon(android.R.drawable.ic_dialog_alert);
+    			String report = "List is up to date!";
+    			p.setMessage(report);
+    			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
+    			      public void onClick(DialogInterface dialog, int which) {
+    			          p.dismiss();
+    			        } });
+    			p.show();
     		}
         	new Thread() {
 				public void run() {
+					Log.d("Aptoide","Extras thread START!");
 					try{
-						Vector<ServerNode> serv = db.getServers();
+						//Vector<ServerNode> serv = db.getServers();
 						boolean parse = false;
-						for(ServerNode node: serv){
+						for(ServerNode node: extras_repo){
 							if(node.inuse){
 								parse = downloadExtras(node.uri);
 								if(parse){
@@ -650,46 +688,13 @@ public class RemoteInTab extends TabActivity {
 								}
 							}
 						}
-					} catch (Exception e) { }
+					} catch (Exception e) { extras_repo.clear();}
+					extras_repo.clear();
+					Log.d("Aptoide","Extras thread DONE!");
 				}
 			}.start(); 
         }
 	};
-
-	
-	/*private Handler secure_error_handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			if(pd.isShowing())
-				pd.dismiss();
-			AlertDialog p = new AlertDialog.Builder(mctx).create();
-			p.setTitle("Login required");
-			p.setIcon(android.R.drawable.ic_dialog_alert);
-			p.setMessage("Server: \"" + msg.obj.toString() + "\" requests login.\nCheck your username/password.");
-			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
-			      public void onClick(DialogInterface dialog, int which) {
-			          return;
-			        } });
-			p.show();
-		}
-	};
-
-	private Handler error_handler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			if(pd.isShowing())
-				pd.dismiss();
-			final AlertDialog p = new AlertDialog.Builder(mctx).create();
-			p.setTitle("Time out");
-			p.setIcon(android.R.drawable.ic_dialog_alert);
-			p.setMessage("Could not connect to server: " + msg.obj.toString());
-			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
-			      public void onClick(DialogInterface dialog, int which) {
-			          p.dismiss();
-			        } });
-			p.show();
-		}
-	};*/
 
 
 	@Override

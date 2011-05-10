@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URL;
+import java.util.UUID;
 import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -139,6 +140,16 @@ public class Aptoide extends Activity {
 		   		prefEdit.putInt("version", pkginfo.versionCode);
 		   		prefEdit.commit();
 			}
+			
+			if(sPref.getString("myId", null) == null){
+				String rand_id = UUID.randomUUID().toString();
+				Log.d("Aptoide", "My id: " + rand_id);
+				prefEdit.putString("myId", rand_id);
+				prefEdit.commit();
+			}else{
+				Log.d("Aptoide","Saved ID id: " + sPref.getString("myId", null));
+			}
+			
 		} catch (NameNotFoundException e) {	}
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);

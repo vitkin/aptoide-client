@@ -22,10 +22,10 @@ package cm.aptoide.pt;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Vector;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -36,6 +36,8 @@ import android.util.Log;
 public class RssHandler extends DefaultHandler{
 	
 	private ApkNodeFull tmp_apk = new ApkNodeFull();
+	
+	private String icon_path;
 	
 	Context mctx;
 	String mserver;
@@ -86,6 +88,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.catg="";
 		tmp_apk.catg_type = 2;
 		tmp_apk.path="";
+		icon_path = "";
 		
 	}
 	
@@ -108,10 +111,11 @@ public class RssHandler extends DefaultHandler{
 				tmp_apk.vercode = 0;
 			}
 		}else if(apk_icon){
-			IconNode a = new IconNode(new String(ch).substring(start, start + length), tmp_apk.apkid);
+			/*IconNode a = new IconNode(new String(ch).substring(start, start + length), tmp_apk.apkid);
 			synchronized(iconFetchList) {
 				iconFetchList.add(a);
-			}
+			}*/
+			icon_path = icon_path.concat(new String(ch).substring(start, start + length));
 		}else if(apk_date){
 			tmp_apk.date = new String(ch).substring(start, start + length);
 		}else if(apk_rat){
@@ -144,6 +148,12 @@ public class RssHandler extends DefaultHandler{
 			throws SAXException {
 		super.endElement(uri, localName, qName);
 		if(localName.trim().equals("package")){
+			
+			IconNode a = new IconNode(icon_path, tmp_apk.apkid);
+			synchronized(iconFetchList) {
+				iconFetchList.add(a);
+			}
+			
 			napk++;
 			new_apk = false;
 			
@@ -185,6 +195,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.catg="";
 			tmp_apk.catg_type = 2;
 			tmp_apk.path="";
+			icon_path = "";
 		}else if(localName.trim().equals("name")){
 			apk_name = false;
 		}else if(localName.trim().equals("path")){
@@ -359,6 +370,8 @@ public class RssHandler extends DefaultHandler{
 		String url = mserver + "/" + uri;
 		String file = mctx.getString(R.string.icons_path) + name;
 		
+		Log.d("Aptoide","getIcon: " + uri);
+		
 		try {
 			FileOutputStream saveit = new FileOutputStream(file);
 			
@@ -369,16 +382,30 @@ public class RssHandler extends DefaultHandler{
 			}else if(mHttpResponse.getStatusLine().getStatusCode() == 403){
 				return;
 			}else{
-				InputStream getit = mHttpResponse.getEntity().getContent();
+				/*InputStream getit = mHttpResponse.getEntity().getContent();
 				byte data[] = new byte[8096];
 				int readed;
 				while((readed = getit.read(data, 0, 8096)) != -1) {
 					saveit.write(data,0,readed);
-				}
+				}*/
+				
+				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
+				saveit.write(buffer);
 			}
 			
-		}catch (IOException e) { }
-		catch (IllegalArgumentException e) { }
+			Log.d("Aptoide","getIcon done: " + uri + "/" + name);
+
+			
+		}catch (Exception e){
+			/*System.out.println("========================222===========================");
+			e.printStackTrace();
+			System.out.println("=========================222==========================");*/
+			Log.d("Aptoide","Error fetching icon.");
+		}
+		
+		
+		/*catch (IOException e) { }
+		catch (IllegalArgumentException e) { }*/
 
 	}
 	
@@ -390,16 +417,19 @@ public class RssHandler extends DefaultHandler{
 			try{
 				while(true){
 					if(iconFinalFetchList.isEmpty()){
+						Log.d("Aptoide","List of icons is empty!");
 						break;
 					}else{
 						synchronized(iconFinalFetchList){
 							node = iconFinalFetchList.remove(0);
 						}
-						getIcon(node.url, node.name);
+						if(node != null)
+							getIcon(node.url, node.name);
 					}
 				}
 
-			}catch (Exception e){
+			}catch (Exception e){ 
+				Log.d("Aptoide", "Wash exception? " + e.toString());
 			}
 		}
 	}
