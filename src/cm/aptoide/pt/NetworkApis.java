@@ -18,6 +18,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 public class NetworkApis {
 
@@ -27,6 +28,9 @@ public class NetworkApis {
 	public static HttpResponse getHttpResponse(String url, String srv, Context mctx){
 		try{
 			DbHandler db = new DbHandler(mctx);
+			
+			SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+			String myid = sPref.getString("myId", "");
 
 			HttpParams httpParameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParameters, 7000);
@@ -47,7 +51,7 @@ public class NetworkApis {
 			});
 			
 			HttpGet mHttpGet = new HttpGet(url);
-			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info);
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";id"+myid);
 			
 			mHttpGet.setHeader("Accept-Encoding", "gzip");
 			
@@ -113,7 +117,7 @@ public class NetworkApis {
 			});
 			
 			HttpGet mHttpGet = new HttpGet(url);
-			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";fetch_icon");
+			//mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";fetch_icon");
 
 			//String[] logins = null; 
 			//logins = db.getLogin(srv);
