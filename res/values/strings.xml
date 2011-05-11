@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.4"</string>
+    <string name="ver_str">"2.4.1"</string>
     <string name="change_log_url">http://aptoide.com/changelog_2_4.html</string>
     
     <string name="tab_avail">Available</string>
@@ -21,7 +21,7 @@
     
     <string name="about_txt1">Your package installer to Android phone.\n</string>
     
-    <string name="about_txt11">Version: 2.4\n(released under GNU GPL v2 license)\n
+    <string name="about_txt11">Version: 2.4.1\n(released under GNU GPL v2 license)\n
     \nCredits: Roberto Jacinto - Caixa Mágica\n</string>
 
     

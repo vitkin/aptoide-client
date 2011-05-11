@@ -21,7 +21,6 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Vector;
 
 import org.apache.http.HttpResponse;

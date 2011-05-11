@@ -143,11 +143,8 @@ public class Aptoide extends Activity {
 			
 			if(sPref.getString("myId", null) == null){
 				String rand_id = UUID.randomUUID().toString();
-				Log.d("Aptoide", "My id: " + rand_id);
 				prefEdit.putString("myId", rand_id);
 				prefEdit.commit();
-			}else{
-				Log.d("Aptoide","Saved ID id: " + sPref.getString("myId", null));
 			}
 			
 		} catch (NameNotFoundException e) {	}
