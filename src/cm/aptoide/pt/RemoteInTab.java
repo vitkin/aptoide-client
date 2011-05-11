@@ -113,6 +113,7 @@ public class RemoteInTab extends TabActivity {
 	
 	private Vector<String> failed_repo = new Vector<String>();
 	private Vector<ServerNode> extras_repo = new Vector<ServerNode>();
+	private boolean there_was_update = false;
 	
 	private Intent intp;
 	private Intent intserver;
@@ -447,6 +448,7 @@ public class RemoteInTab extends TabActivity {
 									db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
 									extras_repo.add(node);
+									there_was_update = true;
 								}else if(parse == -1){
 									failed_repo.add(node.uri);
 								}
@@ -665,14 +667,18 @@ public class RemoteInTab extends TabActivity {
     			p.show();
     		}else{
     			final AlertDialog p = new AlertDialog.Builder(mctx).create();
-    			p.setIcon(android.R.drawable.ic_dialog_alert);
-    			String report = "List is up to date!";
-    			p.setMessage(report);
-    			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
-    			      public void onClick(DialogInterface dialog, int which) {
-    			          p.dismiss();
-    			        } });
-    			p.show();
+				p.setIcon(android.R.drawable.ic_dialog_alert);
+				p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						p.dismiss();
+					} });
+    			
+    			if(there_was_update){
+    				p.setMessage("Repositories updated succesfully.");
+    			}else{
+    				p.setMessage("No Repositories list needs update. Cache used.");
+    			}
+				p.show();
     		}
         	new Thread() {
 				public void run() {

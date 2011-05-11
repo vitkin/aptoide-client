@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.4"</string>
+    <string name="ver_str">"2.4.1"</string>
    
     <string name="tab_avail">متوفر</string>
     <string name="tab_inst">مثبت</string>
@@ -20,7 +20,7 @@
     
     <string name="about_txt1">برنامج لتثبيت البرامج على هاتف اندرويد.\n</string>
     
-    <string name="about_txt11">Version: 2.4\n(released under GNU GPL v2 license)\n
+    <string name="about_txt11">Version: 2.4.1\n(released under GNU GPL v2 license)\n
     \nCredits: Roberto Jacinto - Caixa Mágica\n</string>
 
     

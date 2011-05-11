@@ -19,7 +19,6 @@
 
 package cm.aptoide.pt;
 
-import java.io.Serializable;
 import java.util.Vector;
 
 import org.xml.sax.Attributes;
