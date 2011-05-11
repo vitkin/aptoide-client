@@ -675,6 +675,7 @@ public class RemoteInTab extends TabActivity {
     			
     			if(there_was_update){
     				p.setMessage("Repositories updated succesfully.");
+    				there_was_update = false;
     			}else{
     				p.setMessage("No Repositories list needs update. Cache used.");
     			}
