@@ -746,6 +746,24 @@ public class DbHandler {
 		return out;
 	}
 	
+	public Vector<String> getServersName(){
+		Vector<String> out = new Vector<String>();
+		Cursor c = null;
+		try {
+			//c = db.rawQuery("select uri from " + TABLE_NAME_URI + " order by uri collate nocase", null);
+			c = db.query(TABLE_NAME_URI, new String[]{"uri"}, null, null, null, null, null);
+			c.moveToFirst();
+			for(int i=0; i<c.getCount(); i++){
+				out.add(c.getString(0));
+				c.moveToNext();
+			}
+		}catch (Exception e){ }
+		finally{
+			c.close();
+		}
+		return out;
+	}
+	
 	public boolean areServers(){
 		boolean rt = false;
 		

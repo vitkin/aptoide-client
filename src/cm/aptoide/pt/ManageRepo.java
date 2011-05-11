@@ -134,8 +134,11 @@ public class ManageRepo extends ListActivity{
 		}else if(i.hasExtra("uri")){
 			//String uri = i.getStringExtra("uri");
 			//Vector<String> new_serv_lst = getRemoteServLst(uri);
+			Vector<String> exist_server = db.getServersName();
 			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
 			for(final String srv: new_serv_lst){
+				if(exist_server.contains(srv))
+					continue;
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
