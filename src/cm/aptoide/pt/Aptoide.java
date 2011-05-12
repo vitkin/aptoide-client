@@ -51,6 +51,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -145,6 +146,14 @@ public class Aptoide extends Activity {
 				String rand_id = UUID.randomUUID().toString();
 				prefEdit.putString("myId", rand_id);
 				prefEdit.commit();
+			}
+			
+			if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
+				 DisplayMetrics dm = new DisplayMetrics();
+			     getWindowManager().getDefaultDisplay().getMetrics(dm);
+			     prefEdit.putInt("scW", dm.widthPixels);
+			     prefEdit.putInt("scH", dm.heightPixels);
+			     prefEdit.commit();
 			}
 			
 		} catch (NameNotFoundException e) {	}
