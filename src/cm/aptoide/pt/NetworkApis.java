@@ -30,7 +30,8 @@ public class NetworkApis {
 			DbHandler db = new DbHandler(mctx);
 			
 			SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-			String myid = sPref.getString("myId", "Not found!");
+			String myid = sPref.getString("myId", "NoInfo");
+			String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 			
 			HttpParams httpParameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParameters, 7000);
@@ -51,7 +52,7 @@ public class NetworkApis {
 			});
 			
 			HttpGet mHttpGet = new HttpGet(url);
-			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";id:"+myid);
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
 			
 			mHttpGet.setHeader("Accept-Encoding", "gzip");
 			
@@ -72,7 +73,7 @@ public class NetworkApis {
 				String newurl = azz[0].getValue();
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
-				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";id:"+myid);
+				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
 				mHttpGet.setHeader("Accept-Encoding", "gzip");
 				
 				if(logins != null){
