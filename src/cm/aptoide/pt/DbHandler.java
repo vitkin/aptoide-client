@@ -19,6 +19,7 @@
 
 package cm.aptoide.pt;
 
+import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -494,6 +495,7 @@ public class DbHandler {
 			}else{
 				search = basic_query;
 			}
+			
 			c = db.rawQuery(search, null);
 			c.moveToFirst();
 			for(int i = 0; i< c.getCount(); i++){
@@ -526,7 +528,8 @@ public class DbHandler {
 			//c.close();
 		}catch (Exception e){ }
 		finally{
-			c.close();
+			if(c != null)
+				c.close();
 		}
 		return tmp;
 	}
