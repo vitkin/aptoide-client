@@ -60,6 +60,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -97,6 +99,8 @@ public class RemoteInSearch extends ListActivity{
 	private String query;
 	
 	private String order_lst = "abc";
+	
+	private View baz_search = null;
 	
 	class LstBinder implements ViewBinder
 	{
@@ -143,6 +147,9 @@ public class RemoteInSearch extends ListActivity{
 
 		Intent i = getIntent();
 		query = i.getStringExtra(SearchManager.QUERY);
+		
+		query = query.replaceAll("[\\%27]|[\\']|[\\-\\-]|[\\%23]|[#]", " ");
+		
 		apk_lst = db.getSearch(query,order_lst);
 	}
 		
@@ -150,6 +157,9 @@ public class RemoteInSearch extends ListActivity{
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		query = intent.getStringExtra(SearchManager.QUERY);
+		
+		query = query.replaceAll("[\\%27]|[\\']|[\\-\\-]|[\\%23]|[#]", " ");
+		
 		apk_lst = db.getSearch(query,order_lst);
 	}
 
@@ -433,7 +443,28 @@ public class RemoteInSearch extends ListActivity{
         SimpleAdapter show_out = new SimpleAdapter(this, result, R.layout.listicons, 
         		new String[] {"name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.name, R.id.nameup,  R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
         show_out.setViewBinder(new RemoteInSearch.LstBinder());
+        
+        if(baz_search != null)
+        	getListView().removeFooterView(baz_search);
+        
+        baz_search = View.inflate(this, R.layout.bzzsrch, null);
+        
+        Button search_baz = (Button) baz_search.findViewById(R.id.baz_src);
+        search_baz.setText("Search '" + query + "' on Bazaar");
+        search_baz.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				String url = "http://m.bazaarandroid.com/searchview.php?search="+query;
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(url));
+				startActivity(i);
+			}
+		});
+        
+        getListView().addFooterView(baz_search);
+        
         setListAdapter(show_out);
+
 	}
 
 	private String downloadFile(int position){
