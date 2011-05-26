@@ -19,6 +19,7 @@ import org.apache.http.protocol.HttpContext;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class NetworkApis {
 
@@ -32,7 +33,7 @@ public class NetworkApis {
 			SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 			String myid = sPref.getString("myId", "NoInfo");
 			String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
-			
+						
 			HttpParams httpParameters = new BasicHttpParams();
 			HttpConnectionParams.setConnectionTimeout(httpParameters, 7000);
 			HttpConnectionParams.setSoTimeout(httpParameters, 7000);
@@ -44,6 +45,7 @@ public class NetworkApis {
 						HttpContext context) {
 					return false;
 				}
+				
 
 				public URI getLocationURI(HttpResponse response, HttpContext context)
 				throws ProtocolException {
@@ -51,11 +53,11 @@ public class NetworkApis {
 				}
 			});
 			
+			
 			HttpGet mHttpGet = new HttpGet(url);
 			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
-			
 			mHttpGet.setHeader("Accept-Encoding", "gzip");
-			
+						
 			String[] logins = null; 
 			logins = db.getLogin(srv);
 			if(logins != null){
@@ -65,7 +67,9 @@ public class NetworkApis {
 						new UsernamePasswordCredentials(logins[0], logins[1]));
 			}
 
+			
 			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			
 			
 			// Redirect used... 
 			Header[] azz = mHttpResponse.getHeaders("Location");
@@ -89,7 +93,14 @@ public class NetworkApis {
 				
 			}
 			return mHttpResponse;
-		}catch(IOException e) {return null; }
+		}catch(Exception e){
+			System.out.println("=============================================");
+			e.printStackTrace();
+			System.out.println("=============================================");
+			return null;
+		}
+		
+		//catch(IOException e) {return null; }
 		
 		
 	}

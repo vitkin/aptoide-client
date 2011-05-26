@@ -231,6 +231,26 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			deep = 3;
 		}else{
 
+			Intent apkinfo = new Intent(this,ApkInfo.class);
+			apkinfo.putExtra("name", db.getName(pkg_id));
+			apkinfo.putExtra("icon", this.getString(R.string.icons_path)+pkg_id);
+			apkinfo.putExtra("apk_id", pkg_id);
+			
+			String tmpi = db.getDescript(pkg_id);
+			if(!(tmpi == null)){
+				apkinfo.putExtra("about",tmpi);
+			}else{
+				apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+			}
+			
+
+			Vector<String> tmp_get = db.getApk(pkg_id);
+			apkinfo.putExtra("server", tmp_get.firstElement());
+			apkinfo.putExtra("version", tmp_get.get(1));
+			apkinfo.putExtra("dwn", tmp_get.get(4));
+			
+			startActivity(apkinfo);
+			/*
 			Vector<String> tmp_get = db.getApk(pkg_id);
 			String tmp_path = this.getString(R.string.icons_path)+pkg_id;
 			File test_icon = new File(tmp_path);
@@ -277,9 +297,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 						public void run() {
 							String apk_path = downloadFile(pkg_id);
 							Message msg_alt = new Message();
-							/*Message msg = new Message();
-							msg.arg1 = 1;
-							download_handler.sendMessage(msg);*/
 							if(apk_path == null){
 								msg_alt.arg1= 1;
 								download_error_handler.sendMessage(msg_alt);
@@ -308,7 +325,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 					}
 				} });
 
-			p.show();
+			p.show();*/
 		}
 	}
 	

@@ -2,7 +2,7 @@
 <resources>
     <string name="icons_path">/sdcard/.aptoide/icons/</string>
     <string name="base_path">/sdcard/.aptoide/</string>
-
+    
 </resources>
 <!--
  * Copyright (C) 2009  Roberto Jacinto
