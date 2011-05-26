@@ -19,7 +19,6 @@
 
 package cm.aptoide.pt;
 
-import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -870,16 +869,20 @@ public class DbHandler {
 	public String[] getLogin(String uri){
 		String[] login = new String[2];
 		Cursor c = null;
-		c = db.query(TABLE_NAME_URI, new String[] {"secure", "user", "psd"}, "uri='" + uri + "'", null, null, null, null);
-		if(c.moveToFirst()){
-			if(c.getInt(0) == 0)
-				return null;
-			else{
-				login[0] = c.getString(1);
-				login[1] = c.getString(2);
+		try{
+			c = db.query(TABLE_NAME_URI, new String[] {"secure", "user", "psd"}, "uri='" + uri + "'", null, null, null, null);
+			if(c.moveToFirst()){
+				if(c.getInt(0) == 0)
+					return null;
+				else{
+					login[0] = c.getString(1);
+					login[1] = c.getString(2);
+				}
 			}
+		}catch(Exception e) { }
+		finally{
+			c.close();
 		}
-		c.close();
 		return login;
 	}
 	

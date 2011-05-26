@@ -30,6 +30,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 public class RssHandler extends DefaultHandler{
@@ -71,8 +73,10 @@ public class RssHandler extends DefaultHandler{
 	//private boolean requireLogin = false;
 	private String usern = null;
 	private String passwd = null;
+	
+	private Handler pd = null;
 		
-	public RssHandler(Context ctx, String srv){
+	public RssHandler(Context ctx, String srv, Handler pd){
 		mctx = ctx;
 		mserver = srv;
 		db = new DbHandler(mctx);
@@ -88,6 +92,8 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.catg_type = 2;
 		tmp_apk.path="";
 		icon_path = "";
+		
+		this.pd = pd;
 		
 	}
 	
@@ -321,6 +327,9 @@ public class RssHandler extends DefaultHandler{
 	@Override
 	public void endDocument() throws SAXException {
 		Log.d("Aptoide","Done parsing XML from " + mserver + " ...");
+		Message msg = new Message();
+		msg.arg2 = 10;
+		pd.sendMessage(msg);
 		db.updateServerNApk(mserver, napk);
 		db.endTrans();
 		new Thread() {
