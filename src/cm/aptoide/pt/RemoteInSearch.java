@@ -207,7 +207,7 @@ public class RemoteInSearch extends ListActivity{
 			alrt.setTitle(getText(R.string.app_name));
 			alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int	whichButton) {
-					Uri uri = Uri.parse("http://aptoide.com/changelog.html");
+					Uri uri = Uri.parse(getString(R.string.change_log_url));
 					startActivity(new Intent( Intent.ACTION_VIEW, uri));
 				}
 			});

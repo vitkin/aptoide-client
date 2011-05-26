@@ -453,6 +453,7 @@ public class RemoteInTab extends TabActivity {
 									failed_repo.add(node.uri);
 								}
 							}else{
+								Log.d("Aptoide",node.uri + " no update, returned 1");
 								db.cleanRepoApps(node.uri);
 							}
 						}
@@ -561,13 +562,17 @@ public class RemoteInTab extends TabActivity {
 	private int downloadList(String srv){
 		String url = srv+REMOTE_FILE;
         try {
+        	
+        	
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
         	        	
+        	
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
         	
-        	Log.d("Aptoide","Returned in: " + mHttpResponse.getFirstHeader("Content-Encoding"));
+        	
         	
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
+				
 				
 				// see last-modified...
 				MessageDigest md5hash = MessageDigest.getInstance("MD5");
@@ -591,8 +596,6 @@ public class RemoteInTab extends TabActivity {
 						}
 					}
 				}
-
-				Log.d("Aptoide","info.xml: " + mHttpResponse.getEntity().getContentEncoding());
 				
 				
 				
