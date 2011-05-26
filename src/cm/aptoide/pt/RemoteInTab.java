@@ -47,6 +47,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.app.AlertDialog.Builder;
@@ -98,6 +99,8 @@ public class RemoteInTab extends TabActivity {
 	private DbHandler db = null;
 
 	private ProgressDialog pd;
+	
+	private Dialog updt_pd;
 	
 	private Context mctx;
 	
@@ -427,8 +430,20 @@ public class RemoteInTab extends TabActivity {
 	}
 	
 	public boolean updateRepos(){
-		pd = ProgressDialog.show(this, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
-		pd.setIcon(android.R.drawable.ic_dialog_info);
+		//pd = ProgressDialog.show(this, getText(R.string.top_please_wait), getText(R.string.updating_msg),false);
+		pd = new ProgressDialog(this);
+		pd.setTitle(getText(R.string.top_please_wait));
+		pd.setMessage(getText(R.string.updating_msg));
+		pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		//pd.setMax(10);
+		pd.show();
+		/*updt_pd = new Dialog(this);
+		
+		updt_pd.setContentView(R.layout.updatebars);
+		updt_pd.setTitle(getText(R.string.top_please_wait));
+	
+		updt_pd.show();*/
+		
 		
 		//Check for connection first!
 		
@@ -438,20 +453,37 @@ public class RemoteInTab extends TabActivity {
 				public void run() {
 					try{
 						Vector<ServerNode> serv = db.getServers();
+						int repos_n = 0;
+						int in_repo = 0;
+						for(ServerNode node: serv){
+							if(node.inuse)
+								repos_n++;
+						}
 						int parse = -1;
 						failed_repo.clear();
+						Message counter_msg = null;
 						for(ServerNode node: serv){
+							Log.d("Aptoide",node.uri + " is starting... : " + node.inuse);
 							if(node.inuse){
+								pd.setProgress(0);
+								in_repo++;
+								counter_msg = null;
+								counter_msg = new Message();
+								counter_msg.arg1 = in_repo;
+								counter_msg.arg2 = repos_n;
+								update_updater.sendMessage(counter_msg);
 								Log.d("Aptoide", "Updating repo: " + node.uri);
 								parse = downloadList(node.uri);
 								if(parse == 0){
 									db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
+									pd.setProgress(100);
 									extras_repo.add(node);
 									there_was_update = true;
 								}else if(parse == -1){
 									failed_repo.add(node.uri);
 								}
+								Log.d("Aptoide","Going to next..,.");
 							}else{
 								Log.d("Aptoide",node.uri + " no update, returned 1");
 								db.cleanRepoApps(node.uri);
@@ -485,7 +517,7 @@ public class RemoteInTab extends TabActivity {
 	    	sp = spf.newSAXParser();
 	    	xr = sp.getXMLReader();
 	    	if(type){
-	    		RssHandler handler = new RssHandler(this,srv);
+	    		RssHandler handler = new RssHandler(this,srv,update_updater_icons);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
 	    		xml_file = new File(XML_PATH);
@@ -652,6 +684,9 @@ public class RemoteInTab extends TabActivity {
         	if(pd.isShowing()){
         		pd.dismiss();
         	}
+        	/*if(updt_pd.isShowing())
+        		updt_pd.dismiss();*/
+        	
         	myTabHost.setCurrentTabByTag("avail");
     		
     		if(failed_repo.size() > 0){
@@ -706,6 +741,34 @@ public class RemoteInTab extends TabActivity {
         }
 	};
 
+	private Handler update_updater_icons = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			if(msg.arg2>0){
+				pd.setProgress(0);
+				pd.setMax(msg.arg2);
+			}
+			
+			/*pd.incrementProgressBy(1);*/
+			
+			
+			
+		}
+		
+	};
+	
+	private Handler update_updater = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			pd.setMessage("Updating repository " + msg.arg1 + " of " + msg.arg2);
+			
+		}
+		
+	};
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {

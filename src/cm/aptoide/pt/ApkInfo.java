@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -49,6 +50,31 @@ public class ApkInfo extends BaseManagement{
 				}catch (ActivityNotFoundException e){
 					Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
 				}
+			}
+		});
+		
+		Button action = (Button) findViewById(R.id.btn1);
+		action.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				new Thread() {
+					public void run() {
+						String apk_path = downloadFile(apk_id);
+						Message msg_alt = new Message();
+						if(apk_path == null){
+							msg_alt.arg1= 1;
+							download_error_handler.sendMessage(msg_alt);
+						}else if(apk_path.equals("*md5*")){
+							msg_alt.arg1 = 0;
+							download_error_handler.sendMessage(msg_alt);
+						}else{
+							Message msg = new Message();
+							msg.arg1 = 1;
+							download_handler.sendMessage(msg);
+							installApk(apk_path);
+						}
+					}
+				}.start();
 			}
 		});
 		

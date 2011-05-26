@@ -19,7 +19,6 @@ import org.apache.http.protocol.HttpContext;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 public class NetworkApis {
 
