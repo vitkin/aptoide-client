@@ -225,6 +225,10 @@ public class DbHandler {
 		}catch(Exception e){ }
 	}
 	
+	public void delApk(String apkid){
+		db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
+		db.delete(TABLE_NAME_EXTRA, "apkid='"+apkid+"'", null);
+	}
 	
 	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type){
 

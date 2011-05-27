@@ -475,7 +475,7 @@ public class RemoteInTab extends TabActivity {
 								Log.d("Aptoide", "Updating repo: " + node.uri);
 								parse = downloadList(node.uri);
 								if(parse == 0){
-									db.cleanRepoApps(node.uri);
+									//db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
 									pd.setProgress(100);
 									extras_repo.add(node);

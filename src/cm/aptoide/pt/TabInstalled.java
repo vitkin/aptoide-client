@@ -1,29 +1,19 @@
 package cm.aptoide.pt;
 
-import java.io.File;
 import java.util.Vector;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 
@@ -32,7 +22,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	private ListView lv = null;
 	
 	private DbHandler db = null;
-	private Context mctx = null;
+	//private Context mctx = null;
 	
 	private int pos = -1;
 	
@@ -44,7 +34,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
 		db = new DbHandler(this);
-		mctx = this;
+		//mctx = this;
 	}
 	
 	@Override
@@ -109,6 +99,28 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 
 		pos = arg2;
 
+		Intent apkinfo = new Intent(this,ApkInfo.class);
+		apkinfo.putExtra("name", db.getName(pkg_id));
+		apkinfo.putExtra("icon", this.getString(R.string.icons_path)+pkg_id);
+		apkinfo.putExtra("apk_id", pkg_id);
+		
+		String tmpi = db.getDescript(pkg_id);
+		if(!(tmpi == null)){
+			apkinfo.putExtra("about",tmpi);
+		}else{
+			apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+		}
+		
+
+		Vector<String> tmp_get = db.getApk(pkg_id);
+		apkinfo.putExtra("server", tmp_get.firstElement());
+		apkinfo.putExtra("version", tmp_get.get(1));
+		apkinfo.putExtra("dwn", tmp_get.get(4));
+		apkinfo.putExtra("type", 1);
+		
+		startActivity(apkinfo);
+		
+		/*
 		Vector<String> tmp_get = db.getApk(pkg_id);
 		String tmp_path = this.getString(R.string.icons_path)+pkg_id;
 		File test_icon = new File(tmp_path);
@@ -165,6 +177,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			} });
 
 		p.show();
+		*/
 	}
 
 	protected Handler displayRefresh = new Handler(){
