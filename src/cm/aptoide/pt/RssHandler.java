@@ -75,6 +75,9 @@ public class RssHandler extends DefaultHandler{
 	private String passwd = null;
 	
 	private Handler pd = null;
+	
+	private boolean isDelta = false;
+	private boolean isRemove = false;
 		
 	public RssHandler(Context ctx, String srv, Handler pd){
 		mctx = ctx;
@@ -158,37 +161,50 @@ public class RssHandler extends DefaultHandler{
 			synchronized(iconFetchList) {
 				iconFetchList.add(a);
 			}
-			
+
 			napk++;
 			new_apk = false;
-			
-			if(tmp_apk.name.equalsIgnoreCase("Unknown"))
-				tmp_apk.name = tmp_apk.apkid;
-						
-			ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
-			if(!listapks.contains(node)){
-				db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type);
-				//tmp_apk.isnew = false;
-				//updateTable.add(tmp_apk);
-				listapks.add(node);
-			}else{
-				int pos = listapks.indexOf(node);
-				ApkNode list = listapks.get(pos);
-				if(list.vercode < node.vercode){
-					db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type);
-					//tmp_apk.isnew = true;
-					//updateTable.remove(new ApkNodeFull(list.apkid));
-					//updateTable.add(tmp_apk);
-					listapks.remove(pos);
-					listapks.add(node);
-				}
-			}
-			
+
 			readed++;
 			if(readed >= 10){
 				readed = 0;
 				cleanTransHeap();
 			}
+
+			if(isRemove){
+				Log.d("Aptoide","Removing....");
+				isRemove = false;
+				db.delApk(tmp_apk.apkid);
+			}else{
+
+				if(tmp_apk.name.equalsIgnoreCase("Unknown"))
+					tmp_apk.name = tmp_apk.apkid;
+
+				ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
+				if(!listapks.contains(node)){
+					db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type);
+					//tmp_apk.isnew = false;
+					//updateTable.add(tmp_apk);
+					listapks.add(node);
+				}else{
+					int pos = listapks.indexOf(node);
+					ApkNode list = listapks.get(pos);
+					if(list.vercode < node.vercode){
+						db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type);
+						//tmp_apk.isnew = true;
+						//updateTable.remove(new ApkNodeFull(list.apkid));
+						//updateTable.add(tmp_apk);
+						listapks.remove(pos);
+						listapks.add(node);
+					}
+				}
+			}
+			
+			/*readed++;
+			if(readed >= 10){
+				readed = 0;
+				cleanTransHeap();
+			}*/
 			
 			tmp_apk.name = "Unknown";
 			tmp_apk.ver = "0.0";
@@ -225,6 +241,9 @@ public class RssHandler extends DefaultHandler{
 			apk_ctg = false;
 		}else if(localName.trim().equals("catg2")){
 			apk_ctg2 = false;
+		}else if(localName.trim().equals("repository")){
+			if(!isDelta)
+				db.cleanRepoApps(mserver);
 		}
 	}
 
@@ -258,6 +277,12 @@ public class RssHandler extends DefaultHandler{
 			apk_ctg = true;
 		}else if(localName.trim().equals("catg2")){
 			apk_ctg2 = true;
+		}else if(localName.trim().equals("delta")){
+			Log.d("Aptoide","Is a delta...");
+			isDelta = true;
+		}else if(localName.trim().equals("del")){
+			Log.d("Aptoide","Is a remove...");
+			isRemove = true;
 		}
 	}
 	

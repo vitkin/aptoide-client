@@ -241,6 +241,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			apkinfo.putExtra("server", tmp_get.firstElement());
 			apkinfo.putExtra("version", tmp_get.get(1));
 			apkinfo.putExtra("dwn", tmp_get.get(4));
+			apkinfo.putExtra("type", 0);
 			
 			startActivity(apkinfo);
 			/*
