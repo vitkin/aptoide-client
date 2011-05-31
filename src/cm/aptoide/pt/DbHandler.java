@@ -58,7 +58,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
-				+ " secure integer default 0 not null, updatetime text default 0 not null);";
+				+ " secure integer default 0 not null, updatetime text default 0 not null, delta text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
 				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, catg_ord integer default 2 not null, primary key(apkid));";
@@ -832,6 +832,29 @@ public class DbHandler {
 		db.execSQL("update " + TABLE_NAME_URI + " set napk=" + napk + " where uri='" + repo + "'");
 	}
 	
+	public String getServerDelta(String srv){
+		Cursor c = null;
+		String rtn = null;
+		try{
+			c = db.query(TABLE_NAME_URI, new String[] {"delta"}, "uri='"+srv+"'", null, null, null, null);
+			c.moveToFirst();
+			rtn = c.getString(0);
+			/*if(rtn.equalsIgnoreCase("0"))
+				rtn = "aaa";*/
+			return rtn;
+		}catch (Exception e) {return rtn;}
+		finally{
+			c.close();
+		}
+	}
+	
+	public void setServerDelta(String srv, String hashdelta){
+		try{
+		ContentValues tmp = new ContentValues();
+		tmp.put("delta", hashdelta);
+		db.update(TABLE_NAME_URI, tmp, "uri='"+srv+"'", null);
+		}catch (Exception e) {	}
+	}
 	
 	public void addExtraXML(String apkid, String cmt, String srv){
 		Cursor c = null;

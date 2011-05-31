@@ -162,7 +162,7 @@ public class NetworkApis {
 				
 			}
 			return mHttpResponse;
-		}catch(IOException e) {return null; }
+		}catch(Exception e) {return null; }
 		
 	}
 	

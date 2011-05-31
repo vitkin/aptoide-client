@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -243,7 +244,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			apkinfo.putExtra("dwn", tmp_get.get(4));
 			apkinfo.putExtra("type", 0);
 			
-			startActivity(apkinfo);
+			startActivityForResult(apkinfo,30);
 			/*
 			Vector<String> tmp_get = db.getApk(pkg_id);
 			String tmp_path = this.getString(R.string.icons_path)+pkg_id;
@@ -324,6 +325,37 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	}
 	
 	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+			new Thread() {
+				public void run() {
+					
+					String apk_id = data.getStringExtra("apkid");
+					Log.d("Aptoide", "....... getting: " + apk_id);
+					String apk_pat = downloadFile(apk_id);
+					Message msg_al = new Message();
+					if(apk_pat == null){
+						msg_al.arg1= 1;
+						download_error_handler.sendMessage(msg_al);
+					}else if(apk_pat.equals("*md5*")){
+						msg_al.arg1 = 0;
+						download_error_handler.sendMessage(msg_al);
+					}else{
+						Message msg = new Message();
+						msg.arg1 = 1;
+						download_handler.sendMessage(msg);
+						installApk(apk_pat);
+					}
+				}
+			}.start();
+		}
+	}
+
+
+
 	protected Handler displayRefresh = new Handler(){
 
 		@Override

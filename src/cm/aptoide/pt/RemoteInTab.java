@@ -47,7 +47,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.app.AlertDialog.Builder;
@@ -100,7 +99,7 @@ public class RemoteInTab extends TabActivity {
 
 	private ProgressDialog pd;
 	
-	private Dialog updt_pd;
+	//private Dialog updt_pd;
 	
 	private Context mctx;
 	
@@ -595,22 +594,34 @@ public class RemoteInTab extends TabActivity {
 		String url = srv+REMOTE_FILE;
         try {
         	
+        	String delta_hash = db.getServerDelta(srv);
+        	url = url.concat("?"+delta_hash);
+        	
+        	Log.d("Aptoide","A fazer fetch de: " + url);
         	
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
         	        	
         	
-        	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
+        	HttpResponse mHttpResponse = null;//NetworkApis.getHttpResponse(url, srv, mctx);
         	
+        	while(mHttpResponse == null){
+        		Log.d("Aptoide","--------------------->Connection is null");
+        		try{
+        			mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
+        		}catch (Exception e) {	continue;}
+        	}
         	
+        	Log.d("Aptoide","Got status: "+ mHttpResponse.getStatusLine().getStatusCode());
         	
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
-				
+				Log.d("Aptoide","Got status 200");
 				
 				// see last-modified...
 				MessageDigest md5hash = MessageDigest.getInstance("MD5");
 				Header lst_modif = mHttpResponse.getLastHeader("Last-Modified");
 				
 				if(lst_modif != null){
+					Log.d("Aptoide","lst_modif not null!");
 					String lst_modif_str = lst_modif.getValue();
 					String hash_lst_modif = new BigInteger(1,md5hash.digest(lst_modif_str.getBytes())).toString(16);
 					Log.d("Aptoide","date is: " + lst_modif_str);
@@ -661,11 +672,7 @@ public class RemoteInTab extends TabActivity {
 				//Does nothing
 			}
 			return 0;
-		} catch (UnknownHostException e){
-			/*Message msg = new Message();
-			msg.obj = new String(srv);
-			error_handler.sendMessage(msg);*/
-			return -1;
+		} catch (UnknownHostException e){return -1;
 		} catch (ClientProtocolException e) { return -1;} 
 		  catch (IOException e) {  return -1;}
 		  catch (IllegalArgumentException e) { return -1;} 
@@ -679,7 +686,7 @@ public class RemoteInTab extends TabActivity {
 	private Handler update_handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-    		prefEdit.putBoolean("update", true);
+        	prefEdit.putBoolean("update", true);
         	prefEdit.commit();
         	if(pd.isShowing()){
         		pd.dismiss();

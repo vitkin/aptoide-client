@@ -22,8 +22,9 @@
             android:textSize="21sp"
             android:layout_alignParentTop="true"
             android:textStyle="bold"
-            android:maxLines="1"
+            android:maxLength="18"
             android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
             
