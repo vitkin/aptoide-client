@@ -2,13 +2,13 @@ package cm.aptoide.pt;
 
 import java.io.File;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -16,10 +16,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ApkInfo extends BaseManagement{
+public class ApkInfo extends Activity{
 
-	Intent apkinfo = null;
-	Context mctx = null;
+	private Intent apkinfo = null;
+	private Context mctx = null;
+	
+	private Intent rtrn_intent = null;
+	
+	private boolean jback = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,8 @@ public class ApkInfo extends BaseManagement{
 		setContentView(R.layout.apkinfo);
 		
 		mctx = this;
+		
+		rtrn_intent = new Intent();
 		
 		apkinfo = getIntent();
 		
@@ -73,11 +79,11 @@ public class ApkInfo extends BaseManagement{
 		action.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				new Thread() {
-					public void run() {
+				/*new Thread() {
+					public void run() {*/
 						switch (type) {
 						case 0:
-							String apk_pat = downloadFile(apk_id);
+							/*String apk_pat = downloadFile(apk_id);
 							Message msg_al = new Message();
 							if(apk_pat == null){
 								msg_al.arg1= 1;
@@ -90,16 +96,22 @@ public class ApkInfo extends BaseManagement{
 								msg.arg1 = 1;
 								download_handler.sendMessage(msg);
 								installApk(apk_pat);
-							}
+							}*/
+							rtrn_intent.putExtra("apkid", apk_id);
+							jback = true;
 							break;
 
 						case 1:
-							removeApk(apk_id);
+							//removeApk(apk_id);
+							rtrn_intent.putExtra("apkid", apk_id);
+							jback = true;
 							break;
 							
 							
 						case 2:
-							String apk_path = downloadFile(apk_id);
+							rtrn_intent.putExtra("apkid", apk_id);
+							jback = true;
+							/*String apk_path = downloadFile(apk_id);
 							Message msg_alt = new Message();
 							if(apk_path == null){
 								msg_alt.arg1 = 1;
@@ -112,12 +124,12 @@ public class ApkInfo extends BaseManagement{
 								msg.arg1 = 1;
 								download_handler.sendMessage(msg);
 								updateApk(apk_path, apk_id);
-							}
+							}*/
 							break;
 						}
-					
-					}
-				}.start();
+						finish();
+					//}
+				//}.start();
 			}
 		});
 		
@@ -145,6 +157,15 @@ public class ApkInfo extends BaseManagement{
 		apk_down_n.setText("Downloads: " + apk_dwon_str.replaceAll("\\n", "").replaceAll("\\t", "").trim());
 		
 	}
+
+	@Override
+	public void finish() {
+		if(jback)
+			this.setResult(RESULT_OK, rtrn_intent);
+		super.finish();
+	}
+
+	 
 	
 	
 

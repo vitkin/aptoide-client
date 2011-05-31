@@ -45,7 +45,19 @@
             			android:paddingLeft="5.0sp"
             			android:paddingRight="5.0sp" 
             			android:layout_width="fill_parent" 
-            			android:layout_height="wrap_content"/>
+            			android:layout_height="wrap_content"
+    					android:scrollHorizontally="true"/>
+            		
+            	<LinearLayout 
+    				android:orientation="horizontal" 
+    				android:layout_width="fill_parent" 
+    				android:layout_height="wrap_content">
+            			
+            			
+            	<LinearLayout 
+    				android:orientation="vertical" 
+    				android:layout_width="wrap_content" 
+    				android:layout_height="wrap_content">
             			
             		<TextView 
             			android:id="@+id/app_ver"
@@ -69,45 +81,34 @@
             			android:paddingLeft="5.0sp"
             			android:paddingRight="5.0sp" 
             			android:layout_width="fill_parent" 
-            			android:layout_height="wrap_content"/>
-    				
-    				
+            			android:layout_height="wrap_content"/>    				
+        		
         		</LinearLayout>
         		
 
-			<RelativeLayout 
+			<LinearLayout
     			android:orientation="vertical" 
     			android:layout_width="fill_parent" 
-    			android:layout_height="fill_parent"
+    			android:layout_height="wrap_content"
     			android:paddingTop="5.0dip"
-    			android:gravity="right"
     			>	
-        	
-        		<TextView android:id="@+id/dwn"
-            		android:textSize="12sp"
-            		android:layout_width="wrap_content"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF"
-            		android:paddingRight="5.0sp"
-            		android:layout_centerVertical="true"
-
-            		/>
-            
+                 
         		<RatingBar android:id="@+id/rating"
         			style="?android:attr/ratingBarStyleSmall"
-        			android:layout_below="@id/dwn"
         			android:layout_width="wrap_content"
         			android:layout_height="wrap_content"
         			android:isIndicator="true"
-        			android:paddingTop="5.0sp"
+        			android:paddingTop="1.0sp"
         			android:numStars="5"
-        			android:rating="3"
-/>
+					android:layout_gravity="right" 
+        			android:paddingRight="5.0sp"/>
         		
-	    </RelativeLayout>
+	    	</LinearLayout>
         	
-        	
-        	</LinearLayout>		
+        </LinearLayout>		
+        </LinearLayout>
+        	        		
+		</LinearLayout>		
             			
     	</RelativeLayout>
     		
@@ -162,7 +163,7 @@
             		android:paddingBottom="5.0sp" 
             		android:layout_width="fill_parent" 
             		android:layout_height="wrap_content" 
-            		android:text="Screenshots:"/>		
+            		android:text="Screenshots:"/>
 
 			
 			<LinearLayout 
@@ -190,6 +191,17 @@
         			android:src = "@drawable/splashaptoide2" />	
 			
 			</LinearLayout>
+			
+			<TextView android:id="@+id/dwn"
+            		android:textSize="12sp"
+            		android:gravity="left" 
+            		android:paddingTop="10.0dip"
+            		android:paddingLeft="5.0sp"
+            		android:layout_width="fill_parent"
+            		android:layout_height="wrap_content"
+            		android:textColor="#FFFFFF"
+
+            		/>
 
         	</LinearLayout>
         </ScrollView>
@@ -219,8 +231,3 @@
     	</RelativeLayout>
         
     </LinearLayout>
-	
-
-
-
-

@@ -539,8 +539,8 @@ public class ManageRepo extends ListActivity{
 	private int checkServer(String uri, String user, String pwd){
 		
 		HttpParams httpParameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
-		HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+		HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
+		HttpConnectionParams.setSoTimeout(httpParameters, 10000);
 		
 		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 		

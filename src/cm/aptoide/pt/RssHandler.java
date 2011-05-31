@@ -77,7 +77,10 @@ public class RssHandler extends DefaultHandler{
 	private Handler pd = null;
 	
 	private boolean isDelta = false;
+	private boolean onDelta = false;
+	private String thisDelta = "";
 	private boolean isRemove = false;
+	private boolean hasIcon = false;
 		
 	public RssHandler(Context ctx, String srv, Handler pd){
 		mctx = ctx;
@@ -124,6 +127,7 @@ public class RssHandler extends DefaultHandler{
 				iconFetchList.add(a);
 			}*/
 			icon_path = icon_path.concat(new String(ch).substring(start, start + length));
+			hasIcon = true;
 		}else if(apk_date){
 			tmp_apk.date = new String(ch).substring(start, start + length);
 		}else if(apk_rat){
@@ -148,6 +152,8 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.catg = tmp_apk.catg.concat(new String(ch).substring(start, start + length));
 			//String tmp = new String(ch).substring(start, start + length);
 			//Log.d("Aptoide","======== " + tmp);
+		}else if(onDelta){
+			thisDelta = thisDelta.concat(new String(ch).substring(start, start + length));
 		}
 	}
 
@@ -157,9 +163,12 @@ public class RssHandler extends DefaultHandler{
 		super.endElement(uri, localName, qName);
 		if(localName.trim().equals("package")){
 			
-			IconNode a = new IconNode(icon_path, tmp_apk.apkid);
-			synchronized(iconFetchList) {
-				iconFetchList.add(a);
+			if(hasIcon){
+				IconNode a = new IconNode(icon_path, tmp_apk.apkid);
+				synchronized(iconFetchList) {
+					iconFetchList.add(a);
+				}
+				hasIcon = false;
 			}
 
 			napk++;
@@ -244,6 +253,8 @@ public class RssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("repository")){
 			if(!isDelta)
 				db.cleanRepoApps(mserver);
+		}else if(localName.trim().equals("delta")){
+			onDelta = false;
 		}
 	}
 
@@ -280,6 +291,7 @@ public class RssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("delta")){
 			Log.d("Aptoide","Is a delta...");
 			isDelta = true;
+			onDelta = true;
 		}else if(localName.trim().equals("del")){
 			Log.d("Aptoide","Is a remove...");
 			isRemove = true;
@@ -357,6 +369,19 @@ public class RssHandler extends DefaultHandler{
 		pd.sendMessage(msg);
 		db.updateServerNApk(mserver, napk);
 		db.endTrans();
+		
+		if(isDelta){
+			Log.d("Aptoide","A adicionar novo hash delta: " + mserver + ":" + thisDelta);
+			db.setServerDelta(mserver, thisDelta);
+		}else{
+			File thisXML = new File(mctx.getString(R.string.info_path));
+			Md5Handler hash = new Md5Handler();
+			String deltahash = hash.md5Calc(thisXML);
+			Log.d("Aptoide","A adicionar novo hash delta: " + mserver + ":" + deltahash);
+			db.setServerDelta(mserver, deltahash);
+		}
+		
+		
 		new Thread() {
 			public void run() {
 				try{

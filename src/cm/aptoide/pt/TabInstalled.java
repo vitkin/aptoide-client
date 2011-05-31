@@ -8,6 +8,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -118,7 +119,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("type", 1);
 		
-		startActivity(apkinfo);
+		startActivityForResult(apkinfo,30);
 		
 		/*
 		Vector<String> tmp_get = db.getApk(pkg_id);
@@ -179,6 +180,24 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		p.show();
 		*/
 	}
+	
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+			new Thread() {
+				public void run() {
+					String apk_id = data.getStringExtra("apkid");
+					Log.d("Aptoide", ".... removing: " + apk_id);
+					removeApk(apk_id);
+				}
+			}.start();
+		}
+	}
+
+
 
 	protected Handler displayRefresh = new Handler(){
 

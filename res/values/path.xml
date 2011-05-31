@@ -2,6 +2,7 @@
 <resources>
     <string name="icons_path">/sdcard/.aptoide/icons/</string>
     <string name="base_path">/sdcard/.aptoide/</string>
+    <string name="info_path">/sdcard/.aptoide/remapklst.xml</string>
     
 </resources>
 <!--

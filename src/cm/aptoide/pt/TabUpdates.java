@@ -1,29 +1,20 @@
 package cm.aptoide.pt;
 
-import java.io.File;
 import java.util.Vector;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 
@@ -32,7 +23,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	private ListView lv = null;
 
 	private DbHandler db = null;
-	private Context mctx = null;
+	//private Context mctx = null;
 	
 	private int pos = -1;
 
@@ -44,7 +35,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
 		db = new DbHandler(this);
-		mctx = this;
+		//mctx = this;
 	}
 	
 	
@@ -129,7 +120,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("type", 2);
 		
-		startActivity(apkinfo);
+		startActivityForResult(apkinfo,30);
 		
 		/*
 		Vector<String> tmp_get = db.getApk(pkg_id);
@@ -210,6 +201,38 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		
 	}
 	
+	
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+			new Thread() {
+				public void run() {
+					String apk_id = data.getStringExtra("apkid");
+					Log.d("Aptoide", ".... u+dating: " + apk_id);
+					String apk_path = downloadFile(apk_id);
+					Message msg_alt = new Message();
+					if(apk_path == null){
+						msg_alt.arg1 = 1;
+						download_error_handler.sendMessage(msg_alt);
+					}else if(apk_path.equals("*md5*")){
+						msg_alt.arg1 = 0;
+						download_error_handler.sendMessage(msg_alt);
+					}else{
+						Message msg = new Message();
+						msg.arg1 = 1;
+						download_handler.sendMessage(msg);
+						updateApk(apk_path, apk_id);
+					}
+				}
+			}.start();
+		}
+	}
+
+
+
 	protected Handler displayRefresh = new Handler(){
 
 		@Override
