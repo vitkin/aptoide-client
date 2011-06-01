@@ -209,9 +209,13 @@ public class Aptoide extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		db.clodeDb();
 		super.onActivityResult(requestCode, resultCode, data);
-		this.finish();
+		try{
+			db.clodeDb();
+		}catch (Exception e) {Log.d("Aptoide","Exit error: " + e.toString());	}
+		finally{
+			this.finish();
+		}
 	}
     
 	private void downloadServ(String srv){

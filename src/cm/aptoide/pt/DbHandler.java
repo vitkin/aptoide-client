@@ -61,7 +61,8 @@ public class DbHandler {
 				+ " secure integer default 0 not null, updatetime text default 0 not null, delta text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, catg_ord integer default 2 not null, primary key(apkid));";
+				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, catg_ord integer default 2 not null, " + 
+				"size number default 0 not null, primary key(apkid));";
 	
 	
 	
