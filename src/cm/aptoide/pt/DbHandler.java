@@ -483,7 +483,7 @@ public class DbHandler {
 			final String rat = " order by rat desc";
 			final String mr = " order by dt desc";
 			final String alfb = " order by name collate nocase";
-			final String down = " order by dwn desc";
+			//final String down = " order by dwn desc";
 
 			
 			String search;
@@ -790,6 +790,7 @@ public class DbHandler {
 		ContentValues tmp = new ContentValues();
 		tmp.put("napk", -1);
 		tmp.put("updatetime", "0");
+		tmp.put("delta", 0);
 		db.update(TABLE_NAME_URI, tmp, "uri='" + repo + "'", null);
 	}
 	
@@ -829,6 +830,7 @@ public class DbHandler {
 	}
 	
 	public void updateServerNApk(String repo, int napk){
+		Log.d("Aptoide","Update napks count to: " + napk);		
 		db.execSQL("update " + TABLE_NAME_URI + " set napk=" + napk + " where uri='" + repo + "'");
 	}
 	
@@ -839,8 +841,6 @@ public class DbHandler {
 			c = db.query(TABLE_NAME_URI, new String[] {"delta"}, "uri='"+srv+"'", null, null, null, null);
 			c.moveToFirst();
 			rtn = c.getString(0);
-			/*if(rtn.equalsIgnoreCase("0"))
-				rtn = "aaa";*/
 			return rtn;
 		}catch (Exception e) {return rtn;}
 		finally{

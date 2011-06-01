@@ -75,18 +75,21 @@ public class RssHandler extends DefaultHandler{
 	private String passwd = null;
 	
 	private Handler pd = null;
+	private Handler extras_hd = null;
 	
 	private boolean isDelta = false;
 	private boolean onDelta = false;
 	private String thisDelta = "";
 	private boolean isRemove = false;
 	private boolean hasIcon = false;
+	private boolean apkcount = false;
+	private int apks_n = -1;
 		
-	public RssHandler(Context ctx, String srv, Handler pd){
+	public RssHandler(Context ctx, String srv, Handler pd, Handler extras_hd){
 		mctx = ctx;
 		mserver = srv;
 		db = new DbHandler(mctx);
-		listapks = db.getForUpdate();
+		//listapks = db.getForUpdate();
 		tmp_apk.name = "unknown";
 		tmp_apk.ver = "0.0";
 		tmp_apk.vercode = 0;
@@ -100,6 +103,7 @@ public class RssHandler extends DefaultHandler{
 		icon_path = "";
 		
 		this.pd = pd;
+		this.extras_hd = extras_hd;
 		
 	}
 	
@@ -154,6 +158,8 @@ public class RssHandler extends DefaultHandler{
 			//Log.d("Aptoide","======== " + tmp);
 		}else if(onDelta){
 			thisDelta = thisDelta.concat(new String(ch).substring(start, start + length));
+		}else if(apkcount){
+			apks_n = new Integer(new String(ch).substring(start, start + length));
 		}
 	}
 
@@ -251,10 +257,18 @@ public class RssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("catg2")){
 			apk_ctg2 = false;
 		}else if(localName.trim().equals("repository")){
-			if(!isDelta)
+			if(!isDelta){
 				db.cleanRepoApps(mserver);
+				cleanTransHeap();
+			}
+			listapks = db.getForUpdate();
 		}else if(localName.trim().equals("delta")){
 			onDelta = false;
+			if(thisDelta.equalsIgnoreCase("")){
+				extras_hd.sendEmptyMessage(0);
+			}
+		}else if(localName.trim().equals("appscount")){
+			apkcount = false;
 		}
 	}
 
@@ -295,6 +309,8 @@ public class RssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("del")){
 			Log.d("Aptoide","Is a remove...");
 			isRemove = true;
+		}else if(localName.trim().equals("appscount")){
+			apkcount = true;
 		}
 	}
 	
@@ -367,12 +383,19 @@ public class RssHandler extends DefaultHandler{
 		Message msg = new Message();
 		msg.arg2 = 10;
 		pd.sendMessage(msg);
-		db.updateServerNApk(mserver, napk);
+		if(apks_n != -1)
+			db.updateServerNApk(mserver, apks_n);
+		else
+			db.updateServerNApk(mserver, napk);
 		db.endTrans();
 		
 		if(isDelta){
-			Log.d("Aptoide","A adicionar novo hash delta: " + mserver + ":" + thisDelta);
-			db.setServerDelta(mserver, thisDelta);
+			if(!thisDelta.equalsIgnoreCase("")){
+				db.setServerDelta(mserver, thisDelta);
+			}/*else{
+				boolean iso = extras_hd.sendEmptyMessage(0);
+				Log.d("Aptoide","Delta is empty... disable extras! - " + iso);
+			}*/
 		}else{
 			File thisXML = new File(mctx.getString(R.string.info_path));
 			Md5Handler hash = new Md5Handler();
@@ -460,11 +483,6 @@ public class RssHandler extends DefaultHandler{
 			System.out.println("=========================222==========================");*/
 			Log.d("Aptoide","Error fetching icon.");
 		}
-		
-		
-		/*catch (IOException e) { }
-		catch (IllegalArgumentException e) { }*/
-
 	}
 	
 	private class FetchIcons implements Runnable {
