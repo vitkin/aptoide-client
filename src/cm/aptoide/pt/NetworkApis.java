@@ -3,6 +3,7 @@ package cm.aptoide.pt;
 import java.net.URI;
 import java.net.URL;
 
+import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
@@ -10,6 +11,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
@@ -165,6 +167,75 @@ public class NetworkApis {
 		
 	}
 	
+	public static DefaultHttpClient createItOpen(String url, String usr, String pwd){
+		try{
+		HttpParams httpParameters = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
+		HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+
+		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
+		mHttpClient.setRedirectHandler(new RedirectHandler() {
+
+			public boolean isRedirectRequested(HttpResponse response,
+					HttpContext context) {
+				return false;
+			}
+
+			public URI getLocationURI(HttpResponse response, HttpContext context)
+			throws ProtocolException {
+				return null;
+			}
+		});
+		
+		if(usr != null || pwd != null){
+			URL mUrl = new URL(url);
+			mHttpClient.getCredentialsProvider().setCredentials(
+					new AuthScope(mUrl.getHost(), mUrl.getPort()),
+					new UsernamePasswordCredentials(usr, pwd));
+		}
+		
+		mHttpClient.setKeepAliveStrategy(new ConnectionKeepAliveStrategy() {
+			
+			public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
+				// TODO Auto-generated method stub
+				return 0;
+			}
+		});
+		
+		mHttpClient.setReuseStrategy(new ConnectionReuseStrategy() {
+			
+			public boolean keepAlive(HttpResponse response, HttpContext context) {
+				// TODO Auto-generated method stub
+				return true;
+			}
+		});
+		
+		return mHttpClient;
+		}catch (Exception e) {return null;	}
+		
+	}
+	
+	public static HttpResponse fetch(String fetch_file, DefaultHttpClient mHttpClient){
+		try{
+		HttpGet mHttpGet = new HttpGet(fetch_file);
+		
+		HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+		
+		// Redirect used... 
+		Header[] azz = mHttpResponse.getHeaders("Location");
+		if(azz.length > 0){
+			String newurl = azz[0].getValue();
+			mHttpGet = null;
+			mHttpGet = new HttpGet(newurl);
+			
+			mHttpResponse = null;
+			mHttpResponse = mHttpClient.execute(mHttpGet);
+		}
+		
+		return mHttpResponse;
+		}catch (Exception e) {return null;	}
+		
+	}
 	
 	
 }

@@ -435,8 +435,11 @@ public class RemoteInTab extends TabActivity {
 		pd.setTitle(getText(R.string.top_please_wait));
 		pd.setMessage(getText(R.string.updating_msg));
 		pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		pd.setCancelable(false);
+		pd.setCanceledOnTouchOutside(false);
 		//pd.setMax(10);
 		pd.show();
+		
 		/*updt_pd = new Dialog(this);
 		
 		updt_pd.setContentView(R.layout.updatebars);
@@ -521,7 +524,7 @@ public class RemoteInTab extends TabActivity {
 	    	sp = spf.newSAXParser();
 	    	xr = sp.getXMLReader();
 	    	if(type){
-	    		RssHandler handler = new RssHandler(this,srv,update_updater_icons, disable_fetch_extra);
+	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
 	    		xml_file = new File(XML_PATH);
@@ -762,20 +765,27 @@ public class RemoteInTab extends TabActivity {
         }
 	};
 
-	private Handler update_updater_icons = new Handler(){
+	private Handler update_updater_tick = new Handler(){
 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			if(msg.arg2>0){
-				pd.setProgress(0);
-				pd.setMax(msg.arg2);
-			}
-			
-			/*pd.incrementProgressBy(1);*/
-			
-			
-			
+			pd.incrementProgressBy(1);
+		}
+		
+		
+		
+	};
+	
+	private Handler update_updater_set = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+
+			pd.setProgress(0);
+			pd.setMax(msg.what);
+
 		}
 		
 	};

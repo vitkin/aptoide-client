@@ -1,4 +1,4 @@
-package cm.aptoide.pt;
+	package cm.aptoide.pt;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -17,6 +17,7 @@ public class ExtrasRssHandler extends DefaultHandler{
 	private boolean pkg = false;
 	private boolean apkid = false;
 	private boolean cmt = false;
+	private boolean isDelta = false;
 	
 	private String e_apkid = null;
 	private String e_cmt = null;
@@ -55,6 +56,8 @@ public class ExtrasRssHandler extends DefaultHandler{
 			apkid = false;
 		}else if(localName.trim().equals("cmt")){
 			cmt = false;
+		}else if(localName.trim().equals("delta")){
+			isDelta = true;
 		}
 	}
 
