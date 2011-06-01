@@ -120,6 +120,7 @@ public class RemoteInTab extends TabActivity {
 	private Intent intp;
 	private Intent intserver;
 
+	private boolean fetch_extra = true;
 	
 	private Handler fetchHandler = new Handler() {
 
@@ -477,7 +478,11 @@ public class RemoteInTab extends TabActivity {
 									//db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
 									pd.setProgress(100);
-									extras_repo.add(node);
+									if(fetch_extra){
+										Log.d("Aptoide","Adding repo to extras list...");
+										extras_repo.add(node);
+									}
+									fetch_extra = true;
 									there_was_update = true;
 								}else if(parse == -1){
 									failed_repo.add(node.uri);
@@ -516,7 +521,7 @@ public class RemoteInTab extends TabActivity {
 	    	sp = spf.newSAXParser();
 	    	xr = sp.getXMLReader();
 	    	if(type){
-	    		RssHandler handler = new RssHandler(this,srv,update_updater_icons);
+	    		RssHandler handler = new RssHandler(this,srv,update_updater_icons, disable_fetch_extra);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
 	    		xml_file = new File(XML_PATH);
@@ -595,20 +600,27 @@ public class RemoteInTab extends TabActivity {
         try {
         	
         	String delta_hash = db.getServerDelta(srv);
-        	url = url.concat("?"+delta_hash);
+        	url = url.concat("?hash="+delta_hash);
         	
         	Log.d("Aptoide","A fazer fetch de: " + url);
         	
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
         	        	
         	
-        	HttpResponse mHttpResponse = null;//NetworkApis.getHttpResponse(url, srv, mctx);
+        	HttpResponse mHttpResponse = null; //NetworkApis.getHttpResponse(url, srv, mctx);
         	
-        	while(mHttpResponse == null){
-        		Log.d("Aptoide","--------------------->Connection is null");
-        		try{
-        			mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
-        		}catch (Exception e) {	continue;}
+        	if(mHttpResponse == null){
+        		for(int xx=0; xx<2; xx++){
+        			try{
+        				mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
+        				if(mHttpResponse != null)
+        					break;
+        				else
+        					Log.d("Aptoide","--------------------->Connection is null");
+        			}catch (Exception e) {	continue;}
+        		}
+        		if(mHttpResponse == null)
+        			return -1;
         	}
         	
         	Log.d("Aptoide","Got status: "+ mHttpResponse.getStatusLine().getStatusCode());
@@ -677,6 +689,7 @@ public class RemoteInTab extends TabActivity {
 		  catch (IOException e) {  return -1;}
 		  catch (IllegalArgumentException e) { return -1;} 
 		  catch (NoSuchAlgorithmException e) { return -1;}
+		  catch (Exception e) {return -1;}
 	}
 	
 	
@@ -734,14 +747,15 @@ public class RemoteInTab extends TabActivity {
 						boolean parse = false;
 						for(ServerNode node: extras_repo){
 							if(node.inuse){
+								Log.d("Aptoide", "Extras for: " + node.uri);
 								parse = downloadExtras(node.uri);
 								if(parse){
 									xmlPass(node.uri, false);
 								}
 							}
 						}
+						extras_repo.clear();
 					} catch (Exception e) { extras_repo.clear();}
-					extras_repo.clear();
 					Log.d("Aptoide","Extras thread DONE!");
 				}
 			}.start(); 
@@ -775,6 +789,17 @@ public class RemoteInTab extends TabActivity {
 			
 		}
 		
+	};
+	
+	private Handler disable_fetch_extra = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			fetch_extra = false;
+			Log.d("Aptoide","Extras is: " + fetch_extra);
+		}
+		 
 	};
 
 	@Override
