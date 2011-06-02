@@ -13,6 +13,7 @@ public class ApkNodeFull extends Object{
 	public String md5hash;
 	public String catg;
 	public int catg_type;
+	public int size;
 	
 	public boolean isnew;
 	

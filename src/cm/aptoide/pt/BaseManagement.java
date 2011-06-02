@@ -470,6 +470,7 @@ public class BaseManagement extends Activity {
 		 String getserv = new String();
 		 String md5hash = null;
 		 String repo = null;
+		 int size = 0;
 
 		 try{
 
@@ -481,6 +482,7 @@ public class BaseManagement extends Activity {
 				 getserv = node.repo + "/" + node.path;
 				 md5hash = node.md5h;
 				 repo = node.repo;
+				 size = node.size;
 			 }
 
 			 
@@ -489,6 +491,7 @@ public class BaseManagement extends Activity {
 			 
 			 Message msg = new Message();
 			 msg.arg1 = 0;
+			 msg.arg2 = size;
 			 msg.obj = new String(getserv);
 			 download_handler.sendMessage(msg);
 			 
@@ -520,10 +523,14 @@ public class BaseManagement extends Activity {
 				 InputStream getit = mHttpResponse.getEntity().getContent();
                  byte data[] = new byte[8096];
 				 int readed;
-				 while((readed = getit.read(data, 0, 8096)) != -1) {
+				 readed = getit.read(data, 0, 8096);
+				 while(readed != -1) {
+					 download_tick.sendEmptyMessage(readed);
 					 saveit.write(data,0,readed);
+					 readed = getit.read(data, 0, 8096);
 				 }
 			 }
+			 Log.d("Aptoide","Download done!");
 			 File f = new File(path);
 			 Md5Handler hash = new Md5Handler();
 			 if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
@@ -597,11 +604,30 @@ public class BaseManagement extends Activity {
 		 return rtnadp;
 	 }
 
+	 protected Handler download_tick = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			pd.incrementProgressBy(msg.what);
+		}
+		 
+	 };
+	 
 	 protected Handler download_handler = new Handler() {
 		 @Override
 		 public void handleMessage(Message msg) {
 			 if(msg.arg1 == 0){
-				 pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
+				 //pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
+				 pd = new ProgressDialog(mctx);
+				 pd.setTitle("Download");
+				 pd.setMessage(getString(R.string.download_alrt) + msg.obj.toString());
+				 pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				 pd.setCancelable(false);
+				 pd.setCanceledOnTouchOutside(false);
+				 pd.setMax(msg.arg2);
+				 pd.setProgress(0);
+				 pd.show();
 			 }else{
 				 pd.dismiss();
 			 }

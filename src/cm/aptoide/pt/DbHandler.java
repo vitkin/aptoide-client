@@ -51,7 +51,8 @@ public class DbHandler {
 	private static SQLiteDatabase db = null;
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
-	            + "name text not null, path text not null, lastver text not null, lastvercode number not null ,server text, md5hash text, primary key(apkid, server));";
+	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
+	            + "server text, md5hash text, size number default 0 not null, primary key(apkid, server));";
 	
 	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text primary key, "
 				+ "instver text not null, instvercode number not null);";
@@ -61,8 +62,8 @@ public class DbHandler {
 				+ " secure integer default 0 not null, updatetime text default 0 not null, delta text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, catg_ord integer default 2 not null, " + 
-				"size number default 0 not null, primary key(apkid));";
+				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null,"
+				+ " catg_ord integer default 2 not null, primary key(apkid));";
 	
 	
 	
@@ -231,7 +232,7 @@ public class DbHandler {
 		db.delete(TABLE_NAME_EXTRA, "apkid='"+apkid+"'", null);
 	}
 	
-	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type){
+	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size){
 
 		if(delfirst){
 			db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
@@ -246,6 +247,7 @@ public class DbHandler {
 		tmp.put("lastvercode", vercode);
 		tmp.put("server", serv);
 		tmp.put("md5hash", md5hash);
+		tmp.put("size", size);
 		db.insert(TABLE_NAME, null, tmp);
 		tmp.clear();
 		tmp.put("apkid", apkid);
@@ -668,7 +670,7 @@ public class DbHandler {
 		Vector<DownloadNode> out = new Vector<DownloadNode>();
 		Cursor c = null;
 		try{
-			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id.toString()+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
 				DownloadNode node = new DownloadNode();
@@ -679,6 +681,7 @@ public class DbHandler {
 				}else{
 					node.md5h = c.getString(2);
 				}
+				node.size = c.getInt(3);
 				out.add(node);
 			}
 			//c.close();
@@ -732,7 +735,7 @@ public class DbHandler {
 		Vector<ServerNode> out = new Vector<ServerNode>();
 		Cursor c = null;
 		try {
-			c = db.rawQuery("select uri, inuse, napk from " + TABLE_NAME_URI + " order by uri collate nocase", null);
+			c = db.rawQuery("select uri, inuse, napk, delta from " + TABLE_NAME_URI + " order by uri collate nocase", null);
 			c.moveToFirst();
 			for(int i=0; i<c.getCount(); i++){
 				ServerNode node = new ServerNode();
@@ -743,6 +746,7 @@ public class DbHandler {
 					node.inuse = false;
 				}
 				node.napk = c.getInt(2);
+				node.hash = c.getString(3);
 				out.add(node);
 				c.moveToNext();
 			}

@@ -347,6 +347,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 						Message msg = new Message();
 						msg.arg1 = 1;
 						download_handler.sendMessage(msg);
+						Log.d("Aptoide","Going to install!");
 						installApk(apk_pat);
 					}
 				}
