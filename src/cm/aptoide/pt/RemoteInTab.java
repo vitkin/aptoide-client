@@ -476,7 +476,7 @@ public class RemoteInTab extends TabActivity {
 								counter_msg.arg2 = repos_n;
 								update_updater.sendMessage(counter_msg);
 								Log.d("Aptoide", "Updating repo: " + node.uri);
-								parse = downloadList(node.uri);
+								parse = downloadList(node.uri, node.hash);
 								if(parse == 0){
 									//db.cleanRepoApps(node.uri);
 									xmlPass(node.uri,true);
@@ -549,10 +549,16 @@ public class RemoteInTab extends TabActivity {
 	/*
 	 * Get extras.xml file from server and save it in the SD card 
 	 */
-	private boolean downloadExtras(String srv){
+	private boolean downloadExtras(String srv, String delta_hash){
 		String url = srv+REMOTE_EXTRAS_FILE;
 		
         try {
+        	//String delta_hash = db.getServerDelta(srv);
+        	url = url.concat("?hash="+delta_hash);
+        	
+        	Log.d("Aptoide","A fazer fetch extras de: " + url);
+
+        	
         	FileOutputStream saveit = new FileOutputStream(LOCAL_PATH+REMOTE_EXTRAS_FILE);
 
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
@@ -598,14 +604,14 @@ public class RemoteInTab extends TabActivity {
 	/*
 	 * Get info.xml file from server and save it in the SD card
 	 */
-	private int downloadList(String srv){
+	private int downloadList(String srv, String delta_hash){
 		String url = srv+REMOTE_FILE;
         try {
         	
-        	String delta_hash = db.getServerDelta(srv);
+        	//String delta_hash = db.getServerDelta(srv);
         	url = url.concat("?hash="+delta_hash);
         	
-        	Log.d("Aptoide","A fazer fetch de: " + url);
+        	Log.d("Aptoide","A fazer fetch info de: " + url);
         	
         	FileOutputStream saveit = new FileOutputStream(XML_PATH);
         	        	
@@ -751,7 +757,7 @@ public class RemoteInTab extends TabActivity {
 						for(ServerNode node: extras_repo){
 							if(node.inuse){
 								Log.d("Aptoide", "Extras for: " + node.uri);
-								parse = downloadExtras(node.uri);
+								parse = downloadExtras(node.uri, node.hash);
 								if(parse){
 									xmlPass(node.uri, false);
 								}

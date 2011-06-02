@@ -23,4 +23,5 @@ public class ServerNode extends Object{
 	public String uri;
 	public boolean inuse;
 	public int napk;
+	public String hash;
 }
