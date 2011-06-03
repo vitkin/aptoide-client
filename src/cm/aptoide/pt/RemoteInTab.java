@@ -465,6 +465,7 @@ public class RemoteInTab extends TabActivity {
 						int parse = -1;
 						failed_repo.clear();
 						Message counter_msg = null;
+						ServerNode last_tmp = serv.lastElement();
 						for(ServerNode node: serv){
 							Log.d("Aptoide",node.uri + " is starting... : " + node.inuse);
 							if(node.inuse){
@@ -479,7 +480,7 @@ public class RemoteInTab extends TabActivity {
 								parse = downloadList(node.uri, node.hash);
 								if(parse == 0){
 									//db.cleanRepoApps(node.uri);
-									xmlPass(node.uri,true);
+									xmlPass(node.uri,true,last_tmp.equals(node));
 									pd.setProgress(100);
 									if(fetch_extra){
 										Log.d("Aptoide","Adding repo to extras list...");
@@ -515,7 +516,7 @@ public class RemoteInTab extends TabActivity {
 	 * @type: true - info.xml
 	 * 		  false - extras.xml
 	 */
-	private void xmlPass(String srv, boolean type){
+	private void xmlPass(String srv, boolean type, boolean is_last){
 	    SAXParserFactory spf = SAXParserFactory.newInstance();
 	    File xml_file = null;
 	    SAXParser sp = null;
@@ -524,7 +525,7 @@ public class RemoteInTab extends TabActivity {
 	    	sp = spf.newSAXParser();
 	    	xr = sp.getXMLReader();
 	    	if(type){
-	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra);
+	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
 	    		xml_file = new File(XML_PATH);
@@ -554,7 +555,8 @@ public class RemoteInTab extends TabActivity {
 		
         try {
         	//String delta_hash = db.getServerDelta(srv);
-        	url = url.concat("?hash="+delta_hash);
+        	if((new Integer(delta_hash)) != 0)
+        		url = url.concat("?hash="+delta_hash);
         	
         	Log.d("Aptoide","A fazer fetch extras de: " + url);
 
@@ -609,7 +611,8 @@ public class RemoteInTab extends TabActivity {
         try {
         	
         	//String delta_hash = db.getServerDelta(srv);
-        	url = url.concat("?hash="+delta_hash);
+        	if((new Integer(delta_hash)) != 0)
+        		url = url.concat("?hash="+delta_hash);
         	
         	Log.d("Aptoide","A fazer fetch info de: " + url);
         	
@@ -759,7 +762,7 @@ public class RemoteInTab extends TabActivity {
 								Log.d("Aptoide", "Extras for: " + node.uri);
 								parse = downloadExtras(node.uri, node.hash);
 								if(parse){
-									xmlPass(node.uri, false);
+									xmlPass(node.uri, false,false);
 								}
 							}
 						}
