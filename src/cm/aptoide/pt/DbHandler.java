@@ -171,8 +171,20 @@ public class DbHandler {
 				repos[i] = "http://apps.bazaarandroid.com";
 				inuser[i] = 1;
 				secure[i] = false;
-				
-				if(!c.getString(0).equalsIgnoreCase("http://apps.aptoide.org")){
+
+
+				i++;
+				repos[i] = c.getString(0);
+				inuser[i] = c.getInt(1);
+				if(c.getInt(4) == 1){
+					secure[i] = true;
+					login_user[i] = c.getString(2);
+					login_pwd[i] = c.getString(3);
+				}else{
+					secure[i] = false;
+				}
+
+				while(c.moveToNext()){
 					i++;
 					repos[i] = c.getString(0);
 					inuser[i] = c.getInt(1);
@@ -182,20 +194,6 @@ public class DbHandler {
 						login_pwd[i] = c.getString(3);
 					}else{
 						secure[i] = false;
-					}
-				}
-				while(c.moveToNext()){
-					if(!c.getString(0).equalsIgnoreCase("http://apps.aptoide.org")){
-						i++;
-						repos[i] = c.getString(0);
-						inuser[i] = c.getInt(1);
-						if(c.getInt(4) == 1){
-							secure[i] = true;
-							login_user[i] = c.getString(2);
-							login_pwd[i] = c.getString(3);
-						}else{
-							secure[i] = false;
-						}
 					}
 				}
 			}
@@ -216,15 +214,17 @@ public class DbHandler {
 				db.insert(TABLE_NAME_URI, null, tmp);
 			}*/
 			for(int z = 0; z < repos.length; z++){
-				ContentValues tmp = new ContentValues();
-				tmp.put("uri", repos[z]);
-				tmp.put("inuse", inuser[z]);
-				if(secure[z]){
-					tmp.put("secure", 1);
-					tmp.put("user", login_user[z]);
-					tmp.put("psd", login_pwd[z]);
+				if(!repos[z].equalsIgnoreCase("http://apps.aptoide.org")){
+					ContentValues tmp = new ContentValues();
+					tmp.put("uri", repos[z]);
+					tmp.put("inuse", inuser[z]);
+					if(secure[z]){
+						tmp.put("secure", 1);
+						tmp.put("user", login_user[z]);
+						tmp.put("psd", login_pwd[z]);
+					}
+					db.insert(TABLE_NAME_URI, null, tmp);
 				}
-				db.insert(TABLE_NAME_URI, null, tmp);
 			}
 			
 		}catch(Exception e){ }

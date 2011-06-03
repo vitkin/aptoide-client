@@ -89,8 +89,10 @@ public class RssHandler extends DefaultHandler{
 	private boolean hasIcon = false;
 	private boolean apkcount = false;
 	private int apks_n = -1;
+	
+	private boolean is_last = false;
 		
-	public RssHandler(Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd){
+	public RssHandler(Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
 		mctx = ctx;
 		mserver = srv;
 		db = new DbHandler(mctx);
@@ -114,6 +116,8 @@ public class RssHandler extends DefaultHandler{
 		this.pd_tick = pd_tick;
 		
 		this.extras_hd = extras_hd;
+		
+		this.is_last = is_last;
 		
 	}
 	
@@ -164,8 +168,6 @@ public class RssHandler extends DefaultHandler{
 				tmp_apk.catg_type = 2;
 		}else if(apk_ctg2){
 			tmp_apk.catg = tmp_apk.catg.concat(new String(ch).substring(start, start + length));
-			//String tmp = new String(ch).substring(start, start + length);
-			//Log.d("Aptoide","======== " + tmp);
 		}else if(onDelta){
 			thisDelta = thisDelta.concat(new String(ch).substring(start, start + length));
 		}else if(apkcount){
@@ -180,7 +182,9 @@ public class RssHandler extends DefaultHandler{
 			throws SAXException {
 		super.endElement(uri, localName, qName);
 		if(localName.trim().equals("package")){
-			
+			if(listapks == null){
+				listapks = db.getForUpdate();
+			}
 			if(hasIcon){
 				IconNode a = new IconNode(icon_path, tmp_apk.apkid);
 				synchronized(iconFetchList) {
@@ -188,7 +192,8 @@ public class RssHandler extends DefaultHandler{
 				}
 				hasIcon = false;
 			}
-
+			
+			
 			napk++;
 			new_apk = false;
 
@@ -198,12 +203,11 @@ public class RssHandler extends DefaultHandler{
 				cleanTransHeap();
 			}
 
+			
 			if(isRemove){
-				Log.d("Aptoide","Removing....");
 				isRemove = false;
 				db.delApk(tmp_apk.apkid);
 			}else{
-
 				if(tmp_apk.name.equalsIgnoreCase("Unknown"))
 					tmp_apk.name = tmp_apk.apkid;
 
@@ -384,12 +388,14 @@ public class RssHandler extends DefaultHandler{
 				IconNode node = null;
 				try{
 					while(true){
-						Log.d("Aptoide","A1");
+						Log.d("Aptoide","A1 - " + mserver);
 						Thread.sleep(2000);
 						if(iconFinalFetchList.isEmpty() || (!iconsInPool)){
+							Log.d("Aptoide","break A1 - " + mserver);
 							break;
 						}else{
 							synchronized(iconFinalFetchList){
+								Log.d("Aptoide","Removing onde - " + mserver);
 								node = iconFinalFetchList.remove(0);
 							}
 							getIcon(node.url, node.name);
@@ -432,28 +438,35 @@ public class RssHandler extends DefaultHandler{
 			db.setServerDelta(mserver, deltahash);
 		}
 		
-		
-		new Thread() {
-			public void run() {
-				try{
-					
-					while(true) {
-						if(iconFetchList.size() == 0){
-							iconsInPool = false;
-							break;
+
+		if(is_last){
+			new Thread() {
+				public void run() {
+					try{
+
+						while(true) {
+							if(iconFetchList.size() == 0){
+								iconsInPool = false;
+								break;
+							}
+							Thread.sleep(2000);
 						}
-						Thread.sleep(2000);
-					}
 
-					Thread main_icon_thread = new Thread(new FetchIcons(), "T1");
+						Thread main_icon_thread = new Thread(new FetchIcons(), "T1");
 
-					main_icon_thread.start();					
-					
-				} catch (Exception e) {  }
+						main_icon_thread.start();					
+
+					} catch (Exception e) {  }
+				}
+			}.start();
+		}else{
+			iconsInPool = false;
+			synchronized (iconFetchList) {
+				iconFinalFetchList.clear();
 			}
-		}.start();
+		}
 		
-		IconNode node = null;
+		/*IconNode node = null;
 		try{
 			while(true){
 				if(iconFinalFetchList.isEmpty()){
@@ -467,7 +480,7 @@ public class RssHandler extends DefaultHandler{
 				}
 			}
 		}catch (Exception e){
-		}
+		}*/
 		super.endDocument();
 	}
 	
@@ -480,7 +493,7 @@ public class RssHandler extends DefaultHandler{
 		String url = mserver + "/" + uri;
 		String file = mctx.getString(R.string.icons_path) + name;
 		
-		Log.d("Aptoide","getIcon: " + uri);
+		Log.d("Aptoide","getIcon: " + uri + " - " + mserver);
 		pd_tick.sendEmptyMessage(0);
 		
 		try {
@@ -504,7 +517,7 @@ public class RssHandler extends DefaultHandler{
 				saveit.write(buffer);
 			}
 			
-			Log.d("Aptoide","getIcon done: " + uri + "/" + name);
+			Log.d("Aptoide","getIcon done: " + uri + "/" + name + " - " + mserver);
 
 			
 		}catch (Exception e){
@@ -523,14 +536,14 @@ public class RssHandler extends DefaultHandler{
 			try{
 				while(true){
 					if(iconFinalFetchList.isEmpty()){
-						Log.d("Aptoide","List of icons is empty!");
+						Log.d("Aptoide","List of icons is empty - " + mserver);
 						break;
 					}else{
 						synchronized(iconFinalFetchList){
 							node = iconFinalFetchList.remove(0);
 						}
 						if(node != null){
-							Log.d("Aptoide","A3");
+							Log.d("Aptoide","A2 - " + mserver);
 							getIcon(node.url, node.name);
 						}
 					}
