@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="cm.aptoide.pt"
-      android:versionName="2.5.0" android:versionCode="258">
+      android:versionName="2.5.0" android:versionCode="260">
       <uses-permission android:name="android.permission.INTERNET" />
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
       <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -62,9 +62,9 @@ android:configChanges="keyboardHidden|orientation" android:theme="@android:style
 	</intent-filter>
 	<meta-data android:name="android.app.searchable" android:resource="@xml/find"/>
 </activity>
-<activity android:name="RemoteInTab" android:configChanges="keyboardHidden|orientation">
+<activity android:name="RemoteInTab" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
 	            <meta-data android:name="android.app.default_searchable"
-                       android:value=".RemoteInSearch" android:theme="@android:style/Theme.NoTitleBar" />
+                       android:value=".RemoteInSearch"  />
 </activity>
 <activity android:name="ApkInfo" android:theme="@android:style/Theme.NoTitleBar" />
 </application>

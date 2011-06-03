@@ -622,17 +622,20 @@ public class DbHandler {
 	public Vector<String> getApk(String id){
 		Vector<String> tmp = new Vector<String>();
 		Cursor c = null;
+		int size = 0;
 		try{
-			c = db.query(TABLE_NAME, new String[] {"server", "lastver"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"server", "lastver", "size"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
-			String tmp_serv = new String();
+			/*String tmp_serv = new String();
 			for(int i=0; i<c.getCount(); i++){
 				tmp_serv = tmp_serv.concat(c.getString(0)+"\n");
 				c.moveToNext();
 			}
 			tmp.add(tmp_serv);
-			c.moveToPrevious();
+			c.moveToPrevious();*/
+			tmp.add(c.getString(0));
 			tmp.add("\t" + c.getString(1)+"\n");
+			size = c.getInt(2);
 			c = db.query(TABLE_NAME_LOCAL, new String[] {"instver"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			if(c.getCount() == 0){
 				tmp.add("\tno\n");
@@ -655,6 +658,11 @@ public class DbHandler {
 			}
 			
 			tmp.add(Float.toString(rat));
+			
+			if(size == 0)
+				tmp.add("Size: No information available");
+			else
+				tmp.add("Size: " + new Integer(size).toString() + "kb");
 			
 			//c.close();
 		}catch (Exception e){
@@ -822,11 +830,13 @@ public class DbHandler {
 	
 	public void removeServer(Vector<String> serv){
 		for(String node: serv){
+			cleanRepoApps(node);
 			db.delete(TABLE_NAME_URI, "uri='"+node+"'", null);
 		}
 	}
 	
 	public void removeServer(String serv){
+		cleanRepoApps(serv);
 		db.delete(TABLE_NAME_URI, "uri='"+serv+"'", null);
 	}
 	
@@ -837,6 +847,20 @@ public class DbHandler {
 	public void updateServerNApk(String repo, int napk){
 		Log.d("Aptoide","Update napks count to: " + napk);		
 		db.execSQL("update " + TABLE_NAME_URI + " set napk=" + napk + " where uri='" + repo + "'");
+	}
+	
+	public int getServerNApk(String repo){
+		int napk = 0;
+		Cursor c = null;
+		try{
+			c = db.query(TABLE_NAME_URI, new String[] {"napk"}, "uri='" + repo + "'", null, null, null, null);
+			c.moveToFirst();
+			napk = c.getInt(0);
+			return napk;
+		}catch (Exception e) {return 0;	}
+		finally{
+			c.close();
+		}
 	}
 	
 	public String getServerDelta(String srv){

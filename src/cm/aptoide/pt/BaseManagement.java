@@ -470,6 +470,7 @@ public class BaseManagement extends Activity {
 		 String getserv = new String();
 		 String md5hash = null;
 		 String repo = null;
+		 String name = null;
 		 int size = 0;
 
 		 try{
@@ -483,6 +484,7 @@ public class BaseManagement extends Activity {
 				 md5hash = node.md5h;
 				 repo = node.repo;
 				 size = node.size;
+				 name = node.name;
 			 }
 
 			 
@@ -529,8 +531,13 @@ public class BaseManagement extends Activity {
 					 saveit.write(data,0,readed);
 					 readed = getit.read(data, 0, 8096);
 				 }
+				 Log.d("Aptoide","Download done!");
+				 saveit.flush();
+				 saveit.close();
+				 getit.close();
 			 }
-			 Log.d("Aptoide","Download done!");
+			 
+			 Log.d("Aptoide","Download MD5...");
 			 File f = new File(path);
 			 Md5Handler hash = new Md5Handler();
 			 if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
@@ -609,9 +616,9 @@ public class BaseManagement extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			//Log.d("Aptoide","Progress: " + pd.getProgress() + " Other: " +  (pd.getMax()*0.96) + " Adding: " + msg.what);
 			pd.incrementProgressBy(msg.what);
 		}
-		 
 	 };
 	 
 	 protected Handler download_handler = new Handler() {
@@ -625,7 +632,9 @@ public class BaseManagement extends Activity {
 				 pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				 pd.setCancelable(false);
 				 pd.setCanceledOnTouchOutside(false);
-				 pd.setMax(msg.arg2);
+				 /*int max = (((msg.arg2*106)/100)*1000);
+				 Log.d("Aptoide","Max is: " + max);*/
+				 pd.setMax(msg.arg2*1024);
 				 pd.setProgress(0);
 				 pd.show();
 			 }else{

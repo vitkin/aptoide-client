@@ -254,6 +254,7 @@ public class ManageRepo extends ListActivity{
 		switch (item.getItemId()) {
 		case EDIT_REPO_POP:
 			editRepo(repo_selected);
+			db.resetServerCacheUse(repo_selected);
 			break;
 
 		case REM_REPO_POP:
