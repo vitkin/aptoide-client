@@ -212,7 +212,7 @@ public class RemoteInTab extends TabActivity {
 				if (srv_lst.isEmpty()){
 					Intent call = new Intent(this, ManageRepo.class);
 					call.putExtra("empty", true);
-					call.putExtra("uri", "http://apps.aptoide.org");
+					call.putExtra("uri", "http://apps.bazaarandroid.com");
 					startActivityForResult(call,NEWREPO_FLAG);
 				}
 
