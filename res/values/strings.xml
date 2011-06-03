@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5"</string>
+    <string name="ver_str">"2.5.0"</string>
     <string name="change_log_url">http://aptoide.com/changelog_2_4_3.html</string>
     
     <string name="tab_avail">Available</string>
@@ -21,7 +21,7 @@
     
     <string name="about_txt1">Your package installer to Android phone.\n</string>
     
-    <string name="about_txt11">Version: 2.5.0-beta3\n(released under GNU GPL v2 license)\n
+    <string name="about_txt11">Version: 2.5.0-beta4\n(released under GNU GPL v2 license)\n
     \nCredits: Roberto Jacinto - Caixa Mágica\n
     \t\t\tFrancisco "ppelao3k" - Spanish translation\n
     \t\t\tManaa Alshihe - Arabic translation\n</string>

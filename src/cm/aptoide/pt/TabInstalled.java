@@ -117,6 +117,8 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("server", tmp_get.firstElement());
 		apkinfo.putExtra("version", tmp_get.get(1));
 		apkinfo.putExtra("dwn", tmp_get.get(4));
+		apkinfo.putExtra("rat", tmp_get.get(5));
+		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 1);
 		
 		startActivityForResult(apkinfo,30);

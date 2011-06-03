@@ -11,7 +11,8 @@
         android:layout_width="35px"
         android:layout_height="35px"
         android:cropToPadding ="true"
-        android:scaleType = "centerInside" />
+        android:scaleType="fitCenter" 
+        android:layout_gravity="center_vertical|center_horizontal"/>
 
     <RelativeLayout
         android:layout_width="fill_parent"

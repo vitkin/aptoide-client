@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class ApkInfo extends Activity{
 		String apk_repo_str = apkinfo.getStringExtra("server");
 		String apk_ver_str = apkinfo.getStringExtra("version");
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
+		String apk_rat_str = apkinfo.getStringExtra("rat");
+		String apk_size_str = apkinfo.getStringExtra("size");
 		
 		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
 		serch_mrkt.setOnClickListener(new OnClickListener() {
@@ -83,26 +86,11 @@ public class ApkInfo extends Activity{
 					public void run() {*/
 						switch (type) {
 						case 0:
-							/*String apk_pat = downloadFile(apk_id);
-							Message msg_al = new Message();
-							if(apk_pat == null){
-								msg_al.arg1= 1;
-								download_error_handler.sendMessage(msg_al);
-							}else if(apk_pat.equals("*md5*")){
-								msg_al.arg1 = 0;
-								download_error_handler.sendMessage(msg_al);
-							}else{
-								Message msg = new Message();
-								msg.arg1 = 1;
-								download_handler.sendMessage(msg);
-								installApk(apk_pat);
-							}*/
 							rtrn_intent.putExtra("apkid", apk_id);
 							jback = true;
 							break;
 
 						case 1:
-							//removeApk(apk_id);
 							rtrn_intent.putExtra("apkid", apk_id);
 							jback = true;
 							break;
@@ -111,20 +99,6 @@ public class ApkInfo extends Activity{
 						case 2:
 							rtrn_intent.putExtra("apkid", apk_id);
 							jback = true;
-							/*String apk_path = downloadFile(apk_id);
-							Message msg_alt = new Message();
-							if(apk_path == null){
-								msg_alt.arg1 = 1;
-								download_error_handler.sendMessage(msg_alt);
-							}else if(apk_path.equals("*md5*")){
-								msg_alt.arg1 = 0;
-								download_error_handler.sendMessage(msg_alt);
-							}else{
-								Message msg = new Message();
-								msg.arg1 = 1;
-								download_handler.sendMessage(msg);
-								updateApk(apk_path, apk_id);
-							}*/
 							break;
 						}
 						finish();
@@ -155,6 +129,12 @@ public class ApkInfo extends Activity{
 		
 		TextView apk_down_n = (TextView)findViewById(R.id.dwn);
 		apk_down_n.setText("Downloads: " + apk_dwon_str.replaceAll("\\n", "").replaceAll("\\t", "").trim());
+		
+		RatingBar apk_rat_n = (RatingBar) findViewById(R.id.rating);
+		apk_rat_n.setRating(new Float(apk_rat_str));
+		
+		TextView apk_size_n = (TextView) findViewById(R.id.size);
+		apk_size_n.setText(apk_size_str);
 		
 	}
 

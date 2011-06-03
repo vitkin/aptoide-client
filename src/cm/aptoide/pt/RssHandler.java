@@ -327,6 +327,7 @@ public class RssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("del")){
 			Log.d("Aptoide","Is a remove...");
 			isRemove = true;
+			apks_n--;
 		}else if(localName.trim().equals("appscount")){
 			apkcount = true;
 		}else if(localName.trim().equals("sz")){
@@ -406,6 +407,10 @@ public class RssHandler extends DefaultHandler{
 	@Override
 	public void endDocument() throws SAXException {
 		Log.d("Aptoide","Done parsing XML from " + mserver + " ...");
+		int oldNapks = db.getServerNApk(mserver);
+		if(isDelta){
+			apks_n += oldNapks;
+		}
 		if(apks_n != -1)
 			db.updateServerNApk(mserver, apks_n);
 		else
