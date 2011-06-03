@@ -484,7 +484,6 @@ public class BaseManagement extends Activity {
 				 md5hash = node.md5h;
 				 repo = node.repo;
 				 size = node.size;
-				 name = node.name;
 			 }
 
 			 

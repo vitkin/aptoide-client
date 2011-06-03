@@ -168,22 +168,11 @@ public class DbHandler {
 				secure = new boolean[c.getCount()+1];
 				login_pwd = new String[c.getCount()+1];
 				login_user = new String[c.getCount()+1];
-				repos[i] = "http://apps.aptoide.org";
+				repos[i] = "http://apps.bazaarandroid.com";
 				inuser[i] = 1;
 				secure[i] = false;
 				
-				i++;
-				repos[i] = c.getString(0);
-				inuser[i] = c.getInt(1);
-				if(c.getInt(4) == 1){
-					secure[i] = true;
-					login_user[i] = c.getString(2);
-					login_pwd[i] = c.getString(3);
-				}else{
-					secure[i] = false;
-				}
-				
-				while(c.moveToNext()){
+				if(!c.getString(0).equalsIgnoreCase("http://apps.aptoide.org")){
 					i++;
 					repos[i] = c.getString(0);
 					inuser[i] = c.getInt(1);
@@ -193,6 +182,20 @@ public class DbHandler {
 						login_pwd[i] = c.getString(3);
 					}else{
 						secure[i] = false;
+					}
+				}
+				while(c.moveToNext()){
+					if(!c.getString(0).equalsIgnoreCase("http://apps.aptoide.org")){
+						i++;
+						repos[i] = c.getString(0);
+						inuser[i] = c.getInt(1);
+						if(c.getInt(4) == 1){
+							secure[i] = true;
+							login_user[i] = c.getString(2);
+							login_pwd[i] = c.getString(3);
+						}else{
+							secure[i] = false;
+						}
 					}
 				}
 			}
