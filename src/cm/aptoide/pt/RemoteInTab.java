@@ -431,6 +431,9 @@ public class RemoteInTab extends TabActivity {
 	
 	public boolean updateRepos(){
 		//pd = ProgressDialog.show(this, getText(R.string.top_please_wait), getText(R.string.updating_msg),false);
+		prefEdit.putBoolean("kill_thread", true);
+    	prefEdit.commit();
+    	
 		pd = new ProgressDialog(this);
 		pd.setTitle(getText(R.string.top_please_wait));
 		pd.setMessage(getText(R.string.updating_msg));
@@ -465,37 +468,47 @@ public class RemoteInTab extends TabActivity {
 						int parse = -1;
 						failed_repo.clear();
 						Message counter_msg = null;
-						ServerNode last_tmp = serv.lastElement();
+						Vector<ServerNode> inuse_serv = new Vector<ServerNode>();
 						for(ServerNode node: serv){
-							Log.d("Aptoide",node.uri + " is starting... : " + node.inuse);
 							if(node.inuse){
-								pd.setProgress(0);
-								in_repo++;
-								counter_msg = null;
-								counter_msg = new Message();
-								counter_msg.arg1 = in_repo;
-								counter_msg.arg2 = repos_n;
-								update_updater.sendMessage(counter_msg);
-								Log.d("Aptoide", "Updating repo: " + node.uri);
-								parse = downloadList(node.uri, node.hash);
-								if(parse == 0){
-									//db.cleanRepoApps(node.uri);
-									xmlPass(node.uri,true,last_tmp.equals(node));
-									pd.setProgress(100);
-									if(fetch_extra){
-										Log.d("Aptoide","Adding repo to extras list...");
-										extras_repo.add(node);
-									}
-									fetch_extra = true;
-									there_was_update = true;
-								}else if(parse == -1){
-									failed_repo.add(node.uri);
-								}
-								Log.d("Aptoide","Going to next..,.");
+								inuse_serv.add(node);
 							}else{
-								Log.d("Aptoide",node.uri + " no update, returned 1");
 								db.cleanRepoApps(node.uri);
 							}
+						}
+						ServerNode last_tmp = inuse_serv.lastElement();
+						prefEdit.putBoolean("kill_thread", false);
+				    	prefEdit.commit();
+						for(ServerNode node: inuse_serv){
+							Log.d("Aptoide",node.uri + " is starting... : " + node.inuse);
+							//if(node.inuse){
+							pd.setProgress(0);
+							in_repo++;
+							counter_msg = null;
+							counter_msg = new Message();
+							counter_msg.arg1 = in_repo;
+							counter_msg.arg2 = repos_n;
+							update_updater.sendMessage(counter_msg);
+							Log.d("Aptoide", "Updating repo: " + node.uri);
+							parse = downloadList(node.uri, node.hash);
+							if(parse == 0){
+								//db.cleanRepoApps(node.uri);
+								xmlPass(node.uri,true,last_tmp.equals(node));
+								pd.setProgress(100);
+								if(fetch_extra){
+									Log.d("Aptoide","Adding repo to extras list...");
+									extras_repo.add(node);
+								}
+								fetch_extra = true;
+								there_was_update = true;
+							}else if(parse == -1){
+								failed_repo.add(node.uri);
+							}
+							Log.d("Aptoide","Going to next..,.");
+							/*}else{
+								Log.d("Aptoide",node.uri + " no update, returned 1");
+								db.cleanRepoApps(node.uri);
+							}*/
 						}
 					} catch (Exception e) { }
 					finally{
@@ -555,7 +568,7 @@ public class RemoteInTab extends TabActivity {
 		
         try {
         	//String delta_hash = db.getServerDelta(srv);
-        	if((new Integer(delta_hash)) != 0)
+        	if(delta_hash.length()>2)
         		url = url.concat("?hash="+delta_hash);
         	
         	Log.d("Aptoide","A fazer fetch extras de: " + url);
@@ -611,7 +624,7 @@ public class RemoteInTab extends TabActivity {
         try {
         	
         	//String delta_hash = db.getServerDelta(srv);
-        	if((new Integer(delta_hash)) != 0)
+        	if(delta_hash.length()>2)
         		url = url.concat("?hash="+delta_hash);
         	
         	Log.d("Aptoide","A fazer fetch info de: " + url);

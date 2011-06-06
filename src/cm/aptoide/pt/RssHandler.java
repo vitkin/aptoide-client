@@ -31,6 +31,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
@@ -39,6 +40,8 @@ public class RssHandler extends DefaultHandler{
 	private ApkNodeFull tmp_apk = new ApkNodeFull();
 	
 	private String icon_path;
+	
+	SharedPreferences sPref = null;
 	
 	Context mctx;
 	String mserver;
@@ -118,6 +121,8 @@ public class RssHandler extends DefaultHandler{
 		this.extras_hd = extras_hd;
 		
 		this.is_last = is_last;
+		
+		sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		
 	}
 	
@@ -535,6 +540,8 @@ public class RssHandler extends DefaultHandler{
 			IconNode node = null;
 			try{
 				while(true){
+					if(sPref.getBoolean("kill_thread", false))
+						break;
 					if(iconFinalFetchList.isEmpty()){
 						Log.d("Aptoide","List of icons is empty - " + mserver);
 						break;
