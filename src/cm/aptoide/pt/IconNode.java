@@ -1,6 +1,12 @@
 package cm.aptoide.pt;
 
-public class IconNode extends Object{
+import java.io.Serializable;
+
+public class IconNode extends Object implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public String url;
 	public String name;
 
