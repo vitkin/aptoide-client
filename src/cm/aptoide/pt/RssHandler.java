@@ -21,6 +21,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import org.apache.http.HttpResponse;
@@ -31,6 +33,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
@@ -71,6 +74,9 @@ public class RssHandler extends DefaultHandler{
 	//private DefaultHttpClient mHttpClient2 = null;
 
 	private Vector<ApkNode> listapks= null;
+	
+	private ArrayList<IconNode> iconsLst = new ArrayList<IconNode>();
+
 	
 	private Vector<IconNode> iconFetchList = new Vector<IconNode>();
 	private Vector<IconNode> iconFinalFetchList = new Vector<IconNode>();
@@ -195,6 +201,7 @@ public class RssHandler extends DefaultHandler{
 				synchronized(iconFetchList) {
 					iconFetchList.add(a);
 				}
+				iconsLst.add(a);
 				hasIcon = false;
 			}
 			
@@ -360,7 +367,7 @@ public class RssHandler extends DefaultHandler{
 		mHttpClient = NetworkApis.createItOpen(mserver, usern, passwd);
 		//mHttpClient2 = NetworkApis.createItOpen(mserver, usern, passwd);
 		
-		new Thread() {
+		/*new Thread() {
 			public void run() {
 				try{
 					while(iconsInPool){
@@ -386,9 +393,9 @@ public class RssHandler extends DefaultHandler{
 				} catch (Exception e) { 
 				}
 			}
-		}.start();
+		}.start();*/
 		
-		new Thread() {
+		/*new Thread() {
 			public void run() {
 				IconNode node = null;
 				try{
@@ -409,7 +416,7 @@ public class RssHandler extends DefaultHandler{
 				}catch (Exception e){
 				}
 			}
-		}.start();
+		}.start();*/
 		
 		db.startTrans();
 		super.startDocument();
@@ -443,8 +450,14 @@ public class RssHandler extends DefaultHandler{
 			db.setServerDelta(mserver, deltahash);
 		}
 		
-
-		if(is_last){
+		
+		Intent serv = new Intent(mctx,FetchIconsService.class);
+		serv.putExtra("icons", iconsLst);
+		serv.putExtra("srv", mserver);
+		serv.putExtra("login", new String[] {usern, passwd});
+		mctx.startService(serv);
+				
+		/*if(is_last){
 			new Thread() {
 				public void run() {
 					try{
@@ -469,7 +482,7 @@ public class RssHandler extends DefaultHandler{
 			synchronized (iconFetchList) {
 				iconFinalFetchList.clear();
 			}
-		}
+		}*/
 		
 		/*IconNode node = null;
 		try{

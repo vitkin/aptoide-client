@@ -67,6 +67,9 @@ android:configChanges="keyboardHidden|orientation" android:theme="@android:style
                        android:value=".RemoteInSearch"  />
 </activity>
 <activity android:name="ApkInfo" android:theme="@android:style/Theme.NoTitleBar" />
+
+<service android:name="FetchIconsService"></service>
+
 </application>
     <uses-sdk android:minSdkVersion="4" />
 
