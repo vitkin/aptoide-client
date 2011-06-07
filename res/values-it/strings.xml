@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5.1-beta1"</string>
-    <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string>
+   
+    <string name="tab_avail">Disponibile</string>
+    <string name="tab_inst">Installata</string>
+    <string name="tab_updt">Update</string>
     
-    <string name="tab_avail">Available</string>
-    <string name="tab_inst">Installed</string>
-    <string name="tab_updt">Updates</string>
-    
-    <string name="no_found">No application found!</string>
-    <string name="no_repo">There are no repositories!</string>
+    <string name="no_found">Nessuna applicazione trovata!</string>
+    <string name="no_repo">NON ci sono repository!</string>
  
- 	<string name="not_inst">Not Installed</string>
-    <string name="installed">Installed - Ver.:</string>
-    <string name="installed_update">Update possible - Ver.:</string>
-    <string name="srv_version">Available version:</string>
+ 	<string name="not_inst">Non installata</string>
+    <string name="installed">Installata - Vers.:</string>
+    <string name="installed_update">Possibile update - Vers.:</string>
+    <string name="srv_version">Versione disponibile:</string>
     
     <string name="srch_label">Aptoide</string>
-    <string name="srch_hint">Name of the application</string>
+    <string name="srch_hint">Nome dell\'applicazione</string>
     
-    <string name="about_txt1">Your package installer to Android phone.\n</string>
+    <string name="about_txt1">Il tuo installer di pacchetti per il sistema Android.\n</string>
     
-    <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n
+    <string name="about_txt11">Versione: %s\n(rilasciata sotto licenza GNU GPL v2)\n
     \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n
     \t\t\tFrancisco "ppelao3k" - Spanish translation\n
     \t\t\tManaa Alshihe - Arabic translation\n
     \t\t\tPavo Baxter - Italian translation\n
     \t\t\tAlexis Bonvin - French translation\n
     \t\t\tTheodore Wte - Chinese translation\n</string>
+
     
     <string name="about_site">Home: </string>
     
-    <string name="about_mail">Contact: </string>
+    <string name="about_mail">Contatto: </string>
     
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>

@@ -18,10 +18,13 @@
     
     <string name="about_txt1">Instalador de pacotes para Android.\n</string>
     
-    <string name="about_txt11">Versão: 2.5.0\n(diponibilizado ao abrigo da licença GNU GPL v2)\n
-    \nCréditos: Roberto Jacinto - Caixa Mágica\n
+    <string name="about_txt11">Versão: %s\n(diponibilizado ao abrigo da licença GNU GPL v2)\n
+    \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n
     \t\t\tFrancisco "ppelao3k" - Spanish translation\n
-    \t\t\tManaa Alshihe - Arabic translation\n</string>
+    \t\t\tManaa Alshihe - Arabic translation\n
+    \t\t\tPavo Baxter - Italian translation\n
+    \t\t\tAlexis Bonvin - French translation\n
+    \t\t\tTheodore Wte - Chinese translation\n</string>
 
     
     <string name="about_site">Portal: </string>

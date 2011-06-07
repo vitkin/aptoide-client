@@ -201,6 +201,8 @@ public class RemoteInSearch extends ListActivity{
 		case ABOUT:
 			LayoutInflater li = LayoutInflater.from(this);
 			View view = li.inflate(R.layout.about, null);
+			TextView info = (TextView)view.findViewById(R.id.about11);
+			info.setText(mctx.getString(R.string.about_txt11, mctx.getString(R.string.ver_str)));
 			Builder p = new AlertDialog.Builder(this).setView(view);
 			final AlertDialog alrt = p.create();
 			alrt.setIcon(R.drawable.icon);
