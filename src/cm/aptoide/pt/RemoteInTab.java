@@ -71,6 +71,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class RemoteInTab extends TabActivity {
@@ -370,7 +371,9 @@ public class RemoteInTab extends TabActivity {
 			return true;
 		case ABOUT:
 			LayoutInflater li = LayoutInflater.from(this);
-			View view = li.inflate(R.layout.about, null);			
+			View view = li.inflate(R.layout.about, null);
+			TextView info = (TextView)view.findViewById(R.id.about11);
+			info.setText(mctx.getString(R.string.about_txt11, mctx.getString(R.string.ver_str)));
 			Builder p = new AlertDialog.Builder(this).setView(view);
 			final AlertDialog alrt = p.create();
 			alrt.setIcon(R.drawable.icon);

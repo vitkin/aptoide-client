@@ -1,37 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5.1-beta1"</string>
-    <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string>
+   
+    <string name="tab_avail">有效的</string>
+    <string name="tab_inst">已安装</string>
+    <string name="tab_updt">版本</string>
     
-    <string name="tab_avail">Available</string>
-    <string name="tab_inst">Installed</string>
-    <string name="tab_updt">Updates</string>
-    
-    <string name="no_found">No application found!</string>
-    <string name="no_repo">There are no repositories!</string>
+    <string name="no_found">未找到任何程序!</string>
+    <string name="no_repo">未添加任何仓库!</string>
  
- 	<string name="not_inst">Not Installed</string>
-    <string name="installed">Installed - Ver.:</string>
-    <string name="installed_update">Update possible - Ver.:</string>
-    <string name="srv_version">Available version:</string>
+ 	<string name="not_inst">未安装</string>
+    <string name="installed">已安装 - 版本:</string>
+    <string name="installed_update">可更新 - 版本:</string>
+    <string name="srv_version">有效的版本:</string>
     
     <string name="srch_label">Aptoide</string>
-    <string name="srch_hint">Name of the application</string>
+    <string name="srch_hint">程序名称</string>
     
-    <string name="about_txt1">Your package installer to Android phone.\n</string>
+    <string name="about_txt1">你的Android手机安装包.\n</string>
     
-    <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n
+    <string name="about_txt11">版本: %s\n(发布基于GNU GPL v2的许可)\n
     \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n
     \t\t\tFrancisco "ppelao3k" - Spanish translation\n
     \t\t\tManaa Alshihe - Arabic translation\n
     \t\t\tPavo Baxter - Italian translation\n
     \t\t\tAlexis Bonvin - French translation\n
     \t\t\tTheodore Wte - Chinese translation\n</string>
+
     
-    <string name="about_site">Home: </string>
+    <string name="about_site">主页: </string>
     
-    <string name="about_mail">Contact: </string>
+    <string name="about_mail">联系: </string>
     
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>

@@ -1,35 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5.1-beta1"</string>
-    <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string>
+   
+    <string name="tab_avail">Disponible</string>
+    <string name="tab_inst">Installé</string>
+    <string name="tab_updt">Mises à jour</string>
     
-    <string name="tab_avail">Available</string>
-    <string name="tab_inst">Installed</string>
-    <string name="tab_updt">Updates</string>
-    
-    <string name="no_found">No application found!</string>
-    <string name="no_repo">There are no repositories!</string>
+    <string name="no_found">Aucun application trouvée!</string>
+    <string name="no_repo">Il n\'y pas de dépôts!</string>
  
- 	<string name="not_inst">Not Installed</string>
-    <string name="installed">Installed - Ver.:</string>
-    <string name="installed_update">Update possible - Ver.:</string>
-    <string name="srv_version">Available version:</string>
+ 	<string name="not_inst">Non installé</string>
+    <string name="installed">Installé - Ver.:</string>
+    <string name="installed_update">MàJ possible - Ver.:</string>
+    <string name="srv_version">version disponible:</string>
     
     <string name="srch_label">Aptoide</string>
-    <string name="srch_hint">Name of the application</string>
+    <string name="srch_hint">Nom de l\'application</string>
     
     <string name="about_txt1">Your package installer to Android phone.\n</string>
     
-    <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n
+    <string name="about_txt11">Version: %s\n(sous licence GNU GPL v2)\n
     \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n
     \t\t\tFrancisco "ppelao3k" - Spanish translation\n
     \t\t\tManaa Alshihe - Arabic translation\n
     \t\t\tPavo Baxter - Italian translation\n
     \t\t\tAlexis Bonvin - French translation\n
     \t\t\tTheodore Wte - Chinese translation\n</string>
+
     
-    <string name="about_site">Home: </string>
+    <string name="about_site">Site: </string>
     
     <string name="about_mail">Contact: </string>
     
