@@ -52,7 +52,7 @@ public class FetchIconsService extends Service{
 		parsedList.add(tmp);
 		/*if(!workingPool.isAlive())
 			workingPool.start();*/
-		workingPool.interrupt();
+		//workingPool.interrupt();
 		Log.d("Aptoide","......................... onStart FetchIcons Service");
 	}
 

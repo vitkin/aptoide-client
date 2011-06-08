@@ -470,7 +470,7 @@ public class BaseManagement extends Activity {
 		 String getserv = new String();
 		 String md5hash = null;
 		 String repo = null;
-		 String name = null;
+		 //String name = null;
 		 int size = 0;
 
 		 try{
