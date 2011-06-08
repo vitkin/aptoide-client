@@ -156,6 +156,11 @@ public class Aptoide extends Activity {
 			     prefEdit.commit();
 			}
 			
+			if(sPref.getString("icdown", null) == null){
+				prefEdit.putString("icdown", "g3w");
+				prefEdit.commit();
+			}
+			
 		} catch (NameNotFoundException e) {	}
         
         requestWindowFeature(Window.FEATURE_NO_TITLE);

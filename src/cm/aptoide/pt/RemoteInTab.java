@@ -418,13 +418,13 @@ public class RemoteInTab extends TabActivity {
 			}
 		}else if(requestCode == SETTINGS_FLAG){
 			
-			if(data != null && data.hasExtra("mode")){
+			/*if(data != null && data.hasExtra("mode")){
 				prefEdit.putBoolean("mode", data.getExtras().getBoolean("mode"));
 	        	prefEdit.commit();
 	        	prefEdit.putBoolean("update", true);
 	        	prefEdit.commit();
 	        	onResume();
-			}
+			}*/
 
 		}else if(requestCode == FETCH_APK){
 			if(intserver != null)
@@ -481,6 +481,14 @@ public class RemoteInTab extends TabActivity {
 						}
 						ServerNode last_tmp = inuse_serv.lastElement();
 						prefEdit.putBoolean("kill_thread", false);
+				    	prefEdit.commit();
+				    	if(sPref.getString("icdown", "nd").equalsIgnoreCase("nd")){
+				    		prefEdit.putBoolean("fetchicons", false);
+				    	}else if((sPref.getString("icdown", "nd").equalsIgnoreCase("wo")) && (netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED)){
+				    		prefEdit.putBoolean("fetchicons", false);
+				    	}else{
+				    		prefEdit.putBoolean("fetchicons", true);
+				    	}
 				    	prefEdit.commit();
 						for(ServerNode node: inuse_serv){
 							Log.d("Aptoide",node.uri + " is starting... : " + node.inuse);
