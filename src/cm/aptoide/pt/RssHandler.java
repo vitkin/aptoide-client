@@ -20,14 +20,10 @@
 package cm.aptoide.pt;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -44,10 +40,10 @@ public class RssHandler extends DefaultHandler{
 	
 	private String icon_path;
 	
-	SharedPreferences sPref = null;
+	private SharedPreferences sPref = null;
 	
-	Context mctx;
-	String mserver;
+	private Context mctx;
+	private String mserver;
 	
 	private int napk = 0;
 	
@@ -299,7 +295,7 @@ public class RssHandler extends DefaultHandler{
 			}
 		}else if(localName.trim().equals("appscount")){
 			apkcount = false;
-			int what = 2*apks_n;
+			int what = apks_n;
 			pd_set.sendEmptyMessage(what);
 		}else if(localName.trim().equals("sz")){
 			apk_size = false;
@@ -364,7 +360,7 @@ public class RssHandler extends DefaultHandler{
 			passwd = logins[1];
 		}
 		
-		mHttpClient = NetworkApis.createItOpen(mserver, usern, passwd);
+		//mHttpClient = NetworkApis.createItOpen(mserver, usern, passwd);
 		//mHttpClient2 = NetworkApis.createItOpen(mserver, usern, passwd);
 		
 		/*new Thread() {
@@ -451,11 +447,13 @@ public class RssHandler extends DefaultHandler{
 		}
 		
 		
-		Intent serv = new Intent(mctx,FetchIconsService.class);
-		serv.putExtra("icons", iconsLst);
-		serv.putExtra("srv", mserver);
-		serv.putExtra("login", new String[] {usern, passwd});
-		mctx.startService(serv);
+		if(sPref.getBoolean("fetchicons", false)){
+			Intent serv = new Intent(mctx,FetchIconsService.class);
+			serv.putExtra("icons", iconsLst);
+			serv.putExtra("srv", mserver);
+			serv.putExtra("login", new String[] {usern, passwd});
+			mctx.startService(serv);
+		}
 				
 		/*if(is_last){
 			new Thread() {
@@ -507,7 +505,7 @@ public class RssHandler extends DefaultHandler{
 		db.startTrans();
 	}
 
-	private void getIcon(String uri, String name){
+	/*private void getIcon(String uri, String name){
 		String url = mserver + "/" + uri;
 		String file = mctx.getString(R.string.icons_path) + name;
 		
@@ -524,12 +522,6 @@ public class RssHandler extends DefaultHandler{
 			}else if(mHttpResponse.getStatusLine().getStatusCode() == 403){
 				return;
 			}else{
-				/*InputStream getit = mHttpResponse.getEntity().getContent();
-				byte data[] = new byte[8096];
-				int readed;
-				while((readed = getit.read(data, 0, 8096)) != -1) {
-					saveit.write(data,0,readed);
-				}*/
 				
 				byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 				saveit.write(buffer);
@@ -539,14 +531,11 @@ public class RssHandler extends DefaultHandler{
 
 			
 		}catch (Exception e){
-			/*System.out.println("========================222===========================");
-			e.printStackTrace();
-			System.out.println("=========================222==========================");*/
 			Log.d("Aptoide","Error fetching icon.");
 		}
-	}
+	}*/
 	
-	private class FetchIcons implements Runnable {
+	/*private class FetchIcons implements Runnable {
 		public FetchIcons() {	}
 		
 		public void run() {
@@ -573,6 +562,6 @@ public class RssHandler extends DefaultHandler{
 				Log.d("Aptoide", "Wash exception? " + e.toString());
 			}
 		}
-	}
+	}*/
 
 }

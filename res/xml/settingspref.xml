@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:title="Aptoide settings">
+  
+  
+  <PreferenceCategory
+        android:title="Downloads">
+        <ListPreference
+            android:title="Download icons"
+            android:summary="When does Aptoide fetch icons"
+            android:key="icdown"
+            android:defaultValue="digiGreen"
+            android:entries="@array/dwnif"
+            android:entryValues="@array/dwnifv" />
+    </PreferenceCategory>
+            
+  
+  <PreferenceCategory
+        android:title="Cache">
+  		
+  	 <Preference
+     	android:title="Clear cache"
+        android:summary="DANGER: removes all icons Aptoide has cached"
+        android:key="clearcache" />
+ 
+  </PreferenceCategory>
+  
+  
+</PreferenceScreen>

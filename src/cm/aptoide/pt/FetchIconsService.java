@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -14,12 +13,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Process;
 import android.util.Log;
 
 public class FetchIconsService extends Service{
 	
 
-	private Vector<ServiceIcon> parsedList = null;
+	private List<ServiceIcon> parsedList = null;
 	private Thread workingPool = null;
 	
 	private Context mctx = null;
@@ -35,8 +35,10 @@ public class FetchIconsService extends Service{
 		
 		mctx = this;
 		
-		parsedList = new Vector<ServiceIcon>();
+		parsedList = new ArrayList<ServiceIcon>();
 		workingPool = new Thread(new WorkThread(), "T1");
+		workingPool.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
+		workingPool.start();
 		
 		Log.d("Aptoide","......................... onCreate FetchIcons Service");
 	}
@@ -48,8 +50,9 @@ public class FetchIconsService extends Service{
 		Bundle intent_info = intent.getExtras();
 		ServiceIcon tmp = new ServiceIcon(intent_info.getString("srv"), intent_info.getStringArray("login"), (ArrayList<IconNode>)intent_info.getSerializable("icons"));
 		parsedList.add(tmp);
-		if(!workingPool.isAlive())
-			workingPool.start();
+		/*if(!workingPool.isAlive())
+			workingPool.start();*/
+		workingPool.interrupt();
 		Log.d("Aptoide","......................... onStart FetchIcons Service");
 	}
 
@@ -68,22 +71,15 @@ public class FetchIconsService extends Service{
 		
 		public void run() {
 			try{
-				int i = 5;
-				while(i > 0){
-					Log.d("Aptoide","....... try: " + i);
-					if(parsedList.size() > 0){
-						i = 5;
-						new Thread(new FetchIcons(parsedList.remove(0))).start();
-					}else{
-						i--;
-						Thread.sleep(5000);
-					}
+				while(parsedList.size() > 0){			
+						FetchIcons(parsedList.remove(0));
 				}
+				stopSelf();
 			}catch (Exception e){ 	}
 		}
 	}
 	
-	private class FetchIcons implements Runnable {
+	/*private class FetchIcons implements Runnable {
 		private String server;
 		private String user;
 		private String pswd;
@@ -108,6 +104,25 @@ public class FetchIconsService extends Service{
 			}catch (Exception e){ 
 				Log.d("Aptoide", "Wash exception? " + e.toString());
 			}
+		}
+	}*/
+	
+	private void FetchIcons(ServiceIcon fetch) {
+		String server = fetch.mserver;
+		String user = fetch.usern;
+		String pswd = fetch.passwd;
+		List<IconNode> lst = fetch.iconsLst;
+		
+		try{
+			for(IconNode node : lst){
+				String test_file = mctx.getString(R.string.icons_path) + node.name;
+				
+				File exists = new File(test_file);
+				if(!exists.exists())
+					getIcon(node.url, node.name, server, user, pswd);
+			}
+		}catch (Exception e){ 
+			Log.d("Aptoide", "Wash exception? " + e.toString());
 		}
 	}
 	
