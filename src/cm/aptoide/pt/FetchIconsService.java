@@ -2,6 +2,7 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.Thread.State;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class FetchIconsService extends Service{
 		parsedList = new ArrayList<ServiceIcon>();
 		workingPool = new Thread(new WorkThread(), "T1");
 		workingPool.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
-		workingPool.start();
+		//workingPool.start();
 		
 		Log.d("Aptoide","......................... onCreate FetchIcons Service");
 	}
@@ -53,7 +54,10 @@ public class FetchIconsService extends Service{
 		/*if(!workingPool.isAlive())
 			workingPool.start();*/
 		//workingPool.interrupt();
-		Log.d("Aptoide","......................... onStart FetchIcons Service");
+		if(workingPool.getState() == State.NEW){
+			workingPool.start();
+		}
+		Log.d("Aptoide","......................... onStart FetchIcons Service go!");
 	}
 
 	
@@ -71,8 +75,14 @@ public class FetchIconsService extends Service{
 		
 		public void run() {
 			try{
-				while(parsedList.size() > 0){			
+				int chk = 10;
+				while(chk > 0){
+					chk--;
+					while(parsedList.size() > 0){
+						chk = 10;
+						Log.d("Aptoide","We are fetching icons...");
 						FetchIcons(parsedList.remove(0));
+					}
 				}
 				stopSelf();
 			}catch (Exception e){ 	}
@@ -115,6 +125,7 @@ public class FetchIconsService extends Service{
 		
 		try{
 			for(IconNode node : lst){
+				Log.d("Aptoide","On icon: " + node.name);
 				String test_file = mctx.getString(R.string.icons_path) + node.name;
 				
 				File exists = new File(test_file);
