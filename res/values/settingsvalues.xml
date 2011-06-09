@@ -1,18 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="dwnif">
-        <item>3G and Wifi</item>
-        <item>Wifi only</item>
-        <item>Never download</item>
-    </string-array>
-
     <string-array name="dwnifv">
         <item>g3w</item>
         <item>wo</item>
         <item>nd</item>
     </string-array>
-
-
-
 
 </resources>
