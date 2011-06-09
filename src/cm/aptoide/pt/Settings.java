@@ -199,6 +199,10 @@ public class Settings extends PreferenceActivity{
 	public void finish() {
 		prefEditFull.putString("icdown", sPref.getString("icdown", "error"));
 		prefEditFull.commit();
+		if(sPref.getString("icdown", "error").equalsIgnoreCase("nd")){
+			Intent serv = new Intent(mctx,FetchIconsService.class);
+			mctx.stopService(serv);
+		}
 		//rtrn.putExtra("settings", 0);
 		this.setResult(RESULT_OK, rtrn);
 		super.finish();
