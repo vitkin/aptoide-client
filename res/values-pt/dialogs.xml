@@ -29,10 +29,22 @@
     <string name="update_repos">Actualização</string>
     <string name="update_main">A lista de repositórios foi alterada.\nDeseja realizar um update?</string>
     
-    <string name="updating_3g">You are connected by 3G. It is advised to update with WiFi connection.\nUpdate anyway?</string>
+    <string name="updating_3g">Encontra-se ligado por 3G. É aconselhável que realize o update ligado por WiFi.\nProsseguir mesmo assim?</string>
     <string name="updating_cfrm">Confirma update dos repositórios?</string>
-    <string name="updating_norepos">There are no enabled repositories in your list.\nPlease add repository or enable the ones you have.</string>
+    <string name="updating_norepos">Não exite nenhum repositório activo.\nPor favor adicione um repositório ou active os existentes.</string>
     
+    <string name="repo_ctx">Opções</string>
+    <string name="repo_ctx_edt">Editar</string>
+    <string name="repo_ctx_del">Apagar</string>
+    
+    <string name="repo_del">Apagar repositório</string>
+    <string name="repo_del_msg">Deseja apagar o repositório </string>
+    <string name="repo_del_msg2">Escolha o repositório a apagar</string>
+    <string name="repo_edt_msg1">Escolha o repositório a editar</string>
+    <string name="repo_edt_msg2">Editar o repositório</string>
+    
+    <string name="update_done_msg1">Lista de aplicações actualizada com sucesso.</string>
+    <string name="update_process">A actualizar repositório %1$d de %2$d</string>
     
 </resources>
 

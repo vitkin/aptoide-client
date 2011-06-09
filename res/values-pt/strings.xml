@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <string name="tab_avail">Disponiveis</string>
+    <string name="tab_avail">Disponíveis</string>
     <string name="tab_inst">Instaladas</string>
     <string name="tab_updt">Updates</string>
+    
+    <string name="repo_app">Aplicações:</string>
+    <string name="repo_noinfo">Sem informação</string>
     
     <string name="no_found">Nenhuma aplicação encontrada!</string>
     <string name="no_repo">Não existem repositórios.</string>

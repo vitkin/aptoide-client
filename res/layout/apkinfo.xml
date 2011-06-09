@@ -228,7 +228,7 @@
             			android:layout_width="150.0dip" 
             			android:layout_height="wrap_content" 
             			android:layout_margin="5.0dip" 
-            			android:text="Search Market" 
+            			android:text="@string/btn_search_market" 
             			android:layout_alignParentRight="true" />
             			
             		<Button 
@@ -236,7 +236,7 @@
             			android:layout_width="150.0dip" 
             			android:layout_height="wrap_content" 
             			android:layout_margin="5.0dip" 
-            			android:text="Install"
+            			android:text="@string/install"
             			android:layout_alignParentLeft="true" />
             			
     	</RelativeLayout>

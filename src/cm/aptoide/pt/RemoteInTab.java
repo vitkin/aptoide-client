@@ -768,7 +768,7 @@ public class RemoteInTab extends TabActivity {
 					} });
     			
     			if(there_was_update){
-    				p.setMessage("Repositories updated succesfully.");
+    				p.setMessage(getString(R.string.update_done_msg1));
     				there_was_update = false;
     			}else{
     				p.setMessage("No Repositories list needs update. Cache used.");
@@ -828,7 +828,7 @@ public class RemoteInTab extends TabActivity {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			pd.setMessage("Updating repository " + msg.arg1 + " of " + msg.arg2);
+			pd.setMessage(getString(R.string.update_process, new Object[]{msg.arg1, msg.arg2}));//"Updating repository " + msg.arg1 + " of " + msg.arg2);
 			
 		}
 		

@@ -417,7 +417,7 @@ public class ManageRepo extends ListActivity{
 			}
 			
 			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
-			builder2.setTitle("Chose repository to edit");
+			builder2.setTitle(getString(R.string.repo_edt_msg1));
 			builder2.setIcon(android.R.drawable.ic_menu_edit);
 			builder2.setSingleChoiceItems(b2, -1, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
@@ -478,7 +478,7 @@ public class ManageRepo extends ListActivity{
 		}
 	
 		alrt.setIcon(android.R.drawable.ic_menu_add);
-		alrt.setTitle("Edit repository");
+		alrt.setTitle(getString(R.string.repo_edt_msg2));
 		alrt.setButton(getText(R.string.btn_done), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				String new_repo = uri.getText().toString();
