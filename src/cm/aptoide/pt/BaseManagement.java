@@ -351,68 +351,70 @@ public class BaseManagement extends Activity {
 	protected void redraw(){
 		
 		prefEdit.putBoolean("redrawis", true);
-    	prefEdit.commit();
-		
+		prefEdit.commit();
+
 		pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
 		pd.setIcon(android.R.drawable.ic_dialog_info);
-		
-		
+
+
 		new Thread() {
 
 			public void run(){
 
-				List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
-				List<Map<String, Object>> instMap = new ArrayList<Map<String, Object>>();
-				List<Map<String, Object>> updtMap = new ArrayList<Map<String, Object>>();
-				Map<String, Object> apk_line;
+				try{
 
-				if(apk_lst != null)
-					apk_lst.clear();
-				apk_lst = db.getAll(order_lst);
+					List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
+					List<Map<String, Object>> instMap = new ArrayList<Map<String, Object>>();
+					List<Map<String, Object>> updtMap = new ArrayList<Map<String, Object>>();
+					Map<String, Object> apk_line;
+
+					if(apk_lst != null)
+						apk_lst.clear();
+					apk_lst = db.getAll(order_lst);
 
 
-				for(ApkNode node: apk_lst){
-					apk_line = new HashMap<String, Object>();
-					apk_line.put("pkg", node.apkid);
-					String iconpath = new String(getString(R.string.icons_path)+node.apkid);
-					apk_line.put("icon", iconpath);
-					apk_line.put("rat", node.rat);
-					if(node.down >= 0)
-						apk_line.put("down", node.down + " Down.");
-					if(node.status == 1){
-						apk_line.put("status", getString(R.string.installed) + " " + node.ver);
-						apk_line.put("name", node.name);
-						instMap.add(apk_line);
-					}else if(node.status == 2){
-						apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
-						apk_line.put("name2", node.name);
-						updtMap.add(apk_line);
-						instMap.add(apk_line);
-					}else{
-						apk_line.put("status", "Version: " + node.ver);
-						apk_line.put("name", node.name);
-						availMap.add(apk_line);
+					for(ApkNode node: apk_lst){
+						apk_line = new HashMap<String, Object>();
+						apk_line.put("pkg", node.apkid);
+						String iconpath = new String(getString(R.string.icons_path)+node.apkid);
+						apk_line.put("icon", iconpath);
+						apk_line.put("rat", node.rat);
+						if(node.down >= 0)
+							apk_line.put("down", node.down + " Down.");
+						if(node.status == 1){
+							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+							apk_line.put("name", node.name);
+							instMap.add(apk_line);
+						}else if(node.status == 2){
+							apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
+							apk_line.put("name2", node.name);
+							updtMap.add(apk_line);
+							instMap.add(apk_line);
+						}else{
+							apk_line.put("status", "Version: " + node.ver);
+							apk_line.put("name", node.name);
+							availMap.add(apk_line);
+						}
 					}
+
+					availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
+							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
+
+					availAdpt.setViewBinder(new LstBinder());
+
+					instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
+							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+
+					instAdpt.setViewBinder(new LstBinder());
+
+					updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.listicons, 
+							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+
+					updateAdpt.setViewBinder(new LstBinder());
+				}catch (Exception e) {	}
+				finally{
+					stop_pd.sendEmptyMessage(0);
 				}
-
-				availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
-						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
-
-				availAdpt.setViewBinder(new LstBinder());
-
-				instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
-						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
-
-				instAdpt.setViewBinder(new LstBinder());
-
-				updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.listicons, 
-						new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
-
-				updateAdpt.setViewBinder(new LstBinder());
-
-				stop_pd.sendEmptyMessage(0);
-
-				
 			}
 		}.start();
 		 
