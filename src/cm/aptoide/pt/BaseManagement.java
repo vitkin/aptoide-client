@@ -465,11 +465,11 @@ public class BaseManagement extends Activity {
 			}
 		}
 	 
-	 protected String downloadFile(String apkid){
+	 protected void downloadFile(final String apkid, final boolean isupdate){
 		 Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();
-		 String getserv = new String();
+		 /*String getserv = null;
 		 String md5hash = null;
-		 String repo = null;
+		 String repo = null;*/
 		 //String name = null;
 		 int size = 0;
 
@@ -477,76 +477,97 @@ public class BaseManagement extends Activity {
 
 			 tmp_serv = db.getPathHash(apkid);
 
-			 if(tmp_serv.size() > 0){
-				 DownloadNode node = new DownloadNode();
-				 node = tmp_serv.firstElement();
-				 getserv = node.repo + "/" + node.path;
-				 md5hash = node.md5h;
-				 repo = node.repo;
-				 size = node.size;
-			 }
+			// if(tmp_serv.size() > 0){
+			 DownloadNode node = new DownloadNode();
+			 node = tmp_serv.firstElement();
+			 final String getserv = node.repo + "/" + node.path;
+			 final String md5hash = node.md5h;
+			 final String repo = node.repo;
+			 size = node.size;
+			 //}
 
-			 
+
 			 if(getserv.length() == 0)
 				 throw new TimeoutException();
-			 
+
 			 Message msg = new Message();
 			 msg.arg1 = 0;
 			 msg.arg2 = size;
 			 msg.obj = new String(getserv);
 			 download_handler.sendMessage(msg);
-			 
-			 String path = new String(APK_PATH+apkid+".apk");
-			 
-			 // If file exists, removes it...
-			 File f_chk = new File(path);
-			 if(f_chk.exists()){
-				 f_chk.delete();
-			 }
-			 f_chk = null;
-			 
-			 FileOutputStream saveit = new FileOutputStream(path);
-			 
-			 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
-			 
-			 if(mHttpResponse == null){
-				 Log.d("Aptoide","Problem in network... retry...");	
-				 mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
-				 if(mHttpResponse == null){
-					 Log.d("Aptoide","Major network exception... Exiting!");
-					 return null;
+
+
+			 new Thread(){
+				 public void run(){
+					 Message msg_al = new Message();
+					 try{
+
+						 String path = new String(APK_PATH+apkid+".apk");
+
+						 // If file exists, removes it...
+						 File f_chk = new File(path);
+						 if(f_chk.exists()){
+							 f_chk.delete();
+						 }
+						 f_chk = null;
+
+						 FileOutputStream saveit = new FileOutputStream(path);
+
+						 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
+
+						 if(mHttpResponse == null){
+							 Log.d("Aptoide","Problem in network... retry...");	
+							 mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
+							 if(mHttpResponse == null){
+								 Log.d("Aptoide","Major network exception... Exiting!");
+								 msg_al.arg1= 1;
+								 download_error_handler.sendMessage(msg_al);
+							 }
+						 }
+
+						 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
+							 msg_al.arg1= 1;
+							 download_error_handler.sendMessage(msg_al);
+						 }else{
+							 InputStream getit = mHttpResponse.getEntity().getContent();
+							 byte data[] = new byte[8096];
+							 int readed;
+							 readed = getit.read(data, 0, 8096);
+							 while(readed != -1) {
+								 download_tick.sendEmptyMessage(readed);
+								 saveit.write(data,0,readed);
+								 readed = getit.read(data, 0, 8096);
+							 }
+							 Log.d("Aptoide","Download done!");
+							 saveit.flush();
+							 saveit.close();
+							 getit.close();
+						 }
+
+						 Log.d("Aptoide","Download MD5...");
+						 File f = new File(path);
+						 Md5Handler hash = new Md5Handler();
+						 if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+							 //return path;
+							 msg_al.arg1 = 1;
+							 download_handler.sendMessage(msg_al);
+							 if(!isupdate){
+								 Log.d("Aptoide","Going to install!");
+								 installApk(path);
+							 }else{
+								 Log.d("Aptoide","Going to update!");
+								 updateApk(path, apkid);
+							 }
+						 }else{
+							Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
+							msg_al.arg1 = 0;
+							download_error_handler.sendMessage(msg_al);
+						 }
+					 }catch(Exception e) {}
 				 }
-			 }
-			 
-			 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				 return null;
-			 }else{
-				 InputStream getit = mHttpResponse.getEntity().getContent();
-                 byte data[] = new byte[8096];
-				 int readed;
-				 readed = getit.read(data, 0, 8096);
-				 while(readed != -1) {
-					 download_tick.sendEmptyMessage(readed);
-					 saveit.write(data,0,readed);
-					 readed = getit.read(data, 0, 8096);
-				 }
-				 Log.d("Aptoide","Download done!");
-				 saveit.flush();
-				 saveit.close();
-				 getit.close();
-			 }
-			 
-			 Log.d("Aptoide","Download MD5...");
-			 File f = new File(path);
-			 Md5Handler hash = new Md5Handler();
-			 if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
-				 return path;
-			 }else{
-				 Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
-				 return "*md5*";
-			 }
+			 }.start();
 		 } catch(Exception e){
-			 return null;
+			 //return null;
 		 }
 	 }
 	 
@@ -583,8 +604,8 @@ public class BaseManagement extends Activity {
 		 Vector<ApkNode> tmp_lst = null;
 		 SimpleAdapter rtnadp = null;
 
-		 if(tmp_lst != null)
-			 tmp_lst.clear();
+		/* if(tmp_lst != null)
+			 tmp_lst.clear();*/
 		 tmp_lst = db.getAll(order_lst, ctg, ord);
 
 

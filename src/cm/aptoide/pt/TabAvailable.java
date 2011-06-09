@@ -332,12 +332,13 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
-			new Thread() {
-				public void run() {
+			//new Thread() {
+				//public void run() {
 					
 					String apk_id = data.getStringExtra("apkid");
 					Log.d("Aptoide", "....... getting: " + apk_id);
-					String apk_pat = downloadFile(apk_id);
+					downloadFile(apk_id, false);
+					/*String apk_pat = downloadFile(apk_id);
 					Message msg_al = new Message();
 					if(apk_pat == null){
 						msg_al.arg1= 1;
@@ -351,9 +352,9 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 						download_handler.sendMessage(msg);
 						Log.d("Aptoide","Going to install!");
 						installApk(apk_pat);
-					}
-				}
-			}.start();
+					}*/
+				//}
+			//}.start();
 		}
 	}
 

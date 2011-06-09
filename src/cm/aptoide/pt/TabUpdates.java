@@ -210,11 +210,12 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
-			new Thread() {
-				public void run() {
+			//new Thread() {
+				//public void run() {
 					String apk_id = data.getStringExtra("apkid");
-					Log.d("Aptoide", ".... u+dating: " + apk_id);
-					String apk_path = downloadFile(apk_id);
+					Log.d("Aptoide", ".... updating: " + apk_id);
+					downloadFile(apk_id, true);
+					/*String apk_path = downloadFile(apk_id);
 					Message msg_alt = new Message();
 					if(apk_path == null){
 						msg_alt.arg1 = 1;
@@ -227,9 +228,9 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 						msg.arg1 = 1;
 						download_handler.sendMessage(msg);
 						updateApk(apk_path, apk_id);
-					}
-				}
-			}.start();
+					}*/
+				//}
+			//}.start();
 		}
 	}
 
