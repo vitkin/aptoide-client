@@ -3,7 +3,6 @@
     <string name="add_repo_text">URI to repository: </string>
     <string name="add_repo_private">Private </string>
     
-    <string name="order_popup_title1">Align application list by: </string>
     <string name="order_popup_lst1">Most recent first </string>
     <string name="order_popup_lst2">Alphabetically </string>
     <string name="order_popup_lst3">Rating </string>
