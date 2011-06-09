@@ -198,9 +198,9 @@ public class ManageRepo extends ListActivity{
         		server_line.put("inuse", R.drawable.btn_check_off);
         	}
         	if(node.napk >= 0)
-        		server_line.put("napk", "Applications: " + node.napk);
+        		server_line.put("napk", getString(R.string.repo_app) + " " + node.napk);
         	else
-        		server_line.put("napk", "No information");
+        		server_line.put("napk", getString(R.string.repo_noinfo));
         	result.add(server_line);
         }
         SimpleAdapter show_out = new SimpleAdapter(this, result, R.layout.repolisticons, 
@@ -241,9 +241,9 @@ public class ManageRepo extends ListActivity{
 		
 		super.onCreateContextMenu(menu, v, menuInfo);
 		
-		menu.setHeaderTitle("Options");  
-		menu.add(0, EDIT_REPO_POP, 0, "Edit");  
-		menu.add(0, REM_REPO_POP, 0, "Remove"); 
+		menu.setHeaderTitle(getString(R.string.repo_ctx));  
+		menu.add(0, EDIT_REPO_POP, 0, getString(R.string.repo_ctx_edt));  
+		menu.add(0, REM_REPO_POP, 0, getString(R.string.repo_ctx_del)); 
 	}
 
 	@Override
@@ -259,17 +259,17 @@ public class ManageRepo extends ListActivity{
 
 		case REM_REPO_POP:
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Remove Repository");
+			builder.setTitle(getString(R.string.repo_del));
 			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-			builder.setMessage("Do you want to remove repository " + repo_selected + " ?");
-			builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+			builder.setMessage(getString(R.string.repo_del_msg) + " " + repo_selected + " ?");
+			builder.setPositiveButton(getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
                 		public void onClick(DialogInterface dialog, int	whichButton) {
                 			db.removeServer(repo_selected);
                 			change = true;
                 			redraw();
                 		}
             });
-			builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+			builder.setNegativeButton(getString(R.string.btn_no), new DialogInterface.OnClickListener() {
                 		public void onClick(DialogInterface dialog, int whichButton) {
                 			return;
                 		}
@@ -383,7 +383,7 @@ public class ManageRepo extends ListActivity{
 			}
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle("Chose repository to remove");
+			builder.setTitle(getString(R.string.repo_del_msg2));
 			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 			builder.setMultiChoiceItems(b, null, new DialogInterface.OnMultiChoiceClickListener() {
                 		public void onClick(DialogInterface dialog,int whichButton, boolean isChecked) {
@@ -394,14 +394,14 @@ public class ManageRepo extends ListActivity{
                 		        }
                 		 }
              }); 
-			builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			builder.setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
                 		public void onClick(DialogInterface dialog, int	whichButton) {
                 			db.removeServer(rem_lst);
                 			change = true;
                 			redraw();
                 		}
             });
-			builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			builder.setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
                 		public void onClick(DialogInterface dialog, int whichButton) {
                 			return;
                 		}
@@ -424,14 +424,14 @@ public class ManageRepo extends ListActivity{
 						updt_repo = server_lst.get(which).uri;
 				}
 			}); 
-			builder2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+			builder2.setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int	whichButton) {
 					alert2.dismiss();
 					editRepo(updt_repo);
 					return;
 				}
 			});
-			builder2.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			builder2.setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					return;
 				}

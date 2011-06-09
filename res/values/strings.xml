@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5.1-beta2"</string>
+    <string name="ver_str">"2.5.1-beta3"</string>
     <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string>
     
     <string name="tab_avail">Available</string>
     <string name="tab_inst">Installed</string>
     <string name="tab_updt">Updates</string>
+    
+    <string name="repo_app">Applications:</string>
+    <string name="repo_noinfo">No information</string>
     
     <string name="no_found">No application found!</string>
     <string name="no_repo">There are no repositories!</string>

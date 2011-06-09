@@ -167,7 +167,7 @@ public class BaseManagement extends Activity {
 		p.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		p.setTitle(getString(R.string.order_popup_title));
 		
-		p.setButton("Ok", new DialogInterface.OnClickListener() {
+		p.setButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
 				if(pop_change){

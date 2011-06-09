@@ -33,6 +33,21 @@
     <string name="updating_cfrm">Confirm Aptoide repositories update?</string>
     <string name="updating_norepos">There are no enabled repositories in your list.\nPlease add repository or enable the ones you have.</string>
     
+    <string name="repo_ctx">Options</string>
+    <string name="repo_ctx_edt">Edit</string>
+    <string name="repo_ctx_del">Remove</string>
+    
+    <string name="repo_del">Remove Repository</string>
+    <string name="repo_del_msg">Do you want to remove repository </string>
+    <string name="repo_del_msg2">Choose repository to remove</string>
+    <string name="repo_ctx_de3l">Remove</string>
+    <string name="repo_ctx_d4el">Remove</string>
+    <string name="repo_ctx_d5el">Remove</string>
+    <string name="repo_ctx_de6l">Remove</string>
+    
+    
+    
+    
     
 </resources>
 
