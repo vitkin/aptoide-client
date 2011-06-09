@@ -25,6 +25,8 @@ public class FetchIconsService extends Service{
 	
 	private Context mctx = null;
 	
+	private boolean alive = true;
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -66,6 +68,9 @@ public class FetchIconsService extends Service{
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		if(workingPool.isAlive()){
+			alive = false;
+		}
 		Log.d("Aptoide","......................... onDestroy FetchIcons Service");
 	}
 
@@ -78,12 +83,15 @@ public class FetchIconsService extends Service{
 				int chk = 10;
 				while(chk > 0){
 					chk--;
-					while(parsedList.size() > 0){
+					Log.d("Aptoide","Count in: " + chk);
+					while((parsedList.size() > 0) && alive){
 						chk = 10;
 						Log.d("Aptoide","We are fetching icons...");
 						FetchIcons(parsedList.remove(0));
 					}
+					Thread.sleep(2000);
 				}
+				Log.d("Aptoide","Bye bye...");
 				stopSelf();
 			}catch (Exception e){ 	}
 		}
@@ -125,12 +133,16 @@ public class FetchIconsService extends Service{
 		
 		try{
 			for(IconNode node : lst){
+				if(!alive)
+					break;
 				Log.d("Aptoide","On icon: " + node.name);
 				String test_file = mctx.getString(R.string.icons_path) + node.name;
 				
 				File exists = new File(test_file);
 				if(!exists.exists())
 					getIcon(node.url, node.name, server, user, pswd);
+				else
+					Log.d("Aptoide","FILE EXISTS: " + node.name);
 			}
 		}catch (Exception e){ 
 			Log.d("Aptoide", "Wash exception? " + e.toString());
