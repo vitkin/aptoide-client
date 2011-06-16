@@ -19,10 +19,7 @@
 
 package cm.aptoide.pt;
 
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,10 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -48,33 +41,32 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.AlertDialog.Builder;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ManageRepo extends ListActivity{
 	
@@ -214,13 +206,23 @@ public class ManageRepo extends ListActivity{
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		String node = server_lst.get(position).uri;
-		if(!v.isSelected())
+		ImageView pic = (ImageView)v.findViewById(R.id.img);
+		
+		if(!server_lst.get(position).inuse){
+			server_lst.get(position).inuse = true;
 			server_to_reset_count.add(node);
-		else
+			pic.setImageResource(R.drawable.btn_check_on);
+			Log.d("Aptoide", "check on");
+		}else{
+			server_lst.get(position).inuse = false;
 			server_to_reset_count.remove(node);
+			pic.setImageResource(R.drawable.btn_check_off);
+			Log.d("Aptoide", "check off");
+		}
+		
 		db.changeServerStatus(node);
 		change = true;
-		redraw();
+		//redraw();
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -512,7 +514,7 @@ public class ManageRepo extends ListActivity{
 		}
 	}
 	
-	private Vector<String> getRemoteServLst(String file){
+	/*private Vector<String> getRemoteServLst(String file){
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		Vector<String> out = new Vector<String>();
 	    try {
@@ -535,7 +537,7 @@ public class ManageRepo extends ListActivity{
 			e.printStackTrace();
 		}
 	    return out;
-	}
+	}*/
 	
 	private int checkServer(String uri, String user, String pwd){
 		
