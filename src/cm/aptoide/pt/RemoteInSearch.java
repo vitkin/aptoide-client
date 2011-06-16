@@ -70,6 +70,9 @@ import android.widget.Toast;
 
 public class RemoteInSearch extends ListActivity{
 	
+	private ListView lv = null;
+	private int pos = -1;
+	
 	private String LOCAL_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide";
 	private String APK_PATH = LOCAL_PATH+"/";
 	
@@ -141,7 +144,9 @@ public class RemoteInSearch extends ListActivity{
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
 		
-		getListView().setFastScrollEnabled(true);
+		lv = getListView();
+		lv.setFastScrollEnabled(true);
+		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		Intent i = getIntent();
 		query = i.getStringExtra(SearchManager.QUERY);
@@ -165,6 +170,7 @@ public class RemoteInSearch extends ListActivity{
 	protected void onResume() {
 		super.onResume();
 		redraw();
+		lv.setSelection(pos-1);
 	}
 
 	@Override
@@ -235,6 +241,8 @@ public class RemoteInSearch extends ListActivity{
 	protected void onListItemClick(ListView l, View v, final int position, long id) {
 		
 		super.onListItemClick(l, v, position, id);
+		
+		pos = position;
 		
 		String apkid = apk_lst.get(position).apkid;
 		String name = apk_lst.get(position).name;
@@ -419,6 +427,7 @@ public class RemoteInSearch extends ListActivity{
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		Log.d("Aptoide", "Position is: " + (pos-1));
 		if(requestCode == 30){
 			if(data != null){
 				String apkid = data.getStringExtra("apkid");
@@ -427,32 +436,28 @@ public class RemoteInSearch extends ListActivity{
 					if(data.getBooleanExtra("in", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Install");
 						//installApk(apkid, pos);
-						
-						new Thread() {
-							public void run() {
-								String apk_pkg = downloadFile(pos);
-								Message msg_alt = new Message();
-								if(apk_pkg == null){
-									Message msg = new Message();
-									msg.arg1 = 1;
-									download_handler.sendMessage(msg);
-									msg_alt.arg1 = 1;
-									download_error_handler.sendMessage(msg_alt);
-								}else if(apk_pkg.equals("*md5*")){
-									Message msg = new Message();
-									msg.arg1 = 1;
-									download_handler.sendMessage(msg);
-									msg_alt.arg1 = 0;
-									download_error_handler.sendMessage(msg_alt);
-								}else{
-									installApk(apk_pkg, pos);
-								}
-							}
-						}.start();
-						
-						
-						
-						
+						/*new Thread() {
+							public void run() {*/
+						//String apk_pkg = downloadFile(pos);
+						downloadFile(pos);
+						/*Message msg_alt = new Message();
+						if(apk_pkg == null){
+							Message msg = new Message();
+							msg.arg1 = 1;
+							download_handler.sendMessage(msg);
+							msg_alt.arg1 = 1;
+							download_error_handler.sendMessage(msg_alt);
+						}else if(apk_pkg.equals("*md5*")){
+							Message msg = new Message();
+							msg.arg1 = 1;
+							download_handler.sendMessage(msg);
+							msg_alt.arg1 = 0;
+							download_error_handler.sendMessage(msg_alt);
+						}else{
+							installApk(apk_pkg, pos);
+						}*/
+						/*}
+						}.start();*/
 					}else if(data.getBooleanExtra("rm", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Remove");
 						removeApk(apkid, pos);
@@ -466,6 +471,7 @@ public class RemoteInSearch extends ListActivity{
 				if(data.hasExtra("align"))
 					order_lst = data.getStringExtra("align");
 				redraw();
+				lv.setSelection(pos-1);
 			}else{
 				List<PackageInfo> getapks = mPm.getInstalledPackages(0);
 				for(PackageInfo node: getapks){
@@ -474,6 +480,7 @@ public class RemoteInSearch extends ListActivity{
 						prefEdit.putBoolean("search_updt", true);
 						prefEdit.commit();
 						redraw();
+						lv.setSelection(pos-1);
 						return;
 					}
 				}
@@ -481,6 +488,7 @@ public class RemoteInSearch extends ListActivity{
 				prefEdit.putBoolean("search_updt", true);
 				prefEdit.commit();
 				redraw();
+				lv.setSelection(pos-1);
 			}
 		}
 	}
@@ -540,86 +548,117 @@ public class RemoteInSearch extends ListActivity{
 
 	}
 
-	private String downloadFile(int position){
+	private void downloadFile(final int position){
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();
-		String getserv = new String();
+		/*String getserv = new String();
 		String md5hash = null;
-		String repo = null;
+		String repo = null;*/
+		
+		int size = 0;
 
 		try{
-			tmp_serv = db.getPathHash(apk_lst.get(position).apkid);
+			final String apkid = apk_lst.get(position).apkid; 
+			tmp_serv = db.getPathHash(apkid);
 
-			if(tmp_serv.size() > 0){
-				DownloadNode node = tmp_serv.get(0);
-				getserv = node.repo + "/" + node.path;
-				md5hash = node.md5h;
-				repo = node.repo;
-			}
+			//if(tmp_serv.size() > 0){
+			DownloadNode node = new DownloadNode();
+			node = tmp_serv.firstElement();
+			final String getserv = node.repo + "/" + node.path;
+			final String md5hash = node.md5h;
+			final String repo = node.repo;
+			size = node.size;
+			//}
 
 			if(getserv.length() == 0)
 				throw new TimeoutException();
 
 			Message msg = new Message();
 			msg.arg1 = 0;
+			msg.arg2 = size;
 			msg.obj = new String(getserv);
 			download_handler.sendMessage(msg);
 
-			String path = new String(APK_PATH+apk_lst.get(position).apkid+".apk");
 			
-			// If file exists, removes it...
-			 File f_chk = new File(path);
-			 if(f_chk.exists()){
-				 f_chk.delete();
-			 }
-			 f_chk = null;
+			new Thread(){
+				public void run(){
+					Message msg_al = new Message();
+					try{
+						
+						String path = new String(APK_PATH+apk_lst.get(position).apkid+".apk");
+						
+						// If file exists, removes it...
+						 File f_chk = new File(path);
+						 if(f_chk.exists()){
+							 f_chk.delete();
+						 }
+						 f_chk = null;
+						
+						FileOutputStream saveit = new FileOutputStream(path);
+						DefaultHttpClient mHttpClient = new DefaultHttpClient();
+						HttpGet mHttpGet = new HttpGet(getserv);
+
+						String[] logins = null; 
+						logins = db.getLogin(repo);
+						if(logins != null){
+							URL mUrl = new URL(getserv);
+							mHttpClient.getCredentialsProvider().setCredentials(
+									new AuthScope(mUrl.getHost(), mUrl.getPort()),
+									new UsernamePasswordCredentials(logins[0], logins[1]));
+						}
+
+						HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+						
+						if(mHttpResponse == null){
+							 Log.d("Aptoide","Problem in network... retry...");	
+							 mHttpResponse = mHttpClient.execute(mHttpGet);
+							 if(mHttpResponse == null){
+								 Log.d("Aptoide","Major network exception... Exiting!");
+								 msg_al.arg1= 1;
+								 download_error_handler.sendMessage(msg_al);
+							 }
+						 }
+						
+						if(mHttpResponse.getStatusLine().getStatusCode() == 401){
+							msg_al.arg1= 1;
+							download_error_handler.sendMessage(msg_al);
+						}else{
+							InputStream getit = mHttpResponse.getEntity().getContent();
+							byte data[] = new byte[8096];
+							int readed;
+							readed = getit.read(data, 0, 8096);
+							while(readed != -1) {
+								download_tick.sendEmptyMessage(readed);
+								saveit.write(data,0,readed);
+								readed = getit.read(data, 0, 8096);
+							}
+							Log.d("Aptoide","Download done!");
+							saveit.flush();
+							saveit.close();
+							getit.close();
+						}
+
+
+						File f = new File(path);
+						Md5Handler hash = new Md5Handler();
+						if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+							msg_al.arg1 = 1;
+							download_handler.sendMessage(msg_al);
+							installApk(path, position);
+						}else{
+							Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
+							msg_al.arg1 = 0;
+							download_error_handler.sendMessage(msg_al);
+						}
+
+					}catch (Exception e) { 
+						msg_al.arg1= 1;
+						download_error_handler.sendMessage(msg_al);
+					}
+				}
+			}.start();
 			
-			FileOutputStream saveit = new FileOutputStream(path);
-			DefaultHttpClient mHttpClient = new DefaultHttpClient();
-			HttpGet mHttpGet = new HttpGet(getserv);
-
-			String[] logins = null; 
-			logins = db.getLogin(repo);
-			if(logins != null){
-				URL mUrl = new URL(getserv);
-				mHttpClient.getCredentialsProvider().setCredentials(
-						new AuthScope(mUrl.getHost(), mUrl.getPort()),
-						new UsernamePasswordCredentials(logins[0], logins[1]));
-			}
-
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
 			
-			if(mHttpResponse == null){
-				 Log.d("Aptoide","Problem in network... retry...");	
-				 mHttpResponse = mHttpClient.execute(mHttpGet);
-				 if(mHttpResponse == null){
-					 Log.d("Aptoide","Major network exception... Exiting!");
-					 return null;
-				 }
-			 }
-			
-			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				return null;
-			}else{
-				InputStream getit = mHttpResponse.getEntity().getContent();
-				byte data[] = new byte[8096];
-				int readed;
-				while((readed = getit.read(data, 0, 8096)) != -1) {
-					 saveit.write(data,0,readed);
-				 }
-			}
-
-
-			File f = new File(path);
-			Md5Handler hash = new Md5Handler();
-			if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
-				return path;
-			}else{
-				Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
-				return "*md5*";
-			}
-		} catch(Exception e){
-			return null;
-		}
+		} catch(Exception e){	}
 	}
 	
 	/*
@@ -630,21 +669,42 @@ public class RemoteInSearch extends ListActivity{
         @Override
         public void handleMessage(Message msg) {
         	if(msg.arg1 == 0){
-        		pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
+        		//pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
+        		 pd = new ProgressDialog(mctx);
+				 pd.setTitle("Download");
+				 pd.setMessage(getString(R.string.download_alrt) + msg.obj.toString());
+				 pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				 pd.setCancelable(false);
+				 pd.setCanceledOnTouchOutside(false);
+				 /*int max = (((msg.arg2*106)/100)*1000);
+				 Log.d("Aptoide","Max is: " + max);*/
+				 pd.setMax(msg.arg2*1024);
+				 pd.setProgress(0);
+				 pd.show();
         	}else{
         		pd.dismiss();
         	}
         }
 	};
 	
+	 protected Handler download_tick = new Handler(){
+
+			@Override
+			public void handleMessage(Message msg) {
+				super.handleMessage(msg);
+				//Log.d("Aptoide","Progress: " + pd.getProgress() + " Other: " +  (pd.getMax()*0.96) + " Adding: " + msg.what);
+				pd.incrementProgressBy(msg.what);
+			}
+		 };
+	
 	private Handler download_error_handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
         	if(msg.arg1 == 1){
-        		Toast.makeText(mctx, "Ocorreu uma excepção no download do ficheiro!", Toast.LENGTH_LONG).show();
-        	}else{
-        		Toast.makeText(mctx, "O hash md5 do download não é igual ao da BD!", Toast.LENGTH_LONG).show();
-        	}
+				 Toast.makeText(mctx, getString(R.string.network_error), Toast.LENGTH_LONG).show();
+			 }else{
+	        	Toast.makeText(mctx, getString(R.string.md5_error), Toast.LENGTH_LONG).show();
+			 }
         }
 	};
 }
