@@ -97,30 +97,34 @@ public class ApkInfo extends Activity{
 		}
 		
 		action.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				/*new Thread() {
-					public void run() {*/
-						switch (type) {
-						case 0:
-							rtrn_intent.putExtra("apkid", apk_id);
-							jback = true;
-							break;
 
-						case 1:
-							rtrn_intent.putExtra("apkid", apk_id);
-							jback = true;
-							break;
-							
-							
-						case 2:
-							rtrn_intent.putExtra("apkid", apk_id);
-							jback = true;
-							break;
-						}
-						finish();
-					//}
-				//}.start();
+			public void onClick(View v) {
+				int pos = -1;
+				if(apkinfo.hasExtra("position")){
+					pos = apkinfo.getIntExtra("position", -1);
+				}
+				switch (type) {
+				case 0:
+					rtrn_intent.putExtra("apkid", apk_id);
+					rtrn_intent.putExtra("in", true);
+					rtrn_intent.putExtra("position", pos);
+					jback = true;
+					break;
+
+				case 1:
+					rtrn_intent.putExtra("apkid", apk_id);
+					rtrn_intent.putExtra("rm", true);
+					rtrn_intent.putExtra("position", pos);
+					jback = true;
+					break;
+
+
+				case 2:
+					rtrn_intent.putExtra("apkid", apk_id);
+					jback = true;
+					break;
+				}
+				finish();
 			}
 		});
 		

@@ -37,11 +37,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
-import android.app.AlertDialog.Builder;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,7 +48,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -66,9 +64,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.SimpleAdapter.ViewBinder;
 
 public class RemoteInSearch extends ListActivity{
 	
@@ -238,11 +236,41 @@ public class RemoteInSearch extends ListActivity{
 		
 		super.onListItemClick(l, v, position, id);
 		
-		Vector<String> tmp_get = db.getApk(apk_lst.get(position).apkid);
+		String apkid = apk_lst.get(position).apkid;
+		String name = apk_lst.get(position).name;
+		Vector<String> tmp_get = db.getApk(apkid);
 
-		String tmp_path = this.getString(R.string.icons_path)+apk_lst.get(position).apkid;
-		File test_icon = new File(tmp_path);
+		String tmp_path = this.getString(R.string.icons_path)+apkid;
 		
+		Intent apkinfo = new Intent(mctx, ApkInfo.class);
+		apkinfo.putExtra("position", position);
+		apkinfo.putExtra("icon", tmp_path);
+		apkinfo.putExtra("apk_id", apkid);
+		apkinfo.putExtra("name", name);
+		
+		String tmpi = db.getDescript(apkid);
+		if(!(tmpi == null)){
+			apkinfo.putExtra("about",tmpi);
+		}else{
+			apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+		}
+		
+		apkinfo.putExtra("server", tmp_get.firstElement());
+		apkinfo.putExtra("version", tmp_get.get(1));
+		apkinfo.putExtra("dwn", tmp_get.get(4));
+		apkinfo.putExtra("rat", tmp_get.get(5));
+		apkinfo.putExtra("size", tmp_get.get(6));
+		
+		if(apk_lst.get(position).status == 0){
+			apkinfo.putExtra("type", 0);
+		}else{
+			apkinfo.putExtra("type", 1);
+		}
+		
+		startActivityForResult(apkinfo,30);
+		
+		/*File test_icon = new File(tmp_path);
+	
 		LayoutInflater li = LayoutInflater.from(this);
 		View view = li.inflate(R.layout.alertscroll, null);
 		Builder alrt = new AlertDialog.Builder(this).setView(view);
@@ -362,7 +390,7 @@ public class RemoteInSearch extends ListActivity{
 				} });
 			}
 		}
-		p.show();
+		p.show();*/
 	}
 	
 	private void removeApk(String apk_pkg, int position){
@@ -391,26 +419,69 @@ public class RemoteInSearch extends ListActivity{
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		mPm = getPackageManager();
-		if(data != null && data.hasExtra("settings")){
-			if(data.hasExtra("align"))
-				order_lst = data.getStringExtra("align");
-			redraw();
-		}else{
-			List<PackageInfo> getapks = mPm.getInstalledPackages(0);
-			for(PackageInfo node: getapks){
-				if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
-					db.insertInstalled(apk_lst.get(requestCode).apkid);
-					prefEdit.putBoolean("search_updt", true);
-					prefEdit.commit();
-					redraw();
-					return;
+		if(requestCode == 30){
+			if(data != null){
+				String apkid = data.getStringExtra("apkid");
+				final int pos = data.getIntExtra("position", -1);
+				if(pos > -1){
+					if(data.getBooleanExtra("in", false)){
+						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Install");
+						//installApk(apkid, pos);
+						
+						new Thread() {
+							public void run() {
+								String apk_pkg = downloadFile(pos);
+								Message msg_alt = new Message();
+								if(apk_pkg == null){
+									Message msg = new Message();
+									msg.arg1 = 1;
+									download_handler.sendMessage(msg);
+									msg_alt.arg1 = 1;
+									download_error_handler.sendMessage(msg_alt);
+								}else if(apk_pkg.equals("*md5*")){
+									Message msg = new Message();
+									msg.arg1 = 1;
+									download_handler.sendMessage(msg);
+									msg_alt.arg1 = 0;
+									download_error_handler.sendMessage(msg_alt);
+								}else{
+									installApk(apk_pkg, pos);
+								}
+							}
+						}.start();
+						
+						
+						
+						
+					}else if(data.getBooleanExtra("rm", false)){
+						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Remove");
+						removeApk(apkid, pos);
+					}
 				}
 			}
-			db.removeInstalled(apk_lst.get(requestCode).apkid);
-			prefEdit.putBoolean("search_updt", true);
-			prefEdit.commit();
-			redraw();
+		}else{
+
+			mPm = getPackageManager();
+			if(data != null && data.hasExtra("settings")){
+				if(data.hasExtra("align"))
+					order_lst = data.getStringExtra("align");
+				redraw();
+			}else{
+				List<PackageInfo> getapks = mPm.getInstalledPackages(0);
+				for(PackageInfo node: getapks){
+					if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
+						db.insertInstalled(apk_lst.get(requestCode).apkid);
+						prefEdit.putBoolean("search_updt", true);
+						prefEdit.commit();
+						redraw();
+						return;
+					}
+				}
+				db.removeInstalled(apk_lst.get(requestCode).apkid);
+				prefEdit.putBoolean("search_updt", true);
+				prefEdit.commit();
+				redraw();
+			}
 		}
 	}
 
