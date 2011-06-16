@@ -565,7 +565,10 @@ public class BaseManagement extends Activity {
 							msg_al.arg1 = 0;
 							download_error_handler.sendMessage(msg_al);
 						 }
-					 }catch(Exception e) {}
+					 }catch(Exception e) {
+						 msg_al.arg1= 1;
+						 download_error_handler.sendMessage(msg_al);
+					 }
 				 }
 			 }.start();
 		 } catch(Exception e){
