@@ -238,4 +238,62 @@ public class NetworkApis {
 	}
 	
 	
+	
+	public static HttpResponse imgWsGet(String url){
+		try{
+						
+			HttpParams httpParameters = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
+			HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+			
+			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
+			mHttpClient.setRedirectHandler(new RedirectHandler() {
+
+				public boolean isRedirectRequested(HttpResponse response,
+						HttpContext context) {
+					return false;
+				}
+				
+
+				public URI getLocationURI(HttpResponse response, HttpContext context)
+				throws ProtocolException {
+					return null;
+				}
+			});
+			
+			
+			HttpGet mHttpGet = new HttpGet(url);
+
+			
+			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+			
+			return mHttpResponse;
+		}catch(Exception e){
+			System.out.println("=============================================");
+			e.printStackTrace();
+			System.out.println("=============================================");
+			return null;
+		}
+	
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

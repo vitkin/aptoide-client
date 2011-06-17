@@ -277,128 +277,6 @@ public class RemoteInSearch extends ListActivity{
 		
 		startActivityForResult(apkinfo,30);
 		
-		/*File test_icon = new File(tmp_path);
-	
-		LayoutInflater li = LayoutInflater.from(this);
-		View view = li.inflate(R.layout.alertscroll, null);
-		Builder alrt = new AlertDialog.Builder(this).setView(view);
-		final AlertDialog p = alrt.create();
-		if(test_icon.exists() && test_icon.length() > 0){
-			p.setIcon(new BitmapDrawable(tmp_path));
-		}else{
-			p.setIcon(android.R.drawable.sym_def_app_icon);
-		}
-		p.setTitle(apk_lst.get(position).name);
-		TextView t1 = (TextView) view.findViewById(R.id.n11);
-		t1.setText(tmp_get.firstElement());
-		TextView t2 = (TextView) view.findViewById(R.id.n22);
-		t2.setText(tmp_get.get(1));
-		TextView t3 = (TextView) view.findViewById(R.id.n33);
-		t3.setText(tmp_get.get(2));
-		TextView t4 = (TextView) view.findViewById(R.id.n44);
-		t4.setText(tmp_get.get(3));
-		TextView t5 = (TextView) view.findViewById(R.id.n55);
-		String tmpi = db.getDescript(apk_lst.get(position).apkid);
-		if(!(tmpi == null)){
-			t5.setText(tmpi);
-		}else{
-			t5.setText(getText(R.string.app_pop_up_no_info));
-		}
-		
-		TextView t6 = (TextView) view.findViewById(R.id.down_n);
-		t6.setText(tmp_get.get(4));
-		
-		p.setButton2(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
-		      public void onClick(DialogInterface dialog, int which) {
-		          return;
-		        } });
-		if(tmp_get.get(2).equalsIgnoreCase("\tno\n")){
-			p.setButton(getString(R.string.install), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					p.dismiss();
-					new Thread() {
-						public void run() {
-							String apk_pkg = downloadFile(position);
-							Message msg_alt = new Message();
-							if(apk_pkg == null){
-								Message msg = new Message();
-								msg.arg1 = 1;
-								download_handler.sendMessage(msg);
-								msg_alt.arg1 = 1;
-								download_error_handler.sendMessage(msg_alt);
-							}else if(apk_pkg.equals("*md5*")){
-								Message msg = new Message();
-								msg.arg1 = 1;
-								download_handler.sendMessage(msg);
-								msg_alt.arg1 = 0;
-								download_error_handler.sendMessage(msg_alt);
-							}else{
-								installApk(apk_pkg, position);
-							}
-						}
-					}.start();
-				} });
-			p.setButton3(getText(R.string.btn_search_market), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					p.dismiss();					
-					Intent intent = new Intent();
-			    	intent.setAction(android.content.Intent.ACTION_VIEW);
-			    	intent.setData(Uri.parse("market://details?id="+apk_lst.get(position).apkid));
-			    	try{
-						startActivity(intent);
-					}catch (ActivityNotFoundException e){
-						Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
-					}
-				} });
-		}else{ 
-			p.setButton(getString(R.string.rem), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					String apk_pkg = apk_lst.get(position).apkid;
-					removeApk(apk_pkg, position);
-				} });
-			if(apk_lst.get(position).status == 2){
-				p.setButton3(getString(R.string.update), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						p.dismiss();
-						new Thread() {
-							public void run() {
-								String apk_pkg = downloadFile(position);
-								Message msg_alt = new Message();
-								if(apk_pkg == null){
-									//Toast.makeText(RemoteInSearch.this, "Could not connect to server!", Toast.LENGTH_LONG).show();
-									Message msg = new Message();
-									msg.arg1 = 1;
-									download_handler.sendMessage(msg);
-									msg_alt.arg1 = 1;
-									download_error_handler.sendMessage(msg_alt);
-								}else if(apk_pkg.equals("*md5*")){
-									Message msg = new Message();
-									msg.arg1 = 1;
-									download_handler.sendMessage(msg);
-									msg_alt.arg1 = 0;
-									download_error_handler.sendMessage(msg_alt);
-								}else{
-									installApk(apk_pkg, position);
-								}
-							}
-						}.start();
-					} });
-			}else{
-				p.setButton3(getText(R.string.btn_search_market), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						p.dismiss();					
-						Intent intent = new Intent();
-				    	intent.setAction(android.content.Intent.ACTION_VIEW);
-				    	intent.setData(Uri.parse("market://details?id="+apk_lst.get(position).apkid));
-				    	try{
-							startActivity(intent);
-						}catch (ActivityNotFoundException e){
-							Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
-						}
-				} });
-			}
-		}
-		p.show();*/
 	}
 	
 	private void removeApk(String apk_pkg, int position){
@@ -613,14 +491,14 @@ public class RemoteInSearch extends ListActivity{
 							 mHttpResponse = mHttpClient.execute(mHttpGet);
 							 if(mHttpResponse == null){
 								 Log.d("Aptoide","Major network exception... Exiting!");
-								 msg_al.arg1= 1;
-								 download_error_handler.sendMessage(msg_al);
+								 /*msg_al.arg1= 1;
+								 download_error_handler.sendMessage(msg_al);*/
+								 throw new TimeoutException();
 							 }
 						 }
 						
 						if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-							msg_al.arg1= 1;
-							download_error_handler.sendMessage(msg_al);
+							throw new TimeoutException();
 						}else{
 							InputStream getit = mHttpResponse.getEntity().getContent();
 							byte data[] = new byte[8096];

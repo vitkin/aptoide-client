@@ -517,19 +517,23 @@ public class BaseManagement extends Activity {
 
 						 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
 
+						 
 						 if(mHttpResponse == null){
 							 Log.d("Aptoide","Problem in network... retry...");	
 							 mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
 							 if(mHttpResponse == null){
 								 Log.d("Aptoide","Major network exception... Exiting!");
-								 msg_al.arg1= 1;
-								 download_error_handler.sendMessage(msg_al);
+								 //msg_al.arg1= 1;
+								 //download_error_handler.sendMessage(msg_al);
+								 throw new TimeoutException();
+								 
 							 }
 						 }
 
 						 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-							 msg_al.arg1= 1;
-							 download_error_handler.sendMessage(msg_al);
+							 //msg_al.arg1= 1;
+							 //download_error_handler.sendMessage(msg_al);
+							 throw new TimeoutException();
 						 }else{
 							 InputStream getit = mHttpResponse.getEntity().getContent();
 							 byte data[] = new byte[8096];
