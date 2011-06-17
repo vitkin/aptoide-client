@@ -1,6 +1,12 @@
 package cm.aptoide.pt;
 
 import java.io.File;
+import java.io.InputStream;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -9,8 +15,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -26,6 +34,8 @@ import android.widget.Toast;
 
 public class ApkInfo extends Activity{
 
+	private final static String WS_img = "http://www.bazaarandroid.com/webservices/listApkScreens/";
+	
 	private Intent apkinfo = null;
 	private Context mctx = null;
 	
@@ -37,7 +47,9 @@ public class ApkInfo extends Activity{
 			R.drawable.no_screen
 	};
 	
-	//private Drawable[] imageIDs = new Drawable[1];
+	private Drawable[] imageDrwb = null;
+	
+	
 	
 	private String apk_name_str = null;
 	
@@ -63,7 +75,35 @@ public class ApkInfo extends Activity{
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
 		String apk_size_str = apkinfo.getStringExtra("size");
+		
+		try{
+			String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
+			String fetch_imgs = WS_img+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
+
+			Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
+			Log.d("Aptoide","Get img from: " + fetch_imgs);
+			
+			HttpResponse response_ws = NetworkApis.imgWsGet(fetch_imgs);
+			if(response_ws != null && response_ws.getStatusLine().getStatusCode() == 200){
+				String json_str = null;
+				json_str = EntityUtils.toString(response_ws.getEntity());
+				response_ws.getEntity().consumeContent();
+				Log.d("Aptoide","Resp: " + json_str);
+				JSONObject json_resp = new JSONObject(json_str);
 				
+				JSONArray img_url = json_resp.getJSONArray("listing");
+				if(img_url.length()>0)
+					imageDrwb = new Drawable[img_url.length()];
+				for(int i = 0; i< img_url.length(); i++){
+					String a = (String)img_url.get(i);
+					Log.d("Aptoide","* " + a);
+					HttpResponse pic = NetworkApis.imgWsGet(a);
+					InputStream pic_st = pic.getEntity().getContent();
+					Drawable pic_drw = Drawable.createFromStream(pic_st, "src");
+					imageDrwb[i] = pic_drw;
+				}
+			}
+		}catch (Exception e ){ }
 		
 		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
 		serch_mrkt.setOnClickListener(new OnClickListener() {
@@ -167,8 +207,10 @@ public class ApkInfo extends Activity{
 				dialog.setTitle(apk_name_str);
 
 				ImageView image = (ImageView) dialog.findViewById(R.id.image);
-				image.setImageResource(imageIDs[arg2]);
-				//image.setImageDrawable(imageIDs[arg2]);
+				if(imageDrwb == null)
+					image.setImageResource(imageIDs[arg2]);
+				else
+					image.setImageDrawable(imageDrwb[arg2]);
 				dialog.show();
 			}
 		
@@ -193,7 +235,10 @@ public class ApkInfo extends Activity{
  
         //---returns the number of images---
         public int getCount() {
-            return imageIDs.length;
+        	if(imageDrwb == null)
+        		return imageIDs.length;
+        	else
+        		return imageDrwb.length;
         }
  
         //---returns the ID of an item--- 
@@ -208,8 +253,10 @@ public class ApkInfo extends Activity{
         //---returns an ImageView view---
         public View getView(int position, View convertView, ViewGroup parent) {
             ImageView imageView = new ImageView(context);
-            imageView.setImageResource(imageIDs[position]);
-            //imageView.setImageDrawable(imageIDs[position]);
+            if(imageDrwb == null)
+            	imageView.setImageResource(imageIDs[position]);
+            else
+            	imageView.setImageDrawable(imageDrwb[position]);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setLayoutParams(new Gallery.LayoutParams(150, 120));
             imageView.setBackgroundResource(itemBackground);
@@ -224,9 +271,5 @@ public class ApkInfo extends Activity{
 			this.setResult(RESULT_OK, rtrn_intent);
 		super.finish();
 	}
-
-	 
-	
-	
 
 }

@@ -433,7 +433,6 @@ public class RemoteInTab extends TabActivity {
 	}
 	
 	public boolean updateRepos(){
-		//pd = ProgressDialog.show(this, getText(R.string.top_please_wait), getText(R.string.updating_msg),false);
 		prefEdit.putBoolean("kill_thread", true);
     	prefEdit.commit();
     	
