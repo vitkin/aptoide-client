@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -132,10 +131,8 @@ public class ApkInfo extends Activity{
 		File test_icon = new File(icon_path);
 		if(test_icon.exists() && test_icon.length() > 0){
 			icon.setImageDrawable(new BitmapDrawable(icon_path));
-			//imageIDs[0] = new BitmapDrawable(icon_path);
 		}else{
 			icon.setImageResource(android.R.drawable.sym_def_app_icon);
-			//imageIDs[0] = getResources().getDrawable(android.R.drawable.sym_def_app_icon);
 		}
 		
 		TextView apk_name = (TextView)findViewById(R.id.app_name);
