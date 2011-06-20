@@ -19,7 +19,13 @@
 
 package cm.aptoide.pt;
 
-public class ServerNode extends Object{
+import java.io.Serializable;
+
+public class ServerNode extends Object implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public String uri;
 	public boolean inuse;
 	public int napk;

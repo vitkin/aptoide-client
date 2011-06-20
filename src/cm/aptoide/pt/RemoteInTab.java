@@ -47,14 +47,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -115,7 +115,7 @@ public class RemoteInTab extends TabActivity {
 	private ConnectivityManager netstate = null; 
 	
 	private Vector<String> failed_repo = new Vector<String>();
-	private Vector<ServerNode> extras_repo = new Vector<ServerNode>();
+	private ArrayList<ServerNode> extras_repo = new ArrayList<ServerNode>();
 	private boolean there_was_update = false;
 	
 	private Intent intp;
@@ -573,7 +573,7 @@ public class RemoteInTab extends TabActivity {
 	/*
 	 * Get extras.xml file from server and save it in the SD card 
 	 */
-	private boolean downloadExtras(String srv, String delta_hash){
+	/*private boolean downloadExtras(String srv, String delta_hash){
 		String url = srv+REMOTE_EXTRAS_FILE;
 		
         try {
@@ -624,7 +624,7 @@ public class RemoteInTab extends TabActivity {
 		} catch (UnknownHostException e){ return false;} 
 		  catch (ClientProtocolException e) { return false;} 
 		  catch (IOException e) { return false;}
-	}
+	}*/
 	
 	/*
 	 * Get info.xml file from server and save it in the SD card
@@ -774,7 +774,12 @@ public class RemoteInTab extends TabActivity {
     			}
 				p.show();
     		}
-        	new Thread() {
+    		
+    		Intent goExtraServ = new Intent(mctx, FetchExtrasService.class);
+    		goExtraServ.putExtra("lstex", extras_repo);
+    		mctx.startService(goExtraServ);
+    		
+        	/*new Thread() {
 				public void run() {
 					Log.d("Aptoide","Extras thread START!");
 					try{
@@ -793,7 +798,7 @@ public class RemoteInTab extends TabActivity {
 					} catch (Exception e) { extras_repo.clear();}
 					Log.d("Aptoide","Extras thread DONE!");
 				}
-			}.start(); 
+			}.start();*/ 
         }
 	};
 

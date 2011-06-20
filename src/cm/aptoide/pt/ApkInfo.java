@@ -18,6 +18,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,7 +51,7 @@ public class ApkInfo extends Activity{
 	
 	private Drawable[] imageDrwb = null;
 	
-	
+	private Gallery galry = null;
 	
 	private String apk_name_str = null;
 	
@@ -70,13 +72,13 @@ public class ApkInfo extends Activity{
 		String icon_path = apkinfo.getStringExtra("icon");
 		apk_name_str = apkinfo.getStringExtra("name");
 		String apk_descr = apkinfo.getStringExtra("about");
-		String apk_repo_str = apkinfo.getStringExtra("server");
-		String apk_ver_str = apkinfo.getStringExtra("version");
+		final String apk_repo_str = apkinfo.getStringExtra("server");
+		final String apk_ver_str = apkinfo.getStringExtra("version");
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
 		String apk_size_str = apkinfo.getStringExtra("size");
 		
-		try{
+		/*try{
 			String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
 			String fetch_imgs = WS_img+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
 
@@ -103,7 +105,7 @@ public class ApkInfo extends Activity{
 					imageDrwb[i] = pic_drw;
 				}
 			}
-		}catch (Exception e ){ }
+		}catch (Exception e ){ }*/
 		
 		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
 		serch_mrkt.setOnClickListener(new OnClickListener() {
@@ -196,7 +198,7 @@ public class ApkInfo extends Activity{
 		TextView apk_size_n = (TextView) findViewById(R.id.size);
 		apk_size_n.setText(apk_size_str);
 		
-		Gallery galry = (Gallery)findViewById(R.id.screenshots_gal);
+		galry = (Gallery)findViewById(R.id.screenshots_gal);
 		galry.setAdapter(new GalAdpt(this));
 		galry.setOnItemClickListener(new OnItemClickListener() {
 
@@ -217,6 +219,39 @@ public class ApkInfo extends Activity{
 		
 		});
 		
+		new Thread(){
+			public void run(){
+				try{
+					String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
+					String fetch_imgs = WS_img+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
+
+					Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
+					Log.d("Aptoide","Get img from: " + fetch_imgs);
+					
+					HttpResponse response_ws = NetworkApis.imgWsGet(fetch_imgs);
+					if(response_ws != null && response_ws.getStatusLine().getStatusCode() == 200){
+						String json_str = null;
+						json_str = EntityUtils.toString(response_ws.getEntity());
+						response_ws.getEntity().consumeContent();
+						Log.d("Aptoide","Resp: " + json_str);
+						JSONObject json_resp = new JSONObject(json_str);
+						
+						JSONArray img_url = json_resp.getJSONArray("listing");
+						if(img_url.length()>0)
+							imageDrwb = new Drawable[img_url.length()];
+						for(int i = 0; i< img_url.length(); i++){
+							String a = (String)img_url.get(i);
+							Log.d("Aptoide","* " + a);
+							HttpResponse pic = NetworkApis.imgWsGet(a);
+							InputStream pic_st = pic.getEntity().getContent();
+							Drawable pic_drw = Drawable.createFromStream(pic_st, "src");
+							imageDrwb[i] = pic_drw;
+						}
+					}
+					updateScreenshots.sendEmptyMessage(0);
+				}catch (Exception e ){ }
+			}
+		}.start();
 		
 	}
 
@@ -264,6 +299,13 @@ public class ApkInfo extends Activity{
         }
 	}
 	
+	private Handler updateScreenshots = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			galry.setAdapter(new GalAdpt(mctx));
+		}		
+	};
 	
 	@Override
 	public void finish() {
