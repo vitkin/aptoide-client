@@ -21,6 +21,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -69,12 +71,14 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		sPrefFull = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEditFull = sPrefFull.edit();
 
-		String pref_str = sPref.getString("icdown", "error");
+		/*String pref_str = sPref.getString("icdown", "error");
 		
+		Log.d("Aptoide","I got what?: " + pref_str);
 		if(pref_str.equalsIgnoreCase("error")){
 			prefEdit = sPref.edit();
 			prefEdit.putString("icdown", sPrefFull.getString("icdown", "g3w"));
-		}
+			prefEdit.commit();
+		}*/
 		
 		
 		Log.d("Aptoide","The preference is: " + sPref.getString("icdown", "error"));
@@ -91,27 +95,58 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 				alrt.setTitle("Caution");
 				alrt.setMessage("Do you wish to empty Aptoide cache?");
 				alrt.setButton("yes", new OnClickListener() {
-					
+	
 					public void onClick(DialogInterface dialog, int which) {
 						alrt.dismiss();
-						pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.settings_cache), true);
-						pd.setIcon(android.R.drawable.ic_dialog_info);
+
+						boolean isSrvAlive = false;
+						Log.d("Aptoide","... WHAT!!!!!");
+						ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+						for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+							Log.d("Aptoide","... " + service.service.getClassName());
+							if ("cm.aptoide.pt.FetchIconsService".equals(service.service.getClassName())) {
+								isSrvAlive = true;
+								Log.d("Aptoide","ALALALALALALAL");
+								break;
+							}
+						}
 						
-						new Thread() {
-							public void run() {
-								File aptoide_dir = new File(getText(R.string.base_path).toString());
-								for(File fl: aptoide_dir.listFiles()){
-									if(fl.isFile() && fl.getName().toLowerCase().endsWith("apk")){
-										fl.delete();
+						if(isSrvAlive){
+							final AlertDialog alrt2 = new AlertDialog.Builder(mctx).create();
+							alrt2.setTitle("Error");
+							alrt2.setMessage("Aptoide icon service is still running.\nPlease try again latter.");
+							alrt2.setButton("Ok", new OnClickListener() {
+								
+								public void onClick(DialogInterface dialog, int which) {
+									alrt2.dismiss();
+									
+								}
+							});
+							alrt2.show();
+						}else{
+							pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.settings_cache), true);
+							pd.setIcon(android.R.drawable.ic_dialog_info);
+
+							new Thread() {
+								public void run() {
+									try{
+										File aptoide_dir = new File(getText(R.string.base_path).toString());
+										for(File fl: aptoide_dir.listFiles()){
+											if(fl.isFile() && fl.getName().toLowerCase().endsWith("apk")){
+												fl.delete();
+											}
+										}
+										File icons_dir = new File(getText(R.string.icons_path).toString());
+										for(File fl: icons_dir.listFiles()){
+											fl.delete();
+										}
+									}catch (Exception e){ }
+									finally{
+										done_handler.sendEmptyMessage(0);
 									}
 								}
-								File icons_dir = new File(getText(R.string.icons_path).toString());
-								for(File fl: icons_dir.listFiles()){
-									fl.delete();
-								}
-								done_handler.sendEmptyMessage(0);
-							}
-						}.start(); 
+							}.start(); 
+						}
 					}
 				});
 				

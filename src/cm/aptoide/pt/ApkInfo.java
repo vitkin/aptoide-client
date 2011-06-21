@@ -2,6 +2,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -9,10 +11,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -21,15 +27,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,9 +57,17 @@ public class ApkInfo extends Activity{
 	
 	private Drawable[] imageDrwb = null;
 	
-	private Gallery galry = null;
+	//private Gallery galry = null;
 	
 	private String apk_name_str = null;
+	
+	/*ImageView sht1 = null;
+	ImageView sht2 = null;
+	ImageView sht3 = null;
+	ImageView sht4 = null;
+	ImageView sht5 = null;*/
+	
+	List<ImageView> screens = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +75,21 @@ public class ApkInfo extends Activity{
 		setContentView(R.layout.apkinfo);
 		
 		mctx = this;
+		screens = new ArrayList<ImageView>();
+		//sht1 = (ImageView) findViewById(R.id.shot1);
+		screens.add((ImageView) findViewById(R.id.shot1));
+		screens.add((ImageView) findViewById(R.id.shot2));
+		screens.add((ImageView) findViewById(R.id.shot3));
+		screens.add((ImageView) findViewById(R.id.shot4));
+		screens.add((ImageView) findViewById(R.id.shot5));
+//		sht1 = (ImageView) findViewById(R.id.shot1);
+//		screens.add(sht1);
+//		sht1 = (ImageView) findViewById(R.id.shot1);
+//		screens.add(sht1);
+//		sht1 = (ImageView) findViewById(R.id.shot1);
+//		screens.add(sht1);
+//		sht1 = (ImageView) findViewById(R.id.shot1);
+//		screens.add(sht1);
 		
 		rtrn_intent = new Intent();
 		
@@ -198,7 +227,7 @@ public class ApkInfo extends Activity{
 		TextView apk_size_n = (TextView) findViewById(R.id.size);
 		apk_size_n.setText(apk_size_str);
 		
-		galry = (Gallery)findViewById(R.id.screenshots_gal);
+		/*galry = (Gallery)findViewById(R.id.screenshots_gal);
 		galry.setAdapter(new GalAdpt(this));
 		galry.setOnItemClickListener(new OnItemClickListener() {
 
@@ -217,7 +246,7 @@ public class ApkInfo extends Activity{
 			}
 		
 		
-		});
+		});*/
 		
 		new Thread(){
 			public void run(){
@@ -248,14 +277,17 @@ public class ApkInfo extends Activity{
 							imageDrwb[i] = pic_drw;
 						}
 					}
-					updateScreenshots.sendEmptyMessage(0);
+					
 				}catch (Exception e ){ }
+				finally{
+					updateScreenshots.sendEmptyMessage(0);
+				}
 			}
 		}.start();
 		
 	}
 
-	public class GalAdpt extends BaseAdapter{
+	/*public class GalAdpt extends BaseAdapter{
 		private Context context;
         private int itemBackground;
  
@@ -297,13 +329,47 @@ public class ApkInfo extends Activity{
             imageView.setBackgroundResource(itemBackground);
             return imageView;
         }
+	}*/
+	
+	public void screenshotClick(View v){
+		//Log.d("Aptoide","This view.....");
+		final Dialog dialog = new Dialog(mctx);
+
+		dialog.setContentView(R.layout.screenshoot);
+		dialog.setTitle(apk_name_str);
+
+		ImageView image = (ImageView) dialog.findViewById(R.id.image);
+		ImageView fetch = (ImageView) v;
+		image.setImageDrawable(fetch.getDrawable());
+		image.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				dialog.dismiss();
+			}
+		});
+		
+		dialog.setCanceledOnTouchOutside(true);
+		
+		dialog.show();
+		
 	}
 	
 	private Handler updateScreenshots = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			galry.setAdapter(new GalAdpt(mctx));
+			ProgressBar pd = (ProgressBar) findViewById(R.id.pscreens);
+			pd.setVisibility(View.GONE);
+			int i = 0;
+			if(imageDrwb != null){
+				for (Drawable pic : imageDrwb) {
+					screens.get(i).setImageDrawable(pic);
+					i++;
+					if(i>=5)
+						break;
+				}
+			}
+			//galry.setAdapter(new GalAdpt(mctx));
 		}		
 	};
 	
@@ -312,6 +378,11 @@ public class ApkInfo extends Activity{
 		if(jback)
 			this.setResult(RESULT_OK, rtrn_intent);
 		super.finish();
+	}
+	
+	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
 	}
 
 }

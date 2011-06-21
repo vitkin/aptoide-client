@@ -350,6 +350,7 @@ public class BaseManagement extends Activity {
 
 	protected void redraw(){
 		
+		Log.d("Aptoide","======================= I REDRAW");
 		prefEdit.putBoolean("redrawis", true);
 		prefEdit.commit();
 
@@ -413,6 +414,7 @@ public class BaseManagement extends Activity {
 					updateAdpt.setViewBinder(new LstBinder());
 				}catch (Exception e) {	}
 				finally{
+					Log.d("Aptoide","======================= I REDRAW SAY KILL");
 					stop_pd.sendEmptyMessage(0);
 				}
 			}
@@ -692,6 +694,7 @@ public class BaseManagement extends Activity {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			while(pd.isShowing()){
+				Log.d("Aptoide","======================= I KILL");
 				pd.dismiss();
 			}
 			prefEdit.putBoolean("changeavail", true);

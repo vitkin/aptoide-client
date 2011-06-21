@@ -185,11 +185,41 @@
            		android:layout_height="wrap_content"
            		android:text="Screenshots:"/>
 
+			<ProgressBar android:id="@+id/pscreens"
+ 				 android:layout_width="wrap_content"
+  				android:layout_height="wrap_content"/>
 
-				<Gallery
-        			android:id="@+id/screenshots_gal"
-        			android:layout_width="fill_parent" 
-        			android:layout_height="fill_parent" />        
+<!-- 				<Gallery -->
+<!--         			android:id="@+id/screenshots_gal" -->
+<!--         			android:layout_width="fill_parent"  -->
+<!--         			android:layout_height="fill_parent" />         -->
+
+<TableLayout android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:orientation="horizontal"
+			>
+        <TableRow>
+            <ImageView android:id="@+id/shot1" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+            <View android:layout_width="10dip" />
+            <ImageView android:id="@+id/shot2" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+          
+        </TableRow>
+    </TableLayout>
+    
+    
+<TableLayout android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginTop="15sp">
+        <TableRow>
+            <ImageView android:id="@+id/shot3" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+            <View android:layout_width="10dip" />
+            <ImageView android:id="@+id/shot4" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+            <View android:layout_width="10dip" />
+            <ImageView android:id="@+id/shot5" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+        </TableRow>
+    </TableLayout>
 			
 <!-- 			<LinearLayout -->
 <!--        		android:gravity="center" -->

@@ -5,6 +5,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
+import android.text.Html;
 
 public class ExtrasRssHandler extends DefaultHandler{
 	
@@ -48,6 +49,7 @@ public class ExtrasRssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("pkg")){
 			pkg = false;
 			// Add fetched information to DB
+			e_cmt = Html.fromHtml(e_cmt).toString();
 			db.addExtraXML(e_apkid, e_cmt, server);
 			e_apkid = "";
 			e_cmt = "";
