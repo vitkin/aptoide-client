@@ -39,6 +39,7 @@ public class FetchExtrasService extends Service{
 	private String EXTRAS_XML_PATH = LOCAL_PATH+"/extras.xml";
 	
 	private List<ServerNode> parsedList = null;
+	private List<ServerNode> retryList = null;
 	private Thread workingPool = null;
 	Context mctx = null;
 	
@@ -56,6 +57,7 @@ public class FetchExtrasService extends Service{
 		mctx = this;
 		
 		parsedList = new ArrayList<ServerNode>();
+		retryList = new ArrayList<ServerNode>();
 		workingPool = new Thread(new WorkThread(), "T1");
 		workingPool.setPriority(Process.THREAD_PRIORITY_BACKGROUND);
 	}
@@ -83,11 +85,22 @@ public class FetchExtrasService extends Service{
 				for(ServerNode node: parsedList){
 					if(node.inuse){
 						Log.d("Aptoide", "-------------------------Extras for: " + node.uri);
-						if(downloadExtras(node.uri, node.hash)){
-							xmlPass(node.uri);
-						}else if(downloadExtras(node.uri, node.hash)){
-							xmlPass(node.uri);
-						}
+						try{
+							if(downloadExtras(node.uri, node.hash)){
+								xmlPass(node.uri);
+							}else{
+								retryList.add(node);
+							}
+						}catch(Exception e ) {retryList.add(node);}
+					}
+				}
+				for(ServerNode node : retryList){
+					if(node.inuse){
+						try{
+							if(downloadExtras(node.uri, node.hash)){
+								xmlPass(node.uri);
+							}
+						}catch(Exception e ) {}
 					}
 				}
 				Log.d("Aptoide","......................Extras service STOPING....");

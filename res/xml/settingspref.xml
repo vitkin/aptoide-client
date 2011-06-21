@@ -10,7 +10,7 @@
             android:title="@string/clear_dwn_btn"
             android:summary="@string/clear_dwn_msg"
             android:key="icdown"
-            android:defaultValue="digiGreen"
+            android:defaultValue="g3w"
             android:entries="@array/dwnif"
             android:entryValues="@array/dwnifv" />
     </PreferenceCategory>

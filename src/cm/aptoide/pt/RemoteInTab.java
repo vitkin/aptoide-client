@@ -139,7 +139,7 @@ public class RemoteInTab extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		mctx = this;
 		
 		db = new DbHandler(this);
@@ -435,7 +435,7 @@ public class RemoteInTab extends TabActivity {
 	public boolean updateRepos(){
 		prefEdit.putBoolean("kill_thread", true);
     	prefEdit.commit();
-    	
+    	Log.d("Aptoide","======================= I UPDATEREPOS");
 		pd = new ProgressDialog(this);
 		pd.setTitle(getText(R.string.top_please_wait));
 		pd.setMessage(getText(R.string.updating_msg));
@@ -476,6 +476,7 @@ public class RemoteInTab extends TabActivity {
 								inuse_serv.add(node);
 							}else{
 								db.cleanRepoApps(node.uri);
+								
 							}
 						}
 						ServerNode last_tmp = inuse_serv.lastElement();
@@ -522,12 +523,14 @@ public class RemoteInTab extends TabActivity {
 						}
 					} catch (Exception e) { }
 					finally{
+						Log.d("Aptoide","======================= I UPDATEREPOS SAY KILL");
 						update_handler.sendEmptyMessage(0);
 					}
 				}
 			}.start(); 
 			return true;
 		}else{
+			Log.d("Aptoide","======================= I UPDATEREPOS DISMISS");
 			pd.dismiss();
             Toast.makeText(RemoteInTab.this, getText(R.string.aptoide_error), Toast.LENGTH_LONG).show(); 
 			return false;
@@ -736,7 +739,8 @@ public class RemoteInTab extends TabActivity {
         public void handleMessage(Message msg) {
         	prefEdit.putBoolean("update", true);
         	prefEdit.commit();
-        	if(pd.isShowing()){
+        	while(pd.isShowing()){
+        		Log.d("Aptoide","======================= I U KILL");
         		pd.dismiss();
         	}
         	/*if(updt_pd.isShowing())

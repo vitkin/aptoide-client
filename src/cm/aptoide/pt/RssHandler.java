@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 
 public class RssHandler extends DefaultHandler{
@@ -103,7 +104,7 @@ public class RssHandler extends DefaultHandler{
 		db = new DbHandler(mctx);
 		//listapks = db.getForUpdate();
 		tmp_apk.apkid = "";
-		tmp_apk.name = "unknown";
+		tmp_apk.name = "";
 		tmp_apk.ver = "0.0";
 		tmp_apk.vercode = 0;
 		tmp_apk.rat = 0.0f;
@@ -133,7 +134,7 @@ public class RssHandler extends DefaultHandler{
 			throws SAXException {
 		super.characters(ch, start, length);
 		if(apk_name){
-			tmp_apk.name = new String(ch).substring(start, start + length);
+			tmp_apk.name = tmp_apk.name.concat(new String(ch).substring(start, start + length));
 		}else if(apk_id){
 			tmp_apk.apkid = tmp_apk.apkid.concat(new String(ch).substring(start, start + length));
 		}else if(apk_path){
@@ -216,9 +217,9 @@ public class RssHandler extends DefaultHandler{
 				isRemove = false;
 				db.delApk(tmp_apk.apkid);
 			}else{
-				if(tmp_apk.name.equalsIgnoreCase("Unknown"))
+				if(tmp_apk.name.equalsIgnoreCase(""))
 					tmp_apk.name = tmp_apk.apkid;
-
+				
 				ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
 				if(!listapks.contains(node)){
 					db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
@@ -245,7 +246,7 @@ public class RssHandler extends DefaultHandler{
 				cleanTransHeap();
 			}*/
 			tmp_apk.apkid = "";
-			tmp_apk.name = "Unknown";
+			tmp_apk.name = "";
 			tmp_apk.ver = "0.0";
 			tmp_apk.vercode = 0;
 			tmp_apk.rat = 0.0f;

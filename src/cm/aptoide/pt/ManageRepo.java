@@ -205,23 +205,25 @@ public class ManageRepo extends ListActivity{
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		String node = server_lst.get(position).uri;
-		ImageView pic = (ImageView)v.findViewById(R.id.img);
-		
-		if(!server_lst.get(position).inuse){
-			server_lst.get(position).inuse = true;
-			server_to_reset_count.add(node);
-			pic.setImageResource(R.drawable.btn_check_on);
-			Log.d("Aptoide", "check on");
-		}else{
-			server_lst.get(position).inuse = false;
-			server_to_reset_count.remove(node);
-			pic.setImageResource(R.drawable.btn_check_off);
-			Log.d("Aptoide", "check off");
-		}
-		
-		db.changeServerStatus(node);
-		change = true;
+		try{
+			String node = server_lst.get(position).uri;
+			ImageView pic = (ImageView)v.findViewById(R.id.img);
+
+			if(!server_lst.get(position).inuse){
+				server_lst.get(position).inuse = true;
+				server_to_reset_count.add(node);
+				pic.setImageResource(R.drawable.btn_check_on);
+				Log.d("Aptoide", "check on");
+			}else{
+				server_lst.get(position).inuse = false;
+				server_to_reset_count.remove(node);
+				pic.setImageResource(R.drawable.btn_check_off);
+				Log.d("Aptoide", "check off");
+			}
+
+			db.changeServerStatus(node);
+			change = true;
+		}catch (Exception e) {}
 		//redraw();
 	}
 
@@ -592,6 +594,7 @@ public class ManageRepo extends ListActivity{
 		} catch (ClientProtocolException e) { return -1;} 
 		catch (IOException e) { return -1;}
 		catch (IllegalArgumentException e) { return -1;}
+		catch (Exception e) {return -1;	}
 	}
 	
 	
