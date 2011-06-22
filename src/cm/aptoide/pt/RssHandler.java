@@ -219,6 +219,11 @@ public class RssHandler extends DefaultHandler{
 			}else{
 				if(tmp_apk.name.equalsIgnoreCase(""))
 					tmp_apk.name = tmp_apk.apkid;
+				else{
+					try{
+						tmp_apk.name = Html.fromHtml(tmp_apk.name).toString();
+					}catch (Exception e) { }
+				}
 				
 				ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
 				if(!listapks.contains(node)){
