@@ -11,29 +11,22 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.TypedArray;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -51,9 +44,9 @@ public class ApkInfo extends Activity{
 	
 	private boolean jback = false;
 	
-	private Integer[] imageIDs = {
+	/*private Integer[] imageIDs = {
 			R.drawable.no_screen
-	};
+	};*/
 	
 	private Drawable[] imageDrwb = null;
 	
@@ -61,11 +54,8 @@ public class ApkInfo extends Activity{
 	
 	private String apk_name_str = null;
 	
-	/*ImageView sht1 = null;
-	ImageView sht2 = null;
-	ImageView sht3 = null;
-	ImageView sht4 = null;
-	ImageView sht5 = null;*/
+	private TextView noscreens = null;
+
 	
 	List<ImageView> screens = null;
 	
@@ -76,20 +66,13 @@ public class ApkInfo extends Activity{
 		
 		mctx = this;
 		screens = new ArrayList<ImageView>();
-		//sht1 = (ImageView) findViewById(R.id.shot1);
 		screens.add((ImageView) findViewById(R.id.shot1));
 		screens.add((ImageView) findViewById(R.id.shot2));
 		screens.add((ImageView) findViewById(R.id.shot3));
 		screens.add((ImageView) findViewById(R.id.shot4));
 		screens.add((ImageView) findViewById(R.id.shot5));
-//		sht1 = (ImageView) findViewById(R.id.shot1);
-//		screens.add(sht1);
-//		sht1 = (ImageView) findViewById(R.id.shot1);
-//		screens.add(sht1);
-//		sht1 = (ImageView) findViewById(R.id.shot1);
-//		screens.add(sht1);
-//		sht1 = (ImageView) findViewById(R.id.shot1);
-//		screens.add(sht1);
+
+		noscreens = (TextView)findViewById(R.id.noscreens);
 		
 		rtrn_intent = new Intent();
 		
@@ -210,7 +193,8 @@ public class ApkInfo extends Activity{
 		apk_name.setText(apk_name_str);
 		
 		TextView apk_about = (TextView)findViewById(R.id.descript);
-		apk_about.setText(apk_descr);
+		String desc_parsed = Html.fromHtml(apk_descr).toString();
+		apk_about.setText(desc_parsed);
 		
 		TextView apk_repo = (TextView)findViewById(R.id.app_repo);
 		apk_repo.setText(apk_repo_str);
@@ -226,28 +210,7 @@ public class ApkInfo extends Activity{
 		
 		TextView apk_size_n = (TextView) findViewById(R.id.size);
 		apk_size_n.setText(apk_size_str);
-		
-		/*galry = (Gallery)findViewById(R.id.screenshots_gal);
-		galry.setAdapter(new GalAdpt(this));
-		galry.setOnItemClickListener(new OnItemClickListener() {
 
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				Dialog dialog = new Dialog(mctx);
-
-				dialog.setContentView(R.layout.screenshoot);
-				dialog.setTitle(apk_name_str);
-
-				ImageView image = (ImageView) dialog.findViewById(R.id.image);
-				if(imageDrwb == null)
-					image.setImageResource(imageIDs[arg2]);
-				else
-					image.setImageDrawable(imageDrwb[arg2]);
-				dialog.show();
-			}
-		
-		
-		});*/
-		
 		new Thread(){
 			public void run(){
 				try{
@@ -287,50 +250,7 @@ public class ApkInfo extends Activity{
 		
 	}
 
-	/*public class GalAdpt extends BaseAdapter{
-		private Context context;
-        private int itemBackground;
- 
-        public GalAdpt(Context c) 
-        {
-            context = c;
-            //---setting the style---
-            TypedArray a = obtainStyledAttributes(R.styleable.Gallery1);
-            itemBackground = a.getResourceId(R.styleable.Gallery1_android_galleryItemBackground, 0);
-            a.recycle();                    
-        }
- 
-        //---returns the number of images---
-        public int getCount() {
-        	if(imageDrwb == null)
-        		return imageIDs.length;
-        	else
-        		return imageDrwb.length;
-        }
- 
-        //---returns the ID of an item--- 
-        public Object getItem(int position) {
-            return position;
-        }            
- 
-        public long getItemId(int position) {
-            return position;
-        }
- 
-        //---returns an ImageView view---
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ImageView imageView = new ImageView(context);
-            if(imageDrwb == null)
-            	imageView.setImageResource(imageIDs[position]);
-            else
-            	imageView.setImageDrawable(imageDrwb[position]);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setLayoutParams(new Gallery.LayoutParams(150, 120));
-            imageView.setBackgroundResource(itemBackground);
-            return imageView;
-        }
-	}*/
-	
+
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
 		final Dialog dialog = new Dialog(mctx);
@@ -362,12 +282,16 @@ public class ApkInfo extends Activity{
 			pd.setVisibility(View.GONE);
 			int i = 0;
 			if(imageDrwb != null){
+				noscreens.setVisibility(View.GONE);
 				for (Drawable pic : imageDrwb) {
 					screens.get(i).setImageDrawable(pic);
 					i++;
 					if(i>=5)
 						break;
 				}
+			}else{
+				noscreens.setVisibility(View.VISIBLE);
+				noscreens.setText("No screenshots available.");
 			}
 			//galry.setAdapter(new GalAdpt(mctx));
 		}		
