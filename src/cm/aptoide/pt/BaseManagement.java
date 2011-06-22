@@ -92,7 +92,7 @@ public class BaseManagement extends Activity {
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
-		
+		order_lst = sPref.getString("order_lst", "abc");
 		redrawCatgList();
 	}
 	
@@ -255,20 +255,22 @@ public class BaseManagement extends Activity {
 		}else if(sPref.getBoolean("update", false)){
 			prefEdit.remove("update");
 			prefEdit.commit();
-			if(sPref.contains("order_lst")){
+			/*if(sPref.contains("order_lst")){
+				Log.d("Aptoide","************************** This 1 ********************************");
 				order_lst = sPref.getString("order_lst", "abc");
 				prefEdit.remove("order_lst");
 				prefEdit.commit();
-			}
+			}*/
 			redraw();
 			redrawCatgList();
 			
-		}else if(sPref.contains("order_lst")){
+		}/*else if(sPref.contains("order_lst")){
+			Log.d("Aptoide","*********************** This 2 ******************************");
 			order_lst = sPref.getString("order_lst", "abc");
 			prefEdit.remove("order_lst");
 			prefEdit.commit();
 			redraw();
-		}
+		}*/
 	}
 
 	protected void removeApk(String apk_pkg){
@@ -706,7 +708,17 @@ public class BaseManagement extends Activity {
 		 
 	 };
 	 
-	 @Override
+	 
+
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		prefEdit.putString("order_lst", order_lst);
+		prefEdit.commit();
+	}
+
+	@Override
 		public void onConfigurationChanged(Configuration newConfig) {
 			super.onConfigurationChanged(newConfig);
 		}	
