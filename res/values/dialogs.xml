@@ -46,6 +46,12 @@
     <string name="update_done_msg1">Repositories updated succesfully.</string>
     <string name="update_process">Updating repository %1$d of %2$d</string>
     
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    
+    <string name="update_self_title">Update available</string>
+    <string name="update_self_msg">There is a new version of aptoide available,\ndo you wish to update?</string>
+    
 </resources>
 
 <!--

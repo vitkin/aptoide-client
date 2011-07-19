@@ -46,6 +46,12 @@
     <string name="update_done_msg1">Lista de aplicações actualizada com sucesso.</string>
     <string name="update_process">A actualizar repositório %1$d de %2$d</string>
     
+    <string name="dialog_yes">Sim</string>
+    <string name="dialog_no">Não</string>
+    
+    <string name="update_self_title">Actualização disponível</string>
+    <string name="update_self_msg">Está disponível uma nova versão do Aptoide,\npretende actualizar?</string>
+    
 </resources>
 
 <!--
