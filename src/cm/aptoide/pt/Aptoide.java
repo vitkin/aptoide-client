@@ -21,7 +21,6 @@ package cm.aptoide.pt;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -29,10 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
@@ -47,9 +44,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -57,6 +53,7 @@ import org.xml.sax.XMLReader;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -69,12 +66,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 
 public class Aptoide extends Activity { 
@@ -86,6 +84,8 @@ public class Aptoide extends Activity {
     private static final String TMP_SRV_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
     private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/aptoideUpdate.apk";
 	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
+	
+	private WakeLock keepScreenOn;
     
     private Vector<String> server_lst = null;
     private Vector<String[]> get_apks = null;
@@ -148,6 +148,9 @@ public class Aptoide extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
         
         Log.d("Aptoide","******* \n Downloads will be made to: " + Environment.getExternalStorageDirectory().getPath() + "\n ********");
 
@@ -215,6 +218,9 @@ public class Aptoide extends Activity {
         		PackageManager mPm;
         		PackageInfo pkginfo;
         		mPm = getPackageManager();
+        		
+        		keepScreenOn.acquire();
+        		
         		for(ApkNode node: apk_lst){ 
         			if(node.status == 0){
        				 try{
@@ -243,8 +249,11 @@ public class Aptoide extends Activity {
                         }
                     });
                 }
+        		
+        		keepScreenOn.release();
+        		
                 Message msg = new Message();
-                msg.what = 0;
+                msg.what = OUT;
                 startHandler.sendMessage(msg); 
             }
         }).start();
@@ -271,6 +280,8 @@ public class Aptoide extends Activity {
     
 	private void downloadServ(String srv){
 		try{
+			keepScreenOn.acquire();
+			
 			BufferedInputStream getit = new BufferedInputStream(new URL(srv).openStream());
 
 			File file_teste = new File(TMP_SRV_FILE);
@@ -286,6 +297,9 @@ public class Aptoide extends Activity {
 				bout.write(data,0,readed);
 				readed = getit.read(data,0,1024);
 			}
+			
+			keepScreenOn.release();
+			
 			bout.close();
 			getit.close();
 			saveit.close();
@@ -304,6 +318,8 @@ public class Aptoide extends Activity {
 	private void getRemoteServLst(String file){
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 	    try {
+	    	keepScreenOn.acquire();
+	    	
 	    	SAXParser sp = spf.newSAXParser();
 	    	XMLReader xr = sp.getXMLReader();
 	    	NewServerRssHandler handler = new NewServerRssHandler(this);
@@ -316,6 +332,9 @@ public class Aptoide extends Activity {
 	    	xml_file.delete();
 	    	server_lst = handler.getNewSrvs();
 	    	get_apks = handler.getNewApks();
+	    	
+	    	keepScreenOn.release();
+	    	
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    } catch (SAXException e) {
@@ -328,6 +347,8 @@ public class Aptoide extends Activity {
 	private void parseXmlString(String file){
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 	    try {
+	    	keepScreenOn.acquire();
+	    	
 	    	SAXParser sp = spf.newSAXParser();
 	    	XMLReader xr = sp.getXMLReader();
 	    	NewServerRssHandler handler = new NewServerRssHandler(this);
@@ -338,6 +359,9 @@ public class Aptoide extends Activity {
 	    	xr.parse(is);
 	    	server_lst = handler.getNewSrvs();
 	    	get_apks = handler.getNewApks();
+	    	
+	    	keepScreenOn.release();
+	    	
 	    } catch (IOException e) {
 	    } catch (SAXException e) {
 	    } catch (ParserConfigurationException e) {

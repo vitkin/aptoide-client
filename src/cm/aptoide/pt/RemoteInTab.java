@@ -47,14 +47,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -63,7 +63,9 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.os.PowerManager;
 import android.os.StatFs;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -95,6 +97,8 @@ public class RemoteInTab extends TabActivity {
 	private static final int SETTINGS_FLAG = 31;
 	private static final int NEWREPO_FLAG = 33;
 	private static final int FETCH_APK = 35;
+	
+	private WakeLock keepScreenOn;
 	
 	private DbHandler db = null;
 
@@ -140,6 +144,9 @@ public class RemoteInTab extends TabActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
+		
 		mctx = this;
 		
 		db = new DbHandler(this);
@@ -548,6 +555,8 @@ public class RemoteInTab extends TabActivity {
 	    SAXParser sp = null;
     	XMLReader xr = null;
 	    try {
+	    	keepScreenOn.acquire();
+	    	
 	    	sp = spf.newSAXParser();
 	    	xr = sp.getXMLReader();
 	    	if(type){
@@ -564,6 +573,8 @@ public class RemoteInTab extends TabActivity {
 	    	InputStreamReader isr = new FileReader(xml_file);
 	    	InputSource is = new InputSource(isr);
 	    	xr.parse(is);
+	    	
+	    	keepScreenOn.release();
 	    	
 	    } catch (Exception e){
 	    	xr = null;
@@ -666,6 +677,8 @@ public class RemoteInTab extends TabActivity {
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				Log.d("Aptoide","Got status 200");
 				
+				keepScreenOn.acquire();
+				
 				// see last-modified...
 				MessageDigest md5hash = MessageDigest.getInstance("MD5");
 				Header lst_modif = mHttpResponse.getLastHeader("Last-Modified");
@@ -717,6 +730,9 @@ public class RemoteInTab extends TabActivity {
 					byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
 					saveit.write(buffer);
 				}
+				
+				keepScreenOn.release();
+				
 			}else{
 				return -1;
 				//Does nothing
