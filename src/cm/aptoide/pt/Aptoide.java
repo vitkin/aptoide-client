@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.PriorityQueue;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
@@ -179,6 +180,18 @@ public class Aptoide extends Activity {
    		}
 		
     }
+    
+    /**
+	 * @author rafael
+	 * @return
+	 */
+	public ApkNodeFull[] getApkVersionsInfo(){
+		
+		PriorityQueue<ApkNodeFull> priorityApk = new PriorityQueue<ApkNodeFull>();
+		
+		return priorityApk.toArray(new ApkNodeFull[priorityApk.size()]);
+		
+	}
     
     private void updateAppsDb(){
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
