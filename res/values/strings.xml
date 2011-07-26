@@ -38,6 +38,7 @@
     
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>
+    <string name="version_prompt">Select an app version</string>
 </resources>
 
 <!--
