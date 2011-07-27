@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="cm.aptoide.pt"
-      android:versionName="2.5.2" android:versionCode="296">
+      android:versionName="2.5.2" android:versionCode="297">
       <uses-permission android:name="android.permission.INTERNET" />
       <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
       <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -71,8 +71,11 @@ android:configChanges="keyboardHidden|orientation" android:theme="@android:style
 
 <service android:name="FetchIconsService"></service>
 <service android:name="FetchExtrasService"></service>
+<service android:name=".DownloadQueueService" />
 
 </application>
+
+
     <uses-sdk android:minSdkVersion="4" />
 
 </manifest>
