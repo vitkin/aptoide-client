@@ -181,17 +181,7 @@ public class Aptoide extends Activity {
 		
     }
     
-    /**
-	 * @author rafael
-	 * @return
-	 */
-	public ApkNodeFull[] getApkVersionsInfo(){
-		
-		PriorityQueue<ApkNodeFull> priorityApk = new PriorityQueue<ApkNodeFull>();
-		
-		return priorityApk.toArray(new ApkNodeFull[priorityApk.size()]);
-		
-	}
+    
     
     private void updateAppsDb(){
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
