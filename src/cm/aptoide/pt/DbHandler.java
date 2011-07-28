@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
-import junit.runner.Version;
 
+import cm.aptoide.summerinternship2011.Version;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -682,41 +682,29 @@ public class DbHandler {
 	
 	/**
 	 * @author rafael
-	 * http://aptoide.com/test_pkg_version_options.xml
-	 * @return 
+	 * @since summerinternship2011
+	 * Note that we are using the xml http://aptoide.com/test_pkg_version_options.xml file as a model for the reading of data.
+	 * @return The available versions for download
 	 */
-	public Version[] getApkVersionsInfo(String apkid){
+	public Version[] getApkVersionsInfo(final String apkid){
 		
 		Cursor c = null;
 		PriorityQueue<Version> versions = new PriorityQueue<Version>(); 
 		final int COLUMN_INDEX = 0;
 		try{
-			c = db.query(DbHandler.TABLE_NAME_LOCAL, new String[] {"instver"}, "id='" + apkid + "'", null, null, null, null);
+			c = db.query(TABLE_NAME_LOCAL, new String[] {"instver"}, "apkid='" + apkid + "'", null, null, null, null);
+			c.moveToFirst();
 			
-		}catch(Exception e) { }
+			if(c.getCount()>0){
+				do{
+					versions.add(new Version(c.getString(COLUMN_INDEX)));
+				}while(c.moveToNext());
+			}
+			}catch(Exception e) { }
+			
 		finally{ c.close(); }
-		
-		c.moveToFirst();
-		
-		while(c.moveToNext())
-			versions.add(new Version(c.getString(COLUMN_INDEX)));
-		
 		return versions.toArray(new Version[versions.size()]);
 		
-	}
-	
-	/**
-	 * @author rafael
-	 *
-	 */
-	public class Version{
-		private String version; 
-		public Version(String version) {
-			this.version = version;
-		}
-		public String getVersion() {
-			return version;
-		}
 	}
 	
 	public Vector<DownloadNode> getPathHash(String id){

@@ -10,6 +10,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cm.aptoide.summerinternship2011.Version;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -252,17 +254,50 @@ public class ApkInfo extends Activity{
 			}
 		}.start();
 		
-		//
-		Spinner spinner = (Spinner) this.findViewById(R.id.spinner);
-		ArrayAdapter<CharSequence> adapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item);
-	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		adapter.add("Ssdasds");
-		spinner.setAdapter(adapter);
 		
-		//getApkVersionsInfo();
-	
+		addVersionsToInterfaceSpinner(apk_id, R.id.spinnerMultiVersion);
 	}
+	
+	/**
+	 * @author rafael
+	 * @since summerinternship2011
+	 * 
+	 * @param apk_id
+	 * @param spinnerId
+	 */
+	private void addVersionsToInterfaceSpinner(String apk_id, long spinnerId){
+		Spinner spinner = (Spinner) this.findViewById(R.id.spinnerMultiVersion);
+		ArrayAdapter<Version> adapter = new ArrayAdapter<Version>(this, /*android.R.layout.simple_spinner_item*/	android.R.layout.simple_spinner_dropdown_item);
+	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	    DbHandler handler = new DbHandler(this);
+	    Version[] versions = handler.getApkVersionsInfo(apk_id);
+	    handler.clodeDb();
+	    for(Version version:versions){ adapter.add(version); }
+	    adapter.add(new Version("1.0"));
+	    adapter.add(new Version("2.0"));
+	    adapter.add(new Version("3.0"));
+		spinner.setAdapter(adapter);
+		spinner.setOnItemSelectedListener(new MyOnItemSelectedListener(versions.length+""));
+	} 
+	
+	public class MyOnItemSelectedListener implements OnItemSelectedListener {
 
+		private String msg;
+		
+		public MyOnItemSelectedListener(String msg){
+			this.msg = msg;
+		}
+		
+	    public void onItemSelected(AdapterView<?> parent,
+	        View view, int index, long id) {
+	    		Toast.makeText(parent.getContext(), msg, Toast.LENGTH_LONG).show();
+	    }
+
+	    public void onNothingSelected(AdapterView parent) {
+	      // Do nothing.
+	    }
+	}
+	
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
 		final Dialog dialog = new Dialog(mctx);
@@ -274,7 +309,6 @@ public class ApkInfo extends Activity{
 		ImageView fetch = (ImageView) v;
 		image.setImageDrawable(fetch.getDrawable());
 		image.setOnClickListener(new OnClickListener() {
-			
 			public void onClick(View v) {
 				dialog.dismiss();
 			}
