@@ -76,8 +76,7 @@ public class RemoteInSearch extends ListActivity{
 	private ListView lv = null;
 	private int pos = -1;
 	
-	private String LOCAL_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide";
-	private String APK_PATH = LOCAL_PATH+"/";
+	private String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
 	private static final int MANAGE_REPO = Menu.FIRST;
 	private static final int CHANGE_FILTER = 2;
@@ -106,7 +105,7 @@ public class RemoteInSearch extends ListActivity{
 	
 	private View baz_search = null;
 	
-	private DownloadQueueService service;
+	private DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
 	        // This is called when the connection with the service has been
@@ -114,7 +113,7 @@ public class RemoteInSearch extends ListActivity{
 	        // interact with the service.  Because we have bound to a explicit
 	        // service that we know is running in our own process, we can
 	        // cast its IBinder to a concrete class and directly access it.
-	        service = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
 
 	        Log.d("Aptoide-RemoteInSearch", "DownloadQueueService bound to RemoteInSearch");
 	    }
@@ -124,7 +123,7 @@ public class RemoteInSearch extends ListActivity{
 	        // unexpectedly disconnected -- that is, its process crashed.
 	        // Because it is running in our same process, we should never
 	        // see this happen.
-	        service = null;
+	        downloadQueueService = null;
 	        
 	        Log.d("Aptoide-RemoteInSearch","DownloadQueueService unbound from RemoteInSearch");
 	    }
@@ -183,6 +182,8 @@ public class RemoteInSearch extends ListActivity{
 		query = query.replaceAll("[\\%27]|[\\']|[\\-\\-]|[\\%23]|[#]", " ");
 		
 		apk_lst = db.getSearch(query,order_lst);
+		
+		bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
 		
 	@Override
@@ -323,11 +324,8 @@ public class RemoteInSearch extends ListActivity{
     	intent.setAction(android.content.Intent.ACTION_VIEW);
     	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
     	
-    	Message msg = new Message();
-		msg.arg1 = 1;
-		download_handler.sendMessage(msg);
-    	
-    	startActivityForResult(intent,position);
+    	startActivityForResult(intent,position);	//TODO 	passar este método e o correspondente result para a classe Aptoide
+    												//		unificando os códigos desta classe com o da remoteintab
 	}
 	
 
@@ -346,7 +344,7 @@ public class RemoteInSearch extends ListActivity{
 						/*new Thread() {
 							public void run() {*/
 						//String apk_pkg = downloadFile(pos);
-						downloadFile(pos);
+						queueDownload(pos);
 						/*Message msg_alt = new Message();
 						if(apk_pkg == null){
 							Message msg = new Message();
@@ -455,168 +453,34 @@ public class RemoteInSearch extends ListActivity{
 
 	}
 
-	private void downloadFile(final int position){
+	private void queueDownload(final int position){
 		
-		bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 		
-		
-		
-		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();
-		/*String getserv = new String();
-		String md5hash = null;
-		String repo = null;*/
-		
-		int size = 0;
-
 		try{
-			final String apkid = apk_lst.get(position).apkid; 
+		
+			final String apkid = apk_lst.get(position).apkid;
 			tmp_serv = db.getPathHash(apkid);
-
+			
+			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
+			
 			//if(tmp_serv.size() > 0){
-			DownloadNode node = new DownloadNode();
-			node = tmp_serv.firstElement();
-			final String getserv = node.repo + "/" + node.path;
-			final String md5hash = node.md5h;
-			final String repo = node.repo;
-			size = node.size;
+			DownloadNode downloadNode = new DownloadNode();
+			downloadNode = tmp_serv.firstElement();
+			final String remotePath = downloadNode.repo + "/" + downloadNode.path;
+			
 			//}
-
-			if(getserv.length() == 0)
+	
+			if(remotePath.length() == 0)
 				throw new TimeoutException();
-
-			Message msg = new Message();
-			msg.arg1 = 0;
-			msg.arg2 = size;
-			msg.obj = new String(getserv);
-			download_handler.sendMessage(msg);
-
 			
-			new Thread(){
-				public void run(){
-					Message msg_al = new Message();
-					try{
-						
-						String path = new String(APK_PATH+apk_lst.get(position).apkid+".apk");
-						
-						// If file exists, removes it...
-						 File f_chk = new File(path);
-						 if(f_chk.exists()){
-							 f_chk.delete();
-						 }
-						 f_chk = null;
-						
-						FileOutputStream saveit = new FileOutputStream(path);
-						DefaultHttpClient mHttpClient = new DefaultHttpClient();
-						HttpGet mHttpGet = new HttpGet(getserv);
-
-						String[] logins = null; 
-						logins = db.getLogin(repo);
-						if(logins != null){
-							URL mUrl = new URL(getserv);
-							mHttpClient.getCredentialsProvider().setCredentials(
-									new AuthScope(mUrl.getHost(), mUrl.getPort()),
-									new UsernamePasswordCredentials(logins[0], logins[1]));
-						}
-
-						HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-						
-						if(mHttpResponse == null){
-							 Log.d("Aptoide","Problem in network... retry...");	
-							 mHttpResponse = mHttpClient.execute(mHttpGet);
-							 if(mHttpResponse == null){
-								 Log.d("Aptoide","Major network exception... Exiting!");
-								 /*msg_al.arg1= 1;
-								 download_error_handler.sendMessage(msg_al);*/
-								 throw new TimeoutException();
-							 }
-						 }
-						
-						if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-							throw new TimeoutException();
-						}else{
-							InputStream getit = mHttpResponse.getEntity().getContent();
-							byte data[] = new byte[8096];
-							int readed;
-							readed = getit.read(data, 0, 8096);
-							while(readed != -1) {
-								download_tick.sendEmptyMessage(readed);
-								saveit.write(data,0,readed);
-								readed = getit.read(data, 0, 8096);
-							}
-							Log.d("Aptoide","Download done!");
-							saveit.flush();
-							saveit.close();
-							getit.close();
-						}
-
-
-						File f = new File(path);
-						Md5Handler hash = new Md5Handler();
-						if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
-							msg_al.arg1 = 1;
-							download_handler.sendMessage(msg_al);
-							installApk(path, position);
-						}else{
-							Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
-							msg_al.arg1 = 0;
-							download_error_handler.sendMessage(msg_al);
-						}
-
-					}catch (Exception e) { 
-						msg_al.arg1= 1;
-						download_error_handler.sendMessage(msg_al);
-					}
-				}
-			}.start();
-			
-			
+			String[] logins = null; 
+			logins = db.getLogin(downloadNode.repo);
+					
+			//TODO refactor DownloadNode to include all needed fields @dsilveira
+			downloadQueueService.startDownload(position, localPath, downloadNode, apkid, logins, mctx);
+	
 		} catch(Exception e){	}
 	}
 	
-	/*
-	 * UI Handlers
-	 * 
-	 */
-	private Handler download_handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-        	if(msg.arg1 == 0){
-        		//pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
-        		 pd = new ProgressDialog(mctx);
-				 pd.setTitle("Download");
-				 pd.setMessage(getString(R.string.download_alrt) + msg.obj.toString());
-				 pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				 pd.setCancelable(false);
-				 pd.setCanceledOnTouchOutside(false);
-				 /*int max = (((msg.arg2*106)/100)*1000);
-				 Log.d("Aptoide","Max is: " + max);*/
-				 pd.setMax(msg.arg2*1024);
-				 pd.setProgress(0);
-				 pd.show();
-        	}else{
-        		pd.dismiss();
-        	}
-        }
-	};
-	
-	 protected Handler download_tick = new Handler(){
-
-			@Override
-			public void handleMessage(Message msg) {
-				super.handleMessage(msg);
-				//Log.d("Aptoide","Progress: " + pd.getProgress() + " Other: " +  (pd.getMax()*0.96) + " Adding: " + msg.what);
-				pd.incrementProgressBy(msg.what);
-			}
-		 };
-	
-	private Handler download_error_handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-        	if(msg.arg1 == 1){
-				 Toast.makeText(mctx, getString(R.string.network_error), Toast.LENGTH_LONG).show();
-			 }else{
-	        	Toast.makeText(mctx, getString(R.string.md5_error), Toast.LENGTH_LONG).show();
-			 }
-        }
-	};
 }

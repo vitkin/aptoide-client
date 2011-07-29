@@ -30,7 +30,6 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		lv = new ListView(this);
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
