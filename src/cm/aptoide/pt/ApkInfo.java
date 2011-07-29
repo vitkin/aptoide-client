@@ -10,7 +10,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cm.aptoide.summerinternship2011.Version;
+import cm.aptoide.summerinternship2011.multiversion.Version;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -91,6 +91,7 @@ public class ApkInfo extends Activity{
 		apk_name_str = apkinfo.getStringExtra("name");
 		String apk_descr = apkinfo.getStringExtra("about");
 		final String apk_repo_str = apkinfo.getStringExtra("server");
+		//Change multiversion
 		final String apk_ver_str = apkinfo.getStringExtra("version");
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
@@ -204,7 +205,7 @@ public class ApkInfo extends Activity{
 		
 		TextView apk_repo = (TextView)findViewById(R.id.app_repo);
 		apk_repo.setText(apk_repo_str);
-		
+		//Change multiversion
 		TextView apk_version = (TextView)findViewById(R.id.app_ver);
 		apk_version.setText("Version: " + apk_ver_str.replaceAll("\\n", ""));
 		
@@ -221,6 +222,7 @@ public class ApkInfo extends Activity{
 			public void run(){
 				try{
 					String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
+					//Change multiversion
 					String fetch_imgs = WS_img+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
 
 					Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
@@ -269,17 +271,23 @@ public class ApkInfo extends Activity{
 		Spinner spinner = (Spinner) this.findViewById(R.id.spinnerMultiVersion);
 		ArrayAdapter<Version> adapter = new ArrayAdapter<Version>(this, /*android.R.layout.simple_spinner_item*/	android.R.layout.simple_spinner_dropdown_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    DbHandler handler = new DbHandler(this);
-	    Version[] versions = handler.getApkVersionsInfo(apk_id);
-	    handler.clodeDb();
-	    for(Version version:versions){ adapter.add(version); }
-	    adapter.add(new Version("1.0"));
+//	    DbHandler handler = new DbHandler(this);
+//	    Version[] versions = handler.getApkVersionsInfo(apk_id);
+//	    handler.clodeDb();
+//	    for(Version version:versions){ adapter.add(version); }
+	    adapter.add(new Version("1.00000000000000"));
 	    adapter.add(new Version("2.0"));
 	    adapter.add(new Version("3.0"));
 		spinner.setAdapter(adapter);
-		spinner.setOnItemSelectedListener(new MyOnItemSelectedListener(versions.length+""));
+//		spinner.setOnItemSelectedListener(new MyOnItemSelectedListener(versions.length+""));
 	} 
 	
+	/**
+	 * 
+	 * @author rafael
+	 * @since summerinternship2011
+	 * 
+	 */
 	public class MyOnItemSelectedListener implements OnItemSelectedListener {
 
 		private String msg;

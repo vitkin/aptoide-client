@@ -1,7 +1,6 @@
 package cm.aptoide.pt;
 
 import java.util.Vector;
-
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -115,7 +114,10 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 
 		Vector<String> tmp_get = db.getApk(pkg_id);
 		apkinfo.putExtra("server", tmp_get.firstElement());
+//		Change multiversion
 		apkinfo.putExtra("version", tmp_get.get(1));
+//		Ir buscar o link do ficheiro xml
+//		apkinfo.putParcelableArrayListExtra("versionsApk", new VersionParser("http://aptoide.com/test_pkg_version_options.xml", Source.WEB).getVersions());		
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));

@@ -25,7 +25,7 @@ import java.util.PriorityQueue;
 import java.util.Vector;
 
 
-import cm.aptoide.summerinternship2011.Version;
+import cm.aptoide.summerinternship2011.multiversion.Version;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -692,7 +692,8 @@ public class DbHandler {
 		PriorityQueue<Version> versions = new PriorityQueue<Version>(); 
 		final int COLUMN_INDEX = 0;
 		try{
-			c = db.query(TABLE_NAME_LOCAL, new String[] {"instver"}, "apkid='" + apkid + "'", null, null, null, null);
+			
+			c = db.query(TABLE_NAME, new String[] {"lastver"}, "apkid='" + apkid + "'", null, null, null, null);
 			c.moveToFirst();
 			
 			if(c.getCount()>0){
