@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cm.aptoide.summerinternship2011;
+package cm.aptoide.summerinternship2011.multiversion;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public class Version implements Comparable<Version>{
 		rawVersion = processRawVersion(this.version);
 	}
 	
-	public String getVersion() {
+	public String getVersionString() {
 		return version;
 	}
 	
@@ -58,9 +58,9 @@ public class Version implements Comparable<Version>{
 	}
 	
 	public int compareTo(Version version) {
-		String[] rawVersions = ensureSameCharacterLength(version);
-		System.out.println(rawVersions[0]+" "+rawVersions[1]);
-		return new BigInteger(rawVersions[0]).compareTo(new BigInteger(rawVersions[1]));
+		StringBuilder[] rawVersions = ensureSameCharacterLength(version);
+		System.out.println(rawVersions[0].toString() +" "+ rawVersions[1].toString());
+		return new BigInteger(rawVersions[0].toString()).compareTo(new BigInteger(rawVersions[1].toString()));
 	}
 	
 	/**
@@ -68,19 +68,19 @@ public class Version implements Comparable<Version>{
 	 * @param givenVersion
 	 * @return A string array with two elements, the first is rawVersion of this class the second the rawVersion of the givenClass
 	 */
-	public String[] ensureSameCharacterLength(final Version givenVersion){
-		final String[] rawVersions = {rawVersion, givenVersion.getRawVersion()};
+	public StringBuilder[] ensureSameCharacterLength(final Version givenVersion){
+		final StringBuilder[] rawVersions = {new StringBuilder(rawVersion), new StringBuilder(givenVersion.getRawVersion())};
 		int rawVerionLengthDifference = rawVersion.length()-givenVersion.getRawVersion().length();
 		if(rawVerionLengthDifference<0){
-			rawVersions[0] = rawVersions[0]+getStringFielded(-rawVerionLengthDifference,'0'); 
+			rawVersions[0].append(getStringFielded(-rawVerionLengthDifference,'0')); 
 		}else if(rawVerionLengthDifference>0){
-			rawVersions[1] = rawVersions[1]+getStringFielded(rawVerionLengthDifference,'0'); 
+			rawVersions[1].append(getStringFielded(rawVerionLengthDifference,'0')); 
 		}
 		return rawVersions;
 	}
 	
 	@Override
-	public String toString() { return version; }
+	public String toString() { return getVersionString(); }
 	
 //	/**
 //	 * @param size Size of the desired String
@@ -102,16 +102,13 @@ public class Version implements Comparable<Version>{
 	public String getStringFielded(int size,char fillWith){
 		char[] buffer = new char[size];
 		Arrays.fill(buffer, fillWith);
-		return Arrays.toString(buffer);
+		return Arrays.toString(buffer).replaceAll("\\[|\\]|\\s|,", "");
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object version) {
 		if(!(version instanceof Version))
-			throw new IllegalArgumentException("The given argument is not a instance of Version class.");
+			throw new IllegalArgumentException("The given argument is not a instance of Version class");
 		return rawVersion.equals((Version) version);
 	}
 	
@@ -119,7 +116,7 @@ public class Version implements Comparable<Version>{
 	public class NotValidVersionException extends RuntimeException{
 		
 		public NotValidVersionException(String versionIncorrect) {
-			super("The version format \""+versionIncorrect+"\" is incorrect.");
+			super("The version format \""+versionIncorrect+"\" is incorrect");
 		}
 		
 	}
