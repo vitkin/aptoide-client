@@ -89,6 +89,7 @@ public class Aptoide extends Activity {
 	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
 	
 	private WakeLock keepScreenOn;
+	private Intent DownloadQueueServiceIntent;
     
     private Vector<String> server_lst = null;
     private Vector<String[]> get_apks = null;
@@ -174,13 +175,19 @@ public class Aptoide extends Activity {
 				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
 				requestUpdateSelf();
 			}else{
-				updateAppsDb();
+				proceed();
 			}
    		}catch(Exception e){
    			e.printStackTrace();
-   			updateAppsDb();
+   			proceed();
    		}
 		
+    }
+    
+    private void proceed(){
+    	DownloadQueueServiceIntent = new Intent(getApplicationContext(), DownloadQueueService.class);
+    	startService(DownloadQueueServiceIntent);
+    	updateAppsDb();
     }
     
     private void updateAppsDb(){
@@ -267,7 +274,7 @@ public class Aptoide extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode){
 			case UPDATE_SELF:
-				updateAppsDb();
+				proceed();
 				break;
 			default:
 				super.onActivityResult(requestCode, resultCode, data);
@@ -398,7 +405,7 @@ public class Aptoide extends Activity {
     				.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int id) {
     						dialog.cancel();
-    						updateAppsDb();
+    						proceed();
     					}
     				})
     				.setMessage(R.string.update_self_msg)
@@ -524,7 +531,7 @@ public class Aptoide extends Activity {
 					if (this.dialog.isShowing()) {
 						this.dialog.dismiss();
 					}
-					updateAppsDb();
+					proceed();
 					super.onPostExecute(result);
 					
 				}
@@ -541,6 +548,13 @@ public class Aptoide extends Activity {
     	
     	startActivityForResult(intent, UPDATE_SELF);
 	}
+
+	@Override
+	protected void onDestroy() {
+		stopService(DownloadQueueServiceIntent);
+		super.onDestroy();
+	}
+	
 	
 	
 }
