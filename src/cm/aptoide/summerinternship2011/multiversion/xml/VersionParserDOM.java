@@ -1,4 +1,4 @@
-package cm.aptoide.summerinternship2011;
+package cm.aptoide.summerinternship2011.multiversion.xml;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Hashtable;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -19,6 +19,11 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import cm.aptoide.summerinternship2011.Source;
+import cm.aptoide.summerinternship2011.multiversion.VersionApk;
+
+
 
 
 
@@ -32,15 +37,8 @@ import org.xml.sax.SAXException;
  * is too large. How large? This is another question. As the file grows the time to dump the file should rise as well.
  * If this implementation doesn't meet your application needs you should implement a SAX approach based on streaming.
  */
-public class VersionParser {
+public class VersionParserDOM {
 	
-	/**
-	 * 
-	 * @author rafael
-	 * Resource type
-	 * 
-	 */
-	public enum Source{ FILE, WEB }
 	/**
 	 * Resource path
 	 */
@@ -64,7 +62,7 @@ public class VersionParser {
 	 * @throws ParserConfigurationException Indicates a serious configuration error
 	 * @throws SAXException This class can contain basic error or warning information from either the XML parser or the application: a parser writer or application writer can subclass it to provide additional functionality. SAX handlers may throw this exception or any exception subclassed from it
 	 */
-	public VersionParser(String	sourcePath, Source source) throws MalformedURLException, ProtocolException, IOException, ParserConfigurationException, SAXException {
+	public VersionParserDOM(String	sourcePath, Source source) throws MalformedURLException, ProtocolException, IOException, ParserConfigurationException, SAXException {
 		this.sourcePath = sourcePath; 
 		this.source = source;
 		
@@ -114,10 +112,10 @@ public class VersionParser {
 	
 	/**
 	 * 
-	 * @return A hashtable with keys String (VAlues.toString()) and with values VersionApk
+	 * @return A array list with the versions of an application information
 	 */
-	public Hashtable<String, VersionApk> getVersions(){
-		Hashtable<String, VersionApk> versions = new Hashtable<String, VersionApk>();
+	public ArrayList<VersionApk> getVersions(){
+		ArrayList<VersionApk> versions = new ArrayList<VersionApk>();
 		
 		try {
 			// Get a NodeList of  elements
@@ -125,8 +123,7 @@ public class VersionParser {
 			if(nl != null && nl.getLength() > 0) {
 				for(int i = 0; i < nl.getLength();i++) {
 					
-					String version = getVersionTagText(i, "versionNumber", nl);			
-						versions.put(version, new VersionApk(version
+						versions.add(new VersionApk(getVersionTagText(i, "versionNumber", nl)
 								,getVersionTagText(i, "uri", nl)
 								,getVersionTagText(i, "md5", nl)));
 				}
