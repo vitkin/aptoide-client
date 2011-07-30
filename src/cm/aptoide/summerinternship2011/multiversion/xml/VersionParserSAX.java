@@ -14,7 +14,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
-import cm.aptoide.summerinternship2011.Source;
+import cm.aptoide.summerinternship2011.ResourceSource;
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 
 /**
@@ -55,7 +55,7 @@ public class VersionParserSAX {
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public VersionParserSAX(String sourcePath, Source source) throws IOException, SAXException {
+	public VersionParserSAX(String sourcePath, ResourceSource source) throws IOException, SAXException {
 		parser = XMLReaderFactory.createXMLReader();
 		VersionContentHandler handler = new VersionContentHandler();
 		parser.setContentHandler(handler);

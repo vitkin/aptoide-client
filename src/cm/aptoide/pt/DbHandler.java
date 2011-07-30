@@ -692,20 +692,16 @@ public class DbHandler {
 		PriorityQueue<Version> versions = new PriorityQueue<Version>(); 
 		final int COLUMN_INDEX = 0;
 		try{
-			
 			c = db.query(TABLE_NAME, new String[] {"lastver"}, "apkid='" + apkid + "'", null, null, null, null);
-			c.moveToFirst();
-			
-			if(c.getCount()>0){
+			if(c!= null && c.moveToFirst()){
 				do{
 					versions.add(new Version(c.getString(COLUMN_INDEX)));
 				}while(c.moveToNext());
 			}
-			}catch(Exception e) { }
-			
-		finally{ c.close(); }
+		}finally{
+			c.close();
+		}
 		return versions.toArray(new Version[versions.size()]);
-		
 	}
 	
 	public Vector<DownloadNode> getPathHash(String id){
@@ -762,10 +758,10 @@ public class DbHandler {
 			c = db.query(TABLE_NAME, new String[] {"name"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
 			out = c.getString(0);
-			c.close();
-		}catch (Exception e){ }
+		}catch (Exception e){}
 		finally{
-			c.close();
+			if(c!=null)
+				c.close();
 		}
 		return out;
 	}

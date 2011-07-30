@@ -271,15 +271,14 @@ public class ApkInfo extends Activity{
 		Spinner spinner = (Spinner) this.findViewById(R.id.spinnerMultiVersion);
 		ArrayAdapter<Version> adapter = new ArrayAdapter<Version>(this, /*android.R.layout.simple_spinner_item*/	android.R.layout.simple_spinner_dropdown_item);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//	    DbHandler handler = new DbHandler(this);
-//	    Version[] versions = handler.getApkVersionsInfo(apk_id);
+	    DbHandler handler = new DbHandler(this);
+	    Version[] versions = handler.getApkVersionsInfo(apk_id);
+//	    Version version = new Version(db.getApk(apk_id));
 //	    handler.clodeDb();
-//	    for(Version version:versions){ adapter.add(version); }
-	    adapter.add(new Version("1.00000000000000"));
-	    adapter.add(new Version("2.0"));
-	    adapter.add(new Version("3.0"));
+	    for(Version version:versions){ adapter.add(version); }
+	    adapter.add(new Version("1.2"));
 		spinner.setAdapter(adapter);
-//		spinner.setOnItemSelectedListener(new MyOnItemSelectedListener(versions.length+""));
+		spinner.setOnItemSelectedListener(new MyOnItemSelectedListener(versions.length+""));
 	} 
 	
 	/**
