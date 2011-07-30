@@ -30,7 +30,6 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.PriorityQueue;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;

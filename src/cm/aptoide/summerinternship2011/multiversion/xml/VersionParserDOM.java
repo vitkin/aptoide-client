@@ -4,10 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -20,13 +18,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import cm.aptoide.summerinternship2011.Source;
+import cm.aptoide.summerinternship2011.ResourceSource;
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-
-
-
-
-
 
 /**
  * @author rafael
@@ -50,7 +43,7 @@ public class VersionParserDOM {
 	/**
 	 * 
 	 */
-	private Source source;
+	private ResourceSource source;
 	
 	/**
 	 * 
@@ -62,7 +55,7 @@ public class VersionParserDOM {
 	 * @throws ParserConfigurationException Indicates a serious configuration error
 	 * @throws SAXException This class can contain basic error or warning information from either the XML parser or the application: a parser writer or application writer can subclass it to provide additional functionality. SAX handlers may throw this exception or any exception subclassed from it
 	 */
-	public VersionParserDOM(String	sourcePath, Source source) throws MalformedURLException, ProtocolException, IOException, ParserConfigurationException, SAXException {
+	public VersionParserDOM(String	sourcePath, ResourceSource source) throws MalformedURLException, ProtocolException, IOException, ParserConfigurationException, SAXException {
 		this.sourcePath = sourcePath; 
 		this.source = source;
 		
@@ -73,7 +66,7 @@ public class VersionParserDOM {
 		case WEB: 
 			InputStream xmlInputStream = null;
 			try{
-				xmlInputStream = getXMLInputStream(this.sourcePath); 
+				xmlInputStream = Utils.getXMLInputStream(this.sourcePath); 
 				dom =  parseXmlInputStream(xmlInputStream);
 			}finally{xmlInputStream.close();}
 			break;
@@ -99,14 +92,14 @@ public class VersionParserDOM {
 			reader = new Scanner(new File(this.sourcePath));
 			break;
 		case WEB:
-			reader = new Scanner(new BufferedInputStream(getXMLInputStream(this.sourcePath)));
+			reader = new Scanner(new BufferedInputStream(Utils.getXMLInputStream(this.sourcePath)));
 			break;
 		default: break;
 			
 		}
 		
 		while(reader.hasNextLine()){bufferOutput.append(reader.nextLine()+"\r\n");}
-		
+		reader.close();
 		return bufferOutput.toString();
 	}
 	
@@ -190,25 +183,6 @@ public class VersionParserDOM {
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.parse(xmlInputStream);
 		return doc;
-	}
-	
-	/**
-	 * 
-	 * @param uri
-	 * @return
-	 * @throws MalformedURLException Thrown to indicate that a malformed URL has occurred.Either no legal protocol could be found in a specification string or the string could not be parsed
-	 * @throws ProtocolException Thrown to indicate that there is an error in the underlying protocol, such as a TCP error
-	 * @throws IOException Signals that an I/O exception of some sort has occurred. This class is the general class of exceptions produced by failed or interrupted I/O operations
-	 */
-	private InputStream getXMLInputStream(String uri) throws MalformedURLException, ProtocolException, IOException{
-		
-		URL url = new URL(uri);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestMethod("GET");
-		connection.setRequestProperty("Accept", "application/xml");
-
-		return connection.getInputStream();
-	
 	}
 	
 }
