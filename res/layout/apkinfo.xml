@@ -18,7 +18,7 @@
     		android:layout_width="fill_parent" 
     		android:layout_height="wrap_content">	
     			
-    				 
+    			<!-- Program icon --> 
     			<ImageView android:id="@+id/appicon"
 					android:paddingLeft="5.0sp"
     			    android:paddingTop="5.0dip"
@@ -32,6 +32,7 @@
     				android:orientation="vertical" 
     				android:layout_width="wrap_content" 
     				android:layout_height="wrap_content">
+    					
     				
     				<TextView 
             			android:id="@+id/app_name"
@@ -46,7 +47,8 @@
             			android:layout_width="fill_parent" 
             			android:layout_height="wrap_content"
     					android:scrollHorizontally="true"/>
-            		
+            		 
+					    
             	<LinearLayout 
     				android:orientation="horizontal" 
     				android:layout_width="fill_parent" 
@@ -81,26 +83,9 @@
             			android:paddingRight="5.0sp" 
             			android:layout_width="fill_parent" 
             			android:layout_height="wrap_content"/>
-        				<TextView
-        				 android:text="@string/version_prompt"
-        				 android:textAppearance="?android:textAppearanceLarge" 
-            			android:textSize="15.0sp"
-            			android:gravity="left" 
-            			android:layout_gravity="top" 
-            			android:paddingLeft="5.0sp"
-            			android:paddingRight="5.0sp" 
-            			android:layout_width="fill_parent" 
-            			android:layout_height="wrap_content"/>
-					    <Spinner 
-					        android:id="@+id/spinnerMultiVersion"
-					        android:layout_width="fill_parent"
-					        android:prompt="@string/version_prompt" 
-					        android:layout_height="wrap_content"
-					        
-					        android:ellipsize="marquee"
-					        android:textSize="1.0sp"  
-					        />
+        				 
         				
+					        
         		</LinearLayout>
         		
 
@@ -110,7 +95,12 @@
     			android:layout_height="wrap_content"
     			android:paddingTop="5.0dip"
     			>	
-                 
+                
+               <!--  <LinearLayout 
+    				android:orientation="vertical" 
+    				android:layout_width="wrap_content" 
+    				android:layout_height="wrap_content"> -->
+    				
         		<RatingBar android:id="@+id/rating"
         			style="?android:attr/ratingBarStyleSmall"
         			android:layout_width="wrap_content"
@@ -121,10 +111,38 @@
 					
 					android:layout_alignParentRight="true"
         			android:layout_marginRight="5.0sp"/>
-        		
+        					
 	    	</RelativeLayout>
         	
-        </LinearLayout>		
+        	<RelativeLayout
+    			android:orientation="vertical" 
+    			android:layout_width="fill_parent" 
+    			android:layout_height="wrap_content"
+    			android:paddingTop="5.0dip"
+    			>
+            		<!-- <TextView
+        				 android:textAppearance="?android:textAppearanceLarge"
+        				 android:text="@string/version_prompt"
+            			 android:textSize="3.0pt"
+            			 android:gravity="left" 
+            			 android:layout_gravity="top" 
+            			 android:paddingLeft="5.0sp"
+            			 android:paddingRight="5.0sp" 
+            			 android:layout_width="fill_parent" 
+            			 android:layout_height="wrap_content"/>-->
+            			
+            			<Spinner style="@style/NoArrowSpinner"
+					        android:id="@+id/spinnerMultiVersion"
+					        android:layout_width="fill_parent"
+					        android:prompt="@string/version_prompt" 
+					        android:layout_height="30sp"
+					        />
+            			
+            		</RelativeLayout>
+        	
+        </LinearLayout>
+        
+        	 						
         </LinearLayout>
         	        		
 		</LinearLayout>		

@@ -7,7 +7,7 @@ package cm.aptoide.summerinternship2011.multiversion.xml;
  */
 public enum VersionFileElement {
 	
-	APP, PKG, VERSION, VERSIONNUMBER, URI, MD5;
+	APP, PKG, VERSION, VERSION_NUMBER, URI, MD5, NOT_VALID;
 	
 	@Override
 	public String toString() {
@@ -16,7 +16,10 @@ public enum VersionFileElement {
 	}
 	
 	public static VersionFileElement valueOfToUpper(String str){
-		return valueOf(str.toUpperCase());
+		try{
+			return valueOf(str.toUpperCase());
+		}catch(IllegalArgumentException e){}
+		return NOT_VALID;
 	}
 	
 }

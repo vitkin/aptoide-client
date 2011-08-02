@@ -47,21 +47,13 @@ public class VersionApk extends Version implements Parcelable{
 		return md5;
 	}
 	
-	
-	
-	
-	
 	/**
 	 * 
 	 * @param in
 	 */
 	public VersionApk(Parcel in) {
 		super(in.readString());
-		try {
-			url = new URL(in.readString());
-		} catch (MalformedURLException e) { 
-			throw new IllegalArgumentException("The URL is malformed"); 
-		}
+		url = (URL) in.readSerializable();
 		this.md5 = in.readString();
 	}
 	
@@ -77,8 +69,11 @@ public class VersionApk extends Version implements Parcelable{
 	 * 
 	 */
 	public void writeToParcel(Parcel dest, int flags) {
-		// TODO Auto-generated method stub
-		
+		// We just need to write each field into the
+		// parcel. When we read from parcel, they
+		// will come back in the same order
+		dest.writeSerializable(url);
+		dest.writeString(md5);
 	}
 	
 	/**
