@@ -1,16 +1,26 @@
 package cm.aptoide.pt;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
 
-import cm.aptoide.summerinternship2011.multiversion.Version;
+import cm.aptoide.summerinternship2011.ResourceSource;
+import cm.aptoide.summerinternship2011.multiversion.VersionApk;
+import cm.aptoide.summerinternship2011.multiversion.xml.sax.VersionParser;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -18,6 +28,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -268,17 +280,48 @@ public class ApkInfo extends Activity{
 	 * @param spinnerId
 	 */
 	private void addVersionsToInterfaceSpinner(String apk_id, long spinnerId){
+		
 		Spinner spinner = (Spinner) this.findViewById(R.id.spinnerMultiVersion);
-		ArrayAdapter<Version> adapter = new ArrayAdapter<Version>(this, /*android.R.layout.simple_spinner_item*/	android.R.layout.simple_spinner_dropdown_item);
-	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-	    DbHandler handler = new DbHandler(this);
-	    Version[] versions = handler.getApkVersionsInfo(apk_id);
+		ArrayAdapter<VersionApk> adapter;
+		
+		try {
+			ArrayList<VersionApk> versions = new VersionParser("http://aptoide.com/test_pkg_version_options.xml",this.getResources().openRawResource(R.raw.versionfileschema), getApplicationContext()).getVersions();
+			Collections.sort(versions, Collections.reverseOrder());
+			Toast.makeText(this.getApplicationContext(),versions.size()+"",Toast.LENGTH_LONG).show();
+			adapter = new ArrayAdapter<VersionApk>(this, R.layout.versionappspinner, versions);
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		    spinner.setAdapter(adapter);
+		} catch(UnknownHostException e){    
+			// TODO Auto-generated catch block
+			Toast.makeText(this.getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this.getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+		} catch (NotFoundException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this.getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this.getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this.getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this.getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+		} catch (FactoryConfigurationError e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this.getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+		}
+		
+//		adapter = new ArrayAdapter<VersionApk>(this, android.R.layout.simple_spinner_item);	    
+//	    DbHandler handler = new DbHandler(this);
+//	    Version[] versions = handler.getApkVersionsInfo(apk_id);
 //	    Version version = new Version(db.getApk(apk_id));
 //	    handler.clodeDb();
-	    for(Version version:versions){ adapter.add(version); }
-	    adapter.add(new Version("1.2"));
-		spinner.setAdapter(adapter);
-		spinner.setOnItemSelectedListener(new MyOnItemSelectedListener(versions.length+""));
+//	    for(Version version:versions){ adapter.add(version); }
+//		spinner.setOnItemSelectedListener(new MyOnItemSelectedListener(versions.length+""));
+	    
 	} 
 	
 	/**

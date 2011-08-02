@@ -21,11 +21,9 @@ package cm.aptoide.pt;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
 import java.util.Vector;
 
 
-import cm.aptoide.summerinternship2011.multiversion.Version;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -34,7 +32,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import android.widget.SimpleCursorAdapter;
 
 public class DbHandler {
 	
@@ -169,7 +166,7 @@ public class DbHandler {
 				int i = 0;
 				repos = new String[c.getCount()+1];
 				inuser = new int[c.getCount()+1];
-				http://aptoide.com/test_pkg_version_options.xml	secure = new boolean[c.getCount()+1];
+				secure = new boolean[c.getCount()+1];
 				login_pwd = new String[c.getCount()+1];
 				login_user = new String[c.getCount()+1];
 				repos[i] = "http://apps.bazaarandroid.com";
@@ -680,29 +677,29 @@ public class DbHandler {
 		return tmp;
 	}
 	
-	/**
-	 * @author rafael
-	 * @since summerinternship2011
-	 * Note that we are using the xml http://aptoide.com/test_pkg_version_options.xml file as a model for the reading of data.
-	 * @return The available versions for download
-	 */
-	public Version[] getApkVersionsInfo(final String apkid){
-		
-		Cursor c = null;
-		PriorityQueue<Version> versions = new PriorityQueue<Version>(); 
-		final int COLUMN_INDEX = 0;
-		try{
-			c = db.query(TABLE_NAME, new String[] {"lastver"}, "apkid='" + apkid + "'", null, null, null, null);
-			if(c!= null && c.moveToFirst()){
-				do{
-					versions.add(new Version(c.getString(COLUMN_INDEX)));
-				}while(c.moveToNext());
-			}
-		}finally{
-			c.close();
-		}
-		return versions.toArray(new Version[versions.size()]);
-	}
+//	/**
+//	 * @author rafael
+//	 * @since summerinternship2011
+//	 * Note that we are using the xml http://aptoide.com/test_pkg_version_options.xml file as a model for the reading of data.
+//	 * @return The available versions for download
+//	 */
+//	public Version[] getApkVersionsInfo(final String apkid){
+//		
+//		Cursor c = null;
+//		PriorityQueue<Version> versions = new PriorityQueue<Version>(); 
+//		final int COLUMN_INDEX = 0;
+//		try{
+//			c = db.query(TABLE_NAME, new String[] {"lastver"}, "apkid='" + apkid + "'", null, null, null, null);
+//			if(c!= null && c.moveToFirst()){
+//				do{
+//					versions.add(new Version(c.getString(COLUMN_INDEX)));
+//				}while(c.moveToNext());
+//			}
+//		}finally{
+//			c.close();
+//		}
+//		return versions.toArray(new Version[versions.size()]);
+//	}
 	
 	public Vector<DownloadNode> getPathHash(String id){
 		Vector<DownloadNode> out = new Vector<DownloadNode>();
