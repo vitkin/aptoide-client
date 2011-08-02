@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<style parent="@android:style/Widget.Spinner" name="NoArrowSpinner">
+<item name="android:background">@android:drawable/btn_default</item>
+</style>
+</resources>
+<!-- 
+@author rafael
+@since summerinternship2011 
+-->
