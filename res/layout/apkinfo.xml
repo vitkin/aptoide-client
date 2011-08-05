@@ -96,12 +96,8 @@
     			android:paddingTop="5.0dip"
     			>	
                 
-               <!--  <LinearLayout 
-    				android:orientation="vertical" 
-    				android:layout_width="wrap_content" 
-    				android:layout_height="wrap_content"> -->
-    				
-        		<RatingBar android:id="@+id/rating"
+                <RatingBar 
+        			android:id="@+id/rating"
         			style="?android:attr/ratingBarStyleSmall"
         			android:layout_width="wrap_content"
         			android:layout_height="wrap_content"
@@ -111,34 +107,8 @@
 					
 					android:layout_alignParentRight="true"
         			android:layout_marginRight="5.0sp"/>
-        					
-	    	</RelativeLayout>
-        	
-        	<RelativeLayout
-    			android:orientation="vertical" 
-    			android:layout_width="fill_parent" 
-    			android:layout_height="wrap_content"
-    			android:paddingTop="5.0dip"
-    			>
-            		<!-- <TextView
-        				 android:textAppearance="?android:textAppearanceLarge"
-        				 android:text="@string/version_prompt"
-            			 android:textSize="3.0pt"
-            			 android:gravity="left" 
-            			 android:layout_gravity="top" 
-            			 android:paddingLeft="5.0sp"
-            			 android:paddingRight="5.0sp" 
-            			 android:layout_width="fill_parent" 
-            			 android:layout_height="wrap_content"/>-->
-            			
-            			<Spinner style="@style/NoArrowSpinner"
-					        android:id="@+id/spinnerMultiVersion"
-					        android:layout_width="fill_parent"
-					        android:prompt="@string/version_prompt" 
-					        android:layout_height="30sp"
-					        />
-            			
-            		</RelativeLayout>
+        			
+            	</RelativeLayout>
         	
         </LinearLayout>
         
@@ -160,27 +130,50 @@
         		android:orientation="vertical" 
         		android:layout_width="fill_parent" 
         		android:layout_height="wrap_content">
-            
-            <TextView android:id="@+id/dwn"
-            		android:gravity="left" 
-            		android:paddingTop="10.0dip"
-            		android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF"
-
-            		/>
-            		
-            <TextView android:id="@+id/size"
-            		android:gravity="left" 
-            		android:paddingTop="5.0dip"
-            		android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF"
-
-            		/>
-            	
+    			
+		        <TableLayout
+    				android:layout_width="fill_parent"
+    				android:layout_height="fill_parent"
+    				android:paddingTop="10.0dip"
+    				android:paddingLeft="5.0sp"
+    				android:paddingRight="5.0sp"
+				    android:stretchColumns="0,1">
+				    <!-- android:stretchColumns=""-->
+		           <TableRow>
+			            
+			            <TextView 
+			            		android:id="@+id/dwn"
+			            		android:gravity="left" 
+			            		android:layout_width="fill_parent"
+			            		android:layout_height="wrap_content"
+			            		android:textColor="#FFFFFF" 
+			            		/>
+			            		
+			            <Spinner 
+			            style="@style/NoArrowSpinner"
+						android:id="@+id/spinnerMultiVersion"
+						android:layout_width="fill_parent"
+						android:layout_height="40sp"
+						/>
+			            
+			            	
+		           </TableRow>
+		           <TableRow> 					
+			            
+			            
+			            <TextView 
+			            		android:id="@+id/size"
+			            		android:gravity="left"
+			            		android:layout_width="fill_parent"
+			            		android:layout_height="wrap_content"
+			            		android:textColor="#FFFFFF" />
+			            		
+			            <!-- android:paddingTop="5.0dip"
+			            	 android:paddingLeft="5.0sp" -->
+			            	 
+     				</TableRow>
+				</TableLayout>										        
+		    	    	
             <TextView 
             		android:textAppearance="?android:textAppearanceLarge" 
             		android:textSize="18.0sp" 
@@ -298,10 +291,13 @@
 <!-- 			</LinearLayout> -->
 			
 			
-
+				
         	</LinearLayout>
+        	<!-- android:orientation="vertical"  -->
+		
         </ScrollView>
-
+		<!-- android:minHeight="100sp" -->
+		
         <RelativeLayout 
     				android:background="@android:drawable/bottom_bar" 
     				android:layout_width="fill_parent" 
@@ -325,5 +321,12 @@
             			android:layout_alignParentLeft="true" />
             			
     	</RelativeLayout>
+        
+ <!--   <ScrollView 
+        	android:layout_width="fill_parent" 
+        	android:layout_height="wrap_content"
+        	android:layout_weight="1">
+            
+        </ScrollView> -->
         
     </LinearLayout>

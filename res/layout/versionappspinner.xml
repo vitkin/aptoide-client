@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <cm.aptoide.summerinternship2011.TextViewFocused 
+    		  
+    		  xmlns:android="http://schemas.android.com/apk/res/android" 
               android:id="@+id/spinnerMultiVersionTarget"
+              
               android:layout_width="fill_parent"
               android:layout_height="wrap_content"
-              android:textSize="12sp"
+              
               android:textColor="#000000"
-              android:ellipsize="marquee"/>
+              android:gravity="center"
+              
+              android:ellipsize="marquee"
+              android:marqueeRepeatLimit="marquee_forever"
+              
+              android:paddingRight="3.0sp"
+              android:paddingLeft="3.0sp"/>
 <!-- 
 @author rafael
 @since summerinternship2011 

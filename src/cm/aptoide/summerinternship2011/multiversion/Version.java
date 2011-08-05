@@ -80,7 +80,7 @@ public class Version implements Comparable<Version>{
 	}
 	
 	@Override
-	public String toString() { return "ver. "+getVersionString(); }
+	public String toString() { return "Versão "+getVersionString(); }
 	
 //	/**
 //	 * @param size Size of the desired String

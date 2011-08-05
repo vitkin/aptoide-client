@@ -232,15 +232,19 @@ public class RssHandler extends DefaultHandler{
 					//updateTable.add(tmp_apk);
 					listapks.add(node);
 				}else{
-					int pos = listapks.indexOf(node);
-					ApkNode list = listapks.get(pos);
+					int pos = listapks.indexOf(node); // Stored equal apk with possible different version
+					ApkNode list = listapks.get(pos); // Stored Node
 					if(list.vercode < node.vercode){
 						db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
 						//tmp_apk.isnew = true;
 						//updateTable.remove(new ApkNodeFull(list.apkid));
 						//updateTable.add(tmp_apk);
+//						ApkNode oldNode = listapks.get(pos);
+//						db.insertApkOldVersion(false, tmp_apk.apkid, tmp_apk.vercode, tmp_apk.ver, tmp_apk.path, tmp_apk.date, tmp_apk.md5hash, tmp_apk.down, tmp_apk.rat, tmp_apk.size);
 						listapks.remove(pos);
 						listapks.add(node);
+					} else {
+						db.insertApkOldVersion(false, tmp_apk.apkid, tmp_apk.vercode, tmp_apk.ver, tmp_apk.path, tmp_apk.date, tmp_apk.md5hash, tmp_apk.down, tmp_apk.rat, tmp_apk.size, mserver);
 					}
 				}
 			}
