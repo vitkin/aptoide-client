@@ -19,9 +19,12 @@
 
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+
+import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 
 
 import android.content.ContentValues;
@@ -32,6 +35,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DbHandler {
 	
@@ -46,8 +50,8 @@ public class DbHandler {
 	private static final String TABLE_NAME_LOCAL = "local";
 	private static final String TABLE_NAME = "aptoide";
 	private static final String TABLE_NAME_URI = "servers";
-	
 	private static final String TABLE_NAME_EXTRA = "extra";
+	private static final String TABLE_NAME_OLD_VERSIONS = "old_versions";
 	
 	private static SQLiteDatabase db = null;
 	
@@ -66,6 +70,10 @@ public class DbHandler {
 				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null,"
 				+ " catg_ord integer default 2 not null, primary key(apkid));";
 	
+	private static final String CREATE_TABLE_OLD_VERSIONS = "create table if not exists " + TABLE_NAME_OLD_VERSIONS
+				+ " (apkid text, vercode number not null, ver text not null, path text not null, dt date, " 
+				+ " md5hash text, dwn number, rat number, size number default 0 not null, server text,"
+				+ "primary key(apkid, vercode));";
 	
 	
 	Map<String, Object> getCountSecCatg(int ord){
@@ -131,6 +139,7 @@ public class DbHandler {
 			db.execSQL(CREATE_TABLE_EXTRA);
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
+			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
 		}else if(!db.isOpen()){
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
 		}
@@ -203,10 +212,12 @@ public class DbHandler {
 			db.execSQL("drop table if exists " + TABLE_NAME_EXTRA);
 			db.execSQL("drop table if exists " + TABLE_NAME_LOCAL);
 			db.execSQL("drop table if exists " + TABLE_NAME_URI);
+			db.execSQL("drop table if exists " + TABLE_NAME_OLD_VERSIONS);
 			db.execSQL(CREATE_TABLE_URI);
 			db.execSQL(CREATE_TABLE_EXTRA);
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
+			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
 			
 			/*for(String uri: repos){
 				ContentValues tmp = new ContentValues();
@@ -214,6 +225,7 @@ public class DbHandler {
 				tmp.put("inuse", 0);
 				db.insert(TABLE_NAME_URI, null, tmp);
 			}*/
+			
 			for(int z = 0; z < repos.length; z++){
 				if(!repos[z].equalsIgnoreCase("http://apps.aptoide.org")){
 					ContentValues tmp = new ContentValues();
@@ -622,6 +634,7 @@ public class DbHandler {
 	 *  - vec(1): server version
 	 *  - vec(2): is it installed?
 	 *  - vec(3): installed version
+	 *  
 	 */
 	public Vector<String> getApk(String id){
 		Vector<String> tmp = new Vector<String>();
@@ -630,6 +643,7 @@ public class DbHandler {
 		try{
 			c = db.query(TABLE_NAME, new String[] {"server", "lastver", "size"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
+			
 			/*String tmp_serv = new String();
 			for(int i=0; i<c.getCount(); i++){
 				tmp_serv = tmp_serv.concat(c.getString(0)+"\n");
@@ -649,6 +663,7 @@ public class DbHandler {
 				c.moveToFirst();
 				tmp.add("\t"+c.getString(0)+"\n");
 			}
+			
 			
 			c = db.query(TABLE_NAME_EXTRA, new String[] {"dwn", "rat"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
@@ -671,35 +686,97 @@ public class DbHandler {
 			//c.close();
 		}catch (Exception e){
 			//System.out.println(e.toString());
-		}finally{
-			c.close();
-		}
+		}finally{ c.close(); }
+		return tmp;
+		
+	}
+	
+	
+	
+	/**
+	 * @author rafael
+	 * @since summerinternship2011
+	 */
+	public ArrayList<VersionApk> getApkOldVersions(String apkid, Context context, String msg){
+		ArrayList<VersionApk> tmp = new ArrayList<VersionApk>();
+		Cursor c = null;
+		try{
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"ver","path","md5hash"}, "apkid=\""+apkid+"\"", null, null, null, null);
+			
+			if(c.moveToFirst()){
+				//Toast.makeText(context,msg+c.getCount(),Toast.LENGTH_LONG).show();
+				do{
+					tmp.add(new VersionApk(c.getString(0),c.getString(1),c.isNull(2)?null:c.getString(2)));
+				}while(c.moveToNext());
+			}
+		} catch (Exception e){
+		} finally{ c.close(); }
 		return tmp;
 	}
 	
-//	/**
-//	 * @author rafael
-//	 * @since summerinternship2011
-//	 * Note that we are using the xml http://aptoide.com/test_pkg_version_options.xml file as a model for the reading of data.
-//	 * @return The available versions for download
-//	 */
-//	public Version[] getApkVersionsInfo(final String apkid){
-//		
-//		Cursor c = null;
-//		PriorityQueue<Version> versions = new PriorityQueue<Version>(); 
-//		final int COLUMN_INDEX = 0;
-//		try{
-//			c = db.query(TABLE_NAME, new String[] {"lastver"}, "apkid='" + apkid + "'", null, null, null, null);
-//			if(c!= null && c.moveToFirst()){
-//				do{
-//					versions.add(new Version(c.getString(COLUMN_INDEX)));
-//				}while(c.moveToNext());
-//			}
-//		}finally{
-//			c.close();
-//		}
-//		return versions.toArray(new Version[versions.size()]);
-//	}
+	
+	/**
+	 * @author rafael
+	 * @since summerinternship2011
+	 * 
+	 * "create table if not exists " + TABLE_NAME_OLD_VERSIONS
+	 * + " (apkid text, vercode number not null, ver text not null, path text not null, dt date, " 
+	 * + " md5hash text, dwn number, rat number, size number default 0 not null,server text,"
+	 * + "primary key(apkid, vercode));"
+	 * 
+	 * @param delfirst
+	 * 
+	 * @param apkid
+	 * @param vercode
+	 * @param ver
+	 * @param path
+	 * @param date
+	 * @param md5hash
+	 * @param down
+	 * @param rat
+	 * @param size
+	 * @param server
+	 */
+	public void insertApkOldVersion(
+			boolean delfirst, 
+			String apkid,
+			int vercode, 
+			String ver, 
+			String path, 
+			String date, 
+			String md5hash,
+			int down,
+			Float rat, 
+			int size,
+			String server){
+
+		if(delfirst){
+			db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"'", null);
+		}
+		
+		ContentValues tmp = new ContentValues();
+		tmp.put("apkid", apkid);
+		tmp.put("vercode", vercode);
+		tmp.put("ver", ver);
+		tmp.put("path", path);
+		tmp.put("dt", date);
+		tmp.put("md5hash", md5hash);
+		tmp.put("dwn", down);
+		tmp.put("rat", rat);
+		tmp.put("size", size);
+		tmp.put("server", server);
+		db.insert(TABLE_NAME_OLD_VERSIONS, null, tmp);
+		
+   		PackageManager mPm = mctx.getPackageManager();
+   		//See if this application is installed
+		try {
+			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
+			String vers = pkginfo.versionName;
+		    int verscode = pkginfo.versionCode;
+			insertInstalled(apkid, vers, verscode);
+		} catch (NameNotFoundException e) { /*Not installed... do nothing*/ }
+		
+	}
 	
 	public Vector<DownloadNode> getPathHash(String id){
 		Vector<DownloadNode> out = new Vector<DownloadNode>();

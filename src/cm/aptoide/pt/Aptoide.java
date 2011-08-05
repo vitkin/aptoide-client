@@ -366,8 +366,7 @@ public class Aptoide extends Activity {
 	    	
 	    } catch (IOException e) {
 	    } catch (SAXException e) {
-	    } catch (ParserConfigurationException e) {
-		}
+	    } catch (ParserConfigurationException e) {}
 	}
 	
 	private String getXmlElement(String name) throws ParserConfigurationException, MalformedURLException, SAXException, IOException{

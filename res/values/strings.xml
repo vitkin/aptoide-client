@@ -40,6 +40,7 @@
     <string name="about_txt3"> aptoide@aptoide.com</string>
     <string name="version_prompt">Select an app version</string>
     <string name="version_show">ver.</string>
+    <string name="comments">Comments</string>
 </resources>
 
 <!--

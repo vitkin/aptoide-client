@@ -4,8 +4,6 @@
 package cm.aptoide.summerinternship2011.multiversion;
 
 import java.net.MalformedURLException;
-import java.net.URL;
-
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -17,12 +15,12 @@ import android.os.Parcelable;
  */
 public class VersionApk extends Version implements Parcelable{
 	
-	private URL url;
+	private String path;
 	private final String md5;
 	
-	public VersionApk(String version, String uri, String md5) throws MalformedURLException {
+	public VersionApk(String version, String path, String md5) throws MalformedURLException {
 		super(version);
-		url = new URL(uri);
+		this.path = path;
 		this.md5 = md5;
 	}
 	
@@ -36,8 +34,8 @@ public class VersionApk extends Version implements Parcelable{
 	/**
 	 * @return the url
 	 */
-	public URL getUrl() {
-		return url;
+	public String getPath() {
+		return path;
 	}
 
 	/**
@@ -53,7 +51,7 @@ public class VersionApk extends Version implements Parcelable{
 	 */
 	public VersionApk(Parcel in) {
 		super(in.readString());
-		url = (URL) in.readSerializable();
+		this.path = in.readString();
 		this.md5 = in.readString();
 	}
 	
@@ -72,7 +70,8 @@ public class VersionApk extends Version implements Parcelable{
 		// We just need to write each field into the
 		// parcel. When we read from parcel, they
 		// will come back in the same order
-		dest.writeSerializable(url);
+		dest.writeString(this.getVersionString());
+		dest.writeString(path);
 		dest.writeString(md5);
 	}
 	
