@@ -157,6 +157,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 				deep = 0;
 				break;
 			case 2:
+				lv.setAdapter(getAppCtg());
 				setContentView(lv);
 				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				deep = 1;
@@ -239,13 +240,12 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
 			Vector<String> tmp_get = db.getApk(pkg_id);
 			apkinfo.putExtra("server", tmp_get.firstElement());
-			//Change multiversion
 			apkinfo.putExtra("version", tmp_get.get(1));
 			apkinfo.putExtra("dwn", tmp_get.get(4));
 			apkinfo.putExtra("rat", tmp_get.get(5));
 			apkinfo.putExtra("size", tmp_get.get(6));
 			apkinfo.putExtra("type", 0);
-			apkinfo.putParcelableArrayListExtra("versions",  db.getApkOldVersions("com.timsu.astrid", this, "Contagem Tab"));
+			
 			startActivityForResult(apkinfo,30);
 		
 		}

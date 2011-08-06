@@ -1,9 +1,5 @@
 package cm.aptoide.pt;
 
-import java.util.ArrayList;
-
-import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-
 public class ApkNodeFull extends Object{
 	
 	public String name;

@@ -53,9 +53,11 @@ import org.xml.sax.XMLReader;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -65,6 +67,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -86,6 +89,7 @@ public class Aptoide extends Activity {
 	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
 	
 	private WakeLock keepScreenOn;
+	private Intent DownloadQueueServiceIntent;
     
     private Vector<String> server_lst = null;
     private Vector<String[]> get_apks = null;
@@ -96,7 +100,7 @@ public class Aptoide extends Activity {
 	private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
 
-	private PackageInfo pkginfo;
+	private PackageInfo pkginfo;	
 	
 	private ProgressBar mProgress;
 	private int mProgressStatus = 0;
@@ -171,16 +175,20 @@ public class Aptoide extends Activity {
 				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
 				requestUpdateSelf();
 			}else{
-				updateAppsDb();
+				proceed();
 			}
    		}catch(Exception e){
    			e.printStackTrace();
-   			updateAppsDb();
+   			proceed();
    		}
 		
     }
     
-    
+    private void proceed(){
+    	DownloadQueueServiceIntent = new Intent(getApplicationContext(), DownloadQueueService.class);
+    	startService(DownloadQueueServiceIntent);
+    	updateAppsDb();
+    }
     
     private void updateAppsDb(){
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
@@ -260,13 +268,13 @@ public class Aptoide extends Activity {
             }
         }).start();
     }
-    
-    
+
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode){
 			case UPDATE_SELF:
-				updateAppsDb();
+				proceed();
 				break;
 			default:
 				super.onActivityResult(requestCode, resultCode, data);
@@ -366,7 +374,8 @@ public class Aptoide extends Activity {
 	    	
 	    } catch (IOException e) {
 	    } catch (SAXException e) {
-	    } catch (ParserConfigurationException e) {}
+	    } catch (ParserConfigurationException e) {
+		}
 	}
 	
 	private String getXmlElement(String name) throws ParserConfigurationException, MalformedURLException, SAXException, IOException{
@@ -396,7 +405,7 @@ public class Aptoide extends Activity {
     				.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int id) {
     						dialog.cancel();
-    						updateAppsDb();
+    						proceed();
     					}
     				})
     				.setMessage(R.string.update_self_msg)
@@ -522,7 +531,7 @@ public class Aptoide extends Activity {
 					if (this.dialog.isShowing()) {
 						this.dialog.dismiss();
 					}
-					updateAppsDb();
+					proceed();
 					super.onPostExecute(result);
 					
 				}
@@ -539,6 +548,13 @@ public class Aptoide extends Activity {
     	
     	startActivityForResult(intent, UPDATE_SELF);
 	}
+
+	@Override
+	protected void onDestroy() {
+		stopService(DownloadQueueServiceIntent);
+		super.onDestroy();
+	}
+	
 	
 	
 }
