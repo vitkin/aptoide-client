@@ -20,9 +20,6 @@
 package cm.aptoide.pt;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,15 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
@@ -53,9 +43,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -68,7 +56,6 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.SimpleAdapter.ViewBinder;
 
 public class RemoteInSearch extends ListActivity{
@@ -95,7 +82,7 @@ public class RemoteInSearch extends ListActivity{
 
 	private static final int SETTINGS_FLAG = 0;
 	
-	private ProgressDialog pd;
+	//private ProgressDialog pd;
 	
 	private Context mctx = this; 
 
@@ -318,15 +305,15 @@ public class RemoteInSearch extends ListActivity{
 	    startActivityForResult(intent,position); 
 	}
 	
-	private void installApk(String apk_pkg, int position){
-		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
-		Intent intent = new Intent();
-    	intent.setAction(android.content.Intent.ACTION_VIEW);
-    	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
-    	
-    	startActivityForResult(intent,position);	//TODO 	passar este método e o correspondente result para a classe Aptoide
-    												//		unificando os códigos desta classe com o da remoteintab
-	}
+//	private void installApk(String apk_pkg, int position){
+//		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
+//		Intent intent = new Intent();
+//    	intent.setAction(android.content.Intent.ACTION_VIEW);
+//    	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
+//    	
+//    	startActivityForResult(intent,position);	//TODO 	passar este método e o correspondente result para a classe Aptoide
+//    												//		unificando os códigos desta classe com o da remoteintab
+//	}
 	
 
 	@Override

@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -50,7 +49,7 @@ public class RssHandler extends DefaultHandler{
 	
 	private int readed = 0;
 	
-	private boolean new_apk = false;
+	//private boolean new_apk = false;
 	private boolean apk_name = false;
 	private boolean apk_path = false;
 	private boolean apk_ver = false;
@@ -67,7 +66,7 @@ public class RssHandler extends DefaultHandler{
 	
 	private DbHandler db = null;
 	
-	private DefaultHttpClient mHttpClient = null;
+	//private DefaultHttpClient mHttpClient = null;
 	//private DefaultHttpClient mHttpClient2 = null;
 
 	private Vector<ApkNode> listapks= null;
@@ -76,9 +75,9 @@ public class RssHandler extends DefaultHandler{
 
 	
 	private Vector<IconNode> iconFetchList = new Vector<IconNode>();
-	private Vector<IconNode> iconFinalFetchList = new Vector<IconNode>();
+	//private Vector<IconNode> iconFinalFetchList = new Vector<IconNode>();
 	
-	private boolean iconsInPool = true;
+	//private boolean iconsInPool = true;
 	
 	//private boolean requireLogin = false;
 	private String usern = null;
@@ -96,7 +95,7 @@ public class RssHandler extends DefaultHandler{
 	private boolean apkcount = false;
 	private int apks_n = -1;
 	
-	private boolean is_last = false;
+	//private boolean is_last = false;
 		
 	public RssHandler(Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
 		mctx = ctx;
@@ -123,7 +122,7 @@ public class RssHandler extends DefaultHandler{
 		
 		this.extras_hd = extras_hd;
 		
-		this.is_last = is_last;
+		//this.is_last = is_last;
 		
 		sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		
@@ -204,7 +203,7 @@ public class RssHandler extends DefaultHandler{
 			
 			
 			napk++;
-			new_apk = false;
+			//new_apk = false;
 
 			readed++;
 			if(readed >= 10){
@@ -313,7 +312,7 @@ public class RssHandler extends DefaultHandler{
 			Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 		if(localName.trim().equals("package")){
-			new_apk = true;
+			//new_apk = true;
 		}else if(localName.trim().equals("name")){
 			apk_name = true;
 		}else if(localName.trim().equals("path")){
