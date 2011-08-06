@@ -89,7 +89,7 @@ public class RemoteInTab extends TabActivity {
 	
 	
 	private String REMOTE_FILE = "/info.xml";
-	private String REMOTE_EXTRAS_FILE = "/extras.xml";
+	//private String REMOTE_EXTRAS_FILE = "/extras.xml";
 	
 	private static final int UPDATE_REPO = Menu.FIRST;
 	private static final int MANAGE_REPO = 2;
@@ -168,6 +168,7 @@ public class RemoteInTab extends TabActivity {
 		
 	};
     
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

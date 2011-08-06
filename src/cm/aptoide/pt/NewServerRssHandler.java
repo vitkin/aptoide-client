@@ -31,20 +31,20 @@ public class NewServerRssHandler extends DefaultHandler{
 	
 	private String[] node = null;
 	
-	private Context mctx;
+	//private Context mctx;
 	
 	private Vector<String> servers = new Vector<String>();
 	private Vector<String[]> apks = new Vector<String[]>();
 	
-	private boolean new_serv_lst = false;
+	//private boolean new_serv_lst = false;
 	private boolean new_serv = false;
 	
-	private boolean app_list = false;
+	//private boolean app_list = false;
 	private boolean app_apk = false;
 	private boolean app_name = false;
 	
 	public NewServerRssHandler(Context ctx){
-		mctx = ctx;
+		//mctx = ctx;
 	}
 	
 	@Override
@@ -66,11 +66,11 @@ public class NewServerRssHandler extends DefaultHandler{
 			throws SAXException {
 		super.endElement(uri, localName, qName);
 		if(localName.trim().equals("newserver")){
-			new_serv_lst = false;
+			//new_serv_lst = false;
 		}else if(localName.trim().equals("server")){
 			new_serv = false;
 		}else if(localName.trim().equals("getapp")){
-			app_list = false;
+			//app_list = false;
 			apks.add(node);
 			node = null;
 		}else if(localName.trim().equals("get")){
@@ -85,11 +85,11 @@ public class NewServerRssHandler extends DefaultHandler{
 			Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 		if(localName.trim().equals("newserver")){
-			new_serv_lst = true;
+			//new_serv_lst = true;
 		}else if(localName.trim().equals("server")){
 			new_serv = true;
 		}else if(localName.trim().equals("getapp")){
-			app_list = true;
+			//app_list = true;
 			node = new String[2];
 		}else if(localName.trim().equals("get")){
 			app_apk = true;

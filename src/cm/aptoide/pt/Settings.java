@@ -44,7 +44,7 @@ import android.util.Log;
 public class Settings extends PreferenceActivity implements OnSharedPreferenceChangeListener{
 	
 	private SharedPreferences sPref;
-	private SharedPreferences.Editor prefEdit;
+	// private SharedPreferences.Editor prefEdit;
 	private SharedPreferences sPrefFull;
 	private SharedPreferences.Editor prefEditFull;
 	

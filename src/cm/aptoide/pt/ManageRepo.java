@@ -94,6 +94,7 @@ public class ManageRepo extends ListActivity{
 	private AlertDialog alrt = null;
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

@@ -47,6 +47,7 @@ public class FetchIconsService extends Service{
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
