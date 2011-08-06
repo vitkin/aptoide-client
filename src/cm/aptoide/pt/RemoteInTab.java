@@ -50,9 +50,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.app.AlertDialog.Builder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
@@ -62,6 +64,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.StatFs;
@@ -127,6 +130,31 @@ public class RemoteInTab extends TabActivity {
 
 	private boolean fetch_extra = true;
 	
+	private DownloadQueueService downloadQueueService;
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  Because we have bound to a explicit
+	        // service that we know is running in our own process, we can
+	        // cast its IBinder to a concrete class and directly access it.
+	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+	        Log.d("Aptoide-RemoteInTab", "DownloadQueueService bound to RemoteInTab");
+	    }
+	    
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        // Because it is running in our same process, we should never
+	        // see this happen.
+	        downloadQueueService = null;
+	        
+	        Log.d("Aptoide-RemoteInTab","DownloadQueueService unbound from RemoteInTab");
+	    }
+
+	};
+	
 	private Handler fetchHandler = new Handler() {
 
 		@Override
@@ -146,6 +174,8 @@ public class RemoteInTab extends TabActivity {
 
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
+		
+		bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		
 		mctx = this;
 		
@@ -167,6 +197,7 @@ public class RemoteInTab extends TabActivity {
 		
 		File sdcard_file = new File(SDCARD);
 		if(!sdcard_file.exists()){
+			
 			final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
@@ -177,7 +208,20 @@ public class RemoteInTab extends TabActivity {
 				}
 			});
 			upd_alrt.show();
+			
 		}else{
+			
+			Intent intent = getIntent();
+			final String action = intent.getAction();
+			if(action != null){
+				if(action.equals("pt.caixamagica.aptoide.INSTALL_APK")){
+					installApk(intent);
+					keepScreenOn.release();
+					return;
+				}
+			} 
+
+			
 			StatFs stat = new StatFs(sdcard_file.getPath());
 			long blockSize = stat.getBlockSize();
 			long totalBlocks = stat.getBlockCount();
@@ -872,6 +916,28 @@ public class RemoteInTab extends TabActivity {
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+	}
+
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		Log.d("Aptoide-RemoteInTab", "onNewIntent");
+		final String action = intent.getAction();
+		if(action.equals("pt.caixamagica.aptoide.INSTALL_APK")){
+			installApk(intent);
+		}
+	}
+	
+	private void installApk(Intent intent){
+		
+		myTabHost.setCurrentTabByTag("inst");
+		Bundle arguments = intent.getExtras();
+		String localPath = arguments.getString("localPath");
+		int position = arguments.getInt("position");
+		downloadQueueService.dismissNotification(position);
+		//TODO install
+		Log.d("Aptoide-RemoteInTab", "installApk - "+localPath);
+		
 	}
 	
 	

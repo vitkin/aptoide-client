@@ -18,7 +18,7 @@
     		android:layout_width="fill_parent" 
     		android:layout_height="wrap_content">	
     			
-    			<!-- Program icon --> 
+    				 
     			<ImageView android:id="@+id/appicon"
 					android:paddingLeft="5.0sp"
     			    android:paddingTop="5.0dip"
@@ -32,7 +32,6 @@
     				android:orientation="vertical" 
     				android:layout_width="wrap_content" 
     				android:layout_height="wrap_content">
-    					
     				
     				<TextView 
             			android:id="@+id/app_name"
@@ -47,8 +46,7 @@
             			android:layout_width="fill_parent" 
             			android:layout_height="wrap_content"
     					android:scrollHorizontally="true"/>
-            		 
-					    
+            		
             	<LinearLayout 
     				android:orientation="horizontal" 
     				android:layout_width="fill_parent" 
@@ -59,7 +57,7 @@
     				android:orientation="vertical" 
     				android:layout_width="wrap_content" 
     				android:layout_height="wrap_content">
-            		<!--Change multiversion-->	
+            			
             		<TextView 
             			android:id="@+id/app_ver"
             			android:textAppearance="?android:textAppearanceLarge" 
@@ -82,10 +80,8 @@
             			android:paddingLeft="5.0sp"
             			android:paddingRight="5.0sp" 
             			android:layout_width="fill_parent" 
-            			android:layout_height="wrap_content"/>
-        				 
-        				
-					        
+            			android:layout_height="wrap_content"/>    				
+        		
         		</LinearLayout>
         		
 
@@ -95,9 +91,8 @@
     			android:layout_height="wrap_content"
     			android:paddingTop="5.0dip"
     			>	
-                
-                <RatingBar 
-        			android:id="@+id/rating"
+                 
+        		<RatingBar android:id="@+id/rating"
         			style="?android:attr/ratingBarStyleSmall"
         			android:layout_width="wrap_content"
         			android:layout_height="wrap_content"
@@ -107,12 +102,10 @@
 					
 					android:layout_alignParentRight="true"
         			android:layout_marginRight="5.0sp"/>
-        			
-            	</RelativeLayout>
+        		
+	    	</RelativeLayout>
         	
-        </LinearLayout>
-        
-        	 						
+        </LinearLayout>		
         </LinearLayout>
         	        		
 		</LinearLayout>		
@@ -130,50 +123,27 @@
         		android:orientation="vertical" 
         		android:layout_width="fill_parent" 
         		android:layout_height="wrap_content">
-    			
-		        <TableLayout
-    				android:layout_width="fill_parent"
-    				android:layout_height="fill_parent"
-    				android:paddingTop="10.0dip"
-    				android:paddingLeft="5.0sp"
-    				android:paddingRight="5.0sp"
-				    android:stretchColumns="0,1">
-				    <!-- android:stretchColumns=""-->
-		           <TableRow>
-			            
-			            <TextView 
-			            		android:id="@+id/dwn"
-			            		android:gravity="left" 
-			            		android:layout_width="fill_parent"
-			            		android:layout_height="wrap_content"
-			            		android:textColor="#FFFFFF" 
-			            		/>
-			            		
-			            <Spinner 
-			            style="@style/NoArrowSpinner"
-						android:id="@+id/spinnerMultiVersion"
-						android:layout_width="fill_parent"
-						android:layout_height="40sp"
-						/>
-			            
-			            	
-		           </TableRow>
-		           <TableRow> 					
-			            
-			            
-			            <TextView 
-			            		android:id="@+id/size"
-			            		android:gravity="left"
-			            		android:layout_width="fill_parent"
-			            		android:layout_height="wrap_content"
-			            		android:textColor="#FFFFFF" />
-			            		
-			            <!-- android:paddingTop="5.0dip"
-			            	 android:paddingLeft="5.0sp" -->
-			            	 
-     				</TableRow>
-				</TableLayout>										        
-		    	    	
+            
+            <TextView android:id="@+id/dwn"
+            		android:gravity="left" 
+            		android:paddingTop="10.0dip"
+            		android:paddingLeft="5.0sp"
+            		android:layout_width="fill_parent"
+            		android:layout_height="wrap_content"
+            		android:textColor="#FFFFFF"
+
+            		/>
+            		
+            <TextView android:id="@+id/size"
+            		android:gravity="left" 
+            		android:paddingTop="5.0dip"
+            		android:paddingLeft="5.0sp"
+            		android:layout_width="fill_parent"
+            		android:layout_height="wrap_content"
+            		android:textColor="#FFFFFF"
+
+            		/>
+            	
             <TextView 
             		android:textAppearance="?android:textAppearanceLarge" 
             		android:textSize="18.0sp" 
@@ -291,13 +261,10 @@
 <!-- 			</LinearLayout> -->
 			
 			
-				
+
         	</LinearLayout>
-        	<!-- android:orientation="vertical"  -->
-		
         </ScrollView>
-		<!-- android:minHeight="100sp" -->
-		
+
         <RelativeLayout 
     				android:background="@android:drawable/bottom_bar" 
     				android:layout_width="fill_parent" 
@@ -321,12 +288,5 @@
             			android:layout_alignParentLeft="true" />
             			
     	</RelativeLayout>
-        
- <!--   <ScrollView 
-        	android:layout_width="fill_parent" 
-        	android:layout_height="wrap_content"
-        	android:layout_weight="1">
-            
-        </ScrollView> -->
         
     </LinearLayout>

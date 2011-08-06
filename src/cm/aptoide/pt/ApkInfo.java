@@ -1,30 +1,14 @@
 package cm.aptoide.pt;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Vector;
-
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.xml.sax.SAXException;
-
-import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-import cm.aptoide.summerinternship2011.multiversion.notneed.Comment;
-import cm.aptoide.summerinternship2011.multiversion.notneed.LoadOnScrollCommentList;
-import cm.aptoide.summerinternship2011.multiversion.notneed.SideSlideGesture;
-import cm.aptoide.summerinternship2011.multiversion.notneed.VersionParser;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -32,7 +16,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.content.res.Resources.NotFoundException;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -41,23 +24,14 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewFlipper;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ApkInfo extends Activity{
 
@@ -81,15 +55,14 @@ public class ApkInfo extends Activity{
 	private String apk_name_str = null;
 	
 	private TextView noscreens = null;
+
 	
 	List<ImageView> screens = null;
-	
-//	private GestureDetector gestureDetector;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.apkinfomain);
+		setContentView(R.layout.apkinfo);
 		
 		mctx = this;
 		screens = new ArrayList<ImageView>();
@@ -112,13 +85,10 @@ public class ApkInfo extends Activity{
 		apk_name_str = apkinfo.getStringExtra("name");
 		String apk_descr = apkinfo.getStringExtra("about");
 		final String apk_repo_str = apkinfo.getStringExtra("server");
-		//Change multiversion
 		final String apk_ver_str = apkinfo.getStringExtra("version");
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
 		String apk_size_str = apkinfo.getStringExtra("size");
-		
-		ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("versions");
 		
 		/*try{
 			String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
@@ -179,8 +149,6 @@ public class ApkInfo extends Activity{
 			break;
 		}
 		
-		final Spinner spinner = (Spinner) this.findViewById(R.id.spinnerMultiVersion);
-		
 		action.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -230,7 +198,7 @@ public class ApkInfo extends Activity{
 		
 		TextView apk_repo = (TextView)findViewById(R.id.app_repo);
 		apk_repo.setText(apk_repo_str);
-		//Change multiversion
+		
 		TextView apk_version = (TextView)findViewById(R.id.app_ver);
 		apk_version.setText("Version: " + apk_ver_str.replaceAll("\\n", ""));
 		
@@ -247,7 +215,6 @@ public class ApkInfo extends Activity{
 			public void run(){
 				try{
 					String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
-					//Change multiversion
 					String fetch_imgs = WS_img+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
 
 					Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
@@ -281,35 +248,9 @@ public class ApkInfo extends Activity{
 			}
 		}.start();
 		
-//		versions.add(new VersionApk(apk_ver_str,,));
-		addVersionsToInterfaceSpinner(apk_id,spinner, versions);
-//		new DbHandler(this).getApkOldVersions(apk_id, getApplicationContext(),"Contagem info");
-//		ListView commentList = (ListView)findViewById(R.id.listviewappcomment);
-//		ArrayAdapter<Comment> commentsAdapter = new ArrayAdapter<Comment>(getApplicationContext(), R.layout.listviewappcommentsitem);
-//		commentsAdapter.add(new Comment("Joaquim",new Date(), "Esta aplicação até é mais ou menos"));
-//		commentList.setAdapter(commentsAdapter);
-//		commentList.setOnScrollListener(((OnScrollListener) new LoadOnScrollCommentList(getApplicationContext(), commentsAdapter)));
-		
 	}
-	
-	/**
-	 * @author rafael
-	 * @since summerinternship2011
-	 * 
-	 * @param apk_id
-	 * @param spinnerId
-	 * @param oldversions
-	 */
-	private void addVersionsToInterfaceSpinner(String apk_id, Spinner spinner, ArrayList<VersionApk> oldversions){
-		
-		if(oldversions.size()!=0){
-			ArrayAdapter<VersionApk> adapter = new ArrayAdapter<VersionApk>(this, R.layout.versionappspinner, oldversions);
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		    spinner.setAdapter(adapter);
-		} else { spinner.setVisibility(View.INVISIBLE); }
-		
-	} 
-	
+
+
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
 		final Dialog dialog = new Dialog(mctx);
@@ -321,6 +262,7 @@ public class ApkInfo extends Activity{
 		ImageView fetch = (ImageView) v;
 		image.setImageDrawable(fetch.getDrawable());
 		image.setOnClickListener(new OnClickListener() {
+			
 			public void onClick(View v) {
 				dialog.dismiss();
 			}

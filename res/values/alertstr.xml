@@ -18,7 +18,8 @@
     <string name="newrepo_alrt">Do you want to add this repository to your list?\n\n</string>
     
     <string name="error_download_alrt">Could not connect to server or apk file is corrupt!</string>
-    <string name="download_alrt">Getting aplication from:\n </string>
+    <string name="download_alrt">Getting application:\n </string>
+    <string name="finished_download_alrt">Click to install application:\n </string>
      
     <string name="md5_error">The downloaded application md5 check failed!\nPlease update your application system before retry.</string>
     <string name="network_error">There has been an error while fetching the application.\nPlease try again.</string>
