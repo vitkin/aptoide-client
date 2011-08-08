@@ -472,38 +472,45 @@ public class BaseManagement extends Activity {
 		}
 	 
 	 protected void downloadFile(final String apkid, final String ver, final boolean isupdate){
+		 
 		 Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();
-		 /*String getserv = null;
-		 String md5hash = null;
-		 String repo = null;*/
-		 //String name = null;
-		 int size = 0;
+		 String getserv_tmp="";
+		 String md5hash_tmp="";
+		 String repo_tmp="";
+		 int size_tmp=0;
 
 		 try{
 
 			 tmp_serv = db.getPathHash(apkid,ver);
 
-			 // if(tmp_serv.size() > 0){
-			 
 			 DownloadNode node = null;
 			 if(tmp_serv.size()>0){
 				 //Found a latest version
 				 node = tmp_serv.firstElement();
+				 getserv_tmp = node.repo + "/" + node.path;
+				 md5hash_tmp = node.md5h;
+				 repo_tmp = node.repo;
+				 size_tmp = node.size;
 			 }else{
 				 //Search in old versions
-				 node = db.getPathHashOld(apkid, ver).firstElement();
+				 tmp_serv = db.getPathHashOld(apkid, ver);
+				 if(tmp_serv.size()>0){
+					 node = tmp_serv.firstElement();
+					 getserv_tmp = node.repo + "/" + node.path;
+					 md5hash_tmp = node.md5h;
+					 repo_tmp = node.repo;
+					 size_tmp = node.size;
+				 }
 			 }
 			 
-			 final String getserv = node.repo + "/" + node.path;
-			 final String md5hash = node.md5h;
-			 final String repo = node.repo;
-			 size = node.size;
-			 //}
-
-
+			 final String getserv = getserv_tmp;
+			 final String md5hash = md5hash_tmp;
+			 final String repo = repo_tmp;
+			 final int size = size_tmp;
+			 
 			 if(getserv.length() == 0)
 				 throw new TimeoutException();
-
+			 
 			 Message msg = new Message();
 			 msg.arg1 = 0;
 			 msg.arg2 = size;

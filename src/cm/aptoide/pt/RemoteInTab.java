@@ -935,6 +935,7 @@ public class RemoteInTab extends TabActivity {
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
 		int position = arguments.getInt("position");
+		Log.d("Aptoide", "Cheguei aqui!");
 		downloadQueueService.dismissNotification(position);
 		//TODO install
 		

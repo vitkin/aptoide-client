@@ -853,7 +853,6 @@ public class DbHandler {
 	/**
 	 * @author rafael
 	 * 
-	 * @deprecated
 	 * @param id_apk
 	 * @param ver
 	 * @return
