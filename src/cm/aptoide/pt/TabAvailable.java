@@ -2,6 +2,8 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
+
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -246,6 +248,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			apkinfo.putExtra("size", tmp_get.get(6));
 			apkinfo.putExtra("type", 0);
 			
+			apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
+			
 			startActivityForResult(apkinfo,30);
 		
 		}
@@ -256,10 +260,10 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+		if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
 			String apk_id = data.getStringExtra("apkid");
 			Log.d("Aptoide", "....... getting: " + apk_id);
-			downloadFile(apk_id, false);
+			downloadFile(apk_id, data.getStringExtra("version"), false);
 		}
 	}
 

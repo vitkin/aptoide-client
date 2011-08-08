@@ -316,7 +316,7 @@ public class BaseManagement extends Activity {
 			String apkid = sPref.getString("pkg", null);
 			try {
 				pkginfo = mPm.getPackageInfo(apkid, 0);
-				db.insertInstalled(apkid);
+				db.insertInstalled(apkid, pkginfo.versionName);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
 				redrawCatgList();
@@ -341,7 +341,7 @@ public class BaseManagement extends Activity {
 			int vercode = pkginfo.versionCode;
 			if(db.wasUpdate(apkid, vercode)){
 				db.removeInstalled(apkid);
-				db.insertInstalled(apkid);
+				db.insertInstalled(apkid, pkginfo.versionName);
 				prefEdit.remove("pkg");
 				prefEdit.commit();
 				redrawCatgList();
@@ -471,7 +471,7 @@ public class BaseManagement extends Activity {
 			}
 		}
 	 
-	 protected void downloadFile(final String apkid, final boolean isupdate){
+	 protected void downloadFile(final String apkid, final String ver, final boolean isupdate){
 		 Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();
 		 /*String getserv = null;
 		 String md5hash = null;
@@ -481,11 +481,19 @@ public class BaseManagement extends Activity {
 
 		 try{
 
-			 tmp_serv = db.getPathHash(apkid);
+			 tmp_serv = db.getPathHash(apkid,ver);
 
-			// if(tmp_serv.size() > 0){
-			 DownloadNode node = new DownloadNode();
-			 node = tmp_serv.firstElement();
+			 // if(tmp_serv.size() > 0){
+			 
+			 DownloadNode node = null;
+			 if(tmp_serv.size()>0){
+				 //Found a latest version
+				 node = tmp_serv.firstElement();
+			 }else{
+				 //Search in old versions
+				 node = db.getPathHashOld(apkid, ver).firstElement();
+			 }
+			 
 			 final String getserv = node.repo + "/" + node.path;
 			 final String md5hash = node.md5h;
 			 final String repo = node.repo;

@@ -19,9 +19,12 @@
 
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+
+import multiversion.VersionApk;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -45,8 +48,11 @@ public class DbHandler {
 	private static final String TABLE_NAME_LOCAL = "local";
 	private static final String TABLE_NAME = "aptoide";
 	private static final String TABLE_NAME_URI = "servers";
-	
 	private static final String TABLE_NAME_EXTRA = "extra";
+	private static final String TABLE_NAME_OLD_VERSIONS = "old_versions";
+	
+	
+	
 	
 	private static SQLiteDatabase db = null;
 	
@@ -54,8 +60,8 @@ public class DbHandler {
 	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
 	            + "server text, md5hash text, size number default 0 not null, primary key(apkid, server));";
 	
-	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text primary key, "
-				+ "instver text not null, instvercode number not null);";
+	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text, "
+				+ "instver text not null, instvercode number not null, primary key(apkid));";
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
@@ -65,6 +71,9 @@ public class DbHandler {
 				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null,"
 				+ " catg_ord integer default 2 not null, primary key(apkid));";
 	
+	private static final String CREATE_TABLE_OLD_VERSIONS = "create table if not exists " + TABLE_NAME_OLD_VERSIONS
+				+ " (apkid text, name text not null, path text not null, ver text not null, vercode number not null, " 
+				+ " md5hash text, size number default 0 not null, server text, primary key(apkid,ver,server));";
 	
 	
 	Map<String, Object> getCountSecCatg(int ord){
@@ -130,6 +139,7 @@ public class DbHandler {
 			db.execSQL(CREATE_TABLE_EXTRA);
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
+			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
 		}else if(!db.isOpen()){
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
 		}
@@ -202,11 +212,12 @@ public class DbHandler {
 			db.execSQL("drop table if exists " + TABLE_NAME_EXTRA);
 			db.execSQL("drop table if exists " + TABLE_NAME_LOCAL);
 			db.execSQL("drop table if exists " + TABLE_NAME_URI);
+			db.execSQL("drop table if exists " + TABLE_NAME_OLD_VERSIONS);
 			db.execSQL(CREATE_TABLE_URI);
 			db.execSQL(CREATE_TABLE_EXTRA);
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
-			
+			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
 			/*for(String uri: repos){
 				ContentValues tmp = new ContentValues();
 				tmp.put("uri", uri);
@@ -233,6 +244,7 @@ public class DbHandler {
 	public void delApk(String apkid){
 		db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
 		db.delete(TABLE_NAME_EXTRA, "apkid='"+apkid+"'", null);
+		db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"'", null);
 	}
 	
 	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size){
@@ -278,15 +290,77 @@ public class DbHandler {
 		
 	}
 	
-	public boolean insertInstalled(String apkid){
+	/**
+	 * @author rafael
+	 * 
+	 * @param name
+	 * @param path
+	 * @param ver
+	 * @param vercode
+	 * @param apkid
+	 * @param serv
+	 * @param md5hash
+	 * @param size
+	 */
+	public void insertOldApk(String name, String path, String ver, int vercode ,String apkid, String serv, String md5hash, int size){
+		
 		ContentValues tmp = new ContentValues();
 		tmp.put("apkid", apkid);
-		Cursor c = db.query(TABLE_NAME, new String[] {"lastver", "lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
-		c.moveToFirst();
-		String ver = c.getString(0);
-		int vercode = c.getInt(1);
+		tmp.put("name", name);
+		tmp.put("path", path);
+		tmp.put("ver", ver);
+		tmp.put("vercode", vercode);
+		tmp.put("md5hash", md5hash);
+		tmp.put("size", size);
+		tmp.put("server", serv);
+		db.insert(TABLE_NAME_OLD_VERSIONS, null, tmp);
+		
+   		PackageManager mPm = mctx.getPackageManager();
+		try {
+			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
+			String vers = pkginfo.versionName;
+		    int verscode = pkginfo.versionCode;
+			insertInstalled(apkid, vers, verscode);
+		} catch (NameNotFoundException e) {
+			//Not installed... do nothing
+		}
+		
+	}
+	
+	/**
+	 * @author rafael
+	 * 
+	 * @param tmp
+	 * @param mserver
+	 */
+	public void insertOldApk(ApkNodeFull tmp, String mserver){
+		insertOldApk(tmp.name, tmp.path, tmp.ver, tmp.vercode,tmp.apkid, mserver, tmp.md5hash, tmp.size);
+	}
+	
+	/**
+	 * @author rafael
+	 * 
+	 * 
+	 * @param apkid
+	 * @param ver
+	 * @return
+	 */
+	public boolean insertInstalled(String apkid, String ver){
+		//Log.e("My App","DADOS--> '"+apkid+"'"+" "+ "'"+ver+"'");
+
+		ContentValues tmp = new ContentValues();
+		tmp.put("apkid", apkid);
+		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\" and lastver=\""+ver+"\"", null, null, null, null);
+		
+		if(!c.moveToFirst()){
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"vercode"}, "apkid=\""+apkid+"\" and ver=\""+ver+"\"", null, null, null, null);
+			if(!c.moveToFirst()){
+				c.close();
+				return false;
+			}
+		}
 		tmp.put("instver", ver);
-		tmp.put("instvercode", vercode);
+		tmp.put("instvercode", c.getInt(0));
 		c.close();
 		return (db.insert(TABLE_NAME_LOCAL, null, tmp) > 0); 
 	}
@@ -676,12 +750,85 @@ public class DbHandler {
 		return tmp;
 	}
 	
+	public ArrayList<VersionApk> getOldApks(String apk_id){
+		ArrayList<VersionApk> tmp = new ArrayList<VersionApk>();
+		Cursor c = null;
+		try{
+			
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"ver", "size"}, "apkid=\""+apk_id+"\"", null, null, null, null);
+			c.moveToFirst();
+			
+			do{
+				tmp.add(new VersionApk(c.getString(0), apk_id, c.getInt(1)));
+			}while(c.moveToNext());
+			
+		}catch (Exception e){
+			//System.out.println(e.toString());
+		}finally{
+			c.close();
+		}
+		
+		return tmp;
+	}
 	
-	public Vector<DownloadNode> getPathHash(String id){
+	/**
+	 * @author rafael
+	 * 
+	 * @param apk_id
+	 * @param server
+	 * @return
+	 */
+	public Vector<String> copyFromRecentApkToOldApk(String apk_id, String server){
+		Vector<String> tmp = new Vector<String>();
+		Cursor c = null;
+		ApkNodeFull tmp_apk = new ApkNodeFull();
+		
+		tmp_apk.apkid = apk_id;
+		tmp_apk.name = "";
+		tmp_apk.ver = "0.0";
+		tmp_apk.vercode = 0;
+		tmp_apk.md5hash = "";
+		tmp_apk.path="";
+		tmp_apk.size = 0;
+		
+//		private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
+//        + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
+//        + "server text, md5hash text, size number default 0 not null, primary key(apkid, server));";
+//		private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
+//		+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null,"
+//		+ " catg_ord integer default 2 not null, dt date, md5hash text, primary key(apkid));";
+		
+		try{
+			
+			c = db.query(TABLE_NAME, 
+					new String[] {"name", "path", "lastver", "lastvercode", "server", "md5hash", "size"}
+					, "server=\""+server+"\" and apkid=\""+apk_id+"\"", null, null, null, null);
+			c.moveToFirst();
+			
+			tmp_apk.name = c.getString(0);
+			tmp_apk.path = c.getString(1);
+			tmp_apk.ver = c.getString(2);
+			tmp_apk.vercode = c.getInt(3);
+			server = c.getString(4);
+			if(!c.isNull(5)) tmp_apk.md5hash = c.getString(5);
+			tmp_apk.size = c.getInt(6);
+			
+			this.insertOldApk(tmp_apk, server);
+			
+		}catch (Exception e){
+			//System.out.println(e.toString());
+		}finally{
+			c.close();
+		}
+		return tmp;
+	}
+	
+	
+	public Vector<DownloadNode> getPathHash(String id_apk, String ver){
 		Vector<DownloadNode> out = new Vector<DownloadNode>();
 		Cursor c = null;
 		try{
-			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id.toString()+"'", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id_apk+"' and lastver ='"+ver+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
 				DownloadNode node = new DownloadNode();
@@ -703,6 +850,48 @@ public class DbHandler {
 		return out;
 	}
 	
+	/**
+	 * @author rafael
+	 * 
+	 * @deprecated
+	 * @param id_apk
+	 * @param ver
+	 * @return
+	 */
+	public Vector<DownloadNode> getPathHashOld(String id_apk, String ver){
+		//Log.e("My App","DADOS 2--> '"+id_apk+"'"+" "+ "'"+ver+"'");
+		Vector<DownloadNode> out = new Vector<DownloadNode>();
+		Cursor c = null;
+		try{
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id_apk+"' and ver ='"+ver+"'", null, null, null, null);
+			c.moveToFirst();
+			for(int i =0; i<c.getCount(); i++){
+				DownloadNode node = new DownloadNode();
+				node.repo = c.getString(0);
+				node.path = c.getString(1);
+				if(c.isNull(2)){
+					node.md5h = null;
+				}else{
+					node.md5h = c.getString(2);
+				}
+				node.size = c.getInt(3);
+				out.add(node);
+			}
+			//c.close();
+		}catch(Exception e){
+		}finally{
+			c.close();
+		}
+		return out;
+		
+	}	
+	
+	/*
+	 * 
+	 * (0): server
+	 * (1): path
+	 * (2): md5hash (may not exist)
+	 */
 	public Vector<String> getPathHash2(String id){
 		Vector<String> out = new Vector<String>();
 		Cursor c = null;
@@ -996,5 +1185,9 @@ public class DbHandler {
 		Log.d("Aptoide","remved: " + del);
 		int a = db.delete(TABLE_NAME, "server='"+repo+"'", null);
 		Log.d("Aptoide","Removed: " + a);
+		
+		int o = db.delete(TABLE_NAME_OLD_VERSIONS, "server='"+repo+"'", null);
+		Log.d("Aptoide","RemovedOld: " + o);
+		
 	}
 }
