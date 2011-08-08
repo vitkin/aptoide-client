@@ -241,10 +241,10 @@ public class DbHandler {
 		}catch(Exception e){ }
 	}
 	
-	public void delApk(String apkid){
-		db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
-		db.delete(TABLE_NAME_EXTRA, "apkid='"+apkid+"'", null);
-		db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"'", null);
+	public void delApk(String apkid, String ver){
+		if(db.delete(TABLE_NAME, "apkid='"+apkid+"' and lastver='"+ver+"'", null)==1)
+			db.delete(TABLE_NAME_EXTRA, "apkid='"+apkid+"'", null);
+		db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"' and ver='"+ver+"'", null);
 	}
 	
 	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size){
