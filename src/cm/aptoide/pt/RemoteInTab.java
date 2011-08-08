@@ -937,6 +937,8 @@ public class RemoteInTab extends TabActivity {
 		int position = arguments.getInt("position");
 		downloadQueueService.dismissNotification(position);
 		//TODO install
+		
+		
 		Log.d("Aptoide-RemoteInTab", "installApk - "+localPath);
 		
 	}

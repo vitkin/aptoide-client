@@ -3,7 +3,11 @@ package cm.aptoide.pt;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import multiversion.MultiversionSpinnerAdapter;
+import multiversion.VersionApk;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -30,6 +34,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +61,7 @@ public class ApkInfo extends Activity{
 	
 	private TextView noscreens = null;
 
+	private Spinner spinnerMulti;
 	
 	List<ImageView> screens = null;
 	
@@ -149,6 +155,8 @@ public class ApkInfo extends Activity{
 			break;
 		}
 		
+		spinnerMulti = ((Spinner)this.findViewById(R.id.spinnerMultiVersion));
+		
 		action.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -158,9 +166,11 @@ public class ApkInfo extends Activity{
 				}
 				switch (type) {
 				case 0:
+					
 					rtrn_intent.putExtra("apkid", apk_id);
 					rtrn_intent.putExtra("in", true);
 					rtrn_intent.putExtra("position", pos);
+					rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					jback = true;
 					break;
 
@@ -174,6 +184,7 @@ public class ApkInfo extends Activity{
 
 				case 2:
 					rtrn_intent.putExtra("apkid", apk_id);
+					rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					jback = true;
 					break;
 				}
@@ -248,9 +259,33 @@ public class ApkInfo extends Activity{
 			}
 		}.start();
 		
+		ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
+		versions.add(new VersionApk(apk_ver_str.replaceAll("[^0-9\\.]", "") ,apk_id,Integer.parseInt(apk_size_str.replaceAll("[^0-9]",""))));
+		Collections.sort(versions, Collections.reverseOrder());
+		
+		final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
+			= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, 
+					"Version"/*this.getApplicationContext().getString(R.string.version)*/,
+					"Size"/*this.getApplicationContext().getString(R.string.size)*/);
+		spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
+		spinnerMulti.setAdapter(spinnerMultiAdapter );
+		//Select the current version installed by the user
+		if(apkinfo.hasExtra("instversion")){ 
+			VersionApk versionapk = (VersionApk)apkinfo.getParcelableExtra("instversion");
+			int pos = spinnerMultiAdapter.getPosition((VersionApk)apkinfo.getParcelableExtra("instversion"));
+			if(pos!=-1){
+				Toast.makeText(this.getApplicationContext(), String.format(this.getString(R.string.versionfound), versionapk.getVersion()), Toast.LENGTH_LONG).show();
+				spinnerMulti.setSelection(pos);
+			}else{
+				Toast.makeText(this.getApplicationContext(), String.format(this.getString(R.string.versionfound), versionapk.getVersion()), Toast.LENGTH_LONG).show();
+			}
+		}
+		
+		
+		
+			
 	}
-
-
+	
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
 		final Dialog dialog = new Dialog(mctx);
@@ -262,7 +297,6 @@ public class ApkInfo extends Activity{
 		ImageView fetch = (ImageView) v;
 		image.setImageDrawable(fetch.getDrawable());
 		image.setOnClickListener(new OnClickListener() {
-			
 			public void onClick(View v) {
 				dialog.dismiss();
 			}

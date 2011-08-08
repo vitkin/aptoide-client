@@ -27,8 +27,11 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
+import multiversion.VersionApk;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
@@ -82,7 +85,7 @@ public class RemoteInSearch extends ListActivity{
 
 	private static final int SETTINGS_FLAG = 0;
 	
-	//private ProgressDialog pd;
+	private ProgressDialog pd;
 	
 	private Context mctx = this; 
 
@@ -286,6 +289,8 @@ public class RemoteInSearch extends ListActivity{
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
 		
+		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(apkid));
+		
 		if(apk_lst.get(position).status == 0){
 			apkinfo.putExtra("type", 0);
 		}else{
@@ -305,15 +310,15 @@ public class RemoteInSearch extends ListActivity{
 	    startActivityForResult(intent,position); 
 	}
 	
-//	private void installApk(String apk_pkg, int position){
-//		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
-//		Intent intent = new Intent();
-//    	intent.setAction(android.content.Intent.ACTION_VIEW);
-//    	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
-//    	
-//    	startActivityForResult(intent,position);	//TODO 	passar este método e o correspondente result para a classe Aptoide
-//    												//		unificando os códigos desta classe com o da remoteintab
-//	}
+	private void installApk(String apk_pkg, int position){
+		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
+		Intent intent = new Intent();
+    	intent.setAction(android.content.Intent.ACTION_VIEW);
+    	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
+    	
+    	startActivityForResult(intent,position);	//TODO 	passar este mÃ©todo e o correspondente result para a classe Aptoide
+    												//unificando os cÃ³digos desta classe com o da remoteintab
+	}
 	
 
 	@Override
@@ -331,7 +336,7 @@ public class RemoteInSearch extends ListActivity{
 						/*new Thread() {
 							public void run() {*/
 						//String apk_pkg = downloadFile(pos);
-						queueDownload(pos);
+						queueDownload(pos,  data.getStringExtra("version"));
 						/*Message msg_alt = new Message();
 						if(apk_pkg == null){
 							Message msg = new Message();
@@ -368,7 +373,7 @@ public class RemoteInSearch extends ListActivity{
 				List<PackageInfo> getapks = mPm.getInstalledPackages(0);
 				for(PackageInfo node: getapks){
 					if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
-						db.insertInstalled(apk_lst.get(requestCode).apkid);
+						db.insertInstalled(apk_lst.get(requestCode).apkid, data.getStringExtra("version"));
 						prefEdit.putBoolean("search_updt", true);
 						prefEdit.commit();
 						redraw();
@@ -440,20 +445,25 @@ public class RemoteInSearch extends ListActivity{
 
 	}
 
-	private void queueDownload(final int position){
+	private void queueDownload(final int position, final String ver){
 		
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 		
 		try{
 		
 			final String apkid = apk_lst.get(position).apkid;
-			tmp_serv = db.getPathHash(apkid);
-			
 			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
 			
-			//if(tmp_serv.size() > 0){
-			DownloadNode downloadNode = new DownloadNode();
-			downloadNode = tmp_serv.firstElement();
+			tmp_serv = db.getPathHash(apkid, ver);
+			DownloadNode downloadNode =null;
+			if(tmp_serv.size()>0){
+				//Found a latest version
+				downloadNode = tmp_serv.firstElement();
+			}else{
+				//Search in old versions
+				downloadNode = db.getPathHashOld(apkid, ver).firstElement();
+			}
+			
 			final String remotePath = downloadNode.repo + "/" + downloadNode.path;
 			
 			//}
@@ -467,7 +477,9 @@ public class RemoteInSearch extends ListActivity{
 			//TODO refactor DownloadNode to include all needed fields @dsilveira
 			downloadQueueService.startDownload(position, localPath, downloadNode, apkid, logins, mctx);
 	
-		} catch(Exception e){	}
+		} catch(TimeoutException e){	
+			
+		}
 	}
 	
 }

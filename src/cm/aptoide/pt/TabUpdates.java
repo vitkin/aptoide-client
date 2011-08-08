@@ -122,6 +122,8 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 2);
 		
+		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
+		
 		startActivityForResult(apkinfo,30);
 		
 		/*
@@ -209,12 +211,12 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+		if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
 			//new Thread() {
 				//public void run() {
 					String apk_id = data.getStringExtra("apkid");
 					Log.d("Aptoide", ".... updating: " + apk_id);
-					downloadFile(apk_id, true);
+					downloadFile(apk_id,data.getStringExtra("version"), true);
 					/*String apk_path = downloadFile(apk_id);
 					Message msg_alt = new Message();
 					if(apk_path == null){

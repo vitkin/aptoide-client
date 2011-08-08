@@ -124,7 +124,7 @@
         		android:layout_width="fill_parent" 
         		android:layout_height="wrap_content">
             
-            <TextView android:id="@+id/dwn"
+           <!--  <TextView android:id="@+id/dwn"
             		android:gravity="left" 
             		android:paddingTop="10.0dip"
             		android:paddingLeft="5.0sp"
@@ -143,7 +143,68 @@
             		android:textColor="#FFFFFF"
 
             		/>
-            	
+           	-->
+           	
+           	<!-- <TableLayout
+	    				android:layout_width="fill_parent"
+	    				android:layout_height="wrap_content"
+	    				android:paddingTop="10.0dip"
+	    				android:paddingLeft="5.0sp"
+	    				android:paddingBottom="5.0dip"
+	    				android:paddingRight="5.0sp"
+					    android:stretchColumns="0,1">
+			           <TableRow>
+				            
+				            <TextView 
+				            		android:id="@+id/dwn"
+				            		android:gravity="left" 
+				            		android:layout_width="fill_parent"
+				            		android:layout_height="wrap_content"
+				            		android:textColor="#FFFFFF" 
+				            		/>
+				            		
+				            <Spinner
+				    			android:id="@+id/spinnerMultiVersion"
+				    			android:prompt="@string/multi_ver_prompt"
+				    			android:layout_width="fill_parent"
+				    			android:layout_height="wrap_content"
+				    			/>
+				            	
+			           </TableRow>
+			           <TableRow> 					
+				            
+				            <TextView 
+				            		android:id="@+id/size"
+				            		android:gravity="left"
+				            		android:layout_width="fill_parent"
+				            		android:layout_height="wrap_content"
+				            		android:textColor="#FFFFFF" />
+				            		    	 
+	     				</TableRow>
+					</TableLayout>	 -->
+	           	 	
+	        <Spinner
+		   			android:id="@+id/spinnerMultiVersion"
+		   			android:prompt="@string/multi_ver_prompt"
+		   			android:layout_width="fill_parent"
+		   			android:layout_height="wrap_content" />
+			 <TextView 
+            		android:id="@+id/dwn"
+            		android:gravity="left" 
+            		android:paddingTop="5.0dip"
+          			android:paddingLeft="5.0sp"
+            		android:layout_width="fill_parent"
+            		android:layout_height="wrap_content"
+            		android:textColor="#FFFFFF" />
+		      <TextView 
+            		android:id="@+id/size"
+            		android:gravity="left"
+            		android:paddingTop="5.0dip"
+          			android:paddingLeft="5.0sp"
+            		android:layout_width="fill_parent"
+            		android:layout_height="wrap_content"
+            		android:textColor="#FFFFFF" />
+				      
             <TextView 
             		android:textAppearance="?android:textAppearanceLarge" 
             		android:textSize="18.0sp" 
@@ -184,7 +245,7 @@
            		android:layout_width="fill_parent"
            		android:layout_height="wrap_content"
            		android:text="Screenshots:"/>
-
+           		
 			<ProgressBar android:id="@+id/pscreens"
  				 android:layout_width="wrap_content"
   				android:layout_height="wrap_content"/>
