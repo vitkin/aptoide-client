@@ -246,7 +246,7 @@ public class RssHandler extends DefaultHandler{
 					}
 				}
 			}
-			
+			 
 			/*readed++;
 			if(readed >= 10){
 				readed = 0;
