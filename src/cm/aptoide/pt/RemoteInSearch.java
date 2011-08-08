@@ -27,11 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
-import multiversion.VersionApk;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
@@ -85,7 +82,7 @@ public class RemoteInSearch extends ListActivity{
 
 	private static final int SETTINGS_FLAG = 0;
 	
-	private ProgressDialog pd;
+//	private ProgressDialog pd;
 	
 	private Context mctx = this; 
 
@@ -311,12 +308,13 @@ public class RemoteInSearch extends ListActivity{
 	}
 	
 	private void installApk(String apk_pkg, int position){
+		
 		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
 		Intent intent = new Intent();
     	intent.setAction(android.content.Intent.ACTION_VIEW);
     	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
     	
-    	startActivityForResult(intent,position);	//TODO 	passar este mÃ©todo e o correspondente result para a classe Aptoide
+    	startActivityForResult(intent, position);	//TODO 	passar este mÃ©todo e o correspondente result para a classe Aptoide
     												//unificando os cÃ³digos desta classe com o da remoteintab
 	}
 	
@@ -337,6 +335,7 @@ public class RemoteInSearch extends ListActivity{
 							public void run() {*/
 						//String apk_pkg = downloadFile(pos);
 						queueDownload(pos,  data.getStringExtra("version"));
+						//installApk(String apk_pkg, int position);
 						/*Message msg_alt = new Message();
 						if(apk_pkg == null){
 							Message msg = new Message();
