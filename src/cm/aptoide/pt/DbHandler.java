@@ -246,7 +246,7 @@ public class DbHandler {
 			db.delete(TABLE_NAME_EXTRA, "apkid='"+apkid+"'", null);
 		db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"' and ver='"+ver+"'", null);
 	}
-	
+	 
 	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size){
 
 		if(delfirst){
