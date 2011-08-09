@@ -307,16 +307,16 @@ public class RemoteInSearch extends ListActivity{
 	    startActivityForResult(intent,position); 
 	}
 	
-	private void installApk(String apk_pkg, int position){
-		
-		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
-		Intent intent = new Intent();
-    	intent.setAction(android.content.Intent.ACTION_VIEW);
-    	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
-    	
-    	startActivityForResult(intent, position);	//TODO 	passar este mÃ©todo e o correspondente result para a classe Aptoide
-    												//unificando os cÃ³digos desta classe com o da remoteintab
-	}
+//	private void installApk(String apk_pkg, int position){
+//		
+//		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
+//		Intent intent = new Intent();
+//    	intent.setAction(android.content.Intent.ACTION_VIEW);
+//    	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
+//    	
+//    	startActivityForResult(intent, position);	//TODO 	passar este mÃ©todo e o correspondente result para a classe Aptoide
+//    												//unificando os cÃ³digos desta classe com o da remoteintab
+//	}
 	
 
 	@Override
