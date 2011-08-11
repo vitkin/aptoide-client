@@ -3,7 +3,10 @@ package cm.aptoide.pt;
 import java.util.Vector;
 
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,10 +25,27 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 
 	private ListView lv = null;
 	
+    private InstallApkListener installApkListener = null;
+    private Boolean installApkListenerIsRegistered = false;
+
+	
 	private DbHandler db = null;
 	//private Context mctx = null;
 	
 	private int pos = -1;
+	
+
+	protected class InstallApkListener extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d("Aptoide-TabInstalled", "broadcast received");
+			if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
+				installApk(intent.getStringExtra("localPath"));
+			}
+		}
+	}
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +54,8 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
 		db = new DbHandler(this);
+		
+		installApkListener = new InstallApkListener();
 		//mctx = this;
 	}
 	
@@ -76,8 +98,27 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	}
 	
 	@Override
+	protected void onPause() {
+		if (!installApkListenerIsRegistered) {
+            unregisterReceiver(installApkListener);
+            installApkListenerIsRegistered = false;
+        }
+		Log.d("Aptoide-TabInstalled", "installApkListenerIsUnregistered");
+		
+		super.onPause();
+	}
+
+	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.d("Aptoide-TabInstalled", "onResume");
+		
+		if (!installApkListenerIsRegistered) {
+            registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION"));
+            installApkListenerIsRegistered = true;
+        }
+		Log.d("Aptoide-TabInstalled", "installApkListenerIsRegistered");
+
 		
 		new Thread(){
 			@Override

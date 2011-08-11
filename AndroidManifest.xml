@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cm.aptoide.pt" android:versionName="2.5.2" android:versionCode="297">
+	package="cm.aptoide.pt" android:versionName="2.5.2alpha" android:versionCode="298">
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<application android:label="@string/app_name" android:icon="@drawable/icon">
 
-		<activity android:name="Aptoide" android:label="@string/app_name">
+		<activity android:name="Aptoide" android:label="@string/app_name" >
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
@@ -30,33 +30,6 @@
 				<data android:scheme="aptoidexml" />
 			</intent-filter>
 		</activity>
-
-
-		<activity android:name="ManageRepo" android:configChanges="keyboardHidden|orientation"
-			android:theme="@android:style/Theme.NoTitleBar">
-			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
-		</activity>
-		
-		
-		<activity android:name="TabAvailable" android:configChanges="keyboardHidden|orientation"
-			android:theme="@android:style/Theme.NoTitleBar">
-			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
-		</activity>
-		
-		
-		<activity android:name="TabInstalled" android:configChanges="keyboardHidden|orientation"
-			android:theme="@android:style/Theme.NoTitleBar">
-			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
-		</activity>
-		
-		
-		<activity android:name="TabUpdates" android:configChanges="keyboardHidden|orientation"
-			android:theme="@android:style/Theme.NoTitleBar">
-			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
-		</activity>
-
-
-		<activity android:name="Settings" />
 		
 		
 		<activity android:name="RemoteInSearch" android:launchMode="singleTop">
@@ -68,8 +41,7 @@
 		</activity>
 		
 		
-		<activity android:name="RemoteInTab" android:configChanges="keyboardHidden|orientation"
-			android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name="RemoteInTab" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTop">
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
 			<intent-filter>
 				<action android:name="pt.caixamagica.aptoide.INSTALL_APK" />
@@ -77,8 +49,33 @@
 		</activity>
 		
 		
-		<activity android:name="ApkInfo" android:configChanges="keyboardHidden|orientation"
-			android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name="TabInstalled" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
+			<intent-filter>
+				<action android:name="pt.caixamagica.aptoide.INSTALL_APK_ACTION" />
+			</intent-filter>
+		</activity>
+		
+		
+		<activity android:name="TabAvailable" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
+		</activity>
+		
+		
+		<activity android:name="TabUpdates" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
+		</activity>
+
+
+		<activity android:name="ManageRepo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
+		</activity>
+
+
+		<activity android:name="Settings" />
+		
+		
+		<activity android:name="ApkInfo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
 
 		<service android:name="FetchIconsService"></service>
 		<service android:name="FetchExtrasService"></service>

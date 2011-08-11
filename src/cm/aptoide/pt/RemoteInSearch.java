@@ -336,7 +336,7 @@ public class RemoteInSearch extends ListActivity{
 		if(requestCode == 30){
 			if(data != null){
 				String apkid = data.getStringExtra("apkid");
-				final int pos = data.getIntExtra("position", -1);
+				int pos = data.getIntExtra("position", -1);
 				if(pos > -1){
 					if(data.getBooleanExtra("in", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Install");
@@ -453,7 +453,7 @@ public class RemoteInSearch extends ListActivity{
 
 	}
 
-	private void queueDownload(final int position){
+	private void queueDownload(int position){
 		
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 		
@@ -481,6 +481,12 @@ public class RemoteInSearch extends ListActivity{
 			downloadQueueService.startDownload(position, localPath, downloadNode, apkid, logins, mctx);
 	
 		} catch(Exception e){	}
+	}
+
+	@Override
+	protected void onDestroy() {
+		unbindService(serviceConnection);
+		super.onDestroy();
 	}
 	
 }
