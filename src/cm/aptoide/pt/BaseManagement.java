@@ -295,6 +295,7 @@ public class BaseManagement extends Activity {
 			prefEdit.putString("pkg", pkginfo.packageName);
 			prefEdit.commit();
 			startActivityForResult(intent,INSTALL);
+			Log.d("Aptoide-BaseManagement", "Installing Apk: "+apk_path);
 		}
 	}
 	
