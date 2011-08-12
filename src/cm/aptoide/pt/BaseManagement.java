@@ -627,11 +627,4 @@ public class BaseManagement extends Activity {
 			super.onConfigurationChanged(newConfig);
 		}	
 
-	@Override
-	protected void onDestroy() {
-		if(downloadQueueService != null){
-			unbindService(serviceConnection);
-		}
-		super.onDestroy();
-	}	
 }
