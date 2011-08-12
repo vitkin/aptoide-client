@@ -969,12 +969,5 @@ public class RemoteInTab extends TabActivity {
 		sendBroadcast(installApkAction);
 	}
 
-	@Override
-	protected void onDestroy() {
-		if(downloadQueueService != null){
-			unbindService(serviceConnection);	
-		}
-		super.onDestroy();
-	}
 
 }
