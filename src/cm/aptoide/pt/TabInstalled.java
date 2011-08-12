@@ -42,6 +42,9 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
 				installApk(intent.getStringExtra("localPath"));
 			}
+			if (intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
+				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("apkid"));
+			}
 		}
 	}
 	
@@ -115,6 +118,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		
 		if (!installApkListenerIsRegistered) {
             registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION"));
+            registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.UPDATE_APK_ACTION"));
             installApkListenerIsRegistered = true;
         }
 		Log.d("Aptoide-TabInstalled", "installApkListenerIsRegistered");
