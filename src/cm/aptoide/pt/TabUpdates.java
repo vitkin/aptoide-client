@@ -26,6 +26,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	//private Context mctx = null;
 	
 	private int pos = -1;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -214,7 +215,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 				//public void run() {
 					String apk_id = data.getStringExtra("apkid");
 					Log.d("Aptoide", ".... updating: " + apk_id);
-					downloadFile(apk_id, true);
+					queueDownload(apk_id, true);
 					/*String apk_path = downloadFile(apk_id);
 					Message msg_alt = new Message();
 					if(apk_path == null){
@@ -233,8 +234,8 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 			//}.start();
 		}
 	}
-
-
+	
+	
 
 	protected Handler displayRefresh = new Handler(){
 
@@ -271,6 +272,6 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-	}	
-
+	}
+	
 }

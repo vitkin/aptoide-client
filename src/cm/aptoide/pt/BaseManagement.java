@@ -1,8 +1,6 @@
 package cm.aptoide.pt;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,15 +8,15 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.http.HttpResponse;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -28,6 +26,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -39,7 +38,6 @@ import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
 
@@ -69,7 +67,7 @@ public class BaseManagement extends Activity {
 	protected static final int INSTALL = 127;
 	protected static final int REMOVE = 128;
 	protected static final int UPDATE = 129;
-	private static final String APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
+	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
 	
 	private static SimpleAdapter main_catg_adpt = null;
@@ -82,9 +80,36 @@ public class BaseManagement extends Activity {
 		 "Travel", "Demo", "Software Libraries", "Other"};
 	private static final String[] game_ctg = {"Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual", "Other"};
 	
+
+	private DownloadQueueService downloadQueueService;
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  Because we have bound to a explicit
+	        // service that we know is running in our own process, we can
+	        // cast its IBinder to a concrete class and directly access it.
+	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+	        Log.d("Aptoide-BaseManagement", "DownloadQueueService bound to a Tab");
+	    }
+	    
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        // Because it is running in our same process, we should never
+	        // see this happen.
+	        downloadQueueService = null;
+	        
+	        Log.d("Aptoide-BaseManagement","DownloadQueueService unbound from a Tab");
+	    }
+
+	};	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 
 		super.onCreate(savedInstanceState);
 		mPm = getPackageManager();
@@ -94,6 +119,7 @@ public class BaseManagement extends Activity {
 		prefEdit = sPref.edit();
 		order_lst = sPref.getString("order_lst", "abc");
 		redrawCatgList();
+
 	}
 	
 	private void redrawCatgList(){
@@ -425,165 +451,86 @@ public class BaseManagement extends Activity {
 		 
 	}
 	
+
+	class LstBinder implements ViewBinder
+	{
+		public boolean setViewValue(View view, Object data, String textRepresentation)
+		{
+			if(view.getClass().toString().equalsIgnoreCase("class android.widget.RatingBar")){
+				RatingBar tmpr = (RatingBar)view;
+				tmpr.setRating(new Float(textRepresentation));
+			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
+				TextView tmpr = (TextView)view;
+				tmpr.setText(textRepresentation);
+			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
+				ImageView tmpr = (ImageView)view;	
+				File icn = new File(textRepresentation);
+				if(icn.exists() && icn.length() > 0){
+					new Uri.Builder().build();
+					tmpr.setImageURI(Uri.parse(textRepresentation));
+				}else{
+					tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
+				}
+			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
+				LinearLayout tmpr = (LinearLayout)view;
+				tmpr.setTag(textRepresentation);
+			}else{
+				return false;
+			}
+			return true;
+		}
+	}
+
+	class SimpeLstBinder implements ViewBinder
+	{
+		public boolean setViewValue(View view, Object data, String textRepresentation)
+		{
+			if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
+				TextView tmpr = (TextView)view;
+				tmpr.setText(textRepresentation);
+			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
+				LinearLayout tmpr = (LinearLayout)view;
+				tmpr.setTag(textRepresentation);
+			}else{
+				return false;
+			}
+			return true;
+		}
+	}
+
+
+	protected void queueDownload(String apkid, boolean isUpdate){
+
+		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
+
+		try{
+			tmp_serv = db.getPathHash(apkid);
+
+
+			String localPath = new String(LOCAL_APK_PATH+apkid+".apk");
+
+			//if(tmp_serv.size() > 0){
+			DownloadNode downloadNode = new DownloadNode();
+			downloadNode = tmp_serv.firstElement();
+			final String remotePath = downloadNode.repo + "/" + downloadNode.path;
+
+			//}
+
+			if(remotePath.length() == 0)
+				throw new TimeoutException();
+
+			String[] logins = null; 
+			logins = db.getLogin(downloadNode.repo);
+
+			Log.d("Aptoide-BaseManagement","queueing download: "+apkid);	
+
+			//TODO refactor DownloadNode to include all needed fields @dsilveira
+			downloadQueueService.startDownload(localPath, downloadNode, apkid, logins, this, isUpdate);
+
+		} catch(Exception e){	}
+	}
 	
-	 class LstBinder implements ViewBinder
-		{
-			public boolean setViewValue(View view, Object data, String textRepresentation)
-			{
-				if(view.getClass().toString().equalsIgnoreCase("class android.widget.RatingBar")){
-					RatingBar tmpr = (RatingBar)view;
-					tmpr.setRating(new Float(textRepresentation));
-				}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
-					TextView tmpr = (TextView)view;
-					tmpr.setText(textRepresentation);
-				}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
-					ImageView tmpr = (ImageView)view;	
-					File icn = new File(textRepresentation);
-					if(icn.exists() && icn.length() > 0){
-						new Uri.Builder().build();
-	    				tmpr.setImageURI(Uri.parse(textRepresentation));
-	             	}else{
-	             		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
-	             	}
-				}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
-					LinearLayout tmpr = (LinearLayout)view;
-					tmpr.setTag(textRepresentation);
-				}else{
-					return false;
-				}
-				return true;
-			}
-		}
-
-	 class SimpeLstBinder implements ViewBinder
-		{
-			public boolean setViewValue(View view, Object data, String textRepresentation)
-			{
-				if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
-					TextView tmpr = (TextView)view;
-					tmpr.setText(textRepresentation);
-				}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
-					LinearLayout tmpr = (LinearLayout)view;
-					tmpr.setTag(textRepresentation);
-				}else{
-					return false;
-				}
-				return true;
-			}
-		}
-	 
-	 protected void downloadFile(final String apkid, final boolean isupdate){
-		 Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();
-		 /*String getserv = null;
-		 String md5hash = null;
-		 String repo = null;*/
-		 //String name = null;
-		 int size = 0;
-
-		 try{
-
-			 tmp_serv = db.getPathHash(apkid);
-
-			// if(tmp_serv.size() > 0){
-			 DownloadNode node = new DownloadNode();
-			 node = tmp_serv.firstElement();
-			 final String getserv = node.repo + "/" + node.path;
-			 final String md5hash = node.md5h;
-			 final String repo = node.repo;
-			 size = node.size;
-			 //}
-
-
-			 if(getserv.length() == 0)
-				 throw new TimeoutException();
-
-			 Message msg = new Message();
-			 msg.arg1 = 0;
-			 msg.arg2 = size;
-			 msg.obj = new String(getserv);
-			 download_handler.sendMessage(msg);
-
-
-			 new Thread(){
-				 public void run(){
-					 Message msg_al = new Message();
-					 try{
-
-						 String path = new String(APK_PATH+apkid+".apk");
-
-						 // If file exists, removes it...
-						 File f_chk = new File(path);
-						 if(f_chk.exists()){
-							 f_chk.delete();
-						 }
-						 f_chk = null;
-
-						 FileOutputStream saveit = new FileOutputStream(path);
-
-						 HttpResponse mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
-
-						 
-						 if(mHttpResponse == null){
-							 Log.d("Aptoide","Problem in network... retry...");	
-							 mHttpResponse = NetworkApis.getHttpResponse(getserv, repo, mctx);
-							 if(mHttpResponse == null){
-								 Log.d("Aptoide","Major network exception... Exiting!");
-								 //msg_al.arg1= 1;
-								 //download_error_handler.sendMessage(msg_al);
-								 throw new TimeoutException();
-								 
-							 }
-						 }
-
-						 if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-							 //msg_al.arg1= 1;
-							 //download_error_handler.sendMessage(msg_al);
-							 throw new TimeoutException();
-						 }else{
-							 InputStream getit = mHttpResponse.getEntity().getContent();
-							 byte data[] = new byte[8096];
-							 int readed;
-							 readed = getit.read(data, 0, 8096);
-							 while(readed != -1) {
-								 download_tick.sendEmptyMessage(readed);
-								 saveit.write(data,0,readed);
-								 readed = getit.read(data, 0, 8096);
-							 }
-							 Log.d("Aptoide","Download done!");
-							 saveit.flush();
-							 saveit.close();
-							 getit.close();
-						 }
-
-						 Log.d("Aptoide","Download MD5...");
-						 File f = new File(path);
-						 Md5Handler hash = new Md5Handler();
-						 if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
-							 //return path;
-							 msg_al.arg1 = 1;
-							 download_handler.sendMessage(msg_al);
-							 if(!isupdate){
-								 Log.d("Aptoide","Going to install!");
-								 installApk(path);
-							 }else{
-								 Log.d("Aptoide","Going to update!");
-								 updateApk(path, apkid);
-							 }
-						 }else{
-							Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
-							msg_al.arg1 = 0;
-							download_error_handler.sendMessage(msg_al);
-						 }
-					 }catch(Exception e) {
-						 msg_al.arg1= 1;
-						 download_error_handler.sendMessage(msg_al);
-					 }
-				 }
-			 }.start();
-		 } catch(Exception e){
-			 //return null;
-		 }
-	 }
+	
 	 
 	 
 	 protected SimpleAdapter getRootCtg(){
@@ -644,52 +591,8 @@ public class BaseManagement extends Activity {
 
 		 return rtnadp;
 	 }
-
-	 protected Handler download_tick = new Handler(){
-
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			//Log.d("Aptoide","Progress: " + pd.getProgress() + " Other: " +  (pd.getMax()*0.96) + " Adding: " + msg.what);
-			pd.incrementProgressBy(msg.what);
-		}
-	 };
 	 
-	 protected Handler download_handler = new Handler() {
-		 @Override
-		 public void handleMessage(Message msg) {
-			 if(msg.arg1 == 0){
-				 //pd = ProgressDialog.show(mctx, "Download", getString(R.string.download_alrt) + msg.obj.toString(), true);
-				 pd = new ProgressDialog(mctx);
-				 pd.setTitle("Download");
-				 pd.setMessage(getString(R.string.download_alrt) + msg.obj.toString());
-				 pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				 pd.setCancelable(false);
-				 pd.setCanceledOnTouchOutside(false);
-				 /*int max = (((msg.arg2*106)/100)*1000);
-				 Log.d("Aptoide","Max is: " + max);*/
-				 pd.setMax(msg.arg2*1024);
-				 pd.setProgress(0);
-				 pd.show();
-			 }else{
-				 pd.dismiss();
-			 }
-		 }
-	 };
-
-	 protected Handler download_error_handler = new Handler() {
-		 @Override
-		 public void handleMessage(Message msg) {
-			 while(pd.isShowing())
-				 pd.dismiss();
-			
-			 if(msg.arg1 == 1){
-				 Toast.makeText(mctx, getString(R.string.network_error), Toast.LENGTH_LONG).show();
-			 }else{
-	        	Toast.makeText(mctx, getString(R.string.md5_error), Toast.LENGTH_LONG).show();
-			 }
-		 }
-	 };
+	 
 	 
 	 protected Handler stop_pd = new Handler(){
 
@@ -723,4 +626,12 @@ public class BaseManagement extends Activity {
 		public void onConfigurationChanged(Configuration newConfig) {
 			super.onConfigurationChanged(newConfig);
 		}	
+
+	@Override
+	protected void onDestroy() {
+		if(downloadQueueService != null){
+			unbindService(serviceConnection);
+		}
+		super.onDestroy();
+	}	
 }

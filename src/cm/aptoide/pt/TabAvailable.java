@@ -41,6 +41,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	
 	private SimpleAdapter handler_adpt = null;
 	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -259,7 +260,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
 			String apk_id = data.getStringExtra("apkid");
 			Log.d("Aptoide", "....... getting: " + apk_id);
-			downloadFile(apk_id, false);
+			queueDownload(apk_id, false);
 		}
 	}
 
@@ -323,8 +324,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-	}	
-	
-	
+	}
 	
 }

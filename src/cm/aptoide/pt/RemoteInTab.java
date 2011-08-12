@@ -30,7 +30,6 @@ import java.math.BigInteger;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.PKCS8EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.zip.GZIPInputStream;
@@ -48,7 +47,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.app.AlertDialog.Builder;
@@ -59,9 +57,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -95,8 +90,6 @@ public class RemoteInTab extends TabActivity {
 	
 	private String REMOTE_FILE = "/info.xml";
 	private String REMOTE_EXTRAS_FILE = "/extras.xml";
-	
-	private static final int INSTALL = 127;
 	
 	private static final int UPDATE_REPO = Menu.FIRST;
 	private static final int MANAGE_REPO = 2;
@@ -939,7 +932,12 @@ public class RemoteInTab extends TabActivity {
 		final String action = intent.getAction();
 		if(action.equals("pt.caixamagica.aptoide.INSTALL_APK")){
 			Log.d("Aptoide","* * * * *  InstallApk  * * * * *");
-			installApk(intent);
+			if(downloadQueueService == null){
+				installApkIntent = intent;
+				bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+			}else{
+				installApk(intent);
+			}
 		}
 	}
 	
@@ -950,13 +948,19 @@ public class RemoteInTab extends TabActivity {
 	private void installApk(Intent intent){
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
-		int position = arguments.getInt("position");
-		Log.d("Aptoide-RemoteInTab", "installApk - "+localPath);
-		Log.d("Aptoide-RemoteInTab", "installApk position - "+position);
-		downloadQueueService.dismissNotification(position);
+		String apkid = arguments.getString("apkid");
+		int apkHash = arguments.getInt("apkHash");
+		boolean isUpdate = arguments.getBoolean("isUpdate");
+		Log.d("Aptoide-RemoteInTab", "installApk: "+localPath+" apkHash: "+apkHash+" isUpdate: "+isUpdate);
+		downloadQueueService.dismissNotification(apkHash);
 		
 		Intent installApkAction = new Intent();
-    	installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
+		if(isUpdate){
+			installApkAction.setAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
+	    	installApkAction.putExtra("apkid", apkid);
+		}else{
+			installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
+		}
     	installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
     	installApkAction.putExtra("localPath", localPath);
 		
@@ -967,7 +971,9 @@ public class RemoteInTab extends TabActivity {
 
 	@Override
 	protected void onDestroy() {
-		unbindService(serviceConnection);
+		if(downloadQueueService != null){
+			unbindService(serviceConnection);	
+		}
 		super.onDestroy();
 	}
 

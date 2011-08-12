@@ -53,11 +53,9 @@ import org.xml.sax.XMLReader;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -67,7 +65,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -384,7 +381,7 @@ public class Aptoide extends Activity {
         Document dom = builder.parse( new InputSource(new URL(LATEST_VERSION_CODE_URI).openStream()) );
         dom.getDocumentElement().normalize();
         NodeList items = dom.getElementsByTagName(name);
-        for(int i=0;i<items.getLength();i++){
+        for(int i=0;i<items.getLength();){
         	Node item = items.item(i);
         	Log.d("Aptoide-XmlElement Name", item.getNodeName());
         	Log.d("Aptoide-XmlElement Value", item.getFirstChild().getNodeValue().trim());
@@ -450,7 +447,7 @@ public class Aptoide extends Activity {
 				if(latestVersionUri==null){
 					retrieveUpdateParameters();
 				}
-				Message msg_al = new Message();
+//				Message msg_al = new Message();
 				// If file exists, removes it...
 				 File f_chk = new File(TMP_UPDATE_FILE);
 				 if(f_chk.exists()){
