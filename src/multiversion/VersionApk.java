@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cm.aptoide.pt.multiversion;
+package multiversion;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

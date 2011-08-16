@@ -8,13 +8,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import multiversion.MultiversionSpinnerAdapter;
+import multiversion.VersionApk;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cm.aptoide.pt.multiversion.MultiversionSpinnerAdapter;
-import cm.aptoide.pt.multiversion.VersionApk;
 
 import comments.Comment;
 import comments.CommentView;

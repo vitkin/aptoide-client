@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cm.aptoide.pt.multiversion;
+package multiversion;
 
 import android.content.Context;
 import android.graphics.Rect;

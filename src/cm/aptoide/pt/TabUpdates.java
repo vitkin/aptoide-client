@@ -2,7 +2,8 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
-import cm.aptoide.pt.multiversion.VersionApk;
+import multiversion.VersionApk;
+
 
 
 
