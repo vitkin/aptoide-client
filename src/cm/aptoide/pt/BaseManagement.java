@@ -508,11 +508,18 @@ public class BaseManagement extends Activity {
 
 
 			String localPath = new String(LOCAL_APK_PATH+apkid+".apk");
+			String apkName = apkid;
+			for(ApkNode node: apk_lst){
+				if(node.apkid.equals(apkid)){
+					apkName = node.name;
+					break;
+				}
+			}
 
 			//if(tmp_serv.size() > 0){
 			DownloadNode downloadNode = new DownloadNode();
 			downloadNode = tmp_serv.firstElement();
-			final String remotePath = downloadNode.repo + "/" + downloadNode.path;
+			String remotePath = downloadNode.repo + "/" + downloadNode.path;
 
 			//}
 
@@ -525,7 +532,7 @@ public class BaseManagement extends Activity {
 			Log.d("Aptoide-BaseManagement","queueing download: "+apkid);	
 
 			//TODO refactor DownloadNode to include all needed fields @dsilveira
-			downloadQueueService.startDownload(localPath, downloadNode, apkid, logins, this, isUpdate);
+			downloadQueueService.startDownload(localPath, downloadNode, apkName, logins, this, isUpdate);
 
 		} catch(Exception e){	}
 	}
