@@ -111,7 +111,17 @@
 		</LinearLayout>		
             			
     	</RelativeLayout>
-    		
+    	
+    	
+    	<ListView
+    		android:id="@+id/listViewComments" 
+    		android:layout_width="fill_parent" 
+        	android:layout_height="wrap_content" />
+    	
+    	
+    	
+    	
+    	
     		
     	<ScrollView 
         	android:layout_width="fill_parent" 
@@ -123,36 +133,15 @@
         		android:orientation="vertical" 
         		android:layout_width="fill_parent" 
         		android:layout_height="wrap_content">
-            
-           <!--  <TextView android:id="@+id/dwn"
-            		android:gravity="left" 
-            		android:paddingTop="10.0dip"
-            		android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF"
-
-            		/>
-            		
-            <TextView android:id="@+id/size"
-            		android:gravity="left" 
-            		android:paddingTop="5.0dip"
-            		android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF"
-
-            		/>
-           	-->
+           		
            	
-           	<!-- <TableLayout
+           			 <TableLayout
 	    				android:layout_width="fill_parent"
 	    				android:layout_height="wrap_content"
 	    				android:paddingTop="10.0dip"
 	    				android:paddingLeft="5.0sp"
-	    				android:paddingBottom="5.0dip"
 	    				android:paddingRight="5.0sp"
-					    android:stretchColumns="0,1">
+					    android:stretchColumns="0">
 			           <TableRow>
 				            
 				            <TextView 
@@ -164,11 +153,10 @@
 				            		/>
 				            		
 				            <Spinner
-				    			android:id="@+id/spinnerMultiVersion"
-				    			android:prompt="@string/multi_ver_prompt"
-				    			android:layout_width="fill_parent"
-				    			android:layout_height="wrap_content"
-				    			/>
+		   						android:id="@+id/spinnerMultiVersion"
+		   						android:prompt="@string/multi_ver_prompt"
+		   						android:layout_width="fill_parent"
+		   						android:layout_height="wrap_content" />
 				            	
 			           </TableRow>
 			           <TableRow> 					
@@ -181,29 +169,8 @@
 				            		android:textColor="#FFFFFF" />
 				            		    	 
 	     				</TableRow>
-					</TableLayout>	 -->
-	           	 	
-	        <Spinner
-		   			android:id="@+id/spinnerMultiVersion"
-		   			android:prompt="@string/multi_ver_prompt"
-		   			android:layout_width="fill_parent"
-		   			android:layout_height="wrap_content" />
-			 <TextView 
-            		android:id="@+id/dwn"
-            		android:gravity="left" 
-            		android:paddingTop="5.0dip"
-          			android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF" />
-		      <TextView 
-            		android:id="@+id/size"
-            		android:gravity="left"
-            		android:paddingTop="5.0dip"
-          			android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF" />
+					</TableLayout>	
+	           	
 				      
             <TextView 
             		android:textAppearance="?android:textAppearanceLarge" 
@@ -260,15 +227,14 @@
             		android:paddingRight="5.0sp" 
             		android:layout_width="fill_parent" 
             		android:layout_height="wrap_content"
-            		android:visibility="invisible" 
-            		/>
+            		android:visibility="invisible" />
 
 <!-- 				<Gallery -->
 <!--         			android:id="@+id/screenshots_gal" -->
 <!--         			android:layout_width="fill_parent"  -->
 <!--         			android:layout_height="fill_parent" />         -->
 
-<TableLayout android:layout_width="fill_parent" 
+		<TableLayout android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
 			android:orientation="horizontal"
@@ -282,7 +248,7 @@
     </TableLayout>
     
     
-<TableLayout android:layout_width="fill_parent" 
+	<TableLayout android:layout_width="fill_parent" 
 			android:layout_height="wrap_content"
 			android:layout_gravity="center"
 			android:layout_marginTop="15sp">
@@ -320,12 +286,47 @@
 <!--        			android:src = "@drawable/splashaptoide2" />	 -->
 			
 <!-- 			</LinearLayout> -->
-			
-			
-
+				<TextView
+           		android:textAppearance="?android:textAppearanceLarge"
+           		android:textSize="18.0sp"
+           		android:textColor="#FFFFBB"
+           		android:gravity="left"
+           		android:layout_gravity="top"
+           		android:paddingTop="10.0dip"
+           		android:paddingLeft="5.0sp"
+           		android:paddingRight="5.0sp"
+           		android:paddingBottom="5.0sp"
+           		android:layout_width="fill_parent"
+           		android:layout_height="wrap_content"
+           		android:text="@string/comments"
+           		android:id="@+id/commentsLabel"/>
+           		
+				<!--
+				<LinearLayout
+					android:orientation="vertical"
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:id="@+id/linearComments">
+					
+				</LinearLayout> 
+				-->
+				
         	</LinearLayout>
         </ScrollView>
+		
 
+
+
+
+
+
+
+
+
+
+
+
+    	
         <RelativeLayout 
     				android:background="@android:drawable/bottom_bar" 
     				android:layout_width="fill_parent" 

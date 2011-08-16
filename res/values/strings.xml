@@ -41,8 +41,11 @@
     <string name="multi_ver_prompt">Select an app version</string>
     <string name="version">Version</string>
     <string name="size">Size</string>
-    <string name="versionfound">Installed version &quot;%1$s&quot;  was found in stock</string>
-    <string name="versionnotfound">Installed version  &quot;%1$s&quot; was not found in stock</string>
+    <string name="comments">Comments</string>
+    <string name="commentsproblem">Comments not available</string>
+    <string name="isinstalled">Already installed</string>
+    <string name="version_inst">Version installed</string>
+    <string name="installed_downgrade">Downgrade possible - Ver.:</string>
 </resources>
 
 <!--

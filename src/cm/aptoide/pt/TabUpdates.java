@@ -2,8 +2,15 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
+import cm.aptoide.pt.multiversion.VersionApk;
+
+
+
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -121,6 +128,14 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 2);
+		
+		try {
+			PackageManager mPm = getApplicationContext().getPackageManager();
+			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkg_id,-1));
+		} catch (NameNotFoundException e) {
+			//Not installed... do nothing
+		}
 		
 		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
 		

@@ -2,7 +2,11 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
-import multiversion.VersionApk;
+import cm.aptoide.pt.multiversion.VersionApk;
+
+
+
+
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -132,9 +136,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}
-		
 		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
-		
 		startActivityForResult(apkinfo,30);
 		
 		/*
@@ -196,8 +198,6 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		p.show();
 		*/
 	}
-	
-	
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
