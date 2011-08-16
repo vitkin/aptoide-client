@@ -27,7 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
-import cm.aptoide.pt.multiversion.VersionApk;
+import multiversion.VersionApk;
+
 
 
 import android.app.AlertDialog;

@@ -1,4 +1,4 @@
-package cm.aptoide.pt.multiversion;
+package multiversion;
 
 /**
  * @author rafael
