@@ -168,7 +168,7 @@ public class Aptoide extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
    		try{
-			if(pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode")) ){
+			if( pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode") ) ){
 				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
 				requestUpdateSelf();
 			}else{
