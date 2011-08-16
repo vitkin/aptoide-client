@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
+import cm.aptoide.pt.multiversion.VersionApk;
+
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -103,6 +106,7 @@ public class RemoteInSearch extends ListActivity{
 	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
 
 	        Log.d("Aptoide-RemoteInSearch", "DownloadQueueService bound to RemoteInSearch");
+	        
 	    }
 	    
 	    public void onServiceDisconnected(ComponentName className) {
@@ -113,6 +117,7 @@ public class RemoteInSearch extends ListActivity{
 	        downloadQueueService = null;
 	        
 	        Log.d("Aptoide-RemoteInSearch","DownloadQueueService unbound from RemoteInSearch");
+	        
 	    }
 
 	};
@@ -286,14 +291,23 @@ public class RemoteInSearch extends ListActivity{
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
 		
-		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(apkid));
+		try {
+			PackageManager mPm = getApplicationContext().getPackageManager();
+			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,apkid,-1));
+		} catch (NameNotFoundException e) {
+			//Not installed... do nothing
+		}
+		
+		
 		
 		if(apk_lst.get(position).status == 0){
 			apkinfo.putExtra("type", 0);
+			
 		}else{
 			apkinfo.putExtra("type", 1);
 		}
-		
+		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(apkid));
 		startActivityForResult(apkinfo,30);
 		
 	}
@@ -372,7 +386,7 @@ public class RemoteInSearch extends ListActivity{
 				List<PackageInfo> getapks = mPm.getInstalledPackages(0);
 				for(PackageInfo node: getapks){
 					if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
-						db.insertInstalled(apk_lst.get(requestCode).apkid, data.getStringExtra("version"));
+						db.insertInstalled(apk_lst.get(requestCode).apkid, data.getStringExtra("version"));//
 						prefEdit.putBoolean("search_updt", true);
 						prefEdit.commit();
 						redraw();

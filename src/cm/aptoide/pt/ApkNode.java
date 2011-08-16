@@ -29,6 +29,7 @@ public class ApkNode extends Object{
 	 * 0 - not installed
 	 * 1 - installed
 	 * 2 - installed need update
+	 * 
 	 */
 	public float rat;
 	public int down;

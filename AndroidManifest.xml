@@ -77,7 +77,7 @@
 		</activity>
 		
 		
-		<activity android:name="ApkInfo" android:configChanges="keyboardHidden|orientation"
+		<activity android:name=".ApkInfo" android:configChanges="keyboardHidden|orientation"
 			android:theme="@android:style/Theme.NoTitleBar" />
 
 		<service android:name="FetchIconsService"></service>

@@ -1,10 +1,13 @@
 /**
  * 
  */
-package multiversion;
+package cm.aptoide.pt.multiversion;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.regex.Pattern;
 
 import android.os.Parcel;
@@ -182,11 +185,41 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	public int compareTo(VersionApk version) {
 		
 		if(version==null)
-			throw new IllegalArgumentException("The version can not be null");
+			throw new IllegalArgumentException("The version can not be null.");
 		
 		StringBuilder[] rawVersions = ensureSameCharacterLength(version);
 		
 		return new BigInteger(rawVersions[0].toString()).compareTo(new BigInteger(rawVersions[1].toString()));
+	}
+	
+	public static String getStringFromVersionApkList(ArrayList<VersionApk> versionsApk){
+		StringBuilder strBuilder = new StringBuilder("");
+		Iterator<VersionApk> iteratorVersions = versionsApk.iterator();
+		while(iteratorVersions.hasNext()){
+			strBuilder.append(iteratorVersions.next().getVersion());
+			if(iteratorVersions.hasNext()){
+				strBuilder.append(", ");
+			}
+		}
+		return strBuilder.toString();
+	}
+	
+	public static HashMap<String,ArrayList<VersionApk>> getGreaterAndSmallerThan(VersionApk givenVersion, ArrayList<VersionApk> versions){
+		
+		HashMap<String,ArrayList<VersionApk>> ret = new HashMap<String,ArrayList<VersionApk>>();
+		ret.put("smaller", new ArrayList<VersionApk>());
+		ret.put("greater", new ArrayList<VersionApk>());
+		
+		for(VersionApk version:versions){
+			int comp = givenVersion.compareTo(version);
+			
+			if(comp>0) ret.get("smaller").add(version);
+			else if(comp<0) ret.get("smaller").add(version);
+			
+		}
+		
+		return ret;
+		
 	}
 	
 	/*
@@ -227,5 +260,5 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		public VersionApk createFromParcel(Parcel in) { return new VersionApk(in); }	
 		public VersionApk[] newArray(int size) { return new VersionApk[size]; }
 	};
-
+	
 }

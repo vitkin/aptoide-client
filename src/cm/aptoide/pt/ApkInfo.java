@@ -2,17 +2,24 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-
-import multiversion.MultiversionSpinnerAdapter;
-import multiversion.VersionApk;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import cm.aptoide.pt.multiversion.MultiversionSpinnerAdapter;
+import cm.aptoide.pt.multiversion.VersionApk;
+
+import comments.Comment;
+import comments.CommentView;
+
+
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -28,15 +35,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class ApkInfo extends Activity{
 
@@ -138,9 +149,10 @@ public class ApkInfo extends Activity{
 					Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
 				}
 			}
+			
 		});
 		
-		Button action = (Button) findViewById(R.id.btn1);
+		final Button action = (Button) findViewById(R.id.btn1);
 		switch (type) {
 		case 0:
 			action.setText(getString(R.string.install));
@@ -194,6 +206,8 @@ public class ApkInfo extends Activity{
 		
 		ImageView icon = (ImageView) findViewById(R.id.appicon);
 		File test_icon = new File(icon_path);
+		
+		
 		if(test_icon.exists() && test_icon.length() > 0){
 			icon.setImageDrawable(new BitmapDrawable(icon_path));
 		}else{
@@ -211,7 +225,16 @@ public class ApkInfo extends Activity{
 		apk_repo.setText(apk_repo_str);
 		
 		TextView apk_version = (TextView)findViewById(R.id.app_ver);
-		apk_version.setText("Version: " + apk_ver_str.replaceAll("\\n", ""));
+		
+		
+		final VersionApk versionInstApk = (VersionApk) apkinfo.getParcelableExtra("instversion");
+		
+		if(type == 1){ 
+			apk_version.setText(this.getString(R.string.version_inst)+": " + versionInstApk.getVersion());
+		}else{
+			apk_version.setVisibility(View.INVISIBLE);
+		}
+		
 		
 		TextView apk_down_n = (TextView)findViewById(R.id.dwn);
 		apk_down_n.setText("Downloads: " + apk_dwon_str.replaceAll("\\n", "").replaceAll("\\t", "").trim());
@@ -259,32 +282,65 @@ public class ApkInfo extends Activity{
 			}
 		}.start();
 		
-		ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
-		versions.add(new VersionApk(apk_ver_str.replaceAll("[^0-9\\.]", "") ,apk_id,Integer.parseInt(apk_size_str.replaceAll("[^0-9]",""))));
-		Collections.sort(versions, Collections.reverseOrder());
 		
-		final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
-			= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, 
-					"Version"/*this.getApplicationContext().getString(R.string.version)*/,
-					"Size"/*this.getApplicationContext().getString(R.string.size)*/);
-		spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
-		spinnerMulti.setAdapter(spinnerMultiAdapter );
-		//Select the current version installed by the user
-		if(apkinfo.hasExtra("instversion")){ 
-			VersionApk versionapk = (VersionApk)apkinfo.getParcelableExtra("instversion");
-			int pos = spinnerMultiAdapter.getPosition((VersionApk)apkinfo.getParcelableExtra("instversion"));
-			if(pos!=-1){
-				Toast.makeText(this.getApplicationContext(), String.format(this.getString(R.string.versionfound), versionapk.getVersion()), Toast.LENGTH_LONG).show();
-				spinnerMulti.setSelection(pos);
-			}else{
-				Toast.makeText(this.getApplicationContext(), String.format(this.getString(R.string.versionfound), versionapk.getVersion()), Toast.LENGTH_LONG).show();
+		
+		
+		
+		
+		if(type!=1){//If we aren't in the installed tab
+		
+			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
+			versions.add(new VersionApk(apk_ver_str.replaceAll("[^0-9\\.]", "") ,apk_id,Integer.parseInt(apk_size_str.replaceAll("[^0-9]",""))));
+			Collections.sort(versions, Collections.reverseOrder());
+			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
+				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, 
+						"Version"/*this.getApplicationContext().getString(R.string.version)*/,
+						"Size"/*this.getApplicationContext().getString(R.string.size)*/);
+			spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
+			spinnerMulti.setAdapter(spinnerMultiAdapter );
+			if(type==2){
+				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
+					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+						VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
+						
+							int result = versionApk.compareTo(versionInstApk);
+							if(result>0){
+								action.setText("Upgrade");
+								action.setEnabled(true);
+							}else if(result<0) {
+								action.setText("Downgrade");
+								action.setEnabled(true);
+							}else{
+								action.setEnabled(false);
+								action.setText(ApkInfo.this.getString(R.string.isinstalled));
+							}
+							
+					}
+					public void onNothingSelected(AdapterView<?> parent) {}
+				});
 			}
+			//Select the current version installed by the user
+		}else{//Otherwise
+			spinnerMulti.getLayoutParams().height = 0;
+			spinnerMulti.getLayoutParams().width = 0;
+			spinnerMulti.setVisibility(View.INVISIBLE);
 		}
 		
+		LayoutInflater inflater = this.getLayoutInflater();
+		ListView listView = (ListView) findViewById(R.id.listViewComments);
+		listView.addHeaderView(inflater.inflate(R.layout.headercomments, null));
 		
-		
-			
 	}
+	
+	public ArrayList<CommentView> getCommentViews(int index, int offset){
+		//CommentGetter commentGetter = new CommentGetter(this.getApplicationContext(),"market", "cm.aptoide.pt", "2.0.2");
+		ArrayList<CommentView> commentViews = new ArrayList<CommentView>();
+		for(int i=0; i<offset; i++){
+			commentViews.add(new CommentView(this, new Comment(new BigInteger ((index+i)+""), "Zé tosco", "Gosto muito desta aplicação", new Date())));
+		}
+		return commentViews;
+	}
+	
 	
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");

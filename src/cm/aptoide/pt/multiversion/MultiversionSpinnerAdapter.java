@@ -1,4 +1,4 @@
-package multiversion;
+package cm.aptoide.pt.multiversion;
 
 import java.util.List;
 
@@ -46,15 +46,18 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 	@Override
 	public View getDropDownView(int position, View convertView, ViewGroup parent) {
 		
-		LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
-		View spinnerEntry = inflater.inflate(R.layout.multiversionspinneritem, null);
-		TextView multiVersionItemVersion = (TextView) spinnerEntry.findViewById(R.id.versionspinnermultiversion);
-		TextView multiVersionItemSize = (TextView) spinnerEntry.findViewById(R.id.sizespinnermultiversion);
+		if(convertView==null){
+			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
+			convertView = inflater.inflate(R.layout.multiversionspinneritem, null);
+		}
+		
+		TextView multiVersionItemVersion = (TextView) convertView.findViewById(R.id.versionspinnermultiversion);
+		TextView multiVersionItemSize = (TextView) convertView.findViewById(R.id.sizespinnermultiversion);
 		T currentEntry = super.getItem(position);
 		
 		multiVersionItemVersion.setText(versionLabel+" "+currentEntry.getVersion());
 		multiVersionItemSize.setText(sizeLabel + " " + currentEntry.getSize() + " kb");
-		return spinnerEntry;
+		return convertView;
 	
 	}
 

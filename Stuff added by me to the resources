@@ -1,7 +1,11 @@
 layout/textviewfocused
 layout/multiversionspinneritem
 string/multi_ver_prompt
+string/commentsproblem
 string/version
 string/size
-string/versionfound
-string/versionnotfound
+string/version_inst
+string/comments
+string/isinstalled
+string/installed_downgrade
+layout/commentview

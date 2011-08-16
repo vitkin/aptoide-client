@@ -24,7 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import multiversion.VersionApk;
+import cm.aptoide.pt.multiversion.VersionApk;
+
+
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -79,6 +81,7 @@ public class DbHandler {
 	Map<String, Object> getCountSecCatg(int ord){
 		final String basic_query = "select a.catg, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where a.catg_ord = " + ord + " and not exists" +
 								   " (select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg;"; 
+		
 		//final String basic_query2 = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " group by catg;";
 		Map<String, Object> count_lst = new HashMap<String, Object>();
 		Cursor q = null;
@@ -346,31 +349,32 @@ public class DbHandler {
 	 * @return
 	 */
 	public boolean insertInstalled(String apkid, String ver){
-		//Log.e("My App","DADOS--> '"+apkid+"'"+" "+ "'"+ver+"'");
-
 		ContentValues tmp = new ContentValues();
 		tmp.put("apkid", apkid);
-		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\" and lastver=\""+ver+"\"", null, null, null, null);
+		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, " apkid=\""+apkid+"\" and lastver=\""+ver+"\" ", null, null, null, null);
 		
 		if(!c.moveToFirst()){
-			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"vercode"}, "apkid=\""+apkid+"\" and ver=\""+ver+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"vercode"}, " apkid=\""+apkid+"\" and ver=\""+ver+"\" ", null, null, null, null);
+			Log.d("Aptoide - insertInstalled","Empty curor name");
 			if(!c.moveToFirst()){
+				Log.d("Aptoide - insertInstalled","Empty cursor old");
 				c.close();
 				return false;
 			}
 		}
+		
 		tmp.put("instver", ver);
 		tmp.put("instvercode", c.getInt(0));
 		c.close();
+		
 		return (db.insert(TABLE_NAME_LOCAL, null, tmp) > 0); 
 	}
 	
-	public boolean wasUpdate(String apkid, int versioncode){
-		Cursor c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
-		c.moveToFirst();
+	public boolean wasUpdateOrDowngrade(String apkid, int versioncode){
+		Cursor c = db.query(TABLE_NAME_LOCAL, new String[] {"instvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
 		int bd_code = c.getInt(0);
 		c.close();
-		return (versioncode == bd_code);
+		return (versioncode != bd_code);
 	}
 	
 	/*
@@ -620,7 +624,6 @@ public class DbHandler {
 	/*
 	 * Same function as above, used in list of updates
 	 */
-	
 	public Vector<ApkNode> getUpdates(String type){
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
 		Cursor c = null;
@@ -750,6 +753,12 @@ public class DbHandler {
 		return tmp;
 	}
 	
+	/**
+	 * @author rafael
+	 * 
+	 * @param apk_id
+	 * @return
+	 */
 	public ArrayList<VersionApk> getOldApks(String apk_id){
 		ArrayList<VersionApk> tmp = new ArrayList<VersionApk>();
 		Cursor c = null;
