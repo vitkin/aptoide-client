@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5.2"</string>
+    <string name="ver_str">"2.5.1-beta5"</string>
     <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string>
     
-    <string name="tab_avail">Available</string>
-    <string name="tab_inst">Installed</string>
-    <string name="tab_updt">Updates</string>
+    <string name="tab_avail">Dostępne</string>
+    <string name="tab_inst">Zainstalowane</string>
+    <string name="tab_updt">Uaktualnienia</string>
     
-    <string name="repo_app">Applications:</string>
-    <string name="repo_noinfo">No information</string>
+    <string name="repo_app">Aplikacje:</string>
+    <string name="repo_noinfo">Brak informacji</string>
     
-    <string name="no_found">No application found!</string>
-    <string name="no_repo">There are no repositories!</string>
+    <string name="no_found">Nie znaleziono aplikacji!</string>
+    <string name="no_repo">Bak repozytoriów!</string>
  
- 	<string name="not_inst">Not Installed</string>
-    <string name="installed">Installed - Ver.:</string>
-    <string name="installed_update">Update possible - Ver.:</string>
-    <string name="srv_version">Available version:</string>
+ 	<string name="not_inst">Nie zainstalowane</string>
+    <string name="installed">Zainstalowane - Ver.:</string>
+    <string name="installed_update">Dostępne uaktualnienie - Ver.:</string>
+    <string name="srv_version">Dostępna wersja:</string>
     
     <string name="srch_label">Aptoide</string>
-    <string name="srch_hint">Name of the application</string>
+    <string name="srch_hint">Nazwa aplikacji</string>
     
-    <string name="about_txt1">Your package installer to Android phone.\n</string>
+    <string name="about_txt1">Twój instalator aplikacji do telefonu Android.\n</string>
     
-    <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n
+    <string name="about_txt11">Wersja: %s\n(na licencji GNU GPL v2)\n
     \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n
     \t\t\tFrancisco "ppelao3k" - Spanish translation\n
     \t\t\tManaa Alshihe - Arabic translation\n
@@ -36,9 +36,9 @@
     \t\t\tAnonymous - Turkish translation\n
     </string>
     
-    <string name="about_site">Home: </string>
+    <string name="about_site">Strona domowa: </string>
     
-    <string name="about_mail">Contact: </string>
+    <string name="about_mail">Kontakt: </string>
     
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>

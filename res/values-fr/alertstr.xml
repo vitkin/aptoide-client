@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="up_server">Serveurs: </string>
-    <string name="lstver">Version serveur: </string>
-    <string name="dwn_n">Nombre de téléchargements: </string>
-    <string name="isinst">Installé(s): </string>
-    <string name="instver">Version installée: </string>
+    <string name="up_server">Serveurs&#160;: </string>
+    <string name="lstver">Version serveur&#160;: </string>
+    <string name="dwn_n">Nombre de téléchargements&#160;: </string>
+    <string name="isinst">Installé(s)&#160;: </string>
+    <string name="instver">Version installée&#160;: </string>
     <string name="install">Installation </string>
-    <string name="about_alrt">A propos: </string>
+    <string name="about_alrt">À propos&#160;: </string>
     <string name="rem">Désinstallation </string>
     <string name="update">Mise à jour</string>
     
-    <string name="update_alrt">Ils existants des mises à jours pour certaines applications.\nSouhaitez-vous les voir?</string>
-    <string name="repo_alrt">La liste des dépôts a été modifiée.\nVoulez-vous la mettre à jour?</string>
+    <string name="update_alrt">Des mises à jour sont disponibles pour certaines applications.\nSouhaitez-vous les voir&#160;?</string>
+    <string name="repo_alrt">La liste des dépôts a été modifiée.\nVoulez-vous la mettre à jour&#160;?</string>
     
     <string name="title_repo_alrt">Attention</string>
-    <string name="myrepo_alrt">Il semble que vous n\'avez pas de dépôt enregistré.\nNous vous proposons d\'utiliser le nôtre.\nSouhaitez-vous l\'ajouter?\n(Vous pouvez trouver des dépôts online)\n\n</string>
-    <string name="newrepo_alrt">Désirez-vous ajouter ce dépôt à votre liste?\n\n</string>
+    <string name="myrepo_alrt">Il semble que vous n\'avez pas de dépôt enregistré.\nNous vous proposons d\'utiliser le nôtre.\nSouhaitez-vous l\'ajouter&#160;?\n(Vous pouvez trouver davantage de dépôts en ligne)\n\n</string>
+    <string name="newrepo_alrt">Désirez-vous ajouter ce dépôt à votre liste&#160;?\n\n</string>
     
-    <string name="error_download_alrt">Absence de connexion avec le serveur ou le fichier apk est corrompu!</string>
-    <string name="download_alrt">Réception de l\'application de:\n </string>
+    <string name="error_download_alrt">Absence de connexion avec le serveur ou le fichier apk est corrompu&#160;!</string>
+    <string name="download_alrt">Réception de l\'application de&#160;:\n </string>
      
-    <string name="md5_error">Le contrôle md5 de l\'application téléchargée a échoué!\nVeuillez mettre à jour votre application système avant de réessayer!</string>
-    <string name="network_error">Une erreur est survenue lors de l\'obtention de l\'application.\nVeuillez réessayer!.</string>
+    <string name="md5_error">Le contrôle md5 de l\'application téléchargée a échoué&#160;!\nVeuillez mettre à jour votre application système avant de réessayer&#160;!</string>
+    <string name="network_error">Une erreur est survenue lors de l\'obtention de l\'application.\nVeuillez réessayer&#160;!.</string>
     
 </resources>
 <!--
