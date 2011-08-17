@@ -147,12 +147,19 @@
 	       		
 	       			
             </LinearLayout>	
+            
             <ListView
     			android:id="@+id/listViewComments" 
     			android:layout_width="fill_parent" 
         		android:layout_height="wrap_content"
         		android:layout_below="@id/root"
-        		android:layout_above="@id/listview_footer" />		
+        		android:layout_above="@id/listview_footer"
+        		
+        		android:divider="@drawable/list_comments_divider"
+        android:dividerHeight="1px"
+        android:cacheColorHint="#00000000"
+        		 />
+        				
     	</RelativeLayout>
         
     </LinearLayout>

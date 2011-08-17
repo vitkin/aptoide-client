@@ -27,7 +27,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     private int previousTotal = 0; // The total number of items in the dataset after the last load
     private boolean loading = true; // True if we are still waiting for the last set of data to load
     
-    private ArrayAdapter<CommentView> commentList;
+//  private ArrayAdapter<CommentView> commentList;
     private Context context;
     
     /**
@@ -35,8 +35,8 @@ public class LoadOnScrollCommentList implements OnScrollListener {
      * @param context
      * @param commentList
      */
-    public LoadOnScrollCommentList(Context context, ArrayAdapter<CommentView> commentList) {
-    	this.commentList = commentList;
+    public LoadOnScrollCommentList(Context context, ArrayAdapter<Comment> commentList) {
+//   	this.commentList = commentList;
     	this.context = context;
     }
  
@@ -55,7 +55,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
         }
         
         if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-        	commentList.add(new CommentView(context, new Comment(new BigInteger ("1"), "Zé tosco", "Gosto muito desta aplicação", new Date())));
+//        	commentList.add(new CommentView(context, new Comment(new BigInteger ("1"), "Zé tosco", "Gosto muito desta aplicação", new Date())));
         	loading = true;
         }
     }

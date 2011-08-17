@@ -36,7 +36,7 @@ public class Comment implements Comparable<Comment>{
 	private String text;
 	private Date timeStamp;
 	
-	public final static SimpleDateFormat timeStampFormat = new SimpleDateFormat("y-M-d H:m:s.S");
+	public final static SimpleDateFormat timeStampFormat = new SimpleDateFormat("y-M-d H:m:s");
 	
 	/**
 	 * 

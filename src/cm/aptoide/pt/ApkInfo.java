@@ -18,8 +18,10 @@ import org.json.JSONObject;
 
 
 import comments.Comment;
-import comments.CommentView;
-
+import comments.CommentGetter;
+import comments.CommentsAdapter;
+import comments.Status;
+import comments.CommentGetter.EndOfRequestReached;
 
 
 import android.app.Activity;
@@ -40,7 +42,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -315,23 +316,34 @@ public class ApkInfo extends Activity{
 		
 		
 		
-		
 		listView.addHeaderView(linearLayout, null, false);
+		ArrayList<Comment> comments = new ArrayList<Comment>();
 		
-		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.commentview);
+		try {
+			
+			CommentGetter getter = new CommentGetter("market", "cm.aptoide.pt", "2.0.2");
+			
+			try{
+				getter.parse(this, 1, new BigInteger("36"));
+			} catch(EndOfRequestReached e){}
+			
+			if(getter.getStatus().equals(Status.OK)){
+				comments = getter.getComments();
+				comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
+			}
+			
+		} catch (Exception e){}
 		
+		if(comments.size()==0)
+			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
+		
+		CommentsAdapter<Comment> arrayAdapter 
+			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
 		listView.setAdapter(arrayAdapter);
 		
 		
-	}
-	
-	public ArrayList<CommentView> getCommentViews(int index, int offset){
-		//CommentGetter commentGetter = new CommentGetter(this.getApplicationContext(),"market", "cm.aptoide.pt", "2.0.2");
-		ArrayList<CommentView> commentViews = new ArrayList<CommentView>();
-		for(int i=0; i<offset; i++){
-			commentViews.add(new CommentView(this, new Comment(new BigInteger ((index+i)+""), "Zé tosco", "Gosto muito desta aplicação", new Date())));
-		}
-		return commentViews;
+		
+		
 	}
 	
 	
@@ -358,7 +370,6 @@ public class ApkInfo extends Activity{
 	}
 	
 	private Handler updateScreenshots;
-	
 	
 	private class ScreenShotsUpdate extends Handler{
 		

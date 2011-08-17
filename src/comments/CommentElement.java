@@ -7,7 +7,7 @@ package comments;
  */
 public enum CommentElement {
 	
-	ENTRY, STATUS, ID, USERNAME, ANSWERTO, SUBJECT, TEXT, TIMESTAMP;
+	RESPONSE, STATUS, LISTING, ENTRY , ID, USERNAME, ANSWERTO, SUBJECT, TEXT, TIMESTAMP;
 
 	public static CommentElement valueOfToUpper(String name) {
 		return CommentElement.valueOf(name.toUpperCase());
