@@ -356,9 +356,7 @@ public class DbHandler {
 		
 		if(!c.moveToFirst()){
 			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"vercode"}, " apkid=\""+apkid+"\" and ver=\""+ver+"\" ", null, null, null, null);
-			Log.d("Aptoide - insertInstalled","Empty curor name");
 			if(!c.moveToFirst()){
-				Log.d("Aptoide - insertInstalled","Empty cursor old");
 				c.close();
 				return false;
 			}
@@ -373,6 +371,10 @@ public class DbHandler {
 	
 	public boolean wasUpdateOrDowngrade(String apkid, int versioncode){
 		Cursor c = db.query(TABLE_NAME_LOCAL, new String[] {"instvercode"}, "apkid=\""+apkid+"\"", null, null, null, null);
+		
+		if(!c.moveToFirst())
+			return true;
+		
 		int bd_code = c.getInt(0);
 		c.close();
 		return (versioncode != bd_code);
@@ -469,13 +471,8 @@ public class DbHandler {
 						node.status = 1;
 						node.ver = c.getString(2);
 					}else{
-						if(instvercode < lastvercode){
-							node.status = 2;
-							node.ver = c.getString(2) + "/ new: " + c.getString(3);
-						}else{
-							node.status = 1;
-							node.ver = c.getString(2);
-						}
+						node.status = instvercode < lastvercode?2:1;
+						node.ver = c.getString(2);
 					}
 					
 				}
@@ -785,6 +782,37 @@ public class DbHandler {
 	 * @author rafael
 	 * 
 	 * @param apk_id
+	 * @return
+	 */
+	public ArrayList<VersionApk> getOldAndNewApks(String apk_id){
+		ArrayList<VersionApk> tmp = new ArrayList<VersionApk>();
+		tmp.addAll(getOldApks(apk_id));
+		
+		Cursor c = null;
+		try{
+			
+			c = db.query(TABLE_NAME, new String[] {"lastver", "size"}, "apkid=\""+apk_id+"\"", null, null, null, null);
+			c.moveToFirst();
+			
+			do{
+				tmp.add(new VersionApk(c.getString(0), apk_id, c.getInt(1)));
+			}while(c.moveToNext());
+			
+		}catch (Exception e){
+			//System.out.println(e.toString());
+		}finally{
+			c.close();
+		}
+		
+		return tmp;
+		
+	}
+	
+	
+	/**
+	 * @author rafael
+	 * 
+	 * @param apk_id
 	 * @param server
 	 * @return
 	 */
@@ -868,7 +896,7 @@ public class DbHandler {
 	 * @return
 	 */
 	public Vector<DownloadNode> getPathHashOld(String id_apk, String ver){
-		//Log.e("My App","DADOS 2--> '"+id_apk+"'"+" "+ "'"+ver+"'");
+		
 		Vector<DownloadNode> out = new Vector<DownloadNode>();
 		Cursor c = null;
 		try{
