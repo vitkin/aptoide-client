@@ -214,7 +214,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 			int comp = givenVersion.compareTo(version);
 			
 			if(comp>0) ret.get("smaller").add(version);
-			else if(comp<0) ret.get("smaller").add(version);
+			else if(comp<0) ret.get("greater").add(version);
 			
 		}
 		
