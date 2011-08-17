@@ -1,12 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent">
-    <TextView 
-    android:id="@+id/texttest"
-    android:text="Cabeçalho"
-    android:layout_width="fill_parent"
-  	android:layout_height="wrap_content" />
+<LinearLayout 
+   	xmlns:android="http://schemas.android.com/apk/res/android"
+  	android:gravity="center" 
+    android:orientation="vertical" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content">
+           		
+           	
+           			 <TableLayout
+	    				android:layout_width="fill_parent"
+	    				android:layout_height="wrap_content"
+	    				android:paddingTop="10.0dip"
+	    				android:paddingLeft="5.0sp"
+	    				android:paddingRight="5.0sp"
+					    android:stretchColumns="0">
+			           <TableRow>
+				            
+				            <TextView 
+				            		android:id="@+id/dwn"
+				            		android:gravity="left" 
+				            		android:layout_width="fill_parent"
+				            		android:layout_height="wrap_content"
+				            		android:textColor="#FFFFFF" 
+				            		/>
+				            		
+				            <Spinner
+		   						android:id="@+id/spinnerMultiVersion"
+		   						android:prompt="@string/multi_ver_prompt"
+		   						android:layout_width="fill_parent"
+		   						android:layout_height="wrap_content" />
+				            	
+			           </TableRow>
+			           <TableRow> 					
+				            
+				            <TextView 
+				            		android:id="@+id/size"
+				            		android:gravity="left"
+				            		android:layout_width="fill_parent"
+				            		android:layout_height="wrap_content"
+				            		android:textColor="#FFFFFF" />
+				            		    	 
+	     				</TableRow>
+					</TableLayout>	
+	           	
+            <TextView 
+            		android:textAppearance="?android:textAppearanceLarge" 
+            		android:textSize="18.0sp" 
+            		android:textColor="#FFFFBB"
+            		android:gravity="left" 
+            		android:layout_gravity="top" 
+            		android:paddingTop="10.0dip"
+            		android:paddingLeft="5.0sp"
+            		android:paddingRight="5.0sp" 
+            		android:layout_width="fill_parent" 
+            		android:layout_height="wrap_content" 
+            		android:text="About:"/>
+            		
+            <TextView 
+            		android:id="@+id/descript"
+            		android:gravity="left" 
+            		android:layout_gravity="top" 
+            		android:paddingTop="10.0dip"
+					android:textColor="#FFFFFF"
+            		android:paddingLeft="5.0sp"
+            		android:paddingRight="5.0sp" 
+            		android:layout_width="fill_parent" 
+            		android:layout_height="wrap_content" 
+            		/>
+            		
+           <TextView
+           		android:textAppearance="?android:textAppearanceLarge"
+           		android:textSize="18.0sp"
+           		android:textColor="#FFFFBB"
+           		android:gravity="left"
+           		android:layout_gravity="top"
+           		android:paddingTop="10.0dip"
+           		android:paddingLeft="5.0sp"
+           		android:paddingRight="5.0sp"
+           		android:paddingBottom="5.0sp"
+           		android:layout_width="fill_parent"
+           		android:layout_height="wrap_content"
+           		android:text="Screenshots:"/>
+           		
+			<ProgressBar android:id="@+id/pscreens"
+ 				 android:layout_width="wrap_content"
+  				android:layout_height="wrap_content"/>
+  				
+  				 <TextView 
+            		android:id="@+id/noscreens"
+            		android:gravity="center" 
+            		android:layout_gravity="center" 
+            		android:paddingTop="10.0dip"
+					android:textColor="#FFFFFF"
+            		android:paddingLeft="5.0sp"
+            		android:paddingRight="5.0sp" 
+            		android:layout_width="fill_parent" 
+            		android:layout_height="wrap_content"
+            		android:visibility="invisible" />
+
+		<TableLayout android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:orientation="horizontal"
+			>
+        <TableRow>
+            <ImageView android:id="@+id/shot1" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+            <View android:layout_width="10dip" />
+            <ImageView android:id="@+id/shot2" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+          
+        </TableRow>
+    </TableLayout>
+    
+    
+	<TableLayout android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"
+			android:layout_gravity="center"
+			android:layout_marginTop="15sp">
+        <TableRow>
+            <ImageView android:id="@+id/shot3" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+            <View android:layout_width="10dip" />
+            <ImageView android:id="@+id/shot4" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+            <View android:layout_width="10dip" />
+            <ImageView android:id="@+id/shot5" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
+        </TableRow>
+    </TableLayout>
+    
+				<TextView
+           		android:textAppearance="?android:textAppearanceLarge"
+           		android:textSize="18.0sp"
+           		android:textColor="#FFFFBB"
+           		android:gravity="left"
+           		android:layout_gravity="top"
+           		android:paddingTop="10.0dip"
+           		android:paddingLeft="5.0sp"
+           		android:paddingRight="5.0sp"
+           		android:paddingBottom="5.0sp"
+           		android:layout_width="fill_parent"
+           		android:layout_height="wrap_content"
+           		android:text="@string/comments"
+           		android:id="@+id/commentsLabel"/>
+           		
+           		<ListView
+    			android:id="@+id/listViewComments" 
+    			android:layout_width="fill_parent" 
+        		android:layout_height="wrap_content" />
+           		
+     
 </LinearLayout>

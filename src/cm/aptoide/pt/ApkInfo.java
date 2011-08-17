@@ -40,8 +40,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -82,15 +84,20 @@ public class ApkInfo extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.apkinfo);
 		
+		ListView listView = (ListView) findViewById(R.id.listViewComments);
+		LayoutInflater inflater = this.getLayoutInflater();
+		final LinearLayout linearLayout = (LinearLayout)inflater.inflate(R.layout.headercomments,listView, false);
+		updateScreenshots = new ScreenShotsUpdate(linearLayout);
+		
 		mctx = this;
 		screens = new ArrayList<ImageView>();
-		screens.add((ImageView) findViewById(R.id.shot1));
-		screens.add((ImageView) findViewById(R.id.shot2));
-		screens.add((ImageView) findViewById(R.id.shot3));
-		screens.add((ImageView) findViewById(R.id.shot4));
-		screens.add((ImageView) findViewById(R.id.shot5));
+		screens.add((ImageView) linearLayout.findViewById(R.id.shot1));
+		screens.add((ImageView) linearLayout.findViewById(R.id.shot2));
+		screens.add((ImageView) linearLayout.findViewById(R.id.shot3));
+		screens.add((ImageView) linearLayout.findViewById(R.id.shot4));
+		screens.add((ImageView) linearLayout.findViewById(R.id.shot5));
 
-		noscreens = (TextView)findViewById(R.id.noscreens);
+		noscreens = (TextView)linearLayout.findViewById(R.id.noscreens);
 		
 		rtrn_intent = new Intent();
 		
@@ -107,35 +114,6 @@ public class ApkInfo extends Activity{
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
 		String apk_size_str = apkinfo.getStringExtra("size");
-		
-		/*try{
-			String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
-			String fetch_imgs = WS_img+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
-
-			Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
-			Log.d("Aptoide","Get img from: " + fetch_imgs);
-			
-			HttpResponse response_ws = NetworkApis.imgWsGet(fetch_imgs);
-			if(response_ws != null && response_ws.getStatusLine().getStatusCode() == 200){
-				String json_str = null;
-				json_str = EntityUtils.toString(response_ws.getEntity());
-				response_ws.getEntity().consumeContent();
-				Log.d("Aptoide","Resp: " + json_str);
-				JSONObject json_resp = new JSONObject(json_str);
-				
-				JSONArray img_url = json_resp.getJSONArray("listing");
-				if(img_url.length()>0)
-					imageDrwb = new Drawable[img_url.length()];
-				for(int i = 0; i< img_url.length(); i++){
-					String a = (String)img_url.get(i);
-					Log.d("Aptoide","* " + a);
-					HttpResponse pic = NetworkApis.imgWsGet(a);
-					InputStream pic_st = pic.getEntity().getContent();
-					Drawable pic_drw = Drawable.createFromStream(pic_st, "src");
-					imageDrwb[i] = pic_drw;
-				}
-			}
-		}catch (Exception e ){ }*/
 		
 		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
 		serch_mrkt.setOnClickListener(new OnClickListener() {
@@ -168,7 +146,7 @@ public class ApkInfo extends Activity{
 			break;
 		}
 		
-		spinnerMulti = ((Spinner)this.findViewById(R.id.spinnerMultiVersion));
+		spinnerMulti = ((Spinner)linearLayout.findViewById(R.id.spinnerMultiVersion));
 		
 		action.setOnClickListener(new OnClickListener() {
 
@@ -218,7 +196,7 @@ public class ApkInfo extends Activity{
 		TextView apk_name = (TextView)findViewById(R.id.app_name);
 		apk_name.setText(apk_name_str);
 		
-		TextView apk_about = (TextView)findViewById(R.id.descript);
+		TextView apk_about = (TextView)linearLayout.findViewById(R.id.descript);
 		String desc_parsed = Html.fromHtml(apk_descr).toString();
 		apk_about.setText(desc_parsed);
 		
@@ -237,13 +215,13 @@ public class ApkInfo extends Activity{
 		}
 		
 		
-		TextView apk_down_n = (TextView)findViewById(R.id.dwn);
+		TextView apk_down_n = (TextView)linearLayout.findViewById(R.id.dwn);
 		apk_down_n.setText("Downloads: " + apk_dwon_str.replaceAll("\\n", "").replaceAll("\\t", "").trim());
 		
 		RatingBar apk_rat_n = (RatingBar) findViewById(R.id.rating);
 		apk_rat_n.setRating(new Float(apk_rat_str));
 		
-		TextView apk_size_n = (TextView) findViewById(R.id.size);
+		TextView apk_size_n = (TextView) linearLayout.findViewById(R.id.size);
 		apk_size_n.setText(apk_size_str);
 
 		new Thread(){
@@ -278,10 +256,16 @@ public class ApkInfo extends Activity{
 					
 				}catch (Exception e ){ }
 				finally{
+					
+					
 					updateScreenshots.sendEmptyMessage(0);
+					
 				}
 			}
 		}.start();
+		
+		
+		
 		
 		
 		
@@ -327,9 +311,17 @@ public class ApkInfo extends Activity{
 			spinnerMulti.setVisibility(View.INVISIBLE);
 		}
 		
-		LayoutInflater inflater = this.getLayoutInflater();
-		ListView listView = (ListView) findViewById(R.id.listViewComments);
-		listView.addHeaderView(inflater.inflate(R.layout.headercomments, null));
+		
+		
+		
+		
+		
+		listView.addHeaderView(linearLayout, null, false);
+		
+		ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, R.layout.commentview);
+		
+		listView.setAdapter(arrayAdapter);
+		
 		
 	}
 	
@@ -365,11 +357,19 @@ public class ApkInfo extends Activity{
 		
 	}
 	
-	private Handler updateScreenshots = new Handler(){
+	private Handler updateScreenshots;
+	
+	
+	private class ScreenShotsUpdate extends Handler{
+		
+		private LinearLayout header;
+		
+		public ScreenShotsUpdate(LinearLayout header) { this.header= header; }
+		
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			ProgressBar pd = (ProgressBar) findViewById(R.id.pscreens);
+			ProgressBar pd = (ProgressBar) header.findViewById(R.id.pscreens);
 			pd.setVisibility(View.GONE);
 			int i = 0;
 			if(imageDrwb != null){
@@ -385,8 +385,10 @@ public class ApkInfo extends Activity{
 				noscreens.setText("No screenshots available.");
 			}
 			//galry.setAdapter(new GalAdpt(mctx));
-		}		
-	};
+		}	
+		
+	}
+	
 	
 	@Override
 	public void finish() {
