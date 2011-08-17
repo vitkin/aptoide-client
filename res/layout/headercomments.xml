@@ -125,7 +125,7 @@
         </TableRow>
     </TableLayout>
     
-				<TextView
+			<TextView
            		android:textAppearance="?android:textAppearanceLarge"
            		android:textSize="18.0sp"
            		android:textColor="#FFFFBB"
@@ -134,16 +134,9 @@
            		android:paddingTop="10.0dip"
            		android:paddingLeft="5.0sp"
            		android:paddingRight="5.0sp"
-           		android:paddingBottom="5.0sp"
            		android:layout_width="fill_parent"
            		android:layout_height="wrap_content"
            		android:text="@string/comments"
            		android:id="@+id/commentsLabel"/>
-           		
-           		<ListView
-    			android:id="@+id/listViewComments" 
-    			android:layout_width="fill_parent" 
-        		android:layout_height="wrap_content" />
-           		
      
 </LinearLayout>
