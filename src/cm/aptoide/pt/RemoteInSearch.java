@@ -27,7 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
-import multiversion.VersionApk;
+import cm.aptoide.summerinternship2011.multiversion.VersionApk;
+
 
 
 

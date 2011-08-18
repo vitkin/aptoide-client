@@ -1,7 +1,7 @@
 /**
  * 
  */
-package multiversion;
+package cm.aptoide.summerinternship2011.multiversion;
 
 import android.content.Context;
 import android.graphics.Rect;

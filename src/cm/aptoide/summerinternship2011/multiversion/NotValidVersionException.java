@@ -1,4 +1,4 @@
-package multiversion;
+package cm.aptoide.summerinternship2011.multiversion;
 
 /**
  * @author rafael

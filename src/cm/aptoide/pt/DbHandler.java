@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import multiversion.VersionApk;
+import cm.aptoide.summerinternship2011.multiversion.VersionApk;
+
 
 
 

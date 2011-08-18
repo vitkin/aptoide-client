@@ -1,7 +1,7 @@
 /**
  * 
  */
-package comments;
+package cm.aptoide.summerinternship2011.comments;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
