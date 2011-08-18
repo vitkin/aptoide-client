@@ -1,5 +1,7 @@
 layout/textviewfocused
 layout/multiversionspinneritem
+layout/commentlistviewitem
+layout/commentslist
 string/multi_ver_prompt
 string/commentsproblem
 string/version
@@ -8,4 +10,5 @@ string/version_inst
 string/comments
 string/isinstalled
 string/installed_downgrade
-layout/commentview
+string/reply
+drawable/list_comments_divider
