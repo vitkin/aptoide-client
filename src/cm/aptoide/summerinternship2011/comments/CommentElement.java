@@ -1,4 +1,4 @@
-package comments;
+package cm.aptoide.summerinternship2011.comments;
 
 /**
  * 

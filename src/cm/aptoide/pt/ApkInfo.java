@@ -8,20 +8,22 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import multiversion.MultiversionSpinnerAdapter;
-import multiversion.VersionApk;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cm.aptoide.summerinternship2011.comments.Comment;
+import cm.aptoide.summerinternship2011.comments.CommentGetter;
+import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
+import cm.aptoide.summerinternship2011.comments.ContextMenuComments;
+import cm.aptoide.summerinternship2011.comments.Status;
+import cm.aptoide.summerinternship2011.comments.CommentGetter.EndOfRequestReached;
+import cm.aptoide.summerinternship2011.multiversion.MultiversionSpinnerAdapter;
+import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 
-import comments.Comment;
-import comments.CommentGetter;
-import comments.CommentsAdapter;
-import comments.Status;
-import comments.CommentGetter.EndOfRequestReached;
+
 
 
 import android.app.Activity;
@@ -85,7 +87,10 @@ public class ApkInfo extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.apkinfo);
 		
-		ListView listView = (ListView) findViewById(R.id.listViewComments);
+		ListView listView = (ListView) findViewById(R.id.listComments);
+		
+		listView.setOnCreateContextMenuListener(new ContextMenuComments(this.getApplicationContext()));
+		
 		LayoutInflater inflater = this.getLayoutInflater();
 		final LinearLayout linearLayout = (LinearLayout)inflater.inflate(R.layout.headercomments,listView, false);
 		updateScreenshots = new ScreenShotsUpdate(linearLayout);
@@ -341,11 +346,7 @@ public class ApkInfo extends Activity{
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
 		listView.setAdapter(arrayAdapter);
 		
-		
-		
-		
 	}
-	
 	
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
