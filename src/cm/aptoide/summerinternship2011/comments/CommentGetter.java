@@ -60,9 +60,6 @@ public class CommentGetter {
 	public CommentGetter( String repo, String apkid, String apkversion) {
 		
 		urlReal = String.format(url,repo, apkid, apkversion);
-		
-    	this.status= new StringBuilder("");
-    	this.versions= new ArrayList<Comment>();
     	
 	}
 	
@@ -70,7 +67,9 @@ public class CommentGetter {
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
 		InputStream stream = NetworkApis.getInputStreamToComments(context, urlReal);
-    	sp.parse(new InputSource(new BufferedInputStream(stream)), new VersionContentHandler(status, versions, requestSize, startFrom));
+		this.status= new StringBuilder("");
+    	this.versions= new ArrayList<Comment>();
+		sp.parse(new InputSource(new BufferedInputStream(stream)), new VersionContentHandler(status, versions, requestSize, startFrom));
 	}
 	
 	public ArrayList<Comment> getComments() { return versions; }

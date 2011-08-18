@@ -10,5 +10,6 @@ string/version_inst
 string/comments
 string/isinstalled
 string/installed_downgrade
+string/whattodo
 string/reply
 drawable/list_comments_divider

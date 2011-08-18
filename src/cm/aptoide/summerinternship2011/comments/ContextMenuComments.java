@@ -7,10 +7,8 @@ import cm.aptoide.pt.R;
 import android.content.Context;
 import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.Toast;
 
 /**
  * @author rafael
@@ -25,7 +23,7 @@ public class ContextMenuComments implements View.OnCreateContextMenuListener{
 		Event.REPLY.setString(context.getString(R.string.reply));
 	}
 	
-	private enum Event{
+	public enum Event{
 		REPLY(0);
 		private int id;
 		private String string;
@@ -52,30 +50,10 @@ public class ContextMenuComments implements View.OnCreateContextMenuListener{
 		}
 	}
 	
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		menu.setHeaderTitle(context.getString(R.string.whattodo));
 		for(Event item:Event.values())
 			menu.add(0, item.getId(), 0, item.getString());
-	}
-	
-	/**
-	 * 
-	 * @param item
-	 * @return If we handled the event or not. True in the first case.
-	 */
-	public boolean onContextItemSelected(MenuItem item) {
-		Event event = Event.getEventFromId(item.getItemId());
-        
-		if(event!=null){
-			switch (event) {
-	        	case REPLY:
-	        		Toast.makeText(context, "Reply", Toast.LENGTH_LONG);
-	        	return true; 
-	        }
-		}
-		
-		return false;
-        
 	}
 	
 }

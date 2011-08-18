@@ -47,6 +47,7 @@
     <string name="version_inst">Version installed</string>
     <string name="installed_downgrade">Downgrade possible - Ver.:</string>
     <string name="reply">Reply</string>
+    <string name="whattodo">What to do?</string>
 </resources>
 
 <!--
