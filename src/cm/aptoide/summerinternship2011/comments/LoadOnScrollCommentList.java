@@ -4,9 +4,8 @@
 package cm.aptoide.summerinternship2011.comments;
 
 import java.math.BigInteger;
-import java.util.Date;
 
-
+import cm.aptoide.summerinternship2011.comments.CommentGetter.EndOfRequestReached;
 
 import android.content.Context;
 import android.widget.AbsListView;
@@ -27,17 +26,24 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     private int previousTotal = 0; // The total number of items in the dataset after the last load
     private boolean loading = true; // True if we are still waiting for the last set of data to load
     
-//  private ArrayAdapter<CommentView> commentList;
+    private ArrayAdapter<Comment> commentList;
+    private BigInteger lastCommentIdRead;
+    private CommentGetter commentGetter;
     private Context context;
+    
+    private boolean continueFetching;
     
     /**
      * 
      * @param context
      * @param commentList
      */
-    public LoadOnScrollCommentList(Context context, ArrayAdapter<Comment> commentList) {
-//   	this.commentList = commentList;
+    public LoadOnScrollCommentList(Context context,ArrayAdapter<Comment> commentList) {
+    	this.commentList = commentList;
+    	lastCommentIdRead = null;
+    	commentGetter = new CommentGetter("market", "cm.aptoide.pt", "2.0.2");
     	this.context = context;
+    	continueFetching = true;
     }
  
     /**
@@ -46,18 +52,34 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     public void onScroll(AbsListView view, int firstVisibleItem,
             int visibleItemCount, int totalItemCount) {
         
-    	if (loading) {
-            if (totalItemCount > previousTotal) {
-                loading = false;
-                previousTotal = totalItemCount;
-                currentPage++;
-            }
-        }
-        
-        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-//        	commentList.add(new CommentView(context, new Comment(new BigInteger ("1"), "Zé tosco", "Gosto muito desta aplicação", new Date())));
-        	loading = true;
-        }
+    	if(continueFetching){
+	    	if (loading) {
+	            if (totalItemCount > previousTotal) {
+	                loading = false;
+	                previousTotal = totalItemCount;
+	                currentPage++;
+	            }
+	        }
+	        
+	        if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+	        	try{
+	        		
+		        	try{
+						commentGetter.parse(context, 1, lastCommentIdRead);
+					} catch(EndOfRequestReached e){}
+					
+					if(commentGetter.getStatus().equals(Status.OK) && commentGetter.getComments().size()!=0){
+						lastCommentIdRead = commentGetter.getComments().get(0).getId();
+						commentList.add(commentGetter.getComments().get(0));	
+					} else { continueFetching = false; }
+					
+		        	loading = true;
+		        	
+	        	}catch(Exception e){
+	        		continueFetching = false;
+	        	}
+	        }
+    	}
     }
 	
     /**

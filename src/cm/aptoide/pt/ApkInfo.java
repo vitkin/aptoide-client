@@ -2,10 +2,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 
@@ -15,11 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cm.aptoide.summerinternship2011.comments.Comment;
-import cm.aptoide.summerinternship2011.comments.CommentGetter;
 import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
 import cm.aptoide.summerinternship2011.comments.ContextMenuComments;
-import cm.aptoide.summerinternship2011.comments.Status;
-import cm.aptoide.summerinternship2011.comments.CommentGetter.EndOfRequestReached;
+import cm.aptoide.summerinternship2011.comments.LoadOnScrollCommentList;
+import cm.aptoide.summerinternship2011.comments.ContextMenuComments.Event;
 import cm.aptoide.summerinternship2011.multiversion.MultiversionSpinnerAdapter;
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 
@@ -41,6 +38,7 @@ import android.os.Message;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -80,7 +78,7 @@ public class ApkInfo extends Activity{
 
 	private Spinner spinnerMulti;
 	
-	List<ImageView> screens = null;
+	private List<ImageView> screens = null;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -317,34 +315,18 @@ public class ApkInfo extends Activity{
 			spinnerMulti.setVisibility(View.INVISIBLE);
 		}
 		
-		
-		
-		
+//		comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
 		
 		listView.addHeaderView(linearLayout, null, false);
 		ArrayList<Comment> comments = new ArrayList<Comment>();
 		
-		try {
-			
-			CommentGetter getter = new CommentGetter("market", "cm.aptoide.pt", "2.0.2");
-			
-			try{
-				getter.parse(this, 1, new BigInteger("36"));
-			} catch(EndOfRequestReached e){}
-			
-			if(getter.getStatus().equals(Status.OK)){
-				comments = getter.getComments();
-				comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
-			}
-			
-		} catch (Exception e){}
-		
-		if(comments.size()==0)
-			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
+//		if(comments.size()==0)
+//			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
 		
 		CommentsAdapter<Comment> arrayAdapter 
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
 		listView.setAdapter(arrayAdapter);
+		listView.setOnScrollListener(new LoadOnScrollCommentList(this, arrayAdapter));
 		
 	}
 	
@@ -401,6 +383,22 @@ public class ApkInfo extends Activity{
 		
 	}
 	
+	/**
+	 * 
+	 * @param item
+	 * @return If we handled the event or not. True in the first case.
+	 */
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		Event event = Event.getEventFromId(item.getItemId());
+		if(event!=null){
+			switch (event) {
+	        	case REPLY:
+	        	return true; 
+	        }
+		}
+		return false;
+	}
 	
 	@Override
 	public void finish() {
