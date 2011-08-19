@@ -3,6 +3,7 @@
     
     
     <string name="menu_update_repo">Update</string>
+    <string name="menu_update_all">Update all</string>
     <string name="menu_manage">Manage Repo</string>
     <string name="menu_order">Display Options</string>
     <string name="menu_settings">Settings</string>

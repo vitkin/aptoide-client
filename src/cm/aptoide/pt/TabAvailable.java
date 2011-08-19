@@ -76,7 +76,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, 3, 3, R.string.menu_order)
+		menu.add(Menu.NONE, 4, 4, R.string.menu_order)
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		return super.onCreateOptionsMenu(menu);
 	}
