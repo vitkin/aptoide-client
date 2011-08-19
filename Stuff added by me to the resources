@@ -12,4 +12,6 @@ string/isinstalled
 string/installed_downgrade
 string/whattodo
 string/reply
+string/likes
+string/dislikes
 drawable/list_comments_divider

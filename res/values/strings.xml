@@ -48,6 +48,8 @@
     <string name="installed_downgrade">Downgrade possible - Ver.:</string>
     <string name="reply">Reply</string>
     <string name="whattodo">What to do?</string>
+    <string name="likes">Likes: </string>
+    <string name="dislikes">Dislikes: </string>
 </resources>
 
 <!--

@@ -5,7 +5,35 @@
     android:orientation="vertical" 
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content">
-           		
+           			
+           			<TableLayout
+	    				android:layout_width="fill_parent"
+	    				android:layout_height="wrap_content"
+	    				android:paddingTop="10.0dip"
+	    				android:paddingLeft="5.0sp"
+	    				android:paddingRight="5.0sp"
+					    android:stretchColumns="0,1">
+	           			<TableRow>
+	           				
+	           				<TextView 
+	           					android:textColor="#FFFFFF" 
+	           					android:id="@+id/likes"
+	           					android:layout_width="fill_parent"
+	    						android:layout_height="wrap_content"
+	    						android:text="@string/likes" />
+	           				
+	           				<TextView
+	           					android:textColor="#FFFFFF"  
+	           					android:id="@+id/dislikes"
+	           					android:layout_width="fill_parent"
+	    						android:layout_height="wrap_content"
+	    						android:text="@string/dislikes" />
+	    							
+	           			</TableRow>
+           			
+           			</TableLayout>
+           			
+           			
            	
            			 <TableLayout
 	    				android:layout_width="fill_parent"
