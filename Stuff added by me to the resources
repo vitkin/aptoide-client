@@ -14,4 +14,16 @@ string/whattodo
 string/reply
 string/likes
 string/dislikes
+string/copyclip
+string/qrcodecomment
+string/qrcodeunavailable
+string/commentlabel
+
+string/submit
+string/clear
+string/undoresponse
+
+string/body
+string/subject
+
 drawable/list_comments_divider

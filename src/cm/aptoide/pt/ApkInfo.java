@@ -1,6 +1,7 @@
 package cm.aptoide.pt;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,20 +31,27 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.ClipboardManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -76,10 +84,15 @@ public class ApkInfo extends Activity{
 	private String apk_name_str = null;
 	
 	private TextView noscreens = null;
-
-	private Spinner spinnerMulti;
 	
 	private List<ImageView> screens = null;
+	
+	
+	private Spinner spinnerMulti;
+	private ArrayList<Comment> comments;
+	@SuppressWarnings("unused")
+	private Comment replyTo;
+	private ListView listViewGlobal;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +100,8 @@ public class ApkInfo extends Activity{
 		setContentView(R.layout.apkinfo);
 		
 		ListView listView = (ListView) findViewById(R.id.listComments);
+		
+		listViewGlobal = listView;
 		
 		listView.setOnCreateContextMenuListener(new ContextMenuComments(this.getApplicationContext()));
 		
@@ -273,9 +288,6 @@ public class ApkInfo extends Activity{
 		
 		
 		
-		
-		
-		
 		/*Multiversion*/
 		if(type!=1){//If we aren't in the installed tab
 		
@@ -283,15 +295,13 @@ public class ApkInfo extends Activity{
 			versions.add(new VersionApk(apk_ver_str.replaceAll("[^0-9\\.]", "") ,apk_id,Integer.parseInt(apk_size_str.replaceAll("[^0-9]",""))));
 			Collections.sort(versions, Collections.reverseOrder());
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
-				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, 
-						"Version"/*this.getApplicationContext().getString(R.string.version)*/,
-						"Size"/*this.getApplicationContext().getString(R.string.size)*/);
+				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, "Version", "Size");
 			spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
 			spinnerMulti.setAdapter(spinnerMultiAdapter );
 			if(type==2){
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-						VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
+							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
 						
 							int result = versionApk.compareTo(versionInstApk);
 							if(result>0){
@@ -304,13 +314,14 @@ public class ApkInfo extends Activity{
 								action.setEnabled(false);
 								action.setText(ApkInfo.this.getString(R.string.isinstalled));
 							}
-							
+							//TODO Select correct comments and likes for this version
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
 			}
 			//Select the current version installed by the user
-		}else{//Otherwise
+		}else{
+			//Otherwise
 			spinnerMulti.getLayoutParams().height = 0;
 			spinnerMulti.getLayoutParams().width = 0;
 			spinnerMulti.setVisibility(View.INVISIBLE);
@@ -324,13 +335,52 @@ public class ApkInfo extends Activity{
 //		comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
 //		if(comments.size()==0)
 //			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
-		
 		listView.addHeaderView(linearLayout, null, false);
-		ArrayList<Comment> comments = new ArrayList<Comment>();
+		comments = new ArrayList<Comment>();
 		CommentsAdapter<Comment> arrayAdapter 
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
 		listView.setAdapter(arrayAdapter);
 		listView.setOnScrollListener(new LoadOnScrollCommentList(this, arrayAdapter));
+		((Button)findViewById(R.id.clearReply)).setOnClickListener(new OnClickListener(){
+			public void onClick(View arg) {
+				((EditText)findViewById(R.id.subject)).setText("");
+				((EditText)findViewById(R.id.comment)).setText("");
+			}
+		});
+		class SetBlank implements OnTouchListener{
+			private boolean alreadySetted;
+			public SetBlank(){
+				alreadySetted = false;
+			}
+
+			public boolean onTouch(View viewEdit, MotionEvent event) {
+				if(!alreadySetted){
+					((EditText)viewEdit).setText("");
+					((EditText)viewEdit).setTextColor(Color.BLACK);
+					alreadySetted = true;
+				}
+				//If return true it indicates that this action consumed the event and the result is that the edit text won't get selected
+				return false;
+			}
+		}
+		((EditText)findViewById(R.id.comment)).setOnTouchListener(new SetBlank());
+		((EditText)findViewById(R.id.subject)).setOnTouchListener(new SetBlank());
+		((Button)findViewById(R.id.undoReplyLabel)).setOnClickListener(new OnClickListener(){
+			public void onClick(View view) {
+				
+				replyTo = null;
+				
+				TextView to = ((TextView)listViewGlobal.findViewById(R.id.replyTo));
+				to.setText("");
+				to.getLayoutParams().height = 0;
+				to.setLayoutParams(to.getLayoutParams());
+				
+        		Button undo =((Button)listViewGlobal.findViewById(R.id.undoReplyLabel));
+        		undo.getLayoutParams().height = 0;
+        		undo.setLayoutParams(undo.getLayoutParams());
+        		
+			}
+		});
 		
 		
 		
@@ -412,10 +462,39 @@ public class ApkInfo extends Activity{
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		Event event = Event.getEventFromId(item.getItemId());
+		Comment getted = comments.get(((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position-1);
 		if(event!=null){
 			switch (event) {
-	        	case REPLY:
-	        	return true; 
+	        	case REPLY: 
+	        		replyTo = getted;
+	        		
+	        		TextView to = ((TextView)listViewGlobal.findViewById(R.id.replyTo));
+					to.setText("@"+getted.getUsername());
+					to.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+					to.setLayoutParams(to.getLayoutParams());
+	        		
+	        		Button undoReply = ((Button)listViewGlobal.findViewById(R.id.undoReplyLabel));
+	        		undoReply.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+	        		undoReply.setLayoutParams(undoReply.getLayoutParams());
+	        		return true;
+	        		
+	        	case COPY_TO_CLIPBOARD:
+	        		ClipboardManager clipManager = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+	        		clipManager.setText(getted.toString());
+	        		return true;
+	        	case GENERATE_QR_CODE:
+	        		Dialog dialog = new Dialog(this);
+	        		try {
+		        		dialog.setContentView(R.layout.qrviewer);
+		        		dialog.setOwnerActivity((Activity)this);
+	        			((ImageView)dialog.findViewById(R.id.qrImage)).setImageBitmap(getted.giveQrCode());
+	        			dialog.setTitle(getString(R.string.qrcodecomment));
+					} catch (IOException e) {
+						dialog.setTitle(getString(R.string.qrcodeunavailable));
+					}
+					dialog.show();
+	        		return true;
+	        	default : break;
 	        }
 		}
 		return false;
