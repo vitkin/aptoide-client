@@ -4,7 +4,6 @@
 package cm.aptoide.summerinternship2011.comments;
 
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
@@ -35,8 +34,6 @@ public class Comment implements Comparable<Comment>{
 	private String subject;
 	private String text;
 	private Date timeStamp;
-	
-	public final static SimpleDateFormat timeStampFormat = new SimpleDateFormat("y-M-d H:m:s");
 	
 	/**
 	 * 

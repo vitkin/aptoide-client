@@ -25,6 +25,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.NetworkApis;
+import cm.aptoide.summerinternship2011.Configs;
+import cm.aptoide.summerinternship2011.Status;
 
 import android.content.Context;
 
@@ -33,7 +35,7 @@ import android.content.Context;
  * @author rafael
  * @since summerinternship2011
  * 
- * Example of the xml file structure.
+ * Example of the xml file structure. When success.
  * 
  * <response>
  * 	<status>OK</status>
@@ -46,6 +48,15 @@ import android.content.Context;
  * 		<timestamp>2011-06-05 22:03:08.196793</timestamp>
  * 		</entry>
  * 	</listing>
+ * </response>
+ * 
+ * Example of the xml file structure. When insuccess.
+ * 
+ * <response>
+ * 	<status>FAIL</status>
+ * 	<errors>
+ * 		<entry>No apk was found with the given apkid and apkversion.</entry>
+ * 	</errors>
  * </response>
  * 
  */
@@ -66,7 +77,7 @@ public class CommentGetter {
 	public void parse(Context context, int requestSize, BigInteger startFrom) throws MalformedURLException, IOException, ParserConfigurationException, SAXException, FactoryConfigurationError, ProtocolException {
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
-		InputStream stream = NetworkApis.getInputStreamToComments(context, urlReal);
+		InputStream stream = NetworkApis.getInputStream(context, urlReal);
 		this.status= new StringBuilder("");
     	this.versions= new ArrayList<Comment>();
 		sp.parse(new InputSource(new BufferedInputStream(stream)), new VersionContentHandler(status, versions, requestSize, startFrom));
@@ -181,7 +192,7 @@ public class CommentGetter {
 					  	case TIMESTAMP: 
 					  		
 					  		try {
-					  			timestamp_tmp = Comment.timeStampFormat.parse(read);
+					  			timestamp_tmp = Configs.timeStampFormat.parse(read);
 					  		} catch (ParseException e) {}
 					  		
 					  		break;
@@ -190,13 +201,7 @@ public class CommentGetter {
 				  
 				  }
 			  
-			  
-			  
 		  }
-		  
-		  public ArrayList<Comment> getComments() { return comments; }
-		  
-		  public StringBuilder getStatus() { return status; }
 		
 	}
 	

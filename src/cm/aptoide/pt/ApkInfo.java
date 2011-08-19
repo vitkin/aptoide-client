@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cm.aptoide.summerinternship2011.Status;
 import cm.aptoide.summerinternship2011.comments.Comment;
 import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
 import cm.aptoide.summerinternship2011.comments.ContextMenuComments;
@@ -19,6 +19,7 @@ import cm.aptoide.summerinternship2011.comments.LoadOnScrollCommentList;
 import cm.aptoide.summerinternship2011.comments.ContextMenuComments.Event;
 import cm.aptoide.summerinternship2011.multiversion.MultiversionSpinnerAdapter;
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
+import cm.aptoide.summerinternship2011.taste.TasteGetter;
 
 
 
@@ -275,7 +276,7 @@ public class ApkInfo extends Activity{
 		
 		
 		
-		
+		/*Multiversion*/
 		if(type!=1){//If we aren't in the installed tab
 		
 			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
@@ -315,18 +316,38 @@ public class ApkInfo extends Activity{
 			spinnerMulti.setVisibility(View.INVISIBLE);
 		}
 		
+		
+		
+		
+		
+		/*Comments*/
 //		comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
-		
-		listView.addHeaderView(linearLayout, null, false);
-		ArrayList<Comment> comments = new ArrayList<Comment>();
-		
 //		if(comments.size()==0)
 //			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
 		
+		listView.addHeaderView(linearLayout, null, false);
+		ArrayList<Comment> comments = new ArrayList<Comment>();
 		CommentsAdapter<Comment> arrayAdapter 
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
 		listView.setAdapter(arrayAdapter);
 		listView.setOnScrollListener(new LoadOnScrollCommentList(this, arrayAdapter));
+		
+		
+		
+		/*Taste*/
+		TasteGetter tasteGetter = new TasteGetter("market","cm.aptoide.pt","2.0.2");
+		TextView likes = (TextView)linearLayout.findViewById(R.id.likes);
+		TextView dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
+		try {
+			tasteGetter.parse(this, null);
+			if(tasteGetter.getStatus().equals(Status.OK)){
+				likes.append(tasteGetter.getLikes().toString());
+				dislikes.append(tasteGetter.getDislikes().toString());
+			} else { throw new Exception(); }
+		} catch(Exception e){
+			likes.getLayoutParams().height=0;
+			dislikes.getLayoutParams().height=0;
+		}
 		
 	}
 	

@@ -5,6 +5,7 @@ package cm.aptoide.summerinternship2011.comments;
 
 import java.math.BigInteger;
 
+import cm.aptoide.summerinternship2011.Status;
 import cm.aptoide.summerinternship2011.comments.CommentGetter.EndOfRequestReached;
 
 import android.content.Context;

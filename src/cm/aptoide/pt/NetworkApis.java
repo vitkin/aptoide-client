@@ -107,7 +107,7 @@ public class NetworkApis {
 		
 	}
 	
-	public static InputStream getInputStreamToComments(Context mctx, String url) throws ProtocolException, IOException{
+	public static InputStream getInputStream(Context mctx, String url) throws ProtocolException, IOException{
 		
 		URL urlObj = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection(); //Careful with UnknownHostException. Throws MalformedURLException, IOException
