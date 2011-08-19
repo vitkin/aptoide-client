@@ -3,8 +3,20 @@
  */
 package cm.aptoide.summerinternship2011.comments;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Date;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import cm.aptoide.summerinternship2011.Configs;
 
 /**
  * 
@@ -88,6 +100,35 @@ public class Comment implements Comparable<Comment>{
 	
 	public int compareTo(Comment otherComment) {
 		return this.compareTo(otherComment);
+	}
+	
+	public Bitmap giveQrCode() throws IOException {
+		
+		StringBuilder strBuilder = new StringBuilder("");
+		strBuilder.append(URLEncoder.encode("cht", "UTF-8") + "=" + URLEncoder.encode("qr", "UTF-8"));
+		strBuilder.append("&"+URLEncoder.encode("chs", "UTF-8") + "=" + URLEncoder.encode("300x300", "UTF-8"));
+		strBuilder.append("&"+URLEncoder.encode("chl", "UTF-8") + "=" + URLEncoder.encode(this.toString(), "UTF-8"));
+		
+		
+	    URLConnection conn = new URL("https://chart.googleapis.com/chart").openConnection();  
+	    conn.setDoOutput(true);
+	    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+	    wr.write(strBuilder.toString());
+	    wr.flush();
+	    
+	    conn.connect();  
+	    InputStream is = conn.getInputStream();  
+	    BufferedInputStream bis = new BufferedInputStream(is);  
+	    Bitmap bm = BitmapFactory.decodeStream(bis);  
+	    bis.close();  
+	    is.close();  
+	    return bm;  
+	     
+	}
+	
+	@Override
+	public String toString() {
+		return getSubject()!=null?getSubject():""+Configs.LINE_SEPARATOR+getText()+Configs.LINE_SEPARATOR+getUsername()+" at "+Configs.TIME_STAMP_FORMAT.format(getTimestamp());
 	}
 	
 }

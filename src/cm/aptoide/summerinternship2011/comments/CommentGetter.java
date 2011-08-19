@@ -177,7 +177,7 @@ public class CommentGetter {
 					  	case STATUS: 
 					  		status.append(read); 
 					  		if(status.equals(Status.FAILED))
-					  			throw new FailedRequestException();
+					  			throw new FailedRequestException("Status is failed.");
 					  		break;
 						
 					 	case ID: 
@@ -192,8 +192,10 @@ public class CommentGetter {
 					  	case TIMESTAMP: 
 					  		
 					  		try {
-					  			timestamp_tmp = Configs.timeStampFormat.parse(read);
-					  		} catch (ParseException e) {}
+					  			timestamp_tmp = Configs.TIME_STAMP_FORMAT.parse(read);
+					  		} catch (ParseException e) {
+					  			throw new FailedRequestException("Parse exception while parsing date.");
+					  		}
 					  		
 					  		break;
 					  	default: break;
@@ -206,7 +208,13 @@ public class CommentGetter {
 	}
 	
 	@SuppressWarnings("serial")
-	public static class FailedRequestException extends SAXException{}
+	public static class FailedRequestException extends SAXException{
+		
+		public FailedRequestException(String msg) {
+			super(msg);
+		}
+		
+	}
 	
 	@SuppressWarnings("serial")
 	public static class EndOfRequestReached extends SAXException{}

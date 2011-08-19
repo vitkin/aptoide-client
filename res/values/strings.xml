@@ -50,6 +50,16 @@
     <string name="whattodo">What to do?</string>
     <string name="likes">Likes: </string>
     <string name="dislikes">Dislikes: </string>
+    <string name="copyclip">Copy to clipboard</string>
+    <string name="qrcodeview">View QR-Code</string>
+    <string name="qrcodecomment">QR-Code comment</string>
+    <string name="qrcodeunavailable">QR-Code is unavailable</string>
+    <string name="commentlabel">Comment app...</string>
+    <string name="submit">Submit</string>
+    <string name="clear">Clear</string>
+    <string name="undoresponse">Undo response</string>
+    <string name="body">Body..</string>
+    <string name="subject">Subject...</string>
 </resources>
 
 <!--

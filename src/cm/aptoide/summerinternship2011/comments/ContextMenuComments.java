@@ -21,10 +21,12 @@ public class ContextMenuComments implements View.OnCreateContextMenuListener{
 	public ContextMenuComments(Context context) {
 		this.context = context;
 		Event.REPLY.setString(context.getString(R.string.reply));
+		Event.COPY_TO_CLIPBOARD.setString(context.getString(R.string.copyclip));
+		Event.GENERATE_QR_CODE.setString(context.getString(R.string.qrcodeview));
 	}
 	
 	public enum Event{
-		REPLY(0);
+		REPLY(0), COPY_TO_CLIPBOARD(1), GENERATE_QR_CODE(2);
 		private int id;
 		private String string;
 		

@@ -48,7 +48,7 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 		
 		author.setText(currentEntry.getUsername());
 		subject.setText(currentEntry.getSubject());
-		date.setText(Configs.timeStampFormat.format(currentEntry.getTimestamp()));
+		date.setText(Configs.TIME_STAMP_FORMAT.format(currentEntry.getTimestamp()));
 		content.setText(currentEntry.getText());
 		
 		return convertView;
