@@ -19,6 +19,8 @@ import android.widget.AdapterView.OnItemClickListener;
 
 
 public class TabUpdates extends BaseManagement implements OnItemClickListener{
+	
+	private static final int UPDATE_ALL = Menu.FIRST;
 
 	private ListView lv = null;
 
@@ -42,7 +44,9 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, 3, 3, R.string.menu_order)
+		menu.add(Menu.NONE,UPDATE_ALL,1,R.string.menu_update_all)
+		.setIcon(android.R.drawable.ic_menu_rotate);
+		menu.add(Menu.NONE, 4, 4, R.string.menu_order)
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -50,6 +54,9 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case UPDATE_ALL:
+			updateAll();
+			break;
 		case 3:
 			/*if(true){
 				lv.setAdapter(updateAdpt);
@@ -272,6 +279,16 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+	}
+	
+	public void updateAll(){
+		Log.d("Aptoide-TabUpdates", "Starting download of all possible updates");
+		
+		for(ApkNode node: apk_lst){
+			if(node.status == 2){
+				queueDownload(node.apkid, true);
+			}
+		}
 	}
 	
 }
