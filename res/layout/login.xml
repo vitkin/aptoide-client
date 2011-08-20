@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent"
+  android:layout_gravity="center_horizontal"
+  android:gravity="center"
+  android:padding="10dp"
+  >
+  
+  	<EditText
+		android:id="@+id/user"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textSize="18sp"
+		android:layout_span="2"
+		android:textColor="#696969"
+		android:text="@string/user"/>
+	
+	<EditText
+		android:id="@+id/pass"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:textSize="18sp"
+		android:layout_span="2"
+		android:textColor="#696969"
+		android:text="@string/pass"
+		android:password="true"/>
+	
+	<LinearLayout
+		  android:orientation="horizontal"
+		  android:layout_width="fill_parent"
+		  android:layout_height="fill_parent"
+		  android:layout_gravity="center_horizontal"
+		  android:gravity="center">
+	
+		<Button 
+			android:id="@+id/submitLogin"
+			android:layout_width="wrap_content"
+		  	android:layout_height="wrap_content"
+		  	android:text="@string/submit"
+			/>
+		
+		<Button 
+			android:id="@+id/clearLoginData"
+			android:layout_width="wrap_content"
+		  	android:layout_height="wrap_content"
+		  	android:text="@string/clear"
+			/>
+		
+		<Button 
+			android:id="@+id/passShowToogle"
+			android:layout_width="wrap_content"
+		  	android:layout_height="wrap_content"
+		  	android:text="@string/showpass"
+			/>
+		
+		
+		
+	</LinearLayout>
+  
+</LinearLayout>

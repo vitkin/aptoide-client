@@ -12,12 +12,12 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cm.aptoide.summerinternship2011.Login;
+import cm.aptoide.summerinternship2011.SetBlank;
 import cm.aptoide.summerinternship2011.Status;
 import cm.aptoide.summerinternship2011.comments.Comment;
 import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
-import cm.aptoide.summerinternship2011.comments.ContextMenuComments;
 import cm.aptoide.summerinternship2011.comments.LoadOnScrollCommentList;
-import cm.aptoide.summerinternship2011.comments.ContextMenuComments.Event;
 import cm.aptoide.summerinternship2011.multiversion.MultiversionSpinnerAdapter;
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 import cm.aptoide.summerinternship2011.taste.TasteGetter;
@@ -31,7 +31,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -41,13 +40,13 @@ import android.os.Message;
 import android.text.ClipboardManager;
 import android.text.Html;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -82,9 +81,7 @@ public class ApkInfo extends Activity{
 	//private Gallery galry = null;
 	
 	private String apk_name_str = null;
-	
 	private TextView noscreens = null;
-	
 	private List<ImageView> screens = null;
 	
 	
@@ -99,11 +96,12 @@ public class ApkInfo extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.apkinfo);
 		
+		Event.REPLY.setString(this.getString(R.string.reply));
+		Event.COPY_TO_CLIPBOARD.setString(this.getString(R.string.copyclip));
+		Event.GENERATE_QR_CODE.setString(this.getString(R.string.qrcodeview));
+		
 		ListView listView = (ListView) findViewById(R.id.listComments);
-		
 		listViewGlobal = listView;
-		
-		listView.setOnCreateContextMenuListener(new ContextMenuComments(this.getApplicationContext()));
 		
 		LayoutInflater inflater = this.getLayoutInflater();
 		final LinearLayout linearLayout = (LinearLayout)inflater.inflate(R.layout.headercomments,listView, false);
@@ -347,22 +345,6 @@ public class ApkInfo extends Activity{
 				((EditText)findViewById(R.id.comment)).setText("");
 			}
 		});
-		class SetBlank implements OnTouchListener{
-			private boolean alreadySetted;
-			public SetBlank(){
-				alreadySetted = false;
-			}
-
-			public boolean onTouch(View viewEdit, MotionEvent event) {
-				if(!alreadySetted){
-					((EditText)viewEdit).setText("");
-					((EditText)viewEdit).setTextColor(Color.BLACK);
-					alreadySetted = true;
-				}
-				//If return true it indicates that this action consumed the event and the result is that the edit text won't get selected
-				return false;
-			}
-		}
 		((EditText)findViewById(R.id.comment)).setOnTouchListener(new SetBlank());
 		((EditText)findViewById(R.id.subject)).setOnTouchListener(new SetBlank());
 		((Button)findViewById(R.id.undoReplyLabel)).setOnClickListener(new OnClickListener(){
@@ -381,6 +363,13 @@ public class ApkInfo extends Activity{
         		
 			}
 		});
+		((Button)findViewById(R.id.submitComment)).setOnClickListener(new OnClickListener(){
+			public void onClick(View arg) {
+				//if(getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("usernameLogin", null)==null)
+				new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET).show();
+			}
+		});
+		
 		
 		
 		
@@ -399,7 +388,97 @@ public class ApkInfo extends Activity{
 			dislikes.getLayoutParams().height=0;
 		}
 		
+		registerForContextMenu(listView);
+		
 	}
+	
+	public enum Event{
+		REPLY(0), COPY_TO_CLIPBOARD(1), GENERATE_QR_CODE(2);
+		private int id;
+		private String string;
+		
+		private Event(int id){
+			this.id = Menu.FIRST+id;
+			this.string=null;
+		}
+		public int getId() {
+			return id;
+		}
+		public String getString() {
+			return string;
+		}
+		public void setString(String string) {
+			this.string = string;
+		}
+		public static Event getEventFromId(int id){
+			for(Event event:values()){
+				if(event.getId()==id)
+					return event;
+			}
+			return null;
+		}
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
+		
+		if (((AdapterView.AdapterContextMenuInfo)menuInfo).id!=-1){
+			menu.setHeaderTitle(this.getString(R.string.whattodo));
+				for(Event item:Event.values())
+					menu.add(0, item.getId(), 0, item.getString());
+		}else{
+			super.onCreateContextMenu(menu, view, menuInfo);
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param item
+	 * @return If we handled the event or not. True in the first case.
+	 */
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		Event event = Event.getEventFromId(item.getItemId());
+		Comment getted = comments.get(((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position-1);
+		if(event!=null){
+			switch (event) {
+	        	case REPLY: 
+	        		replyTo = getted;
+	        		
+	        		TextView to = ((TextView)listViewGlobal.findViewById(R.id.replyTo));
+					to.setText("@"+getted.getUsername());
+					to.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+					to.setLayoutParams(to.getLayoutParams());
+	        		
+	        		Button undoReply = ((Button)listViewGlobal.findViewById(R.id.undoReplyLabel));
+	        		undoReply.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+	        		undoReply.setLayoutParams(undoReply.getLayoutParams());
+	        		return true;
+	        		
+	        	case COPY_TO_CLIPBOARD:
+	        		ClipboardManager clipManager = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+	        		clipManager.setText(getted.toString());
+	        		return true;
+	        	case GENERATE_QR_CODE:
+	        		Dialog dialog = new Dialog(this);
+	        		try {
+		        		dialog.setContentView(R.layout.qrviewer);
+		        		dialog.setOwnerActivity((Activity)this);
+	        			((ImageView)dialog.findViewById(R.id.qrImage)).setImageBitmap(getted.giveQrCode());
+	        			dialog.setTitle(getString(R.string.qrcodecomment));
+					} catch (IOException e) {
+						dialog.setTitle(getString(R.string.qrcodeunavailable));
+					}
+					dialog.show();
+					return true;
+	        	default : break;
+	        }
+		}
+		
+		return false;
+	}
+	
 	
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
@@ -452,52 +531,6 @@ public class ApkInfo extends Activity{
 			//galry.setAdapter(new GalAdpt(mctx));
 		}	
 		
-	}
-	
-	/**
-	 * 
-	 * @param item
-	 * @return If we handled the event or not. True in the first case.
-	 */
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		Event event = Event.getEventFromId(item.getItemId());
-		Comment getted = comments.get(((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position-1);
-		if(event!=null){
-			switch (event) {
-	        	case REPLY: 
-	        		replyTo = getted;
-	        		
-	        		TextView to = ((TextView)listViewGlobal.findViewById(R.id.replyTo));
-					to.setText("@"+getted.getUsername());
-					to.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
-					to.setLayoutParams(to.getLayoutParams());
-	        		
-	        		Button undoReply = ((Button)listViewGlobal.findViewById(R.id.undoReplyLabel));
-	        		undoReply.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
-	        		undoReply.setLayoutParams(undoReply.getLayoutParams());
-	        		return true;
-	        		
-	        	case COPY_TO_CLIPBOARD:
-	        		ClipboardManager clipManager = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-	        		clipManager.setText(getted.toString());
-	        		return true;
-	        	case GENERATE_QR_CODE:
-	        		Dialog dialog = new Dialog(this);
-	        		try {
-		        		dialog.setContentView(R.layout.qrviewer);
-		        		dialog.setOwnerActivity((Activity)this);
-	        			((ImageView)dialog.findViewById(R.id.qrImage)).setImageBitmap(getted.giveQrCode());
-	        			dialog.setTitle(getString(R.string.qrcodecomment));
-					} catch (IOException e) {
-						dialog.setTitle(getString(R.string.qrcodeunavailable));
-					}
-					dialog.show();
-	        		return true;
-	        	default : break;
-	        }
-		}
-		return false;
 	}
 	
 	@Override

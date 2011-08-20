@@ -171,7 +171,7 @@
 					<Button 
 						android:layout_width="fill_parent"
 						android:layout_height="0dip"
-						android:text="@string/undoresponse"
+						android:text="@string/undoreplay"
 						android:id="@+id/undoReplyLabel" />
 						
 				</TableRow>
@@ -211,7 +211,8 @@
 					<Button 
 						android:layout_width="fill_parent"
 						android:layout_height="wrap_content"
-						android:text="@string/submit" />
+						android:text="@string/submit"
+						android:id="@+id/submitComment" />
 						
 					<Button 
 						android:id="@+id/clearReply"
@@ -222,7 +223,6 @@
 				</TableRow>
 					
 			</TableLayout>
-			
 			
 			<TextView
            		android:textAppearance="?android:textAppearanceLarge"
@@ -237,8 +237,5 @@
            		android:layout_height="wrap_content"
            		android:text="@string/comments"
            		android:id="@+id/commentsLabel"/>
-     		
-     		
-
      		
 </LinearLayout>
