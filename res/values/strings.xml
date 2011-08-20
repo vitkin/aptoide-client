@@ -57,9 +57,14 @@
     <string name="commentlabel">Comment app...</string>
     <string name="submit">Submit</string>
     <string name="clear">Clear</string>
-    <string name="undoresponse">Undo response</string>
+    <string name="undoreplay">Undo replay</string>
     <string name="body">Body..</string>
     <string name="subject">Subject...</string>
+    <string name="user">User name...</string>
+    <string name="pass">Password...</string>
+    <string name="showpass">Show password</string>
+    <string name="hidepass">Hide password</string>
+    <string name="failedcredentials">Failed to save login credentials.</string>
 </resources>
 
 <!--

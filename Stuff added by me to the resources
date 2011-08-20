@@ -2,6 +2,8 @@ layout/textviewfocused
 layout/multiversionspinneritem
 layout/commentlistviewitem
 layout/commentslist
+layout/qrviewer
+
 string/multi_ver_prompt
 string/commentsproblem
 string/version
@@ -18,12 +20,15 @@ string/copyclip
 string/qrcodecomment
 string/qrcodeunavailable
 string/commentlabel
-
 string/submit
 string/clear
-string/undoresponse
-
+string/undoreply
 string/body
 string/subject
+string/user
+string/pass
+string/showpass
+string/hidepass
+string/failedcredentials
 
 drawable/list_comments_divider
