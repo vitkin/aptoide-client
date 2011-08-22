@@ -107,7 +107,16 @@ public class NetworkApis {
 		
 	}
 	
-	public static InputStream getInputStream(Context mctx, String url) throws ProtocolException, IOException{
+	/**
+	 * @author rafael
+	 * 
+	 * @param mctx
+	 * @param url
+	 * @return
+	 * @throws ProtocolException
+	 * @throws IOException
+	 */
+	public static InputStream getInputStream(Context mctx, String url) throws IOException{
 		
 		URL urlObj = new URL(url);
 		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection(); //Careful with UnknownHostException. Throws MalformedURLException, IOException
@@ -127,6 +136,33 @@ public class NetworkApis {
 	}
 	
 	
+	/**
+	 * @author rafael
+	 * 
+	 * @param mctx
+	 * @param url
+	 * @param args
+	 * @return
+	 * @throws IOException
+	 */
+	public static HttpURLConnection send(Context mctx, String url, String... args) throws IOException {
+		
+		URL urlObj = new URL(String.format(url,(Object[])args));
+		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection(); //Careful with UnknownHostException. Throws MalformedURLException, IOException
+		
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Accept", "application/xml");
+		conn.setRequestProperty("Content-Type", "text/xml; charset=UTF-8");
+		
+		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		String myid = sPref.getString("myId", "NoInfo");
+		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+		conn.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
+		
+		return conn;
+		
+		
+	}
 	
 	
 	public static HttpResponse getHttpResponse(String url, String usr, String pwd, Context mctx){
