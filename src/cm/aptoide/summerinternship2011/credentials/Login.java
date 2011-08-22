@@ -1,20 +1,20 @@
 /**
  * 
  */
-package cm.aptoide.summerinternship2011;
+package cm.aptoide.summerinternship2011.credentials;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import cm.aptoide.pt.R;
+import cm.aptoide.summerinternship2011.SetBlank;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -35,6 +35,7 @@ public class Login extends Dialog{
 		super(context);
 		sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
+//		Log.d("Dialog", "Constructor dialog");
 	}
 
 	@Override
@@ -69,8 +70,8 @@ public class Login extends Dialog{
 				try {
 					MessageDigest md = MessageDigest.getInstance("SHA1");
 					md.update(editText.getText().toString().getBytes()); 
-					prefEdit.putString("usernameLogin", ((EditText)Login.this.findViewById(R.id.user)).getText().toString());
 					prefEdit.putString("passwordLogin", new String(md.digest()));
+					prefEdit.putString("usernameLogin", ((EditText)Login.this.findViewById(R.id.user)).getText().toString());
 					prefEdit.commit();
 				} catch (NoSuchAlgorithmException e) {
 					Toast.makeText(getContext(),  Login.this.getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();

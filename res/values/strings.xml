@@ -64,7 +64,8 @@
     <string name="pass">Password...</string>
     <string name="showpass">Show password</string>
     <string name="hidepass">Hide password</string>
-    <string name="failedcredentials">Failed to save login credentials.</string>
+    <string name="failedcredentials">Failed to login the given credentials.</string>
+    <string name="unabletoexecute">Unable to execute.</string>
 </resources>
 
 <!--

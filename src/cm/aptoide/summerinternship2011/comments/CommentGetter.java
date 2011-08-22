@@ -26,6 +26,7 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.Configs;
+import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.Status;
 
 import android.content.Context;
@@ -62,15 +63,13 @@ import android.content.Context;
  */
 public class CommentGetter {
 	
-	private final static String url = "http://dev.bazaarandroid.com/webservices/listApkComments/%1$s/%2$s/%3$s/xml";
-	
 	private StringBuilder status;
 	private ArrayList<Comment> versions;
 	private String urlReal;
 	
 	public CommentGetter( String repo, String apkid, String apkversion) {
 		
-		urlReal = String.format(url,repo, apkid, apkversion);
+		urlReal = String.format(Configs.COMMENTS_URL,repo, apkid, apkversion);
     	
 	}
 	
@@ -204,15 +203,6 @@ public class CommentGetter {
 				  }
 			  
 		  }
-		
-	}
-	
-	@SuppressWarnings("serial")
-	public static class FailedRequestException extends SAXException{
-		
-		public FailedRequestException(String msg) {
-			super(msg);
-		}
 		
 	}
 	

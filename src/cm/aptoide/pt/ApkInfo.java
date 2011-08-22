@@ -12,12 +12,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cm.aptoide.summerinternship2011.Login;
+import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.SetBlank;
 import cm.aptoide.summerinternship2011.Status;
 import cm.aptoide.summerinternship2011.comments.Comment;
 import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
 import cm.aptoide.summerinternship2011.comments.LoadOnScrollCommentList;
+import cm.aptoide.summerinternship2011.credentials.Login;
 import cm.aptoide.summerinternship2011.multiversion.MultiversionSpinnerAdapter;
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 import cm.aptoide.summerinternship2011.taste.TasteGetter;
@@ -30,6 +31,7 @@ import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -218,7 +220,7 @@ public class ApkInfo extends Activity{
 		String desc_parsed = Html.fromHtml(apk_descr).toString();
 		apk_about.setText(desc_parsed);
 		
-		TextView apk_repo = (TextView)findViewById(R.id.app_repo);
+		final TextView apk_repo = (TextView)findViewById(R.id.app_repo);
 		apk_repo.setText(apk_repo_str);
 		
 		TextView apk_version = (TextView)findViewById(R.id.app_ver);
@@ -333,6 +335,7 @@ public class ApkInfo extends Activity{
 //		comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
 //		if(comments.size()==0)
 //			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
+		
 		listView.addHeaderView(linearLayout, null, false);
 		comments = new ArrayList<Comment>();
 		CommentsAdapter<Comment> arrayAdapter 
@@ -365,8 +368,19 @@ public class ApkInfo extends Activity{
 		});
 		((Button)findViewById(R.id.submitComment)).setOnClickListener(new OnClickListener(){
 			public void onClick(View arg) {
-				//if(getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("usernameLogin", null)==null)
-				new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET).show();
+				SharedPreferences sharePreferences = getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+				
+					if(sharePreferences.getString("usernameLogin", null)==null){				
+						new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET).show();
+					}
+					
+					try {
+						Comment.sendComment(ApkInfo.this, apk_repo_str, apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), ((EditText)findViewById(R.id.comment)).getText().toString(), sharePreferences.getString("usernameLogin", null), sharePreferences.getString("passwordLogin", null));
+					} catch (FailedRequestException e) {
+						Toast.makeText(ApkInfo.this, getString(R.string.failedcredentials), Toast.LENGTH_LONG);
+					} catch (IOException e) {
+						Toast.makeText(ApkInfo.this, getString(R.string.unabletoexecute), Toast.LENGTH_LONG);
+					}
 			}
 		});
 		

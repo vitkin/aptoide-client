@@ -19,6 +19,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
 import cm.aptoide.pt.NetworkApis;
+import cm.aptoide.summerinternship2011.Configs;
 import cm.aptoide.summerinternship2011.Status;
 
 /**
@@ -53,8 +54,6 @@ import cm.aptoide.summerinternship2011.Status;
  * </response>
  */
 public class TasteGetter {
-private final static String url = "http://dev.bazaarandroid.com/webservices/listApkLikes/%1$s/%2$s/%3$s/xml";
-	
 	
 	private String urlReal;
 	
@@ -66,7 +65,7 @@ private final static String url = "http://dev.bazaarandroid.com/webservices/list
 	private final static BigInteger UNIT = new BigInteger("1");
 	
 	public TasteGetter( String repo, String apkid, String apkversion) {
-		urlReal = String.format(url,repo, apkid, apkversion);
+		urlReal = String.format(Configs.TASTE_URL,repo, apkid, apkversion);
 	}
 	
 	public void parse(Context context, String username) throws MalformedURLException, IOException, ParserConfigurationException, SAXException, FactoryConfigurationError, ProtocolException {
