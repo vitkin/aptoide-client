@@ -877,7 +877,7 @@ public class BaseManagement extends Activity {
 	}
 
 	@Override
-		public void onConfigurationChanged(Configuration newConfig) {
-			super.onConfigurationChanged(newConfig);
-		}	
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}	
 }

@@ -4,13 +4,13 @@
 package cm.aptoide.summerinternship2011.comments;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
@@ -18,13 +18,11 @@ import java.util.Date;
 import java.util.Scanner;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.pt.R;
-import cm.aptoide.summerinternship2011.Configs;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.Mode;
 
@@ -119,7 +117,6 @@ public class Comment implements Comparable<Comment>{
 		strBuilder.append("&"+URLEncoder.encode("chs", "UTF-8") + "=" + URLEncoder.encode("300x300", "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("chl", "UTF-8") + "=" + URLEncoder.encode(this.toString(), "UTF-8"));
 		
-		
 	    URLConnection conn = new URL("https://chart.googleapis.com/chart").openConnection();  
 	    conn.setDoOutput(true);
 	    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -155,9 +152,18 @@ public class Comment implements Comparable<Comment>{
 	 * @throws IOException 
 	 * @throws FailedRequestException 
 	 */
-	public static void sendComment(Context ctx, String repo, String apkid, String version, String text, String user, String pass) throws IOException, FailedRequestException{
+	public static void sendComment(
+			Context ctx, 
+			String repo,
+			String apkid, 
+			String version,
+			String subject,
+			String text, 
+			String user, 
+			String pass,
+			BigInteger reply) throws IOException, FailedRequestException{
 		
-		HttpURLConnection urlConnection = NetworkApis.send(ctx, Configs.COMMENTS_URL ,repo, apkid, version);
+		HttpURLConnection urlConnection = NetworkApis.send(ctx, ConfigsAndUtils.COMMENTS_URL_ADD,repo, apkid, version);
 		
 		//Variable definition
 		StringBuilder strBuilder = new StringBuilder("");
@@ -167,29 +173,40 @@ public class Comment implements Comparable<Comment>{
 		strBuilder.append("&"+URLEncoder.encode("apkid", "UTF-8") + "=" + URLEncoder.encode(apkid, "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("apkversion", "UTF-8") + "=" + URLEncoder.encode(version, "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("text", "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8"));
+		if(reply!=null)
+			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(reply.toString(), "UTF-8"));
+		if(subject!=null && subject.length()!=0)
+			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode(Mode.XML.toString(), "UTF-8"));
-		
-		//Add variables to request
+	    
+		//
 		urlConnection.setDoOutput(true);
+		urlConnection.setDoInput(true);
+		
+		//
 	    OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
 	    wr.write(strBuilder.toString());
 	    wr.flush();
-	    
-	    //Get response stream
-	    urlConnection.connect();  
-	    InputStream res = urlConnection.getInputStream();  
-	    Scanner sbres = new Scanner(new BufferedInputStream(res));
-	    
-		if(!sbres.hasNext("<status>OK</status>")){
-			throw new FailedRequestException("The server didn't reply as expected.");
+
+	    // Get the response
+	    BufferedReader brd = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+		Scanner sbrd = new Scanner(brd);
+		try{
+			if(!sbrd.hasNext("<status>OK</status>")){
+				throw new FailedRequestException("The server didn't reply as expected.");
+			}
+		}finally{
+			wr.close();
+			brd.close();
+			sbrd.close();
 		}
-	    
+		
 	}
 	
 
 	@Override
 	public String toString() {
-		return getSubject()!=null?getSubject():""+Configs.LINE_SEPARATOR+getText()+Configs.LINE_SEPARATOR+getUsername()+" at "+Configs.TIME_STAMP_FORMAT.format(getTimestamp());
+		return getSubject()!=null?getSubject():""+ConfigsAndUtils.LINE_SEPARATOR+getText()+ConfigsAndUtils.LINE_SEPARATOR+getUsername()+" at "+ConfigsAndUtils.TIME_STAMP_FORMAT.format(getTimestamp());
 	}
 	
 }

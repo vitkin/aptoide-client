@@ -6,7 +6,7 @@ package cm.aptoide.summerinternship2011.comments;
 import java.util.List;
 
 import cm.aptoide.pt.R;
-import cm.aptoide.summerinternship2011.Configs;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 
 import android.app.Activity;
 import android.view.LayoutInflater;
@@ -48,7 +48,7 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 		
 		author.setText(currentEntry.getUsername());
 		subject.setText(currentEntry.getSubject());
-		date.setText(Configs.TIME_STAMP_FORMAT.format(currentEntry.getTimestamp()));
+		date.setText(ConfigsAndUtils.TIME_STAMP_FORMAT.format(currentEntry.getTimestamp()));
 		content.setText(currentEntry.getText());
 		
 		return convertView;

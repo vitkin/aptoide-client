@@ -85,6 +85,35 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		Log.d("Aptoide","The preference is: " + sPrefFull.getString("icdown", "error"));
 		
 		lst_pref_icns = (ListPreference) findPreference("icdown");
+		Preference clear_credentials = (Preference)findPreference("clearcredentials");
+
+		
+		clear_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			
+			public boolean onPreferenceClick(Preference preference) {
+
+				prefEditFull.remove("usernameLogin");
+				prefEditFull.remove("passwordLogin");
+				prefEditFull.commit();
+				
+				final AlertDialog alrtClear = new AlertDialog.Builder(mctx).create();
+				alrtClear.setTitle(mctx.getString(R.string.credentialscleared));
+				alrtClear.setMessage(mctx.getString(R.string.credentialscleared_des));
+				alrtClear.setButton("Ok", new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						alrtClear.dismiss();
+					}
+				});
+				alrtClear.show();
+				
+				
+				
+				return true;
+				
+			}
+		});
+		
+		
 		
 		clear_cache = (Preference)findPreference("clearcache");
 		clear_cache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -167,8 +196,6 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
 	}
-
-	
 	
 	@Override
 	protected void onResume() {
@@ -177,16 +204,12 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		
 	}
 	
-	 
-	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,	String key) {
 		if(key.equalsIgnoreCase("icdown")){
 			updateSum();
 		}
 	}
-
-
-
+	
 	private void updateSum(){
 		String pref_str = sPref.getString("icdown", "error");
 		String[] talk = getResources().getStringArray(R.array.dwnif);

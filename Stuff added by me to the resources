@@ -31,5 +31,13 @@ string/showpass
 string/hidepass
 string/failedcredentials
 string/unabletoexecute
+string/credentialssettings
+string/clearcredentials
+string/clearcredentials_summary
+string/setcredentials
+string/setcredentials_summary
+string/credentialscleared
+string/credentialscleared_des
+string/commentadded
 
 drawable/list_comments_divider
