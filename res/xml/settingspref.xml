@@ -26,5 +26,21 @@
  
   </PreferenceCategory>
   
+  <PreferenceCategory
+        android:title="@string/credentialssettings">
+	
+	 <Preference
+     	android:title="@string/clearcredentials"
+        android:summary="@string/clearcredentials_summary"
+        android:key="clearcredentials" />
+          		
+  	 <Preference
+     	android:title="@string/setcredentials"
+        android:summary="@string/setcredentials_summary"
+        android:key="setcredentials" />
+
+        
+  </PreferenceCategory>
+  
   
 </PreferenceScreen>

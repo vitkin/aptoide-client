@@ -66,6 +66,14 @@
     <string name="hidepass">Hide password</string>
     <string name="failedcredentials">Failed to login the given credentials.</string>
     <string name="unabletoexecute">Unable to execute.</string>
+    <string name="credentialssettings">Credentials</string>
+    <string name="clearcredentials">Clear credentials</string>
+    <string name="clearcredentials_summary">Will unset your current login</string>
+    <string name="setcredentials">Set credentials</string>
+    <string name="setcredentials_summary">Will override your current login</string>
+    <string name="credentialscleared">Credentials cleared</string>
+    <string name="credentialscleared_des">Your credentials have been unsetted</string>
+    <string name="commentadded">Your comment as been successfully submited</string>
 </resources>
 
 <!--

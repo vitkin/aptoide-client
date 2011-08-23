@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import cm.aptoide.pt.R;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.SetBlank;
 import android.app.Dialog;
 import android.content.Context;
@@ -27,15 +28,17 @@ public class Login extends Dialog{
 	
 	private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
+	public static Boolean showing; 
 	
 	public static enum InvoqueNature{CREDENTIALS_FAILED, NO_CREDENTIALS_SET}
 	
 	
 	public Login(Context context, InvoqueNature nature) {
 		super(context);
-		sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		sPref = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
-//		Log.d("Dialog", "Constructor dialog");
+		showing = false;
+		Log.d("Dialog", "Constructor dialog");
 	}
 
 	@Override
@@ -43,9 +46,9 @@ public class Login extends Dialog{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 		this.setTitle("Login");
-		((EditText)findViewById(R.id.user)).setOnTouchListener(new SetBlank());
+		((EditText)findViewById(R.id.user)).setOnFocusChangeListener(new SetBlank());
 		final EditText editText =((EditText)findViewById(R.id.pass));
-		editText.setOnTouchListener(new SetBlank());
+		editText.setOnFocusChangeListener(new SetBlank());
 		((Button)findViewById(R.id.clearLoginData)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {
 				((EditText)findViewById(R.id.user)).setText("");
@@ -68,20 +71,18 @@ public class Login extends Dialog{
 			public void onClick(View arg) {
 				
 				try {
-					MessageDigest md = MessageDigest.getInstance("SHA1");
-					md.update(editText.getText().toString().getBytes()); 
-					prefEdit.putString("passwordLogin", new String(md.digest()));
+					MessageDigest md = MessageDigest.getInstance("SHA");
+					md.update(editText.getText().toString().getBytes());
+					prefEdit.putString("passwordLogin", ConfigsAndUtils.byteArrayToHexString(md.digest()));
 					prefEdit.putString("usernameLogin", ((EditText)Login.this.findViewById(R.id.user)).getText().toString());
 					prefEdit.commit();
 				} catch (NoSuchAlgorithmException e) {
 					Toast.makeText(getContext(),  Login.this.getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
 				}
-		      	
 		      	Login.this.dismiss();
-				
 			}
 		});
 		
 	}
-	
+
 }

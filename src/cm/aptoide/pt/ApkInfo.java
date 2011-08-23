@@ -30,8 +30,10 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -63,7 +65,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class ApkInfo extends Activity{
+public class ApkInfo extends Activity implements OnDismissListener{
 
 	private final static String WS_img = "http://www.bazaarandroid.com/webservices/listApkScreens/";
 	
@@ -89,9 +91,12 @@ public class ApkInfo extends Activity{
 	
 	private Spinner spinnerMulti;
 	private ArrayList<Comment> comments;
-	@SuppressWarnings("unused")
 	private Comment replyTo;
 	private ListView listViewGlobal;
+	
+	private String apk_repo_str;
+	private String apk_ver_str;
+	private String apk_id;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,14 +128,14 @@ public class ApkInfo extends Activity{
 		
 		apkinfo = getIntent();
 		
-		final String apk_id = apkinfo.getStringExtra("apk_id");
+		apk_id = apkinfo.getStringExtra("apk_id");
 		final int type = apkinfo.getIntExtra("type", 0);
 		
 		String icon_path = apkinfo.getStringExtra("icon");
 		apk_name_str = apkinfo.getStringExtra("name");
 		String apk_descr = apkinfo.getStringExtra("about");
-		final String apk_repo_str = apkinfo.getStringExtra("server");
-		final String apk_ver_str = apkinfo.getStringExtra("version");
+		apk_repo_str = apkinfo.getStringExtra("server");
+		apk_ver_str = apkinfo.getStringExtra("version");
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
 		String apk_size_str = apkinfo.getStringExtra("size");
@@ -276,10 +281,7 @@ public class ApkInfo extends Activity{
 					
 				}catch (Exception e ){ }
 				finally{
-					
-					
 					updateScreenshots.sendEmptyMessage(0);
-					
 				}
 			}
 		}.start();
@@ -335,7 +337,6 @@ public class ApkInfo extends Activity{
 //		comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
 //		if(comments.size()==0)
 //			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
-		
 		listView.addHeaderView(linearLayout, null, false);
 		comments = new ArrayList<Comment>();
 		CommentsAdapter<Comment> arrayAdapter 
@@ -348,11 +349,33 @@ public class ApkInfo extends Activity{
 				((EditText)findViewById(R.id.comment)).setText("");
 			}
 		});
-		((EditText)findViewById(R.id.comment)).setOnTouchListener(new SetBlank());
-		((EditText)findViewById(R.id.subject)).setOnTouchListener(new SetBlank());
+		final Button submit = ((Button)findViewById(R.id.submitComment));
+		submit.setOnClickListener(new OnClickListener(){
+			public void onClick(View arg) {
+					
+				SharedPreferences sharePreferences = getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+				if(sharePreferences.getString("usernameLogin", null)==null){				
+					Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET);
+					loginComments.setOnDismissListener(ApkInfo.this);
+					loginComments.show();
+				}else{
+					ApkInfo.this.onDismiss(null);
+				}
+					
+			}
+		});
+		class SetBlankSubmitComment extends SetBlank{
+			public SetBlankSubmitComment() { super(); }
+			public void onFocusChange(View viewEdit, boolean hasFocus) {
+				super.onFocusChange(viewEdit, hasFocus);
+				if(!submit.isEnabled())
+					submit.setEnabled(true);
+			}
+		}
+		((EditText)findViewById(R.id.comment)).setOnFocusChangeListener(new SetBlankSubmitComment());
+		((EditText)findViewById(R.id.subject)).setOnFocusChangeListener(new SetBlank());
 		((Button)findViewById(R.id.undoReplyLabel)).setOnClickListener(new OnClickListener(){
 			public void onClick(View view) {
-				
 				replyTo = null;
 				
 				TextView to = ((TextView)listViewGlobal.findViewById(R.id.replyTo));
@@ -363,26 +386,9 @@ public class ApkInfo extends Activity{
         		Button undo =((Button)listViewGlobal.findViewById(R.id.undoReplyLabel));
         		undo.getLayoutParams().height = 0;
         		undo.setLayoutParams(undo.getLayoutParams());
-        		
 			}
 		});
-		((Button)findViewById(R.id.submitComment)).setOnClickListener(new OnClickListener(){
-			public void onClick(View arg) {
-				SharedPreferences sharePreferences = getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-				
-					if(sharePreferences.getString("usernameLogin", null)==null){				
-						new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET).show();
-					}
-					
-					try {
-						Comment.sendComment(ApkInfo.this, apk_repo_str, apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), ((EditText)findViewById(R.id.comment)).getText().toString(), sharePreferences.getString("usernameLogin", null), sharePreferences.getString("passwordLogin", null));
-					} catch (FailedRequestException e) {
-						Toast.makeText(ApkInfo.this, getString(R.string.failedcredentials), Toast.LENGTH_LONG);
-					} catch (IOException e) {
-						Toast.makeText(ApkInfo.this, getString(R.string.unabletoexecute), Toast.LENGTH_LONG);
-					}
-			}
-		});
+		
 		
 		
 		
@@ -405,6 +411,10 @@ public class ApkInfo extends Activity{
 		registerForContextMenu(listView);
 		
 	}
+	
+	
+	
+	
 	
 	public enum Event{
 		REPLY(0), COPY_TO_CLIPBOARD(1), GENERATE_QR_CODE(2);
@@ -494,6 +504,43 @@ public class ApkInfo extends Activity{
 	}
 	
 	
+	public void onDismiss(DialogInterface dialog) {
+		EditText subject = ((EditText)findViewById(R.id.subject));
+		
+		SharedPreferences sharedPreferences = getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		try {
+			//Comment.sendComment(this, apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), ((EditText)findViewById(R.id.comment)).getText().toString(), sharedPreferences.getString("usernameLogin", null), sharedPreferences.getString("passwordLogin", null));
+			Comment.sendComment(this, 
+								"market", 
+								"cm.aptoide.pt", 
+								"2.0.2", 
+								((SetBlank)subject.getOnFocusChangeListener()).getAlreadySetted()?subject.getText().toString():null,
+								((EditText)findViewById(R.id.comment)).getText().toString(), 
+								sharedPreferences.getString("usernameLogin", null), 
+								sharedPreferences.getString("passwordLogin", null),
+								replyTo!=null?replyTo.getId():null);
+			Toast.makeText(this, getString(R.string.commentadded), Toast.LENGTH_LONG);
+		} catch (FailedRequestException e) {
+			Toast.makeText(this, getString(R.string.failedcredentials), Toast.LENGTH_LONG);
+		} catch (IOException e) {
+			Toast.makeText(this, getString(R.string.unabletoexecute), Toast.LENGTH_LONG);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
 		final Dialog dialog = new Dialog(mctx);
@@ -558,5 +605,7 @@ public class ApkInfo extends Activity{
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}
+	
+	
 
 }

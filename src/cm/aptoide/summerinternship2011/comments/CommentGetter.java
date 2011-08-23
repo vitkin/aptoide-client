@@ -25,7 +25,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.summerinternship2011.Configs;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.Status;
 
@@ -69,7 +69,7 @@ public class CommentGetter {
 	
 	public CommentGetter( String repo, String apkid, String apkversion) {
 		
-		urlReal = String.format(Configs.COMMENTS_URL,repo, apkid, apkversion);
+		urlReal = String.format(ConfigsAndUtils.COMMENTS_URL_LIST,repo, apkid, apkversion);
     	
 	}
 	
@@ -77,8 +77,8 @@ public class CommentGetter {
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
 		InputStream stream = NetworkApis.getInputStream(context, urlReal);
-		this.status= new StringBuilder("");
-    	this.versions= new ArrayList<Comment>();
+		this.status = new StringBuilder("");
+    	this.versions = new ArrayList<Comment>();
 		sp.parse(new InputSource(new BufferedInputStream(stream)), new VersionContentHandler(status, versions, requestSize, startFrom));
 	}
 	
@@ -154,11 +154,9 @@ public class CommentGetter {
 			 	
 				 CommentElement elem = CommentElement.valueOfToUpper(name);
 				 if(elem!=null){  
-					 if(elem.equals(CommentElement.ENTRY) && ((started && !id_tmp.equals(startFrom))||startFrom==null) ){
+					 if(elem.equals(CommentElement.ENTRY) && started && (startFrom==null || !id_tmp.equals(startFrom)) ){
 						 comments.add(new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp, timestamp_tmp));
-						 if(startFrom!=null && comments.size()==requestedSize){
-							 throw new EndOfRequestReached();
-						 }
+						 if(comments.size()==requestedSize) throw new EndOfRequestReached();
 					 }
 					 commentDataIndicator = null;
 				 }
@@ -180,9 +178,11 @@ public class CommentGetter {
 					  		break;
 						
 					 	case ID: 
-					 		id_tmp = new BigInteger(read); 
-					 		if(startFrom!=null && id_tmp.equals(startFrom))
+					 		id_tmp = new BigInteger(read);
+					 		
+					 		if(!started && (startFrom==null||id_tmp.equals(startFrom))){
 					 			started=true;
+					 		}
 					 		break;
 					  	case USERNAME: username_tmp = read; break;
 					  	case ANSWERTO: answerto_tmp = new BigInteger(read); break;
@@ -191,7 +191,7 @@ public class CommentGetter {
 					  	case TIMESTAMP: 
 					  		
 					  		try {
-					  			timestamp_tmp = Configs.TIME_STAMP_FORMAT.parse(read);
+					  			timestamp_tmp = ConfigsAndUtils.TIME_STAMP_FORMAT.parse(read);
 					  		} catch (ParseException e) {
 					  			throw new FailedRequestException("Parse exception while parsing date.");
 					  		}

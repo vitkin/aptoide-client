@@ -19,7 +19,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
 import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.summerinternship2011.Configs;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
+import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.Status;
 
 /**
@@ -65,7 +66,7 @@ public class TasteGetter {
 	private final static BigInteger UNIT = new BigInteger("1");
 	
 	public TasteGetter( String repo, String apkid, String apkversion) {
-		urlReal = String.format(Configs.TASTE_URL,repo, apkid, apkversion);
+		urlReal = String.format(ConfigsAndUtils.TASTE_URL_LIST,repo, apkid, apkversion);
 	}
 	
 	public void parse(Context context, String username) throws MalformedURLException, IOException, ParserConfigurationException, SAXException, FactoryConfigurationError, ProtocolException {
@@ -180,7 +181,7 @@ public class TasteGetter {
 					 case STATUS: 
 						 status = Status.valueOfToUpper(read); 
 					  	 if(status==null || status.equals(Status.FAILED))
-					  		throw new FailedRequestException();
+					  		throw new FailedRequestException("The retrived information about the taste was not as expected.");
 						 break;
 					 case USERNAME: 
 						 if(username!= null && read.equals(username)){
@@ -208,7 +209,5 @@ public class TasteGetter {
 		  
 	}
 	
-	@SuppressWarnings("serial")
-	public static class FailedRequestException extends SAXException{}
 	
 }
