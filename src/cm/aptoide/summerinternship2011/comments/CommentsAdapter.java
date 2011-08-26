@@ -3,6 +3,7 @@
  */
 package cm.aptoide.summerinternship2011.comments;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cm.aptoide.pt.R;
@@ -67,7 +68,32 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 		return -1;
 	}
 	
+//	public void addAtBegin(T item){
+//		ArrayList<T> itens = new ArrayList<T>();
+//		itens.add(item);
+//		int i = 0;
+//		while(getCount()!=0){
+//			T obj = getItem(i++);
+//			itens.add(obj);
+//			this.remove(obj);
+//		}
+//		i = 0;
+//		while(i!=itens.size()){
+//			this.add(itens.get(i++));
+//		}
+//	}
 
+	public ArrayList<T> removeAll(){
+		ArrayList<T> itens = new ArrayList<T>();
+		int i = getCount();
+		while(getCount()!=0){
+			T obj = getItem((i--) -1);
+			itens.add(obj);
+			this.remove(obj);
+		}
+		return itens;
+	}
+	
 	
 //	/**
 //	 * @see android.widget.BaseAdapter#isEnabled(int)

@@ -82,10 +82,13 @@ public class ApkInfo extends Activity{
 	
 	private Spinner spinnerMulti;
 	private ArrayList<Comment> comments;
-	
+	private CommentsAdapter<Comment> commentAdapter;
+	private LoadOnScrollCommentList loadOnScrollCommentList;
 	private String apk_repo_str;
 	private String apk_ver_str;
 	private String apk_id;
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -326,13 +329,14 @@ public class ApkInfo extends Activity{
 		listView.addHeaderView(linearLayout, null, false);
 		comments = new ArrayList<Comment>();
 		//apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "") 
-		CommentsAdapter<Comment> arrayAdapter 
+		commentAdapter 
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
-		listView.setAdapter(arrayAdapter);
-		listView.setOnScrollListener(new LoadOnScrollCommentList(this, arrayAdapter, "market", "cm.aptoide.pt", "2.0.2"));
+		listView.setAdapter(commentAdapter);
+		loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, "market", "cm.aptoide.pt", "2.0.2");
+		listView.setOnScrollListener(loadOnScrollCommentList);
 		listView.findViewById(R.id.commentThis).setOnClickListener(new OnClickListener(){
 			public void onClick(View view) {
-				Dialog commentDialog = new AddCommentDialog(ApkInfo.this, null, "market", "cm.aptoide.pt", "2.0.2");
+				Dialog commentDialog = new AddCommentDialog(ApkInfo.this, commentAdapter, loadOnScrollCommentList, null, "market", "cm.aptoide.pt", "2.0.2");
 				commentDialog.show();
 			}
 		});
@@ -404,7 +408,7 @@ public class ApkInfo extends Activity{
 			switch (event) {
 	        	case REPLY: 
 	        		//Open reply comment
-	        		Dialog commentDialog = new AddCommentDialog(ApkInfo.this, getted, "market", "cm.aptoide.pt", "2.0.2");
+	        		Dialog commentDialog = new AddCommentDialog(ApkInfo.this, commentAdapter, loadOnScrollCommentList, getted, "market", "cm.aptoide.pt", "2.0.2");
 					commentDialog.show();
 	        		return true;
 	        	case COPY_TO_CLIPBOARD:

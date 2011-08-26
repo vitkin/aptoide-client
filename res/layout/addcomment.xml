@@ -4,6 +4,8 @@
  	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content"
 	android:layout_gravity="center"
+	android:paddingLeft="5dip"
+	android:paddingRight="5dip"
 	android:stretchColumns="0"> 
 		
 		<TableRow>
@@ -14,15 +16,17 @@
 		</TableRow>
 		
 		<TableRow>
-			<TextView android:id="@+id/subject"
-					android:layout_width="fill_parent"
+			
+			<TextView 
+					android:id="@+id/inresponseto"
+					android:text="@string/inresponseto"
 					android:layout_height="0px"
+					android:textColor="@android:color/white"
+					android:layout_width="fill_parent"
 					android:textSize="18sp"
 					android:layout_span="2"
-					android:textColor="#696969"
-					android:text="@string/inresponseto" />
+					/>
 		</TableRow>
-		
  		<TableRow>
  			
 	   		<EditText

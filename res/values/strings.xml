@@ -72,10 +72,11 @@
     <string name="credentialscleared_des">Your credentials have been unsetted</string>
     <string name="commentadded">Your comment as been successfully submited</string>
     <string name="enterbody">Enter your review on the body section</string>
-    <string name="inresponseto">In response to</string>
+    <string name="inresponseto">\@</string>
     <string name="usernotdef">User not defined</string>
     <string name="passwordnotdef">Password not defined</string>
     <string name="loading">Loading...</string>
+    <string name="override_credentials"></string>
 </resources>
 
 <!--
