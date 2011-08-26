@@ -68,32 +68,18 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 		return -1;
 	}
 	
-//	public void addAtBegin(T item){
-//		ArrayList<T> itens = new ArrayList<T>();
-//		itens.add(item);
-//		int i = 0;
-//		while(getCount()!=0){
-//			T obj = getItem(i++);
-//			itens.add(obj);
-//			this.remove(obj);
-//		}
-//		i = 0;
-//		while(i!=itens.size()){
-//			this.add(itens.get(i++));
-//		}
-//	}
-
-	public ArrayList<T> removeAll(){
-		ArrayList<T> itens = new ArrayList<T>();
+	public void addAtBegin(ArrayList<T> itens){
 		int i = getCount();
 		while(getCount()!=0){
-			T obj = getItem((i--) -1);
+			T obj = getItem(--i);
 			itens.add(obj);
 			this.remove(obj);
 		}
-		return itens;
+		i = 0;
+		while(i!=itens.size()){
+			this.add(itens.get(i++));
+		}
 	}
-	
 	
 //	/**
 //	 * @see android.widget.BaseAdapter#isEnabled(int)

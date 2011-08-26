@@ -196,9 +196,9 @@ public class TasteGetter {
 					 case USERNAME: 
 						 if(username!= null && read.equals(username)){
 							 if(tasteTypeIndicator.equals(TasteElement.LIKES)){
-								 userTaste = UserTaste.LIKES;
+								 userTaste = UserTaste.LIKE;
 							 }else if(tasteTypeIndicator.equals(TasteElement.DISLIKES)){
-								 userTaste = UserTaste.DISLIKES;
+								 userTaste = UserTaste.DONTLIKE;
 							 }
 						 }
 					 case TIMESTAMP:
