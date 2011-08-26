@@ -8,7 +8,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,7 +17,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.http.ProtocolException;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
@@ -26,6 +24,7 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
+import cm.aptoide.summerinternship2011.EndOfRequestReached;
 import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.Status;
 
@@ -64,47 +63,52 @@ import android.content.Context;
 public class CommentGetter {
 	
 	private StringBuilder status;
-	private ArrayList<Comment> versions;
+	private ArrayList<Comment> comments;
 	private String urlReal;
 	
-	public CommentGetter( String repo, String apkid, String apkversion) {
-		
+	/**
+	 * 
+	 * @param repo
+	 * @param apkid
+	 * @param apkversion
+	 */
+	public CommentGetter( String repo, String apkid, String apkversion ) {
 		urlReal = String.format(ConfigsAndUtils.COMMENTS_URL_LIST,repo, apkid, apkversion);
-    	
 	}
 	
-	public void parse(Context context, int requestSize, BigInteger startFrom) throws MalformedURLException, IOException, ParserConfigurationException, SAXException, FactoryConfigurationError, ProtocolException {
+	public void parse(Context context, int requestSize, BigInteger startFrom, boolean startFromGiven) throws IOException, ParserConfigurationException, SAXException, FactoryConfigurationError {
+		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
+		
 		InputStream stream = NetworkApis.getInputStream(context, urlReal);
+		BufferedInputStream bstream = new BufferedInputStream(stream);
+		
 		this.status = new StringBuilder("");
-    	this.versions = new ArrayList<Comment>();
-		sp.parse(new InputSource(new BufferedInputStream(stream)), new VersionContentHandler(status, versions, requestSize, startFrom));
+    	this.comments = new ArrayList<Comment>();
+    	
+		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, requestSize, startFrom));
+		
+		stream.close();
+		bstream.close();
+		
 	}
 	
-	public ArrayList<Comment> getComments() { return versions; }
+	public ArrayList<Comment> getComments() { return comments; }
 	
 	public Status getStatus() { return Status.valueOfToUpper(status.toString()); }
-	
 	
 	/**
 	 * @author rafael
 	 * @since summerinternship2011
 	 * 
-	 * The default handler for the SAX reader.
 	 */
 	public class VersionContentHandler extends DefaultHandler{
 		
-		/*
-		 * null if any element started being read 
-		 */
-		private CommentElement commentDataIndicator;
+		private CommentElement commentDataIndicator; //null if any element started being read 
 		private StringBuilder status;
 		private ArrayList<Comment> comments;
 		
-		/*
-		 * 
-		 */
 		private BigInteger id_tmp;
 		private String username_tmp;
 		private BigInteger answerto_tmp;
@@ -112,16 +116,15 @@ public class CommentGetter {
 		private String text_tmp;
 		private Date timestamp_tmp;
 		
-		private int requestedSize;
-		private BigInteger startFrom;
-		private boolean started;
+		private int requestedSize; // Number of comments requested
+		private BigInteger startFrom; // Number of comments requested, starting from comment id 
+		private boolean started; // Start reading
 		
 		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, int requestedSize, BigInteger startFrom) {
 			
+			commentDataIndicator = null;
 			this.status = status;
 			this.comments = comments;
-			
-			commentDataIndicator = null;
 			
 			id_tmp=null; 
 			username_tmp=null;
@@ -129,37 +132,42 @@ public class CommentGetter {
 			subject_tmp=null;
 			text_tmp=null;
 			timestamp_tmp=null;
-			status = null;
 			
 			this.requestedSize = requestedSize;
 			this.startFrom = startFrom;
 			started = false;
+			
 		}
 		
 		/**
 		  * Handle the start of an element.
 		  */
 		  public void startElement (String uri, String name, String qName, Attributes atts){
-			  
-		 	  CommentElement commentElement = CommentElement.valueOfToUpper(name);
-			  if(commentElement!=null){ commentDataIndicator = commentElement; }
-			  
-			  
+			  commentDataIndicator = CommentElement.valueOfToUpper(name); 
 		  }
 		  
 		/**
 		 * Handle the end of an element.
 		 */
-		 public void endElement (String uri, String name, String qName) throws SAXException{
+		 public void endElement(String uri, String name, String qName) throws SAXException{
 			 	
-				 CommentElement elem = CommentElement.valueOfToUpper(name);
-				 if(elem!=null){  
-					 if(elem.equals(CommentElement.ENTRY) && started && (startFrom==null || !id_tmp.equals(startFrom)) ){
-						 comments.add(new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp, timestamp_tmp));
-						 if(comments.size()==requestedSize) throw new EndOfRequestReached();
-					 }
-					 commentDataIndicator = null;
+			 CommentElement elem = CommentElement.valueOfToUpper(name);
+			 
+			 if(started && elem.equals(CommentElement.ENTRY) ){
+				 
+				 if(startFrom == null || !id_tmp.equals(startFrom)){
+					 if( startFrom == null ) startFrom = id_tmp; 
+					 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp, timestamp_tmp) );
+				 	 if( comments.size() == requestedSize ) 
+				 		 throw new EndOfRequestReached();
 				 }
+				 
+				 answerto_tmp = null;
+				 subject_tmp = null;
+				 
+			 }
+			 
+			 commentDataIndicator = null;
 				 
 		  }
 		
@@ -173,29 +181,38 @@ public class CommentGetter {
 					  switch(commentDataIndicator){
 					  	case STATUS: 
 					  		status.append(read); 
-					  		if(status.equals(Status.FAILED))
+					  		if(status.equals(Status.FAIL))
 					  			throw new FailedRequestException("Status is failed.");
 					  		break;
-						
 					 	case ID: 
 					 		id_tmp = new BigInteger(read);
-					 		
-					 		if(!started && (startFrom==null||id_tmp.equals(startFrom))){
+					 		if( !started && ( startFrom==null || id_tmp.equals(startFrom)) ){ 
 					 			started=true;
 					 		}
 					 		break;
-					  	case USERNAME: username_tmp = read; break;
-					  	case ANSWERTO: answerto_tmp = new BigInteger(read); break;
-					  	case SUBJECT: subject_tmp = read; break;
-					  	case TEXT: text_tmp = read; break;
+					  	case USERNAME: 
+					  		if(started)
+					  			username_tmp = read; 
+					  		break;
+					  	case ANSWERTO: 
+					  		if(started)
+					  			answerto_tmp = new BigInteger(read);
+					  		break;
+					  	case SUBJECT: 
+					  		if(started)
+					  			subject_tmp = read; 
+					  		break;
+					  	case TEXT: 
+					  		if(started)
+					  			text_tmp = read;
+					  		break;
 					  	case TIMESTAMP: 
-					  		
-					  		try {
-					  			timestamp_tmp = ConfigsAndUtils.TIME_STAMP_FORMAT.parse(read);
-					  		} catch (ParseException e) {
-					  			throw new FailedRequestException("Parse exception while parsing date.");
-					  		}
-					  		
+					  		if(started)
+						  		try {
+						  			timestamp_tmp = ConfigsAndUtils.TIME_STAMP_FORMAT.parse(read);
+						  		} catch (ParseException e) {
+						  			throw new FailedRequestException("Date format not valid.");
+						  		}
 					  		break;
 					  	default: break;
 					  }
@@ -205,8 +222,5 @@ public class CommentGetter {
 		  }
 		
 	}
-	
-	@SuppressWarnings("serial")
-	public static class EndOfRequestReached extends SAXException{}
 	
 }

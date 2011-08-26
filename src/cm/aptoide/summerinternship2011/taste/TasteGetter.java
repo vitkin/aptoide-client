@@ -26,6 +26,7 @@ import cm.aptoide.summerinternship2011.Status;
 /**
  * 
  * @author rafael
+ * @since summerinternship2011
  * 
  * Example of the xml file structure. When success.
  * 
@@ -65,11 +66,29 @@ public class TasteGetter {
 	
 	private final static BigInteger UNIT = new BigInteger("1");
 	
+	/**
+	 * 
+	 * @param repo
+	 * @param apkid
+	 * @param apkversion
+	 */
 	public TasteGetter( String repo, String apkid, String apkversion) {
 		urlReal = String.format(ConfigsAndUtils.TASTE_URL_LIST,repo, apkid, apkversion);
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @param username
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws FactoryConfigurationError
+	 * @throws ProtocolException
+	 */
 	public void parse(Context context, String username) throws MalformedURLException, IOException, ParserConfigurationException, SAXException, FactoryConfigurationError, ProtocolException {
+		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
 		InputStream stream = NetworkApis.getInputStream(context, urlReal);
@@ -95,15 +114,8 @@ public class TasteGetter {
 	 */
 	public class VersionContentHandler extends DefaultHandler{
 		
-		/*
-		 * null if any element started being read. 
-		 */
-		private TasteElement tasteDataIndicator;
-		/*
-		 * null if any element started being read.
-		 * Three possible values null, TasteElement.LIKE, TasteElement.DISLIKE.
-		 */
-		private TasteElement tasteTypeIndicator;
+		private TasteElement tasteDataIndicator; //null if any element started being read. 
+		private TasteElement tasteTypeIndicator; //null if any element started being read. Three possible values null, TasteElement.LIKE, TasteElement.DISLIKE.
 		
 		private String username;
 		
@@ -112,6 +124,10 @@ public class TasteGetter {
 		private BigInteger dislikes;
 		private UserTaste userTaste;
 		
+		/**
+		 * 
+		 * @param username
+		 */
 		public VersionContentHandler(String username) {
 			
 			this.tasteDataIndicator = null;
@@ -134,13 +150,11 @@ public class TasteGetter {
 		 */
 		 public void startElement (String uri, String name, String qName, Attributes atts){
 			 TasteElement tasteElement = TasteElement.valueOfToUpper(name);
-			 if(tasteElement!=null){ 
-				 if(tasteElement.equals(TasteElement.LIKES)||tasteElement.equals(TasteElement.DISLIKES)){
-					 tasteTypeIndicator = tasteElement;
-				 } else {
-					 tasteDataIndicator = tasteElement;
-				 }
-			 } 
+			 if(tasteElement.equals(TasteElement.LIKES)||tasteElement.equals(TasteElement.DISLIKES)){
+				 tasteTypeIndicator = tasteElement;
+			 } else {
+				 tasteDataIndicator = tasteElement;
+			 }
 		 }
 		  
 		/**
@@ -149,23 +163,19 @@ public class TasteGetter {
 		 public void endElement (String uri, String name, String qName) throws SAXException{
 			 
 			 TasteElement elem = TasteElement.valueOfToUpper(name);
-			 if(elem!=null){  
+			 if(elem.equals(TasteElement.LIKES)||elem.equals(TasteElement.DISLIKES)){
+				 tasteTypeIndicator = null;
+			 } else {
 				 
-				 if(elem.equals(TasteElement.LIKES)||elem.equals(TasteElement.DISLIKES)){
-					 tasteTypeIndicator = null;
-				 } else {
-					 
-					 if(elem.equals(TasteElement.ENTRY)){
-						 if(tasteTypeIndicator.equals(TasteElement.LIKES)){
-							 likes = likes.add(UNIT);
-						 }else if(tasteTypeIndicator.equals(TasteElement.DISLIKES)){
-							 dislikes = dislikes.add(UNIT);
-						 }
+				 if(elem.equals(TasteElement.ENTRY)){
+					 if(tasteTypeIndicator.equals(TasteElement.LIKES)){
+						 likes = likes.add(UNIT);
+					 }else if(tasteTypeIndicator.equals(TasteElement.DISLIKES)){
+						 dislikes = dislikes.add(UNIT);
 					 }
-					 
-					 tasteDataIndicator = null;
 				 }
 				 
+				 tasteDataIndicator = null;
 			 }
 				 
 		 }
@@ -180,7 +190,7 @@ public class TasteGetter {
 				 switch(tasteDataIndicator){
 					 case STATUS: 
 						 status = Status.valueOfToUpper(read); 
-					  	 if(status==null || status.equals(Status.FAILED))
+					  	 if(status==null || status.equals(Status.FAIL))
 					  		throw new FailedRequestException("The retrived information about the taste was not as expected.");
 						 break;
 					 case USERNAME: 

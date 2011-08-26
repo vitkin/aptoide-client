@@ -142,89 +142,18 @@
         </TableRow>
     </TableLayout>
     
-    		<TextView
+    		 
+    		<Button
            		android:textAppearance="?android:textAppearanceLarge"
            		android:textSize="18.0sp"
-           		android:textColor="#FFFFBB"
            		android:gravity="left"
            		android:layout_gravity="top"
            		android:paddingTop="10.0dip"
-           		android:paddingLeft="5.0sp"
-           		android:paddingRight="5.0sp"
            		android:layout_width="fill_parent"
            		android:layout_height="wrap_content"
+           		android:id="@+id/commentThis"
            		android:text="@string/commentlabel"/>
     		
-    		<TableLayout 
-    			android:layout_width="fill_parent" 
-				android:layout_height="wrap_content"
-				android:layout_gravity="center"
-				android:stretchColumns="0">
-				
-				<TableRow>
-					
-					<TextView 
-						android:id="@+id/replyTo"
-						android:layout_width="fill_parent"
-						android:layout_height="0dip" />
-					
-					<Button 
-						android:layout_width="fill_parent"
-						android:layout_height="0dip"
-						android:text="@string/undoreplay"
-						android:id="@+id/undoReplyLabel" />
-						
-				</TableRow>
-				
-    			<TableRow>
-    			
-		    		<EditText
-						android:inputType="textMultiLine"
-						android:id="@+id/subject"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:textSize="18sp"
-						android:singleLine="false"
-						android:layout_span="2"
-						android:textColor="#696969"
-						android:text="@string/subject"/>
-						
-				</TableRow>
-				
-				<TableRow>
-				
-		    		<EditText
-						android:inputType="textMultiLine"
-						android:id="@+id/comment"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:textSize="18sp"
-						android:singleLine="false"
-						android:textColor="#696969"
-						android:text="@string/body"
-						android:layout_span="2" />
-						
-				</TableRow>
-				
-				<TableRow>
-					
-					<Button 
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:text="@string/submit"
-						android:enabled="false"
-						android:id="@+id/submitComment" />
-						
-					<Button 
-						android:id="@+id/clearReply"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"
-						android:text="@string/clear" />
-							
-				</TableRow>
-					
-			</TableLayout>
-			
 			<TextView
            		android:textAppearance="?android:textAppearanceLarge"
            		android:textSize="18.0sp"

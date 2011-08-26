@@ -23,8 +23,7 @@ import android.widget.TextView;
  */
 public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 	
-	public CommentsAdapter(Activity context, int textViewResourceId,
-			List<T> objects) {
+	public CommentsAdapter(Activity context, int textViewResourceId, List<T> objects) {
 		super(context, textViewResourceId, objects);
 	}
 
@@ -67,6 +66,8 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 		}
 		return -1;
 	}
+	
+
 	
 //	/**
 //	 * @see android.widget.BaseAdapter#isEnabled(int)

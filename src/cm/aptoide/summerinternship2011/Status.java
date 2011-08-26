@@ -11,7 +11,7 @@ package cm.aptoide.summerinternship2011;
  */
 public enum Status {
 	
-	OK, FAILED;
+	OK, FAIL;
 	
 	public static Status valueOfToUpper(String name) {
 		return Status.valueOf(name.toUpperCase());

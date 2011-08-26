@@ -21,6 +21,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 
+import cm.aptoide.summerinternship2011.credentials.Login;
+
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
@@ -113,7 +115,17 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 			}
 		});
 		
+		Preference set_credentials = (Preference)findPreference("setcredentials");
+
 		
+		set_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			
+			public boolean onPreferenceClick(Preference preference) {
+				Login loginComments = new Login(Settings.this, Login.InvoqueNature.OVERRIDE_CREDENTIALS);
+				loginComments.show();
+				return true;	
+			}
+		});
 		
 		clear_cache = (Preference)findPreference("clearcache");
 		clear_cache.setOnPreferenceClickListener(new OnPreferenceClickListener() {

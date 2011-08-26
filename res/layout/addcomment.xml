@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout 
+	xmlns:android="http://schemas.android.com/apk/res/android"
+ 	android:layout_width="fill_parent" 
+	android:layout_height="wrap_content"
+	android:layout_gravity="center"
+	android:stretchColumns="0"> 
+		
+		<TableRow>
+		<!-- Remove focus from subject on create -->
+		<EditText
+				android:layout_width="fill_parent"
+				android:layout_height="0px"/>
+		</TableRow>
+		
+		<TableRow>
+			<TextView android:id="@+id/subject"
+					android:layout_width="fill_parent"
+					android:layout_height="0px"
+					android:textSize="18sp"
+					android:layout_span="2"
+					android:textColor="#696969"
+					android:text="@string/inresponseto" />
+		</TableRow>
+		
+ 		<TableRow>
+ 			
+	   		<EditText
+				android:id="@+id/subject"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:textSize="18sp"
+				android:layout_span="2"
+				android:textColor="#696969"
+				android:text="@string/subject"/>
+			
+		</TableRow>
+	
+	<TableRow>
+	
+   		<EditText
+			android:inputType="textMultiLine"
+			android:id="@+id/comment"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:textSize="18sp"
+			android:singleLine="false"
+			android:textColor="#696969"
+			android:text="@string/body"
+			android:layout_span="2" />
+			
+	</TableRow>
+	
+	<TableRow>
+		
+		<Button 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/submit"
+			android:id="@+id/submitComment" />
+			
+		<Button 
+			android:id="@+id/clearReply"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/clear" />
+				
+	</TableRow>
+		
+</TableLayout>

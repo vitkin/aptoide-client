@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package cm.aptoide.summerinternship2011;
 
 import android.graphics.Color;
@@ -5,6 +8,12 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 
+/**
+ * 
+ * @author rafael
+ * @since summerinternship2011
+ * 
+ */
 public class SetBlank implements OnFocusChangeListener{
 	
 	private boolean alreadySetted;
