@@ -113,7 +113,7 @@ public class CommentGetter {
 		private String username_tmp;
 		private BigInteger answerto_tmp;
 		private String subject_tmp;
-		private String text_tmp;
+		private StringBuilder text_tmp;
 		private Date timestamp_tmp;
 		
 		private int requestedSize; // Number of comments requested
@@ -130,7 +130,7 @@ public class CommentGetter {
 			username_tmp=null;
 			answerto_tmp=null;
 			subject_tmp=null;
-			text_tmp=null;
+			text_tmp = new StringBuilder("");
 			timestamp_tmp=null;
 			
 			this.requestedSize = requestedSize;
@@ -157,14 +157,14 @@ public class CommentGetter {
 				 
 				 if(startFrom == null || !id_tmp.equals(startFrom)){
 					 if( startFrom == null ) startFrom = id_tmp; 
-					 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp, timestamp_tmp) );
+					 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp.toString(), timestamp_tmp) );
 				 	 if( comments.size() == requestedSize ) 
 				 		 throw new EndOfRequestReached();
 				 }
 				 
 				 answerto_tmp = null;
 				 subject_tmp = null;
-				 
+				 text_tmp = new StringBuilder("");
 			 }
 			 
 			 commentDataIndicator = null;
@@ -204,7 +204,7 @@ public class CommentGetter {
 					  		break;
 					  	case TEXT: 
 					  		if(started)
-					  			text_tmp = read;
+					  			text_tmp.append(read);
 					  		break;
 					  	case TIMESTAMP: 
 					  		if(started)

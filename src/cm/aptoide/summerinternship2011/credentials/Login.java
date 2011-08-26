@@ -32,7 +32,11 @@ public class Login extends Dialog{
 	private EditText username;
 	private EditText password;
 	
-	public static enum InvoqueNature{ CREDENTIALS_FAILED, NO_CREDENTIALS_SET, OVERRIDE_CREDENTIALS }
+	public static enum InvoqueNature{ 
+		CREDENTIALS_FAILED,
+		NO_CREDENTIALS_SET,
+		OVERRIDE_CREDENTIALS
+	}
 	
 	public Login(Context context, InvoqueNature nature) {
 		super(context);

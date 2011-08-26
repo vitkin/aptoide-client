@@ -4,8 +4,10 @@
 package cm.aptoide.summerinternship2011.comments;
 
 import cm.aptoide.pt.R;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.SetBlank;
 import cm.aptoide.summerinternship2011.credentials.Login;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,8 +16,10 @@ import android.content.DialogInterface.OnDismissListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -34,13 +38,17 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	private String repo;
 	private String apkid;
 	private String version;
+	private CommentsAdapter<Comment> listViewCom;
+	private LoadOnScrollCommentList loadOnScrollComList;
 	
-	public AddCommentDialog(Context context, Comment replyTo, String repo, String apkid, String version) {
+	public AddCommentDialog(Activity context, CommentsAdapter<Comment> listViewCom, LoadOnScrollCommentList loadOnScrollComList, Comment replyTo, String repo, String apkid, String version) {
 		super(context);
 		this.replyTo = replyTo;
 		this.repo = repo;
 		this.apkid = apkid; 
 		this.version = version;
+		this.listViewCom = listViewCom;
+		this.loadOnScrollComList = loadOnScrollComList; 
 	}
 	
 	@Override
@@ -51,8 +59,14 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		this.setContentView(R.layout.addcomment);
 		//getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titledialog);
 		
-		this.setTitle(getContext().getString(R.string.commentlabel)+(replyTo!=null?" "+getContext().getString(R.string.inresponseto)+" "+replyTo.getUsername():""));
+		this.setTitle(getContext().getString(R.string.commentlabel));
 		
+		if(replyTo!=null){
+			TextView inresponse = ((TextView)findViewById(R.id.inresponseto));
+			inresponse.append(replyTo.getUsername());
+			inresponse.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+			inresponse.setLayoutParams(inresponse.getLayoutParams());
+		}
 		body = ((EditText)findViewById(R.id.comment));
 		subject = ((EditText)findViewById(R.id.subject));
 		
@@ -118,7 +132,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 								apkid, 
 								version, 
 								((SetBlank)subject.getOnFocusChangeListener()).getAlreadySetted()?subject.getText().toString():null,
-								body.getText().toString(), 
+								(replyTo!=null?(AddCommentDialog.this.getContext().getString(R.string.inresponseto)+replyTo.getUsername())+ConfigsAndUtils.LINE_SEPARATOR:"")+body.getText().toString(), 
 								username, 
 								passwordSha1,
 								replyTo!=null?replyTo.getId():null);
@@ -129,8 +143,14 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 				@Override
 				protected void onPostExecute(Boolean result) {
 					if(result){
+						
+						synchronized(listViewCom){
+							listViewCom.removeAll();
+							loadOnScrollComList.reset();	
+						}
+						
 						AddCommentDialog.this.dismiss();
-						//Toast.makeText(AddCommentDialog.this.getContext(), getContext().getString(R.string.commentadded), Toast.LENGTH_LONG).show();
+						Toast.makeText(AddCommentDialog.this.getContext(), getContext().getString(R.string.commentadded), Toast.LENGTH_LONG).show();
 					}else{
 						//Toast.makeText(getContext(), getContext().getString(R.string.unabletoexecutelogreq), Toast.LENGTH_LONG).show();
 					}

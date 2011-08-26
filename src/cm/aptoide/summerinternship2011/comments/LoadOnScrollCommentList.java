@@ -58,6 +58,14 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	
     	commentGetter = new CommentGetter(repo, apkid, version);
     	
+    	reset();
+    }
+ 
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    	new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
+    }
+    
+    public synchronized void reset(){
     	currentPage = 0;
     	previousTotal = 0;
     	loading = true;
@@ -66,10 +74,6 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	
     	pausedNetwork = false;
     	stopOnFirstPage = false;
-    }
- 
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-    	new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
     }
     
     /**
@@ -97,10 +101,10 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		
 		@Override
 		protected ArrayList<Comment> doInBackground(Void... params) {
-			
+			synchronized(LoadOnScrollCommentList.this){
 			if(continueFetching){
 		    		
-					synchronized(loading){
+					
 						
 			            if (loading && totalItemCount > previousTotal) {
 			                
@@ -145,11 +149,10 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 							}
 							
 				        }
-			            
-				} //Sync end
+			           
 					
 	    	}
-			
+			} //Sync end
 			return null;
 			
 		}
@@ -158,14 +161,16 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		protected void onPostExecute(ArrayList<Comment> result) {
 			if(result != null){
 				if(pausedNetwork) commentsCanBeLoaded();
-				for(Comment comment: commentGetter.getComments())
-					commentList.add(comment);
+				for(Comment comment: commentGetter.getComments()){
+					synchronized(commentList){ commentList.add(comment); }
+				}
 			}else{
 				commentsCouldNotBeLoaded();
 			}
 		}	
     	
 		private void commentsCouldNotBeLoaded(){
+			
 			if(stopOnFirstPage)
 				((TextView)((ListView)context.findViewById(R.id.listComments)).findViewById(R.id.commentsLabel)).setText(context.getString(R.string.comments_unavailable));	
 		}
