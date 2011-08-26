@@ -38,16 +38,14 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	private String repo;
 	private String apkid;
 	private String version;
-	private CommentsAdapter<Comment> listViewCom;
 	private LoadOnScrollCommentList loadOnScrollComList;
 	
-	public AddCommentDialog(Activity context, CommentsAdapter<Comment> listViewCom, LoadOnScrollCommentList loadOnScrollComList, Comment replyTo, String repo, String apkid, String version) {
+	public AddCommentDialog(Activity context, LoadOnScrollCommentList loadOnScrollComList, Comment replyTo, String repo, String apkid, String version) {
 		super(context);
 		this.replyTo = replyTo;
 		this.repo = repo;
 		this.apkid = apkid; 
 		this.version = version;
-		this.listViewCom = listViewCom;
 		this.loadOnScrollComList = loadOnScrollComList; 
 	}
 	
@@ -55,9 +53,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
-		//requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		this.setContentView(R.layout.addcomment);
-		//getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.titledialog);
 		
 		this.setTitle(getContext().getString(R.string.commentlabel));
 		
@@ -126,7 +122,6 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 				@Override
 				protected Boolean doInBackground(Void... params) {
 					try {
-						//Comment.sendComment(this, apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), ((EditText)findViewById(R.id.comment)).getText().toString(), sharedPreferences.getString("usernameLogin", null), sharedPreferences.getString("passwordLogin", null));
 						Comment.sendComment(AddCommentDialog.this.getContext(), 
 								repo, 
 								apkid, 
@@ -144,15 +139,13 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 				protected void onPostExecute(Boolean result) {
 					if(result){
 						
-						synchronized(listViewCom){
-							listViewCom.removeAll();
-							loadOnScrollComList.reset();	
-						}
+						loadOnScrollComList.fetchNewComments();
 						
 						AddCommentDialog.this.dismiss();
 						Toast.makeText(AddCommentDialog.this.getContext(), getContext().getString(R.string.commentadded), Toast.LENGTH_LONG).show();
+						
 					}else{
-						//Toast.makeText(getContext(), getContext().getString(R.string.unabletoexecutelogreq), Toast.LENGTH_LONG).show();
+						Toast.makeText(getContext(), getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
 					}
 				}
 				

@@ -94,6 +94,33 @@ public class CommentGetter {
 		
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @param until
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws FactoryConfigurationError
+	 */
+	public void parse(Context context, BigInteger until) throws IOException, ParserConfigurationException, SAXException, FactoryConfigurationError {
+		
+		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
+		SAXParser sp = spf.newSAXParser();
+		
+		InputStream stream = NetworkApis.getInputStream(context, urlReal);
+		BufferedInputStream bstream = new BufferedInputStream(stream);
+		
+		this.status = new StringBuilder("");
+    	this.comments = new ArrayList<Comment>();
+    	
+		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, until));
+		
+		stream.close();
+		bstream.close();
+		
+	}
+	
 	public ArrayList<Comment> getComments() { return comments; }
 	
 	public Status getStatus() { return Status.valueOfToUpper(status.toString()); }
@@ -119,6 +146,7 @@ public class CommentGetter {
 		private int requestedSize; // Number of comments requested
 		private BigInteger startFrom; // Number of comments requested, starting from comment id 
 		private boolean started; // Start reading
+		private BigInteger until;
 		
 		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, int requestedSize, BigInteger startFrom) {
 			
@@ -136,8 +164,30 @@ public class CommentGetter {
 			this.requestedSize = requestedSize;
 			this.startFrom = startFrom;
 			started = false;
+			until = null;
 			
 		}
+		
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, BigInteger until) {
+			commentDataIndicator = null;
+			this.status = status;
+			this.comments = comments;
+			
+			id_tmp=null; 
+			username_tmp=null;
+			answerto_tmp=null;
+			subject_tmp=null;
+			text_tmp = new StringBuilder("");
+			timestamp_tmp=null;
+			
+			//Not used
+			this.requestedSize = 0;
+			this.startFrom = null;
+			
+			started = true;
+			this.until = until;
+		}
+		
 		
 		/**
 		  * Handle the start of an element.
@@ -154,8 +204,11 @@ public class CommentGetter {
 			 CommentElement elem = CommentElement.valueOfToUpper(name);
 			 
 			 if(started && elem.equals(CommentElement.ENTRY) ){
-				 
-				 if(startFrom == null || !id_tmp.equals(startFrom)){
+				 if(until!=null){
+					 if(!id_tmp.equals(until)){
+						 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp.toString(), timestamp_tmp) );
+					 }else{ throw new EndOfRequestReached(); }
+				 }else if(startFrom == null || !id_tmp.equals(startFrom)){
 					 if( startFrom == null ) startFrom = id_tmp; 
 					 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp.toString(), timestamp_tmp) );
 				 	 if( comments.size() == requestedSize ) 
@@ -186,7 +239,7 @@ public class CommentGetter {
 					  		break;
 					 	case ID: 
 					 		id_tmp = new BigInteger(read);
-					 		if( !started && ( startFrom==null || id_tmp.equals(startFrom)) ){ 
+					 		if(until==null && !started && ( startFrom==null || id_tmp.equals(startFrom)) ){ 
 					 			started=true;
 					 		}
 					 		break;

@@ -144,7 +144,7 @@ public class Comment implements Comparable<Comment>{
 		if(reply!=null)
 			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(reply.toString(), "UTF-8"));
 		if(subject!=null && subject.length()!=0)
-			strBuilder.append("&"+URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8"));
+			strBuilder.append("&"+URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(subject, "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode(Mode.XML.toString(), "UTF-8"));
 	    
 		//
@@ -176,7 +176,12 @@ public class Comment implements Comparable<Comment>{
 
 	@Override
 	public String toString() {
-		return getSubject()!=null?getSubject():""+ConfigsAndUtils.LINE_SEPARATOR+getText()+ConfigsAndUtils.LINE_SEPARATOR+getUsername()+" at "+ConfigsAndUtils.TIME_STAMP_FORMAT.format(getTimestamp());
+		String ret = getUsername()+" at "
+		+ConfigsAndUtils.TIME_STAMP_FORMAT.format(getTimestamp())
+		+ConfigsAndUtils.LINE_SEPARATOR
+		+(getSubject()!=null?(getSubject()+ConfigsAndUtils.LINE_SEPARATOR):"")
+		+getText();
+		return ret;
 	}
 	
 }

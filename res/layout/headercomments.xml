@@ -32,6 +32,26 @@
 	    							
 	           			</TableRow>
 					    
+					    <TableRow>
+	           				
+	           				<ImageView
+	           					android:id="@+id/likesImage"
+	           					android:layout_width="fill_parent"
+	    						android:layout_height="wrap_content"
+	    						android:layout_gravity="left"
+	    						android:src="@drawable/like"
+	    						 />
+	           				
+	           				<ImageView
+	           					android:id="@+id/dislikesImage"
+	           					android:layout_width="fill_parent"
+	    						android:layout_height="wrap_content"
+	    						android:layout_gravity="left"
+	    						android:src="@drawable/dontlike"
+	    						 />
+	    							
+	           			</TableRow>
+	           			
 			           <TableRow>
 				            
 				            <TextView 

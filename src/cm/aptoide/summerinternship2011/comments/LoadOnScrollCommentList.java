@@ -42,7 +42,6 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     private boolean pausedNetwork; // If no internconnection is found
     private boolean stopOnFirstPage; // 
     
-    
     /**
      * 
      * @param context
@@ -102,56 +101,54 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		@Override
 		protected ArrayList<Comment> doInBackground(Void... params) {
 			synchronized(LoadOnScrollCommentList.this){
-			if(continueFetching){
-		    		
-					
-						
-			            if (loading && totalItemCount > previousTotal) {
-			                
-			            	loading = false;
-			                previousTotal = totalItemCount;
-			                currentPage++;
-			                
-			            }
-			            
-			            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-				        	loading = true;
-				        	
-				        	try{
-				        		
-			    				try{
-									commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
-								} catch(cm.aptoide.summerinternship2011.EndOfRequestReached e){}
-								
-								if(commentGetter.getComments().size()!=0){
+				
+				if(continueFetching){
+			    		
+				            if (loading && totalItemCount > previousTotal) {
+				                
+				            	loading = false;
+				                previousTotal = totalItemCount;
+				                currentPage++;
+				                
+				            }
+				            
+				            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+					        	loading = true;
+					        	
+					        	try{
+					        		
+				    				try{
+										commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
+									} catch(cm.aptoide.summerinternship2011.EndOfRequestReached e){}
 									
-									lastCommentIdRead = commentGetter.getComments().get(commentGetter.getComments().size()-1).getId();
-									return commentGetter.getComments();
+									if(commentGetter.getComments().size()!=0){
+										
+										lastCommentIdRead = commentGetter.getComments().get(commentGetter.getComments().size()-1).getId();
+										return commentGetter.getComments();
+										
+									} else { 
+										if(!commentGetter.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK))
+											throw new FailedRequestException("Request could not be executed");
+										else
+											throw new EmptyRequestException("Request empty.");
+									}
 									
-								} else { 
-									if(!commentGetter.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK))
-										throw new FailedRequestException("Request could not be executed");
-									else
-										throw new EmptyRequestException("Request empty.");
+				    			}catch(IOException e){
+				    				pausedNetwork = true;
+				    				if(currentPage==1) 
+				    					stopOnFirstPage = true;
+				    				continueFetching = false;
+				    			}catch (Exception e) {
+				    				if(currentPage==1) 
+				    					stopOnFirstPage = true;
+				    				continueFetching = false;
+									//FailedRequestException && EmptyRequestException  && SAXException && 
+				    				//&& ParserConfigurationException && FactoryConfigurationError
 								}
 								
-			    			}catch(IOException e){
-			    				pausedNetwork = true;
-			    				if(currentPage==1) 
-			    					stopOnFirstPage = true;
-			    				continueFetching = false;
-			    			}catch (Exception e) {
-			    				if(currentPage==1) 
-			    					stopOnFirstPage = true;
-			    				continueFetching = false;
-								//FailedRequestException && EmptyRequestException  && SAXException && 
-			    				//&& ParserConfigurationException && FactoryConfigurationError
-							}
-							
-				        }
-			           
-					
-	    	}
+					        }
+				           
+		    	}
 			} //Sync end
 			return null;
 			
@@ -181,6 +178,19 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		}
 		
     }
+    
+    public synchronized void fetchNewComments(){
+    	
+    	try{
+	    	try{
+				commentGetter.parse(context, commentList.getItem(0).getId());
+			} catch(cm.aptoide.summerinternship2011.EndOfRequestReached e){}
+			synchronized(commentList){
+				((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
+			}
+    	}catch(Exception e){}
+		
+	}
     
     public void onScrollStateChanged(AbsListView view, int scrollState) {}
  
