@@ -1,7 +1,6 @@
 package cm.aptoide.pt;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,16 +11,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cm.aptoide.summerinternship2011.FailedRequestException;
-import cm.aptoide.summerinternship2011.SetBlank;
-import cm.aptoide.summerinternship2011.Status;
+import cm.aptoide.summerinternship2011.comments.AddCommentDialog;
 import cm.aptoide.summerinternship2011.comments.Comment;
 import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
 import cm.aptoide.summerinternship2011.comments.LoadOnScrollCommentList;
-import cm.aptoide.summerinternship2011.credentials.Login;
 import cm.aptoide.summerinternship2011.multiversion.MultiversionSpinnerAdapter;
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-import cm.aptoide.summerinternship2011.taste.TasteGetter;
+import cm.aptoide.summerinternship2011.taste.TastePoster;
 
 
 
@@ -30,10 +26,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -51,10 +44,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -65,7 +56,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
-public class ApkInfo extends Activity implements OnDismissListener{
+public class ApkInfo extends Activity{
 
 	private final static String WS_img = "http://www.bazaarandroid.com/webservices/listApkScreens/";
 	
@@ -91,8 +82,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	private Spinner spinnerMulti;
 	private ArrayList<Comment> comments;
-	private Comment replyTo;
-	private ListView listViewGlobal;
 	
 	private String apk_repo_str;
 	private String apk_ver_str;
@@ -105,10 +94,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		Event.REPLY.setString(this.getString(R.string.reply));
 		Event.COPY_TO_CLIPBOARD.setString(this.getString(R.string.copyclip));
-		Event.GENERATE_QR_CODE.setString(this.getString(R.string.qrcodeview));
 		
 		ListView listView = (ListView) findViewById(R.id.listComments);
-		listViewGlobal = listView;
 		
 		LayoutInflater inflater = this.getLayoutInflater();
 		final LinearLayout linearLayout = (LinearLayout)inflater.inflate(R.layout.headercomments,listView, false);
@@ -335,79 +322,27 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		/*Comments*/
 //		comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
-//		if(comments.size()==0)
-//			((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
+//		if(comments.size()==0) ((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
 		listView.addHeaderView(linearLayout, null, false);
 		comments = new ArrayList<Comment>();
+		//apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "") 
 		CommentsAdapter<Comment> arrayAdapter 
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
 		listView.setAdapter(arrayAdapter);
-		listView.setOnScrollListener(new LoadOnScrollCommentList(this, arrayAdapter));
-		((Button)findViewById(R.id.clearReply)).setOnClickListener(new OnClickListener(){
-			public void onClick(View arg) {
-				((EditText)findViewById(R.id.subject)).setText("");
-				((EditText)findViewById(R.id.comment)).setText("");
-			}
-		});
-		final Button submit = ((Button)findViewById(R.id.submitComment));
-		submit.setOnClickListener(new OnClickListener(){
-			public void onClick(View arg) {
-					
-				SharedPreferences sharePreferences = getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-				if(sharePreferences.getString("usernameLogin", null)==null){				
-					Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET);
-					loginComments.setOnDismissListener(ApkInfo.this);
-					loginComments.show();
-				}else{
-					ApkInfo.this.onDismiss(null);
-				}
-					
-			}
-		});
-		class SetBlankSubmitComment extends SetBlank{
-			public SetBlankSubmitComment() { super(); }
-			public void onFocusChange(View viewEdit, boolean hasFocus) {
-				super.onFocusChange(viewEdit, hasFocus);
-				if(!submit.isEnabled())
-					submit.setEnabled(true);
-			}
-		}
-		((EditText)findViewById(R.id.comment)).setOnFocusChangeListener(new SetBlankSubmitComment());
-		((EditText)findViewById(R.id.subject)).setOnFocusChangeListener(new SetBlank());
-		((Button)findViewById(R.id.undoReplyLabel)).setOnClickListener(new OnClickListener(){
+		listView.setOnScrollListener(new LoadOnScrollCommentList(this, arrayAdapter, "market", "cm.aptoide.pt", "2.0.2"));
+		listView.findViewById(R.id.commentThis).setOnClickListener(new OnClickListener(){
 			public void onClick(View view) {
-				replyTo = null;
-				
-				TextView to = ((TextView)listViewGlobal.findViewById(R.id.replyTo));
-				to.setText("");
-				to.getLayoutParams().height = 0;
-				to.setLayoutParams(to.getLayoutParams());
-				
-        		Button undo =((Button)listViewGlobal.findViewById(R.id.undoReplyLabel));
-        		undo.getLayoutParams().height = 0;
-        		undo.setLayoutParams(undo.getLayoutParams());
+				Dialog commentDialog = new AddCommentDialog(ApkInfo.this, null, "market", "cm.aptoide.pt", "2.0.2");
+				commentDialog.show();
 			}
 		});
-		
-		
-		
-		
 		
 		/*Taste*/
-		TasteGetter tasteGetter = new TasteGetter("market","cm.aptoide.pt","2.0.2");
 		TextView likes = (TextView)linearLayout.findViewById(R.id.likes);
 		TextView dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
-		try {
-			tasteGetter.parse(this, null);
-			if(tasteGetter.getStatus().equals(Status.OK)){
-				likes.append(tasteGetter.getLikes().toString());
-				dislikes.append(tasteGetter.getDislikes().toString());
-			} else { throw new Exception(); }
-		} catch(Exception e){
-			likes.getLayoutParams().height=0;
-			dislikes.getLayoutParams().height=0;
-		}
-		
+		likes.append(this.getString(R.string.loading));
+		dislikes.append(this.getString(R.string.loading));
+		new TastePoster(this,"cm.aptoide.pt","2.0.2","market",likes,dislikes).execute();
 		registerForContextMenu(listView);
 		
 	}
@@ -417,7 +352,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	
 	public enum Event{
-		REPLY(0), COPY_TO_CLIPBOARD(1), GENERATE_QR_CODE(2);
+		REPLY(0), COPY_TO_CLIPBOARD(1);
 		private int id;
 		private String string;
 		
@@ -468,64 +403,19 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		if(event!=null){
 			switch (event) {
 	        	case REPLY: 
-	        		replyTo = getted;
-	        		
-	        		TextView to = ((TextView)listViewGlobal.findViewById(R.id.replyTo));
-					to.setText("@"+getted.getUsername());
-					to.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
-					to.setLayoutParams(to.getLayoutParams());
-	        		
-	        		Button undoReply = ((Button)listViewGlobal.findViewById(R.id.undoReplyLabel));
-	        		undoReply.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
-	        		undoReply.setLayoutParams(undoReply.getLayoutParams());
+	        		//Open reply comment
+	        		Dialog commentDialog = new AddCommentDialog(ApkInfo.this, getted, "market", "cm.aptoide.pt", "2.0.2");
+					commentDialog.show();
 	        		return true;
-	        		
 	        	case COPY_TO_CLIPBOARD:
 	        		ClipboardManager clipManager = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
 	        		clipManager.setText(getted.toString());
 	        		return true;
-	        	case GENERATE_QR_CODE:
-	        		Dialog dialog = new Dialog(this);
-	        		try {
-		        		dialog.setContentView(R.layout.qrviewer);
-		        		dialog.setOwnerActivity((Activity)this);
-	        			((ImageView)dialog.findViewById(R.id.qrImage)).setImageBitmap(getted.giveQrCode());
-	        			dialog.setTitle(getString(R.string.qrcodecomment));
-					} catch (IOException e) {
-						dialog.setTitle(getString(R.string.qrcodeunavailable));
-					}
-					dialog.show();
-					return true;
 	        	default : break;
 	        }
 		}
 		
 		return false;
-	}
-	
-	
-	public void onDismiss(DialogInterface dialog) {
-		EditText subject = ((EditText)findViewById(R.id.subject));
-		
-		SharedPreferences sharedPreferences = getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-		try {
-			//Comment.sendComment(this, apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), ((EditText)findViewById(R.id.comment)).getText().toString(), sharedPreferences.getString("usernameLogin", null), sharedPreferences.getString("passwordLogin", null));
-			Comment.sendComment(this, 
-								"market", 
-								"cm.aptoide.pt", 
-								"2.0.2", 
-								((SetBlank)subject.getOnFocusChangeListener()).getAlreadySetted()?subject.getText().toString():null,
-								((EditText)findViewById(R.id.comment)).getText().toString(), 
-								sharedPreferences.getString("usernameLogin", null), 
-								sharedPreferences.getString("passwordLogin", null),
-								replyTo!=null?replyTo.getId():null);
-			Toast.makeText(this, getString(R.string.commentadded), Toast.LENGTH_LONG);
-		} catch (FailedRequestException e) {
-			Toast.makeText(this, getString(R.string.failedcredentials), Toast.LENGTH_LONG);
-		} catch (IOException e) {
-			Toast.makeText(this, getString(R.string.unabletoexecute), Toast.LENGTH_LONG);
-		}
-		
 	}
 	
 	

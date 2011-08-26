@@ -29,6 +29,8 @@ public class NetworkApis {
 	private static final String terminal_info = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"
 	+";v"+android.os.Build.VERSION.RELEASE+";"+System.getProperty("os.arch");
 	
+	public static final int TIME_OUT = 12000;
+	
 	public static HttpResponse getHttpResponse(String url, String srv, Context mctx){
 		try{
 			DbHandler db = new DbHandler(mctx);
@@ -38,8 +40,8 @@ public class NetworkApis {
 			String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 						
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-			HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+			HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 			
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {
@@ -113,7 +115,6 @@ public class NetworkApis {
 	 * @param mctx
 	 * @param url
 	 * @return
-	 * @throws ProtocolException
 	 * @throws IOException
 	 */
 	public static InputStream getInputStream(Context mctx, String url) throws IOException{
@@ -124,6 +125,7 @@ public class NetworkApis {
 		conn.setRequestMethod("GET");
 		conn.setRequestProperty("Accept", "application/xml");
 		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		conn.setConnectTimeout(TIME_OUT);
 		
 		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		String myid = sPref.getString("myId", "NoInfo");
@@ -148,8 +150,8 @@ public class NetworkApis {
 	public static HttpURLConnection send(Context mctx, String url, String... args) throws IOException {
 		
 		URL urlObj = new URL(String.format(url,(Object[])args));
-		//Careful with UnknownHostException. Throws MalformedURLException, IOException
-		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection(); 
+		
+		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();//Careful with UnknownHostException 
 		
 		conn.setRequestMethod("POST");
 		conn.setRequestProperty("Accept", "application/xml");
@@ -170,8 +172,8 @@ public class NetworkApis {
 			//DbHandler db = new DbHandler(mctx);
 
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-			HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+			HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {
@@ -229,8 +231,8 @@ public class NetworkApis {
 	public static DefaultHttpClient createItOpen(String url, String usr, String pwd){
 		try{
 		HttpParams httpParameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-		HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+		HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+		HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 
 		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 		mHttpClient.setRedirectHandler(new RedirectHandler() {
@@ -302,8 +304,8 @@ public class NetworkApis {
 		try{
 						
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-			HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+			HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 			
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {

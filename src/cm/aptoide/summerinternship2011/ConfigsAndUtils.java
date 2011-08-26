@@ -16,6 +16,7 @@ public class ConfigsAndUtils {
 	public static final String TASTE_URL_LIST = "http://dev.bazaarandroid.com/webservices/listApkLikes/%1$s/%2$s/%3$s/xml";;
 	public static final String COMMENTS_URL_ADD = "http://dev.bazaarandroid.com/webservices/addApkComment";
 	public static final String TASTE_URL_ADD = "http://dev.bazaarandroid.com/webservices/addApkLike";
+	public static final String QR_CODE_GOOGLE_WEBSERVICE = "https://chart.googleapis.com/chart";
 	
 	private ConfigsAndUtils(){}
 	

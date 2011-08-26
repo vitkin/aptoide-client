@@ -2,7 +2,7 @@ layout/textviewfocused
 layout/multiversionspinneritem
 layout/commentlistviewitem
 layout/commentslist
-layout/qrviewer
+layout/addcomment
 
 string/multi_ver_prompt
 string/commentsproblem
@@ -10,6 +10,7 @@ string/version
 string/size
 string/version_inst
 string/comments
+import android.util.Log;
 string/isinstalled
 string/installed_downgrade
 string/whattodo
@@ -17,8 +18,6 @@ string/reply
 string/likes
 string/dislikes
 string/copyclip
-string/qrcodecomment
-string/qrcodeunavailable
 string/commentlabel
 string/submit
 string/clear
@@ -30,7 +29,7 @@ string/pass
 string/showpass
 string/hidepass
 string/failedcredentials
-string/unabletoexecute
+string/comments_unavailable
 string/credentialssettings
 string/clearcredentials
 string/clearcredentials_summary
@@ -39,5 +38,14 @@ string/setcredentials_summary
 string/credentialscleared
 string/credentialscleared_des
 string/commentadded
+string/enterbody
+string/inresponseto
+string/passwordnotdef
+string/usernotdef
+string/loading
+
+values/themes.xml
+values/styles.xml 
+values/colors.xml
 
 drawable/list_comments_divider

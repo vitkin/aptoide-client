@@ -7,7 +7,8 @@ import java.util.Date;
 
 /**
  * @author rafael
- *
+ * @since summerinternship2011
+ * 
  */
 public class Taste {
 	

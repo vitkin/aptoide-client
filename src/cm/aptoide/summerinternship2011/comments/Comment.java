@@ -3,23 +3,16 @@
  */
 package cm.aptoide.summerinternship2011.comments;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.Date;
-import java.util.Scanner;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
@@ -106,32 +99,7 @@ public class Comment implements Comparable<Comment>{
 	 */
 	public Date getTimestamp() { return timeStamp; }
 	
-	public int compareTo(Comment otherComment) {
-		return this.compareTo(otherComment);
-	}
-	
-	public Bitmap giveQrCode() throws IOException {
-		
-		StringBuilder strBuilder = new StringBuilder("");
-		strBuilder.append(URLEncoder.encode("cht", "UTF-8") + "=" + URLEncoder.encode("qr", "UTF-8"));
-		strBuilder.append("&"+URLEncoder.encode("chs", "UTF-8") + "=" + URLEncoder.encode("300x300", "UTF-8"));
-		strBuilder.append("&"+URLEncoder.encode("chl", "UTF-8") + "=" + URLEncoder.encode(this.toString(), "UTF-8"));
-		
-	    URLConnection conn = new URL("https://chart.googleapis.com/chart").openConnection();  
-	    conn.setDoOutput(true);
-	    OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-	    wr.write(strBuilder.toString());
-	    wr.flush();
-	    
-	    conn.connect();  
-	    InputStream is = conn.getInputStream();  
-	    BufferedInputStream bis = new BufferedInputStream(is);  
-	    Bitmap bm = BitmapFactory.decodeStream(bis);  
-	    bis.close();  
-	    is.close();  
-	    return bm;  
-	     
-	}
+	public int compareTo(Comment otherComment) { return this.compareTo(otherComment); }
 	
 	
 	/**
@@ -176,7 +144,7 @@ public class Comment implements Comparable<Comment>{
 		if(reply!=null)
 			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(reply.toString(), "UTF-8"));
 		if(subject!=null && subject.length()!=0)
-			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8"));
+			strBuilder.append("&"+URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode(Mode.XML.toString(), "UTF-8"));
 	    
 		//
@@ -187,19 +155,21 @@ public class Comment implements Comparable<Comment>{
 	    OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
 	    wr.write(strBuilder.toString());
 	    wr.flush();
-
+	    
 	    // Get the response
 	    BufferedReader brd = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-		Scanner sbrd = new Scanner(brd);
-		try{
-			if(!sbrd.hasNext("<status>OK</status>")){
+		
+	    StringBuilder builder = new StringBuilder();
+	    int read = brd.read();
+	    while(read!=-1){
+	    	builder.append((char)read);
+	    	read = brd.read();
+	    }
+	    try {
+			if(builder.toString().replace("\n", "").matches(".*<status>FAIL</status>.*")){
 				throw new FailedRequestException("The server didn't reply as expected.");
 			}
-		}finally{
-			wr.close();
-			brd.close();
-			sbrd.close();
-		}
+		}finally{ wr.close(); brd.close(); }
 		
 	}
 	

@@ -14,7 +14,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,25 +29,30 @@ public class Login extends Dialog{
 	private SharedPreferences.Editor prefEdit;
 	public static Boolean showing; 
 	
-	public static enum InvoqueNature{CREDENTIALS_FAILED, NO_CREDENTIALS_SET}
+	private EditText username;
+	private EditText password;
 	
+	public static enum InvoqueNature{ CREDENTIALS_FAILED, NO_CREDENTIALS_SET, OVERRIDE_CREDENTIALS }
 	
 	public Login(Context context, InvoqueNature nature) {
 		super(context);
 		sPref = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
 		showing = false;
-		Log.d("Dialog", "Constructor dialog");
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
-		this.setTitle("Login");
-		((EditText)findViewById(R.id.user)).setOnFocusChangeListener(new SetBlank());
-		final EditText editText =((EditText)findViewById(R.id.pass));
-		editText.setOnFocusChangeListener(new SetBlank());
+		
+		this.setTitle(this.getContext().getString(R.string.setcredentials));
+		
+		username = ((EditText)findViewById(R.id.user));
+		username.setOnFocusChangeListener(new SetBlank());
+		password = ((EditText)findViewById(R.id.pass));;
+		
+		password.setOnFocusChangeListener(new SetBlank());
 		((Button)findViewById(R.id.clearLoginData)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {
 				((EditText)findViewById(R.id.user)).setText("");
@@ -57,29 +61,33 @@ public class Login extends Dialog{
 		});
 		((Button)findViewById(R.id.passShowToogle)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {
-				if(editText.getTransformationMethod()!=null){
-					editText.setTransformationMethod(null);
+				if(password.getTransformationMethod()!=null){
+					password.setTransformationMethod(null);
 					((Button)arg).setText(Login.this.getContext().getString(R.string.hidepass));
 				}else{
-					editText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+					password.setTransformationMethod(PasswordTransformationMethod.getInstance());
 					((Button)arg).setText(Login.this.getContext().getString(R.string.showpass));
 				}
 			}
 		});
-		
 		((Button)findViewById(R.id.submitLogin)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {
-				
-				try {
-					MessageDigest md = MessageDigest.getInstance("SHA");
-					md.update(editText.getText().toString().getBytes());
-					prefEdit.putString("passwordLogin", ConfigsAndUtils.byteArrayToHexString(md.digest()));
-					prefEdit.putString("usernameLogin", ((EditText)Login.this.findViewById(R.id.user)).getText().toString());
-					prefEdit.commit();
-				} catch (NoSuchAlgorithmException e) {
-					Toast.makeText(getContext(),  Login.this.getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
+				if(!((SetBlank)username.getOnFocusChangeListener()).getAlreadySetted()){
+					Toast.makeText(Login.this.getContext(), Login.this.getContext().getString(R.string.usernotdef), Toast.LENGTH_LONG);
+				}else if(!((SetBlank)password.getOnFocusChangeListener()).getAlreadySetted()){
+					Toast.makeText(Login.this.getContext(), Login.this.getContext().getString(R.string.passwordnotdef), Toast.LENGTH_LONG);
+				}else{
+					try {
+						MessageDigest md = MessageDigest.getInstance("SHA");
+						md.update(password.getText().toString().getBytes());
+						prefEdit.putString("passwordLogin", ConfigsAndUtils.byteArrayToHexString(md.digest()));
+						prefEdit.putString("usernameLogin", username.getText().toString());
+						prefEdit.commit();
+					} catch (NoSuchAlgorithmException e) {
+						Toast.makeText(getContext(),  Login.this.getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
+					}
+			      	Login.this.dismiss();
 				}
-		      	Login.this.dismiss();
 			}
 		});
 		
