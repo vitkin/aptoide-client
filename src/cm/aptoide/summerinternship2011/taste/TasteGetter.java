@@ -20,8 +20,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.content.Context;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
-import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.Status;
+import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 
 /**
  * 

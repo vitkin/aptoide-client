@@ -8,8 +8,8 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 
 import cm.aptoide.pt.R;
-import cm.aptoide.summerinternship2011.EmptyRequestException;
-import cm.aptoide.summerinternship2011.FailedRequestException;
+import cm.aptoide.summerinternship2011.exceptions.EmptyRequestException;
+import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 
 import android.app.Activity;
 import android.os.AsyncTask;
@@ -119,7 +119,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 					        		
 				    				try{
 										commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
-									} catch(cm.aptoide.summerinternship2011.EndOfRequestReached e){}
+									} catch(cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached e){}
 									
 									if(commentGetter.getComments().size()!=0){
 										
@@ -181,15 +181,17 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     
     public synchronized void fetchNewComments(){
     	
-    	try{
+    	if(commentList.getCount()!=0){
 	    	try{
-				commentGetter.parse(context, commentList.getItem(0).getId());
-			} catch(cm.aptoide.summerinternship2011.EndOfRequestReached e){}
-			synchronized(commentList){
-				((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
-			}
-    	}catch(Exception e){}
-		
+		    	try{
+		    		Comment comment = commentList.getItem(0);
+					commentGetter.parse(context, commentList.getItem(0).getId());
+				} catch(cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached e){}
+				synchronized(commentList){
+					((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
+				}
+	    	}catch(Exception e){}
+    	}
 	}
     
     public void onScrollStateChanged(AbsListView view, int scrollState) {}

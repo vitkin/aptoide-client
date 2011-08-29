@@ -87,7 +87,7 @@ public class DbHandler {
 		//final String basic_query2 = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " group by catg;";
 		Map<String, Object> count_lst = new HashMap<String, Object>();
 		Cursor q = null;
-
+		
 		q = db.rawQuery(basic_query, null);
 		if(q.moveToFirst()){
 			count_lst.put(q.getString(0), q.getInt(1));
@@ -288,7 +288,7 @@ public class DbHandler {
 			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
 			String vers = pkginfo.versionName;
 		    int verscode = pkginfo.versionCode;
-			insertInstalled(apkid, vers, verscode);
+		    insertInstalled(apkid, vers, verscode);
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}
@@ -1223,7 +1223,6 @@ public class DbHandler {
 		Log.d("Aptoide","remved: " + del);
 		int a = db.delete(TABLE_NAME, "server='"+repo+"'", null);
 		Log.d("Aptoide","Removed: " + a);
-		
 		int o = db.delete(TABLE_NAME_OLD_VERSIONS, "server='"+repo+"'", null);
 		Log.d("Aptoide","RemovedOld: " + o);
 		

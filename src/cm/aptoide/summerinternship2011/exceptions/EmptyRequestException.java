@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cm.aptoide.summerinternship2011;
+package cm.aptoide.summerinternship2011.exceptions;
 
 /**
  * @author rafael

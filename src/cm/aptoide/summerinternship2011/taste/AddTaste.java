@@ -13,11 +13,12 @@ import cm.aptoide.summerinternship2011.ResponseToHandler;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.widget.Toast;
 
 /**
  * @author rafael
- *
+ * @since summerinternship2011
+ * 
  */
 public class AddTaste {
 	
@@ -39,7 +40,13 @@ public class AddTaste {
 	 * @param password
 	 * @param userTaste
 	 */
-	public AddTaste(Context context, String repo, String apkid, String version, String user, String password, UserTaste userTaste) {
+	public AddTaste(Context context, 
+					String repo, 
+					String apkid, 
+					String version, 
+					String user, 
+					String password, 
+					UserTaste userTaste) {
 		
 		this.context = context;
 		this.repo = repo;
@@ -53,7 +60,6 @@ public class AddTaste {
 		
 		this.userTaste = userTaste;
 		
-		//
 		new SubmitTaste().execute();
 		
 	}
@@ -76,7 +82,7 @@ public class AddTaste {
 			catch (IOException e) {} 
 			catch (ParserConfigurationException e) {} 
 			catch (SAXException e) {}
-			catch (Exception e){Log.d("Exception", e.getMessage());}
+			catch (Exception e){}
 			
 			return null;
 		}
@@ -84,9 +90,15 @@ public class AddTaste {
 		@Override
 		protected void onPostExecute(ResponseToHandler result) {
 			if(result!=null){
-				Log.d("Aptoide like", result.getStatus().toString()+" "+result.getErrors().size());
-				for(String str: result.getErrors()){
-					Log.d("reason", str.replace("\n", ""));
+				if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
+					
+					
+					
+					
+				}else{
+					for(String error: result.getErrors()){
+						Toast.makeText(context, error, Toast.LENGTH_LONG);
+					}
 				}
 			}
 		}

@@ -77,6 +77,8 @@
     <string name="passwordnotdef">Password not defined</string>
     <string name="loading">Loading...</string>
     <string name="override_credentials"></string>
+    <string name="postingcomment">Posting your comment...</string>
+    <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
 </resources>
 
 <!--

@@ -20,11 +20,13 @@ import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
 
 import android.content.Context;
-import android.util.Log;
 
 /**
  * @author rafael
  * @since summerinternship2011
+ * 
+ * Structure of the webservice:
+ * 	http://dev.bazaarandroid.com/webservices/addApkLike/user/<username>/<passhash(sha1)>/<apkid>/<apkversion>/like/<mode>
  * 
  */
 public class Taste {
@@ -33,23 +35,54 @@ public class Taste {
 	private Date timeStamp;
 	private UserTaste userTaste;
 	
+	/**
+	 * 
+	 * @param user
+	 * @param timeStamp
+	 * @param userTaste
+	 */
 	public Taste(String user, Date timeStamp, UserTaste userTaste){
 		this.user = user;
 		this.timeStamp = timeStamp;
 		this.userTaste = userTaste;
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public String getUser() { return user; }
+	/**
+	 * 
+	 * @return
+	 */
 	public Date getTimeStamp() { return timeStamp; }	
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public UserTaste getUserTaste() { return userTaste; }
 	
+	/**
+	 * 
+	 * @param context
+	 * @param repo
+	 * @param apkid
+	 * @param version
+	 * @param user
+	 * @param password
+	 * @param userTaste
+	 * @return
+	 * @throws IOException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 */
 	public static ResponseToHandler sendTaste(Context context, String repo, String apkid, String version,String user, String password, UserTaste userTaste) throws IOException, ParserConfigurationException, SAXException{
 		
-//		http://dev.bazaarandroid.com/webservices/addApkLike/user/<username>/<passhash(sha1)>/<apkid>/<apkversion>/like/<mode>
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException 
 		SAXParser sp = spf.newSAXParser();
 		String url = String.format(ConfigsAndUtils.TASTE_URL_ADD, user, password, repo, apkid, version, userTaste.toString());
-		Log.d("Gen url",url);
 		InputStream stream = NetworkApis.getInputStream(context, url);
 		BufferedInputStream bstream = new BufferedInputStream(stream);
 		

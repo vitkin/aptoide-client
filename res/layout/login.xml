@@ -47,12 +47,6 @@
 		  	android:text="@string/submit"
 			/>
 		
-		<Button 
-			android:id="@+id/clearLoginData"
-			android:layout_width="wrap_content"
-		  	android:layout_height="wrap_content"
-		  	android:text="@string/clear"
-			/>
 		
 		<Button 
 			android:id="@+id/passShowToogle"

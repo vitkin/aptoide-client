@@ -24,9 +24,9 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
-import cm.aptoide.summerinternship2011.EndOfRequestReached;
-import cm.aptoide.summerinternship2011.FailedRequestException;
 import cm.aptoide.summerinternship2011.Status;
+import cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached;
+import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 
 import android.content.Context;
 
@@ -143,11 +143,18 @@ public class CommentGetter {
 		private StringBuilder text_tmp;
 		private Date timestamp_tmp;
 		
-		private int requestedSize; // Number of comments requested
-		private BigInteger startFrom; // Number of comments requested, starting from comment id 
-		private boolean started; // Start reading
+		private int requestedSize; 		// Number of comments requested
+		private BigInteger startFrom; 	// Number of comments requested, starting from comment id 
+		private boolean started; 		// Start reading
 		private BigInteger until;
 		
+		/**
+		 * 
+		 * @param status
+		 * @param comments
+		 * @param requestedSize
+		 * @param startFrom
+		 */
 		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, int requestedSize, BigInteger startFrom) {
 			
 			commentDataIndicator = null;
@@ -168,6 +175,12 @@ public class CommentGetter {
 			
 		}
 		
+		/**
+		 * 
+		 * @param status
+		 * @param comments
+		 * @param until
+		 */
 		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, BigInteger until) {
 			commentDataIndicator = null;
 			this.status = status;
