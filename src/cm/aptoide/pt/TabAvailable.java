@@ -2,6 +2,8 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
+import cm.aptoide.pt.utils.EnumOptionsMenu;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -76,15 +78,24 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, 4, 4, R.string.menu_order)
-		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(Menu.NONE,EnumOptionsMenu.UPDATE_REPO.ordinal(),EnumOptionsMenu.UPDATE_REPO.ordinal(),R.string.menu_update_repo)
+			.setIcon(android.R.drawable.ic_menu_rotate);
+		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options)
+			.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case 3:
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		switch (menuEntry) {
+		case UPDATE_REPO:
+			Intent remoteUpdate = new Intent("pt.caixamagica.aptoide.UPDATE_REPOS");
+			remoteUpdate.setClassName("cm.aptoide.pt", "cm.aptoide.pt.RemoteInTab");
+			startActivity(remoteUpdate);
+			return true;
+		case DISPLAY_OPTIONS:
 			final AlertDialog p = resumeMe();
 			p.show();
 			

@@ -110,7 +110,7 @@ public class DownloadQueueService extends Service {
 		int size = Integer.parseInt(notifications.get(apkHash).get("intSize"));
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
-		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.icon);
+		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
 		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.download_alrt)+" "+apkid);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, progress, false);	
 		
@@ -122,41 +122,7 @@ public class DownloadQueueService extends Service {
     	// The PendingIntent to launch our activity if the user selects this notification
     	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
 
-    	notify(apkHash, progress, contentView, onClickAction, getString(R.string.download_alrt));
-    	
-    }
-	
-	private void setFinishedNotification(int apkHash, String localPath) {
-		
-		String apkid = notifications.get(apkHash).get("apkid");
-		int size = Integer.parseInt(notifications.get(apkHash).get("intSize"));
-		
-		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
-		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.icon);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+apkid);
-		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, size*KBYTES_TO_BYTES, false);	
-		
-		Intent onClick = new Intent("pt.caixamagica.aptoide.INSTALL_APK", Uri.parse("apk:"+apkid));
-		onClick.setClassName("cm.aptoide.pt", "cm.aptoide.pt.RemoteInTab");
-		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-    	onClick.putExtra("localPath", localPath);
-    	onClick.putExtra("apkid", apkid);
-    	onClick.putExtra("apkHash", apkHash);
-    	onClick.putExtra("isUpdate", Boolean.parseBoolean(notifications.get(apkid.hashCode()).get("isUpdate")));
-		 Log.d("Aptoide-DownloadQueuService","finished notification apkHash: "+apkHash +" localPath: "+localPath);	
-    	
-    	// The PendingIntent to launch our activity if the user selects this notification
-    	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
-    	
-    	notify(apkHash, size, contentView, onClickAction, getString(R.string.finished_download_alrt));
-		
-	}
-	
-	private void notify(int apkHash, int progress, RemoteViews contentView, PendingIntent onClickAction, String alertMessage){
-		
-		String apkid = notifications.get(apkHash).get("apkid");
-				
-    	Notification notification = new Notification(R.drawable.icon, alertMessage+" "+apkid, System.currentTimeMillis());
+    	Notification notification = new Notification(R.drawable.icon, getString(R.string.download_alrt)+" "+apkid, System.currentTimeMillis());
     	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 		notification.contentView = contentView;
 
@@ -172,7 +138,53 @@ public class DownloadQueueService extends Service {
     	notificationManager.notify(apkHash, notification); 
     	
 //		Log.d("Aptoide-DownloadQueueService", "Notification Set");
+    }
+	
+	private void setFinishedNotification(int apkHash, String localPath) {
+		
+		String apkid = notifications.get(apkHash).get("apkid");
+		int size = Integer.parseInt(notifications.get(apkHash).get("intSize"));
+		
+		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
+		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
+		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+apkid);
+		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, size*KBYTES_TO_BYTES, false);	
+		
+		Intent onClick = new Intent("pt.caixamagica.aptoide.INSTALL_APK", Uri.parse("apk:"+apkid));
+		onClick.setClassName("cm.aptoide.pt", "cm.aptoide.pt.RemoteInTab");
+		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+    	onClick.putExtra("localPath", localPath);
+    	onClick.putExtra("apkid", apkid);
+    	onClick.putExtra("apkHash", apkHash);
+    	onClick.putExtra("isUpdate", Boolean.parseBoolean(notifications.get(apkid.hashCode()).get("isUpdate")));
+		 Log.d("Aptoide-DownloadQueuService","finished notification apkHash: "+apkHash +" localPath: "+localPath);	
+    	
+    	// The PendingIntent to launch our activity if the user selects this notification
+    	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
+				
+    	Notification notification = new Notification(R.drawable.icon, getString(R.string.finished_download_alrt)+" "+apkid, System.currentTimeMillis());
+    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+		notification.contentView = contentView;
 
+
+		// Set the info for the notification panel.
+    	notification.contentIntent = onClickAction;
+//    	notification.setLatestEventInfo(this, getText(R.string.app_name), getText(R.string.add_repo_text), contentIntent);
+
+
+		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+    	// Send the notification.
+    	// We use the position because it is a unique number.  We use it later to cancel.
+    	notificationManager.notify(apkHash, notification); 
+    	
+//		Log.d("Aptoide-DownloadQueueService", "Notification Set");
+		
+	}
+	
+	public void dismissAllNotifications(){
+		for (Integer notificationKey : notifications.keySet()) {
+			dismissNotification(notificationKey);
+		}
 	}
 	
 	public void dismissNotification(int apkHash){
@@ -324,7 +336,7 @@ public class DownloadQueueService extends Service {
         		String localPath =  (String) downloadArguments.obj;
 //        		notificationManager.cancel(downloadArguments.arg2);
         		setFinishedNotification(apkHash, localPath);
-   			 	notifications.remove(apkHash);
+//   			 	notifications.remove(apkHash);
         	}else{ }
         }
 	};
@@ -351,7 +363,7 @@ public class DownloadQueueService extends Service {
 		 public void handleMessage(Message downloadArguments) {
 			 int apkHash = downloadArguments.arg2;
 			 notificationManager.cancel(apkHash);
-			 notifications.remove(apkHash);
+//			 notifications.remove(apkHash);
 			 if(downloadArguments.arg1 == 1){
 				 Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_LONG).show();
 			 }else{

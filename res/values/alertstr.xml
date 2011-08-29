@@ -22,7 +22,7 @@
     <string name="finished_download_alrt">Ready to install:\n </string>
     <string name="finished_download_message">Click to install application:\n </string>
      
-    <string name="md5_error">The downloaded application md5 check failed!\nPlease update your application system before retry.</string>
+    <string name="md5_error">The downloaded application md5 check failed!\nPlease update your repositories before retrying.</string>
     <string name="network_error">There has been an error while fetching the application.\nPlease try again.</string>
     
 </resources>

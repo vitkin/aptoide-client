@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
+import cm.aptoide.pt.utils.EnumOptionsMenu;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -64,12 +66,6 @@ public class RemoteInSearch extends ListActivity{
 	private int pos = -1;
 	
 	private static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
-	
-	private static final int MANAGE_REPO = Menu.FIRST;
-	private static final int CHANGE_FILTER = 2;
-	private static final int SEARCH_MENU = 3;
-	private static final int SETTINGS = 4;
-	private static final int ABOUT = 5;
 	
 	static protected SharedPreferences sPref;
 	static protected SharedPreferences.Editor prefEdit;
@@ -192,15 +188,15 @@ public class RemoteInSearch extends ListActivity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, MANAGE_REPO, 1, R.string.menu_manage)
+		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, CHANGE_FILTER, 2, R.string.menu_order)
+		menu.add(Menu.NONE, EnumOptionsMenu.CHANGE_ORDER.ordinal(), EnumOptionsMenu.CHANGE_ORDER.ordinal(), R.string.menu_order)
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
-		menu.add(Menu.NONE, SEARCH_MENU,3,R.string.menu_search)
+		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(), EnumOptionsMenu.SEARCH_MENU.ordinal(), R.string.menu_search)
 			.setIcon(android.R.drawable.ic_menu_search);
-		menu.add(Menu.NONE, SETTINGS, 4, R.string.menu_settings)
+		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, ABOUT,5,R.string.menu_about)
+		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(), EnumOptionsMenu.ABOUT.ordinal(), R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
 	}
@@ -208,8 +204,9 @@ public class RemoteInSearch extends ListActivity{
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		switch (item.getItemId()) {
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		switch (menuEntry) {
 		case MANAGE_REPO:
 			Intent i = new Intent(this, ManageRepo.class);
 			startActivity(i);
@@ -239,7 +236,7 @@ public class RemoteInSearch extends ListActivity{
 			s.putExtra("order", order_lst);
 			startActivityForResult(s,SETTINGS_FLAG);
 			return true;
-		case CHANGE_FILTER:
+		case CHANGE_ORDER:
 			if(order_lst.equalsIgnoreCase("abc"))
 				order_lst = "iu";
 			else if(order_lst.equalsIgnoreCase("iu"))
