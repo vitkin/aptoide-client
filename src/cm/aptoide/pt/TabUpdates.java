@@ -2,6 +2,8 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
+import cm.aptoide.pt.utils.EnumOptionsMenu;
+
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -19,8 +21,6 @@ import android.widget.AdapterView.OnItemClickListener;
 
 
 public class TabUpdates extends BaseManagement implements OnItemClickListener{
-	
-	private static final int UPDATE_ALL = Menu.FIRST;
 
 	private ListView lv = null;
 
@@ -44,43 +44,45 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE,UPDATE_ALL,1,R.string.menu_update_all)
-		.setIcon(android.R.drawable.ic_menu_rotate);
-		menu.add(Menu.NONE, 4, 4, R.string.menu_order)
-		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.menu_update_all)
+			.setIcon(R.drawable.ic_menu_refresh);
+//		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_order)
+//			.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		switch (menuEntry) {
 		case UPDATE_ALL:
 			updateAll();
 			break;
-		case 3:
-			/*if(true){
-				lv.setAdapter(updateAdpt);
-				setContentView(lv);
-				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-				lv.setSelection(pos-1);
-			}*/
-			
-			final AlertDialog p = resumeMe();
-			p.show();
-			
-			new Thread(){
-				@Override
-				public void run() {
-					super.run();
-					while(p.isShowing()){
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {	}
-					}
-					displayRefresh.sendEmptyMessage(0);
-				}
-			}.start();
-				
+//		case DISPLAY_OPTIONS:
+//			/*if(true){
+//				lv.setAdapter(updateAdpt);
+//				setContentView(lv);
+//				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//				lv.setSelection(pos-1);
+//			}*/
+//			
+//			final AlertDialog p = resumeMe();
+//			p.show();
+//			
+//			new Thread(){
+//				@Override
+//				public void run() {
+//					super.run();
+//					while(p.isShowing()){
+//						try {
+//							Thread.sleep(1000);
+//						} catch (InterruptedException e) {	}
+//					}
+//					displayRefresh.sendEmptyMessage(0);
+//				}
+//			}.start();
+//				
 		}
 		return super.onOptionsItemSelected(item);
 	}
