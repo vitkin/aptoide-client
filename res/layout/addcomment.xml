@@ -5,8 +5,7 @@
 	android:layout_height="wrap_content"
 	android:layout_gravity="center"
 	android:paddingLeft="5dip"
-	android:paddingRight="5dip"
-	android:stretchColumns="0"> 
+	android:paddingRight="5dip"> 
 		
 		<TableRow>
 		<!-- Remove focus from subject on create -->
@@ -24,9 +23,10 @@
 					android:textColor="@android:color/white"
 					android:layout_width="fill_parent"
 					android:textSize="18sp"
-					android:layout_span="2"
 					/>
+					
 		</TableRow>
+		
  		<TableRow>
  			
 	   		<EditText
@@ -34,7 +34,6 @@
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
 				android:textSize="18sp"
-				android:layout_span="2"
 				android:textColor="#696969"
 				android:text="@string/subject"/>
 			
@@ -51,7 +50,8 @@
 			android:singleLine="false"
 			android:textColor="#696969"
 			android:text="@string/body"
-			android:layout_span="2" />
+			android:lines="5"
+			/>
 			
 	</TableRow>
 	
@@ -63,11 +63,6 @@
 			android:text="@string/submit"
 			android:id="@+id/submitComment" />
 			
-		<Button 
-			android:id="@+id/clearReply"
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/clear" />
 				
 	</TableRow>
 		

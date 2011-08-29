@@ -28,7 +28,7 @@ string/user
 string/pass
 string/showpass
 string/hidepass
-string/failedcredentials
+string/unabletoexecutecheknet
 string/comments_unavailable
 string/credentialssettings
 string/clearcredentials
@@ -43,6 +43,8 @@ string/inresponseto
 string/passwordnotdef
 string/usernotdef
 string/loading
+string/postingcomment
+
 
 values/themes.xml
 values/styles.xml 

@@ -69,13 +69,12 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 	}
 	
 	public void addAtBegin(ArrayList<T> itens){
-		int i = getCount();
 		while(getCount()!=0){
-			T obj = getItem(--i);
+			T obj = getItem(0);
 			itens.add(obj);
 			this.remove(obj);
 		}
-		i = 0;
+		int i = 0;
 		while(i!=itens.size()){
 			this.add(itens.get(i++));
 		}

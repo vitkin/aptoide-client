@@ -41,7 +41,7 @@ public class ResponseToHandler extends DefaultHandler{
 	 */
 	 public void endElement(String uri, String name, String qName) throws SAXException{
 		 
-		 if(commentDataIndicator!=null){
+		 if(commentDataIndicator!=null && commentDataIndicator.equals(ResponseToElements.ENTRY)){
 			 errors.add( read.toString() );
 			 read = new StringBuilder();
 			 commentDataIndicator = null;

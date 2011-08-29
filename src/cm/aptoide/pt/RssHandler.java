@@ -69,7 +69,7 @@ public class RssHandler extends DefaultHandler{
 	//private DefaultHttpClient mHttpClient = null;
 	//private DefaultHttpClient mHttpClient2 = null;
 
-	private Vector<ApkNode> listapks= null;
+	private Vector<ApkNode> listapks = null;
 	
 	
 	private ArrayList<IconNode> iconsLst = new ArrayList<IconNode>();
@@ -228,8 +228,6 @@ public class RssHandler extends DefaultHandler{
 				ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
 				if(!listapks.contains(node)){
 					db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
-					//tmp_apk.isnew = false;
-					//updateTable.add(tmp_apk);
 					listapks.add(node);
 				}else{
 					int pos = listapks.indexOf(node);
@@ -237,13 +235,8 @@ public class RssHandler extends DefaultHandler{
 					if(list.vercode < node.vercode){
 						db.copyFromRecentApkToOldApk(tmp_apk.apkid, mserver);
 						db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
-						//tmp_apk.isnew = true;
-						//updateTable.remove(new ApkNodeFull(list.apkid));
-						//updateTable.add(tmp_apk);
 						listapks.add(node);
-					} else {
-						db.insertOldApk(tmp_apk, mserver);
-					}
+					} else { db.insertOldApk(tmp_apk, mserver); }
 				}
 			}
 			 

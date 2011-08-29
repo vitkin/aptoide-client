@@ -12,12 +12,19 @@ import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.Date;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import android.content.Context;
 
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
-import cm.aptoide.summerinternship2011.FailedRequestException;
-import cm.aptoide.summerinternship2011.Mode;
+import cm.aptoide.summerinternship2011.ResponseToHandler;
+import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 
 /**
  * 
@@ -118,9 +125,11 @@ public class Comment implements Comparable<Comment>{
 	 * @param version
 	 * @return
 	 * @throws IOException 
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 * @throws FailedRequestException 
 	 */
-	public static void sendComment(
+	public static ResponseToHandler sendComment(
 			Context ctx, 
 			String repo,
 			String apkid, 
@@ -129,7 +138,7 @@ public class Comment implements Comparable<Comment>{
 			String text, 
 			String user, 
 			String pass,
-			BigInteger reply) throws IOException, FailedRequestException{
+			BigInteger reply) throws IOException, ParserConfigurationException, SAXException{
 		
 		HttpURLConnection urlConnection = NetworkApis.send(ctx, ConfigsAndUtils.COMMENTS_URL_ADD,repo, apkid, version);
 		
@@ -145,7 +154,6 @@ public class Comment implements Comparable<Comment>{
 			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(reply.toString(), "UTF-8"));
 		if(subject!=null && subject.length()!=0)
 			strBuilder.append("&"+URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(subject, "UTF-8"));
-		strBuilder.append("&"+URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode(Mode.XML.toString(), "UTF-8"));
 	    
 		//
 		urlConnection.setDoOutput(true);
@@ -157,19 +165,24 @@ public class Comment implements Comparable<Comment>{
 	    wr.flush();
 	    
 	    // Get the response
-	    BufferedReader brd = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+	    SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException 
+		SAXParser sp = spf.newSAXParser();
+	    ResponseToHandler commentsResponseReader = new ResponseToHandler();
+		sp.parse(new InputSource(new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))), commentsResponseReader);
 		
-	    StringBuilder builder = new StringBuilder();
-	    int read = brd.read();
-	    while(read!=-1){
-	    	builder.append((char)read);
-	    	read = brd.read();
-	    }
-	    try {
-			if(builder.toString().replace("\n", "").matches(".*<status>FAIL</status>.*")){
-				throw new FailedRequestException("The server didn't reply as expected.");
-			}
-		}finally{ wr.close(); brd.close(); }
+		return commentsResponseReader;
+		
+//	    StringBuilder builder = new StringBuilder();
+//	    int read = brd.read();
+//	    while(read!=-1){
+//	    	builder.append((char)read);
+//	    	read = brd.read();
+//	    }
+//	    try {
+//			if(builder.toString().replace("\n", "").matches(".*<status>FAIL</status>.*")){
+//				throw new FailedRequestException("The server didn't reply as expected.");
+//			}
+//		}finally{ wr.close(); brd.close(); }
 		
 	}
 	

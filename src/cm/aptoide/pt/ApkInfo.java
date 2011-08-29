@@ -42,7 +42,6 @@ import android.text.ClipboardManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -331,11 +330,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Comments*/
-//		comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
-//		if(comments.size()==0) ((TextView)linearLayout.findViewById(R.id.commentsLabel)).getLayoutParams().height=0;
+		//comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
+		//apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "")
 		listView.addHeaderView(linearLayout, null, false);
 		comments = new ArrayList<Comment>();
-		//apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "") 
 		final CommentsAdapter<Comment> commentAdapter 
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
 		listView.setAdapter(commentAdapter);
@@ -347,6 +345,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				commentDialog.show();
 			}
 		});
+		
+		
+		
+		
 		
 		/*Taste*/
 		TextView likes = (TextView)linearLayout.findViewById(R.id.likes);
@@ -364,21 +366,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		             case MotionEvent.ACTION_DOWN:
 		            	 ((ImageView)view).setImageResource(R.drawable.likehover);
 		            	 
- SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		            	 SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		            	 
 		            	 if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
 							Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET);
 							loginComments.setOnDismissListener(ApkInfo.this);
 							loginComments.show();
 						 }else{
-//							 AddTaste addTaste = new AddTaste(
-//									 				ApkInfo.this, 
-//									 				apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), 
-//									 				apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), 
-//									 				sharedPreferences.getString("usernameLogin", null), 
-//									 				sharedPreferences.getString("passwordLogin", null), 
-//									 				UserTaste.LIKE);
-							
+							 //AddTaste addTaste = new AddTaste(ApkInfo.this, apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), sharedPreferences.getString("usernameLogin", null), sharedPreferences.getString("passwordLogin", null), UserTaste.LIKE);
 							 AddTaste addTaste = new AddTaste(
 						 				ApkInfo.this, 
 						 				"market",
@@ -386,17 +381,12 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						 				sharedPreferences.getString("usernameLogin", null), 
 						 				sharedPreferences.getString("passwordLogin", null), 
 						 				UserTaste.LIKE);
-							 
-						 }
-		            	 
-		            	 
-		            	  
+						 } 
 		            	 break;
 		          }
 		          return false;  //means that the listener dosen't consume the event
 		      }
 		});
-		
 		ImageView dislike = ((ImageView)listView.findViewById(R.id.dislikesImage));
 		dislike.setOnTouchListener(new OnTouchListener(){
 		      public boolean onTouch(View view, MotionEvent e) {
@@ -406,20 +396,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		            	  ((ImageView)view).setImageResource(R.drawable.dontlikehover);
 		            	  
 		            	  SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-			            	 
-			            	 if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-								Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET);
+		            	  if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
+		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET);
 								loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
-							 }else{
-//								 AddTaste addTaste = new AddTaste(
-//										 				ApkInfo.this, 
-//										 				apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), 
-//										 				apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), 
-//										 				sharedPreferences.getString("usernameLogin", null), 
-//										 				sharedPreferences.getString("passwordLogin", null), 
-//										 				UserTaste.LIKE);
-								
+		            	  }else{
 								 AddTaste addTaste = new AddTaste(
 							 				ApkInfo.this, 
 							 				"market",
@@ -427,17 +408,20 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							 				sharedPreferences.getString("usernameLogin", null), 
 							 				sharedPreferences.getString("passwordLogin", null), 
 							 				UserTaste.DONTLIKE);
-							 }
-		            	  
+		            	  }
 		                  break;
 		          }
 		          return false;  //means that the listener dosen't consume the event
 		      }
 		});
 		
-		
 	}
 	
+	/**
+	 * 
+	 * @author rafael
+	 *
+	 */
 	public enum Event{
 		REPLY(0), COPY_TO_CLIPBOARD(1);
 		private int id;
@@ -506,6 +490,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		return false;
 	}
 	
+	/**
+	 * 
+	 */
 	public void onDismiss(DialogInterface dialog) {
 		
 	}
@@ -513,15 +500,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
 		final Dialog dialog = new Dialog(mctx);

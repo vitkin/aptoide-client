@@ -27,22 +27,32 @@ public class Login extends Dialog{
 	
 	private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
-	public static Boolean showing; 
 	
 	private EditText username;
 	private EditText password;
+	private boolean isLoginSubmited;
 	
+	/**
+	 * 
+	 * @author rafael
+	 *
+	 */
 	public static enum InvoqueNature{ 
 		CREDENTIALS_FAILED,
 		NO_CREDENTIALS_SET,
 		OVERRIDE_CREDENTIALS
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @param nature
+	 */
 	public Login(Context context, InvoqueNature nature) {
 		super(context);
 		sPref = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
-		showing = false;
+		isLoginSubmited = false;
 	}
 
 	@Override
@@ -54,15 +64,10 @@ public class Login extends Dialog{
 		
 		username = ((EditText)findViewById(R.id.user));
 		username.setOnFocusChangeListener(new SetBlank());
-		password = ((EditText)findViewById(R.id.pass));;
+		password = ((EditText)findViewById(R.id.pass));
 		
 		password.setOnFocusChangeListener(new SetBlank());
-		((Button)findViewById(R.id.clearLoginData)).setOnClickListener(new View.OnClickListener(){
-			public void onClick(View arg) {
-				((EditText)findViewById(R.id.user)).setText("");
-				((EditText)findViewById(R.id.pass)).setText("");
-			}
-		});
+		
 		((Button)findViewById(R.id.passShowToogle)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {
 				if(password.getTransformationMethod()!=null){
@@ -91,10 +96,15 @@ public class Login extends Dialog{
 						Toast.makeText(getContext(),  Login.this.getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
 					}
 			      	Login.this.dismiss();
+			      	isLoginSubmited =true;
 				}
 			}
 		});
 		
 	}
-
+	
+	public boolean isLoginSubmited(){
+		return isLoginSubmited;
+	}
+	
 }
