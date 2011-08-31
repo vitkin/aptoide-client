@@ -9,11 +9,14 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 /**
  * @author rafael
  * @since summerinternship2011
  * 
+ * The handler that provides information about server response, for:
+ * 	+	Comment Post;
+ * 	+	Rating;
+ * 	+	Login. In login the token element is ignored;
  */
 public class ResponseToHandler extends DefaultHandler{
 	
@@ -23,6 +26,9 @@ public class ResponseToHandler extends DefaultHandler{
 	
 	private ResponseToElements commentDataIndicator; //null if any element started being read
 	
+	/**
+	 * 
+	 */
 	public ResponseToHandler() {
 		errors = new ArrayList<String>();
 		status = null;
@@ -46,6 +52,7 @@ public class ResponseToHandler extends DefaultHandler{
 			 read = new StringBuilder();
 			 commentDataIndicator = null;
 		 }
+		 
 	 }
 	
 	 /**

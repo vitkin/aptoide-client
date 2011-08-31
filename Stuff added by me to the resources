@@ -21,7 +21,6 @@ string/copyclip
 string/commentlabel
 string/submit
 string/clear
-string/undoreply
 string/body
 string/subject
 string/user
@@ -44,7 +43,9 @@ string/passwordnotdef
 string/usernotdef
 string/loading
 string/postingcomment
-
+string/opinionsuccess
+string/postingtaste
+string/loggingin
 
 values/themes.xml
 values/styles.xml 

@@ -8,22 +8,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.regex.Pattern;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
  * @author rafael
+ * @since summerinternship2011
  * 
  * A description of a application version that enables to work easily with them.
- * 
  */
 public class VersionApk implements Comparable<VersionApk>, Parcelable{
-	
-	
-	
-	
 	
 	/**
 	 * Formated version
@@ -42,15 +37,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 * 
 	 */
 	private int size;
-	
-	/**
-	 * A pattern for version format confirming
-	 */
-	private static final Pattern versionPattern = Pattern.compile("^(((\\d)+\\.)+(\\d)+)|((\\d)+)$");
-	
-	
-	
-	
 	
 	/**
 	 * 
@@ -97,20 +83,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 */
 	public int getSize() { return size; }
 	
-	/**
-	 * 
-	 * @param version Version to confirm with the pattern ^(((\\d)+\\.)+(\\d)+)|((\\d)+)$
-	 * @throws NotValidVersionException
-	 * @throws IllegalArgumentException
-	 */
-	public static void confirmPattern(String version){
-		
-		if(version==null)
-			throw new IllegalArgumentException("The version can not be null");
-		
-		if(!versionPattern.matcher(version).matches())
-			throw new NotValidVersionException(version);
-	}
+
 	
 	/**
 	 * 
@@ -118,11 +91,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 * @return A field to easily compare versions, this is the same string with out the dots
 	 */
 	public static String processRawVersion(final String version){
-		
-		if(version==null)
-			throw new IllegalArgumentException("The version can not be null");
-		
-		confirmPattern(version);
 		return version.replace(".", "");	
 	}
 	
@@ -145,9 +113,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 */
 	private StringBuilder[] ensureSameCharacterLength(final VersionApk version){
 		
-		if(version==null)
-			throw new IllegalArgumentException("The givenVersion can not be null");
-		
 		final StringBuilder[] rawVersions = {
 				new StringBuilder(rawVersion), 
 				new StringBuilder(
@@ -168,9 +133,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	@Override
 	public boolean equals(Object version) {
 		
-		if(version==null)
-			throw new IllegalArgumentException("The given object can not be null.");
-		
 		if(!(version instanceof VersionApk))
 			throw new IllegalArgumentException("The given argument is not a instance of Version class.");
 		
@@ -183,9 +145,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	}
 	
 	public int compareTo(VersionApk version) {
-		
-		if(version==null)
-			throw new IllegalArgumentException("The version can not be null.");
 		
 		StringBuilder[] rawVersions = ensureSameCharacterLength(version);
 		

@@ -4,14 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.http.ProtocolException;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -21,10 +20,8 @@ import android.content.Context;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.Status;
-import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 
 /**
- * 
  * @author rafael
  * @since summerinternship2011
  * 
@@ -54,17 +51,17 @@ import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
  * 		<entry>No apk was found with the given apkid and apkversion.</entry>
  * 	</errors>
  * </response>
+ * 
  */
 public class TasteGetter {
 	
 	private String urlReal;
 	
 	private Status status;
+	private ArrayList<String> errors;
 	private BigInteger likes;
 	private BigInteger dislikes;
 	private UserTaste userTaste;
-	
-	private final static BigInteger UNIT = new BigInteger("1");
 	
 	/**
 	 * 
@@ -73,39 +70,42 @@ public class TasteGetter {
 	 * @param apkversion
 	 */
 	public TasteGetter( String repo, String apkid, String apkversion) {
-		urlReal = String.format(ConfigsAndUtils.TASTE_URL_LIST,repo, apkid, apkversion);
+		urlReal = String.format(ConfigsAndUtils.TASTE_URL_LIST, URLEncoder.encode(repo), URLEncoder.encode(apkid), URLEncoder.encode(apkversion));
+		
 	}
 	
 	/**
 	 * 
 	 * @param context
 	 * @param username
-	 * @throws MalformedURLException
-	 * @throws IOException
+	 * 
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
-	 * @throws FactoryConfigurationError
-	 * @throws ProtocolException
+	 * @throws IOException 
 	 */
-	public void parse(Context context, String username) throws MalformedURLException, IOException, ParserConfigurationException, SAXException, FactoryConfigurationError, ProtocolException {
+	public void parse(Context context, String username) throws ParserConfigurationException, SAXException, IOException {
 		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
 		InputStream stream = NetworkApis.getInputStream(context, urlReal);
 		VersionContentHandler versionContentHandler = new VersionContentHandler(username);
-    	sp.parse(new InputSource(new BufferedInputStream(stream)),versionContentHandler);
+    	sp.parse(new InputSource(new BufferedInputStream(stream)), versionContentHandler);
     	
     	likes = versionContentHandler.getLikes();
     	dislikes = versionContentHandler.getDislikes();
     	status = versionContentHandler.getStatus();
     	userTaste = versionContentHandler.getUserTaste();
-    	
+    	errors = versionContentHandler.getErrors();
 	}
 	
 	public BigInteger getLikes() { return likes; }
 	public BigInteger getDislikes() { return dislikes; }
 	public Status getStatus() { return status; }
 	public UserTaste getUserTaste() { return userTaste; }
+	public ArrayList<String> getErrors() { return errors; }
+	
+	
+	
 	
 	/**
 	 * @author rafael
@@ -123,7 +123,8 @@ public class TasteGetter {
 		private BigInteger likes;
 		private BigInteger dislikes;
 		private UserTaste userTaste;
-		
+		private ArrayList<String> errors;
+		private StringBuilder error;
 		/**
 		 * 
 		 * @param username
@@ -136,14 +137,16 @@ public class TasteGetter {
 			this.status = null;
 			this.userTaste = UserTaste.NOTEVALUATED;
 			likes = new BigInteger("0");
-			dislikes = new BigInteger("0");	
-			
+			dislikes = new BigInteger("0");
+			errors = new ArrayList<String>();
+			error = new StringBuilder("");
 		}
 		
 		public Status getStatus() { return status; }
 		public BigInteger getLikes() { return likes; }
 		public BigInteger getDislikes() { return dislikes; }
 		public UserTaste getUserTaste() { return userTaste; }
+		public ArrayList<String> getErrors() { return errors; }
 		
 		/**
 		 * Handle the start of an element.
@@ -168,13 +171,25 @@ public class TasteGetter {
 			 } else {
 				 
 				 if(elem.equals(TasteElement.ENTRY)){
-					 if(tasteTypeIndicator.equals(TasteElement.LIKES)){
-						 likes = likes.add(UNIT);
-					 }else if(tasteTypeIndicator.equals(TasteElement.DISLIKES)){
-						 dislikes = dislikes.add(UNIT);
+					 if(status.equals(Status.OK)){
+						 
+						 switch(tasteTypeIndicator){
+							 case LIKES: 
+								 likes = likes.add(BigInteger.ONE);
+								 break;
+							 case DISLIKES: 
+								 dislikes = dislikes.add(BigInteger.ONE);
+								 break;
+							 default: break;
+						 }
+						 
+					 }else{
+						 //Error...
+						 errors.add(error.toString());
+						 error = new StringBuilder("");
 					 }
+					 
 				 }
-				 
 				 tasteDataIndicator = null;
 			 }
 				 
@@ -185,29 +200,26 @@ public class TasteGetter {
 		 */
 		 public void characters (char ch[], int start, int length) throws SAXException{
 			 
-			 if(tasteDataIndicator!=null){
 				 String read = new String(ch, start, length);
 				 switch(tasteDataIndicator){
 					 case STATUS: 
-						 status = Status.valueOfToUpper(read); 
-					  	 if(status==null || status.equals(Status.FAIL))
-					  		throw new FailedRequestException("The retrived information about the taste was not as expected.");
-						 break;
+						status = Status.valueOfToUpper(read); 
+					  	break;
 					 case USERNAME: 
 						 if(username!= null && read.equals(username)){
-							 if(tasteTypeIndicator.equals(TasteElement.LIKES)){
-								 userTaste = UserTaste.LIKE;
-							 }else if(tasteTypeIndicator.equals(TasteElement.DISLIKES)){
-								 userTaste = UserTaste.DONTLIKE;
+							 switch(tasteTypeIndicator){
+							 	case LIKES: userTaste = UserTaste.LIKE; break; 
+							 	case DISLIKES: userTaste = UserTaste.DONTLIKE;
 							 }
 						 }
 					 case TIMESTAMP:
 					 case ENTRY:
+						 if(status.equals(Status.FAIL)){
+							 error.append(read);
+						 }
 					 case RESPONSE:
 					 default: break;
 				 }
-				 
-			 }
 			 
 		 }
 		 
@@ -218,6 +230,9 @@ public class TasteGetter {
 		}
 		  
 	}
+	
+	
+	
 	
 	
 }

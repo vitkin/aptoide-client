@@ -3,10 +3,8 @@
  */
 package cm.aptoide.summerinternship2011.comments;
 
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -64,77 +62,108 @@ public class CommentGetter {
 	
 	private StringBuilder status;
 	private ArrayList<Comment> comments;
+	private ArrayList<String> errors;
 	private String urlReal;
+	private SAXParser sp;
 	
 	/**
 	 * 
 	 * @param repo
 	 * @param apkid
 	 * @param apkversion
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException 
 	 */
-	public CommentGetter( String repo, String apkid, String apkversion ) {
+	public CommentGetter( String repo, String apkid, String apkversion ) throws ParserConfigurationException, SAXException {
 		urlReal = String.format(ConfigsAndUtils.COMMENTS_URL_LIST,repo, apkid, apkversion);
+		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
+		sp = spf.newSAXParser();
 	}
 	
-	public void parse(Context context, int requestSize, BigInteger startFrom, boolean startFromGiven) throws IOException, ParserConfigurationException, SAXException, FactoryConfigurationError {
+	/**
+	 * Request a set of comments starting in startFrom.
+	 * 
+	 * @param context
+	 * @param requestSize
+	 * @param startFrom
+	 * @param startFromGiven
+	 * 
+	 * @throws IOException
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws FactoryConfigurationError
+	 */
+	public void parse(Context context, int requestSize, BigInteger startFrom, boolean startFromGiven) throws IOException, SAXException {
 		
-		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
-		SAXParser sp = spf.newSAXParser();
-		
-		InputStream stream = NetworkApis.getInputStream(context, urlReal);
-		BufferedInputStream bstream = new BufferedInputStream(stream);
-		
-		this.status = new StringBuilder("");
-    	this.comments = new ArrayList<Comment>();
-    	
-		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, requestSize, startFrom));
-		
-		stream.close();
+		BufferedInputStream bstream = buildBasicStructure(context);
+		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, errors, requestSize, startFrom));
 		bstream.close();
 		
 	}
 	
 	/**
+	 * Request comments until a certain comment is found excluding this one, given by the variable until. 
 	 * 
 	 * @param context
-	 * @param until
+	 * @param until Get until this comment
+	 * 
 	 * @throws IOException
+	 * @throws SAXException 
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws FactoryConfigurationError
 	 */
-	public void parse(Context context, BigInteger until) throws IOException, ParserConfigurationException, SAXException, FactoryConfigurationError {
-		
-		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
-		SAXParser sp = spf.newSAXParser();
-		
-		InputStream stream = NetworkApis.getInputStream(context, urlReal);
-		BufferedInputStream bstream = new BufferedInputStream(stream);
-		
-		this.status = new StringBuilder("");
-    	this.comments = new ArrayList<Comment>();
-    	
-		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, until));
-		
-		stream.close();
+	public void parse(Context context, BigInteger until) throws IOException, SAXException {
+		BufferedInputStream bstream = buildBasicStructure(context);
+		sp.parse(bstream, new VersionContentHandler(status, comments, errors, until));
 		bstream.close();
-		
 	}
 	
+	/**
+	 * 
+	 * @param context
+	 * @return
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private BufferedInputStream buildBasicStructure(Context context) throws IOException{
+		this.status = new StringBuilder("");
+    	this.comments = new ArrayList<Comment>();
+    	this.errors = new ArrayList<String>();
+    	return new BufferedInputStream(NetworkApis.getInputStream(context, urlReal));
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public ArrayList<Comment> getComments() { return comments; }
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Status getStatus() { return Status.valueOfToUpper(status.toString()); }
+	
+	/**
+	 * 
+	 * @return
+	 */
+	public ArrayList<String> getErrors() { return errors; }
 	
 	/**
 	 * @author rafael
 	 * @since summerinternship2011
 	 * 
 	 */
-	public class VersionContentHandler extends DefaultHandler{
+	public static class VersionContentHandler extends DefaultHandler{
 		
 		private CommentElement commentDataIndicator; //null if any element started being read 
 		private StringBuilder status;
 		private ArrayList<Comment> comments;
+		private ArrayList<String> errors;
 		
 		private BigInteger id_tmp;
 		private String username_tmp;
@@ -145,21 +174,26 @@ public class CommentGetter {
 		
 		private int requestedSize; 		// Number of comments requested
 		private BigInteger startFrom; 	// Number of comments requested, starting from comment id 
-		private boolean started; 		// Start reading
+		private boolean started; 		// Start reading?
 		private BigInteger until;
 		
+		
+		
 		/**
+		 * Request a set of comments starting in startFrom.
 		 * 
-		 * @param status
-		 * @param comments
-		 * @param requestedSize
-		 * @param startFrom
+		 * @param status If the connection was performed successfully
+		 * @param comments The Collection to put the comments
+		 * @param errors
+		 * @param requestedSize The number of comments to get
+		 * @param startFrom If start from is null it will start gathering comments from the beginning of the xml file
 		 */
-		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, int requestedSize, BigInteger startFrom) {
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, int requestedSize, BigInteger startFrom) {
 			
 			commentDataIndicator = null;
 			this.status = status;
 			this.comments = comments;
+			this.errors = errors;
 			
 			id_tmp=null; 
 			username_tmp=null;
@@ -171,34 +205,28 @@ public class CommentGetter {
 			this.requestedSize = requestedSize;
 			this.startFrom = startFrom;
 			started = false;
+			
+			//Not used in this operation mode
 			until = null;
 			
 		}
 		
 		/**
+		 * Request comments until a certain comment is found excluding this one given by the variable until. 
 		 * 
-		 * @param status
-		 * @param comments
-		 * @param until
+		 * @param status If the connection was performed successfully
+		 * @param comments The Collection to put the comments
+		 * @param errors
+		 * @param until Get the comments until this comment id can not be null
 		 */
-		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, BigInteger until) {
-			commentDataIndicator = null;
-			this.status = status;
-			this.comments = comments;
-			
-			id_tmp=null; 
-			username_tmp=null;
-			answerto_tmp=null;
-			subject_tmp=null;
-			text_tmp = new StringBuilder("");
-			timestamp_tmp=null;
-			
-			//Not used
-			this.requestedSize = 0;
-			this.startFrom = null;
-			
-			started = true;
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, BigInteger until) {
+			this(status, comments, errors, 0, null);
+			if(until==null)
+				throw new IllegalArgumentException("The until parameter can not be null");
 			this.until = until;
+			//Not used in this operation mode
+			//this.requestedSize = 0;
+			//this.startFrom = null;
 		}
 		
 		
@@ -217,10 +245,13 @@ public class CommentGetter {
 			 CommentElement elem = CommentElement.valueOfToUpper(name);
 			 
 			 if(started && elem.equals(CommentElement.ENTRY) ){
+				 
 				 if(until!=null){
 					 if(!id_tmp.equals(until)){
 						 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp.toString(), timestamp_tmp) );
-					 }else{ throw new EndOfRequestReached(); }
+					 }else{ 
+						 throw new EndOfRequestReached();
+					 }
 				 }else if(startFrom == null || !id_tmp.equals(startFrom)){
 					 if( startFrom == null ) startFrom = id_tmp; 
 					 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp.toString(), timestamp_tmp) );
@@ -230,6 +261,10 @@ public class CommentGetter {
 				 
 				 answerto_tmp = null;
 				 subject_tmp = null;
+				 text_tmp = new StringBuilder("");
+				 
+			 } else if(status.equals(Status.FAIL) && elem.equals(CommentElement.ENTRY)){
+				 errors.add(text_tmp.toString());
 				 text_tmp = new StringBuilder("");
 			 }
 			 
@@ -246,13 +281,11 @@ public class CommentGetter {
 					  String read =new String(ch, start, length);
 					  switch(commentDataIndicator){
 					  	case STATUS: 
-					  		status.append(read); 
-					  		if(status.equals(Status.FAIL))
-					  			throw new FailedRequestException("Status is failed.");
+					  		status.append(read);
 					  		break;
 					 	case ID: 
 					 		id_tmp = new BigInteger(read);
-					 		if(until==null && !started && ( startFrom==null || id_tmp.equals(startFrom)) ){ 
+					 		if(!started && ( until!=null  || ( startFrom==null || id_tmp.equals(startFrom) ) ) ){ 
 					 			started=true;
 					 		}
 					 		break;
@@ -280,13 +313,17 @@ public class CommentGetter {
 						  			throw new FailedRequestException("Date format not valid.");
 						  		}
 					  		break;
+					  	case ENTRY:
+					  		if( status.equals(Status.FAIL) )
+					  			text_tmp.append(read);
+					  		break;
 					  	default: break;
 					  }
 				  
 				  }
 			  
-		  }
+		  } // End characters
 		
-	}
+	} // End VersionContentHandler
 	
 }

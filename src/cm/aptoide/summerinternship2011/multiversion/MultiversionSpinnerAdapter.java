@@ -12,11 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 /**
- * 
  * @author rafael
+ * @since summerinternship2011
  * 
- * 
- * 
+ * The adapter of the spinner responsible for showing the available versions.
  */
 public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapter<T> {
 	
@@ -72,7 +71,5 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 		}
 		return -1;
 	}
-	
-	
 	
 }

@@ -54,7 +54,6 @@
     <string name="commentlabel">Comment app...</string>
     <string name="submit">Submit</string>
     <string name="clear">Clear</string>
-    <string name="undoreplay">Undo replay</string>
     <string name="body">Body..</string>
     <string name="subject">Subject...</string>
     <string name="user">User name...</string>
@@ -79,6 +78,10 @@
     <string name="override_credentials"></string>
     <string name="postingcomment">Posting your comment...</string>
     <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
+    <string name="opinionsuccess">Your opinion was successfully submitted</string>
+    <string name="postingtaste">Your opinion is being submitted.</string>
+    <string name="unabletoexecute">Unable to execute</string>
+    <string name="loggingin">Logging in...</string>
 </resources>
 
 <!--

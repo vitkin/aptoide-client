@@ -7,8 +7,13 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 import cm.aptoide.pt.R;
 import cm.aptoide.summerinternship2011.exceptions.EmptyRequestException;
+import cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached;
 import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 
 import android.app.Activity;
@@ -20,10 +25,11 @@ import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
 
 /**
- * 
  * @author rafael
  * @since summerinternship2011
- *
+ * 
+ * The scroll listener of the comment list.
+ * 
  */
 public class LoadOnScrollCommentList implements OnScrollListener {
 	
@@ -49,8 +55,10 @@ public class LoadOnScrollCommentList implements OnScrollListener {
      * @param repo
      * @param apkid
      * @param version
+     * @throws SAXException 
+     * @throws ParserConfigurationException 
      */
-    public LoadOnScrollCommentList(Activity context, ArrayAdapter<Comment> commentList, String repo, String apkid, String version) {
+    public LoadOnScrollCommentList(Activity context, ArrayAdapter<Comment> commentList, String repo, String apkid, String version) throws ParserConfigurationException, SAXException {
     	
     	this.context = context;
     	this.commentList = commentList;
@@ -59,12 +67,11 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	
     	reset();
     }
- 
-    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-    	new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
-    }
     
-    public synchronized void reset(){
+    /**
+     * 
+     */
+    private void reset(){
     	currentPage = 0;
     	previousTotal = 0;
     	loading = true;
@@ -74,6 +81,10 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	pausedNetwork = false;
     	stopOnFirstPage = false;
     }
+    
+    
+    
+    
     
     /**
      * @author rafael
@@ -119,7 +130,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 					        		
 				    				try{
 										commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
-									} catch(cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached e){}
+									} catch(EndOfRequestReached e){}
 									
 									if(commentGetter.getComments().size()!=0){
 										
@@ -127,6 +138,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 										return commentGetter.getComments();
 										
 									} else { 
+										
 										if(!commentGetter.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK))
 											throw new FailedRequestException("Request could not be executed");
 										else
@@ -142,8 +154,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 				    				if(currentPage==1) 
 				    					stopOnFirstPage = true;
 				    				continueFetching = false;
-									//FailedRequestException && EmptyRequestException  && SAXException && 
-				    				//&& ParserConfigurationException && FactoryConfigurationError
+									//FailedRequestException && EmptyRequestException
 								}
 								
 					        }
@@ -166,33 +177,47 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 			}
 		}	
     	
+		/**
+		 * 
+		 */
 		private void commentsCouldNotBeLoaded(){
-			
 			if(stopOnFirstPage)
 				((TextView)((ListView)context.findViewById(R.id.listComments)).findViewById(R.id.commentsLabel)).setText(context.getString(R.string.comments_unavailable));	
 		}
 		
+		/**
+		 * 
+		 */
 		private void commentsCanBeLoaded(){
 			((TextView)((ListView)context.findViewById(R.id.listComments)).findViewById(R.id.commentsLabel)).setText(context.getString(R.string.commentlabel));
 			pausedNetwork = false;
 		}
 		
-    }
+    } //End of Fetch class
     
+    
+    
+    
+    
+    /**
+     * Fetches new comments and adds it to the beginning of the list.
+     * Synchronized due to other AsyncThreads that may interfere in the normal program work flow,
+     * 
+     */
     public synchronized void fetchNewComments(){
-    	
     	if(commentList.getCount()!=0){
 	    	try{
 		    	try{
-		    		Comment comment = commentList.getItem(0);
 					commentGetter.parse(context, commentList.getItem(0).getId());
-				} catch(cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached e){}
-				synchronized(commentList){
-					((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
-				}
+				} catch(EndOfRequestReached e){}
+				((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
 	    	}catch(Exception e){}
     	}
 	}
+    
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    	new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
+    }
     
     public void onScrollStateChanged(AbsListView view, int scrollState) {}
  

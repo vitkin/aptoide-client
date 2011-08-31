@@ -99,6 +99,7 @@ public class BaseManagement extends Activity {
 		prefEdit = sPref.edit();
 		order_lst = sPref.getString("order_lst", "abc");
 		redrawCatgList();
+		
 	}
 	
 	private void redrawCatgList(){
@@ -385,7 +386,13 @@ public class BaseManagement extends Activity {
 						apk_lst.clear();
 					apk_lst = db.getAll(order_lst);
 
-
+					/*
+					 * status
+					 * 0 - not installed
+					 * 1 - installed
+					 * 2 - installed need update
+					 * 
+					 */
 					for(ApkNode node: apk_lst){
 						apk_line = new HashMap<String, Object>();
 						apk_line.put("pkg", node.apkid);
@@ -394,87 +401,6 @@ public class BaseManagement extends Activity {
 						apk_line.put("rat", node.rat);
 						if(node.down >= 0)
 							apk_line.put("down", node.down + " Down.");
-						
-						
-						
-						//if(node.status==1 || node.status==2){
-//						if(node.status==1){
-//							//Is the latest version
-//							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
-//							apk_line.put("name", node.name);
-//							instMap.add(apk_line);
-//							
-//						}
-//							
-					//
-//						{
-//							
-//							ArrayList<VersionApk> versions = db.getOldApks(node.apkid);
-//							HashMap<String,ArrayList<VersionApk>> ret = VersionApk.getGreaterAndSmallerThan(new VersionApk(node.ver, node.apkid, -1), versions);
-//							StringBuilder label = new StringBuilder("");
-//							if(ret.get("smaller").size()>0){
-//								label.append(getString(R.string.installed_downgrade) + " " + VersionApk.getStringFromVersionApkList(ret.get("smaller")) + ".");
-//							}
-//							if(ret.get("greater").size()>0){
-//								if(ret.get("smaller").size()>0){
-//									label.append(System.getProperty("line.separator"));
-//								}
-//								label.append(getString(R.string.installed_update) + " " + VersionApk.getStringFromVersionApkList(ret.get("greater")) + "." );
-//							}
-//							String labelStr = label.toString();
-//							
-//							if(labelStr!=""){
-//								
-//								apk_line = new HashMap<String, Object>();
-//								apk_line.put("pkg", node.apkid);
-//								apk_line.put("icon", iconpath);
-//								apk_line.put("rat", node.rat);
-//								
-//								apk_line.put("status2", label.toString());
-//								
-//								apk_line.put("name2", node.name);
-//								updtMap.add(apk_line);
-//								
-//								if(node.status!=1)
-//									instMap.add(apk_line);
-//							}
-//							
-//							
-//							
-//						}
-					//
-//						}
-						
-						
-						
-						
-						//for(ApkNode node: apk_lst){
-//						apk_line = new HashMap<String, Object>();
-//						apk_line.put("pkg", node.apkid);
-//						String iconpath = new String(getString(R.string.icons_path)+node.apkid);
-//						apk_line.put("icon", iconpath);
-//						apk_line.put("rat", node.rat);
-//						if(node.down >= 0)
-//							apk_line.put("down", node.down + " Down.");
-//						if(node.status == 1){
-//							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
-//							apk_line.put("name", node.name);
-//							instMap.add(apk_line);
-//						}else if(node.status == 2){
-//						    apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
-//						    apk_line.put("name2", node.name);
-//						    updtMap.add(apk_line);
-//						    instMap.add(apk_line);
-//						}else{
-//							apk_line.put("status", "Version: " + node.ver);
-//							apk_line.put("name", node.name);
-//							availMap.add(apk_line);
-//						}
-					//	
-					//}
-						
-						
-						
 						
 							if(node.status == 1 || node.status == 2){
 								
@@ -880,4 +806,95 @@ public class BaseManagement extends Activity {
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//if(node.status==1 || node.status==2){
+//	if(node.status==1){
+//		//Is the latest version
+//		apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+//		apk_line.put("name", node.name);
+//		instMap.add(apk_line);
+//		
+//	}
+//		
+//
+//	{
+//		
+//		ArrayList<VersionApk> versions = db.getOldApks(node.apkid);
+//		HashMap<String,ArrayList<VersionApk>> ret = VersionApk.getGreaterAndSmallerThan(new VersionApk(node.ver, node.apkid, -1), versions);
+//		StringBuilder label = new StringBuilder("");
+//		if(ret.get("smaller").size()>0){
+//			label.append(getString(R.string.installed_downgrade) + " " + VersionApk.getStringFromVersionApkList(ret.get("smaller")) + ".");
+//		}
+//		if(ret.get("greater").size()>0){
+//			if(ret.get("smaller").size()>0){
+//				label.append(System.getProperty("line.separator"));
+//			}
+//			label.append(getString(R.string.installed_update) + " " + VersionApk.getStringFromVersionApkList(ret.get("greater")) + "." );
+//		}
+//		String labelStr = label.toString();
+//		
+//		if(labelStr!=""){
+//			
+//			apk_line = new HashMap<String, Object>();
+//			apk_line.put("pkg", node.apkid);
+//			apk_line.put("icon", iconpath);
+//			apk_line.put("rat", node.rat);
+//			
+//			apk_line.put("status2", label.toString());
+//			
+//			apk_line.put("name2", node.name);
+//			updtMap.add(apk_line);
+//			
+//			if(node.status!=1)
+//				instMap.add(apk_line);
+//		}
+//		
+//		
+//		
+//	}
+//
+//	}
+	
+	
+	
+	
+	//for(ApkNode node: apk_lst){
+//	apk_line = new HashMap<String, Object>();
+//	apk_line.put("pkg", node.apkid);
+//	String iconpath = new String(getString(R.string.icons_path)+node.apkid);
+//	apk_line.put("icon", iconpath);
+//	apk_line.put("rat", node.rat);
+//	if(node.down >= 0)
+//		apk_line.put("down", node.down + " Down.");
+//	if(node.status == 1){
+//		apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+//		apk_line.put("name", node.name);
+//		instMap.add(apk_line);
+//	}else if(node.status == 2){
+//	    apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
+//	    apk_line.put("name2", node.name);
+//	    updtMap.add(apk_line);
+//	    instMap.add(apk_line);
+//	}else{
+//		apk_line.put("status", "Version: " + node.ver);
+//		apk_line.put("name", node.name);
+//		availMap.add(apk_line);
+//	}
+//	
+//}
 }

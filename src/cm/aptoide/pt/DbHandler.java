@@ -389,7 +389,8 @@ public class DbHandler {
 		tmp.put("apkid", apkid);
 		tmp.put("instver", ver);
 		tmp.put("instvercode", vercode);
-		return (db.insert(TABLE_NAME_LOCAL, null, tmp) > 0); 
+		long i = db.insert(TABLE_NAME_LOCAL, null, tmp);
+		return i > 0; 
 	}
 	
 	public boolean UpdateInstalled(String apkid, String ver, int vercode){

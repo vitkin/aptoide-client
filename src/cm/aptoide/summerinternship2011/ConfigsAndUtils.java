@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 
 /**
  * @author rafael
+ * @since summerinternship2011
+ * 
  */
 public class ConfigsAndUtils {
 	
@@ -16,10 +18,16 @@ public class ConfigsAndUtils {
 	public static final String TASTE_URL_LIST = "http://dev.bazaarandroid.com/webservices/listApkLikes/%1$s/%2$s/%3$s/xml";
 	public static final String COMMENTS_URL_ADD = "http://dev.bazaarandroid.com/webservices/addApkComment";
 	public static final String TASTE_URL_ADD = "http://dev.bazaarandroid.com/webservices/addApkLike/user/%1$s/%2$s/%3$s/%4$s/%5$s/%6$s";
-	public static final String QR_CODE_GOOGLE_WEBSERVICE = "https://chart.googleapis.com/chart";
+	public static final String CHECK_CREDENTIALS_URL = "http://dev.bazaarandroid.com/webservices/checkUserCredentials/%1s/%2s/xml";
+	//public static final String QR_CODE_GOOGLE_WEBSERVICE = "https://chart.googleapis.com/chart";
 	
 	private ConfigsAndUtils(){}
 	
+	/**
+	 * 
+	 * @param b
+	 * @return
+	 */
 	public static String byteArrayToHexString(byte[] b) {
 		  StringBuilder result = new StringBuilder("");
 		  for (int i=0; i < b.length; i++) {

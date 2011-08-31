@@ -6,6 +6,7 @@ package cm.aptoide.summerinternship2011.taste;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.util.Date;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,7 +28,6 @@ import android.content.Context;
  * 
  * Structure of the webservice:
  * 	http://dev.bazaarandroid.com/webservices/addApkLike/user/<username>/<passhash(sha1)>/<apkid>/<apkversion>/like/<mode>
- * 
  */
 public class Taste {
 	
@@ -82,7 +82,9 @@ public class Taste {
 		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException 
 		SAXParser sp = spf.newSAXParser();
-		String url = String.format(ConfigsAndUtils.TASTE_URL_ADD, user, password, repo, apkid, version, userTaste.toString());
+		String url = String.format(ConfigsAndUtils.TASTE_URL_ADD, URLEncoder.encode(user), URLEncoder.encode(password), 
+										URLEncoder.encode(repo), URLEncoder.encode(apkid), URLEncoder.encode(version), 
+										URLEncoder.encode(userTaste.toString()));
 		InputStream stream = NetworkApis.getInputStream(context, url);
 		BufferedInputStream bstream = new BufferedInputStream(stream);
 		
