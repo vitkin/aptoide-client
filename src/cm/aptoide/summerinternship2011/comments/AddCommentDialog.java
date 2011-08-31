@@ -25,14 +25,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * 
  * @author rafael
- *
+ * @since summerinternship2011
+ * 
  */
 public class AddCommentDialog extends Dialog implements OnDismissListener{
 	
-	private Comment replyTo;
+	
 	private final SharedPreferences sharedPreferences = this.getContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+	
+	private Comment replyTo;
 	
 	private EditText subject;
 	private EditText body;
@@ -40,6 +42,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	private String repo;
 	private String apkid;
 	private String version;
+	
 	private LoadOnScrollCommentList loadOnScrollComList;
 	private ProgressDialog dialogProgress;
 	
@@ -68,7 +71,6 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		this.setContentView(R.layout.addcomment);
 		this.setTitle(getContext().getString(R.string.commentlabel));
 		
-		
 		if(replyTo!=null){
 			TextView inresponse = ((TextView)findViewById(R.id.inresponseto));
 			inresponse.append(replyTo.getUsername());
@@ -80,17 +82,18 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		subject = ((EditText)findViewById(R.id.subject));
 		
 		final Button submit = ((Button)findViewById(R.id.submitComment));
+		
 		submit.setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {
 				if(body.getText().toString().length()!=0 && ((SetBlank)body.getOnFocusChangeListener()).getAlreadySetted()){
-					
 					//If the text as some content on it provided by the user
 					if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
 						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET);
 						loginComments.setOnDismissListener(AddCommentDialog.this);
 						loginComments.show();
-					}else{ postMessage(); }
-					
+					}else{ 
+						postMessage(); 
+					}
 				} else {
 					Toast.makeText(AddCommentDialog.this.getContext(), AddCommentDialog.this.getContext().getString(R.string.enterbody), Toast.LENGTH_LONG).show();
 				}
@@ -116,9 +119,9 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		if(username != null && passwordSha1!=null){
 			
 			/**
-			 * 
 			 * @author rafael
-			 *
+			 * @since summerinternship2011
+			 * 
 			 */
 			class PostComment extends AsyncTask<Void, Void, ResponseToHandler>{
 				
@@ -160,9 +163,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 				protected void onPostExecute(ResponseToHandler result) {
 					dialogProgress.dismiss();
 					if(result!=null){
-						
 						loadOnScrollComList.fetchNewComments();
-						
 						AddCommentDialog.this.dismiss();
 						if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.FAIL)){
 							for(String error: result.getErrors()){

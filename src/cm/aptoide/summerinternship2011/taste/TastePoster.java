@@ -1,27 +1,34 @@
 package cm.aptoide.summerinternship2011.taste;
 
-import java.util.HashMap;
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.R;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * 
  * @author rafael
  * @since summerinternship2011
  * 
  */
-public class TastePoster extends AsyncTask<Void, Integer, HashMap<String,String>>{
+public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 	
+	private Context context;
 	private String apkid;
 	private String version;
 	private String repo;
 	private TextView likes;
 	private TextView dislikes;
-	private Context context;
+	private ImageView like;
+	private ImageView dislike;
+	private String username;
 	
 	/**
 	 * 
@@ -32,36 +39,51 @@ public class TastePoster extends AsyncTask<Void, Integer, HashMap<String,String>
 	 * @param likes
 	 * @param dislikes
 	 */
-	public TastePoster(Context context, String apkid, String version, String repo, TextView likes, TextView dislikes) {
+	public TastePoster(Context context,String apkid, String version, String repo, TextView likes, TextView dislikes, ImageView like, ImageView dislike, String username) {
 		this.apkid = apkid;
 		this.version = version;
 		this.repo = repo;
 		this.likes = likes;
 		this.dislikes = dislikes;
 		this.context = context;
+		this.like = like;
+		this.dislike = dislike;
+		this.username = username;
 	}
 	
 	@Override
-	protected HashMap<String, String> doInBackground(Void... params) {
+	protected TasteGetter doInBackground(Void... params) {
+		
+		TasteGetter tasteGetter = new TasteGetter(repo,apkid,version);
 		
 		try {
-			HashMap<String,String> hashMapTaste = new HashMap<String,String>();
-			TasteGetter tasteGetter = new TasteGetter(repo,apkid,version);
-			tasteGetter.parse(context, null);
-			if(tasteGetter.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
-				hashMapTaste.put("LIKES",tasteGetter.getLikes().toString());
-				hashMapTaste.put("DISLIKES",tasteGetter.getDislikes().toString());
-				return hashMapTaste;
-			}
-		} catch(Exception e){}
+			tasteGetter.parse(context, username);
+			return tasteGetter;
+		} catch (ParserConfigurationException e) {
+		} catch (SAXException e) {
+		} catch (IOException e) {
+		}
 		
 		return null;
+		
 	}
 	
-	protected void onPostExecute(HashMap<String,String> result) {
+	protected void onPostExecute(TasteGetter result) {
 		if(result!=null){
-			likes.setText(context.getString(R.string.likes)+result.get("LIKES"));
-			dislikes.setText(context.getString(R.string.dislikes)+result.get("DISLIKES"));
+			
+			likes.setText(context.getString(R.string.likes)+result.getLikes().toString());
+			dislikes.setText(context.getString(R.string.dislikes)+result.getDislikes().toString());
+			
+			switch(result.getUserTaste()){
+				case LIKE:
+					like.setImageResource(R.drawable.likehover);
+					break;
+				case DONTLIKE: 
+					dislike.setImageResource(R.drawable.dontlikehover);
+					break;
+				default: break;
+			}
+			
 		}else{
 			likes.getLayoutParams().height=0;
 			dislikes.getLayoutParams().height=0;

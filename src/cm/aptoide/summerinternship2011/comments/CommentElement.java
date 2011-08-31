@@ -1,9 +1,9 @@
 package cm.aptoide.summerinternship2011.comments;
 
 /**
- * 
  * @author rafael
- *
+ * @since summerinternship2011
+ * 
  */
 public enum CommentElement {
 	

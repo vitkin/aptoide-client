@@ -217,6 +217,7 @@ public class RssHandler extends DefaultHandler{
 				isRemove = false;
 				db.delApk(tmp_apk.apkid, tmp_apk.ver);
 			}else{
+				
 				if(tmp_apk.name.equalsIgnoreCase(""))
 					tmp_apk.name = tmp_apk.apkid;
 				else{

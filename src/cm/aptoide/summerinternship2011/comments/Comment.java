@@ -29,6 +29,7 @@ import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 /**
  * 
  * @author rafael
+ * @since summerinternship2011
  * 
  * Example of the xml file structure.
  * 
@@ -46,7 +47,7 @@ import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
  * </response>
  * 
  */
-public class Comment implements Comparable<Comment>{
+public class Comment{
 	
 	private BigInteger id; 
 	private String username;
@@ -59,10 +60,10 @@ public class Comment implements Comparable<Comment>{
 	 * 
 	 * @param id
 	 * @param username
-	 * @param answerto
-	 * @param subject
-	 * @param text
-	 * @param timestamp
+	 * @param answerto can be null
+	 * @param subject 
+	 * @param text 
+	 * @param timestamp can not be null
 	 */
 	public Comment(BigInteger id, String username, BigInteger answerto, String subject, String text, Date timestamp) {
 		
@@ -75,6 +76,7 @@ public class Comment implements Comparable<Comment>{
 		this.subject = subject;
 		this.text = text;
 		this.timeStamp = timestamp; 
+		
 	}
 	
 	public Comment(BigInteger id, String username, String text, Date timestamp) {
@@ -106,8 +108,6 @@ public class Comment implements Comparable<Comment>{
 	 */
 	public Date getTimestamp() { return timeStamp; }
 	
-	public int compareTo(Comment otherComment) { return this.compareTo(otherComment); }
-	
 	
 	/**
 	 * 	user - Username
@@ -119,10 +119,15 @@ public class Comment implements Comparable<Comment>{
 	 *	text - Comment text
 	 *	mode - Return mode/format ('xml' or 'json')
 	 *	
-	 *	
+	 * @param ctx
 	 * @param repo
 	 * @param apkid
 	 * @param version
+	 * @param subject
+	 * @param text
+	 * @param user
+	 * @param pass
+	 * @param reply
 	 * @return
 	 * @throws IOException 
 	 * @throws SAXException 
@@ -171,18 +176,6 @@ public class Comment implements Comparable<Comment>{
 		sp.parse(new InputSource(new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))), commentsResponseReader);
 		
 		return commentsResponseReader;
-		
-//	    StringBuilder builder = new StringBuilder();
-//	    int read = brd.read();
-//	    while(read!=-1){
-//	    	builder.append((char)read);
-//	    	read = brd.read();
-//	    }
-//	    try {
-//			if(builder.toString().replace("\n", "").matches(".*<status>FAIL</status>.*")){
-//				throw new FailedRequestException("The server didn't reply as expected.");
-//			}
-//		}finally{ wr.close(); brd.close(); }
 		
 	}
 	

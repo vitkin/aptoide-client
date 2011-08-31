@@ -17,13 +17,19 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 /**
- * 
  * @author rafael
- *
+ * @since summerinternship2011
+ * 
  * @param <T>
  */
 public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 	
+	/**
+	 * 
+	 * @param context
+	 * @param textViewResourceId
+	 * @param objects
+	 */
 	public CommentsAdapter(Activity context, int textViewResourceId, List<T> objects) {
 		super(context, textViewResourceId, objects);
 	}
@@ -68,6 +74,10 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 		return -1;
 	}
 	
+	/**
+	 * 
+	 * @param itens ArrayList<T> to add at the begin of the adapter
+	 */
 	public void addAtBegin(ArrayList<T> itens){
 		while(getCount()!=0){
 			T obj = getItem(0);

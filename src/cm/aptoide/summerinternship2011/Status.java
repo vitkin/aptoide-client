@@ -6,8 +6,9 @@ package cm.aptoide.summerinternship2011;
 /**
  * 
  * @author rafael
+ * @since summerinternship2011
  * 
- * Defines the status of a requested web service.
+ * Defines the return status of a requested web service.
  */
 public enum Status {
 	
