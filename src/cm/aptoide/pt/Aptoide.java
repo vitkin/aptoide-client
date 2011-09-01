@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
@@ -51,8 +52,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -79,7 +83,7 @@ public class Aptoide extends Activity {
 	
 
     
-	private static final int OUT = 0;
+	private static final int LOAD_TABS = 0;
 	private static final int UPDATE_SELF = 99;
     private static final String TMP_SRV_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
     private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/aptoideUpdate.apk";
@@ -101,15 +105,16 @@ public class Aptoide extends Activity {
 	
 	private ProgressBar mProgress;
 	private int mProgressStatus = 0;
+	
 	private Handler mHandler = new Handler();
 
-
+	
 	private Handler startHandler = new Handler() {
 
 		@Override
 		public void handleMessage(Message msg) {
 			switch(msg.what){
-			case OUT:
+			case LOAD_TABS:
 				Intent i = new Intent(Aptoide.this, RemoteInTab.class);
 				Intent get = getIntent();
 				if(get.getData() != null){
@@ -149,10 +154,24 @@ public class Aptoide extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
-        
+        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
+    	DownloadQueueServiceIntent = new Intent(getApplicationContext(), DownloadQueueService.class);
+    	startService(DownloadQueueServiceIntent);
+    	
+//@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
+    	ActivityManager activityManager = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+    	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
+    	for (RunningTaskInfo runningTask : running) {
+			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.RemoteInTab")){	//RemoteInTab is the real Aptoide Activity
+				Message msg = new Message();
+	            msg.what = LOAD_TABS;
+	            startHandler.sendMessage(msg);
+	            return;
+			}
+		}
+			
         Log.d("Aptoide","******* \n Downloads will be made to: " + Environment.getExternalStorageDirectory().getPath() + "\n ********");
 
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
@@ -182,12 +201,6 @@ public class Aptoide extends Activity {
     }
     
     private void proceed(){
-    	DownloadQueueServiceIntent = new Intent(getApplicationContext(), DownloadQueueService.class);
-    	startService(DownloadQueueServiceIntent);
-    	updateAppsDb();
-    }
-    
-    private void updateAppsDb(){
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
 	   		db.UpdateTables();
 	   		prefEdit.putBoolean("mode", true);
@@ -260,7 +273,7 @@ public class Aptoide extends Activity {
         		keepScreenOn.release();
         		
                 Message msg = new Message();
-                msg.what = OUT;
+                msg.what = LOAD_TABS;
                 startHandler.sendMessage(msg); 
             }
         }).start();

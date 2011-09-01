@@ -110,9 +110,10 @@ public class BaseManagement extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-
 		super.onCreate(savedInstanceState);
+		
+		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+		
 		mPm = getPackageManager();
 		db = new DbHandler(this);
 		mctx = this;
@@ -537,8 +538,6 @@ public class BaseManagement extends Activity {
 
 		} catch(Exception e){	}
 	}
-	
-	
 	 
 	 
 	 protected SimpleAdapter getRootCtg(){
