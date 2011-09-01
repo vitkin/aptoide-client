@@ -96,6 +96,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 
 				prefEditFull.remove("usernameLogin");
 				prefEditFull.remove("passwordLogin");
+				prefEditFull.remove("useridLogin");
 				prefEditFull.commit();
 				
 				final AlertDialog alrtClear = new AlertDialog.Builder(mctx).create();

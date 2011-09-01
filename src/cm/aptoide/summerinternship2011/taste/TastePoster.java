@@ -28,7 +28,7 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 	private TextView dislikes;
 	private ImageView like;
 	private ImageView dislike;
-	private String username;
+	private String useridLogin;
 	
 	/**
 	 * 
@@ -39,7 +39,7 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 	 * @param likes
 	 * @param dislikes
 	 */
-	public TastePoster(Context context,String apkid, String version, String repo, TextView likes, TextView dislikes, ImageView like, ImageView dislike, String username) {
+	public TastePoster(Context context,String apkid, String version, String repo, TextView likes, TextView dislikes, ImageView like, ImageView dislike, String useridLogin) {
 		this.apkid = apkid;
 		this.version = version;
 		this.repo = repo;
@@ -48,7 +48,7 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 		this.context = context;
 		this.like = like;
 		this.dislike = dislike;
-		this.username = username;
+		this.useridLogin = useridLogin;
 	}
 	
 	@Override
@@ -57,12 +57,13 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 		TasteGetter tasteGetter = new TasteGetter(repo,apkid,version);
 		
 		try {
-			tasteGetter.parse(context, username);
+			tasteGetter.parse(context, useridLogin);
 			return tasteGetter;
 		} catch (ParserConfigurationException e) {
 		} catch (SAXException e) {
 		} catch (IOException e) {
-		}
+		} catch (Exception e){}
+		
 		
 		return null;
 		

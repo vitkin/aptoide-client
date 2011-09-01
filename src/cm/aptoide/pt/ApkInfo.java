@@ -373,7 +373,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		final ImageView dislike = ((ImageView)listView.findViewById(R.id.dislikesImage));
 		final SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		
-		new TastePoster(this,"cm.aptoide.pt","2.0.2","market",likes,dislikes,like, dislike, sharedPreferences.getString("usernameLogin", null)).execute();
+		new TastePoster(this,"cm.aptoide.pt","2.0.2","market",likes,dislikes,like, dislike, sharedPreferences.getString("useridLogin", null)).execute();
 		
 		like.setOnTouchListener(new OnTouchListener(){
 		      public boolean onTouch(View view, MotionEvent e) {

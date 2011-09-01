@@ -149,10 +149,6 @@ public class Login extends Dialog{
 		return isLoginSubmited;
 	}
 	
-	
-	
-	
-	
 	/**
 	 * @author rafael
 	 * @since summerinternship2011
@@ -164,12 +160,15 @@ public class Login extends Dialog{
 		private String user;
 		private String password;
 		private ProgressDialog progress;
+		private MessageDigest md;
 		
-		public LoginConfirmation(Context context, String user, String password, ProgressDialog progress) {
+		public LoginConfirmation(Context context, String user, String password, ProgressDialog progress) throws NoSuchAlgorithmException {
 			this.context = context;
 			this.user = user;
 			this.password = password;
 			this.progress = progress;
+			md = MessageDigest.getInstance("SHA");
+			
 		}
 		
 		@Override
@@ -182,6 +181,7 @@ public class Login extends Dialog{
 //			catch (ParserConfigurationException e) {}
 //			catch (SAXException e) {}
 			catch(Exception e){}
+			
 			return null;
 		}
 		
@@ -190,8 +190,12 @@ public class Login extends Dialog{
 				
 				if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
 					
-					prefEdit.putString("passwordLogin", user);
-					prefEdit.putString("usernameLogin", password);
+					md.update(user.getBytes());
+					
+					prefEdit.putString("passwordLogin", password);
+					prefEdit.putString("usernameLogin", user);
+					prefEdit.putString("useridLogin", ConfigsAndUtils.byteArrayToHexString(md.digest()));
+					
 					prefEdit.commit();
 					success = true;
 					
@@ -208,6 +212,8 @@ public class Login extends Dialog{
 	    }
 		
 	}
+	
+	
 	
 	public static ResponseToHandler checkCredentials(Context context, String user, String password) throws IOException, ParserConfigurationException, SAXException{
 		

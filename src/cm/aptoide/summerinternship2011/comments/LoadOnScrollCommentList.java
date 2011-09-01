@@ -17,6 +17,7 @@ import cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached;
 import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
@@ -169,8 +170,11 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		protected void onPostExecute(ArrayList<Comment> result) {
 			if(result != null){
 				if(pausedNetwork) commentsCanBeLoaded();
-				for(Comment comment: commentGetter.getComments()){
-					synchronized(commentList){ commentList.add(comment); }
+				synchronized(commentList){
+					ArrayList<Comment> comments = commentGetter.getComments();
+					for(Comment comment: comments){
+						 commentList.add(comment);
+					}
 				}
 			}else{
 				commentsCouldNotBeLoaded();
@@ -204,14 +208,18 @@ public class LoadOnScrollCommentList implements OnScrollListener {
      * Synchronized due to other AsyncThreads that may interfere in the normal program work flow,
      * 
      */
-    public synchronized void fetchNewComments(){
-    	if(commentList.getCount()!=0){
-	    	try{
+    public void fetchNewComments(){
+    	synchronized(commentList){
+	    	if(commentList.getCount()!=0){
 		    	try{
-					commentGetter.parse(context, commentList.getItem(0).getId());
-				} catch(EndOfRequestReached e){}
-				((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
-	    	}catch(Exception e){}
+			    	try
+			    	{
+						commentGetter.parse(context, commentList.getItem(0).getId(), 
+								context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null));
+					} catch(EndOfRequestReached e){}
+					((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
+		    	}catch(Exception e){}
+	    	}
     	}
 	}
     
