@@ -716,33 +716,26 @@ public class RemoteInTab extends TabActivity {
 						}
 					}
 				}
-				
-				
+//@dsilveira #531 +20lines fix OutOfMemory crash			
+				InputStream instream = null;
 				
 				if((mHttpResponse.getEntity().getContentEncoding() != null) && (mHttpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
 
-					//byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-
 					Log.d("Aptoide","with gzip");
+					instream = new GZIPInputStream(mHttpResponse.getEntity().getContent());
 
-					InputStream instream = new GZIPInputStream(mHttpResponse.getEntity().getContent());
-
-					ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-					int nRead;
-					byte[] data = new byte[1024];
-
-					while ((nRead = instream.read(data, 0, data.length)) != -1) {
-						buffer.write(data, 0, nRead);
-					}
-
-					buffer.flush();
-
-					saveit.write(buffer.toByteArray());
 				}else{
+
 					Log.d("Aptoide","No gzip");
-					byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-					saveit.write(buffer);
+					instream = mHttpResponse.getEntity().getContent();
+
+				}
+				
+				int nRead;
+				byte[] data = new byte[1024];
+
+				while ((nRead = instream.read(data, 0, data.length)) != -1) {
+					saveit.write(data, 0, nRead);
 				}
 				
 				keepScreenOn.release();
@@ -901,15 +894,64 @@ public class RemoteInTab extends TabActivity {
 				forceUpdateRepos();
 			}
 		}
+		if(intent.hasExtra("uri")){
+			if(intent.hasExtra("apks")){
+				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("uri");
+				if(servers_lst != null && servers_lst.size() > 0){
+					intserver = new Intent(this, ManageRepo.class);
+					intserver.putExtra("uri", intent.getSerializableExtra("uri"));
+				}else{
+					intserver = null;
+				}
+				
+				final String[] nodi = ((ArrayList<String[]>) intent.getSerializableExtra("apks")).get(0);
+				final AlertDialog alrt = new AlertDialog.Builder(this).create();
+				alrt.setTitle("Install");
+				alrt.setMessage("Do you wish to install: " + nodi[1] + " ?");
+				alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						alrt.dismiss();
+						pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + nodi[1], true);
+						pd.setIcon(android.R.drawable.ic_dialog_info);
+						
+						new Thread(new Runnable() {
+							public void run() {
+								installFromLink(nodi[0]);
+							}
+						}).start();
+
+					}
+				});
+				alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						alrt.dismiss();
+					}
+				});
+				alrt.show();
+			}else{
+				Intent call = new Intent(this, ManageRepo.class);
+				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("uri");
+				if(servers_lst != null && servers_lst.size() > 0){
+					call.putExtra("uri", intent.getSerializableExtra("uri"));
+					startActivityForResult(call,NEWREPO_FLAG);
+				}
+			}
+		}else if(intent.hasExtra("newrepo")){
+			Intent call = new Intent(this, ManageRepo.class);
+			call.putExtra("newrepo", intent.getStringExtra("newrepo"));
+			startActivityForResult(call,NEWREPO_FLAG);
+		}else if(intent.hasExtra("linkxml")){
+			
+		}
 	}
 	
 	private void installApk(Intent intent){
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
 		String apkid = arguments.getString("apkid");
-		int apkHash = arguments.getInt("apkHash");
+		int apkidHash = arguments.getInt("apkidHash");
 		boolean isUpdate = arguments.getBoolean("isUpdate");
-		Log.d("Aptoide-RemoteInTab", "installApk: "+localPath+" apkHash: "+apkHash+" isUpdate: "+isUpdate);
+		Log.d("Aptoide-RemoteInTab", "installApk: "+localPath+" apkidHash: "+apkidHash+" isUpdate: "+isUpdate);
 		
 		Intent installApkAction = new Intent();
 		if(isUpdate){
