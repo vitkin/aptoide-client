@@ -81,7 +81,7 @@ public class CommentGetter {
 	}
 	
 	/**
-	 * Request a set of comments starting in startFrom.
+	 * Request a set of comments starting in startFrom, with comment out selection of a single user.
 	 * 
 	 * @param context
 	 * @param requestSize
@@ -103,7 +103,7 @@ public class CommentGetter {
 	}
 	
 	/**
-	 * Request comments until a certain comment is found excluding this one, given by the variable until. 
+	 * Request comments until a certain comment is found excluding this one, given by the variable until, with comment out selection of a single user.
 	 * 
 	 * @param context
 	 * @param until Get until this comment
@@ -115,10 +115,57 @@ public class CommentGetter {
 	 * @throws FactoryConfigurationError
 	 */
 	public void parse(Context context, BigInteger until) throws IOException, SAXException {
+		
 		BufferedInputStream bstream = buildBasicStructure(context);
 		sp.parse(bstream, new VersionContentHandler(status, comments, errors, until));
 		bstream.close();
+		
 	}
+	
+	/**
+	 * Request comments until a certain comment is found excluding this one, given by the variable until, with comment selection of a single user.
+	 * 
+	 * @param context
+	 * @param until Get until this comment
+	 * @param fromUserIdHash User id hash whose comments are being selected. Null to select all comments
+	 * 
+	 * @throws IOException
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws FactoryConfigurationError
+	 */
+	public void parse(Context context, BigInteger until, String fromUserIdHash) throws IOException, SAXException {
+		
+		BufferedInputStream bstream = buildBasicStructure(context);
+		sp.parse(bstream, new VersionContentHandler(status, comments, errors, until,fromUserIdHash));
+		bstream.close();
+		
+	}
+	
+	/**
+	 * Request a set of comments starting in startFrom, with comment selection of a single user.
+	 * 
+	 * @param context
+	 * @param requestSize
+	 * @param startFrom
+	 * @param startFromGiven
+	 * @param fromUserIdHash User id hash whose comments are being selected. Null to select all comments
+	 * 
+	 * @throws IOException
+	 * @throws SAXException 
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws FactoryConfigurationError
+	 */
+	public void parse(Context context, int requestSize, BigInteger startFrom, boolean startFromGiven, String fromUserIdHash) throws IOException, SAXException {
+		
+		BufferedInputStream bstream = buildBasicStructure(context);
+		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, errors, requestSize, startFrom, fromUserIdHash));
+		bstream.close();
+		
+	}
+	
 	
 	/**
 	 * 
@@ -171,12 +218,13 @@ public class CommentGetter {
 		private String subject_tmp;
 		private StringBuilder text_tmp;
 		private Date timestamp_tmp;
+		private String userIdHash_tmp;
 		
 		private int requestedSize; 		// Number of comments requested
 		private BigInteger startFrom; 	// Number of comments requested, starting from comment id 
 		private boolean started; 		// Start reading?
 		private BigInteger until;
-		
+		private String fromUserIdHash; // If set only get comments from this user id. Note: That the user ID is the sha-1 hash of the users email
 		
 		
 		/**
@@ -187,8 +235,9 @@ public class CommentGetter {
 		 * @param errors
 		 * @param requestedSize The number of comments to get
 		 * @param startFrom If start from is null it will start gathering comments from the beginning of the xml file
+		 * @param fromUserIdHash User id hash whose comments are being selected. Null to select all comments
 		 */
-		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, int requestedSize, BigInteger startFrom) {
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, int requestedSize, BigInteger startFrom, String fromUserIdHash) {
 			
 			commentDataIndicator = null;
 			this.status = status;
@@ -201,6 +250,7 @@ public class CommentGetter {
 			subject_tmp=null;
 			text_tmp = new StringBuilder("");
 			timestamp_tmp=null;
+			userIdHash_tmp = null;
 			
 			this.requestedSize = requestedSize;
 			this.startFrom = startFrom;
@@ -208,6 +258,8 @@ public class CommentGetter {
 			
 			//Not used in this operation mode
 			until = null;
+			
+			this.fromUserIdHash = null;
 			
 		}
 		
@@ -218,9 +270,10 @@ public class CommentGetter {
 		 * @param comments The Collection to put the comments
 		 * @param errors
 		 * @param until Get the comments until this comment id can not be null
+		 * @param fromUserIdHash User id hash whose comments are being selected. Null to select all comments
 		 */
-		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, BigInteger until) {
-			this(status, comments, errors, 0, null);
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, BigInteger until, String fromUserIdHash) {
+			this(status, comments, errors, 0, null, fromUserIdHash);
 			if(until==null)
 				throw new IllegalArgumentException("The until parameter can not be null");
 			this.until = until;
@@ -229,6 +282,33 @@ public class CommentGetter {
 			//this.startFrom = null;
 		}
 		
+		/**
+		 * Request comments until a certain comment is found excluding this one given by the variable until, with out comment selection of a single user.
+		 * 
+		 * @param status If the connection was performed successfully
+		 * @param comments The Collection to put the comments
+		 * @param errors
+		 * @param until Get the comments until this comment id can not be null
+		 */
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, BigInteger until) {
+			this(status, comments, errors, 0, null, null);
+		}
+		
+		/**
+		 * Request a set of comments starting in startFrom, with out comment selection of a single user.
+		 * 
+		 * @param status If the connection was performed successfully
+		 * @param comments The Collection to put the comments
+		 * @param errors
+		 * @param requestedSize The number of comments to get
+		 * @param startFrom If start from is null it will start gathering comments from the beginning of the xml file
+		 */
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, 
+											int requestedSize, BigInteger startFrom) {
+			
+			this(status, comments, errors, requestedSize, startFrom, null);
+			
+		}
 		
 		/**
 		  * Handle the start of an element.
@@ -248,7 +328,11 @@ public class CommentGetter {
 				 
 				 if(until!=null){
 					 if(!id_tmp.equals(until)){
-						 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp.toString(), timestamp_tmp) );
+						 if(fromUserIdHash==null||fromUserIdHash.equals(userIdHash_tmp)){
+							 // If the commentaries selection of a single user is turned on
+							 comments.add( new Comment(id_tmp, username_tmp, answerto_tmp, subject_tmp, text_tmp.toString(), timestamp_tmp) );
+						 
+						 }
 					 }else{ 
 						 throw new EndOfRequestReached();
 					 }
@@ -316,6 +400,10 @@ public class CommentGetter {
 					  	case ENTRY:
 					  		if( status.equals(Status.FAIL) )
 					  			text_tmp.append(read);
+					  		break;
+					  	case USERIDHASH:
+					  		if(fromUserIdHash!=null)
+					  			userIdHash_tmp = read;
 					  		break;
 					  	default: break;
 					  }

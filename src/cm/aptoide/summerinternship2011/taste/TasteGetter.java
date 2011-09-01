@@ -17,6 +17,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
+import android.util.Log;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.Status;
@@ -77,18 +78,18 @@ public class TasteGetter {
 	/**
 	 * 
 	 * @param context
-	 * @param username
+	 * @param useridLogin
 	 * 
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException 
 	 */
-	public void parse(Context context, String username) throws ParserConfigurationException, SAXException, IOException {
+	public void parse(Context context, String useridLogin) throws ParserConfigurationException, SAXException, IOException {
 		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
 		InputStream stream = NetworkApis.getInputStream(context, urlReal);
-		VersionContentHandler versionContentHandler = new VersionContentHandler(username);
+		VersionContentHandler versionContentHandler = new VersionContentHandler(useridLogin);
     	sp.parse(new InputSource(new BufferedInputStream(stream)), versionContentHandler);
     	
     	likes = versionContentHandler.getLikes();
@@ -117,7 +118,7 @@ public class TasteGetter {
 		private TasteElement tasteDataIndicator; //null if any element started being read. 
 		private TasteElement tasteTypeIndicator; //null if any element started being read. Three possible values null, TasteElement.LIKE, TasteElement.DISLIKE.
 		
-		private String username;
+		private String useridLogin;
 		
 		private Status status;
 		private BigInteger likes;
@@ -127,12 +128,12 @@ public class TasteGetter {
 		private StringBuilder error;
 		/**
 		 * 
-		 * @param username
+		 * @param useridLogin
 		 */
-		public VersionContentHandler(String username) {
+		public VersionContentHandler(String useridLogin) {
 			
 			this.tasteDataIndicator = null;
-			this.username = username;
+			this.useridLogin = useridLogin;
 			
 			this.status = null;
 			this.userTaste = UserTaste.NOTEVALUATED;
@@ -205,8 +206,10 @@ public class TasteGetter {
 					 case STATUS: 
 						status = Status.valueOfToUpper(read); 
 					  	break;
-					 case USERNAME: 
-						 if(username!= null && read.equals(username)){
+					 case USERIDHASH:
+						 Log.d("REad blá",read+" "+useridLogin);
+						 if(useridLogin!= null && read.equals(useridLogin)){
+							 
 							 switch(tasteTypeIndicator){
 							 	case LIKES: userTaste = UserTaste.LIKE; break; 
 							 	case DISLIKES: userTaste = UserTaste.DONTLIKE;
@@ -217,6 +220,7 @@ public class TasteGetter {
 						 if(status.equals(Status.FAIL)){
 							 error.append(read);
 						 }
+					 case USERNAME:
 					 case RESPONSE:
 					 default: break;
 				 }
