@@ -3,6 +3,9 @@ layout/multiversionspinneritem
 layout/commentlistviewitem
 layout/commentslist
 layout/addcomment
+layout/loadingfootercomments
+
+
 
 string/multi_ver_prompt
 string/commentsproblem
@@ -10,7 +13,6 @@ string/version
 string/size
 string/version_inst
 string/comments
-import android.util.Log;
 string/isinstalled
 string/installed_downgrade
 string/whattodo
@@ -46,9 +48,15 @@ string/postingcomment
 string/opinionsuccess
 string/postingtaste
 string/loggingin
+string/endcomreached
 
 values/themes.xml
 values/styles.xml 
 values/colors.xml
 
 drawable/list_comments_divider
+drawable/like.png
+drawable/likehover.png
+drawable/dontlikehover.png
+drawable/dontlike.png
+drawable/loading.gif

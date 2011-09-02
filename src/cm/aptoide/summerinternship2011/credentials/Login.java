@@ -23,6 +23,7 @@ import cm.aptoide.pt.R;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
 import cm.aptoide.summerinternship2011.SetBlank;
+import cm.aptoide.summerinternship2011.taste.TasteGetter;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -34,6 +35,7 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -52,6 +54,12 @@ public class Login extends Dialog{
 	private EditText password;
 	private boolean isLoginSubmited;
 	private boolean success;
+	private ImageView like; 
+	private ImageView dontlike;
+	
+	private String repo; 
+	private String apkid; 
+	private String apkversion;
 	
 	/**
 	 * @author rafael
@@ -65,18 +73,41 @@ public class Login extends Dialog{
 	}
 	
 	/**
+	 * Must define the parameters like, dontlike, repo, apkid && apkversion.
 	 * 
 	 * @param context
 	 * @param nature
+	 * 
+	 * @param like
+	 * @param dontlike
+	 * @param repo
+	 * @param apkid
+	 * @param apkversion
+	 * 
 	 */
-	public Login(Context context, InvoqueNature nature) {
+	public Login(Context context, InvoqueNature nature, ImageView like, 
+				ImageView dontlike, String repo, String apkid, String apkversion) {
 		super(context);
 		sPref = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
 		isLoginSubmited = false;
 		success = false;
+		this.like = like;
+		this.dontlike = dontlike;
+		this.repo = repo;
+		this.apkid = apkid;
+		this.apkversion = apkversion;
 	}
 
+	/**
+	 * 
+	 * @param context
+	 * @param nature
+	 */
+	public Login(Context context, InvoqueNature nature) {
+		this(context, nature, null, null, null, null, null);
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -160,22 +191,35 @@ public class Login extends Dialog{
 		private String user;
 		private String password;
 		private ProgressDialog progress;
-		private MessageDigest md;
+		private String useridLogin;
+		private TasteGetter tasteGetter;
 		
 		public LoginConfirmation(Context context, String user, String password, ProgressDialog progress) throws NoSuchAlgorithmException {
 			this.context = context;
 			this.user = user;
 			this.password = password;
 			this.progress = progress;
-			md = MessageDigest.getInstance("SHA");
+			MessageDigest md = MessageDigest.getInstance("SHA");
+			md.update(user.getBytes());
+			useridLogin = ConfigsAndUtils.byteArrayToHexString(md.digest());
 			
+			tasteGetter = null;
 		}
 		
 		@Override
 		protected ResponseToHandler doInBackground(Void... args) {
 			
 			try {
-				return checkCredentials(context, user, password);
+				
+				ResponseToHandler response = checkCredentials(context, user, password);
+				
+				if(response.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK) && repo!=null && apkid!=null && apkversion!=null){
+						tasteGetter = new  TasteGetter( repo, apkid, apkversion);
+						tasteGetter.parse(context, useridLogin);
+						
+				}
+				
+				return response;
 			} 
 //			catch (IOException e) {}
 //			catch (ParserConfigurationException e) {}
@@ -190,14 +234,27 @@ public class Login extends Dialog{
 				
 				if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
 					
-					md.update(user.getBytes());
 					
 					prefEdit.putString("passwordLogin", password);
 					prefEdit.putString("usernameLogin", user);
-					prefEdit.putString("useridLogin", ConfigsAndUtils.byteArrayToHexString(md.digest()));
+					prefEdit.putString("useridLogin", useridLogin);
 					
 					prefEdit.commit();
 					success = true;
+					
+					if(tasteGetter!=null){
+						if(tasteGetter.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
+							switch(tasteGetter.getUserTaste()){
+								case LIKE: 
+									like.setImageResource(R.drawable.likehover);
+									break;
+								case DONTLIKE: 
+									dontlike.setImageResource(R.drawable.dontlikehover);
+									break;
+								default: break;
+							}
+						}
+					}
 					
 				}else{
 					Toast.makeText(context, context.getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();

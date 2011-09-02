@@ -19,8 +19,11 @@ import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
@@ -34,8 +37,8 @@ import android.widget.AbsListView.OnScrollListener;
  */
 public class LoadOnScrollCommentList implements OnScrollListener {
 	
-    private final static int visibleThreshold = 3; // The minimum amount of items to have below your current scroll position, before loading more
-    private final static int commentsToLoad = 3; //The number of comments to retrieve per fetch
+    private final static int visibleThreshold = 6; // The minimum amount of items to have below your current scroll position, before loading more
+    private final static int commentsToLoad = 2; //The number of comments to retrieve per fetch
     
     private int currentPage; // The current page of data you have loaded
     private int previousTotal; // The total number of items in the dataset after the last load
@@ -47,7 +50,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     private ArrayAdapter<Comment> commentList;
     private CommentGetter commentGetter; //Comment xml parser
     private boolean pausedNetwork; // If no internconnection is found
-    private boolean stopOnFirstPage; // 
+    private LinearLayout loadingLayout;
     
     /**
      * 
@@ -56,15 +59,19 @@ public class LoadOnScrollCommentList implements OnScrollListener {
      * @param repo
      * @param apkid
      * @param version
+     * @param loadingLayout
      * @throws SAXException 
      * @throws ParserConfigurationException 
      */
-    public LoadOnScrollCommentList(Activity context, ArrayAdapter<Comment> commentList, String repo, String apkid, String version) throws ParserConfigurationException, SAXException {
+    public LoadOnScrollCommentList(Activity context, ArrayAdapter<Comment> commentList, String repo, 
+    								String apkid, String version, LinearLayout loadingLayout) 
+    										throws ParserConfigurationException, SAXException {
     	
     	this.context = context;
     	this.commentList = commentList;
     	
     	commentGetter = new CommentGetter(repo, apkid, version);
+    	this.loadingLayout = loadingLayout;
     	
     	reset();
     }
@@ -80,7 +87,6 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	continueFetching = true;
     	
     	pausedNetwork = false;
-    	stopOnFirstPage = false;
     }
     
     
@@ -112,6 +118,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		
 		@Override
 		protected ArrayList<Comment> doInBackground(Void... params) {
+			
 			synchronized(LoadOnScrollCommentList.this){
 				
 				if(continueFetching){
@@ -144,16 +151,13 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 											throw new FailedRequestException("Request could not be executed");
 										else
 											throw new EmptyRequestException("Request empty.");
+										
 									}
 									
 				    			}catch(IOException e){
 				    				pausedNetwork = true;
-				    				if(currentPage==1) 
-				    					stopOnFirstPage = true;
 				    				continueFetching = false;
 				    			}catch (Exception e) {
-				    				if(currentPage==1) 
-				    					stopOnFirstPage = true;
 				    				continueFetching = false;
 									//FailedRequestException && EmptyRequestException
 								}
@@ -167,35 +171,41 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		}
 
 		@Override
-		protected void onPostExecute(ArrayList<Comment> result) {
+		protected  void onPostExecute(ArrayList<Comment> result) {
 			if(result != null){
-				if(pausedNetwork) commentsCanBeLoaded();
-				synchronized(commentList){
-					ArrayList<Comment> comments = commentGetter.getComments();
-					for(Comment comment: comments){
-						 commentList.add(comment);
+				
+				if(pausedNetwork) 
+					pausedNetwork = false;
+				
+				((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
+				((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
+				
+				synchronized (commentList){
+					synchronized (commentGetter){
+						ArrayList<Comment> comments = commentGetter.getComments();
+						for(Comment comment: comments){
+							 commentList.add(comment);
+						}
 					}
 				}
+				
 			}else{
-				commentsCouldNotBeLoaded();
+				
+				((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
+				((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
+				
 			}
 		}	
     	
-		/**
-		 * 
-		 */
-		private void commentsCouldNotBeLoaded(){
-			if(stopOnFirstPage)
-				((TextView)((ListView)context.findViewById(R.id.listComments)).findViewById(R.id.commentsLabel)).setText(context.getString(R.string.comments_unavailable));	
-		}
+//		/**
+//		 * 
+//		 */
+//		private void commentsCouldNotBeLoaded(){
+//			if(stopOnFirstPage)
+//				((TextView)((ListView)context.findViewById(R.id.listComments)).findViewById(R.id.commentsLabel)).setText(context.getString(R.string.comments_unavailable));
+//				
+//		}
 		
-		/**
-		 * 
-		 */
-		private void commentsCanBeLoaded(){
-			((TextView)((ListView)context.findViewById(R.id.listComments)).findViewById(R.id.commentsLabel)).setText(context.getString(R.string.commentlabel));
-			pausedNetwork = false;
-		}
 		
     } //End of Fetch class
     
@@ -209,18 +219,27 @@ public class LoadOnScrollCommentList implements OnScrollListener {
      * 
      */
     public void fetchNewComments(){
-    	synchronized(commentList){
-	    	if(commentList.getCount()!=0){
-		    	try{
-			    	try
-			    	{
-						commentGetter.parse(context, commentList.getItem(0).getId(), 
-								context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null));
-					} catch(EndOfRequestReached e){}
-					((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
-		    	}catch(Exception e){}
-	    	}
-    	}
+    	
+    		synchronized (commentList){
+		
+			    	try{
+			    		synchronized(this){
+					    	try{
+					    		if(commentList.getCount()!=0){
+									commentGetter.parse(context, commentList.getItem(0).getId(), 
+											context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null));
+					    		} else {
+					    			commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
+					    		}
+							} catch(EndOfRequestReached e){}
+							((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
+			    		}
+			    	}catch(Exception e){
+			    		Log.d("Aptoide", e.getMessage());
+			    	}
+				
+    		}
+    	
 	}
     
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
