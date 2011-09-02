@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,6 +46,8 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	
 	private LoadOnScrollCommentList loadOnScrollComList;
 	private ProgressDialog dialogProgress;
+	private ImageView like;
+	private ImageView dislike;
 	
 	/**
 	 * 
@@ -55,13 +58,15 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	 * @param apkid
 	 * @param version
 	 */
-	public AddCommentDialog(Activity context, LoadOnScrollCommentList loadOnScrollComList, Comment replyTo, String repo, String apkid, String version) {
+	public AddCommentDialog(Activity context, LoadOnScrollCommentList loadOnScrollComList, Comment replyTo, ImageView like, ImageView dislike, String repo, String apkid, String version) {
 		super(context);
 		this.replyTo = replyTo;
+		this.loadOnScrollComList = loadOnScrollComList; 
 		this.repo = repo;
 		this.apkid = apkid; 
 		this.version = version;
-		this.loadOnScrollComList = loadOnScrollComList; 
+		this.like = like;
+		this.dislike = dislike;
 	}
 	
 	@Override
@@ -87,8 +92,10 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 			public void onClick(View arg) {
 				if(body.getText().toString().length()!=0 && ((SetBlank)body.getOnFocusChangeListener()).getAlreadySetted()){
 					//If the text as some content on it provided by the user
-					if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET);
+					if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){
+						
+						
+						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, repo, apkid, version);
 						loginComments.setOnDismissListener(AddCommentDialog.this);
 						loginComments.show();
 					}else{ 

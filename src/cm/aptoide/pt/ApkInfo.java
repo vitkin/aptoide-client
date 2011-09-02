@@ -6,13 +6,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.xml.sax.SAXException;
 
 import cm.aptoide.summerinternship2011.comments.AddCommentDialog;
 import cm.aptoide.summerinternship2011.comments.Comment;
@@ -96,7 +93,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private String apk_repo_str;
 	private String apk_ver_str;
 	private String apk_id;
-	
+	private ImageView like;
+	private ImageView dislike;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -332,28 +330,33 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Comments*/
-		
 		//comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
 		//apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "")
-		
 		listView.addHeaderView(linearLayout, null, false);
+		LinearLayout loadComLayout = (LinearLayout)inflater.inflate(R.layout.loadingfootercomments,listView, false);
+		listView.addFooterView(loadComLayout);
 		comments = new ArrayList<Comment>();
 		final CommentsAdapter<Comment> commentAdapter 
-			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem ,comments);
+			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem,comments);
 		listView.setAdapter(commentAdapter);
 		
 		try {
-			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, "market", "cm.aptoide.pt", "2.0.2");
+			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, "market", "cm.aptoide.pt", "2.0.2",loadComLayout);
 			listView.setOnScrollListener(loadOnScrollCommentList);
-		} catch (ParserConfigurationException e1) {
-			e1.printStackTrace();
-		} catch (SAXException e1) {
-			e1.printStackTrace();
-		}
+		} 
+//		catch (ParserConfigurationException e) {} 
+//		catch (SAXException e) {}
+		catch(Exception e){}
+		
+		final ImageView like = ((ImageView)listView.findViewById(R.id.likesImage));
+		final ImageView dislike = ((ImageView)listView.findViewById(R.id.dislikesImage));
 		
 		listView.findViewById(R.id.commentThis).setOnClickListener(new OnClickListener(){
 			public void onClick(View view) {
-				Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, "market", "cm.aptoide.pt", "2.0.2");
+				Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
+						"market",
+		 				"cm.aptoide.pt", 
+		 				"2.0.2");
 				commentDialog.show();
 			}
 		});
@@ -369,8 +372,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		likes.append(this.getString(R.string.loading));
 		dislikes.append(this.getString(R.string.loading));
 		
-		final ImageView like = ((ImageView)listView.findViewById(R.id.likesImage));
-		final ImageView dislike = ((ImageView)listView.findViewById(R.id.dislikesImage));
 		final SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		
 		new TastePoster(this,"cm.aptoide.pt","2.0.2","market",likes,dislikes,like, dislike, sharedPreferences.getString("useridLogin", null)).execute();
@@ -381,11 +382,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		          {
 		             case MotionEvent.ACTION_DOWN:
 		            	 
-		            	 
-		            	 
-		            	 
 		            	 if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-							Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET);
+							Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str.substring("http://".length(), apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "") );
 							loginComments.setOnDismissListener(ApkInfo.this);
 							loginComments.show();
 						 }else{
@@ -393,7 +391,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							 new AddTaste(
 						 				ApkInfo.this, 
 						 				"market",
-						 				"cm.aptoide.pt", "2.0.2", 
+						 				"cm.aptoide.pt", 
+						 				"2.0.2", 
 						 				sharedPreferences.getString("usernameLogin", null), 
 						 				sharedPreferences.getString("passwordLogin", null), 
 						 				UserTaste.LIKE, likes, dislikes, like, dislike).submit();
@@ -411,14 +410,15 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		            	  
 		            	  SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		            	  if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET);
+		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str.substring("http://".length(), apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""));
 								loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
 		            	  }else{
 		            		  new AddTaste(
 							 		ApkInfo.this, 
 							 		"market",
-							 		"cm.aptoide.pt", "2.0.2", 
+							 		"cm.aptoide.pt", 
+							 		"2.0.2", 
 							 		sharedPreferences.getString("usernameLogin", null), 
 							 		sharedPreferences.getString("passwordLogin", null), 
 							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike).submit();
@@ -489,7 +489,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			switch (event) {
 	        	case REPLY: 
 	        		//Open reply comment
-	        		Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, getted, "market", "cm.aptoide.pt", "2.0.2");
+	        		Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, getted, like, dislike, 
+	        				"market",
+			 				"cm.aptoide.pt", 
+			 				"2.0.2");
 					commentDialog.show();
 	        		return true;
 	        	case COPY_TO_CLIPBOARD:

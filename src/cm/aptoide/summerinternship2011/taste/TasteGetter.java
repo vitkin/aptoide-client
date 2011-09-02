@@ -17,7 +17,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
-import android.util.Log;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.Status;
@@ -72,7 +71,6 @@ public class TasteGetter {
 	 */
 	public TasteGetter( String repo, String apkid, String apkversion) {
 		urlReal = String.format(ConfigsAndUtils.TASTE_URL_LIST, URLEncoder.encode(repo), URLEncoder.encode(apkid), URLEncoder.encode(apkversion));
-		
 	}
 	
 	/**
@@ -207,7 +205,7 @@ public class TasteGetter {
 						status = Status.valueOfToUpper(read); 
 					  	break;
 					 case USERIDHASH:
-						 Log.d("REad blá",read+" "+useridLogin);
+						// Log.d("REad blá",read+" "+useridLogin);
 						 if(useridLogin!= null && read.equals(useridLogin)){
 							 
 							 switch(tasteTypeIndicator){
