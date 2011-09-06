@@ -17,9 +17,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.Status;
+import cm.aptoide.summerinternship2011.exceptions.CancelRequestException;
 
 /**
  * @author rafael
@@ -62,6 +64,7 @@ public class TasteGetter {
 	private BigInteger likes;
 	private BigInteger dislikes;
 	private UserTaste userTaste;
+	private AsyncTask<?,?,?> submitTaste;
 	
 	/**
 	 * 
@@ -77,24 +80,27 @@ public class TasteGetter {
 	 * 
 	 * @param context
 	 * @param useridLogin
+	 * @param submitTaste
 	 * 
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 * @throws IOException 
 	 */
-	public void parse(Context context, String useridLogin) throws ParserConfigurationException, SAXException, IOException {
+	public void parse(Context context, String useridLogin, AsyncTask<?,?,?> submitTaste) throws ParserConfigurationException, SAXException, IOException {
 		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		SAXParser sp = spf.newSAXParser();
 		InputStream stream = NetworkApis.getInputStream(context, urlReal);
 		VersionContentHandler versionContentHandler = new VersionContentHandler(useridLogin);
-    	sp.parse(new InputSource(new BufferedInputStream(stream)), versionContentHandler);
+		this.submitTaste = submitTaste;
+		sp.parse(new InputSource(new BufferedInputStream(stream)), versionContentHandler);
     	
     	likes = versionContentHandler.getLikes();
     	dislikes = versionContentHandler.getDislikes();
     	status = versionContentHandler.getStatus();
     	userTaste = versionContentHandler.getUserTaste();
     	errors = versionContentHandler.getErrors();
+    	
 	}
 	
 	public BigInteger getLikes() { return likes; }
@@ -165,11 +171,15 @@ public class TasteGetter {
 		 public void endElement (String uri, String name, String qName) throws SAXException{
 			 
 			 TasteElement elem = TasteElement.valueOfToUpper(name);
-			 if(elem.equals(TasteElement.LIKES)||elem.equals(TasteElement.DISLIKES)){
+			 if(elem.equals(TasteElement.LIKES) || elem.equals(TasteElement.DISLIKES)){
 				 tasteTypeIndicator = null;
 			 } else {
 				 
 				 if(elem.equals(TasteElement.ENTRY)){
+					 if(submitTaste.isCancelled()){
+						 //Check if request as been canceled
+						 throw new CancelRequestException();
+					 }
 					 if(status.equals(Status.OK)){
 						 
 						 switch(tasteTypeIndicator){
@@ -212,12 +222,13 @@ public class TasteGetter {
 							 	case LIKES: userTaste = UserTaste.LIKE; break; 
 							 	case DISLIKES: userTaste = UserTaste.DONTLIKE; break;
 							 }
-						 }
-					 case TIMESTAMP:
+						 }break;
+					 
 					 case ENTRY:
 						 if(status.equals(Status.FAIL)){
 							 error.append(read);
-						 }
+						 }break;
+					 case TIMESTAMP:
 					 case USERNAME:
 					 case RESPONSE:
 					 default: break;

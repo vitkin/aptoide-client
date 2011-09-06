@@ -335,8 +335,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		if(apk_size_str_raw.equals("No information available")){ apk_size_str_raw = "0";}
 		else{ apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); }
 		
-		if(type == 1){ apk_ver_str_raw = versionInstApk.getVersion();} 
-		else{apk_ver_str_raw = apk_ver_str.substring(1,apk_ver_str.length()-1);}
+		if(type == 1) { apk_ver_str_raw = versionInstApk.getVersion(); } 
+		else { apk_ver_str_raw = apk_ver_str.substring(1,apk_ver_str.length()-1); }
 		
 		apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
 		
@@ -351,11 +351,13 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					Integer.parseInt(apk_size_str_raw))
 			);
 			Collections.sort(versions, Collections.reverseOrder());
+			
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
 				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, "Version", "Size");
 			spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
 			spinnerMulti.setAdapter(spinnerMultiAdapter );
 			if(type==2){
+				//If we are in tab updates
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
@@ -370,6 +372,16 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								action.setText(ApkInfo.this.getString(R.string.isinstalled));
 							}
 							//TODO Select correct comments and likes for this version
+					}
+					public void onNothingSelected(AdapterView<?> parent) {}
+				});
+			} else if(type==0){
+				
+				//If we are in tab available
+				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
+					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+						apk_ver_str_raw = ((VersionApk)spinnerMultiAdapter.getItem(position)).getVersion();
+						selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
@@ -416,7 +428,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Taste*/
-		//selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+		if(type==1)
+			selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 		
 		this.like.setOnTouchListener(new OnTouchListener(){
 		      public boolean onTouch(View view, MotionEvent e) {
@@ -483,9 +496,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							 		sharedPreferences.getString("passwordLogin", null), 
 							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste).submit();
 							 } else {
-								 
 								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
-								 
 							 }
 							 
 		            	  }
@@ -539,9 +550,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		likes.setText(this.getString(R.string.loading));
 		dontlikes.setText(this.getString(R.string.loading));
-		Log.d("Aptoide threads TastePoster1","invoque");
+		
 		if(tastePoster!=null)
-			tastePoster.cancel(false);
+			tastePoster.cancel(true);
 		
 		tastePoster = new TastePoster(this, apkid, version, repo, likes, dontlikes, 
 													like, dislike, sharedPreferences.getString("useridLogin", null),
@@ -629,9 +640,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	/**
 	 * 
 	 */
-	public void onDismiss(DialogInterface dialog) {
-		
-	}
+	public void onDismiss(DialogInterface dialog) {}
 	
 	
 	

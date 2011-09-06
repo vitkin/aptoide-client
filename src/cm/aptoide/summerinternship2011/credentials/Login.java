@@ -214,8 +214,9 @@ public class Login extends Dialog{
 				ResponseToHandler response = checkCredentials(context, user, password);
 				
 				if(response.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK) && repo!=null && apkid!=null && apkversion!=null){
+						
 						tasteGetter = new  TasteGetter( repo, apkid, apkversion);
-						tasteGetter.parse(context, useridLogin);
+						tasteGetter.parse(context, useridLogin, this);
 						
 				}
 				

@@ -63,7 +63,7 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 		TasteGetter tasteGetter = new TasteGetter(repo, apkid, version);
 		
 		try {
-			tasteGetter.parse(context, useridLogin);
+			tasteGetter.parse(context, useridLogin, this);
 			return tasteGetter;
 		}
 		//catch (ParserConfigurationException e) 		{} 

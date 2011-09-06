@@ -255,7 +255,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			apkinfo.putExtra("rat", tmp_get.get(5));
 			apkinfo.putExtra("size", tmp_get.get(6));
 			apkinfo.putExtra("type", 0);
-			apkinfo.putExtra("vercode", tmp_get.get(7));
+			apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));
 			
 			try {
 				PackageManager mPm = getApplicationContext().getPackageManager();

@@ -130,7 +130,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 1);
-		apkinfo.putExtra("vercode", tmp_get.get(7));
+		apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));
 		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
