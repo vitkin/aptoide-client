@@ -67,6 +67,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 
 	private final static String WS_img = "http://www.bazaarandroid.com/webservices/listApkScreens/";
 	
+	private SharedPreferences sharedPreferences;
+	
+	
 	private Intent apkinfo = null;
 	private Context mctx = null;
 	
@@ -93,22 +96,66 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private String apk_repo_str;
 	private String apk_ver_str;
 	private String apk_id;
+	
 	private ImageView like;
 	private ImageView dislike;
+	private TextView likes;
+	private TextView dislikes;
+	private String apk_repo_str_raw;
+	private String apk_ver_str_raw;
+	private String apk_size_str_raw;
+	private UserTaste taste;
+	private WrapperUserTaste userTaste;
+	private TastePoster tastePoster;
+	
+	/**
+	 * @author rafael
+	 * @since summerinternship2011
+	 * 
+	 */
+	public class WrapperUserTaste{
+		
+		private UserTaste userTaste;
+		private int operatingThreads;
+		public WrapperUserTaste(){userTaste=UserTaste.NOTEVALUATED; operatingThreads=0;}
+		public UserTaste getValue(){ return userTaste; } 
+		public void setValue(UserTaste userTaste){ this.userTaste = userTaste; }
+		public void incOperatingThreads(){ operatingThreads++; }
+		public void decOperatingThreads(){ 
+			if(operatingThreads!=0)
+				operatingThreads--;
+		}
+		public int getOperatingThreads(){ return operatingThreads; }
+		
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.apkinfo);
 		
+		sharedPreferences= ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		
 		Event.REPLY.setString(this.getString(R.string.reply));
 		Event.COPY_TO_CLIPBOARD.setString(this.getString(R.string.copyclip));
-		
 		ListView listView = (ListView) findViewById(R.id.listComments);
-		
 		LayoutInflater inflater = this.getLayoutInflater();
 		final LinearLayout linearLayout = (LinearLayout)inflater.inflate(R.layout.headercomments,listView, false);
 		updateScreenshots = new ScreenShotsUpdate(linearLayout);
+		
+		this.likes = (TextView)linearLayout.findViewById(R.id.likes);
+		this.dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
+		
+		this.like = ((ImageView)linearLayout.findViewById(R.id.likesImage));
+		this.dislike = ((ImageView)linearLayout.findViewById(R.id.dislikesImage));
+		
+		this.userTaste = new WrapperUserTaste();
+		this.taste = UserTaste.NOTEVALUATED;
+		
+		tastePoster = null;
+		
+		
+		
 		
 		mctx = this;
 		screens = new ArrayList<ImageView>();
@@ -123,7 +170,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		rtrn_intent = new Intent();
 		
 		apkinfo = getIntent();
-		
+		final int versioncode = apkinfo.getIntExtra("vercode", 0);
 		apk_id = apkinfo.getStringExtra("apk_id");
 		final int type = apkinfo.getIntExtra("type", 0);
 		
@@ -282,15 +329,27 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			}
 		}.start();
 		
+		//TODO This as to be changed in a future code revision
+		apk_size_str_raw 	= apk_size_str.substring(6);
 		
+		if(apk_size_str_raw.equals("No information available")){ apk_size_str_raw = "0";}
+		else{ apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); }
 		
+		if(type == 1){ apk_ver_str_raw = versionInstApk.getVersion();} 
+		else{apk_ver_str_raw = apk_ver_str.substring(1,apk_ver_str.length()-1);}
 		
+		apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
 		
 		/*Multiversion*/
 		if(type!=1){//If we aren't in the installed tab
 		
 			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
-			versions.add(new VersionApk(apk_ver_str.replaceAll("[^0-9\\.]", "") ,apk_id,Integer.parseInt(apk_size_str.replaceAll("[^0-9]",""))));
+			versions.add(
+					new VersionApk(apk_ver_str_raw, 
+					versioncode, 
+					apk_id, 
+					Integer.parseInt(apk_size_str_raw))
+			);
 			Collections.sort(versions, Collections.reverseOrder());
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
 				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, "Version", "Size");
@@ -300,16 +359,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
-						
+							apk_ver_str_raw = versionApk.getVersion();
+							selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 							int result = versionApk.compareTo(versionInstApk);
 							if(result>0){
 								action.setText("Upgrade");
-								action.setEnabled(true);
 							}else if(result<0) {
 								action.setText("Downgrade");
-								action.setEnabled(true);
 							}else{
-								action.setEnabled(false);
 								action.setText(ApkInfo.this.getString(R.string.isinstalled));
 							}
 							//TODO Select correct comments and likes for this version
@@ -330,33 +387,26 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Comments*/
-		//comments.add(new Comment(new BigInteger("1"), "Hey", new BigInteger("1"), "Hello", "António", new Date()));
-		//apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "")
 		listView.addHeaderView(linearLayout, null, false);
-		LinearLayout loadComLayout = (LinearLayout)inflater.inflate(R.layout.loadingfootercomments,listView, false);
+		LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
 		listView.addFooterView(loadComLayout);
 		comments = new ArrayList<Comment>();
 		final CommentsAdapter<Comment> commentAdapter 
 			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem,comments);
 		listView.setAdapter(commentAdapter);
-		
 		try {
-			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, "market", "cm.aptoide.pt", "2.0.2",loadComLayout);
+			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
 			listView.setOnScrollListener(loadOnScrollCommentList);
 		} 
-//		catch (ParserConfigurationException e) {} 
-//		catch (SAXException e) {}
-		catch(Exception e){}
-		
-		final ImageView like = ((ImageView)listView.findViewById(R.id.likesImage));
-		final ImageView dislike = ((ImageView)listView.findViewById(R.id.dislikesImage));
-		
+		//catch (ParserConfigurationException e) 	{} 
+		//catch (SAXException e) 					{}
+		catch(Exception e)							{}
 		listView.findViewById(R.id.commentThis).setOnClickListener(new OnClickListener(){
 			public void onClick(View view) {
 				Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
-						"market",
-		 				"cm.aptoide.pt", 
-		 				"2.0.2");
+						apk_repo_str_raw,
+		 				apk_id, 
+		 				apk_ver_str_raw);
 				commentDialog.show();
 			}
 		});
@@ -365,69 +415,139 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		
-		
 		/*Taste*/
-		final TextView likes = (TextView)linearLayout.findViewById(R.id.likes);
-		final TextView dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
-		likes.append(this.getString(R.string.loading));
-		dislikes.append(this.getString(R.string.loading));
+		//selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 		
-		final SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-		
-		new TastePoster(this,"cm.aptoide.pt","2.0.2","market",likes,dislikes,like, dislike, sharedPreferences.getString("useridLogin", null)).execute();
-		
-		like.setOnTouchListener(new OnTouchListener(){
+		this.like.setOnTouchListener(new OnTouchListener(){
 		      public boolean onTouch(View view, MotionEvent e) {
 		          switch(e.getAction())
 		          {
 		             case MotionEvent.ACTION_DOWN:
 		            	 
 		            	 if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-							Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str.substring("http://".length(), apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", "") );
+		            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str_raw , apk_id, apk_ver_str_raw );
 							loginComments.setOnDismissListener(ApkInfo.this);
 							loginComments.show();
 						 }else{
-//							 new AddTaste(ApkInfo.this, apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""), sharedPreferences.getString("usernameLogin", null), sharedPreferences.getString("passwordLogin", null), UserTaste.LIKE, likes, dislikes, like, dislike).submit();
-							 new AddTaste(
+							 
+							 boolean userTasteBufEquals = false;
+							 synchronized(userTaste){
+								 userTasteBufEquals = userTaste.getValue().equals(UserTaste.LIKE);	 
+							 }
+							 
+							 if(!userTasteBufEquals){
+							 
+								 new AddTaste(
 						 				ApkInfo.this, 
-						 				"market",
-						 				"cm.aptoide.pt", 
-						 				"2.0.2", 
+						 				apk_repo_str_raw ,
+						 				apk_id, 
+						 				apk_ver_str_raw, 
 						 				sharedPreferences.getString("usernameLogin", null), 
 						 				sharedPreferences.getString("passwordLogin", null), 
-						 				UserTaste.LIKE, likes, dislikes, like, dislike).submit();
+						 				UserTaste.LIKE, likes, dislikes, like, dislike, userTaste).submit();
+							 } else {
+								 
+								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
+								 
+							 }
 						 } 
 		            	 break;
 		          }
 		          return false;  //means that the listener dosen't consume the event
 		      }
 		});
-		dislike.setOnTouchListener(new OnTouchListener(){
+		this.dislike.setOnTouchListener(new OnTouchListener(){
 		      public boolean onTouch(View view, MotionEvent e) {
 		          switch(e.getAction())
 		          {
 		             case MotionEvent.ACTION_DOWN:
-		            	  
 		            	  SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		            	  if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str.substring("http://".length(), apk_repo_str.indexOf(".bazaarandroid.com")), apk_id, apk_ver_str.replaceAll("[^0-9\\.]", ""));
-								loginComments.setOnDismissListener(ApkInfo.this);
+		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str_raw, apk_id, apk_ver_str_raw);
+		            		  	loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
 		            	  }else{
+		            		  
+		            		 boolean userTasteBufEquals = false;
+							 synchronized(userTaste){
+								 userTasteBufEquals = userTaste.getValue().equals(UserTaste.DONTLIKE);	 
+							 }
+							 
+							 if(!userTasteBufEquals){
 		            		  new AddTaste(
 							 		ApkInfo.this, 
-							 		"market",
-							 		"cm.aptoide.pt", 
-							 		"2.0.2", 
+							 		apk_repo_str_raw,
+							 		apk_id, 
+							 		apk_ver_str_raw, 
 							 		sharedPreferences.getString("usernameLogin", null), 
 							 		sharedPreferences.getString("passwordLogin", null), 
-							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike).submit();
+							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste).submit();
+							 } else {
+								 
+								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
+								 
+							 }
+							 
 		            	  }
 		                  break;
 		          }
 		          return false;  //means that the listener dosen't consume the event
 		      }
 		});
+		
+	}
+	
+	/**
+	 * 
+	 */
+	public void selectComments(){
+		 SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		 if(sharedPreferences.getString("usernameLogin", null)!=null 
+				 && sharedPreferences.getString("passwordLogin", null)!=null 
+				 && !taste.equals(UserTaste.NOTEVALUATED) 
+				&& !taste.equals(UserTaste.TASTELESS)){
+				
+			 new AddTaste(
+				 		ApkInfo.this, 
+				 		apk_repo_str_raw,
+				 		apk_id, 
+				 		apk_ver_str_raw, 
+				 		sharedPreferences.getString("usernameLogin", null), 
+				 		sharedPreferences.getString("passwordLogin", null), 
+				 		taste, likes, dislikes, like, dislike, userTaste).submit();
+			 
+			 taste = UserTaste.TASTELESS;
+			 
+		 }
+	}
+	
+	/**
+	 * 
+	 * @param repo
+	 * @param apkid
+	 * @param version
+	 * @param likes
+	 * @param dontlikes
+	 * @param like
+	 * @param dislike
+	 * @param userTaste
+	 * @return
+	 */
+	public TastePoster selectTaste(String repo, String apkid, String version, 
+							TextView likes, TextView dontlikes, ImageView like, 
+							ImageView dislike, WrapperUserTaste userTaste){
+		
+		likes.setText(this.getString(R.string.loading));
+		dontlikes.setText(this.getString(R.string.loading));
+		Log.d("Aptoide threads TastePoster1","invoque");
+		if(tastePoster!=null)
+			tastePoster.cancel(false);
+		
+		tastePoster = new TastePoster(this, apkid, version, repo, likes, dontlikes, 
+													like, dislike, sharedPreferences.getString("useridLogin", null),
+													userTaste);
+		tastePoster.execute();
+		return tastePoster;
 		
 	}
 	
@@ -490,15 +610,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	        	case REPLY: 
 	        		//Open reply comment
 	        		Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, getted, like, dislike, 
-	        				"market",
-			 				"cm.aptoide.pt", 
-			 				"2.0.2");
+	        				apk_repo_str_raw,
+	        				apk_id, 
+					 		apk_ver_str_raw);
 					commentDialog.show();
 	        		return true;
 	        	case COPY_TO_CLIPBOARD:
 	        		ClipboardManager clipManager = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
 	        		clipManager.setText(getted.toString());
-	        		Log.d("blah", getted.toString());
 	        		return true;
 	        	default : break;
 	        }

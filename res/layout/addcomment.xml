@@ -1,61 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout 
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
+ 	
  	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content"
+	
 	android:layout_gravity="center"
 	android:paddingLeft="5dip"
 	android:paddingRight="5dip"> 
 		
-		<TableRow>
+		
 		<!-- Remove focus from subject on create -->
 		<EditText
 				android:layout_width="fill_parent"
 				android:layout_height="0px"/>
-		</TableRow>
 		
-		<TableRow>
+		
+		
 			
 			<TextView 
+					android:layout_width="fill_parent"
+					android:layout_height="0px"
+					
 					android:id="@+id/inresponseto"
 					android:text="@string/inresponseto"
-					android:layout_height="0px"
 					android:textColor="@android:color/white"
-					android:layout_width="fill_parent"
 					android:textSize="18sp"
 					/>
 					
-		</TableRow>
 		
- 		<TableRow>
+		
+ 		
  			
 	   		<EditText
-				android:id="@+id/subject"
-				android:layout_width="fill_parent"
+	   			android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
+				
+				android:id="@+id/subject"
 				android:textSize="18sp"
 				android:textColor="#696969"
 				android:text="@string/subject"/>
 			
-		</TableRow>
+		
 	
-	<TableRow>
+		
 	
    		<EditText
-			android:inputType="textMultiLine"
-			android:id="@+id/comment"
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
+			
+			android:inputType="textMultiLine"
+			android:id="@+id/comment"
 			android:textSize="18sp"
 			android:singleLine="false"
 			android:textColor="#696969"
 			android:text="@string/body"
-			android:lines="5"
+			android:lines="1"
 			/>
 			
-	</TableRow>
+		
 	
-	<TableRow>
+		
 		
 		<Button 
 			android:layout_width="fill_parent"
@@ -64,6 +69,6 @@
 			android:id="@+id/submitComment" />
 			
 				
-	</TableRow>
+	
 		
-</TableLayout>
+</LinearLayout>

@@ -1,20 +1,17 @@
 package cm.aptoide.summerinternship2011.taste;
 
-import java.io.IOException;
-
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
  * @author rafael
+ * @param <WrapperUserTaste>
  * @since summerinternship2011
  * 
  */
@@ -29,6 +26,7 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 	private ImageView like;
 	private ImageView dislike;
 	private String useridLogin;
+	private WrapperUserTaste userTaste;
 	
 	/**
 	 * 
@@ -39,7 +37,9 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 	 * @param likes
 	 * @param dislikes
 	 */
-	public TastePoster(Context context,String apkid, String version, String repo, TextView likes, TextView dislikes, ImageView like, ImageView dislike, String useridLogin) {
+	public TastePoster(Context context,String apkid, String version, String repo, 
+						TextView likes, TextView dislikes, ImageView like, 
+						ImageView dislike, String useridLogin, WrapperUserTaste userTaste) {
 		this.apkid = apkid;
 		this.version = version;
 		this.repo = repo;
@@ -49,46 +49,80 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 		this.like = like;
 		this.dislike = dislike;
 		this.useridLogin = useridLogin;
+		this.userTaste = userTaste;
 	}
 	
 	@Override
 	protected TasteGetter doInBackground(Void... params) {
 		
-		TasteGetter tasteGetter = new TasteGetter(repo,apkid,version);
+		synchronized(userTaste){
+			userTaste.incOperatingThreads();
+			Log.d("Aptoide threads TastePoster1","hey threads"+userTaste.getOperatingThreads());
+		}
+		
+		TasteGetter tasteGetter = new TasteGetter(repo, apkid, version);
 		
 		try {
 			tasteGetter.parse(context, useridLogin);
 			return tasteGetter;
-		} catch (ParserConfigurationException e) {
-		} catch (SAXException e) {
-		} catch (IOException e) {
-		} catch (Exception e){}
-		
+		}
+		//catch (ParserConfigurationException e) 		{} 
+		//catch (SAXException e) 						{} 
+		//catch (IOException e) 						{} 
+		catch (Exception e)								{}
 		
 		return null;
 		
 	}
 	
 	protected void onPostExecute(TasteGetter result) {
-		if(result!=null){
+		
+		synchronized(userTaste){
 			
-			likes.setText(context.getString(R.string.likes)+result.getLikes().toString());
-			dislikes.setText(context.getString(R.string.dislikes)+result.getDislikes().toString());
-			
-			switch(result.getUserTaste()){
-				case LIKE:
-					like.setImageResource(R.drawable.likehover);
-					break;
-				case DONTLIKE: 
-					dislike.setImageResource(R.drawable.dontlikehover);
-					break;
-				default: break;
+			if(!this.isCancelled()){
+				if(result!=null){ //Everything run as expected
+					
+					dislike.setImageResource(R.drawable.dontlike);
+					like.setImageResource(R.drawable.like);
+					
+					likes.setText(context.getString(R.string.likes)+result.getLikes().toString());
+					dislikes.setText(context.getString(R.string.dislikes)+result.getDislikes().toString());
+					
+					switch(result.getUserTaste()){
+						case LIKE:
+							like.setImageResource(R.drawable.likehover);
+							break;
+						case DONTLIKE:
+							dislike.setImageResource(R.drawable.dontlikehover);
+							break;
+						default: break;
+					}
+					
+					userTaste.setValue(result.getUserTaste()); //UserTaste.NOTEVALUATED can not happen hear
+					
+				}else{ //There was some error
+					
+					likes.setText(context.getText(R.string.tastenotavailable));
+					dislikes.setText("");
+					userTaste.setValue(UserTaste.NOTEVALUATED);
+					
+				}
+				userTaste.notifyAll();
 			}
 			
-		}else{
-			likes.getLayoutParams().height=0;
-			dislikes.getLayoutParams().height=0;
+			//Relese license
+			userTaste.decOperatingThreads();
+			Log.d("Aptoide threads TastePoster2","hey threads"+userTaste.getOperatingThreads());
 		}
+		
     }
+	
+	@Override
+	protected void onCancelled() {
+		synchronized(userTaste){
+			userTaste.decOperatingThreads();
+			Log.d("Aptoide threads TastePoster2 cancel","hey threads"+userTaste.getOperatingThreads());
+		}
+	}
 	
 }

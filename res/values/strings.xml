@@ -43,7 +43,7 @@
     <string name="size">Size</string>
     <string name="comments">Comments:</string>
     <string name="commentsproblem">Comments not available</string>
-    <string name="isinstalled">Already installed</string>
+    <string name="isinstalled">Reinstall</string>
     <string name="version_inst">Version installed</string>
     <string name="installed_downgrade">Downgrade possible - Ver.:</string>
     <string name="reply">Reply</string>
@@ -83,6 +83,7 @@
     <string name="unabletoexecute">Unable to execute</string>
     <string name="loggingin">Logging in...</string>
     <string name="endcomreached">End of comment list reached</string>
+    <string name="tastenotavailable">Taste not available</string>
 </resources>
 
 <!--

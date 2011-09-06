@@ -691,20 +691,13 @@ public class DbHandler {
 		return tmp;
 	}
 	
-	
-	/*
-	 * Returned values about an application
-	 *  - vec(0): servers
-	 *  - vec(1): server version
-	 *  - vec(2): is it installed?
-	 *  - vec(3): installed version
-	 */
 	public Vector<String> getApk(String id){
 		Vector<String> tmp = new Vector<String>();
 		Cursor c = null;
 		int size = 0;
+		String lastvercode = "";
 		try{
-			c = db.query(TABLE_NAME, new String[] {"server", "lastver", "size"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"server", "lastver", "size", "lastvercode"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			c.moveToFirst();
 			/*String tmp_serv = new String();
 			for(int i=0; i<c.getCount(); i++){
@@ -716,6 +709,9 @@ public class DbHandler {
 			tmp.add(c.getString(0));
 			tmp.add("\t" + c.getString(1)+"\n");
 			size = c.getInt(2);
+			
+			lastvercode = c.getInt(3)+"";
+			
 			c = db.query(TABLE_NAME_LOCAL, new String[] {"instver"}, "apkid=\""+id.toString()+"\"", null, null, null, null);
 			if(c.getCount() == 0){
 				tmp.add("\tno\n");
@@ -739,11 +735,12 @@ public class DbHandler {
 			
 			tmp.add(Float.toString(rat));
 			
-			if(size == 0)
+			if(size == 0){
 				tmp.add("Size: No information available");
-			else
+			}else{
 				tmp.add("Size: " + new Integer(size).toString() + "kb");
-			
+			}
+			tmp.add(lastvercode);
 			//c.close();
 		}catch (Exception e){
 			//System.out.println(e.toString());
@@ -764,11 +761,11 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"ver", "size"}, "apkid=\""+apk_id+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"ver", "size", "vercode"}, "apkid=\""+apk_id+"\"", null, null, null, null);
 			c.moveToFirst();
 			
 			do{
-				tmp.add(new VersionApk(c.getString(0), apk_id, c.getInt(1)));
+				tmp.add( new VersionApk(c.getString(0), c.getInt(2), apk_id, c.getInt(1)) );
 			}while(c.moveToNext());
 			
 		}catch (Exception e){
@@ -793,11 +790,11 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			c = db.query(TABLE_NAME, new String[] {"lastver", "size"}, "apkid=\""+apk_id+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"lastver", "size", "lastvercode"}, "apkid=\""+apk_id+"\"", null, null, null, null);
 			c.moveToFirst();
 			
 			do{
-				tmp.add(new VersionApk(c.getString(0), apk_id, c.getInt(1)));
+				tmp.add(new VersionApk(c.getString(0),  c.getInt(2), apk_id, c.getInt(1)));
 			}while(c.moveToNext());
 			
 		}catch (Exception e){

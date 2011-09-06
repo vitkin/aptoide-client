@@ -49,6 +49,8 @@ string/opinionsuccess
 string/postingtaste
 string/loggingin
 string/endcomreached
+string/tastenotvailable
+
 
 values/themes.xml
 values/styles.xml 

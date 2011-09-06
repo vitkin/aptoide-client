@@ -200,9 +200,9 @@ public class Login extends Dialog{
 			this.password = password;
 			this.progress = progress;
 			MessageDigest md = MessageDigest.getInstance("SHA");
-			md.update(user.getBytes());
-			useridLogin = ConfigsAndUtils.byteArrayToHexString(md.digest());
+			md.update(this.user.getBytes());
 			
+			useridLogin = ConfigsAndUtils.byteArrayToHexString(md.digest());
 			tasteGetter = null;
 		}
 		
@@ -221,10 +221,10 @@ public class Login extends Dialog{
 				
 				return response;
 			} 
-//			catch (IOException e) {}
-//			catch (ParserConfigurationException e) {}
-//			catch (SAXException e) {}
-			catch(Exception e){}
+//			catch (IOException e) 					{}
+//			catch (ParserConfigurationException e) 	{}
+//			catch (SAXException e) 					{}
+			catch(Exception e)						{}
 			
 			return null;
 		}
@@ -237,6 +237,7 @@ public class Login extends Dialog{
 					
 					prefEdit.putString("passwordLogin", password);
 					prefEdit.putString("usernameLogin", user);
+					
 					prefEdit.putString("useridLogin", useridLogin);
 					
 					prefEdit.commit();
