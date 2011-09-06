@@ -78,7 +78,9 @@ public class Taste {
 	 * @throws ParserConfigurationException
 	 * @throws SAXException
 	 */
-	public static ResponseToHandler sendTaste(Context context, String repo, String apkid, String version,String user, String password, UserTaste userTaste) throws IOException, ParserConfigurationException, SAXException{
+	public static ResponseToHandler sendTaste(Context context, String repo, String apkid, String version, 
+											String user, String password, UserTaste userTaste) 
+											throws IOException, ParserConfigurationException, SAXException{
 		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException 
 		SAXParser sp = spf.newSAXParser();

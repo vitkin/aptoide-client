@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<TableLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
  	
  	android:layout_width="fill_parent" 
@@ -9,15 +9,14 @@
 	android:paddingLeft="5dip"
 	android:paddingRight="5dip"> 
 		
+		<TableRow>
+			<!-- Remove focus from subject on create -->
+			<EditText
+					android:layout_width="fill_parent"
+					android:layout_height="0px" />
+		</TableRow>
 		
-		<!-- Remove focus from subject on create -->
-		<EditText
-				android:layout_width="fill_parent"
-				android:layout_height="0px"/>
-		
-		
-		
-			
+		<TableRow>
 			<TextView 
 					android:layout_width="fill_parent"
 					android:layout_height="0px"
@@ -27,11 +26,9 @@
 					android:textColor="@android:color/white"
 					android:textSize="18sp"
 					/>
-					
+		</TableRow>			
 		
-		
- 		
- 			
+ 		<TableRow>	
 	   		<EditText
 	   			android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
@@ -40,35 +37,29 @@
 				android:textSize="18sp"
 				android:textColor="#696969"
 				android:text="@string/subject"/>
-			
+		</TableRow>	
 		
-	
-		
-	
-   		<EditText
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			
-			android:inputType="textMultiLine"
-			android:id="@+id/comment"
-			android:textSize="18sp"
-			android:singleLine="false"
-			android:textColor="#696969"
-			android:text="@string/body"
-			android:lines="1"
-			/>
-			
-		
-	
-		
-		
-		<Button 
-			android:layout_width="fill_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/submit"
-			android:id="@+id/submitComment" />
-			
+		<TableRow>
+	   		<EditText
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
 				
-	
+				android:inputType="textMultiLine"
+				android:id="@+id/comment"
+				android:textSize="18sp"
+				android:singleLine="false"
+				android:textColor="#696969"
+				android:text="@string/body"
+				
+				/>
+		</TableRow>	
 		
-</LinearLayout>
+		<TableRow>
+			<Button 
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:text="@string/submit"
+				android:id="@+id/submitComment" />
+		</TableRow>
+		
+</TableLayout>

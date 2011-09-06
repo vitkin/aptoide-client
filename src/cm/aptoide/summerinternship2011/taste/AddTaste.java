@@ -13,7 +13,6 @@ import cm.aptoide.summerinternship2011.ResponseToHandler;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -120,7 +119,6 @@ public class AddTaste {
 			synchronized(userTastePrevious){
 				
 				while(userTastePrevious.getOperatingThreads()!=0){
-					Log.d("Aptoide threads AddTaste","hey threads"+userTastePrevious.getOperatingThreads());
 					try { 
 						userTastePrevious.wait();
 					} catch (InterruptedException e) {}
