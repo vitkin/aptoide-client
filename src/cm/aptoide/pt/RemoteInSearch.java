@@ -292,11 +292,12 @@ public class RemoteInSearch extends ListActivity{
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
+		apkinfo.putExtra("vercode", tmp_get.get(7));
 		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
-			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,apkid,-1));
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName, pkginfo.versionCode, apkid, -1));
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}

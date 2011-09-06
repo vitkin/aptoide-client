@@ -56,6 +56,7 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 		
 		multiVersionItemVersion.setText(versionLabel+" "+currentEntry.getVersion());
 		multiVersionItemSize.setText(sizeLabel + " " + currentEntry.getSize() + " kb");
+		
 		return convertView;
 	
 	}

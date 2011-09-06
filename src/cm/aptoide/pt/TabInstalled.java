@@ -130,11 +130,12 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 1);
+		apkinfo.putExtra("vercode", tmp_get.get(7));
 		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
-			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkg_id,-1));
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1));
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}

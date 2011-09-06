@@ -210,7 +210,7 @@ public class TasteGetter {
 							 
 							 switch(tasteTypeIndicator){
 							 	case LIKES: userTaste = UserTaste.LIKE; break; 
-							 	case DISLIKES: userTaste = UserTaste.DONTLIKE;
+							 	case DISLIKES: userTaste = UserTaste.DONTLIKE; break;
 							 }
 						 }
 					 case TIMESTAMP:

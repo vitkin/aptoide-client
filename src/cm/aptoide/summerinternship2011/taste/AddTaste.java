@@ -3,20 +3,17 @@
  */
 package cm.aptoide.summerinternship2011.taste;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.xml.sax.SAXException;
-
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +37,8 @@ public class AddTaste {
 	private TextView likes;
 	private TextView dislikes;
 	private ProgressDialog dialogProgress;
+	private WrapperUserTaste userTastePrevious;
+	
 	/**
 	 * 
 	 * @param context
@@ -60,7 +59,8 @@ public class AddTaste {
 					TextView likes,
 					TextView dislikes,
 					ImageView like,
-					ImageView dislike) {
+					ImageView dislike,
+					WrapperUserTaste tastePoster) {
 		
 		this.context = context;
 		this.repo = repo;
@@ -69,7 +69,7 @@ public class AddTaste {
 		this.user = user;
 		this.password = password;
 		
-		if( userTaste!=null && !userTaste.equals(UserTaste.LIKE) && !userTaste.equals(UserTaste.DONTLIKE) )
+		if( userTaste==null || (userTaste!=null && !userTaste.equals(UserTaste.LIKE) && !userTaste.equals(UserTaste.DONTLIKE) ) )
 			throw new IllegalArgumentException();
 		
 		this.userTaste = userTaste;
@@ -81,6 +81,8 @@ public class AddTaste {
 		this.dislikes = dislikes;
 		
 		dialogProgress = null;
+		
+		this.userTastePrevious = tastePoster;
 	}
 	
 	public void submit(){
@@ -104,10 +106,10 @@ public class AddTaste {
 			try {
 				return Taste.sendTaste(context, repo, apkid, version, user, password, userTaste);
 			} 
-			catch (IOException e) {} 
-			catch (ParserConfigurationException e) {} 
-			catch (SAXException e) {}
-			catch (Exception e){}
+			//catch (IOException e) 					{} 
+			//catch (ParserConfigurationException e) 	{} 
+			//catch (SAXException e)					{}
+			catch (Exception e)							{}
 			
 			return null;
 		}
@@ -115,35 +117,56 @@ public class AddTaste {
 		@Override
 		protected void onPostExecute(ResponseToHandler result) {
 			
-			dialogProgress.dismiss();
-			
-			if(result!=null){
+			synchronized(userTastePrevious){
 				
-				if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
-					Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
-					switch(userTaste){
-						case LIKE:
-							like.setImageResource(R.drawable.likehover);
-							dislike.setImageResource(R.drawable.dontlike);
-							likes.setText(context.getString(R.string.likes)+new BigInteger(likes.getText().toString().replaceAll("\\D", "")).add(BigInteger.ONE).toString());
-							dislikes.setText(context.getString(R.string.dislikes)+new BigInteger(dislikes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
-							break;
-						case DONTLIKE: 
-							dislike.setImageResource(R.drawable.dontlikehover);
-							like.setImageResource(R.drawable.like);
-							dislikes.setText(context.getString(R.string.dislikes)+new BigInteger(dislikes.getText().toString().replaceAll("\\D", "")).add(BigInteger.ONE).toString());
-							likes.setText(context.getString(R.string.likes)+new BigInteger(likes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
-							break;
-						default: break;
-					}
-				}else{
-					ArrayList<String> errors = result.getErrors();
-					for(String error: errors){
-						Toast.makeText(context, error, Toast.LENGTH_LONG).show();
-					}
+				while(userTastePrevious.getOperatingThreads()!=0){
+					Log.d("Aptoide threads AddTaste","hey threads"+userTastePrevious.getOperatingThreads());
+					try { 
+						userTastePrevious.wait();
+					} catch (InterruptedException e) {}
 				}
-			} else {
-				Toast.makeText(context, context.getString(R.string.unabletoexecutecheknet), Toast.LENGTH_LONG).show();
+				
+				if(result!=null){ //No errors found
+					
+					if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
+						Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
+						
+						switch(userTaste){
+							case LIKE:
+								if(userTastePrevious.getValue().equals(UserTaste.DONTLIKE)){
+									dislike.setImageResource(R.drawable.dontlike);
+									dislikes.setText(context.getString(R.string.dislikes)+new BigInteger(dislikes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
+									like.setImageResource(R.drawable.likehover);
+									likes.setText(context.getString(R.string.likes)+new BigInteger(likes.getText().toString().replaceAll("\\D", "")).add(BigInteger.ONE).toString());
+								}
+								break;
+							case DONTLIKE: 
+								if(userTastePrevious.getValue().equals(UserTaste.LIKE)){
+									like.setImageResource(R.drawable.like);
+									likes.setText(context.getString(R.string.likes)+new BigInteger(likes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
+									dislike.setImageResource(R.drawable.dontlikehover);
+									dislikes.setText(context.getString(R.string.dislikes)+new BigInteger(dislikes.getText().toString().replaceAll("\\D", "")).add(BigInteger.ONE).toString());
+								}
+								break;
+							default: break;
+						}
+						
+						userTastePrevious.setValue(userTaste);
+						
+					}else{
+						ArrayList<String> errors = result.getErrors();
+						for(String error: errors){
+							Toast.makeText(context, error, Toast.LENGTH_LONG).show();
+						}
+					}
+					
+				} else { 
+					//Some error was found
+					Toast.makeText(context, context.getString(R.string.unabletoexecutecheknet), Toast.LENGTH_LONG).show();
+				}
+				
+				dialogProgress.dismiss();
+			
 			}
 			
 		}

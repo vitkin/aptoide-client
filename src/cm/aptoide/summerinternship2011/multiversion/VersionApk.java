@@ -3,9 +3,7 @@
  */
 package cm.aptoide.summerinternship2011.multiversion;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -27,7 +25,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	/**
 	 * A field to easily compare versions, this is the same string with out the dots
 	 */
-	private String rawVersion;
+	private int versionCode;
 	/**
 	 * 
 	 */
@@ -44,7 +42,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 * @param apkId
 	 * @param versionLabel
 	 */
-	public VersionApk(String version, String apkId, int size ) {
+	public VersionApk(String version, int versionCode, String apkId, int size ) {
 		
 		if(version==null)
 			throw new IllegalArgumentException("The version can not be null");
@@ -54,7 +52,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		
 		this.size = size;
 		this.version = version;
-		this.rawVersion = VersionApk.processRawVersion(this.version);
+		this.versionCode = versionCode;
 		this.apkId = apkId;
 		
 	}
@@ -69,7 +67,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 * 
 	 * @return A field to easily compare versions, this is the same string as getVersionString() in with out the dots
 	 */
-	public String getRawVersion() { return rawVersion; }
+	public int getVersionCode() { return versionCode; }
 	
 	/**
 	 * 
@@ -94,39 +92,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		return version.replace(".", "");	
 	}
 	
-	/**
-	 * @param size Size of the desired String
-	 * @param fillWith Character to field the string with
-	 * @return A String fielded with the filedWith and with a length size
-	 */
-	private String getStringFielded(int size,char fillWith){
-		char[] buffer = new char[size];
-		Arrays.fill(buffer, fillWith);
-		return Arrays.toString(buffer).replaceAll("\\[|\\]|\\s|,", "");
-	}
-	
-	/**
-	 * Ensure that the rawVersion attribute of this class is the same length as the givenVersionRawVersion, 
-	 * by adding zeros at the end of the smaller string to make their length match.
-	 * @param version
-	 * @return A string array with two elements, the first is rawVersion of this class the second the rawVersion of the givenClass
-	 */
-	private StringBuilder[] ensureSameCharacterLength(final VersionApk version){
-		
-		final StringBuilder[] rawVersions = {
-				new StringBuilder(rawVersion), 
-				new StringBuilder(
-						version.getRawVersion())
-		};
-		int rawVerionLengthDifference = rawVersion.length()-version.getRawVersion().length();
-		if(rawVerionLengthDifference<0){
-			rawVersions[0].append(getStringFielded(-rawVerionLengthDifference,'0')); 
-		}else if(rawVerionLengthDifference>0){
-			rawVersions[1].append(getStringFielded(rawVerionLengthDifference,'0')); 
-		}
-		return rawVersions;
-	}
-	
 	@Override
 	public String toString() { return "apkId: "+apkId+" version: "+version+" size:"+size; }
 	
@@ -138,17 +103,14 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		
 		VersionApk versionApk = (VersionApk)version;
 		
-		StringBuilder[] rawVersions = ensureSameCharacterLength(versionApk);
-		
-		return new BigInteger(rawVersions[0].toString()).equals(new BigInteger(rawVersions[1].toString())) && this.apkId.equals(((VersionApk)version).getApkId());
+		return versionCode == versionApk.getVersionCode() && this.apkId.equals(versionApk.getApkId());
 		
 	}
 	
 	public int compareTo(VersionApk version) {
-		
-		StringBuilder[] rawVersions = ensureSameCharacterLength(version);
-		
-		return new BigInteger(rawVersions[0].toString()).compareTo(new BigInteger(rawVersions[1].toString()));
+		if(!this.apkId.equals(version.getApkId()))
+			throw new IllegalArgumentException("To compare apps the same id must be provided.");
+		return versionCode-version.getVersionCode();
 	}
 	
 	public static String getStringFromVersionApkList(ArrayList<VersionApk> versionsApk){
@@ -163,17 +125,26 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		return strBuilder.toString();
 	}
 	
-	public static HashMap<String,ArrayList<VersionApk>> getGreaterAndSmallerThan(VersionApk givenVersion, ArrayList<VersionApk> versions){
+	public static HashMap<String,ArrayList<VersionApk>> getGreaterAndSmallerThan(String givenVersion, ArrayList<VersionApk> versions){
+		
+		
 		
 		HashMap<String,ArrayList<VersionApk>> ret = new HashMap<String,ArrayList<VersionApk>>();
 		ret.put("smaller", new ArrayList<VersionApk>());
 		ret.put("greater", new ArrayList<VersionApk>());
+		VersionApk givenVersionCal = null;
+		for(VersionApk version:versions){
+			if(version.getVersion().equals(givenVersion)){
+				givenVersionCal = version;
+				ret.remove(givenVersionCal);
+			}
+		}
 		
 		for(VersionApk version:versions){
-			int comp = givenVersion.compareTo(version);
+			int comp = givenVersionCal.compareTo(version);
 			
-			if(comp>0) ret.get("smaller").add(version);
-			else if(comp<0) ret.get("greater").add(version);
+			if(comp>0){ ret.get("smaller").add(version); }
+			else if(comp<0){ ret.get("greater").add(version); }
 			
 		}
 		
@@ -190,7 +161,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 * @param in
 	 */
 	public VersionApk(Parcel in) { 
-		this(in.readString(),in.readString(), in.readInt());
+		this(in.readString(),in.readInt(),in.readString(), in.readInt());
 	}
 	
 	/**
@@ -208,6 +179,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 */
 	public void writeToParcel(Parcel dest, int flags) { 
 		dest.writeString(this.getVersion()); 
+		dest.writeInt(this.getVersionCode());
 		dest.writeString(this.getApkId());
 		dest.writeInt(this.size);
 	}
