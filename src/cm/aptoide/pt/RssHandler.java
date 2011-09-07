@@ -455,6 +455,10 @@ public class RssHandler extends DefaultHandler{
 		
 		if(sPref.getBoolean("fetchicons", false)){
 			Intent serv = new Intent(mctx,FetchIconsService.class);
+//Temporary fix for ANR after failed binder transaction
+			for (int i=iconsLst.size();i >= 2000 ;i++) {
+				iconsLst.remove(i);
+			}
 			serv.putExtra("icons", iconsLst);
 			serv.putExtra("srv", mserver);
 			serv.putExtra("login", new String[] {usern, passwd});
