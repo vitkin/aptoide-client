@@ -3,7 +3,6 @@
  */
 package cm.aptoide.summerinternship2011.comments;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
@@ -19,9 +18,7 @@ import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,10 +43,11 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     private boolean continueFetching;
     
     private Activity context;
-    private ArrayAdapter<Comment> commentList;
+    private CommentsAdapter<Comment> commentList;
     private CommentGetter commentGetter; //Comment xml parser
-    private boolean pausedNetwork; // If no internconnection is found
     private LinearLayout loadingLayout;
+    
+    private ArrayList<Fetch> pendingFetch;
     
     /**
      * 
@@ -62,7 +60,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
      * @throws SAXException 
      * @throws ParserConfigurationException 
      */
-    public LoadOnScrollCommentList(Activity context, ArrayAdapter<Comment> commentList, String repo, 
+    public LoadOnScrollCommentList(Activity context, CommentsAdapter<Comment> commentList, String repo, 
     								String apkid, String version, LinearLayout loadingLayout) 
     										throws ParserConfigurationException, SAXException {
     	
@@ -72,25 +70,37 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	commentGetter = new CommentGetter(repo, apkid, version);
     	this.loadingLayout = loadingLayout;
     	
+    	this.pendingFetch = new ArrayList<Fetch>();
+    	
     	reset();
+    	
     }
     
     /**
      * 
      */
-    private void reset(){
+    public void reset(){
+    	
     	currentPage = 0;
     	previousTotal = 0;
     	loading = true;
     	lastCommentIdRead = null;
     	continueFetching = true;
     	
-    	pausedNetwork = false;
+    	((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.loading);
+		((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageResource(R.drawable.loading);
+		
     }
     
-    
-    
-    
+    /**
+     * 
+     * @param repo
+     * @param apkid
+     * @param apkversion
+     */
+    public void resetGetter(String repo, String apkid, String apkversion){
+    	commentGetter.reset(repo, apkid, apkversion);
+    }
     
     /**
      * @author rafael
@@ -118,133 +128,165 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 		@Override
 		protected ArrayList<Comment> doInBackground(Void... params) {
 			
-			synchronized(LoadOnScrollCommentList.this){
+			//Add this thread to the list of pending threads
+			synchronized(pendingFetch){ pendingFetch.add(this); }
+			
+			// Make sure no one uses commentGetter
+			synchronized(commentGetter) {
 				
-				if(continueFetching){
-			    		
-				            if (loading && totalItemCount > previousTotal) {
-				                
-				            	loading = false;
-				                previousTotal = totalItemCount;
-				                currentPage++;
-				                
-				            }
-				            
-				            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-					        	loading = true;
-					        	
-					        	try{
-					        		
-				    				try{
-										commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
-									} catch(EndOfRequestReached e){}
-									
-									if(commentGetter.getComments().size()!=0){
-										
-										lastCommentIdRead = commentGetter.getComments().get(commentGetter.getComments().size()-1).getId();
-										return commentGetter.getComments();
-										
-									} else { 
-										
-										if(!commentGetter.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK))
-											throw new FailedRequestException("Request could not be executed");
-										else
-											throw new EmptyRequestException("Request empty.");
-										
-									}
-									
-				    			}catch(IOException e){
-				    				pausedNetwork = true;
-				    				continueFetching = false;
-				    			}catch (Exception e) {
-				    				continueFetching = false;
-									//FailedRequestException && EmptyRequestException
+				if(continueFetching && !isCancelled()){
+					
+		            if (loading && totalItemCount > previousTotal) {
+		                
+		            	loading = false;
+		                previousTotal = totalItemCount;
+		                currentPage++;
+		                
+		            }
+		            
+		            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+			        	loading = true;
+			        	
+			        	try{
+			        		
+		    				try{
+								commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
+							} catch(EndOfRequestReached e){}
+							
+							if(commentGetter.getComments().size()!=0){
+								
+								lastCommentIdRead = commentGetter.getComments().get(commentGetter.getComments().size()-1).getId();
+								return commentGetter.getComments();
+								
+							} else { 
+								
+								if(!commentGetter.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
+									throw new FailedRequestException("Request could not be executed");
+								}else{
+									throw new EmptyRequestException("Request empty.");
 								}
 								
-					        }
+							}
+							
+		    			}catch (Exception e) { continueFetching = false; }
+						
+			        }
 				           
 		    	}
+				
 			} //Sync end
+			
 			return null;
 			
 		}
 
 		@Override
-		protected  void onPostExecute(ArrayList<Comment> result) {
-			if(result != null){
+		protected void onPostExecute(ArrayList<Comment> result) {
+			
+			// Make sure no new comments are added while reseting comment list
+			synchronized (pendingFetch){ 
 				
-				if(pausedNetwork) 
-					pausedNetwork = false;
-				
-				((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
-				((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
-				
-				synchronized (commentList){
-					synchronized (commentGetter){
+				//Check if the thread is canceled
+				if(!isCancelled()){ 
+					
+					if(result != null){
+						
+						((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
+						((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
+						
 						ArrayList<Comment> comments = commentGetter.getComments();
 						for(Comment comment: comments){
 							 commentList.add(comment);
 						}
+						
+					}else{
+						
+						((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
+						((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
+						
 					}
+					
 				}
-				
-			}else{
-				
-				((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
-				((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
-				
+			
+			 // Remove thread from pending fetch 
+			 pendingFetch.remove(this); 
+			 
 			}
-		}	
-    	
-//		/**
-//		 * 
-//		 */
-//		private void commentsCouldNotBeLoaded(){
-//			if(stopOnFirstPage)
-//				((TextView)((ListView)context.findViewById(R.id.listComments)).findViewById(R.id.commentsLabel)).setText(context.getString(R.string.comments_unavailable));
-//				
-//		}
+			
+		}
 		
+		@Override
+		protected void onCancelled() {
+			// Remove thread from pending fetch 
+			synchronized (pendingFetch){ pendingFetch.remove(this); }
+		}
 		
     } //End of Fetch class
     
-    
-    
-    
-    
     /**
      * Fetches new comments and adds it to the beginning of the list.
-     * Synchronized due to other AsyncThreads that may interfere in the normal program work flow,
+     * Synchronized due to other AsyncThreads that may interfere in the normal program work flow.
+     * This is invoked when trying to fetch the newly created comment.
      * 
      */
     public void fetchNewComments(){
     	
-    		synchronized (commentList){
-		
-			    	try{
-			    		synchronized(this){
-					    	try{
-					    		if(commentList.getCount()!=0){
-									commentGetter.parse(context, commentList.getItem(0).getId(), 
-											context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null));
-					    		} else {
-					    			commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
-					    		}
-							} catch(EndOfRequestReached e){}
-							((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
-			    		}
-			    	}catch(Exception e){
-			    		Log.d("Aptoide", e.getMessage());
-			    	}
-				
+    		synchronized (pendingFetch){
+    			
+		    	try{
+		    		// Make sure no one uses commentGetter
+		    		synchronized(commentGetter){
+		    			
+				    	try{
+				    		if(commentList.getCount()!=0){
+								commentGetter.parse(context, commentList.getItem(0).getId(), 
+										context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null));
+				    		} else {
+				    			commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
+				    		}
+						} catch(EndOfRequestReached e){}
+						((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
+						
+		    		}
+		    	
+		    	} catch(Exception e)		{}
+		    	
+		    	cancelAllPendingRequests();
+		    	
     		}
     	
 	}
     
+    public void fetchNewApp(String apk_repo_str_raw,String apk_id,String apk_ver_str_raw){
+    	// Make sure no new comments are added while reseting comment list
+    	synchronized(pendingFetch){ 
+	    	this.reset();
+			this.resetGetter(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+			commentList.removeAll();
+			this.cancelAllPendingRequests();
+    	}
+    	
+    }
+    
+    /**
+     * 
+     */
+    public void cancelAllPendingRequests(){
+		for (Fetch fetch:pendingFetch){
+			fetch.cancel(false);
+		}
+    }
+    
+    /**
+     * 
+     */
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     	new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
     }
     
+    /**
+     * 
+     */
     public void onScrollStateChanged(AbsListView view, int scrollState) {}
  
 }

@@ -24,6 +24,7 @@ import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
 import cm.aptoide.summerinternship2011.SetBlank;
 import cm.aptoide.summerinternship2011.taste.TasteGetter;
+import cm.aptoide.summerinternship2011.taste.UserTaste;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -61,6 +62,8 @@ public class Login extends Dialog{
 	private String apkid; 
 	private String apkversion;
 	
+	private UserTaste userTaste;
+	
 	/**
 	 * @author rafael
 	 * @since summerinternship2011
@@ -86,7 +89,7 @@ public class Login extends Dialog{
 	 * 
 	 */
 	public Login(Context context, InvoqueNature nature, ImageView like, 
-				ImageView dontlike, String repo, String apkid, String apkversion) {
+				ImageView dontlike, String repo, String apkid, String apkversion, UserTaste userTaste) {
 		super(context);
 		sPref = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
@@ -97,6 +100,7 @@ public class Login extends Dialog{
 		this.repo = repo;
 		this.apkid = apkid;
 		this.apkversion = apkversion;
+		this.userTaste = userTaste;
 	}
 
 	/**
@@ -105,7 +109,7 @@ public class Login extends Dialog{
 	 * @param nature
 	 */
 	public Login(Context context, InvoqueNature nature) {
-		this(context, nature, null, null, null, null, null);
+		this(context, nature, null, null, null, null, null, null);
 	}
 	
 	@Override
@@ -292,6 +296,10 @@ public class Login extends Dialog{
 		
 		return tasteResponseReader;  
 		
+	}
+
+	public UserTaste getUserTaste() {
+		return userTaste;
 	}
 	
 }

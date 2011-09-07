@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
- 	
- 	android:layout_width="fill_parent" 
-	android:layout_height="wrap_content"
-	
-	android:layout_gravity="center"
-	android:paddingLeft="5dip"
-	android:paddingRight="5dip"> 
+<LinearLayout
+	  xmlns:android="http://schemas.android.com/apk/res/android"
+	  
+	  android:orientation="vertical"
+	  android:layout_width="fill_parent"
+	  android:layout_height="fill_parent"
+	  android:layout_gravity="center_horizontal"
+	  android:gravity="center"
+	  android:padding="10dp"
+	  >
 		
-		<TableRow>
+		
 			<!-- Remove focus from subject on create -->
 			<EditText
 					android:layout_width="fill_parent"
 					android:layout_height="0px" />
-		</TableRow>
 		
-		<TableRow>
+		
+		
 			<TextView 
 					android:layout_width="fill_parent"
 					android:layout_height="0px"
@@ -26,9 +27,9 @@
 					android:textColor="@android:color/white"
 					android:textSize="18sp"
 					/>
-		</TableRow>			
+				
 		
- 		<TableRow>	
+ 		
 	   		<EditText
 	   			android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
@@ -36,10 +37,11 @@
 				android:id="@+id/subject"
 				android:textSize="18sp"
 				android:textColor="#696969"
-				android:text="@string/subject"/>
-		</TableRow>	
+				android:text="@string/subject"
+				/>
 		
-		<TableRow>
+		
+		
 	   		<EditText
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
@@ -50,16 +52,17 @@
 				android:singleLine="false"
 				android:textColor="#696969"
 				android:text="@string/body"
-				
+				android:lines="3"
 				/>
-		</TableRow>	
 		
-		<TableRow>
+		
+		
 			<Button 
 				android:layout_width="fill_parent"
 				android:layout_height="wrap_content"
+				
 				android:text="@string/submit"
 				android:id="@+id/submitComment" />
-		</TableRow>
 		
-</TableLayout>
+		
+</LinearLayout>
