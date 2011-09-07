@@ -5,7 +5,6 @@ import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -57,7 +56,6 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 		
 		synchronized(userTaste){
 			userTaste.incOperatingThreads();
-			Log.d("Aptoide threads TastePoster1","hey threads"+userTaste.getOperatingThreads());
 		}
 		
 		TasteGetter tasteGetter = new TasteGetter(repo, apkid, version);
@@ -112,7 +110,7 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 			
 			//Relese license
 			userTaste.decOperatingThreads();
-			Log.d("Aptoide threads TastePoster2","hey threads"+userTaste.getOperatingThreads());
+			
 		}
 		
     }
@@ -121,7 +119,6 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 	protected void onCancelled() {
 		synchronized(userTaste){
 			userTaste.decOperatingThreads();
-			Log.d("Aptoide threads TastePoster2 cancel","hey threads"+userTaste.getOperatingThreads());
 		}
 	}
 	

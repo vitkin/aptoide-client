@@ -32,6 +32,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -60,6 +61,7 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.content.DialogInterface.OnDismissListener;
 
@@ -134,7 +136,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.apkinfo);
 		
-		sharedPreferences= ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		
 		Event.REPLY.setString(this.getString(R.string.reply));
 		Event.COPY_TO_CLIPBOARD.setString(this.getString(R.string.copyclip));
@@ -317,7 +319,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							Log.d("Aptoide","* " + a);
 							HttpResponse pic = NetworkApis.imgWsGet(a);
 							InputStream pic_st = pic.getEntity().getContent();
-							Drawable pic_drw = Drawable.createFromStream(pic_st, "src");
+							//java.lang.OutOfMemoryError: bitmap size exceeds VM budget
+							Drawable pic_drw = Drawable.createFromStream(pic_st, "src"); //hear
 							imageDrwb[i] = pic_drw;
 						}
 					}
@@ -333,12 +336,58 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		apk_size_str_raw 	= apk_size_str.substring(6);
 		
 		if(apk_size_str_raw.equals("No information available")){ apk_size_str_raw = "0";}
-		else{ apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); }
+		else { apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); }
 		
 		if(type == 1) { apk_ver_str_raw = versionInstApk.getVersion(); } 
 		else { apk_ver_str_raw = apk_ver_str.substring(1,apk_ver_str.length()-1); }
 		
 		apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
+		
+		
+		
+		
+		
+		
+		/*Comments*/
+		listView.addHeaderView(linearLayout, null, false);
+		listView.setOnItemClickListener(new OnItemClickListener(){
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				if(position==1){ // If comment app... option selected
+					Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
+							apk_repo_str_raw,
+			 				apk_id, 
+			 				apk_ver_str_raw);
+					commentDialog.show();
+				}
+			}
+		});
+		TextView textView = new TextView(this);
+		textView.setText(this.getString(R.string.commentlabel));
+		textView.setTextSize(20);
+		textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+		listView.addHeaderView(textView);
+		
+		LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
+		listView.addFooterView(loadComLayout);
+		comments = new ArrayList<Comment>();
+		final CommentsAdapter<Comment> commentAdapter 
+			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem,comments);
+		listView.setAdapter(commentAdapter);
+		try {
+			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
+			listView.setOnScrollListener(loadOnScrollCommentList);
+		} 
+		//catch (ParserConfigurationException e) 	{} 
+		//catch (SAXException e) 					{}
+		catch(Exception e)							{}
+		
+		registerForContextMenu(listView);
+		
+		
+		
+		
+		
+		
 		
 		/*Multiversion*/
 		if(type!=1){//If we aren't in the installed tab
@@ -348,7 +397,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					new VersionApk(apk_ver_str_raw, 
 					versioncode, 
 					apk_id, 
-					Integer.parseInt(apk_size_str_raw))
+					Integer.parseInt(apk_size_str_raw)
+					)
 			);
 			Collections.sort(versions, Collections.reverseOrder());
 			
@@ -371,7 +421,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							}else{
 								action.setText(ApkInfo.this.getString(R.string.isinstalled));
 							}
-							//TODO Select correct comments and likes for this version
+							
+							loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+							
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
@@ -382,6 +434,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 						apk_ver_str_raw = ((VersionApk)spinnerMultiAdapter.getItem(position)).getVersion();
 						selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+						
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
@@ -398,35 +451,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		
-		/*Comments*/
-		listView.addHeaderView(linearLayout, null, false);
-		LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
-		listView.addFooterView(loadComLayout);
-		comments = new ArrayList<Comment>();
-		final CommentsAdapter<Comment> commentAdapter 
-			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem,comments);
-		listView.setAdapter(commentAdapter);
-		try {
-			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
-			listView.setOnScrollListener(loadOnScrollCommentList);
-		} 
-		//catch (ParserConfigurationException e) 	{} 
-		//catch (SAXException e) 					{}
-		catch(Exception e)							{}
-		listView.findViewById(R.id.commentThis).setOnClickListener(new OnClickListener(){
-			public void onClick(View view) {
-				Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
-						apk_repo_str_raw,
-		 				apk_id, 
-		 				apk_ver_str_raw);
-				commentDialog.show();
-			}
-		});
-		registerForContextMenu(listView);
-		
-		
-		
-		
 		/*Taste*/
 		if(type==1)
 			selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
@@ -438,7 +462,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		             case MotionEvent.ACTION_DOWN:
 		            	 
 		            	 if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-		            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str_raw , apk_id, apk_ver_str_raw );
+		            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, 
+		            										dislike, apk_repo_str_raw , 
+		            										apk_id, apk_ver_str_raw, UserTaste.LIKE);
 							loginComments.setOnDismissListener(ApkInfo.this);
 							loginComments.show();
 						 }else{
@@ -457,7 +483,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						 				apk_ver_str_raw, 
 						 				sharedPreferences.getString("usernameLogin", null), 
 						 				sharedPreferences.getString("passwordLogin", null), 
-						 				UserTaste.LIKE, likes, dislikes, like, dislike, userTaste).submit();
+						 				UserTaste.LIKE, likes, dislikes, like, dislike, userTaste, null).submit();
+								 
 							 } else {
 								 
 								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
@@ -474,9 +501,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		          switch(e.getAction())
 		          {
 		             case MotionEvent.ACTION_DOWN:
-		            	  SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		            	 
 		            	  if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
-		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, apk_repo_str_raw, apk_id, apk_ver_str_raw);
+		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
+		            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, UserTaste.DONTLIKE);
 		            		  	loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
 		            	  }else{
@@ -494,7 +522,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							 		apk_ver_str_raw, 
 							 		sharedPreferences.getString("usernameLogin", null), 
 							 		sharedPreferences.getString("passwordLogin", null), 
-							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste).submit();
+							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
 							 } else {
 								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 							 }
@@ -507,6 +535,15 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		});
 		
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/**
 	 * 
@@ -525,7 +562,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				 		apk_ver_str_raw, 
 				 		sharedPreferences.getString("usernameLogin", null), 
 				 		sharedPreferences.getString("passwordLogin", null), 
-				 		taste, likes, dislikes, like, dislike, userTaste).submit();
+				 		taste, likes, dislikes, like, dislike, userTaste, null).submit();
 			 
 			 taste = UserTaste.TASTELESS;
 			 
@@ -544,7 +581,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	 * @param userTaste
 	 * @return
 	 */
-	public TastePoster selectTaste(String repo, String apkid, String version, 
+	public void selectTaste(String repo, String apkid, String version, 
 							TextView likes, TextView dontlikes, ImageView like, 
 							ImageView dislike, WrapperUserTaste userTaste){
 		
@@ -558,10 +595,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 													like, dislike, sharedPreferences.getString("useridLogin", null),
 													userTaste);
 		tastePoster.execute();
-		return tastePoster;
 		
 	}
-	
+
 	/**
 	 * 
 	 * @author rafael
@@ -596,7 +632,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
-		
+		//Log.d("Aptoide get",((AdapterContextMenuInfo)menuInfo).position+"");
 		if (((AdapterView.AdapterContextMenuInfo)menuInfo).id!=-1){
 			menu.setHeaderTitle(this.getString(R.string.whattodo));
 				for(Event item:Event.values())
@@ -640,7 +676,18 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	/**
 	 * 
 	 */
-	public void onDismiss(DialogInterface dialog) {}
+	public void onDismiss(DialogInterface dialog) {
+		if(sharedPreferences.getString("usernameLogin", null)!=null && sharedPreferences.getString("passwordLogin", null)!=null){
+			new AddTaste(
+	 				ApkInfo.this, 
+	 				apk_repo_str_raw,
+	 				apk_id, 
+	 				apk_ver_str_raw, 
+	 				sharedPreferences.getString("usernameLogin", null), 
+	 				sharedPreferences.getString("passwordLogin", null), 
+	 				((Login)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste, ApkInfo.this).submit();
+		}
+	}
 	
 	
 	

@@ -61,17 +61,27 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 		
 	}
 	
-	/**
-	 * 
-	 * @see android.widget.ArrayAdapter#getPosition(java.lang.Object)
-	 */
-	@Override
-	public int getPosition(T item) {
-		for(int i = 0; i<this.getCount();i++ ){
-			if(item.equals(this.getItem(i))) 
-				return i;
+//	/**
+//	 * 
+//	 * @see android.widget.ArrayAdapter#getPosition(java.lang.Object)
+//	 */
+//	@Override
+//	public int getPosition(T item) {
+//		for(int i = 0; i<this.getCount();i++ ){
+//			if(item.equals(this.getItem(i))) 
+//				return i;
+//		}
+//		return -1;
+//	}
+	
+	public ArrayList<T> removeAll(){
+		ArrayList<T> buffer = new ArrayList<T>();
+		while(getCount()!=0){
+			T obj = getItem(0);
+			buffer.add(obj);
+			this.remove(obj);
 		}
-		return -1;
+		return buffer;
 	}
 	
 	/**
@@ -79,11 +89,7 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 	 * @param itens ArrayList<T> to add at the begin of the adapter
 	 */
 	public void addAtBegin(ArrayList<T> itens){
-		while(getCount()!=0){
-			T obj = getItem(0);
-			itens.add(obj);
-			this.remove(obj);
-		}
+		itens.addAll(removeAll());
 		int i = 0;
 		while(i!=itens.size()){
 			this.add(itens.get(i++));

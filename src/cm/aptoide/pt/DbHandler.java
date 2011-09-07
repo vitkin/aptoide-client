@@ -957,10 +957,8 @@ public class DbHandler {
 			c.moveToFirst();
 			out = c.getString(0);
 			c.close();
-		}catch (Exception e){ }
-		finally{
-			c.close();
-		}
+		}catch (Exception e){}
+		finally{ c.close(); }
 		return out;
 	}
 	

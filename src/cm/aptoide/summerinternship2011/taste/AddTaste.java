@@ -6,6 +6,7 @@ package cm.aptoide.summerinternship2011.taste;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
+import cm.aptoide.pt.ApkInfo;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
@@ -13,6 +14,7 @@ import cm.aptoide.summerinternship2011.ResponseToHandler;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,6 +39,7 @@ public class AddTaste {
 	private TextView dislikes;
 	private ProgressDialog dialogProgress;
 	private WrapperUserTaste userTastePrevious;
+	private ApkInfo caller;
 	
 	/**
 	 * 
@@ -59,7 +62,8 @@ public class AddTaste {
 					TextView dislikes,
 					ImageView like,
 					ImageView dislike,
-					WrapperUserTaste tastePoster) {
+					WrapperUserTaste tastePoster, 
+					ApkInfo caller) {
 		
 		this.context = context;
 		this.repo = repo;
@@ -82,10 +86,11 @@ public class AddTaste {
 		dialogProgress = null;
 		
 		this.userTastePrevious = tastePoster;
+		this.caller = caller;
 	}
 	
 	public void submit(){
-		dialogProgress = ProgressDialog.show(context, context.getString(R.string.top_please_wait),context.getString(R.string.postingcomment),true);
+		dialogProgress = ProgressDialog.show(context, context.getString(R.string.top_please_wait), context.getString(R.string.postingtaste),true);
 		dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
 		new SubmitTaste().execute();
 	}
@@ -103,7 +108,21 @@ public class AddTaste {
 		protected ResponseToHandler doInBackground(Void... args) {
 			
 			try {
+				
+				if(caller!=null){
+					
+					TasteGetter tasteGetter = new TasteGetter(repo, apkid, version);
+					try {
+						tasteGetter.parse(context, context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null), this);
+						synchronized(userTastePrevious){
+							userTastePrevious.setValue(tasteGetter.getUserTaste());
+						}
+					}catch(Exception e){}
+					
+				}
+				
 				return Taste.sendTaste(context, repo, apkid, version, user, password, userTaste);
+				
 			} 
 			//catch (IOException e) 					{} 
 			//catch (ParserConfigurationException e) 	{} 
@@ -111,12 +130,20 @@ public class AddTaste {
 			catch (Exception e)							{}
 			
 			return null;
+			
 		}
 		
 		@Override
 		protected void onPostExecute(ResponseToHandler result) {
 			
+			
+			
+			
 			synchronized(userTastePrevious){
+				
+				Log.d("Aptoide get2", userTastePrevious.getValue().toString());
+				
+				
 				
 				while(userTastePrevious.getOperatingThreads()!=0){
 					try { 
@@ -129,19 +156,24 @@ public class AddTaste {
 					if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
 						Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 						
+						
 						switch(userTaste){
 							case LIKE:
-								if(userTastePrevious.getValue().equals(UserTaste.DONTLIKE)){
-									dislike.setImageResource(R.drawable.dontlike);
-									dislikes.setText(context.getString(R.string.dislikes)+new BigInteger(dislikes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
+								if(!userTastePrevious.getValue().equals(UserTaste.LIKE)){
+									if(userTastePrevious.getValue().equals(UserTaste.DONTLIKE)){
+										dislike.setImageResource(R.drawable.dontlike);
+										dislikes.setText(context.getString(R.string.dislikes)+new BigInteger(dislikes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
+									}
 									like.setImageResource(R.drawable.likehover);
 									likes.setText(context.getString(R.string.likes)+new BigInteger(likes.getText().toString().replaceAll("\\D", "")).add(BigInteger.ONE).toString());
 								}
 								break;
 							case DONTLIKE: 
-								if(userTastePrevious.getValue().equals(UserTaste.LIKE)){
-									like.setImageResource(R.drawable.like);
-									likes.setText(context.getString(R.string.likes)+new BigInteger(likes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
+								if(!userTastePrevious.getValue().equals(UserTaste.DONTLIKE)){
+									if(userTastePrevious.getValue().equals(UserTaste.LIKE)){
+										like.setImageResource(R.drawable.like);
+										likes.setText(context.getString(R.string.likes)+new BigInteger(likes.getText().toString().replaceAll("\\D", "")).subtract(BigInteger.ONE).toString());
+									}
 									dislike.setImageResource(R.drawable.dontlikehover);
 									dislikes.setText(context.getString(R.string.dislikes)+new BigInteger(dislikes.getText().toString().replaceAll("\\D", "")).add(BigInteger.ONE).toString());
 								}
@@ -152,10 +184,12 @@ public class AddTaste {
 						userTastePrevious.setValue(userTaste);
 						
 					}else{
+						
 						ArrayList<String> errors = result.getErrors();
 						for(String error: errors){
 							Toast.makeText(context, error, Toast.LENGTH_LONG).show();
 						}
+						
 					}
 					
 				} else { 

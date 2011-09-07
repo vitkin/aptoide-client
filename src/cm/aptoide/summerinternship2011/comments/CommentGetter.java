@@ -75,9 +75,14 @@ public class CommentGetter {
 	 * @throws ParserConfigurationException 
 	 */
 	public CommentGetter( String repo, String apkid, String apkversion ) throws ParserConfigurationException, SAXException {
-		urlReal = String.format(ConfigsAndUtils.COMMENTS_URL_LIST,repo, apkid, apkversion);
+		reset(repo, apkid, apkversion);
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		sp = spf.newSAXParser();
+		
+	}
+	
+	public void reset(String repo, String apkid, String apkversion){
+		urlReal = String.format(ConfigsAndUtils.COMMENTS_URL_LIST,repo, apkid, apkversion);
 	}
 	
 	/**

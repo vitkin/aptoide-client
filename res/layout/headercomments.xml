@@ -161,18 +161,6 @@
             <ImageView android:id="@+id/shot5" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
         </TableRow>
     </TableLayout>
-    
-    		 
-    		<Button
-           		android:textAppearance="?android:textAppearanceLarge"
-           		android:textSize="18.0sp"
-           		android:gravity="left"
-           		android:layout_gravity="top"
-           		android:paddingTop="10.0dip"
-           		android:layout_width="fill_parent"
-           		android:layout_height="wrap_content"
-           		android:id="@+id/commentThis"
-           		android:text="@string/commentlabel"/>
     		
 			<TextView
            		android:textAppearance="?android:textAppearanceLarge"

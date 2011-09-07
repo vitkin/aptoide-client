@@ -95,7 +95,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 					if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){
 						
 						
-						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, repo, apkid, version);
+						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, repo, apkid, version, null);
 						loginComments.setOnDismissListener(AddCommentDialog.this);
 						loginComments.show();
 					}else{ 
