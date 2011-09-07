@@ -377,7 +377,7 @@ public class ManageRepo extends ListActivity{
 						uri_str = uri_str+'/';
 						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
 					}
-					if(!uri_str.substring(0, 7).equals("http://")){
+					if(!uri_str.startsWith("http://")){
 						uri_str = "http://"+uri_str;
 						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
 					}
@@ -651,7 +651,13 @@ public class ManageRepo extends ListActivity{
 		
 		int result;
 		
-		DefaultHttpClient mHttpClient = Threading.getThreadSafeHttpClient();
+		HttpParams httpParameters = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
+		HttpConnectionParams.setSoTimeout(httpParameters, 10000);
+		           
+		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
+		
+//		DefaultHttpClient mHttpClient = Threading.getThreadSafeHttpClient();
 		
 		mHttpClient.setRedirectHandler(new RedirectHandler() {
 			public boolean isRedirectRequested(HttpResponse response,
