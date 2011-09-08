@@ -240,10 +240,9 @@ public class Login extends Dialog{
 				if(result.getStatus().equals(cm.aptoide.summerinternship2011.Status.OK)){
 					
 					
-					prefEdit.putString("passwordLogin", password);
-					prefEdit.putString("usernameLogin", user);
-					
-					prefEdit.putString("useridLogin", useridLogin);
+					prefEdit.putString(ConfigsAndUtils.LOGIN_PASSWORD, password);
+					prefEdit.putString(ConfigsAndUtils.LOGIN_USER_NAME, user);
+					prefEdit.putString(ConfigsAndUtils.LOGIN_USER_ID, useridLogin);
 					
 					prefEdit.commit();
 					success = true;
@@ -282,7 +281,7 @@ public class Login extends Dialog{
 		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException 
 		SAXParser sp = spf.newSAXParser();
-		String url = String.format(ConfigsAndUtils.CHECK_CREDENTIALS_URL, URLEncoder.encode(user), URLEncoder.encode(password));
+		String url = String.format(ConfigsAndUtils.WEB_SERVICE_GET_CHECK_CREDENTIALS, URLEncoder.encode(user), URLEncoder.encode(password));
 		
 		InputStream stream = NetworkApis.getInputStream(context, url);
 		BufferedInputStream bstream = new BufferedInputStream(stream);

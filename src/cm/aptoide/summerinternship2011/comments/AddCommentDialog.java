@@ -92,7 +92,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 			public void onClick(View arg) {
 				if(body.getText().toString().length()!=0 && ((SetBlank)body.getOnFocusChangeListener()).getAlreadySetted()){
 					//If the text as some content on it provided by the user
-					if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){
+					if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){
 						
 						
 						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, repo, apkid, version, null);
@@ -121,8 +121,8 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
 		this.hide();
 		
-		String username = sharedPreferences.getString("usernameLogin", null);
-		String passwordSha1 = sharedPreferences.getString("passwordLogin", null);
+		String username = sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null);
+		String passwordSha1 = sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null);
 		if(username != null && passwordSha1!=null){
 			
 			/**

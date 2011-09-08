@@ -145,7 +145,7 @@ public class Comment{
 			String pass,
 			BigInteger reply) throws IOException, ParserConfigurationException, SAXException{
 		
-		HttpURLConnection urlConnection = NetworkApis.send(ctx, ConfigsAndUtils.COMMENTS_URL_ADD,repo, apkid, version);
+		HttpURLConnection urlConnection = NetworkApis.send(ctx, ConfigsAndUtils.WEB_SERVICE_POST_COMMENT_ADD,repo, apkid, version);
 		
 		//Variable definition
 		StringBuilder strBuilder = new StringBuilder("");
