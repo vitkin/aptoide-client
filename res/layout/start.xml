@@ -5,20 +5,22 @@
     android:orientation="vertical"
     android:gravity="center">
     
-<ImageView android:id="@+id/imagebutton"
-  android:src="@drawable/splashaptoide2"
-  android:cropToPadding="true"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content"/>
-  
- <ProgressBar
- 	android:id="@+id/pbar"
- 	android:layout_width="fill_parent"
- 	android:layout_height="wrap_content"
- 	android:orientation="horizontal"
- 	android:visibility="visible"
- 	style="?android:attr/progressBarStyleHorizontal" 
- 	android:max="100" />
+	<ImageView android:id="@+id/imagebutton"
+		android:src="@drawable/splashaptoide2"
+		android:cropToPadding="true"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:layout_weight="1"/>
+	  
+	<ProgressBar
+		android:id="@+id/pbar"
+	 	android:layout_width="fill_parent"
+	 	android:layout_height="wrap_content"
+	 	android:orientation="horizontal"
+	 	android:visibility="visible"
+	 	style="?android:attr/progressBarStyleHorizontal" 
+	 	android:max="100" 
+		android:layout_weight="2"/>
 </LinearLayout>
 <!--
  * Copyright (C) 2009  Roberto Jacinto
