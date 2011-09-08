@@ -412,6 +412,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				//If we are in tab updates
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+						
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
 							apk_ver_str_raw = versionApk.getVersion();
 							selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
@@ -436,6 +437,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 						apk_ver_str_raw = ((VersionApk)spinnerMultiAdapter.getItem(position)).getVersion();
 						selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+						
+						loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
 						
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
