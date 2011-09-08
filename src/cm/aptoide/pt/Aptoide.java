@@ -221,6 +221,7 @@ public class Aptoide extends Activity {
        
         new Thread(new Runnable() {
             public void run() {
+            	
             	Vector<ApkNode> apk_lst = db.getAll("abc");
             	mProgress.setMax(apk_lst.size());
         		PackageManager mPm;
@@ -262,7 +263,8 @@ public class Aptoide extends Activity {
         		
                 Message msg = new Message();
                 msg.what = OUT;
-                startHandler.sendMessage(msg); 
+                startHandler.sendMessage(msg);
+                
             }
         }).start();
     }

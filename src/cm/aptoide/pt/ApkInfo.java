@@ -93,7 +93,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	
 	private Spinner spinnerMulti;
-	private ArrayList<Comment> comments;
+	//private ArrayList<Comment> comments;
+	private CommentsAdapter<Comment> commentAdapter;
 	private LoadOnScrollCommentList loadOnScrollCommentList;
 	private String apk_repo_str;
 	private String apk_ver_str;
@@ -109,6 +110,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private UserTaste taste;
 	private WrapperUserTaste userTaste;
 	private TastePoster tastePoster;
+	
+	private static final int HEADERS = 2; // The number of header itens on the list view
 	
 	/**
 	 * @author rafael
@@ -369,9 +372,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
 		listView.addFooterView(loadComLayout);
-		comments = new ArrayList<Comment>();
-		final CommentsAdapter<Comment> commentAdapter 
-			= new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem,comments);
+		//comments = new ArrayList<Comment>();
+		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		listView.setAdapter(commentAdapter);
 		try {
 			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
@@ -651,7 +653,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		Event event = Event.getEventFromId(item.getItemId());
-		Comment getted = comments.get(((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position-1);
+		Comment getted = commentAdapter.getItem((((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position-HEADERS));
 		if(event!=null){
 			switch (event) {
 	        	case REPLY: 

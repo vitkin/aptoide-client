@@ -482,6 +482,7 @@ public class DbHandler {
 				node.down = c.getInt(8);
 				node.catg = c.getString(9);
 				node.catg_ord = c.getInt(10);
+				node.vercode = c.getInt(4);
 				tmp.add(node);
 				c.moveToNext();
 			}
