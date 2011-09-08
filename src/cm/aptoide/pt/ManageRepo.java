@@ -441,7 +441,9 @@ public class ManageRepo extends ListActivity{
 							Log.d("Aptoide-ManageRepo", "return ok");
 							msg.obj = 0;
 							db.addServer(uri_str);
-							db.addLogin(user, pwd, uri_str);
+							if(user != null && pwd != null){
+								db.addLogin(user, pwd, uri_str);	
+							}
 							change = true;
 							redraw();
 							break;

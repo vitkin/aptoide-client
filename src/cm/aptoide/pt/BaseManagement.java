@@ -335,6 +335,7 @@ public class BaseManagement extends Activity {
     	prefEdit.putString("pkg", pkginfo.packageName);
     	prefEdit.commit();
     	startActivityForResult(intent,UPDATE);
+		Log.d("Aptoide-BaseManagement", "Updating Apk: "+apk_path);
 	}
 	
 		
