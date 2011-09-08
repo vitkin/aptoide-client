@@ -82,7 +82,7 @@ public class CommentGetter {
 	}
 	
 	public void reset(String repo, String apkid, String apkversion){
-		urlReal = String.format(ConfigsAndUtils.COMMENTS_URL_LIST,repo, apkid, apkversion);
+		urlReal = String.format(ConfigsAndUtils.WEB_SERVICE_COMMENTS_LIST,repo, apkid, apkversion);
 	}
 	
 	/**

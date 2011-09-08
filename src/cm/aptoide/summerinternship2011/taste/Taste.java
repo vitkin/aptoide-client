@@ -84,7 +84,7 @@ public class Taste {
 		
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException 
 		SAXParser sp = spf.newSAXParser();
-		String url = String.format(ConfigsAndUtils.TASTE_URL_ADD, URLEncoder.encode(user), URLEncoder.encode(password), 
+		String url = String.format(ConfigsAndUtils.WEB_SERVICE_GET_TASTE_ADD, URLEncoder.encode(user), URLEncoder.encode(password), 
 										URLEncoder.encode(repo), URLEncoder.encode(apkid), URLEncoder.encode(version), 
 										URLEncoder.encode(userTaste.toString()));
 		InputStream stream = NetworkApis.getInputStream(context, url);

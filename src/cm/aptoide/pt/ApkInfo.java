@@ -11,6 +11,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.comments.AddCommentDialog;
 import cm.aptoide.summerinternship2011.comments.Comment;
 import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
@@ -466,7 +467,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		          {
 		             case MotionEvent.ACTION_DOWN:
 		            	 
-		            	 if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
+		            	 if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
 		            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, 
 		            										dislike, apk_repo_str_raw , 
 		            										apk_id, apk_ver_str_raw, UserTaste.LIKE);
@@ -486,8 +487,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						 				apk_repo_str_raw ,
 						 				apk_id, 
 						 				apk_ver_str_raw, 
-						 				sharedPreferences.getString("usernameLogin", null), 
-						 				sharedPreferences.getString("passwordLogin", null), 
+						 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
+						 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
 						 				UserTaste.LIKE, likes, dislikes, like, dislike, userTaste, null).submit();
 								 
 							 } else {
@@ -507,7 +508,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		          {
 		             case MotionEvent.ACTION_DOWN:
 		            	 
-		            	  if(sharedPreferences.getString("usernameLogin", null)==null || sharedPreferences.getString("passwordLogin", null)==null){				
+		            	  if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
 		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
 		            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, UserTaste.DONTLIKE);
 		            		  	loginComments.setOnDismissListener(ApkInfo.this);
@@ -525,8 +526,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							 		apk_repo_str_raw,
 							 		apk_id, 
 							 		apk_ver_str_raw, 
-							 		sharedPreferences.getString("usernameLogin", null), 
-							 		sharedPreferences.getString("passwordLogin", null), 
+							 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
+							 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
 							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
 							 } else {
 								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
@@ -555,8 +556,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	 */
 	public void selectComments(){
 		 SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-		 if(sharedPreferences.getString("usernameLogin", null)!=null 
-				 && sharedPreferences.getString("passwordLogin", null)!=null 
+		 if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)!=null 
+				 && sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)!=null 
 				 && !taste.equals(UserTaste.NOTEVALUATED) 
 				&& !taste.equals(UserTaste.TASTELESS)){
 				
@@ -565,8 +566,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				 		apk_repo_str_raw,
 				 		apk_id, 
 				 		apk_ver_str_raw, 
-				 		sharedPreferences.getString("usernameLogin", null), 
-				 		sharedPreferences.getString("passwordLogin", null), 
+				 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
+				 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
 				 		taste, likes, dislikes, like, dislike, userTaste, null).submit();
 			 
 			 taste = UserTaste.TASTELESS;
@@ -597,7 +598,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			tastePoster.cancel(true);
 		
 		tastePoster = new TastePoster(this, apkid, version, repo, likes, dontlikes, 
-													like, dislike, sharedPreferences.getString("useridLogin", null),
+													like, dislike, sharedPreferences.getString( ConfigsAndUtils.LOGIN_USER_ID , null),
 													userTaste);
 		tastePoster.execute();
 		
@@ -682,14 +683,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	 * 
 	 */
 	public void onDismiss(DialogInterface dialog) {
-		if(sharedPreferences.getString("usernameLogin", null)!=null && sharedPreferences.getString("passwordLogin", null)!=null){
+		if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)!=null && sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)!=null){
 			new AddTaste(
 	 				ApkInfo.this, 
 	 				apk_repo_str_raw,
 	 				apk_id, 
 	 				apk_ver_str_raw, 
-	 				sharedPreferences.getString("usernameLogin", null), 
-	 				sharedPreferences.getString("passwordLogin", null), 
+	 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
+	 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
 	 				((Login)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste, ApkInfo.this).submit();
 		}
 	}

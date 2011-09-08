@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import cm.aptoide.pt.ApkInfo;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
 
 import android.app.ProgressDialog;
@@ -113,7 +114,7 @@ public class AddTaste {
 					
 					TasteGetter tasteGetter = new TasteGetter(repo, apkid, version);
 					try {
-						tasteGetter.parse(context, context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null), this);
+						tasteGetter.parse(context, context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString( ConfigsAndUtils.LOGIN_USER_ID, null), this);
 						synchronized(userTastePrevious){
 							userTastePrevious.setValue(tasteGetter.getUserTaste());
 						}

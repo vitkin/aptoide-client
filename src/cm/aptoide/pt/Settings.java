@@ -42,6 +42,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 
 public class Settings extends PreferenceActivity implements OnSharedPreferenceChangeListener{
 	
@@ -94,9 +95,9 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 			
 			public boolean onPreferenceClick(Preference preference) {
 
-				prefEditFull.remove("usernameLogin");
-				prefEditFull.remove("passwordLogin");
-				prefEditFull.remove("useridLogin");
+				prefEditFull.remove( ConfigsAndUtils.LOGIN_USER_NAME );
+				prefEditFull.remove( ConfigsAndUtils.LOGIN_PASSWORD );
+				prefEditFull.remove( ConfigsAndUtils.LOGIN_USER_ID );
 				prefEditFull.commit();
 				
 				final AlertDialog alrtClear = new AlertDialog.Builder(mctx).create();

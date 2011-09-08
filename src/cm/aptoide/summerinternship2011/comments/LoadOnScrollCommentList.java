@@ -11,6 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.R;
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.GifView;
 import cm.aptoide.summerinternship2011.exceptions.EmptyRequestException;
 import cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached;
@@ -244,7 +245,8 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 				    	try{
 				    		if(commentList.getCount()!=0){
 								commentGetter.parse(context, commentList.getItem(0).getId(), 
-										context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString("useridLogin", null));
+										context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE)
+										.getString(ConfigsAndUtils.LOGIN_USER_ID, null));
 				    		} else {
 				    			commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
 				    		}
@@ -252,10 +254,10 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 						((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
 						
 		    		}
-		    	
+		    		
+		    		cancelAllPendingRequests();
+		    		
 		    	} catch(Exception e)		{}
-		    	
-		    	cancelAllPendingRequests();
 		    	
     		}
     	

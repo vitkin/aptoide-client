@@ -73,7 +73,7 @@ public class TasteGetter {
 	 * @param apkversion
 	 */
 	public TasteGetter( String repo, String apkid, String apkversion) {
-		urlReal = String.format(ConfigsAndUtils.TASTE_URL_LIST, URLEncoder.encode(repo), URLEncoder.encode(apkid), URLEncoder.encode(apkversion));
+		urlReal = String.format(ConfigsAndUtils.WEB_SERVICE_TASTE_LIST, URLEncoder.encode(repo), URLEncoder.encode(apkid), URLEncoder.encode(apkversion));
 	}
 	
 	/**
