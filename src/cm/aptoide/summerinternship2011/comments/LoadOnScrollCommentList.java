@@ -11,6 +11,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.R;
+import cm.aptoide.summerinternship2011.GifView;
 import cm.aptoide.summerinternship2011.exceptions.EmptyRequestException;
 import cm.aptoide.summerinternship2011.exceptions.EndOfRequestReached;
 import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
@@ -19,7 +20,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.AbsListView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
@@ -48,6 +48,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     private LinearLayout loadingLayout;
     
     private ArrayList<Fetch> pendingFetch;
+    private GifView load;
     
     /**
      * 
@@ -72,6 +73,9 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	
     	this.pendingFetch = new ArrayList<Fetch>();
     	
+    	load = ((GifView)loadingLayout.findViewById(R.id.loadImageComments));
+    	load.startAnimation(R.drawable.loading);
+    	
     	reset();
     	
     }
@@ -88,8 +92,9 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	continueFetching = true;
     	
     	((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.loading);
-		((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageResource(R.drawable.loading);
-		
+    	
+    	load.startAnimation();
+    	
     }
     
     /**
@@ -169,7 +174,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 							}
 							
 		    			}catch (Exception e) { 
-		    				continueFetching = false; 
+		    				continueFetching = false;
 		    			}
 						
 			        }
@@ -193,9 +198,6 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 					
 					if(result != null){
 						
-						((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
-						((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
-						
 						ArrayList<Comment> comments = commentGetter.getComments();
 						for(Comment comment: comments){
 							 commentList.add(comment);
@@ -204,7 +206,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 					}else{
 						
 						((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
-						((ImageView)loadingLayout.findViewById(R.id.loadImageComments)).setImageBitmap(null);
+						load.stopAnimation();
 						
 					}
 					
@@ -259,15 +261,22 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	
 	}
     
+    /**
+     * 
+     * @param apk_repo_str_raw
+     * @param apk_id
+     * @param apk_ver_str_raw
+     */
     public void fetchNewApp(String apk_repo_str_raw,String apk_id,String apk_ver_str_raw){
     	// Make sure no new comments are added while reseting comment list
-    	synchronized(pendingFetch){ 
-	    	this.reset();
-			this.resetGetter(apk_repo_str_raw, apk_id, apk_ver_str_raw);
-			commentList.removeAll();
-			this.cancelAllPendingRequests();
+    	synchronized(commentGetter){
+	    	synchronized(pendingFetch){
+				this.resetGetter(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+				commentList.removeAll();
+				this.reset();
+				this.cancelAllPendingRequests();
+	    	}
     	}
-    	
     }
     
     /**
