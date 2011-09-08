@@ -168,7 +168,9 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 								
 							}
 							
-		    			}catch (Exception e) { continueFetching = false; }
+		    			}catch (Exception e) { 
+		    				continueFetching = false; 
+		    			}
 						
 			        }
 				           

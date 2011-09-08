@@ -44,12 +44,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 */
 	public VersionApk(String version, int versionCode, String apkId, int size ) {
 		
-		if(version==null)
-			throw new IllegalArgumentException("The version can not be null");
-		
-		if(apkId==null)
-			throw new IllegalArgumentException("The apkId can not be null");
-		
 		this.size = size;
 		this.version = version;
 		this.versionCode = versionCode;
@@ -108,8 +102,6 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	}
 	
 	public int compareTo(VersionApk version) {
-		if(!this.apkId.equals(version.getApkId()))
-			throw new IllegalArgumentException("To compare apps the same id must be provided.");
 		return versionCode-version.getVersionCode();
 	}
 	
@@ -125,28 +117,36 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		return strBuilder.toString();
 	}
 	
-	public static HashMap<String,ArrayList<VersionApk>> getGreaterAndSmallerThan(String givenVersion, ArrayList<VersionApk> versions){
-		
-		
+	public static HashMap<String,ArrayList<VersionApk>> getGreaterAndSmallerThan(int givenVersionCode, ArrayList<VersionApk> versions){
 		
 		HashMap<String,ArrayList<VersionApk>> ret = new HashMap<String,ArrayList<VersionApk>>();
 		ret.put("smaller", new ArrayList<VersionApk>());
 		ret.put("greater", new ArrayList<VersionApk>());
+		
+		
 		VersionApk givenVersionCal = null;
 		for(VersionApk version:versions){
-			if(version.getVersion().equals(givenVersion)){
+			if(version.versionCode == givenVersionCode){
 				givenVersionCal = version;
 				ret.remove(givenVersionCal);
+				break;
 			}
 		}
 		
+		if(givenVersionCal==null){
+			givenVersionCal = new VersionApk(null, givenVersionCode, null, 0);
+		}	
+		
 		for(VersionApk version:versions){
-			int comp = givenVersionCal.compareTo(version);
-			
-			if(comp>0){ ret.get("smaller").add(version); }
-			else if(comp<0){ ret.get("greater").add(version); }
-			
-		}
+				int comp = givenVersionCal.compareTo(version);
+				
+				if(comp>0){ 
+					ret.get("smaller").add(version); 
+				}else if(comp<0){ 
+					ret.get("greater").add(version); 
+				}
+				
+			}
 		
 		return ret;
 		

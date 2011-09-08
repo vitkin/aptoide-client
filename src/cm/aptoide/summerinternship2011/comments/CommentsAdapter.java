@@ -75,6 +75,7 @@ public class CommentsAdapter<T extends Comment> extends ArrayAdapter<T>  {
 //	}
 	
 	public ArrayList<T> removeAll(){
+		
 		ArrayList<T> buffer = new ArrayList<T>();
 		while(getCount()!=0){
 			T obj = getItem(0);
