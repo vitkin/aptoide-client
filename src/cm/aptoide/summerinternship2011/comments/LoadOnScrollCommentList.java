@@ -34,7 +34,7 @@ import android.widget.AbsListView.OnScrollListener;
  */
 public class LoadOnScrollCommentList implements OnScrollListener {
 	
-    private final static int visibleThreshold = 6; // The minimum amount of items to have below your current scroll position, before loading more
+    private final static int visibleThreshold = 4; // The minimum amount of items to have below your current scroll position, before loading more
     private final static int commentsToLoad = 2; //The number of comments to retrieve per fetch
     
     private int currentPage; // The current page of data you have loaded
@@ -50,6 +50,8 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     
     private ArrayList<Fetch> pendingFetch;
     private GifView load;
+    
+    private boolean stoped;
     
     /**
      * 
@@ -91,7 +93,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	loading = true;
     	lastCommentIdRead = null;
     	continueFetching = true;
-    	
+    	stoped = false;
     	((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.loading);
     	
     	load.startAnimation();
@@ -204,10 +206,13 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 							 commentList.add(comment);
 						}
 						
-					}else{
+					}else {
 						
-						((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
-						load.stopAnimation();
+						if(!stoped && !continueFetching){
+							((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
+							load.stopAnimation();
+							stoped = true;
+						}
 						
 					}
 					

@@ -3,7 +3,7 @@
 	  xmlns:android="http://schemas.android.com/apk/res/android"
 	  
 	  android:orientation="vertical"
-	  android:layout_width="fill_parent"
+	  android:layout_width="250dip"
 	  android:layout_height="fill_parent"
 	  android:layout_gravity="center_horizontal"
 	  android:gravity="center"
@@ -38,6 +38,7 @@
 				android:textSize="18sp"
 				android:textColor="#696969"
 				android:text="@string/subject"
+				android:singleLine="true"
 				/>
 		
 		
@@ -49,7 +50,7 @@
 				android:inputType="textMultiLine"
 				android:id="@+id/comment"
 				android:textSize="18sp"
-				android:singleLine="false"
+				android:singleLine="true"
 				android:textColor="#696969"
 				android:text="@string/body"
 				android:lines="3"

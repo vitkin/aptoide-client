@@ -22,7 +22,8 @@
 		android:textSize="18sp"
 		android:layout_span="2"
 		android:textColor="#696969"
-		android:text="@string/user"/>
+		android:text="@string/user"
+		android:singleLine="true"/>
 	
 	<EditText
 		android:id="@+id/pass"
@@ -32,7 +33,8 @@
 		android:layout_span="2"
 		android:textColor="#696969"
 		android:text="@string/pass"
-		android:password="true"/>
+		android:password="true"
+		android:singleLine="true"/>
 	
 	<LinearLayout
 		  android:orientation="horizontal"
