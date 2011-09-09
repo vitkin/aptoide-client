@@ -13,8 +13,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.apache.http.HttpResponse;
 
-import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-
 
 
 import android.app.Activity;
@@ -391,6 +389,7 @@ public class BaseManagement extends Activity {
 					 * 0 - not installed
 					 * 1 - installed
 					 * 2 - installed need update
+					 * 3 - installed don't need update but downgrade possible
 					 * 
 					 */
 					for(ApkNode node: apk_lst){
@@ -401,32 +400,62 @@ public class BaseManagement extends Activity {
 						apk_line.put("icon", iconpath);
 						apk_line.put("rat", node.rat);
 						
-						
-						if(node.status != 0){
-							
+						if(node.down >= 0)
 							apk_line.put("down", node.down + " Down.");
-							
-							String labelUpdate = getLabel(node);
-							
-							if(labelUpdate!=""){
-						    	HashMap<String, Object> apk_line2 = new HashMap<String, Object>();
-								apk_line2.put("pkg", node.apkid);
-								apk_line2.put("icon", iconpath);
-								apk_line2.put("rat", node.rat);
-							    apk_line2.put("status2", labelUpdate);
-							    apk_line2.put("name2", node.name);
-						    	updtMap.add(apk_line2);
-					    	}
-							
+						
+						if(node.status == 1){
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("name", node.name);
 							instMap.add(apk_line);
+						}else if(node.status == 2){
+							apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
+							apk_line.put("name2", node.name);
+							updtMap.add(apk_line);
+							instMap.add(apk_line);
+						}else if(node.status == 3){
+							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+							apk_line.put("name", node.name);
+							instMap.add(apk_line);
+							
+							HashMap<String, Object> apk_line2 = new HashMap<String, Object>();
+							apk_line2.put("pkg", node.apkid);
+							apk_line2.put("icon", iconpath);
+							apk_line2.put("rat", node.rat);
+						    apk_line2.put("status2", getString(R.string.installed_downgrade));
+						    apk_line2.put("name2", node.name);
+							updtMap.add(apk_line2);
 							
 						}else{
 							apk_line.put("status", "Version: " + node.ver);
 							apk_line.put("name", node.name);
 							availMap.add(apk_line);
 						}
+						
+//						if(node.status != 0){
+//							
+//							apk_line.put("down", node.down + " Down.");
+//							
+//							String labelUpdate = getLabel(node);
+//							
+//							if(labelUpdate!=""){
+//						    	HashMap<String, Object> apk_line2 = new HashMap<String, Object>();
+//								apk_line2.put("pkg", node.apkid);
+//								apk_line2.put("icon", iconpath);
+//								apk_line2.put("rat", node.rat);
+//							    apk_line2.put("status2", labelUpdate);
+//							    apk_line2.put("name2", node.name);
+//						    	updtMap.add(apk_line2);
+//					    	}
+//							
+//							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+//							apk_line.put("name", node.name);
+//							instMap.add(apk_line);
+//							
+//						}else{
+//							apk_line.put("status", "Version: " + node.ver);
+//							apk_line.put("name", node.name);
+//							availMap.add(apk_line);
+//						}
 						
 					}
 
@@ -461,31 +490,31 @@ public class BaseManagement extends Activity {
 		 
 	}
 	
-	/**
-	 * @author rafael
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public String getLabel(ApkNode node){
-		
-		ArrayList<VersionApk> versions = db.getOldAndNewApks(node.apkid);
-		
-		
-			StringBuilder label = new StringBuilder("");
-			HashMap<String,ArrayList<VersionApk>> ret = VersionApk.getGreaterAndSmallerThan(node.vercode, versions);
-			
-			if(ret.get("smaller").size()>0){
-				label.append(getString(R.string.installed_downgrade) + " " + VersionApk.getStringFromVersionApkList(ret.get("smaller")) + ".");
-			}
-			
-			if(ret.get("greater").size()>0){
-				if(ret.get("smaller").size()>0){ label.append(System.getProperty("line.separator")); }
-				label.append(getString(R.string.installed_update) + " " + VersionApk.getStringFromVersionApkList(ret.get("greater")) + "." );
-			}
-			return label.toString();
-		
-	}
+//	/**
+//	 * @author rafael
+//	 * 
+//	 * @param node
+//	 * @return
+//	 */
+//	public String getLabel(ApkNode node){
+//		
+//		ArrayList<VersionApk> versions = db.getOldAndNewApks(node.apkid);
+//		
+//		
+//			StringBuilder label = new StringBuilder("");
+//			HashMap<String,ArrayList<VersionApk>> ret = VersionApk.getGreaterAndSmallerThan(node.vercode, versions);
+//			
+//			if(ret.get("smaller").size()>0){
+//				label.append(getString(R.string.installed_downgrade) + " " + VersionApk.getStringFromVersionApkList(ret.get("smaller")) + ".");
+//			}
+//			
+//			if(ret.get("greater").size()>0){
+//				if(ret.get("smaller").size()>0){ label.append(System.getProperty("line.separator")); }
+//				label.append(getString(R.string.installed_update) + " " + VersionApk.getStringFromVersionApkList(ret.get("greater")) + "." );
+//			}
+//			return label.toString();
+//		
+//	}
 	
 	
 	

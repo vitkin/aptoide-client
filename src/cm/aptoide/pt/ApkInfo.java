@@ -419,7 +419,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 							int result = versionApk.compareTo(versionInstApk);
 							if(result>0){
-								action.setText("Upgrade");
+								action.setText("Update");
 							}else if(result<0) {
 								action.setText("Downgrade");
 							}else{
