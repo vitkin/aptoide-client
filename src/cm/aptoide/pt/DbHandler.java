@@ -891,7 +891,7 @@ public class DbHandler {
 	public void addExtraXML(String apkid, String cmt, String srv){
 		Cursor c = null;
 		try{
-			c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "server=\"?\" and apkid=\"?\"", new String[]{srv, apkid}, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "server=\""+srv+"\" and apkid=\""+apkid+"\"", null, null, null, null);
 			if(c.getCount() > 0){
 				ContentValues extra = new ContentValues();
 				if(cmt.length() > 1){

@@ -293,17 +293,20 @@ public class RemoteInTab extends TabActivity {
 
 	private void installFromLink(String path){
 		try{
+			Log.d("Aptoide-RemoteInTab", "installing From Link: "+path);
+			
 			String file_out = new String(SDCARD+"/.aptoide/fetched.apk");
 			FileOutputStream saveit = new FileOutputStream(file_out);
 			DefaultHttpClient mHttpClient = new DefaultHttpClient();
 			HttpGet mHttpGet = new HttpGet(path);
-
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
 			
+			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+
 			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 				 return;
 			 }
 
+            Log.d("Aptoide-RemoteInTab", "installFromLink Content-Lenght: "+mHttpResponse.getEntity().getContentLength());
 			InputStream getit = mHttpResponse.getEntity().getContent();
 			byte data[] = new byte[8096];
 			int readed;

@@ -456,10 +456,14 @@ public class RssHandler extends DefaultHandler{
 		if(sPref.getBoolean("fetchicons", false)){
 			Intent serv = new Intent(mctx,FetchIconsService.class);
 //Temporary fix for ANR after failed binder transaction
-			for (int i=iconsLst.size();i >= 2000 ;i++) {
-				iconsLst.remove(i);
+//			Log.d("Aptoide-RssHandler", "reducing iconslist, size= "+iconsLst.size());
+			ArrayList<IconNode> newList = new ArrayList<IconNode>();
+			for (int i=0;i <= 2000 && iconsLst.size() >= 0 ;i++) {
+				newList.add(iconsLst.remove(i));
+//				Log.d("Aptoide-RssHandler", "i: "+i+" icon: "+newList.get(i).url);
 			}
-			serv.putExtra("icons", iconsLst);
+			serv.putExtra("icons", newList);
+//			serv.putExtra("icons", iconsLst);
 			serv.putExtra("srv", mserver);
 			serv.putExtra("login", new String[] {usern, passwd});
 			mctx.startService(serv);
