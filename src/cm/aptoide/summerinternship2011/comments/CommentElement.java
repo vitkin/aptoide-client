@@ -7,7 +7,7 @@ package cm.aptoide.summerinternship2011.comments;
  */
 public enum CommentElement {
 	
-	RESPONSE, STATUS, LISTING, ENTRY , ID, USERNAME, USERIDHASH, ANSWERTO, SUBJECT, TEXT, TIMESTAMP, ERRORS;
+	ID, USERNAME, ANSWERTO, SUBJECT, TEXT, TIMESTAMP, USERIDHASH, LANG, RESPONSE, STATUS, LISTING, ENTRY, ERRORS;
 
 	public static CommentElement valueOfToUpper(String name) {
 		return CommentElement.valueOf(name.toUpperCase());
