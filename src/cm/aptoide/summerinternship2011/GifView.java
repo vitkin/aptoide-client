@@ -14,7 +14,8 @@ import android.widget.ImageView;
 /**
  * 
  * @author rafael
- *
+ * @since summerinternship2011
+ * 
  */
 public class GifView extends ImageView{
     	
@@ -25,6 +26,13 @@ public class GifView extends ImageView{
 		
     	private int height;
     	
+    	
+    	/**
+    	 * 
+    	 * @param context 
+    	 * @param resourceGif
+    	 * @param height in pixels
+    	 */
 		public GifView(Context context, int resourceGif, int height) {
 			super(context);
 			is=context.getResources().openRawResource(resourceGif);
@@ -34,6 +42,10 @@ public class GifView extends ImageView{
 			this.height = height;
 		}
 
+		/**
+		 * 
+		 * @param context
+		 */
 		public GifView(Context context) {
 			super(context);
 			is=null;
@@ -42,6 +54,11 @@ public class GifView extends ImageView{
 			startAnimation = false;
 		}
 		
+		/**
+		 * 
+		 * @param context
+		 * @param attrs
+		 */
 		public GifView(Context context, AttributeSet attrs) {
 			super(context, attrs);
 			is=null;
@@ -50,6 +67,12 @@ public class GifView extends ImageView{
 			startAnimation = false;
 		}
 		
+		/**
+		 * 
+		 * @param context
+		 * @param attrs
+		 * @param defStyle
+		 */
 		public GifView(Context context, AttributeSet attrs, int defStyle) {
 			super(context, attrs, defStyle);
 			is=null;
@@ -58,6 +81,11 @@ public class GifView extends ImageView{
 			startAnimation = false;
 		}
 		
+		/**
+		 * 
+		 * @param resourceGif
+		 * @param height
+		 */
 		public synchronized  void startAnimation(int resourceGif, int height){
 			this.height = height;
 			is = super.getContext().getResources().openRawResource(resourceGif);
@@ -83,12 +111,18 @@ public class GifView extends ImageView{
     		}
     	}
     	
+    	/**
+    	 * 
+    	 */
     	public synchronized void stopAnimation() { 
     		this.getLayoutParams().height = 0;
     		startAnimation = false;
     	
     	}
     	
+    	/**
+    	 * 
+    	 */
     	public synchronized void startAnimation() { 
     		
     		this.getLayoutParams().height = height;

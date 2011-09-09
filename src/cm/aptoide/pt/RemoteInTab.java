@@ -46,6 +46,10 @@ import org.apache.http.util.EntityUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import cm.aptoide.summerinternship2011.ConfigsAndUtils;
+
+
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -75,6 +79,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -168,6 +173,27 @@ public class RemoteInTab extends TabActivity {
 		
 	};
     
+	private void addTab(String label, int drawableId, Class<?> classToLauch) {
+		//TesteActivity.class
+		Intent intent = new Intent(this, classToLauch);
+		TabHost.TabSpec spec = getTabHost().newTabSpec(label);
+
+		View tabIndicator = LayoutInflater.from(this).inflate(
+								R.layout.tab_indicator, 
+								getTabWidget(), 
+								false
+								);
+		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
+		title.setText(label);
+		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.icon);
+		icon.setImageResource(drawableId);
+
+		spec.setIndicator(tabIndicator);
+		spec.setContent(intent);
+		getTabHost().addTab(spec);
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -188,9 +214,20 @@ public class RemoteInTab extends TabActivity {
 		prefEdit.commit();
 
 		myTabHost = getTabHost();
-		myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
-		myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)));
-		myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
+		
+		if(ConfigsAndUtils.INTERFACE_SILVER_TABS_ON){
+		
+			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class);
+			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class);
+			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class);
+		
+		}else{
+			
+			myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
+			myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)) );
+			myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
+			
+		}
 
 		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
 
@@ -934,6 +971,10 @@ public class RemoteInTab extends TabActivity {
 		myTabHost.setCurrentTabByTag("inst");
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
+		
+		// Null pointer exception need fix
+		//if(arguments ==null) Log.d("Aptoide", "Null pointer exception aqui!");
+		
 		int position = arguments.getInt("position");
 		Log.d("Aptoide", "Cheguei aqui!");
 		downloadQueueService.dismissNotification(position);

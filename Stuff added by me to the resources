@@ -50,7 +50,6 @@ string/postingtaste
 string/loggingin
 string/tastenotvailable
 
-
 values/themes.xml
 values/styles.xml 
 values/colors.xml
@@ -61,3 +60,8 @@ drawable/likehover.png
 drawable/dontlikehover.png
 drawable/dontlike.png
 drawable/loading.gif
+
+drawable/tabinfo.xml
+drawable/tabindicator.xml
+drawable/tabback.xml
+color/tabs.xml
