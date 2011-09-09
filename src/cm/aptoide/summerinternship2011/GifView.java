@@ -23,12 +23,15 @@ public class GifView extends ImageView{
     	private long movieStart;
     	private boolean startAnimation;
 		
-		public GifView(Context context, int resourceGif) {
+    	private int height;
+    	
+		public GifView(Context context, int resourceGif, int height) {
 			super(context);
 			is=context.getResources().openRawResource(resourceGif);
 			movie=Movie.decodeStream(is);
 			movieStart=0;
 			startAnimation = true;
+			this.height = height;
 		}
 
 		public GifView(Context context) {
@@ -55,7 +58,8 @@ public class GifView extends ImageView{
 			startAnimation = false;
 		}
 		
-		public synchronized  void startAnimation(int resourceGif){
+		public synchronized  void startAnimation(int resourceGif, int height){
+			this.height = height;
 			is = super.getContext().getResources().openRawResource(resourceGif);
 			movie = Movie.decodeStream(is);
 			movieStart = 0;
@@ -79,9 +83,18 @@ public class GifView extends ImageView{
     		}
     	}
     	
-    	public synchronized void stopAnimation() { startAnimation = false; }
+    	public synchronized void stopAnimation() { 
+    		this.getLayoutParams().height = 0;
+    		startAnimation = false;
     	
-    	public synchronized void startAnimation() { startAnimation = true; }
+    	}
+    	
+    	public synchronized void startAnimation() { 
+    		
+    		this.getLayoutParams().height = height;
+    		startAnimation = true; 
+    	
+    	}
     	
 }
 
