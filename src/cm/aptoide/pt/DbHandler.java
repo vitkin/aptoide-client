@@ -469,20 +469,24 @@ public class DbHandler {
 				}else{
 					int instvercode = c.getInt(4);
 					int lastvercode = c.getInt(5);
-					if(instvercode == lastvercode){
-						node.status = 1;
-						node.ver = c.getString(2);
-					}else{
-						node.status = instvercode < lastvercode?2:1;
-						node.ver = c.getString(2);
-					}
 					
+					if(instvercode >= lastvercode){
+						
+						if(getOldApks(node.apkid).size()==0 && instvercode == lastvercode){
+							node.status = 1;
+						} else {
+							node.status = 3;
+						}
+						
+					}else{
+						node.status = 2;
+					}
+					node.ver = c.getString(2);
 				}
 				node.rat = c.getFloat(7);
 				node.down = c.getInt(8);
 				node.catg = c.getString(9);
 				node.catg_ord = c.getInt(10);
-				node.vercode = c.getInt(4);
 				tmp.add(node);
 				c.moveToNext();
 			}
