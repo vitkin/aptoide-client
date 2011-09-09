@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cm.aptoide.pt" android:versionName="2.5.2-rc8" android:versionCode="308">
+	package="cm.aptoide.pt" android:versionName="2.5.2-rc9" android:versionCode="310">
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -60,17 +60,17 @@
 		</activity>
 		
 		
-		<activity android:name="TabAvailable" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name="TabAvailable" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask">
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
 		</activity>
 		
 		
-		<activity android:name="TabUpdates" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name="TabUpdates" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask">
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
 		</activity>
 
 
-		<activity android:name="ManageRepo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name="ManageRepo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTop">
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
 		</activity>
 
@@ -78,7 +78,7 @@
 		<activity android:name="Settings" android:launchMode="singleTask"/>
 		
 		
-		<activity android:name="ApkInfo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" />
+		<activity android:name="ApkInfo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTop"/>
 
 		<service android:name="FetchIconsService"></service>
 		<service android:name="FetchExtrasService"></service>
