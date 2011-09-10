@@ -9,7 +9,7 @@
     		>
     		
     	<RelativeLayout 
-    				android:background="@android:drawable/bottom_bar" 
+    				android:background="@drawable/apkinfoheader" 
     				android:layout_width="fill_parent" 
     				android:layout_height="wrap_content">
     			
@@ -124,7 +124,7 @@
         		
         	<LinearLayout 
         		android:id="@+id/listview_footer"
-        		android:background="@android:drawable/bottom_bar"
+        		android:background="@drawable/apkinfofooter"
         		android:layout_height="wrap_content"
      			android:layout_width="fill_parent"
      			android:layout_alignParentBottom="true"

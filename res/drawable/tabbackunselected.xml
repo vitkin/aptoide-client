@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 	
+	<!--
 	<item android:top="63dp">
 		<shape android:shape="rectangle">
 			<solid android:color="#898989" />
@@ -12,25 +13,27 @@
 			<solid android:color="@color/app_background" />
 		</shape>
 	</item>
+	-->
 	
-	<item 
-			>
+	<item>
 			<!-- android:left="@dimen/tab_space" 
 			android:right="@dimen/tab_space"-->
 			
 		<shape android:shape="rectangle">
 			
-			<corners 
+			<!-- <corners 
 				android:bottomRightRadius="0dp"
 				android:bottomLeftRadius="0dp" 
      			android:topLeftRadius="7dp"
-     			android:topRightRadius="7dp" /> 
+     			android:topRightRadius="7dp" /> --> 
 			
 			<!-- android:topLeftRadius="@dimen/corner_radius"
 			android:topRightRadius="@dimen/corner_radius"-->
 			
-			<gradient android:angle="90" android:startColor="#FFFFFF" android:endColor="#8B8B83" />
-			<stroke android:width="1px" android:color="#898989" />
+			<gradient android:angle="90" android:startColor="#000000" android:endColor="#8B8B83" />
+			
+			<!--  <stroke android:width="1px" android:color="#898989" /> -->
+			
 		</shape>
 	</item>
 	

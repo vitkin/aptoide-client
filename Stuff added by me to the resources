@@ -61,7 +61,9 @@ drawable/dontlikehover.png
 drawable/dontlike.png
 drawable/loading.gif
 
-drawable/tabinfo.xml
+drawable/tabbackpressed.xml
+drawable/tabbackselected.xml
+drawable/tabbackunselected.xml
 drawable/tabindicator.xml
-drawable/tabback.xml
-color/tabs.xml
+layout/tab_indicator.xml
+values/colors.xml
