@@ -49,7 +49,6 @@ import org.xml.sax.XMLReader;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;

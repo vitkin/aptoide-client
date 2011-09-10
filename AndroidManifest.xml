@@ -79,8 +79,6 @@
 		<activity android:name=".ApkInfo" android:configChanges="keyboardHidden|orientation"
 			android:theme="@android:style/Theme.NoTitleBar" />
 		
-		<activity android:name=".TesteActivity" android:configChanges="keyboardHidden|orientation"/>
-		
 		<service android:name="FetchIconsService"></service>
 		<service android:name="FetchExtrasService"></service>
 		<service android:name=".DownloadQueueService" />

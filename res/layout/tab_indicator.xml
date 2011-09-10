@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
 android:layout_width="0dip"
 android:layout_height="64dip"
 android:layout_weight="1"
@@ -18,7 +20,6 @@ android:padding="5dp">
 	android:layout_alignParentBottom="true"
 	android:layout_centerHorizontal="true"
 	style="?android:attr/tabWidgetStyle"
-	android:textColor="#000000"
 	 />
 
 </RelativeLayout>
