@@ -31,21 +31,32 @@ import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
  * @author rafael
  * @since summerinternship2011
  * 
- * Example of the xml file structure.
+ * Example of a normal xml file structure response.
  * 
  * <response>
  * 	<status>OK</status>
- * 	<listing><entry>
- * 		<id>34</id>
- * 		<username>fredde165487</username>
- * 		<answerto/>
- * 		<subject/>
- * 		<text>This app isnt the real market!</text>
- * 		<timestamp>2011-06-05 22:03:08.196793</timestamp>
+ * 	<listing>
+ * 		<entry>
+ * 			<id>34</id>
+ * 			<username>fredde165487</username>
+ * 			<answerto/>
+ * 			<subject/>
+ * 			<text>This app isnt the real market!</text>
+ * 			<timestamp>2011-06-05 22:03:08.196793</timestamp>
+ * 			<lang />
+ * 			<useridhash>fc679c81a8259fe24e895442fd750e9fc6d20608</useridhash>
  * 		</entry>
  * 	</listing>
  * </response>
  * 
+ * Example of a error return.
+ * 
+ * <response>
+ * 	<status>FAIL</status>
+ * 		<errors>
+ * 			<entry>No apk was found with the given apkid and apkversion.</entry>
+ * 		</errors><
+ * </response>
  */
 public class Comment{
 	
@@ -128,7 +139,7 @@ public class Comment{
 	 * @param user
 	 * @param pass
 	 * @param reply
-	 * @return
+	 * @return The response provided by the webservice
 	 * @throws IOException 
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 

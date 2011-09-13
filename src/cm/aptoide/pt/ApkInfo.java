@@ -377,6 +377,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					}
 				}
 			});
+			//listView.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.apkinfoheader));
 			TextView textView = new TextView(this);
 			textView.setText(this.getString(R.string.commentlabel));
 			textView.setTextSize(20);
