@@ -60,6 +60,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		lv = new ListView(this);
+		lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava));
+		lv.setCacheColorHint(0);
 		lv.setOnItemClickListener(this);
 		lv.setFastScrollEnabled(true);
 

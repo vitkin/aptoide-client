@@ -156,8 +156,13 @@
 	       			android:layout_height="50dp"
 	       			android:textSize="15sp" 
 	       			android:textColor="#FFFFFF"
-	       			android:background="@drawable/apkinfofooter"
+	       			android:background="@drawable/apkinfofooterindicator"
 	       			android:text="@string/install" />
+     			<View
+					    android:layout_width="1dip"
+					    android:layout_height="fill_parent"
+					    android:background="#FFFFFF"
+					/>
      			
 				<Button 
 	       			android:id="@+id/btn_market"
@@ -166,7 +171,7 @@
 	       			android:layout_height="50dp"
 	       			android:textSize="15sp"
 	       			android:textColor="#FFFFFF"
-	       			android:background="@drawable/apkinfofooter"
+	       			android:background="@drawable/apkinfofooterindicator"
 	       			android:text="@string/btn_search_market" />
 	       			
             </LinearLayout>	

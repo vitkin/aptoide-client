@@ -43,6 +43,8 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		lv = new ListView(this);
+		lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistinst));
+		lv.setCacheColorHint(0);
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
 		db = new DbHandler(this);
