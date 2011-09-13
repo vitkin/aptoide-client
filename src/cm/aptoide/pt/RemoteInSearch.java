@@ -302,14 +302,12 @@ public class RemoteInSearch extends ListActivity{
 			//Not installed... do nothing
 		}
 		
-		
-		
 		if(apk_lst.get(position).status == 0){
 			apkinfo.putExtra("type", 0);
-			
 		}else{
 			apkinfo.putExtra("type", 1);
 		}
+		
 		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(apkid));
 		startActivityForResult(apkinfo,30);
 		

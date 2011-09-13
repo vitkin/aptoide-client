@@ -176,6 +176,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		rtrn_intent = new Intent();
 		
 		apkinfo = getIntent();
+		final boolean applicationExistsInRepo = apkinfo.getBooleanExtra("applicationExistsInRepo", true);
+		
 		final int versioncode = apkinfo.getIntExtra("vercode", 0);
 		apk_id = apkinfo.getStringExtra("apk_id");
 		final int type = apkinfo.getIntExtra("type", 0);
@@ -188,6 +190,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
 		String apk_size_str = apkinfo.getStringExtra("size");
+		
 		
 		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
 		serch_mrkt.setOnClickListener(new OnClickListener() {
@@ -347,45 +350,54 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
 		
+		if(!applicationExistsInRepo){
+			//Hide taste section
+			this.like.getLayoutParams().height = 0;
+			this.dislike.getLayoutParams().height = 0;
+			this.likes.getLayoutParams().height = 0;
+			this.dislikes.getLayoutParams().height = 0;
+		}
 		
-		
-		
+		listView.addHeaderView(linearLayout, null, false);
+		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		
 		
 		/*Comments*/
-		listView.addHeaderView(linearLayout, null, false);
-		listView.setOnItemClickListener(new OnItemClickListener(){
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				if(position==1){ // If comment app... option selected
-					Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
-							apk_repo_str_raw,
-			 				apk_id, 
-			 				apk_ver_str_raw);
-					commentDialog.show();
+		if(applicationExistsInRepo){
+			//Stop comments for aplications not present in the repository
+			
+			listView.setOnItemClickListener(new OnItemClickListener(){
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(position==1){ // If comment app... option selected
+						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
+								apk_repo_str_raw,
+				 				apk_id, 
+				 				apk_ver_str_raw);
+						commentDialog.show();
+					}
 				}
-			}
-		});
-		TextView textView = new TextView(this);
-		textView.setText(this.getString(R.string.commentlabel));
-		textView.setTextSize(20);
-		textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-		listView.addHeaderView(textView);
-		
-		LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
-		listView.addFooterView(loadComLayout);
-		//comments = new ArrayList<Comment>();
-		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
-		listView.setAdapter(commentAdapter);
-		try {
-			loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
-			listView.setOnScrollListener(loadOnScrollCommentList);
-		} 
-		//catch (ParserConfigurationException e) 	{} 
-		//catch (SAXException e) 					{}
-		catch(Exception e)							{}
-		
-		registerForContextMenu(listView);
-		
+			});
+			TextView textView = new TextView(this);
+			textView.setText(this.getString(R.string.commentlabel));
+			textView.setTextSize(20);
+			textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+			listView.addHeaderView(textView);
+			
+			LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
+			listView.addFooterView(loadComLayout);
+			listView.setAdapter(commentAdapter);
+			try {
+				loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
+				listView.setOnScrollListener(loadOnScrollCommentList);
+			} 
+			//catch (ParserConfigurationException e) 	{} 
+			//catch (SAXException e) 					{}
+			catch(Exception e)							{}
+			
+			registerForContextMenu(listView);
+		} else {
+			listView.setAdapter(commentAdapter);
+		}
 		
 		
 		
@@ -458,87 +470,90 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Taste*/
-		if(type==1)
-			selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
-		
-		this.like.setOnTouchListener(new OnTouchListener(){
-		      public boolean onTouch(View view, MotionEvent e) {
-		          switch(e.getAction())
-		          {
-		             case MotionEvent.ACTION_DOWN:
-		            	 
-		            	 if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
-		            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, 
-		            										dislike, apk_repo_str_raw , 
-		            										apk_id, apk_ver_str_raw, UserTaste.LIKE);
-							loginComments.setOnDismissListener(ApkInfo.this);
-							loginComments.show();
-						 }else{
-							 
-							 boolean userTasteBufEquals = false;
-							 synchronized(userTaste){
-								 userTasteBufEquals = userTaste.getValue().equals(UserTaste.LIKE);	 
-							 }
-							 
-							 if(!userTasteBufEquals){
-							 
-								 new AddTaste(
-						 				ApkInfo.this, 
-						 				apk_repo_str_raw ,
-						 				apk_id, 
-						 				apk_ver_str_raw, 
-						 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
-						 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
-						 				UserTaste.LIKE, likes, dislikes, like, dislike, userTaste, null).submit();
-								 
-							 } else {
-								 
-								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
-								 
-							 }
-						 } 
-		            	 break;
-		          }
-		          return false;  //means that the listener dosen't consume the event
-		      }
-		});
-		this.dislike.setOnTouchListener(new OnTouchListener(){
-		      public boolean onTouch(View view, MotionEvent e) {
-		          switch(e.getAction())
-		          {
-		             case MotionEvent.ACTION_DOWN:
-		            	 
-		            	  if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
-		            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
-		            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, UserTaste.DONTLIKE);
-		            		  	loginComments.setOnDismissListener(ApkInfo.this);
+		if(applicationExistsInRepo){
+			
+			if(type==1)
+				selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+			
+			this.like.setOnTouchListener(new OnTouchListener(){
+			      public boolean onTouch(View view, MotionEvent e) {
+			          switch(e.getAction())
+			          {
+			             case MotionEvent.ACTION_DOWN:
+			            	 
+			            	 if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
+			            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, 
+			            										dislike, apk_repo_str_raw , 
+			            										apk_id, apk_ver_str_raw, UserTaste.LIKE);
+								loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
-		            	  }else{
-		            		  
-		            		 boolean userTasteBufEquals = false;
-							 synchronized(userTaste){
-								 userTasteBufEquals = userTaste.getValue().equals(UserTaste.DONTLIKE);	 
-							 }
-							 
-							 if(!userTasteBufEquals){
-		            		  new AddTaste(
-							 		ApkInfo.this, 
-							 		apk_repo_str_raw,
-							 		apk_id, 
-							 		apk_ver_str_raw, 
-							 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
-							 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
-							 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
-							 } else {
-								 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
-							 }
-							 
-		            	  }
-		                  break;
-		          }
-		          return false;  //means that the listener dosen't consume the event
-		      }
-		});
+							 }else{
+								 
+								 boolean userTasteBufEquals = false;
+								 synchronized(userTaste){
+									 userTasteBufEquals = userTaste.getValue().equals(UserTaste.LIKE);	 
+								 }
+								 
+								 if(!userTasteBufEquals){
+								 
+									 new AddTaste(
+							 				ApkInfo.this, 
+							 				apk_repo_str_raw ,
+							 				apk_id, 
+							 				apk_ver_str_raw, 
+							 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
+							 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
+							 				UserTaste.LIKE, likes, dislikes, like, dislike, userTaste, null).submit();
+									 
+								 } else {
+									 
+									 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
+									 
+								 }
+							 } 
+			            	 break;
+			          }
+			          return false;  //means that the listener dosen't consume the event
+			      }
+			});
+			this.dislike.setOnTouchListener(new OnTouchListener(){
+			      public boolean onTouch(View view, MotionEvent e) {
+			          switch(e.getAction())
+			          {
+			             case MotionEvent.ACTION_DOWN:
+			            	 
+			            	  if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
+			            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
+			            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, UserTaste.DONTLIKE);
+			            		  	loginComments.setOnDismissListener(ApkInfo.this);
+									loginComments.show();
+			            	  }else{
+			            		  
+			            		 boolean userTasteBufEquals = false;
+								 synchronized(userTaste){
+									 userTasteBufEquals = userTaste.getValue().equals(UserTaste.DONTLIKE);	 
+								 }
+								 
+								 if(!userTasteBufEquals){
+			            		  new AddTaste(
+								 		ApkInfo.this, 
+								 		apk_repo_str_raw,
+								 		apk_id, 
+								 		apk_ver_str_raw, 
+								 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
+								 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
+								 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
+								 } else {
+									 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
+								 }
+								 
+			            	  }
+			                  break;
+			          }
+			          return false;  //means that the listener dosen't consume the event
+			      }
+			});
+		}
 		
 	}
 	
