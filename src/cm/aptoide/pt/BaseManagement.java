@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -406,24 +408,32 @@ public class BaseManagement extends Activity {
 						if(node.status == 1){
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("name", node.name);
+							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
+							
 						}else if(node.status == 2){
+							
 							apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
 							apk_line.put("name2", node.name);
+							apk_line.put("statusSort", 2);
 							updtMap.add(apk_line);
 							instMap.add(apk_line);
+							
 						}else if(node.status == 3){
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("name", node.name);
+							apk_line.put("statusSort", 3);
 							instMap.add(apk_line);
 							
 							HashMap<String, Object> apk_line2 = new HashMap<String, Object>();
 							apk_line2.put("pkg", node.apkid);
 							apk_line2.put("icon", iconpath);
 							apk_line2.put("rat", node.rat);
-						    apk_line2.put("status2", getString(R.string.installed_downgrade));
-						    apk_line2.put("name2", node.name);
-							updtMap.add(apk_line2);
+						    apk_line2.put("status", getString(R.string.installed_downgrade));
+						    apk_line2.put("name", node.name);
+						    apk_line2.put("statusSort", 3);
+							
+						    updtMap.add(apk_line2);
 							
 						}else{
 							apk_line.put("status", "Version: " + node.ver);
@@ -431,34 +441,37 @@ public class BaseManagement extends Activity {
 							availMap.add(apk_line);
 						}
 						
-//						if(node.status != 0){
-//							
-//							apk_line.put("down", node.down + " Down.");
-//							
-//							String labelUpdate = getLabel(node);
-//							
-//							if(labelUpdate!=""){
-//						    	HashMap<String, Object> apk_line2 = new HashMap<String, Object>();
-//								apk_line2.put("pkg", node.apkid);
-//								apk_line2.put("icon", iconpath);
-//								apk_line2.put("rat", node.rat);
-//							    apk_line2.put("status2", labelUpdate);
-//							    apk_line2.put("name2", node.name);
-//						    	updtMap.add(apk_line2);
-//					    	}
-//							
-//							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
-//							apk_line.put("name", node.name);
-//							instMap.add(apk_line);
-//							
-//						}else{
-//							apk_line.put("status", "Version: " + node.ver);
-//							apk_line.put("name", node.name);
-//							availMap.add(apk_line);
-//						}
-						
 					}
+					Collections.sort(instMap, new Comparator<Map<String,Object>>(){
 
+						public int compare(Map<String, Object> map1, Map<String, Object> map2) {	
+							if(((Integer)map1.get("statusSort"))==1 && ((Integer)map2.get("statusSort"))==2){
+								return 1;
+							} else if(((Integer)map1.get("statusSort"))==2 && ((Integer)map2.get("statusSort"))==1){
+								return -1;
+							} if(((Integer)map1.get("statusSort"))==2 && ((Integer)map2.get("statusSort"))==3){
+								return -1;
+							}else if(((Integer)map1.get("statusSort"))==3 && ((Integer)map2.get("statusSort"))==2){
+								return 1;
+							}
+							return 0;
+						}
+					});
+					
+					Collections.sort(updtMap, new Comparator<Map<String,Object>>(){
+						public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+							if(((Integer)map1.get("statusSort")) == 2 && ((Integer)map2.get("statusSort"))==3){
+								return -1;
+							}else if(((Integer)map1.get("statusSort"))==3 && ((Integer)map2.get("statusSort"))==2){
+								return 1;
+							}
+							return 0;
+						}
+					});
+					
+					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
+					for(Map<String, Object> map:updtMap){ map.remove("statusSort"); }
+					
 					availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
 							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
 
@@ -473,14 +486,13 @@ public class BaseManagement extends Activity {
 							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
 
 					updateAdpt.setViewBinder(new LstBinder());
-				}catch (Exception e) {	
-					
-					//Log.d("Aptoide - Multiversion",e.getMessage());
-
+				
+					//Log.d("Aptoide", e.getMessage()+"");
 				}finally{
 					
 					Log.d("Aptoide","======================= I REDRAW SAY KILL");
 					stop_pd.sendEmptyMessage(0);
+					
 				}
 			}
 			
@@ -489,32 +501,6 @@ public class BaseManagement extends Activity {
 		}.start();
 		 
 	}
-	
-//	/**
-//	 * @author rafael
-//	 * 
-//	 * @param node
-//	 * @return
-//	 */
-//	public String getLabel(ApkNode node){
-//		
-//		ArrayList<VersionApk> versions = db.getOldAndNewApks(node.apkid);
-//		
-//		
-//			StringBuilder label = new StringBuilder("");
-//			HashMap<String,ArrayList<VersionApk>> ret = VersionApk.getGreaterAndSmallerThan(node.vercode, versions);
-//			
-//			if(ret.get("smaller").size()>0){
-//				label.append(getString(R.string.installed_downgrade) + " " + VersionApk.getStringFromVersionApkList(ret.get("smaller")) + ".");
-//			}
-//			
-//			if(ret.get("greater").size()>0){
-//				if(ret.get("smaller").size()>0){ label.append(System.getProperty("line.separator")); }
-//				label.append(getString(R.string.installed_update) + " " + VersionApk.getStringFromVersionApkList(ret.get("greater")) + "." );
-//			}
-//			return label.toString();
-//		
-//	}
 	
 	
 	
