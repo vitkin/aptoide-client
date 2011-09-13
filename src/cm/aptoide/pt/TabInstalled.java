@@ -1,5 +1,6 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
@@ -131,15 +132,26 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 1);
 		apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));
+		ArrayList<VersionApk> oldVersionsApk = db.getOldApks(pkg_id);
 		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
 			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1));
+			VersionApk versionApkPassed = new VersionApk(tmp_get.get(1),Integer.parseInt(tmp_get.get(7)),pkg_id,-1);
+			VersionApk versionApkInstalled = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1);
+			oldVersionsApk.add(versionApkPassed);
+			
+			if(!oldVersionsApk.contains(versionApkInstalled)){
+				apkinfo.putExtra("applicationExistsInRepo", false);
+			}
+			
+			oldVersionsApk.remove(versionApkPassed);
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}
-		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
+		
+		apkinfo.putParcelableArrayListExtra("oldVersions", oldVersionsApk);
 		startActivityForResult(apkinfo,30);
 		
 		/*

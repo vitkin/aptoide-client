@@ -124,27 +124,50 @@
         		
         	<LinearLayout 
         		android:id="@+id/listview_footer"
-        		android:background="@drawable/apkinfofooter"
         		android:layout_height="wrap_content"
      			android:layout_width="fill_parent"
      			android:layout_alignParentBottom="true"
      			android:orientation="horizontal">
      			
+     			<!-- <TabHost
+     				android:layout_width="fill_parent"
+     				android:layout_height="wrap_content"
+     				android:id="@android:id/tabhost"
+     				>
+
+				<TabWidget
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:id="@android:id/tabs"
+					
+					/>
+				
+				<FrameLayout
+					android:id="@android:id/tabcontent"
+					android:layout_width="fill_parent"
+					android:layout_height="200px"
+					android:paddingTop="65px" />
+     			</TabHost>-->
+     			
      			<Button 
 	       			android:id="@+id/btn1" 
-	       			android:layout_width="150.0dip" 
-	       			android:layout_height="wrap_content" 
-	       			android:layout_margin="5.0dip" 
+	       			android:layout_weight=".50" 
+	       			android:layout_width="fill_parent" 
+	       			android:layout_height="50dp"
+	       			android:textSize="15sp" 
+	       			android:textColor="#FFFFFF"
+	       			android:background="@drawable/apkinfofooter"
 	       			android:text="@string/install" />
      			
 				<Button 
-	       			android:id="@+id/btn_market" 
-	       			android:layout_width="150.0dip" 
-	       			android:layout_height="wrap_content" 
-	       			android:layout_margin="5.0dip" 
+	       			android:id="@+id/btn_market"
+	       			android:layout_weight=".50"  
+	       			android:layout_width="fill_parent" 
+	       			android:layout_height="50dp"
+	       			android:textSize="15sp"
+	       			android:textColor="#FFFFFF"
+	       			android:background="@drawable/apkinfofooter"
 	       			android:text="@string/btn_search_market" />
-            			
-	       		
 	       			
             </LinearLayout>	
             
