@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -12,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
+import cm.aptoide.summerinternship2011.ImageAdapter;
 import cm.aptoide.summerinternship2011.comments.AddCommentDialog;
 import cm.aptoide.summerinternship2011.comments.Comment;
 import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
@@ -54,6 +56,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -90,11 +93,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	private String apk_name_str = null;
 	private TextView noscreens = null;
-	private List<ImageView> screens = null;
+	private LinkedList<ImageView> screens = null;
 	
+	private Gallery galleryView = null;
 	
 	private Spinner spinnerMulti;
-	//private ArrayList<Comment> comments;
 	private CommentsAdapter<Comment> commentAdapter;
 	private LoadOnScrollCommentList loadOnScrollCommentList;
 	private String apk_repo_str;
@@ -164,14 +167,16 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		mctx = this;
-		screens = new ArrayList<ImageView>();
-		screens.add((ImageView) linearLayout.findViewById(R.id.shot1));
-		screens.add((ImageView) linearLayout.findViewById(R.id.shot2));
-		screens.add((ImageView) linearLayout.findViewById(R.id.shot3));
-		screens.add((ImageView) linearLayout.findViewById(R.id.shot4));
-		screens.add((ImageView) linearLayout.findViewById(R.id.shot5));
+		screens = new LinkedList<ImageView>();
+//		screens.add((ImageView) linearLayout.findViewById(R.id.shot1));
+//		screens.add((ImageView) linearLayout.findViewById(R.id.shot2));
+//		screens.add((ImageView) linearLayout.findViewById(R.id.shot3));
+//		screens.add((ImageView) linearLayout.findViewById(R.id.shot4));
+//		screens.add((ImageView) linearLayout.findViewById(R.id.shot5));
 
-		noscreens = (TextView)linearLayout.findViewById(R.id.noscreens);
+		galleryView = (Gallery) linearLayout.findViewById(R.id.galleryScreens);
+		
+		noscreens = (TextView) linearLayout.findViewById(R.id.noscreens);
 		
 		rtrn_intent = new Intent();
 		
@@ -344,7 +349,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		if(apk_size_str_raw.equals("No information available")){ apk_size_str_raw = "0";}
 		else { apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); }
-		
+		;
 		if(type == 1) { apk_ver_str_raw = versionInstApk.getVersion(); } 
 		else { apk_ver_str_raw = apk_ver_str.substring(1,apk_ver_str.length()-1); }
 		
@@ -352,10 +357,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		if(!applicationExistsInRepo){
 			//Hide taste section
-			this.like.getLayoutParams().height = 0;
-			this.dislike.getLayoutParams().height = 0;
-			this.likes.getLayoutParams().height = 0;
-			this.dislikes.getLayoutParams().height = 0;
+			this.like.setVisibility(View.GONE);
+			this.dislike.setVisibility(View.GONE);
+			this.likes.setVisibility(View.GONE);
+			this.dislikes.setVisibility(View.GONE);
 		}
 		
 		listView.addHeaderView(linearLayout, null, false);
@@ -753,17 +758,48 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			int i = 0;
 			if(imageDrwb != null){
 				noscreens.setVisibility(View.GONE);
+				
 				for (Drawable pic : imageDrwb) {
-					screens.get(i).setImageDrawable(pic);
+					screens.add(new ImageView(ApkInfo.this));
+					screens.getLast().setImageDrawable(pic);
+					//screens.get(i).setImageDrawable(pic);
 					i++;
 					if(i>=5)
 						break;
 				}
+				galleryView.setAdapter(new ImageAdapter(ApkInfo.this, imageDrwb, apk_name_str));
+				galleryView.setOnItemClickListener(new OnItemClickListener() {
+			        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+			        	
+			        	//Log.d("Aptoide","This view.....");
+			    		final Dialog dialog = new Dialog(mctx);
+
+			    		dialog.setContentView(R.layout.screenshoot);
+			    		dialog.setTitle(apk_name_str);
+
+			    		ImageView image = (ImageView) dialog.findViewById(R.id.image);
+			    		ImageView fetch = (ImageView) v;
+			    		image.setImageDrawable(fetch.getDrawable());
+			    		image.setOnClickListener(new OnClickListener() {
+			    			public void onClick(View v) {
+			    				dialog.dismiss();
+			    			}
+			    		});
+			    		
+			    		dialog.setCanceledOnTouchOutside(true);
+			    		
+			    		dialog.show();
+			    		
+			        }
+			    });
+				
+
+				
 			}else{
 				noscreens.setVisibility(View.VISIBLE);
 				noscreens.setText("No screenshots available.");
 			}
-			//galry.setAdapter(new GalAdpt(mctx));
+			
 		}	
 		
 	}
