@@ -141,39 +141,15 @@
 			android:layout_gravity="center"
 			android:orientation="horizontal"
 			>
-        <TableRow>
-            <ImageView android:id="@+id/shot1" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-            <View android:layout_width="10dip" />
-            <ImageView android:id="@+id/shot2" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-        </TableRow>
-    </TableLayout>
-    
-    
-	<TableLayout android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:layout_marginTop="15sp">
-        <TableRow>
-            <ImageView android:id="@+id/shot3" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-            <View android:layout_width="10dip" />
-            <ImageView android:id="@+id/shot4" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-            <View android:layout_width="10dip" />
-            <ImageView android:id="@+id/shot5" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-        </TableRow>
+			
     </TableLayout>
     		
-			<!-- <TextView
-           		android:textAppearance="?android:textAppearanceLarge"
-           		android:textSize="18.0sp"
-           		android:textColor="#FFFFBB"
-           		android:gravity="left"
-           		android:layout_gravity="top"
-           		android:paddingTop="10.0dip"
-           		android:paddingLeft="5.0sp"
-           		android:paddingRight="5.0sp"
-           		android:layout_width="fill_parent"
-           		android:layout_height="wrap_content"
-           		android:text="@string/comments"
-           		android:id="@+id/commentsLabel"/>  -->
+    		
+    		
+    		
+	<Gallery
+		android:id="@+id/galleryScreens"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content" /> 
      		
 </LinearLayout>

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -163,16 +162,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		tastePoster = null;
 		
-		
-		
-		
 		mctx = this;
 		screens = new LinkedList<ImageView>();
-//		screens.add((ImageView) linearLayout.findViewById(R.id.shot1));
-//		screens.add((ImageView) linearLayout.findViewById(R.id.shot2));
-//		screens.add((ImageView) linearLayout.findViewById(R.id.shot3));
-//		screens.add((ImageView) linearLayout.findViewById(R.id.shot4));
-//		screens.add((ImageView) linearLayout.findViewById(R.id.shot5));
 
 		galleryView = (Gallery) linearLayout.findViewById(R.id.galleryScreens);
 		
@@ -762,7 +753,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				for (Drawable pic : imageDrwb) {
 					screens.add(new ImageView(ApkInfo.this));
 					screens.getLast().setImageDrawable(pic);
-					//screens.get(i).setImageDrawable(pic);
 					i++;
 					if(i>=5)
 						break;
