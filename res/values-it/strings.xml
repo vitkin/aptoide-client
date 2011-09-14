@@ -17,20 +17,7 @@
     <string name="srch_hint">Nome dell\'applicazione</string>
     
     <string name="about_txt1">Il tuo installer di pacchetti per il sistema Android.\n</string>
-    
-    <string name="about_txt11">Versione: %s\n(rilasciata sotto licenza GNU GPL v2)\n
-    \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n
-    \t\t\tFrancisco "ppelao3k" - Spanish translation\n
-    \t\t\tManaa Alshihe - Arabic translation\n
-    \t\t\tPavo Baxter - Italian translation\n
-    \t\t\tAlexis Bonvin - French translation\n
-    \t\t\tTheodore Wte - Chinese translation\n
-    \t\t\Stanislaw "trurl3" - Polish translation\n
-    \t\t\tMartin Nehrdich - German translation\n
-    \t\t\tAnonymous - Turkish translation\n
-    </string>
 
-    
     <string name="about_site">Home: </string>
     
     <string name="about_mail">Contatto: </string>
