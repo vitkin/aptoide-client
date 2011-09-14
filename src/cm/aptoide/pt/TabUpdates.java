@@ -39,8 +39,9 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		lv = new ListView(this);
+		lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistupd));
+		lv.setCacheColorHint(0);
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
 		db = new DbHandler(this);

@@ -5,6 +5,7 @@ package cm.aptoide.summerinternship2011.comments;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -20,6 +21,8 @@ import cm.aptoide.summerinternship2011.exceptions.FailedRequestException;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,12 +49,12 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     private Activity context;
     private CommentsAdapter<Comment> commentList;
     private CommentGetter commentGetter; //Comment xml parser
-    private LinearLayout loadingLayout;
     
     private ArrayList<Fetch> pendingFetch;
     private GifView load;
     
-    private boolean stoped;
+    private AtomicBoolean stoped;
+    private TextView loadingText;
     
     /**
      * 
@@ -72,12 +75,12 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	this.commentList = commentList;
     	
     	commentGetter = new CommentGetter(repo, apkid, version);
-    	this.loadingLayout = loadingLayout;
     	
     	this.pendingFetch = new ArrayList<Fetch>();
     	
     	load = ((GifView)loadingLayout.findViewById(R.id.loadImageComments));
-    	load.startAnimation(R.drawable.loading);
+    	load.startAnimation(R.drawable.loading, 40);
+    	loadingText = ((TextView)loadingLayout.findViewById(R.id.loadTextComments));
     	
     	reset();
     	
@@ -93,9 +96,10 @@ public class LoadOnScrollCommentList implements OnScrollListener {
     	loading = true;
     	lastCommentIdRead = null;
     	continueFetching = true;
-    	stoped = false;
-    	((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.loading);
+    	stoped = new AtomicBoolean(false);
     	
+    	loadingText.setText(R.string.loading);
+    	loadingText.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
     	load.startAnimation();
     	
     }
@@ -208,10 +212,11 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 						
 					}else {
 						
-						if(!stoped && !continueFetching){
-							((TextView)loadingLayout.findViewById(R.id.loadTextComments)).setText(R.string.endcomreached);
+						if(!stoped.get() && !continueFetching){
+							loadingText.getLayoutParams().height = 0;
+							loadingText.setText("");
 							load.stopAnimation();
-							stoped = true;
+							stoped.set(true);
 						}
 						
 					}
@@ -256,6 +261,7 @@ public class LoadOnScrollCommentList implements OnScrollListener {
 				    			commentGetter.parse(context, commentsToLoad, lastCommentIdRead, false);
 				    		}
 						} catch(EndOfRequestReached e){}
+						
 						((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
 						
 		    		}
@@ -299,7 +305,10 @@ public class LoadOnScrollCommentList implements OnScrollListener {
      * 
      */
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-    	new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
+    	if(!stoped.get()){
+    		new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
+    		Log.d("Aptoide", "New thread launched");
+    	}
     }
     
     /**

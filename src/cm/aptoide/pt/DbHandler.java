@@ -102,6 +102,24 @@ public class DbHandler {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param catg
+	 * @param catg_ord
+	 */
+	public void getTopDownloads(String catg, String catg_ord){
+		
+	}
+	
+	/**
+	 * 
+	 * @param catg
+	 */
+	public void getTopDownloads(String catg){
+		
+	}
+	
+	
 	int[] getCountMainCtg(){
 		final String basic_query = "select a.catg_ord, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where not exists " +
 				                   "(select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg_ord;";
@@ -122,9 +140,6 @@ public class DbHandler {
 			return null;
 		}
 	}
-	
-	
-	
 	
 	/*
 	 * catg_ord: game (0) / application (1) / others(2) 
@@ -469,20 +484,24 @@ public class DbHandler {
 				}else{
 					int instvercode = c.getInt(4);
 					int lastvercode = c.getInt(5);
-					if(instvercode == lastvercode){
-						node.status = 1;
-						node.ver = c.getString(2);
-					}else{
-						node.status = instvercode < lastvercode?2:1;
-						node.ver = c.getString(2);
-					}
 					
+					if(instvercode >= lastvercode){
+						
+						if(getOldApks(node.apkid).size()==0 && instvercode == lastvercode){
+							node.status = 1;
+						} else {
+							node.status = 3;
+						}
+						
+					}else{
+						node.status = 2;
+					}
+					node.ver = c.getString(2);
 				}
 				node.rat = c.getFloat(7);
 				node.down = c.getInt(8);
 				node.catg = c.getString(9);
 				node.catg_ord = c.getInt(10);
-				node.vercode = c.getInt(4);
 				tmp.add(node);
 				c.moveToNext();
 			}

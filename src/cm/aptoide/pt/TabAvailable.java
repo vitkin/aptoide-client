@@ -60,6 +60,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		lv = new ListView(this);
+		lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava));
+		lv.setCacheColorHint(0);
 		lv.setOnItemClickListener(this);
 		lv.setFastScrollEnabled(true);
 
@@ -264,6 +266,8 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			} catch (NameNotFoundException e) {
 				//Not installed... do nothing
 			}
+			
+			//apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));new DbHandler(this).getOldAndNewApks(pkg_id).contains(new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1), Integer.parseInt(tmp_get.get(7)), pkg_id, 0));
 			
 			apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
 			

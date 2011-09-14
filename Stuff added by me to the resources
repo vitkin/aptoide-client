@@ -48,9 +48,7 @@ string/postingcomment
 string/opinionsuccess
 string/postingtaste
 string/loggingin
-string/endcomreached
 string/tastenotvailable
-
 
 values/themes.xml
 values/styles.xml 
@@ -62,3 +60,10 @@ drawable/likehover.png
 drawable/dontlikehover.png
 drawable/dontlike.png
 drawable/loading.gif
+
+drawable/tabbackpressed.xml
+drawable/tabbackselected.xml
+drawable/tabbackunselected.xml
+drawable/tabindicator.xml
+layout/tab_indicator.xml
+values/colors.xml
