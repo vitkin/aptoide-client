@@ -45,7 +45,7 @@
     <string name="commentsproblem">Comments not available</string>
     <string name="isinstalled">Reinstall</string>
     <string name="version_inst">Version installed</string>
-    <string name="installed_downgrade">Downgrade possible - Ver.:</string>
+    <string name="installed_downgrade">Downgrade possible.</string>
     <string name="reply">Reply</string>
     <string name="whattodo">What to do?</string>
     <string name="likes">Likes: </string>
@@ -65,7 +65,7 @@
     <string name="credentialssettings">Bazaar login</string>
     <string name="clearcredentials">Clear login</string>
     <string name="clearcredentials_summary">Will unset your current login</string>
-    <string name="setcredentials">Set login</string>
+    <string name="setcredentials">Bazaar Login</string>
     <string name="setcredentials_summary">Will set a new login</string>
     <string name="credentialscleared">Login cleared</string>
     <string name="credentialscleared_des">Your credentials have been unsetted</string>
@@ -75,14 +75,12 @@
     <string name="usernotdef">User not defined</string>
     <string name="passwordnotdef">Password not defined</string>
     <string name="loading">Loading...</string>
-    <string name="override_credentials"></string>
     <string name="postingcomment">Posting your comment...</string>
     <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
     <string name="opinionsuccess">Your opinion was successfully submitted</string>
     <string name="postingtaste">Your opinion is being submitted.</string>
     <string name="unabletoexecute">Unable to execute</string>
     <string name="loggingin">Logging in...</string>
-    <string name="endcomreached">End of comment list reached</string>
     <string name="tastenotavailable">Taste not available</string>
 </resources>
 

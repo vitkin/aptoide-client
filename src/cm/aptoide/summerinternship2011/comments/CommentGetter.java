@@ -37,13 +37,16 @@ import android.content.Context;
  * 
  * <response>
  * 	<status>OK</status>
- * 	<listing><entry>
+ * 	<listing>
+ * 		<entry>
  * 		<id>34</id>
  * 		<username>fredde165487</username>
  * 		<answerto/>
  * 		<subject/>
  * 		<text>This app isnt the real market!</text>
  * 		<timestamp>2011-06-05 22:03:08.196793</timestamp>
+ * 		<lang/>
+ * 		<useridhash>bdf3b8d237da80e0a51cbdbb44ffcc7dbb143cd8</useridhash>
  * 		</entry>
  * 	</listing>
  * </response>

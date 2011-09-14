@@ -4,7 +4,6 @@
 package cm.aptoide.summerinternship2011.multiversion;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import android.os.Parcel;
@@ -117,40 +116,40 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		return strBuilder.toString();
 	}
 	
-	public static HashMap<String,ArrayList<VersionApk>> getGreaterAndSmallerThan(int givenVersionCode, ArrayList<VersionApk> versions){
-		
-		HashMap<String,ArrayList<VersionApk>> ret = new HashMap<String,ArrayList<VersionApk>>();
-		ret.put("smaller", new ArrayList<VersionApk>());
-		ret.put("greater", new ArrayList<VersionApk>());
-		
-		
-		VersionApk givenVersionCal = null;
-		for(VersionApk version:versions){
-			if(version.versionCode == givenVersionCode){
-				givenVersionCal = version;
-				ret.remove(givenVersionCal);
-				break;
-			}
-		}
-		
-		if(givenVersionCal==null){
-			givenVersionCal = new VersionApk(null, givenVersionCode, null, 0);
-		}	
-		
-		for(VersionApk version:versions){
-				int comp = givenVersionCal.compareTo(version);
-				
-				if(comp>0){ 
-					ret.get("smaller").add(version); 
-				}else if(comp<0){ 
-					ret.get("greater").add(version); 
-				}
-				
-			}
-		
-		return ret;
-		
-	}
+//	public static HashMap<String,ArrayList<VersionApk>> getGreaterAndSmallerThan(int givenVersionCode, ArrayList<VersionApk> versions){
+//		
+//		HashMap<String,ArrayList<VersionApk>> ret = new HashMap<String,ArrayList<VersionApk>>();
+//		ret.put("smaller", new ArrayList<VersionApk>());
+//		ret.put("greater", new ArrayList<VersionApk>());
+//		
+//		
+//		VersionApk givenVersionCal = null;
+//		for(VersionApk version:versions){
+//			if(version.versionCode == givenVersionCode){
+//				givenVersionCal = version;
+//				ret.remove(givenVersionCal);
+//				break;
+//			}
+//		}
+//		
+//		if(givenVersionCal==null){
+//			givenVersionCal = new VersionApk(null, givenVersionCode, null, 0);
+//		}	
+//		
+//		for(VersionApk version:versions){
+//				int comp = givenVersionCal.compareTo(version);
+//				
+//				if(comp>0){ 
+//					ret.get("smaller").add(version); 
+//				}else if(comp<0){ 
+//					ret.get("greater").add(version); 
+//				}
+//				
+//			}
+//		
+//		return ret;
+//		
+//	}
 	
 	/*
 	 * Necessary to parcellation...

@@ -14,7 +14,8 @@ import android.widget.ImageView;
 /**
  * 
  * @author rafael
- *
+ * @since summerinternship2011
+ * 
  */
 public class GifView extends ImageView{
     	
@@ -23,14 +24,28 @@ public class GifView extends ImageView{
     	private long movieStart;
     	private boolean startAnimation;
 		
-		public GifView(Context context, int resourceGif) {
+    	private int height;
+    	
+    	
+    	/**
+    	 * 
+    	 * @param context 
+    	 * @param resourceGif
+    	 * @param height in pixels
+    	 */
+		public GifView(Context context, int resourceGif, int height) {
 			super(context);
 			is=context.getResources().openRawResource(resourceGif);
 			movie=Movie.decodeStream(is);
 			movieStart=0;
 			startAnimation = true;
+			this.height = height;
 		}
 
+		/**
+		 * 
+		 * @param context
+		 */
 		public GifView(Context context) {
 			super(context);
 			is=null;
@@ -39,6 +54,11 @@ public class GifView extends ImageView{
 			startAnimation = false;
 		}
 		
+		/**
+		 * 
+		 * @param context
+		 * @param attrs
+		 */
 		public GifView(Context context, AttributeSet attrs) {
 			super(context, attrs);
 			is=null;
@@ -47,6 +67,12 @@ public class GifView extends ImageView{
 			startAnimation = false;
 		}
 		
+		/**
+		 * 
+		 * @param context
+		 * @param attrs
+		 * @param defStyle
+		 */
 		public GifView(Context context, AttributeSet attrs, int defStyle) {
 			super(context, attrs, defStyle);
 			is=null;
@@ -55,7 +81,13 @@ public class GifView extends ImageView{
 			startAnimation = false;
 		}
 		
-		public synchronized  void startAnimation(int resourceGif){
+		/**
+		 * 
+		 * @param resourceGif
+		 * @param height
+		 */
+		public synchronized  void startAnimation(int resourceGif, int height){
+			this.height = height;
 			is = super.getContext().getResources().openRawResource(resourceGif);
 			movie = Movie.decodeStream(is);
 			movieStart = 0;
@@ -79,9 +111,24 @@ public class GifView extends ImageView{
     		}
     	}
     	
-    	public synchronized void stopAnimation() { startAnimation = false; }
+    	/**
+    	 * 
+    	 */
+    	public synchronized void stopAnimation() { 
+    		this.getLayoutParams().height = 0;
+    		startAnimation = false;
     	
-    	public synchronized void startAnimation() { startAnimation = true; }
+    	}
+    	
+    	/**
+    	 * 
+    	 */
+    	public synchronized void startAnimation() { 
+    		
+    		this.getLayoutParams().height = height;
+    		startAnimation = true; 
+    	
+    	}
     	
 }
 
