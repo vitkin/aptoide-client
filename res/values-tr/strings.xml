@@ -23,19 +23,7 @@
     <string name="srch_hint">Uygulamanın adı</string>
     
     <string name="about_txt1">Android cihazınıza paket yükleyicisi.\n</string>
-    
-    <string name="about_txt11">Sürüm: %s\n(GNU GPL v2 lisansı altında)\n
-    \nEmeği geçenler: Roberto Jacinto &amp; Caixa Mágica\n\n
-    \t\t\tFrancisco "ppelao3k" - İspanyolca tercüme\n
-    \t\t\tManaa Alshihe - Arapça tercüme\n
-    \t\t\tPavo Baxter - İtalyanca tercüme\n
-    \t\t\tAlexis Bonvin - Fransızca tercüme\n
-    \t\t\tTheodore Wte - Çince tercüme\n
-    \t\t\Stanislaw "trurl3" - Polish translation\n
-    \t\t\tMartin Nehrdich - German translation\n
-    \t\t\tAnonim - Türkçe tercüme\n
-    </string>
-    
+
     <string name="about_site">Resmi site: </string>
     
     <string name="about_mail">İletişim: </string>

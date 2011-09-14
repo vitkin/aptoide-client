@@ -23,19 +23,7 @@
     <string name="srch_hint">Nom de l\'application</string>
     
     <string name="about_txt1">Votre installeur de paquetages pour téléphones Android.\n</string>
-    
-    <string name="about_txt11">Version&#160;: %s\n(sous licence GNU GPL v2)\n
-    \nCrédits&#160;: Roberto Jacinto &amp; Caixa Mágica\n\n
-    \t\t\tFrancisco "ppelao3k" - Traduction en espagnol\n
-    \t\t\tManaa Alshihe - Traduction en arabe\n
-    \t\t\tPavo Baxter - Traduction en italien\n
-    \t\t\tAlexis Bonvin - Traduction en français\n
-    \t\t\tTheodore Wte - Traduction en chinois\n
-    \t\t\Stanislaw "trurl3" - Polish translation\n
-    \t\t\tMartin Nehrdich - Traduction en German\n
-    \t\t\tAnonyme - Traduction en turc\n
-    </string>
-    
+
     <string name="about_site">Site&#160;: </string>
     
     <string name="about_mail">Contact&#160;: </string>
