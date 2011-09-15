@@ -4,11 +4,8 @@ import java.util.Vector;
 
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
-
-
-
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -35,6 +32,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	//private Context mctx = null;
 	
 	private int pos = -1;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,38 +49,45 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, 3, 3, R.string.menu_order)
-		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.menu_update_all)
+			.setIcon(R.drawable.ic_menu_refresh);
+//		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_order)
+//			.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case 3:
-			/*if(true){
-				lv.setAdapter(updateAdpt);
-				setContentView(lv);
-				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-				lv.setSelection(pos-1);
-			}*/
-			
-			final AlertDialog p = resumeMe();
-			p.show();
-			
-			new Thread(){
-				@Override
-				public void run() {
-					super.run();
-					while(p.isShowing()){
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {	}
-					}
-					displayRefresh.sendEmptyMessage(0);
-				}
-			}.start();
-				
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		switch (menuEntry) {
+		case UPDATE_ALL:
+			updateAll();
+			break;
+//		case DISPLAY_OPTIONS:
+//			/*if(true){
+//				lv.setAdapter(updateAdpt);
+//				setContentView(lv);
+//				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//				lv.setSelection(pos-1);
+//			}*/
+//			
+//			final AlertDialog p = resumeMe();
+//			p.show();
+//			
+//			new Thread(){
+//				@Override
+//				public void run() {
+//					super.run();
+//					while(p.isShowing()){
+//						try {
+//							Thread.sleep(1000);
+//						} catch (InterruptedException e) {	}
+//					}
+//					displayRefresh.sendEmptyMessage(0);
+//				}
+//			}.start();
+//				
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -235,7 +240,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 				//public void run() {
 					String apk_id = data.getStringExtra("apkid");
 					Log.d("Aptoide", ".... updating: " + apk_id);
-					downloadFile(apk_id,data.getStringExtra("version"), true);
+					queueDownload(apk_id,data.getStringExtra("version"), true);
 					/*String apk_path = downloadFile(apk_id);
 					Message msg_alt = new Message();
 					if(apk_path == null){
@@ -254,8 +259,8 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 			//}.start();
 		}
 	}
-
-
+	
+	
 
 	protected Handler displayRefresh = new Handler(){
 
@@ -292,6 +297,18 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-	}	
-
+	}
+	
+	
+	/*Changed by Rafael*/
+	public void updateAll(){
+		Log.d("Aptoide-TabUpdates", "Starting download of all possible updates");
+		
+		for(ApkNode node: apk_lst){
+			if(node.status == 2){
+				queueDownload(node.apkid, node.ver, true);
+			}
+		}
+	}
+	
 }

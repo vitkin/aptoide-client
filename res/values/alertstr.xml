@@ -10,7 +10,7 @@
     <string name="rem">Uninstall </string>
     <string name="update">Update</string>
     
-    <string name="update_alrt">There updates available for some installed applications.\nDo you wish to see them?</string>
+    <string name="update_alrt">There are updates available for some installed applications.\nDo you wish to see them?</string>
     <string name="repo_alrt">The list of repositories in use has been changed.\nDo you wish to update them?</string>
     
     <string name="title_repo_alrt">Attention</string>
@@ -19,9 +19,10 @@
     
     <string name="error_download_alrt">Could not connect to server or apk file is corrupt!</string>
     <string name="download_alrt">Getting application:\n </string>
-    <string name="finished_download_alrt">Click to install application:\n </string>
+    <string name="finished_download_alrt">Ready to install:\n </string>
+    <string name="finished_download_message">Click to install application:\n </string>
      
-    <string name="md5_error">The downloaded application md5 check failed!\nPlease update your application system before retry.</string>
+    <string name="md5_error">The downloaded application md5 check failed!\nPlease update your repositories before retrying.</string>
     <string name="network_error">There has been an error while fetching the application.\nPlease try again.</string>
     
 </resources>

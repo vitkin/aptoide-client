@@ -134,16 +134,19 @@ public class FetchIconsService extends Service{
 		
 		try{
 			for(IconNode node : lst){
-				if(!alive)
+				if(!alive){
+					Log.d("Aptoide-FetchIconService","not alive");
 					break;
+				}
 				Log.d("Aptoide","On icon: " + node.name);
 				String test_file = mctx.getString(R.string.icons_path) + node.name;
 				
 				File exists = new File(test_file);
-				if(!exists.exists())
+				if(!exists.exists()){
 					getIcon(node.url, node.name, server, user, pswd);
-				else
+				}else{
 					Log.d("Aptoide","FILE EXISTS: " + node.name);
+				}
 			}
 		}catch (Exception e){ 
 			Log.d("Aptoide", "Wash exception? " + e.toString());

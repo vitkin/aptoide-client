@@ -27,10 +27,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
-import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-
-
-
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -68,13 +65,7 @@ public class RemoteInSearch extends ListActivity{
 	private ListView lv = null;
 	private int pos = -1;
 	
-	private String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
-	
-	private static final int MANAGE_REPO = Menu.FIRST;
-	private static final int CHANGE_FILTER = 2;
-	private static final int SEARCH_MENU = 3;
-	private static final int SETTINGS = 4;
-	private static final int ABOUT = 5;
+	private static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
 	static protected SharedPreferences sPref;
 	static protected SharedPreferences.Editor prefEdit;
@@ -86,8 +77,6 @@ public class RemoteInSearch extends ListActivity{
 	private PackageInfo pkginfo;
 
 	private static final int SETTINGS_FLAG = 0;
-	
-//	private ProgressDialog pd;
 	
 	private Context mctx = this; 
 
@@ -108,7 +97,6 @@ public class RemoteInSearch extends ListActivity{
 	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
 
 	        Log.d("Aptoide-RemoteInSearch", "DownloadQueueService bound to RemoteInSearch");
-	        
 	    }
 	    
 	    public void onServiceDisconnected(ComponentName className) {
@@ -119,7 +107,6 @@ public class RemoteInSearch extends ListActivity{
 	        downloadQueueService = null;
 	        
 	        Log.d("Aptoide-RemoteInSearch","DownloadQueueService unbound from RemoteInSearch");
-	        
 	    }
 
 	};
@@ -173,7 +160,8 @@ public class RemoteInSearch extends ListActivity{
 		Intent i = getIntent();
 		query = i.getStringExtra(SearchManager.QUERY);
 		
-		query = query.replaceAll("[\\%27]|[\\']|[\\-\\-]|[\\%23]|[#]", " ");
+//@dsilveira #529 search doens't handle hiphens well		
+		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]", " ");
 		
 		apk_lst = db.getSearch(query,order_lst);
 		
@@ -184,8 +172,9 @@ public class RemoteInSearch extends ListActivity{
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		query = intent.getStringExtra(SearchManager.QUERY);
-		
-		query = query.replaceAll("[\\%27]|[\\']|[\\-\\-]|[\\%23]|[#]", " ");
+
+//@dsilveira #529 search doens't handle hiphens well	
+		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]", " ");
 		
 		apk_lst = db.getSearch(query,order_lst);
 	}
@@ -201,15 +190,15 @@ public class RemoteInSearch extends ListActivity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, MANAGE_REPO, 1, R.string.menu_manage)
+		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, CHANGE_FILTER, 2, R.string.menu_order)
+		menu.add(Menu.NONE, EnumOptionsMenu.CHANGE_ORDER.ordinal(), EnumOptionsMenu.CHANGE_ORDER.ordinal(), R.string.menu_order)
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
-		menu.add(Menu.NONE, SEARCH_MENU,3,R.string.menu_search)
+		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(), EnumOptionsMenu.SEARCH_MENU.ordinal(), R.string.menu_search)
 			.setIcon(android.R.drawable.ic_menu_search);
-		menu.add(Menu.NONE, SETTINGS, 4, R.string.menu_settings)
+		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(Menu.NONE, ABOUT,5,R.string.menu_about)
+		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(), EnumOptionsMenu.ABOUT.ordinal(), R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
 	}
@@ -217,8 +206,9 @@ public class RemoteInSearch extends ListActivity{
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		switch (item.getItemId()) {
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		switch (menuEntry) {
 		case MANAGE_REPO:
 			Intent i = new Intent(this, ManageRepo.class);
 			startActivity(i);
@@ -248,7 +238,7 @@ public class RemoteInSearch extends ListActivity{
 			s.putExtra("order", order_lst);
 			startActivityForResult(s,SETTINGS_FLAG);
 			return true;
-		case CHANGE_FILTER:
+		case CHANGE_ORDER:
 			if(order_lst.equalsIgnoreCase("abc"))
 				order_lst = "iu";
 			else if(order_lst.equalsIgnoreCase("iu"))
@@ -292,15 +282,6 @@ public class RemoteInSearch extends ListActivity{
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
-		apkinfo.putExtra("vercode", tmp_get.get(7));
-		
-		try {
-			PackageManager mPm = getApplicationContext().getPackageManager();
-			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
-			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName, pkginfo.versionCode, apkid, -1));
-		} catch (NameNotFoundException e) {
-			//Not installed... do nothing
-		}
 		
 		if(apk_lst.get(position).status == 0){
 			apkinfo.putExtra("type", 0);
@@ -308,7 +289,6 @@ public class RemoteInSearch extends ListActivity{
 			apkinfo.putExtra("type", 1);
 		}
 		
-		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(apkid));
 		startActivityForResult(apkinfo,30);
 		
 	}
@@ -322,18 +302,6 @@ public class RemoteInSearch extends ListActivity{
 	    startActivityForResult(intent,position); 
 	}
 	
-//	private void installApk(String apk_pkg, int position){
-//		
-//		pkginfo = mPm.getPackageArchiveInfo(apk_pkg, 0); //variavel global usada no retorno da instalacao
-//		Intent intent = new Intent();
-//    	intent.setAction(android.content.Intent.ACTION_VIEW);
-//    	intent.setDataAndType(Uri.parse("file://" + apk_pkg), "application/vnd.android.package-archive");
-//    	
-//    	startActivityForResult(intent, position);	//TODO 	passar este mÃ©todo e o correspondente result para a classe Aptoide
-//    												//unificando os cÃ³digos desta classe com o da remoteintab
-//	}
-	
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -341,34 +309,12 @@ public class RemoteInSearch extends ListActivity{
 		if(requestCode == 30){
 			if(data != null){
 				String apkid = data.getStringExtra("apkid");
-				final int pos = data.getIntExtra("position", -1);
+				int pos = data.getIntExtra("position", -1);
 				if(pos > -1){
 					if(data.getBooleanExtra("in", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Install");
-						//installApk(apkid, pos);
-						/*new Thread() {
-							public void run() {*/
-						//String apk_pkg = downloadFile(pos);
-						queueDownload(pos,  data.getStringExtra("version"));
-						//installApk(String apk_pkg, int position);
-						/*Message msg_alt = new Message();
-						if(apk_pkg == null){
-							Message msg = new Message();
-							msg.arg1 = 1;
-							download_handler.sendMessage(msg);
-							msg_alt.arg1 = 1;
-							download_error_handler.sendMessage(msg_alt);
-						}else if(apk_pkg.equals("*md5*")){
-							Message msg = new Message();
-							msg.arg1 = 1;
-							download_handler.sendMessage(msg);
-							msg_alt.arg1 = 0;
-							download_error_handler.sendMessage(msg_alt);
-						}else{
-							installApk(apk_pkg, pos);
-						}*/
-						/*}
-						}.start();*/
+						queueDownload(pos);
+						
 					}else if(data.getBooleanExtra("rm", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Remove");
 						removeApk(apkid, pos);
@@ -387,7 +333,7 @@ public class RemoteInSearch extends ListActivity{
 				List<PackageInfo> getapks = mPm.getInstalledPackages(0);
 				for(PackageInfo node: getapks){
 					if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
-						db.insertInstalled(apk_lst.get(requestCode).apkid, data.getStringExtra("version"));//
+						db.insertInstalled(apk_lst.get(requestCode).apkid, apk_lst.get(requestCode).ver);
 						prefEdit.putBoolean("search_updt", true);
 						prefEdit.commit();
 						redraw();
@@ -459,26 +405,28 @@ public class RemoteInSearch extends ListActivity{
 
 	}
 
-	private void queueDownload(final int position, final String ver){
+	private void queueDownload(int position){
 		
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 		
 		try{
 		
-			final String apkid = apk_lst.get(position).apkid;
-			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
+			String apkid = apk_lst.get(position).apkid;
+			String apkName = apk_lst.get(position).name;
 			
-			tmp_serv = db.getPathHash(apkid, ver);
-			DownloadNode downloadNode =null;
-			if(tmp_serv.size()>0){
-				//Found a latest version
-				downloadNode = tmp_serv.firstElement();
-			}else{
-				//Search in old versions
-				downloadNode = db.getPathHashOld(apkid, ver).firstElement();
+			/*Changed by Rafael Campos*/
+			tmp_serv = db.getPathHash(apkid, apk_lst.get(position).ver);
+			if(tmp_serv.size()==0){
+				tmp_serv = db.getPathHashOld(apkid, apk_lst.get(position).ver);
 			}
 			
-			final String remotePath = downloadNode.repo + "/" + downloadNode.path;
+			
+			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
+			
+			//if(tmp_serv.size() > 0){
+			DownloadNode downloadNode = new DownloadNode();
+			downloadNode = tmp_serv.firstElement();
+			String remotePath = downloadNode.repo + "/" + downloadNode.path;
 			
 			//}
 	
@@ -489,11 +437,17 @@ public class RemoteInSearch extends ListActivity{
 			logins = db.getLogin(downloadNode.repo);
 					
 			//TODO refactor DownloadNode to include all needed fields @dsilveira
-			downloadQueueService.startDownload(position, localPath, downloadNode, apkid, logins, mctx);
+			downloadQueueService.startDownload(localPath, downloadNode, apkName, logins, mctx, false);
 	
-		} catch(TimeoutException e){	
-			
+		} catch(Exception e){	}
+	}
+
+	@Override
+	protected void onDestroy() {
+		if(downloadQueueService != null){
+			unbindService(serviceConnection);	
 		}
+		super.onDestroy();
 	}
 	
 }

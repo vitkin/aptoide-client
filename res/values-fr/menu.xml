@@ -6,22 +6,22 @@
     <string name="menu_manage">Gérer les dépôts</string>
     <string name="menu_order">Options d\'affichage</string>
     <string name="menu_settings">Paramètres</string>
-    <string name="menu_about">A propos</string>
+    <string name="menu_about">À propos</string>
     <string name="menu_search">Rechercher</string>
     
     
     <string name="menu_add_repo">Nouveau dépôt</string>
-    <string name="menu_rem_repo">Enlver dépôt</string>
-    <string name="menu_edit_repo">Editer dépôt</string>
+    <string name="menu_rem_repo">Enlever le dépôt</string>
+    <string name="menu_edit_repo">Éditer le dépôt</string>
     
     <string name="btn_yes">Oui</string>
     <string name="btn_no">Non</string>
-    <string name="btn_ok">Ok</string>
+    <string name="btn_ok">OK</string>
     <string name="btn_add">Ajouter</string>
     <string name="btn_cancel">Annuler</string>
     <string name="btn_done">Terminé</string>
-    <string name="btn_chlog">Changer log</string>
-    <string name="btn_search_market">Rechercher Market</string>
+    <string name="btn_chlog">Journal des modifications</string>
+    <string name="btn_search_market">Rechercher sur Market</string>
     
     
     
