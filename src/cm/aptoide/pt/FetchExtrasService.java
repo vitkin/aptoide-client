@@ -1,6 +1,5 @@
 package cm.aptoide.pt;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -18,7 +17,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.util.EntityUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -157,31 +155,28 @@ public class FetchExtrasService extends Service{
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				
 				Log.d("Aptoide","extras.xml: " + mHttpResponse.getEntity().getContentEncoding());
+//@dsilveira #531 +20lines fix OutOfMemory crash				
+				InputStream instream = null;
 				
 				if((mHttpResponse.getEntity().getContentEncoding() != null) && (mHttpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
 
-					//byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-
 					Log.d("Aptoide","with gzip");
-
-					InputStream instream = new GZIPInputStream(mHttpResponse.getEntity().getContent());
-
-					ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-					int nRead;
-					byte[] data = new byte[1024];
-
-					while ((nRead = instream.read(data, 0, data.length)) != -1) {
-						buffer.write(data, 0, nRead);
-					}
-
-					buffer.flush();
-
-					saveit.write(buffer.toByteArray());
+					instream = new GZIPInputStream(mHttpResponse.getEntity().getContent());
+					
 				}else{
-					byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
-					saveit.write(buffer);
+
+					Log.d("Aptoide","No gzip");
+					instream = mHttpResponse.getEntity().getContent();
+					
 				}
+				
+				int nRead;
+				byte[] data = new byte[1024];
+
+				while ((nRead = instream.read(data, 0, data.length)) != -1) {
+					saveit.write(data, 0, nRead);
+				}
+				
 			}else{
 				return false;
 				//Does nothing...

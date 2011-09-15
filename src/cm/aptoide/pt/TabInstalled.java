@@ -4,25 +4,18 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-
-
-
-
-
-
-
-import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -31,13 +24,33 @@ import android.widget.AdapterView.OnItemClickListener;
 
 
 public class TabInstalled extends BaseManagement implements OnItemClickListener{
-
+	
 	private ListView lv = null;
+	
+    private InstallApkListener installApkListener = null;
+    private Boolean installApkListenerIsRegistered = false;
+
 	
 	private DbHandler db = null;
 	//private Context mctx = null;
 	
 	private int pos = -1;
+	
+
+	protected class InstallApkListener extends BroadcastReceiver {
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d("Aptoide-TabInstalled", "broadcast received");
+			if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
+				installApk(intent.getStringExtra("localPath"), intent.getStringExtra("version"));
+			}
+			if (intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
+				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("apkid"), intent.getStringExtra("version"));
+			}
+		}
+	}
+	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,50 +61,74 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
 		db = new DbHandler(this);
+		
+		installApkListener = new InstallApkListener();
 		//mctx = this;
 	}
 	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(Menu.NONE, 3, 3, R.string.menu_order)
-		.setIcon(android.R.drawable.ic_menu_sort_by_size);
-		return super.onCreateOptionsMenu(menu);
-	}
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_order)
+//			.setIcon(android.R.drawable.ic_menu_sort_by_size);
+//		return super.onCreateOptionsMenu(menu);
+//	}
+//	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+//		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+//		switch (menuEntry) {
+//		case DISPLAY_OPTIONS:
+//			/*if(resumeMe()){
+//				lv.setAdapter(instAdpt);
+//				setContentView(lv);
+//				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+//				lv.setSelection(pos-1);
+//			}*/
+//			
+//			final AlertDialog p = resumeMe();
+//			p.show();
+//			
+//			new Thread(){
+//				@Override
+//				public void run() {
+//					super.run();
+//					while(p.isShowing()){
+//						try {
+//							Thread.sleep(1000);
+//						} catch (InterruptedException e) {	}
+//					}
+//					displayRefresh.sendEmptyMessage(0);
+//				}
+//			}.start();
+//				
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 	
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case 3:
-			/*if(resumeMe()){
-				lv.setAdapter(instAdpt);
-				setContentView(lv);
-				lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-				lv.setSelection(pos-1);
-			}*/
-			
-			final AlertDialog p = resumeMe();
-			p.show();
-			
-			new Thread(){
-				@Override
-				public void run() {
-					super.run();
-					while(p.isShowing()){
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {	}
-					}
-					displayRefresh.sendEmptyMessage(0);
-				}
-			}.start();
-				
-		}
-		return super.onOptionsItemSelected(item);
+	protected void onPause() {
+		if (!installApkListenerIsRegistered) {
+            unregisterReceiver(installApkListener);
+            installApkListenerIsRegistered = false;
+        }
+		Log.d("Aptoide-TabInstalled", "installApkListenerIsUnregistered");
+		
+		super.onPause();
 	}
-	
+
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.d("Aptoide-TabInstalled", "onResume");
+		
+		if (!installApkListenerIsRegistered) {
+            registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION"));
+            registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.UPDATE_APK_ACTION"));
+            installApkListenerIsRegistered = true;
+        }
+		Log.d("Aptoide-TabInstalled", "installApkListenerIsRegistered");
+
 		
 		new Thread(){
 			@Override

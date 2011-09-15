@@ -24,23 +24,26 @@ import java.io.File;
 import cm.aptoide.summerinternship2011.credentials.Login;
 
 import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.preference.ListPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 
@@ -59,6 +62,34 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	ListPreference lst_pref_icns = null;
 	
 	private Preference clear_cache = null;
+	
+	private DownloadQueueService downloadQueueService;
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  Because we have bound to a explicit
+	        // service that we know is running in our own process, we can
+	        // cast its IBinder to a concrete class and directly access it.
+	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+	        Log.d("Aptoide-Settings", "DownloadQueueService bound to Settings");
+	        
+	        downloadQueueService.dismissAllNotifications();
+	    }
+	    
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        // Because it is running in our same process, we should never
+	        // see this happen.
+	        downloadQueueService = null;
+	        
+	        Log.d("Aptoide-Settings","DownloadQueueService unbound from Settings");
+	    }
+
+	};	
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -140,6 +171,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 				alrt.setButton("yes", new OnClickListener() {
 	
 					public void onClick(DialogInterface dialog, int which) {
+						getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 						alrt.dismiss();
 
 						boolean isSrvAlive = false;

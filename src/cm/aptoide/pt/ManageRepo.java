@@ -43,8 +43,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.ListActivity;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -53,20 +53,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ManageRepo extends ListActivity{
 	
@@ -92,6 +92,8 @@ public class ManageRepo extends ListActivity{
 	private AlertDialog alert2;
 	
 	private AlertDialog alrt = null;
+	
+	private enum returnStatus {OK, LOGIN_REQUIRED, BAD_LOGIN, FAIL, EXCEPTION};
 	
 
 	@SuppressWarnings("unchecked")
@@ -130,7 +132,7 @@ public class ManageRepo extends ListActivity{
 			Vector<String> exist_server = db.getServersName();
 			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
 			for(final String srv: new_serv_lst){
-				if(exist_server.contains(srv))
+				if(serverContainsRepo(exist_server,srv))
 					continue;
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle(getString(R.string.title_repo_alrt));
@@ -151,6 +153,7 @@ public class ManageRepo extends ListActivity{
 			}
 		}else if(i.hasExtra("newrepo")){
 			final String repo = i.getStringExtra("newrepo");
+			
 			AlertDialog alrt = new AlertDialog.Builder(this).create();
 			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -168,6 +171,39 @@ public class ManageRepo extends ListActivity{
 			      }});
 			alrt.show();
 		}
+	}
+	
+	private boolean serverContainsRepo(Vector<String> serverList, String repo){
+		if(serverList.contains(repo)){
+			Log.d("Aptoide-ManageRepo", "Repo already exists");
+			return true;
+		}else{
+			for (String existingRepo : serverList) {
+				if(repo.length()== (existingRepo.length()-1)){
+					if(repo.equals(existingRepo.substring(0, existingRepo.length()-1))){
+						Log.d("Aptoide-ManageRepo", "Repo equal to existant one but without final forward slash");
+						return true;
+					}
+				}else if(repo.length()== (existingRepo.length()-8)){ 
+					if(repo.equals(existingRepo.substring(7, existingRepo.length()-1))){
+						Log.d("Aptoide-ManageRepo", "Repo equal to existant one but without initial http:// and the final forward slash");
+						return true;
+					}
+				}else{
+					repo = repo+".bazaarandroid.com/";
+					if(repo.equals(existingRepo.substring(7, existingRepo.length()))){
+						Log.d("Aptoide-ManageRepo", "Repo equal to existant one but without initial http:// and without .bazaarandroid.com extension");
+						return true;
+					}
+					if(repo.equals(existingRepo.substring(7, existingRepo.length()-1))){
+						Log.d("Aptoide-ManageRepo", "Repo equal to existant one but without initial http:// , without .bazaarandroid.com extension, and the final forward slash");
+						return true;
+					}
+				}
+			}
+		}
+		Log.d("Aptoide-ManageRepo", "Repo is new");
+		return false;
 	}
 	
 	@Override
@@ -328,48 +364,116 @@ public class ManageRepo extends ListActivity{
 			alrt.setTitle(getText(R.string.manage_repo_add));
 
 			alrt.setButton(getText(R.string.btn_add), new DialogInterface.OnClickListener() {
+				
 				public void onClick(DialogInterface dialog, int which) {
 					Message msg = new Message();
 					EditText uri = (EditText) alrt.findViewById(R.id.edit_uri);
 					String uri_str = uri.getText().toString();
+					
+					if(uri_str.charAt(uri_str.length()-1)!='/'){
+						uri_str = uri_str+'/';
+						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
+					}
+					if(!uri_str.startsWith("http://")){
+						uri_str = "http://"+uri_str;
+						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
+					}
 					sec_msg.setVisibility(View.GONE);
 					sec_msg2.setVisibility(View.GONE);
+					
+					String user = null;
+					String pwd = null;
+					
 					if(sec.isChecked()){
-						String user = sec_user.getText().toString();
-						String pwd = sec_pwd.getText().toString();
-						int result = checkServer(uri_str, user, pwd);
-						if(result == 200){
-							msg.obj = 0;
-							db.addServer(uri_str);
-							db.addLogin(user, pwd, uri_str);
-							change = true;
-							redraw();
-						}else if (result == 401){
-							sec_msg2.setText(getText(R.string.manage_repo_answ_wrongl));
-							sec_msg2.setVisibility(View.VISIBLE);
-							msg.obj = 1;			
-						}else{
-							sec_msg.setText(getText(R.string.manage_repo_answ_cc));
-							sec_msg.setVisibility(View.VISIBLE);
-							msg.obj = 1;
+						user = sec_user.getText().toString();
+						pwd = sec_pwd.getText().toString();
+					}
+					
+					returnStatus result = checkServerConnection(uri_str, user, pwd);
+					switch (result) {
+					case OK:
+						Log.d("Aptoide-ManageRepo", "return ok");
+						msg.obj = 0;
+						db.addServer(uri_str);
+						if(user != null && pwd != null){
+							db.addLogin(user, pwd, uri_str);	
 						}
-					}else{
-						int result = checkServer(uri_str, null, null);
-						if(result == 200){
+						change = true;
+						redraw();
+						break;
+					
+					case LOGIN_REQUIRED:
+						Log.d("Aptoide-ManageRepo", "return login_required");
+						sec_msg2.setText(getText(R.string.manage_repo_answ_lr));
+						sec_msg2.setVisibility(View.VISIBLE);
+						msg.obj = 1;
+						
+						break;
+						
+					case BAD_LOGIN:
+						Log.d("Aptoide-ManageRepo", "return bad_login");
+						sec_msg2.setText(getText(R.string.manage_repo_answ_wrongl));
+						sec_msg2.setVisibility(View.VISIBLE);
+						msg.obj = 1;
+						break;
+						
+					case FAIL:
+						Log.d("Aptoide-ManageRepo", "return fail");
+						uri_str = uri_str.substring(0, uri_str.length()-1)+".bazaarandroid.com/";
+						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
+						msg.obj = 1;
+						break;
+
+					default:
+						Log.d("Aptoide-ManageRepo", "return exception");
+						uri_str = uri_str.substring(0, uri_str.length()-1)+".bazaarandroid.com/";
+						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
+						msg.obj = 1;
+						break;
+					}
+					if(result.equals(returnStatus.FAIL) || result.equals(returnStatus.EXCEPTION)){
+						returnStatus result2 = checkServerConnection(uri_str, user, pwd);
+						switch (result2) {
+						case OK:
+							Log.d("Aptoide-ManageRepo", "return ok");
 							msg.obj = 0;
 							db.addServer(uri_str);
+							if(user != null && pwd != null){
+								db.addLogin(user, pwd, uri_str);	
+							}
 							change = true;
 							redraw();
-						}else if (result == 401){
+							break;
+						
+						case LOGIN_REQUIRED:
+							Log.d("Aptoide-ManageRepo", "return login_required");
 							sec_msg2.setText(getText(R.string.manage_repo_answ_lr));
 							sec_msg2.setVisibility(View.VISIBLE);
 							msg.obj = 1;
-						}else{
+							
+							break;
+							
+						case BAD_LOGIN:
+							Log.d("Aptoide-ManageRepo", "return bad_login");
+							sec_msg2.setText(getText(R.string.manage_repo_answ_wrongl));
+							sec_msg2.setVisibility(View.VISIBLE);
+							msg.obj = 1;	
+							break;
+							
+						case FAIL:
+							Log.d("Aptoide-ManageRepo", "return fail");
 							sec_msg.setText(getText(R.string.manage_repo_answ_cc));
 							sec_msg.setVisibility(View.VISIBLE);
 							msg.obj = 1;
+								
+							break;
+
+						default:
+							Log.d("Aptoide-ManageRepo", "return exception");
+							msg.obj = 1;	
+							break;
 						}
-					}
+					}				
 					new_repo.sendMessage(msg);
 				} });
 
@@ -542,13 +646,19 @@ public class ManageRepo extends ListActivity{
 	    return out;
 	}*/
 	
-	private int checkServer(String uri, String user, String pwd){
+
+	
+	private returnStatus checkServerConnection(String uri, String user, String pwd){
+		
+		int result;
 		
 		HttpParams httpParameters = new BasicHttpParams();
 		HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
 		HttpConnectionParams.setSoTimeout(httpParameters, 10000);
-		
+		           
 		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
+		
+//		DefaultHttpClient mHttpClient = Threading.getThreadSafeHttpClient();
 		
 		mHttpClient.setRedirectHandler(new RedirectHandler() {
 			public boolean isRedirectRequested(HttpResponse response,
@@ -591,11 +701,19 @@ public class ManageRepo extends ListActivity{
 				mHttpResponse = mHttpClient.execute(mHttpGet);
 			}
 
-			return mHttpResponse.getStatusLine().getStatusCode();
-		} catch (ClientProtocolException e) { return -1;} 
-		catch (IOException e) { return -1;}
-		catch (IllegalArgumentException e) { return -1;}
-		catch (Exception e) {return -1;	}
+			result = mHttpResponse.getStatusLine().getStatusCode();
+			
+			if(result == 200){
+				return returnStatus.OK;
+			}else if (result == 401){
+				return returnStatus.BAD_LOGIN;
+			}else{
+				return returnStatus.FAIL;
+			}
+		} catch (ClientProtocolException e) { return returnStatus.EXCEPTION;} 
+		catch (IOException e) { return returnStatus.EXCEPTION;}
+		catch (IllegalArgumentException e) { return returnStatus.EXCEPTION;}
+		catch (Exception e) {return returnStatus.EXCEPTION;	}
 	}
 	
 	

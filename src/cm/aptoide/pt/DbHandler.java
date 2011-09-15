@@ -613,20 +613,20 @@ public class DbHandler {
 					node.status = 0;
 				}else{
 					//if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					node.ver = c.getString(2);
 					if(c.getInt(4) == c.getInt(5)){
 						node.status = 1;
-						node.ver = c.getString(2);
 					}else{
 						int instvercode = c.getInt(4);
 						int lastvercode = c.getInt(5);
 						if(instvercode < lastvercode){
 							node.status = 2;
-							node.ver = c.getString(2) + "/ new: " + c.getString(3);
+							node.ver += "/ new: " + c.getString(3);
 						}else{
 							node.status = 1;
-							node.ver = c.getString(2);
 						}
 					}
+					
 				}
 				node.rat = c.getFloat(7);
 				tmp.add(node);
@@ -885,7 +885,7 @@ public class DbHandler {
 		Vector<DownloadNode> out = new Vector<DownloadNode>();
 		Cursor c = null;
 		try{
-			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id_apk+"' and lastver ='"+ver+"'", null, null, null, null);
+			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size", "lastver"}, "apkid='"+id_apk+"' and lastver ='"+ver+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
 				DownloadNode node = new DownloadNode();
@@ -897,6 +897,7 @@ public class DbHandler {
 					node.md5h = c.getString(2);
 				}
 				node.size = c.getInt(3);
+				node.version = c.getString(4);
 				out.add(node);
 			}
 			//c.close();

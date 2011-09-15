@@ -5,4 +5,6 @@ public class DownloadNode extends Object{
 	public String path;
 	public String md5h;
 	public int size;
+	/*Changed by Rafael Campos*/
+	public String version; 
 }
