@@ -137,10 +137,11 @@ public class DownloadQueueService extends Service {
 
 		String apkid = notifications.get(apkidHash).get("apkid");
 		int size = Integer.parseInt(notifications.get(apkidHash).get("intSize"));
+		String version = notifications.get(apkidHash).get("version");
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.download_alrt)+" "+apkid);
+		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.download_alrt)+" "+apkid+" v."+version);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, progress, false);	
 		
     	Intent onClick = new Intent();
@@ -173,10 +174,11 @@ public class DownloadQueueService extends Service {
 		
 		String apkid = notifications.get(apkidHash).get("apkid");
 		int size = Integer.parseInt(notifications.get(apkidHash).get("intSize"));
+		String version = notifications.get(apkidHash).get("version");
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+apkid);
+		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+apkid+" v."+version);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, size*KBYTES_TO_BYTES, false);	
 		
 		Intent onClick = new Intent("pt.caixamagica.aptoide.INSTALL_APK", Uri.parse("apk:"+apkid));

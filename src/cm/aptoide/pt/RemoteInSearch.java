@@ -28,6 +28,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 import cm.aptoide.pt.utils.EnumOptionsMenu;
+import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -287,7 +288,17 @@ public class RemoteInSearch extends ListActivity{
 			apkinfo.putExtra("type", 0);
 		}else{
 			apkinfo.putExtra("type", 1);
+			try {
+				PackageManager mPm = getApplicationContext().getPackageManager();
+				PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
+				
+				apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,apkid,-1));
+			} catch (NameNotFoundException e) {
+				//Not installed... do nothing
+			}
 		}
+		
+		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(apkid));
 		
 		startActivityForResult(apkinfo,30);
 		
