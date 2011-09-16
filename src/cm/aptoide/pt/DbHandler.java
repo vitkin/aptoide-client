@@ -684,15 +684,14 @@ public class DbHandler {
 			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id.toString()+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
-				DownloadNode node = new DownloadNode();
-				node.repo = c.getString(0);
-				node.path = c.getString(1);
-				if(c.isNull(2)){
-					node.md5h = null;
-				}else{
-					node.md5h = c.getString(2);
+				String repo = c.getString(0);
+				String remotePath = repo+"/"+c.getString(1);
+				String md5sum = null;
+				if(!c.isNull(2)){
+					md5sum = c.getString(2);
 				}
-				node.size = c.getInt(3);
+				int size = c.getInt(3);
+				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size);
 				out.add(node);
 			}
 			//c.close();

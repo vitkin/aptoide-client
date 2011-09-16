@@ -100,28 +100,29 @@ public class DownloadQueueService extends Service {
 	}
 
 	
-	public void startDownload(String localPath, DownloadNode downloadNode, String apkid, String[] login, Context context, boolean isUpdate){
+	public void startDownload(DownloadNode downloadNode, Context context){
 		this.context = context;
 		HashMap<String,String> notification = new HashMap<String,String>();
-		notification.put("remotePath", downloadNode.repo + "/" + downloadNode.path);
-		notification.put("md5hash", downloadNode.md5h);
+		notification.put("remotePath", downloadNode.getRemotePath());
+		notification.put("md5sum", downloadNode.getMd5sum());
 		
-		notification.put("apkid", apkid);
-		notification.put("intSize", Integer.toString(downloadNode.size));
+		notification.put("packageName", downloadNode.getPackageName());
+		notification.put("appName", downloadNode.getAppName());
+		notification.put("intSize", Integer.toString(downloadNode.getSize()));
 		notification.put("intProgress", "0");
-		notification.put("localPath", localPath);
-		notification.put("isUpdate", Boolean.toString(isUpdate));
-		if(login != null){
+		notification.put("localPath", downloadNode.getLocalPath());
+		notification.put("isUpdate", Boolean.toString(downloadNode.isUpdate()));
+		if(downloadNode.isRepoPrivate()){
 			notification.put("loginRequired", "true");
-			notification.put("username", login[0]);
-			notification.put("password", login[1]);
+			notification.put("username", downloadNode.getLogins()[0]);
+			notification.put("password", downloadNode.getLogins()[1]);
 		}else{
 			notification.put("loginRequired", "false");
 		}
 		Log.d("Aptoide-DowloadQueueService", "download Started");
-		notifications.put(apkid.hashCode(), notification);
-		setNotification(apkid.hashCode(), 0);
-		downloadFile(apkid.hashCode());
+		notifications.put(downloadNode.getPackageName().hashCode(), notification);
+		setNotification(downloadNode.getPackageName().hashCode(), 0);
+		downloadFile(downloadNode.getPackageName().hashCode());
 	}
 	
 //	public void startExternalDownload(String remotePath, String localPath, String apkName, Context context){
@@ -132,12 +133,12 @@ public class DownloadQueueService extends Service {
 
 	private void setNotification(int apkidHash, int progress) {
 
-		String apkid = notifications.get(apkidHash).get("apkid");
+		String appName = notifications.get(apkidHash).get("appName");
 		int size = Integer.parseInt(notifications.get(apkidHash).get("intSize"));
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.download_alrt)+" "+apkid);
+		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.download_alrt)+" "+appName);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, progress, false);	
 		
     	Intent onClick = new Intent();
@@ -148,7 +149,7 @@ public class DownloadQueueService extends Service {
     	// The PendingIntent to launch our activity if the user selects this notification
     	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
 
-    	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.download_alrt)+" "+apkid, System.currentTimeMillis());
+    	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.download_alrt)+" "+appName, System.currentTimeMillis());
     	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 		notification.contentView = contentView;
 
@@ -168,27 +169,28 @@ public class DownloadQueueService extends Service {
 	
 	private void setFinishedNotification(int apkidHash, String localPath) {
 		
-		String apkid = notifications.get(apkidHash).get("apkid");
+		String packageName = notifications.get(apkidHash).get("packageName");
+		String appName = notifications.get(apkidHash).get("appName");
 		int size = Integer.parseInt(notifications.get(apkidHash).get("intSize"));
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+apkid);
+		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+appName);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, size*KBYTES_TO_BYTES, false);	
 		
-		Intent onClick = new Intent("pt.caixamagica.aptoide.INSTALL_APK", Uri.parse("apk:"+apkid));
+		Intent onClick = new Intent("pt.caixamagica.aptoide.INSTALL_APK", Uri.parse("apk:"+packageName));
 		onClick.setClassName("cm.aptoide.pt", "cm.aptoide.pt.RemoteInTab");
 		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
     	onClick.putExtra("localPath", localPath);
-    	onClick.putExtra("apkid", apkid);
+    	onClick.putExtra("packageName", packageName);
     	onClick.putExtra("apkidHash", apkidHash);
-    	onClick.putExtra("isUpdate", Boolean.parseBoolean(notifications.get(apkid.hashCode()).get("isUpdate")));
+    	onClick.putExtra("isUpdate", Boolean.parseBoolean(notifications.get(packageName.hashCode()).get("isUpdate")));
 		 Log.d("Aptoide-DownloadQueuService","finished notification apkidHash: "+apkidHash +" localPath: "+localPath);	
     	
     	// The PendingIntent to launch our activity if the user selects this notification
     	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
 				
-    	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.finished_download_alrt)+" "+apkid, System.currentTimeMillis());
+    	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.finished_download_alrt)+" "+appName, System.currentTimeMillis());
     	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.contentView = contentView;
 
@@ -243,7 +245,7 @@ public class DownloadQueueService extends Service {
 					int threadApkidHash = apkidHash;
 					
 					String remotePath = notifications.get(threadApkidHash).get("remotePath");
-					String md5hash = notifications.get(threadApkidHash).get("md5hash");
+					String md5sum = notifications.get(threadApkidHash).get("md5sum");
 					
 					String localPath = notifications.get(threadApkidHash).get("localPath");
 					 Log.d("Aptoide-DownloadQueuService","thread apkidHash: "+threadApkidHash +" localPath: "+localPath);	
@@ -325,13 +327,13 @@ public class DownloadQueueService extends Service {
 
 						File f = new File(localPath);
 						Md5Handler hash = new Md5Handler();
-						if(md5hash == null || md5hash.equalsIgnoreCase(hash.md5Calc(f))){
+						if(md5sum == null || md5sum.equalsIgnoreCase(hash.md5Calc(f))){
 							downloadArguments.arg1 = 1;
 							downloadArguments.arg2 = threadApkidHash;
 							downloadArguments.obj = localPath;
 							downloadHandler.sendMessage(downloadArguments);
 						}else{
-							Log.d("Aptoide",md5hash + " VS " + hash.md5Calc(f));
+							Log.d("Aptoide",md5sum + " VS " + hash.md5Calc(f));
 							downloadArguments.arg1 = 0;
 							downloadArguments.arg2 = threadApkidHash;
 							downloadErrorHandler.sendMessage(downloadArguments);

@@ -502,27 +502,29 @@ public class BaseManagement extends Activity {
 	}
 
 
-	protected void queueDownload(String apkid, boolean isUpdate){
+	protected void queueDownload(String packageName, boolean isUpdate){
 
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 
 		try{
-			tmp_serv = db.getPathHash(apkid);
+			tmp_serv = db.getPathHash(packageName);
 
 
-			String localPath = new String(LOCAL_APK_PATH+apkid+".apk");
-			String apkName = apkid;
+			String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
+			String appName = packageName;
 			for(ApkNode node: apk_lst){
-				if(node.apkid.equals(apkid)){
-					apkName = node.name;
+				if(node.apkid.equals(packageName)){
+					appName = node.name;
 					break;
 				}
 			}
 
 			//if(tmp_serv.size() > 0){
-			DownloadNode downloadNode = new DownloadNode();
-			downloadNode = tmp_serv.firstElement();
-			String remotePath = downloadNode.repo + "/" + downloadNode.path;
+			DownloadNode downloadNode = tmp_serv.firstElement();
+			downloadNode.setPackageName(packageName);
+			downloadNode.setAppName(appName);
+			downloadNode.setLocalPath(localPath);
+			String remotePath = downloadNode.getRemotePath();
 
 			//}
 
@@ -530,12 +532,12 @@ public class BaseManagement extends Activity {
 				throw new TimeoutException();
 
 			String[] logins = null; 
-			logins = db.getLogin(downloadNode.repo);
+			logins = db.getLogin(downloadNode.getRepo());
 
-			Log.d("Aptoide-BaseManagement","queueing download: "+apkid);	
+			downloadNode.setLogins(logins);
+			Log.d("Aptoide-BaseManagement","queueing download: "+packageName);	
 
-			//TODO refactor DownloadNode to include all needed fields @dsilveira
-			downloadQueueService.startDownload(localPath, downloadNode, apkName, logins, this, isUpdate);
+			downloadQueueService.startDownload(downloadNode, this);
 
 		} catch(Exception e){	}
 	}

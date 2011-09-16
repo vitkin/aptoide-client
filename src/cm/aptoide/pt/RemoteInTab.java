@@ -19,7 +19,6 @@
 
 package cm.aptoide.pt;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -42,19 +41,18 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.app.AlertDialog.Builder;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.res.Configuration;
@@ -64,6 +62,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.StatFs;
@@ -77,6 +76,7 @@ import android.view.ViewGroup;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInTab extends TabActivity {
 
@@ -123,6 +123,34 @@ public class RemoteInTab extends TabActivity {
 
 	private boolean fetch_extra = true;
 	
+
+	private DownloadQueueService downloadQueueService;
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  Because we have bound to a explicit
+	        // service that we know is running in our own process, we can
+	        // cast its IBinder to a concrete class and directly access it.
+	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+	        Log.d("Aptoide-BaseManagement", "DownloadQueueService bound to a Tab");
+	    }
+	    
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        // Because it is running in our same process, we should never
+	        // see this happen.
+	        downloadQueueService = null;
+	        
+	        Log.d("Aptoide-BaseManagement","DownloadQueueService unbound from a Tab");
+	    }
+
+	};	
+	
+	
+	
 	private Handler fetchHandler = new Handler() {
 
 		@Override
@@ -139,6 +167,7 @@ public class RemoteInTab extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
@@ -238,9 +267,9 @@ public class RemoteInTab extends TabActivity {
 				}
 
 				Intent i = getIntent();
-				if(i.hasExtra("uri")){
-					if(i.hasExtra("apks")){
-						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("uri");
+				if(i.hasExtra("repos")){
+					if(i.hasExtra("apps")){
+						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
 						if(servers_lst != null && servers_lst.size() > 0){
 							intserver = new Intent(this, ManageRepo.class);
 							intserver.putExtra("uri", i.getSerializableExtra("uri"));
@@ -248,22 +277,27 @@ public class RemoteInTab extends TabActivity {
 							intserver = null;
 						}
 						
-						final String[] nodi = ((ArrayList<String[]>) i.getSerializableExtra("apks")).get(0);
+						final String[] app = ((ArrayList<String[]>) i.getSerializableExtra("apps")).get(0);
 						final AlertDialog alrt = new AlertDialog.Builder(this).create();
 						alrt.setTitle("Install");
-						alrt.setMessage("Do you wish to install: " + nodi[1] + " ?");
+						alrt.setMessage("Do you wish to install: " + app[1] + " ?");
 						alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								alrt.dismiss();
-								pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + nodi[1], true);
-								pd.setIcon(android.R.drawable.ic_dialog_info);
-								
-								new Thread(new Runnable() {
-									public void run() {
-										installFromLink(nodi[0]);
-									}
-								}).start();
+//								pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + nodi[1], true);
+//								pd.setIcon(android.R.drawable.ic_dialog_info);
+//								
+//								new Thread(new Runnable() {
+//									public void run() {
+//										installFromLink(nodi[0]);
+//									}
+//								}).start();
 
+								Log.d("Aptoide-RemoteInTab","queueing download: "+app[1]);	
+
+								DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3]), SDCARD+"/.aptoide/fetched.apk", app[4]);
+								downloadNode.setAppName(app[1]);
+								downloadQueueService.startDownload(downloadNode, getApplicationContext());
 							}
 						});
 						alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
@@ -274,7 +308,7 @@ public class RemoteInTab extends TabActivity {
 						alrt.show();
 					}else{
 						Intent call = new Intent(this, ManageRepo.class);
-						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("uri");
+						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
 						if(servers_lst != null && servers_lst.size() > 0){
 							call.putExtra("uri", i.getSerializableExtra("uri"));
 							startActivityForResult(call,NEWREPO_FLAG);
@@ -291,35 +325,35 @@ public class RemoteInTab extends TabActivity {
 		}
 	}
 
-	private void installFromLink(String path){
-		try{
-			Log.d("Aptoide-RemoteInTab", "installing From Link: "+path);
-			
-			String file_out = new String(SDCARD+"/.aptoide/fetched.apk");
-			FileOutputStream saveit = new FileOutputStream(file_out);
-			DefaultHttpClient mHttpClient = new DefaultHttpClient();
-			HttpGet mHttpGet = new HttpGet(path);
-			
-			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-
-			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-				 return;
-			 }
-
-            Log.d("Aptoide-RemoteInTab", "installFromLink Content-Lenght: "+mHttpResponse.getEntity().getContentLength());
-			InputStream getit = mHttpResponse.getEntity().getContent();
-			byte data[] = new byte[8096];
-			int readed;
-			while((readed = getit.read(data, 0, 8096)) != -1) {
-				saveit.write(data,0,readed);
-			}
-			
-			intp = new Intent();
-	    	intp.setAction(android.content.Intent.ACTION_VIEW);
-	    	intp.setDataAndType(Uri.parse("file://" + file_out), "application/vnd.android.package-archive");
-	    	fetchHandler.sendEmptyMessage(0);
-		}catch(IOException e) { }
-	}
+//	private void installFromLink(String path){
+//		try{
+//			Log.d("Aptoide-RemoteInTab", "installing From Link: "+path);
+//			
+//			String file_out = new String(SDCARD+"/.aptoide/fetched.apk");
+//			FileOutputStream saveit = new FileOutputStream(file_out);
+//			DefaultHttpClient mHttpClient = new DefaultHttpClient();
+//			HttpGet mHttpGet = new HttpGet(path);
+//			
+//			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+//
+//			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
+//				 return;
+//			 }
+//
+//            Log.d("Aptoide-RemoteInTab", "installFromLink Content-Lenght: "+mHttpResponse.getEntity().getContentLength());
+//			InputStream getit = mHttpResponse.getEntity().getContent();
+//			byte data[] = new byte[8096];
+//			int readed;
+//			while((readed = getit.read(data, 0, 8096)) != -1) {
+//				saveit.write(data,0,readed);
+//			}
+//			
+//			intp = new Intent();
+//	    	intp.setAction(android.content.Intent.ACTION_VIEW);
+//	    	intp.setDataAndType(Uri.parse("file://" + file_out), "application/vnd.android.package-archive");
+//	    	fetchHandler.sendEmptyMessage(0);
+//		}catch(IOException e) { }
+//	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -897,9 +931,9 @@ public class RemoteInTab extends TabActivity {
 				forceUpdateRepos();
 			}
 		}
-		if(intent.hasExtra("uri")){
-			if(intent.hasExtra("apks")){
-				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("uri");
+		if(intent.hasExtra("repos")){
+			if(intent.hasExtra("apps")){
+				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
 				if(servers_lst != null && servers_lst.size() > 0){
 					intserver = new Intent(this, ManageRepo.class);
 					intserver.putExtra("uri", intent.getSerializableExtra("uri"));
@@ -907,21 +941,28 @@ public class RemoteInTab extends TabActivity {
 					intserver = null;
 				}
 				
-				final String[] nodi = ((ArrayList<String[]>) intent.getSerializableExtra("apks")).get(0);
+				final String[] app = ((ArrayList<String[]>) intent.getSerializableExtra("apps")).get(0);
 				final AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle("Install");
-				alrt.setMessage("Do you wish to install: " + nodi[1] + " ?");
+				alrt.setMessage("Do you wish to install: " + app[1] + " ?");
 				alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						alrt.dismiss();
-						pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + nodi[1], true);
-						pd.setIcon(android.R.drawable.ic_dialog_info);
+//						pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + app[1], true);
+//						pd.setIcon(android.R.drawable.ic_dialog_info);
 						
-						new Thread(new Runnable() {
-							public void run() {
-								installFromLink(nodi[0]);
-							}
-						}).start();
+//						new Thread(new Runnable() {
+//							public void run() {
+//								installFromLink(nodi[0]);
+//							}
+//						}).start();
+						
+						Log.d("Aptoide-RemoteInTab","queueing download: "+app[1]);	
+
+						DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3]), SDCARD+"/.aptoide/fetched.apk", app[4]);
+						downloadNode.setAppName(app[1]);
+						downloadQueueService.startDownload(downloadNode, getApplicationContext());
+
 
 					}
 				});
@@ -933,7 +974,7 @@ public class RemoteInTab extends TabActivity {
 				alrt.show();
 			}else{
 				Intent call = new Intent(this, ManageRepo.class);
-				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("uri");
+				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
 				if(servers_lst != null && servers_lst.size() > 0){
 					call.putExtra("uri", intent.getSerializableExtra("uri"));
 					startActivityForResult(call,NEWREPO_FLAG);
@@ -951,7 +992,7 @@ public class RemoteInTab extends TabActivity {
 	private void installApk(Intent intent){
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
-		String apkid = arguments.getString("apkid");
+		String packageName = arguments.getString("packageName");
 		int apkidHash = arguments.getInt("apkidHash");
 		boolean isUpdate = arguments.getBoolean("isUpdate");
 		Log.d("Aptoide-RemoteInTab", "installApk: "+localPath+" apkidHash: "+apkidHash+" isUpdate: "+isUpdate);
@@ -959,7 +1000,7 @@ public class RemoteInTab extends TabActivity {
 		Intent installApkAction = new Intent();
 		if(isUpdate){
 			installApkAction.setAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
-	    	installApkAction.putExtra("apkid", apkid);
+	    	installApkAction.putExtra("packageName", packageName);
 		}else{
 			installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
 		}
