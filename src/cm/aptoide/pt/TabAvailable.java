@@ -65,7 +65,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		lv.setCacheColorHint(0);
 		lv.setOnItemClickListener(this);
 		lv.setFastScrollEnabled(true);
-
 		
 		new Thread(){
 

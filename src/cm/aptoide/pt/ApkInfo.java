@@ -45,6 +45,7 @@ import android.text.ClipboardManager;
 import android.text.Html;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -378,6 +379,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			textView.setText(this.getString(R.string.commentlabel));
 			textView.setTextSize(20);
 			textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+			textView.setPadding(0, 10, 0, 10);
+			textView.setGravity(Gravity.CENTER_HORIZONTAL);
 			listView.addHeaderView(textView);
 			
 			LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
