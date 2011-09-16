@@ -85,7 +85,7 @@ public class Aptoide extends Activity {
     
 	private static final int LOAD_TABS = 0;
 	private static final int UPDATE_SELF = 99;
-    private static final String TMP_SRV_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
+    private static final String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
     private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/aptoideUpdate.apk";
 	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
 	
@@ -93,7 +93,7 @@ public class Aptoide extends Activity {
 	private Intent DownloadQueueServiceIntent;
     
     private Vector<String> server_lst = null;
-    private Vector<String[]> get_apks = null;
+    private Vector<String[]> get_apps = null;
     
     // Used for Aptoide version update
 	private DbHandler db = null;
@@ -120,25 +120,28 @@ public class Aptoide extends Activity {
 				if(get.getData() != null){
 					String uri = get.getDataString();
 					if(uri.startsWith("aptoiderepo")){
+						Log.d("Aptoide-startHandler", "aptoiderepo-scheme");
 						String repo = uri.substring(14);
 						i.putExtra("newrepo", repo);
 					}else if(uri.startsWith("aptoidexml")){
+						Log.d("Aptoide-startHandler", "aptoidexml-scheme");
 						String repo = uri.substring(13);
 						parseXmlString(repo);
-						i.putExtra("uri", server_lst);
-						if(get_apks.size() > 0){
+						i.putExtra("repos", server_lst);
+						if(get_apps.size() > 0){
 							//i.putExtra("uri", TMP_SRV_FILE);
-							i.putExtra("apks", get_apks);
+							i.putExtra("apps", get_apps);
 
 						}
 						//i.putExtra("linkxml", repo);
 					}else{
-						downloadServ(uri);
-						getRemoteServLst(TMP_SRV_FILE);
-						i.putExtra("uri", server_lst);
-						if(get_apks.size() > 0){
+						Log.d("Aptoide-startHandler", "receiving a myapp file");
+						downloadMyappFile(uri);
+						parseMyappFile(TMP_MYAPP_FILE);
+						i.putExtra("repos", server_lst);
+						if(get_apps.size() > 0){
 							//i.putExtra("uri", TMP_SRV_FILE);
-							i.putExtra("apks", get_apks);
+							i.putExtra("apps", get_apps);
 
 						}
 					}
@@ -298,17 +301,17 @@ public class Aptoide extends Activity {
 		}
 	}
     
-	private void downloadServ(String srv){
+	private void downloadMyappFile(String myappUri){
 		try{
 			keepScreenOn.acquire();
 			
-			BufferedInputStream getit = new BufferedInputStream(new URL(srv).openStream());
+			BufferedInputStream getit = new BufferedInputStream(new URL(myappUri).openStream());
 
-			File file_teste = new File(TMP_SRV_FILE);
+			File file_teste = new File(TMP_MYAPP_FILE);
 			if(file_teste.exists())
 				file_teste.delete();
 			
-			FileOutputStream saveit = new FileOutputStream(TMP_SRV_FILE);
+			FileOutputStream saveit = new FileOutputStream(TMP_MYAPP_FILE);
 			BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
 			byte data[] = new byte[1024];
 			
@@ -335,7 +338,7 @@ public class Aptoide extends Activity {
 		}
 	}
 	
-	private void getRemoteServLst(String file){
+	private void parseMyappFile(String file){
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 	    try {
 	    	keepScreenOn.acquire();
@@ -351,7 +354,7 @@ public class Aptoide extends Activity {
 	    	File xml_file = new File(file);
 	    	xml_file.delete();
 	    	server_lst = handler.getNewSrvs();
-	    	get_apks = handler.getNewApks();
+	    	get_apps = handler.getNewApps();
 	    	
 	    	keepScreenOn.release();
 	    	
@@ -378,7 +381,7 @@ public class Aptoide extends Activity {
 	    	is.setCharacterStream(new StringReader(file));
 	    	xr.parse(is);
 	    	server_lst = handler.getNewSrvs();
-	    	get_apks = handler.getNewApks();
+	    	get_apps = handler.getNewApps();
 	    	
 	    	keepScreenOn.release();
 	    	

@@ -411,16 +411,18 @@ public class RemoteInSearch extends ListActivity{
 		
 		try{
 		
-			String apkid = apk_lst.get(position).apkid;
-			String apkName = apk_lst.get(position).name;
-			tmp_serv = db.getPathHash(apkid);
+			String packageName = apk_lst.get(position).apkid;
+			String appName = apk_lst.get(position).name;
+			tmp_serv = db.getPathHash(packageName);
 			
 			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
 			
 			//if(tmp_serv.size() > 0){
-			DownloadNode downloadNode = new DownloadNode();
-			downloadNode = tmp_serv.firstElement();
-			String remotePath = downloadNode.repo + "/" + downloadNode.path;
+			DownloadNode downloadNode = tmp_serv.firstElement();
+			downloadNode.setPackageName(packageName);
+			downloadNode.setAppName(appName);
+			downloadNode.setLocalPath(localPath);
+			String remotePath = downloadNode.getRemotePath();
 			
 			//}
 	
@@ -428,10 +430,9 @@ public class RemoteInSearch extends ListActivity{
 				throw new TimeoutException();
 			
 			String[] logins = null; 
-			logins = db.getLogin(downloadNode.repo);
+			logins = db.getLogin(downloadNode.getRepo());
 					
-			//TODO refactor DownloadNode to include all needed fields @dsilveira
-			downloadQueueService.startDownload(localPath, downloadNode, apkName, logins, mctx, false);
+			downloadQueueService.startDownload(downloadNode, mctx);
 	
 		} catch(Exception e){	}
 	}
