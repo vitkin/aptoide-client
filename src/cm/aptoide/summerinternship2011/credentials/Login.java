@@ -20,6 +20,7 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
 import cm.aptoide.summerinternship2011.SetBlank;
@@ -63,6 +64,7 @@ public class Login extends Dialog{
 	private String apkversion;
 	
 	private UserTaste userTaste;
+	private WrapperUserTaste userTasteGetted;
 	
 	/**
 	 * @author rafael
@@ -89,7 +91,8 @@ public class Login extends Dialog{
 	 * 
 	 */
 	public Login(Context context, InvoqueNature nature, ImageView like, 
-				ImageView dontlike, String repo, String apkid, String apkversion, UserTaste userTaste) {
+				ImageView dontlike, String repo, String apkid, String apkversion, 
+				UserTaste userTaste, WrapperUserTaste userTasteGetted) {
 		super(context);
 		sPref = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
@@ -101,6 +104,7 @@ public class Login extends Dialog{
 		this.apkid = apkid;
 		this.apkversion = apkversion;
 		this.userTaste = userTaste;
+		this.userTasteGetted = userTasteGetted;
 	}
 
 	/**
@@ -109,7 +113,7 @@ public class Login extends Dialog{
 	 * @param nature
 	 */
 	public Login(Context context, InvoqueNature nature) {
-		this(context, nature, null, null, null, null, null, null);
+		this(context, nature, null, null, null, null, null, null, null);
 	}
 	
 	@Override
@@ -258,6 +262,9 @@ public class Login extends Dialog{
 									break;
 								default: break;
 							}
+						}
+						synchronized(userTasteGetted){
+							userTasteGetted.setValue(tasteGetter.getUserTaste());
 						}
 					}
 					
