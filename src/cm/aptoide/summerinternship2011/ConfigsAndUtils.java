@@ -27,6 +27,7 @@ public class ConfigsAndUtils {
 	public static final String LOGIN_USER_NAME = "usernameLogin";
 	
 	public static final boolean INTERFACE_SILVER_TABS_ON = true;
+	public static final boolean INTERFACE_TABS_ON_BOTTOM = true;
 	
 	//public static final String QR_CODE_GOOGLE_WEBSERVICE = "https://chart.googleapis.com/chart";
 	

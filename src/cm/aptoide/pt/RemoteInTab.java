@@ -73,6 +73,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -136,14 +137,14 @@ public class RemoteInTab extends TabActivity {
 		
 	};
     
-	private void addTab(String label, int drawableId, Class<?> classToLauch) {
+	private void addTab(String label, int drawableId, Class<?> classToLauch, TabHost tabHost) {
 		//TesteActivity.class
 		Intent intent = new Intent(this, classToLauch);
-		TabHost.TabSpec spec = getTabHost().newTabSpec(label);
-
+		TabHost.TabSpec spec = tabHost.newTabSpec(label);
+		
 		View tabIndicator = LayoutInflater.from(this).inflate(
 								R.layout.tab_indicator, 
-								getTabWidget(), 
+								tabHost.getTabWidget(), 
 								false
 								);
 		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
@@ -153,7 +154,7 @@ public class RemoteInTab extends TabActivity {
 
 		spec.setIndicator(tabIndicator);
 		spec.setContent(intent);
-		getTabHost().addTab(spec);
+		tabHost.addTab(spec);
 		
 	}
 	
@@ -161,7 +162,7 @@ public class RemoteInTab extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		super.setContentView(R.layout.tabhostbottom);
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 		
@@ -173,14 +174,18 @@ public class RemoteInTab extends TabActivity {
 		prefEdit = sPref.edit();
 		prefEdit.putBoolean("update", true);
 		prefEdit.commit();
-
-		myTabHost = getTabHost();
 		
+		//myTabHost = getTabHost();
+		if(ConfigsAndUtils.INTERFACE_TABS_ON_BOTTOM){
+			TabHost myTabHostConf = (TabHost)((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.tabhostbottom, null);
+			myTabHostConf.setup();
+		}
+		myTabHost = getTabHost();
 		if(ConfigsAndUtils.INTERFACE_SILVER_TABS_ON){
 		
-			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class);
-			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class);
-			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class);
+			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
+			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());
+			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class, getTabHost());
 		
 		}else{
 			
@@ -191,7 +196,7 @@ public class RemoteInTab extends TabActivity {
 		}
 
 		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
-
+		
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		File sdcard_file = new File(SDCARD);
