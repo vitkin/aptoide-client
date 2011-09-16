@@ -3,9 +3,8 @@
 	<item>
 		<shape android:shape="rectangle">
 			
-			<gradient android:type="radial" android:gradientRadius="300" android:centerY="0"
-			
-			 android:startColor="#8B8B83" android:endColor="#000000" />
+			<gradient android:type="radial" android:gradientRadius="300" android:centerY="1.0"
+			android:centerX="0.83" android:startColor="#8B8B83" android:endColor="#000000" />
 			
 		</shape>
 	</item>
