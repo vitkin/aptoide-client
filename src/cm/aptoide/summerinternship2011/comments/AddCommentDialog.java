@@ -4,6 +4,7 @@
 package cm.aptoide.summerinternship2011.comments;
 
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
 import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.summerinternship2011.ResponseToHandler;
 import cm.aptoide.summerinternship2011.SetBlank;
@@ -49,6 +50,8 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	private ImageView like;
 	private ImageView dislike;
 	
+	private WrapperUserTaste userTasteGetter;
+	
 	/**
 	 * 
 	 * @param context
@@ -58,7 +61,8 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 	 * @param apkid
 	 * @param version
 	 */
-	public AddCommentDialog(Activity context, LoadOnScrollCommentList loadOnScrollComList, Comment replyTo, ImageView like, ImageView dislike, String repo, String apkid, String version) {
+	public AddCommentDialog(Activity context, LoadOnScrollCommentList loadOnScrollComList, Comment replyTo, 
+						ImageView like, ImageView dislike, String repo, String apkid, String version, WrapperUserTaste userTasteGetter) {
 		super(context);
 		this.replyTo = replyTo;
 		this.loadOnScrollComList = loadOnScrollComList; 
@@ -67,6 +71,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		this.version = version;
 		this.like = like;
 		this.dislike = dislike;
+		this.userTasteGetter = userTasteGetter;
 	}
 	
 	@Override
@@ -95,7 +100,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 					if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){
 						
 						
-						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, repo, apkid, version, null);
+						Login loginComments = new Login(AddCommentDialog.this.getContext(), Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, repo, apkid, version, null, userTasteGetter);
 						loginComments.setOnDismissListener(AddCommentDialog.this);
 						loginComments.show();
 					}else{ 

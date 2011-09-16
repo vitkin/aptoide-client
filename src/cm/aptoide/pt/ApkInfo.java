@@ -369,7 +369,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
 								apk_repo_str_raw,
 				 				apk_id, 
-				 				apk_ver_str_raw);
+				 				apk_ver_str_raw,
+				 				userTaste);
 						commentDialog.show();
 					}
 				}
@@ -484,7 +485,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			            	 if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
 			            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, 
 			            										dislike, apk_repo_str_raw , 
-			            										apk_id, apk_ver_str_raw, UserTaste.LIKE);
+			            										apk_id, apk_ver_str_raw, UserTaste.LIKE, userTaste);
 								loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
 							 }else{
@@ -524,7 +525,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			            	 
 			            	  if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
 			            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
-			            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, UserTaste.DONTLIKE);
+			            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, UserTaste.DONTLIKE, userTaste);
 			            		  	loginComments.setOnDismissListener(ApkInfo.this);
 									loginComments.show();
 			            	  }else{
@@ -680,7 +681,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	        		Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, getted, like, dislike, 
 	        				apk_repo_str_raw,
 	        				apk_id, 
-					 		apk_ver_str_raw);
+					 		apk_ver_str_raw,
+					 		userTaste);
 					commentDialog.show();
 	        		return true;
 	        	case COPY_TO_CLIPBOARD:
