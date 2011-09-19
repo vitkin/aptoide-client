@@ -524,6 +524,7 @@ public class BaseManagement extends Activity {
 			downloadNode.setPackageName(packageName);
 			downloadNode.setAppName(appName);
 			downloadNode.setLocalPath(localPath);
+			downloadNode.setUpdate(isUpdate);
 			String remotePath = downloadNode.getRemotePath();
 
 			//}

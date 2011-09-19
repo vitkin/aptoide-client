@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
-import cm.aptoide.pt.utils.EnumOptionsMenu;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -59,6 +57,7 @@ import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInSearch extends ListActivity{
 	

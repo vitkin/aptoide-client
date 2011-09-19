@@ -2,8 +2,6 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
-import cm.aptoide.pt.utils.EnumOptionsMenu;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +22,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
