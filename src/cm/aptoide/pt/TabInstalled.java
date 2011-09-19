@@ -2,9 +2,6 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
-import cm.aptoide.pt.utils.EnumOptionsMenu;
-
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,8 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -43,9 +38,6 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			Log.d("Aptoide-TabInstalled", "broadcast received");
 			if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
 				installApk(intent.getStringExtra("localPath"));
-			}
-			if (intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
-				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"));
 			}
 		}
 	}
@@ -122,7 +114,6 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		
 		if (!installApkListenerIsRegistered) {
             registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION"));
-            registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.UPDATE_APK_ACTION"));
             installApkListenerIsRegistered = true;
         }
 		Log.d("Aptoide-TabInstalled", "installApkListenerIsRegistered");

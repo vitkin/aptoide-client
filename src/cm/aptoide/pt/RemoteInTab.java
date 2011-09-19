@@ -39,8 +39,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -1001,13 +999,14 @@ public class RemoteInTab extends TabActivity {
 		if(isUpdate){
 			installApkAction.setAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
 	    	installApkAction.putExtra("packageName", packageName);
+			myTabHost.setCurrentTabByTag("updt");
 		}else{
 			installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
+			myTabHost.setCurrentTabByTag("inst");
 		}
     	installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
     	installApkAction.putExtra("localPath", localPath);
 		
-		myTabHost.setCurrentTabByTag("inst");
 		
 		sendBroadcast(installApkAction); Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
