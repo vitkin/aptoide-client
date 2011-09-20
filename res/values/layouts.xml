@@ -26,6 +26,8 @@
     <string name="clear_dwn_btn">Download icons</string>
     <string name="clear_dwn_msg">Download icon rules </string>
     
+    <string name="auto_updating">Please wait while processing update download...</string>
+    
     <string-array name="dwnif">
         <item>3G and Wifi</item>
         <item>Wifi only</item>
