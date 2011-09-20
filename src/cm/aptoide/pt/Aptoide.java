@@ -179,7 +179,6 @@ public class Aptoide extends Activity {
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
         
-   		db = new DbHandler(this);
    		
    		PackageManager mPm = getPackageManager();
    		try {
@@ -203,6 +202,8 @@ public class Aptoide extends Activity {
     }
     
     private void proceed(){
+   		db = new DbHandler(this);
+   		
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
 	   		db.UpdateTables();
 	   		prefEdit.putBoolean("mode", true);
