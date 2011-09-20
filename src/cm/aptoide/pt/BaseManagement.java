@@ -38,6 +38,7 @@ import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
 
@@ -313,29 +314,38 @@ public class BaseManagement extends Activity {
 	}
 	
 	protected void installApk(String apk_path){
-		pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
-		if(pkginfo == null){
-			// Ficheiro está corrupto, temos de verificar!
-		}else{
-			Intent intent = new Intent();
-			intent.setAction(android.content.Intent.ACTION_VIEW);
-			intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
-			prefEdit.putString("pkg", pkginfo.packageName);
-			prefEdit.commit();
-			startActivityForResult(intent,INSTALL);
-			Log.d("Aptoide-BaseManagement", "Installing Apk: "+apk_path);
+		try {
+			pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
+			if(pkginfo == null){
+				// Ficheiro está corrupto, temos de verificar!
+			}else{
+				Intent intent = new Intent();
+				intent.setAction(android.content.Intent.ACTION_VIEW);
+				intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
+				prefEdit.putString("pkg", pkginfo.packageName);
+				prefEdit.commit();
+				startActivityForResult(intent,INSTALL);
+				Log.d("Aptoide-BaseManagement", "Installing Apk: "+apk_path);
+			}
+		} catch (Exception e) {
+			Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.failed_install), Toast.LENGTH_LONG);
 		}
 	}
 	
-	protected void updateApk(String apk_path, String apk_id){	
-		pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
-		Intent intent = new Intent();
-    	intent.setAction(android.content.Intent.ACTION_VIEW);
-    	intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
-    	prefEdit.putString("pkg", pkginfo.packageName);
-    	prefEdit.commit();
-    	startActivityForResult(intent,UPDATE);
-		Log.d("Aptoide-BaseManagement", "Updating Apk: "+apk_path);
+	protected void updateApk(String apk_path, String apk_id){
+		try {		
+			pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
+			Intent intent = new Intent();
+	    	intent.setAction(android.content.Intent.ACTION_VIEW);
+	    	intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
+	//    	prefEdit.putString("pkg", pkginfo.packageName);
+	    	prefEdit.putString("pkg", apk_id);
+	    	prefEdit.commit();
+	    	startActivityForResult(intent,UPDATE);
+			Log.d("Aptoide-BaseManagement", "Updating Apk: "+apk_path);
+		} catch (Exception e) {
+			Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.failed_update), Toast.LENGTH_LONG);
+		}
 	}
 	
 		
