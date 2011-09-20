@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="cm.aptoide.pt" android:versionName="2.5.2" android:versionCode="312">
+	package="cm.aptoide.pt" android:versionName="2.5.2" android:versionCode="313">
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -55,7 +55,6 @@
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
 			<intent-filter>
 				<action android:name="pt.caixamagica.aptoide.INSTALL_APK_ACTION" />
-				<action android:name="pt.caixamagica.aptoide.UPDATE_APK_ACTION" />
 			</intent-filter>
 		</activity>
 		
@@ -67,6 +66,9 @@
 		
 		<activity android:name="TabUpdates" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask">
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
+			<intent-filter>
+				<action android:name="pt.caixamagica.aptoide.UPDATE_APK_ACTION" />
+			</intent-filter>
 		</activity>
 
 

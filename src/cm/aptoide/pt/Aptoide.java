@@ -73,9 +73,11 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 public class Aptoide extends Activity { 
@@ -407,11 +409,13 @@ public class Aptoide extends Activity {
 	}
 	
 	private void requestUpdateSelf(){
+		
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
     	alertBuilder.setCancelable(false)
     				.setPositiveButton(R.string.dialog_yes , new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int id) {
     						dialog.cancel();
+    						setContentView(R.layout.auto_updating);
     						new DownloadSelfUpdate().execute();
     					}
     				})    	
@@ -508,6 +512,7 @@ public class Aptoide extends Activity {
 			}catch (Exception e) { 
 //						download_error_handler.sendMessage(msg_al);
 				e.printStackTrace();
+				Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.network_auto_update_error), Toast.LENGTH_LONG);
 				Log.d("Aptoide-Auto-Update", "Update connection failed!  Keeping current version.");
 			}
 			return null;
@@ -535,11 +540,11 @@ public class Aptoide extends Activity {
 						Log.d("Aptoide",referenceMd5 + " VS " + hash.md5Calc(apk));
 		//				msg_al.arg1 = 0;
 		//						download_error_handler.sendMessage(msg_al);
-						
 						throw new Exception(referenceMd5 + " VS " + hash.md5Calc(apk));
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
+					Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.md5_auto_update_error), Toast.LENGTH_LONG);
 					Log.d("Aptoide-Auto-Update", "Update package checksum failed!  Keeping current version.");
 					if (this.dialog.isShowing()) {
 						this.dialog.dismiss();
