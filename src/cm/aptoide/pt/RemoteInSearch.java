@@ -431,7 +431,7 @@ public class RemoteInSearch extends ListActivity{
 			String[] logins = null; 
 			logins = db.getLogin(downloadNode.getRepo());
 					
-			downloadQueueService.startDownload(downloadNode, mctx);
+			downloadQueueService.startDownload(downloadNode);
 	
 		} catch(Exception e){	}
 	}

@@ -56,9 +56,11 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -68,12 +70,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -107,6 +109,37 @@ public class Aptoide extends Activity {
 	private ProgressBar mProgress;
 	private int mProgressStatus = 0;
 	
+	private Context mctx;
+	
+	private DownloadQueueService downloadQueueService;
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  Because we have bound to a explicit
+	        // service that we know is running in our own process, we can
+	        // cast its IBinder to a concrete class and directly access it.
+	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+	        downloadQueueService.setCurrentContext(mctx);
+	        
+	        Log.d("Aptoide", "DownloadQueueService bound to Aptoide");
+	    }
+	    
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        // Because it is running in our same process, we should never
+	        // see this happen.
+	        downloadQueueService = null;
+	        
+	        Log.d("Aptoide","DownloadQueueService unbound from Aptoide");
+	    }
+
+	};	
+	
+	private Bundle savedInstanceState;
+	
 	private Handler mHandler = new Handler();
 
 	
@@ -138,12 +171,17 @@ public class Aptoide extends Activity {
 					}else{
 						Log.d("Aptoide-startHandler", "receiving a myapp file");
 						downloadMyappFile(uri);
-						parseMyappFile(TMP_MYAPP_FILE);
-						i.putExtra("repos", server_lst);
-						if(get_apps.size() > 0){
-							//i.putExtra("uri", TMP_SRV_FILE);
-							i.putExtra("apps", get_apps);
-
+						try {
+							parseMyappFile(TMP_MYAPP_FILE);
+							i.putExtra("repos", server_lst);
+							if(get_apps.size() > 0){
+								//i.putExtra("uri", TMP_SRV_FILE);
+								i.putExtra("apps", get_apps);
+	
+							}
+						} catch (Exception e) {
+							Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
+							onCreate(savedInstanceState);
 						}
 					}
 				}
@@ -158,14 +196,18 @@ public class Aptoide extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        mctx = this;
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
-    	DownloadQueueServiceIntent = new Intent(getApplicationContext(), DownloadQueueService.class);
+    	DownloadQueueServiceIntent = new Intent(mctx, DownloadQueueService.class);
     	startService(DownloadQueueServiceIntent);
+
+    	mctx.bindService(new Intent(mctx, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     	
 //@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
-    	ActivityManager activityManager = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+    	ActivityManager activityManager = (ActivityManager)mctx.getSystemService(Context.ACTIVITY_SERVICE);
     	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
     	for (RunningTaskInfo runningTask : running) {
 			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.RemoteInTab")){	//RemoteInTab is the real Aptoide Activity
@@ -512,7 +554,7 @@ public class Aptoide extends Activity {
 			}catch (Exception e) { 
 //						download_error_handler.sendMessage(msg_al);
 				e.printStackTrace();
-				Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.network_auto_update_error), Toast.LENGTH_LONG);
+				Toast.makeText(mctx, mctx.getString(R.string.network_auto_update_error), Toast.LENGTH_LONG);
 				Log.d("Aptoide-Auto-Update", "Update connection failed!  Keeping current version.");
 			}
 			return null;
@@ -544,7 +586,7 @@ public class Aptoide extends Activity {
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
-					Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.md5_auto_update_error), Toast.LENGTH_LONG);
+					Toast.makeText(mctx, mctx.getString(R.string.md5_auto_update_error), Toast.LENGTH_LONG);
 					Log.d("Aptoide-Auto-Update", "Update package checksum failed!  Keeping current version.");
 					if (this.dialog.isShowing()) {
 						this.dialog.dismiss();
@@ -569,6 +611,7 @@ public class Aptoide extends Activity {
 
 	@Override
 	protected void onDestroy() {
+		mctx.unbindService(serviceConnection);
 		stopService(DownloadQueueServiceIntent);
 		super.onDestroy();
 	}
