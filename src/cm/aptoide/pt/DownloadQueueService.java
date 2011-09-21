@@ -100,8 +100,7 @@ public class DownloadQueueService extends Service {
 	}
 
 	
-	public void startDownload(DownloadNode downloadNode, Context context){
-		this.context = context;
+	public void startDownload(DownloadNode downloadNode){
 		HashMap<String,String> notification = new HashMap<String,String>();
 		notification.put("remotePath", downloadNode.getRemotePath());
 		notification.put("md5sum", downloadNode.getMd5sum());
@@ -130,6 +129,10 @@ public class DownloadQueueService extends Service {
 //		HashMap<String,String> notification = new HashMap<String,String>();
 //		notification.put("remotePath", remotePath);
 //	}
+	
+	public void setCurrentContext(Context context){
+		this.context = context;
+	}
 
 	private void setNotification(int apkidHash, int progress) {
 
