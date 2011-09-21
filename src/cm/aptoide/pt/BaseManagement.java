@@ -546,9 +546,9 @@ public class BaseManagement extends Activity {
 			logins = db.getLogin(downloadNode.getRepo());
 
 			downloadNode.setLogins(logins);
-			Log.d("Aptoide-BaseManagement","queueing download: "+packageName);	
+			Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
 
-			downloadQueueService.startDownload(downloadNode, this);
+			downloadQueueService.startDownload(downloadNode);
 
 		} catch(Exception e){	}
 	}
