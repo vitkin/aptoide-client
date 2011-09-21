@@ -31,7 +31,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	private int pos = -1;
 	
 	private UpdateApkListener updateApkListener = null;
-	private boolean updateApkListenerIsRegistered = false;
+//	private boolean updateApkListenerIsRegistered = false;
 
 	protected class UpdateApkListener extends BroadcastReceiver {
 		@Override
@@ -39,7 +39,6 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 			Log.d("Aptoide-TabUpdates", "broadcast received");
 			if (intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
 				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"));
-				onPause();
 			}
 		}
 	}
@@ -57,6 +56,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		//mctx = this;
 		
 		updateApkListener = new UpdateApkListener();
+		registerReceiver(updateApkListener, new IntentFilter("pt.caixamagica.aptoide.UPDATE_APK_ACTION"));
 	}
 	
 	
@@ -107,27 +107,27 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	
 	
 	
-	@Override
-	protected void onPause() {
-		if (!updateApkListenerIsRegistered) {
-            unregisterReceiver(updateApkListener);
-            updateApkListenerIsRegistered = false;
-        }
-		Log.d("Aptoide-TabUpdates", "updateApkListenerIsUnregistered");
-		
-		super.onPause();
-	}
+//	@Override
+//	protected void onPause() {
+//		if (!updateApkListenerIsRegistered) {
+//            unregisterReceiver(updateApkListener);
+//            updateApkListenerIsRegistered = false;
+//        }
+//		Log.d("Aptoide-TabUpdates", "updateApkListenerIsUnregistered");
+//		
+//		super.onPause();
+//	}
 
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		
-		if (!updateApkListenerIsRegistered) {
-            registerReceiver(updateApkListener, new IntentFilter("pt.caixamagica.aptoide.UPDATE_APK_ACTION"));
-            updateApkListenerIsRegistered = true;
-        }
-		Log.d("Aptoide-TabUpdates", "updateApkListenerIsRegistered");
+//		if (!updateApkListenerIsRegistered) {
+//            registerReceiver(updateApkListener, new IntentFilter("pt.caixamagica.aptoide.UPDATE_APK_ACTION"));
+//            updateApkListenerIsRegistered = true;
+//        }
+//		Log.d("Aptoide-TabUpdates", "updateApkListenerIsRegistered");
 
 		
 		new Thread(){

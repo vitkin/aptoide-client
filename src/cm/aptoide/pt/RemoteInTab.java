@@ -170,7 +170,7 @@ public class RemoteInTab extends TabActivity {
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 		
-		mctx = this;
+		mctx = getBaseContext();
 		
 		db = new DbHandler(this);
 
@@ -270,7 +270,7 @@ public class RemoteInTab extends TabActivity {
 						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
 						if(servers_lst != null && servers_lst.size() > 0){
 							intserver = new Intent(this, ManageRepo.class);
-							intserver.putExtra("uri", i.getSerializableExtra("uri"));
+							intserver.putExtra("uri", i.getSerializableExtra("repos"));
 						}else{
 							intserver = null;
 						}
@@ -288,19 +288,23 @@ public class RemoteInTab extends TabActivity {
 //								new Thread(new Runnable() {
 //									public void run() {
 //										installFromLink(nodi[0]);
-//									}
+//									}fetched
 //								}).start();
 
-								Log.d("Aptoide-RemoteInTab","queueing download: "+app[1]);	
+								Log.d("Aptoide-RemoteInTab","queueing download: "+app[0]+" "+app[1]+ " "+app[2]+" "+app[3]+" "+app[4]);	
 
-								DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3]), SDCARD+"/.aptoide/fetched.apk", app[4]);
+								DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3])/1000, SDCARD+"/.aptoide/"+app[4]+".apk", app[4]);
 								downloadNode.setAppName(app[1]);
-								downloadQueueService.startDownload(downloadNode, getApplicationContext());
+								downloadQueueService.startDownload(downloadNode);
+
+								startActivityForResult(intserver, NEWREPO_FLAG);
 							}
 						});
 						alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
 							public void onClick(DialogInterface dialog, int which) {
 								alrt.dismiss();
+
+								startActivityForResult(intserver, NEWREPO_FLAG);
 							}
 						});
 						alrt.show();
@@ -934,7 +938,7 @@ public class RemoteInTab extends TabActivity {
 				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
 				if(servers_lst != null && servers_lst.size() > 0){
 					intserver = new Intent(this, ManageRepo.class);
-					intserver.putExtra("uri", intent.getSerializableExtra("uri"));
+					intserver.putExtra("uri", intent.getSerializableExtra("repos"));
 				}else{
 					intserver = null;
 				}
@@ -955,18 +959,20 @@ public class RemoteInTab extends TabActivity {
 //							}
 //						}).start();
 						
-						Log.d("Aptoide-RemoteInTab","queueing download: "+app[1]);	
+						Log.d("Aptoide-RemoteInTab","queueing download: "+app[0]+" "+app[1]+ " "+app[2]+" "+app[3]+" "+app[4]);	
 
-						DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3]), SDCARD+"/.aptoide/fetched.apk", app[4]);
+						DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3])/1000, SDCARD+"/.aptoide/"+app[4]+".apk", app[4]);
 						downloadNode.setAppName(app[1]);
-						downloadQueueService.startDownload(downloadNode, getApplicationContext());
+						downloadQueueService.startDownload(downloadNode);
 
-
+						startActivityForResult(intserver, NEWREPO_FLAG);
 					}
 				});
 				alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						alrt.dismiss();
+
+						startActivityForResult(intserver, NEWREPO_FLAG);
 					}
 				});
 				alrt.show();
