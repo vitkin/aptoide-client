@@ -170,7 +170,7 @@ public class RemoteInTab extends TabActivity {
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 		
-		mctx = getBaseContext();
+		mctx = this;
 		
 		db = new DbHandler(this);
 
@@ -312,7 +312,7 @@ public class RemoteInTab extends TabActivity {
 						Intent call = new Intent(this, ManageRepo.class);
 						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
 						if(servers_lst != null && servers_lst.size() > 0){
-							call.putExtra("uri", i.getSerializableExtra("uri"));
+							call.putExtra("uri", i.getSerializableExtra("repos"));
 							startActivityForResult(call,NEWREPO_FLAG);
 						}
 					}
@@ -980,7 +980,7 @@ public class RemoteInTab extends TabActivity {
 				Intent call = new Intent(this, ManageRepo.class);
 				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
 				if(servers_lst != null && servers_lst.size() > 0){
-					call.putExtra("uri", intent.getSerializableExtra("uri"));
+					call.putExtra("uri", intent.getSerializableExtra("repos"));
 					startActivityForResult(call,NEWREPO_FLAG);
 				}
 			}
