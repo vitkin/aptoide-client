@@ -73,7 +73,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -922,6 +921,7 @@ public class RemoteInTab extends TabActivity {
 		super.onConfigurationChanged(newConfig);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
