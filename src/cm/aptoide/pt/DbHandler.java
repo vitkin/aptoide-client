@@ -102,24 +102,6 @@ public class DbHandler {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param catg
-	 * @param catg_ord
-	 */
-	public void getTopDownloads(String catg, String catg_ord){
-		
-	}
-	
-	/**
-	 * 
-	 * @param catg
-	 */
-	public void getTopDownloads(String catg){
-		
-	}
-	
-	
 	int[] getCountMainCtg(){
 		final String basic_query = "select a.catg_ord, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where not exists " +
 				                   "(select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg_ord;";
