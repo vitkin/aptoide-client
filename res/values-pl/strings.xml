@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5.1-beta5"</string>
-    <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string>
     
     <string name="tab_avail">Dostępne</string>
     <string name="tab_inst">Zainstalowane</string>

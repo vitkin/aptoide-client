@@ -870,15 +870,14 @@ public class DbHandler {
 			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size", "lastver"}, "apkid='"+id_apk+"' and lastver ='"+ver+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
-				DownloadNode node = new DownloadNode();
-				node.repo = c.getString(0);
-				node.path = c.getString(1);
-				if(c.isNull(2)){
-					node.md5h = null;
-				}else{
-					node.md5h = c.getString(2);
+				String repo = c.getString(0);
+				String remotePath = repo+"/"+c.getString(1);
+				String md5sum = null;
+				if(!c.isNull(2)){
+					md5sum = c.getString(2);
 				}
-				node.size = c.getInt(3);
+				int size = c.getInt(3);
+				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size);
 				node.version = c.getString(4);
 				out.add(node);
 			}
@@ -905,15 +904,11 @@ public class DbHandler {
 			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id_apk+"' and ver ='"+ver+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
-				DownloadNode node = new DownloadNode();
-				node.repo = c.getString(0);
-				node.path = c.getString(1);
-				if(c.isNull(2)){
-					node.md5h = null;
-				}else{
-					node.md5h = c.getString(2);
+				String md5h = null;
+				if(!c.isNull(2)){
+					md5h = c.getString(2);
 				}
-				node.size = c.getInt(3);
+				DownloadNode node = new DownloadNode(c.getString(0), c.getString(1), md5h, c.getInt(3));
 				out.add(node);
 			}
 			//c.close();
