@@ -23,7 +23,12 @@
     <string name="finished_download_message">Click to install application:\n </string>
      
     <string name="md5_error">The downloaded application md5 check failed!\nPlease update your repositories before retrying.</string>
+    <string name="md5_auto_update_error">Update package checksum failed!  Keeping current version.</string>
+    <string name="network_auto_update_error">Update connection failed!  Keeping current version.</string>
     <string name="network_error">There has been an error while fetching the application.\nPlease try again.</string>
+    
+    <string name="failed_update">Application update has failed!</string>
+    <string name="failed_install">Application install has failed!</string>
     
 </resources>
 <!--

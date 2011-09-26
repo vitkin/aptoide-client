@@ -29,7 +29,6 @@ import java.util.concurrent.TimeoutException;
 
 import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -60,6 +59,7 @@ import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInSearch extends ListActivity{
 	
@@ -422,22 +422,24 @@ public class RemoteInSearch extends ListActivity{
 		
 		try{
 		
-			String apkid = apk_lst.get(position).apkid;
-			String apkName = apk_lst.get(position).name;
+			String packageName = apk_lst.get(position).apkid;
+			String appName = apk_lst.get(position).name;
 			
 			/*Changed by Rafael Campos*/
-			tmp_serv = db.getPathHash(apkid, apk_lst.get(position).ver);
+			tmp_serv = db.getPathHash(packageName, apk_lst.get(position).ver);
 			if(tmp_serv.size()==0){
-				tmp_serv = db.getPathHashOld(apkid, apk_lst.get(position).ver);
+				tmp_serv = db.getPathHashOld(packageName, apk_lst.get(position).ver);
 			}
 			
 			
 			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
 			
 			//if(tmp_serv.size() > 0){
-			DownloadNode downloadNode = new DownloadNode();
-			downloadNode = tmp_serv.firstElement();
-			String remotePath = downloadNode.repo + "/" + downloadNode.path;
+			DownloadNode downloadNode = tmp_serv.firstElement();
+			downloadNode.setPackageName(packageName);
+			downloadNode.setAppName(appName);
+			downloadNode.setLocalPath(localPath);
+			String remotePath = downloadNode.getRemotePath();
 			
 			//}
 	
@@ -445,10 +447,9 @@ public class RemoteInSearch extends ListActivity{
 				throw new TimeoutException();
 			
 			String[] logins = null; 
-			logins = db.getLogin(downloadNode.repo);
+			logins = db.getLogin(downloadNode.getRepo());
 					
-			//TODO refactor DownloadNode to include all needed fields @dsilveira
-			downloadQueueService.startDownload(localPath, downloadNode, apkName, logins, mctx, false);
+			downloadQueueService.startDownload(downloadNode);
 	
 		} catch(Exception e){	}
 	}

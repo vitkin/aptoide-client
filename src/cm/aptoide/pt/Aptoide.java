@@ -56,9 +56,11 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -68,6 +70,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -76,6 +79,7 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 
 public class Aptoide extends Activity { 
@@ -84,7 +88,7 @@ public class Aptoide extends Activity {
     
 	private static final int LOAD_TABS = 0;
 	private static final int UPDATE_SELF = 99;
-    private static final String TMP_SRV_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
+    private static final String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
     private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/aptoideUpdate.apk";
 	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
 	
@@ -92,7 +96,7 @@ public class Aptoide extends Activity {
 	private Intent DownloadQueueServiceIntent;
     
     private Vector<String> server_lst = null;
-    private Vector<String[]> get_apks = null;
+    private Vector<String[]> get_apps = null;
     
     // Used for Aptoide version update
 	private DbHandler db = null;
@@ -104,6 +108,37 @@ public class Aptoide extends Activity {
 	
 	private ProgressBar mProgress;
 	private int mProgressStatus = 0;
+	
+	private Context mctx;
+	
+	private DownloadQueueService downloadQueueService;
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  Because we have bound to a explicit
+	        // service that we know is running in our own process, we can
+	        // cast its IBinder to a concrete class and directly access it.
+	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+	        downloadQueueService.setCurrentContext(mctx);
+	        
+	        Log.d("Aptoide", "DownloadQueueService bound to Aptoide");
+	    }
+	    
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        // Because it is running in our same process, we should never
+	        // see this happen.
+	        downloadQueueService = null;
+	        
+	        Log.d("Aptoide","DownloadQueueService unbound from Aptoide");
+	    }
+
+	};	
+	
+	private Bundle savedInstanceState;
 	
 	private Handler mHandler = new Handler();
 
@@ -119,26 +154,34 @@ public class Aptoide extends Activity {
 				if(get.getData() != null){
 					String uri = get.getDataString();
 					if(uri.startsWith("aptoiderepo")){
+						Log.d("Aptoide-startHandler", "aptoiderepo-scheme");
 						String repo = uri.substring(14);
 						i.putExtra("newrepo", repo);
 					}else if(uri.startsWith("aptoidexml")){
+						Log.d("Aptoide-startHandler", "aptoidexml-scheme");
 						String repo = uri.substring(13);
 						parseXmlString(repo);
-						i.putExtra("uri", server_lst);
-						if(get_apks.size() > 0){
+						i.putExtra("repos", server_lst);
+						if(get_apps.size() > 0){
 							//i.putExtra("uri", TMP_SRV_FILE);
-							i.putExtra("apks", get_apks);
+							i.putExtra("apps", get_apps);
 
 						}
 						//i.putExtra("linkxml", repo);
 					}else{
-						downloadServ(uri);
-						getRemoteServLst(TMP_SRV_FILE);
-						i.putExtra("uri", server_lst);
-						if(get_apks.size() > 0){
-							//i.putExtra("uri", TMP_SRV_FILE);
-							i.putExtra("apks", get_apks);
-
+						Log.d("Aptoide-startHandler", "receiving a myapp file");
+						downloadMyappFile(uri);
+						try {
+							parseMyappFile(TMP_MYAPP_FILE);
+							i.putExtra("repos", server_lst);
+							if(get_apps.size() > 0){
+								//i.putExtra("uri", TMP_SRV_FILE);
+								i.putExtra("apps", get_apps);
+	
+							}
+						} catch (Exception e) {
+							Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
+							onCreate(savedInstanceState);
 						}
 					}
 				}
@@ -154,14 +197,18 @@ public class Aptoide extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
+        
+        mctx = this;
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
-    	DownloadQueueServiceIntent = new Intent(getApplicationContext(), DownloadQueueService.class);
+    	DownloadQueueServiceIntent = new Intent(mctx, DownloadQueueService.class);
     	startService(DownloadQueueServiceIntent);
+
+    	mctx.bindService(new Intent(mctx, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     	
 //@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
-    	ActivityManager activityManager = (ActivityManager)getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+    	ActivityManager activityManager = (ActivityManager)mctx.getSystemService(Context.ACTIVITY_SERVICE);
     	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
     	for (RunningTaskInfo runningTask : running) {
 			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.RemoteInTab")){	//RemoteInTab is the real Aptoide Activity
@@ -177,7 +224,6 @@ public class Aptoide extends Activity {
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
         
-   		db = new DbHandler(this);
    		
    		PackageManager mPm = getPackageManager();
    		try {
@@ -201,6 +247,8 @@ public class Aptoide extends Activity {
     }
     
     private void proceed(){
+   		db = new DbHandler(this);
+   		
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
 	   		db.UpdateTables();
 	   		prefEdit.putBoolean("mode", true);
@@ -300,17 +348,17 @@ public class Aptoide extends Activity {
 		}
 	}
     
-	private void downloadServ(String srv){
+	private void downloadMyappFile(String myappUri){
 		try{
 			keepScreenOn.acquire();
 			
-			BufferedInputStream getit = new BufferedInputStream(new URL(srv).openStream());
+			BufferedInputStream getit = new BufferedInputStream(new URL(myappUri).openStream());
 
-			File file_teste = new File(TMP_SRV_FILE);
+			File file_teste = new File(TMP_MYAPP_FILE);
 			if(file_teste.exists())
 				file_teste.delete();
 			
-			FileOutputStream saveit = new FileOutputStream(TMP_SRV_FILE);
+			FileOutputStream saveit = new FileOutputStream(TMP_MYAPP_FILE);
 			BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
 			byte data[] = new byte[1024];
 			
@@ -337,7 +385,7 @@ public class Aptoide extends Activity {
 		}
 	}
 	
-	private void getRemoteServLst(String file){
+	private void parseMyappFile(String file){
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 	    try {
 	    	keepScreenOn.acquire();
@@ -353,7 +401,7 @@ public class Aptoide extends Activity {
 	    	File xml_file = new File(file);
 	    	xml_file.delete();
 	    	server_lst = handler.getNewSrvs();
-	    	get_apks = handler.getNewApks();
+	    	get_apps = handler.getNewApps();
 	    	
 	    	keepScreenOn.release();
 	    	
@@ -380,7 +428,7 @@ public class Aptoide extends Activity {
 	    	is.setCharacterStream(new StringReader(file));
 	    	xr.parse(is);
 	    	server_lst = handler.getNewSrvs();
-	    	get_apks = handler.getNewApks();
+	    	get_apps = handler.getNewApps();
 	    	
 	    	keepScreenOn.release();
 	    	
@@ -406,11 +454,13 @@ public class Aptoide extends Activity {
 	}
 	
 	private void requestUpdateSelf(){
+		
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
     	alertBuilder.setCancelable(false)
     				.setPositiveButton(R.string.dialog_yes , new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int id) {
     						dialog.cancel();
+    						setContentView(R.layout.auto_updating);
     						new DownloadSelfUpdate().execute();
     					}
     				})    	
@@ -507,6 +557,7 @@ public class Aptoide extends Activity {
 			}catch (Exception e) { 
 //						download_error_handler.sendMessage(msg_al);
 				e.printStackTrace();
+				Toast.makeText(mctx, mctx.getString(R.string.network_auto_update_error), Toast.LENGTH_LONG);
 				Log.d("Aptoide-Auto-Update", "Update connection failed!  Keeping current version.");
 			}
 			return null;
@@ -534,11 +585,11 @@ public class Aptoide extends Activity {
 						Log.d("Aptoide",referenceMd5 + " VS " + hash.md5Calc(apk));
 		//				msg_al.arg1 = 0;
 		//						download_error_handler.sendMessage(msg_al);
-						
 						throw new Exception(referenceMd5 + " VS " + hash.md5Calc(apk));
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
+					Toast.makeText(mctx, mctx.getString(R.string.md5_auto_update_error), Toast.LENGTH_LONG);
 					Log.d("Aptoide-Auto-Update", "Update package checksum failed!  Keeping current version.");
 					if (this.dialog.isShowing()) {
 						this.dialog.dismiss();
@@ -563,6 +614,7 @@ public class Aptoide extends Activity {
 
 	@Override
 	protected void onDestroy() {
+		mctx.unbindService(serviceConnection);
 		stopService(DownloadQueueServiceIntent);
 		super.onDestroy();
 	}

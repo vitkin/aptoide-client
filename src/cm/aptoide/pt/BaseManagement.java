@@ -40,6 +40,7 @@ import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
 
@@ -315,31 +316,42 @@ public class BaseManagement extends Activity {
 	}
 	
 	protected void installApk(String apk_path, String ver){
-		pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
-		if(pkginfo == null){
-			// Ficheiro está corrupto, temos de verificar!
-		}else{
-			Intent intent = new Intent();
-			intent.setAction(android.content.Intent.ACTION_VIEW);
-			intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
-			prefEdit.putString("pkg", pkginfo.packageName);
-			prefEdit.putString("ver", ver);
-			prefEdit.commit();
-			startActivityForResult(intent,INSTALL);
-			Log.d("Aptoide-BaseManagement", "Installing Apk: "+apk_path);
+
+		try {
+			pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
+			if(pkginfo == null){
+				// Ficheiro está corrupto, temos de verificar!
+			}else{
+				Intent intent = new Intent();
+				intent.setAction(android.content.Intent.ACTION_VIEW);
+				intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
+				prefEdit.putString("ver", ver);
+				prefEdit.putString("pkg", pkginfo.packageName);
+				prefEdit.commit();
+				startActivityForResult(intent,INSTALL);
+				Log.d("Aptoide-BaseManagement", "Installing Apk: "+apk_path);
+			}
+		} catch (Exception e) {
+			Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.failed_install), Toast.LENGTH_LONG);
 		}
 	}
 	
 	protected void updateApk(String apk_path, String apk_id, String ver){	
-		pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
-		Intent intent = new Intent();
-    	intent.setAction(android.content.Intent.ACTION_VIEW);
-    	intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
-    	prefEdit.putString("pkg", pkginfo.packageName);
-    	prefEdit.putString("ver", ver);
-    	prefEdit.commit();
-    	startActivityForResult(intent,UPDATE);
-		Log.d("Aptoide-BaseManagement", "Updating Apk: "+apk_path);
+
+		try {		
+			pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
+			Intent intent = new Intent();
+	    	intent.setAction(android.content.Intent.ACTION_VIEW);
+	    	intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
+	//    	prefEdit.putString("pkg", pkginfo.packageName);
+	    	prefEdit.putString("pkg", apk_id);
+    		prefEdit.putString("ver", ver);
+	    	prefEdit.commit();
+	    	startActivityForResult(intent,UPDATE);
+			Log.d("Aptoide-BaseManagement", "Updating Apk: "+apk_path);
+		} catch (Exception e) {
+			Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.failed_update), Toast.LENGTH_LONG);
+		}
 	}
 	
 		
@@ -574,32 +586,34 @@ public class BaseManagement extends Activity {
 
 	}
 
-	/*Changed by Rafael*/
-	protected void queueDownload(String apkid, String ver, boolean isUpdate){
+	protected void queueDownload(String packageName, String ver, boolean isUpdate){
 
 
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 
 		try{
 			
-			tmp_serv = db.getPathHash(apkid, ver);
+			tmp_serv = db.getPathHash(packageName, ver);
 			if(tmp_serv.size()==0){
-				tmp_serv = db.getPathHashOld(apkid, ver);
+				tmp_serv = db.getPathHashOld(packageName, ver);
 			}
-			
-			String localPath = new String(LOCAL_APK_PATH+apkid+".apk");
-			String apkName = apkid;
+
+			String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
+			String appName = packageName;
 			for(ApkNode node: apk_lst){
-				if(node.apkid.equals(apkid)){
-					apkName = node.name;
+				if(node.apkid.equals(packageName)){
+					appName = node.name;
 					break;
 				}
 			}
 
 			//if(tmp_serv.size() > 0){
-			DownloadNode downloadNode = new DownloadNode();
-			downloadNode = tmp_serv.firstElement();
-			String remotePath = downloadNode.repo + "/" + downloadNode.path;
+			DownloadNode downloadNode = tmp_serv.firstElement();
+			downloadNode.setPackageName(packageName);
+			downloadNode.setAppName(appName);
+			downloadNode.setLocalPath(localPath);
+			downloadNode.setUpdate(isUpdate);
+			String remotePath = downloadNode.getRemotePath();
 
 			//}
 
@@ -607,12 +621,12 @@ public class BaseManagement extends Activity {
 				throw new TimeoutException();
 
 			String[] logins = null; 
-			logins = db.getLogin(downloadNode.repo);
+			logins = db.getLogin(downloadNode.getRepo());
 
-			Log.d("Aptoide-BaseManagement","queueing download: "+apkid);	
+			downloadNode.setLogins(logins);
+			Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
 
-			//TODO refactor DownloadNode to include all needed fields @dsilveira
-			downloadQueueService.startDownload(localPath, downloadNode, apkName, logins, this, isUpdate);
+			downloadQueueService.startDownload(downloadNode);
 
 		} catch(Exception e){	}
 	}
