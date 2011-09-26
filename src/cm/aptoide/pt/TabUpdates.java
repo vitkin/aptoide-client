@@ -2,9 +2,8 @@ package cm.aptoide.pt;
 
 import java.util.Vector;
 
-import cm.aptoide.summerinternship2011.ConfigsAndUtils;
-import cm.aptoide.summerinternship2011.multiversion.VersionApk;
 
+import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 import android.content.Intent;
@@ -39,10 +38,12 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		lv = new ListView(this);
-		if(ConfigsAndUtils.INTERFACE_TABS_ON_BOTTOM){
-			lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistupd_tab_bottom));
-		}else{
-			lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistupd_tab_top));
+		if(Configs.BACKGROUND_ON_TABS){
+			if(Configs.INTERFACE_TABS_ON_BOTTOM){
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistupd_tab_bottom));
+			}else{
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistupd_tab_top));
+			}
 		}
 		lv.setCacheColorHint(0);
 		lv.setFastScrollEnabled(true);
