@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cm.aptoide.pt.utils.webservices;
+package cm.aptoide.pt.comments;
 
 import java.io.InputStream;
 

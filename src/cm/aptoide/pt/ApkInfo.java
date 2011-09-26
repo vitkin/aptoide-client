@@ -114,7 +114,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private WrapperUserTaste userTaste;
 	private TastePoster tastePoster;
 	
-	private static final int HEADERS = 2; // The number of header items on the list view
+	private static int headers = 2; // The number of header items on the list view
 	
 	/**
 	 * @author rafael
@@ -359,7 +359,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Comments*/
-		if(applicationExistsInRepo){
+		if(applicationExistsInRepo && Configs.COMMENTS_LIST_ON){
 			//Stop comments for applications not present in the repository
 			
 			listView.setOnItemClickListener(new OnItemClickListener(){
@@ -375,13 +375,16 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				}
 			});
 			//listView.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.apkinfoheader));
-			TextView textView = new TextView(this);
-			textView.setText(this.getString(R.string.commentlabel));
-			textView.setTextSize(20);
-			textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-			textView.setPadding(0, 10, 0, 10);
-			textView.setGravity(Gravity.CENTER_HORIZONTAL);
-			listView.addHeaderView(textView);
+			
+			if(Configs.COMMENTS_ADD_ON){
+				TextView textView = new TextView(this);
+				textView.setText(this.getString(R.string.commentlabel));
+				textView.setTextSize(20);
+				textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+				textView.setPadding(0, 10, 0, 10);
+				textView.setGravity(Gravity.CENTER_HORIZONTAL);
+				listView.addHeaderView(textView);
+			}else{ headers--; }
 			
 			LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
 			listView.addFooterView(loadComLayout);
@@ -428,7 +431,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
 							apk_ver_str_raw = versionApk.getVersion();
-							selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+							if(Configs.TASTE_LIST_ON){
+								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+							}
 							int result = versionApk.compareTo(versionInstApk);
 							if(result>0){
 								action.setText("Update");
@@ -438,7 +443,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								action.setText(ApkInfo.this.getString(R.string.isinstalled));
 							}
 							
-							loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+							if(Configs.COMMENTS_LIST_ON){
+								loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+							}
 							
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
@@ -470,11 +477,13 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Taste*/
-		if(applicationExistsInRepo){
+		if(applicationExistsInRepo && Configs.TASTE_LIST_ON){
 			
-			if(type==1)
+			if(type==1){
 				selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+			}
 			
+			if(Configs.TASTE_ADD_ON){
 			this.like.setOnTouchListener(new OnTouchListener(){
 			      public boolean onTouch(View view, MotionEvent e) {
 			          switch(e.getAction())
@@ -553,6 +562,15 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			          return false;  //means that the listener dosen't consume the event
 			      }
 			});
+			}else{
+				this.dislike.getLayoutParams().height=0;
+				this.like.getLayoutParams().height=0;
+			}
+		} else {
+			this.dislike.getLayoutParams().height=0;
+			this.like.getLayoutParams().height=0;
+			this.likes.getLayoutParams().height=0;
+			this.dislikes.getLayoutParams().height=0;
 		}
 		
 	}
@@ -672,7 +690,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		Event event = Event.getEventFromId(item.getItemId());
-		Comment getted = commentAdapter.getItem((((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position-HEADERS));
+		Comment getted = commentAdapter.getItem((((AdapterView.AdapterContextMenuInfo)item.getMenuInfo()).position-headers));
 		if(event!=null){
 			switch (event) {
 	        	case REPLY: 
