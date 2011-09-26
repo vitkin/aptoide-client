@@ -16,7 +16,6 @@ import cm.aptoide.pt.R;
 import cm.aptoide.pt.exceptions.EmptyRequestException;
 import cm.aptoide.pt.exceptions.EndOfRequestReachedSAXException;
 import cm.aptoide.pt.exceptions.FailedRequestSAXException;
-import cm.aptoide.pt.utils.webservices.GifView;
 
 import android.app.Activity;
 import android.content.Context;

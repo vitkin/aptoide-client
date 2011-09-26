@@ -119,45 +119,54 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		
 		lst_pref_icns = (ListPreference) findPreference("icdown");
 		Preference clear_credentials = (Preference)findPreference("clearcredentials");
-
-		
-		clear_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			
-			public boolean onPreferenceClick(Preference preference) {
-
-				prefEditFull.remove( Configs.LOGIN_USER_NAME );
-				prefEditFull.remove( Configs.LOGIN_PASSWORD );
-				prefEditFull.remove( Configs.LOGIN_USER_ID );
-				prefEditFull.commit();
-				
-				final AlertDialog alrtClear = new AlertDialog.Builder(mctx).create();
-				alrtClear.setTitle(mctx.getString(R.string.credentialscleared));
-				alrtClear.setMessage(mctx.getString(R.string.credentialscleared_des));
-				alrtClear.setButton("Ok", new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						alrtClear.dismiss();
-					}
-				});
-				alrtClear.show();
-				
-				
-				
-				return true;
-				
-			}
-		});
-		
 		Preference set_credentials = (Preference)findPreference("setcredentials");
-
 		
-		set_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		if((Configs.COMMENTS_ADD_ON && Configs.COMMENTS_LIST_ON) || (Configs.TASTE_ADD_ON && Configs.TASTE_LIST_ON)){
 			
-			public boolean onPreferenceClick(Preference preference) {
-				LoginDialog loginComments = new LoginDialog(Settings.this, LoginDialog.InvoqueNature.OVERRIDE_CREDENTIALS);
-				loginComments.show();
-				return true;	
-			}
-		});
+			clear_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				
+				public boolean onPreferenceClick(Preference preference) {
+	
+					prefEditFull.remove( Configs.LOGIN_USER_NAME );
+					prefEditFull.remove( Configs.LOGIN_PASSWORD );
+					prefEditFull.remove( Configs.LOGIN_USER_ID );
+					prefEditFull.commit();
+					
+					final AlertDialog alrtClear = new AlertDialog.Builder(mctx).create();
+					alrtClear.setTitle(mctx.getString(R.string.credentialscleared));
+					alrtClear.setMessage(mctx.getString(R.string.credentialscleared_des));
+					alrtClear.setButton("Ok", new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							alrtClear.dismiss();
+						}
+					});
+					alrtClear.show();
+					
+					
+					
+					return true;
+					
+				}
+			});
+			
+		
+			
+	
+			
+			set_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				
+				public boolean onPreferenceClick(Preference preference) {
+					LoginDialog loginComments = new LoginDialog(Settings.this, LoginDialog.InvoqueNature.OVERRIDE_CREDENTIALS);
+					loginComments.show();
+					return true;	
+				}
+			});
+			
+		}else{
+			clear_credentials.setEnabled(false);
+			set_credentials.setEnabled(false);
+		}
+		
 		
 		clear_cache = (Preference)findPreference("clearcache");
 		clear_cache.setOnPreferenceClickListener(new OnPreferenceClickListener() {

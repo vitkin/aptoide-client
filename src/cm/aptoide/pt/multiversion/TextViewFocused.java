@@ -16,12 +16,12 @@ import android.widget.TextView;
  * 
  * The purpose of this class was to provide a nice marquee on in a TextView without the need of focus on it.
  */
-public class TextViewFocusedView extends TextView {
+public class TextViewFocused extends TextView {
 
 	/**
 	 * @param context
 	 */
-	public TextViewFocusedView(Context context) {
+	public TextViewFocused(Context context) {
 		super(context);
 	}
 
@@ -29,7 +29,7 @@ public class TextViewFocusedView extends TextView {
 	 * @param context
 	 * @param attrs
 	 */
-	public TextViewFocusedView(Context context, AttributeSet attrs) {
+	public TextViewFocused(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
@@ -38,7 +38,7 @@ public class TextViewFocusedView extends TextView {
 	 * @param attrs
 	 * @param defStyle
 	 */
-	public TextViewFocusedView(Context context, AttributeSet attrs, int defStyle) {
+	public TextViewFocused(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 	
