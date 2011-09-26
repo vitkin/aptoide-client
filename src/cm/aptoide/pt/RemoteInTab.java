@@ -44,7 +44,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import cm.aptoide.summerinternship2011.ConfigsAndUtils;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -161,7 +160,9 @@ public class RemoteInTab extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		super.setContentView(R.layout.tabhostbottom);
+		if(Configs.INTERFACE_TABS_ON_BOTTOM){
+			super.setContentView(R.layout.tabhostbottom);
+		}
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 		
@@ -174,13 +175,12 @@ public class RemoteInTab extends TabActivity {
 		prefEdit.putBoolean("update", true);
 		prefEdit.commit();
 		
-		//myTabHost = getTabHost();
-		if(ConfigsAndUtils.INTERFACE_TABS_ON_BOTTOM){
-			TabHost myTabHostConf = (TabHost)((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.tabhostbottom, null);
-			myTabHostConf.setup();
-		}
+//		if(ConfigsAndUtils.INTERFACE_TABS_ON_BOTTOM){
+//			TabHost myTabHostConf = (TabHost)((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.tabhostbottom, null);
+//			myTabHostConf.setup();
+//		}
 		myTabHost = getTabHost();
-		if(ConfigsAndUtils.INTERFACE_SILVER_TABS_ON){
+		if(Configs.INTERFACE_SILVER_TABS_ON){
 		
 			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
 			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());

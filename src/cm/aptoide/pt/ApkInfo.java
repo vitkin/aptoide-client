@@ -11,18 +11,17 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cm.aptoide.summerinternship2011.ConfigsAndUtils;
-import cm.aptoide.summerinternship2011.ImageAdapter;
-import cm.aptoide.summerinternship2011.comments.AddCommentDialog;
-import cm.aptoide.summerinternship2011.comments.Comment;
-import cm.aptoide.summerinternship2011.comments.CommentsAdapter;
-import cm.aptoide.summerinternship2011.comments.LoadOnScrollCommentList;
-import cm.aptoide.summerinternship2011.credentials.Login;
-import cm.aptoide.summerinternship2011.multiversion.MultiversionSpinnerAdapter;
-import cm.aptoide.summerinternship2011.multiversion.VersionApk;
-import cm.aptoide.summerinternship2011.taste.AddTaste;
-import cm.aptoide.summerinternship2011.taste.TastePoster;
-import cm.aptoide.summerinternship2011.taste.UserTaste;
+import cm.aptoide.pt.comments.AddCommentDialog;
+import cm.aptoide.pt.comments.Comment;
+import cm.aptoide.pt.comments.CommentPosterListOnScrollListener;
+import cm.aptoide.pt.comments.CommentsAdapter;
+import cm.aptoide.pt.credentials.LoginDialog;
+import cm.aptoide.pt.multiversion.MultiversionSpinnerAdapter;
+import cm.aptoide.pt.multiversion.VersionApk;
+import cm.aptoide.pt.taste.AddTaste;
+import cm.aptoide.pt.taste.EnumUserTaste;
+import cm.aptoide.pt.taste.TastePoster;
+import cm.aptoide.pt.utils.ImageAdapter;
 
 
 
@@ -99,7 +98,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	private Spinner spinnerMulti;
 	private CommentsAdapter<Comment> commentAdapter;
-	private LoadOnScrollCommentList loadOnScrollCommentList;
+	private CommentPosterListOnScrollListener loadOnScrollCommentList;
 	private String apk_repo_str;
 	private String apk_ver_str;
 	private String apk_id;
@@ -111,11 +110,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private String apk_repo_str_raw;
 	private String apk_ver_str_raw;
 	private String apk_size_str_raw;
-	private UserTaste taste;
+	private EnumUserTaste taste;
 	private WrapperUserTaste userTaste;
 	private TastePoster tastePoster;
 	
-	private static final int HEADERS = 2; // The number of header itens on the list view
+	private static final int HEADERS = 2; // The number of header items on the list view
 	
 	/**
 	 * @author rafael
@@ -124,11 +123,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	 */
 	public class WrapperUserTaste{
 		
-		private UserTaste userTaste;
+		private EnumUserTaste userTaste;
 		private int operatingThreads;
-		public WrapperUserTaste(){userTaste=UserTaste.NOTEVALUATED; operatingThreads=0;}
-		public UserTaste getValue(){ return userTaste; } 
-		public void setValue(UserTaste userTaste){ this.userTaste = userTaste; }
+		public WrapperUserTaste(){userTaste=EnumUserTaste.NOTEVALUATED; operatingThreads=0;}
+		public EnumUserTaste getValue(){ return userTaste; } 
+		public void setValue(EnumUserTaste userTaste){ this.userTaste = userTaste; }
 		public void incOperatingThreads(){ operatingThreads++; }
 		public void decOperatingThreads(){ 
 			if(operatingThreads!=0)
@@ -159,7 +158,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		this.dislike = ((ImageView)linearLayout.findViewById(R.id.dislikesImage));
 		
 		this.userTaste = new WrapperUserTaste();
-		this.taste = UserTaste.NOTEVALUATED;
+		this.taste = EnumUserTaste.NOTEVALUATED;
 		
 		tastePoster = null;
 		
@@ -361,7 +360,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		/*Comments*/
 		if(applicationExistsInRepo){
-			//Stop comments for aplications not present in the repository
+			//Stop comments for applications not present in the repository
 			
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -388,7 +387,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			listView.addFooterView(loadComLayout);
 			listView.setAdapter(commentAdapter);
 			try {
-				loadOnScrollCommentList = new LoadOnScrollCommentList(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
+				loadOnScrollCommentList = new CommentPosterListOnScrollListener(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
 				listView.setOnScrollListener(loadOnScrollCommentList);
 			} 
 			//catch (ParserConfigurationException e) 	{} 
@@ -482,17 +481,17 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			          {
 			             case MotionEvent.ACTION_DOWN:
 			            	 
-			            	 if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
-			            		Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, 
+			            	 if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(Configs.LOGIN_PASSWORD, null)==null){				
+			            		LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, 
 			            										dislike, apk_repo_str_raw , 
-			            										apk_id, apk_ver_str_raw, UserTaste.LIKE, userTaste);
+			            										apk_id, apk_ver_str_raw, EnumUserTaste.LIKE, userTaste);
 								loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
 							 }else{
 								 
 								 boolean userTasteBufEquals = false;
 								 synchronized(userTaste){
-									 userTasteBufEquals = userTaste.getValue().equals(UserTaste.LIKE);	 
+									 userTasteBufEquals = userTaste.getValue().equals(EnumUserTaste.LIKE);	 
 								 }
 								 
 								 if(!userTasteBufEquals){
@@ -502,9 +501,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							 				apk_repo_str_raw ,
 							 				apk_id, 
 							 				apk_ver_str_raw, 
-							 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
-							 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
-							 				UserTaste.LIKE, likes, dislikes, like, dislike, userTaste, null).submit();
+							 				sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+							 				sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+							 				EnumUserTaste.LIKE, likes, dislikes, like, dislike, userTaste, null).submit();
 									 
 								 } else {
 									 
@@ -523,16 +522,16 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			          {
 			             case MotionEvent.ACTION_DOWN:
 			            	 
-			            	  if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)==null){				
-			            		  	Login loginComments = new Login(ApkInfo.this, Login.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
-			            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, UserTaste.DONTLIKE, userTaste);
+			            	  if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(Configs.LOGIN_PASSWORD, null)==null){				
+			            		  	LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
+			            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, EnumUserTaste.DONTLIKE, userTaste);
 			            		  	loginComments.setOnDismissListener(ApkInfo.this);
 									loginComments.show();
 			            	  }else{
 			            		  
 			            		 boolean userTasteBufEquals = false;
 								 synchronized(userTaste){
-									 userTasteBufEquals = userTaste.getValue().equals(UserTaste.DONTLIKE);	 
+									 userTasteBufEquals = userTaste.getValue().equals(EnumUserTaste.DONTLIKE);	 
 								 }
 								 
 								 if(!userTasteBufEquals){
@@ -541,9 +540,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								 		apk_repo_str_raw,
 								 		apk_id, 
 								 		apk_ver_str_raw, 
-								 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
-								 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
-								 		UserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
+								 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+								 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+								 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
 								 } else {
 									 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 								 }
@@ -572,21 +571,21 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	 */
 	public void selectComments(){
 		 SharedPreferences sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-		 if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)!=null 
-				 && sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)!=null 
-				 && !taste.equals(UserTaste.NOTEVALUATED) 
-				&& !taste.equals(UserTaste.TASTELESS)){
+		 if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)!=null 
+				 && sharedPreferences.getString(Configs.LOGIN_PASSWORD, null)!=null 
+				 && !taste.equals(EnumUserTaste.NOTEVALUATED) 
+				&& !taste.equals(EnumUserTaste.TASTELESS)){
 				
 			 new AddTaste(
 				 		ApkInfo.this, 
 				 		apk_repo_str_raw,
 				 		apk_id, 
 				 		apk_ver_str_raw, 
-				 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
-				 		sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
+				 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+				 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
 				 		taste, likes, dislikes, like, dislike, userTaste, null).submit();
 			 
-			 taste = UserTaste.TASTELESS;
+			 taste = EnumUserTaste.TASTELESS;
 			 
 		 }
 	}
@@ -614,7 +613,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			tastePoster.cancel(true);
 		
 		tastePoster = new TastePoster(this, apkid, version, repo, likes, dontlikes, 
-													like, dislike, sharedPreferences.getString( ConfigsAndUtils.LOGIN_USER_ID , null),
+													like, dislike, sharedPreferences.getString( Configs.LOGIN_USER_ID , null),
 													userTaste);
 		tastePoster.execute();
 		
@@ -700,15 +699,15 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	 * 
 	 */
 	public void onDismiss(DialogInterface dialog) {
-		if(sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null)!=null && sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null)!=null){
+		if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)!=null && sharedPreferences.getString(Configs.LOGIN_PASSWORD, null)!=null){
 			new AddTaste(
 	 				ApkInfo.this, 
 	 				apk_repo_str_raw,
 	 				apk_id, 
 	 				apk_ver_str_raw, 
-	 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_USER_NAME, null), 
-	 				sharedPreferences.getString(ConfigsAndUtils.LOGIN_PASSWORD, null), 
-	 				((Login)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste, ApkInfo.this).submit();
+	 				sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+	 				sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+	 				((LoginDialog)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste, ApkInfo.this).submit();
 		}
 	}
 	
