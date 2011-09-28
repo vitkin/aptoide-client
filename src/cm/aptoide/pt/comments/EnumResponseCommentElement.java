@@ -2,7 +2,7 @@ package cm.aptoide.pt.comments;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  */
 public enum EnumResponseCommentElement {

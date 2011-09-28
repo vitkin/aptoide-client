@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * The adapter of the spinner responsible for showing the available versions.
  */

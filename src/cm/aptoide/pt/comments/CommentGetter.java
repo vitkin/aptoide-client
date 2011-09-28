@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.comments;
 
 import java.io.BufferedInputStream;
@@ -29,9 +26,8 @@ import cm.aptoide.pt.utils.webservices.EnumResponseStatus;
 import android.content.Context;
 
 /**
- * 
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * Example of the xml file structure. When success.
  * 

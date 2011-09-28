@@ -25,7 +25,7 @@ import cm.aptoide.pt.utils.webservices.EnumResponseStatus;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * Example of the xml file structure. When success.
  * 

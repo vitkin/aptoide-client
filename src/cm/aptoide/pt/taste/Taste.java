@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.taste;
 
 import java.io.BufferedInputStream;
@@ -24,10 +21,8 @@ import android.content.Context;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
- * Structure of the webservice:
- * 	http://dev.bazaarandroid.com/webservices/addApkLike/user/<username>/<passhash(sha1)>/<apkid>/<apkversion>/like/<mode>
  */
 public class Taste {
 	

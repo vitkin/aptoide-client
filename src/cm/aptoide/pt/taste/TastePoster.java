@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  */
 public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{

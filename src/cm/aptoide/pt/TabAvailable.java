@@ -28,7 +28,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class TabAvailable extends BaseManagement implements OnItemClickListener{
 

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt;
 
 import java.text.SimpleDateFormat;
@@ -39,10 +36,10 @@ public class Configs {
 	 */
 	public final static int COMMNETS_TO_LOAD = 2;
 	
-	public final static boolean TASTE_LIST_ON = true; 
-	public final static boolean COMMENTS_LIST_ON = true;
+	public final static boolean TASTE_ON = true; 
+	public final static boolean COMMENTS_ON = true;
 	public final static boolean COMMENTS_ADD_ON = true; // For this option have any meaning COMMENTS_LIST_ON = true;
-	public final static boolean TASTE_ADD_ON = true; // For this option have any meaning TASTE_LIST_ON = true;
+	public final static boolean TASTE_ADD_ON = true; 	// For this option have any meaning TASTE_LIST_ON = true;
 	
 	
 	private Configs(){}

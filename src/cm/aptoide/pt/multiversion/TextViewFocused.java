@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.multiversion;
 
 import android.content.Context;
@@ -10,7 +7,7 @@ import android.widget.TextView;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * @see android.widget.TextView
  * 

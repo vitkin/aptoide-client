@@ -1,9 +1,8 @@
 package cm.aptoide.pt.taste;
 
 /**
- * 
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  */
 public enum EnumResponseTasteElement {

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.comments;
 
 import java.io.BufferedReader;
@@ -27,36 +24,9 @@ import cm.aptoide.pt.exceptions.FailedRequestSAXException;
 import cm.aptoide.pt.utils.webservices.ResponseHandler;
 
 /**
- * 
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
- * Example of a normal xml file structure response.
- * 
- * <response>
- * 	<status>OK</status>
- * 	<listing>
- * 		<entry>
- * 			<id>34</id>
- * 			<username>fredde165487</username>
- * 			<answerto/>
- * 			<subject/>
- * 			<text>This app isnt the real market!</text>
- * 			<timestamp>2011-06-05 22:03:08.196793</timestamp>
- * 			<lang />
- * 			<useridhash>fc679c81a8259fe24e895442fd750e9fc6d20608</useridhash>
- * 		</entry>
- * 	</listing>
- * </response>
- * 
- * Example of a error return.
- * 
- * <response>
- * 	<status>FAIL</status>
- * 		<errors>
- * 			<entry>No apk was found with the given apkid and apkversion.</entry>
- * 		</errors><
- * </response>
  */
 public class Comment{
 	

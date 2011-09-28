@@ -59,7 +59,6 @@ import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInSearch extends ListActivity{
 	
@@ -425,7 +424,6 @@ public class RemoteInSearch extends ListActivity{
 			String packageName = apk_lst.get(position).apkid;
 			String appName = apk_lst.get(position).name;
 			
-			/*Changed by Rafael Campos*/
 			tmp_serv = db.getPathHash(packageName, apk_lst.get(position).ver);
 			if(tmp_serv.size()==0){
 				tmp_serv = db.getPathHashOld(packageName, apk_lst.get(position).ver);
@@ -446,8 +444,8 @@ public class RemoteInSearch extends ListActivity{
 			if(remotePath.length() == 0)
 				throw new TimeoutException();
 			
-			String[] logins = null; 
-			logins = db.getLogin(downloadNode.getRepo());
+//			String[] logins = null; 
+//			logins = db.getLogin(downloadNode.getRepo());
 					
 			downloadQueueService.startDownload(downloadNode);
 	

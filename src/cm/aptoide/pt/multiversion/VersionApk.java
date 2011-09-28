@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.multiversion;
 
 import java.util.ArrayList;
@@ -11,7 +8,7 @@ import android.os.Parcelable;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * A description of a application version that enables to work easily with them.
  */

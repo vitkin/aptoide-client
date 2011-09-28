@@ -25,7 +25,6 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 
 public class TabUpdates extends BaseManagement implements OnItemClickListener{

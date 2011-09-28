@@ -118,7 +118,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	/**
 	 * @author rafael
-	 * @since summerinternship2011
+	 * @since 2.5.3
 	 * 
 	 */
 	public class WrapperUserTaste{
@@ -135,6 +135,38 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		}
 		public int getOperatingThreads(){ return operatingThreads; }
 		
+	}
+	
+	/**
+	 * @author rafael
+	 * @since 2.5.3
+	 * 
+	 */
+	public enum Event{
+		REPLY(0), COPY_TO_CLIPBOARD(1);
+		private int id;
+		private String string;
+		
+		private Event(int id){
+			this.id = Menu.FIRST+id;
+			this.string=null;
+		}
+		public int getId() {
+			return id;
+		}
+		public String getString() {
+			return string;
+		}
+		public void setString(String string) {
+			this.string = string;
+		}
+		public static Event getEventFromId(int id){
+			for(Event event:values()){
+				if(event.getId()==id)
+					return event;
+			}
+			return null;
+		}
 	}
 	
 	@Override
@@ -359,7 +391,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Comments*/
-		if(applicationExistsInRepo && Configs.COMMENTS_LIST_ON){
+		if(applicationExistsInRepo && Configs.COMMENTS_ON){
 			//Stop comments for applications not present in the repository
 			
 			listView.setOnItemClickListener(new OnItemClickListener(){
@@ -431,7 +463,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
 							apk_ver_str_raw = versionApk.getVersion();
-							if(Configs.TASTE_LIST_ON){
+							if(Configs.TASTE_ON){
 								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 							}
 							int result = versionApk.compareTo(versionInstApk);
@@ -443,7 +475,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								action.setText(ApkInfo.this.getString(R.string.isinstalled));
 							}
 							
-							if(Configs.COMMENTS_LIST_ON){
+							if(Configs.COMMENTS_ON){
 								loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
 							}
 							
@@ -477,7 +509,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Taste*/
-		if(applicationExistsInRepo && Configs.TASTE_LIST_ON){
+		if(applicationExistsInRepo && Configs.TASTE_ON){
 			
 			if(type==1){
 				selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
@@ -575,15 +607,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	/**
 	 * 
 	 */
@@ -635,38 +658,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 													userTaste);
 		tastePoster.execute();
 		
-	}
-
-	/**
-	 * 
-	 * @author rafael
-	 *
-	 */
-	public enum Event{
-		REPLY(0), COPY_TO_CLIPBOARD(1);
-		private int id;
-		private String string;
-		
-		private Event(int id){
-			this.id = Menu.FIRST+id;
-			this.string=null;
-		}
-		public int getId() {
-			return id;
-		}
-		public String getString() {
-			return string;
-		}
-		public void setString(String string) {
-			this.string = string;
-		}
-		public static Event getEventFromId(int id){
-			for(Event event:values()){
-				if(event.getId()==id)
-					return event;
-			}
-			return null;
-		}
 	}
 	
 	@Override

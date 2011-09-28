@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.utils.webservices;
 
 import java.util.ArrayList;
@@ -12,7 +9,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * The handler that provides information about server response, for:
  * 	+	Comment Post;

@@ -121,7 +121,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		Preference clear_credentials = (Preference)findPreference("clearcredentials");
 		Preference set_credentials = (Preference)findPreference("setcredentials");
 		
-		if((Configs.COMMENTS_ADD_ON && Configs.COMMENTS_LIST_ON) || (Configs.TASTE_ADD_ON && Configs.TASTE_LIST_ON)){
+		if((Configs.COMMENTS_ADD_ON && Configs.COMMENTS_ON) || (Configs.TASTE_ADD_ON && Configs.TASTE_ON)){
 			
 			clear_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				

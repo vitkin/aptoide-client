@@ -10,7 +10,7 @@ import android.widget.EditText;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * Used as a focus listener to control the input of some fields that have a label written.
  */
