@@ -1,11 +1,11 @@
-package cm.aptoide.pt.comments;
+package cm.aptoide.pt.webservices.comments;
 
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
-import cm.aptoide.pt.credentials.LoginDialog;
 import cm.aptoide.pt.utils.SetBlankOnFocusChangeListener;
-import cm.aptoide.pt.utils.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.login.LoginDialog;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -188,7 +188,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 					if(result!=null){
 						loadOnScrollComList.fetchNewComments();
 						AddCommentDialog.this.dismiss();
-						if(result.getStatus().equals(cm.aptoide.pt.utils.webservices.EnumResponseStatus.FAIL)){
+						if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.FAIL)){
 							for(String error: result.getErrors()){
 								Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
 							}

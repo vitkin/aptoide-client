@@ -1,4 +1,4 @@
-package cm.aptoide.pt.taste;
+package cm.aptoide.pt.webservices.taste;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -7,7 +7,7 @@ import cm.aptoide.pt.ApkInfo;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
-import cm.aptoide.pt.utils.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.ResponseHandler;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -159,7 +159,7 @@ public class AddTaste {
 				
 				if(result!=null){ //No errors found
 					
-					if(result.getStatus().equals(cm.aptoide.pt.utils.webservices.EnumResponseStatus.OK)){
+					if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
 						Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 						
 						

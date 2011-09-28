@@ -1,4 +1,4 @@
-package cm.aptoide.pt.comments;
+package cm.aptoide.pt.webservices.comments;
 
 import java.util.ArrayList;
 import java.util.List;

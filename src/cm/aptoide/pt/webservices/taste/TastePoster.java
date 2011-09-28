@@ -1,4 +1,4 @@
-package cm.aptoide.pt.taste;
+package cm.aptoide.pt.webservices.taste;
 
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ApkInfo.WrapperUserTaste;

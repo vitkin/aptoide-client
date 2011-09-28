@@ -1,4 +1,4 @@
-package cm.aptoide.pt.taste;
+package cm.aptoide.pt.webservices.taste;
 
 /**
  * @author rafael

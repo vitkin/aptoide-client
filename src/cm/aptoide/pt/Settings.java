@@ -21,7 +21,7 @@ package cm.aptoide.pt;
 
 import java.io.File;
 
-import cm.aptoide.pt.credentials.LoginDialog;
+import cm.aptoide.pt.webservices.login.LoginDialog;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;

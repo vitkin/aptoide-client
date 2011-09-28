@@ -1,4 +1,4 @@
-package cm.aptoide.pt.comments;
+package cm.aptoide.pt.webservices.comments;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,8 +20,8 @@ import android.content.Context;
 
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.pt.exceptions.FailedRequestSAXException;
-import cm.aptoide.pt.utils.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 
 /**
  * @author rafael

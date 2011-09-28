@@ -1,4 +1,4 @@
-package cm.aptoide.pt.taste;
+package cm.aptoide.pt.webservices.taste;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -20,8 +20,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.pt.exceptions.CancelRequestSAXException;
-import cm.aptoide.pt.utils.webservices.EnumResponseStatus;
+import cm.aptoide.pt.webservices.EnumResponseStatus;
+import cm.aptoide.pt.webservices.exceptions.CancelRequestSAXException;
 
 /**
  * @author rafael
