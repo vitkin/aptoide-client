@@ -1,11 +1,8 @@
-/**
- * 
- */
 package cm.aptoide.pt.utils.webservices;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  */
 public enum EnumSimpleResponse {

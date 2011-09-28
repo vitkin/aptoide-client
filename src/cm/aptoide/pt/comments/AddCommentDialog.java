@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.comments;
 
 import cm.aptoide.pt.Configs;
@@ -28,8 +25,22 @@ import android.widget.Toast;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
+ * Structure of the webservice POST:
+ * 	URL: http://www.bazaarandroid.com/webservices/addApkComment
+ * 	Variables:
+ *		repo 				- Repository name
+ *		apkid 				- Application package ID (example: com.mystuff.android.myapp)
+ *		apkversion 			- Application version (example: 1.4.2)
+ *		text 				- Comment text
+ *		mode 				- Return mode/format ('xml' or 'json')
+ *		lang (optional) 	- Language code of the comment: en_GB, pt_PT, es_ES, fr_FR, de_DE, it_IT, zu_RU, zh_CN, ko_KR
+ *		subject (optional) 	- Comment subject/title
+ *		answerto (optional) - ID of the comment this comment is replying to
+ * 	Response:
+ * 		status 				- Request result status (OK or FAIL)
+ * 		errors 				- Errors log from the request (not existent when status="OK")
  */
 public class AddCommentDialog extends Dialog implements OnDismissListener{
 	

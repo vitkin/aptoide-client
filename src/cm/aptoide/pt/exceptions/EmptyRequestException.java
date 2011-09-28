@@ -1,11 +1,8 @@
-/**
- * 
- */
 package cm.aptoide.pt.exceptions;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * Used in for example when a fetch form a xml file results in 0 elements.
  */

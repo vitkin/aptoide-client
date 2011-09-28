@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.credentials;
 
 import java.io.BufferedInputStream;
@@ -43,10 +40,9 @@ import android.widget.Toast;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * Implementation of the login interface.
- * 
  */
 public class LoginDialog extends Dialog{
 	

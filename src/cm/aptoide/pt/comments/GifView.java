@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.comments;
 
 import java.io.InputStream;
@@ -12,9 +9,8 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 /**
- * 
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  */
 public class GifView extends ImageView{

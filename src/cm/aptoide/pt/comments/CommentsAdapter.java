@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.comments;
 
 import java.util.ArrayList;
@@ -18,7 +15,7 @@ import android.widget.TextView;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * @param <T>
  */

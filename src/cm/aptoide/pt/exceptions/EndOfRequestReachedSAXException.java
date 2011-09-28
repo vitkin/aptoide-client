@@ -4,7 +4,7 @@ import org.xml.sax.SAXException;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * Thrown if a request to a parser as reach its stop condition.
  */

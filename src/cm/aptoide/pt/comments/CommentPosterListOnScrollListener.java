@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.comments;
 
 import java.math.BigInteger;
@@ -29,10 +26,9 @@ import android.widget.AbsListView.OnScrollListener;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  * The scroll listener of the comment list.
- * 
  */
 public class CommentPosterListOnScrollListener implements OnScrollListener {
     

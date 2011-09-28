@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
   				
-    <LinearLayout 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     		android:orientation="vertical" 
+    		
     		android:layout_width="fill_parent" 
     		android:layout_height="fill_parent"
-    		xmlns:android="http://schemas.android.com/apk/res/android"
     		>
     		
     	<RelativeLayout 
-    				android:background="@drawable/apkinfoheader" 
+    				android:background="@android:drawable/bottom_bar"
     				android:layout_width="fill_parent" 
     				android:layout_height="wrap_content">
-    			
+    				<!-- android:background="@drawable/apkinfoheader"  -->
+    				
     		<LinearLayout 
     		android:orientation="horizontal" 
+    		
     		android:layout_width="fill_parent" 
     		android:layout_height="wrap_content">	
     			
@@ -155,14 +157,20 @@
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
 	       			android:textSize="15sp" 
-	       			android:textColor="#FFFFFF"
-	       			android:background="@drawable/apkinfofooterindicator"
+	       			android:textColor="#000000"
 	       			android:text="@string/install" />
-     			<View
+	       			<!-- 
+	       				android:background="@drawable/apkinfofooterindicator"
+	       				android:textColor="#FFFFFF"
+	       			-->
+     			
+     			<!-- 
+     				<View
 					    android:layout_width="1dip"
 					    android:layout_height="fill_parent"
 					    android:background="#000000"
 					/>
+     			-->
      			
 				<Button 
 	       			android:id="@+id/btn_market"
@@ -170,10 +178,13 @@
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
 	       			android:textSize="15sp"
-	       			android:textColor="#FFFFFF"
-	       			android:background="@drawable/apkinfofooterindicator"
-	       			android:text="@string/btn_search_market" />
+	       			android:textColor="#000000"
 	       			
+	       			android:text="@string/btn_search_market" />
+	       			<!-- 
+	       				android:background="@drawable/apkinfofooterindicator"
+	       				android:textColor="#FFFFFF"	
+	       			 -->
             </LinearLayout>	
             
             <ListView

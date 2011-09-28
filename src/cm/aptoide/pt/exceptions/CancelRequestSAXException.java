@@ -1,13 +1,10 @@
-/**
- * 
- */
 package cm.aptoide.pt.exceptions;
 
 import org.xml.sax.SAXException;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
  */
 @SuppressWarnings("serial")

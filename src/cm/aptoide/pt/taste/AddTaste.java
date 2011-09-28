@@ -1,6 +1,3 @@
-/**
- * 
- */
 package cm.aptoide.pt.taste;
 
 import java.math.BigInteger;
@@ -21,8 +18,21 @@ import android.widget.Toast;
 
 /**
  * @author rafael
- * @since summerinternship2011
+ * @since 2.5.3
  * 
+ * Structure of the webservice GET:
+ * 	URL: http://www.bazaarandroid.com/webservices/addApkLike
+ * 	Variables:
+ * 		user 		- User id (email)
+ * 		passhash 	- SHA1 hash of the user password
+ * 		repo 		- Repository name
+ * 		apkid 		- Application package ID (example: com.mystuff.android.myapp)
+ * 		apkversion 	- Application version (example: 1.4.2)
+ * 		like 		- 'like' to like an application, anything else to dislike
+ * 		mode 		- Return mode/format ('xml' or 'json')
+ * 	Response:
+ * 		status 		- Request result status (OK or FAIL)
+ * 		errors 		- Errors log from the request (not existent when status="OK")
  */
 public class AddTaste {
 	

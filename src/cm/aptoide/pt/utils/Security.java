@@ -2,6 +2,7 @@ package cm.aptoide.pt.utils;
 
 /**
  * @author rafael
+ * @since 2.5.3
  * 
  */
 public class Security {

@@ -39,8 +39,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -78,7 +76,6 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInTab extends TabActivity {
 
@@ -121,7 +118,7 @@ public class RemoteInTab extends TabActivity {
 	private ArrayList<ServerNode> extras_repo = new ArrayList<ServerNode>();
 	private boolean there_was_update = false;
 	
-	private Intent intp;
+//	private Intent intp;
 	private Intent intserver;
 
 	private boolean fetch_extra = true;
@@ -154,18 +151,18 @@ public class RemoteInTab extends TabActivity {
 	
 	
 	
-	private Handler fetchHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			if(pd.isShowing())
-				pd.dismiss();
-			
-	    	startActivityForResult(intp, FETCH_APK);
-			super.handleMessage(msg);
-		}
-		
-	};
+//	private Handler fetchHandler = new Handler() {
+//
+//		@Override
+//		public void handleMessage(Message msg) {
+//			if(pd.isShowing())
+//				pd.dismiss();
+//			
+//	    	startActivityForResult(intp, FETCH_APK);
+//			super.handleMessage(msg);
+//		}
+//		
+//	};
     
 	private void addTab(String label, int drawableId, Class<?> classToLauch, TabHost tabHost) {
 		//TesteActivity.class
