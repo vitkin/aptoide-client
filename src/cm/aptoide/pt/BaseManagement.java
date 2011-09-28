@@ -470,7 +470,7 @@ public class BaseManagement extends Activity {
 						    apk_line2.put("name", node.name);
 						    apk_line2.put("statusSort", 3);
 							
-						    updtMap.add(apk_line2);
+						    instMap.add(apk_line2);
 							
 						}else{
 							apk_line.put("status", "Version: " + node.ver);
@@ -479,32 +479,40 @@ public class BaseManagement extends Activity {
 						}
 						
 					}
+					
 					Collections.sort(instMap, new Comparator<Map<String,Object>>(){
 
 						public int compare(Map<String, Object> map1, Map<String, Object> map2) {	
-							if(((Integer)map1.get("statusSort"))==1 && ((Integer)map2.get("statusSort"))==2){
-								return 1;
-							} else if(((Integer)map1.get("statusSort"))==2 && ((Integer)map2.get("statusSort"))==1){
-								return -1;
-							} if(((Integer)map1.get("statusSort"))==2 && ((Integer)map2.get("statusSort"))==3){
-								return -1;
-							}else if(((Integer)map1.get("statusSort"))==3 && ((Integer)map2.get("statusSort"))==2){
-								return 1;
+							if(((Integer)map1.get("statusSort"))==2){
+								if(((Integer)map2.get("statusSort"))!=2){
+									return -1;
+								} else{ 
+									return 0; 
+								}
+							} else if(((Integer)map1.get("statusSort"))==1) {
+								if(((Integer)map2.get("statusSort"))==3){
+									return -1;
+								} else {
+									return 0;
+								}
+							}  else if(((Integer)map1.get("statusSort"))==3 && ((Integer)map2.get("statusSort"))==3){
+								return 0;
 							}
-							return 0;
+							
+							return 1;
 						}
 					});
 					
-					Collections.sort(updtMap, new Comparator<Map<String,Object>>(){
-						public int compare(Map<String, Object> map1, Map<String, Object> map2) {
-							if(((Integer)map1.get("statusSort")) == 2 && ((Integer)map2.get("statusSort"))==3){
-								return -1;
-							}else if(((Integer)map1.get("statusSort"))==3 && ((Integer)map2.get("statusSort"))==2){
-								return 1;
-							}
-							return 0;
-						}
-					});
+//					Collections.sort(updtMap, new Comparator<Map<String,Object>>(){
+//						public int compare(Map<String, Object> map1, Map<String, Object> map2) {
+//							if(((Integer)map1.get("statusSort")) == 2 && ((Integer)map2.get("statusSort"))==3){
+//								return -1;
+//							}else if(((Integer)map1.get("statusSort"))==3 && ((Integer)map2.get("statusSort"))==2){
+//								return 1;
+//							}
+//							return 0;
+//						}
+//					});
 					
 					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
 					for(Map<String, Object> map:updtMap){ map.remove("statusSort"); }
