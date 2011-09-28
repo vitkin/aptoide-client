@@ -201,7 +201,7 @@ public class LoginDialog extends Dialog{
 		
 		public LoginConfirmation(Context context, String user, String password, ProgressDialog progress) throws NoSuchAlgorithmException {
 			this.context = context;
-			this.user = user;
+			this.user = user.toLowerCase();
 			this.password = password;
 			this.progress = progress;
 			MessageDigest md = MessageDigest.getInstance("SHA");
