@@ -1,4 +1,4 @@
-package cm.aptoide.pt.comments;
+package cm.aptoide.pt.webservices.comments;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.exceptions.EmptyRequestException;
-import cm.aptoide.pt.exceptions.EndOfRequestReachedSAXException;
-import cm.aptoide.pt.exceptions.FailedRequestSAXException;
+import cm.aptoide.pt.webservices.exceptions.EmptyRequestException;
+import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
+import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 
 import android.app.Activity;
 import android.content.Context;
@@ -164,7 +164,7 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 								
 							} else { 
 								
-								if(!commentGetter.getStatus().equals(cm.aptoide.pt.utils.webservices.EnumResponseStatus.OK)){
+								if(!commentGetter.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
 									throw new FailedRequestSAXException("Request could not be executed");
 								}else{
 									throw new EmptyRequestException("Request empty.");

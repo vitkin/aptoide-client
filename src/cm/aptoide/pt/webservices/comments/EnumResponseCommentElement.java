@@ -1,4 +1,4 @@
-package cm.aptoide.pt.comments;
+package cm.aptoide.pt.webservices.comments;
 
 /**
  * @author rafael

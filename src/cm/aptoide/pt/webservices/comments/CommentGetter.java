@@ -1,4 +1,4 @@
-package cm.aptoide.pt.comments;
+package cm.aptoide.pt.webservices.comments;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -19,9 +19,9 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.pt.exceptions.EndOfRequestReachedSAXException;
-import cm.aptoide.pt.exceptions.FailedRequestSAXException;
-import cm.aptoide.pt.utils.webservices.EnumResponseStatus;
+import cm.aptoide.pt.webservices.EnumResponseStatus;
+import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
+import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 
 import android.content.Context;
 

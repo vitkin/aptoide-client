@@ -1,4 +1,4 @@
-package cm.aptoide.pt.taste;
+package cm.aptoide.pt.webservices.taste;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.pt.utils.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.ResponseHandler;
 
 import android.content.Context;
 

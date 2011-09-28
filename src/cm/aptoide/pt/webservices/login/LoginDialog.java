@@ -1,4 +1,4 @@
-package cm.aptoide.pt.credentials;
+package cm.aptoide.pt.webservices.login;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -19,11 +19,11 @@ import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
-import cm.aptoide.pt.taste.EnumUserTaste;
-import cm.aptoide.pt.taste.TasteGetter;
 import cm.aptoide.pt.utils.Security;
 import cm.aptoide.pt.utils.SetBlankOnFocusChangeListener;
-import cm.aptoide.pt.utils.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.taste.EnumUserTaste;
+import cm.aptoide.pt.webservices.taste.TasteGetter;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -218,7 +218,7 @@ public class LoginDialog extends Dialog{
 				
 				ResponseHandler response = checkCredentials(context, user, password);
 				
-				if(response.getStatus().equals(cm.aptoide.pt.utils.webservices.EnumResponseStatus.OK) && repo!=null && apkid!=null && apkversion!=null){
+				if(response.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK) && repo!=null && apkid!=null && apkversion!=null){
 						
 						tasteGetter = new  TasteGetter( repo, apkid, apkversion);
 						tasteGetter.parse(context, useridLogin, this);
@@ -238,7 +238,7 @@ public class LoginDialog extends Dialog{
 		protected void onPostExecute(ResponseHandler result) {
 			if(result!=null){
 				
-				if(result.getStatus().equals(cm.aptoide.pt.utils.webservices.EnumResponseStatus.OK)){
+				if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
 					
 					
 					prefEdit.putString(Configs.LOGIN_PASSWORD, password);
@@ -249,7 +249,7 @@ public class LoginDialog extends Dialog{
 					success = true;
 					
 					if(tasteGetter!=null){
-						if(tasteGetter.getStatus().equals(cm.aptoide.pt.utils.webservices.EnumResponseStatus.OK)){
+						if(tasteGetter.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
 							switch(tasteGetter.getUserTaste()){
 								case LIKE: 
 									like.setImageResource(R.drawable.likehover);

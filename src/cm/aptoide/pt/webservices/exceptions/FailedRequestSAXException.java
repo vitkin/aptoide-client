@@ -1,4 +1,4 @@
-package cm.aptoide.pt.exceptions;
+package cm.aptoide.pt.webservices.exceptions;
 
 import org.xml.sax.SAXException;
 

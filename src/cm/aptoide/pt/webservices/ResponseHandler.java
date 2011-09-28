@@ -1,4 +1,4 @@
-package cm.aptoide.pt.utils.webservices;
+package cm.aptoide.pt.webservices;
 
 import java.util.ArrayList;
 

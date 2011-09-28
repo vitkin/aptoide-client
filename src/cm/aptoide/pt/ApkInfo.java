@@ -11,17 +11,17 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import cm.aptoide.pt.comments.AddCommentDialog;
-import cm.aptoide.pt.comments.Comment;
-import cm.aptoide.pt.comments.CommentPosterListOnScrollListener;
-import cm.aptoide.pt.comments.CommentsAdapter;
-import cm.aptoide.pt.credentials.LoginDialog;
 import cm.aptoide.pt.multiversion.MultiversionSpinnerAdapter;
 import cm.aptoide.pt.multiversion.VersionApk;
-import cm.aptoide.pt.taste.AddTaste;
-import cm.aptoide.pt.taste.EnumUserTaste;
-import cm.aptoide.pt.taste.TastePoster;
 import cm.aptoide.pt.utils.ImageAdapter;
+import cm.aptoide.pt.webservices.comments.AddCommentDialog;
+import cm.aptoide.pt.webservices.comments.Comment;
+import cm.aptoide.pt.webservices.comments.CommentPosterListOnScrollListener;
+import cm.aptoide.pt.webservices.comments.CommentsAdapter;
+import cm.aptoide.pt.webservices.login.LoginDialog;
+import cm.aptoide.pt.webservices.taste.AddTaste;
+import cm.aptoide.pt.webservices.taste.EnumUserTaste;
+import cm.aptoide.pt.webservices.taste.TastePoster;
 
 
 
@@ -69,11 +69,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.content.DialogInterface.OnDismissListener;
 
 public class ApkInfo extends Activity implements OnDismissListener{
-
-	private final static String WS_img = "http://www.bazaarandroid.com/webservices/listApkScreens/";
 	
 	private SharedPreferences sharedPreferences;
-	
 	
 	private Intent apkinfo = null;
 	private Context mctx = null;
@@ -333,7 +330,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			public void run(){
 				try{
 					String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
-					String fetch_imgs = WS_img+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
+					String fetch_imgs = Configs.WEB_SERVICE_SCREENS_LIST+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
 
 					Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
 					Log.d("Aptoide","Get img from: " + fetch_imgs);
