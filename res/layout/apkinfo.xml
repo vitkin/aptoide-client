@@ -123,6 +123,17 @@
     				android:layout_height="wrap_content"
     				 >
     		
+    		<ListView
+    			android:id="@+id/listComments" 
+    			
+    			android:layout_height="wrap_content" 
+    			android:layout_width="fill_parent"
+        		
+        		android:divider="@drawable/list_comments_divider"
+        		android:dividerHeight="1px"
+       			android:cacheColorHint="#00000000"
+       			android:layout_marginBottom="50dp"
+        		/>
         		
         	<LinearLayout 
         		android:id="@+id/listview_footer"
@@ -186,20 +197,6 @@
 	       				android:textColor="#FFFFFF"	
 	       			 -->
             </LinearLayout>	
-            
-            <ListView
-    			android:id="@+id/listComments" 
-    			
-    			android:layout_height="wrap_content" 
-    			android:layout_width="fill_parent"
-    			
-    			android:layout_below="@id/root"
-        		android:layout_above="@id/listview_footer"
-        		
-        		android:divider="@drawable/list_comments_divider"
-        		android:dividerHeight="1px"
-       			android:cacheColorHint="#00000000"
-        		/>
         				
     	</RelativeLayout>
         
