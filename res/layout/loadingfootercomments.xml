@@ -7,7 +7,7 @@
   android:layout_height="wrap_content"
   android:background="#000000">
     
-   <cm.aptoide.pt.comments.GifView
+   <cm.aptoide.pt.webservices.comments.GifView
     	android:id="@+id/loadImageComments"
     	android:layout_width="40px"
   		android:layout_height="40px"

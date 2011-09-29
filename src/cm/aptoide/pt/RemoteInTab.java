@@ -67,9 +67,11 @@ import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -123,6 +125,7 @@ public class RemoteInTab extends TabActivity {
 
 	private boolean fetch_extra = true;
 	
+	private GestureDetector detectChangeTab;
 
 	private DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -191,6 +194,7 @@ public class RemoteInTab extends TabActivity {
 		super.onCreate(savedInstanceState);
 		if(Configs.INTERFACE_TABS_ON_BOTTOM){
 			super.setContentView(R.layout.tabhostbottom);
+			detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
 		}
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 
@@ -200,16 +204,12 @@ public class RemoteInTab extends TabActivity {
 		mctx = this;
 		
 		db = new DbHandler(this);
-
+		
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
 		prefEdit.putBoolean("update", true);
 		prefEdit.commit();
 		
-//		if(ConfigsAndUtils.INTERFACE_TABS_ON_BOTTOM){
-//			TabHost myTabHostConf = (TabHost)((LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.tabhostbottom, null);
-//			myTabHostConf.setup();
-//		}
 		myTabHost = getTabHost();
 		if(Configs.INTERFACE_SILVER_TABS_ON){
 		
@@ -367,7 +367,9 @@ public class RemoteInTab extends TabActivity {
 			}
 		}
 	}
-
+	
+	
+	
 //	private void installFromLink(String path){
 //		try{
 //			Log.d("Aptoide-RemoteInTab", "installing From Link: "+path);
@@ -397,6 +399,19 @@ public class RemoteInTab extends TabActivity {
 //	    	fetchHandler.sendEmptyMessage(0);
 //		}catch(IOException e) { }
 //	}
+
+	/**
+	 * @see android.app.Activity#onTouchEvent(android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if(detectChangeTab!=null){
+			if (detectChangeTab.onTouchEvent(event)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
