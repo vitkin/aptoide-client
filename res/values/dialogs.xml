@@ -29,7 +29,7 @@
     <string name="update_repos">Update repositories</string>
     <string name="update_main">The list of repositories in use has been changed.\nDo you wish to update them?</string>
     
-    <string name="updating_3g">You are connected not connected through WIFI. It is advised to update with a WiFi connection.\nUpdate anyway?</string>
+    <string name="updating_3g">You are not connected through WIFI. It is advised to update with a WiFi connection.\nUpdate anyway?</string>
     <string name="updating_cfrm">Confirm Aptoide repositories update?</string>
     <string name="updating_norepos">There are no enabled repositories in your list.\nPlease add a repository or enable at least one that you already have.</string>
     
