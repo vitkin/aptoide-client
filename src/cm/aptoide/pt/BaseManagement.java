@@ -497,7 +497,7 @@ public class BaseManagement extends Activity {
 					instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
 							new String[] {	"pkg", 		"name", 	"name2", 		"status", 		"status2", 		"status3", 						"icon", 		"rat"}, 
 							new int[] {		R.id.pkg, 	R.id.name, 	R.id.nameup, 	R.id.isinst, 	R.id.isupdt, 	R.id.isDowngradeAvailable, 		R.id.appicon, 	R.id.rating});
-
+  
 					instAdpt.setViewBinder(new LstBinder());
 
 					updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.listicons, 
