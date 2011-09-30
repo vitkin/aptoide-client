@@ -572,7 +572,7 @@ public class RemoteInTab extends TabActivity {
 		//Check for connection first!
 		
 		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
-		||  netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED ||  netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED){
+		||  netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED){
 			myTabHost.setCurrentTabByTag("inst");
 			new Thread() {
 				public void run() {
