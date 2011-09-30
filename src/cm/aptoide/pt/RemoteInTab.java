@@ -78,6 +78,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 public class RemoteInTab extends TabActivity {
 
@@ -168,7 +169,7 @@ public class RemoteInTab extends TabActivity {
 //	};
     
 	private void addTab(String label, int drawableId, Class<?> classToLauch, TabHost tabHost) {
-		//TesteActivity.class
+		//For the style of the tabs
 		Intent intent = new Intent(this, classToLauch);
 		TabHost.TabSpec spec = tabHost.newTabSpec(label);
 		
@@ -181,7 +182,7 @@ public class RemoteInTab extends TabActivity {
 		title.setText(label);
 		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.icon);
 		icon.setImageResource(drawableId);
-
+		
 		spec.setIndicator(tabIndicator);
 		spec.setContent(intent);
 		tabHost.addTab(spec);
@@ -192,10 +193,15 @@ public class RemoteInTab extends TabActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		if(Configs.INTERFACE_TABS_ON_BOTTOM){
 			super.setContentView(R.layout.tabhostbottom);
-			detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
+		} else {
+			super.setContentView(R.layout.tabhosttop);
 		}
+		
+		detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
+		
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -216,15 +222,35 @@ public class RemoteInTab extends TabActivity {
 			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
 			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());
 			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class, getTabHost());
-		
-		}else{
 			
+		}else{
+			 
 			myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
 			myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)) );
 			myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
 			
 		}
-
+		
+		class ClickForce implements View.OnClickListener {
+			private ViewFlipper flipper;
+			private int index;
+			
+			public ClickForce(int index) {
+				flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
+				this.index = index;
+			}
+			public void onClick(View v) {
+		        getTabHost().setCurrentTab(this.index);
+		        flipper.setInAnimation(null);
+		        flipper.setOutAnimation(null);
+				flipper.setDisplayedChild(this.index);
+			}
+		}
+		
+		getTabWidget().getChildAt(0).setOnClickListener(new ClickForce(0));
+		getTabWidget().getChildAt(1).setOnClickListener(new ClickForce(1));
+		getTabWidget().getChildAt(2).setOnClickListener(new ClickForce (2));
+		
 		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
 		
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -567,7 +593,6 @@ public class RemoteInTab extends TabActivity {
 		updt_pd.setTitle(getText(R.string.top_please_wait));
 	
 		updt_pd.show();*/
-		
 		
 		//Check for connection first!
 		

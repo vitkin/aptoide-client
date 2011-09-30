@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import cm.aptoide.pt.multiversion.VersionApk;
+import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -64,12 +67,21 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		lv.setCacheColorHint(0);
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
+		
+		final GestureDetector changeTabGes = new GestureDetector(new ChangeTab(((TabActivity)this.getParent()).getTabHost()));
+        lv.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                return changeTabGes.onTouchEvent(event); 
+            }
+        });
+        
 		db = new DbHandler(this);
 		
 		installApkListener = new InstallApkListener();
 		registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION"));
 		//mctx = this;
 	}
+	
 	
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
