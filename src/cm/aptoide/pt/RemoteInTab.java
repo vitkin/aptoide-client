@@ -231,12 +231,18 @@ public class RemoteInTab extends TabActivity {
 			
 		}
 		
+		/**
+		 * @author rafael
+		 *
+		 */
 		class ClickForce implements View.OnClickListener {
 			private ViewFlipper flipper;
 			private int index;
 			
-			public ClickForce(int index) {
-				flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
+			public ClickForce(int index, ViewFlipper flipper) {
+				this.flipper = flipper;
+				getTabHost().setCurrentTab(index);
+				flipper.setDisplayedChild(index);
 				this.index = index;
 			}
 			public void onClick(View v) {
@@ -246,10 +252,13 @@ public class RemoteInTab extends TabActivity {
 				flipper.setDisplayedChild(this.index);
 			}
 		}
+		ViewFlipper flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
+		for (int i = 0; i < getTabWidget().getChildCount(); i++) {
+			getTabWidget().getChildAt(i).setOnClickListener(new ClickForce(i,flipper));
+		}
+		getTabHost().setCurrentTab(0);
+		flipper.setDisplayedChild(0);
 		
-		getTabWidget().getChildAt(0).setOnClickListener(new ClickForce(0));
-		getTabWidget().getChildAt(1).setOnClickListener(new ClickForce(1));
-		getTabWidget().getChildAt(2).setOnClickListener(new ClickForce (2));
 		
 		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
 		
