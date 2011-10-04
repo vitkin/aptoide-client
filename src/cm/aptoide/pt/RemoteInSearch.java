@@ -279,10 +279,11 @@ public class RemoteInSearch extends ListActivity{
 		
 		apkinfo.putExtra("server", tmp_get.firstElement());
 		apkinfo.putExtra("version", tmp_get.get(1));
+		Log.d("Aptoide", "Versão aplicação:"+tmp_get.get(1));
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
-		
+		Log.d("Aptoide", "Status: "+apk_lst.get(position).status);
 		if(apk_lst.get(position).status == 0){
 			apkinfo.putExtra("type", 0);
 		}else{
@@ -323,7 +324,7 @@ public class RemoteInSearch extends ListActivity{
 				if(pos > -1){
 					if(data.getBooleanExtra("in", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Install");
-						queueDownload(pos);
+						queueDownload(pos, data.getStringExtra("version"));
 						
 					}else if(data.getBooleanExtra("rm", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Remove");
@@ -415,7 +416,7 @@ public class RemoteInSearch extends ListActivity{
 
 	}
 
-	private void queueDownload(int position){
+	private void queueDownload(int position, String version){
 		
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 		
@@ -424,9 +425,9 @@ public class RemoteInSearch extends ListActivity{
 			String packageName = apk_lst.get(position).apkid;
 			String appName = apk_lst.get(position).name;
 			
-			tmp_serv = db.getPathHash(packageName, apk_lst.get(position).ver);
+			tmp_serv = db.getPathHash(packageName, version);
 			if(tmp_serv.size()==0){
-				tmp_serv = db.getPathHashOld(packageName, apk_lst.get(position).ver);
+				tmp_serv = db.getPathHashOld(packageName, version);
 			}
 			
 			

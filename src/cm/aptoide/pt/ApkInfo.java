@@ -263,7 +263,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					rtrn_intent.putExtra("apkid", apk_id);
 					rtrn_intent.putExtra("in", true);
 					rtrn_intent.putExtra("position", pos);
-					rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					jback = true;
 					break;
 
@@ -271,16 +270,17 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					rtrn_intent.putExtra("apkid", apk_id);
 					rtrn_intent.putExtra("rm", true);
 					rtrn_intent.putExtra("position", pos);
+					
 					jback = true;
 					break;
 
 
 				case 2:
 					rtrn_intent.putExtra("apkid", apk_id);
-					rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					jback = true;
 					break;
 				}
+				rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 				finish();
 			}
 		});

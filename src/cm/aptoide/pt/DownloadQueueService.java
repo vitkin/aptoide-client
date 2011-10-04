@@ -192,7 +192,7 @@ public class DownloadQueueService extends Service {
     	onClick.putExtra("apkidHash", apkidHash);
     	onClick.putExtra("isUpdate", Boolean.parseBoolean(notifications.get(packageName.hashCode()).get("isUpdate")));
     	/*Changed by Rafael Campos*/
-    	onClick.putExtra("version", notifications.get(appName.hashCode()).get("version"));
+    	onClick.putExtra("version", version);
 		 Log.d("Aptoide-DownloadQueuService","finished notification apkidHash: "+apkidHash +" localPath: "+localPath);	
     	
     	// The PendingIntent to launch our activity if the user selects this notification

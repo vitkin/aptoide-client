@@ -200,7 +200,7 @@ public class RemoteInTab extends TabActivity {
 			super.setContentView(R.layout.tabhosttop);
 		}
 		
-		detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
+		//detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
 		
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 
