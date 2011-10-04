@@ -67,8 +67,17 @@ public class ImageAdapter extends BaseAdapter {
         ImageView imageView = new ImageView(context);
         imageView.setImageDrawable(drawables[position]);
         imageView.setScaleType(ImageView.ScaleType.FIT_END);
-        imageView.setLayoutParams(new Gallery.LayoutParams((int)(drawables[position].getMinimumWidth()*0.5), (int)(drawables[position].getMinimumHeight()*0.5)));
-        imageView.setBackgroundResource(itemBackground);
+        imageView.setLayoutParams(
+        		new Gallery.LayoutParams(
+        				(int)(drawables[position].getMinimumWidth()*0.5), 
+        				(int)(drawables[position].getMinimumHeight()*0.5)
+        				)
+        		);
+        
+        try{
+        	imageView.setBackgroundResource(itemBackground);
+        }catch(OutOfMemoryError e){}
+        
         return imageView;
     }
     
