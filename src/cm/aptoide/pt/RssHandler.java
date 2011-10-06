@@ -465,14 +465,10 @@ public class RssHandler extends DefaultHandler{
 //Temporary fix for ANR after failed binder transaction
 //			Log.d("Aptoide-RssHandler", "reducing iconslist, size= "+iconsLst.size());
 			ArrayList<IconNode> newList = new ArrayList<IconNode>();
-//			for (int i=0;i <= 1000 && iconsLst.size() >= 0 ;i++) {
-//				newList.add(iconsLst.remove(i));
-////				Log.d("Aptoide-RssHandler", "i: "+i+" icon: "+newList.get(i).url);
-//			}
 			for (int i=0;i <= 1000 && iconsLst.size() > 0 ;i++) {
 				newList.add(iconsLst.remove(0));
 			}
-			Log.d("Aptoide-RssHandler", "reduced iconslist to size= "+newList.size());
+//			Log.d("Aptoide-RssHandler", "reduced iconslist to size= "+newList.size());
 			serv.putExtra("icons", newList);
 //			serv.putExtra("icons", iconsLst);
 			serv.putExtra("srv", basepath);
