@@ -35,7 +35,7 @@ public class Configs {
 	/**
 	 * The number of comments to retrieve per fetch
 	 */
-	public final static int COMMNETS_TO_LOAD = 2;
+	public final static int COMMNETS_TO_LOAD = 4;
 	
 	public final static boolean TASTE_ON = true; 
 	public final static boolean COMMENTS_ON = true;

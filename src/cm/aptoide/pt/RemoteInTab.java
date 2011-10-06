@@ -605,9 +605,11 @@ public class RemoteInTab extends TabActivity {
 		
 		//Check for connection first!
 		
-		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
+		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED 
+		||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
 		||  netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED){
 			myTabHost.setCurrentTabByTag("inst");
+			
 			new Thread() {
 				public void run() {
 					try{
@@ -935,7 +937,6 @@ public class RemoteInTab extends TabActivity {
     		Intent goExtraServ = new Intent(mctx, FetchExtrasService.class);
     		goExtraServ.putExtra("lstex", extras_repo);
     		mctx.startService(goExtraServ);
-    		
         	/*new Thread() {
 				public void run() {
 					Log.d("Aptoide","Extras thread START!");

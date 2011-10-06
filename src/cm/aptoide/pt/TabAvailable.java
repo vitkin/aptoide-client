@@ -259,7 +259,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			lv.setSelection(pos-1);
 			deep = 3;
 		}else{
-
+			
 			Intent apkinfo = new Intent(this,ApkInfo.class);
 			apkinfo.putExtra("name", db.getName(pkg_id));
 			apkinfo.putExtra("icon", this.getString(R.string.icons_path)+pkg_id);

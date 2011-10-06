@@ -82,8 +82,8 @@
 		
 		<activity android:name=".ApkInfo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTop"/>
 
-		<service android:name="FetchIconsService"></service>
-		<service android:name="FetchExtrasService"></service>
+		<service android:name=".FetchIconsService"></service>
+		<service android:name=".FetchExtrasService"></service>
 		<service android:name=".DownloadQueueService" />
 
 	</application>
