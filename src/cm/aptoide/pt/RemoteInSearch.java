@@ -76,7 +76,7 @@ public class RemoteInSearch extends ListActivity{
 	private PackageManager mPm;
 	private PackageInfo pkginfo;
 
-	private static final int SETTINGS_FLAG = 0;
+//	private static final int SETTINGS_FLAG = 0;
 	
 	private Context mctx = this; 
 
@@ -196,8 +196,8 @@ public class RemoteInSearch extends ListActivity{
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(), EnumOptionsMenu.SEARCH_MENU.ordinal(), R.string.menu_search)
 			.setIcon(android.R.drawable.ic_menu_search);
-		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
-			.setIcon(android.R.drawable.ic_menu_preferences);
+//		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
+//			.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(), EnumOptionsMenu.ABOUT.ordinal(), R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
@@ -233,11 +233,11 @@ public class RemoteInSearch extends ListActivity{
 			});
 			alrt.show();
 			return true;
-		case SETTINGS:
-			Intent s = new Intent(RemoteInSearch.this, Settings.class);
-			s.putExtra("order", order_lst);
-			startActivityForResult(s,SETTINGS_FLAG);
-			return true;
+//		case SETTINGS:
+//			Intent s = new Intent(mctx, Settings.class);
+//			s.putExtra("order", order_lst);
+//			startActivityForResult(s,SETTINGS_FLAG);
+//			return true;
 		case CHANGE_ORDER:
 			if(order_lst.equalsIgnoreCase("abc"))
 				order_lst = "iu";

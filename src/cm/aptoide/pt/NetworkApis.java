@@ -25,9 +25,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class NetworkApis {
-
-	private static final String terminal_info = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"
-	+";v"+android.os.Build.VERSION.RELEASE+";"+System.getProperty("os.arch");
 	
 	public static final int TIME_OUT = 12000;
 	
@@ -59,7 +56,7 @@ public class NetworkApis {
 			
 			
 			HttpGet mHttpGet = new HttpGet(url);
-			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid);
 			mHttpGet.setHeader("Accept-Encoding", "gzip");
 						
 			String[] logins = null; 
@@ -81,7 +78,7 @@ public class NetworkApis {
 				String newurl = azz[0].getValue();
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
-				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
+				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid);
 				mHttpGet.setHeader("Accept-Encoding", "gzip");
 				
 				if(logins != null){
@@ -131,7 +128,7 @@ public class NetworkApis {
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 		
-		conn.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
+		conn.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
 		
 		return conn.getInputStream();
 		
@@ -160,7 +157,7 @@ public class NetworkApis {
 		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
-		conn.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
+		conn.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
 		
 		return conn;
 		
