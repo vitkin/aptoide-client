@@ -133,7 +133,8 @@ public class ManageRepo extends ListActivity{
 			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
 			for(final String srv: new_serv_lst){
 				if(serverContainsRepo(exist_server,srv))
-					continue;
+//					continue;
+					finish();
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
