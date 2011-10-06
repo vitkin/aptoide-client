@@ -45,8 +45,10 @@ import org.apache.http.protocol.HttpContext;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -674,6 +676,13 @@ public class ManageRepo extends ListActivity{
 		});
 		
         HttpGet mHttpGet = new HttpGet(uri+"/info.xml");
+        
+        SharedPreferences sPref = this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		String myid = sPref.getString("myId", "NoInfo");
+		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+        
+        mHttpGet.setHeader("User-Agent", "aptoide-" + this.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+        
         try {
         	if(user != null && pwd != null){
         		URL mUrl = new URL(uri);

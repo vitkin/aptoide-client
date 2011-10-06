@@ -40,6 +40,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
@@ -272,13 +273,18 @@ public class DownloadQueueService extends Service {
 						FileOutputStream saveit = new FileOutputStream(localPath);
 						DefaultHttpClient mHttpClient = new DefaultHttpClient();
 						HttpGet mHttpGet = new HttpGet(remotePath);
-
+						
+						SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+						String myid = sPref.getString("myId", "NoInfo");
+						String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+						
+						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+						
 						if(Boolean.parseBoolean(notifications.get(threadApkidHash).get("loginRequired"))){
 							URL mUrl = new URL(remotePath);
 							mHttpClient.getCredentialsProvider().setCredentials(
 									new AuthScope(mUrl.getHost(), mUrl.getPort()),
 									new UsernamePasswordCredentials(notifications.get(threadApkidHash).get("username"), notifications.get(threadApkidHash).get("password") ));
-
 						}
 
 						HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);

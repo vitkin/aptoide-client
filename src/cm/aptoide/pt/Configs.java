@@ -28,6 +28,9 @@ public class Configs {
 	public static final boolean INTERFACE_TABS_ON_BOTTOM = false;
 	public static final boolean BACKGROUND_ON_TABS = false;
 	
+	public static final String TERMINAL_INFO = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"
+	+";v"+android.os.Build.VERSION.RELEASE+";"+System.getProperty("os.arch");
+	
 	/**
 	 * The minimum amount of items to have below your current scroll position, before loading more.
 	 */
