@@ -160,8 +160,8 @@ public class AddTaste {
 				if(result!=null){ //No errors found
 					
 					if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
-						Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 						
+						Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 						
 						switch(userTaste){
 							case LIKE:
