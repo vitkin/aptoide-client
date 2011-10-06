@@ -31,7 +31,6 @@ public class ChangeTab extends SimpleOnGestureListener {
 	
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-		Log.d("hey", tabHost.getCurrentTab()+"");
 		if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 			
 			int tab = (tabHost.getCurrentTab()+1 ) % tabWidget.getChildCount();
