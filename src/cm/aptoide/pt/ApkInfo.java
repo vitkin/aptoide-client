@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.http.HttpResponse;
@@ -110,6 +111,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private EnumUserTaste taste;
 	private WrapperUserTaste userTaste;
 	private TastePoster tastePoster;
+	private VersionApk versionInstApk;
 	
 	private static int headers = 2; // The number of header items on the list view
 	
@@ -178,6 +180,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		ListView listView = (ListView) findViewById(R.id.listComments);
 		LayoutInflater inflater = this.getLayoutInflater();
 		final LinearLayout linearLayout = (LinearLayout)inflater.inflate(R.layout.headercomments,listView, false);
+		
+		
 		updateScreenshots = new ScreenShotsUpdate(linearLayout);
 		
 		this.likes = (TextView)linearLayout.findViewById(R.id.likes);
@@ -207,6 +211,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		apk_id = apkinfo.getStringExtra("apk_id");
 		final int type = apkinfo.getIntExtra("type", 0);
 		
+		
+		versionInstApk = (VersionApk) apkinfo.getParcelableExtra("instversion");
 		String icon_path = apkinfo.getStringExtra("icon");
 		apk_name_str = apkinfo.getStringExtra("name");
 		String apk_descr = apkinfo.getStringExtra("about");
@@ -253,10 +259,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		action.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
-				int pos = -1;
-				if(apkinfo.hasExtra("position")){
-					pos = apkinfo.getIntExtra("position", -1);
-				}
+				
+				int pos = apkinfo.getIntExtra("position", -1);
+				
 				switch (type) {
 				case 0:
 					
@@ -268,20 +273,29 @@ public class ApkInfo extends Activity implements OnDismissListener{
 
 				case 1:
 					rtrn_intent.putExtra("apkid", apk_id);
-					rtrn_intent.putExtra("rm", true);
+					
+					if(((VersionApk)spinnerMulti.getSelectedItem()).compareTo(versionInstApk)==0){
+						rtrn_intent.putExtra("rm", true);
+						rtrn_intent.putExtra("install", false);
+					}else{
+						rtrn_intent.putExtra("rm", false);
+						rtrn_intent.putExtra("install", true);
+					}
+					
 					rtrn_intent.putExtra("position", pos);
 					
 					jback = true;
 					break;
-
 
 				case 2:
 					rtrn_intent.putExtra("apkid", apk_id);
 					jback = true;
 					break;
 				}
+				
 				rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 				finish();
+				
 			}
 		});
 		
@@ -306,9 +320,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		apk_repo.setText(apk_repo_str);
 		
 		TextView apk_version = (TextView)findViewById(R.id.app_ver);
-		
-		
-		final VersionApk versionInstApk = (VersionApk) apkinfo.getParcelableExtra("instversion");
 		
 		if(type == 1){ 
 			apk_version.setText(this.getString(R.string.version_inst)+": " + versionInstApk.getVersion());
@@ -391,20 +402,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		if(applicationExistsInRepo && Configs.COMMENTS_ON){
 			//Stop comments for applications not present in the repository
 			
-			listView.setOnItemClickListener(new OnItemClickListener(){
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					if(position==1){ // If comment app... option selected
-						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
-								apk_repo_str_raw,
-				 				apk_id, 
-				 				apk_ver_str_raw,
-				 				userTaste);
-						commentDialog.show();
-					}
-				}
-			});
-			//listView.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.apkinfoheader));
-			
 			if(Configs.COMMENTS_ADD_ON){
 				TextView textView = new TextView(this);
 				textView.setText(this.getString(R.string.commentlabel));
@@ -426,6 +423,24 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			//catch (SAXException e) 					{}
 			catch(Exception e)							{}
 			
+			listView.setOnItemClickListener(new OnItemClickListener(){
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(position==1){ // If comment app... option selected
+						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
+								apk_repo_str_raw,
+				 				apk_id, 
+				 				apk_ver_str_raw,
+				 				userTaste);
+						commentDialog.show();
+					}
+				}
+			});
+			//listView.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.apkinfoheader));
+			
+			
+			
+			
+			
 			registerForContextMenu(listView);
 		} else {
 			listView.setAdapter(commentAdapter);
@@ -437,16 +452,15 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Multiversion*/
-		if(type!=1){//If we aren't in the installed tab
+		
 		
 			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
-			versions.add(
-					new VersionApk(apk_ver_str_raw, 
+			VersionApk latestVersion = new VersionApk(apk_ver_str_raw, 
 					versioncode, 
 					apk_id, 
 					Integer.parseInt(apk_size_str_raw)
-					)
-			);
+					);
+			versions.add(latestVersion);
 			Collections.sort(versions, Collections.reverseOrder());
 			
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
@@ -454,7 +468,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
 			spinnerMulti.setAdapter(spinnerMultiAdapter );
 			if(type==2){
-				//If we are in tab updates
+				
+				Iterator<VersionApk> iteratorVersion = versions.iterator();
+				while(iteratorVersion.hasNext()){
+					if(iteratorVersion.next().compareTo(versionInstApk)<=0){
+						iteratorVersion.remove();
+					}
+				}
+				
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 						
@@ -479,6 +500,71 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
+				
+			} else if(type==1){
+				if(versions.size()!=0){
+				Iterator<VersionApk> iteratorVersion = versions.iterator();
+				while(iteratorVersion.hasNext()){
+					if(iteratorVersion.next().compareTo(versionInstApk)>0){
+						iteratorVersion.remove();
+					}
+				}
+				Button reinstall = (Button)findViewById(R.id.btnReinstall);
+				if(applicationExistsInRepo){
+					reinstall.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f));
+					reinstall.setOnClickListener(new OnClickListener(){
+
+						public void onClick(View arg0) {
+							
+							rtrn_intent.putExtra("apkid", apk_id);
+							
+							
+							rtrn_intent.putExtra("rm", false);
+							rtrn_intent.putExtra("install", true);
+							
+							rtrn_intent.putExtra("position", apkinfo.getIntExtra("position", -1));
+							
+							jback = true;
+							
+							rtrn_intent.putExtra("version", versionInstApk.getVersion());
+							finish();
+							
+						}
+						
+					});
+				}
+				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
+					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+						
+							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
+							apk_ver_str_raw = versionApk.getVersion();
+							if(Configs.TASTE_ON){
+								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+							}
+							int result = versionApk.compareTo(versionInstApk);
+							
+							if(result==0){
+								action.setText("Uninstall");
+							}else if(result<0) {
+								action.setText("Downgrade");
+							}
+//							else{
+//								action.setText(ApkInfo.this.getString(R.string.isinstalled));
+//							}
+							
+							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
+								loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+							}
+							
+					}
+					public void onNothingSelected(AdapterView<?> parent) {}
+				});
+				}else{
+					//Otherwise
+					spinnerMulti.getLayoutParams().height = 0;
+					spinnerMulti.getLayoutParams().width = 0;
+					spinnerMulti.setVisibility(View.INVISIBLE);
+				}
 			} else if(type==0){
 				
 				//If we are in tab available
@@ -487,19 +573,13 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						apk_ver_str_raw = ((VersionApk)spinnerMultiAdapter.getItem(position)).getVersion();
 						selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 						
-						loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
-						
+						if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
+							loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+						}
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
 			}
-			//Select the current version installed by the user
-		}else{
-			//Otherwise
-			spinnerMulti.getLayoutParams().height = 0;
-			spinnerMulti.getLayoutParams().width = 0;
-			spinnerMulti.setVisibility(View.INVISIBLE);
-		}
 		
 		
 		

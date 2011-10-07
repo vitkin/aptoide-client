@@ -462,7 +462,7 @@ public class BaseManagement extends Activity {
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 3);
 							instMap.add(apk_line);
-							updtMap.add(apk_line);
+//							updtMap.add(apk_line);
 							
 						}else{
 							
@@ -605,7 +605,7 @@ public class BaseManagement extends Activity {
 
 			String[] logins = null; 
 			logins = db.getLogin(downloadNode.getRepo());
-
+//			downloadNode.getRemotePath()
 			downloadNode.setLogins(logins);
 			Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
 

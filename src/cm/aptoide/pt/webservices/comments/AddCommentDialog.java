@@ -114,6 +114,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 						LoginDialog loginComments = new LoginDialog(AddCommentDialog.this.getContext(), LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, repo, apkid, version, null, userTasteGetter);
 						loginComments.setOnDismissListener(AddCommentDialog.this);
 						loginComments.show();
+						
 					}else{ 
 						postMessage(); 
 					}
@@ -186,7 +187,8 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 				protected void onPostExecute(ResponseHandler result) {
 					dialogProgress.dismiss();
 					if(result!=null){
-						loadOnScrollComList.fetchNewComments();
+						if(loadOnScrollComList!=null)
+							loadOnScrollComList.fetchNewComments();
 						AddCommentDialog.this.dismiss();
 						if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.FAIL)){
 							for(String error: result.getErrors()){

@@ -192,7 +192,9 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+			Log.d("Aptoide", "Putting installed version");
 			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1));
+			
 			VersionApk versionApkPassed = new VersionApk(tmp_get.get(1),Integer.parseInt(tmp_get.get(7)),pkg_id,-1);
 			VersionApk versionApkInstalled = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1);
 			oldVersionsApk.add(versionApkPassed);
@@ -273,13 +275,19 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
-			new Thread() {
-				public void run() {
+			if(data.getBooleanExtra("rm", false)){
+				new Thread() {
+					public void run() {
+						String apk_id = data.getStringExtra("apkid");
+						Log.d("Aptoide", ".... removing: " + apk_id);
+						removeApk(apk_id);
+					}
+				}.start();
+			} else if(data.getBooleanExtra("install", false) && data.hasExtra("version")){
 					String apk_id = data.getStringExtra("apkid");
-					Log.d("Aptoide", ".... removing: " + apk_id);
-					removeApk(apk_id);
-				}
-			}.start();
+					Log.d("Aptoide", "....... getting: " + apk_id);
+					queueDownload(apk_id, data.getStringExtra("version"), true);
+			}
 		}
 	}
 
