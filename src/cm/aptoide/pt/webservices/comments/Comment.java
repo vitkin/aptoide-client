@@ -17,9 +17,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import android.content.Context;
+import android.util.Log;
 
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.NetworkApis;
+import cm.aptoide.pt.SupportedLanguages;
 import cm.aptoide.pt.webservices.ResponseHandler;
 import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 
@@ -136,6 +138,9 @@ public class Comment{
 		strBuilder.append("&"+URLEncoder.encode("apkid", "UTF-8") + "=" + URLEncoder.encode(apkid, "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("apkversion", "UTF-8") + "=" + URLEncoder.encode(version, "UTF-8"));
 		strBuilder.append("&"+URLEncoder.encode("text", "UTF-8") + "=" + URLEncoder.encode(text, "UTF-8"));
+		String lang = SupportedLanguages.getMyCountrCode(ctx);
+		Log.d("Aptoide", "Comment language "+lang);
+		strBuilder.append("&"+URLEncoder.encode("lang", "UTF-8") + "=" + URLEncoder.encode( lang, "UTF-8"));
 		if(reply!=null)
 			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(reply.toString(), "UTF-8"));
 		if(subject!=null && subject.length()!=0)

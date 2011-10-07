@@ -905,10 +905,12 @@ public class DbHandler {
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
 				String md5h = null;
+				String remotePath = c.getString(0)+"/"+c.getString(1);
 				if(!c.isNull(2)){
 					md5h = c.getString(2);
 				}
-				DownloadNode node = new DownloadNode(c.getString(0), c.getString(1), md5h, c.getInt(3));
+				DownloadNode node = new DownloadNode(c.getString(0), remotePath, md5h, c.getInt(3));
+				node.version = ver;
 				out.add(node);
 			}
 			//c.close();
