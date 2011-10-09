@@ -1,6 +1,5 @@
 package cm.aptoide.pt;
 
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AccelerateInterpolator;
