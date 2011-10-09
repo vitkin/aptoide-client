@@ -33,7 +33,7 @@
     <string name="size">Size</string>
     <string name="comments">Comments:</string>
     <string name="commentsproblem">Comments not available</string>
-    <string name="isinstalled">Reinstall</string>
+    <string name="reinstall">Reinstall</string>
     <string name="version_inst">Version installed</string>
     <string name="installed_downgrade">Downgrade possible.</string>
     <string name="reply">Reply</string>

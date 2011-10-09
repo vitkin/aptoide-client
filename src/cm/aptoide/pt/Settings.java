@@ -105,7 +105,6 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		prefEditFull = sPrefFull.edit();
 
 		/*String pref_str = sPref.getString("icdown", "error");
-		
 		Log.d("Aptoide","I got what?: " + pref_str);
 		if(pref_str.equalsIgnoreCase("error")){
 			prefEdit = sPref.edit();

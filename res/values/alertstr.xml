@@ -30,6 +30,7 @@
     <string name="failed_update">Application update has failed!</string>
     <string name="failed_install">Application install has failed!</string>
     <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Uninstall</string>
     
 </resources>
 <!--
