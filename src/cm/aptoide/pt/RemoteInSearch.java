@@ -283,22 +283,29 @@ public class RemoteInSearch extends ListActivity{
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
+		
+		ArrayList<VersionApk> versions = db.getOldApks(apkid);
+		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),apkid,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+		versions.add(versionApkPassed);
+		
 		Log.d("Aptoide", "Status: "+apk_lst.get(position).status);
+		
 		if(apk_lst.get(position).status == 0){
 			apkinfo.putExtra("type", 0);
 		}else{
 			apkinfo.putExtra("type", 1);
-			try {
-				PackageManager mPm = getApplicationContext().getPackageManager();
-				PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
-				
-				apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,apkid,-1));
-			} catch (NameNotFoundException e) {
-				//Not installed... do nothing
-			}
 		}
 		
-		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(apkid));
+		try {
+			PackageManager mPm = getApplicationContext().getPackageManager();
+			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
+			
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,apkid,-1));
+		} catch (NameNotFoundException e) {
+			//Not installed... do nothing
+		}
+		
+		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
 		
 		startActivityForResult(apkinfo,30);
 		

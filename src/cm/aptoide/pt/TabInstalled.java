@@ -186,29 +186,26 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 1);
-		apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));
-		ArrayList<VersionApk> oldVersionsApk = db.getOldApks(pkg_id);
+		
+		ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+		versions.add(versionApkPassed);
 		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
 			Log.d("Aptoide", "Putting installed version");
-			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1));
-			
-			VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
 			VersionApk versionApkInstalled = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1);
-			oldVersionsApk.add(versionApkPassed);
+			apkinfo.putExtra("instversion", versionApkInstalled);
 			
-			if(!oldVersionsApk.contains(versionApkInstalled)){
+			if(!versions.contains(versionApkInstalled)){
 				apkinfo.putExtra("applicationExistsInRepo", false);
 			}
-			
-//			oldVersionsApk.remove(versionApkPassed);
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}
 		
-		apkinfo.putParcelableArrayListExtra("oldVersions", oldVersionsApk);
+		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
 		startActivityForResult(apkinfo,30);
 		
 		/*

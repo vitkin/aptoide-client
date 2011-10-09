@@ -1,5 +1,6 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 
@@ -194,7 +195,10 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 2);
-		apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));
+		
+		ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+		versions.add(versionApkPassed);
 		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
@@ -204,7 +208,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 			//Not installed... do nothing
 		}
 		
-		apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
+		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
 		
 		startActivityForResult(apkinfo,30);
 		
