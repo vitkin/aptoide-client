@@ -195,7 +195,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			Log.d("Aptoide", "Putting installed version");
 			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1));
 			
-			VersionApk versionApkPassed = new VersionApk(tmp_get.get(1),Integer.parseInt(tmp_get.get(7)),pkg_id,-1);
+			VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
 			VersionApk versionApkInstalled = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1);
 			oldVersionsApk.add(versionApkPassed);
 			
@@ -203,7 +203,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 				apkinfo.putExtra("applicationExistsInRepo", false);
 			}
 			
-			oldVersionsApk.remove(versionApkPassed);
+//			oldVersionsApk.remove(versionApkPassed);
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}

@@ -238,7 +238,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			}
 			
 		});
-		
 		final Button action = (Button) findViewById(R.id.btn1);
 		switch (type) {
 		case 0:
@@ -274,13 +273,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 1:
 					rtrn_intent.putExtra("apkid", apk_id);
 					
-					if(((VersionApk)spinnerMulti.getSelectedItem()).compareTo(versionInstApk)==0){
-						rtrn_intent.putExtra("rm", true);
-						rtrn_intent.putExtra("install", false);
-					}else{
-						rtrn_intent.putExtra("rm", false);
-						rtrn_intent.putExtra("install", true);
-					}
+					rtrn_intent.putExtra("rm", false);
+					rtrn_intent.putExtra("install", true);
 					
 					rtrn_intent.putExtra("position", pos);
 					
@@ -455,12 +449,12 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
-			VersionApk latestVersion = new VersionApk(apk_ver_str_raw, 
-					versioncode, 
-					apk_id, 
-					Integer.parseInt(apk_size_str_raw)
-					);
-			versions.add(latestVersion);
+//			VersionApk latestVersion = new VersionApk(apk_ver_str_raw, 
+//					versioncode, 
+//					apk_id, 
+//					Integer.parseInt(apk_size_str_raw)
+//					);
+//			versions.add(latestVersion);
 			Collections.sort(versions, Collections.reverseOrder());
 			
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
@@ -475,28 +469,16 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						iteratorVersion.remove();
 					}
 				}
-				
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-						
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
 							apk_ver_str_raw = versionApk.getVersion();
 							if(Configs.TASTE_ON){
 								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 							}
-							int result = versionApk.compareTo(versionInstApk);
-							if(result>0){
-								action.setText("Update");
-							}else if(result<0) {
-								action.setText("Downgrade");
-							}else{
-								action.setText(ApkInfo.this.getString(R.string.isinstalled));
-							}
-							
-							if(Configs.COMMENTS_ON){
+							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
 								loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
 							}
-							
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
@@ -509,18 +491,18 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						iteratorVersion.remove();
 					}
 				}
-				Button reinstall = (Button)findViewById(R.id.btnReinstall);
-				if(applicationExistsInRepo){
-					reinstall.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 0.5f));
-					reinstall.setOnClickListener(new OnClickListener(){
+				
+				Button uninstall = (Button)findViewById(R.id.btnUninstall);
+				uninstall.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, uninstall.getLayoutParams().height, 0.5f));
+				uninstall.setOnClickListener(new OnClickListener(){
 
 						public void onClick(View arg0) {
 							
 							rtrn_intent.putExtra("apkid", apk_id);
 							
 							
-							rtrn_intent.putExtra("rm", false);
-							rtrn_intent.putExtra("install", true);
+							rtrn_intent.putExtra("rm", true);
+							rtrn_intent.putExtra("install", false);
 							
 							rtrn_intent.putExtra("position", apkinfo.getIntExtra("position", -1));
 							
@@ -532,7 +514,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						}
 						
 					});
-				}
+				
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 						
@@ -544,13 +526,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							int result = versionApk.compareTo(versionInstApk);
 							
 							if(result==0){
-								action.setText("Uninstall");
+								action.setText("Reinstall");
 							}else if(result<0) {
-								action.setText("Downgrade");
+								action.setText(R.string.downgrade);
 							}
-//							else{
-//								action.setText(ApkInfo.this.getString(R.string.isinstalled));
-//							}
 							
 							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
 								loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);

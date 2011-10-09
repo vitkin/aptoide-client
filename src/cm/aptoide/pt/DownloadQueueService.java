@@ -144,7 +144,13 @@ public class DownloadQueueService extends Service {
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.download_alrt)+" "+appName+" v."+version);
+		StringBuilder textApp = new StringBuilder(getString(R.string.download_alrt)+" "+appName);
+		if(version!=null){
+			Log.d("Aptoide", "External download taking place. Unable to retrive version.");
+			textApp.append(" v."+version);
+		}
+		contentView.setTextViewText(R.id.download_notification_name, textApp.toString());
+		
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, progress, false);	
 		
     	Intent onClick = new Intent();

@@ -9,10 +9,10 @@
     		>
     		
     	<RelativeLayout 
-    				android:background="@android:drawable/bottom_bar"
+    				android:background="@drawable/apkinfoheader"
     				android:layout_width="fill_parent" 
     				android:layout_height="wrap_content">
-    				<!-- android:background="@drawable/apkinfoheader"  -->
+    				<!-- android:background="@android:drawable/bottom_bar"  -->
     				
     		<LinearLayout 
     		android:orientation="horizontal" 
@@ -168,39 +168,58 @@
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
 	       			android:textSize="15sp" 
-	       			android:textColor="#000000"
-	       			android:text="@string/install" />
+	       			android:text="@string/install"
+	       			
+	       			android:background="@drawable/apkinfofooterindicator"
+	       			android:textColor="#FFFFFF"	
+	       			/>
 	       			<!-- 
 	       				android:background="@drawable/apkinfofooterindicator"
 	       				android:textColor="#FFFFFF"
 	       			-->
-     			
+					<View
+					    android:layout_width="1dip"
+					    android:layout_height="fill_parent"
+					    android:background="#000000"
+					/>
+				
+				     			
      			<Button 
-	       			android:id="@+id/btnReinstall" 
+	       			android:id="@+id/btnUninstall" 
 	       			android:layout_weight="1" 
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
-	       			android:textSize="15sp" 
-	       			android:textColor="#000000"
-	       			android:text="@string/isinstalled" />
+	       			android:textSize="15sp"
+	       			android:text="@string/uninstall"
+	       			
+	       			android:background="@drawable/apkinfofooterindicator"
+	       			android:textColor="#FFFFFF"
+	       				
+	       			 />
      			
-     			<!-- 
+     			
      				<View
 					    android:layout_width="1dip"
 					    android:layout_height="fill_parent"
 					    android:background="#000000"
 					/>
-     			-->
      			
-				<Button 
+     			
+				<cm.aptoide.pt.multiversion.ButtonFocused 
 	       			android:id="@+id/btn_market"
 	       			android:layout_weight=".50"  
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
 	       			android:textSize="15sp"
-	       			android:textColor="#000000"
 	       			
-	       			android:text="@string/btn_search_market" />
+	       			android:text="@string/btn_search_market"
+	       			android:singleLine="true"
+	       			android:ellipsize="marquee"
+            		android:marqueeRepeatLimit="marquee_forever"
+            		
+            		android:background="@drawable/apkinfofooterindicator"
+	       			android:textColor="#FFFFFF"	
+            		/>
 	       			<!-- 
 	       				android:background="@drawable/apkinfofooterindicator"
 	       				android:textColor="#FFFFFF"	
