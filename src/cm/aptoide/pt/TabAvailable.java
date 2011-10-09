@@ -1,5 +1,6 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 
@@ -279,7 +280,10 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			apkinfo.putExtra("rat", tmp_get.get(5));
 			apkinfo.putExtra("size", tmp_get.get(6));
 			apkinfo.putExtra("type", 0);
-			apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));
+			
+			ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+			VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+			versions.add(versionApkPassed);
 			
 			try {
 				PackageManager mPm = getApplicationContext().getPackageManager();
@@ -291,7 +295,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			
 			//apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));new DbHandler(this).getOldAndNewApks(pkg_id).contains(new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1), Integer.parseInt(tmp_get.get(7)), pkg_id, 0));
 			
-			apkinfo.putParcelableArrayListExtra("oldVersions", db.getOldApks(pkg_id));
+			apkinfo.putParcelableArrayListExtra("oldVersions", versions);
 			
 			startActivityForResult(apkinfo,30);
 		

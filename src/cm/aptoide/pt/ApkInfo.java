@@ -207,7 +207,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		apkinfo = getIntent();
 		final boolean applicationExistsInRepo = apkinfo.getBooleanExtra("applicationExistsInRepo", true);
 		
-		final int versioncode = apkinfo.getIntExtra("vercode", 0);
 		apk_id = apkinfo.getStringExtra("apk_id");
 		final int type = apkinfo.getIntExtra("type", 0);
 		
