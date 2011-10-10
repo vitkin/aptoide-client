@@ -122,7 +122,6 @@ public class BaseManagement extends Activity {
 		prefEdit = sPref.edit();
 		order_lst = sPref.getString("order_lst", "abc");
 		redrawCatgList();
-
 	}
 	
 	private void redrawCatgList(){
@@ -181,6 +180,7 @@ public class BaseManagement extends Activity {
         	apk_line.put("cat_count",count + " files");
         	game_catg.add(apk_line);
         }
+        
        game_catg_adpt = new SimpleAdapter(mctx, game_catg, R.layout.catglist, 
         		new String[] {"cntrl", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
 	}
@@ -313,7 +313,8 @@ public class BaseManagement extends Activity {
 		startActivityForResult(intent,REMOVE); 
 	}
 	
-	protected void installApk(String apk_path){
+	protected void installApk(String apk_path, String ver){
+
 		try {
 			pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
 			if(pkginfo == null){
@@ -322,6 +323,7 @@ public class BaseManagement extends Activity {
 				Intent intent = new Intent();
 				intent.setAction(android.content.Intent.ACTION_VIEW);
 				intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
+				prefEdit.putString("ver", ver);
 				prefEdit.putString("pkg", pkginfo.packageName);
 				prefEdit.commit();
 				startActivityForResult(intent,INSTALL);
@@ -332,7 +334,8 @@ public class BaseManagement extends Activity {
 		}
 	}
 	
-	protected void updateApk(String apk_path, String apk_id){
+	protected void updateApk(String apk_path, String apk_id, String ver){	
+
 		try {		
 			pkginfo = mPm.getPackageArchiveInfo(apk_path, 0);
 			Intent intent = new Intent();
@@ -340,6 +343,7 @@ public class BaseManagement extends Activity {
 	    	intent.setDataAndType(Uri.parse("file://" + apk_path), "application/vnd.android.package-archive");
 	//    	prefEdit.putString("pkg", pkginfo.packageName);
 	    	prefEdit.putString("pkg", apk_id);
+    		prefEdit.putString("ver", ver);
 	    	prefEdit.commit();
 	    	startActivityForResult(intent,UPDATE);
 			Log.d("Aptoide-BaseManagement", "Updating Apk: "+apk_path);
@@ -356,8 +360,8 @@ public class BaseManagement extends Activity {
 			String apkid = sPref.getString("pkg", null);
 			try {
 				pkginfo = mPm.getPackageInfo(apkid, 0);
-				db.insertInstalled(apkid);
-				prefEdit.remove("pkg");
+				db.insertInstalled(apkid, sPref.getString("ver", null));
+				prefEdit.remove("pkg"); prefEdit.remove("ver");
 				prefEdit.commit();
 				redrawCatgList();
 				redraw();
@@ -368,7 +372,8 @@ public class BaseManagement extends Activity {
 				pkginfo = mPm.getPackageInfo(apkid, 0);
 			} catch (NameNotFoundException e) {	
 				db.removeInstalled(apkid);
-				prefEdit.remove("pkg");
+				prefEdit.remove("pkg"); 
+				prefEdit.remove("ver"); 
 				prefEdit.commit();
 				redrawCatgList();
 				redraw();
@@ -379,10 +384,11 @@ public class BaseManagement extends Activity {
 				pkginfo = mPm.getPackageInfo(apkid, 0);
 			} catch (NameNotFoundException e) {	}
 			int vercode = pkginfo.versionCode;
-			if(db.wasUpdate(apkid, vercode)){
+			String version = sPref.getString("ver", null);
+			if(db.wasUpdateOrDowngrade(apkid, vercode)){
 				db.removeInstalled(apkid);
-				db.insertInstalled(apkid);
-				prefEdit.remove("pkg");
+				db.insertInstalled(apkid, version);
+				prefEdit.remove("pkg"); prefEdit.remove("ver");
 				prefEdit.commit();
 				redrawCatgList();
 				redraw();
@@ -414,57 +420,108 @@ public class BaseManagement extends Activity {
 					if(apk_lst != null)
 						apk_lst.clear();
 					apk_lst = db.getAll(order_lst);
-
-
+					
+					/*
+					 * status
+					 * 0 - not installed
+					 * 1 - installed
+					 * 2 - installed need update
+					 * 3 - installed don't need update but downgrade possible
+					 * 
+					 */
 					for(ApkNode node: apk_lst){
+						
 						apk_line = new HashMap<String, Object>();
 						apk_line.put("pkg", node.apkid);
 						String iconpath = new String(getString(R.string.icons_path)+node.apkid);
 						apk_line.put("icon", iconpath);
 						apk_line.put("rat", node.rat);
+						
 						if(node.down >= 0)
 							apk_line.put("down", node.down + " Down.");
+						
 						if(node.status == 1){
+							
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("name", node.name);
+//							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
+							
 						}else if(node.status == 2){
+							
 							apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
 							apk_line.put("name2", node.name);
+//							apk_line.put("statusSort", 2);
 							updtMap.add(apk_line);
 							instMap.add(apk_line);
+							
+						}else if(node.status == 3){
+							
+							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
+							apk_line.put("name", node.name);
+//							apk_line.put("statusSort", 3);
+							instMap.add(apk_line);
+//							updtMap.add(apk_line);
+							
 						}else{
+							
 							apk_line.put("status", "Version: " + node.ver);
 							apk_line.put("name", node.name);
 							availMap.add(apk_line);
 						}
+						
 					}
-
+					
+//					Collections.sort(instMap, new Comparator<Map<String,Object>>(){
+//
+//						public int compare(Map<String, Object> map1, Map<String, Object> map2) {	
+//							if(((Integer)map1.get("statusSort"))==2){
+//								if(((Integer)map2.get("statusSort"))!=2){
+//									return -1;
+//								} else{ 
+//									return 0; 
+//								}
+//							}
+//							
+//							return 1;
+//						}
+//					});
+//					
+//					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
+					
 					availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
 							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
 
 					availAdpt.setViewBinder(new LstBinder());
 
 					instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
-							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
-
+							new String[] {	"pkg", 		"name", 	"name2", 		"status", 		"status2", 		"status3", 						"icon", 		"rat"}, 
+							new int[] {		R.id.pkg, 	R.id.name, 	R.id.nameup, 	R.id.isinst, 	R.id.isupdt, 	R.id.isDowngradeAvailable, 		R.id.appicon, 	R.id.rating});
+  
 					instAdpt.setViewBinder(new LstBinder());
 
 					updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.listicons, 
-							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating});
+							new String[] {	"pkg", 		"name", 	"name2", 		"status", 		"status2", 		"status3",					"icon", 		"rat"}, 
+							new int[] {		R.id.pkg, 	R.id.name, 	R.id.nameup, 	R.id.isinst, 	R.id.isupdt, 	R.id.isDowngradeAvailable,	R.id.appicon, 	R.id.rating});
 
 					updateAdpt.setViewBinder(new LstBinder());
-				}catch (Exception e) {	}
-				finally{
+				
+					//Log.d("Aptoide", e.getMessage()+"");
+				}finally{
+					
 					Log.d("Aptoide","======================= I REDRAW SAY KILL");
 					stop_pd.sendEmptyMessage(0);
+					
 				}
 			}
+			
+			
+			
 		}.start();
 		 
 	}
 	
-
 	class LstBinder implements ViewBinder
 	{
 		public boolean setViewValue(View view, Object data, String textRepresentation)
@@ -509,16 +566,20 @@ public class BaseManagement extends Activity {
 			}
 			return true;
 		}
+
 	}
 
+	protected void queueDownload(String packageName, String ver, boolean isUpdate){
 
-	protected void queueDownload(String packageName, boolean isUpdate){
 
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 
 		try{
-			tmp_serv = db.getPathHash(packageName);
-
+			
+			tmp_serv = db.getPathHash(packageName, ver);
+			if(tmp_serv.size()==0){
+				tmp_serv = db.getPathHashOld(packageName, ver);
+			}
 
 			String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
 			String appName = packageName;
@@ -544,7 +605,7 @@ public class BaseManagement extends Activity {
 
 			String[] logins = null; 
 			logins = db.getLogin(downloadNode.getRepo());
-
+//			downloadNode.getRemotePath()
 			downloadNode.setLogins(logins);
 			Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
 
@@ -552,7 +613,6 @@ public class BaseManagement extends Activity {
 
 		} catch(Exception e){	}
 	}
-	 
 	 
 	 protected SimpleAdapter getRootCtg(){
 		 main_catg_adpt.setViewBinder(new SimpeLstBinder());
@@ -644,8 +704,9 @@ public class BaseManagement extends Activity {
 	}
 
 	@Override
-		public void onConfigurationChanged(Configuration newConfig) {
-			super.onConfigurationChanged(newConfig);
-		}	
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+	}	
+	
 
 }

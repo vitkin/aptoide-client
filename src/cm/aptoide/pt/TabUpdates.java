@@ -1,24 +1,34 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
+
+import cm.aptoide.pt.multiversion.VersionApk;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
+
+import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 
 public class TabUpdates extends BaseManagement implements OnItemClickListener{
@@ -38,7 +48,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		public void onReceive(Context context, Intent intent) {
 			Log.d("Aptoide-TabUpdates", "broadcast received");
 			if (intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
-				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"));
+				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"), intent.getStringExtra("version"));
 			}
 		}
 	}
@@ -48,10 +58,25 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		lv = new ListView(this);
+		if(Configs.BACKGROUND_ON_TABS){
+			if(Configs.INTERFACE_TABS_ON_BOTTOM){
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistupd_tab_bottom));
+			}else{
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistupd_tab_top));
+			}
+		}
+		lv.setCacheColorHint(0);
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
+		
+		final GestureDetector changeTabGes = new GestureDetector(new ChangeTab(((TabActivity)this.getParent()).getTabHost()));
+        lv.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                return changeTabGes.onTouchEvent(event); 
+            }
+        });
+		
 		db = new DbHandler(this);
 		//mctx = this;
 		
@@ -171,6 +196,20 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 2);
 		
+		ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+		versions.add(versionApkPassed);
+		
+		try {
+			PackageManager mPm = getApplicationContext().getPackageManager();
+			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode, pkg_id,-1));
+		} catch (NameNotFoundException e) {
+			//Not installed... do nothing
+		}
+		
+		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
+		
 		startActivityForResult(apkinfo,30);
 		
 		/*
@@ -258,12 +297,12 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+		if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
 			//new Thread() {
 				//public void run() {
 					String apk_id = data.getStringExtra("apkid");
 					Log.d("Aptoide", ".... updating: " + apk_id);
-					queueDownload(apk_id, true);
+					queueDownload(apk_id,data.getStringExtra("version"), true);
 					/*String apk_path = downloadFile(apk_id);
 					Message msg_alt = new Message();
 					if(apk_path == null){
@@ -322,12 +361,14 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		super.onConfigurationChanged(newConfig);
 	}
 	
+	
+	/*Changed by Rafael*/
 	public void updateAll(){
 		Log.d("Aptoide-TabUpdates", "Starting download of all possible updates");
 		
 		for(ApkNode node: apk_lst){
 			if(node.status == 2){
-				queueDownload(node.apkid, true);
+				queueDownload(node.apkid, node.ver, true);
 			}
 		}
 	}

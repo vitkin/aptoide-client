@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
   				
-    <LinearLayout 
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     		android:orientation="vertical" 
+    		
     		android:layout_width="fill_parent" 
     		android:layout_height="fill_parent"
-    		xmlns:android="http://schemas.android.com/apk/res/android"
     		>
     		
     	<RelativeLayout 
-    				android:background="@android:drawable/bottom_bar" 
+    				android:background="@drawable/apkinfoheader"
     				android:layout_width="fill_parent" 
     				android:layout_height="wrap_content">
-    			
+    				<!-- android:background="@android:drawable/bottom_bar"  -->
+    				
     		<LinearLayout 
     		android:orientation="horizontal" 
+    		
     		android:layout_width="fill_parent" 
     		android:layout_height="wrap_content">	
     			
@@ -110,183 +112,120 @@
         	        		
 		</LinearLayout>		
             			
-    	</RelativeLayout>
-    		
-    		
-    	<ScrollView 
-        	android:layout_width="fill_parent" 
-        	android:layout_height="wrap_content"
-        	android:layout_weight="1">
-        
-        	<LinearLayout 
-        		android:gravity="center" 
-        		android:orientation="vertical" 
-        		android:layout_width="fill_parent" 
-        		android:layout_height="wrap_content">
-            
-            <TextView android:id="@+id/dwn"
-            		android:gravity="left" 
-            		android:paddingTop="10.0dip"
-            		android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF"
-
-            		/>
-            		
-            <TextView android:id="@+id/size"
-            		android:gravity="left" 
-            		android:paddingTop="5.0dip"
-            		android:paddingLeft="5.0sp"
-            		android:layout_width="fill_parent"
-            		android:layout_height="wrap_content"
-            		android:textColor="#FFFFFF"
-
-            		/>
-            	
-            <TextView 
-            		android:textAppearance="?android:textAppearanceLarge" 
-            		android:textSize="18.0sp" 
-            		android:textColor="#FFFFBB"
-            		android:gravity="left" 
-            		android:layout_gravity="top" 
-            		android:paddingTop="10.0dip"
-            		android:paddingLeft="5.0sp"
-            		android:paddingRight="5.0sp" 
-            		android:layout_width="fill_parent" 
-            		android:layout_height="wrap_content" 
-            		android:text="About:"/>
-            		
-            		
-            <TextView 
-            		android:id="@+id/descript"
-            		android:gravity="left" 
-            		android:layout_gravity="top" 
-            		android:paddingTop="10.0dip"
-					android:textColor="#FFFFFF"
-            		android:paddingLeft="5.0sp"
-            		android:paddingRight="5.0sp" 
-            		android:layout_width="fill_parent" 
-            		android:layout_height="wrap_content" 
-            		/>
-            		
-           
-           <TextView
-           		android:textAppearance="?android:textAppearanceLarge"
-           		android:textSize="18.0sp"
-           		android:textColor="#FFFFBB"
-           		android:gravity="left"
-           		android:layout_gravity="top"
-           		android:paddingTop="10.0dip"
-           		android:paddingLeft="5.0sp"
-           		android:paddingRight="5.0sp"
-           		android:paddingBottom="5.0sp"
-           		android:layout_width="fill_parent"
-           		android:layout_height="wrap_content"
-           		android:text="Screenshots:"/>
-
-			<ProgressBar android:id="@+id/pscreens"
- 				 android:layout_width="wrap_content"
-  				android:layout_height="wrap_content"/>
-  				
-  				 <TextView 
-            		android:id="@+id/noscreens"
-            		android:gravity="center" 
-            		android:layout_gravity="center" 
-            		android:paddingTop="10.0dip"
-					android:textColor="#FFFFFF"
-            		android:paddingLeft="5.0sp"
-            		android:paddingRight="5.0sp" 
-            		android:layout_width="fill_parent" 
-            		android:layout_height="wrap_content"
-            		android:visibility="invisible" 
-            		/>
-
-<!-- 				<Gallery -->
-<!--         			android:id="@+id/screenshots_gal" -->
-<!--         			android:layout_width="fill_parent"  -->
-<!--         			android:layout_height="fill_parent" />         -->
-
-<TableLayout android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:orientation="horizontal"
-			>
-        <TableRow>
-            <ImageView android:id="@+id/shot1" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-            <View android:layout_width="10dip" />
-            <ImageView android:id="@+id/shot2" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-          
-        </TableRow>
-    </TableLayout>
-    
-    
-<TableLayout android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"
-			android:layout_gravity="center"
-			android:layout_marginTop="15sp">
-        <TableRow>
-            <ImageView android:id="@+id/shot3" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-            <View android:layout_width="10dip" />
-            <ImageView android:id="@+id/shot4" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-            <View android:layout_width="10dip" />
-            <ImageView android:id="@+id/shot5" android:onClick="screenshotClick" android:scaleType="fitCenter" android:layout_width="0dip" android:layout_weight="1" android:layout_height="wrap_content" android:adjustViewBounds="true" />
-        </TableRow>
-    </TableLayout>
-			
-<!-- 			<LinearLayout -->
-<!--        		android:gravity="center" -->
-<!--        		android:orientation="horizontal" -->
-<!--        		android:layout_width="fill_parent" -->
-<!--        		android:layout_height="wrap_content"> -->
-			
-<!-- 				<ImageView android:id="@+id/screen1" -->
-<!-- 					android:layout_gravity="left" -->
-<!--        			android:layout_width="50px" -->
-<!--        			android:layout_height="50px" -->
-<!--        			android:cropToPadding ="true" -->
-<!--        			android:scaleType="fitCenter" -->
-<!--        			android:adjustViewBounds="true" -->
-<!--        			android:src = "@drawable/splashaptoide2" />	 -->
-       			
-<!--        		<ImageView android:id="@+id/screen2" -->
-<!-- 					android:layout_gravity="right" -->
-<!--        			android:layout_width="50px" -->
-<!--        			android:layout_height="50px" -->
-<!--        			android:cropToPadding ="true" -->
-<!--        			android:scaleType="fitCenter" -->
-<!-- 					android:adjustViewBounds="true" -->
-<!--        			android:src = "@drawable/splashaptoide2" />	 -->
-			
-<!-- 			</LinearLayout> -->
-			
-			
-
-        	</LinearLayout>
-        </ScrollView>
-
-        <RelativeLayout 
-    				android:background="@android:drawable/bottom_bar" 
+    	</RelativeLayout>	
+    	
+    	
+    	
+        		
+    	<RelativeLayout 
+    				android:id="@+id/root"
     				android:layout_width="fill_parent" 
     				android:layout_height="wrap_content"
     				 >
-    				
-    				<Button 
-            			android:id="@+id/btn_market" 
-            			android:layout_width="150.0dip" 
-            			android:layout_height="wrap_content" 
-            			android:layout_margin="5.0dip" 
-            			android:text="@string/btn_search_market" 
-            			android:layout_alignParentRight="true" />
-            			
-            		<Button 
-            			android:id="@+id/btn1" 
-            			android:layout_width="150.0dip" 
-            			android:layout_height="wrap_content" 
-            			android:layout_margin="5.0dip" 
-            			android:text="@string/install"
-            			android:layout_alignParentLeft="true" />
-            			
+    		
+    		<ListView
+    			android:id="@+id/listComments" 
+    			
+    			android:layout_height="wrap_content" 
+    			android:layout_width="fill_parent"
+        		
+        		android:divider="@drawable/list_comments_divider"
+        		android:dividerHeight="1px"
+       			android:cacheColorHint="#00000000"
+       			android:layout_marginBottom="50dp"
+        		/>
+        		
+        	<LinearLayout 
+        		android:id="@+id/listview_footer"
+        		android:layout_height="wrap_content"
+     			android:layout_width="fill_parent"
+     			android:layout_alignParentBottom="true"
+     			android:orientation="horizontal">
+     			
+     			<!-- <TabHost
+     				android:layout_width="fill_parent"
+     				android:layout_height="wrap_content"
+     				android:id="@android:id/tabhost"
+     				>
+
+				<TabWidget
+					android:layout_width="fill_parent"
+					android:layout_height="wrap_content"
+					android:id="@android:id/tabs"
+					
+					/>
+				
+				<FrameLayout
+					android:id="@android:id/tabcontent"
+					android:layout_width="fill_parent"
+					android:layout_height="200px"
+					android:paddingTop="65px" />
+     			</TabHost>-->
+     			
+     			<Button 
+	       			android:id="@+id/btn1" 
+	       			android:layout_weight=".50" 
+	       			android:layout_width="fill_parent" 
+	       			android:layout_height="50dp"
+	       			android:textSize="15sp" 
+	       			android:text="@string/install"
+	       			
+	       			android:background="@drawable/apkinfofooterindicator"
+	       			android:textColor="#FFFFFF"	
+	       			/>
+	       			<!-- 
+	       				android:background="@drawable/apkinfofooterindicator"
+	       				android:textColor="#FFFFFF"
+	       			-->
+					<View
+					    android:layout_width="1dip"
+					    android:layout_height="fill_parent"
+					    android:background="#000000"
+					/>
+				
+				     			
+     			<Button 
+	       			android:id="@+id/btnUninstall" 
+	       			android:layout_weight="1" 
+	       			android:layout_width="fill_parent" 
+	       			android:layout_height="50dp"
+	       			android:textSize="15sp"
+	       			android:text="@string/uninstall"
+	       			
+	       			android:background="@drawable/apkinfofooterindicator"
+	       			android:textColor="#FFFFFF"
+	       				
+	       			 />
+     			
+     			
+     				<View
+					    android:layout_width="1dip"
+					    android:layout_height="fill_parent"
+					    android:background="#000000"
+					/>
+     			
+     			
+				<cm.aptoide.pt.multiversion.ButtonFocused 
+	       			android:id="@+id/btn_market"
+	       			android:layout_weight=".50"  
+	       			android:layout_width="fill_parent" 
+	       			android:layout_height="50dp"
+	       			android:textSize="15sp"
+	       			
+	       			android:text="@string/btn_search_market"
+	       			android:singleLine="true"
+	       			android:ellipsize="marquee"
+            		android:marqueeRepeatLimit="marquee_forever"
+            		
+            		android:background="@drawable/apkinfofooterindicator"
+	       			android:textColor="#FFFFFF"	
+            		/>
+	       			<!-- 
+	       				android:background="@drawable/apkinfofooterindicator"
+	       				android:textColor="#FFFFFF"	
+	       			 -->
+            </LinearLayout>	
+        				
     	</RelativeLayout>
         
     </LinearLayout>

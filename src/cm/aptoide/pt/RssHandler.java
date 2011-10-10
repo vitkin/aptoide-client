@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -50,7 +49,7 @@ public class RssHandler extends DefaultHandler{
 	
 	private int readed = 0;
 	
-	private boolean new_apk = false;
+	//private boolean new_apk = false;
 	private boolean apk_name = false;
 	private boolean apk_path = false;
 	private boolean apk_ver = false;
@@ -67,22 +66,26 @@ public class RssHandler extends DefaultHandler{
 	
 	private DbHandler db = null;
 	
-	private DefaultHttpClient mHttpClient = null;
+	//private DefaultHttpClient mHttpClient = null;
 	//private DefaultHttpClient mHttpClient2 = null;
 
-	private Vector<ApkNode> listapks= null;
+	private Vector<ApkNode> listapks = null;
+	
 	
 	private ArrayList<IconNode> iconsLst = new ArrayList<IconNode>();
 
 	
 	private Vector<IconNode> iconFetchList = new Vector<IconNode>();
-	private Vector<IconNode> iconFinalFetchList = new Vector<IconNode>();
 	
-	private boolean iconsInPool = true;
-	
+	//private Vector<IconNode> iconFinalFetchList = new Vector<IconNode>();
+	//private boolean iconsInPool = true;
 	//private boolean requireLogin = false;
+	
+	
 	private String usern = null;
 	private String passwd = null;
+	
+	private String basepath=null;
 	
 	private Handler pd_set = null;
 	private Handler pd_tick = null;
@@ -94,9 +97,11 @@ public class RssHandler extends DefaultHandler{
 	private boolean isRemove = false;
 	private boolean hasIcon = false;
 	private boolean apkcount = false;
+	private	boolean apk_basepath = false;
 	private int apks_n = -1;
 	
-	private boolean is_last = false;
+
+	//private boolean is_last = false;
 		
 	public RssHandler(Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
 		mctx = ctx;
@@ -123,7 +128,7 @@ public class RssHandler extends DefaultHandler{
 		
 		this.extras_hd = extras_hd;
 		
-		this.is_last = is_last;
+		//this.is_last = is_last;
 		
 		sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		
@@ -182,6 +187,8 @@ public class RssHandler extends DefaultHandler{
 			apks_n = new Integer(new String(ch).substring(start, start + length));
 		}else if(apk_size){
 			tmp_apk.size = new Integer(new String(ch).substring(start, start + length));
+		}else if(apk_basepath){
+			basepath = new String(ch).substring(start, start + length);
 		}
 	}
 
@@ -204,7 +211,7 @@ public class RssHandler extends DefaultHandler{
 			
 			
 			napk++;
-			new_apk = false;
+			//new_apk = false;
 
 			readed++;
 			if(readed >= 10){
@@ -215,8 +222,9 @@ public class RssHandler extends DefaultHandler{
 			
 			if(isRemove){
 				isRemove = false;
-				db.delApk(tmp_apk.apkid);
+				db.delApk(tmp_apk.apkid, tmp_apk.ver);
 			}else{
+				
 				if(tmp_apk.name.equalsIgnoreCase(""))
 					tmp_apk.name = tmp_apk.apkid;
 				else{
@@ -228,23 +236,18 @@ public class RssHandler extends DefaultHandler{
 				ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
 				if(!listapks.contains(node)){
 					db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
-					//tmp_apk.isnew = false;
-					//updateTable.add(tmp_apk);
 					listapks.add(node);
 				}else{
 					int pos = listapks.indexOf(node);
 					ApkNode list = listapks.get(pos);
 					if(list.vercode < node.vercode){
+						db.copyFromRecentApkToOldApk(tmp_apk.apkid, mserver);
 						db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
-						//tmp_apk.isnew = true;
-						//updateTable.remove(new ApkNodeFull(list.apkid));
-						//updateTable.add(tmp_apk);
-						listapks.remove(pos);
 						listapks.add(node);
-					}
+					} else { db.insertOldApk(tmp_apk, mserver); }
 				}
 			}
-			
+			 
 			/*readed++;
 			if(readed >= 10){
 				readed = 0;
@@ -305,6 +308,8 @@ public class RssHandler extends DefaultHandler{
 			pd_set.sendEmptyMessage(what);
 		}else if(localName.trim().equals("sz")){
 			apk_size = false;
+		}else if(localName.trim().equals("basepath")){
+			apk_basepath = false;
 		}
 	}
 
@@ -313,7 +318,7 @@ public class RssHandler extends DefaultHandler{
 			Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 		if(localName.trim().equals("package")){
-			new_apk = true;
+			//new_apk = true;
 		}else if(localName.trim().equals("name")){
 			apk_name = true;
 		}else if(localName.trim().equals("path")){
@@ -350,6 +355,8 @@ public class RssHandler extends DefaultHandler{
 			apkcount = true;
 		}else if(localName.trim().equals("sz")){
 			apk_size = true;
+		}else if(localName.trim().equals("basepath")){
+			apk_basepath = true;
 		}
 	}
 	
@@ -458,14 +465,13 @@ public class RssHandler extends DefaultHandler{
 //Temporary fix for ANR after failed binder transaction
 //			Log.d("Aptoide-RssHandler", "reducing iconslist, size= "+iconsLst.size());
 			ArrayList<IconNode> newList = new ArrayList<IconNode>();
-			for (int i=0;i <= 1000 && iconsLst.size() >= 0 ;i++) {
-				newList.add(iconsLst.remove(i));
-//				Log.d("Aptoide-RssHandler", "i: "+i+" icon: "+newList.get(i).url);
+			for (int i=0;i <= 1000 && iconsLst.size() > 0 ;i++) {
+				newList.add(iconsLst.remove(0));
 			}
-			Log.d("Aptoide-RssHandler", "reduced iconslist to size= "+newList.size());
+//			Log.d("Aptoide-RssHandler", "reduced iconslist to size= "+newList.size());
 			serv.putExtra("icons", newList);
 //			serv.putExtra("icons", iconsLst);
-			serv.putExtra("srv", mserver);
+			serv.putExtra("srv", basepath);
 			serv.putExtra("login", new String[] {usern, passwd});
 			mctx.startService(serv);
 		}

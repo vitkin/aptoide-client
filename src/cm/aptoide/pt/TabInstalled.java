@@ -1,16 +1,24 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
+import cm.aptoide.pt.multiversion.VersionApk;
+import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -37,7 +45,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		public void onReceive(Context context, Intent intent) {
 			Log.d("Aptoide-TabInstalled", "broadcast received");
 			if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
-				installApk(intent.getStringExtra("localPath"));
+				installApk(intent.getStringExtra("localPath"), intent.getStringExtra("version"));
 			}
 		}
 	}
@@ -48,14 +56,32 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		lv = new ListView(this);
+		if(Configs.BACKGROUND_ON_TABS){
+			if(Configs.INTERFACE_TABS_ON_BOTTOM){
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistinst_tab_bottom));
+			}else{
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistinst_tab_top));
+			}
+		}
+		
+		lv.setCacheColorHint(0);
 		lv.setFastScrollEnabled(true);
 		lv.setOnItemClickListener(this);
+		
+		final GestureDetector changeTabGes = new GestureDetector(new ChangeTab(((TabActivity)this.getParent()).getTabHost()));
+        lv.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                return changeTabGes.onTouchEvent(event); 
+            }
+        });
+        
 		db = new DbHandler(this);
 		
 		installApkListener = new InstallApkListener();
 		registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION"));
 		//mctx = this;
 	}
+	
 	
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
@@ -161,6 +187,25 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", 1);
 		
+		ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+		versions.add(versionApkPassed);
+		
+		try {
+			PackageManager mPm = getApplicationContext().getPackageManager();
+			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+			Log.d("Aptoide", "Putting installed version");
+			VersionApk versionApkInstalled = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1);
+			apkinfo.putExtra("instversion", versionApkInstalled);
+			
+			if(!versions.contains(versionApkInstalled)){
+				apkinfo.putExtra("applicationExistsInRepo", false);
+			}
+		} catch (NameNotFoundException e) {
+			//Not installed... do nothing
+		}
+		
+		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
 		startActivityForResult(apkinfo,30);
 		
 		/*
@@ -223,19 +268,23 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		*/
 	}
 	
-	
-	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
-			new Thread() {
-				public void run() {
+			if(data.getBooleanExtra("rm", false)){
+				new Thread() {
+					public void run() {
+						String apk_id = data.getStringExtra("apkid");
+						Log.d("Aptoide", ".... removing: " + apk_id);
+						removeApk(apk_id);
+					}
+				}.start();
+			} else if(data.getBooleanExtra("install", false) && data.hasExtra("version")){
 					String apk_id = data.getStringExtra("apkid");
-					Log.d("Aptoide", ".... removing: " + apk_id);
-					removeApk(apk_id);
-				}
-			}.start();
+					Log.d("Aptoide", "....... getting: " + apk_id);
+					queueDownload(apk_id, data.getStringExtra("version"), true);
+			}
 		}
 	}
 

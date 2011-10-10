@@ -21,6 +21,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 
+import cm.aptoide.pt.webservices.login.LoginDialog;
+
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -47,7 +49,7 @@ import android.util.Log;
 public class Settings extends PreferenceActivity implements OnSharedPreferenceChangeListener{
 	
 	private SharedPreferences sPref;
-	private SharedPreferences.Editor prefEdit;
+	// private SharedPreferences.Editor prefEdit;
 	private SharedPreferences sPrefFull;
 	private SharedPreferences.Editor prefEditFull;
 	
@@ -103,7 +105,6 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		prefEditFull = sPrefFull.edit();
 
 		/*String pref_str = sPref.getString("icdown", "error");
-		
 		Log.d("Aptoide","I got what?: " + pref_str);
 		if(pref_str.equalsIgnoreCase("error")){
 			prefEdit = sPref.edit();
@@ -116,6 +117,55 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		Log.d("Aptoide","The preference is: " + sPrefFull.getString("icdown", "error"));
 		
 		lst_pref_icns = (ListPreference) findPreference("icdown");
+		Preference clear_credentials = (Preference)findPreference("clearcredentials");
+		Preference set_credentials = (Preference)findPreference("setcredentials");
+		
+		if((Configs.COMMENTS_ADD_ON && Configs.COMMENTS_ON) || (Configs.TASTE_ADD_ON && Configs.TASTE_ON)){
+			
+			clear_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				
+				public boolean onPreferenceClick(Preference preference) {
+	
+					prefEditFull.remove( Configs.LOGIN_USER_NAME );
+					prefEditFull.remove( Configs.LOGIN_PASSWORD );
+					prefEditFull.remove( Configs.LOGIN_USER_ID );
+					prefEditFull.commit();
+					
+					final AlertDialog alrtClear = new AlertDialog.Builder(mctx).create();
+					alrtClear.setTitle(mctx.getString(R.string.credentialscleared));
+					alrtClear.setMessage(mctx.getString(R.string.credentialscleared_des));
+					alrtClear.setButton("Ok", new OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							alrtClear.dismiss();
+						}
+					});
+					alrtClear.show();
+					
+					
+					
+					return true;
+					
+				}
+			});
+			
+		
+			
+	
+			
+			set_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+				
+				public boolean onPreferenceClick(Preference preference) {
+					LoginDialog loginComments = new LoginDialog(Settings.this, LoginDialog.InvoqueNature.OVERRIDE_CREDENTIALS);
+					loginComments.show();
+					return true;	
+				}
+			});
+			
+		}else{
+			clear_credentials.setEnabled(false);
+			set_credentials.setEnabled(false);
+		}
+		
 		
 		clear_cache = (Preference)findPreference("clearcache");
 		clear_cache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
@@ -199,8 +249,6 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
 	}
-
-	
 	
 	@Override
 	protected void onResume() {
@@ -209,16 +257,12 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		
 	}
 	
-	 
-	
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,	String key) {
 		if(key.equalsIgnoreCase("icdown")){
 			updateSum();
 		}
 	}
-
-
-
+	
 	private void updateSum(){
 		String pref_str = sPref.getString("icdown", "error");
 		String[] talk = getResources().getStringArray(R.array.dwnif);

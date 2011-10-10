@@ -27,6 +27,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
+import cm.aptoide.pt.multiversion.VersionApk;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.SearchManager;
@@ -57,7 +59,6 @@ import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInSearch extends ListActivity{
 	
@@ -75,7 +76,7 @@ public class RemoteInSearch extends ListActivity{
 	private PackageManager mPm;
 	private PackageInfo pkginfo;
 
-	private static final int SETTINGS_FLAG = 0;
+//	private static final int SETTINGS_FLAG = 0;
 	
 	private Context mctx = this; 
 
@@ -195,8 +196,8 @@ public class RemoteInSearch extends ListActivity{
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(), EnumOptionsMenu.SEARCH_MENU.ordinal(), R.string.menu_search)
 			.setIcon(android.R.drawable.ic_menu_search);
-		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
-			.setIcon(android.R.drawable.ic_menu_preferences);
+//		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
+//			.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(), EnumOptionsMenu.ABOUT.ordinal(), R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		return true;
@@ -232,11 +233,11 @@ public class RemoteInSearch extends ListActivity{
 			});
 			alrt.show();
 			return true;
-		case SETTINGS:
-			Intent s = new Intent(RemoteInSearch.this, Settings.class);
-			s.putExtra("order", order_lst);
-			startActivityForResult(s,SETTINGS_FLAG);
-			return true;
+//		case SETTINGS:
+//			Intent s = new Intent(mctx, Settings.class);
+//			s.putExtra("order", order_lst);
+//			startActivityForResult(s,SETTINGS_FLAG);
+//			return true;
 		case CHANGE_ORDER:
 			if(order_lst.equalsIgnoreCase("abc"))
 				order_lst = "iu";
@@ -278,15 +279,33 @@ public class RemoteInSearch extends ListActivity{
 		
 		apkinfo.putExtra("server", tmp_get.firstElement());
 		apkinfo.putExtra("version", tmp_get.get(1));
+		Log.d("Aptoide", "Versão aplicação:"+tmp_get.get(1));
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
+		
+		ArrayList<VersionApk> versions = db.getOldApks(apkid);
+		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),apkid,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+		versions.add(versionApkPassed);
+		
+		Log.d("Aptoide", "Status: "+apk_lst.get(position).status);
 		
 		if(apk_lst.get(position).status == 0){
 			apkinfo.putExtra("type", 0);
 		}else{
 			apkinfo.putExtra("type", 1);
 		}
+		
+		try {
+			PackageManager mPm = getApplicationContext().getPackageManager();
+			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
+			
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,apkid,-1));
+		} catch (NameNotFoundException e) {
+			//Not installed... do nothing
+		}
+		
+		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
 		
 		startActivityForResult(apkinfo,30);
 		
@@ -312,7 +331,7 @@ public class RemoteInSearch extends ListActivity{
 				if(pos > -1){
 					if(data.getBooleanExtra("in", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Install");
-						queueDownload(pos);
+						queueDownload(pos, data.getStringExtra("version"));
 						
 					}else if(data.getBooleanExtra("rm", false)){
 						Log.d("Aptoide","This: " + apkid + " - " + pos + " - Remove");
@@ -332,7 +351,7 @@ public class RemoteInSearch extends ListActivity{
 				List<PackageInfo> getapks = mPm.getInstalledPackages(0);
 				for(PackageInfo node: getapks){
 					if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
-						db.insertInstalled(apk_lst.get(requestCode).apkid);
+						db.insertInstalled(apk_lst.get(requestCode).apkid, apk_lst.get(requestCode).ver);
 						prefEdit.putBoolean("search_updt", true);
 						prefEdit.commit();
 						redraw();
@@ -404,7 +423,7 @@ public class RemoteInSearch extends ListActivity{
 
 	}
 
-	private void queueDownload(int position){
+	private void queueDownload(int position, String version){
 		
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 		
@@ -412,7 +431,12 @@ public class RemoteInSearch extends ListActivity{
 		
 			String packageName = apk_lst.get(position).apkid;
 			String appName = apk_lst.get(position).name;
-			tmp_serv = db.getPathHash(packageName);
+			
+			tmp_serv = db.getPathHash(packageName, version);
+			if(tmp_serv.size()==0){
+				tmp_serv = db.getPathHashOld(packageName, version);
+			}
+			
 			
 			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
 			
@@ -428,8 +452,8 @@ public class RemoteInSearch extends ListActivity{
 			if(remotePath.length() == 0)
 				throw new TimeoutException();
 			
-			String[] logins = null; 
-			logins = db.getLogin(downloadNode.getRepo());
+//			String[] logins = null; 
+//			logins = db.getLogin(downloadNode.getRepo());
 					
 			downloadQueueService.startDownload(downloadNode);
 	

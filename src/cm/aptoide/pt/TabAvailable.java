@@ -1,19 +1,29 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
+
+import cm.aptoide.pt.multiversion.VersionApk;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 import android.app.AlertDialog;
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
@@ -22,7 +32,6 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
@@ -51,9 +60,25 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		lv = new ListView(this);
+		
+		if(Configs.BACKGROUND_ON_TABS){
+			if(Configs.INTERFACE_TABS_ON_BOTTOM){
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava_tab_bottom));
+			}else{
+				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava_tab_top));
+			}
+		}
+		
+		lv.setCacheColorHint(0);
 		lv.setOnItemClickListener(this);
 		lv.setFastScrollEnabled(true);
-
+		
+		final GestureDetector changeTabGes = new GestureDetector(new ChangeTab(((TabActivity)this.getParent()).getTabHost()));
+        lv.setOnTouchListener(new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                return changeTabGes.onTouchEvent(event); 
+            }
+        });
 		
 		new Thread(){
 
@@ -235,7 +260,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			lv.setSelection(pos-1);
 			deep = 3;
 		}else{
-
+			
 			Intent apkinfo = new Intent(this,ApkInfo.class);
 			apkinfo.putExtra("name", db.getName(pkg_id));
 			apkinfo.putExtra("icon", this.getString(R.string.icons_path)+pkg_id);
@@ -248,7 +273,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 				apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
 			}
 			
-
 			Vector<String> tmp_get = db.getApk(pkg_id);
 			apkinfo.putExtra("server", tmp_get.firstElement());
 			apkinfo.putExtra("version", tmp_get.get(1));
@@ -256,6 +280,22 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			apkinfo.putExtra("rat", tmp_get.get(5));
 			apkinfo.putExtra("size", tmp_get.get(6));
 			apkinfo.putExtra("type", 0);
+			
+			ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+			VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+			versions.add(versionApkPassed);
+			
+			try {
+				PackageManager mPm = getApplicationContext().getPackageManager();
+				PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+				apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName, pkginfo.versionCode,pkg_id,-1));
+			} catch (NameNotFoundException e) {
+				//Not installed... do nothing
+			}
+			
+			//apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));new DbHandler(this).getOldAndNewApks(pkg_id).contains(new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1), Integer.parseInt(tmp_get.get(7)), pkg_id, 0));
+			
+			apkinfo.putParcelableArrayListExtra("oldVersions", versions);
 			
 			startActivityForResult(apkinfo,30);
 		
@@ -267,10 +307,10 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+		if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
 			String apk_id = data.getStringExtra("apkid");
 			Log.d("Aptoide", "....... getting: " + apk_id);
-			queueDownload(apk_id, false);
+			queueDownload(apk_id, data.getStringExtra("version"), false);
 		}
 	}
 

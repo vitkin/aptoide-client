@@ -1,5 +1,8 @@
 package cm.aptoide.pt;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 
@@ -22,9 +25,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class NetworkApis {
-
-	private static final String terminal_info = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"
-	+";v"+android.os.Build.VERSION.RELEASE+";"+System.getProperty("os.arch");
+	
+	public static final int TIME_OUT = 12000;
 	
 	public static HttpResponse getHttpResponse(String url, String srv, Context mctx){
 		try{
@@ -35,8 +37,8 @@ public class NetworkApis {
 			String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 						
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-			HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+			HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 			
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {
@@ -46,7 +48,6 @@ public class NetworkApis {
 					return false;
 				}
 				
-
 				public URI getLocationURI(HttpResponse response, HttpContext context)
 				throws ProtocolException {
 					return null;
@@ -55,7 +56,7 @@ public class NetworkApis {
 			
 			
 			HttpGet mHttpGet = new HttpGet(url);
-			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
+			mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid);
 			mHttpGet.setHeader("Accept-Encoding", "gzip");
 						
 			String[] logins = null; 
@@ -77,7 +78,7 @@ public class NetworkApis {
 				String newurl = azz[0].getValue();
 				mHttpGet = null;
 				mHttpGet = new HttpGet(newurl);
-				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ terminal_info+";"+myscr+";id:"+myid);
+				mHttpGet.setHeader("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid);
 				mHttpGet.setHeader("Accept-Encoding", "gzip");
 				
 				if(logins != null){
@@ -105,14 +106,71 @@ public class NetworkApis {
 		
 	}
 	
+	/**
+	 * @author rafael
+	 * 
+	 * @param mctx
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
+	public static InputStream getInputStream(Context mctx, String url) throws IOException{
+		
+		URL urlObj = new URL(url);
+		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection(); //Careful with UnknownHostException. Throws MalformedURLException, IOException
+		
+		conn.setRequestMethod("GET");
+		conn.setRequestProperty("Accept", "application/xml");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		conn.setConnectTimeout(TIME_OUT);
+		
+		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		String myid = sPref.getString("myId", "NoInfo");
+		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+		
+		conn.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+		
+		return conn.getInputStream();
+		
+	}
+	
+	
+	/**
+	 * @author rafael
+	 * 
+	 * @param mctx
+	 * @param url
+	 * @param args
+	 * @return
+	 * @throws IOException
+	 */
+	public static HttpURLConnection send(Context mctx, String url, String... args) throws IOException {
+		
+		URL urlObj = new URL(String.format(url,(Object[])args));
+		
+		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();//Careful with UnknownHostException 
+		
+		conn.setRequestMethod("POST");
+		conn.setRequestProperty("Accept", "application/xml");
+		conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+		
+		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		String myid = sPref.getString("myId", "NoInfo");
+		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+		conn.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+		
+		return conn;
+		
+	}
+	
 	
 	public static HttpResponse getHttpResponse(String url, String usr, String pwd, Context mctx){
 		try{
 			//DbHandler db = new DbHandler(mctx);
 
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-			HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+			HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {
@@ -170,8 +228,8 @@ public class NetworkApis {
 	public static DefaultHttpClient createItOpen(String url, String usr, String pwd){
 		try{
 		HttpParams httpParameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-		HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+		HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+		HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 
 		DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 		mHttpClient.setRedirectHandler(new RedirectHandler() {
@@ -243,8 +301,8 @@ public class NetworkApis {
 		try{
 						
 			HttpParams httpParameters = new BasicHttpParams();
-			HttpConnectionParams.setConnectionTimeout(httpParameters, 12000);
-			HttpConnectionParams.setSoTimeout(httpParameters, 12000);
+			HttpConnectionParams.setConnectionTimeout(httpParameters, TIME_OUT);
+			HttpConnectionParams.setSoTimeout(httpParameters, TIME_OUT);
 			
 			DefaultHttpClient mHttpClient = new DefaultHttpClient(httpParameters);
 			mHttpClient.setRedirectHandler(new RedirectHandler() {
