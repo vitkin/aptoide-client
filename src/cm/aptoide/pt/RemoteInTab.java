@@ -604,10 +604,18 @@ public class RemoteInTab extends TabActivity {
 		updt_pd.show();*/
 		
 		//Check for connection first!
+		boolean connectionAvailable = false;
+		try {
+			connectionAvailable = netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+			
+		} catch (Exception e) { }
 		
-		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED 
-		||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED
-		||  netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED){
+		
+		
+		if(connectionAvailable){
 			myTabHost.setCurrentTabByTag("inst");
 			
 			new Thread() {
