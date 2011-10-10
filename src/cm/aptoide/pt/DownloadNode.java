@@ -1,6 +1,7 @@
 package cm.aptoide.pt;
 
 public class DownloadNode extends Object{
+	
 	private String repo;
 	private String remotePath;
 	private String md5sum;
@@ -100,4 +101,6 @@ public class DownloadNode extends Object{
 	}
 	
 		
+	/*Changed by Rafael Campos*/
+	public String version; 
 }

@@ -47,8 +47,10 @@ public class FetchIconsService extends Service{
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onStart(Intent intent, int startId) {
+		
 		super.onStart(intent, startId);
 		Bundle intent_info = intent.getExtras();
 		ServiceIcon tmp = new ServiceIcon(intent_info.getString("srv"), intent_info.getStringArray("login"), (ArrayList<IconNode>)intent_info.getSerializable("icons"));

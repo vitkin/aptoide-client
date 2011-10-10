@@ -40,6 +40,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
@@ -109,6 +110,7 @@ public class DownloadQueueService extends Service {
 		notification.put("appName", downloadNode.getAppName());
 		notification.put("intSize", Integer.toString(downloadNode.getSize()));
 		notification.put("intProgress", "0");
+		notification.put("version", downloadNode.version);
 		notification.put("localPath", downloadNode.getLocalPath());
 		notification.put("isUpdate", Boolean.toString(downloadNode.isUpdate()));
 		if(downloadNode.isRepoPrivate()){
@@ -138,10 +140,17 @@ public class DownloadQueueService extends Service {
 
 		String appName = notifications.get(apkidHash).get("appName");
 		int size = Integer.parseInt(notifications.get(apkidHash).get("intSize"));
+		String version = notifications.get(apkidHash).get("version");
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.download_alrt)+" "+appName);
+		StringBuilder textApp = new StringBuilder(getString(R.string.download_alrt)+" "+appName);
+		if(version!=null){
+			Log.d("Aptoide", "External download taking place. Unable to retrive version.");
+			textApp.append(" v."+version);
+		}
+		contentView.setTextViewText(R.id.download_notification_name, textApp.toString());
+		
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, progress, false);	
 		
     	Intent onClick = new Intent();
@@ -175,10 +184,11 @@ public class DownloadQueueService extends Service {
 		String packageName = notifications.get(apkidHash).get("packageName");
 		String appName = notifications.get(apkidHash).get("appName");
 		int size = Integer.parseInt(notifications.get(apkidHash).get("intSize"));
+		String version = notifications.get(apkidHash).get("version");
 		
 		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+appName);
+		contentView.setTextViewText(R.id.download_notification_name, getString(R.string.finished_download_message)+" "+appName+" v."+version);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, size*KBYTES_TO_BYTES, false);	
 		
 		Intent onClick = new Intent("pt.caixamagica.aptoide.INSTALL_APK", Uri.parse("apk:"+packageName));
@@ -188,6 +198,8 @@ public class DownloadQueueService extends Service {
     	onClick.putExtra("packageName", packageName);
     	onClick.putExtra("apkidHash", apkidHash);
     	onClick.putExtra("isUpdate", Boolean.parseBoolean(notifications.get(packageName.hashCode()).get("isUpdate")));
+    	/*Changed by Rafael Campos*/
+    	onClick.putExtra("version", version);
 		 Log.d("Aptoide-DownloadQueuService","finished notification apkidHash: "+apkidHash +" localPath: "+localPath);	
     	
     	// The PendingIntent to launch our activity if the user selects this notification
@@ -267,13 +279,18 @@ public class DownloadQueueService extends Service {
 						FileOutputStream saveit = new FileOutputStream(localPath);
 						DefaultHttpClient mHttpClient = new DefaultHttpClient();
 						HttpGet mHttpGet = new HttpGet(remotePath);
-
+						
+						SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+						String myid = sPref.getString("myId", "NoInfo");
+						String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+						
+						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+						
 						if(Boolean.parseBoolean(notifications.get(threadApkidHash).get("loginRequired"))){
 							URL mUrl = new URL(remotePath);
 							mHttpClient.getCredentialsProvider().setCredentials(
 									new AuthScope(mUrl.getHost(), mUrl.getPort()),
 									new UsernamePasswordCredentials(notifications.get(threadApkidHash).get("username"), notifications.get(threadApkidHash).get("password") ));
-
 						}
 
 						HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
@@ -376,19 +393,19 @@ public class DownloadQueueService extends Service {
 	
 	 protected Handler downloadProgress = new Handler(){
 
-			@Override
-			public void handleMessage(Message progressArguments) {
-				super.handleMessage(progressArguments);
-
-				int apkidHash = progressArguments.arg1;
-				int intermediateProgress = progressArguments.arg2;
-				//Log.d("Aptoide","Progress: " + pd.getProgress() + " Other: " +  (pd.getMax()*0.96) + " Adding: " + msg.what);
-				Log.d("Aptoide-downloadQueue", "apkidHash: "+apkidHash+" current progress - "+notifications.get(apkidHash).get("intProgress") + "  additional - "+ intermediateProgress);
-				int progress = Integer.parseInt(notifications.get(apkidHash).get("intProgress"))+intermediateProgress;
-				notifications.get(apkidHash).put("intProgress", Integer.toString(progress));
-				setNotification(apkidHash, progress);
-			}
-		 };
+		 @Override
+		 public void handleMessage(Message progressArguments) {
+			 super.handleMessage(progressArguments);
+			 	
+			 int apkidHash = progressArguments.arg1;
+			 int intermediateProgress = progressArguments.arg2;
+			 //Log.d("Aptoide","Progress: " + pd.getProgress() + " Other: " +  (pd.getMax()*0.96) + " Adding: " + msg.what);
+			 Log.d("Aptoide-downloadQueue", "apkidHash: "+apkidHash+" current progress - "+notifications.get(apkidHash).get("intProgress") + "  additional - "+ intermediateProgress);
+			 int progress = Integer.parseInt(notifications.get(apkidHash).get("intProgress"))+intermediateProgress;
+			 notifications.get(apkidHash).put("intProgress", Integer.toString(progress));
+			 setNotification(apkidHash, progress);
+		 }
+	 };
 	
 
 	 private Handler downloadErrorHandler = new Handler() {

@@ -42,6 +42,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -66,15 +67,18 @@ import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
-import cm.aptoide.pt.utils.EnumOptionsMenu;
+import android.widget.ViewFlipper;
 
 public class RemoteInTab extends TabActivity {
 
@@ -86,6 +90,7 @@ public class RemoteInTab extends TabActivity {
 	
 	
 	private String REMOTE_FILE = "/info.xml";
+
 //	private String REMOTE_EXTRAS_FILE = "/extras.xml";
 	
 	private static final int SETTINGS_FLAG = 31;
@@ -116,11 +121,12 @@ public class RemoteInTab extends TabActivity {
 	private ArrayList<ServerNode> extras_repo = new ArrayList<ServerNode>();
 	private boolean there_was_update = false;
 	
-	private Intent intp;
+//	private Intent intp;
 	private Intent intserver;
 
 	private boolean fetch_extra = true;
 	
+	private GestureDetector detectChangeTab;
 
 	private DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -149,22 +155,53 @@ public class RemoteInTab extends TabActivity {
 	
 	
 	
-	private Handler fetchHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			if(pd.isShowing())
-				pd.dismiss();
-			
-	    	startActivityForResult(intp, FETCH_APK);
-			super.handleMessage(msg);
-		}
-		
-	};
+//	private Handler fetchHandler = new Handler() {
+//
+//		@Override
+//		public void handleMessage(Message msg) {
+//			if(pd.isShowing())
+//				pd.dismiss();
+//			
+//	    	startActivityForResult(intp, FETCH_APK);
+//			super.handleMessage(msg);
+//		}
+//		
+//	};
     
+	private void addTab(String label, int drawableId, Class<?> classToLauch, TabHost tabHost) {
+		//For the style of the tabs
+		Intent intent = new Intent(this, classToLauch);
+		TabHost.TabSpec spec = tabHost.newTabSpec(label);
+		
+		View tabIndicator = LayoutInflater.from(this).inflate(
+								R.layout.tab_indicator, 
+								tabHost.getTabWidget(), 
+								false
+								);
+		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
+		title.setText(label);
+		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.icon);
+		icon.setImageResource(drawableId);
+		
+		spec.setIndicator(tabIndicator);
+		spec.setContent(intent);
+		tabHost.addTab(spec);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if(Configs.INTERFACE_TABS_ON_BOTTOM){
+			super.setContentView(R.layout.tabhostbottom);
+		} else {
+			super.setContentView(R.layout.tabhosttop);
+		}
+		
+		//detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
+		
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -173,19 +210,58 @@ public class RemoteInTab extends TabActivity {
 		mctx = this;
 		
 		db = new DbHandler(this);
-
+		
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
 		prefEdit.putBoolean("update", true);
 		prefEdit.commit();
-
+		
 		myTabHost = getTabHost();
-		myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
-		myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)));
-		myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
-
+		if(Configs.INTERFACE_SILVER_TABS_ON){
+		
+			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
+			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());
+			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class, getTabHost());
+			
+		}else{
+			 
+			myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
+			myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)) );
+			myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
+			
+		}
+		
+		/**
+		 * @author rafael
+		 *
+		 */
+		class ClickForce implements View.OnClickListener {
+			private ViewFlipper flipper;
+			private int index;
+			
+			public ClickForce(int index, ViewFlipper flipper) {
+				this.flipper = flipper;
+				getTabHost().setCurrentTab(index);
+				flipper.setDisplayedChild(index);
+				this.index = index;
+			}
+			public void onClick(View v) {
+		        getTabHost().setCurrentTab(this.index);
+		        flipper.setInAnimation(null);
+		        flipper.setOutAnimation(null);
+				flipper.setDisplayedChild(this.index);
+			}
+		}
+		ViewFlipper flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
+		for (int i = 0; i < getTabWidget().getChildCount(); i++) {
+			getTabWidget().getChildAt(i).setOnClickListener(new ClickForce(i,flipper));
+		}
+		getTabHost().setCurrentTab(0);
+		flipper.setDisplayedChild(0);
+		
+		
 		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
-
+		
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		File sdcard_file = new File(SDCARD);
@@ -326,7 +402,9 @@ public class RemoteInTab extends TabActivity {
 			}
 		}
 	}
-
+	
+	
+	
 //	private void installFromLink(String path){
 //		try{
 //			Log.d("Aptoide-RemoteInTab", "installing From Link: "+path);
@@ -356,6 +434,19 @@ public class RemoteInTab extends TabActivity {
 //	    	fetchHandler.sendEmptyMessage(0);
 //		}catch(IOException e) { }
 //	}
+
+	/**
+	 * @see android.app.Activity#onTouchEvent(android.view.MotionEvent)
+	 */
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		if(detectChangeTab!=null){
+			if (detectChangeTab.onTouchEvent(event)){
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -512,11 +603,21 @@ public class RemoteInTab extends TabActivity {
 	
 		updt_pd.show();*/
 		
-		
 		//Check for connection first!
+		boolean connectionAvailable = false;
+		try {
+			connectionAvailable = netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+			
+		} catch (Exception e) { }
 		
-		if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED ||  netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED){
+		
+		
+		if(connectionAvailable){
 			myTabHost.setCurrentTabByTag("inst");
+			
 			new Thread() {
 				public void run() {
 					try{
@@ -844,7 +945,6 @@ public class RemoteInTab extends TabActivity {
     		Intent goExtraServ = new Intent(mctx, FetchExtrasService.class);
     		goExtraServ.putExtra("lstex", extras_repo);
     		mctx.startService(goExtraServ);
-    		
         	/*new Thread() {
 				public void run() {
 					Log.d("Aptoide","Extras thread START!");
@@ -920,6 +1020,7 @@ public class RemoteInTab extends TabActivity {
 		super.onConfigurationChanged(newConfig);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -996,6 +1097,9 @@ public class RemoteInTab extends TabActivity {
 	private void installApk(Intent intent){
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
+		
+		String version = arguments.getString("version");
+		
 		String packageName = arguments.getString("packageName");
 		int apkidHash = arguments.getInt("apkidHash");
 		boolean isUpdate = arguments.getBoolean("isUpdate");
@@ -1010,11 +1114,12 @@ public class RemoteInTab extends TabActivity {
 			installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
 			myTabHost.setCurrentTabByTag("inst");
 		}
-    	installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-    	installApkAction.putExtra("localPath", localPath);
+    		installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+	    	installApkAction.putExtra("localPath", localPath);
+	    	installApkAction.putExtra("version", version);
 		
-		
-		sendBroadcast(installApkAction); Log.d("Aptoide-RemoteInTab", "install broadcast sent");
+		sendBroadcast(installApkAction); 
+		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
 
 

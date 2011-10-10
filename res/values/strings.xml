@@ -28,6 +28,51 @@
     
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>
+    <string name="multi_ver_prompt">Select an app version</string>
+    <string name="version">Version</string>
+    <string name="size">Size</string>
+    <string name="comments">Comments:</string>
+    <string name="commentsproblem">Comments not available</string>
+    <string name="reinstall">Reinstall</string>
+    <string name="version_inst">Version installed</string>
+    <string name="installed_downgrade">Downgrade possible.</string>
+    <string name="reply">Reply</string>
+    <string name="whattodo">What to do?</string>
+    <string name="likes">Likes: </string>
+    <string name="dislikes">Dislikes: </string>
+    <string name="copyclip">Copy to clipboard</string>
+    <string name="commentlabel">Comment app...</string>
+    <string name="submit">Submit</string>
+    <string name="clear">Clear</string>
+    <string name="body">Body..</string>
+    <string name="subject">Subject...</string>
+    <string name="user">User name...</string>
+    <string name="pass">Password...</string>
+    <string name="showpass">Show password</string>
+    <string name="hidepass">Hide password</string>
+    <string name="failedcredentials">Failed to login the given credentials</string>
+    <string name="comments_unavailable">Comments unavailable</string>
+    <string name="credentialssettings">Bazaar login</string>
+    <string name="clearcredentials">Clear login</string>
+    <string name="clearcredentials_summary">Will unset your current login</string>
+    <string name="setcredentials">Bazaar Login</string>
+    <string name="setcredentials_summary">Will set a new login</string>
+    <string name="credentialscleared">Login cleared</string>
+    <string name="credentialscleared_des">Your credentials have been unsetted</string>
+    <string name="commentadded">Your comment as been successfully submited</string>
+    <string name="enterbody">Enter your review on the body section</string>
+    <string name="inresponseto">\@</string>
+    <string name="usernotdef">User not defined</string>
+    <string name="passwordnotdef">Password not defined</string>
+    <string name="loading">Loading...</string>
+    <string name="postingcomment">Posting your comment...</string>
+    <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
+    <string name="opinionsuccess">Your opinion was successfully submitted</string>
+    <string name="postingtaste">Your opinion is being submitted.</string>
+    <string name="unabletoexecute">Unable to execute</string>
+    <string name="loggingin">Logging in...</string>
+    <string name="tastenotavailable">Taste not available</string>
+    <string name="downgrade_available">downgrade available</string>
 </resources>
 
 <!--

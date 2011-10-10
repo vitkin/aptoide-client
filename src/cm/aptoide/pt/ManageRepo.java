@@ -45,8 +45,10 @@ import org.apache.http.protocol.HttpContext;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -96,6 +98,7 @@ public class ManageRepo extends ListActivity{
 	private enum returnStatus {OK, LOGIN_REQUIRED, BAD_LOGIN, FAIL, EXCEPTION};
 	
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -132,7 +135,8 @@ public class ManageRepo extends ListActivity{
 			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
 			for(final String srv: new_serv_lst){
 				if(serverContainsRepo(exist_server,srv))
-					continue;
+//					continue;
+					finish();
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -672,6 +676,13 @@ public class ManageRepo extends ListActivity{
 		});
 		
         HttpGet mHttpGet = new HttpGet(uri+"/info.xml");
+        
+        SharedPreferences sPref = this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		String myid = sPref.getString("myId", "NoInfo");
+		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+        
+        mHttpGet.setHeader("User-Agent", "aptoide-" + this.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+        
         try {
         	if(user != null && pwd != null){
         		URL mUrl = new URL(uri);

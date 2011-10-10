@@ -1,4 +1,4 @@
-	package cm.aptoide.pt;
+package cm.aptoide.pt;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -14,8 +14,8 @@ public class ExtrasRssHandler extends DefaultHandler{
 	
 	private DbHandler db = null;
 	
-	private boolean extras = false;
-	private boolean pkg = false;
+//	private boolean extras = false;
+//	private boolean pkg = false;
 	private boolean apkid = false;
 	private boolean cmt = false;
 	
@@ -44,10 +44,10 @@ public class ExtrasRssHandler extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		if(localName.trim().equals("extras")){
-			extras = false;
+			//extras = false;
 			// end of XML document
 		}else if(localName.trim().equals("pkg")){
-			pkg = false;
+			//pkg = false;
 			// Add fetched information to DB
 			e_cmt = Html.fromHtml(e_cmt).toString();
 			db.addExtraXML(e_apkid, e_cmt, server);
@@ -64,9 +64,9 @@ public class ExtrasRssHandler extends DefaultHandler{
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
 		if(localName.trim().equals("extras")){
-			extras = true;
+			//extras = true;
 		}else if(localName.trim().equals("pkg")){
-			pkg = true;
+			//pkg = true;
 		}else if(localName.trim().equals("apkid")){
 			apkid = true;
 		}else if(localName.trim().equals("cmt")){

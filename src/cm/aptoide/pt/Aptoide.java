@@ -195,6 +195,7 @@ public class Aptoide extends Activity {
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	
         super.onCreate(savedInstanceState);
         
         mctx = this;
@@ -280,6 +281,7 @@ public class Aptoide extends Activity {
        
         new Thread(new Runnable() {
             public void run() {
+            	
             	Vector<ApkNode> apk_lst = db.getAll("abc");
             	mProgress.setMax(apk_lst.size());
         		PackageManager mPm;
@@ -321,7 +323,8 @@ public class Aptoide extends Activity {
         		
                 Message msg = new Message();
                 msg.what = LOAD_TABS;
-                startHandler.sendMessage(msg); 
+                startHandler.sendMessage(msg);
+                
             }
         }).start();
     }
@@ -441,8 +444,8 @@ public class Aptoide extends Activity {
         Document dom = builder.parse( new InputSource(new URL(LATEST_VERSION_CODE_URI).openStream()) );
         dom.getDocumentElement().normalize();
         NodeList items = dom.getElementsByTagName(name);
-        for(int i=0;i<items.getLength();){
-        	Node item = items.item(i);
+        if(items.getLength()>0){
+        	Node item = items.item(0);
         	Log.d("Aptoide-XmlElement Name", item.getNodeName());
         	Log.d("Aptoide-XmlElement Value", item.getFirstChild().getNodeValue().trim());
         	return item.getFirstChild().getNodeValue().trim();
