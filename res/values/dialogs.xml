@@ -20,7 +20,7 @@
     <string name="settings_cache">Clearing cache...</string>
     
     <string name="remote_in_noSD_title">No memory</string>
-    <string name="remote_in_noSD">You don\'t have an SDcard.\nPlease insert one and try again.</string>
+    <string name="remote_in_noSD">You don\'t have an SDcard, or it isn\'t working properly\nPlease insert one, or re-insert it and try again.</string>
     <string name="remote_in_noSDspace">You don\'t have enough space on your SDcard to use Aptoide\nPlease free up some space and try again.</string>
     
     <string name="error_on_update">The update process could not be completed on the following repositories:\n</string>
