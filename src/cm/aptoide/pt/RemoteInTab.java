@@ -265,7 +265,7 @@ public class RemoteInTab extends TabActivity {
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		File sdcard_file = new File(SDCARD);
-		if(!sdcard_file.exists()){
+		if(!sdcard_file.exists() || !sdcard_file.canWrite()){
 			
 			final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
