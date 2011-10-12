@@ -170,18 +170,18 @@
 	       			android:textSize="15sp" 
 	       			android:text="@string/install"
 	       			
-	       			android:background="@drawable/apkinfofooterindicator"
-	       			android:textColor="#FFFFFF"	
+	       			
+	       			android:textColor="#000000"	
 	       			/>
 	       			<!-- 
 	       				android:background="@drawable/apkinfofooterindicator"
 	       				android:textColor="#FFFFFF"
 	       			-->
-					<View
+					<!-- <View
 					    android:layout_width="1dip"
 					    android:layout_height="fill_parent"
 					    android:background="#000000"
-					/>
+					/>-->
 				
 				     			
      			<Button 
@@ -192,34 +192,36 @@
 	       			android:textSize="15sp"
 	       			android:text="@string/uninstall"
 	       			
-	       			android:background="@drawable/apkinfofooterindicator"
-	       			android:textColor="#FFFFFF"
+	       			
+	       			android:textColor="#000000"
 	       				
 	       			 />
      			
      			
-     				<View
+     				<!-- <View
 					    android:layout_width="1dip"
 					    android:layout_height="fill_parent"
 					    android:background="#000000"
-					/>
+					/>-->
      			
      			
-				<cm.aptoide.pt.multiversion.ButtonFocused 
+				<Button
 	       			android:id="@+id/btn_market"
 	       			android:layout_weight=".50"  
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
-	       			android:textSize="15sp"
+	       			android:textSize="12sp"
 	       			
 	       			android:text="@string/btn_search_market"
-	       			android:singleLine="true"
-	       			android:ellipsize="marquee"
-            		android:marqueeRepeatLimit="marquee_forever"
+	       			
             		
-            		android:background="@drawable/apkinfofooterindicator"
-	       			android:textColor="#FFFFFF"	
+            		
+	       			android:textColor="#000000"	
             		/>
+            		<!-- android:singleLine="true"
+	       			android:ellipsize="marquee"
+            		android:marqueeRepeatLimit="marquee_forever" -->
+            		
 	       			<!-- 
 	       				android:background="@drawable/apkinfofooterindicator"
 	       				android:textColor="#FFFFFF"	

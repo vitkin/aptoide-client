@@ -71,7 +71,7 @@
     <string name="postingtaste">Your opinion is being submitted.</string>
     <string name="unabletoexecute">Unable to execute</string>
     <string name="loggingin">Logging in...</string>
-    <string name="tastenotavailable">Taste not available</string>
+    <string name="tastenotavailable">Likes not available</string>
     <string name="downgrade_available">downgrade available</string>
 </resources>
 
