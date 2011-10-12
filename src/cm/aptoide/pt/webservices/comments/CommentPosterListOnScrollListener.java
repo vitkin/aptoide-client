@@ -17,7 +17,8 @@ import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
@@ -36,7 +37,6 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
     private int previousTotal; // The total number of items in the dataset after the last load
     private Boolean loading; // True if we are still waiting for the last set of data to load
     private BigInteger lastCommentIdRead;
-    private boolean continueFetching;
     
     private Activity context;
     private CommentsAdapter<Comment> commentList;
@@ -47,6 +47,8 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
     
     private AtomicBoolean stoped;
     private TextView loadingText;
+    
+    private AtomicBoolean isRequestRunning;
     
     /**
      * 
@@ -83,17 +85,13 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
      */
     public void reset(){
     	
-    	currentPage = 0;
-    	previousTotal = 0;
-    	loading = true;
-    	lastCommentIdRead = null;
-    	continueFetching = true;
-    	stoped = new AtomicBoolean(false);
-    	
-    	loadingText.setText(R.string.loading);
-    	loadingText.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
-    	load.startAnimation();
-    	
+    	currentPage 		= 0;
+    	previousTotal 		= 0;
+    	loading 			= true;
+    	lastCommentIdRead 	= null;
+    	stoped 				= new AtomicBoolean(false);
+    	isRequestRunning	= new AtomicBoolean(false);
+    	updateInterface.sendEmptyMessage(0);
     }
     
     /**
@@ -140,7 +138,7 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 			// Make sure no one uses commentGetter
 			synchronized(commentGetter) {
 				
-				if(continueFetching && !isCancelled()){
+				if(!isCancelled()){
 					
 		            if (loading && totalItemCount > previousTotal) {
 		                
@@ -175,7 +173,7 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 							}
 							
 		    			}catch (Exception e) { 
-		    				continueFetching = false;
+		    				stoped.set(true);
 		    			}
 						
 			        }
@@ -204,14 +202,11 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 							 commentList.add(comment);
 						}
 						
-					}else {
-						
-						if(!stoped.get() && !continueFetching){
-							loadingText.getLayoutParams().height = 0;
-							loadingText.setText("");
-							load.stopAnimation();
-							stoped.set(true);
-						}
+					} else {
+							
+						loadingText.getLayoutParams().height = 0;
+						loadingText.setText("");
+						load.stopAnimation();
 						
 					}
 					
@@ -221,13 +216,14 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 			 pendingFetch.remove(this); 
 			 
 			}
-			
+			isRequestRunning.set(false);
 		}
 		
 		@Override
 		protected void onCancelled() {
 			// Remove thread from pending fetch 
 			synchronized (pendingFetch){ pendingFetch.remove(this); }
+			isRequestRunning.set(false);
 		}
 		
     } //End of Fetch class
@@ -300,8 +296,9 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
      */
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
     	if(!stoped.get()){
-    		new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
-    		Log.d("Aptoide", "New thread launched");
+    		if(isRequestRunning.getAndSet(true)){
+    			new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
+    		}
     	}
     }
     
@@ -309,5 +306,17 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
      * 
      */
     public void onScrollStateChanged(AbsListView view, int scrollState) {}
- 
+    
+    private UpdateInterface updateInterface = new UpdateInterface();
+    
+    private class UpdateInterface extends Handler{
+		public UpdateInterface() {}
+		@Override
+		public void handleMessage(Message msg) {
+			loadingText.setText(R.string.loading);
+	    	loadingText.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+	    	load.startAnimation();
+		}
+	}
+    
 }

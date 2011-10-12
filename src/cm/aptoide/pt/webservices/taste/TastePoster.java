@@ -98,6 +98,9 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 					
 					userTaste.setValue(result.getUserTaste()); //UserTaste.NOTEVALUATED can not happen hear
 					
+					like.setVisibility(View.VISIBLE);
+					dislike.setVisibility(View.VISIBLE);
+					
 				}else{ //There was some error
 					
 					likes.setText(context.getText(R.string.tastenotavailable));
