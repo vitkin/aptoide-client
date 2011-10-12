@@ -42,11 +42,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import cm.aptoide.pt.utils.EnumOptionsMenu;
-import cm.aptoide.pt.webservices.comments.Comment;
-import cm.aptoide.pt.webservices.exceptions.EmptyRequestException;
-import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
-import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -62,7 +57,6 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -84,6 +78,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInTab extends TabActivity {
 
@@ -517,7 +512,14 @@ public class RemoteInTab extends TabActivity {
 				}
 			});
 		}else{
-			if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED){
+			boolean freeConnectionAvailable = false;
+			try {
+				freeConnectionAvailable = netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+				freeConnectionAvailable = freeConnectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+				
+			} catch (Exception e) { }
+			
+			if(freeConnectionAvailable){
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				upd_alrt.setTitle(getText(R.string.update_repos));
 				upd_alrt.setMessage(getText(R.string.updating_cfrm));
@@ -650,10 +652,12 @@ public class RemoteInTab extends TabActivity {
 			connectionAvailable = netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+			
+		} catch (Exception e) { }
+		try {
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
 			
 		} catch (Exception e) { }
-		
 		
 		
 		if(connectionAvailable){
