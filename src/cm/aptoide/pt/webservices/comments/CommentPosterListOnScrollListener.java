@@ -132,6 +132,8 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 		@Override
 		protected ArrayList<Comment> doInBackground(Void... params) {
 			
+			Thread.currentThread().setName("FetchCommentsTask");
+			
 			//Add this thread to the list of pending threads
 			synchronized(pendingFetch){ pendingFetch.add(this); }
 			

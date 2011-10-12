@@ -5,6 +5,7 @@ import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -101,6 +102,10 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 					
 					likes.setText(context.getText(R.string.tastenotavailable));
 					dislikes.setText("");
+					
+					like.setVisibility(View.GONE);
+					dislike.setVisibility(View.GONE);
+					
 					userTaste.setValue(EnumUserTaste.NOTEVALUATED);
 					
 				}

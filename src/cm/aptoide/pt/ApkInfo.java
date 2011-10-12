@@ -205,7 +205,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		rtrn_intent = new Intent();
 		
 		apkinfo = getIntent();
-		final boolean applicationExistsInRepo = apkinfo.getBooleanExtra("applicationExistsInRepo", true);
 		
 		apk_id = apkinfo.getStringExtra("apk_id");
 		final int type = apkinfo.getIntExtra("type", 0);
@@ -379,20 +378,20 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
 		
-		if(!applicationExistsInRepo){
-			//Hide taste section
-			this.like.setVisibility(View.GONE);
-			this.dislike.setVisibility(View.GONE);
-			this.likes.setVisibility(View.GONE);
-			this.dislikes.setVisibility(View.GONE);
-		}
+//		if(!applicationExistsInRepo){
+//			//Hide taste section
+//			this.like.setVisibility(View.GONE);
+//			this.dislike.setVisibility(View.GONE);
+//			this.likes.setVisibility(View.GONE);
+//			this.dislikes.setVisibility(View.GONE);
+//		}
 		
 		listView.addHeaderView(linearLayout, null, false);
 		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		
 		
 		/*Comments*/
-		if(applicationExistsInRepo && Configs.COMMENTS_ON){
+		if( Configs.COMMENTS_ON){
 			//Stop comments for applications not present in the repository
 			
 			if(Configs.COMMENTS_ADD_ON){
@@ -430,10 +429,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			});
 			//listView.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.apkinfoheader));
 			
-			
-			
-			
-			
 			registerForContextMenu(listView);
 		} else {
 			listView.setAdapter(commentAdapter);
@@ -445,8 +440,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Multiversion*/
-		
-		
 			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
 //			VersionApk latestVersion = new VersionApk(apk_ver_str_raw, 
 //					versioncode, 
@@ -564,7 +557,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Taste*/
-		if(applicationExistsInRepo && Configs.TASTE_ON){
+		if( Configs.TASTE_ON){
 			
 			if(type==1){
 				selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
@@ -659,6 +652,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			this.likes.getLayoutParams().height=0;
 			this.dislikes.getLayoutParams().height=0;
 		}
+		
+		Log.d("Aptoide", "hello finished");
 		
 	}
 	

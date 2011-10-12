@@ -43,6 +43,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import cm.aptoide.pt.utils.EnumOptionsMenu;
+import cm.aptoide.pt.webservices.comments.Comment;
+import cm.aptoide.pt.webservices.exceptions.EmptyRequestException;
+import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
+import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -58,6 +62,7 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -584,6 +589,42 @@ public class RemoteInTab extends TabActivity {
 	}
 	
 	public boolean updateRepos(){
+		
+		
+//		/**
+//	     * @author rafael
+//	     * @since summerinternship2011
+//	     * 
+//	     */
+//	    class UpdateRepos extends AsyncTask<Void, Void, Void> {
+//			
+//			/**
+//			 * 
+//			 * @param firstVisibleItem
+//			 * @param visibleItemCount
+//			 * @param totalItemCount
+//			 */
+//			public UpdateRepos() {
+//				
+//			}
+//			
+//			@Override
+//			protected Void doInBackground(Void... params) {
+//				return null;
+//			}
+//
+//			@Override
+//			protected Void onPostExecute(Void result) {
+//				return null;
+//			}
+//			
+//			@Override
+//			protected Void onCancelled() {
+//				return null;
+//			}
+//			
+//	    } //End of Fetch class
+		
 		prefEdit.putBoolean("kill_thread", true);
     	prefEdit.commit();
     	Log.d("Aptoide","======================= I UPDATEREPOS");
