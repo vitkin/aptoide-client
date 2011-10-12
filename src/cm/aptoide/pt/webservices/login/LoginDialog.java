@@ -270,7 +270,7 @@ public class LoginDialog extends Dialog{
 				}
 				
 			}else{
-				Toast.makeText(context, context.getString(R.string.unabletoexecutecheknet)+"bla", Toast.LENGTH_LONG).show();
+				Toast.makeText(context, context.getString(R.string.unabletoexecutecheknet), Toast.LENGTH_LONG).show();
 			}
 			
 			progress.dismiss();

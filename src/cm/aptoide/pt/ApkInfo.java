@@ -171,6 +171,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		long start = System.currentTimeMillis();
+		
 		setContentView(R.layout.apkinfo);
 		
 		sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
@@ -354,7 +357,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							Log.d("Aptoide","* " + a);
 							HttpResponse pic = NetworkApis.imgWsGet(a);
 							InputStream pic_st = pic.getEntity().getContent();
-							//java.lang.OutOfMemoryError: bitmap size exceeds VM budget
+							//TODO fix java.lang.OutOfMemoryError: bitmap size exceeds VM budget
 							Drawable pic_drw = Drawable.createFromStream(pic_st, "src"); //hear
 							imageDrwb[i] = pic_drw;
 						}
@@ -440,6 +443,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Multiversion*/
+			final Runnable newVersionFetchComments = new Runnable(){
+
+				public void run() {
+					loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+				}
+				
+			};
+			
 			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
 //			VersionApk latestVersion = new VersionApk(apk_ver_str_raw, 
 //					versioncode, 
@@ -469,7 +480,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 							}
 							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
-								loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+								new Thread(newVersionFetchComments).start();
 							}
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
@@ -512,10 +523,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
 							apk_ver_str_raw = versionApk.getVersion();
+							int result = versionApk.compareTo(versionInstApk);
+							
 							if(Configs.TASTE_ON){
 								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 							}
-							int result = versionApk.compareTo(versionInstApk);
+							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
+								new Thread(newVersionFetchComments).start();
+							}
 							
 							if(result==0){
 								action.setText("Reinstall");
@@ -523,18 +538,12 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								action.setText(R.string.downgrade);
 							}
 							
-							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
-								loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
-							}
-							
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
 				}else{
 					//Otherwise
-					spinnerMulti.getLayoutParams().height = 0;
-					spinnerMulti.getLayoutParams().width = 0;
-					spinnerMulti.setVisibility(View.INVISIBLE);
+					spinnerMulti.setVisibility(View.GONE);
 				}
 			} else if(type==0){
 				
@@ -542,10 +551,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 						apk_ver_str_raw = ((VersionApk)spinnerMultiAdapter.getItem(position)).getVersion();
-						selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
-						
+						if(Configs.TASTE_ON){
+							selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+						}
 						if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
-							loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+							new Thread(newVersionFetchComments).start();
 						}
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
@@ -557,11 +567,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Taste*/
-		if( Configs.TASTE_ON){
-			
-			if(type==1){
-				selectTaste(apk_repo_str_raw, apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
-			}
+		if(Configs.TASTE_ON){
 			
 			if(Configs.TASTE_ADD_ON){
 			this.like.setOnTouchListener(new OnTouchListener(){
@@ -653,7 +659,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			this.dislikes.getLayoutParams().height=0;
 		}
 		
-		Log.d("Aptoide", "hello finished");
+		long end = System.currentTimeMillis();
+		Log.d("Aptoide", "ApkInfo - Execution time was "+(end-start)+" ms.");
+		
 		
 	}
 	
@@ -699,6 +707,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		likes.setText(this.getString(R.string.loading));
 		dontlikes.setText(this.getString(R.string.loading));
+		
+		dislike.setVisibility(View.INVISIBLE);
+		like.setVisibility(View.INVISIBLE);
 		
 		if(tastePoster!=null)
 			tastePoster.cancel(true);

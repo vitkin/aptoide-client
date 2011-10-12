@@ -42,6 +42,8 @@ import org.apache.http.client.ClientProtocolException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+import cm.aptoide.pt.utils.EnumOptionsMenu;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
