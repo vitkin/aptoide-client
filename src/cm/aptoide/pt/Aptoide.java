@@ -84,7 +84,7 @@ import android.widget.Toast;
 
 public class Aptoide extends Activity { 
 	
-
+//TODO Constants 
     
 	private static final int LOAD_TABS = 0;
 	private static final int UPDATE_SELF = 99;
@@ -92,24 +92,27 @@ public class Aptoide extends Activity {
     private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/aptoideUpdate.apk";
 	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
 	
+//-------------------	
+	
 	private WakeLock keepScreenOn;
-	private Intent DownloadQueueServiceIntent;
+	private Intent DownloadQueueServiceIntent;	//TODO to dataService
     
-    private Vector<String> server_lst = null;
-    private Vector<String[]> get_apps = null;
+    private Vector<String> server_lst = null;	//TODO to dataService
+    private Vector<String[]> get_apps = null;	//TODO to dataService
     
-    // Used for Aptoide version update
-	private DbHandler db = null;
+	private DbHandler db = null;				//TODO to dataService
 
-	private SharedPreferences sPref;
-	private SharedPreferences.Editor prefEdit;
+	private SharedPreferences sPref;			//TODO to dataService
+	private SharedPreferences.Editor prefEdit;	//TODO to dataService
 
-	private PackageInfo pkginfo;	
+	private PackageInfo pkginfo;				//TODO to dataService	
 	
 	private ProgressBar mProgress;
 	private int mProgressStatus = 0;
 	
 	private Context mctx;
+
+//TODO to dataService	
 	
 	private DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -137,6 +140,7 @@ public class Aptoide extends Activity {
 	    }
 
 	};	
+	
 	
 	private Bundle savedInstanceState;
 	
@@ -192,20 +196,28 @@ public class Aptoide extends Activity {
 		} 
     }; 
 	
+//-------------------
+	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
         
-        mctx = this;
+        mctx = this;	//TODO delete, leads to memory leaks, just use this
 
+//TODO to dataService       
+        
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
     	DownloadQueueServiceIntent = new Intent(mctx, DownloadQueueService.class);
     	startService(DownloadQueueServiceIntent);
 
     	mctx.bindService(new Intent(mctx, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+
+//-------------------    	
+    	
+//TODO deprecated    	
     	
 //@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
     	ActivityManager activityManager = (ActivityManager)mctx.getSystemService(Context.ACTIVITY_SERVICE);
@@ -218,13 +230,20 @@ public class Aptoide extends Activity {
 	            return;
 			}
 		}
-			
+    	
+//-------------------
+
+//TODO to dataService    	
+    	
         Log.d("Aptoide","******* \n Downloads will be made to: " + Environment.getExternalStorageDirectory().getPath() + "\n ********");
 
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
         
-   		
+//-------------------
+
+//TODO to dataService		
+		
    		PackageManager mPm = getPackageManager();
    		try {
 			pkginfo = mPm.getPackageInfo("cm.aptoide.pt", 0);
@@ -243,9 +262,10 @@ public class Aptoide extends Activity {
    			e.printStackTrace();
    			proceed();
    		}
-		
+//-------------------				
     }
-    
+ 
+//TODO to dataService      
     private void proceed(){
    		db = new DbHandler(this);
    		
@@ -279,7 +299,7 @@ public class Aptoide extends Activity {
         
         mProgress = (ProgressBar) findViewById(R.id.pbar);
        
-        new Thread(new Runnable() {
+        new Thread(new Runnable() {		
             public void run() {
             	
             	Vector<ApkNode> apk_lst = db.getAll("abc");
@@ -290,7 +310,8 @@ public class Aptoide extends Activity {
         		
         		keepScreenOn.acquire();
         		
-        		for(ApkNode node: apk_lst){ 
+        		//TODO iterate through getInstalledPackages(), it'll surely have much less iterations
+        		for(ApkNode node: apk_lst){	
         			if(node.status == 0){
        				 try{
        					 pkginfo = mPm.getPackageInfo(node.apkid, 0);
@@ -326,8 +347,9 @@ public class Aptoide extends Activity {
                 startHandler.sendMessage(msg);
                 
             }
-        }).start();
-    }
+        }).start();	
+    }			
+//-------------------
 
 
 	@Override

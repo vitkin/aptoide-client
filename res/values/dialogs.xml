@@ -20,7 +20,7 @@
     <string name="settings_cache">Clearing cache...</string>
     
     <string name="remote_in_noSD_title">No memory</string>
-    <string name="remote_in_noSD">You don\'t have an SDcard.\nPlease insert one and try again.</string>
+    <string name="remote_in_noSD">You don\'t have an SDcard, or it isn\'t working properly\nPlease insert one, or re-insert it and try again.</string>
     <string name="remote_in_noSDspace">You don\'t have enough space on your SDcard to use Aptoide\nPlease free up some space and try again.</string>
     
     <string name="error_on_update">The update process could not be completed on the following repositories:\n</string>
@@ -29,7 +29,7 @@
     <string name="update_repos">Update repositories</string>
     <string name="update_main">The list of repositories in use has been changed.\nDo you wish to update them?</string>
     
-    <string name="updating_3g">You are not connected through WIFI. It is advised to update with a WiFi connection.\nUpdate anyway?</string>
+    <string name="updating_3g">You are not connected through WIFI or ethernet. It is advised to update with a WiFi or ethernet connection.\nUpdate anyway?</string>
     <string name="updating_cfrm">Confirm Aptoide repositories update?</string>
     <string name="updating_norepos">There are no enabled repositories in your list.\nPlease add a repository or enable at least one that you already have.</string>
     

@@ -42,7 +42,6 @@ import org.apache.http.client.ClientProtocolException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import cm.aptoide.pt.utils.EnumOptionsMenu;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
@@ -79,6 +78,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInTab extends TabActivity {
 
@@ -265,7 +265,7 @@ public class RemoteInTab extends TabActivity {
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		File sdcard_file = new File(SDCARD);
-		if(!sdcard_file.exists()){
+		if(!sdcard_file.exists() || !sdcard_file.canWrite()){
 			
 			final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -512,7 +512,14 @@ public class RemoteInTab extends TabActivity {
 				}
 			});
 		}else{
-			if(netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED){
+			boolean freeConnectionAvailable = false;
+			try {
+				freeConnectionAvailable = netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+				freeConnectionAvailable = freeConnectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+				
+			} catch (Exception e) { }
+			
+			if(freeConnectionAvailable){
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				upd_alrt.setTitle(getText(R.string.update_repos));
 				upd_alrt.setMessage(getText(R.string.updating_cfrm));
@@ -584,6 +591,42 @@ public class RemoteInTab extends TabActivity {
 	}
 	
 	public boolean updateRepos(){
+		
+		
+//		/**
+//	     * @author rafael
+//	     * @since summerinternship2011
+//	     * 
+//	     */
+//	    class UpdateRepos extends AsyncTask<Void, Void, Void> {
+//			
+//			/**
+//			 * 
+//			 * @param firstVisibleItem
+//			 * @param visibleItemCount
+//			 * @param totalItemCount
+//			 */
+//			public UpdateRepos() {
+//				
+//			}
+//			
+//			@Override
+//			protected Void doInBackground(Void... params) {
+//				return null;
+//			}
+//
+//			@Override
+//			protected Void onPostExecute(Void result) {
+//				return null;
+//			}
+//			
+//			@Override
+//			protected Void onCancelled() {
+//				return null;
+//			}
+//			
+//	    } //End of Fetch class
+		
 		prefEdit.putBoolean("kill_thread", true);
     	prefEdit.commit();
     	Log.d("Aptoide","======================= I UPDATEREPOS");
@@ -609,10 +652,12 @@ public class RemoteInTab extends TabActivity {
 			connectionAvailable = netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+			
+		} catch (Exception e) { }
+		try {
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
 			
 		} catch (Exception e) { }
-		
 		
 		
 		if(connectionAvailable){
