@@ -444,11 +444,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		/*Multiversion*/
 			final Runnable newVersionFetchComments = new Runnable(){
-
 				public void run() {
 					loadOnScrollCommentList.fetchNewApp(apk_repo_str_raw, apk_id, apk_ver_str_raw);
 				}
-				
 			};
 			
 			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");

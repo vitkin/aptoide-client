@@ -169,7 +169,8 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 				protected ResponseHandler doInBackground(Void... params) {
 					
 					try {
-						return Comment.sendComment(AddCommentDialog.this.getContext(), 
+						
+						ResponseHandler handler = Comment.sendComment(AddCommentDialog.this.getContext(), 
 								repo, 
 								apkid, 
 								version, 
@@ -178,6 +179,13 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 								username, 
 								passwordSha1,
 								replyTo!=null?replyTo.getId():null);
+						
+						if(loadOnScrollComList!=null){
+							loadOnScrollComList.fetchNewComments();
+						}
+						
+						return handler;
+						
 					} catch (Exception e){}
 					
 					return null;
@@ -187,8 +195,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 				protected void onPostExecute(ResponseHandler result) {
 					dialogProgress.dismiss();
 					if(result!=null){
-						if(loadOnScrollComList!=null)
-							loadOnScrollComList.fetchNewComments();
+						
 						AddCommentDialog.this.dismiss();
 						if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.FAIL)){
 							for(String error: result.getErrors()){
