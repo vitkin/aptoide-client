@@ -10,6 +10,7 @@ import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.webservices.exceptions.CancelRequestSAXException;
 import cm.aptoide.pt.webservices.exceptions.EmptyRequestException;
 import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
 import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
@@ -19,7 +20,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.view.ViewGroup.LayoutParams;
+import android.util.Log;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -33,22 +35,19 @@ import android.widget.AbsListView.OnScrollListener;
  */
 public class CommentPosterListOnScrollListener implements OnScrollListener {
     
-    private int currentPage; // The current page of data you have loaded
-    private int previousTotal; // The total number of items in the dataset after the last load
-    private Boolean loading; // True if we are still waiting for the last set of data to load
-    private BigInteger lastCommentIdRead;
+    private int 			currentPage; 						// The current page of data you have loaded
+    private int 			previousTotal; 						// The total number of items in the dataset after the last load
+    private BigInteger 		lastCommentIdRead;
     
-    private Activity context;
-    private CommentsAdapter<Comment> commentList;
-    private CommentGetter commentGetter; //Comment xml parser
+    private Activity 					context;
+    private CommentsAdapter<Comment> 	commentList;	
+    private CommentGetter 				commentGetter; 			// Comment xml parser
     
-    private ArrayList<Fetch> pendingFetch;
-    private GifView load;
+    private ExecutingController pendingFetch;					// The fetch comment asynctask being run
+    private GifView 		   load;
     
-    private AtomicBoolean stoped;
-    private TextView loadingText;
-    
-    private AtomicBoolean isRequestRunning;
+    private AtomicBoolean 	stoped;								//	If mode comments should be fetch
+    private TextView 		loadingText;						//	Text field displaying a loading message for messages
     
     /**
      * 
@@ -65,33 +64,32 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
     								String apkid, String version, LinearLayout loadingLayout) 
     										throws ParserConfigurationException, SAXException {
     	
-    	this.context = context;
-    	this.commentList = commentList;
+    	this.context 		= context;
+    	this.commentList 	= commentList;
     	
-    	commentGetter = new CommentGetter(repo, apkid, version);
+    	commentGetter 		= new CommentGetter(repo, apkid, version);
     	
-    	this.pendingFetch = new ArrayList<Fetch>();
+    	this.pendingFetch 	= null;
     	
-    	load = ((GifView)loadingLayout.findViewById(R.id.loadImageComments));
+    	load 				= ((GifView)loadingLayout.findViewById(R.id.loadImageComments));
     	load.startAnimation(R.drawable.loading, 40);
-    	loadingText = ((TextView)loadingLayout.findViewById(R.id.loadTextComments));
+    	loadingText 		= ((TextView)loadingLayout.findViewById(R.id.loadTextComments));
     	
     	reset();
     	
+    	stoped 				= new AtomicBoolean(true);
+    	pendingFetch = new ExecutingController();
     }
     
     /**
      * 
      */
     public void reset(){
-    	
     	currentPage 		= 0;
     	previousTotal 		= 0;
-    	loading 			= true;
     	lastCommentIdRead 	= null;
     	stoped 				= new AtomicBoolean(false);
-    	isRequestRunning	= new AtomicBoolean(false);
-    	updateInterface.sendEmptyMessage(0);
+    	initing.sendEmptyMessage(0);
     }
     
     /**
@@ -132,29 +130,21 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 			
 			Thread.currentThread().setName("FetchCommentsTask");
 			
-			//Add this thread to the list of pending threads
-			synchronized(pendingFetch){ pendingFetch.add(this); }
-			
-			// Make sure no one uses commentGetter
-			synchronized(commentGetter) {
+			if(!isCancelled()){
 				
-				if(!isCancelled()){
-					
-		            if (loading && totalItemCount > previousTotal) {
-		                
-		            	loading = false;
-		                previousTotal = totalItemCount;
-		                currentPage++;
-		                
-		            }
-		            
-		            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + Configs.VISIBLE_THRESHOLD_COMMENTS)) {
-			        	loading = true;
-			        	
-			        	try{
-			        		
-		    				try{
-								commentGetter.parse(context, Configs.VISIBLE_THRESHOLD_COMMENTS, lastCommentIdRead, false);
+	            if (totalItemCount > previousTotal) {
+	                previousTotal = totalItemCount;
+	                currentPage++;
+	            }
+	            
+	            if ((totalItemCount - visibleItemCount) <= (firstVisibleItem + Configs.VISIBLE_THRESHOLD_COMMENTS)) {
+		        	
+		        	try{
+		        		
+		        		synchronized(commentGetter){
+		        			//	Importante para garantir que a busca do comentário que foi acabado de ser submtido não colide com o fetch actual
+		        			try{
+								commentGetter.parse(context, Configs.VISIBLE_THRESHOLD_COMMENTS, lastCommentIdRead, false, this);
 							} catch(EndOfRequestReachedSAXException e){}
 							
 							if(commentGetter.getComments().size()!=0){
@@ -165,22 +155,25 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 							} else { 
 								
 								if(!commentGetter.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
-									throw new FailedRequestSAXException("Request could not be executed");
+									throw new FailedRequestSAXException("Request could not be executed.");
 								}else{
 									throw new EmptyRequestException("Request empty.");
 								}
 								
 							}
 							
-		    			}catch (Exception e) { 
-		    				stoped.set(true);
-		    			}
-						
-			        }
-				           
-		    	}
-				
-			} //Sync end
+		        		}
+		        		
+	    			}catch(CancelRequestSAXException e){
+	    				
+	    			}catch (Exception e) { 
+	    				stoped.set(true);
+	    				Log.d("Aptoide", "Comment, fetcher as cancelled future fetch for this app version");
+	    			}
+					
+		        }
+			           
+	    	}
 			
 			return null;
 			
@@ -189,41 +182,27 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 		@Override
 		protected void onPostExecute(ArrayList<Comment> result) {
 			
-			// Make sure no new comments are added while reseting comment list
-			synchronized (pendingFetch){ 
-				
-				//Check if the thread is canceled
-				if(!isCancelled()){ 
-					
-					if(result != null){
-						
-						ArrayList<Comment> comments = commentGetter.getComments();
-						for(Comment comment: comments){
-							 commentList.add(comment);
-						}
-						
-					} else {
-							
-						loadingText.getLayoutParams().height = 0;
-						loadingText.setText("");
-						load.stopAnimation();
-						
-					}
-					
+			if(result != null){
+				ArrayList<Comment> comments = commentGetter.getComments();
+				for(Comment comment: comments){
+					 commentList.add(comment);
 				}
-			
-			 // Remove thread from pending fetch 
-			 pendingFetch.remove(this); 
-			 
+			} else {
+				loadingText.setVisibility(View.GONE);
+				load.stopAnimation();
 			}
-			isRequestRunning.set(false);
+			Log.d("Aptoide", "Comment, fetcher as finished");
+			finish();
 		}
 		
 		@Override
 		protected void onCancelled() {
-			// Remove thread from pending fetch 
-			synchronized (pendingFetch){ pendingFetch.remove(this); }
-			isRequestRunning.set(false);
+			Log.d("Aptoide", "Comment, fetcher was cancelled");
+			finish();
+		}
+		
+		private void finish(){
+			pendingFetch.clearExecuting();
 		}
 		
     } //End of Fetch class
@@ -236,31 +215,34 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
      */
     public void fetchNewComments(){
     	
-    		synchronized (pendingFetch){
-    			
-		    	try{
-		    		// Make sure no one uses commentGetter
-		    		synchronized(commentGetter){
-		    			
-				    	try{
-				    		if(commentList.getCount()!=0){
-								commentGetter.parse(context, commentList.getItem(0).getId(), 
-										context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE)
-										.getString(Configs.LOGIN_USER_ID, null));
-				    		} else {
-				    			commentGetter.parse(context, Configs.COMMNETS_TO_LOAD, lastCommentIdRead, false);
-				    		}
-						} catch(EndOfRequestReachedSAXException e){}
-						
-						((CommentsAdapter<Comment>)commentList).addAtBegin(commentGetter.getComments());
-						
-		    		}
-		    		
-		    		cancelAllPendingRequests();
-		    		
-		    	} catch(Exception e)		{}
-		    	
+    	synchronized(pendingFetch){
+        	
+    		while(pendingFetch.isExecuting()){
+    			try {
+					pendingFetch.wait();
+				} catch (InterruptedException e) {}
     		}
+    		
+    		//There is no fetcher running
+    		
+	    	try{
+	    		
+		    	try{
+		    		if(commentList.getCount()!=0){
+		    			String userId = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString(Configs.LOGIN_USER_ID, null);
+						commentGetter.parse(context, commentList.getItem(0).getId(), userId);
+		    		} else {
+		    			commentGetter.parse(context, Configs.COMMNETS_TO_LOAD, lastCommentIdRead, false, (AsyncTask<?,?,?>)null);
+		    		}
+				} catch(EndOfRequestReachedSAXException e){}
+				
+				addComments.sendEmptyMessage(0);
+				
+	    	} catch(Exception e)		{
+	    		Log.d("Aptoide", "An unusual exception was thrown while trying to retrive the new comment of the use. "+e.getMessage());
+	    	}
+    	
+    	}
     	
 	}
     
@@ -271,35 +253,58 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
      * @param apk_ver_str_raw
      */
     public void fetchNewApp(String apk_repo_str_raw,String apk_id,String apk_ver_str_raw){
-    	// Make sure no new comments are added while reseting comment list
-    	synchronized(commentGetter){
-	    	synchronized(pendingFetch){
-				this.resetGetter(apk_repo_str_raw, apk_id, apk_ver_str_raw);
-				commentList.removeAll();
-				this.reset();
-				this.cancelAllPendingRequests();
-	    	}
+		
+    	cancelCommentFetch();
+    	
+    	Log.d("Aptoide", "Comment, fetching new app");
+    	
+    	synchronized(pendingFetch){
+    	
+    		while(pendingFetch.isExecuting()){
+    			Log.d("Aptoide", "Comment, waiting for fetch finish");
+    			try {
+					pendingFetch.wait();
+				} catch (InterruptedException e) {}
+				Log.d("Aptoide", "Comment, fetch as finished ready to proced");
+    		}
+    		
+    		//There is no fetcher running
+    		
+	    	this.resetGetter(apk_repo_str_raw, apk_id, apk_ver_str_raw);
+	    	this.reset();
+			removeAllComments.sendEmptyMessage(0);
+			
     	}
+    	
+    	Log.d("Aptoide", "Comment, fetch new app was complete");
+    	
     }
     
     /**
      * 
      */
-    public void cancelAllPendingRequests(){
-		for (Fetch fetch:pendingFetch){
-			fetch.cancel(false);
-		}
+    public void cancelCommentFetch(){
+		
+    	synchronized(pendingFetch){
+    		if(pendingFetch.getExecuting()!=null){
+    			pendingFetch.getExecuting().cancel(false);
+    		}
+    	}
+    	
     }
     
     /**
      * 
      */
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+    	
     	if(!stoped.get()){
-    		if(isRequestRunning.getAndSet(true)){
-    			new Fetch(firstVisibleItem,visibleItemCount,totalItemCount).execute();
+    		if(!pendingFetch.getAndSetIsExecuting(firstVisibleItem, visibleItemCount, totalItemCount)){
+    			Log.d("Aptoide", "Comment, launch new fetch");
+    			pendingFetch.getExecuting().execute();
     		}
-    	}
+		}
+		
     }
     
     /**
@@ -307,16 +312,65 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
      */
     public void onScrollStateChanged(AbsListView view, int scrollState) {}
     
-    private UpdateInterface updateInterface = new UpdateInterface();
     
-    private class UpdateInterface extends Handler{
-		public UpdateInterface() {}
+    
+    
+    
+    private RemoveAllComments removeAllComments = new RemoveAllComments();
+    private class RemoveAllComments extends Handler{
+		public RemoveAllComments() {}
 		@Override
 		public void handleMessage(Message msg) {
-			loadingText.setText(R.string.loading);
-	    	loadingText.getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+			commentList.removeAll();
+		}
+	}
+    
+    private InitingInterface initing = new InitingInterface();
+    private class InitingInterface extends Handler{
+		public InitingInterface() {}
+		@Override
+		public void handleMessage(Message msg) {
+			loadingText.setVisibility(View.VISIBLE);
 	    	load.startAnimation();
 		}
 	}
+    
+    private AddComments addComments= new AddComments();
+    private class AddComments extends Handler{
+		public AddComments() {}
+		@Override
+		public void handleMessage(Message msg) {
+			commentList.addAtBegin(commentGetter.getComments());
+		}
+	}
+    
+    
+    /**
+     * @author rafael
+     * @since 2.5.3
+     * 
+     */
+    private class ExecutingController{
+    	private Fetch executing;
+    	public ExecutingController() {
+    		executing = null;
+		}
+    	public synchronized boolean getAndSetIsExecuting(int firstVisibleItem,int visibleItemCount,int totalItemCount){
+    		boolean isExecuting = isExecuting();
+    		if(!isExecuting)
+    			executing 			= new Fetch(firstVisibleItem,visibleItemCount,totalItemCount);
+    		return isExecuting;
+    	}
+    	public synchronized Fetch getExecuting() {
+			return executing;
+		}
+    	public synchronized boolean isExecuting() {
+			return executing!=null;
+		}
+    	public synchronized void clearExecuting() {
+			executing=null;
+			this.notifyAll();
+		}
+    } 
     
 }

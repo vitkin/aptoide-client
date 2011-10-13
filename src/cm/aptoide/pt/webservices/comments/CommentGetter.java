@@ -20,10 +20,12 @@ import org.xml.sax.SAXException;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.pt.webservices.EnumResponseStatus;
+import cm.aptoide.pt.webservices.exceptions.CancelRequestSAXException;
 import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
 import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 /**
  * @author rafael
@@ -98,10 +100,10 @@ public class CommentGetter {
 	 * @throws SAXException
 	 * @throws FactoryConfigurationError
 	 */
-	public void parse(Context context, int requestSize, BigInteger startFrom, boolean startFromGiven) throws IOException, SAXException {
+	public void parse(Context context, int requestSize, BigInteger startFrom, boolean startFromGiven, AsyncTask<?, ?, ?> callTask) throws IOException, SAXException {
 		
 		BufferedInputStream bstream = buildBasicStructure(context);
-		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, errors, requestSize, startFrom));
+		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, errors, requestSize, startFrom, callTask));
 		bstream.close();
 		
 	}
@@ -165,7 +167,7 @@ public class CommentGetter {
 	public void parse(Context context, int requestSize, BigInteger startFrom, boolean startFromGiven, String fromUserIdHash) throws IOException, SAXException {
 		
 		BufferedInputStream bstream = buildBasicStructure(context);
-		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, errors, requestSize, startFrom, fromUserIdHash));
+		sp.parse(new InputSource(bstream), new VersionContentHandler(status, comments, errors, requestSize, startFrom, fromUserIdHash, null));
 		bstream.close();
 		
 	}
@@ -211,24 +213,26 @@ public class CommentGetter {
 	 */
 	public static class VersionContentHandler extends DefaultHandler{
 		
-		private EnumResponseCommentElement commentDataIndicator; //null if any element started being read 
-		private StringBuilder status;
-		private ArrayList<Comment> comments;
-		private ArrayList<String> errors;
+		private EnumResponseCommentElement 	commentDataIndicator; 	//Null if any element started being read 
+		private StringBuilder 				status;
+		private ArrayList<Comment> 			comments;
+		private ArrayList<String> 			errors;
 		
-		private BigInteger id_tmp;
-		private String username_tmp;
-		private BigInteger answerto_tmp;
-		private String subject_tmp;
-		private StringBuilder text_tmp;
-		private Date timestamp_tmp;
-		private String userIdHash_tmp;
+		private BigInteger 					id_tmp;
+		private String 						username_tmp;
+		private BigInteger 					answerto_tmp;
+		private String 						subject_tmp;
+		private StringBuilder 				text_tmp;
+		private Date 						timestamp_tmp;
+		private String 						userIdHash_tmp;
 		
-		private int requestedSize; 		// Number of comments requested
-		private BigInteger startFrom; 	// Number of comments requested, starting from comment id 
-		private boolean started; 		// Start reading?
-		private BigInteger until;
-		private String fromUserIdHash; // If set only get comments from this user id. Note: That the user ID is the sha-1 hash of the users email
+		private int 						requestedSize; 			// Number of comments requested
+		private BigInteger 					startFrom; 				// Number of comments requested, starting from comment id 
+		private boolean 					started; 				// Start reading?
+		private BigInteger 					until;
+		private String 						fromUserIdHash; 		// If set only get comments from this user id. Note: That the user ID is the sha-1 hash of the users email
+		
+		private AsyncTask<?, ?, ?> 			callTask;
 		
 		
 		/**
@@ -241,7 +245,7 @@ public class CommentGetter {
 		 * @param startFrom If start from is null it will start gathering comments from the beginning of the xml file
 		 * @param fromUserIdHash User id hash whose comments are being selected. Null to select all comments
 		 */
-		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, int requestedSize, BigInteger startFrom, String fromUserIdHash) {
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, int requestedSize, BigInteger startFrom, String fromUserIdHash, AsyncTask<?, ?, ?> callTask) {
 			
 			commentDataIndicator = null;
 			this.status = status;
@@ -265,6 +269,8 @@ public class CommentGetter {
 			
 			this.fromUserIdHash = null;
 			
+			this.callTask = callTask;
+			
 		}
 		
 		/**
@@ -276,8 +282,9 @@ public class CommentGetter {
 		 * @param until Get the comments until this comment id can not be null
 		 * @param fromUserIdHash User id hash whose comments are being selected. Null to select all comments
 		 */
-		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, BigInteger until, String fromUserIdHash) {
-			this(status, comments, errors, 0, null, fromUserIdHash);
+		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, 
+										BigInteger until, String fromUserIdHash) {
+			this(status, comments, errors, 0, null, fromUserIdHash, null);
 			if(until==null)
 				throw new IllegalArgumentException("The until parameter can not be null");
 			this.until = until;
@@ -295,7 +302,7 @@ public class CommentGetter {
 		 * @param until Get the comments until this comment id can not be null
 		 */
 		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, BigInteger until) {
-			this(status, comments, errors, 0, null, null);
+			this(status, comments, errors, 0, null, null, null);
 		}
 		
 		/**
@@ -308,9 +315,9 @@ public class CommentGetter {
 		 * @param startFrom If start from is null it will start gathering comments from the beginning of the xml file
 		 */
 		public VersionContentHandler(StringBuilder status, ArrayList<Comment> comments, ArrayList<String> errors, 
-											int requestedSize, BigInteger startFrom) {
+											int requestedSize, BigInteger startFrom, AsyncTask<?, ?, ?> callTask) {
 			
-			this(status, comments, errors, requestedSize, startFrom, null);
+			this(status, comments, errors, requestedSize, startFrom, null, callTask);
 			
 		}
 		
@@ -325,7 +332,10 @@ public class CommentGetter {
 		 * Handle the end of an element.
 		 */
 		 public void endElement(String uri, String name, String qName) throws SAXException{
-			 	
+			
+			 if(callTask!=null && callTask.isCancelled())
+				 throw new CancelRequestSAXException();
+			 
 			 EnumResponseCommentElement elem = EnumResponseCommentElement.valueOfToUpper(name);
 			 
 			 if(started && elem.equals(EnumResponseCommentElement.ENTRY) ){
