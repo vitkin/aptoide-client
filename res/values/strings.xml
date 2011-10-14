@@ -64,7 +64,7 @@
     <string name="inresponseto">\@</string>
     <string name="usernotdef">User not defined</string>
     <string name="passwordnotdef">Password not defined</string>
-    <string name="loading">Loading...</string>
+    <string name="loading_likes">Likes loading...</string>
     <string name="postingcomment">Posting your comment...</string>
     <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
     <string name="opinionsuccess">Your opinion was successfully submitted</string>
@@ -73,6 +73,7 @@
     <string name="loggingin">Logging in...</string>
     <string name="tastenotavailable">Likes not available</string>
     <string name="downgrade_available">downgrade available</string>
+    <string name="loading_comments">Loading comments...</string>
 </resources>
 
 <!--

@@ -275,7 +275,6 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			
 			Vector<String> tmp_get = db.getApk(pkg_id);
 			apkinfo.putExtra("server", tmp_get.firstElement());
-			apkinfo.putExtra("version", tmp_get.get(1));
 			apkinfo.putExtra("dwn", tmp_get.get(4));
 			apkinfo.putExtra("rat", tmp_get.get(5));
 			apkinfo.putExtra("size", tmp_get.get(6));
@@ -293,9 +292,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 				//Not installed... do nothing
 			}
 			
-			//apkinfo.putExtra("vercode", Integer.parseInt(tmp_get.get(7)));new DbHandler(this).getOldAndNewApks(pkg_id).contains(new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1), Integer.parseInt(tmp_get.get(7)), pkg_id, 0));
-			
-			apkinfo.putParcelableArrayListExtra("oldVersions", versions);
+			apkinfo.putParcelableArrayListExtra("versions", versions);
 			
 			startActivityForResult(apkinfo,30);
 		

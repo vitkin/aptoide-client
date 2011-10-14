@@ -1,6 +1,7 @@
 package cm.aptoide.pt;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 import cm.aptoide.pt.multiversion.VersionApk;
@@ -29,13 +30,8 @@ import android.widget.AdapterView.OnItemClickListener;
 public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	
 	private ListView lv = null;
-	
     private InstallApkListener installApkListener = null;
-//    private Boolean installApkListenerIsRegistered = false;
-
-	
 	private DbHandler db = null;
-	//private Context mctx = null;
 	
 	private int pos = -1;
 	
@@ -43,7 +39,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	protected class InstallApkListener extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			Log.d("Aptoide-TabInstalled", "broadcast received");
+			Log.d("Aptoide-TabInstalled", "TabInstalled, broadcast received");
 			if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
 				installApk(intent.getStringExtra("localPath"), intent.getStringExtra("version"));
 			}
@@ -173,7 +169,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		
 		String tmpi = db.getDescript(pkg_id);
 		if(!(tmpi == null)){
-			apkinfo.putExtra("about",tmpi);
+			apkinfo.putExtra("about", tmpi);
 		}else{
 			apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
 		}
@@ -181,7 +177,6 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 
 		Vector<String> tmp_get = db.getApk(pkg_id);
 		apkinfo.putExtra("server", tmp_get.firstElement());
-		apkinfo.putExtra("version", tmp_get.get(1));
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
@@ -191,21 +186,26 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
 		versions.add(versionApkPassed);
 		
+		
+		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
-			Log.d("Aptoide", "Putting installed version");
-			VersionApk versionApkInstalled = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1);
-			apkinfo.putExtra("instversion", versionApkInstalled);
-			
-			if(!versions.contains(versionApkInstalled)){
-				apkinfo.putExtra("applicationExistsInRepo", false);
+			VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1);
+			apkinfo.putExtra("instversion", versionInstApk);
+			Iterator<VersionApk> iteratorVersion = versions.iterator();
+			while(iteratorVersion.hasNext()){
+				if(iteratorVersion.next().compareTo(versionInstApk)>0){
+					iteratorVersion.remove();
+				}
 			}
 		} catch (NameNotFoundException e) {
-			//Not installed... do nothing
+			//Not installed... do nothing, not going to happen hear
 		}
 		
-		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
+		
+		
+		apkinfo.putParcelableArrayListExtra("versions", versions);
 		startActivityForResult(apkinfo,30);
 		
 		/*
