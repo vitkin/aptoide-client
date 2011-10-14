@@ -85,11 +85,12 @@
 		<service android:name=".FetchIconsService"></service>
 		<service android:name=".FetchExtrasService"></service>
 		<service android:name=".DownloadQueueService" />
+		<service android:name=".data.ServiceData" android:process=":aptoideData"/>
 
 	</application>
 
 
-	<uses-sdk android:minSdkVersion="4" />
+	<uses-sdk android:minSdkVersion="4" android:targetSdkVersion="7"/>
 
 </manifest>
 <!--

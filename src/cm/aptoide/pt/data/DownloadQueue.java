@@ -1,6 +1,6 @@
 /*
- * DownloadQueueService		auxilliary service to Aptoide, that centralizes all download processes
- * Copyright (C) 20011  Duarte Silveira
+ * DownloadQueueService		auxilliary class to Aptoide's ServiceData, that centralizes all download processes
+ * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -19,7 +19,7 @@
 */
 
 
-package cm.aptoide.pt;
+package cm.aptoide.pt.data;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,54 +52,31 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-public class DownloadQueueService extends Service {
+public class DownloadQueue {
 
-	private final static int KBYTES_TO_BYTES = 1024;
+//	private final static int KBYTES_TO_BYTES = 1024;					// moved to constants.xml
+//	private HashMap<Integer, HashMap<String, String>> notifications;	//TODO move to notifications within ServiceData
+//	private NotificationManager notificationManager;					//TODO move to notifications within ServiceData
+//	private Context context;											//TODO deprecate
+//	private WakeLock keepScreenOn;										//moved to ServiceData
 	
-	private HashMap<Integer, HashMap<String, String>> notifications;
 	
-	private NotificationManager notificationManager;
-	private Context context;
-	private WakeLock keepScreenOn;
+//TODO move to Notifications and dataService
 	
-	// This is the object that receives interactions from service clients.
-    private final IBinder binder = new DownloadQueueBinder();
+//	@Override
+//	public void onCreate() {
+//		super.onCreate();
+//		notifications = new HashMap<Integer, HashMap<String,String>>();
+//		
+//		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
+//		Log.d("Aptoide-DowloadQueueService", "Created");
+//	}
 	
-    /**
-     * Class for clients to access.  Because we know this service always
-     * runs in the same process as its clients, we don't need to deal with
-     * IPC.
-     */
-    public class DownloadQueueBinder extends Binder {
-    	DownloadQueueService getService() {
-            return DownloadQueueService.this;
-        }
-    }
-    
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.d("Aptoide-DowloadQueueService", "Bound");
-		return binder;
-	}
+//-------------------
 
-	
-	
-	@Override
-	public void onCreate() {
-		super.onCreate();
-		notifications = new HashMap<Integer, HashMap<String,String>>();
-		
-		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
-		Log.d("Aptoide-DowloadQueueService", "Created");
-	}
 
-	@Override
-	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-		Log.d("Aptoide-DowloadQueueService", "Started");
-	}
-
+//TODO refactor	
 	
 	public void startDownload(DownloadNode downloadNode){
 		HashMap<String,String> notification = new HashMap<String,String>();
@@ -126,16 +103,22 @@ public class DownloadQueueService extends Service {
 		downloadFile(downloadNode.getPackageName().hashCode());
 	}
 	
+//-------------------
+	
+	
 //	public void startExternalDownload(String remotePath, String localPath, String apkName, Context context){
 //		this.context = context;
 //		HashMap<String,String> notification = new HashMap<String,String>();
 //		notification.put("remotePath", remotePath);
 //	}
 	
-	public void setCurrentContext(Context context){
-		this.context = context;
-	}
+//	public void setCurrentContext(Context context){
+//		this.context = context;
+//	}
 
+	
+//TODO move to notifications within ServiceData
+	
 	private void setNotification(int apkidHash, int progress) {
 
 		String appName = notifications.get(apkidHash).get("appName");
@@ -223,6 +206,7 @@ public class DownloadQueueService extends Service {
 //		Log.d("Aptoide-DownloadQueueService", "Notification Set");
 		
 	}
+
 	
 	public void dismissAllNotifications(){
 		for (Integer notificationKey : notifications.keySet()) {
@@ -235,16 +219,9 @@ public class DownloadQueueService extends Service {
 //		notifications.remove(apkidHash);
 	}
 
+//-------------------
 	
-//	private void installApk(String localPath, int position){
-//
-//    	Message downloadArguments = new Message();
-//		downloadArguments.arg1 = 1;
-//		downloadHandler.sendMessage(downloadArguments);
-//    	
-		//TODO Send a broadcast Intent with the data via sendBroadcast(), that the activity picks up with a BroadcastReceiver
-//		
-//	}
+//TODO refactor
 	
 	private void downloadFile(final int apkidHash){
 			
@@ -374,6 +351,7 @@ public class DownloadQueueService extends Service {
 		} catch(Exception e){	}
 	}
 	
+	
 	/*
 	 * Notification UI Handlers
 	 * 
@@ -421,5 +399,7 @@ public class DownloadQueueService extends Service {
 			 }
 		 }
 	 };
+		
+//-------------------
 
 }

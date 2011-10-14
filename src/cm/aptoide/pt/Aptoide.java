@@ -65,6 +65,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -84,18 +85,18 @@ import android.widget.Toast;
 
 public class Aptoide extends Activity { 
 	
-//TODO Constants 
+//moved to Constants 
     
-	private static final int LOAD_TABS = 0;
-	private static final int UPDATE_SELF = 99;
-    private static final String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";
-    private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/aptoideUpdate.apk";
-	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
+//	private static final int LOAD_TABS = 0;			//TODO Probably unneeded
+//	private static final int UPDATE_SELF = 99;		//TODO Probably unneeded
+//    private static final String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/server";	//TODO unnecessary?
+//    private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/aptoideUpdate.apk"; //TODO renamed
+//	private static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml"; 
 	
 //-------------------	
 	
-	private WakeLock keepScreenOn;
-	private Intent DownloadQueueServiceIntent;	//TODO to dataService
+//	private WakeLock keepScreenOn;				//TODO to dataService
+//	private Intent DownloadQueueServiceIntent;	//TODO to dataService
     
     private Vector<String> server_lst = null;	//TODO to dataService
     private Vector<String[]> get_apps = null;	//TODO to dataService
@@ -112,7 +113,7 @@ public class Aptoide extends Activity {
 	
 	private Context mctx;
 
-//TODO to dataService	
+//TODO to dataService, needs refactoring, to notification class + download pool class, no need for another service
 	
 	private DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -141,6 +142,9 @@ public class Aptoide extends Activity {
 
 	};	
 	
+//-------------------
+	
+//TODO to dataService
 	
 	private Bundle savedInstanceState;
 	

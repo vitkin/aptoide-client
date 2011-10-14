@@ -1,12 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="ver_str">&quot;2.94-dev&quot;</string>
-    <string name="change_log_url">http://aptoide.com/changelog_3_0.html</string>
-</resources>
-
-<!--
- * Copyright (C) 2009  Roberto Jacinto
- * roberto.jacinto@caixamagica.pt
+/*
+ * Constants.java, part of Aptoide
+ * Copyright (C) 2011 Duarte Silveira
+ * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -21,4 +16,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
--->
+*/
+package cm.aptoide.pt.data;
+
+import android.os.Environment;
+
+/**
+ * Constants
+ *
+ * @author dsilveira
+ *
+ */
+public class Constants {
+	public static final String CACHE_PATH = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/";
+	public static final String SELF_UPDATE_FILE = CACHE_PATH + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
+	public static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml";
+}
