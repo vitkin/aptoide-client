@@ -1,6 +1,7 @@
 package cm.aptoide.pt;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 
@@ -190,7 +191,6 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 
 		Vector<String> tmp_get = db.getApk(pkg_id);
 		apkinfo.putExtra("server", tmp_get.firstElement());
-		apkinfo.putExtra("version", tmp_get.get(1));
 		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
 		apkinfo.putExtra("size", tmp_get.get(6));
@@ -203,12 +203,19 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
-			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode, pkg_id,-1));
+			VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode, pkg_id,-1);
+			apkinfo.putExtra("instversion", versionInstApk);
+			Iterator<VersionApk> iteratorVersion = versions.iterator();
+			while(iteratorVersion.hasNext()){
+				if(iteratorVersion.next().compareTo(versionInstApk)<=0){
+					iteratorVersion.remove();
+				}
+			}
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}
 		
-		apkinfo.putParcelableArrayListExtra("oldVersions", versions);
+		apkinfo.putParcelableArrayListExtra("versions", versions);
 		
 		startActivityForResult(apkinfo,30);
 		

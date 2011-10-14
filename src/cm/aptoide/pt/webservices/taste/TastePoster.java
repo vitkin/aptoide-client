@@ -106,8 +106,8 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 					likes.setText(context.getText(R.string.tastenotavailable));
 					dislikes.setText("");
 					
-					like.setVisibility(View.GONE);
-					dislike.setVisibility(View.GONE);
+					like.setVisibility(View.INVISIBLE);
+					dislike.setVisibility(View.INVISIBLE);
 					
 					userTaste.setValue(EnumUserTaste.NOTEVALUATED);
 					

@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.util.EntityUtils;
@@ -98,7 +98,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private CommentsAdapter<Comment> commentAdapter;
 	private CommentPosterListOnScrollListener loadOnScrollCommentList;
 	private String apk_repo_str;
-	private String apk_ver_str;
 	private String apk_id;
 	
 	private ImageView like;
@@ -112,8 +111,78 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private WrapperUserTaste userTaste;
 	private TastePoster tastePoster;
 	private VersionApk versionInstApk;
+	private GetScreenShots previousGetter;
 	
 	private static int headers = 2; // The number of header items on the list view
+	
+	/**
+	 * @author rafael
+	 * @since 2.5.3
+	 * 
+	 */
+	class GetScreenShots extends Thread{
+		
+		private String version;
+		private AtomicBoolean canceled;
+		
+		public GetScreenShots(String version){
+			this.version 	= version;
+			canceled 		= new AtomicBoolean(false);
+		}
+		
+		public void run(){
+			try{
+				String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
+				String fetch_imgs = Configs.WEB_SERVICE_SCREENS_LIST+ws_repo+"/"+apk_id+"/"+version+"/json";
+
+				Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
+				Log.d("Aptoide","Get img from: " + fetch_imgs);
+				
+				HttpResponse response_ws = NetworkApis.imgWsGet(fetch_imgs);
+				if(response_ws != null && response_ws.getStatusLine().getStatusCode() == 200){
+					String json_str = null;
+					json_str = EntityUtils.toString(response_ws.getEntity());
+					response_ws.getEntity().consumeContent();
+					Log.d("Aptoide","Resp: " + json_str);
+					JSONObject json_resp = new JSONObject(json_str);
+					
+					JSONArray img_url = json_resp.getJSONArray("listing");
+					if(img_url.length()>0)
+						imageDrwb = new Drawable[img_url.length()];
+					for(int i = 0; i< img_url.length(); i++){
+						
+						if(canceled.get())
+							throw new CancelledScreenShots();
+						
+						String a = (String)img_url.get(i);
+						Log.d("Aptoide","* " + a);
+						HttpResponse pic = NetworkApis.imgWsGet(a);
+						InputStream pic_st = pic.getEntity().getContent();
+						//TODO fix java.lang.OutOfMemoryError: bitmap size exceeds VM budget
+						try{
+							Drawable pic_drw = Drawable.createFromStream(pic_st, "src"); //hear
+							imageDrwb[i] = pic_drw;
+						}catch(OutOfMemoryError e){}
+						
+					}
+				}
+				
+			}catch (Exception e ){	
+			}finally{
+				if(!canceled.get())
+					updateScreenshots.sendEmptyMessage(0);
+			}
+			
+		}
+		
+		public void cancel(){
+			canceled.set(true);
+		}
+		
+		@SuppressWarnings("serial")
+		class CancelledScreenShots extends Exception{}
+		
+	}
 	
 	/**
 	 * @author rafael
@@ -170,9 +239,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
 		
-		long start = System.currentTimeMillis();
+		super.onCreate(savedInstanceState);
+		apkinfo = getIntent();
 		
 		setContentView(R.layout.apkinfo);
 		
@@ -184,8 +253,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		LayoutInflater inflater = this.getLayoutInflater();
 		final LinearLayout linearLayout = (LinearLayout)inflater.inflate(R.layout.headercomments,listView, false);
 		
-		
-		updateScreenshots = new ScreenShotsUpdate(linearLayout);
+		ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("versions");
+		Collections.sort(versions, Collections.reverseOrder());
 		
 		this.likes = (TextView)linearLayout.findViewById(R.id.likes);
 		this.dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
@@ -195,19 +264,24 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		this.userTaste = new WrapperUserTaste();
 		this.taste = EnumUserTaste.NOTEVALUATED;
-		
 		tastePoster = null;
+		galleryView = (Gallery) linearLayout.findViewById(R.id.galleryScreens);
+		
+		updateScreenshots = new ScreenShotsUpdate(linearLayout);
+		resetScreenshots = new ResetScreenshots(linearLayout);
+		previousGetter = null;
+		
+		
+		
 		
 		mctx = this;
 		screens = new LinkedList<ImageView>();
-
-		galleryView = (Gallery) linearLayout.findViewById(R.id.galleryScreens);
 		
 		noscreens = (TextView) linearLayout.findViewById(R.id.noscreens);
 		
 		rtrn_intent = new Intent();
 		
-		apkinfo = getIntent();
+		
 		
 		apk_id = apkinfo.getStringExtra("apk_id");
 		final int type = apkinfo.getIntExtra("type", 0);
@@ -218,7 +292,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		apk_name_str = apkinfo.getStringExtra("name");
 		String apk_descr = apkinfo.getStringExtra("about");
 		apk_repo_str = apkinfo.getStringExtra("server");
-		apk_ver_str = apkinfo.getStringExtra("version");
 		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
 		String apk_size_str = apkinfo.getStringExtra("size");
@@ -288,7 +361,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					break;
 				}
 				
+				
 				rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
+				
+				
 				finish();
 				
 			}
@@ -332,72 +408,30 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		TextView apk_size_n = (TextView) linearLayout.findViewById(R.id.size);
 		apk_size_n.setText(apk_size_str);
 
-		new Thread(){
-			public void run(){
-				try{
-					String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
-					String fetch_imgs = Configs.WEB_SERVICE_SCREENS_LIST+ws_repo+"/"+apk_id+"/"+apk_ver_str.trim()+"/json";
-
-					Log.d("Aptoide",apk_repo_str + " vs " + ws_repo);
-					Log.d("Aptoide","Get img from: " + fetch_imgs);
-					
-					HttpResponse response_ws = NetworkApis.imgWsGet(fetch_imgs);
-					if(response_ws != null && response_ws.getStatusLine().getStatusCode() == 200){
-						String json_str = null;
-						json_str = EntityUtils.toString(response_ws.getEntity());
-						response_ws.getEntity().consumeContent();
-						Log.d("Aptoide","Resp: " + json_str);
-						JSONObject json_resp = new JSONObject(json_str);
-						
-						JSONArray img_url = json_resp.getJSONArray("listing");
-						if(img_url.length()>0)
-							imageDrwb = new Drawable[img_url.length()];
-						for(int i = 0; i< img_url.length(); i++){
-							String a = (String)img_url.get(i);
-							Log.d("Aptoide","* " + a);
-							HttpResponse pic = NetworkApis.imgWsGet(a);
-							InputStream pic_st = pic.getEntity().getContent();
-							//TODO fix java.lang.OutOfMemoryError: bitmap size exceeds VM budget
-							Drawable pic_drw = Drawable.createFromStream(pic_st, "src"); //hear
-							imageDrwb[i] = pic_drw;
-						}
-					}
-					
-				}catch (Exception e ){ }
-				finally{
-					updateScreenshots.sendEmptyMessage(0);
-				}
-			}
-		}.start();
+		
 		
 		//TODO This as to be changed in a future code revision
 		apk_size_str_raw 	= apk_size_str.substring(6);
 		
 		if(apk_size_str_raw.equals("No information available")){ apk_size_str_raw = "0";}
-		else { apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); }
-		;
-		if(type == 1) { apk_ver_str_raw = versionInstApk.getVersion(); } 
-		else { apk_ver_str_raw = apk_ver_str.substring(1,apk_ver_str.length()-1); }
+		else { apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); };
+		
+		if(versions.size()!=0){
+			apk_ver_str_raw = versions.get(0).getVersion(); 
+		}else{
+			apk_ver_str_raw = null;
+		}
 		
 		apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
-		
-//		if(!applicationExistsInRepo){
-//			//Hide taste section
-//			this.like.setVisibility(View.GONE);
-//			this.dislike.setVisibility(View.GONE);
-//			this.likes.setVisibility(View.GONE);
-//			this.dislikes.setVisibility(View.GONE);
-//		}
 		
 		listView.addHeaderView(linearLayout, null, false);
 		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		
 		
 		/*Comments*/
-		if( Configs.COMMENTS_ON){
-			//Stop comments for applications not present in the repository
+		if(Configs.COMMENTS_ON){
 			
-			if(Configs.COMMENTS_ADD_ON){
+			if(Configs.COMMENTS_ADD_ON && versions.size()!=0){
 				TextView textView = new TextView(this);
 				textView.setText(this.getString(R.string.commentlabel));
 				textView.setTextSize(20);
@@ -406,17 +440,22 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				textView.setGravity(Gravity.CENTER_HORIZONTAL);
 				listView.addHeaderView(textView);
 			}else{ headers--; }
+			LinearLayout loadComLayout = null;
+			if(versions.size()!=0){
+				loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
+				listView.addFooterView(loadComLayout);
+			}
+				listView.setAdapter(commentAdapter);
+				try {
+					if(versions.size()!=0){
+						loadOnScrollCommentList = new CommentPosterListOnScrollListener(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
+						listView.setOnScrollListener(loadOnScrollCommentList);
+					}
+				} 
+				//catch (ParserConfigurationException e) 	{} 
+				//catch (SAXException e) 					{}
+				catch(Exception e)							{}
 			
-			LinearLayout loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
-			listView.addFooterView(loadComLayout);
-			listView.setAdapter(commentAdapter);
-			try {
-				loadOnScrollCommentList = new CommentPosterListOnScrollListener(this, commentAdapter, apk_repo_str_raw, apk_id, apk_ver_str_raw, loadComLayout);
-				listView.setOnScrollListener(loadOnScrollCommentList);
-			} 
-			//catch (ParserConfigurationException e) 	{} 
-			//catch (SAXException e) 					{}
-			catch(Exception e)							{}
 			
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -430,17 +469,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					}
 				}
 			});
-			//listView.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.apkinfoheader));
 			
 			registerForContextMenu(listView);
 		} else {
 			listView.setAdapter(commentAdapter);
 		}
-		
-		
-		
-		
-		
 		
 		/*Multiversion*/
 			final Runnable newVersionFetchComments = new Runnable(){
@@ -449,14 +482,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				}
 			};
 			
-			ArrayList<VersionApk> versions = apkinfo.getParcelableArrayListExtra("oldVersions");
-//			VersionApk latestVersion = new VersionApk(apk_ver_str_raw, 
-//					versioncode, 
-//					apk_id, 
-//					Integer.parseInt(apk_size_str_raw)
-//					);
-//			versions.add(latestVersion);
-			Collections.sort(versions, Collections.reverseOrder());
+			
 			
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
 				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, "Version", "Size");
@@ -464,12 +490,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			spinnerMulti.setAdapter(spinnerMultiAdapter );
 			if(type==2){
 				
-				Iterator<VersionApk> iteratorVersion = versions.iterator();
-				while(iteratorVersion.hasNext()){
-					if(iteratorVersion.next().compareTo(versionInstApk)<=0){
-						iteratorVersion.remove();
-					}
-				}
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
@@ -480,27 +500,26 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
 								new Thread(newVersionFetchComments).start();
 							}
+							
+							if(previousGetter!=null)
+								previousGetter.cancel();
+							resetScreenshots.sendEmptyMessage(0);
+							
+							previousGetter = new GetScreenShots(apk_ver_str_raw);
+							previousGetter.start();
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
 				
 			} else if(type==1){
-				if(versions.size()!=0){
-				Iterator<VersionApk> iteratorVersion = versions.iterator();
-				while(iteratorVersion.hasNext()){
-					if(iteratorVersion.next().compareTo(versionInstApk)>0){
-						iteratorVersion.remove();
-					}
-				}
 				
 				Button uninstall = (Button)findViewById(R.id.btnUninstall);
 				uninstall.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, uninstall.getLayoutParams().height, 0.5f));
 				uninstall.setOnClickListener(new OnClickListener(){
-
+	
 						public void onClick(View arg0) {
 							
 							rtrn_intent.putExtra("apkid", apk_id);
-							
 							
 							rtrn_intent.putExtra("rm", true);
 							rtrn_intent.putExtra("install", false);
@@ -516,33 +535,51 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						
 					});
 				
-				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
-					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-						
-							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
-							apk_ver_str_raw = versionApk.getVersion();
-							int result = versionApk.compareTo(versionInstApk);
+				if(versions.size()!=0){
+					
+					spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
+						public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 							
-							if(Configs.TASTE_ON){
-								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
-							}
-							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
-								new Thread(newVersionFetchComments).start();
-							}
-							
-							if(result==0){
-								action.setText("Reinstall");
-							}else if(result<0) {
-								action.setText(R.string.downgrade);
-							}
-							
-					}
-					public void onNothingSelected(AdapterView<?> parent) {}
-				});
+								VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
+								apk_ver_str_raw = versionApk.getVersion();
+								int result = versionApk.compareTo(versionInstApk);
+								
+								if(Configs.TASTE_ON){
+									selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
+								}
+								if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
+									new Thread(newVersionFetchComments).start();
+								}
+								
+								if(result==0){
+									action.setText("Reinstall");
+								}else if(result<0) {
+									action.setText(R.string.downgrade);
+								}
+								
+								if(previousGetter!=null){
+									previousGetter.cancel();
+									
+								}
+								resetScreenshots.sendEmptyMessage(0);
+								
+								previousGetter = new GetScreenShots(apk_ver_str_raw);
+								previousGetter.start();
+								
+						}
+						public void onNothingSelected(AdapterView<?> parent) {}
+					});
 				}else{
 					//Otherwise
 					spinnerMulti.setVisibility(View.GONE);
+					like.setVisibility(View.GONE);
+					dislike.setVisibility(View.GONE);
+					dislikes.setVisibility(View.GONE);
+					dislikes.setVisibility(View.GONE);
+					((Button)findViewById(R.id.btn1)).setVisibility(View.GONE);
+					new GetScreenShots(apk_ver_str_raw).start();
 				}
+				
 			} else if(type==0){
 				
 				//If we are in tab available
@@ -555,6 +592,13 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
 							new Thread(newVersionFetchComments).start();
 						}
+						
+						if(previousGetter!=null)
+							previousGetter.cancel();
+						resetScreenshots.sendEmptyMessage(0);
+						
+						previousGetter = new GetScreenShots(apk_ver_str_raw);
+						previousGetter.start();
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
@@ -628,14 +672,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								 }
 								 
 								 if(!userTasteBufEquals){
-			            		  new AddTaste(
-								 		ApkInfo.this, 
-								 		apk_repo_str_raw,
-								 		apk_id, 
-								 		apk_ver_str_raw, 
-								 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
-								 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
-								 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
+				            		  new AddTaste(
+									 		ApkInfo.this, 
+									 		apk_repo_str_raw,
+									 		apk_id, 
+									 		apk_ver_str_raw, 
+									 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+									 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+									 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
 								 } else {
 									 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 								 }
@@ -656,10 +700,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			this.likes.getLayoutParams().height=0;
 			this.dislikes.getLayoutParams().height=0;
 		}
-		
-		long end = System.currentTimeMillis();
-		Log.d("Aptoide", "ApkInfo - Execution time was "+(end-start)+" ms.");
-		
 		
 	}
 	
@@ -703,9 +743,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							TextView likes, TextView dontlikes, ImageView like, 
 							ImageView dislike, WrapperUserTaste userTaste){
 		
-		likes.setText(this.getString(R.string.loading));
-		dontlikes.setText(this.getString(R.string.loading));
-		
+		likes.setText(this.getString(R.string.loading_likes));
+		dislikes.setText("");
 		dislike.setVisibility(View.INVISIBLE);
 		like.setVisibility(View.INVISIBLE);
 		
@@ -779,10 +818,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		}
 	}
 	
-	
-	
-	
-		
 	public void screenshotClick(View v){
 		//Log.d("Aptoide","This view.....");
 		final Dialog dialog = new Dialog(mctx);
@@ -805,8 +840,23 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 	}
 	
-	private Handler updateScreenshots;
+	private Handler resetScreenshots;
+	private class ResetScreenshots extends Handler{
+		
+		private LinearLayout header;
+		
+		public ResetScreenshots(LinearLayout header) { this.header= header; }
+		
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			galleryView.setVisibility(View.GONE);
+			noscreens.setVisibility(View.GONE);
+			((ProgressBar) header.findViewById(R.id.pscreens)).setVisibility(View.VISIBLE);	
+		}
+	}
 	
+	private Handler updateScreenshots;
 	private class ScreenShotsUpdate extends Handler{
 		
 		private LinearLayout header;
@@ -856,7 +906,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			    });
 				
 
-				
+				galleryView.setVisibility(View.VISIBLE);
 			}else{
 				noscreens.setVisibility(View.VISIBLE);
 				noscreens.setText("No screenshots available.");
