@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
 import android.app.AlertDialog;
@@ -70,7 +71,7 @@ public class RemoteInSearch extends ListActivity{
 	static protected SharedPreferences sPref;
 	static protected SharedPreferences.Editor prefEdit;
 	
-	private DbHandler db = null;
+	private ManagerDatabase db = null;
 	private Vector<ApkNode> apk_lst = null;
 	
 	private PackageManager mPm;
@@ -146,7 +147,7 @@ public class RemoteInSearch extends ListActivity{
 		
 		setContentView(R.layout.list);
 				
-		db = new DbHandler(this);
+		db = new ManagerDatabase(this);
 		
 		mPm = getPackageManager();
 		

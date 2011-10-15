@@ -27,6 +27,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -64,7 +66,7 @@ public class RssHandler extends DefaultHandler{
 	private boolean apk_ctg2 = false;
 	private boolean apk_size = false;
 	
-	private DbHandler db = null;
+	private ManagerDatabase db = null;
 	
 	//private DefaultHttpClient mHttpClient = null;
 	//private DefaultHttpClient mHttpClient2 = null;
@@ -106,7 +108,7 @@ public class RssHandler extends DefaultHandler{
 	public RssHandler(Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
 		mctx = ctx;
 		mserver = srv;
-		db = new DbHandler(mctx);
+		db = new ManagerDatabase(mctx);
 		//listapks = db.getForUpdate();
 		tmp_apk.apkid = "";
 		tmp_apk.name = "";

@@ -3,6 +3,7 @@ package cm.aptoide.pt;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.multiversion.VersionApk;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
@@ -34,7 +35,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 //    private Boolean installApkListenerIsRegistered = false;
 
 	
-	private DbHandler db = null;
+	private ManagerDatabase db = null;
 	//private Context mctx = null;
 	
 	private int pos = -1;
@@ -75,7 +76,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
             }
         });
         
-		db = new DbHandler(this);
+		db = new ManagerDatabase(this);
 		
 		installApkListener = new InstallApkListener();
 		registerReceiver(installApkListener, new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION"));

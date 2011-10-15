@@ -78,6 +78,7 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
+import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 public class RemoteInTab extends TabActivity {
@@ -99,7 +100,7 @@ public class RemoteInTab extends TabActivity {
 	
 	private WakeLock keepScreenOn;
 	
-	private DbHandler db = null;
+	private ManagerDatabase db = null;
 
 	private ProgressDialog pd;
 	
@@ -209,7 +210,7 @@ public class RemoteInTab extends TabActivity {
 		
 		mctx = this;
 		
-		db = new DbHandler(this);
+		db = new ManagerDatabase(this);
 		
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();

@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -47,7 +49,7 @@ public class BaseManagement extends Activity {
 	static private PackageManager mPm;
 	static private PackageInfo pkginfo;
 	
-	static private DbHandler db = null;
+	static private ManagerDatabase db = null;
 	static private Context mctx = null;
 	
 	static protected SharedPreferences sPref;
@@ -116,7 +118,7 @@ public class BaseManagement extends Activity {
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		
 		mPm = getPackageManager();
-		db = new DbHandler(this);
+		db = new ManagerDatabase(this);
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();

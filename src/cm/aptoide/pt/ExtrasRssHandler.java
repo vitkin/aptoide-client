@@ -4,6 +4,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
+
 import android.content.Context;
 import android.text.Html;
 
@@ -12,7 +14,7 @@ public class ExtrasRssHandler extends DefaultHandler{
 	Context mctx = null;
 	String server = null;
 	
-	private DbHandler db = null;
+	private ManagerDatabase db = null;
 	
 //	private boolean extras = false;
 //	private boolean pkg = false;
@@ -25,7 +27,7 @@ public class ExtrasRssHandler extends DefaultHandler{
 	public ExtrasRssHandler(Context ctx, String srv){
 		mctx = ctx;
 		server = srv;
-		db = new DbHandler(mctx);
+		db = new ManagerDatabase(mctx);
 		e_apkid = "";
 		e_cmt = "";
 	}

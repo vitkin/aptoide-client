@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
 
@@ -35,7 +36,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 
 	private ListView lv = null;
 
-	private DbHandler db = null;
+	private ManagerDatabase db = null;
 	//private Context mctx = null;
 	
 	private int pos = -1;
@@ -77,7 +78,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
             }
         });
 		
-		db = new DbHandler(this);
+		db = new ManagerDatabase(this);
 		//mctx = this;
 		
 		updateApkListener = new UpdateApkListener();
