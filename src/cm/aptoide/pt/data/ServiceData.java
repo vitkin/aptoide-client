@@ -39,7 +39,7 @@ import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
 
 /**
- * ServiceData, entry point for all Aptoide's data I/O to the interface classes
+ * ServiceData, Aptoide's data I/O manager for the activity classes
  * 
  * @author dsilveira
  * @since 3.0

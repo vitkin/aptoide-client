@@ -42,6 +42,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
+
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.AlertDialog.Builder;
@@ -72,7 +74,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ManageRepo extends ListActivity{
 	
-	private DbHandler db = null;
+	private ManagerDatabase db = null;
 	
 	private final int ADD_REPO = 1;
 	private final int REM_REPO = 2;
@@ -106,7 +108,7 @@ public class ManageRepo extends ListActivity{
 		
 		registerForContextMenu(this.getListView());
 		
-		db = new DbHandler(this);
+		db = new ManagerDatabase(this);
 		
 		Intent i = getIntent();
 		if(i.hasExtra("empty")){

@@ -17,13 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt;
+package cm.aptoide.pt.data.database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import cm.aptoide.pt.ApkNode;
+import cm.aptoide.pt.ApkNodeFull;
+import cm.aptoide.pt.DownloadNode;
+import cm.aptoide.pt.ServerNode;
 import cm.aptoide.pt.multiversion.VersionApk;
 
 
@@ -39,7 +43,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-public class DbHandler {
+public class ManagerDatabase {
 	
 	private Context mctx = null;
 
@@ -133,7 +137,7 @@ public class DbHandler {
 	 *  - Other
 	 */
 
-	public DbHandler(Context ctx) {
+	public ManagerDatabase(Context ctx) {
 		mctx = ctx;
 		if(db == null){
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);

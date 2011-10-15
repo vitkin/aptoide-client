@@ -51,6 +51,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -101,7 +103,7 @@ public class Aptoide extends Activity {
     private Vector<String> server_lst = null;	//TODO to dataService
     private Vector<String[]> get_apps = null;	//TODO to dataService
     
-	private DbHandler db = null;				//TODO to dataService
+	private ManagerDatabase db = null;				//TODO to dataService
 
 	private SharedPreferences sPref;			//TODO to dataService
 	private SharedPreferences.Editor prefEdit;	//TODO to dataService
@@ -271,7 +273,7 @@ public class Aptoide extends Activity {
  
 //TODO to dataService      
     private void proceed(){
-   		db = new DbHandler(this);
+   		db = new ManagerDatabase(this);
    		
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
 	   		db.UpdateTables();

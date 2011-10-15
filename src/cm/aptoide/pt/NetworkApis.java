@@ -21,6 +21,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
+import cm.aptoide.pt.data.database.ManagerDatabase;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -30,7 +32,7 @@ public class NetworkApis {
 	
 	public static HttpResponse getHttpResponse(String url, String srv, Context mctx){
 		try{
-			DbHandler db = new DbHandler(mctx);
+			ManagerDatabase db = new ManagerDatabase(mctx);
 			
 			SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 			String myid = sPref.getString("myId", "NoInfo");

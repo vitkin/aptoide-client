@@ -1,5 +1,5 @@
 /*
- * DownloadQueueService		auxilliary class to Aptoide's ServiceData, that centralizes all download processes
+ * ManagerDownloads		auxilliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -19,12 +19,13 @@
 */
 
 
-package cm.aptoide.pt.data;
+package cm.aptoide.pt.data.downloads;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
 
@@ -52,7 +53,21 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-public class DownloadQueue {
+/**
+ * ManagerDownloads, centralizes all download processes
+ * 
+ * @author dsilveira
+ * @since 3.0
+ *
+ */
+public class ManagerDownloads {
+	
+	/** Ongoing */
+	private ArrayList<Download> downloads;
+	
+	/** Object reuse pool */
+	private ArrayList<Download> downloadPool;
+	private ArrayList<Login> loginPool;
 
 //	private final static int KBYTES_TO_BYTES = 1024;					// moved to constants.xml
 //	private HashMap<Integer, HashMap<String, String>> notifications;	//TODO move to notifications within ServiceData
@@ -80,16 +95,16 @@ public class DownloadQueue {
 	
 	public void startDownload(DownloadNode downloadNode){
 		HashMap<String,String> notification = new HashMap<String,String>();
-		notification.put("remotePath", downloadNode.getRemotePath());
-		notification.put("md5sum", downloadNode.getMd5sum());
+		notification.put("remotePath", downloadNode.getRemotePath());				//
+		notification.put("md5sum", downloadNode.getMd5sum());						//
 		
-		notification.put("packageName", downloadNode.getPackageName());
-		notification.put("appName", downloadNode.getAppName());
-		notification.put("intSize", Integer.toString(downloadNode.getSize()));
-		notification.put("intProgress", "0");
-		notification.put("version", downloadNode.version);
-		notification.put("localPath", downloadNode.getLocalPath());
-		notification.put("isUpdate", Boolean.toString(downloadNode.isUpdate()));
+		notification.put("packageName", downloadNode.getPackageName());				//
+		notification.put("appName", downloadNode.getAppName());						//
+		notification.put("intSize", Integer.toString(downloadNode.getSize()));		//
+		notification.put("intProgress", "0");										//
+		notification.put("version", downloadNode.version);							//
+		notification.put("localPath", downloadNode.getLocalPath());					//
+		notification.put("isUpdate", Boolean.toString(downloadNode.isUpdate()));	//
 		if(downloadNode.isRepoPrivate()){
 			notification.put("loginRequired", "true");
 			notification.put("username", downloadNode.getLogins()[0]);
