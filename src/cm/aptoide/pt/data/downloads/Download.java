@@ -40,9 +40,16 @@ public class Download {
 	private Notifier notifier;
 	
 	
-	public Download(String remotePath, boolean loginRequired, Login login, Cache cache, Notifier notifier) {
+	public Download(String remotePath, Cache cache, Notifier notifier) {
 		this.remotePath = remotePath;
-		this.loginRequired = loginRequired;
+		this.loginRequired = false;
+		this.cache = cache;
+		this.notifier = notifier;
+	}
+	
+	public Download(String remotePath, Login login, Cache cache, Notifier notifier) {
+		this.remotePath = remotePath;
+		this.loginRequired = true;
 		this.login = login;
 		this.cache = cache;
 		this.notifier = notifier;
@@ -58,7 +65,7 @@ public class Download {
 	}
 
 	public Login getLogin() {
-		return login;
+		return login;			//TODO test isrequired and return nullobject pattern if not
 	}
 
 	public Cache getCache() {
