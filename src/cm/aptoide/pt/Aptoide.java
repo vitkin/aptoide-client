@@ -300,7 +300,9 @@ public class Aptoide extends Activity {
 			prefEdit.putString("icdown", "g3w");
 			prefEdit.commit();
 		}
-    
+
+		//TODO move to managersystemsync and Activitysplash
+		
         setContentView(R.layout.start);
         
         mProgress = (ProgressBar) findViewById(R.id.pbar);
@@ -354,6 +356,8 @@ public class Aptoide extends Activity {
                 
             }
         }).start();	
+        
+        //----------------------
     }			
 //-------------------
 
