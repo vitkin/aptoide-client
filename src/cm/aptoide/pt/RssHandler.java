@@ -225,15 +225,16 @@ public class RssHandler extends DefaultHandler{
 				db.delApk(tmp_apk.apkid, tmp_apk.ver);
 			}else{
 				
-				if(tmp_apk.name.equalsIgnoreCase(""))
+				if(tmp_apk.name.equalsIgnoreCase("")){
 					tmp_apk.name = tmp_apk.apkid;
-				else{
+				}else{
 					try{
 						tmp_apk.name = Html.fromHtml(tmp_apk.name).toString();
-					}catch (Exception e) { }
+					}catch (Exception e) {}
 				}
 				
 				ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
+				
 				if(!listapks.contains(node)){
 					db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
 					listapks.add(node);
@@ -244,8 +245,9 @@ public class RssHandler extends DefaultHandler{
 						db.copyFromRecentApkToOldApk(tmp_apk.apkid, mserver);
 						db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size);
 						listapks.add(node);
-					} else { db.insertOldApk(tmp_apk, mserver); }
+					} else if(list.vercode != node.vercode){ db.insertOldApk(tmp_apk, mserver); }
 				}
+				
 			}
 			 
 			/*readed++;

@@ -278,19 +278,17 @@ public class RemoteInSearch extends ListActivity{
 		}
 		
 		apkinfo.putExtra("server", tmp_get.firstElement());
-		apkinfo.putExtra("dwn", tmp_get.get(4));
 		apkinfo.putExtra("rat", tmp_get.get(5));
-		apkinfo.putExtra("size", tmp_get.get(6));
 		apkinfo.putExtra("type", apk_lst.get(position).status == 0?0:1);
 		
 		ArrayList<VersionApk> versions = db.getOldApks(apkid);
-		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),apkid,Integer.parseInt(tmp_get.get(6).replaceAll("[^\\d]", "")));
+		VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),apkid,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
 		versions.add(versionApkPassed);
 		
 		try {
 			PackageManager mPm = getApplicationContext().getPackageManager();
 			PackageInfo pkginfo = mPm.getPackageInfo(apkid, 0);
-			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,apkid,-1));
+			apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName,pkginfo.versionCode,apkid,-1,-1));
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing
 		}

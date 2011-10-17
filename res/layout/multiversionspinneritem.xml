@@ -41,7 +41,19 @@
 					android:textColor="#000000"
 					android:layout_width="fill_parent" 
 					android:layout_height="fill_parent"
-					android:text="Other information (to complete)"
+					/>
+	      	 	
+      	 </TableRow>
+      	 
+      	  <TableRow>
+      	 
+      			<TextView 
+					android:id="@+id/downspinnermultiversion" 
+					android:textSize="12sp"
+					android:textColor="#000000"
+					android:layout_width="fill_parent" 
+					android:width="0px"
+					android:layout_height="fill_parent"
 					/>
 	      	 	
       	 </TableRow>

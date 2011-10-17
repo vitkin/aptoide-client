@@ -106,7 +106,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private TextView dislikes;
 	private String apk_repo_str_raw;
 	private String apk_ver_str_raw;
-	private String apk_size_str_raw;
 	private EnumUserTaste taste;
 	private WrapperUserTaste userTaste;
 	private TastePoster tastePoster;
@@ -292,9 +291,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		apk_name_str = apkinfo.getStringExtra("name");
 		String apk_descr = apkinfo.getStringExtra("about");
 		apk_repo_str = apkinfo.getStringExtra("server");
-		String apk_dwon_str = apkinfo.getStringExtra("dwn");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
-		String apk_size_str = apkinfo.getStringExtra("size");
 		
 		
 		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
@@ -399,22 +396,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		}
 		
 		
-		TextView apk_down_n = (TextView)linearLayout.findViewById(R.id.dwn);
-		apk_down_n.setText("Downloads: " + apk_dwon_str.replaceAll("\\n", "").replaceAll("\\t", "").trim());
-		
 		RatingBar apk_rat_n = (RatingBar) findViewById(R.id.rating);
 		apk_rat_n.setRating(new Float(apk_rat_str));
-		
-		TextView apk_size_n = (TextView) linearLayout.findViewById(R.id.size);
-		apk_size_n.setText(apk_size_str);
-
-		
-		
-		//TODO This as to be changed in a future code revision
-		apk_size_str_raw 	= apk_size_str.substring(6);
-		
-		if(apk_size_str_raw.equals("No information available")){ apk_size_str_raw = "0";}
-		else { apk_size_str_raw = apk_size_str_raw.substring(0,apk_size_str_raw.length()-2); };
 		
 		if(versions.size()!=0){
 			apk_ver_str_raw = versions.get(0).getVersion(); 
@@ -485,7 +468,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			
 			
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
-				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, "Version", "Size");
+				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, "Version", "Size", "Downloads");
 			spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
 			spinnerMulti.setAdapter(spinnerMultiAdapter );
 			if(type==2){

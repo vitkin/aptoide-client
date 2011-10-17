@@ -21,12 +21,14 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 	
 	private String versionLabel;
 	private String sizeLabel;
+	private String downLabel;
 	
 	public MultiversionSpinnerAdapter(Activity context, int textViewResourceId,
-			List<T> objects,String versionLabel, String sizeLabel) {
+			List<T> objects,String versionLabel, String sizeLabel, String downLabel) {
 		super(context, textViewResourceId, objects);
 		this.versionLabel = versionLabel;
 		this.sizeLabel = sizeLabel;
+		this.downLabel = downLabel;
 	}
 	
 	/**
@@ -34,9 +36,21 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 	 */
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		TextView defaultView = ((TextView)super.getView(position, convertView, parent));
-		defaultView.setText(versionLabel+" "+super.getItem(position).getVersion());
-		return defaultView;
+		if(convertView==null){
+			LayoutInflater inflater = ((Activity)getContext()).getLayoutInflater();
+			convertView = inflater.inflate(R.layout.infomultiversionspinner, null);
+		}
+		
+		TextView multiVersionItemVersion = (TextView) convertView.findViewById(R.id.versionspinnermultiversionSelected);
+		TextView multiVersionItemInfo = (TextView) convertView.findViewById(R.id.infopinnermultiversionSelected);
+		T currentEntry = super.getItem(position);
+		
+		multiVersionItemVersion.setText(
+				versionLabel+" "+currentEntry.getVersion());
+		multiVersionItemInfo.setText(
+				formatSize(currentEntry)+", "+formatDownloads(currentEntry));
+		
+		return convertView;
 	}
 
 	/**
@@ -52,15 +66,25 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 		
 		TextView multiVersionItemVersion = (TextView) convertView.findViewById(R.id.versionspinnermultiversion);
 		TextView multiVersionItemSize = (TextView) convertView.findViewById(R.id.sizespinnermultiversion);
+		TextView multiVersionItemDown = (TextView) convertView.findViewById(R.id.downspinnermultiversion);
 		T currentEntry = super.getItem(position);
 		
 		multiVersionItemVersion.setText(versionLabel+" "+currentEntry.getVersion());
-		multiVersionItemSize.setText(sizeLabel + " " + currentEntry.getSize() + " kb");
+		multiVersionItemSize.setText(formatSize(currentEntry));
+		multiVersionItemDown.setText(formatDownloads(currentEntry));
 		
 		return convertView;
 	
 	}
-
+	
+	private String formatSize(VersionApk version){
+		return sizeLabel + " " + ((version.getSize()>0)?(version.getSize()+ " kb"):"not available") ;
+	}
+	
+	private String formatDownloads(VersionApk version){
+		return downLabel + " " + ((version.getDownloads()>=0)?version.getDownloads():"not available");
+	}
+	
 	/**
 	 * 
 	 * @see android.widget.ArrayAdapter#getPosition(java.lang.Object)
