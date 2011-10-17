@@ -48,7 +48,7 @@
             			android:layout_width="fill_parent" 
             			android:layout_height="wrap_content"
     					android:scrollHorizontally="true"/>
-            		
+    					
             	<LinearLayout 
     				android:orientation="horizontal" 
     				android:layout_width="fill_parent" 

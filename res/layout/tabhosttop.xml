@@ -14,7 +14,7 @@
          <ViewFlipper
 	        android:id="@android:id/tabcontent"
 	        android:layout_width="fill_parent"
-	        android:layout_height="390dip"
+	        android:layout_height="fill_parent"
 	        android:layout_marginTop="60dip"
 	        android:padding="5dp" >  
 	        <!-- <FrameLayout

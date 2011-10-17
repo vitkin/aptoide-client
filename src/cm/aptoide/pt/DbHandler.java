@@ -77,7 +77,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_OLD_VERSIONS = "create table if not exists " + TABLE_NAME_OLD_VERSIONS
 				+ " (apkid text, name text not null, path text not null, ver text not null, vercode number not null, " 
-				+ " md5hash text, size number default 0 not null, server text, primary key(apkid,ver,server));";
+				+ " md5hash text, size number default 0 not null, server text, dwn number, primary key(apkid,ver,server));";
 	
 	
 	Map<String, Object> getCountSecCatg(int ord){
@@ -304,7 +304,7 @@ public class DbHandler {
 	 * @param md5hash
 	 * @param size
 	 */
-	public void insertOldApk(String name, String path, String ver, int vercode ,String apkid, String serv, String md5hash, int size){
+	public void insertOldApk(String name, String path, String ver, int vercode ,String apkid, String serv, String md5hash, int size, int dwn){
 		
 		ContentValues tmp = new ContentValues();
 		tmp.put("apkid", apkid);
@@ -315,6 +315,7 @@ public class DbHandler {
 		tmp.put("md5hash", md5hash);
 		tmp.put("size", size);
 		tmp.put("server", serv);
+		tmp.put("dwn", dwn);
 		db.insert(TABLE_NAME_OLD_VERSIONS, null, tmp);
 		
    		PackageManager mPm = mctx.getPackageManager();
@@ -336,7 +337,7 @@ public class DbHandler {
 	 * @param mserver
 	 */
 	public void insertOldApk(ApkNodeFull tmp, String mserver){
-		insertOldApk(tmp.name, tmp.path, tmp.ver, tmp.vercode,tmp.apkid, mserver, tmp.md5hash, tmp.size);
+		insertOldApk(tmp.name, tmp.path, tmp.ver, tmp.vercode,tmp.apkid, mserver, tmp.md5hash, tmp.size, tmp.down);
 	}
 	
 	/**
@@ -729,19 +730,13 @@ public class DbHandler {
 			int downloads = c.getInt(0);
 			float rat = c.getFloat(1);
 			
-			if(downloads < 0){
-				tmp.add("\tNo information available.\n");
-			}else{
-				tmp.add("\t"+Integer.toString(downloads)+"\n");
-			}
+			
+			tmp.add(Integer.toString(downloads));
 			
 			tmp.add(Float.toString(rat));
 			
-			if(size == 0){
-				tmp.add("Size: No information available");
-			}else{
-				tmp.add("Size: " + new Integer(size).toString() + "kb");
-			}
+			tmp.add(new Integer(size).toString());
+
 			tmp.add(lastvercode);
 			//c.close();
 		}catch (Exception e){
@@ -763,50 +758,19 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"ver", "size", "vercode"}, "apkid=\""+apk_id+"\"", null, null, null, null);
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"ver", "size", "vercode", "dwn"}, "apkid=\""+apk_id+"\"", null, null, null, null);
 			c.moveToFirst();
 			
 			do{
-				tmp.add( new VersionApk(c.getString(0), c.getInt(2), apk_id, c.getInt(1)) );
+				tmp.add( new VersionApk(c.getString(0), c.getInt(2), apk_id, c.getInt(1),c.getInt(3)) );
 			}while(c.moveToNext());
 			
 		}catch (Exception e){
-			//System.out.println(e.toString());
+			Log.e("Aptoide", e.getMessage());
 		}finally{
 			c.close();
 		}
-		
 		return tmp;
-	}
-	
-	/**
-	 * @author rafael
-	 * 
-	 * @param apk_id
-	 * @return
-	 */
-	public ArrayList<VersionApk> getOldAndNewApks(String apk_id){
-		ArrayList<VersionApk> tmp = new ArrayList<VersionApk>();
-		tmp.addAll(getOldApks(apk_id));
-		
-		Cursor c = null;
-		try{
-			
-			c = db.query(TABLE_NAME, new String[] {"lastver", "size", "lastvercode"}, "apkid=\""+apk_id+"\"", null, null, null, null);
-			c.moveToFirst();
-			
-			do{
-				tmp.add(new VersionApk(c.getString(0),  c.getInt(2), apk_id, c.getInt(1)));
-			}while(c.moveToNext());
-			
-		}catch (Exception e){
-			//System.out.println(e.toString());
-		}finally{
-			c.close();
-		}
-		
-		return tmp;
-		
 	}
 	
 	
@@ -825,10 +789,11 @@ public class DbHandler {
 		tmp_apk.apkid = apk_id;
 		tmp_apk.name = "";
 		tmp_apk.ver = "0.0";
-		tmp_apk.vercode = 0;
+		tmp_apk.vercode = -1;
 		tmp_apk.md5hash = "";
 		tmp_apk.path="";
 		tmp_apk.size = 0;
+		tmp_apk.down = -1;
 		
 //		private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
 //        + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
@@ -843,7 +808,6 @@ public class DbHandler {
 					new String[] {"name", "path", "lastver", "lastvercode", "server", "md5hash", "size"}
 					, "server=\""+server+"\" and apkid=\""+apk_id+"\"", null, null, null, null);
 			c.moveToFirst();
-			
 			tmp_apk.name = c.getString(0);
 			tmp_apk.path = c.getString(1);
 			tmp_apk.ver = c.getString(2);
@@ -851,6 +815,10 @@ public class DbHandler {
 			server = c.getString(4);
 			if(!c.isNull(5)) tmp_apk.md5hash = c.getString(5);
 			tmp_apk.size = c.getInt(6);
+			
+			c = db.query(TABLE_NAME_EXTRA, new String[] {"dwn"}, "apkid=\""+apk_id+"\"", null, null, null, null);
+			c.moveToFirst();
+			tmp_apk.down = c.getInt(0);
 			
 			this.insertOldApk(tmp_apk, server);
 			

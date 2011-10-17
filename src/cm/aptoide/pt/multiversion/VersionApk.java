@@ -34,16 +34,22 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	
 	/**
 	 * 
+	 */
+	private int downloads;
+	
+	/**
+	 * 
 	 * @param version
 	 * @param apkId
 	 * @param versionLabel
 	 */
-	public VersionApk(String version, int versionCode, String apkId, int size ) {
+	public VersionApk(String version, int versionCode, String apkId, int size, int downloads) {
 		
-		this.size = size;
-		this.version = version;
-		this.versionCode = versionCode;
-		this.apkId = apkId;
+		this.size 			= size;
+		this.version 		= version;
+		this.versionCode 	= versionCode;
+		this.apkId 			= apkId;
+		this.downloads 		= downloads;
 		
 	}
 	
@@ -71,7 +77,9 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 */
 	public int getSize() { return size; }
 	
-
+	public int getDownloads() {
+		return downloads;
+	}
 	
 	/**
 	 * 
@@ -122,7 +130,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 	 * @param in
 	 */
 	public VersionApk(Parcel in) { 
-		this(in.readString(),in.readInt(),in.readString(), in.readInt());
+		this(in.readString(),in.readInt(),in.readString(), in.readInt(), in.readInt());
 	}
 	
 	/**
@@ -143,6 +151,7 @@ public class VersionApk implements Comparable<VersionApk>, Parcelable{
 		dest.writeInt(this.getVersionCode());
 		dest.writeString(this.getApkId());
 		dest.writeInt(this.size);
+		dest.writeInt(this.downloads);
 	}
 	
 	/**
