@@ -35,6 +35,8 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import cm.aptoide.pt.data.Constants;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -75,21 +77,12 @@ public class ManagerDownloads {
 //	private Context context;											//TODO deprecate
 //	private WakeLock keepScreenOn;										//moved to ServiceData
 	
-	
-//TODO move to Notifications and dataService
-	
-//	@Override
-//	public void onCreate() {
-//		super.onCreate();
-//		notifications = new HashMap<Integer, HashMap<String,String>>();
-//		
-//		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-//		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
-//		Log.d("Aptoide-DowloadQueueService", "Created");
-//	}
-	
-//-------------------
 
+	
+	public ManagerDownloads() {
+		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.CACHE_PATH + "\n ********");
+	}
+	
 
 //TODO refactor	
 	
@@ -133,7 +126,8 @@ public class ManagerDownloads {
 
 	
 //TODO move to notifications within ServiceData
-	
+
+
 	private void setNotification(int apkidHash, int progress) {
 
 		String appName = notifications.get(apkidHash).get("appName");

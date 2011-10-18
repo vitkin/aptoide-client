@@ -51,7 +51,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import cm.aptoide.pt.data.EnumServiceDataMessage;
+import cm.aptoide.pt.data.ServiceData;
 import cm.aptoide.pt.data.database.ManagerDatabase;
+import cm.aptoide.pt.data.system.ScreenDimensions;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -75,7 +78,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Messenger;
 import android.os.PowerManager;
+import android.os.RemoteException;
 import android.os.PowerManager.WakeLock;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -87,6 +92,71 @@ import android.widget.Toast;
 
 public class Aptoide extends Activity { 
 	
+	Messenger serviceDataOutboundMessenger = null;
+
+	boolean serviceDataIsBound;
+	private ServiceConnection serviceDataConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the object we can use to
+			// interact with the service.  We are communicating with the
+			// service using a Messenger, so here we get a client-side
+			// representation of that from the raw IBinder object.
+			serviceDataOutboundMessenger = new Messenger(service);
+			serviceDataIsBound = true;
+
+			DisplayMetrics displayMetrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+			ScreenDimensions screenDimensions = new ScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
+			Message storeScreenDimensions = Message.obtain(null, EnumServiceDataMessage.STORE_SCREEN_DIMENSIONS.ordinal(), screenDimensions);
+	        try {
+	            serviceDataOutboundMessenger.send(storeScreenDimensions);
+	        } catch (RemoteException e) {
+	            e.printStackTrace();
+	        }
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			serviceDataOutboundMessenger = null;
+			serviceDataIsBound = false;
+		}
+	};
+    
+    class ServiceDataInboundHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+//            switch (msg.what) {
+//                case MessengerService.MSG_SET_VALUE:
+//                    mCallbackText.setText("Received from service: " + msg.arg1);
+//                    break;
+//                default:
+//                    super.handleMessage(msg);
+//            }
+        }
+    }
+
+    /**
+     * Target we publish for clients to send messages to ServiceDataInboundHandler.
+     */
+    final Messenger serviceDataInboundMessenger = new Messenger(new ServiceDataInboundHandler());
+
+
+    /** example service usage code */
+    
+//    public void sayHello(View v) {
+//        if (!serviceDataIsBound) return;
+//        // Create and send a message to the service, using a supported 'what' value
+//        Message msg = Message.obtain(null, MessengerService.MSG_SAY_HELLO, 0, 0);
+//        try {
+//            serviceDataOutboundMessenger.send(msg);
+//        } catch (RemoteException e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+	
 //moved to Constants 
     
 //	private static final int LOAD_TABS = 0;			//TODO Probably unneeded
@@ -97,110 +167,74 @@ public class Aptoide extends Activity {
 	
 //-------------------	
 	
-//	private WakeLock keepScreenOn;				//TODO to dataService
-//	private Intent DownloadQueueServiceIntent;	//TODO to dataService
     
     private Vector<String> server_lst = null;	//TODO to dataService
     private Vector<String[]> get_apps = null;	//TODO to dataService
     
 	private ManagerDatabase db = null;				//TODO to dataService
 
-	private SharedPreferences sPref;			//TODO to dataService
-	private SharedPreferences.Editor prefEdit;	//TODO to dataService
-
-	private PackageInfo pkginfo;				//TODO to dataService	
-	
+	//TODO to splash activity class
 	private ProgressBar mProgress;
 	private int mProgressStatus = 0;
+	//-----------------------------
 	
-	private Context mctx;
+//	private Context mctx;						//TODO deprecate
 
-//TODO to dataService, needs refactoring, to notification class + download pool class, no need for another service
-	
-	private DownloadQueueService downloadQueueService;
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-	        // This is called when the connection with the service has been
-	        // established, giving us the service object we can use to
-	        // interact with the service.  Because we have bound to a explicit
-	        // service that we know is running in our own process, we can
-	        // cast its IBinder to a concrete class and directly access it.
-	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
-
-	        downloadQueueService.setCurrentContext(mctx);
-	        
-	        Log.d("Aptoide", "DownloadQueueService bound to Aptoide");
-	    }
-	    
-	    public void onServiceDisconnected(ComponentName className) {
-	        // This is called when the connection with the service has been
-	        // unexpectedly disconnected -- that is, its process crashed.
-	        // Because it is running in our same process, we should never
-	        // see this happen.
-	        downloadQueueService = null;
-	        
-	        Log.d("Aptoide","DownloadQueueService unbound from Aptoide");
-	    }
-
-	};	
-	
-//-------------------
-	
 //TODO to dataService
 	
-	private Bundle savedInstanceState;
-	
-	private Handler mHandler = new Handler();
-
-	
-	private Handler startHandler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			switch(msg.what){
-			case LOAD_TABS:
-				Intent i = new Intent(Aptoide.this, RemoteInTab.class);
-				Intent get = getIntent();
-				if(get.getData() != null){
-					String uri = get.getDataString();
-					if(uri.startsWith("aptoiderepo")){
-						Log.d("Aptoide-startHandler", "aptoiderepo-scheme");
-						String repo = uri.substring(14);
-						i.putExtra("newrepo", repo);
-					}else if(uri.startsWith("aptoidexml")){
-						Log.d("Aptoide-startHandler", "aptoidexml-scheme");
-						String repo = uri.substring(13);
-						parseXmlString(repo);
-						i.putExtra("repos", server_lst);
-						if(get_apps.size() > 0){
-							//i.putExtra("uri", TMP_SRV_FILE);
-							i.putExtra("apps", get_apps);
-
-						}
-						//i.putExtra("linkxml", repo);
-					}else{
-						Log.d("Aptoide-startHandler", "receiving a myapp file");
-						downloadMyappFile(uri);
-						try {
-							parseMyappFile(TMP_MYAPP_FILE);
-							i.putExtra("repos", server_lst);
-							if(get_apps.size() > 0){
-								//i.putExtra("uri", TMP_SRV_FILE);
-								i.putExtra("apps", get_apps);
-	
-							}
-						} catch (Exception e) {
-							Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
-							onCreate(savedInstanceState);
-						}
-					}
-				}
-				startActivityForResult(i,0);
-				break;
-			}
-			super.handleMessage(msg);
-		} 
-    }; 
+//	private Bundle savedInstanceState;
+//	
+//	private Handler mHandler = new Handler();
+//
+//	
+//	private Handler startHandler = new Handler() {
+//
+//		@Override
+//		public void handleMessage(Message msg) {
+//			switch(msg.what){
+//			case LOAD_TABS:
+//				Intent i = new Intent(Aptoide.this, RemoteInTab.class);
+//				Intent get = getIntent();
+//				if(get.getData() != null){
+//					String uri = get.getDataString();
+//					if(uri.startsWith("aptoiderepo")){
+//						Log.d("Aptoide-startHandler", "aptoiderepo-scheme");
+//						String repo = uri.substring(14);
+//						i.putExtra("newrepo", repo);
+//					}else if(uri.startsWith("aptoidexml")){
+//						Log.d("Aptoide-startHandler", "aptoidexml-scheme");
+//						String repo = uri.substring(13);
+//						parseXmlString(repo);
+//						i.putExtra("repos", server_lst);
+//						if(get_apps.size() > 0){
+//							//i.putExtra("uri", TMP_SRV_FILE);
+//							i.putExtra("apps", get_apps);
+//
+//						}
+//						//i.putExtra("linkxml", repo);
+//					}else{
+//						Log.d("Aptoide-startHandler", "receiving a myapp file");
+//						downloadMyappFile(uri);
+//						try {
+//							parseMyappFile(TMP_MYAPP_FILE);
+//							i.putExtra("repos", server_lst);
+//							if(get_apps.size() > 0){
+//								//i.putExtra("uri", TMP_SRV_FILE);
+//								i.putExtra("apps", get_apps);
+//	
+//							}
+//						} catch (Exception e) {
+//							Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
+//							onCreate(savedInstanceState);
+//						}
+//					}
+//				}
+//				startActivityForResult(i,0);
+//				break;
+//			}
+//			super.handleMessage(msg);
+//		} 
+//    }; 
 	
 //-------------------
 	
@@ -210,53 +244,40 @@ public class Aptoide extends Activity {
     	
         super.onCreate(savedInstanceState);
         
-        mctx = this;	//TODO delete, leads to memory leaks, just use this
+//        mctx = this;	//TODO delete, leads to memory leaks, just use this when needed
 
-//TODO to dataService       
         
-        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
-    	DownloadQueueServiceIntent = new Intent(mctx, DownloadQueueService.class);
-    	startService(DownloadQueueServiceIntent);
-
-    	mctx.bindService(new Intent(mctx, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-
-//-------------------    	
+        //TODO to ManagerNotifiers
+//        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
+        //------------------------
+        
     	
 //TODO deprecated    	
     	
 //@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
-    	ActivityManager activityManager = (ActivityManager)mctx.getSystemService(Context.ACTIVITY_SERVICE);
-    	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
-    	for (RunningTaskInfo runningTask : running) {
-			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.RemoteInTab")){	//RemoteInTab is the real Aptoide Activity
-				Message msg = new Message();
-	            msg.what = LOAD_TABS;
-	            startHandler.sendMessage(msg);
-	            return;
-			}
-		}
+//    	ActivityManager activityManager = (ActivityManager)mctx.getSystemService(Context.ACTIVITY_SERVICE);
+//    	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
+//    	for (RunningTaskInfo runningTask : running) {
+//			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.RemoteInTab")){	//RemoteInTab is the real Aptoide Activity
+//				Message msg = new Message();
+//	            msg.what = LOAD_TABS;
+//	            startHandler.sendMessage(msg);
+//	            return;
+//			}
+//		}
     	
 //-------------------
 
-//TODO to dataService    	
-    	
-        Log.d("Aptoide","******* \n Downloads will be made to: " + Environment.getExternalStorageDirectory().getPath() + "\n ********");
-
-        sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
-		prefEdit = sPref.edit();
+        startService(new Intent(this, ServiceData.class));
+        bindService(new Intent(this, ServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
         
-//-------------------
-
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		
+        
 //TODO to dataService		
 		
-   		PackageManager mPm = getPackageManager();
-   		try {
-			pkginfo = mPm.getPackageInfo("cm.aptoide.pt", 0);
-   		} catch (NameNotFoundException e) {	}
-   		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
    		try{
 			if( pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode") ) ){
 				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
@@ -270,36 +291,19 @@ public class Aptoide extends Activity {
    		}
 //-------------------				
     }
- 
-//TODO to dataService      
+
+
+	//TODO to dataService      
     private void proceed(){
    		db = new ManagerDatabase(this);
    		
-    	if(sPref.getInt("version", 0) < pkginfo.versionCode){
-	   		db.UpdateTables();
-	   		prefEdit.putBoolean("mode", true);
-	   		prefEdit.putInt("version", pkginfo.versionCode);
-	   		prefEdit.commit();
-		}
-		
-		if(sPref.getString("myId", null) == null){
-			String rand_id = UUID.randomUUID().toString();
-			prefEdit.putString("myId", rand_id);
-			prefEdit.commit();
-		}
-		
-		if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
-			 DisplayMetrics dm = new DisplayMetrics();
-		     getWindowManager().getDefaultDisplay().getMetrics(dm);
-		     prefEdit.putInt("scW", dm.widthPixels);
-		     prefEdit.putInt("scH", dm.heightPixels);
-		     prefEdit.commit();
-		}
-		
-		if(sPref.getString("icdown", null) == null){
-			prefEdit.putString("icdown", "g3w");
-			prefEdit.commit();
-		}
+   		
+   		/** TODO expand settings downloads options */
+   		
+//		if(sPref.getString("icdown", null) == null){
+//			prefEdit.putString("icdown", "g3w");
+//			prefEdit.commit();
+//		}
 
 		//TODO move to managersystemsync and Activitysplash
 		
@@ -646,8 +650,10 @@ public class Aptoide extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		mctx.unbindService(serviceConnection);
-		stopService(DownloadQueueServiceIntent);
+		if (serviceDataIsBound) {
+            unbindService(serviceDataConnection);
+            serviceDataIsBound = false;
+        }
 		super.onDestroy();
 	}
 	

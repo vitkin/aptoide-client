@@ -1,13 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    
-</resources>
-<!--
+/*
+ * InstalledPackages, auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
- *
- * derivative work from original Aptoide, (C) 2009 Roberto Jacinto
- * roberto.jacinto@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -22,4 +16,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
--->
+*/
+package cm.aptoide.pt.data.system;
+
+import java.util.HashMap;
+
+/**
+ * InstalledPackages, models list of installed Packages 
+ *
+ * @author dsilveira
+ * @since 3.0
+ *
+ */
+public class InstalledPackages {
+	
+	private HashMap<String, HashMap<String,String>> installedPackages; //TODO implement method to get Differences in lists
+	
+}

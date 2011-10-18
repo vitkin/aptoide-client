@@ -37,6 +37,8 @@ import android.util.Log;
 import android.widget.Toast;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.data.preferences.ManagerPreferences;
+import cm.aptoide.pt.data.system.ManagerSystemSync;
 
 /**
  * ServiceData, Aptoide's data I/O manager for the activity classes
@@ -52,7 +54,9 @@ public class ServiceData extends Service {
 	private EnumServiceDataMessage latestRequest;
 
 	private WakeLock keepScreenOn;
-	private Intent DownloadQueueServiceIntent;
+	
+	private ManagerPreferences managerPreferences;
+	private ManagerSystemSync managerSystemSync;
 	
 	
 	class IncomingRequestHandler extends Handler {
@@ -102,6 +106,7 @@ public class ServiceData extends Service {
 	@Override
 	public void onCreate() {
 		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		
 		/** Compatibility with API level 4, ignore following try catches */
 		try {
 	        startForeground = getClass().getMethod("startForeground", startForegroundSignature);
@@ -118,7 +123,14 @@ public class ServiceData extends Service {
 	                "OS doesn't have Service.startForeground OR Service.setForeground!");
 	    }
 		/*****************************************************************/
+	    
 		serviceClients = new ArrayList<Messenger>();
+		
+		managerPreferences = new ManagerPreferences(this);
+		managerSystemSync = new ManagerSystemSync(this);
+		
+		
+		
 		
 		startForegroundCompat(R.string.aptoide_started, getNotification());
 		Log.d("Aptoide ServiceData", "Service started");
@@ -138,6 +150,21 @@ public class ServiceData extends Service {
 		Log.d("Aptoide ServiceData", "Service stopped");
 		super.onDestroy();
 	}
+
+	
+	public ManagerPreferences getManagerPreferences() {
+		return managerPreferences;
+	}
+	
+	public ManagerSystemSync getManagerSystemSync() {
+		return managerSystemSync;
+	}
+	
+	public Statistics getStatistics(){
+		Statistics statistics = new Statistics(managerSystemSync.getAptoideVersionNameInUse());
+		managerPreferences.completeStatistics(statistics);
+		return statistics;
+	}
 	
 	
 	private Notification getNotification() {
@@ -148,7 +175,7 @@ public class ServiceData extends Service {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, Aptoide.class), 0);
 
         // Set the info for the views that show in the notification panel.
-        notification.setLatestEventInfo(this, getText(R.string.app_name), getText(R.string.ver_str), contentIntent);
+        notification.setLatestEventInfo(this, getText(R.string.app_name), managerSystemSync.getAptoideVersionNameInUse(), contentIntent);
         
         return notification; 
 	}

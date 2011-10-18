@@ -64,6 +64,7 @@ import android.widget.Toast;
  */
 public class ManagerNotifiers {
 
+	private WakeLock keepScreenOn;
 	private ServiceData serviceData;
 	
 	/** Ongoing */
@@ -99,6 +100,10 @@ public class ManagerNotifiers {
 	
 	public ManagerNotifiers(ServiceData serviceData) {
 		this.serviceData = serviceData;
+		
+		PowerManager powerManager = (PowerManager) serviceData.getSystemService(Context.POWER_SERVICE);
+        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
+        
 		notificationPool = new ArrayList<Notifier>(10);
 		gettingApps = new ArrayList<Notifier>(5);
 		gettingUpdates = new ArrayList<Notifier>(5);
