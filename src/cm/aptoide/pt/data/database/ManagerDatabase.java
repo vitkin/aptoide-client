@@ -28,6 +28,7 @@ import cm.aptoide.pt.ApkNode;
 import cm.aptoide.pt.ApkNodeFull;
 import cm.aptoide.pt.DownloadNode;
 import cm.aptoide.pt.ServerNode;
+import cm.aptoide.pt.data.system.InstalledPackages;
 import cm.aptoide.pt.multiversion.VersionApk;
 
 
@@ -1226,5 +1227,76 @@ public class ManagerDatabase {
 		int o = db.delete(TABLE_NAME_OLD_VERSIONS, "server='"+repo+"'", null);
 		Log.d("Aptoide","RemovedOld: " + o);
 		
+	}
+	
+	public Vector<ApkNode> syncInstalledPackages(InstalledPackages installedPackages){
+		Vector<ApkNode> tmp = new Vector<ApkNode>();
+		Cursor c = null;
+		try{
+			
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
+				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
+				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
+			
+			final String rat = " order by rat desc";
+			final String mr = " order by dt desc";
+			final String alfb = " order by name collate nocase";
+			final String down = " order by dwn desc";
+						
+			String search;
+			if(type.equalsIgnoreCase("abc")){
+				search = basic_query+alfb;
+			}else if(type.equalsIgnoreCase("dwn")){
+				search = basic_query+down;
+			}else if(type.equalsIgnoreCase("rct")){
+				search = basic_query+mr;
+			}else if(type.equalsIgnoreCase("rat")){
+				search = basic_query+rat;
+			}else{
+				search = basic_query;
+			}
+			c = db.rawQuery(search, null);
+			c.moveToFirst();
+			
+			
+			for(int i = 0; i< c.getCount(); i++){
+				ApkNode node = new ApkNode();
+				node.apkid = c.getString(0);
+				node.name = c.getString(1);
+				if(c.getString(2) == null){
+					node.status = 0;
+					node.ver = c.getString(3);
+				}else{
+					int instvercode = c.getInt(4);
+					int lastvercode = c.getInt(5);
+					
+					if(instvercode >= lastvercode){
+						
+						if(getOldApks(node.apkid).size()==0 && instvercode == lastvercode){
+							node.status = 1;
+						} else {
+							node.status = 3;
+						}
+						
+					}else{
+						node.status = 2;
+					}
+					node.ver = c.getString(2);
+				}
+				node.rat = c.getFloat(7);
+				node.down = c.getInt(8);
+				node.catg = c.getString(9);
+				node.catg_ord = c.getInt(10);
+				tmp.add(node);
+				c.moveToNext();
+			}
+		}catch (Exception e){ 
+			e.printStackTrace();
+		}
+		finally{
+			c.close();
+		}
+		return tmp;
 	}
 }

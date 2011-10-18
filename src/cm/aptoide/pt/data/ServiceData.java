@@ -160,8 +160,8 @@ public class ServiceData extends Service {
 		return managerSystemSync;
 	}
 	
-	public Statistics getStatistics(){
-		Statistics statistics = new Statistics(managerSystemSync.getAptoideVersionNameInUse());
+	public ClientStatistics getStatistics(){
+		ClientStatistics statistics = new ClientStatistics(managerSystemSync.getAptoideVersionNameInUse());
 		managerPreferences.completeStatistics(statistics);
 		return statistics;
 	}
