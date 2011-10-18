@@ -22,6 +22,7 @@ package cm.aptoide.pt.data;
 
 public enum EnumServiceDataMessage {
 	ON_START,
+	STORE_SCREEN_DIMENSIONS,
 	INSERT_REPO;
 	
 	public static EnumServiceDataMessage reverseOrdinal(int ordinal){

@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Aptoide</string>
     
-    <string name="ver_str">&quot;2.94-dev&quot;</string>
     <string name="change_log_url">http://aptoide.com/changelog_3_0.html</string>
    
     <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n\n

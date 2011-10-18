@@ -20,6 +20,14 @@
 
 package cm.aptoide.pt.data.preferences;
 
+import java.util.UUID;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+import cm.aptoide.pt.data.ServiceData;
+import cm.aptoide.pt.data.Statistics;
+import cm.aptoide.pt.data.system.ScreenDimensions;
+
 /**
  * ManagerPreferences, manages aptoide's preferences I/O
  * 
@@ -28,5 +36,46 @@ package cm.aptoide.pt.data.preferences;
  *
  */
 public class ManagerPreferences {
+	
+	private SharedPreferences getPreferences;
+	private SharedPreferences.Editor setPreferences;
+	
 
+	public ManagerPreferences(ServiceData serviceData) {
+		getPreferences = serviceData.getSharedPreferences("aptoide_preferences", Context.MODE_PRIVATE);
+		setPreferences = getPreferences.edit();
+		
+		String aptoideClientUUID = getPreferences.getString("aptoideClientUUID", null);
+		if(aptoideClientUUID == null){
+			aptoideClientUUID = UUID.randomUUID().toString();
+		}
+	}
+
+	
+	public SharedPreferences getGetPreferences() {
+		return getPreferences;
+	}
+
+	public SharedPreferences.Editor getSetPreferences() {
+		return setPreferences;
+	}
+
+	
+	public String getAptoideClientUUID(){
+		return getPreferences.getString("aptoideClientUUID", null);
+	}
+	
+	public void setScreenDimensions(ScreenDimensions screenDimensions){
+		setPreferences.putInt("screenWidth", screenDimensions.getWidth());
+		setPreferences.putInt("screenHeight", screenDimensions.getHeight());
+	}
+	
+	public ScreenDimensions getScreenDimensions(){
+		return new ScreenDimensions(getPreferences.getInt("screenWidth", 0), getPreferences.getInt("screenWidth", 0));
+	}
+	
+	public void completeStatistics(Statistics statistics){
+		statistics.completeStatistics(getAptoideClientUUID(), getScreenDimensions());
+	}
+	
 }

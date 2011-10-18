@@ -28,7 +28,9 @@ import android.os.Environment;
  *
  */
 public class Constants {
+	public static final int KBYTES_TO_BYTES = 1024;
 	public static final String CACHE_PATH = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/";
 	public static final String SELF_UPDATE_FILE = CACHE_PATH + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
 	public static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml";
+	
 }

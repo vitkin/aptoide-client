@@ -20,6 +20,11 @@
 
 package cm.aptoide.pt.data.system;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import cm.aptoide.pt.data.ServiceData;
+
 /**
  * ManagerSystemSync, manages data synchronization with the underlying android's package database 
  * 
@@ -28,5 +33,35 @@ package cm.aptoide.pt.data.system;
  *
  */
 public class ManagerSystemSync {
+
+	PackageManager packageManager;
+	
+	public ManagerSystemSync(ServiceData serviceData){
+		packageManager = serviceData.getPackageManager();
+	}
+	
+	public int getAptoideVersionInUse(){
+		PackageInfo aptoideInfo;
+		try {
+			aptoideInfo = packageManager.getPackageInfo("cm.aptoide.pt", 0);
+   		} catch (NameNotFoundException e) {	
+   			/** this should never happen */
+   			return -1;
+   		}
+		return aptoideInfo.versionCode;
+	}
+	
+	public String getAptoideVersionNameInUse(){
+		PackageInfo aptoideInfo;
+		try {
+			aptoideInfo = packageManager.getPackageInfo("cm.aptoide.pt", 0);
+   		} catch (NameNotFoundException e) {	
+   			/** this should never happen */
+   			return null;
+   		}
+		return aptoideInfo.versionName;
+	}
+	
+	public 
 
 }
