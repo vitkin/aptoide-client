@@ -19,7 +19,8 @@
 */
 package cm.aptoide.pt.data.system;
 
-import java.util.HashMap;
+import java.util.List;
+import android.content.pm.PackageInfo;
 
 /**
  * InstalledPackages, models list of installed Packages 
@@ -30,6 +31,16 @@ import java.util.HashMap;
  */
 public class InstalledPackages {
 	
-	private HashMap<String, HashMap<String,String>> installedPackages; //TODO implement method to get Differences in lists
+	private List<PackageInfo> systemInstalledList;
+	
+	
+	public InstalledPackages( List<PackageInfo> systemInstalledList ){
+		this.systemInstalledList = systemInstalledList;
+	}
+
+
+	public List<PackageInfo> getSystemInstalledList() {
+		return systemInstalledList;
+	}
 	
 }

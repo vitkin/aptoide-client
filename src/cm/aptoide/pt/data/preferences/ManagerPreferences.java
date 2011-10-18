@@ -25,7 +25,7 @@ import java.util.UUID;
 import android.content.Context;
 import android.content.SharedPreferences;
 import cm.aptoide.pt.data.ServiceData;
-import cm.aptoide.pt.data.Statistics;
+import cm.aptoide.pt.data.ClientStatistics;
 import cm.aptoide.pt.data.system.ScreenDimensions;
 
 /**
@@ -74,7 +74,7 @@ public class ManagerPreferences {
 		return new ScreenDimensions(getPreferences.getInt("screenWidth", 0), getPreferences.getInt("screenWidth", 0));
 	}
 	
-	public void completeStatistics(Statistics statistics){
+	public void completeStatistics(ClientStatistics statistics){
 		statistics.completeStatistics(getAptoideClientUUID(), getScreenDimensions());
 	}
 	

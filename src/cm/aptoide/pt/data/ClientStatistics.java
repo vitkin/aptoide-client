@@ -28,24 +28,24 @@ import cm.aptoide.pt.data.system.ScreenDimensions;
  * @since 3.0
  *
  */
-public class Statistics {
+public class ClientStatistics {
 
 	private String aptoideVersionNameInUse;
 	private String aptoideClientUUID;
 	
 	private ScreenDimensions screenDimensions;
 
-	public Statistics(String aptoideVersionNameInUse) {
+	public ClientStatistics(String aptoideVersionNameInUse) {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
 	}
 	
-	public Statistics(String aptoideVersionNameInUse, String aptoideClientUUID, int screenWidth, int screenHeight) {
+	public ClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, int screenWidth, int screenHeight) {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
 		this.aptoideClientUUID = aptoideClientUUID;
 		this.screenDimensions = new ScreenDimensions(screenWidth, screenHeight);
 	}	
 	
-	public Statistics(String aptoideVersionNameInUse, String aptoideClientUUID, ScreenDimensions screenDimensions) {
+	public ClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, ScreenDimensions screenDimensions) {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
 		this.aptoideClientUUID = aptoideClientUUID;
 		this.screenDimensions = screenDimensions;
