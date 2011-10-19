@@ -32,7 +32,9 @@ import android.content.pm.PackageInfo;
 public class InstalledPackages {
 	
 	private List<PackageInfo> systemInstalledList;
-	
+	String sqlWherePnames;
+	String sqlWherePnamesAndInstalledVersions;
+		
 	
 	public InstalledPackages( List<PackageInfo> systemInstalledList ){
 		this.systemInstalledList = systemInstalledList;
@@ -41,6 +43,29 @@ public class InstalledPackages {
 
 	public List<PackageInfo> getSystemInstalledList() {
 		return systemInstalledList;
+	}
+	
+	public void prepareSqlWhereStrings(){
+		sqlWherePnames = null;
+		sqlWherePnamesAndInstalledVersions = null;
+		int iterations = 0;
+		for (PackageInfo installedPackage : systemInstalledList) {
+			iterations ++;
+			sqlWherePnames += "apkid='"+installedPackage.packageName+"'";		//TODO replace sql column names with new ones
+			sqlWherePnamesAndInstalledVersions += "(apkid='"+installedPackage.packageName+"' AND lastvercode='"+installedPackage.versionCode+"')";
+			if(iterations < systemInstalledList.size()){
+				sqlWherePnames += " OR ";
+				sqlWherePnamesAndInstalledVersions += " OR ";
+			}
+		}
+	}
+	
+	public String getSqlWherePnames(){
+		return sqlWherePnames;
+	}
+	
+	public String getSqlWherePnamesAndInstalledVersions(){
+		return sqlWherePnamesAndInstalledVersions;
 	}
 	
 }
