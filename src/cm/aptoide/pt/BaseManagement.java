@@ -577,9 +577,6 @@ public class BaseManagement extends Activity {
 		try{
 			
 			tmp_serv = db.getPathHash(packageName, ver);
-			if(tmp_serv.size()==0){
-				tmp_serv = db.getPathHashOld(packageName, ver);
-			}
 
 			String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
 			String appName = packageName;
@@ -597,7 +594,6 @@ public class BaseManagement extends Activity {
 			downloadNode.setLocalPath(localPath);
 			downloadNode.setUpdate(isUpdate);
 			String remotePath = downloadNode.getRemotePath();
-
 			//}
 
 			if(remotePath.length() == 0)

@@ -421,10 +421,6 @@ public class RemoteInSearch extends ListActivity{
 			String appName = apk_lst.get(position).name;
 			
 			tmp_serv = db.getPathHash(packageName, version);
-			if(tmp_serv.size()==0){
-				tmp_serv = db.getPathHashOld(packageName, version);
-			}
-			
 			
 			String localPath = new String(LOCAL_APK_PATH+apk_lst.get(position).apkid+".apk");
 			
