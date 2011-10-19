@@ -389,8 +389,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		TextView apk_version = (TextView)findViewById(R.id.app_ver);
 		
-		if(type == 1){ 
-			apk_version.setText(this.getString(R.string.version_inst)+": " + versionInstApk.getVersion());
+		if(type == 1){
+			apk_version.setText(this.getString(R.string.version_inst)+": " + versionInstApk!=null?versionInstApk.getVersion(): "Not available");
 		}else{
 			apk_version.setVisibility(View.INVISIBLE);
 		}
@@ -510,8 +510,6 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							rtrn_intent.putExtra("position", apkinfo.getIntExtra("position", -1));
 							
 							jback = true;
-							
-							rtrn_intent.putExtra("version", versionInstApk.getVersion());
 							finish();
 							
 						}

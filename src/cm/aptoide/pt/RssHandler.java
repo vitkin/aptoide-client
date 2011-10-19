@@ -36,11 +36,11 @@ import android.util.Log;
 
 public class RssHandler extends DefaultHandler{
 	
-	private ApkNodeFull tmp_apk = new ApkNodeFull();
+	private ApkNodeFull 		tmp_apk = new ApkNodeFull();
 	
-	private String icon_path;
+	private String				icon_path;
 	
-	private SharedPreferences sPref = null;
+	private SharedPreferences 	sPref = null;
 	
 	private Context mctx;
 	private String mserver;
@@ -189,6 +189,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.size = new Integer(new String(ch).substring(start, start + length));
 		}else if(apk_basepath){
 			basepath = new String(ch).substring(start, start + length);
+			db.updateBasePathRepo(mserver, basepath);
 		}
 	}
 

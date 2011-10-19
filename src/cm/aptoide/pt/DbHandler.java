@@ -69,7 +69,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
-				+ " secure integer default 0 not null, updatetime text default 0 not null, delta text default 0 not null);";
+				+ " secure integer default 0 not null, updatetime text default 0 not null, base_path text, delta text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
 				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null,"
@@ -147,6 +147,11 @@ public class DbHandler {
 		}
 	}
 	
+	public void updateBasePathRepo(String repo, String basepath){
+		ContentValues tmp = new ContentValues();
+		tmp.put("base_path", basepath);
+		db.update(TABLE_NAME_URI, tmp, "uri='" + repo + "'", null);
+	}
 	
 	public void startTrans(){
 		db.beginTransaction();
@@ -834,12 +839,17 @@ public class DbHandler {
 	public Vector<DownloadNode> getPathHash(String id_apk, String ver){
 		Vector<DownloadNode> out = new Vector<DownloadNode>();
 		Cursor c = null;
+		Cursor e = null;
 		try{
 			c = db.query(TABLE_NAME, new String[] {"server", "path", "md5hash", "size", "lastver"}, "apkid='"+id_apk+"' and lastver ='"+ver+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
 				String repo = c.getString(0);
-				String remotePath = repo+"/"+c.getString(1);
+				
+				e = db.query(TABLE_NAME_URI, new String[] {"base_path"}, "uri='"+repo+"'", null, null, null, null);
+				e.moveToFirst();
+				
+				String remotePath = e.getString(0)+c.getString(1);
 				String md5sum = null;
 				if(!c.isNull(2)){
 					md5sum = c.getString(2);
@@ -850,9 +860,17 @@ public class DbHandler {
 				out.add(node);
 			}
 			//c.close();
-		}catch(Exception e){
+		}catch(Exception exception){
+			Log.e("Aptoide", exception.getMessage());
 		}finally{
 			c.close();
+			if(e!=null){
+				e.close();
+			}
+		}
+		
+		if(out.size()==0){
+			out = getPathHashOld(id_apk, ver);
 		}
 		return out;
 	}
@@ -864,14 +882,21 @@ public class DbHandler {
 	 * @param ver
 	 * @return
 	 */
-	public Vector<DownloadNode> getPathHashOld(String id_apk, String ver){
+	private Vector<DownloadNode> getPathHashOld(String id_apk, String ver){
 		
 		Vector<DownloadNode> out = new Vector<DownloadNode>();
 		Cursor c = null;
+		Cursor e = null;
 		try{
 			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"server", "path", "md5hash", "size"}, "apkid='"+id_apk+"' and ver ='"+ver+"'", null, null, null, null);
 			c.moveToFirst();
 			for(int i =0; i<c.getCount(); i++){
+				
+				String repo = c.getString(0);
+				
+				e = db.query(TABLE_NAME_URI, new String[] {"base_path"}, "uri='"+repo+"'", null, null, null, null);
+				e.moveToFirst();
+				
 				String md5h = null;
 				String remotePath = c.getString(0)+"/"+c.getString(1);
 				if(!c.isNull(2)){
@@ -882,9 +907,13 @@ public class DbHandler {
 				out.add(node);
 			}
 			//c.close();
-		}catch(Exception e){
+		}catch(Exception exception){
 		}finally{
 			c.close();
+			if(e!=null){
+				e.close();
+			}
+				
 		}
 		return out;
 		

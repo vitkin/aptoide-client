@@ -1161,6 +1161,7 @@ public class RemoteInTab extends TabActivity {
 			myTabHost.setCurrentTabByTag("inst");
 		}
     		installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+    		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
 	    	installApkAction.putExtra("localPath", localPath);
 	    	installApkAction.putExtra("version", version);
 		

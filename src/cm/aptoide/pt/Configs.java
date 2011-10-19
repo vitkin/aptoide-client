@@ -25,7 +25,7 @@ public class Configs {
 	public static final String LOGIN_USER_NAME 	= "usernameLogin";
 	
 	public static final boolean INTERFACE_SILVER_TABS_ON	= false;
-	public static final boolean INTERFACE_TABS_ON_BOTTOM 	= true;
+	public static final boolean INTERFACE_TABS_ON_BOTTOM 	= false;
 	public static final boolean BACKGROUND_ON_TABS 			= false;
 	
 	public static final String TERMINAL_INFO = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"
