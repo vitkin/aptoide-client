@@ -46,24 +46,30 @@ import android.util.Log;
 
 public class ManagerDatabase {
 	
-	private Context mctx = null;
-
-	private static final String[] CATGS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
-		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
-		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
-	
-	
-	private static final String DATABASE_NAME = "aptoide_db";
-	private static final String TABLE_NAME_LOCAL = "local";
-	private static final String TABLE_NAME = "aptoide";
-	private static final String TABLE_NAME_URI = "servers";
-	private static final String TABLE_NAME_EXTRA = "extra";
-	private static final String TABLE_NAME_OLD_VERSIONS = "old_versions";
-	
+//	private Context mctx = null;	//TODO deprecate, leaks memory
+//
+//	private static final String[] CATGS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
+//		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
+//		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
+//	
+	private static final String DATABASE = "aptoide_db";
+	private static final String TABLE_APPLICATION = "application";
+	private static final String TABLE_REPOSITORY = "repository";
+	private static final String TABLE_APP_REPO = "app_repo";
+	private static final String TABLE_LOGIN = "login";
+	private static final String TABLE_EXTRA = "extra";
+	private static final String TABLE_DOWNLOAD = "download";
+	private static final String TABLE_CATEGORY = "category";
+	private static final String TABLE_SUB_CATEGORY = "sub_category";
+	private static final String TABLE_APP_CATEGORY = "app_category";
 	
 	
 	
 	private static SQLiteDatabase db = null;
+	
+	private static final String CREATE_TABLE_APPLICATION = "create table if not exists " + TABLE_APPLICATION + " (package_name text, "
+    			+ "name text not null, path text not null, lastver text not null, lastvercode number not null, "
+    			+ "server text, md5hash text, size number default 0 not null, primary key(apkid, server));";
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
 	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
@@ -1230,6 +1236,11 @@ public class ManagerDatabase {
 	}
 	
 	public Vector<ApkNode> syncInstalledPackages(InstalledPackages installedPackages){
+		
+		final String selectUninstalled = "SELECT apkid,lastvercode from aptoide";
+		final String selectUpdated = "SELECT apkid,lastvercode";
+		
+		
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
 		Cursor c = null;
 		try{
