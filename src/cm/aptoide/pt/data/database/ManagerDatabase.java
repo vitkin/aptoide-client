@@ -47,20 +47,18 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 /**
- * ManagerDatabase, manages aptoide's sqlite database
+ * ManagerDatabase, manages aptoide's sqlite data persistence
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
 public class ManagerDatabase {
-	
-//	private Context mctx = null;	//TODO deprecate, leaks memory
-//
+
 //	private static final String[] CATGS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
 //		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
 //		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
-//	
+	
 	private static final String DATABASE = "aptoide_db";
 	private static final String TABLE_REPOSITORY = "repository";
 	private static final String KEY_REPO_SHORT_NAME = "repo_short_name";
@@ -80,16 +78,16 @@ public class ManagerDatabase {
 	private static final String KEY_APP_VERSION_CODE = "version_code";
 	private static final String KEY_APP_VERSION_NAME = "version_name";
 	private static final String KEY_APP_REPO_SHORT_NAME = "repo_short_name";
-	private static final String TABLE_APP_CATEGORY = "app_category";
-	private static final String KEY_APP_CATEGORY_NAME = "category_name";
-	private static final String KEY_APP_CATEGORY_PACKAGE_NAME = "package_name";
-	private static final String KEY_APP_CATEGORY_VERSION_CODE = "version_code";
-	private static final String KEY_APP_CATEGORY_REPO_SHORT_NAME = "repo_short_name";
 	private static final String TABLE_CATEGORY = "category";
 	private static final String KEY_CATEGORY_NAME = "category_name";
 	private static final String TABLE_SUB_CATEGORY = "sub_category";
 	private static final String KEY_SUB_CATEGORY_PARENT = "category_parent";
 	private static final String KEY_SUB_CATEGORY_CHILD = "category_child";
+	private static final String TABLE_APP_CATEGORY = "app_category";
+	private static final String KEY_APP_CATEGORY_NAME = "category_name";
+	private static final String KEY_APP_CATEGORY_PACKAGE_NAME = "package_name";
+	private static final String KEY_APP_CATEGORY_VERSION_CODE = "version_code";
+	private static final String KEY_APP_CATEGORY_REPO_SHORT_NAME = "repo_short_name";
 	private static final String TABLE_EXTRA = "extra";
 	private static final String KEY_EXTRA_APP_PACKAGE_NAME = "package_name";
 	private static final String KEY_EXTRA_APP_VERSION_CODE = "version_code";
@@ -109,53 +107,89 @@ public class ManagerDatabase {
 	
 	
 	private static final String CREATE_TABLE_REPOSITORY = "CREATE TABLE IF NOT EXISTS " + TABLE_REPOSITORY + " ("
-				+ KEY_REPO_SHORT_NAME + " TEXT NOT NULL, "
-				+ KEY_REPO_URI + " TEXT NOT NULL, "
-				+ KEY_REPO_BASE_PATH + " TEXT NOT NULL, "
-				+ KEY_REPO_SIZE + " INTEGER NOT NULL DEFAULT 0, "
-				+ KEY_REPO_UPDATE_TIME + " TEXT NOT NULL DEFAULT 0, "
-				+ KEY_REPO_DELTA + " TEXT NOT NULL DEFAULT 0, "
-				+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT 1, "
-				+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +"), "
-				+ "CHECK "+KEY_REPO_SIZE+">=0);";
-	
+			+ KEY_REPO_SHORT_NAME + " TEXT NOT NULL, "
+			+ KEY_REPO_URI + " TEXT UNIQUE NOT NULL, "
+			+ KEY_REPO_BASE_PATH + " TEXT UNIQUE NOT NULL, "
+			+ KEY_REPO_SIZE + " INTEGER NOT NULL DEFAULT 0, "
+			+ KEY_REPO_UPDATE_TIME + " TEXT NOT NULL DEFAULT 0, "
+			+ KEY_REPO_DELTA + " TEXT NOT NULL DEFAULT 0, "
+			+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT 1, "
+			+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +"), "
+			+ "CHECK "+KEY_REPO_SIZE+">=0);";
+
 	private static final String CREATE_TABLE_LOGIN = "CREATE TABLE IF NOT EXISTS " + TABLE_LOGIN + " ("
-				+ KEY_LOGIN_REPO_SHORT_NAME + " TEXT NOT NULL, "
-				+ KEY_LOGIN_USERNAME + " TEXT NOT NULL, "
-				+ KEY_LOGIN_PASSWORD + " INTEGER NOT NULL, "
-				+ "FOREIGN KEY("+ KEY_LOGIN_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
-				+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +"));";
-	
+			+ KEY_LOGIN_REPO_SHORT_NAME + " TEXT NOT NULL, "
+			+ KEY_LOGIN_USERNAME + " TEXT NOT NULL, "
+			+ KEY_LOGIN_PASSWORD + " INTEGER NOT NULL, "
+			+ "FOREIGN KEY("+ KEY_LOGIN_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
+			+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +"));";
+
 	private static final String CREATE_TABLE_APPLICATION = "CREATE TABLE IF NOT EXISTS " + TABLE_APPLICATION + " ("
-				+ KEY_APP_REPO_SHORT_NAME + " TEXT NOT NULL, "
-				+ KEY_APP_PACKAGE_NAME + " TEXT NOT NULL, "
-				+ KEY_APP_VERSION_CODE + " INTEGER NOT NULL, "
-				+ KEY_APP_VERSION_NAME + " TEXT NOT NULL, "
-				+ "FOREIGN KEY("+ KEY_APP_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
-				+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +", "+ KEY_APP_PACKAGE_NAME +", "+ KEY_APP_VERSION_CODE +"));";
+			+ KEY_APP_REPO_SHORT_NAME + " TEXT NOT NULL, "
+			+ KEY_APP_PACKAGE_NAME + " TEXT NOT NULL, "
+			+ KEY_APP_VERSION_CODE + " INTEGER NOT NULL, "
+			+ KEY_APP_VERSION_NAME + " TEXT NOT NULL, "
+			+ KEY_APP_NAME + " TEXT NOT NULL, "
+			+ "FOREIGN KEY("+ KEY_APP_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
+			+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +", "+ KEY_APP_PACKAGE_NAME +", "+ KEY_APP_VERSION_CODE +"),"
+			+ "CHECK "+KEY_APP_VERSION_CODE+">=0);";
 	
-	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
-	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
-	            + "server text, md5hash text, size number default 0 not null, primary key(apkid, server));";
+	private static final String CREATE_TABLE_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_CATEGORY + " ("
+			+ KEY_CATEGORY_NAME + " TEXT NOT NULL, "
+			+ "PRIMARY KEY("+ KEY_CATEGORY_NAME +"));";
 	
-	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text, "
-				+ "instver text not null, instvercode number not null, primary key(apkid));";
+	private static final String CREATE_TABLE_SUB_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_SUB_CATEGORY + " ("
+			+ KEY_SUB_CATEGORY_PARENT + " TEXT NOT NULL, "
+			+ KEY_SUB_CATEGORY_CHILD + " TEXT NOT NULL, "
+			+ "FOREIGN KEY("+ KEY_SUB_CATEGORY_PARENT +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_NAME +"),"
+			+ "FOREIGN KEY("+ KEY_SUB_CATEGORY_CHILD +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_NAME +"),"
+			+ "PRIMARY KEY("+ KEY_SUB_CATEGORY_PARENT +", "+ KEY_SUB_CATEGORY_CHILD +"));";
 	
-	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
-				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
-				+ " secure integer default 0 not null, updatetime text default 0 not null, delta text default 0 not null);";
-	
-	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null,"
-				+ " catg_ord integer default 2 not null, primary key(apkid));";
-	
-	private static final String CREATE_TABLE_OLD_VERSIONS = "create table if not exists " + TABLE_NAME_OLD_VERSIONS
-				+ " (apkid text, name text not null, path text not null, ver text not null, vercode number not null, " 
-				+ " md5hash text, size number default 0 not null, server text, primary key(apkid,ver,server));";
+	private static final String CREATE_TABLE_APP_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_CATEGORY + " ("
+			+ KEY_APP_CATEGORY_NAME + " TEXT NOT NULL, "
+			+ KEY_APP_CATEGORY_PACKAGE_NAME + " TEXT NOT NULL, "
+			+ KEY_APP_CATEGORY_VERSION_CODE + " TEXT NOT NULL, "
+			+ KEY_APP_CATEGORY_REPO_SHORT_NAME + " TEXT NOT NULL, "
+			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_NAME +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_NAME +"),"
+			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_PACKAGE_NAME +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_PACKAGE_NAME +"),"
+			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_VERSION_CODE +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_VERSION_CODE +"),"
+			+ "FOREIGN KEY("+ KEY_APP_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
+			+ "PRIMARY KEY("+ KEY_APP_CATEGORY_NAME +", "+ KEY_APP_CATEGORY_PACKAGE_NAME +", "+ KEY_APP_CATEGORY_VERSION_CODE +", "+ KEY_APP_CATEGORY_REPO_SHORT_NAME +"));";
+							
+	private static final String CREATE_TABLE_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_EXTRA + " ("
+			+ KEY_EXTRA_APP_PACKAGE_NAME + " TEXT NOT NULL, "
+			+ KEY_EXTRA_APP_VERSION_CODE + " TEXT NOT NULL, "
+			+ KEY_EXTRA_APP_REPO_SHORT_NAME + " TEXT NOT NULL, "
+			+ KEY_EXTRA_DESCRIPTION + " TEXT NOT NULL, "
+			+ KEY_EXTRA_DATE + " DATE NOT NULL, "
+			+ KEY_EXTRA_RATING + " INTEGER NOT NULL, "
+			+ KEY_EXTRA_POPULARITY + " INTEGER NOT NULL, "
+			+ KEY_EXTRA_ICON_PATH + " TEXT NOT NULL, "
+			+ "FOREIGN KEY("+ KEY_EXTRA_APP_PACKAGE_NAME +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_PACKAGE_NAME +"),"
+			+ "FOREIGN KEY("+ KEY_EXTRA_APP_VERSION_CODE +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_VERSION_CODE +"),"
+			+ "FOREIGN KEY("+ KEY_EXTRA_APP_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
+			+ "PRIMARY KEY("+ KEY_EXTRA_APP_PACKAGE_NAME +", "+ KEY_EXTRA_APP_VERSION_CODE +", "+ KEY_EXTRA_APP_REPO_SHORT_NAME +"),"
+			+ "CHECK "+KEY_EXTRA_POPULARITY+">=0);";	//TODO integrity restrictions on date and rating
+			
+	private static final String CREATE_TABLE_DOWNLOAD = "CREATE TABLE IF NOT EXISTS " + TABLE_DOWNLOAD + " ("
+			+ KEY_DOWNLOAD_APP_PACKAGE_NAME + " TEXT NOT NULL, "
+			+ KEY_DOWNLOAD_APP_VERSION_CODE + " TEXT NOT NULL, "
+			+ KEY_DOWNLOAD_APP_REPO_SHORT_NAME + " TEXT NOT NULL, "
+			+ KEY_DOWNLOAD_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
+			+ KEY_DOWNLOAD_MD5HASH + " TEXT NOT NULL, "
+			+ KEY_DOWNLOAD_SIZE + " INTEGER NOT NULL, "
+			+ "FOREIGN KEY("+ KEY_DOWNLOAD_APP_PACKAGE_NAME +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_PACKAGE_NAME +"),"
+			+ "FOREIGN KEY("+ KEY_DOWNLOAD_APP_VERSION_CODE +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_VERSION_CODE +"),"
+			+ "FOREIGN KEY("+ KEY_DOWNLOAD_APP_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
+			+ "PRIMARY KEY("+ KEY_DOWNLOAD_APP_PACKAGE_NAME +", "+ KEY_DOWNLOAD_APP_VERSION_CODE +", "+ KEY_DOWNLOAD_APP_REPO_SHORT_NAME +"),"
+			+ "CHECK "+KEY_DOWNLOAD_SIZE+">0);";
+
+	//TODO triggers and views *****************************************************************************
 	
 	
 	private static SQLiteDatabase db = null;
 	
+// TODO refactor 
 	
 	Map<String, Object> getCountSecCatg(int ord){
 		final String basic_query = "select a.catg, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where a.catg_ord = " + ord + " and not exists" +
@@ -209,18 +243,25 @@ public class ManagerDatabase {
 	 *  - Travel, Demo, Software Libraries, Arcade & Action, Brain & Puzzle, Cards & Casino, Casual,
 	 *  - Other
 	 */
+	
 
-	public ManagerDatabase(Context ctx) {
-		mctx = ctx;
+// -----------------
+	
+
+	public ManagerDatabase(Context context) {
 		if(db == null){
-			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
-			db.execSQL(CREATE_TABLE_URI);
+			db = context.openOrCreateDatabase(DATABASE, 0, null);
+			db.execSQL(CREATE_TABLE_REPOSITORY);
+			db.execSQL(CREATE_TABLE_LOGIN);
+			db.execSQL(CREATE_TABLE_APPLICATION);
+			db.execSQL(CREATE_TABLE_CATEGORY);
+			db.execSQL(CREATE_TABLE_SUB_CATEGORY);
+			db.execSQL(CREATE_TABLE_APP_CATEGORY);
 			db.execSQL(CREATE_TABLE_EXTRA);
-			db.execSQL(CREATE_TABLE_APTOIDE);
-			db.execSQL(CREATE_TABLE_LOCAL);
-			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
+			db.execSQL(CREATE_TABLE_DOWNLOAD);
+			//TODO triggers and views
 		}else if(!db.isOpen()){
-			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
+			db = context.openOrCreateDatabase(DATABASE, 0, null);
 		}
 	}
 	
@@ -238,86 +279,32 @@ public class ManagerDatabase {
 		}
 	}
 	
-	/*
-	 * Code for DB update on new version of Aptoide
+	/**
+	 * prepareToTorchDB, handles smooth transition from old database schema
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
 	 */
-	public void UpdateTables(){
-		String[] repos = null;
-		int[] inuser = null;
-		boolean[] secure = null;
-		String[] login_user = null;
-		String[] login_pwd = null;
-		try{
-			Cursor c;
-			c = db.query(TABLE_NAME_URI, new String[] {"uri","inuse","user","psd","secure"}, null, null, null, null, null);
-			if(c.moveToFirst()){
-				int i = 0;
-				repos = new String[c.getCount()+1];
-				inuser = new int[c.getCount()+1];
-				secure = new boolean[c.getCount()+1];
-				login_pwd = new String[c.getCount()+1];
-				login_user = new String[c.getCount()+1];
-				repos[i] = "http://apps.bazaarandroid.com";
-				inuser[i] = 1;
-				secure[i] = false;
-
-
-				i++;
-				repos[i] = c.getString(0);
-				inuser[i] = c.getInt(1);
-				if(c.getInt(4) == 1){
-					secure[i] = true;
-					login_user[i] = c.getString(2);
-					login_pwd[i] = c.getString(3);
-				}else{
-					secure[i] = false;
-				}
-
-				while(c.moveToNext()){
-					i++;
-					repos[i] = c.getString(0);
-					inuser[i] = c.getInt(1);
-					if(c.getInt(4) == 1){
-						secure[i] = true;
-						login_user[i] = c.getString(2);
-						login_pwd[i] = c.getString(3);
-					}else{
-						secure[i] = false;
-					}
-				}
-			}
-			c.close();
-			db.execSQL("drop table if exists " + TABLE_NAME);
-			db.execSQL("drop table if exists " + TABLE_NAME_EXTRA);
-			db.execSQL("drop table if exists " + TABLE_NAME_LOCAL);
-			db.execSQL("drop table if exists " + TABLE_NAME_URI);
-			db.execSQL("drop table if exists " + TABLE_NAME_OLD_VERSIONS);
-			db.execSQL(CREATE_TABLE_URI);
-			db.execSQL(CREATE_TABLE_EXTRA);
-			db.execSQL(CREATE_TABLE_APTOIDE);
-			db.execSQL(CREATE_TABLE_LOCAL);
-			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
-			/*for(String uri: repos){
-				ContentValues tmp = new ContentValues();
-				tmp.put("uri", uri);
-				tmp.put("inuse", 0);
-				db.insert(TABLE_NAME_URI, null, tmp);
-			}*/
-			for(int z = 0; z < repos.length; z++){
-				if(!repos[z].equalsIgnoreCase("http://apps.aptoide.org")){
-					ContentValues tmp = new ContentValues();
-					tmp.put("uri", repos[z]);
-					tmp.put("inuse", inuser[z]);
-					if(secure[z]){
-						tmp.put("secure", 1);
-						tmp.put("user", login_user[z]);
-						tmp.put("psd", login_pwd[z]);
-					}
-					db.insert(TABLE_NAME_URI, null, tmp);
-				}
-			}
-			
-		}catch(Exception e){ }
+	public HashMap<String,Boolean> prepareToTorchDB(){
+		
+		Cursor cursor = db.query("servers", new String[]{"uri", "inuse"}, null, null, null, null, null);
+		HashMap<String, Boolean> repositories = new HashMap<String, Boolean>(cursor.getCount());
+		cursor.moveToFirst();
+		for(int i=0; i<cursor.getCount(); i++){
+			repositories.put(cursor.getString(0), cursor.getInt(1)>0?true:false);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		
+		return repositories; 
+		
+		//TODO close db, delete db file
+		
+		//TODO call constructor
+		
+		//TODO populate re-repositories
+		
 	}
 	
 	public void delApk(String apkid, String ver){
