@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2009  Roberto Jacinto
- * roberto.jacinto@caixamagica.pt
- *
+ * ManagerDatabase,		part of Aptoide
+ * 
+ * Copyright (C) 2011  Duarte Silveira
+ * duarte.silveira@caixamagica.pt
+ * 
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -44,6 +46,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+/**
+ * ManagerDatabase, manages aptoide's sqlite database
+ * 
+ * @author dsilveira
+ * @since 3.0
+ *
+ */
 public class ManagerDatabase {
 	
 //	private Context mctx = null;	//TODO deprecate, leaks memory
@@ -53,23 +62,77 @@ public class ManagerDatabase {
 //		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
 //	
 	private static final String DATABASE = "aptoide_db";
-	private static final String TABLE_APPLICATION = "application";
 	private static final String TABLE_REPOSITORY = "repository";
-	private static final String TABLE_APP_REPO = "app_repo";
+	private static final String KEY_REPO_SHORT_NAME = "repo_short_name";
+	private static final String KEY_REPO_URI = "uri";
+	private static final String KEY_REPO_BASE_PATH = "base_path";
+	private static final String KEY_REPO_SIZE = "repo_size";
+	private static final String KEY_REPO_UPDATE_TIME = "update_time";
+	private static final String KEY_REPO_DELTA = "delta";
+	private static final String KEY_REPO_IN_USE = "in_use";
 	private static final String TABLE_LOGIN = "login";
-	private static final String TABLE_EXTRA = "extra";
-	private static final String TABLE_DOWNLOAD = "download";
-	private static final String TABLE_CATEGORY = "category";
-	private static final String TABLE_SUB_CATEGORY = "sub_category";
+	private static final String KEY_LOGIN_REPO_SHORT_NAME = "repo_short_name";
+	private static final String KEY_LOGIN_USERNAME = "username";
+	private static final String KEY_LOGIN_PASSWORD = "password";
+	private static final String TABLE_APPLICATION = "application";
+	private static final String KEY_APP_PACKAGE_NAME = "package_name";
+	private static final String KEY_APP_NAME = "app_name";
+	private static final String KEY_APP_VERSION_CODE = "version_code";
+	private static final String KEY_APP_VERSION_NAME = "version_name";
+	private static final String KEY_APP_REPO_SHORT_NAME = "repo_short_name";
 	private static final String TABLE_APP_CATEGORY = "app_category";
+	private static final String KEY_APP_CATEGORY_NAME = "category_name";
+	private static final String KEY_APP_CATEGORY_PACKAGE_NAME = "package_name";
+	private static final String KEY_APP_CATEGORY_VERSION_CODE = "version_code";
+	private static final String KEY_APP_CATEGORY_REPO_SHORT_NAME = "repo_short_name";
+	private static final String TABLE_CATEGORY = "category";
+	private static final String KEY_CATEGORY_NAME = "category_name";
+	private static final String TABLE_SUB_CATEGORY = "sub_category";
+	private static final String KEY_SUB_CATEGORY_PARENT = "category_parent";
+	private static final String KEY_SUB_CATEGORY_CHILD = "category_child";
+	private static final String TABLE_EXTRA = "extra";
+	private static final String KEY_EXTRA_APP_PACKAGE_NAME = "package_name";
+	private static final String KEY_EXTRA_APP_VERSION_CODE = "version_code";
+	private static final String KEY_EXTRA_APP_REPO_SHORT_NAME = "repo_short_name";
+	private static final String KEY_EXTRA_DESCRIPTION = "description";
+	private static final String KEY_EXTRA_DATE = "extra_date";
+	private static final String KEY_EXTRA_RATING = "rating";
+	private static final String KEY_EXTRA_POPULARITY = "popularity";
+	private static final String KEY_EXTRA_ICON_PATH = "icon_path";
+	private static final String TABLE_DOWNLOAD = "download";
+	private static final String KEY_DOWNLOAD_APP_PACKAGE_NAME = "package_name";
+	private static final String KEY_DOWNLOAD_APP_VERSION_CODE = "version_code";
+	private static final String KEY_DOWNLOAD_APP_REPO_SHORT_NAME = "repo_short_name";
+	private static final String KEY_DOWNLOAD_REMOTE_PATH_TAIL = "remote_path_tail";
+	private static final String KEY_DOWNLOAD_MD5HASH = "md5hash";
+	private static final String KEY_DOWNLOAD_SIZE = "download_size";
 	
 	
+	private static final String CREATE_TABLE_REPOSITORY = "CREATE TABLE IF NOT EXISTS " + TABLE_REPOSITORY + " ("
+				+ KEY_REPO_SHORT_NAME + " TEXT NOT NULL, "
+				+ KEY_REPO_URI + " TEXT NOT NULL, "
+				+ KEY_REPO_BASE_PATH + " TEXT NOT NULL, "
+				+ KEY_REPO_SIZE + " INTEGER NOT NULL DEFAULT 0, "
+				+ KEY_REPO_UPDATE_TIME + " TEXT NOT NULL DEFAULT 0, "
+				+ KEY_REPO_DELTA + " TEXT NOT NULL DEFAULT 0, "
+				+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT 1, "
+				+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +"), "
+				+ "CHECK "+KEY_REPO_SIZE+">=0);";
 	
-	private static SQLiteDatabase db = null;
+	private static final String CREATE_TABLE_LOGIN = "CREATE TABLE IF NOT EXISTS " + TABLE_LOGIN + " ("
+				+ KEY_LOGIN_REPO_SHORT_NAME + " TEXT NOT NULL, "
+				+ KEY_LOGIN_USERNAME + " TEXT NOT NULL, "
+				+ KEY_LOGIN_PASSWORD + " INTEGER NOT NULL, "
+				+ "FOREIGN KEY("+ KEY_LOGIN_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
+				+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +"));";
 	
-	private static final String CREATE_TABLE_APPLICATION = "create table if not exists " + TABLE_APPLICATION + " (package_name text, "
-    			+ "name text not null, path text not null, lastver text not null, lastvercode number not null, "
-    			+ "server text, md5hash text, size number default 0 not null, primary key(apkid, server));";
+	private static final String CREATE_TABLE_APPLICATION = "CREATE TABLE IF NOT EXISTS " + TABLE_APPLICATION + " ("
+				+ KEY_APP_REPO_SHORT_NAME + " TEXT NOT NULL, "
+				+ KEY_APP_PACKAGE_NAME + " TEXT NOT NULL, "
+				+ KEY_APP_VERSION_CODE + " INTEGER NOT NULL, "
+				+ KEY_APP_VERSION_NAME + " TEXT NOT NULL, "
+				+ "FOREIGN KEY("+ KEY_APP_REPO_SHORT_NAME +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_SHORT_NAME +")," 
+				+ "PRIMARY KEY("+ KEY_APP_REPO_SHORT_NAME +", "+ KEY_APP_PACKAGE_NAME +", "+ KEY_APP_VERSION_CODE +"));";
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
 	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
@@ -89,6 +152,9 @@ public class ManagerDatabase {
 	private static final String CREATE_TABLE_OLD_VERSIONS = "create table if not exists " + TABLE_NAME_OLD_VERSIONS
 				+ " (apkid text, name text not null, path text not null, ver text not null, vercode number not null, " 
 				+ " md5hash text, size number default 0 not null, server text, primary key(apkid,ver,server));";
+	
+	
+	private static SQLiteDatabase db = null;
 	
 	
 	Map<String, Object> getCountSecCatg(int ord){
