@@ -41,7 +41,7 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 			convertView = inflater.inflate(R.layout.infomultiversionspinner, null);
 		}
 		
-		TextView multiVersionItemVersion = (TextView) convertView.findViewById(R.id.versionspinnermultiversionSelected);
+		TextViewFocused multiVersionItemVersion = (TextViewFocused) convertView.findViewById(R.id.versionspinnermultiversionSelected);
 		TextView multiVersionItemInfo = (TextView) convertView.findViewById(R.id.infopinnermultiversionSelected);
 		T currentEntry = super.getItem(position);
 		

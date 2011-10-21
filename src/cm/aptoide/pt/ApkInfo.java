@@ -550,13 +550,13 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						}
 						public void onNothingSelected(AdapterView<?> parent) {}
 					});
+					
 				}else{
 					//Otherwise
 					spinnerMulti.setVisibility(View.GONE);
+					dislikes.setVisibility(View.GONE);
 					like.setVisibility(View.GONE);
 					dislike.setVisibility(View.GONE);
-					dislikes.setVisibility(View.GONE);
-					dislikes.setVisibility(View.GONE);
 					((Button)findViewById(R.id.btn1)).setVisibility(View.GONE);
 					new GetScreenShots(apk_ver_str_raw).start();
 				}
@@ -606,28 +606,16 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								loginComments.setOnDismissListener(ApkInfo.this);
 								loginComments.show();
 							 }else{
-								 
-								 boolean userTasteBufEquals = false;
-								 synchronized(userTaste){
-									 userTasteBufEquals = userTaste.getValue().equals(EnumUserTaste.LIKE);	 
-								 }
-								 
-								 if(!userTasteBufEquals){
-								 
-									 new AddTaste(
-							 				ApkInfo.this, 
-							 				apk_repo_str_raw ,
-							 				apk_id, 
-							 				apk_ver_str_raw, 
-							 				sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
-							 				sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
-							 				EnumUserTaste.LIKE, likes, dislikes, like, dislike, userTaste, null).submit();
-									 
-								 } else {
-									 
-									 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
-									 
-								 }
+								
+								 new AddTaste(
+						 				ApkInfo.this, 
+						 				apk_repo_str_raw,
+						 				apk_id, 
+						 				apk_ver_str_raw, 
+						 				sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+						 				sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+						 				EnumUserTaste.LIKE, likes, dislikes, like, dislike, userTaste).submit();
+								
 							 } 
 			            	 break;
 			          }
@@ -647,23 +635,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 									loginComments.show();
 			            	  }else{
 			            		  
-			            		 boolean userTasteBufEquals = false;
-								 synchronized(userTaste){
-									 userTasteBufEquals = userTaste.getValue().equals(EnumUserTaste.DONTLIKE);	 
-								 }
-								 
-								 if(!userTasteBufEquals){
-				            		  new AddTaste(
-									 		ApkInfo.this, 
-									 		apk_repo_str_raw,
-									 		apk_id, 
-									 		apk_ver_str_raw, 
-									 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
-									 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
-									 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste, null).submit();
-								 } else {
-									 Toast.makeText(ApkInfo.this, ApkInfo.this.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
-								 }
+			            		  new AddTaste(
+								 		ApkInfo.this, 
+								 		apk_repo_str_raw,
+								 		apk_id, 
+								 		apk_ver_str_raw, 
+								 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+								 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+								 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste).submit();
 								 
 			            	  }
 			                  break;
@@ -701,7 +680,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				 		apk_ver_str_raw, 
 				 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
 				 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
-				 		taste, likes, dislikes, like, dislike, userTaste, null).submit();
+				 		taste, likes, dislikes, like, dislike, userTaste).submit();
 			 
 			 taste = EnumUserTaste.TASTELESS;
 			 
@@ -726,8 +705,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		likes.setText(this.getString(R.string.loading_likes));
 		dislikes.setText("");
-		dislike.setVisibility(View.INVISIBLE);
-		like.setVisibility(View.INVISIBLE);
+//		dislike.setVisibility(View.INVISIBLE);
+//		like.setVisibility(View.INVISIBLE);
 		
 		if(tastePoster!=null)
 			tastePoster.cancel(true);
@@ -795,7 +774,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	 				apk_ver_str_raw, 
 	 				sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
 	 				sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
-	 				((LoginDialog)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste, ApkInfo.this).submit();
+	 				((LoginDialog)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste).submit();
 		}
 	}
 	
