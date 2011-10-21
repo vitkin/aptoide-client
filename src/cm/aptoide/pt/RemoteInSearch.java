@@ -160,8 +160,9 @@ public class RemoteInSearch extends ListActivity{
 		Intent i = getIntent();
 		query = i.getStringExtra(SearchManager.QUERY);
 		
-//@dsilveira #529 search doens't handle hiphens well		
-		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]", " ");
+//@dsilveira #529 search doens't handle hiphens well
+//@rui.mateus #567 Search isn't trimming white spaces correctly
+		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]| {2,}", " ").trim();
 		
 		apk_lst = db.getSearch(query,order_lst);
 		
@@ -174,7 +175,8 @@ public class RemoteInSearch extends ListActivity{
 		query = intent.getStringExtra(SearchManager.QUERY);
 
 //@dsilveira #529 search doens't handle hiphens well	
-		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]", " ");
+//@rui.mateus #567 Search isn't trimming white spaces correctly
+		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]| {2,}", " ").trim();
 		
 		apk_lst = db.getSearch(query,order_lst);
 	}
