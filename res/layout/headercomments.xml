@@ -43,7 +43,7 @@
 			           					android:layout_width="fill_parent"
 			    						android:layout_height="wrap_content"
 			    						android:layout_gravity="left"
-			    						android:visibility="invisible"
+			    						android:visibility="visible"
 			    						android:src="@drawable/like"
 			    						 />
 			           				
@@ -52,7 +52,7 @@
 			           					android:layout_width="fill_parent"
 			    						android:layout_height="wrap_content"
 			    						android:layout_gravity="left"
-			    						android:visibility="invisible"
+			    						android:visibility="visible"
 			    						android:src="@drawable/dontlike"
 			    						 />
 			    							

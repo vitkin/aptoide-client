@@ -83,6 +83,8 @@ import android.widget.ViewFlipper;
 
 public class RemoteInTab extends TabActivity {
 
+	
+	
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 	private String LOCAL_PATH = SDCARD+"/.aptoide";
 	private String ICON_PATH = LOCAL_PATH+"/icons";
@@ -1160,12 +1162,13 @@ public class RemoteInTab extends TabActivity {
 			installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
 			myTabHost.setCurrentTabByTag("inst");
 		}
-    		installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-    		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
-	    	installApkAction.putExtra("localPath", localPath);
-	    	installApkAction.putExtra("version", version);
-		
-		sendBroadcast(installApkAction); 
+			
+		installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
+    	installApkAction.putExtra("localPath", localPath);
+    	installApkAction.putExtra("version", version);
+	    	
+		sendOrderedBroadcast(installApkAction, null); 
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
 

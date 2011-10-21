@@ -167,7 +167,7 @@
 	       			android:layout_weight=".50" 
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
-	       			android:textSize="15sp" 
+	       			android:textSize="12sp" 
 	       			android:text="@string/install"
 	       			
 	       			
@@ -189,7 +189,7 @@
 	       			android:layout_weight="1" 
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
-	       			android:textSize="15sp"
+	       			android:textSize="12sp"
 	       			android:text="@string/uninstall"
 	       			
 	       			

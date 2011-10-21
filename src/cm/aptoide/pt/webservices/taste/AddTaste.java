@@ -3,7 +3,6 @@ package cm.aptoide.pt.webservices.taste;
 import java.math.BigInteger;
 import java.util.ArrayList;
 
-import cm.aptoide.pt.ApkInfo;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
@@ -49,7 +48,6 @@ public class AddTaste {
 	private TextView dislikes;
 	private ProgressDialog dialogProgress;
 	private WrapperUserTaste userTastePrevious;
-	private ApkInfo caller;
 	
 	/**
 	 * 
@@ -72,8 +70,7 @@ public class AddTaste {
 					TextView dislikes,
 					ImageView like,
 					ImageView dislike,
-					WrapperUserTaste tastePoster, 
-					ApkInfo caller) {
+					WrapperUserTaste tastePoster) {
 		
 		this.context = context;
 		this.repo = repo;
@@ -96,7 +93,6 @@ public class AddTaste {
 		dialogProgress = null;
 		
 		this.userTastePrevious = tastePoster;
-		this.caller = caller;
 	}
 	
 	public void submit(){
@@ -111,26 +107,34 @@ public class AddTaste {
 	 * 
 	 */
 	private class SubmitTaste extends AsyncTask<Void, Void, ResponseHandler>{
-
-		public SubmitTaste() {}
+		
+		private TasteGetter getterTasteFromError;
+		
+		public SubmitTaste() {
+			getterTasteFromError = null;
+		}
 		
 		@Override
 		protected ResponseHandler doInBackground(Void... args) {
-			
+
 			try {
-				
-				if(caller!=null){
+				synchronized(userTastePrevious){
 					
-					TasteGetter tasteGetter = new TasteGetter(repo, apkid, version);
-					try {
-						tasteGetter.parse(context, context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString( Configs.LOGIN_USER_ID, null), this);
-						synchronized(userTastePrevious){
-							userTastePrevious.setValue(tasteGetter.getUserTaste());
-						}
-					}catch(Exception e){}
+					if(userTaste.equals(userTastePrevious.getValue())){
+						this.cancel(false);
+						throw new Exception("Do nothing. And show success.");
+					}
 					
+					if(userTastePrevious.getValue().equals(EnumUserTaste.NOTEVALUATED)){
+						
+						getterTasteFromError = new TasteGetter(repo, apkid, version);
+						
+						getterTasteFromError.parse(context, context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE).getString( Configs.LOGIN_USER_ID, null), this);
+							
+						userTastePrevious.setValue(getterTasteFromError.getUserTaste());
+						
+					}
 				}
-				
 				return Taste.sendTaste(context, repo, apkid, version, user, password, userTaste);
 				
 			} 
@@ -163,6 +167,18 @@ public class AddTaste {
 						
 						Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 						
+						if(getterTasteFromError!=null){
+							dislikes.setText(context.getString(R.string.dislikes)+getterTasteFromError.getDislikes());
+							likes.setText(context.getString(R.string.likes)+getterTasteFromError.getLikes());
+							if(userTaste.equals(EnumUserTaste.LIKE)){
+								dislike.setImageResource(R.drawable.dontlike);
+								like.setImageResource(R.drawable.likehover);
+							}else if(userTaste.equals(EnumUserTaste.DONTLIKE)){
+								dislike.setImageResource(R.drawable.dontlikehover);
+								like.setImageResource(R.drawable.like);
+							}
+						}
+						
 						switch(userTaste){
 							case LIKE:
 								if(!userTastePrevious.getValue().equals(EnumUserTaste.LIKE)){
@@ -187,6 +203,7 @@ public class AddTaste {
 							default: break;
 						}
 						
+						
 						userTastePrevious.setValue(userTaste);
 						
 					}else{
@@ -207,6 +224,12 @@ public class AddTaste {
 			
 			}
 			
+		}
+		
+		@Override
+		protected void onCancelled() {
+			dialogProgress.dismiss();
+			Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 		}
 		
 	}
