@@ -65,13 +65,11 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 		}
 		
 		TextView multiVersionItemVersion = (TextView) convertView.findViewById(R.id.versionspinnermultiversion);
-		TextView multiVersionItemSize = (TextView) convertView.findViewById(R.id.sizespinnermultiversion);
-		TextView multiVersionItemDown = (TextView) convertView.findViewById(R.id.downspinnermultiversion);
+		TextView multiVersionItemSize = (TextView) convertView.findViewById(R.id.infoMultiversion);
 		T currentEntry = super.getItem(position);
 		
 		multiVersionItemVersion.setText(versionLabel+" "+currentEntry.getVersion());
-		multiVersionItemSize.setText(formatSize(currentEntry));
-		multiVersionItemDown.setText(formatDownloads(currentEntry));
+		multiVersionItemSize.setText(formatSize(currentEntry)+", "+formatDownloads(currentEntry));
 		
 		return convertView;
 	
