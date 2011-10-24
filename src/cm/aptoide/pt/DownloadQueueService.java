@@ -34,6 +34,8 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import cm.aptoide.pt.TabInstalled.InstallApkListener;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -87,6 +89,8 @@ public class DownloadQueueService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		
+		
 		notifications = new HashMap<Integer, HashMap<String,String>>();
 		
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -204,9 +208,13 @@ public class DownloadQueueService extends Service {
     	
     	// The PendingIntent to launch our activity if the user selects this notification
     	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
+    	
+    
+    	
+    	
 				
     	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.finished_download_alrt)+" "+appName, System.currentTimeMillis());
-    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.contentView = contentView;
 
 
@@ -219,6 +227,11 @@ public class DownloadQueueService extends Service {
     	// Send the notification.
     	// We use the position because it is a unique number.  We use it later to cancel.
     	notificationManager.notify(apkidHash, notification); 
+    	
+    	// Launch APK after download
+    	
+		
+		context.startActivity(onClick);
     	
 //		Log.d("Aptoide-DownloadQueueService", "Notification Set");
 		
@@ -339,6 +352,7 @@ public class DownloadQueueService extends Service {
 							saveit.flush();
 							saveit.close();
 							getit.close();
+							
 						}
 
 						if(keepScreenOn.isHeld()){
@@ -358,6 +372,7 @@ public class DownloadQueueService extends Service {
 							downloadArguments.arg2 = threadApkidHash;
 							downloadErrorHandler.sendMessage(downloadArguments);
 						}
+						 
 
 					}catch (Exception e) { 
 						if(keepScreenOn.isHeld()){
@@ -369,6 +384,7 @@ public class DownloadQueueService extends Service {
 					}
 				}
 			}.start();
+			
 			
 			
 		} catch(Exception e){	}
@@ -387,6 +403,7 @@ public class DownloadQueueService extends Service {
 //        		notificationManager.cancel(downloadArguments.arg2);
         		setFinishedNotification(apkidHash, localPath);
 //   			 	notifications.remove(apkidHash);
+        		
         	}else{ }
         }
 	};
