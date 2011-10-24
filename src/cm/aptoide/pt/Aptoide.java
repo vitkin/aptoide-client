@@ -195,9 +195,9 @@ public class Aptoide extends Activity {
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
-    	
         super.onCreate(savedInstanceState);
         
+		
         mctx = this;
 
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);

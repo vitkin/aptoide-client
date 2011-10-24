@@ -606,6 +606,16 @@ public class BaseManagement extends Activity {
 			Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
 
 			downloadQueueService.startDownload(downloadNode);
+			
+			
+			
+//			File apkFile = new File("/mnt/sdcard/.aptoide/browser.dolphin.firefox.opera.chrome.fennec.license.apk");
+//			Intent intent = new Intent(Intent.ACTION_VIEW);
+//			intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+//			startActivity(intent);
+			
+			
+
 
 		} catch(Exception e){	}
 	}
