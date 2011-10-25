@@ -446,6 +446,7 @@ public class BaseManagement extends Activity {
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
+							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else if(node.status == 2){
 							
@@ -454,6 +455,7 @@ public class BaseManagement extends Activity {
 //							apk_line.put("statusSort", 2);
 							updtMap.add(apk_line);
 							instMap.add(apk_line);
+							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else if(node.status == 3){
 							
@@ -463,6 +465,7 @@ public class BaseManagement extends Activity {
 //							apk_line.put("statusSort", 3);
 							instMap.add(apk_line);
 //							updtMap.add(apk_line);
+							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else{
 							
