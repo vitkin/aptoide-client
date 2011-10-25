@@ -21,6 +21,7 @@
 package cm.aptoide.pt.data.downloads;
 
 import cm.aptoide.pt.data.cache.Cache;
+import cm.aptoide.pt.data.model.Login;
 import cm.aptoide.pt.data.notifiers.Notifier;
 
  /**

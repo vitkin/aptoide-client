@@ -31,6 +31,7 @@ import cm.aptoide.pt.ApkNodeFull;
 import cm.aptoide.pt.DownloadNode;
 import cm.aptoide.pt.ServerNode;
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.model.Category;
 import cm.aptoide.pt.data.model.Repository;
 import cm.aptoide.pt.data.system.InstalledPackages;
 import cm.aptoide.pt.multiversion.VersionApk;
@@ -121,6 +122,40 @@ public class ManagerDatabase {
 	
 
 // -----------------
+
+	
+	/**
+	 * insertCategories, inserts categories set in Constants.
+	 * 					this insertHelper pattern: prepareforinsert, bind, bind, execute
+	 * 					is not thread safe. Only used here because this is methid is only
+	 * 					called in the beginning.
+	 * 
+	 * @author dsilveira
+	 * @deprecated
+	 * 
+	 */
+//	private void initCategories(){
+//		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
+//		
+//		try{
+//			db.beginTransaction();
+//			for (String category : Constants.CATEGORIES) {
+//				insertCategory.prepareForInsert();
+//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
+//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
+//				if(insertCategory.insert() == -1){
+//					//TODO throw exception;
+//				}
+//			}
+//		}catch (Exception e) {
+//			// TODO: send to errorHandler the exception
+//		}finally{
+//			db.endTransaction();
+//		}
+//		
+//	}
+	
+//	
 	
 
 	public ManagerDatabase(Context context) {
@@ -175,18 +210,18 @@ public class ManagerDatabase {
 	}
 	
 	
-	public void startTrans(){
-		db.beginTransaction();
-	}
-	
-	public void endTrans(){
-		try{
-			db.setTransactionSuccessful();
-		}catch (Exception e){
-		}finally{
-			db.endTransaction();
-		}
-	}
+//	public void startTrans(){
+//		db.beginTransaction();
+//	}
+//	
+//	public void endTrans(){
+//		try{
+//			db.setTransactionSuccessful();
+//		}catch (Exception e){
+//		}finally{
+//			db.endTransaction();
+//		}
+//	}
 	
 	/**
 	 * prepareToTorchDB, handles smooth transition from old database schema
@@ -199,11 +234,12 @@ public class ManagerDatabase {
 		/* hard coded strings that represent old names */
 		Cursor cursor = db.query("servers", new String[]{"uri", "inuse"}, null, null, null, null, null);
 		HashMap<String, Boolean> repositories = new HashMap<String, Boolean>(cursor.getCount());
+		final int oldIndexRepoUri = 0;
+		final int oldIndexRepoInUse = 1;
 		cursor.moveToFirst();
-		for(int i=0; i<cursor.getCount(); i++){
-			repositories.put(cursor.getString(0), cursor.getInt(1)>0?true:false);
-			cursor.moveToNext();
-		}
+		do{
+			repositories.put(cursor.getString(oldIndexRepoUri), cursor.getInt(oldIndexRepoInUse) == Constants.DB_TRUE?true:false);
+		} while(cursor.moveToNext());
 		cursor.close();
 		
 		return repositories; 
@@ -216,34 +252,106 @@ public class ManagerDatabase {
 		
 	}
 	
-	public void insertRepositories(ArrayList<Repository> repositories){
-		InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
-		db.beginTransaction();
-		for (Repository repository : repositories) {
-			if(insertRepository.insert(repository.getValues()) == -1){
-				//TODO handle error on insertion;
+	public void insertCategories(ArrayList<Category> categories){
+		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
+		ArrayList<ContentValues> CategoriesRelations = new ArrayList<ContentValues>(categories.size());
+		ContentValues CategoryRelation;
+		
+		try{
+			db.beginTransaction();
+			for (Category category : categories) {
+				if(insertCategory.insert(category.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+				if(category.hasChilds()){
+					for (Category subCategory : category.getSubCategories()) {
+						if(insertCategory.insert(subCategory.getValues()) == Constants.DB_ERROR){
+							//TODO throw exception;
+						}
+						CategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
+						CategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, category.getHashid());
+						CategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, subCategory.getHashid());
+						CategoriesRelations.add(CategoryRelation);
+					}
+				}
 			}
-//			insertRepository.prepareForInsert();
-			
-//			insertRepository.bind(indexRepoHashid, );
-//			insertRepository.bind(indexRepoUri, );
-//			insertRepository.bind(indexRepoBasePath, );
-//			insertRepository.bind(indexRepoSize, );
-//			insertRepository.bind(indexRepoUpdateTime, );
-//			insertRepository.bind(indexRepoDelta, );
-//			insertRepository.bind(indexRepoInUse, );
-			
-//			insertRepository.execute(); /** WARNING this is not thread-safe, if problems are encountered, use insertHelper.insert(ContentValues)*/
+			insertCategory.close();
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
 		}
-		insertRepository.close();
-		db.setTransactionSuccessful();
-		db.endTransaction();
+		
+		InsertHelper insertCategoryRelation = new InsertHelper(db, Constants.TABLE_SUB_CATEGORY);
+		
+		try{
+			db.beginTransaction();
+			for (ContentValues categoryRelationValues : CategoriesRelations) {
+				if(insertCategoryRelation.insert(categoryRelationValues) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertCategoryRelation.close();
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
 	}
 	
-
-//	private static final String[] CATGS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
-//		 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
-//		 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
+	
+	public void insertRepositories(ArrayList<Repository> repositories){
+		InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
+		ArrayList<ContentValues> loginsValues = new ArrayList<ContentValues>(repositories.size());
+		
+		try{
+			db.beginTransaction();
+			for (Repository repository : repositories) {
+				if(insertRepository.insert(repository.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+				if(repository.requiresLogin()){
+					loginsValues.add(repository.getLogin().getValues());
+				}
+	//			insertRepository.prepareForInsert();
+				
+	//			insertRepository.bind(indexRepoHashid, );
+	//			insertRepository.bind(indexRepoUri, );
+	//			insertRepository.bind(indexRepoBasePath, );
+	//			insertRepository.bind(indexRepoSize, );
+	//			insertRepository.bind(indexRepoUpdateTime, );
+	//			insertRepository.bind(indexRepoDelta, );
+	//			insertRepository.bind(indexRepoInUse, );
+				
+	//			insertRepository.execute(); /** WARNING this is not thread-safe, if problems are encountered, use insertHelper.insert(ContentValues)*/
+			}
+			insertRepository.close();
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+		
+		InsertHelper insertLogin = new InsertHelper(db, Constants.TABLE_LOGIN);
+		
+		try{
+			db.beginTransaction();
+			for (ContentValues loginValues : loginsValues) {
+				if(insertLogin.insert(loginValues) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertLogin.close();
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
 	
 	
 	

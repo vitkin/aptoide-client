@@ -18,7 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.downloads;
+package cm.aptoide.pt.data.model;
+
+import cm.aptoide.pt.data.Constants;
+import android.content.ContentValues;
 
 
  /**
@@ -30,34 +33,49 @@ package cm.aptoide.pt.data.downloads;
  */
 public class Login {
 
-	private String username;
-	private String password;
+
+	private ContentValues loginValues;
 	
 
 	public Login(String username, String password) {
-		this.username = username;
-		this.password = password;
+		loginValues = new ContentValues(Constants.NUMBER_OF_COLUMNS_LOGIN);
+		setUsername(username);
+		setPassword(password);
 	}
 
+	private void setUsername(String username){
+		loginValues.put(Constants.KEY_LOGIN_USERNAME, username);
+	}
+
+	private void setPassword(String password){
+		loginValues.put(Constants.KEY_LOGIN_PASSWORD, password);
+	}
 
 	public String getUsername() {
-		return username;
+		return loginValues.getAsString(Constants.KEY_LOGIN_USERNAME);
 	}
 
-
 	public String getPassword() {
-		return password;
+		return loginValues.getAsString(Constants.KEY_LOGIN_PASSWORD);
+	}
+	
+	public void setRepoHashid(int repoHashid){
+		loginValues.put(Constants.KEY_LOGIN_REPO_HASHID, repoHashid);
+	}
+	
+	public ContentValues getValues(){
+		return loginValues;
 	}
 	
 	
 	public void clean(){
-		this.username = null;
-		this.password = null;
+		this.loginValues = null;
 	}
 
 	public void reuse(String username, String password){
-		this.username = username;
-		this.password = password;
+		loginValues = new ContentValues(Constants.NUMBER_OF_COLUMNS_LOGIN);
+		setUsername(username);
+		setPassword(password);
 	}
 	
 }
