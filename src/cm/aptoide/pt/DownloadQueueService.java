@@ -34,7 +34,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import cm.aptoide.pt.TabInstalled.InstallApkListener;
+
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -244,6 +244,7 @@ public class DownloadQueueService extends Service {
 	}
 	
 	public void dismissNotification(int apkidHash){
+		if(notificationManager!=null)
 		notificationManager.cancel(apkidHash);
 //		notifications.remove(apkidHash);
 	}

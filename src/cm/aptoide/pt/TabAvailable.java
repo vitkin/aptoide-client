@@ -332,6 +332,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			
 			redraw();
 		}
 		 
