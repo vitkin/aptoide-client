@@ -30,6 +30,8 @@ import cm.aptoide.pt.ApkNode;
 import cm.aptoide.pt.ApkNodeFull;
 import cm.aptoide.pt.DownloadNode;
 import cm.aptoide.pt.ServerNode;
+import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.model.Repository;
 import cm.aptoide.pt.data.system.InstalledPackages;
 import cm.aptoide.pt.multiversion.VersionApk;
 
@@ -52,231 +54,15 @@ import android.util.Log;
  */
 public class ManagerDatabase {
 	
-	/** HashIds are the hashcodes of the real E-A primary keyes separated by dots */ 
-	
-	private static final String DATABASE = "aptoide_db";
-	
-	private static final String TABLE_REPOSITORY = "repository";
-	private static final String KEY_REPO_HASHID = "repo_hashid";
-	private static final String KEY_REPO_URI = "uri";
-	private static final String KEY_REPO_BASE_PATH = "base_path";
-	private static final String KEY_REPO_SIZE = "repo_size";
-	private static final String KEY_REPO_UPDATE_TIME = "update_time";
-	private static final String KEY_REPO_DELTA = "delta";
-	private static final String KEY_REPO_IN_USE = "in_use";
-	
-	private static final String TABLE_LOGIN = "login";
-	private static final String KEY_LOGIN_REPO_HASHID = "repo_hashid";
-	private static final String KEY_LOGIN_USERNAME = "username";
-	private static final String KEY_LOGIN_PASSWORD = "password";
-	
-	private static final String TABLE_APPLICATION = "application";
-	private static final String KEY_APP_HASHID = "app_hashid";
-	private static final String KEY_APP_REPO_HASHID = "repo_hashid";	
-	private static final String KEY_APP_PACKAGE_NAME = "package_name";
-	private static final String KEY_APP_VERSION_CODE = "version_code";
-	private static final String KEY_APP_VERSION_NAME = "version_name";
-	private static final String KEY_APP_NAME = "app_name";
-	
-	private static final String TABLE_CATEGORY = "category";
-	private static final String KEY_CATEGORY_HASHID = "category_hashid";
-	private static final String KEY_CATEGORY_NAME = "category_name";
-	
-	private static final String TABLE_SUB_CATEGORY = "sub_category";
-	private static final String KEY_SUB_CATEGORY_PARENT = "category_parent";
-	private static final String KEY_SUB_CATEGORY_CHILD = "category_child";
-	
-	private static final String TABLE_APP_CATEGORY = "app_category";
-	private static final String KEY_APP_CATEGORY_CATEGORY_HASHID = "category_hashid";
-	private static final String KEY_APP_CATEGORY_APP_HASHID = "app_hashid";
-	
-	private static final String TABLE_ICON = "icon";
-	private static final String KEY_ICON_APP_HASHID = "app_hashid";
-	private static final String KEY_ICON_REMOTE_PATH_TAIL = "remote_icon_path_tail";
-	
-	private static final String TABLE_DOWNLOAD = "download";
-	private static final String KEY_DOWNLOAD_APP_HASHID = "app_hashid";
-	private static final String KEY_DOWNLOAD_REMOTE_PATH_TAIL = "remote_path_tail";
-	private static final String KEY_DOWNLOAD_MD5HASH = "md5hash";
-	private static final String KEY_DOWNLOAD_SIZE = "download_size";
-	
-	private static final String TABLE_EXTRA = "extra";
-	private static final String KEY_EXTRA_APP_HASHID = "app_hashid";
-	private static final String KEY_EXTRA_DESCRIPTION = "description";
-	private static final String KEY_EXTRA_DATE = "extra_date";
-	private static final String KEY_EXTRA_RATING = "rating";
-	private static final String KEY_EXTRA_POPULARITY = "popularity";
-	
-	
-	private static final String CREATE_TABLE_REPOSITORY = "CREATE TABLE IF NOT EXISTS " + TABLE_REPOSITORY + " ("
-			+ KEY_REPO_HASHID + " INTEGER NOT NULL, "
-			+ KEY_REPO_URI + " TEXT UNIQUE NOT NULL, "
-			+ KEY_REPO_BASE_PATH + " TEXT UNIQUE NOT NULL, "
-			+ KEY_REPO_SIZE + " INTEGER NOT NULL DEFAULT (0) CHECK ("+KEY_REPO_SIZE+">=0), "
-			+ KEY_REPO_UPDATE_TIME + " TEXT NOT NULL DEFAULT (0), "
-			+ KEY_REPO_DELTA + " TEXT NOT NULL DEFAULT (0), "
-			+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT (1), "
-			+ "PRIMARY KEY("+ KEY_REPO_HASHID +") );";
-	
-	private static final String FOREIGN_KEY_UPDATE_LOGIN_REPO_HASHID_STRONG = "foreign_key_update_login_repo_hash_id_strong";
-	private static final String FOREIGN_KEY_UPDATE_APP_REPO_HASHID_STRONG = "foreign_key_update_app_repo_hash_id_strong";
-	private static final String FOREIGN_KEY_DELETE_LOGIN_REPO_HASHID = "foreign_key_delete_login_repo_hash_id";
-	private static final String FOREIGN_KEY_DELETE_APP_REPO_HASHID = "foreign_key_delete_app_repo_hash_id";
-
-	
-	
-	private static final String CREATE_TABLE_LOGIN = "CREATE TABLE IF NOT EXISTS " + TABLE_LOGIN + " ("
-			+ KEY_LOGIN_REPO_HASHID + " INTEGER NOT NULL, "
-			+ KEY_LOGIN_USERNAME + " TEXT NOT NULL, "
-			+ KEY_LOGIN_PASSWORD + " TEXT NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_LOGIN_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +")," 
-			+ "PRIMARY KEY("+ KEY_LOGIN_REPO_HASHID +") );";
-	
-	private static final String FOREIGN_KEY_INSERT_LOGIN_REPO_HASHID = "foreign_key_insert_login_repo_hash_id";
-	private static final String FOREIGN_KEY_UPDATE_LOGIN_REPO_HASHID_WEAK = "foreign_key_update_login_repo_hash_id_weak";
-
-	
-	
-	private static final String CREATE_TABLE_APPLICATION = "CREATE TABLE IF NOT EXISTS " + TABLE_APPLICATION + " ("
-			+ KEY_APP_HASHID + " INTEGER NOT NULL, "
-			+ KEY_APP_REPO_HASHID + " INTEGER NOT NULL, "
-			+ KEY_APP_PACKAGE_NAME + " TEXT NOT NULL, "
-			+ KEY_APP_VERSION_CODE + " INTEGER NOT NULL CHECK ("+KEY_APP_VERSION_CODE+">=0), "
-			+ KEY_APP_VERSION_NAME + " TEXT NOT NULL, "
-			+ KEY_APP_NAME + " TEXT NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_APP_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +")," 
-			+ "PRIMARY KEY("+ KEY_APP_HASHID +") );";	
-
-	private static final String FOREIGN_KEY_INSERT_APP_REPO_HASHID = "foreign_key_insert_app_repo_hash_id";
-	private static final String FOREIGN_KEY_UPDATE_APP_REPO_HASHID_WEAK = "foreign_key_update_app_repo_hash_id_weak";
-
-	private static final String FOREIGN_KEY_UPDATE_APP_CATEGORY_APP_HASHID_STRONG = "foreign_key_update_app_category_app_hashid_strong";
-	private static final String FOREIGN_KEY_DELETE_APP_CATEGORY_APP_HASHID = "foreign_key_delete_app_category_app_hashid";
-
-	private static final String FOREIGN_KEY_UPDATE_DOWNLOAD_APP_HASHID_STRONG = "foreign_key_update_download_app_hashid_strong";
-	private static final String FOREIGN_KEY_DELETE_DOWNLOAD_APP_HASHID = "foreign_key_delete_download_app_hashid";
-
-	private static final String FOREIGN_KEY_UPDATE_EXTRA_APP_HASHID_STRONG = "foreign_key_update_extra_app_hashid_strong";
-	private static final String FOREIGN_KEY_DELETE_EXTRA_APP_HASHID = "foreign_key_delete_extra_app_hashid";
-
-	
-	
-	private static final String CREATE_TABLE_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_CATEGORY + " ("
-			+ KEY_CATEGORY_HASHID + " INTEGER NOT NULL, "
-			+ KEY_CATEGORY_NAME + " TEXT NOT NULL, "
-			+ "PRIMARY KEY("+ KEY_CATEGORY_HASHID +"));";
-
-	private static final String FOREIGN_KEY_UPDATE_SUB_CATEGORY_PARENT_STRONG = "foreign_key_update_sub_category_parent_strong";
-	private static final String FOREIGN_KEY_UPDATE_SUB_CATEGORY_CHILD_STRONG = "foreign_key_update_sub_category_child_strong";
-	private static final String FOREIGN_KEY_DELETE_SUB_CATEGORY_PARENT = "foreign_key_delete_sub_category_parent";	
-	private static final String FOREIGN_KEY_DELETE_SUB_CATEGORY_CHILD = "foreign_key_delete_sub_category_child";
-
-	private static final String FOREIGN_KEY_UPDATE_APP_CATEGORY_CATEGORY_HASHID_STRONG = "foreign_key_update_app_category_category_hashid_strong";
-	private static final String FOREIGN_KEY_DELETE_APP_CATEGORY_CATEGORY_HASHID = "foreign_key_delete_app_category_category_hashid";
-
-	
-	
-	private static final String CREATE_TABLE_SUB_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_SUB_CATEGORY + " ("
-			+ KEY_SUB_CATEGORY_PARENT + " INTEGER NOT NULL, "
-			+ KEY_SUB_CATEGORY_CHILD + " INTEGER NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_SUB_CATEGORY_PARENT +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_HASHID +"),"
-			+ "FOREIGN KEY("+ KEY_SUB_CATEGORY_CHILD +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_SUB_CATEGORY_CHILD +"));";	
-
-	private static final String FOREIGN_KEY_INSERT_SUB_CATEGORY_PARENT = "foreign_key_insert_sub_category_parent";
-	private static final String FOREIGN_KEY_UPDATE_SUB_CATEGORY_PARENT_WEAK = "foreign_key_update_sub_category_parent_weak";
-
-	private static final String FOREIGN_KEY_INSERT_SUB_CATEGORY_CHILD = "foreign_key_insert_sub_category_child";
-	private static final String FOREIGN_KEY_UPDATE_SUB_CATEGORY_CHILD_WEAK = "foreign_key_update_sub_category_child_weak";
-
-	
-	
-	private static final String CREATE_TABLE_APP_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_CATEGORY + " ("
-			+ KEY_APP_CATEGORY_CATEGORY_HASHID + " INTEGER NOT NULL, "
-			+ KEY_APP_CATEGORY_APP_HASHID + " INTEGER NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_CATEGORY_HASHID +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_NAME +"),"
-			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_APP_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_PACKAGE_NAME +"),"
-			+ "PRIMARY KEY("+ KEY_APP_CATEGORY_APP_HASHID +"));";
-	
-	private static final String FOREIGN_KEY_INSERT_APP_CATEGORY_CATEGORY_HASHID = "foreign_key_insert_app_category_category_hashid";
-	private static final String FOREIGN_KEY_UPDATE_APP_CATEGORY_CATEGORY_HASHID_WEAK = "foreign_key_update_app_category_category_hashid_weak";
-	
-	private static final String FOREIGN_KEY_INSERT_APP_CATEGORY_APP_HASHID = "foreign_key_insert_app_category_app_hashid";
-	private static final String FOREIGN_KEY_UPDATE_APP_CATEGORY_APP_HASHID_WEAK = "foreign_key_update_app_category_app_hashid_weak";
-
-	
-	
-	private static final String CREATE_TABLE_ICON = "CREATE TABLE IF NOT EXISTS " + TABLE_ICON + " ("
-			+ KEY_ICON_APP_HASHID + " INTEGER NOT NULL, "
-			+ KEY_ICON_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
-			+ "PRIMARY KEY("+ KEY_ICON_APP_HASHID +"));";
-
-	
-	
-	private static final String CREATE_TABLE_DOWNLOAD = "CREATE TABLE IF NOT EXISTS " + TABLE_DOWNLOAD + " ("
-			+ KEY_DOWNLOAD_APP_HASHID + " INTEGER NOT NULL, "
-			+ KEY_DOWNLOAD_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
-			+ KEY_DOWNLOAD_MD5HASH + " TEXT NOT NULL, "
-			+ KEY_DOWNLOAD_SIZE + " INTEGER NOT NULL CHECK ("+KEY_DOWNLOAD_SIZE+">0), "
-			+ "FOREIGN KEY("+ KEY_DOWNLOAD_APP_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_PACKAGE_NAME +"),"
-			+ "PRIMARY KEY("+ KEY_DOWNLOAD_APP_HASHID +") );";
-	
-	private static final String FOREIGN_KEY_INSERT_DOWNLOAD_APP_HASHID = "foreign_key_insert_download_app_hashid";
-	private static final String FOREIGN_KEY_UPDATE_DOWNLOAD_APP_HASHID_WEAK = "foreign_key_update_download_app_hashid_weak";
-
-	
-	
-	private static final String CREATE_TABLE_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_EXTRA + " ("
-			+ KEY_EXTRA_APP_HASHID + " INTEGER NOT NULL, "
-			+ KEY_EXTRA_DESCRIPTION + " TEXT NOT NULL, "
-			+ KEY_EXTRA_DATE + " DATE NOT NULL, "
-			+ KEY_EXTRA_RATING + " INTEGER NOT NULL, "
-			+ KEY_EXTRA_POPULARITY + " INTEGER NOT NULL CHECK ("+KEY_EXTRA_POPULARITY+">=0), "
-			+ "FOREIGN KEY("+ KEY_EXTRA_APP_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APP_PACKAGE_NAME +"),"
-			+ "PRIMARY KEY("+ KEY_EXTRA_APP_HASHID +") );";	//TODO integrity restrictions on date and rating
-
-	private static final String FOREIGN_KEY_INSERT_EXTRA_APP_HASHID = "foreign_key_insert_extra_app_hashid";
-	private static final String FOREIGN_KEY_UPDATE_EXTRA_APP_HASHID_WEAK = "foreign_key_update_extra_app_hashid_weak";
-
-	
-	
-	/**
-	 * Triggers,	Stupid sqlite only constraints foreign keys after 3.6.19 which means android 2.2
-	 * 				only hope of implementing those constraints is by using triggers, as explained in this sqlite wiki webpage:
-	 * 				http://www.sqlite.org/cvstrac/wiki?p=ForeignKeyTriggers	 * 
-	 */
-	
-	private static final String CREATE_TRIGGER_LOGIN_INSERT = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_INSERT_LOGIN_REPO_HASHID
-			+ "BEFORE INSERT ON " + TABLE_LOGIN
-			+ " FOR EACH ROW BEGIN"
-			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_LOGIN +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_LOGIN_REPO_HASHID +"')"
-			+ "     WHERE NEW."+ KEY_LOGIN_REPO_HASHID +" IS NOT NULL"
-			+ "	        AND (SELECT "+ KEY_REPO_HASHID +" FROM "+ TABLE_REPOSITORY +" WHERE "+ KEY_REPO_HASHID +" = NEW."+ KEY_LOGIN_REPO_HASHID +") IS NULL;"
-			+ " END;";
-	
-	private static final String CREATE_TRIGGER_LOGIN_UPDATE_WEAK = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_UPDATE_LOGIN_REPO_HASHID_WEAK
-			+ "BEFORE UPDATE ON " + TABLE_LOGIN
-			+ "FOR EACH ROW BEGIN"
-			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_LOGIN +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_LOGIN_REPO_HASHID_WEAK +"')"
-			+ "    WHERE (SELECT "+ KEY_REPO_HASHID +" FROM "+ TABLE_REPOSITORY +" WHERE "+ KEY_REPO_HASHID +" = NEW."+ KEY_LOGIN_REPO_HASHID +") IS NULL;"
-			+ "END;";
-	
-	private static final String CREATE_TRIGGER_LOGIN_UPDATE_STRONG = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_UPDATE_LOGIN_REPO_HASHID_STRONG
-			+ "BEFORE UPDATE ON " + TABLE_REPOSITORY
-			+ " FOR EACH ROW BEGIN"
-			+ "     SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_REPOSITORY +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_LOGIN_REPO_HASHID_STRONG +"')"
-			+ "     WHERE (SELECT "+ KEY_LOGIN_REPO_HASHID +" FROM "+ TABLE_LOGIN +" WHERE "+ KEY_LOGIN_REPO_HASHID +" = NEW."+ KEY_REPO_HASHID +") IS NULL;"
-			+ " END;";
-	
-	private static final String CREATE_TRIGGER_LOGIN_DELETE = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_DELETE_LOGIN_REPO_HASHID
-			+ "AFTER UPDATE ON" + TABLE_REPOSITORY
-			+ " FOR EACH ROW BEGIN"
-			+ "     SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_REPOSITORY +" violates foreign key constraint "+ FOREIGN_KEY_DELETE_LOGIN_REPO_HASHID +"')"
-			+ "     UPDATE "+ TABLE_LOGIN +" SET "+ KEY_LOGIN_REPO_HASHID +" = NEW."+ KEY_REPO_HASHID +" WHERE "+ KEY_LOGIN_REPO_HASHID +" = OLD."+ KEY_REPO_HASHID +") IS NULL;"
-			+ " END;";
-	
-	
 	private static SQLiteDatabase db = null;
+	
+	final int indexRepoHashid;
+	final int indexRepoUri;
+	final int indexRepoBasePath;
+	final int indexRepoSize;
+	final int indexRepoUpdateTime;
+	final int indexRepoDelta;
+	final int indexRepoInUse;
 	
 // TODO refactor 
 	
@@ -339,20 +125,53 @@ public class ManagerDatabase {
 
 	public ManagerDatabase(Context context) {
 		if(db == null){
-			db = context.openOrCreateDatabase(DATABASE, 0, null);
-			db.execSQL(CREATE_TABLE_REPOSITORY);
-			db.execSQL(CREATE_TABLE_LOGIN);
-			db.execSQL(CREATE_TABLE_APPLICATION);
-			db.execSQL(CREATE_TABLE_CATEGORY);
-			db.execSQL(CREATE_TABLE_SUB_CATEGORY);
-			db.execSQL(CREATE_TABLE_APP_CATEGORY);
-			db.execSQL(CREATE_TABLE_ICON);
-			db.execSQL(CREATE_TABLE_DOWNLOAD);
-			db.execSQL(CREATE_TABLE_EXTRA);
+			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
+			db.execSQL(Constants.CREATE_TABLE_REPOSITORY);
+			db.execSQL(Constants.CREATE_TABLE_LOGIN);
+			db.execSQL(Constants.CREATE_TABLE_APPLICATION);
+			db.execSQL(Constants.CREATE_TABLE_CATEGORY);
+			db.execSQL(Constants.CREATE_TABLE_SUB_CATEGORY);
+			db.execSQL(Constants.CREATE_TABLE_APP_CATEGORY);
+			db.execSQL(Constants.CREATE_TABLE_APP_INSTALLED);
+			db.execSQL(Constants.CREATE_TABLE_ICON);
+			db.execSQL(Constants.CREATE_TABLE_DOWNLOAD);
+			db.execSQL(Constants.CREATE_TABLE_EXTRA);
+			
+			db.execSQL(Constants.CREATE_TRIGGER_REPO_DELETE_REPO);
+			db.execSQL(Constants.CREATE_TRIGGER_REPO_UPDATE_REPO_HASHID_STRONG);
+			db.execSQL(Constants.CREATE_TRIGGER_LOGIN_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_LOGIN_UPDATE_REPO_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_APPLICATION_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_APPLICATION_UPDATE_REPO_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_APPLICATION_DELETE);
+			db.execSQL(Constants.CREATE_TRIGGER_APPLICATION_UPDATE_APP_FULL_HASHID_STRONG);
+			db.execSQL(Constants.CREATE_TRIGGER_CATEGORY_DELETE);
+			db.execSQL(Constants.CREATE_TRIGGER_CATEGORY_UPDATE_CATEGORY_HASHID_STRONG);
+			db.execSQL(Constants.CREATE_TRIGGER_SUB_CATEGORY_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_SUB_CATEGORY_UPDATE_PARENT_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_SUB_CATEGORY_UPDATE_CHILD_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_UPDATE_CATEGORY_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_ICON_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_ICON_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_EXTRA_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_EXTRA_UPDATE_APP_FULL_HASHID_WEAK);
 			
 		}else if(!db.isOpen()){
-			db = context.openOrCreateDatabase(DATABASE, 0, null);
+			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
 		}
+
+		InsertHelper repoIndex = new InsertHelper(db, Constants.TABLE_REPOSITORY);
+		indexRepoHashid = repoIndex.getColumnIndex(Constants.KEY_REPO_HASHID);
+		indexRepoUri = repoIndex.getColumnIndex(Constants.KEY_REPO_URI);
+		indexRepoBasePath = repoIndex.getColumnIndex(Constants.KEY_REPO_BASE_PATH);
+		indexRepoSize = repoIndex.getColumnIndex(Constants.KEY_REPO_SIZE);
+		indexRepoUpdateTime = repoIndex.getColumnIndex(Constants.KEY_REPO_UPDATE_TIME);
+		indexRepoDelta = repoIndex.getColumnIndex(Constants.KEY_REPO_DELTA);
+		indexRepoInUse = repoIndex.getColumnIndex(Constants.KEY_REPO_IN_USE);
 	}
 	
 	
@@ -397,15 +216,28 @@ public class ManagerDatabase {
 		
 	}
 	
-	public void insertRepository(){
-		InsertHelper insertHelper = new InsertHelper(db, TABLE_REPOSITORY);
+	public void insertRepositories(ArrayList<Repository> repositories){
+		InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
 		db.beginTransaction();
-//		insertHelper.getColumnIndex(arg0)
-//		ContentValues values = new ContentValues();
-//		values.put("uri", srv);
-//		values.put("inuse", 1);
-//		db.
-//		db.insert(TABLE_NAME_URI, null, values);
+		for (Repository repository : repositories) {
+			if(insertRepository.insert(repository.getValues()) == -1){
+				//TODO handle error on insertion;
+			}
+//			insertRepository.prepareForInsert();
+			
+//			insertRepository.bind(indexRepoHashid, );
+//			insertRepository.bind(indexRepoUri, );
+//			insertRepository.bind(indexRepoBasePath, );
+//			insertRepository.bind(indexRepoSize, );
+//			insertRepository.bind(indexRepoUpdateTime, );
+//			insertRepository.bind(indexRepoDelta, );
+//			insertRepository.bind(indexRepoInUse, );
+			
+//			insertRepository.execute(); /** WARNING this is not thread-safe, if problems are encountered, use insertHelper.insert(ContentValues)*/
+		}
+		insertRepository.close();
+		db.setTransactionSuccessful();
+		db.endTransaction();
 	}
 	
 
