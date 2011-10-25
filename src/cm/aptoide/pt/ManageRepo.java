@@ -373,7 +373,9 @@ public class ManageRepo extends ListActivity{
 					EditText uri = (EditText) alrt.findViewById(R.id.edit_uri);
 					String uri_str = uri.getText().toString();
 					
-					if(uri_str.charAt(uri_str.length()-1)!='/'){
+					// fixed #577 StringIndexOutOfBoundsException on uri_str.length() == 0
+					
+					if(uri_str.length()!=0 &&uri_str.charAt(uri_str.length()-1)!='/'){
 						uri_str = uri_str+'/';
 						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
 					}
