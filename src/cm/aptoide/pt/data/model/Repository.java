@@ -22,7 +22,6 @@ package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.downloads.Login;
 
  /**
  * Repository, models a repository
@@ -34,21 +33,16 @@ import cm.aptoide.pt.data.downloads.Login;
 public class Repository {
 
 	private ContentValues values;
-	private boolean loginRequired;
+	private boolean requiresLogin;
 	private Login login;
 	
 	
 	public Repository(String uri) {
-		this.loginRequired = false;
-		this.values = new ContentValues(7);
-		setUri(uri);
-		setHashid(uri);		
+		this.requiresLogin = false;
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
+		setUri(uri);	
 	}
 
-	
-	private void setHashid(String uri){
-		values.put(Constants.KEY_REPO_HASHID, uri.hashCode());
-	}
 	
 	public int getHashid() {
 		return values.getAsInteger(Constants.KEY_REPO_HASHID);
@@ -56,6 +50,7 @@ public class Repository {
 	
 	private void setUri(String uri){
 		values.put(Constants.KEY_REPO_URI, uri);
+		values.put(Constants.KEY_REPO_HASHID, uri.hashCode());
 	}
 
 	public String getUri() {
@@ -95,11 +90,11 @@ public class Repository {
 	}
 	
 	public void setInUse(boolean inUse){
-		values.put(Constants.KEY_REPO_IN_USE, inUse?1:0);
+		values.put(Constants.KEY_REPO_IN_USE, inUse?Constants.DB_TRUE:Constants.DB_FALSE);
 	}
 
 	public boolean getInUse() {
-		return values.getAsInteger(Constants.KEY_REPO_SIZE)==1?true:false;
+		return values.getAsInteger(Constants.KEY_REPO_SIZE)==Constants.DB_TRUE?true:false;
 	}
 	
 	public ContentValues getValues(){
@@ -108,12 +103,13 @@ public class Repository {
 	
 	
 	public void setLogin(Login login){
-		this.loginRequired = true;
+		this.requiresLogin = true;
 		this.login = login;
+		this.login.setRepoHashid(getHashid());
 	}
 	
-	public boolean isLoginRequired() {
-		return loginRequired;
+	public boolean requiresLogin() {
+		return requiresLogin;
 	}
 
 	public Login getLogin() {
@@ -123,13 +119,13 @@ public class Repository {
 	
 	public void clean(){
 		this.values = null;
-		this.loginRequired = false;
+		this.requiresLogin = false;
 		this.login = null;
 	}
 	
 	public void reuse(String uri) {
-		this.loginRequired = false;
-		this.values = new ContentValues(7);
+		this.requiresLogin = false;
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
 		setUri(uri);
 	}
 	

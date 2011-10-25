@@ -35,6 +35,15 @@ public class Constants {
 	
 	// **************************** Database definitions ********************************* //
 	
+	//TODO deprecate
+	public static final String[] CATEGORIES = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
+			 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
+			 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
+	
+	public static final int DB_TRUE = 1;
+	public static final int DB_FALSE = 0;
+	public static final int DB_ERROR = -1;
+	
 	/** HashIds are the hashcodes of the real E-A primary keyes separated by pipe symbols. 
 	 *			Reasoning behind them is that sqlite is noticeably more efficient
 	 *			handling integet indexes than text ones. 
@@ -55,11 +64,13 @@ public class Constants {
 	public static final String KEY_REPO_UPDATE_TIME = "update_time";
 	public static final String KEY_REPO_DELTA = "delta";
 	public static final String KEY_REPO_IN_USE = "in_use";
+	public static final int NUMBER_OF_COLUMNS_REPO = 7;
 	
 	public static final String TABLE_LOGIN = "login";
 	public static final String KEY_LOGIN_REPO_HASHID = "repo_hashid";
 	public static final String KEY_LOGIN_USERNAME = "username";
 	public static final String KEY_LOGIN_PASSWORD = "password";
+	public static final int NUMBER_OF_COLUMNS_LOGIN = 3;
 	
 	public static final String TABLE_APPLICATION = "application";
 	public static final String KEY_APP_FULL_HASHID = "app_full_hashid";	/** base: package_name|versioncode|repo_hashid */
@@ -69,18 +80,22 @@ public class Constants {
 	public static final String KEY_APP_VERSION_CODE = "version_code";
 	public static final String KEY_APP_VERSION_NAME = "version_name";
 	public static final String KEY_APP_NAME = "app_name";
+	public static final int NUMBER_OF_COLUMNS_APP = 7;
 	
 	public static final String TABLE_CATEGORY = "category";
 	public static final String KEY_CATEGORY_HASHID = "category_hashid";	/** base: category_name */
 	public static final String KEY_CATEGORY_NAME = "category_name";
+	public static final int NUMBER_OF_COLUMNS_CATEGORY = 2;
 	
 	public static final String TABLE_SUB_CATEGORY = "sub_category";
 	public static final String KEY_SUB_CATEGORY_PARENT = "category_parent";
 	public static final String KEY_SUB_CATEGORY_CHILD = "category_child";
+	public static final int NUMBER_OF_COLUMNS_SUB_CATEGORY = 2;
 	
 	public static final String TABLE_APP_CATEGORY = "app_category";
 	public static final String KEY_APP_CATEGORY_CATEGORY_HASHID = "category_hashid";
 	public static final String KEY_APP_CATEGORY_APP_FULL_HASHID = "app_full_hashid";
+	public static final int NUMBER_OF_COLUMNS_APP_CATEGORY = 2;
 	
 	public static final String TABLE_APP_INSTALLED = "app_installed";
 	public static final String KEY_APP_INSTALLED_HASHID = "app_hashid";	/** base: package_name|versioncode */
@@ -88,16 +103,19 @@ public class Constants {
 	public static final String KEY_APP_INSTALLED_VERSION_CODE = "version_code";
 	public static final String KEY_APP_INSTALLED_VERSION_NAME = "version_name";
 	public static final String KEY_APP_INSTALLED_NAME = "app_name";
+	public static final int NUMBER_OF_COLUMNS_APP_INSTALLED = 5;
 	
 	public static final String TABLE_ICON = "icon";
 	public static final String KEY_ICON_APP_FULL_HASHID = "app_full_hashid";
 	public static final String KEY_ICON_REMOTE_PATH_TAIL = "remote_icon_path_tail";
+	public static final int NUMBER_OF_COLUMNS_ICON = 2;
 	
 	public static final String TABLE_DOWNLOAD = "download";
 	public static final String KEY_DOWNLOAD_APP_FULL_HASHID = "app_full_hashid";
 	public static final String KEY_DOWNLOAD_REMOTE_PATH_TAIL = "remote_path_tail";
 	public static final String KEY_DOWNLOAD_MD5HASH = "md5hash";
 	public static final String KEY_DOWNLOAD_SIZE = "download_size";
+	public static final int NUMBER_OF_COLUMNS_DOWNLOAD = 4;
 	
 	public static final String TABLE_EXTRA = "extra";
 	public static final String KEY_EXTRA_APP_FULL_HASHID = "app_full_hashid";
@@ -105,6 +123,7 @@ public class Constants {
 	public static final String KEY_EXTRA_DATE = "extra_date";
 	public static final String KEY_EXTRA_RATING = "rating";
 	public static final String KEY_EXTRA_POPULARITY = "popularity";
+	public static final int NUMBER_OF_COLUMNS_EXTRA = 5;
 	
 	
 	/**
