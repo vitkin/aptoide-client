@@ -1,5 +1,6 @@
 package cm.aptoide.pt;
 
+import android.gesture.GestureOverlayView;
 import android.view.MotionEvent;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AccelerateInterpolator;
@@ -16,21 +17,19 @@ import android.widget.ViewFlipper;
  */
 public class ChangeTab extends SimpleOnGestureListener {
 	
-	private static final int SWIPE_MIN_DISTANCE = 120;
-	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
 	private ViewFlipper viewFlipper;
 	private TabWidget tabWidget;
 	private TabHost tabHost;
 	
 	public ChangeTab(TabHost tabHost) {
-		this.viewFlipper 	= (ViewFlipper)((RelativeLayout)tabHost.getChildAt(0)).getChildAt(1);
+		this.viewFlipper 	= (ViewFlipper)((GestureOverlayView)((RelativeLayout)tabHost.getChildAt(0)).getChildAt(1)).getChildAt(0);
 		this.tabWidget 		= (TabWidget)((RelativeLayout)tabHost.getChildAt(0)).getChildAt(0);
 		this.tabHost 		= tabHost;
 	}
 	
 	@Override
 	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-		if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+		if(e1.getX() - e2.getX() > Configs.SWIPE_SLIDE_TO_TAB_MIN_DISTANCE && Math.abs(velocityX) > Configs.SWIPE_SLIDE_TO_TAB_THRESHOLD_VELOCITY) {
 			
 			int tab = (tabHost.getCurrentTab()+1 ) % tabWidget.getChildCount();
 			tabHost.setCurrentTab( (tabHost.getCurrentTab()+1 ) % tabWidget.getChildCount() );
@@ -39,7 +38,7 @@ public class ChangeTab extends SimpleOnGestureListener {
 			viewFlipper.setDisplayedChild(tab);
 			
 			return true;
-		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+		} else if (e2.getX() - e1.getX() > Configs.SWIPE_SLIDE_TO_TAB_MIN_DISTANCE && Math.abs(velocityX) > Configs.SWIPE_SLIDE_TO_TAB_THRESHOLD_VELOCITY) {
 			int tab = (tabHost.getCurrentTab()+(tabWidget.getChildCount()-1) ) % tabWidget.getChildCount();
 			tabHost.setCurrentTab( tab );
 			viewFlipper.setInAnimation(inFromLeftAnimation());

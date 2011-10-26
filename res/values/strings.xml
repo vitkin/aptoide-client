@@ -74,6 +74,7 @@
     <string name="tastenotavailable">Likes not available</string>
     <string name="downgrade_available">downgrade available</string>
     <string name="loading_comments">Loading comments...</string>
+    <string name="moving_to">Moving to</string>
 </resources>
 
 <!--

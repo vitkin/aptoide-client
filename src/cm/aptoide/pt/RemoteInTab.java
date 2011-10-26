@@ -157,7 +157,6 @@ public class RemoteInTab extends TabActivity {
 	};	
 	
 	
-	
 //	private Handler fetchHandler = new Handler() {
 //
 //		@Override
@@ -404,6 +403,7 @@ public class RemoteInTab extends TabActivity {
 				}
 			}
 		}
+		
 	}
 	
 	
