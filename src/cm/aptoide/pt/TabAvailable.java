@@ -6,6 +6,7 @@ import java.util.Vector;
 
 import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
+import cm.aptoide.pt.utils.GestureAlphabet;
 import android.app.AlertDialog;
 import android.app.TabActivity;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -51,7 +53,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	
 	private SimpleAdapter handler_adpt = null;
 	
-	
+	private GestureAlphabet gestureAlphabet;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -97,6 +99,14 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 				}
 			}			
 		}.start();
+		
+		gestureAlphabet = new GestureAlphabet(this, lv);
+		if(Configs.SEARCH_GESTURE_ON){
+			GestureOverlayView gestures = (GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList);
+			gestures.setUncertainGestureColor(android.R.color.transparent);
+			//gestures.removeOnGestureListener(listener)
+		}
+		
 	}
 
 
@@ -166,6 +176,7 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
+		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).addOnGesturePerformedListener(gestureAlphabet);
 		
 		new Thread(){
 			@Override
@@ -182,6 +193,12 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		}.start();
 	}
 
+	@Override
+	protected void onPause() {
+		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).removeOnGesturePerformedListener(gestureAlphabet);
+		super.onPause();
+	}
+	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && sPref.getBoolean("mode", false) && deep > 0) {

@@ -12,18 +12,29 @@
             android:layout_alignParentBottom="true"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
-         <ViewFlipper
-	        android:id="@android:id/tabcontent"
-	        android:layout_width="fill_parent"
-	        android:layout_height="fill_parent"
-	        android:layout_marginBottom="60dip"
-	        android:padding="5dp" >  
-	        <!-- <FrameLayout
-	            android:id="@android:id/tabcontent"
-	            android:layout_width="fill_parent"
-	            android:layout_height="390dip"
-	            android:padding="5dp" />
-	            -->
-         </ViewFlipper> 
+            <android.gesture.GestureOverlayView
+    			android:id="@+id/gesturesAlphabetList"
+    			android:layout_width="fill_parent"
+    			android:layout_height="fill_parent"
+    			
+				android:gestureColor="#2F4F2F"
+    			android:gestureStrokeType="multiple"
+    			android:eventsInterceptionEnabled="true"
+    			android:orientation="vertical"
+    			android:layout_marginBottom="60dip">
+	         <ViewFlipper
+		        android:id="@android:id/tabcontent"
+		        android:layout_width="fill_parent"
+		        android:layout_height="fill_parent"
+		        android:layout_marginBottom="60dip"
+		        android:padding="5dp" >  
+		        <!-- <FrameLayout
+		            android:id="@android:id/tabcontent"
+		            android:layout_width="fill_parent"
+		            android:layout_height="390dip"
+		            android:padding="5dp" />
+		            -->
+	         </ViewFlipper> 
+         </android.gesture.GestureOverlayView>
     </RelativeLayout>
 </TabHost>

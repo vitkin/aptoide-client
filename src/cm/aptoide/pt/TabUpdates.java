@@ -7,6 +7,7 @@ import java.util.Vector;
 
 import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
+import cm.aptoide.pt.utils.GestureAlphabet;
 
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
@@ -17,6 +18,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -42,13 +44,14 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	private int pos = -1;
 	private UpdateApkListener updateApkListener = null;
 	private static boolean isRegister = false;
+	private GestureAlphabet gestureAlphabet;
 	
 	protected class UpdateApkListener extends BroadcastReceiver {
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
 				Log.d("Aptoide-TabUpdates", "Tab Updates, broadcast received.");
-				if (/*intent.hashCode()==intent.getIntExtra("flag", 0)&&*/ intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
+				if ( intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
 					updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"), intent.getStringExtra("version"));
 				}
 		}
@@ -85,6 +88,12 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 			TabUpdates.isRegister = true;
 		}
 		//mctx = this;
+		
+		gestureAlphabet = new GestureAlphabet(this, lv);
+		if(Configs.SEARCH_GESTURE_ON){
+			GestureOverlayView gestures = (GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList);
+			gestures.setUncertainGestureColor(android.R.color.transparent);
+		}
 		
 	}
 	
@@ -146,7 +155,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).addOnGesturePerformedListener(gestureAlphabet);
 		new Thread(){
 			@Override
 			public void run() {
@@ -162,6 +171,12 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		}.start();	
 	}
 
+	@Override
+	protected void onPause() {
+		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).removeOnGesturePerformedListener(gestureAlphabet);
+		super.onPause();
+	}
+	
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import cm.aptoide.pt.multiversion.VersionApk;
+import cm.aptoide.pt.utils.GestureAlphabet;
 import android.app.TabActivity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,6 +15,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.gesture.GestureOverlayView;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -34,6 +36,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	private DbHandler db = null;
 	private int pos = -1;
 	public static boolean isRegister = false;
+	private GestureAlphabet gestureAlphabet;
 	
 	protected class InstallApkListener extends BroadcastReceiver {
 		
@@ -41,7 +44,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		public void onReceive(Context context, Intent intent) {
 			synchronized(TabInstalled.this){
 				Log.d("Aptoide-TabInstalled", "Tab Installed, broadcast received.");
-				if (/*intent.hashCode()==intent.getIntExtra("flag", 0) &&*/intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
+				if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
 					installApk(intent.getStringExtra("localPath"), intent.getStringExtra("version"));
 				}
 			}
@@ -81,7 +84,14 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			TabInstalled.isRegister = true;
 		}
 		//mctx = this;
+		gestureAlphabet = new GestureAlphabet(this, lv);
+		if(Configs.SEARCH_GESTURE_ON){
+			GestureOverlayView gestures = (GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList);
+			gestures.setUncertainGestureColor(android.R.color.transparent);
+		}
+		
 	}
+	
 	
 	
 //	@Override
@@ -128,7 +138,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	protected void onResume() {
 		super.onResume();
 		Log.d("Aptoide-TabInstalled", "onResume");
-		
+		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).addOnGesturePerformedListener(gestureAlphabet);
 //		Log.d("Aptoide-TabInstalled", "installApkListenerIsRegistered");
 
 		
@@ -147,6 +157,12 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 		}.start();	
 	}
 
+	@Override
+	protected void onPause() {
+		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).removeOnGesturePerformedListener(gestureAlphabet);
+		super.onPause();
+	}
+	
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 
