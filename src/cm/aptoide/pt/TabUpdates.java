@@ -378,8 +378,9 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		Log.d("Aptoide-TabUpdates", "Starting download of all possible updates");
 		
 		for(ApkNode node: apk_lst){
+			
 			if(node.status == 2){
-				queueDownload(node.apkid, node.ver, true);
+				queueDownload(node.apkid, node.verUpdate, true);
 			}
 		}
 	}

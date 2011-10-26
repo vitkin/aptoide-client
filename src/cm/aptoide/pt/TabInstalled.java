@@ -1,7 +1,6 @@
 package cm.aptoide.pt;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Vector;
 
 import cm.aptoide.pt.multiversion.VersionApk;
@@ -197,12 +196,12 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
 			VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1,-1);
 			apkinfo.putExtra("instversion", versionInstApk);
-			Iterator<VersionApk> iteratorVersion = versions.iterator();
-			while(iteratorVersion.hasNext()){
-				if(iteratorVersion.next().compareTo(versionInstApk)>0){
-					iteratorVersion.remove();
-				}
-			}
+//			Iterator<VersionApk> iteratorVersion = versions.iterator();
+//			while(iteratorVersion.hasNext()){
+//				if(iteratorVersion.next().compareTo(versionInstApk)>0){
+//					iteratorVersion.remove();
+//				}
+//			}
 		} catch (NameNotFoundException e) {
 			//Not installed... do nothing, not going to happen hear
 		}

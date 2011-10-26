@@ -23,6 +23,7 @@ public class ApkNode extends Object{
 	public String name;
 	public String apkid;
 	public String ver;
+	public String verUpdate;
 	public int status;
 	/*
 	 * status
