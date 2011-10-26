@@ -489,7 +489,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								previousGetter.cancel();
 							resetScreenshots.sendEmptyMessage(0);
 							
-							((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatSize((VersionApk)spinnerMulti.getSelectedItem()));
+							((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatInfo((VersionApk)spinnerMulti.getSelectedItem()));
 							
 							previousGetter = new GetScreenShots(apk_ver_str_raw);
 							previousGetter.start();
@@ -585,7 +585,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							previousGetter.cancel();
 						resetScreenshots.sendEmptyMessage(0);
 						
-						((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatSize((VersionApk)spinnerMulti.getSelectedItem()));
+						((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatInfo((VersionApk)spinnerMulti.getSelectedItem()));
 						
 						previousGetter = new GetScreenShots(apk_ver_str_raw);
 						previousGetter.start();
