@@ -76,6 +76,7 @@
     <string name="loading_comments">Loading comments...</string>
     <string name="moving_to">Moving to</string>
     <string name="recognized">Recognized</string>
+   <string name="not_recognized">Not recognized</string>
 </resources>
 
 <!--

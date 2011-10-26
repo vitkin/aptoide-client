@@ -40,8 +40,7 @@ public class GestureAlphabet implements GestureOverlayView.OnGesturePerformedLis
 	    		if(react(predictions.get(0).name)){
 			    	if(predictions.get(0).score >= Configs.MIN_SEARCH_GESTURE_CONFIANCE){
 				    	String action = predictions.get(0).name;
-				        
-					    	
+				        	
 				        int index = searchIndexOfApk(action.charAt(0));
 				        if(index>=0){
 				        	Toast.makeText(context, context.getString(R.string.moving_to)+" "+action, Toast.LENGTH_SHORT).show();
@@ -49,6 +48,7 @@ public class GestureAlphabet implements GestureOverlayView.OnGesturePerformedLis
 				    	}else{
 				    		Toast.makeText(context, context.getString(R.string.recognized)+" "+action+". "+context.getString(R.string.no_found), Toast.LENGTH_SHORT).show();
 				    	}
+				        
 			    	}else{
 			    		Toast.makeText(context, context.getString(R.string.not_recognized), Toast.LENGTH_SHORT).show();
 			    	}
