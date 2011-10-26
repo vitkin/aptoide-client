@@ -33,7 +33,7 @@
 	      	 
       	 </TableRow>
       	 	
-      	 	<TableRow>
+      	 <TableRow>
       	 
       			<TextView 
 					android:id="@+id/infoMultiversion" 

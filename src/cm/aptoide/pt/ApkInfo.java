@@ -310,19 +310,19 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			
 		});
 		final Button action = (Button) findViewById(R.id.btn1);
-		switch (type) {
-		case 0:
-			action.setText(getString(R.string.install));
-			break;
-
-		case 1:
-			action.setText(getString(R.string.rem));
-			break;
-			
-		case 2:
-			action.setText(getString(R.string.update));
-			break;
-		}
+//		switch (type) {
+//		case 0:
+//			action.setText(getString(R.string.install));
+//			break;
+//
+//		case 1:
+//			action.setText(getString(R.string.rem));
+//			break;
+//			
+//		case 2:
+//			action.setText(getString(R.string.update));
+//			break;
+//		}
 		
 		spinnerMulti = ((Spinner)linearLayout.findViewById(R.id.spinnerMultiVersion));
 		
@@ -346,6 +346,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					
 					rtrn_intent.putExtra("rm", false);
 					rtrn_intent.putExtra("install", true);
+					rtrn_intent.putExtra("in", true);
 					
 					rtrn_intent.putExtra("position", pos);
 					
@@ -389,8 +390,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		TextView apk_version = (TextView)findViewById(R.id.app_ver);
 		
-		if(type == 1){
-			apk_version.setText(this.getString(R.string.version_inst)+": " + versionInstApk!=null?versionInstApk.getVersion(): "Not available");
+		if(type == 1 || type == 2){
+			apk_version.setText(this.getString(R.string.version_inst)+": " + ( versionInstApk!=null?versionInstApk.getVersion(): "Not available" ) );
 		}else{
 			apk_version.setVisibility(View.INVISIBLE);
 		}
@@ -468,11 +469,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			
 			
 			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
-				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions, "Version", "Size", "Downloads");
+				= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions);
 			spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
 			spinnerMulti.setAdapter(spinnerMultiAdapter );
 			if(type==2){
-				
+				//Tab updates
 				spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener(){
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
@@ -488,8 +489,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								previousGetter.cancel();
 							resetScreenshots.sendEmptyMessage(0);
 							
+							((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatSize((VersionApk)spinnerMulti.getSelectedItem()));
+							
 							previousGetter = new GetScreenShots(apk_ver_str_raw);
 							previousGetter.start();
+							
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
@@ -536,13 +540,16 @@ public class ApkInfo extends Activity implements OnDismissListener{
 									action.setText("Reinstall");
 								}else if(result<0) {
 									action.setText(R.string.downgrade);
+								}else if(result>0) {
+									action.setText(R.string.update);
 								}
 								
 								if(previousGetter!=null){
 									previousGetter.cancel();
-									
 								}
 								resetScreenshots.sendEmptyMessage(0);
+								
+								((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatInfo((VersionApk)spinnerMulti.getSelectedItem()));
 								
 								previousGetter = new GetScreenShots(apk_ver_str_raw);
 								previousGetter.start();
@@ -577,6 +584,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 						if(previousGetter!=null)
 							previousGetter.cancel();
 						resetScreenshots.sendEmptyMessage(0);
+						
+						((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatSize((VersionApk)spinnerMulti.getSelectedItem()));
 						
 						previousGetter = new GetScreenShots(apk_ver_str_raw);
 						previousGetter.start();
@@ -705,8 +714,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		likes.setText(this.getString(R.string.loading_likes));
 		dislikes.setText("");
-//		dislike.setVisibility(View.INVISIBLE);
-//		like.setVisibility(View.INVISIBLE);
+//		dislike.setImageResource(R.drawable.dontlike);
+//		like.setImageResource(R.drawable.like);
 		
 		if(tastePoster!=null)
 			tastePoster.cancel(true);

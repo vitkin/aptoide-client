@@ -19,16 +19,13 @@ import android.widget.TextView;
  */
 public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapter<T> {
 	
-	private String versionLabel;
-	private String sizeLabel;
-	private String downLabel;
+	private static String versionLabel 	= "Version";
+	private static String sizeLabel 	= "Size";
+	private static String downLabel 	= "Downloads";
 	
 	public MultiversionSpinnerAdapter(Activity context, int textViewResourceId,
-			List<T> objects,String versionLabel, String sizeLabel, String downLabel) {
+			List<T> objects) {
 		super(context, textViewResourceId, objects);
-		this.versionLabel = versionLabel;
-		this.sizeLabel = sizeLabel;
-		this.downLabel = downLabel;
 	}
 	
 	/**
@@ -42,13 +39,13 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 		}
 		
 		TextViewFocused multiVersionItemVersion = (TextViewFocused) convertView.findViewById(R.id.versionspinnermultiversionSelected);
-		TextView multiVersionItemInfo = (TextView) convertView.findViewById(R.id.infopinnermultiversionSelected);
+//		TextView multiVersionItemInfo = (TextView) convertView.findViewById(R.id.infopinnermultiversionSelected);
 		T currentEntry = super.getItem(position);
 		
 		multiVersionItemVersion.setText(
 				versionLabel+" "+currentEntry.getVersion());
-		multiVersionItemInfo.setText(
-				formatSize(currentEntry)+", "+formatDownloads(currentEntry));
+//		multiVersionItemInfo.setText(
+//				formatSize(currentEntry)+", "+formatDownloads(currentEntry));
 		
 		return convertView;
 	}
@@ -75,12 +72,16 @@ public class MultiversionSpinnerAdapter<T extends VersionApk> extends ArrayAdapt
 	
 	}
 	
-	private String formatSize(VersionApk version){
+	public static String formatSize(VersionApk version){
 		return sizeLabel + " " + ((version.getSize()>0)?(version.getSize()+ " kb"):"not available") ;
 	}
 	
-	private String formatDownloads(VersionApk version){
+	public static String formatDownloads(VersionApk version){
 		return downLabel + " " + ((version.getDownloads()>=0)?version.getDownloads():"not available");
+	}
+	
+	public static String formatInfo(VersionApk version){
+		return formatSize(version)+", "+formatDownloads(version);
 	}
 	
 	/**

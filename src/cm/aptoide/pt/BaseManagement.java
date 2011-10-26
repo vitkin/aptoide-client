@@ -2,6 +2,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -461,11 +463,11 @@ public class BaseManagement extends Activity {
 							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 3);
-							instMap.add(apk_line);
 //							updtMap.add(apk_line);
+							instMap.add(apk_line);
+
 							
 						}else{
-							
 							apk_line.put("status", "Version: " + node.ver);
 							apk_line.put("name", node.name);
 							availMap.add(apk_line);
@@ -473,22 +475,33 @@ public class BaseManagement extends Activity {
 						
 					}
 					
-//					Collections.sort(instMap, new Comparator<Map<String,Object>>(){
-//
-//						public int compare(Map<String, Object> map1, Map<String, Object> map2) {	
-//							if(((Integer)map1.get("statusSort"))==2){
-//								if(((Integer)map2.get("statusSort"))!=2){
-//									return -1;
-//								} else{ 
-//									return 0; 
-//								}
-//							}
-//							
-//							return 1;
-//						}
-//					});
-//					
-//					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
+					Comparator<Map<String, Object>> alphabeticComp =new Comparator<Map<String,Object>>(){
+						//Order alphabetic ins
+						public int compare(Map<String, Object> map1, Map<String, Object> map2) {	
+							
+							
+							String name1 = ((String)map1.get("name2"))!=null?((String)map1.get("name2")):((String)map1.get("name1"));
+							String name2 = ((String)map2.get("name2"))!=null?((String)map2.get("name2")):((String)map2.get("name1"));
+							
+							if(name1!=null && name1.length()>0){
+								
+								if(name2!=null && name2.length()>0){
+									return ((int)(name1.charAt(0)))-((int)(name2.charAt(0)));
+								}
+								
+								return 1;
+								
+							}
+							
+							return (name2==null || name2.length()==0)?0:-1;
+							
+						}
+					};
+					
+					Collections.sort(instMap, alphabeticComp);
+					Collections.sort(updtMap, alphabeticComp);
+					
+					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
 					
 					availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
 							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});

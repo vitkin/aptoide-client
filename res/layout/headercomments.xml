@@ -62,15 +62,24 @@
 		           	
 		           		</TableRow>
 	           		
-		           		<TableRow>
+		           		<TableRow android:paddingTop="15.0dip">
 		           			<Spinner
 		   						android:id="@+id/spinnerMultiVersion"
 		   						android:prompt="@string/multi_ver_prompt"
 		   						android:layout_gravity="left"
 		   						android:layout_width="40sp"
-		   						android:layout_height="wrap_content" />
+		   						android:layout_height="wrap_content"
+		   						 />
 		           		</TableRow>
 		           	
+		           		<TableRow android:paddingTop="10.0dip">
+		           			<TextView android:id="@+id/versionInfo"
+			           			android:gravity="left"
+		                        android:layout_width="fill_parent"
+		                        android:layout_height="wrap_content"
+		                        android:textColor="#FFFFFF"
+		                        />
+		           		</TableRow>
 		           	</TableLayout>
             <TextView 
             		android:textAppearance="?android:textAppearanceLarge" 

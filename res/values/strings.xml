@@ -54,9 +54,9 @@
     <string name="comments_unavailable">Comments unavailable</string>
     <string name="credentialssettings">Bazaar login</string>
     <string name="clearcredentials">Clear login</string>
-    <string name="clearcredentials_summary">Will unset your current login</string>
+    <string name="clearcredentials_summary">Unset your current login</string>
     <string name="setcredentials">Bazaar Login</string>
-    <string name="setcredentials_summary">Will set a new login</string>
+    <string name="setcredentials_summary">Set a new login</string>
     <string name="credentialscleared">Login cleared</string>
     <string name="credentialscleared_des">Your credentials have been unsetted</string>
     <string name="commentadded">Your comment as been successfully submitted</string>
@@ -67,14 +67,15 @@
     <string name="loading_likes">Likes loading...</string>
     <string name="postingcomment">Posting your comment...</string>
     <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
-    <string name="opinionsuccess">Your like or don\'t like was successfully submitted</string>
-    <string name="postingtaste">Your opinion is being submitted.</string>
+    <string name="opinionsuccess">Your request was successfully submitted</string>
+    <string name="postingtaste">Your request is being submitted</string>
     <string name="unabletoexecute">Unable to execute</string>
     <string name="loggingin">Logging in...</string>
     <string name="tastenotavailable">Likes not available</string>
     <string name="downgrade_available">downgrade available</string>
     <string name="loading_comments">Loading comments...</string>
     <string name="moving_to">Moving to</string>
+    <string name="recognized">Recognized</string>
 </resources>
 
 <!--
