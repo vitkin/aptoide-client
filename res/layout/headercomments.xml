@@ -63,6 +63,7 @@
 		           		</TableRow>
 	           		
 		           		<TableRow>
+
 		           			<Spinner
 		   						android:id="@+id/spinnerMultiVersion"
 		   						android:prompt="@string/multi_ver_prompt"
@@ -70,8 +71,20 @@
 		   						android:layout_width="40sp"
 		   						android:layout_height="wrap_content" />
 		           		</TableRow>
+
+		           		<TableRow >
+
+		           			<CheckBox
+		           			    android:id="@+id/download_later"
+		           			    android:layout_width="wrap_content"
+		           			    android:layout_height="wrap_content"
+		           			    android:paddingLeft="40sp"
+		           			    android:text="@string/download_later" />
+
+		           		</TableRow>
 		           	
 		           	</TableLayout>
+
             <TextView 
             		android:textAppearance="?android:textAppearanceLarge" 
             		android:textSize="18.0sp" 

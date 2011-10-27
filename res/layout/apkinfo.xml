@@ -114,120 +114,71 @@
             			
     	</RelativeLayout>	
     	
-    	
-    	
-        		
-    	<RelativeLayout 
-    				android:id="@+id/root"
-    				android:layout_width="fill_parent" 
-    				android:layout_height="wrap_content"
-    				 >
-    		
-    		<ListView
-    			android:id="@+id/listComments" 
-    			
-    			android:layout_height="wrap_content" 
-    			android:layout_width="fill_parent"
-        		
-        		android:divider="@drawable/list_comments_divider"
-        		android:dividerHeight="1px"
-       			android:cacheColorHint="#00000000"
-       			android:layout_marginBottom="50dp"
-        		/>
-        		
-        	<LinearLayout 
-        		android:id="@+id/listview_footer"
-        		android:layout_height="wrap_content"
-     			android:layout_width="fill_parent"
-     			android:layout_alignParentBottom="true"
-     			android:orientation="horizontal">
-     			
-     			<!-- <TabHost
-     				android:layout_width="fill_parent"
-     				android:layout_height="wrap_content"
-     				android:id="@android:id/tabhost"
-     				>
+    	<RelativeLayout
+    	    android:id="@+id/root"
+    	    android:layout_width="fill_parent"
+    	    android:layout_height="wrap_content" >
 
-				<TabWidget
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:id="@android:id/tabs"
-					
-					/>
-				
-				<FrameLayout
-					android:id="@android:id/tabcontent"
-					android:layout_width="fill_parent"
-					android:layout_height="200px"
-					android:paddingTop="65px" />
-     			</TabHost>-->
-     			
-     			<Button 
-	       			android:id="@+id/btn1" 
-	       			android:layout_weight=".50" 
-	       			android:layout_width="fill_parent" 
-	       			android:layout_height="50dp"
-	       			android:textSize="15sp" 
-	       			android:text="@string/install"
-	       			
-	       			
-	       			android:textColor="#000000"	
-	       			/>
-	       			<!-- 
-	       				android:background="@drawable/apkinfofooterindicator"
-	       				android:textColor="#FFFFFF"
-	       			-->
-					<!-- <View
-					    android:layout_width="1dip"
-					    android:layout_height="fill_parent"
-					    android:background="#000000"
-					/>-->
-				
-				     			
-     			<Button 
-	       			android:id="@+id/btnUninstall" 
-	       			android:layout_weight="1" 
-	       			android:layout_width="fill_parent" 
-	       			android:layout_height="50dp"
-	       			android:textSize="15sp"
-	       			android:text="@string/uninstall"
-	       			
-	       			
-	       			android:textColor="#000000"
-	       				
-	       			 />
-     			
-     			
-     				<!-- <View
-					    android:layout_width="1dip"
-					    android:layout_height="fill_parent"
-					    android:background="#000000"
-					/>-->
-     			
-     			
-				<Button
-	       			android:id="@+id/btn_market"
-	       			android:layout_weight=".50"  
-	       			android:layout_width="fill_parent" 
-	       			android:layout_height="50dp"
-	       			android:textSize="12sp"
-	       			
-	       			android:text="@string/btn_search_market"
-	       			
-            		
-            		
-	       			android:textColor="#000000"	
-            		/>
-            		<!-- android:singleLine="true"
-	       			android:ellipsize="marquee"
-            		android:marqueeRepeatLimit="marquee_forever" -->
-            		
-	       			<!-- 
-	       				android:background="@drawable/apkinfofooterindicator"
-	       				android:textColor="#FFFFFF"	
-	       			 -->
-            </LinearLayout>	
-        				
+    	    <ListView
+    	        android:id="@+id/listComments"
+    	        android:layout_width="fill_parent"
+    	        android:layout_height="wrap_content"
+    	        android:layout_marginBottom="50dp"
+    	        android:cacheColorHint="#00000000"
+    	        android:divider="@drawable/list_comments_divider"
+    	        android:dividerHeight="1px" />
+
+    	    <LinearLayout
+    	        android:id="@+id/linearLayout1"
+    	        android:layout_width="fill_parent"
+    	        android:layout_height="wrap_content"
+    	        android:layout_alignParentBottom="true"
+    	        android:orientation="vertical" >
+
+    	        <LinearLayout
+    	            android:id="@+id/listview_footer"
+    	            android:layout_width="fill_parent"
+    	            android:layout_height="wrap_content"
+    	            android:orientation="horizontal" >
+
+    	            <Button
+    	                android:id="@+id/btn1"
+    	                android:layout_width="fill_parent"
+    	                android:layout_height="50dp"
+    	                android:layout_weight=".50"
+    	                android:text="@string/install"
+    	                android:textColor="#000000"
+    	                android:textSize="15sp" />
+
+    	            <Button
+    	                android:id="@+id/btnUninstall"
+    	                android:layout_width="fill_parent"
+    	                android:layout_height="50dp"
+    	                android:layout_weight="1"
+    	                android:text="@string/uninstall"
+    	                android:textColor="#000000"
+    	                android:textSize="15sp" />
+
+    	            <Button
+    	                android:id="@+id/btn_market"
+    	                android:layout_width="fill_parent"
+    	                android:layout_height="50dp"
+    	                android:layout_weight=".50"
+    	                android:text="@string/btn_search_market"
+    	                android:textColor="#000000"
+    	                android:textSize="12sp" />
+    	        </LinearLayout>
+
+<!--    	        <CheckBox-->
+<!--    	            android:id="@+id/checkBox1"-->
+<!--    	            android:layout_width="fill_parent"-->
+<!--    	            android:layout_height="wrap_content"-->
+<!--    	            android:background="#80000000"-->
+<!--    	            android:paddingLeft="40sp"-->
+<!--    	            android:text="@string/download_later" />-->
+
+    	    </LinearLayout>
+
     	</RelativeLayout>
         
     </LinearLayout>
