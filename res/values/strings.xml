@@ -74,6 +74,8 @@
     <string name="tastenotavailable">Likes not available</string>
     <string name="downgrade_available">downgrade available</string>
     <string name="loading_comments">Loading comments...</string>
+    <string name="download_later">Schedule Download</string>
+    <string name="add_download_later">Added to Scheduled List</string>
 </resources>
 
 <!--

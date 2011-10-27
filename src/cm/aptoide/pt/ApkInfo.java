@@ -56,6 +56,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -99,6 +100,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private CommentPosterListOnScrollListener loadOnScrollCommentList;
 	private String apk_repo_str;
 	private String apk_id;
+	private CheckBox download_later_box;
 	
 	private ImageView like;
 	private ImageView dislike;
@@ -310,8 +312,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			
 		});
 		final Button action = (Button) findViewById(R.id.btn1);
+		download_later_box = (CheckBox) linearLayout.findViewById(R.id.download_later);
+
 		switch (type) {
 		case 0:
+			
 			action.setText(getString(R.string.install));
 			break;
 
@@ -326,6 +331,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		spinnerMulti = ((Spinner)linearLayout.findViewById(R.id.spinnerMultiVersion));
 		
+		
+			
+		
+		
 		action.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -334,34 +343,43 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				
 				switch (type) {
 				case 0:
-					
+					if(download_later_box.isChecked()){
+						Toast.makeText(mctx, R.string.add_download_later, 2000).show();
+						
+					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					rtrn_intent.putExtra("in", true);
 					rtrn_intent.putExtra("position", pos);
-					jback = true;
+					jback = true;}
 					break;
-
 				case 1:
+					if(download_later_box.isChecked()){
+						Toast.makeText(mctx, R.string.add_download_later, 2000).show();
+						
+					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
-					
 					rtrn_intent.putExtra("rm", false);
 					rtrn_intent.putExtra("install", true);
 					
 					rtrn_intent.putExtra("position", pos);
 					
-					jback = true;
+					jback = true;}
 					break;
 
 				case 2:
+					if(download_later_box.isChecked()){
+						Toast.makeText(mctx, R.string.add_download_later, 2000).show();
+						
+					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
-					jback = true;
+					jback = true;}
 					break;
 				}
 				
 				
 				rtrn_intent.putExtra("version", ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 				
-				
+				if(jback)
 				finish();
 				
 			}
@@ -742,12 +760,14 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view, ContextMenuInfo menuInfo) {
 		//Log.d("Aptoide get",((AdapterContextMenuInfo)menuInfo).position+"");
+		
 		if (((AdapterView.AdapterContextMenuInfo)menuInfo).id!=-1){
 			menu.setHeaderTitle(this.getString(R.string.whattodo));
 				for(Event item:Event.values())
 					menu.add(0, item.getId(), 0, item.getString());
 		}else{
 			super.onCreateContextMenu(menu, view, menuInfo);
+			
 		}
 		
 	}
