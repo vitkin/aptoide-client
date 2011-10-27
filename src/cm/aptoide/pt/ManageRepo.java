@@ -155,8 +155,13 @@ public class ManageRepo extends ListActivity{
 				alrt.show();
 			}
 		}else if(i.hasExtra("newrepo")){
-			final String repo = i.getStringExtra("newrepo");
 			
+			
+			final String repo = i.getStringExtra("newrepo");
+			Vector<String> server_lst = db.getServersName();
+			if(serverContainsRepo(server_lst, repo)){
+				finish();
+			}else{
 			AlertDialog alrt = new AlertDialog.Builder(this).create();
 			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -173,7 +178,7 @@ public class ManageRepo extends ListActivity{
 			    	  //exit
 			      }});
 			alrt.show();
-		}
+		}}
 	}
 	
 	private boolean serverContainsRepo(Vector<String> serverList, String repo){
@@ -372,10 +377,8 @@ public class ManageRepo extends ListActivity{
 					Message msg = new Message();
 					EditText uri = (EditText) alrt.findViewById(R.id.edit_uri);
 					String uri_str = uri.getText().toString();
-					
-					// fixed #577 StringIndexOutOfBoundsException on uri_str.length() == 0
-					
-					if(uri_str.length()!=0 &&uri_str.charAt(uri_str.length()-1)!='/'){
+//					
+					if(uri_str.length()!=0 && uri_str.charAt(uri_str.length()-1)!='/'){
 						uri_str = uri_str+'/';
 						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
 					}
@@ -398,12 +401,16 @@ public class ManageRepo extends ListActivity{
 					switch (result) {
 					case OK:
 						Log.d("Aptoide-ManageRepo", "return ok");
+						Vector<String> serverList = db.getServersName();
 						msg.obj = 0;
+						if(serverContainsRepo(serverList, uri_str)){
+//							finish();
+						}else{
 						db.addServer(uri_str);
 						if(user != null && pwd != null){
 							db.addLogin(user, pwd, uri_str);	
 						}
-						change = true;
+						change = true;}
 						redraw();
 						break;
 					
@@ -442,11 +449,15 @@ public class ManageRepo extends ListActivity{
 						case OK:
 							Log.d("Aptoide-ManageRepo", "return ok");
 							msg.obj = 0;
+							Vector<String> serverList = db.getServersName();
+							if(serverContainsRepo(serverList, uri_str)){
+//								finish();
+							}else{
 							db.addServer(uri_str);
 							if(user != null && pwd != null){
 								db.addLogin(user, pwd, uri_str);	
 							}
-							change = true;
+							change = true;}
 							redraw();
 							break;
 						
