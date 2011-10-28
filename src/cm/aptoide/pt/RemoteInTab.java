@@ -460,6 +460,7 @@ public class RemoteInTab extends TabActivity {
 			.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
+		menu.add(Menu.NONE,EnumOptionsMenu.DOWNLOAD_SCHEDULED.ordinal(),EnumOptionsMenu.DOWNLOAD_SCHEDULED.ordinal(),"Scheduled");
 		return true;
 	}
 	
@@ -496,7 +497,11 @@ public class RemoteInTab extends TabActivity {
 		case SETTINGS:
 			Intent s = new Intent(RemoteInTab.this, Settings.class);
 			startActivityForResult(s,SETTINGS_FLAG);
-			return true;	
+			return true;
+		case DOWNLOAD_SCHEDULED:
+			Intent sch_download = new Intent(RemoteInTab.this,ScheduledDownload.class);
+			startActivity(sch_download);
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}

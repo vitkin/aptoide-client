@@ -74,7 +74,7 @@
 
 		<activity android:name="ManageRepo" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTop">
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
-		</activity>
+		</activity><activity android:name="ScheduledDownload" android:theme="@android:style/Theme.NoTitleBar"></activity>
 
 
 		<activity android:name="Settings" android:launchMode="singleTask"/>
@@ -85,6 +85,7 @@
 		<service android:name=".FetchIconsService"></service>
 		<service android:name=".FetchExtrasService"></service>
 		<service android:name=".DownloadQueueService" />
+		
 
 	</application>
 

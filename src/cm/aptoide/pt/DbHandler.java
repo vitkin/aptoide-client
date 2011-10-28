@@ -142,6 +142,7 @@ public class DbHandler {
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
 			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
+			
 		}else if(!db.isOpen()){
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
 		}
