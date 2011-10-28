@@ -31,6 +31,7 @@ import cm.aptoide.pt.ApkNodeFull;
 import cm.aptoide.pt.DownloadNode;
 import cm.aptoide.pt.ServerNode;
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.model.Application;
 import cm.aptoide.pt.data.model.Category;
 import cm.aptoide.pt.data.model.Repository;
 import cm.aptoide.pt.data.system.InstalledPackages;
@@ -125,7 +126,7 @@ public class ManagerDatabase {
 
 	
 	/**
-	 * insertCategories, inserts categories set in Constants.
+	 * initCategories, inserts categories set in Constants.
 	 * 					this insertHelper pattern: prepareforinsert, bind, bind, execute
 	 * 					is not thread safe. Only used here because this is methid is only
 	 * 					called in the beginning.
@@ -134,30 +135,36 @@ public class ManagerDatabase {
 	 * @deprecated
 	 * 
 	 */
-//	private void initCategories(){
-//		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
-//		
-//		try{
-//			db.beginTransaction();
-//			for (String category : Constants.CATEGORIES) {
+	private void initCategories(){
+		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
+		
+		try{
+			db.beginTransaction();
+			for (String category : Constants.CATEGORIES) {
 //				insertCategory.prepareForInsert();
 //				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
 //				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
 //				if(insertCategory.insert() == -1){
 //					//TODO throw exception;
 //				}
-//			}
-//		}catch (Exception e) {
-//			// TODO: send to errorHandler the exception
-//		}finally{
-//			db.endTransaction();
-//		}
-//		
-//	}
+			}
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+		
+	}
 	
-//	
 	
-
+	
+	/**
+	 * 
+	 * ManagerDatabase Constructor
+	 *
+	 * @param context
+	 * 
+	 */
 	public ManagerDatabase(Context context) {
 		if(db == null){
 			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
@@ -252,10 +259,19 @@ public class ManagerDatabase {
 		
 	}
 	
+	/**
+	 * insertCategories, handles the insertion of categories received from bazaar
+	 * 
+	 * @param categories
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
 	public void insertCategories(ArrayList<Category> categories){
 		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
-		ArrayList<ContentValues> CategoriesRelations = new ArrayList<ContentValues>(categories.size());
-		ContentValues CategoryRelation;
+		ArrayList<ContentValues> subCategoriesRelations = new ArrayList<ContentValues>(categories.size());
+		ContentValues subCategoryRelation;
 		
 		try{
 			db.beginTransaction();
@@ -268,10 +284,10 @@ public class ManagerDatabase {
 						if(insertCategory.insert(subCategory.getValues()) == Constants.DB_ERROR){
 							//TODO throw exception;
 						}
-						CategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
-						CategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, category.getHashid());
-						CategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, subCategory.getHashid());
-						CategoriesRelations.add(CategoryRelation);
+						subCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
+						subCategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, category.getHashid());
+						subCategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, subCategory.getHashid());
+						subCategoriesRelations.add(subCategoryRelation);
 					}
 				}
 			}
@@ -287,7 +303,7 @@ public class ManagerDatabase {
 		
 		try{
 			db.beginTransaction();
-			for (ContentValues categoryRelationValues : CategoriesRelations) {
+			for (ContentValues categoryRelationValues : subCategoriesRelations) {
 				if(insertCategoryRelation.insert(categoryRelationValues) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -354,6 +370,73 @@ public class ManagerDatabase {
 	}
 	
 	
+	public void insertRepository(Repository repository){
+		try{
+			db.beginTransaction();
+			if(db.insert(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			if(repository.requiresLogin()){
+				if(db.insert(Constants.TABLE_LOGIN, null, repository.getLogin().getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	public void insertApplications(ArrayList<Application> applications){
+		InsertHelper insertApplication = new InsertHelper(db, Constants.TABLE_APPLICATION);
+		ArrayList<ContentValues> appCategoriesRelations = new ArrayList<ContentValues>(applications.size());
+		ContentValues appCategoryRelation;
+		
+		try{
+			db.beginTransaction();
+			for (Application application : applications) {
+				if(insertApplication.insert(application.getValues()) == Constants.DB_ERROR){	//TODO**************************HERE***********************//
+					//TODO throw exception;
+				}
+				if(application.hasChilds()){
+					for (Category subCategory : application.getSubCategories()) {
+						if(insertApplication.insert(subCategory.getValues()) == Constants.DB_ERROR){
+							//TODO throw exception;
+						}
+						appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
+						appCategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, application.getHashid());
+						appCategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, subCategory.getHashid());
+						appCategoriesRelations.add(appCategoryRelation);
+					}
+				}
+			}
+			insertApplication.close();
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+		
+		InsertHelper insertCategoryRelation = new InsertHelper(db, Constants.TABLE_SUB_CATEGORY);
+		
+		try{
+			db.beginTransaction();
+			for (ContentValues categoryRelationValues : appCategoriesRelations) {
+				if(insertCategoryRelation.insert(categoryRelationValues) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertCategoryRelation.close();
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
 	
 	
 //	public void delApk(String apkid, String ver){
