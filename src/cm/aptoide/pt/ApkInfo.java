@@ -369,7 +369,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 2:
 					if(download_later_box.isChecked()){
 						Toast.makeText(mctx, R.string.add_download_later, 2000).show();
-						
+						addSchedulledDownload(apk_id);
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					jback = true;}
@@ -702,6 +702,12 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 	}
 	
+	protected void addSchedulledDownload(String apkId) {
+		// TODO Auto-generated method stub
+		
+		
+	}
+
 	/**
 	 * 
 	 */
