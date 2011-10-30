@@ -100,11 +100,14 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			}			
 		}.start();
 		
-		gestureAlphabet = new GestureAlphabet(this, lv);
+		GestureOverlayView gestures = (GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList);
 		if(Configs.SEARCH_GESTURE_ON){
-			GestureOverlayView gestures = (GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList);
+			gestureAlphabet = new GestureAlphabet(this, lv);
 			gestures.setUncertainGestureColor(android.R.color.transparent);
 			//gestures.removeOnGestureListener(listener)
+		} else {
+			gestureAlphabet = null;
+			gestures.setEnabled(false);
 		}
 		
 	}
@@ -176,7 +179,10 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).addOnGesturePerformedListener(gestureAlphabet);
+		
+		if(gestureAlphabet!=null){
+			((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).addOnGesturePerformedListener(gestureAlphabet);
+		}
 		
 		new Thread(){
 			@Override
@@ -195,7 +201,9 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 
 	@Override
 	protected void onPause() {
-		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).removeOnGesturePerformedListener(gestureAlphabet);
+		if(gestureAlphabet!=null){
+			((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).removeOnGesturePerformedListener(gestureAlphabet);
+		}
 		super.onPause();
 	}
 	

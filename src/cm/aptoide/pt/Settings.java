@@ -27,10 +27,12 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
@@ -63,6 +65,31 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	private Preference clear_cache = null;
 	
 	private DownloadQueueService downloadQueueService;
+	
+	protected class LoginListener extends BroadcastReceiver {
+		
+		private Preference clear_credentials;
+		private SharedPreferences sPref;
+		public LoginListener(Preference clear_credentials, SharedPreferences sPref){
+			
+			this.clear_credentials = clear_credentials;
+			this.sPref = sPref;
+		}
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d("Aptoide","Settings received "+intent.getAction());
+			if (intent.getAction().equals("pt.caixamagica.aptoide.LOGIN_ACTION")) {
+				if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null){
+					clear_credentials.setEnabled(false);
+				}else{
+					clear_credentials.setEnabled(true);
+				}
+			}
+		}
+	}
+	
+	
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
 	        // This is called when the connection with the service has been
@@ -101,6 +128,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		lst_pref_icns = (ListPreference) findPreference("icdown");
 		
 		sPref = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		SharedPreferences userPref = this.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		sPrefFull = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEditFull = sPrefFull.edit();
 
@@ -122,6 +150,10 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		
 		if((Configs.COMMENTS_ADD_ON && Configs.COMMENTS_ON) || (Configs.TASTE_ADD_ON && Configs.TASTE_ON)){
 			
+			if(userPref.getString(Configs.LOGIN_USER_NAME, null)==null){
+				((Preference)findPreference("clearcredentials")).setEnabled(false);
+			}
+			
 			clear_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 				
 				public boolean onPreferenceClick(Preference preference) {
@@ -130,6 +162,11 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 					prefEditFull.remove( Configs.LOGIN_PASSWORD );
 					prefEditFull.remove( Configs.LOGIN_USER_ID );
 					prefEditFull.commit();
+					
+					Log.d("Aptoide", "Login action broadcast sent");
+					Intent loginAction = new Intent();
+					loginAction.setAction("pt.caixamagica.aptoide.LOGIN_ACTION");
+					Settings.this.getApplicationContext().sendBroadcast(loginAction);
 					
 					final AlertDialog alrtClear = new AlertDialog.Builder(mctx).create();
 					alrtClear.setTitle(mctx.getString(R.string.credentialscleared));
@@ -141,25 +178,22 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 					});
 					alrtClear.show();
 					
-					
-					
 					return true;
 					
 				}
 			});
 			
-		
-			
-	
-			
 			set_credentials.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-				
 				public boolean onPreferenceClick(Preference preference) {
 					LoginDialog loginComments = new LoginDialog(Settings.this, LoginDialog.InvoqueNature.OVERRIDE_CREDENTIALS);
 					loginComments.show();
 					return true;	
 				}
 			});
+			
+			Log.d("Aptoide", "Broadcast registered");
+			
+			registerReceiver(new LoginListener(clear_credentials, userPref), new IntentFilter("pt.caixamagica.aptoide.LOGIN_ACTION"));
 			
 		}else{
 			clear_credentials.setEnabled(false);
@@ -248,6 +282,8 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
+		
+		
 	}
 	
 	@Override

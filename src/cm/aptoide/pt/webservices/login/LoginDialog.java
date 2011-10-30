@@ -28,10 +28,13 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -118,6 +121,17 @@ public class LoginDialog extends Dialog{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.login);
 		
+		((Button)this.findViewById(R.id.newAccount)).setOnClickListener(new View.OnClickListener(){
+			
+			public void onClick(View v) {
+				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.bazaarandroid.com/account/new-user"));
+				LoginDialog.this.getContext().startActivity(browserIntent);
+			}
+			
+		});
+		
+		
+		
 		this.setTitle(this.getContext().getString(R.string.setcredentials));
 		
 		username = ((EditText)findViewById(R.id.user));
@@ -160,8 +174,14 @@ public class LoginDialog extends Dialog{
 								if(successLogin.get()){
 									
 									if(success){
-										LoginDialog.this.dismiss();
 										isLoginSubmited = true;
+										LoginDialog.this.dismiss();
+										
+										Log.d("Aptoide", "Login action broadcast sent");
+										Intent loginAction = new Intent();
+										loginAction.setAction("pt.caixamagica.aptoide.LOGIN_ACTION");
+										LoginDialog.this.getContext().sendBroadcast(loginAction);
+										
 									}
 									
 								}else{

@@ -475,13 +475,13 @@ public class BaseManagement extends Activity {
 						
 					}
 					
-					Comparator<Map<String, Object>> alphabeticComp =new Comparator<Map<String,Object>>(){
+					Comparator<Map<String, Object>> alphabeticComp = new Comparator<Map<String,Object>>(){
 						//Order alphabetic ins
 						public int compare(Map<String, Object> map1, Map<String, Object> map2) {	
 							
 							
-							String name1 = ((String)map1.get("name2"))!=null?((String)map1.get("name2")):((String)map1.get("name1"));
-							String name2 = ((String)map2.get("name2"))!=null?((String)map2.get("name2")):((String)map2.get("name1"));
+							String name1 = ((String)map1.get("name2"))!=null?((String)map1.get("name2")):((String)map1.get("name"));
+							String name2 = ((String)map2.get("name2"))!=null?((String)map2.get("name2")):((String)map2.get("name"));
 							
 							if(name1!=null && name1.length()>0){
 								
