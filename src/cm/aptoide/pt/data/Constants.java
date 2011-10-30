@@ -30,7 +30,6 @@ import android.os.Environment;
 public class Constants {
 	public static final int KBYTES_TO_BYTES = 1024;
 	public static final int EMPTY_INT = 0;
-	public static final String EMPTY_STRING = "";
 	
 	public static final String CACHE_PATH = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/";
 	public static final String SELF_UPDATE_FILE = CACHE_PATH + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
@@ -64,7 +63,7 @@ public class Constants {
 	public static final String KEY_REPO_URI = "uri";
 	public static final String KEY_REPO_BASE_PATH = "base_path";
 	public static final String KEY_REPO_SIZE = "repo_size";
-	public static final String KEY_REPO_UPDATE_TIME = "update_time";
+	public static final String KEY_REPO_UPDATE_TIME = "update_time";	//TODO may be useless if delta is not cached on server, which is probable
 	public static final String KEY_REPO_DELTA = "delta";
 	public static final String KEY_REPO_IN_USE = "in_use";
 	public static final int NUMBER_OF_COLUMNS_REPO = 7;
@@ -108,22 +107,21 @@ public class Constants {
 	public static final String KEY_APP_INSTALLED_NAME = "app_name";
 	public static final int NUMBER_OF_COLUMNS_APP_INSTALLED = 5;
 	
-	public static final String TABLE_ICON = "icon";
+	public static final String TABLE_ICON_INFO = "icon_info";
 	public static final String KEY_ICON_APP_FULL_HASHID = "app_full_hashid";
 	public static final String KEY_ICON_REMOTE_PATH_TAIL = "remote_icon_path_tail";
 	public static final int NUMBER_OF_COLUMNS_ICON = 2;
 	
-	public static final String TABLE_DOWNLOAD = "download";
+	public static final String TABLE_DOWNLOAD_INFO = "download_info";
 	public static final String KEY_DOWNLOAD_APP_FULL_HASHID = "app_full_hashid";
 	public static final String KEY_DOWNLOAD_REMOTE_PATH_TAIL = "remote_path_tail";
 	public static final String KEY_DOWNLOAD_MD5HASH = "md5hash";
 	public static final String KEY_DOWNLOAD_SIZE = "download_size";
 	public static final int NUMBER_OF_COLUMNS_DOWNLOAD = 4;
 	
-	public static final String TABLE_EXTRA = "extra";
+	public static final String TABLE_EXTRA_INFO = "extra_info";
 	public static final String KEY_EXTRA_APP_FULL_HASHID = "app_full_hashid";
-	public static final String KEY_EXTRA_DESCRIPTION = "description";
-	public static final String KEY_EXTRA_DATE = "extra_date";
+	public static final String KEY_EXTRA_DESCRIPTION = "description";	//TODO test if there is a big performance improvement by sending description to a different table
 	public static final String KEY_EXTRA_RATING = "rating";
 	public static final String KEY_EXTRA_POPULARITY = "popularity";
 	public static final int NUMBER_OF_COLUMNS_EXTRA = 5;
@@ -234,7 +232,7 @@ public class Constants {
 	
 	
 	
-	public static final String CREATE_TABLE_ICON = "CREATE TABLE IF NOT EXISTS " + TABLE_ICON + " ("
+	public static final String CREATE_TABLE_ICON = "CREATE TABLE IF NOT EXISTS " + TABLE_ICON_INFO + " ("
 			+ KEY_ICON_APP_FULL_HASHID + " INTEGER NOT NULL, "
 			+ KEY_ICON_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
 			+ "FOREIGN KEY("+ KEY_ICON_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
@@ -244,7 +242,7 @@ public class Constants {
 	public static final String FOREIGN_KEY_UPDATE_ICON_APP_FULL_HASHID_WEAK = "foreign_key_update_icon_app_full_hashid_weak";
 	
 	
-	public static final String CREATE_TABLE_DOWNLOAD = "CREATE TABLE IF NOT EXISTS " + TABLE_DOWNLOAD + " ("
+	public static final String CREATE_TABLE_DOWNLOAD = "CREATE TABLE IF NOT EXISTS " + TABLE_DOWNLOAD_INFO + " ("
 			+ KEY_DOWNLOAD_APP_FULL_HASHID + " INTEGER NOT NULL, "
 			+ KEY_DOWNLOAD_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
 			+ KEY_DOWNLOAD_MD5HASH + " TEXT NOT NULL, "
@@ -257,14 +255,13 @@ public class Constants {
 
 	
 	
-	public static final String CREATE_TABLE_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_EXTRA + " ("
+	public static final String CREATE_TABLE_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_EXTRA_INFO + " ("
 			+ KEY_EXTRA_APP_FULL_HASHID + " INTEGER NOT NULL, "
 			+ KEY_EXTRA_DESCRIPTION + " TEXT NOT NULL, "
-			+ KEY_EXTRA_DATE + " DATE NOT NULL, "
 			+ KEY_EXTRA_RATING + " INTEGER NOT NULL, "
 			+ KEY_EXTRA_POPULARITY + " INTEGER NOT NULL CHECK ("+KEY_EXTRA_POPULARITY+">=0), "
 			+ "FOREIGN KEY("+ KEY_EXTRA_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_EXTRA_APP_FULL_HASHID +") );";	//TODO integrity restrictions on date and rating
+			+ "PRIMARY KEY("+ KEY_EXTRA_APP_FULL_HASHID +") );";	//TODO integrity restrictions on rating
 
 	public static final String FOREIGN_KEY_INSERT_EXTRA = "foreign_key_insert_extra";
 	public static final String FOREIGN_KEY_UPDATE_EXTRA_APP_FULL_HASHID_WEAK = "foreign_key_update_extra_app_full_hashid_weak";
@@ -332,18 +329,18 @@ public class Constants {
 			+ " AFTER UPDATE OF "+ KEY_APPLICATION_FULL_HASHID  +" ON " + TABLE_APPLICATION
 			+ " FOR EACH ROW BEGIN"
 			+ "     UPDATE "+ TABLE_APP_CATEGORY +" SET "+ KEY_APP_CATEGORY_APP_FULL_HASHID +" = NEW."+ KEY_APPLICATION_FULL_HASHID +" WHERE "+ KEY_APP_CATEGORY_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
-			+ "     UPDATE "+ TABLE_ICON +" SET "+ KEY_ICON_APP_FULL_HASHID +" = NEW."+ KEY_APPLICATION_FULL_HASHID +" WHERE "+ KEY_ICON_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
-			+ "     UPDATE "+ TABLE_DOWNLOAD +" SET "+ KEY_DOWNLOAD_APP_FULL_HASHID +" = NEW."+ KEY_APPLICATION_FULL_HASHID +" WHERE "+ KEY_DOWNLOAD_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
-			+ "     UPDATE "+ TABLE_EXTRA +" SET "+ KEY_EXTRA_APP_FULL_HASHID +" = NEW."+ KEY_APPLICATION_FULL_HASHID +" WHERE "+ KEY_EXTRA_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
+			+ "     UPDATE "+ TABLE_ICON_INFO +" SET "+ KEY_ICON_APP_FULL_HASHID +" = NEW."+ KEY_APPLICATION_FULL_HASHID +" WHERE "+ KEY_ICON_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
+			+ "     UPDATE "+ TABLE_DOWNLOAD_INFO +" SET "+ KEY_DOWNLOAD_APP_FULL_HASHID +" = NEW."+ KEY_APPLICATION_FULL_HASHID +" WHERE "+ KEY_DOWNLOAD_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
+			+ "     UPDATE "+ TABLE_EXTRA_INFO +" SET "+ KEY_EXTRA_APP_FULL_HASHID +" = NEW."+ KEY_APPLICATION_FULL_HASHID +" WHERE "+ KEY_EXTRA_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
 			+ " END;";
 	
 	public static final String CREATE_TRIGGER_APPLICATION_DELETE = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_DELETE_APPLICATION
 			+ " BEFORE DELETE ON" + TABLE_APPLICATION
 			+ " FOR EACH ROW BEGIN"
 			+ "     DELETE FROM "+ TABLE_APP_CATEGORY +" WHERE "+ KEY_APP_CATEGORY_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
-			+ "     DELETE FROM "+ TABLE_ICON +" WHERE "+ KEY_ICON_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
-			+ "     DELETE FROM "+ TABLE_DOWNLOAD +" WHERE "+ KEY_DOWNLOAD_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
-			+ "     DELETE FROM "+ TABLE_EXTRA +" WHERE "+ KEY_EXTRA_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
+			+ "     DELETE FROM "+ TABLE_ICON_INFO +" WHERE "+ KEY_ICON_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
+			+ "     DELETE FROM "+ TABLE_DOWNLOAD_INFO +" WHERE "+ KEY_DOWNLOAD_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
+			+ "     DELETE FROM "+ TABLE_EXTRA_INFO +" WHERE "+ KEY_EXTRA_APP_FULL_HASHID +" = OLD."+ KEY_APPLICATION_FULL_HASHID +");"
 			+ " END;";
 	
 	
@@ -423,17 +420,17 @@ public class Constants {
 	
 	
 	public static final String CREATE_TRIGGER_ICON_INSERT = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_INSERT_ICON
-			+ " BEFORE INSERT ON " + TABLE_ICON
+			+ " BEFORE INSERT ON " + TABLE_ICON_INFO
 			+ " FOR EACH ROW BEGIN"
-			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_ICON +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_ICON +"')"
+			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_ICON_INFO +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_ICON +"')"
 			+ "     WHERE NEW."+ KEY_ICON_APP_FULL_HASHID +" IS NOT NULL"
 			+ "	        AND (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_ICON_APP_FULL_HASHID +") IS NULL;"
 			+ " END;";
 	
 	public static final String CREATE_TRIGGER_ICON_UPDATE_APP_FULL_HASHID_WEAK = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_UPDATE_ICON_APP_FULL_HASHID_WEAK
-			+ " BEFORE UPDATE OF "+ KEY_ICON_APP_FULL_HASHID  +" ON " + TABLE_ICON
+			+ " BEFORE UPDATE OF "+ KEY_ICON_APP_FULL_HASHID  +" ON " + TABLE_ICON_INFO
 			+ " FOR EACH ROW BEGIN"
-			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_ICON +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_ICON_APP_FULL_HASHID_WEAK +"')"
+			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_ICON_INFO +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_ICON_APP_FULL_HASHID_WEAK +"')"
 			+ "    WHERE (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_ICON_APP_FULL_HASHID +") IS NULL;"
 			+ " END;";
 	
@@ -441,17 +438,17 @@ public class Constants {
 	
 	
 	public static final String CREATE_TRIGGER_DOWNLOAD_INSERT = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_INSERT_DOWNLOAD
-			+ " BEFORE INSERT ON " + TABLE_DOWNLOAD
+			+ " BEFORE INSERT ON " + TABLE_DOWNLOAD_INFO
 			+ " FOR EACH ROW BEGIN"
-			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_DOWNLOAD +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_DOWNLOAD +"')"
+			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_DOWNLOAD_INFO +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_DOWNLOAD +"')"
 			+ "     WHERE NEW."+ KEY_DOWNLOAD_APP_FULL_HASHID +" IS NOT NULL"
 			+ "	        AND (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_DOWNLOAD_APP_FULL_HASHID +") IS NULL;"
 			+ " END;";
 	
 	public static final String CREATE_TRIGGER_DOWNLOAD_UPDATE_APP_FULL_HASHID_WEAK = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_UPDATE_DOWNLOAD_APP_FULL_HASHID_WEAK
-			+ " BEFORE UPDATE OF "+ KEY_DOWNLOAD_APP_FULL_HASHID  +" ON " + TABLE_DOWNLOAD
+			+ " BEFORE UPDATE OF "+ KEY_DOWNLOAD_APP_FULL_HASHID  +" ON " + TABLE_DOWNLOAD_INFO
 			+ " FOR EACH ROW BEGIN"
-			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_DOWNLOAD +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_DOWNLOAD_APP_FULL_HASHID_WEAK +"')"
+			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_DOWNLOAD_INFO +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_DOWNLOAD_APP_FULL_HASHID_WEAK +"')"
 			+ "    WHERE (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_DOWNLOAD_APP_FULL_HASHID +") IS NULL;"
 			+ " END;";
 	
@@ -459,17 +456,17 @@ public class Constants {
 	
 	
 	public static final String CREATE_TRIGGER_EXTRA_INSERT = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_INSERT_EXTRA
-			+ " BEFORE INSERT ON " + TABLE_EXTRA
+			+ " BEFORE INSERT ON " + TABLE_EXTRA_INFO
 			+ " FOR EACH ROW BEGIN"
-			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_EXTRA +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_EXTRA +"')"
+			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_EXTRA_INFO +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_EXTRA +"')"
 			+ "     WHERE NEW."+ KEY_EXTRA_APP_FULL_HASHID +" IS NOT NULL"
 			+ "	        AND (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_EXTRA_APP_FULL_HASHID +") IS NULL;"
 			+ " END;";
 	
 	public static final String CREATE_TRIGGER_EXTRA_UPDATE_APP_FULL_HASHID_WEAK = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_UPDATE_EXTRA_APP_FULL_HASHID_WEAK
-			+ " BEFORE UPDATE OF "+ KEY_EXTRA_APP_FULL_HASHID  +" ON " + TABLE_EXTRA
+			+ " BEFORE UPDATE OF "+ KEY_EXTRA_APP_FULL_HASHID  +" ON " + TABLE_EXTRA_INFO
 			+ " FOR EACH ROW BEGIN"
-			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_EXTRA +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_EXTRA_APP_FULL_HASHID_WEAK +"')"
+			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_EXTRA_INFO +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_EXTRA_APP_FULL_HASHID_WEAK +"')"
 			+ "    WHERE (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_EXTRA_APP_FULL_HASHID+") IS NULL;"
 			+ " END;";
 	
