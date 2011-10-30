@@ -83,16 +83,19 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 		
 		db = new DbHandler(this);
 		if(!TabUpdates.isRegister){
+			TabUpdates.isRegister = true;
 			updateApkListener = new UpdateApkListener();
 			registerReceiver(updateApkListener, new IntentFilter("pt.caixamagica.aptoide.UPDATE_APK_ACTION"));
-			TabUpdates.isRegister = true;
 		}
 		//mctx = this;
 		
-		gestureAlphabet = new GestureAlphabet(this, lv);
+		GestureOverlayView gestures = (GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList);
 		if(Configs.SEARCH_GESTURE_ON){
-			GestureOverlayView gestures = (GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList);
+			gestureAlphabet = new GestureAlphabet(this, lv);
 			gestures.setUncertainGestureColor(android.R.color.transparent);
+		} else {
+			gestureAlphabet = null;
+			gestures.setEnabled(false);
 		}
 		
 	}
@@ -155,7 +158,9 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onResume() {
 		super.onResume();
-		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).addOnGesturePerformedListener(gestureAlphabet);
+		if(gestureAlphabet!=null){
+			((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).addOnGesturePerformedListener(gestureAlphabet);
+		}
 		new Thread(){
 			@Override
 			public void run() {
@@ -173,8 +178,10 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 
 	@Override
 	protected void onPause() {
-		((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).removeOnGesturePerformedListener(gestureAlphabet);
 		super.onPause();
+		if(gestureAlphabet!=null){
+			((GestureOverlayView) this.getParent().findViewById(R.id.gesturesAlphabetList)).removeOnGesturePerformedListener(gestureAlphabet);
+		}
 	}
 	
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
