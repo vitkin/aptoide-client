@@ -33,6 +33,8 @@ import cm.aptoide.pt.ServerNode;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.Application;
 import cm.aptoide.pt.data.model.Category;
+import cm.aptoide.pt.data.model.DownloadInfo;
+import cm.aptoide.pt.data.model.IconInfo;
 import cm.aptoide.pt.data.model.Repository;
 import cm.aptoide.pt.data.system.InstalledPackages;
 import cm.aptoide.pt.multiversion.VersionApk;
@@ -58,111 +60,15 @@ public class ManagerDatabase {
 	
 	private static SQLiteDatabase db = null;
 	
-	final int indexRepoHashid;
-	final int indexRepoUri;
-	final int indexRepoBasePath;
-	final int indexRepoSize;
-	final int indexRepoUpdateTime;
-	final int indexRepoDelta;
-	final int indexRepoInUse;
-	
-// TODO refactor 
-	
-//	Map<String, Object> getCountSecCatg(int ord){
-//		final String basic_query = "select a.catg, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where a.catg_ord = " + ord + " and not exists" +
-//								   " (select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg;"; 
-//		
-//		//final String basic_query2 = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " group by catg;";
-//		Map<String, Object> count_lst = new HashMap<String, Object>();
-//		Cursor q = null;
-//		
-//		q = db.rawQuery(basic_query, null);
-//		if(q.moveToFirst()){
-//			count_lst.put(q.getString(0), q.getInt(1));
-//			while(q.moveToNext()){
-//				count_lst.put(q.getString(0), q.getInt(1));
-//			}
-//			q.close();
-//			return count_lst;
-//		}else{
-//			q.close();
-//			return null;
-//		}
-//	}
-//	
-//	int[] getCountMainCtg(){
-//		final String basic_query = "select a.catg_ord, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where not exists " +
-//				                   "(select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg_ord;";
-//		//final String basic_query2 = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " group by catg_ord;";		
-//		int[] rtn = new int[3];
-//		Cursor q = null;
-//
-//		q = db.rawQuery(basic_query, null);
-//		if(q.moveToFirst()){
-//			rtn[q.getInt(0)] = q.getInt(1);
-//			while(q.moveToNext()){
-//				rtn[q.getInt(0)] = q.getInt(1);
-//			}
-//			q.close();
-//			return rtn;
-//		}else{
-//			q.close();
-//			return null;
-//		}
-//	}
-	
-	/*
-	 * catg_ord: game (0) / application (1) / others(2) 
-	 * 
-	 * catg: category for the application:
-	 *  - Comics, Communication, Entertainment, Finance, Health, Lifestyle, Multimedia, 
-	 *  - News & Weather, Productivity, Reference, Shopping, Social, Sports, Themes, Tools, 
-	 *  - Travel, Demo, Software Libraries, Arcade & Action, Brain & Puzzle, Cards & Casino, Casual,
-	 *  - Other
-	 */
-	
-
-// -----------------
-
 	
 	/**
-	 * initCategories, inserts categories set in Constants.
-	 * 					this insertHelper pattern: prepareforinsert, bind, bind, execute
-	 * 					is not thread safe. Only used here because this is methid is only
-	 * 					called in the beginning.
+	 * 
+	 * ManagerDatabase Constructor, opens Aptoide's database or creates it if it doens't exist yet 
+	 *
+	 * @param Context context, Aptoide's activity context
 	 * 
 	 * @author dsilveira
-	 * @deprecated
-	 * 
-	 */
-	private void initCategories(){
-		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
-		
-		try{
-			db.beginTransaction();
-			for (String category : Constants.CATEGORIES) {
-//				insertCategory.prepareForInsert();
-//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
-//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
-//				if(insertCategory.insert() == -1){
-//					//TODO throw exception;
-//				}
-			}
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-		
-	}
-	
-	
-	
-	/**
-	 * 
-	 * ManagerDatabase Constructor
-	 *
-	 * @param context
+	 * @since 3.0
 	 * 
 	 */
 	public ManagerDatabase(Context context) {
@@ -205,30 +111,8 @@ public class ManagerDatabase {
 		}else if(!db.isOpen()){
 			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
 		}
-
-		InsertHelper repoIndex = new InsertHelper(db, Constants.TABLE_REPOSITORY);
-		indexRepoHashid = repoIndex.getColumnIndex(Constants.KEY_REPO_HASHID);
-		indexRepoUri = repoIndex.getColumnIndex(Constants.KEY_REPO_URI);
-		indexRepoBasePath = repoIndex.getColumnIndex(Constants.KEY_REPO_BASE_PATH);
-		indexRepoSize = repoIndex.getColumnIndex(Constants.KEY_REPO_SIZE);
-		indexRepoUpdateTime = repoIndex.getColumnIndex(Constants.KEY_REPO_UPDATE_TIME);
-		indexRepoDelta = repoIndex.getColumnIndex(Constants.KEY_REPO_DELTA);
-		indexRepoInUse = repoIndex.getColumnIndex(Constants.KEY_REPO_IN_USE);
 	}
 	
-	
-//	public void startTrans(){
-//		db.beginTransaction();
-//	}
-//	
-//	public void endTrans(){
-//		try{
-//			db.setTransactionSuccessful();
-//		}catch (Exception e){
-//		}finally{
-//			db.endTransaction();
-//		}
-//	}
 	
 	/**
 	 * prepareToTorchDB, handles smooth transition from old database schema
@@ -238,13 +122,13 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public HashMap<String,Boolean> prepareToTorchDB(){
-		/* hard coded strings that represent old names */
+								/* hard coded strings that represent old names */
 		Cursor cursor = db.query("servers", new String[]{"uri", "inuse"}, null, null, null, null, null);
 		HashMap<String, Boolean> repositories = new HashMap<String, Boolean>(cursor.getCount());
 		final int oldIndexRepoUri = 0;
 		final int oldIndexRepoInUse = 1;
 		cursor.moveToFirst();
-		do{
+		do{		//TODO refactor to return Repository objects + Login Objects
 			repositories.put(cursor.getString(oldIndexRepoUri), cursor.getInt(oldIndexRepoInUse) == Constants.DB_TRUE?true:false);
 		} while(cursor.moveToNext());
 		cursor.close();
@@ -255,25 +139,25 @@ public class ManagerDatabase {
 		
 		//TODO call constructor
 		
-		//TODO populate re-repositories
+		//TODO re-populate repositories
 		
 	}
 	
 	/**
-	 * insertCategories, handles the insertion of categories received from bazaar
+	 * insertCategories, handles multiple categories insertion
 	 * 
-	 * @param categories
+	 * @param ArrayList<Category> categories
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
 	public void insertCategories(ArrayList<Category> categories){
-		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
-		ArrayList<ContentValues> subCategoriesRelations = new ArrayList<ContentValues>(categories.size());
-		ContentValues subCategoryRelation;
-		
 		try{
+			InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
+			ArrayList<ContentValues> subCategoriesRelations = new ArrayList<ContentValues>(categories.size());
+			ContentValues subCategoryRelation;
+			
 			db.beginTransaction();
 			for (Category category : categories) {
 				if(insertCategory.insert(category.getValues()) == Constants.DB_ERROR){
@@ -292,23 +176,15 @@ public class ManagerDatabase {
 				}
 			}
 			insertCategory.close();
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-		
-		InsertHelper insertCategoryRelation = new InsertHelper(db, Constants.TABLE_SUB_CATEGORY);
-		
-		try{
-			db.beginTransaction();
+			
+			InsertHelper insertCategoryRelation = new InsertHelper(db, Constants.TABLE_SUB_CATEGORY);
 			for (ContentValues categoryRelationValues : subCategoriesRelations) {
 				if(insertCategoryRelation.insert(categoryRelationValues) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 			}
 			insertCategoryRelation.close();
+			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: send to errorHandler the exception
@@ -317,12 +193,53 @@ public class ManagerDatabase {
 		}
 	}
 	
-	
-	public void insertRepositories(ArrayList<Repository> repositories){
-		InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
-		ArrayList<ContentValues> loginsValues = new ArrayList<ContentValues>(repositories.size());
-		
+	/**
+	 * insertCategory, handles single category insertion
+	 * 
+	 * @param Category category
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void insertCategory(Category category){
 		try{
+			ContentValues parentCategoryRelation;
+			
+			db.beginTransaction();
+			if(db.insert(Constants.TABLE_CATEGORY, null, category.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			parentCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
+			parentCategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, category.getParentHashid());
+			parentCategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, category.getHashid());
+			
+			if(db.insert(Constants.TABLE_SUB_CATEGORY, null, parentCategoryRelation) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertRepositories, handles multiple repositories insertion
+	 * 
+	 * @param ArrayList<Repository> repositories
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void insertRepositories(ArrayList<Repository> repositories){
+		try{
+			InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
+			ArrayList<ContentValues> loginsValues = new ArrayList<ContentValues>(repositories.size());
+			
 			db.beginTransaction();
 			for (Repository repository : repositories) {
 				if(insertRepository.insert(repository.getValues()) == Constants.DB_ERROR){
@@ -331,36 +248,17 @@ public class ManagerDatabase {
 				if(repository.requiresLogin()){
 					loginsValues.add(repository.getLogin().getValues());
 				}
-	//			insertRepository.prepareForInsert();
-				
-	//			insertRepository.bind(indexRepoHashid, );
-	//			insertRepository.bind(indexRepoUri, );
-	//			insertRepository.bind(indexRepoBasePath, );
-	//			insertRepository.bind(indexRepoSize, );
-	//			insertRepository.bind(indexRepoUpdateTime, );
-	//			insertRepository.bind(indexRepoDelta, );
-	//			insertRepository.bind(indexRepoInUse, );
-				
-	//			insertRepository.execute(); /** WARNING this is not thread-safe, if problems are encountered, use insertHelper.insert(ContentValues)*/
 			}
 			insertRepository.close();
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-		
-		InsertHelper insertLogin = new InsertHelper(db, Constants.TABLE_LOGIN);
-		
-		try{
-			db.beginTransaction();
+			
+			InsertHelper insertLogin = new InsertHelper(db, Constants.TABLE_LOGIN);
 			for (ContentValues loginValues : loginsValues) {
 				if(insertLogin.insert(loginValues) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 			}
 			insertLogin.close();
+			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: send to errorHandler the exception
@@ -369,7 +267,15 @@ public class ManagerDatabase {
 		}
 	}
 	
-	
+	/**
+	 * insertRepository, handles single repository insertion
+	 * 
+	 * @param Repository repository
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
 	public void insertRepository(Repository repository){
 		try{
 			db.beginTransaction();
@@ -389,47 +295,75 @@ public class ManagerDatabase {
 		}
 	}
 	
+	/**
+	 * insertApplications, handles multiple applications insertion
+	 * 
+	 * @param ArrayList<Application> applications
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
 	public void insertApplications(ArrayList<Application> applications){
-		InsertHelper insertApplication = new InsertHelper(db, Constants.TABLE_APPLICATION);
-		ArrayList<ContentValues> appCategoriesRelations = new ArrayList<ContentValues>(applications.size());
+		try{
+			InsertHelper insertApplication = new InsertHelper(db, Constants.TABLE_APPLICATION);
+			ArrayList<ContentValues> appCategoriesRelations = new ArrayList<ContentValues>(applications.size());
+			ContentValues appCategoryRelation;
+			
+			db.beginTransaction();
+			for (Application application : applications) {
+				if(insertApplication.insert(application.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+				appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_CATEGORY); //TODO check if this implicit object recycling works 
+				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_APP_FULL_HASHID, application.getFullHashid());
+				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID, application.getCategoryHashid());
+				appCategoriesRelations.add(appCategoryRelation);
+				
+			}
+			insertApplication.close();
+			
+			InsertHelper insertAppCategoryRelation = new InsertHelper(db, Constants.TABLE_APP_CATEGORY);
+			for (ContentValues appCategoryRelationValues : appCategoriesRelations) {
+				if(insertAppCategoryRelation.insert(appCategoryRelationValues) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertAppCategoryRelation.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertApplication, handles single application insertion
+	 * 
+	 * @param Application application
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void insertApplication(Application application){
 		ContentValues appCategoryRelation;
 		
 		try{
 			db.beginTransaction();
-			for (Application application : applications) {
-				if(insertApplication.insert(application.getValues()) == Constants.DB_ERROR){	//TODO**************************HERE***********************//
-					//TODO throw exception;
-				}
-				if(application.hasChilds()){
-					for (Category subCategory : application.getSubCategories()) {
-						if(insertApplication.insert(subCategory.getValues()) == Constants.DB_ERROR){
-							//TODO throw exception;
-						}
-						appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
-						appCategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, application.getHashid());
-						appCategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, subCategory.getHashid());
-						appCategoriesRelations.add(appCategoryRelation);
-					}
-				}
+			if(db.insert(Constants.TABLE_APPLICATION ,null, application.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
 			}
-			insertApplication.close();
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-		
-		InsertHelper insertCategoryRelation = new InsertHelper(db, Constants.TABLE_SUB_CATEGORY);
-		
-		try{
-			db.beginTransaction();
-			for (ContentValues categoryRelationValues : appCategoriesRelations) {
-				if(insertCategoryRelation.insert(categoryRelationValues) == Constants.DB_ERROR){
-					//TODO throw exception;
-				}
+			appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_CATEGORY); //TODO check if this implicit object recycling works 
+			appCategoryRelation.put(Constants.KEY_APP_CATEGORY_APP_FULL_HASHID, application.getFullHashid());
+			appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID, application.getCategoryHashid());
+
+			if(db.insert(Constants.TABLE_APP_CATEGORY ,null, appCategoryRelation) == Constants.DB_ERROR){
+				//TODO throw exception;
 			}
-			insertCategoryRelation.close();
+			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: send to errorHandler the exception
@@ -438,6 +372,177 @@ public class ManagerDatabase {
 		}
 	}
 	
+	/**
+	 * insertIcons, handles multiple application's icons insertion
+	 * 
+	 * @param ArrayList<Icon> icons
+	 */
+	public void insertIcons(ArrayList<IconInfo> icons){
+		try{
+			InsertHelper insertIcon = new InsertHelper(db, Constants.TABLE_ICON_INFO);
+			
+			db.beginTransaction();
+
+			for (IconInfo icon : icons) {
+				if(insertIcon.insert(icon.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertIcon.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertDownloads, handles multiple application's download requirements insertion
+	 * 
+	 * @param ArrayList<DownloadInfo> downloads
+	 */
+	public void insertDownloads(ArrayList<DownloadInfo> downloads){
+		try{
+			InsertHelper insertDownload = new InsertHelper(db, Constants.TABLE_DOWNLOAD_INFO);
+			
+			db.beginTransaction();
+
+			for (DownloadInfo download : downloads) {
+				if(insertDownload.insert(download.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertDownload.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertExtras, handles multiple application's icons insertion
+	 * 
+	 * @param ArrayList<Extra> extras
+	 */
+	public void insertExtras(ArrayList<Extra> extras){
+		try{
+			InsertHelper insertExtra = new InsertHelper(db, Constants.TABLE_EXTRA_INFO);
+			
+			db.beginTransaction();
+
+			for (Extra extra : extras) {
+				if(insertExtra.insert(extra.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertExtra.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+
+	
+	
+	
+	
+	/**
+	 * initCategories, inserts categories set in Constants.
+	 * 					this insertHelper pattern: prepareforinsert, bind, bind, execute
+	 * 					is not thread safe. Only used here because this is methid is only
+	 * 					called in the beginning.
+	 * 
+	 * @author dsilveira
+	 * @deprecated
+	 * 
+	 */
+	private void initCategories(){
+		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
+		
+		try{
+			db.beginTransaction();
+			for (String category : Constants.CATEGORIES) {
+//				insertCategory.prepareForInsert();
+//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
+//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
+//				if(insertCategory.insert() == -1){
+//					//TODO throw exception;
+//				}
+			}
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+		
+	}
+	
+	// TODO refactor 
+		
+//		Map<String, Object> getCountSecCatg(int ord){
+//			final String basic_query = "select a.catg, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where a.catg_ord = " + ord + " and not exists" +
+//									   " (select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg;"; 
+//			
+//			//final String basic_query2 = "select catg, count(*) from " + TABLE_NAME_EXTRA + " where catg_ord = " + ord + " group by catg;";
+//			Map<String, Object> count_lst = new HashMap<String, Object>();
+//			Cursor q = null;
+//			
+//			q = db.rawQuery(basic_query, null);
+//			if(q.moveToFirst()){
+//				count_lst.put(q.getString(0), q.getInt(1));
+//				while(q.moveToNext()){
+//					count_lst.put(q.getString(0), q.getInt(1));
+//				}
+//				q.close();
+//				return count_lst;
+//			}else{
+//				q.close();
+//				return null;
+//			}
+//		}
+	//	
+//		int[] getCountMainCtg(){
+//			final String basic_query = "select a.catg_ord, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where not exists " +
+//					                   "(select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg_ord;";
+//			//final String basic_query2 = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " group by catg_ord;";		
+//			int[] rtn = new int[3];
+//			Cursor q = null;
+	//
+//			q = db.rawQuery(basic_query, null);
+//			if(q.moveToFirst()){
+//				rtn[q.getInt(0)] = q.getInt(1);
+//				while(q.moveToNext()){
+//					rtn[q.getInt(0)] = q.getInt(1);
+//				}
+//				q.close();
+//				return rtn;
+//			}else{
+//				q.close();
+//				return null;
+//			}
+//		}
+		
+		/*
+		 * catg_ord: game (0) / application (1) / others(2) 
+		 * 
+		 * catg: category for the application:
+		 *  - Comics, Communication, Entertainment, Finance, Health, Lifestyle, Multimedia, 
+		 *  - News & Weather, Productivity, Reference, Shopping, Social, Sports, Themes, Tools, 
+		 *  - Travel, Demo, Software Libraries, Arcade & Action, Brain & Puzzle, Cards & Casino, Casual,
+		 *  - Other
+		 */
+		
+
+	// -----------------
+
 	
 //	public void delApk(String apkid, String ver){
 //		if(db.delete(TABLE_NAME, "apkid='"+apkid+"' and lastver='"+ver+"'", null)==1)

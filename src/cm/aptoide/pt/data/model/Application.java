@@ -34,14 +34,22 @@ public class Application {
 
 	private ContentValues values;
 	private int categoryHashid;
-	private int repoHashid;
 	
 	
-	public Application(String appName, String packageName, String versionName, int versionCode) {
+	public Application(String applicationName, String packageName, String versionName, int versionCode) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
 		setPackageName(packageName);
 		setVersionCode(versionCode);
-		setAppHashid(packageName, versionCode);	
+		setAppHashid(packageName, versionCode);
+		setVersionName(versionName);
+		setApplicationName(applicationName);
+	}
+	
+	public Application(String packageName, int versionCode) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
+		setPackageName(packageName);
+		setVersionCode(versionCode);
+		setAppHashid(packageName, versionCode);
 	}
 	
 	
@@ -61,12 +69,64 @@ public class Application {
 		return values.getAsInteger(Constants.KEY_APPLICATION_VERSION_CODE);
 	}
 	
+	private void setAppHashid(String packageName, int versionCode){
+		values.put(Constants.KEY_APPLICATION_HASHID, (packageName+'|'+versionCode).hashCode());
+	}
+	
 	public int getHashid() {
 		return values.getAsInteger(Constants.KEY_APPLICATION_HASHID);
 	}
 	
-	private void setAppHashid(String packageName, int versionCode){
-		values.put(Constants.KEY_APPLICATION_HASHID, (packageName+'|'+Integer.toString(versionCode)).hashCode());
+	public void setVersionName(String versionName){
+		values.put(Constants.KEY_APPLICATION_VERSION_NAME, versionName);		
+	}
+	
+	public String getVersionName(){
+		return values.getAsString(Constants.KEY_APPLICATION_VERSION_NAME);
+	}
+	
+	public void setApplicationName(String applicationName){
+		values.put(Constants.KEY_APPLICATION_NAME, applicationName);		
+	}
+	
+	public String getApplicationName(){
+		return values.getAsString(Constants.KEY_APPLICATION_NAME);
+	}
+	
+	/**
+	 * setRepoHashid, sets this application's repo hashid
+	 * 
+	 * @param int repoHashid, repoUri.hashCode()
+	 */
+	public void setRepoHashid(int repoHashid){
+		values.put(Constants.KEY_APPLICATION_REPO_HASHID, repoHashid);
+		values.put(Constants.KEY_APPLICATION_FULL_HASHID, (getPackageName()+'|'+getVersionCode()+'|'+repoHashid).hashCode());
+	}
+	
+	public int getRepoHashid(){
+		return values.getAsInteger(Constants.KEY_APPLICATION_REPO_HASHID);
+	}
+	
+	public int getFullHashid(){
+		return values.getAsInteger(Constants.KEY_APPLICATION_FULL_HASHID);
+	}	
+	
+	/**
+	 * setCategoryHashid, sets this application's category hashid
+	 * 
+	 * @param int categoryHashid, categoryName.hashCode()
+	 */
+	public void setCategoryHashid(int categoryHashid){
+		this.categoryHashid = categoryHashid;
+	}
+	
+	public int getCategoryHashid(){
+		return this.categoryHashid;
+	}
+	
+	
+	public ContentValues getValues(){
+		return this.values;
 	}
 
 	
@@ -74,10 +134,22 @@ public class Application {
 	public void clean(){
 		this.values = null;
 		this.categoryHashid = Constants.EMPTY_INT;
-		this.repoHashid = Constants.EMPTY_INT;
 	}
 	
-	public void reuse(String appName, String packageName, String versionName, int versionCode) {
+	public void reuse(String applicationName, String packageName, String versionName, int versionCode) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
+		setPackageName(packageName);
+		setVersionCode(versionCode);
+		setAppHashid(packageName, versionCode);
+		setVersionName(versionName);
+		setApplicationName(applicationName);
+	}
+	
+	public void reuse(String packageName, int versionCode) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
+		setPackageName(packageName);
+		setVersionCode(versionCode);
+		setAppHashid(packageName, versionCode);
 	}
 	
 }

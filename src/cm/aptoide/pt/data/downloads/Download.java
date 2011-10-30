@@ -21,6 +21,7 @@
 package cm.aptoide.pt.data.downloads;
 
 import cm.aptoide.pt.data.cache.Cache;
+import cm.aptoide.pt.data.model.DownloadInfo;
 import cm.aptoide.pt.data.model.Login;
 import cm.aptoide.pt.data.notifiers.Notifier;
 
@@ -33,7 +34,8 @@ import cm.aptoide.pt.data.notifiers.Notifier;
  */
 public class Download {
 
-	private String remotePath;
+	private InterfaceDownloadInfo downloadInfo;		//TODO this doesn't allow one to use methods not in interface? if confirmed refactor, maybe use DownloadInfo globally
+	private boolean bareInfo;
 	private boolean loginRequired;
 	private Login login;
 	
@@ -41,15 +43,25 @@ public class Download {
 	private Notifier notifier;
 	
 	
-	public Download(String remotePath, Cache cache, Notifier notifier) {
-		this.remotePath = remotePath;
+	public Download(InterfaceDownloadInfo downloadInfo, Cache cache, Notifier notifier) {
+		if(downloadInfo.getClass().equals(BareDownloadInfo.class)){	//TODO does this work, or how do I get around it
+			this.bareInfo = true;
+		}else{
+			this.bareInfo = false;
+		}
+		this.downloadInfo = downloadInfo;
 		this.loginRequired = false;
 		this.cache = cache;
 		this.notifier = notifier;
 	}
 	
-	public Download(String remotePath, Login login, Cache cache, Notifier notifier) {
-		this.remotePath = remotePath;
+	public Download(InterfaceDownloadInfo downloadInfo, Login login, Cache cache, Notifier notifier) {
+		if(downloadInfo.getClass().equals(BareDownloadInfo.class)){	//TODO does this work, or how do I get around it
+			this.bareInfo = true;
+		}else{
+			this.bareInfo = false;
+		}
+		this.downloadInfo = downloadInfo;
 		this.loginRequired = true;
 		this.login = login;
 		this.cache = cache;
@@ -57,8 +69,8 @@ public class Download {
 	}
 
 
-	public String getRemotePath() {
-		return remotePath;
+	public InterfaceDownloadInfo getDownloadInfo() {
+		return downloadInfo;
 	}
 
 	public boolean isLoginRequired() {
@@ -79,15 +91,15 @@ public class Download {
 	
 	
 	public void clean(){
-		this.remotePath = null;
+		this.downloadInfo = null;
 		this.loginRequired = false;
 		this.login = null;
 		this.cache = null;
 		this.notifier = null;
 	}
 	
-	public void reuse(String remotePath, boolean loginRequired, Login login, Cache cache, Notifier notifier) {
-		this.remotePath = remotePath;
+	public void reuse(InterfaceDownloadInfo downloadInfo, boolean loginRequired, Login login, Cache cache, Notifier notifier) {
+		this.downloadInfo = downloadInfo;
 		this.loginRequired = loginRequired;
 		this.login = login;
 		this.cache = cache;

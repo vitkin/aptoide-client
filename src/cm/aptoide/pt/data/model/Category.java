@@ -35,6 +35,7 @@ import cm.aptoide.pt.data.Constants;
 public class Category {
 
 	private ContentValues values;
+	private int parentHashid;
 	private boolean hasChilds;
 	private ArrayList<Category> subCategories;
 	
@@ -65,6 +66,15 @@ public class Category {
 	}
 	
 	
+	public void setParentHashid(int parentHashid){
+		this.parentHashid = parentHashid;
+	}
+	
+	public int getParentHashid(){
+		return this.parentHashid;
+	}
+	
+	
 	public boolean hasChilds(){
 		return hasChilds;
 	}
@@ -76,7 +86,7 @@ public class Category {
 		}
 	}
 	
-	public ArrayList<Category> getSubCategories(){
+	public ArrayList<Category> getSubCategories(){	//TODO return null Category object if !hasChilds
 		return subCategories;
 	}
 	
