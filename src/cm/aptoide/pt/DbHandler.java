@@ -54,11 +54,13 @@ public class DbHandler {
 	private static final String TABLE_NAME_URI = "servers";
 	private static final String TABLE_NAME_EXTRA = "extra";
 	private static final String TABLE_NAME_OLD_VERSIONS = "old_versions";
-	
+	private static final String TABLE_NAME_SCHEDULED="scheduled";
 	
 	
 	
 	private static SQLiteDatabase db = null;
+
+	
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
 	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
@@ -66,6 +68,9 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text, "
 				+ "instver text not null, instvercode number not null, primary key(apkid));";
+	
+	private static final String CREATE_TABLE_SCHEDULED = "create table if not exists " + TABLE_NAME_SCHEDULED + " (apkid text, "
+	+ "name text, instver text not null, instvercode number not null, primary key(apkid));";
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
@@ -141,6 +146,7 @@ public class DbHandler {
 			db.execSQL(CREATE_TABLE_EXTRA);
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
+			db.execSQL(CREATE_TABLE_SCHEDULED);
 			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
 			
 		}else if(!db.isOpen()){
@@ -221,11 +227,14 @@ public class DbHandler {
 			db.execSQL("drop table if exists " + TABLE_NAME_LOCAL);
 			db.execSQL("drop table if exists " + TABLE_NAME_URI);
 			db.execSQL("drop table if exists " + TABLE_NAME_OLD_VERSIONS);
+			db.execSQL("drop table if exists " + TABLE_NAME_SCHEDULED);
+			
 			db.execSQL(CREATE_TABLE_URI);
 			db.execSQL(CREATE_TABLE_EXTRA);
 			db.execSQL(CREATE_TABLE_APTOIDE);
 			db.execSQL(CREATE_TABLE_LOCAL);
 			db.execSQL(CREATE_TABLE_OLD_VERSIONS);
+			db.execSQL(CREATE_TABLE_SCHEDULED);
 			/*for(String uri: repos){
 				ContentValues tmp = new ContentValues();
 				tmp.put("uri", uri);
@@ -372,6 +381,42 @@ public class DbHandler {
 		c.close();
 		
 		return (db.insert(TABLE_NAME_LOCAL, null, tmp) > 0); 
+	}
+	
+	public boolean insertScheduled(String apkid, String ver){
+		ContentValues tmp = new ContentValues();
+		tmp.put("apkid", apkid);
+		Cursor c = db.query(TABLE_NAME, new String[] {"name","lastvercode"}, " apkid=\""+apkid+"\" and lastver=\""+ver+"\" ", null, null, null, null);
+		c.moveToFirst();
+		tmp.put("name", c.getString(0));
+		
+		tmp.put("instver", ver);
+		tmp.put("instvercode", c.getInt(1));
+		
+		c.close();
+		
+		return (db.insert(TABLE_NAME_SCHEDULED, null, tmp) > 0); 
+	}
+	
+	public Vector<String> getScheduledListNames() {
+		// TODO Auto-generated method stub
+		Vector<String> out = new Vector<String>();
+		Cursor c = null;
+		try {
+			//c = db.rawQuery("select uri from " + TABLE_NAME_URI + " order by uri collate nocase", null);
+			c = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid"}, null, null, null, null, null);
+			c.moveToFirst();
+			for(int i=0; i<c.getCount(); i++){
+				out.add(c.getString(0));
+				c.moveToNext();
+			}
+		}catch (Exception e){ 
+			e.printStackTrace();
+		}
+		finally{
+			c.close();
+		}
+		return out;
 	}
 	
 	public boolean wasUpdateOrDowngrade(String apkid, int versioncode){
@@ -1221,4 +1266,6 @@ public class DbHandler {
 		Log.d("Aptoide","RemovedOld: " + o);
 		
 	}
+
+	
 }
