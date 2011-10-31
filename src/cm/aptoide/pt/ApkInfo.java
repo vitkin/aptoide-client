@@ -114,6 +114,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	private VersionApk versionInstApk;
 	private GetScreenShots previousGetter;
 	
+	DbHandler db = new DbHandler(this);
+	
 	private static int headers = 2; // The number of header items on the list view
 	
 	/**
@@ -337,6 +339,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		action.setOnClickListener(new OnClickListener() {
 
+			
+
 			public void onClick(View v) {
 				
 				int pos = apkinfo.getIntExtra("position", -1);
@@ -345,7 +349,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 0:
 					if(download_later_box.isChecked()){
 						Toast.makeText(mctx, R.string.add_download_later, 2000).show();
-						
+						addSchedulledDownload(apk_id,((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					rtrn_intent.putExtra("in", true);
@@ -355,7 +359,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 1:
 					if(download_later_box.isChecked()){
 						Toast.makeText(mctx, R.string.add_download_later, 2000).show();
-						
+						addSchedulledDownload(apk_id,((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					rtrn_intent.putExtra("rm", false);
@@ -369,7 +373,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 2:
 					if(download_later_box.isChecked()){
 						Toast.makeText(mctx, R.string.add_download_later, 2000).show();
-						addSchedulledDownload(apk_id);
+						addSchedulledDownload(apk_id,((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					jback = true;}
@@ -702,9 +706,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 	}
 	
-	protected void addSchedulledDownload(String apkId) {
+	protected void addSchedulledDownload(String apkId, String version) {
 		// TODO Auto-generated method stub
-		
+		db.insertScheduled(apkId, version);
 		
 	}
 
