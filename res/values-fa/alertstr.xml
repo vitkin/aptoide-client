@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="up_server">سرورها: </string>
+    <string name="lstver">نسخه سرور: </string>
+    <string name="dwn_n">تعداد دانلودها: </string>
+    <string name="isinst">نصب شده: </string>
+    <string name="instver">نسخه نصب شده: </string>
+    <string name="install">نصب </string>
+    <string name="about_alrt">درباره: </string>
+    <string name="rem">پاک کردن </string>
+    <string name="update">به روز رسانی</string>
+    
+    <string name="update_alrt">این آپدیت ها برای برخی نرم افزار های نصب شده موجود است\nآیا می خواهید آنها را ببینید؟</string>
+    <string name="repo_alrt">لیست مخازن در حال استفاده تغییر یافته\nآیا می خواهید آنها را به روز رسانی کنید؟</string>
+    
+    <string name="title_repo_alrt">توجه</string>
+    <string name="myrepo_alrt">به نظر می رسد شما هیچ مخزن نرم افزاری اضافه نکرده اید\nما مخزن خودمان را به شما پیشنهاد می کنیم\nآیا مایل به اضافه کردن مخزن ما هستید؟\n(شما می توانید مخازن بیشتری را از اینترنت دانلود کنید)\n\n</string>
+    <string name="newrepo_alrt">آیا مایل به اضافه کردن این مخزن به لیست خود هستید؟\n\n</string>
+    
+    <string name="error_download_alrt">قابلیت اتصال به سرور وجود ندارد یا فایل شما خراب است</string>
+    <string name="download_alrt">دریافت نرم افزار از:\n </string>
+     
+    <string name="md5_error">بررسی کد صحت نرم افزار با شکست مواجه شد\nلطفا قبل از تلاش مجدد نرم افزار سیستمی خود را چک کنید</string>
+    <string name="network_error">مشکلی در دریافت نرم افزار رخ داده است\nلطفا دوباره تلاش کنید</string>
+    
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
