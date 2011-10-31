@@ -134,9 +134,10 @@ public class ManageRepo extends ListActivity{
 			Vector<String> exist_server = db.getServersName();
 			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
 			for(final String srv: new_serv_lst){
-				if(serverContainsRepo(exist_server,srv))
+				if(serverContainsRepo(exist_server,srv)){
 //					continue;
 					finish();
+				}else{
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -153,7 +154,7 @@ public class ManageRepo extends ListActivity{
 				    	  return;
 				      }});
 				alrt.show();
-			}
+			}}
 		}else if(i.hasExtra("newrepo")){
 			
 			
