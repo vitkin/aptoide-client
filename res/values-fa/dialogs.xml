@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="top_please_wait">لطفا صبر کنید</string>
+	<string name="top_error">خطا</string>
+	<string name="top_download">دانلود</string>
+
+	<string name="fetch_apk">دریافت نرم افزار</string>
+
+	<string name="aptoide_error">عدم توانایی اتصال به سرور</string>
+	
+	<string name="manage_repo_add">اضافه کردن مخزن</string>
+	<string name="manage_repo_answ_wrongl">خطا در ورود</string>
+	<string name="manage_repo_answ_cc">عدم توانایی در اتصال به سرور</string>
+	<string name="manage_repo_answ_lr">نیاز به لاگین است</string>
+	
+	<string name="app_pop_up_no_info">جزئیاتی بر روی سرور موجود نیست. برای اطلاعات بیشتر از مارکت دکمه زیر را فشار دهید</string>
+	<string name="error_no_market">شما گوگل مارکت را نصب نکرده اید!</string>
+		
+    <string name="settings_cache">پاک کردن حافظه موقت...</string>
+    
+    <string name="remote_in_noSD_title">بدون حافظه</string>
+    <string name="remote_in_noSD">شما کارت حافظه ندارید.\nلطفا کارت حافظه را وصل کرده و دوباره تلاش کنید</string>
+    <string name="remote_in_noSDspace">برای نصب اپتوئید شما حافظه کافی بر روی دستگاه ندارید\nلطفا فضای بیشتری را آزاد کرده و دوبره تلاش کنید.</string>
+    
+    <string name="error_on_update">روند به روز رسانی بر روی این مخازن امکان پذیر نیست:\n</string>
+    
+    <string name="updating_msg">به روز رسانی لیست نرم افزارها...</string>
+    <string name="update_repos">به روز رسانی مخازن</string>
+    <string name="update_main">لیست مخازن در حال استفاده تغییر یافته است.\nDآیا مایل به به روز رسانی آنها هستید؟</string>
+    
+    <string name="updating_3g">شما با اینترنت سیمکارت خود وصل شده اید. ما توصیه می کنیم از وای فای استفاده کنید.\nآیا در همین حالت ادامه می دهید؟</string>
+    <string name="updating_cfrm">به روزرسانی مخازن اپتوئید را تایید می کنید؟</string>
+    <string name="updating_norepos">مخزن فعالی در لیست شما وجود ندارد.\nلطفا یک مخزن اضافه کنید یا یکی از مخازن را فعال نمایید.</string>
+    
+    <string name="repo_ctx">تنظیمات</string>
+    <string name="repo_ctx_edt">ویرایش</string>
+    <string name="repo_ctx_del">حذف</string>
+    
+    <string name="repo_del">حذف مخزن</string>
+    <string name="repo_del_msg">آیا مایل به حذف مخزن هستید؟ </string>
+    <string name="repo_del_msg2">مخزن مورد نظر برای حذف را انتخاب کنید</string>
+    <string name="repo_edt_msg1">مخزن مورد نظر برای ویرایش را انتخاب کنید</string>
+    <string name="repo_edt_msg2">ویرایش مخزن</string>
+
+    <string name="update_done_msg1">به روز رسانی مخازن با موفقیت انجام شد.</string>
+    <string name="update_process">به روز رسانی مخزن %1$d of %2$d</string>
+    
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
