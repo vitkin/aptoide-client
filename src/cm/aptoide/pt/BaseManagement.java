@@ -84,7 +84,7 @@ public class BaseManagement extends Activity {
 	
 
 	private DownloadQueueService downloadQueueService;
-	private ServiceConnection serviceConnection = new ServiceConnection() {
+	protected ServiceConnection serviceConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
 	        // This is called when the connection with the service has been
 	        // established, giving us the service object we can use to
@@ -446,6 +446,7 @@ public class BaseManagement extends Activity {
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
+							if(downloadQueueService!=null)
 							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else if(node.status == 2){

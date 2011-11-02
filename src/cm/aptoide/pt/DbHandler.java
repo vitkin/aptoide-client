@@ -398,16 +398,22 @@ public class DbHandler {
 		return (db.insert(TABLE_NAME_SCHEDULED, null, tmp) > 0); 
 	}
 	
-	public Vector<String> getScheduledListNames() {
+	public Vector<ApkNode> getScheduledListNames() {
 		// TODO Auto-generated method stub
-		Vector<String> out = new Vector<String>();
+		Vector<ApkNode> out = new Vector<ApkNode>();
 		Cursor c = null;
 		try {
 			//c = db.rawQuery("select uri from " + TABLE_NAME_URI + " order by uri collate nocase", null);
-			c = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid"}, null, null, null, null, null);
+			c = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid","name","instver","instvercode"}, null, null, null, null, null);
 			c.moveToFirst();
+			
 			for(int i=0; i<c.getCount(); i++){
-				out.add(c.getString(0));
+				ApkNode apknode = new ApkNode();
+				apknode.apkid=c.getString(0);
+				apknode.name=c.getString(1);
+				apknode.ver=c.getString(2);
+				apknode.vercode=c.getInt(3);
+				out.add(apknode);
 				c.moveToNext();
 			}
 		}catch (Exception e){ 
