@@ -68,6 +68,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ManageRepo extends ListActivity{
@@ -89,6 +90,7 @@ public class ManageRepo extends ListActivity{
 	
 	private Vector<String> server_to_reset_count = new Vector<String>();
 	
+	Context ctx;
 	
 	private String updt_repo;
 	private AlertDialog alert2;
@@ -103,7 +105,7 @@ public class ManageRepo extends ListActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.repolist);
-		
+		ctx=this;
 		registerForContextMenu(this.getListView());
 		
 		db = new DbHandler(this);
@@ -133,10 +135,15 @@ public class ManageRepo extends ListActivity{
 			//Vector<String> new_serv_lst = getRemoteServLst(uri);
 			Vector<String> exist_server = db.getServersName();
 			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
-			for(final String srv: new_serv_lst){
+			boolean isChanged=false;
+			for(final String uri_str: new_serv_lst){
+				final String srv = serverCheck(uri_str);
 				if(serverContainsRepo(exist_server,srv)){
-//					continue;
-					finish();
+					Toast.makeText(this, "Repo "+ srv+ " already exists.", 5000).show();
+					continue;
+//					finish();
+					
+					
 				}else{
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
 				alrt.setTitle(getString(R.string.title_repo_alrt));
@@ -154,14 +161,22 @@ public class ManageRepo extends ListActivity{
 				    	  return;
 				      }});
 				alrt.show();
+				isChanged=true;
+				
 			}}
+			if(!isChanged){
+				finish();
+			}
 		}else if(i.hasExtra("newrepo")){
 			
 			
 			final String repo = i.getStringExtra("newrepo");
 			Vector<String> server_lst = db.getServersName();
 			if(serverContainsRepo(server_lst, repo)){
+				Toast.makeText(this, "Repo "+ repo+ " already exists.", 5000).show();
 				finish();
+				
+				
 			}else{
 			AlertDialog alrt = new AlertDialog.Builder(this).create();
 			alrt.setTitle(getString(R.string.title_repo_alrt));
@@ -379,14 +394,7 @@ public class ManageRepo extends ListActivity{
 					EditText uri = (EditText) alrt.findViewById(R.id.edit_uri);
 					String uri_str = uri.getText().toString();
 //					
-					if(uri_str.length()!=0 && uri_str.charAt(uri_str.length()-1)!='/'){
-						uri_str = uri_str+'/';
-						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
-					}
-					if(!uri_str.startsWith("http://")){
-						uri_str = "http://"+uri_str;
-						Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
-					}
+					uri_str = serverCheck(uri_str);
 					sec_msg.setVisibility(View.GONE);
 					sec_msg2.setVisibility(View.GONE);
 					
@@ -405,6 +413,7 @@ public class ManageRepo extends ListActivity{
 						Vector<String> serverList = db.getServersName();
 						msg.obj = 0;
 						if(serverContainsRepo(serverList, uri_str)){
+							Toast.makeText(ctx, "Repo "+ uri_str+ " already exists.", 5000).show();
 //							finish();
 						}else{
 						db.addServer(uri_str);
@@ -452,6 +461,7 @@ public class ManageRepo extends ListActivity{
 							msg.obj = 0;
 							Vector<String> serverList = db.getServersName();
 							if(serverContainsRepo(serverList, uri_str)){
+								Toast.makeText(ctx, "Repo "+ uri_str+ " already exists.", 5000).show();
 //								finish();
 							}else{
 							db.addServer(uri_str);
@@ -764,6 +774,18 @@ public class ManageRepo extends ListActivity{
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+	}
+
+	private String serverCheck(String uri_str) {
+		if(uri_str.length()!=0 && uri_str.charAt(uri_str.length()-1)!='/'){
+			uri_str = uri_str+'/';
+			Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
+		}
+		if(!uri_str.startsWith("http://")){
+			uri_str = "http://"+uri_str;
+			Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
+		}
+		return uri_str;
 	}
 	
 }
