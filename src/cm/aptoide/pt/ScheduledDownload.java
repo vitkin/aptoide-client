@@ -1,7 +1,6 @@
 package cm.aptoide.pt;
 
 import java.util.ArrayList;
-import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
@@ -16,14 +15,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 
 public class ScheduledDownload extends ListActivity {
@@ -65,107 +70,161 @@ public class ScheduledDownload extends ListActivity {
 	private Vector<ApkNode> sch_list;
 	DownloadNode downloadNode;
 	
-
-
 	 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+        registerForContextMenu(this.getListView());
         getApplicationContext().bindService(new Intent(this, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-        
-        
         sch_list=db.getScheduledListNames();
-        
         mAdapter = new MyCustomAdapter();
         for(int i =0;i!=sch_list.size();i++){
         	mAdapter.addName(sch_list.get(i).name);
         	mAdapter.addIconpath(getString(R.string.icons_path)+sch_list.get(i).apkid);
         	mAdapter.addVersion(sch_list.get(i).ver);
         }
-        	
-        
         setListAdapter(mAdapter);
         
-        
-        
-        
-        
-        
-        
- 
     }
     
-    
-    
-    
- 
 
-    
-    
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		menu.add(Menu.NONE,1, 1, "Download All");
+		
+		
+		return super.onCreateOptionsMenu(menu);
+	}
 
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onMenuItemSelected(int, android.view.MenuItem)
+	 */
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		// TODO Auto-generated method stub
+		switch (item.getItemId()) {
+		case 1:
+			downloadAll();
+			break;
+
+		default:
+			break;
+		}
+		
+		return super.onMenuItemSelected(featureId, item);
+	}
+
+
+	private void downloadAll() {
+		// TODO Auto-generated method stub
+		for (int i =0; i!=sch_list.size();i++){
+			downloadQueueService.startDownload(doDownloadNode(i));
+		}
+		
+	}
+
+	
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
+	 */
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		// TODO Auto-generated method stub
+		 
+		super.onCreateContextMenu(menu, v, menuInfo);
+		 
+		menu.add(0, 4, 0, "Remove Scheduled Download");
+	}
+	
+	
+
+
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		AdapterContextMenuInfo itemInfo = (AdapterContextMenuInfo) item.getMenuInfo();
+
+		switch (item.getItemId()) {
+		case 4:
+			Toast.makeText(this, itemInfo.position+ " " + itemInfo.id, 5000).show();
+			sch_list.remove(itemInfo.position);
+			redraw();
+			break;
+
+		default:
+			break;
+		}
+		return super.onContextItemSelected(item);
+		
+		
+	}
+
+
+	private void redraw() {
+		// TODO Auto-generated method stub
+		
+		mAdapter = null;
+		mAdapter = new MyCustomAdapter();
+        for(int i =0;i!=sch_list.size();i++){
+        	mAdapter.addName(sch_list.get(i).name);
+        	mAdapter.addIconpath(getString(R.string.icons_path)+sch_list.get(i).apkid);
+        	mAdapter.addVersion(sch_list.get(i).ver);
+        }
+        setListAdapter(mAdapter);
+		
+		
+	}
 
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		// TODO Auto-generated method stub
-	       Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
-
-			try{
-				String packageName=sch_list.get(position).apkid;
-				String ver = sch_list.get(position).ver;
-				Vector<ApkNode> apk_lst = db.getAll("abc");
-				String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
-				
-				tmp_serv = db.getPathHash(packageName, ver);
-
-				String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
-				String appName = packageName;
-				for(ApkNode node: apk_lst){
-					if(node.apkid.equals(packageName)){
-						appName = node.name;
-						break;
-					}
-				}
-
-				//if(tmp_serv.size() > 0){
-				downloadNode = tmp_serv.firstElement();
-				downloadNode.setPackageName(packageName);
-				downloadNode.setAppName(appName);
-				downloadNode.setLocalPath(localPath);
-				downloadNode.setUpdate(false);
-				String remotePath = downloadNode.getRemotePath();
-				//}
-
-				if(remotePath.length() == 0)
-					throw new TimeoutException();
-
-				String[] logins = null; 
-				logins = db.getLogin(downloadNode.getRepo());
-//				downloadNode.getRemotePath()
-				downloadNode.setLogins(logins);
-//				Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
-				
-				
-	        
-			} catch(Exception e){	
-				e.printStackTrace();
-			}
-		downloadQueueService.startDownload(downloadNode);
-		
-		
-		
+		downloadQueueService.startDownload(doDownloadNode(position));
 		super.onListItemClick(l, v, position, id);
 	}
 
 
-
-
-
-
-
-
-
+	private DownloadNode doDownloadNode(int position) {
+		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
+		try{
+			String packageName=sch_list.get(position).apkid;
+			String ver = sch_list.get(position).ver;
+			Vector<ApkNode> apk_lst = db.getAll("abc");
+			String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
+			tmp_serv = db.getPathHash(packageName, ver);
+			String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
+			String appName = packageName;
+			for(ApkNode node: apk_lst){
+				if(node.apkid.equals(packageName)){
+					appName = node.name;
+					break;
+				}
+			}
+			downloadNode = tmp_serv.firstElement();
+			downloadNode.setPackageName(packageName);
+			downloadNode.setAppName(appName);
+			downloadNode.setLocalPath(localPath);
+			downloadNode.setUpdate(false);
+			String remotePath = downloadNode.getRemotePath();
+			if(remotePath.length() == 0)
+				throw new TimeoutException();
+			String[] logins = null; 
+			logins = db.getLogin(downloadNode.getRepo());
+			downloadNode.setLogins(logins);
+		} catch(Exception e){	
+			e.printStackTrace();
+		}
+		return downloadNode;
+	}
 
 
 	private class MyCustomAdapter extends BaseAdapter {

@@ -456,6 +456,7 @@ public class BaseManagement extends Activity {
 //							apk_line.put("statusSort", 2);
 							updtMap.add(apk_line);
 							instMap.add(apk_line);
+							if(downloadQueueService!=null)
 							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else if(node.status == 3){
@@ -466,6 +467,7 @@ public class BaseManagement extends Activity {
 //							apk_line.put("statusSort", 3);
 							instMap.add(apk_line);
 //							updtMap.add(apk_line);
+							if(downloadQueueService!=null)
 							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else{

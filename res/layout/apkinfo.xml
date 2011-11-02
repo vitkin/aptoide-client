@@ -166,7 +166,7 @@
     	                android:layout_weight=".50"
     	                android:text="@string/btn_search_market"
     	                android:textColor="#000000"
-    	                android:textSize="12sp" />
+    	                android:textSize="15sp" />
     	        </LinearLayout>
 
 <!--    	        <CheckBox-->
