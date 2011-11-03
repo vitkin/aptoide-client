@@ -398,6 +398,10 @@ public class DbHandler {
 		return (db.insert(TABLE_NAME_SCHEDULED, null, tmp) > 0); 
 	}
 	
+	public boolean deleteScheduledDownload(String apkid){
+		return db.delete(TABLE_NAME_SCHEDULED, "apkid='"+apkid+"'", null)>0;
+	}
+	
 	public Vector<ApkNode> getScheduledListNames() {
 		// TODO Auto-generated method stub
 		Vector<ApkNode> out = new Vector<ApkNode>();
