@@ -5,12 +5,15 @@ import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -24,8 +27,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -68,7 +74,8 @@ public class ScheduledDownload extends ListActivity {
 	private MyCustomAdapter mAdapter;
 	private DbHandler db = new DbHandler(this);
 	private Vector<ApkNode> sch_list;
-	DownloadNode downloadNode;
+	private Vector <String> schDownToDelete = new Vector<String>();
+	private DownloadNode downloadNode;
 	
 	 
     @Override
@@ -84,6 +91,9 @@ public class ScheduledDownload extends ListActivity {
         	mAdapter.addVersion(sch_list.get(i).ver);
         }
         setListAdapter(mAdapter);
+        if(sch_list.size()==0){
+			Toast.makeText(this, "No Scheduled Downloads", Toast.LENGTH_LONG).show();
+        }
         
     }
     
@@ -94,7 +104,11 @@ public class ScheduledDownload extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
-		menu.add(Menu.NONE,1, 1, "Download All");
+		
+		menu.add(Menu.NONE,2, 2, "Download Selected");
+		menu.add(Menu.NONE,3, 3, "Invert Selection");
+		menu.add(Menu.NONE,4, 3, "Remove Selected");
+		
 		
 		
 		return super.onCreateOptionsMenu(menu);
@@ -106,12 +120,78 @@ public class ScheduledDownload extends ListActivity {
 	 */
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		AlertDialog alrt = new AlertDialog.Builder(this).create();
 		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
-		case 1:
-			downloadAll();
+		case 4:
+			
+			alrt.setMessage("Are you sure you want to remove?");
+			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					for(int i=0; i < getListAdapter().getCount(); i++){
+						LinearLayout itemLayout = (LinearLayout)getListView().getChildAt(i);
+						CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
+							if(cb.isChecked()){
+								db.deleteScheduledDownload(sch_list.get(i).apkid);
+								
+							}
+						}
+					redraw();
+					return;
+				} }); 
+			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}});
+			alrt.show();
+			
 			break;
+			
+		case 2:
+			
+			String programs = "";
+			boolean existsDownloads=false;
+			
+			for(int i=0; i < this.getListAdapter().getCount(); i++){
+				LinearLayout itemLayout = (LinearLayout)getListView().getChildAt(i);
+				CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
 
+				if (cb.isChecked()){
+					downloadQueueService.startDownload(doDownloadNode(i));
+					programs=programs.concat("\n"+getListAdapter().getItem(i).toString());
+					
+					schDownToDelete.add(sch_list.get(i).apkid);
+					existsDownloads = true;
+				}
+
+
+			}
+			if(existsDownloads){
+				alrt.setMessage("Delete Scheduled Downloads? "+programs);
+				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						for (String apkid : schDownToDelete){
+							db.deleteScheduledDownload(apkid);
+						}
+						redraw();
+						return;
+					} }); 
+				alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						return;
+					}});
+				alrt.show();
+			}else{
+				Toast.makeText(this, "No Downloads Selected", Toast.LENGTH_LONG).show();
+			}
+			break;
+		case 3:
+			for(int i=0; i < this.getListAdapter().getCount(); i++){
+				LinearLayout itemLayout = (LinearLayout)getListView().getChildAt(i);
+				CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
+					cb.toggle();
+				}
+			break;
 		default:
 			break;
 		}
@@ -156,7 +236,7 @@ public class ScheduledDownload extends ListActivity {
 
 		switch (item.getItemId()) {
 		case 4:
-			Toast.makeText(this, itemInfo.position+ " " + itemInfo.id, 5000).show();
+			db.deleteScheduledDownload(sch_list.get(itemInfo.position).apkid);
 			sch_list.remove(itemInfo.position);
 			redraw();
 			break;
@@ -172,7 +252,10 @@ public class ScheduledDownload extends ListActivity {
 
 	private void redraw() {
 		// TODO Auto-generated method stub
-		
+		sch_list=db.getScheduledListNames();
+		if(sch_list.size()==0){
+			Toast.makeText(this, "No Scheduled Downloads", 10000).show();
+        }
 		mAdapter = null;
 		mAdapter = new MyCustomAdapter();
         for(int i =0;i!=sch_list.size();i++){
@@ -269,12 +352,14 @@ public class ScheduledDownload extends ListActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             System.out.println("getView " + position + " " + convertView);
             ViewHolder holder = null;
+          
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.sch_download, null);
                 holder = new ViewHolder();
                 holder.name = (TextView)convertView.findViewById(R.id.name);
                 holder.iconpath = (ImageView)convertView.findViewById(R.id.appicon);
                 holder.version=(TextView)convertView.findViewById(R.id.isinst);
+                
                 
                 convertView.setTag(holder);
             } else {
