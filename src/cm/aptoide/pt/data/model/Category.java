@@ -45,6 +45,7 @@ public class Category {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_CATEGORY);
 		setCategoryName(categoryName);
 		subCategories = new ArrayList<Category>();
+		this.parentHashid = Constants.TOP_CATEGORY;
 	}
 	
 	
@@ -80,6 +81,7 @@ public class Category {
 	}
 		
 	public void addChild(Category subCategory){
+		subCategory.setParentHashid(getHashid());
 		subCategories.add(subCategory);
 		if(!this.hasChilds){
 			this.hasChilds = true;
@@ -95,12 +97,14 @@ public class Category {
 		this.values = null;
 		this.hasChilds = false;
 		this.subCategories = null;
+		this.parentHashid = Constants.TOP_CATEGORY;
 	}
 	
 	public void reuse(String categoryName) {
 		this.hasChilds = false;
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_CATEGORY);
 		setCategoryName(categoryName);
+		this.parentHashid = Constants.TOP_CATEGORY;
 	}
 	
 }

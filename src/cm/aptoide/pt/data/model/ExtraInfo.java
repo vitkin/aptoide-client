@@ -1,5 +1,5 @@
 /*
- * DownloadInfo		part of Aptoide's data model
+ * ExtraInfo		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -22,76 +22,68 @@ package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.downloads.InterfaceDownloadInfo;
 
  /**
- * DownloadInfo, models a download's info
+ * ExtraInfo, models a download's info
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class DownloadInfo implements InterfaceDownloadInfo {
+public class ExtraInfo {
 
 	private ContentValues values;
-	private String remoteBasePath;
 
 	
 	/**
 	 * DownloadInfo Constructor
 	 * 
-	 * @param String remotePathTail, what comes after repository's base path
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public DownloadInfo(String remotePathTail, int applicationFullHashid) {
+	public ExtraInfo(int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD);
-		setRemotePathTail(remotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}
 	
 	
-	private void setRemotePathTail(String remotePathTail){
-		this.values.put(Constants.KEY_DOWNLOAD_REMOTE_PATH_TAIL, remotePathTail);		
-	}
-	
-	public String getRemotePathTail(){
-		return this.values.getAsString(Constants.KEY_DOWNLOAD_REMOTE_PATH_TAIL);
-	}
-	
 	private void setAppFullHashid(int appFullHashid){
-		this.values.put(Constants.KEY_DOWNLOAD_APP_FULL_HASHID, appFullHashid);
+		this.values.put(Constants.KEY_EXTRA_APP_FULL_HASHID, appFullHashid);
 	}
 	
 	public int getAppFullHashid() {
-		return values.getAsInteger(Constants.KEY_DOWNLOAD_APP_FULL_HASHID);
+		return values.getAsInteger(Constants.KEY_EXTRA_APP_FULL_HASHID);
 	}
 	
-	public void setRemoteBasePath(String remoteBasePath){
-		this.remoteBasePath = remoteBasePath;
+	public void setDescription(String description){
+		this.values.put(Constants.KEY_EXTRA_DESCRIPTION, description);
 	}
 	
-	public String getRemoteBasePath(){
-		return this.remoteBasePath;
+	public String getDescription(){
+		return this.values.getAsString(Constants.KEY_EXTRA_DESCRIPTION);
 	}
 	
-	public String getRemotePath(){
-		return getRemoteBasePath() + getRemotePathTail();
+	public void setRating(int rating){
+		this.values.put(Constants.KEY_EXTRA_RATING, rating);
 	}
 	
-	public void setMd5hash(int md5hash){
-		this.values.put(Constants.KEY_DOWNLOAD_MD5HASH, md5hash);
+	public int getRating(){
+		return this.values.getAsInteger(Constants.KEY_EXTRA_RATING);
 	}
 	
-	public int getMd5hash(){
-		return this.values.getAsInteger(Constants.KEY_DOWNLOAD_MD5HASH);
+	public void setStars(int stars){
+		this.values.put(Constants.KEY_EXTRA_STARS, stars);
 	}
 	
-	public void setSize(int size){
-		this.values.put(Constants.KEY_DOWNLOAD_SIZE, size);
+	public int getStars(){
+		return this.values.getAsInteger(Constants.KEY_EXTRA_STARS);
 	}
 	
-	public int getSize(){
-		return this.values.getAsInteger(Constants.KEY_DOWNLOAD_SIZE);
+	public void setDownloads(int downloads){
+		this.values.put(Constants.KEY_EXTRA_DOWNLOADS, downloads);
+	}
+	
+	public int getDownloads(){
+		return this.values.getAsInteger(Constants.KEY_EXTRA_DOWNLOADS);
 	}
 		
 	
@@ -104,9 +96,8 @@ public class DownloadInfo implements InterfaceDownloadInfo {
 		this.values = null;
 	}
 	
-	public void reuse(String iconRemotePathTail, int applicationFullHashid) {
+	public void reuse(int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD);
-		setRemotePathTail(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}
 	

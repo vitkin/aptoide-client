@@ -73,14 +73,6 @@ public class Repository {
 		return values.getAsInteger(Constants.KEY_REPO_SIZE);
 	}
 	
-	public void setUpdateTime(String updateTime){
-		values.put(Constants.KEY_REPO_UPDATE_TIME, updateTime);
-	}
-
-	public String getUpdateTime() {
-		return values.getAsString(Constants.KEY_REPO_UPDATE_TIME);
-	}
-	
 	public void setDelta(String delta){
 		values.put(Constants.KEY_REPO_DELTA, delta);
 	}

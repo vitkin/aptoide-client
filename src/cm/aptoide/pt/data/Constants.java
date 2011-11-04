@@ -42,9 +42,11 @@ public class Constants {
 			 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
 			 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
 	
-	public static final int DB_TRUE = 1;
+	public static final int DB_TRUE = 1;		/** stupid sqlite doesn't know booleans */
 	public static final int DB_FALSE = 0;
 	public static final int DB_ERROR = -1;
+	
+	public static final int TOP_CATEGORY = 0;
 	
 	/** HashIds are the hashcodes of the real E-A primary keyes separated by pipe symbols. 
 	 *			Reasoning behind them is that sqlite is noticeably more efficient
@@ -63,8 +65,7 @@ public class Constants {
 	public static final String KEY_REPO_URI = "uri";
 	public static final String KEY_REPO_BASE_PATH = "base_path";
 	public static final String KEY_REPO_SIZE = "repo_size";
-	public static final String KEY_REPO_UPDATE_TIME = "update_time";	//TODO may be useless if delta is not cached on server, which is probable
-	public static final String KEY_REPO_DELTA = "delta";
+	public static final String KEY_REPO_DELTA = "delta";			/** identifies a single version of all xml files */
 	public static final String KEY_REPO_IN_USE = "in_use";
 	public static final int NUMBER_OF_COLUMNS_REPO = 7;
 	
@@ -122,8 +123,9 @@ public class Constants {
 	public static final String TABLE_EXTRA_INFO = "extra_info";
 	public static final String KEY_EXTRA_APP_FULL_HASHID = "app_full_hashid";
 	public static final String KEY_EXTRA_DESCRIPTION = "description";	//TODO test if there is a big performance improvement by sending description to a different table
-	public static final String KEY_EXTRA_RATING = "rating";
-	public static final String KEY_EXTRA_POPULARITY = "popularity";
+	public static final String KEY_EXTRA_RATING = "rating";			
+	public static final String KEY_EXTRA_STARS = "stars";	
+	public static final String KEY_EXTRA_DOWNLOADS = "downloads";
 	public static final int NUMBER_OF_COLUMNS_EXTRA = 5;
 	
 	
@@ -137,7 +139,6 @@ public class Constants {
 			+ KEY_REPO_URI + " TEXT UNIQUE NOT NULL, "
 			+ KEY_REPO_BASE_PATH + " TEXT UNIQUE NOT NULL, "
 			+ KEY_REPO_SIZE + " INTEGER NOT NULL DEFAULT (0) CHECK ("+KEY_REPO_SIZE+">=0), "
-			+ KEY_REPO_UPDATE_TIME + " TEXT NOT NULL DEFAULT (0), "
 			+ KEY_REPO_DELTA + " TEXT NOT NULL DEFAULT (0), "
 			+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT (1), "		/** stupid sqlite doesn't know booleans */
 			+ "PRIMARY KEY("+ KEY_REPO_HASHID +") );";
@@ -258,10 +259,11 @@ public class Constants {
 	public static final String CREATE_TABLE_EXTRA = "CREATE TABLE IF NOT EXISTS " + TABLE_EXTRA_INFO + " ("
 			+ KEY_EXTRA_APP_FULL_HASHID + " INTEGER NOT NULL, "
 			+ KEY_EXTRA_DESCRIPTION + " TEXT NOT NULL, "
-			+ KEY_EXTRA_RATING + " INTEGER NOT NULL, "
-			+ KEY_EXTRA_POPULARITY + " INTEGER NOT NULL CHECK ("+KEY_EXTRA_POPULARITY+">=0), "
+			+ KEY_EXTRA_RATING + " INTEGER NOT NULL CHECK ("+KEY_EXTRA_RATING+">0), "
+			+ KEY_EXTRA_STARS + " INTEGER NOT NULL CHECK ("+KEY_EXTRA_STARS+">=0), "
+			+ KEY_EXTRA_DOWNLOADS + " INTEGER NOT NULL CHECK ("+KEY_EXTRA_DOWNLOADS+">=0), "
 			+ "FOREIGN KEY("+ KEY_EXTRA_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_EXTRA_APP_FULL_HASHID +") );";	//TODO integrity restrictions on rating
+			+ "PRIMARY KEY("+ KEY_EXTRA_APP_FULL_HASHID +") );";
 
 	public static final String FOREIGN_KEY_INSERT_EXTRA = "foreign_key_insert_extra";
 	public static final String FOREIGN_KEY_UPDATE_EXTRA_APP_FULL_HASHID_WEAK = "foreign_key_update_extra_app_full_hashid_weak";
