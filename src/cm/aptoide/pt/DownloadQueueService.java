@@ -64,6 +64,7 @@ public class DownloadQueueService extends Service {
 	private Context context;
 	private WakeLock keepScreenOn;
 	
+	
 	// This is the object that receives interactions from service clients.
     private final IBinder binder = new DownloadQueueBinder();
 	

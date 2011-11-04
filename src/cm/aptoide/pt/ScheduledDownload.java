@@ -12,11 +12,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.opengl.Visibility;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -94,6 +97,8 @@ public class ScheduledDownload extends ListActivity {
         if(sch_list.size()==0){
 			Toast.makeText(this, "No Scheduled Downloads", Toast.LENGTH_LONG).show();
         }
+        Toast.makeText(this, new String (new Integer(getResources().getConfiguration().screenLayout).toString()), Toast.LENGTH_LONG).show();
+        
         
     }
     
@@ -108,6 +113,7 @@ public class ScheduledDownload extends ListActivity {
 		menu.add(Menu.NONE,2, 2, "Download Selected");
 		menu.add(Menu.NONE,3, 3, "Invert Selection");
 		menu.add(Menu.NONE,4, 3, "Remove Selected");
+		
 		
 		
 		
@@ -149,41 +155,44 @@ public class ScheduledDownload extends ListActivity {
 			
 		case 2:
 			
-			String programs = "";
-			boolean existsDownloads=false;
+//			String programs = "";
+//			boolean existsDownloads=false;
 			
 			for(int i=0; i < this.getListAdapter().getCount(); i++){
 				LinearLayout itemLayout = (LinearLayout)getListView().getChildAt(i);
 				CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
 
 				if (cb.isChecked()){
-					downloadQueueService.startDownload(doDownloadNode(i));
-					programs=programs.concat("\n"+getListAdapter().getItem(i).toString());
 					
-					schDownToDelete.add(sch_list.get(i).apkid);
-					existsDownloads = true;
-				}
+					downloadQueueService.startDownload(doDownloadNode(i));
+//					programs=programs.concat("\n"+getListAdapter().getItem(i).toString());
+//					schDownToDelete.add(sch_list.get(i).apkid);
+//					existsDownloads = true;
+//				}
 
 
-			}
-			if(existsDownloads){
-				alrt.setMessage("Delete Scheduled Downloads? "+programs);
-				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						for (String apkid : schDownToDelete){
-							db.deleteScheduledDownload(apkid);
-						}
-						redraw();
-						return;
-					} }); 
-				alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						return;
-					}});
-				alrt.show();
+//			}
+//			if(existsDownloads){
+//				alrt.setMessage("Delete Scheduled Downloads? "+programs);
+//				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+//					public void onClick(DialogInterface dialog, int which) {
+//						for (String apkid : schDownToDelete){
+//							db.deleteScheduledDownload(apkid);
+//						}
+//						redraw();
+//						return;
+//					} }); 
+//				alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+//					public void onClick(DialogInterface dialog, int which) {
+//						return;
+//					}});
+//				alrt.show();
+				
 			}else{
 				Toast.makeText(this, "No Downloads Selected", Toast.LENGTH_LONG).show();
 			}
+				}
+				
 			break;
 		case 3:
 			for(int i=0; i < this.getListAdapter().getCount(); i++){

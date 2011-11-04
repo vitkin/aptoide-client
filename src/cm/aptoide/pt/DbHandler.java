@@ -398,6 +398,30 @@ public class DbHandler {
 		return (db.insert(TABLE_NAME_SCHEDULED, null, tmp) > 0); 
 	}
 	
+	public boolean existScheduledDownload(String apkid) {
+		Cursor cursor = null;
+		String existsapkid = null;
+		try {
+			
+			cursor = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid"}, null, null, null, null, null);
+			cursor.moveToFirst();
+			for(int i=0; i<cursor.getCount(); i++){
+				existsapkid=cursor.getString(0);
+				if(existsapkid.equals(apkid)){
+					return true;
+				}
+				cursor.moveToNext();
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			cursor.close();
+		}
+		return false;
+		
+	}
+	
 	public boolean deleteScheduledDownload(String apkid){
 		return db.delete(TABLE_NAME_SCHEDULED, "apkid='"+apkid+"'", null)>0;
 	}
@@ -1276,6 +1300,8 @@ public class DbHandler {
 		Log.d("Aptoide","RemovedOld: " + o);
 		
 	}
+
+	
 
 	
 }
