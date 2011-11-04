@@ -1146,7 +1146,12 @@ public class RemoteInTab extends TabActivity {
 	}
 	
 	private void installApk(Intent intent){
+		
 		Bundle arguments = intent.getExtras();
+		String apkid=arguments.getString("packageName");
+		
+//		db.deleteScheduledDownload(apkid);
+		
 		String localPath = arguments.getString("localPath");
 		
 		String version = arguments.getString("version");
@@ -1170,7 +1175,7 @@ public class RemoteInTab extends TabActivity {
 	    	installApkAction.putExtra("localPath", localPath);
 	    	installApkAction.putExtra("version", version);
 		
-		sendBroadcast(installApkAction); 
+		sendBroadcast(installApkAction);
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
 

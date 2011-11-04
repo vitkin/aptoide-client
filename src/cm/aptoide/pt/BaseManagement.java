@@ -31,6 +31,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -44,6 +45,8 @@ import android.widget.SimpleAdapter.ViewBinder;
 
 public class BaseManagement extends Activity {
 
+		
+	
 	static private PackageManager mPm;
 	static private PackageInfo pkginfo;
 	
@@ -361,10 +364,13 @@ public class BaseManagement extends Activity {
 			try {
 				pkginfo = mPm.getPackageInfo(apkid, 0);
 				db.insertInstalled(apkid, sPref.getString("ver", null));
+				db.deleteScheduledDownload(apkid);
+				downloadQueueService.dismissNotification(apkid.hashCode());
 				prefEdit.remove("pkg"); prefEdit.remove("ver");
 				prefEdit.commit();
 				redrawCatgList();
 				redraw();
+				
 			} catch (NameNotFoundException e) {	}
 		}else if(requestCode == REMOVE){
 			String apkid = sPref.getString("pkg", null);
@@ -386,6 +392,8 @@ public class BaseManagement extends Activity {
 			int vercode = pkginfo.versionCode;
 			String version = sPref.getString("ver", null);
 			if(db.wasUpdateOrDowngrade(apkid, vercode)){
+				db.deleteScheduledDownload(apkid);
+				downloadQueueService.dismissNotification(apkid.hashCode());
 				db.removeInstalled(apkid);
 				db.insertInstalled(apkid, version);
 				prefEdit.remove("pkg"); prefEdit.remove("ver");
@@ -405,13 +413,15 @@ public class BaseManagement extends Activity {
 		pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
 		pd.setIcon(android.R.drawable.ic_dialog_info);
 
-
+		
 		new Thread() {
 
 			public void run(){
 
 				try{
-
+					
+					
+					
 					List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
 					List<Map<String, Object>> instMap = new ArrayList<Map<String, Object>>();
 					List<Map<String, Object>> updtMap = new ArrayList<Map<String, Object>>();
@@ -446,8 +456,9 @@ public class BaseManagement extends Activity {
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
-							if(downloadQueueService!=null)
-							downloadQueueService.dismissNotification(node.apkid.hashCode());
+//							if(downloadQueueService!=null)
+//							downloadQueueService.dismissNotification(node.apkid.hashCode());
+//							cenas(); 
 							
 						}else if(node.status == 2){
 							
@@ -456,8 +467,8 @@ public class BaseManagement extends Activity {
 //							apk_line.put("statusSort", 2);
 							updtMap.add(apk_line);
 							instMap.add(apk_line);
-							if(downloadQueueService!=null)
-							downloadQueueService.dismissNotification(node.apkid.hashCode());
+//							if(downloadQueueService!=null)
+//							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else if(node.status == 3){
 							
@@ -467,8 +478,8 @@ public class BaseManagement extends Activity {
 //							apk_line.put("statusSort", 3);
 							instMap.add(apk_line);
 //							updtMap.add(apk_line);
-							if(downloadQueueService!=null)
-							downloadQueueService.dismissNotification(node.apkid.hashCode());
+//							if(downloadQueueService!=null)
+//							downloadQueueService.dismissNotification(node.apkid.hashCode());
 							
 						}else{
 							
@@ -521,12 +532,18 @@ public class BaseManagement extends Activity {
 					
 				}
 			}
+
+			
 			
 			
 			
 		}.start();
+		
+			
 		 
 	}
+	
+	
 	
 	class LstBinder implements ViewBinder
 	{

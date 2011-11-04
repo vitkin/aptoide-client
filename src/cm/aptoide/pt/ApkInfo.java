@@ -707,7 +707,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	}
 	
 	protected void addSchedulledDownload(String apkId, String version) {
-		// TODO Auto-generated method stub
+		
 		db.insertScheduled(apkId, version);
 		
 	}
