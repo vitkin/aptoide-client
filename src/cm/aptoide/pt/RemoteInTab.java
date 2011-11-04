@@ -890,7 +890,7 @@ public class RemoteInTab extends TabActivity {
 					Log.d("Aptoide","date is: " + lst_modif_str);
 					Log.d("Aptoide","hash date: " + hash_lst_modif);
 
-					String db_lst_modify = db.getUpdateTime(srv);
+					String db_lst_modify = db.getUpdateTime(srv);		//TODO updatetime deprecated
 					if(db_lst_modify == null){
 						db.setUpdateTime(hash_lst_modif, srv);
 					}else{

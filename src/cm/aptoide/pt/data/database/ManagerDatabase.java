@@ -34,6 +34,7 @@ import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.Application;
 import cm.aptoide.pt.data.model.Category;
 import cm.aptoide.pt.data.model.DownloadInfo;
+import cm.aptoide.pt.data.model.ExtraInfo;
 import cm.aptoide.pt.data.model.IconInfo;
 import cm.aptoide.pt.data.model.Repository;
 import cm.aptoide.pt.data.system.InstalledPackages;
@@ -210,14 +211,15 @@ public class ManagerDatabase {
 			if(db.insert(Constants.TABLE_CATEGORY, null, category.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
-			parentCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
-			parentCategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, category.getParentHashid());
-			parentCategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, category.getHashid());
-			
-			if(db.insert(Constants.TABLE_SUB_CATEGORY, null, parentCategoryRelation) == Constants.DB_ERROR){
-				//TODO throw exception;
+			if(!(category.getParentHashid() == Constants.TOP_CATEGORY)){
+				parentCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
+				parentCategoryRelation.put(Constants.KEY_SUB_CATEGORY_PARENT, category.getParentHashid());
+				parentCategoryRelation.put(Constants.KEY_SUB_CATEGORY_CHILD, category.getHashid());
+
+				if(db.insert(Constants.TABLE_SUB_CATEGORY, null, parentCategoryRelation) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
 			}
-			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: send to errorHandler the exception
@@ -373,22 +375,22 @@ public class ManagerDatabase {
 	}
 	
 	/**
-	 * insertIcons, handles multiple application's icons insertion
+	 * insertIconsInfo, handles multiple application's icon info insertion
 	 * 
-	 * @param ArrayList<Icon> icons
+	 * @param ArrayList<IconInfo> iconsInfo
 	 */
-	public void insertIcons(ArrayList<IconInfo> icons){
+	public void insertIconsInfo(ArrayList<IconInfo> iconsInfo){
 		try{
-			InsertHelper insertIcon = new InsertHelper(db, Constants.TABLE_ICON_INFO);
+			InsertHelper insertIconInfo = new InsertHelper(db, Constants.TABLE_ICON_INFO);
 			
 			db.beginTransaction();
 
-			for (IconInfo icon : icons) {
-				if(insertIcon.insert(icon.getValues()) == Constants.DB_ERROR){
+			for (IconInfo iconInfo : iconsInfo) {
+				if(insertIconInfo.insert(iconInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 			}
-			insertIcon.close();
+			insertIconInfo.close();
 			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
@@ -399,22 +401,17 @@ public class ManagerDatabase {
 	}
 	
 	/**
-	 * insertDownloads, handles multiple application's download requirements insertion
+	 * insertIconsInfo, handles single application's icon info insertion
 	 * 
-	 * @param ArrayList<DownloadInfo> downloads
+	 * @param IconInfo iconInfo
 	 */
-	public void insertDownloads(ArrayList<DownloadInfo> downloads){
+	public void insertIconInfo(IconInfo iconInfo){
 		try{
-			InsertHelper insertDownload = new InsertHelper(db, Constants.TABLE_DOWNLOAD_INFO);
-			
 			db.beginTransaction();
 
-			for (DownloadInfo download : downloads) {
-				if(insertDownload.insert(download.getValues()) == Constants.DB_ERROR){
-					//TODO throw exception;
-				}
+			if(db.insert(Constants.TABLE_ICON_INFO, null, iconInfo.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
 			}
-			insertDownload.close();
 			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
@@ -425,22 +422,90 @@ public class ManagerDatabase {
 	}
 	
 	/**
-	 * insertExtras, handles multiple application's icons insertion
+	 * insertDownloadsInfo, handles multiple application's download info insertion
 	 * 
-	 * @param ArrayList<Extra> extras
+	 * @param ArrayList<DownloadInfo> downloadsInfo
 	 */
-	public void insertExtras(ArrayList<Extra> extras){
+	public void insertDownloadsInfo(ArrayList<DownloadInfo> downloadsInfo){
 		try{
-			InsertHelper insertExtra = new InsertHelper(db, Constants.TABLE_EXTRA_INFO);
+			InsertHelper insertDownloadInfo = new InsertHelper(db, Constants.TABLE_DOWNLOAD_INFO);
 			
 			db.beginTransaction();
 
-			for (Extra extra : extras) {
-				if(insertExtra.insert(extra.getValues()) == Constants.DB_ERROR){
+			for (DownloadInfo downloadInfo : downloadsInfo) {
+				if(insertDownloadInfo.insert(downloadInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 			}
-			insertExtra.close();
+			insertDownloadInfo.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertDownloadInfo, handles single application's download info insertion
+	 * 
+	 * @param DownloadInfo downloadInfo
+	 */
+	public void insertDownloadInfo(DownloadInfo downloadInfo){
+		try{
+			db.beginTransaction();
+
+			if(db.insert(Constants.TABLE_DOWNLOAD_INFO, null, downloadInfo.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertExtraInfos, handles multiple application's extra info insertion
+	 * 
+	 * @param ArrayList<ExtraInfo> extraInfos
+	 */
+	public void insertExtras(ArrayList<ExtraInfo> extraInfos){
+		try{
+			InsertHelper insertExtraInfo = new InsertHelper(db, Constants.TABLE_EXTRA_INFO);
+			
+			db.beginTransaction();
+
+			for (ExtraInfo extraInfo : extraInfos) {
+				if(insertExtraInfo.insert(extraInfo.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertExtraInfo.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertExtraInfo, handles single application's extra info insertion
+	 * 
+	 * @param ExtraInfo extraInfo
+	 */
+	public void insertExtra(ExtraInfo extraInfo){
+		try{
+			db.beginTransaction();
+
+			if(db.insert(Constants.TABLE_EXTRA_INFO, null, extraInfo.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
 			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
