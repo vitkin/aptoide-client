@@ -44,7 +44,7 @@ public class DownloadInfo implements InterfaceDownloadInfo {
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
 	public DownloadInfo(String remotePathTail, int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD);
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD_INFO);
 		setRemotePathTail(remotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}
@@ -105,7 +105,7 @@ public class DownloadInfo implements InterfaceDownloadInfo {
 	}
 	
 	public void reuse(String iconRemotePathTail, int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD);
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD_INFO);
 		setRemotePathTail(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}

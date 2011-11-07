@@ -42,18 +42,18 @@ public class IconInfo {
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
 	public IconInfo(String iconRemotePathTail, int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON);
-		setRemotePathTail(iconRemotePathTail);
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
+		setMd5Hash(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}
 	
 	
-	private void setRemotePathTail(String remotePathTail){
-		values.put(Constants.KEY_ICON_REMOTE_PATH_TAIL, remotePathTail);		
+	private void setMd5Hash(String md5hash){
+		values.put(Constants.KEY_ICON_MD5HASH, md5hash);		
 	}
 	
-	public String getRemotePathTail(){
-		return values.getAsString(Constants.KEY_ICON_REMOTE_PATH_TAIL);
+	public String getMd5Hash(){
+		return values.getAsString(Constants.KEY_ICON_MD5HASH);
 	}
 	
 	private void setAppFullHashid(int appFullHashid){
@@ -76,8 +76,8 @@ public class IconInfo {
 	}
 	
 	public void reuse(String iconRemotePathTail, int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON);
-		setRemotePathTail(iconRemotePathTail);
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
+		setMd5Hash(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}
 	

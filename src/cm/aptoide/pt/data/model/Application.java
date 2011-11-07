@@ -93,6 +93,14 @@ public class Application {
 		return values.getAsString(Constants.KEY_APPLICATION_NAME);
 	}
 	
+	public void setRating(int rating){
+		values.put(Constants.KEY_APPLICATION_RATING, rating);
+	}
+	
+	public int getRating() {
+		return values.getAsInteger(Constants.KEY_APPLICATION_RATING);
+	}
+	
 	/**
 	 * setRepoHashid, sets this application's repo hashid
 	 * 
