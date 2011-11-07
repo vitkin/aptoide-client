@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="horizontal"
+  android:gravity="center"
+  android:layout_width="fill_parent"
+  android:layout_height="wrap_content"
+  android:background="#000000">
+    
+   <cm.aptoide.pt.webservices.comments.GifView
+    	android:id="@+id/loadImageComments"
+    	android:layout_width="40px"
+  		android:layout_height="40px"
+    	/>
+    
+    <TextView
+    	android:id="@+id/loadTextComments"
+    	android:text="@string/loading_comments"
+    	android:layout_width="wrap_content"
+  		android:layout_height="wrap_content"
+    	/>
+    
+</LinearLayout>
