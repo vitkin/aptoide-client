@@ -65,6 +65,22 @@ public class Repository {
 		return values.getAsString(Constants.KEY_REPO_BASE_PATH);
 	}
 	
+	public void setIconsPath(String iconsPath){
+		values.put(Constants.KEY_REPO_ICONS_PATH, iconsPath);
+	}
+
+	public String getIconsPath() {
+		return values.getAsString(Constants.KEY_REPO_ICONS_PATH);
+	}
+	
+	public void setScreensPath(String screensPath){
+		values.put(Constants.KEY_REPO_SCREENS_PATH, screensPath);
+	}
+
+	public String getScreensPath() {
+		return values.getAsString(Constants.KEY_REPO_SCREENS_PATH);
+	}
+	
 	public void setSize(int size){
 		values.put(Constants.KEY_REPO_SIZE, size);
 	}

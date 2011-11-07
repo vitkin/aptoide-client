@@ -31,12 +31,14 @@ import cm.aptoide.pt.ApkNodeFull;
 import cm.aptoide.pt.DownloadNode;
 import cm.aptoide.pt.ServerNode;
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.model.AppComment;
 import cm.aptoide.pt.data.model.Application;
 import cm.aptoide.pt.data.model.Category;
 import cm.aptoide.pt.data.model.DownloadInfo;
 import cm.aptoide.pt.data.model.ExtraInfo;
 import cm.aptoide.pt.data.model.IconInfo;
 import cm.aptoide.pt.data.model.Repository;
+import cm.aptoide.pt.data.model.StatsInfo;
 import cm.aptoide.pt.data.system.InstalledPackages;
 import cm.aptoide.pt.multiversion.VersionApk;
 
@@ -75,6 +77,7 @@ public class ManagerDatabase {
 	public ManagerDatabase(Context context) {
 		if(db == null){
 			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
+			db.beginTransaction();
 			db.execSQL(Constants.CREATE_TABLE_REPOSITORY);
 			db.execSQL(Constants.CREATE_TABLE_LOGIN);
 			db.execSQL(Constants.CREATE_TABLE_APPLICATION);
@@ -82,9 +85,11 @@ public class ManagerDatabase {
 			db.execSQL(Constants.CREATE_TABLE_SUB_CATEGORY);
 			db.execSQL(Constants.CREATE_TABLE_APP_CATEGORY);
 			db.execSQL(Constants.CREATE_TABLE_APP_INSTALLED);
-			db.execSQL(Constants.CREATE_TABLE_ICON);
-			db.execSQL(Constants.CREATE_TABLE_DOWNLOAD);
-			db.execSQL(Constants.CREATE_TABLE_EXTRA);
+			db.execSQL(Constants.CREATE_TABLE_ICON_INFO);
+			db.execSQL(Constants.CREATE_TABLE_DOWNLOAD_INFO);
+			db.execSQL(Constants.CREATE_TABLE_STATS_INFO);
+			db.execSQL(Constants.CREATE_TABLE_EXTRA_INFO);
+			db.execSQL(Constants.CREATE_TABLE_APP_COMMENTS);
 			
 			db.execSQL(Constants.CREATE_TRIGGER_REPO_DELETE_REPO);
 			db.execSQL(Constants.CREATE_TRIGGER_REPO_UPDATE_REPO_HASHID_STRONG);
@@ -102,13 +107,18 @@ public class ManagerDatabase {
 			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_INSERT);
 			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_UPDATE_APP_FULL_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_UPDATE_CATEGORY_HASHID_WEAK);
-			db.execSQL(Constants.CREATE_TRIGGER_ICON_INSERT);
-			db.execSQL(Constants.CREATE_TRIGGER_ICON_UPDATE_APP_FULL_HASHID_WEAK);
-			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_INSERT);
-			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_UPDATE_APP_FULL_HASHID_WEAK);
-			db.execSQL(Constants.CREATE_TRIGGER_EXTRA_INSERT);
-			db.execSQL(Constants.CREATE_TRIGGER_EXTRA_UPDATE_APP_FULL_HASHID_WEAK);
-			
+			db.execSQL(Constants.CREATE_TRIGGER_ICON_INFO_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_ICON_INFO_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_INFO_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_INFO_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_STATS_INFO_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_STATS_INFO_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_EXTRA_INFO_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_EXTRA_INFO_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_APP_COMMENT_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_APP_COMMENT_UPDATE_APP_FULL_HASHID_WEAK);
+			db.setTransactionSuccessful();
+			db.endTransaction();
 		}else if(!db.isOpen()){
 			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
 		}
@@ -154,12 +164,12 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertCategories(ArrayList<Category> categories){
+		db.beginTransaction();
 		try{
 			InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
 			ArrayList<ContentValues> subCategoriesRelations = new ArrayList<ContentValues>(categories.size());
 			ContentValues subCategoryRelation;
 			
-			db.beginTransaction();
 			for (Category category : categories) {
 				if(insertCategory.insert(category.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
@@ -204,10 +214,10 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertCategory(Category category){
+		db.beginTransaction();
 		try{
 			ContentValues parentCategoryRelation;
 			
-			db.beginTransaction();
 			if(db.insert(Constants.TABLE_CATEGORY, null, category.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -238,11 +248,11 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertRepositories(ArrayList<Repository> repositories){
+		db.beginTransaction();
 		try{
 			InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
 			ArrayList<ContentValues> loginsValues = new ArrayList<ContentValues>(repositories.size());
 			
-			db.beginTransaction();
 			for (Repository repository : repositories) {
 				if(insertRepository.insert(repository.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
@@ -279,8 +289,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertRepository(Repository repository){
+		db.beginTransaction();
 		try{
-			db.beginTransaction();
 			if(db.insert(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -307,12 +317,12 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertApplications(ArrayList<Application> applications){
+		db.beginTransaction();
 		try{
 			InsertHelper insertApplication = new InsertHelper(db, Constants.TABLE_APPLICATION);
 			ArrayList<ContentValues> appCategoriesRelations = new ArrayList<ContentValues>(applications.size());
 			ContentValues appCategoryRelation;
 			
-			db.beginTransaction();
 			for (Application application : applications) {
 				if(insertApplication.insert(application.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
@@ -352,9 +362,9 @@ public class ManagerDatabase {
 	 */
 	public void insertApplication(Application application){
 		ContentValues appCategoryRelation;
-		
+
+		db.beginTransaction();
 		try{
-			db.beginTransaction();
 			if(db.insert(Constants.TABLE_APPLICATION ,null, application.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -380,11 +390,10 @@ public class ManagerDatabase {
 	 * @param ArrayList<IconInfo> iconsInfo
 	 */
 	public void insertIconsInfo(ArrayList<IconInfo> iconsInfo){
+		db.beginTransaction();
 		try{
 			InsertHelper insertIconInfo = new InsertHelper(db, Constants.TABLE_ICON_INFO);
 			
-			db.beginTransaction();
-
 			for (IconInfo iconInfo : iconsInfo) {
 				if(insertIconInfo.insert(iconInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
@@ -406,9 +415,8 @@ public class ManagerDatabase {
 	 * @param IconInfo iconInfo
 	 */
 	public void insertIconInfo(IconInfo iconInfo){
+		db.beginTransaction();
 		try{
-			db.beginTransaction();
-
 			if(db.insert(Constants.TABLE_ICON_INFO, null, iconInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -427,11 +435,10 @@ public class ManagerDatabase {
 	 * @param ArrayList<DownloadInfo> downloadsInfo
 	 */
 	public void insertDownloadsInfo(ArrayList<DownloadInfo> downloadsInfo){
+		db.beginTransaction();
 		try{
 			InsertHelper insertDownloadInfo = new InsertHelper(db, Constants.TABLE_DOWNLOAD_INFO);
 			
-			db.beginTransaction();
-
 			for (DownloadInfo downloadInfo : downloadsInfo) {
 				if(insertDownloadInfo.insert(downloadInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
@@ -453,9 +460,8 @@ public class ManagerDatabase {
 	 * @param DownloadInfo downloadInfo
 	 */
 	public void insertDownloadInfo(DownloadInfo downloadInfo){
+		db.beginTransaction();
 		try{
-			db.beginTransaction();
-
 			if(db.insert(Constants.TABLE_DOWNLOAD_INFO, null, downloadInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -474,11 +480,10 @@ public class ManagerDatabase {
 	 * @param ArrayList<ExtraInfo> extraInfos
 	 */
 	public void insertExtras(ArrayList<ExtraInfo> extraInfos){
+		db.beginTransaction();
 		try{
 			InsertHelper insertExtraInfo = new InsertHelper(db, Constants.TABLE_EXTRA_INFO);
 			
-			db.beginTransaction();
-
 			for (ExtraInfo extraInfo : extraInfos) {
 				if(insertExtraInfo.insert(extraInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
@@ -500,12 +505,89 @@ public class ManagerDatabase {
 	 * @param ExtraInfo extraInfo
 	 */
 	public void insertExtra(ExtraInfo extraInfo){
+		db.beginTransaction();
 		try{
-			db.beginTransaction();
-
 			if(db.insert(Constants.TABLE_EXTRA_INFO, null, extraInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * insertOrReplaceStatsInfos, handles multiple application's stats info insertion
+	 * 							  if already present replaces with new ones
+	 * 
+	 * @param ArrayList<StatsInfo> statsInfos
+	 */
+	public void insertOrReplaceStatsInfos(ArrayList<StatsInfo> statsInfos){
+		db.beginTransaction();
+		try{
+			InsertHelper insertStatsInfo = new InsertHelper(db, Constants.TABLE_STATS_INFO);
+			
+			for (StatsInfo statsInfo : statsInfos) {
+				if(insertStatsInfo.replace(statsInfo.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertStatsInfo.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertOrReplaceStatsInfo, handles single application's stats info insertion
+	 * 							 if already present replaces with new ones
+	 * 
+	 * @param StatsInfo statsInfo
+	 */
+	public void insertOrReplaceStatsInfo(StatsInfo statsInfo){
+		db.beginTransaction();
+		try{
+			if(db.replace(Constants.TABLE_STATS_INFO, null, statsInfo.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	
+	
+	
+	/**
+	 * insertAppComments, handles multiple application's comments insertion
+	 * 
+	 * @param ArrayList<AppComment> appComment
+	 */
+	public void insertAppComments(ArrayList<AppComment> appComments){
+		db.beginTransaction();
+		try{
+			InsertHelper insertAppComments = new InsertHelper(db, Constants.TABLE_APP_COMMENTS);
+			
+			for (AppComment appComment : appComments) {
+				if(insertAppComments.insert(appComment.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertAppComments.close();
 			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
