@@ -48,10 +48,12 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.app.AlertDialog.Builder;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
@@ -59,6 +61,7 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -156,6 +159,31 @@ public class RemoteInTab extends TabActivity {
 
 	};	
 	
+private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			final String action = intent.getAction();
+		    if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
+		        if (intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false)) {
+		            //do stuff
+		        	
+		        	Toast.makeText(mctx, "Wi-Fi Connected", Toast.LENGTH_LONG).show();
+		        	if(!db.getScheduledListNames().isEmpty()){		        		
+		        	Intent intent1 = new Intent(RemoteInTab.this,ScheduledDownload.class);
+		        	intent1.putExtra("downloadAll", "");
+		        	startActivity(intent1);}
+		        } else {
+		            // wifi connection was lost
+		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
+		        }
+
+		}
+	}
+		};
+	
+		IntentFilter intentFilter;
 	
 //	private Handler fetchHandler = new Handler() {
 //
@@ -194,6 +222,10 @@ public class RemoteInTab extends TabActivity {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		intentFilter = new IntentFilter();
+    	intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+    	
+		
 		super.onCreate(savedInstanceState);
 		
 		if(Configs.INTERFACE_TABS_ON_BOTTOM){
@@ -561,6 +593,25 @@ public class RemoteInTab extends TabActivity {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see android.app.ActivityGroup#onPause()
+	 */
+	@Override
+	protected void onPause() {
+		// TODO Auto-generated method stub
+		unregisterReceiver(broadcastReceiver);
+		super.onPause();
+	}
+
+	/* (non-Javadoc)
+	 * @see android.app.ActivityGroup#onResume()
+	 */
+	@Override
+	protected void onResume() {
+		registerReceiver(broadcastReceiver , intentFilter);
+		super.onResume();
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);

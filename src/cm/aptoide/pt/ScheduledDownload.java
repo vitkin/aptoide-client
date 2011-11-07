@@ -7,13 +7,17 @@ import java.util.concurrent.TimeoutException;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,6 +47,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 public class ScheduledDownload extends ListActivity {
 	
 	private DownloadQueueService downloadQueueService;
+	Context ctx = this;
 	
 	
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -77,13 +82,21 @@ public class ScheduledDownload extends ListActivity {
 	private MyCustomAdapter mAdapter;
 	private DbHandler db = new DbHandler(this);
 	private Vector<ApkNode> sch_list;
-	private Vector <String> schDownToDelete = new Vector<String>();
 	private DownloadNode downloadNode;
+	
+	
+	
 	
 	 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	
+
+    	
         super.onCreate(savedInstanceState);
+        
+        
+        
         registerForContextMenu(this.getListView());
         getApplicationContext().bindService(new Intent(this, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         sch_list=db.getScheduledListNames();
@@ -97,10 +110,29 @@ public class ScheduledDownload extends ListActivity {
         if(sch_list.size()==0){
 			Toast.makeText(this, "No Scheduled Downloads", Toast.LENGTH_LONG).show();
         }
-        Toast.makeText(this, new String (new Integer(getResources().getConfiguration().screenLayout).toString()), Toast.LENGTH_LONG).show();
+        Intent intent = getIntent();
+    	if(intent.hasExtra("downloadAll")){
+    		AlertDialog alrt = new AlertDialog.Builder(this).create();
+    		alrt.setMessage("Wireless detected: Download all aplications on Scheduled Downloads?");
+			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					downloadAll();
+					return;
+				} }); 
+			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+					return;
+				}});
+			alrt.show();
+    	}
+        
         
         
     }
+    
+    
+
     
 
 	/* (non-Javadoc)
@@ -212,6 +244,7 @@ public class ScheduledDownload extends ListActivity {
 	private void downloadAll() {
 		// TODO Auto-generated method stub
 		for (int i =0; i!=sch_list.size();i++){
+			Log.d("1","1");
 			downloadQueueService.startDownload(doDownloadNode(i));
 		}
 		
