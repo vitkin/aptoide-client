@@ -23,13 +23,12 @@ package cm.aptoide.pt.data.database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Vector;
 
-import cm.aptoide.pt.ApkNode;
-import cm.aptoide.pt.ApkNodeFull;
-import cm.aptoide.pt.DownloadNode;
-import cm.aptoide.pt.ServerNode;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.DatabaseUtils.InsertHelper;
+import android.database.sqlite.SQLiteDatabase;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.AppComment;
 import cm.aptoide.pt.data.model.Application;
@@ -37,20 +36,9 @@ import cm.aptoide.pt.data.model.Category;
 import cm.aptoide.pt.data.model.DownloadInfo;
 import cm.aptoide.pt.data.model.ExtraInfo;
 import cm.aptoide.pt.data.model.IconInfo;
+import cm.aptoide.pt.data.model.ListIds;
 import cm.aptoide.pt.data.model.Repository;
 import cm.aptoide.pt.data.model.StatsInfo;
-import cm.aptoide.pt.data.system.InstalledPackages;
-import cm.aptoide.pt.multiversion.VersionApk;
-
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
-import android.database.DatabaseUtils.InsertHelper;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -125,6 +113,7 @@ public class ManagerDatabase {
 	}
 	
 	
+	
 	/**
 	 * prepareToTorchDB, handles smooth transition from old database schema
 	 * 
@@ -153,6 +142,8 @@ public class ManagerDatabase {
 		//TODO re-populate repositories
 		
 	}
+	
+	
 	
 	/**
 	 * insertCategories, handles multiple categories insertion
@@ -238,6 +229,8 @@ public class ManagerDatabase {
 		}
 	}
 	
+	
+	
 	/**
 	 * insertRepositories, handles multiple repositories insertion
 	 * 
@@ -306,6 +299,92 @@ public class ManagerDatabase {
 			db.endTransaction();
 		}
 	}
+	
+	/**
+	 * removeRepositories, handles multiple repositories removal
+	 * 
+	 * @param ListIds repoHashids
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void removeRepositories(ListIds repoHashids){
+		db.beginTransaction();
+		try{
+			StringBuilder deleteWhere = new StringBuilder();
+			boolean firstWhere = true;
+			
+			
+			for (String repoHashid : repoHashids.getList()) {
+				
+				if(firstWhere){
+					firstWhere = false;
+				}else{
+					deleteWhere.append(" OR ");					
+				}
+				
+				deleteWhere.append(Constants.KEY_REPO_HASHID+"="+repoHashid);
+			}
+			
+			
+			if(db.delete(Constants.TABLE_REPOSITORY, deleteWhere.toString(), null) == Constants.DB_NO_CHANGES_MADE){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * toggleRepositoriesInUse, handles multiple repositories inUse toggle
+	 * 
+	 * @param ListIds repoHashids
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void toggleRepositoriesInUse(ListIds repoHashids, boolean setInUse){
+		db.beginTransaction();
+		try{
+			ContentValues setTrue = new ContentValues();
+			setTrue.put(Constants.KEY_REPO_IN_USE, (setInUse?Constants.DB_TRUE:Constants.DB_FALSE) );
+			
+			StringBuilder updateWhere = new StringBuilder();
+			boolean firstWhere = true;
+			
+			
+			for (String repoHashid : repoHashids.getList()) {
+				
+				if(firstWhere){
+					firstWhere = false;
+				}else{
+					updateWhere.append(" OR ");					
+				}
+				
+				updateWhere.append(Constants.KEY_REPO_HASHID+"="+repoHashid);
+			}
+			
+			
+			if(db.update(Constants.TABLE_REPOSITORY, setTrue, updateWhere.toString(), null) == Constants.DB_NO_CHANGES_MADE){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+		
+	
+	
 	
 	/**
 	 * insertApplications, handles multiple applications insertion
@@ -383,6 +462,48 @@ public class ManagerDatabase {
 			db.endTransaction();
 		}
 	}
+	
+	/**
+	 * removeApplications, handles multiple applications removal
+	 * 
+	 * @param ListIds appsFullHashid
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void removeApplications(ListIds appsFullHashid){
+		db.beginTransaction();
+		try{
+			StringBuilder deleteWhere = new StringBuilder();
+			boolean firstWhere = true;
+			
+			
+			for (String appFullHashid : appsFullHashid.getList()) {
+				
+				if(firstWhere){
+					firstWhere = false;
+				}else{
+					deleteWhere.append(" OR ");
+				}
+				
+				deleteWhere.append(Constants.KEY_APPLICATION_FULL_HASHID+"="+appFullHashid);
+			}
+			
+			
+			if(db.delete(Constants.TABLE_APPLICATION, deleteWhere.toString(), null) == Constants.DB_NO_CHANGES_MADE){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	
 	
 	/**
 	 * insertIconsInfo, handles multiple application's icon info insertion
@@ -523,6 +644,34 @@ public class ManagerDatabase {
 	
 	
 	/**
+	 * insertAppComments, handles multiple application's comments insertion
+	 * 
+	 * @param ArrayList<AppComment> appComment
+	 */
+	public void insertAppComments(ArrayList<AppComment> appComments){
+		db.beginTransaction();
+		try{
+			InsertHelper insertAppComments = new InsertHelper(db, Constants.TABLE_APP_COMMENTS);
+			
+			for (AppComment appComment : appComments) {
+				if(insertAppComments.insert(appComment.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertAppComments.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	
+	
+	
+	/**
 	 * insertOrReplaceStatsInfos, handles multiple application's stats info insertion
 	 * 							  if already present replaces with new ones
 	 * 
@@ -570,32 +719,6 @@ public class ManagerDatabase {
 	}
 	
 	
-	
-	
-	/**
-	 * insertAppComments, handles multiple application's comments insertion
-	 * 
-	 * @param ArrayList<AppComment> appComment
-	 */
-	public void insertAppComments(ArrayList<AppComment> appComments){
-		db.beginTransaction();
-		try{
-			InsertHelper insertAppComments = new InsertHelper(db, Constants.TABLE_APP_COMMENTS);
-			
-			for (AppComment appComment : appComments) {
-				if(insertAppComments.insert(appComment.getValues()) == Constants.DB_ERROR){
-					//TODO throw exception;
-				}
-			}
-			insertAppComments.close();
-			
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-	}
 
 	
 	
