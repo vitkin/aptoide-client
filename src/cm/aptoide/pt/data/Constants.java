@@ -45,26 +45,29 @@ public class Constants {
 	public static final int DB_TRUE = 1;		/** stupid sqlite doesn't know booleans */
 	public static final int DB_FALSE = 0;
 	public static final int DB_ERROR = -1;
+	public static final int DB_NO_CHANGES_MADE = 0;
 	
 	public static final int TOP_CATEGORY = 0;
 	
-	/** HashIds are the hashcodes of the real E-A primary keyes separated by pipe symbols. 
-	 *			Reasoning behind them is that sqlite is noticeably more efficient
-	 *			handling integet indexes than text ones. 
+	/** 
+	 * 		HashIds are the hashcodes of the real E-A primary keyes separated by pipe symbols. 
+	 *		Reasoning behind them is that sqlite is noticeably more efficient
+	 *		handling integet indexes than text ones. 
 	 *
-	 *			Primary Key collision is a possibility due to java's hascode, 
-	 *			but, I expect, highly unlikely for our use case. Anyway, if it does happen,
-	 *			hashids can still be used to speed up querys, we'll simply have to change db's PKs
-	 *			to their actual entity keys to avoid collisions, or maybe add an autoincrement integer id.
+	 *		Primary Key collision is a possibility due to java's hascode, 
+	 *		but, I expect, highly unlikely for our use case. Anyway, if it does happen,
+	 *		hashids can still be used to speed up querys, we'll simply have to change db's PKs
+	 *		to their actual entity keys to avoid collisions, or maybe add an autoincrement integer id.
 	 *
-	 *			For future reference:
-	 *				for android <= 2.1 the version of sqlite is 3.5.9, 
-	 *				lacking the following features:
-	 *					* Foreign key constraints
-	 *					* Chained triggers
-	 *					* Stored procedures
-	 *					* multiple value inserts
-	 *					* ... 			
+	 *		For future reference:
+	 *			for android <= 2.1 the version of sqlite is 3.5.9, 
+	 *			lacking the following features:
+	 *				* Foreign key constraints
+	 *				* Chained triggers
+	 *				* Stored procedures
+	 *				* multiple value inserts
+	 *				* booleans
+	 *				* ... 			
 	 */ 
 	
 	public static final String DATABASE = "aptoide_db";
@@ -135,7 +138,7 @@ public class Constants {
 	public static final String TABLE_STATS_INFO = "stats_info";
 	public static final String KEY_STATS_APP_FULL_HASHID = "app_full_hashid";
 	public static final String KEY_STATS_DOWNLOADS = "downloads";
-	public static final String KEY_STATS_STARS = "stars";		/** receives only one xml tag: likes|dislikes that feeds these 3 columns after processing */
+	public static final String KEY_STATS_STARS = "stars";		/** receives only one xml tag: likes|dislikes that feeds these next 3 columns after processing */
 	public static final String KEY_STATS_LIKES = "likes";
 	public static final String KEY_STATS_DISLIKES = "dislikes";
 	public static final int NUMBER_OF_COLUMNS_STATS_INFO = 5;
