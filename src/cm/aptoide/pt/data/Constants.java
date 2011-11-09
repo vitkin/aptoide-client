@@ -54,7 +54,7 @@ public class Constants {
 	 *		Reasoning behind them is that sqlite is noticeably more efficient
 	 *		handling integet indexes than text ones. 
 	 *
-	 *		Primary Key collision is a possibility due to java's hascode, 
+	 *		Primary Key collision is a possibility due to java's hascode algorithm, 
 	 *		but, I expect, highly unlikely for our use case. Anyway, if it does happen,
 	 *		hashids can still be used to speed up querys, we'll simply have to change db's PKs
 	 *		to their actual entity keys to avoid collisions, or maybe add an autoincrement integer id.
