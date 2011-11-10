@@ -30,15 +30,17 @@ import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.model.AppComment;
-import cm.aptoide.pt.data.model.Application;
-import cm.aptoide.pt.data.model.Category;
-import cm.aptoide.pt.data.model.DownloadInfo;
-import cm.aptoide.pt.data.model.ExtraInfo;
-import cm.aptoide.pt.data.model.IconInfo;
-import cm.aptoide.pt.data.model.ListIds;
-import cm.aptoide.pt.data.model.Repository;
-import cm.aptoide.pt.data.model.StatsInfo;
+import cm.aptoide.pt.data.views.AppComment;
+import cm.aptoide.pt.data.views.Application;
+import cm.aptoide.pt.data.views.Category;
+import cm.aptoide.pt.data.views.DownloadInfo;
+import cm.aptoide.pt.data.views.ExtraInfo;
+import cm.aptoide.pt.data.views.IconInfo;
+import cm.aptoide.pt.data.views.ListIds;
+import cm.aptoide.pt.data.views.ListRepos;
+import cm.aptoide.pt.data.views.Login;
+import cm.aptoide.pt.data.views.Repository;
+import cm.aptoide.pt.data.views.StatsInfo;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -51,6 +53,10 @@ public class ManagerDatabase {
 	
 	private static SQLiteDatabase db = null;
 	
+	private int INDEX_KEY_REPO_URI; 
+	private int INDEX_KEY_REPO_INUSE; 
+	private int INDEX_KEY_LOGIN_USERNAME; 
+	private int INDEX_KEY_LOGIN_PASSWORD; 
 	
 	/**
 	 * 
@@ -66,6 +72,7 @@ public class ManagerDatabase {
 		if(db == null){
 			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
 			db.beginTransaction();
+			
 			db.execSQL(Constants.CREATE_TABLE_REPOSITORY);
 			db.execSQL(Constants.CREATE_TABLE_LOGIN);
 			db.execSQL(Constants.CREATE_TABLE_APPLICATION);
@@ -105,11 +112,23 @@ public class ManagerDatabase {
 			db.execSQL(Constants.CREATE_TRIGGER_EXTRA_INFO_UPDATE_APP_FULL_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_APP_COMMENT_INSERT);
 			db.execSQL(Constants.CREATE_TRIGGER_APP_COMMENT_UPDATE_APP_FULL_HASHID_WEAK);
+			
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}else if(!db.isOpen()){
 			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
 		}
+		db.execSQL(Constants.PRAGMA_FOREIGN_KEYS_OFF);
+		db.execSQL(Constants.PRAGMA_RECURSIVE_TRIGGERS_OFF);
+		
+		InsertHelper indexFinder = new InsertHelper(db, Constants.TABLE_REPOSITORY);
+		this.INDEX_KEY_REPO_URI = indexFinder.getColumnIndex(Constants.KEY_REPO_URI);
+		this.INDEX_KEY_REPO_INUSE = indexFinder.getColumnIndex(Constants.KEY_REPO_IN_USE);
+		indexFinder.close();
+		indexFinder = new InsertHelper(db, Constants.TABLE_LOGIN);
+		this.INDEX_KEY_LOGIN_USERNAME = indexFinder.getColumnIndex(Constants.KEY_LOGIN_USERNAME);
+		this.INDEX_KEY_LOGIN_PASSWORD = indexFinder.getColumnIndex(Constants.KEY_LOGIN_PASSWORD);
+		indexFinder.close();
 	}
 	
 	
@@ -323,17 +342,18 @@ public class ManagerDatabase {
 			StringBuilder deleteWhere = new StringBuilder();
 			boolean firstWhere = true;
 			
-			
+			deleteWhere.append(Constants.KEY_REPO_HASHID+" IN (");
 			for (String repoHashid : repoHashids.getList()) {
 				
 				if(firstWhere){
 					firstWhere = false;
 				}else{
-					deleteWhere.append(" OR ");					
+					deleteWhere.append(",");					
 				}
 				
-				deleteWhere.append(Constants.KEY_REPO_HASHID+"="+repoHashid);
+				deleteWhere.append(repoHashid);
 			}
+			deleteWhere.append(")");	
 			
 			
 			if(db.delete(Constants.TABLE_REPOSITORY, deleteWhere.toString(), null) == Constants.DB_NO_CHANGES_MADE){
@@ -365,18 +385,19 @@ public class ManagerDatabase {
 			
 			StringBuilder updateWhere = new StringBuilder();
 			boolean firstWhere = true;
-			
-			
+
+			updateWhere.append(Constants.KEY_REPO_HASHID+" IN (");
 			for (String repoHashid : repoHashids.getList()) {
 				
 				if(firstWhere){
 					firstWhere = false;
 				}else{
-					updateWhere.append(" OR ");					
+					updateWhere.append(",");					
 				}
 				
-				updateWhere.append(Constants.KEY_REPO_HASHID+"="+repoHashid);
+				updateWhere.append(repoHashid);
 			}
+			updateWhere.append(")");
 			
 			
 			if(db.update(Constants.TABLE_REPOSITORY, setTrue, updateWhere.toString(), null) == Constants.DB_NO_CHANGES_MADE){
@@ -486,18 +507,18 @@ public class ManagerDatabase {
 			StringBuilder deleteWhere = new StringBuilder();
 			boolean firstWhere = true;
 			
-			
+			deleteWhere.append(Constants.KEY_APPLICATION_FULL_HASHID+" IN (");
 			for (String appFullHashid : appsFullHashid.getList()) {
 				
 				if(firstWhere){
 					firstWhere = false;
 				}else{
-					deleteWhere.append(" OR ");
+					deleteWhere.append(",");
 				}
 				
-				deleteWhere.append(Constants.KEY_APPLICATION_FULL_HASHID+"="+appFullHashid);
+				deleteWhere.append(appFullHashid);
 			}
-			
+			deleteWhere.append(")");
 			
 			if(db.delete(Constants.TABLE_APPLICATION, deleteWhere.toString(), null) == Constants.DB_NO_CHANGES_MADE){
 				//TODO throw exception;
@@ -725,6 +746,91 @@ public class ManagerDatabase {
 			db.endTransaction();
 		}
 	}
+		
+	
+	
+	
+	/**
+	 * insertInstalledApplications, handles multiple installed applications insertion
+	 * 										 
+	 * 
+	 * @param ArrayList<Application> installedApplications
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void insertInstalledApplications(ArrayList<Application> installedApplications){
+		db.beginTransaction();
+		try{
+			db.execSQL(Constants.DROP_TABLE_APP_INSTALLED);
+			db.execSQL(Constants.CREATE_TABLE_APP_INSTALLED);
+			
+			InsertHelper insertInstalledApplication = new InsertHelper(db, Constants.TABLE_APP_INSTALLED);
+			for (Application application : installedApplications) {
+				if(insertInstalledApplication.insert(application.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertInstalledApplication.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertInstalledApplication, handles single installed application insertion
+	 * 										 
+	 * 
+	 * @param Application installedApplication
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void insertInstalledApplication(Application installedApplication){
+		db.beginTransaction();
+		try{
+			if(db.insert(Constants.TABLE_APP_INSTALLED ,null, installedApplication.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * removeInstalledApplication, handles single application removal
+	 * 
+	 * @param String appHashid
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void removeApplications(String appHashid){
+		db.beginTransaction();
+		try{
+			if(db.delete(Constants.TABLE_APP_INSTALLED, Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid, null) == Constants.DB_NO_CHANGES_MADE){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
 	
 	
 	
@@ -734,46 +840,68 @@ public class ManagerDatabase {
 	 * 															*
 	 * ******************************************************** */
 	
+	/**
+	 * baseQuery, serves as a basis for all querys;
+	 */
+	private Cursor baseQuery(String sqlQuery, String[] queryArgs, Cursor resultsListCursor){
+		db.beginTransaction();
+		try{
+			resultsListCursor = db.rawQuery(sqlQuery, queryArgs);
+
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: handle exception
+		}finally{
+			db.endTransaction();
+		}
+		return resultsListCursor;
+	}
+	
 	
 	
 	/**
-	 * 
+	 * getRepoMinimalList, retrieves a list of known repositories
+	 * 					   with minimal information (uri)
 	 */
+	public ListRepos getRepoMinimalList(){ //TODO refactor to join repo table with login table
+
+		String selectRepos = "SELECT "+Constants.KEY_REPO_URI+" FROM "+Constants.TABLE_REPOSITORY+";";
+		Cursor repoListCursor = null;
+		String selectLogin = "SELECT * FROM "+Constants.TABLE_LOGIN+" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+" = ?;";
+		Cursor loginCursor = null;
+		
+		repoListCursor = baseQuery(selectRepos, null, repoListCursor);
+		
+		Repository repo = null;
+		Login login = null;
+		ListRepos listRepos = new ListRepos();
+
+		repoListCursor.moveToFirst();
+		do{
+			if(repoListCursor.isFirst()){
+				repo = new Repository(repoListCursor.getString(INDEX_KEY_REPO_URI), true);				
+			}else{
+				repo.clean();
+				repo.reuse(repoListCursor.getString(INDEX_KEY_REPO_URI), true);
+			}			
+			repo.setInUse((repoListCursor.getInt(INDEX_KEY_REPO_INUSE)==Constants.DB_TRUE?true:false));
+			if(repoListCursor.getString()
+			loginCursor = baseQuery(selectLogin, new String[]{ repoListCursor.getString(INDEX_KEY_REPO_URI) }, loginCursor);
+			login.reuse(loginCursor.getString(INDEX_KEY_LOGIN_USERNAME), loginCursor.getString(INDEX_KEY_LOGIN_PASSWORD));
+			repo.setLogin(login);
+			listRepos.addRepo(repo);
+		} while(repoListCursor.moveToNext());
+		
+		repoListCursor.close();
+		
+		return listRepos;		
+	}
 
 	
 	
 	
 	
-	/**
-	 * initCategories, inserts categories set in Constants.
-	 * 					this insertHelper pattern: prepareforinsert, bind, bind, execute
-	 * 					is not thread safe. Only used here because this is methid is only
-	 * 					called in the beginning.
-	 * 
-	 * @author dsilveira
-	 * @deprecated
-	 * 
-	 */
-	private void initCategories(){
-		InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
-		
-		try{
-			db.beginTransaction();
-			for (String category : Constants.CATEGORIES) {
-//				insertCategory.prepareForInsert();
-//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
-//				insertCategory.bind(Constants.KEY_CATEGORY_NAME, category);
-//				if(insertCategory.insert() == -1){
-//					//TODO throw exception;
-//				}
-			}
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-		
-	}
+
 	
 	// TODO refactor 
 		
