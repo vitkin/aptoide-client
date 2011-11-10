@@ -695,8 +695,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		pd.setCancelable(false);
 		pd.setCanceledOnTouchOutside(false);
-		//pd.setMax(10);
-		pd.show();
+		
+//		pd.setMax(1);
+		
 		
 		/*updt_pd = new Dialog(this);
 		
@@ -792,7 +793,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 						update_handler.sendEmptyMessage(0);
 					}
 				}
-			}.start(); 
+			}.start();
+			
 			return true;
 		}else{
 			Log.d("Aptoide","======================= I UPDATEREPOS DISMISS");
@@ -1092,6 +1094,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 			pd.setProgress(0);
 			pd.setMax(msg.what);
+			pd.show();
 
 		}
 		
