@@ -1,6 +1,7 @@
 package cm.aptoide.pt;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
@@ -39,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -97,6 +99,8 @@ public class ScheduledDownload extends ListActivity {
         
         
         
+        
+        
         registerForContextMenu(this.getListView());
         getApplicationContext().bindService(new Intent(this, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
         sch_list=db.getScheduledListNames();
@@ -108,12 +112,12 @@ public class ScheduledDownload extends ListActivity {
         }
         setListAdapter(mAdapter);
         if(sch_list.size()==0){
-			Toast.makeText(this, "No Scheduled Downloads", Toast.LENGTH_LONG).show();
+			Toast.makeText(this, R.string.no_sch_downloads, Toast.LENGTH_LONG).show();
         }
         Intent intent = getIntent();
     	if(intent.hasExtra("downloadAll")){
     		AlertDialog alrt = new AlertDialog.Builder(this).create();
-    		alrt.setMessage("Wireless detected: Download all aplications on Scheduled Downloads?");
+    		alrt.setMessage(getText(R.string.schDown_wireless_detected));
 			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					downloadAll();
@@ -142,9 +146,9 @@ public class ScheduledDownload extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		
-		menu.add(Menu.NONE,2, 2, "Download Selected");
-		menu.add(Menu.NONE,3, 3, "Invert Selection");
-		menu.add(Menu.NONE,4, 3, "Remove Selected");
+		menu.add(Menu.NONE,2, 2, R.string.schDown_downselected);
+		menu.add(Menu.NONE,3, 3, R.string.schDown_invertselection);
+		menu.add(Menu.NONE,4, 3, R.string.schDown_removeselected);
 		
 		
 		
@@ -163,7 +167,7 @@ public class ScheduledDownload extends ListActivity {
 		switch (item.getItemId()) {
 		case 4:
 			
-			alrt.setMessage("Are you sure you want to remove?");
+			alrt.setMessage(getText(R.string.schDown_sureremove));
 			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					for(int i=0; i < getListAdapter().getCount(); i++){
@@ -195,8 +199,14 @@ public class ScheduledDownload extends ListActivity {
 				CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
 
 				if (cb.isChecked()){
+					DownloadNode downloadnode = doDownloadNode(i);
+					if(downloadnode!=null){
+					downloadQueueService.startDownload(downloadnode);
+					}
+					else{
+						Toast.makeText(ctx, R.string.schDown_downerror, Toast.LENGTH_LONG).show();
+					}
 					
-					downloadQueueService.startDownload(doDownloadNode(i));
 //					programs=programs.concat("\n"+getListAdapter().getItem(i).toString());
 //					schDownToDelete.add(sch_list.get(i).apkid);
 //					existsDownloads = true;
@@ -221,7 +231,7 @@ public class ScheduledDownload extends ListActivity {
 //				alrt.show();
 				
 			}else{
-				Toast.makeText(this, "No Downloads Selected", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.schDown_nodownloadselect, Toast.LENGTH_LONG).show();
 			}
 				}
 				
@@ -244,7 +254,6 @@ public class ScheduledDownload extends ListActivity {
 	private void downloadAll() {
 		// TODO Auto-generated method stub
 		for (int i =0; i!=sch_list.size();i++){
-			Log.d("1","1");
 			downloadQueueService.startDownload(doDownloadNode(i));
 		}
 		
@@ -252,18 +261,7 @@ public class ScheduledDownload extends ListActivity {
 
 	
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu, android.view.View, android.view.ContextMenu.ContextMenuInfo)
-	 */
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		// TODO Auto-generated method stub
-		 
-		super.onCreateContextMenu(menu, v, menuInfo);
-		 
-		menu.add(0, 4, 0, "Remove Scheduled Download");
-	}
+
 	
 	
 
@@ -296,7 +294,7 @@ public class ScheduledDownload extends ListActivity {
 		// TODO Auto-generated method stub
 		sch_list=db.getScheduledListNames();
 		if(sch_list.size()==0){
-			Toast.makeText(this, "No Scheduled Downloads", 10000).show();
+			Toast.makeText(this, R.string.schDown_nodownloads, 10000).show();
         }
 		mAdapter = null;
 		mAdapter = new MyCustomAdapter();
@@ -326,6 +324,7 @@ public class ScheduledDownload extends ListActivity {
 			Vector<ApkNode> apk_lst = db.getAll("abc");
 			String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 			tmp_serv = db.getPathHash(packageName, ver);
+			
 			String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
 			String appName = packageName;
 			for(ApkNode node: apk_lst){

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+
+    <string name="top_please_wait">אנא המתן</string>
+    <string name="top_error">שגיאה</string>
+    <string name="top_download">הורדה</string>
+    <string name="fetch_apk">קורא אפליקצייה</string>
+    <string name="aptoide_error">לא ניתן להתחבר לשרת</string>
+    <string name="manage_repo_add">הוסף מקור חדש</string>
+    <string name="manage_repo_answ_wrongl">התחברות שגויה</string>
+    <string name="manage_repo_answ_cc">לא ניתן להתחבר לשרת</string>
+    <string name="manage_repo_answ_lr">התחברות נדרשת</string>
+    <string name="app_pop_up_no_info">אין מידע זמין בשרת. למידע נוסף לחץ על כפתור ה\'מרקט\' למטה.</string>
+    <string name="error_no_market">אין ברשותך מרקט מותקן!</string>
+    <string name="settings_cache">מנקה מטמון...</string>
+    <string name="remote_in_noSD_title">אין זיכרון</string>
+    <string name="remote_in_noSD">אין ברשותך כרטיס זיכרון, או שהוא לא עובד כראוי\nאנא הכנס כרטיס זיכרון, או הכנס מחדש ונסה שנית.</string>
+    <string name="remote_in_noSDspace">אין בכרטיס הזיכרון שברשותך מספיק זיכרון על מנת להשתמש ב-Aptiode.\nאנא פנה מקום, ולאחר מכן נסה שנית!</string>
+    <string name="error_on_update">תהליך העדכון נכשל עבור המקורות הבאים:\n</string>
+    <string name="updating_msg">מעדכן רשימת אפליקציות...</string>
+    <string name="update_repos">עדכון מקורות</string>
+    <string name="update_main">רשימת המקורות שונתה.\nהאם ברצונך לעדכן את המקורות?</string>
+    <string name="updating_3g">אינך מחובר כעת דרך רשת אלחוטית או אינטרנט מהיר. מומלץ לעדכן בחיבור לרשת אלחוטית או בחיבור לאינטרנט מהיר.\nלעדכן בכל זאת?</string>
+    <string name="updating_cfrm">לאשר עדכון מקורות?</string>
+    <string name="updating_norepos">אין מקורות זמינים ברשימה.\nאנא הוסף מקור, או הפוך לפחות אחד מאלו הקיימים לזמין.</string>
+    <string name="repo_ctx">אפשרויות</string>
+    <string name="repo_ctx_edt">ערוך</string>
+    <string name="repo_ctx_del">הסר</string>
+    <string name="repo_del">הסר מקור</string>
+    <string name="repo_del_msg">האם ברצונך להסיר את המקור?</string>
+    <string name="repo_del_msg2">בחר מקור להסרה</string>
+    <string name="repo_edt_msg1">בחר מקור לעריכה</string>
+    <string name="repo_edt_msg2">ערוך מקור</string>
+    <string name="update_done_msg1">המקורות עודכנו בהצלחה.</string>
+    <string name="update_process">עדכון מקור %1$d מ %2$d</string>
+    <string name="dialog_yes">כן</string>
+    <string name="dialog_no">לא</string>
+    <string name="update_self_title">עדכון זמין</string>
+    <string name="update_self_msg">גירסא חדשה של Aptoide זמינה.\nהאם ברצונך לעדכן?</string>
+
+</resources>
