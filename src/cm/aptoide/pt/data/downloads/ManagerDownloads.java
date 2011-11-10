@@ -36,7 +36,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.model.Login;
+import cm.aptoide.pt.data.views.Login;
 
 import android.app.Notification;
 import android.app.NotificationManager;

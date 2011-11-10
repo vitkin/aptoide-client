@@ -1,5 +1,5 @@
 /*
- * ListIds		part of Aptoide's data model
+ * ListRepos		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,55 +18,59 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.model;
+package cm.aptoide.pt.data.views;
 
 import java.util.ArrayList;
 
  /**
- * ListIds, models an list of Ids
+ * ListRepos, models an list of Repos
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ListIds {
+public class ListRepos {
 
-	private ArrayList<String> idList;
+	private ArrayList<Repository> repoList;
 
 	
 	/**
-	 * Icon Constructor
+	 * ListRepos Constructor
 	 * 
-	 * @param String id
+	 * @param String repo
 	 */
-	public ListIds(String id) {
-		this.idList = new ArrayList<String>();
-		addId(id);
+	public ListRepos(Repository repo) {
+		this.repoList = new ArrayList<Repository>();
+		addRepo(repo);
+	}
+	
+	public ListRepos() {
+		this.repoList = new ArrayList<Repository>();
 	}
 	
 	
-	public void addId(String id){
-		this.idList.add(id);		
+	public void addRepo(Repository repo){
+		this.repoList.add(repo);		
 	}
 	
-	public void removeId(String id){
-		this.idList.remove(id);		
+	public void removeRepo(Repository repo){
+		this.repoList.remove(repo);		
 	}
 	
 	
-	public ArrayList<String> getList(){
-		return this.idList;
+	public ArrayList<Repository> getList(){
+		return this.repoList;
 	}
 
 	
 	
 	public void clean(){
-		this.idList = null;
+		this.repoList = null;
 	}
 	
-	public void reuse(String id) {
-		this.idList = new ArrayList<String>();
-		addId(id);
+	public void reuse(Repository repo) {
+		this.repoList = new ArrayList<Repository>();
+		addRepo(repo);
 	}
 	
 }

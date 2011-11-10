@@ -62,13 +62,16 @@ public class Constants {
 	 *		For future reference:
 	 *			for android <= 2.1 the version of sqlite is 3.5.9, 
 	 *			lacking the following features:
-	 *				* Foreign key constraints
-	 *				* Chained triggers
+	 *				* Foreign key constraints	(only since 3.6.19)
+	 *				* recursive triggers		(only since 3.6.18)
 	 *				* Stored procedures
 	 *				* multiple value inserts
 	 *				* booleans
 	 *				* ... 			
 	 */ 
+	
+	public static final String PRAGMA_FOREIGN_KEYS_OFF = "PRAGMA foreign_keys=OFF;";	/**  force compatibility with all android versions */
+	public static final String PRAGMA_RECURSIVE_TRIGGERS_OFF = "PRAGMA recursive_triggers=OFF;";	/**  force compatibility with all android versions */
 	
 	public static final String DATABASE = "aptoide_db";
 	
@@ -82,6 +85,7 @@ public class Constants {
 	public static final String KEY_REPO_DELTA = "delta";			/** identifies a single version of all xml files */
 	public static final String KEY_REPO_IN_USE = "in_use";
 	public static final int NUMBER_OF_COLUMNS_REPO = 8;
+	public static final int NUMBER_OF_COLUMNS_REPO_MINIMAL = 2;		/**  uri + inUse */
 	
 	public static final String TABLE_LOGIN = "login";
 	public static final String KEY_LOGIN_REPO_HASHID = "repo_hashid";
@@ -256,7 +260,7 @@ public class Constants {
 			+ KEY_APP_INSTALLED_NAME + " TEXT NOT NULL, "
 			+ "PRIMARY KEY("+ KEY_APP_INSTALLED_HASHID +") );";	
 
-	
+	public static final String DROP_TABLE_APP_INSTALLED = "DROP TABLE IF EXISTS "+ TABLE_APP_INSTALLED;
 	
 	//TODO table never update pk = fk hashid from installed + triggers
 	

@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.model;
+package cm.aptoide.pt.data.views;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
@@ -36,8 +36,12 @@ public class Application {
 	private int categoryHashid;
 	
 	
-	public Application(String applicationName, String packageName, String versionName, int versionCode) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
+	public Application(String applicationName, String packageName, String versionName, int versionCode, boolean installed) {
+		if(installed){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
+		}
 		setPackageName(packageName);
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
@@ -45,8 +49,12 @@ public class Application {
 		setApplicationName(applicationName);
 	}
 	
-	public Application(String packageName, int versionCode) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
+	public Application(String packageName, int versionCode, boolean installed) {
+		if(installed){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
+		}
 		setPackageName(packageName);
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
@@ -144,8 +152,12 @@ public class Application {
 		this.categoryHashid = Constants.EMPTY_INT;
 	}
 	
-	public void reuse(String applicationName, String packageName, String versionName, int versionCode) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
+	public void reuse(String applicationName, String packageName, String versionName, int versionCode, boolean installed) {
+		if(installed){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
+		}
 		setPackageName(packageName);
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
@@ -153,11 +165,39 @@ public class Application {
 		setApplicationName(applicationName);
 	}
 	
-	public void reuse(String packageName, int versionCode) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);
+	public void reuse(String packageName, int versionCode, boolean installed) {
+		if(installed){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
+		}
 		setPackageName(packageName);
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
+	}
+
+
+	@Override
+	public int hashCode() {
+		return this.getHashid();
+	}
+
+
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof Repository){
+			Repository repo = (Repository) object;
+			if(repo.hashCode() == this.hashCode()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
+	public String toString() {
+		return this.getApplicationName()+" "+getVersionName();
 	}
 	
 }

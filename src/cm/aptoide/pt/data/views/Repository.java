@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.model;
+package cm.aptoide.pt.data.views;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
@@ -37,9 +37,19 @@ public class Repository {
 	private Login login;
 	
 	
-	public Repository(String uri) {
+	/**
+	 * Repository Constructor
+	 *
+	 * @param String uri
+	 * @param boolean minimal
+	 */
+	public Repository(String uri, boolean minimal) {
 		this.requiresLogin = false;
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
+		if(minimal){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO_MINIMAL);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);			
+		}
 		setUri(uri);	
 	}
 
@@ -131,10 +141,38 @@ public class Repository {
 		this.login = null;
 	}
 	
-	public void reuse(String uri) {
+	public void reuse(String uri, boolean minimal) {
 		this.requiresLogin = false;
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
+		if(minimal){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO_MINIMAL);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
+		}
 		setUri(uri);
 	}
-	
+
+
+	@Override
+	public int hashCode() {
+		return this.getHashid();
+	}
+
+
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof Repository){
+			Repository repo = (Repository) object;
+			if(repo.hashCode() == this.hashCode()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
+	public String toString() {
+		return this.getUri();
+	}
+		
 }

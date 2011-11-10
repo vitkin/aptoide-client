@@ -1,5 +1,5 @@
 /*
- * StatsInfo		part of Aptoide's data model
+ * ExtraInfo		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,72 +18,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.model;
+package cm.aptoide.pt.data.views;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * StatsInfo, models an app's stats info
+ * ExtraInfo, models an app's extra info
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class StatsInfo {
+public class ExtraInfo {
 
 	private ContentValues values;
 
 	
 	/**
-	 * StatsInfo Constructor
+	 * ExtraInfo Constructor
 	 * 
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public StatsInfo(int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_STATS_INFO);
+	public ExtraInfo(int applicationFullHashid) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_EXTRA_INFO);
 		setAppFullHashid(applicationFullHashid);
 	}
 	
 	
 	private void setAppFullHashid(int appFullHashid){
-		this.values.put(Constants.KEY_STATS_APP_FULL_HASHID, appFullHashid);
+		this.values.put(Constants.KEY_EXTRA_APP_FULL_HASHID, appFullHashid);
 	}
 	
 	public int getAppFullHashid() {
-		return values.getAsInteger(Constants.KEY_STATS_APP_FULL_HASHID);
+		return values.getAsInteger(Constants.KEY_EXTRA_APP_FULL_HASHID);
 	}
 	
-	public void setDownloads(int downloads){
-		this.values.put(Constants.KEY_STATS_DOWNLOADS, downloads);
+	public void setDescription(String description){
+		this.values.put(Constants.KEY_EXTRA_DESCRIPTION, description);
 	}
 	
-	public int getDownloads(){
-		return this.values.getAsInteger(Constants.KEY_STATS_DOWNLOADS);
-	}
-	
-	public void setStars(int stars){
-		this.values.put(Constants.KEY_STATS_STARS, stars);
-	}
-	
-	public int getStars(){
-		return this.values.getAsInteger(Constants.KEY_STATS_STARS);
-	}
-	
-	public void setLikes(int likes){
-		this.values.put(Constants.KEY_STATS_LIKES, likes);
-	}
-	
-	public int getLikes(){
-		return this.values.getAsInteger(Constants.KEY_STATS_LIKES);
-	}
-	
-	public void setDislikes(int dislikes){
-		this.values.put(Constants.KEY_STATS_DISLIKES, dislikes);
-	}
-	
-	public int getDislikes(){
-		return this.values.getAsInteger(Constants.KEY_STATS_DISLIKES);
+	public String getDescription(){
+		return this.values.getAsString(Constants.KEY_EXTRA_DESCRIPTION);
 	}
 		
 	
@@ -97,7 +73,7 @@ public class StatsInfo {
 	}
 	
 	public void reuse(int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_STATS_INFO);
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_EXTRA_INFO);
 		setAppFullHashid(applicationFullHashid);
 	}
 	
