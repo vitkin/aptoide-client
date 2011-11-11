@@ -36,21 +36,32 @@ public class Application {
 	private int categoryHashid;
 	
 	
-	public Application(String applicationName, String packageName, String versionName, int versionCode, boolean installed) {
-		if(installed){
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
-		}else{
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
-		}
-		setPackageName(packageName);
-		setVersionCode(versionCode);
-		setAppHashid(packageName, versionCode);
+	/**
+	 * Application constructor
+	 * 
+	 * @param String applicationName
+	 * @param String packageName
+	 * @param String versionName
+	 * @param int versionCode
+	 * @param boolean isInstalled
+	 * 
+	 */
+	public Application(String applicationName, String packageName, String versionName, int versionCode, boolean isInstalled) {
+		this(packageName, versionCode, isInstalled);
 		setVersionName(versionName);
 		setApplicationName(applicationName);
 	}
 	
-	public Application(String packageName, int versionCode, boolean installed) {
-		if(installed){
+	/**
+	 * Application embrio constructor
+	 * 
+	 * @param String packageName
+	 * @param int versionCode
+	 * @param boolean isInstalled
+	 * 
+	 */
+	public Application(String packageName, int versionCode, boolean isInstalled) {
+		if(isInstalled){
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
 		}else{
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
@@ -58,6 +69,26 @@ public class Application {
 		setPackageName(packageName);
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
+	}
+	
+	/**
+	 * Application minimalistic constructor
+	 * 
+	 * @param int appHashid
+	 * @param String applicationName
+	 * @param String versionName
+	 * @param boolean isInstalled
+	 * 
+	 */
+	public Application(int appHashid, String applicationName, String versionName, boolean installed) {
+		if(installed){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED-2);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION-2);			
+		}
+		setAppHashid(appHashid);
+		setApplicationName(applicationName);
+		setVersionName(versionName);
 	}
 	
 	
@@ -79,6 +110,10 @@ public class Application {
 	
 	private void setAppHashid(String packageName, int versionCode){
 		values.put(Constants.KEY_APPLICATION_HASHID, (packageName+'|'+versionCode).hashCode());
+	}
+	
+	private void setAppHashid(int appHashid){
+		values.put(Constants.KEY_APPLICATION_HASHID, appHashid);
 	}
 	
 	public int getHashid() {
@@ -152,8 +187,18 @@ public class Application {
 		this.categoryHashid = Constants.EMPTY_INT;
 	}
 	
-	public void reuse(String applicationName, String packageName, String versionName, int versionCode, boolean installed) {
-		if(installed){
+	/**
+	 * reuse, Application object reconstructor
+	 * 
+	 * @param String applicationName
+	 * @param String packageName
+	 * @param String versionName
+	 * @param int versionCode
+	 * @param boolean isInstalled
+	 * 
+	 */
+	public void reuse(String applicationName, String packageName, String versionName, int versionCode, boolean isInstalled) {
+		if(isInstalled){
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
 		}else{
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
@@ -165,8 +210,16 @@ public class Application {
 		setApplicationName(applicationName);
 	}
 	
-	public void reuse(String packageName, int versionCode, boolean installed) {
-		if(installed){
+	/**
+	 * reuse, Application object reconstructor
+	 * 
+	 * @param String packageName
+	 * @param int versionCode
+	 * @param boolean isInstalled
+	 * 
+	 */
+	public void reuse(String packageName, int versionCode, boolean isInstalled) {
+		if(isInstalled){
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
 		}else{
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
@@ -174,6 +227,26 @@ public class Application {
 		setPackageName(packageName);
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
+	}
+	
+	/**
+	 * reuse, Application object minimalistic reconstructor
+	 * 
+	 * @param String applicationName
+	 * @param String versionName
+	 * @param int appHashid
+	 * @param boolean isInstalled
+	 * 
+	 */
+	public void reuse(String applicationName, String versionName, int appHashid, boolean installed) {
+		if(installed){
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED-2);
+		}else{
+			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION-2);			
+		}
+		setAppHashid(appHashid);
+		setApplicationName(applicationName);
+		setVersionName(versionName);
 	}
 
 
@@ -185,9 +258,9 @@ public class Application {
 
 	@Override
 	public boolean equals(Object object) {
-		if(object instanceof Repository){
-			Repository repo = (Repository) object;
-			if(repo.hashCode() == this.hashCode()){
+		if(object instanceof Application){
+			Application app = (Application) object;
+			if(app.hashCode() == this.hashCode()){
 				return true;
 			}
 		}

@@ -36,6 +36,7 @@ import cm.aptoide.pt.data.views.Category;
 import cm.aptoide.pt.data.views.DownloadInfo;
 import cm.aptoide.pt.data.views.ExtraInfo;
 import cm.aptoide.pt.data.views.IconInfo;
+import cm.aptoide.pt.data.views.ListApps;
 import cm.aptoide.pt.data.views.ListIds;
 import cm.aptoide.pt.data.views.ListRepos;
 import cm.aptoide.pt.data.views.Login;
@@ -52,11 +53,6 @@ import cm.aptoide.pt.data.views.StatsInfo;
 public class ManagerDatabase {
 	
 	private static SQLiteDatabase db = null;
-	
-	private int INDEX_KEY_REPO_URI; 
-	private int INDEX_KEY_REPO_INUSE; 
-	private int INDEX_KEY_LOGIN_USERNAME; 
-	private int INDEX_KEY_LOGIN_PASSWORD; 
 	
 	/**
 	 * 
@@ -120,15 +116,6 @@ public class ManagerDatabase {
 		}
 		db.execSQL(Constants.PRAGMA_FOREIGN_KEYS_OFF);
 		db.execSQL(Constants.PRAGMA_RECURSIVE_TRIGGERS_OFF);
-		
-		InsertHelper indexFinder = new InsertHelper(db, Constants.TABLE_REPOSITORY);
-		this.INDEX_KEY_REPO_URI = indexFinder.getColumnIndex(Constants.KEY_REPO_URI);
-		this.INDEX_KEY_REPO_INUSE = indexFinder.getColumnIndex(Constants.KEY_REPO_IN_USE);
-		indexFinder.close();
-		indexFinder = new InsertHelper(db, Constants.TABLE_LOGIN);
-		this.INDEX_KEY_LOGIN_USERNAME = indexFinder.getColumnIndex(Constants.KEY_LOGIN_USERNAME);
-		this.INDEX_KEY_LOGIN_PASSWORD = indexFinder.getColumnIndex(Constants.KEY_LOGIN_PASSWORD);
-		indexFinder.close();
 	}
 	
 	
@@ -816,7 +803,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public void removeApplications(String appHashid){
+	public void removeInstalledApplication(String appHashid){
 		db.beginTransaction();
 		try{
 			if(db.delete(Constants.TABLE_APP_INSTALLED, Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid, null) == Constants.DB_NO_CHANGES_MADE){
@@ -832,69 +819,241 @@ public class ManagerDatabase {
 	}
 	
 	
-	
-	
+		
 	/* ******************************************************** *
 	 * 															*
 	 *                     Reader methods						*
 	 * 															*
 	 * ******************************************************** */
 	
+	
+	
 	/**
-	 * baseQuery, serves as a basis for all querys;
+	 * aptoideNonAtomicQuery, serves as a basis for all aptoide db's queries,
+	 * 				does not handle transactions
+	 * 
+	 * @param String sqlQuery
+	 * @param String[] queryArgs
+	 * 
+	 * @return Cursor querysResults
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
 	 */
-	private Cursor baseQuery(String sqlQuery, String[] queryArgs, Cursor resultsListCursor){
+	private Cursor aptoideNonAtomicQuery(String sqlQuery, String[] queryArgs){
+		return db.rawQuery(sqlQuery, queryArgs);
+	}
+	
+	/**
+	 * aptoideAtomicQuery, serves as a basis for all aptoide db's queries,
+	 * 				handles transactions
+	 * 
+	 * @param String sqlQuery
+	 * @param String[] queryArgs
+	 * 
+	 * @return Cursor querysResults
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	private Cursor aptoideAtomicQuery(String sqlQuery, String[] queryArgs){
+		Cursor resultsCursor = null;
+		
 		db.beginTransaction();
 		try{
-			resultsListCursor = db.rawQuery(sqlQuery, queryArgs);
-
+			resultsCursor = db.rawQuery(sqlQuery, queryArgs);
+			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: handle exception
 		}finally{
 			db.endTransaction();
 		}
-		return resultsListCursor;
+		
+		return resultsCursor;
+	}
+	
+	/**
+	 * aptoideNonAtomicQuery, serves as a basis for all aptoide db's queries with no arguments,
+	 * 				does not handle transactions
+	 * 
+	 * @param String sqlQuery
+	 * 
+	 * @return Cursor querysResults
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	private Cursor aptoideNonAtomicQuery(String sqlQuery){
+		return aptoideNonAtomicQuery(sqlQuery, null);
+	}
+	
+	/**
+	 * aptoideAtomicQuery, serves as a basis for all aptoide db's queries with no arguments,
+	 * 				handles transactions
+	 * 
+	 * @param String sqlQuery
+	 * 
+	 * @return Cursor querysResults
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	private Cursor aptoideAtomicQuery(String sqlQuery){
+		return aptoideAtomicQuery(sqlQuery, null);
 	}
 	
 	
 	
 	/**
-	 * getRepoMinimalList, retrieves a list of known repositories
-	 * 					   with minimal information (uri)
+	 * getReposMinimalInfo, retrieves a list of all known repositories
+	 * 					   with minimal information (uri, inUse, Login if required)
+	 * 
+	 * @return ListRepos list of repos with it's logins
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
 	 */
-	public ListRepos getRepoMinimalList(){ //TODO refactor to join repo table with login table
+	public ListRepos getReposMinimalInfo(){
+		
+		final int URI = Constants.COLUMN_FIRST;
+		final int IN_USE = Constants.COLUMN_SECOND;
+		final int REPO_HASHID = Constants.COLUMN_FIRST;
+		final int USERNAME = Constants.COLUMN_SECOND;
+		final int PASSWORD = Constants.COLUMN_THIRD;
 
-		String selectRepos = "SELECT "+Constants.KEY_REPO_URI+" FROM "+Constants.TABLE_REPOSITORY+";";
-		Cursor repoListCursor = null;
-		String selectLogin = "SELECT * FROM "+Constants.TABLE_LOGIN+" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+" = ?;";
-		Cursor loginCursor = null;
-		
-		repoListCursor = baseQuery(selectRepos, null, repoListCursor);
-		
-		Repository repo = null;
-		Login login = null;
 		ListRepos listRepos = new ListRepos();
-
-		repoListCursor.moveToFirst();
-		do{
-			if(repoListCursor.isFirst()){
-				repo = new Repository(repoListCursor.getString(INDEX_KEY_REPO_URI), true);				
-			}else{
-				repo.clean();
-				repo.reuse(repoListCursor.getString(INDEX_KEY_REPO_URI), true);
-			}			
-			repo.setInUse((repoListCursor.getInt(INDEX_KEY_REPO_INUSE)==Constants.DB_TRUE?true:false));
-			if(repoListCursor.getString()
-			loginCursor = baseQuery(selectLogin, new String[]{ repoListCursor.getString(INDEX_KEY_REPO_URI) }, loginCursor);
-			login.reuse(loginCursor.getString(INDEX_KEY_LOGIN_USERNAME), loginCursor.getString(INDEX_KEY_LOGIN_PASSWORD));
-			repo.setLogin(login);
-			listRepos.addRepo(repo);
-		} while(repoListCursor.moveToNext());
 		
-		repoListCursor.close();
+		String selectRepos = "SELECT "+Constants.KEY_REPO_URI+","+Constants.KEY_REPO_IN_USE
+							+" FROM "+Constants.TABLE_REPOSITORY+";";
+		Repository repo;
+		Cursor reposCursor = null;
+		
+		String selectLogins = "SELECT * "
+							 +"FROM "+Constants.TABLE_LOGIN+";";
+		Login login;
+		Cursor loginsCursor = null;
+
+		
+		db.beginTransaction();
+		try{
+			reposCursor = aptoideNonAtomicQuery(selectRepos);
+			loginsCursor = aptoideNonAtomicQuery(selectLogins);
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: handle exception
+		}finally{
+			db.endTransaction();
+		}
+		
+		reposCursor.moveToFirst();
+		do{
+			repo = new Repository(reposCursor.getString(URI), true);				
+			repo.setInUse((reposCursor.getInt(IN_USE)==Constants.DB_TRUE?true:false));
+			listRepos.addRepo(repo);
+		}while(reposCursor.moveToNext());
+		reposCursor.close();
+		
+
+		
+		loginsCursor.moveToFirst();
+		do{
+			login = new Login(loginsCursor.getString(USERNAME),loginsCursor.getString(PASSWORD));
+			listRepos.getRepo(reposCursor.getInt(REPO_HASHID)).setLogin(login);
+		}while(loginsCursor.moveToNext());
+		loginsCursor.close();
 		
 		return listRepos;		
+	}
+	
+	/**
+	 * getInstalledApps, retrieves a list of all installed apps
+	 * 
+	 * @param int offset, number of row to start from
+	 * @param int range, number of rows to list
+	 * 
+	 * @return ListApps list of installed apps
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ListApps getInstalledApps(int offset, int range){
+		
+		final int APP_HASHID = Constants.COLUMN_FIRST;
+		final int VERSION_NAME = Constants.COLUMN_FOURTH;
+		final int APP_NAME = Constants.COLUMN_FIFTH;
+
+		ListApps listApps = new ListApps();
+		
+		String selectInstalledApps = "SELECT "+Constants.KEY_APP_INSTALLED_HASHID+","+Constants.KEY_APP_INSTALLED_VERSION_NAME+","
+											  +Constants.KEY_APP_INSTALLED_NAME
+									+" FROM "+Constants.TABLE_APP_INSTALLED
+									+" ORDER BY "+Constants.KEY_APP_INSTALLED_NAME
+									+" LIMIT ?"
+									+" OFFSET ?;";
+		String[] selectArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+		Application app;
+		
+		Cursor appsCursor = aptoideAtomicQuery(selectInstalledApps, selectArgs);
+		
+		appsCursor.moveToFirst();
+		do{
+			app = new Application(appsCursor.getInt(APP_HASHID), appsCursor.getString(VERSION_NAME), appsCursor.getString(APP_NAME), true);
+			listApps.addApp(app);
+		}while(appsCursor.moveToNext());
+		appsCursor.close();
+		
+		return listApps;		
+	}
+	
+	/**
+	 * getAppsUpdates, retrieves a list of all apps' updates
+	 * 
+	 * @param int offset, number of row to start from
+	 * @param int range, number of rows to list
+	 * 
+	 * @return ListApps list of apps available updates
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ListApps getAppsUpdates(int offset, int range){	//TODO add stats 
+		
+		final int PACKAGE_NAME = Constants.COLUMN_SECOND;
+		final int VERSION_CODE = Constants.COLUMN_THIRD;
+		final int VERSION_NAME = Constants.COLUMN_FOURTH;
+		final int APP_NAME = Constants.COLUMN_FIFTH;
+
+		ListApps listApps = new ListApps();
+		
+		String selectInstalledApps = "SELECT "+Constants.KEY_APP_INSTALLED_NAME+","+Constants.KEY_APP_INSTALLED_PACKAGE_NAME+","
+											  +Constants.KEY_APP_INSTALLED_VERSION_NAME+","+Constants.KEY_APP_INSTALLED_VERSION_CODE
+									+" FROM "+Constants.TABLE_APP_INSTALLED
+									+" ORDER BY "+Constants.KEY_APP_INSTALLED_NAME
+									+" LIMIT ?"
+									+" OFFSET ?;";
+		String[] selectArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+		Application app;
+		
+		Cursor appsCursor = aptoideAtomicQuery(selectInstalledApps, selectArgs);
+		
+		appsCursor.moveToFirst();
+		do{
+			app = new Application(appsCursor.getString(APP_NAME), appsCursor.getString(PACKAGE_NAME),
+								  appsCursor.getString(VERSION_NAME), appsCursor.getInt(VERSION_CODE), true);
+			listApps.addApp(app);
+		}while(appsCursor.moveToNext());
+		appsCursor.close();
+		
+		return listApps;		
 	}
 
 	
