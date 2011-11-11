@@ -42,12 +42,25 @@ public class Constants {
 			 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
 			 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
 	
-	public static final int DB_TRUE = 1;		/** stupid sqlite doesn't know booleans */
+	/** stupid sqlite doesn't know booleans */
+	public static final int DB_TRUE = 1;
+	/** stupid sqlite doesn't know booleans */
 	public static final int DB_FALSE = 0;
 	public static final int DB_ERROR = -1;
+	/** 0 affected rows */
 	public static final int DB_NO_CHANGES_MADE = 0;
 	
+	/** has no parent, so no parent hashid */
 	public static final int TOP_CATEGORY = 0;
+	
+	public static final int COLUMN_FIRST = 0;
+	public static final int COLUMN_SECOND = 1;
+	public static final int COLUMN_THIRD = 2;
+	public static final int COLUMN_FOURTH = 3;
+	public static final int COLUMN_FIFTH = 4;
+	public static final int COLUMN_SIXTH = 5;
+	public static final int COLUMN_SEVENTH = 6;
+	public static final int COLUMN_EIGTH = 7;		
 	
 	/** 
 	 * 		HashIds are the hashcodes of the real E-A primary keyes separated by pipe symbols. 
@@ -68,92 +81,117 @@ public class Constants {
 	 *				* multiple value inserts
 	 *				* booleans
 	 *				* ... 			
-	 */ 
+	 */
 	
-	public static final String PRAGMA_FOREIGN_KEYS_OFF = "PRAGMA foreign_keys=OFF;";	/**  force compatibility with all android versions */
-	public static final String PRAGMA_RECURSIVE_TRIGGERS_OFF = "PRAGMA recursive_triggers=OFF;";	/**  force compatibility with all android versions */
+	/**  force compatibility with all android versions */
+	public static final String PRAGMA_FOREIGN_KEYS_OFF = "PRAGMA foreign_keys=OFF;";
+	/**  force compatibility with all android versions */
+	public static final String PRAGMA_RECURSIVE_TRIGGERS_OFF = "PRAGMA recursive_triggers=OFF;";
+	
 	
 	public static final String DATABASE = "aptoide_db";
 	
+	
 	public static final String TABLE_REPOSITORY = "repository";
-	public static final String KEY_REPO_HASHID = "repo_hashid";	/** base: uri */
+	/** base: uri */
+	public static final String KEY_REPO_HASHID = "repo_hashid";
 	public static final String KEY_REPO_URI = "uri";
-	public static final String KEY_REPO_BASE_PATH = "base_path";	
-	public static final String KEY_REPO_ICONS_PATH = "icons_path";	/** relative path from basepath */
-	public static final String KEY_REPO_SCREENS_PATH = "screens_path";	/** relative path from basepath */
+	public static final String KEY_REPO_BASE_PATH = "base_path";
+	/** relative path from basepath */
+	public static final String KEY_REPO_ICONS_PATH = "icons_path";
+	/** relative path from basepath */
+	public static final String KEY_REPO_SCREENS_PATH = "screens_path";	
 	public static final String KEY_REPO_SIZE = "repo_size";
-	public static final String KEY_REPO_DELTA = "delta";			/** identifies a single version of all xml files */
+	/** identifies a single version of all non volatile xml files */
+	public static final String KEY_REPO_DELTA = "delta";
 	public static final String KEY_REPO_IN_USE = "in_use";
 	public static final int NUMBER_OF_COLUMNS_REPO = 8;
-	public static final int NUMBER_OF_COLUMNS_REPO_MINIMAL = 2;		/**  uri + inUse */
+	/**  uri + inUse */
+	public static final int NUMBER_OF_COLUMNS_REPO_MINIMAL = 2;
+	
 	
 	public static final String TABLE_LOGIN = "login";
-	public static final String KEY_LOGIN_REPO_HASHID = "repo_hashid";
+	public static final String KEY_LOGIN_REPO_HASHID = KEY_REPO_HASHID;
 	public static final String KEY_LOGIN_USERNAME = "username";
 	public static final String KEY_LOGIN_PASSWORD = "password";
 	public static final int NUMBER_OF_COLUMNS_LOGIN = 3;
 	
+	
 	public static final String TABLE_APPLICATION = "application";
-	public static final String KEY_APPLICATION_FULL_HASHID = "app_full_hashid";	/** base: package_name|versioncode|repo_hashid */
-	public static final String KEY_APPLICATION_REPO_HASHID = "repo_hashid";	
-	public static final String KEY_APPLICATION_HASHID = "app_hashid";				/** base: package_name|versioncode */
+	/** base: package_name|versioncode|repo_hashid */
+	public static final String KEY_APPLICATION_FULL_HASHID = "app_full_hashid";
+	public static final String KEY_APPLICATION_REPO_HASHID = KEY_REPO_HASHID;
+	/** base: package_name|versioncode */
+	public static final String KEY_APPLICATION_HASHID = "app_hashid";
 	public static final String KEY_APPLICATION_PACKAGE_NAME = "package_name";
 	public static final String KEY_APPLICATION_VERSION_CODE = "version_code";
 	public static final String KEY_APPLICATION_VERSION_NAME = "version_name";
-	public static final String KEY_APPLICATION_NAME = "app_name";
+	public static final String KEY_APPLICATION_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increse lookup performance
 	public static final String KEY_APPLICATION_RATING = "rating";
 	public static final int NUMBER_OF_COLUMNS_APPLICATION = 8;
 	
+	
 	public static final String TABLE_CATEGORY = "category";
-	public static final String KEY_CATEGORY_HASHID = "category_hashid";	/** base: category_name */
-	public static final String KEY_CATEGORY_NAME = "category_name";
+	/** base: category_name */
+	public static final String KEY_CATEGORY_HASHID = "category_hashid";
+	public static final String KEY_CATEGORY_NAME = "category_name";		//TODO maybe create index, consider changing columns order to increse lookup performance
 	public static final int NUMBER_OF_COLUMNS_CATEGORY = 2;
+	
 	
 	public static final String TABLE_SUB_CATEGORY = "sub_category";
 	public static final String KEY_SUB_CATEGORY_PARENT = "category_parent";
 	public static final String KEY_SUB_CATEGORY_CHILD = "category_child";
 	public static final int NUMBER_OF_COLUMNS_SUB_CATEGORY = 2;
 	
+	
 	public static final String TABLE_APP_CATEGORY = "app_category";
-	public static final String KEY_APP_CATEGORY_CATEGORY_HASHID = "category_hashid";
-	public static final String KEY_APP_CATEGORY_APP_FULL_HASHID = "app_full_hashid";
+	public static final String KEY_APP_CATEGORY_CATEGORY_HASHID = KEY_CATEGORY_HASHID;
+	public static final String KEY_APP_CATEGORY_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
 	public static final int NUMBER_OF_COLUMNS_APP_CATEGORY = 2;
 	
+	
 	public static final String TABLE_APP_INSTALLED = "app_installed";
-	public static final String KEY_APP_INSTALLED_HASHID = "app_hashid";	/** base: package_name|versioncode */
+	/** base: package_name|versioncode */
+	public static final String KEY_APP_INSTALLED_HASHID = KEY_APPLICATION_HASHID;	
 	public static final String KEY_APP_INSTALLED_PACKAGE_NAME = "package_name";
 	public static final String KEY_APP_INSTALLED_VERSION_CODE = "version_code";
-	public static final String KEY_APP_INSTALLED_VERSION_NAME = "version_name";
-	public static final String KEY_APP_INSTALLED_NAME = "app_name";
+	public static final String KEY_APP_INSTALLED_VERSION_NAME = "version_name"; 
+	public static final String KEY_APP_INSTALLED_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increse lookup performance
 	public static final int NUMBER_OF_COLUMNS_APP_INSTALLED = 5;
 	
+	
 	public static final String TABLE_ICON_INFO = "icon_info";
-	public static final String KEY_ICON_APP_FULL_HASHID = "app_full_hashid";
+	public static final String KEY_ICON_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
 	public static final String KEY_ICON_MD5HASH = "icon_md5hash";
 	public static final int NUMBER_OF_COLUMNS_ICON_INFO = 2;
 	
+	
 	public static final String TABLE_DOWNLOAD_INFO = "download_info";
-	public static final String KEY_DOWNLOAD_APP_FULL_HASHID = "app_full_hashid";
+	public static final String KEY_DOWNLOAD_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
 	public static final String KEY_DOWNLOAD_REMOTE_PATH_TAIL = "remote_path_tail";
 	public static final String KEY_DOWNLOAD_MD5HASH = "md5hash";
 	public static final String KEY_DOWNLOAD_SIZE = "download_size";
 	public static final int NUMBER_OF_COLUMNS_DOWNLOAD_INFO = 4;
 	
+	
 	public static final String TABLE_STATS_INFO = "stats_info";
-	public static final String KEY_STATS_APP_FULL_HASHID = "app_full_hashid";
+	public static final String KEY_STATS_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
 	public static final String KEY_STATS_DOWNLOADS = "downloads";
-	public static final String KEY_STATS_STARS = "stars";		/** receives only one xml tag: likes|dislikes that feeds these next 3 columns after processing */
+	/** receives only one xml tag: likes|dislikes that feeds these next 3 columns after processing */
+	public static final String KEY_STATS_STARS = "stars";
 	public static final String KEY_STATS_LIKES = "likes";
 	public static final String KEY_STATS_DISLIKES = "dislikes";
 	public static final int NUMBER_OF_COLUMNS_STATS_INFO = 5;
 	
+	
 	public static final String TABLE_EXTRA_INFO = "extra_info";
-	public static final String KEY_EXTRA_APP_FULL_HASHID = "app_full_hashid";
+	public static final String KEY_EXTRA_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
 	public static final String KEY_EXTRA_DESCRIPTION = "description";
 	public static final int NUMBER_OF_COLUMNS_EXTRA_INFO = 2;
 	
+	
 	public static final String TABLE_APP_COMMENTS = "app_comments";
-	public static final String KEY_APP_COMMENTS_APP_FULL_HASHID = "app_full_hashid";	//TODO create index
+	public static final String KEY_APP_COMMENTS_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;	//TODO create index
 	public static final String KEY_APP_COMMENT_ID = "comment_id";
 	public static final String KEY_APP_COMMENT = "comment";
 	public static final int NUMBER_OF_COLUMNS_APP_COMMENTS = 3;

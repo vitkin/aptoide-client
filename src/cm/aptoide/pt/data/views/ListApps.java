@@ -1,5 +1,5 @@
 /*
- * ListRepos		part of Aptoide's data model
+ * ListApps		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -23,69 +23,69 @@ package cm.aptoide.pt.data.views;
 import java.util.LinkedHashMap;
 
  /**
- * ListRepos, models a list of Repos,
+ * ListApps, models a list of Apps,
  * 			 maintains insertion order
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ListRepos {
+public class ListApps {
 
-	private LinkedHashMap<Integer, Repository> reposList;
+	private LinkedHashMap<Integer, Application> appsList;
 
 	
 	/**
-	 * ListRepos Constructor
+	 * ListApps Constructor
 	 * 
-	 * @param Repository repo
+	 * @param Application app
 	 */
-	public ListRepos(Repository repo) {
+	public ListApps(Application app) {
 		this();
-		addRepo(repo);
+		addApp(app);
 	}
 	
-	public ListRepos() {
-		this.reposList = new LinkedHashMap<Integer, Repository>(1);
+	public ListApps() {
+		this.appsList = new LinkedHashMap<Integer, Application>(1);
 	}
 	
 	
-	public void addRepo(Repository repo){
-		this.reposList.put(repo.getHashid(), repo);
+	public void addApp(Application app){
+		this.appsList.put(app.getHashid(), app);		
 	}
 	
-	public void removeRepo(int repoHashid){
-		this.reposList.remove(repoHashid);		
+	public void removeApp(int appHashid){
+		this.appsList.remove(appHashid);		
 	}
 	
-	public void removeRepo(Repository repo){
-		this.reposList.remove(repo.getHashid());		
+	public void removeApp(Application app){
+		this.appsList.remove(app.getHashid());		
 	}
 	
-	public Repository getRepo(int repoHashid){
-		return this.reposList.get(repoHashid);
+	public Application getApp(int appHashid){
+		return this.appsList.get(appHashid);
 	}
 	
 	
 	/**
-	 * getList, retrieves repos list,
+	 * getList, retrieves apps list,
 	 * 			maintains insertion order
 	 * 
-	 * @return LinkedHashMap<Integer, Repository> reposList
+	 * @return LinkedHashMap<Integer, Application> appsList
 	 */
-	public LinkedHashMap<Integer, Repository> getList(){
-		return this.reposList;
+	public LinkedHashMap<Integer, Application> getList(){
+		return this.appsList;
 	}
 
 	
 	
 	public void clean(){
-		this.reposList = null;
+		this.appsList = null;
 	}
 	
-	public void reuse(Repository repo) {
-		this.reposList = new LinkedHashMap<Integer, Repository>(1);
-		addRepo(repo);
+	public void reuse(Application app) {
+		this.appsList = new LinkedHashMap<Integer, Application>(1);
+		addApp(app);
 	}
 	
 }
