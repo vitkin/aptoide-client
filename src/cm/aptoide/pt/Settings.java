@@ -147,7 +147,10 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		lst_pref_icns = (ListPreference) findPreference("icdown");
 		Preference clear_credentials = (Preference)findPreference("clearcredentials");
 		Preference set_credentials = (Preference)findPreference("setcredentials");
-		
+		Preference hwspecs = (Preference)findPreference("hwspecs");
+		hwspecs.setIntent(new Intent(
+				getBaseContext()
+				,HWSpecifications.class));
 		if((Configs.COMMENTS_ADD_ON && Configs.COMMENTS_ON) || (Configs.TASTE_ADD_ON && Configs.TASTE_ON)){
 			
 			if(userPref.getString(Configs.LOGIN_USER_NAME, null)==null){

@@ -98,6 +98,11 @@ public class ScheduledDownload extends ListActivity {
         super.onCreate(savedInstanceState);
         
         
+//        HWSpecifications specs = new HWSpecifications(this);
+//        Toast.makeText(this, 
+//        		new String(new Integer(specs.getScreenSize()).toString()), Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, 
+//        		specs.getEsglVer(), Toast.LENGTH_LONG).show();
         
         
         

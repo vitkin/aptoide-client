@@ -41,5 +41,9 @@
         
   </PreferenceCategory>
   
+      <Preference
+     	android:title="Hardware Specs"
+        android:summary="Check your hardware specifications"
+        android:key="hwspecs" />
   
 </PreferenceScreen>
