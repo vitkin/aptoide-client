@@ -31,9 +31,28 @@ public class Constants {
 	public static final int KBYTES_TO_BYTES = 1024;
 	public static final int EMPTY_INT = 0;
 	
-	public static final String CACHE_PATH = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/";
-	public static final String SELF_UPDATE_FILE = CACHE_PATH + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
-	public static final String LATEST_VERSION_CODE_URI = "http://aptoide.com/latest_version.xml";
+	public static final String PATH_CACHE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/";
+	public static final String PATH_CACHE_ICONS = PATH_CACHE + "icons/";
+	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
+	public static final String URI_LATEST_VERSION_CODE = "http://aptoide.com/latest_version.xml";
+	
+
+	/**  uri + size + inUse + requiresLogin  */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_REPO = 4;
+
+	/**  appName + stars + downloads + upToDateVersionName  */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_AVAILABLE = 5;
+	/**  appName + installedVersionName + upToDateVersionName + downgradeAvailable  */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_INSTALLED = 5;
+	/**  appName + installedVersionName + upToDateVersionName  */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_UPDATE = 4;
+	
+	
+	public static final String DISPLAY_REPO_REQUIRES_LOGIN = "requires_login";
+	public static final String DISPLAY_APP_ICON_CACHE_PATH = "iconCachePath";
+	public static final String DISPLAY_APP_UP_TO_DATE_VERSION_NAME = "upToDateVersionName";
+	public static final String DISPLAY_APP_INSTALLED_VERSION_NAME = "installedVersionName";
+	public static final String DISPLAY_APP_DOWNGRADE_AVAILABLE = "downgradeAvailable";
 	
 	// **************************** Database definitions ********************************* //
 	
@@ -62,15 +81,17 @@ public class Constants {
 	public static final int COLUMN_SEVENTH = 6;
 	public static final int COLUMN_EIGTH = 7;		
 	
+	
+	
 	/** 
-	 * 		HashIds are the hashcodes of the real E-A primary keyes separated by pipe symbols. 
+	 * 		HashIds are the hashcodes of the real E-A primary keys separated by pipe symbols. 
 	 *		Reasoning behind them is that sqlite is noticeably more efficient
-	 *		handling integet indexes than text ones. 
+	 *		handling integer indexes than text ones. 
 	 *
 	 *		Primary Key collision is a possibility due to java's hascode algorithm, 
 	 *		but, I expect, highly unlikely for our use case. Anyway, if it does happen,
-	 *		hashids can still be used to speed up querys, we'll simply have to change db's PKs
-	 *		to their actual entity keys to avoid collisions, or maybe add an autoincrement integer id.
+	 *		hashids can still be used to speed up queries, we'll simply have to change db's PKs
+	 *		to their actual entity keys to avoid collisions, or maybe add an auto-increment integer id.
 	 *
 	 *		For future reference:
 	 *			for android <= 2.1 the version of sqlite is 3.5.9, 
@@ -106,8 +127,6 @@ public class Constants {
 	public static final String KEY_REPO_DELTA = "delta";
 	public static final String KEY_REPO_IN_USE = "in_use";
 	public static final int NUMBER_OF_COLUMNS_REPO = 8;
-	/**  uri + inUse */
-	public static final int NUMBER_OF_COLUMNS_REPO_MINIMAL = 2;
 	
 	
 	public static final String TABLE_LOGIN = "login";
@@ -126,7 +145,7 @@ public class Constants {
 	public static final String KEY_APPLICATION_PACKAGE_NAME = "package_name";
 	public static final String KEY_APPLICATION_VERSION_CODE = "version_code";
 	public static final String KEY_APPLICATION_VERSION_NAME = "version_name";
-	public static final String KEY_APPLICATION_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increse lookup performance
+	public static final String KEY_APPLICATION_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increase lookup performance
 	public static final String KEY_APPLICATION_RATING = "rating";
 	public static final int NUMBER_OF_COLUMNS_APPLICATION = 8;
 	
@@ -134,7 +153,7 @@ public class Constants {
 	public static final String TABLE_CATEGORY = "category";
 	/** base: category_name */
 	public static final String KEY_CATEGORY_HASHID = "category_hashid";
-	public static final String KEY_CATEGORY_NAME = "category_name";		//TODO maybe create index, consider changing columns order to increse lookup performance
+	public static final String KEY_CATEGORY_NAME = "category_name";		//TODO maybe create index, consider changing columns order to increase lookup performance
 	public static final int NUMBER_OF_COLUMNS_CATEGORY = 2;
 	
 	
@@ -156,7 +175,7 @@ public class Constants {
 	public static final String KEY_APP_INSTALLED_PACKAGE_NAME = "package_name";
 	public static final String KEY_APP_INSTALLED_VERSION_CODE = "version_code";
 	public static final String KEY_APP_INSTALLED_VERSION_NAME = "version_name"; 
-	public static final String KEY_APP_INSTALLED_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increse lookup performance
+	public static final String KEY_APP_INSTALLED_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increase lookup performance
 	public static final int NUMBER_OF_COLUMNS_APP_INSTALLED = 5;
 	
 	
@@ -330,7 +349,7 @@ public class Constants {
 	public static final String CREATE_TABLE_STATS_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_STATS_INFO + " ("
 			+ KEY_STATS_APP_FULL_HASHID + " INTEGER NOT NULL, "
 			+ KEY_STATS_DOWNLOADS + " INTEGER NOT NULL CHECK ("+KEY_STATS_DOWNLOADS+">=0), "
-			+ KEY_STATS_STARS + " INTEGER NOT NULL CHECK ("+KEY_STATS_STARS+">=0), "
+			+ KEY_STATS_STARS + " REAL NOT NULL CHECK ("+KEY_STATS_STARS+">=0), "
 			+ KEY_STATS_LIKES + " INTEGER NOT NULL CHECK ("+KEY_STATS_LIKES+">=0), "
 			+ KEY_STATS_DISLIKES + " INTEGER NOT NULL CHECK ("+KEY_STATS_DISLIKES+">=0), "
 			+ "FOREIGN KEY("+ KEY_STATS_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"

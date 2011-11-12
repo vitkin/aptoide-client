@@ -1,5 +1,5 @@
 /*
- * ListRepos		part of Aptoide's data model
+ * ViewListRepos		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -23,46 +23,49 @@ package cm.aptoide.pt.data.views;
 import java.util.LinkedHashMap;
 
  /**
- * ListRepos, models a list of Repos,
+ * ViewListRepos, models a list of Repos,
  * 			 maintains insertion order
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ListRepos {
+public class ViewListRepos {
 
-	private LinkedHashMap<Integer, Repository> reposList;
+	private LinkedHashMap<Integer, ViewDisplayRepository> reposList;
 
 	
 	/**
-	 * ListRepos Constructor
+	 * ViewListRepos Constructor
 	 * 
-	 * @param Repository repo
+	 * @param ViewRepository repo
 	 */
-	public ListRepos(Repository repo) {
+	public ViewListRepos(ViewDisplayRepository repo) {
 		this();
 		addRepo(repo);
 	}
 	
-	public ListRepos() {
-		this.reposList = new LinkedHashMap<Integer, Repository>(1);
+	/**
+	 * ViewListRepos Constructor
+	 */
+	public ViewListRepos() {
+		this.reposList = new LinkedHashMap<Integer, ViewDisplayRepository>(1);
 	}
 	
 	
-	public void addRepo(Repository repo){
-		this.reposList.put(repo.getHashid(), repo);
+	public void addRepo(ViewDisplayRepository repo){
+		this.reposList.put(repo.getRepoHashid(), repo);
 	}
 	
 	public void removeRepo(int repoHashid){
 		this.reposList.remove(repoHashid);		
 	}
 	
-	public void removeRepo(Repository repo){
-		this.reposList.remove(repo.getHashid());		
+	public void removeRepo(ViewDisplayRepository repo){
+		this.reposList.remove(repo.getRepoHashid());		
 	}
 	
-	public Repository getRepo(int repoHashid){
+	public ViewDisplayRepository getRepo(int repoHashid){
 		return this.reposList.get(repoHashid);
 	}
 	
@@ -71,20 +74,27 @@ public class ListRepos {
 	 * getList, retrieves repos list,
 	 * 			maintains insertion order
 	 * 
-	 * @return LinkedHashMap<Integer, Repository> reposList
+	 * @return LinkedHashMap<Integer, ViewDisplayRepository> reposList
 	 */
-	public LinkedHashMap<Integer, Repository> getList(){
+	public LinkedHashMap<Integer, ViewDisplayRepository> getList(){
 		return this.reposList;
 	}
 
 	
-	
+	/**
+	 * ViewListRepos object reuse clean references
+	 */
 	public void clean(){
 		this.reposList = null;
 	}
 	
-	public void reuse(Repository repo) {
-		this.reposList = new LinkedHashMap<Integer, Repository>(1);
+	/**
+	 * ViewListRepos object reuse reConstructor
+	 * 
+	 * @param ViewDisplayRepository repo
+	 */
+	public void reuse(ViewDisplayRepository repo) {
+		this.reposList = new LinkedHashMap<Integer, ViewDisplayRepository>(1);
 		addRepo(repo);
 	}
 	

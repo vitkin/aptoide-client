@@ -30,18 +30,19 @@ import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.views.AppComment;
-import cm.aptoide.pt.data.views.Application;
-import cm.aptoide.pt.data.views.Category;
-import cm.aptoide.pt.data.views.DownloadInfo;
-import cm.aptoide.pt.data.views.ExtraInfo;
-import cm.aptoide.pt.data.views.IconInfo;
-import cm.aptoide.pt.data.views.ListApps;
-import cm.aptoide.pt.data.views.ListIds;
-import cm.aptoide.pt.data.views.ListRepos;
-import cm.aptoide.pt.data.views.Login;
-import cm.aptoide.pt.data.views.Repository;
-import cm.aptoide.pt.data.views.StatsInfo;
+import cm.aptoide.pt.data.views.ViewAppComment;
+import cm.aptoide.pt.data.views.ViewApplication;
+import cm.aptoide.pt.data.views.ViewCategory;
+import cm.aptoide.pt.data.views.ViewDisplayRepository;
+import cm.aptoide.pt.data.views.ViewDownloadInfo;
+import cm.aptoide.pt.data.views.ViewExtraInfo;
+import cm.aptoide.pt.data.views.ViewIconInfo;
+import cm.aptoide.pt.data.views.ViewListApps;
+import cm.aptoide.pt.data.views.ViewListIds;
+import cm.aptoide.pt.data.views.ViewListRepos;
+import cm.aptoide.pt.data.views.ViewLogin;
+import cm.aptoide.pt.data.views.ViewRepository;
+import cm.aptoide.pt.data.views.ViewStatsInfo;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -168,19 +169,19 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public void insertCategories(ArrayList<Category> categories){
+	public void insertCategories(ArrayList<ViewCategory> categories){
 		db.beginTransaction();
 		try{
 			InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
 			ArrayList<ContentValues> subCategoriesRelations = new ArrayList<ContentValues>(categories.size());
 			ContentValues subCategoryRelation;
 			
-			for (Category category : categories) {
+			for (ViewCategory category : categories) {
 				if(insertCategory.insert(category.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 				if(category.hasChilds()){
-					for (Category subCategory : category.getSubCategories()) {
+					for (ViewCategory subCategory : category.getSubCategories()) {
 						if(insertCategory.insert(subCategory.getValues()) == Constants.DB_ERROR){
 							//TODO throw exception;
 						}
@@ -212,13 +213,13 @@ public class ManagerDatabase {
 	/**
 	 * insertCategory, handles single category insertion
 	 * 
-	 * @param Category category
+	 * @param ViewCategory category
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public void insertCategory(Category category){
+	public void insertCategory(ViewCategory category){
 		db.beginTransaction();
 		try{
 			ContentValues parentCategoryRelation;
@@ -254,13 +255,13 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public void insertRepositories(ArrayList<Repository> repositories){
+	public void insertRepositories(ArrayList<ViewRepository> repositories){
 		db.beginTransaction();
 		try{
 			InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
 			ArrayList<ContentValues> loginsValues = new ArrayList<ContentValues>(repositories.size());
 			
-			for (Repository repository : repositories) {
+			for (ViewRepository repository : repositories) {
 				if(insertRepository.insert(repository.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -289,13 +290,13 @@ public class ManagerDatabase {
 	/**
 	 * insertRepository, handles single repository insertion
 	 * 
-	 * @param Repository repository
+	 * @param ViewRepository repository
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public void insertRepository(Repository repository){
+	public void insertRepository(ViewRepository repository){
 		db.beginTransaction();
 		try{
 			if(db.insert(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
@@ -317,20 +318,20 @@ public class ManagerDatabase {
 	/**
 	 * removeRepositories, handles multiple repositories removal
 	 * 
-	 * @param ListIds repoHashids
+	 * @param ViewListIds repoHashids
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public void removeRepositories(ListIds repoHashids){
+	public void removeRepositories(ViewListIds repoHashids){
 		db.beginTransaction();
 		try{
 			StringBuilder deleteWhere = new StringBuilder();
 			boolean firstWhere = true;
 			
 			deleteWhere.append(Constants.KEY_REPO_HASHID+" IN (");
-			for (String repoHashid : repoHashids.getList()) {
+			for (int repoHashid : repoHashids.getList()) {
 				
 				if(firstWhere){
 					firstWhere = false;
@@ -358,13 +359,13 @@ public class ManagerDatabase {
 	/**
 	 * toggleRepositoriesInUse, handles multiple repositories inUse toggle
 	 * 
-	 * @param ListIds repoHashids
+	 * @param ViewListIds repoHashids
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public void toggleRepositoriesInUse(ListIds repoHashids, boolean setInUse){
+	public void toggleRepositoriesInUse(ViewListIds repoHashids, boolean setInUse){
 		db.beginTransaction();
 		try{
 			ContentValues setTrue = new ContentValues();
@@ -374,7 +375,7 @@ public class ManagerDatabase {
 			boolean firstWhere = true;
 
 			updateWhere.append(Constants.KEY_REPO_HASHID+" IN (");
-			for (String repoHashid : repoHashids.getList()) {
+			for (int repoHashid : repoHashids.getList()) {
 				
 				if(firstWhere){
 					firstWhere = false;
@@ -411,14 +412,14 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public void insertApplications(ArrayList<Application> applications){
+	public void insertApplications(ArrayList<ViewApplication> applications){
 		db.beginTransaction();
 		try{
 			InsertHelper insertApplication = new InsertHelper(db, Constants.TABLE_APPLICATION);
 			ArrayList<ContentValues> appCategoriesRelations = new ArrayList<ContentValues>(applications.size());
 			ContentValues appCategoryRelation;
 			
-			for (Application application : applications) {
+			for (ViewApplication application : applications) {
 				if(insertApplication.insert(application.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -449,13 +450,13 @@ public class ManagerDatabase {
 	/**
 	 * insertApplication, handles single application insertion
 	 * 
-	 * @param Application application
+	 * @param ViewApplication application
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public void insertApplication(Application application){
+	public void insertApplication(ViewApplication application){
 		ContentValues appCategoryRelation;
 
 		db.beginTransaction();
@@ -482,20 +483,20 @@ public class ManagerDatabase {
 	/**
 	 * removeApplications, handles multiple applications removal
 	 * 
-	 * @param ListIds appsFullHashid
+	 * @param ViewListIds appsFullHashid
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public void removeApplications(ListIds appsFullHashid){
+	public void removeApplications(ViewListIds appsFullHashid){
 		db.beginTransaction();
 		try{
 			StringBuilder deleteWhere = new StringBuilder();
 			boolean firstWhere = true;
 			
 			deleteWhere.append(Constants.KEY_APPLICATION_FULL_HASHID+" IN (");
-			for (String appFullHashid : appsFullHashid.getList()) {
+			for (int appFullHashid : appsFullHashid.getList()) {
 				
 				if(firstWhere){
 					firstWhere = false;
@@ -526,12 +527,12 @@ public class ManagerDatabase {
 	 * 
 	 * @param ArrayList<IconInfo> iconsInfo
 	 */
-	public void insertIconsInfo(ArrayList<IconInfo> iconsInfo){
+	public void insertIconsInfo(ArrayList<ViewIconInfo> iconsInfo){
 		db.beginTransaction();
 		try{
 			InsertHelper insertIconInfo = new InsertHelper(db, Constants.TABLE_ICON_INFO);
 			
-			for (IconInfo iconInfo : iconsInfo) {
+			for (ViewIconInfo iconInfo : iconsInfo) {
 				if(insertIconInfo.insert(iconInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -549,9 +550,9 @@ public class ManagerDatabase {
 	/**
 	 * insertIconsInfo, handles single application's icon info insertion
 	 * 
-	 * @param IconInfo iconInfo
+	 * @param ViewIconInfo iconInfo
 	 */
-	public void insertIconInfo(IconInfo iconInfo){
+	public void insertIconInfo(ViewIconInfo iconInfo){
 		db.beginTransaction();
 		try{
 			if(db.insert(Constants.TABLE_ICON_INFO, null, iconInfo.getValues()) == Constants.DB_ERROR){
@@ -571,12 +572,12 @@ public class ManagerDatabase {
 	 * 
 	 * @param ArrayList<DownloadInfo> downloadsInfo
 	 */
-	public void insertDownloadsInfo(ArrayList<DownloadInfo> downloadsInfo){
+	public void insertDownloadsInfo(ArrayList<ViewDownloadInfo> downloadsInfo){
 		db.beginTransaction();
 		try{
 			InsertHelper insertDownloadInfo = new InsertHelper(db, Constants.TABLE_DOWNLOAD_INFO);
 			
-			for (DownloadInfo downloadInfo : downloadsInfo) {
+			for (ViewDownloadInfo downloadInfo : downloadsInfo) {
 				if(insertDownloadInfo.insert(downloadInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -594,9 +595,9 @@ public class ManagerDatabase {
 	/**
 	 * insertDownloadInfo, handles single application's download info insertion
 	 * 
-	 * @param DownloadInfo downloadInfo
+	 * @param ViewDownloadInfo downloadInfo
 	 */
-	public void insertDownloadInfo(DownloadInfo downloadInfo){
+	public void insertDownloadInfo(ViewDownloadInfo downloadInfo){
 		db.beginTransaction();
 		try{
 			if(db.insert(Constants.TABLE_DOWNLOAD_INFO, null, downloadInfo.getValues()) == Constants.DB_ERROR){
@@ -616,12 +617,12 @@ public class ManagerDatabase {
 	 * 
 	 * @param ArrayList<ExtraInfo> extraInfos
 	 */
-	public void insertExtras(ArrayList<ExtraInfo> extraInfos){
+	public void insertExtras(ArrayList<ViewExtraInfo> extraInfos){
 		db.beginTransaction();
 		try{
 			InsertHelper insertExtraInfo = new InsertHelper(db, Constants.TABLE_EXTRA_INFO);
 			
-			for (ExtraInfo extraInfo : extraInfos) {
+			for (ViewExtraInfo extraInfo : extraInfos) {
 				if(insertExtraInfo.insert(extraInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -639,9 +640,9 @@ public class ManagerDatabase {
 	/**
 	 * insertExtraInfo, handles single application's extra info insertion
 	 * 
-	 * @param ExtraInfo extraInfo
+	 * @param ViewExtraInfo extraInfo
 	 */
-	public void insertExtra(ExtraInfo extraInfo){
+	public void insertExtra(ViewExtraInfo extraInfo){
 		db.beginTransaction();
 		try{
 			if(db.insert(Constants.TABLE_EXTRA_INFO, null, extraInfo.getValues()) == Constants.DB_ERROR){
@@ -664,12 +665,12 @@ public class ManagerDatabase {
 	 * 
 	 * @param ArrayList<AppComment> appComment
 	 */
-	public void insertAppComments(ArrayList<AppComment> appComments){
+	public void insertAppComments(ArrayList<ViewAppComment> appComments){
 		db.beginTransaction();
 		try{
 			InsertHelper insertAppComments = new InsertHelper(db, Constants.TABLE_APP_COMMENTS);
 			
-			for (AppComment appComment : appComments) {
+			for (ViewAppComment appComment : appComments) {
 				if(insertAppComments.insert(appComment.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -693,12 +694,12 @@ public class ManagerDatabase {
 	 * 
 	 * @param ArrayList<StatsInfo> statsInfos
 	 */
-	public void insertOrReplaceStatsInfos(ArrayList<StatsInfo> statsInfos){
+	public void insertOrReplaceStatsInfos(ArrayList<ViewStatsInfo> statsInfos){
 		db.beginTransaction();
 		try{
 			InsertHelper insertStatsInfo = new InsertHelper(db, Constants.TABLE_STATS_INFO);
 			
-			for (StatsInfo statsInfo : statsInfos) {
+			for (ViewStatsInfo statsInfo : statsInfos) {
 				if(insertStatsInfo.replace(statsInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -717,9 +718,9 @@ public class ManagerDatabase {
 	 * insertOrReplaceStatsInfo, handles single application's stats info insertion
 	 * 							 if already present replaces with new ones
 	 * 
-	 * @param StatsInfo statsInfo
+	 * @param ViewStatsInfo statsInfo
 	 */
-	public void insertOrReplaceStatsInfo(StatsInfo statsInfo){
+	public void insertOrReplaceStatsInfo(ViewStatsInfo statsInfo){
 		db.beginTransaction();
 		try{
 			if(db.replace(Constants.TABLE_STATS_INFO, null, statsInfo.getValues()) == Constants.DB_ERROR){
@@ -747,14 +748,14 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public void insertInstalledApplications(ArrayList<Application> installedApplications){
+	public void insertInstalledApplications(ArrayList<ViewApplication> installedApplications){
 		db.beginTransaction();
 		try{
 			db.execSQL(Constants.DROP_TABLE_APP_INSTALLED);
 			db.execSQL(Constants.CREATE_TABLE_APP_INSTALLED);
 			
 			InsertHelper insertInstalledApplication = new InsertHelper(db, Constants.TABLE_APP_INSTALLED);
-			for (Application application : installedApplications) {
+			for (ViewApplication application : installedApplications) {
 				if(insertInstalledApplication.insert(application.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -773,13 +774,13 @@ public class ManagerDatabase {
 	 * insertInstalledApplication, handles single installed application insertion
 	 * 										 
 	 * 
-	 * @param Application installedApplication
+	 * @param ViewApplication installedApplication
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public void insertInstalledApplication(Application installedApplication){
+	public void insertInstalledApplication(ViewApplication installedApplication){
 		db.beginTransaction();
 		try{
 			if(db.insert(Constants.TABLE_APP_INSTALLED ,null, installedApplication.getValues()) == Constants.DB_ERROR){
@@ -910,8 +911,8 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * getReposMinimalInfo, retrieves a list of all known repositories
-	 * 					   with minimal information (uri, inUse, Login if required)
+	 * getReposDisplayInfo, retrieves a list of all known repositories
+	 * 					   with display relevant information (uri, inUse, Login if required)
 	 * 
 	 * @return ListRepos list of repos with it's logins
 	 * 
@@ -919,56 +920,59 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ListRepos getReposMinimalInfo(){
-		
-		final int URI = Constants.COLUMN_FIRST;
-		final int IN_USE = Constants.COLUMN_SECOND;
+	public ViewListRepos getReposDisplayInfo(){
+
 		final int REPO_HASHID = Constants.COLUMN_FIRST;
+		final int URI = Constants.COLUMN_SECOND;
+		final int IN_USE = Constants.COLUMN_THIRD;
+		final int SIZE = Constants.COLUMN_FOURTH;
+		
+		final int LOGIN_REPO_HASHID = Constants.COLUMN_FIRST;
 		final int USERNAME = Constants.COLUMN_SECOND;
 		final int PASSWORD = Constants.COLUMN_THIRD;
 
-		ListRepos listRepos = new ListRepos();
+		ViewListRepos listRepos = new ViewListRepos();
 		
-		String selectRepos = "SELECT "+Constants.KEY_REPO_URI+","+Constants.KEY_REPO_IN_USE
+		String selectRepos = "SELECT "+Constants.KEY_REPO_HASHID+","+Constants.KEY_REPO_URI
+									  +Constants.KEY_REPO_IN_USE+","+Constants.KEY_REPO_SIZE
 							+" FROM "+Constants.TABLE_REPOSITORY+";";
-		Repository repo;
-		Cursor reposCursor = null;
+		ViewDisplayRepository repo;
+		Cursor reposCursor;
 		
 		String selectLogins = "SELECT * "
 							 +"FROM "+Constants.TABLE_LOGIN+";";
-		Login login;
-		Cursor loginsCursor = null;
+		ViewLogin login;
+		Cursor loginsCursor;
 
 		
 		db.beginTransaction();
 		try{
 			reposCursor = aptoideNonAtomicQuery(selectRepos);
 			loginsCursor = aptoideNonAtomicQuery(selectLogins);
-			
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: handle exception
-		}finally{
-			db.endTransaction();
-		}
-		
-		reposCursor.moveToFirst();
-		do{
-			repo = new Repository(reposCursor.getString(URI), true);				
-			repo.setInUse((reposCursor.getInt(IN_USE)==Constants.DB_TRUE?true:false));
-			listRepos.addRepo(repo);
-		}while(reposCursor.moveToNext());
-		reposCursor.close();
-		
 
-		
-		loginsCursor.moveToFirst();
-		do{
-			login = new Login(loginsCursor.getString(USERNAME),loginsCursor.getString(PASSWORD));
-			listRepos.getRepo(reposCursor.getInt(REPO_HASHID)).setLogin(login);
-		}while(loginsCursor.moveToNext());
-		loginsCursor.close();
-		
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			reposCursor.moveToFirst();
+			do{
+				repo = new ViewDisplayRepository(reposCursor.getInt(REPO_HASHID), reposCursor.getString(URI), (reposCursor.getInt(IN_USE)==Constants.DB_TRUE?true:false), reposCursor.getInt(SIZE) );				
+				listRepos.addRepo(repo);
+			}while(reposCursor.moveToNext());
+			reposCursor.close();
+
+
+
+			loginsCursor.moveToFirst();
+			do{
+				login = new ViewLogin(loginsCursor.getString(USERNAME),loginsCursor.getString(PASSWORD));
+				listRepos.getRepo(reposCursor.getInt(LOGIN_REPO_HASHID)).setLogin(login);
+			}while(loginsCursor.moveToNext());
+			loginsCursor.close();
+
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+		}
 		return listRepos;		
 	}
 	
@@ -984,33 +988,46 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ListApps getInstalledApps(int offset, int range){
-		
-		final int APP_HASHID = Constants.COLUMN_FIRST;
-		final int VERSION_NAME = Constants.COLUMN_FOURTH;
-		final int APP_NAME = Constants.COLUMN_FIFTH;
+	public ViewListApps getInstalledApps(int offset, int range){ //TODO Here I am refactoring this and next methods to use new ViewDisplayApplication class
 
-		ListApps listApps = new ListApps();
+		final int APP_NAME = Constants.COLUMN_FIRST;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int VERSION_NAME = Constants.COLUMN_THIRD;
+
+		ViewListApps installedApps = new ViewListApps();
+		ViewListIds installedIds = new ViewListIds();
 		
-		String selectInstalledApps = "SELECT "+Constants.KEY_APP_INSTALLED_HASHID+","+Constants.KEY_APP_INSTALLED_VERSION_NAME+","
-											  +Constants.KEY_APP_INSTALLED_NAME
+		String selectInstalledApps = "SELECT "+Constants.KEY_APP_INSTALLED_NAME+","+Constants.KEY_APP_INSTALLED_HASHID
+											  +","+Constants.KEY_APP_INSTALLED_VERSION_NAME	  
 									+" FROM "+Constants.TABLE_APP_INSTALLED
 									+" ORDER BY "+Constants.KEY_APP_INSTALLED_NAME
 									+" LIMIT ?"
 									+" OFFSET ?;";
 		String[] selectArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
-		Application app;
+		ViewApplication app;
+		Cursor appsCursor = null;
 		
-		Cursor appsCursor = aptoideAtomicQuery(selectInstalledApps, selectArgs);
-		
-		appsCursor.moveToFirst();
-		do{
-			app = new Application(appsCursor.getInt(APP_HASHID), appsCursor.getString(VERSION_NAME), appsCursor.getString(APP_NAME), true);
-			listApps.addApp(app);
-		}while(appsCursor.moveToNext());
-		appsCursor.close();
-		
-		return listApps;		
+		db.beginTransaction();
+		try{
+			appsCursor = aptoideNonAtomicQuery(selectInstalledApps, selectArgs);
+
+			appsCursor.moveToFirst();
+			do{
+				app = new ViewApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(VERSION_NAME), appsCursor.getString(APP_NAME), true);
+				installedApps.addApp(app);
+				installedIds.addId(appsCursor.getInt(APP_HASHID));
+			}while(appsCursor.moveToNext());
+			appsCursor.close();
+			
+			
+
+			db.setTransactionSuccessful();		
+		}catch (Exception e) {
+			// TODO: handle exception
+		}finally{
+			db.endTransaction();
+		}
+		return installedApps;
 	}
 	
 	/**
@@ -1025,14 +1042,14 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ListApps getAppsUpdates(int offset, int range){	//TODO add stats 
+	public ViewListApps getAppsUpdates(int offset, int range){	//TODO add stats 
 		
 		final int PACKAGE_NAME = Constants.COLUMN_SECOND;
 		final int VERSION_CODE = Constants.COLUMN_THIRD;
 		final int VERSION_NAME = Constants.COLUMN_FOURTH;
 		final int APP_NAME = Constants.COLUMN_FIFTH;
 
-		ListApps listApps = new ListApps();
+		ViewListApps listApps = new ViewListApps();
 		
 		String selectInstalledApps = "SELECT "+Constants.KEY_APP_INSTALLED_NAME+","+Constants.KEY_APP_INSTALLED_PACKAGE_NAME+","
 											  +Constants.KEY_APP_INSTALLED_VERSION_NAME+","+Constants.KEY_APP_INSTALLED_VERSION_CODE
@@ -1041,13 +1058,13 @@ public class ManagerDatabase {
 									+" LIMIT ?"
 									+" OFFSET ?;";
 		String[] selectArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
-		Application app;
+		ViewApplication app;
 		
 		Cursor appsCursor = aptoideAtomicQuery(selectInstalledApps, selectArgs);
 		
 		appsCursor.moveToFirst();
 		do{
-			app = new Application(appsCursor.getString(APP_NAME), appsCursor.getString(PACKAGE_NAME),
+			app = new ViewApplication(appsCursor.getString(APP_NAME), appsCursor.getString(PACKAGE_NAME),
 								  appsCursor.getString(VERSION_NAME), appsCursor.getInt(VERSION_CODE), true);
 			listApps.addApp(app);
 		}while(appsCursor.moveToNext());

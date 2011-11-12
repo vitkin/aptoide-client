@@ -1,5 +1,5 @@
 /*
- * DownloadInfo		part of Aptoide's data model
+ * ViewDownloadInfo		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -25,25 +25,25 @@ import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.downloads.InterfaceDownloadInfo;
 
  /**
- * DownloadInfo, models a download's info
+ * ViewDownloadInfo, models a download's info
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class DownloadInfo implements InterfaceDownloadInfo {
+public class ViewDownloadInfo implements InterfaceDownloadInfo {
 
 	private ContentValues values;
 	private String remoteBasePath;
 
 	
 	/**
-	 * DownloadInfo Constructor
+	 * ViewDownloadInfo Constructor
 	 * 
 	 * @param String remotePathTail, what comes after repository's base path
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public DownloadInfo(String remotePathTail, int applicationFullHashid) {
+	public ViewDownloadInfo(String remotePathTail, int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD_INFO);
 		setRemotePathTail(remotePathTail);
 		setAppFullHashid(applicationFullHashid);
@@ -99,11 +99,20 @@ public class DownloadInfo implements InterfaceDownloadInfo {
 		return this.values;
 	}
 	
-	
+
+	/**
+	 * ViewDownloadInfo object reuse, clean references
+	 */
 	public void clean(){
 		this.values = null;
 	}
-	
+
+	/**
+	 * ViewDownloadInfo object reuse, reConstructor
+	 * 
+	 * @param String remotePathTail, what comes after repository's base path
+	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
+	 */
 	public void reuse(String iconRemotePathTail, int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD_INFO);
 		setRemotePathTail(iconRemotePathTail);

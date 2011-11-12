@@ -36,7 +36,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.views.Login;
+import cm.aptoide.pt.data.views.ViewLogin;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -70,7 +70,7 @@ public class ManagerDownloads {
 	
 	/** Object reuse pool */
 	private ArrayList<Download> downloadPool;
-	private ArrayList<Login> loginPool;
+	private ArrayList<ViewLogin> loginPool;
 
 //	private final static int KBYTES_TO_BYTES = 1024;					// moved to constants.xml
 //	private HashMap<Integer, HashMap<String, String>> notifications;	//TODO move to notifications within ServiceData
@@ -81,7 +81,7 @@ public class ManagerDownloads {
 
 	
 	public ManagerDownloads() {
-		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.CACHE_PATH + "\n ********");
+		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.PATH_CACHE + "\n ********");
 	}
 	
 
