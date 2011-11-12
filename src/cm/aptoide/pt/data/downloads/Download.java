@@ -22,8 +22,8 @@ package cm.aptoide.pt.data.downloads;
 
 import cm.aptoide.pt.data.cache.Cache;
 import cm.aptoide.pt.data.notifiers.Notifier;
-import cm.aptoide.pt.data.views.DownloadInfo;
-import cm.aptoide.pt.data.views.Login;
+import cm.aptoide.pt.data.views.ViewDownloadInfo;
+import cm.aptoide.pt.data.views.ViewLogin;
 
  /**
  * Download, models a download
@@ -37,7 +37,7 @@ public class Download {
 	private InterfaceDownloadInfo downloadInfo;		//TODO this doesn't allow one to use methods not in interface? if confirmed refactor, maybe use DownloadInfo globally
 	private boolean bareInfo;
 	private boolean loginRequired;
-	private Login login;
+	private ViewLogin login;
 	
 	private Cache cache;
 	private Notifier notifier;
@@ -55,7 +55,7 @@ public class Download {
 		this.notifier = notifier;
 	}
 	
-	public Download(InterfaceDownloadInfo downloadInfo, Login login, Cache cache, Notifier notifier) {
+	public Download(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, Notifier notifier) {
 		if(downloadInfo.getClass().equals(BareDownloadInfo.class)){	//TODO does this work, or how do I get around it
 			this.bareInfo = true;
 		}else{
@@ -77,7 +77,7 @@ public class Download {
 		return loginRequired;
 	}
 
-	public Login getLogin() {
+	public ViewLogin getLogin() {
 		return login;			//TODO test isrequired and return nullobject pattern if not
 	}
 
@@ -98,7 +98,7 @@ public class Download {
 		this.notifier = null;
 	}
 	
-	public void reuse(InterfaceDownloadInfo downloadInfo, boolean loginRequired, Login login, Cache cache, Notifier notifier) {
+	public void reuse(InterfaceDownloadInfo downloadInfo, boolean loginRequired, ViewLogin login, Cache cache, Notifier notifier) {
 		this.downloadInfo = downloadInfo;
 		this.loginRequired = loginRequired;
 		this.login = login;

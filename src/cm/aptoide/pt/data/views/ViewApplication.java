@@ -1,5 +1,5 @@
 /*
- * Application		part of Aptoide's data model
+ * ViewApplication		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -24,20 +24,20 @@ import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * Application, models an application
+ * ViewApplication, models an application
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class Application {
+public class ViewApplication {
 
 	private ContentValues values;
 	private int categoryHashid;
 	
 	
 	/**
-	 * Application constructor
+	 * ViewApplication constructor
 	 * 
 	 * @param String applicationName
 	 * @param String packageName
@@ -46,21 +46,21 @@ public class Application {
 	 * @param boolean isInstalled
 	 * 
 	 */
-	public Application(String applicationName, String packageName, String versionName, int versionCode, boolean isInstalled) {
+	public ViewApplication(String applicationName, String packageName, String versionName, int versionCode, boolean isInstalled) {
 		this(packageName, versionCode, isInstalled);
 		setVersionName(versionName);
 		setApplicationName(applicationName);
 	}
 	
 	/**
-	 * Application embrio constructor
+	 * ViewApplication embrio constructor
 	 * 
 	 * @param String packageName
 	 * @param int versionCode
 	 * @param boolean isInstalled
 	 * 
 	 */
-	public Application(String packageName, int versionCode, boolean isInstalled) {
+	public ViewApplication(String packageName, int versionCode, boolean isInstalled) {
 		if(isInstalled){
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
 		}else{
@@ -69,26 +69,6 @@ public class Application {
 		setPackageName(packageName);
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
-	}
-	
-	/**
-	 * Application minimalistic constructor
-	 * 
-	 * @param int appHashid
-	 * @param String applicationName
-	 * @param String versionName
-	 * @param boolean isInstalled
-	 * 
-	 */
-	public Application(int appHashid, String applicationName, String versionName, boolean installed) {
-		if(installed){
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED-2);
-		}else{
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION-2);			
-		}
-		setAppHashid(appHashid);
-		setApplicationName(applicationName);
-		setVersionName(versionName);
 	}
 	
 	
@@ -110,10 +90,6 @@ public class Application {
 	
 	private void setAppHashid(String packageName, int versionCode){
 		values.put(Constants.KEY_APPLICATION_HASHID, (packageName+'|'+versionCode).hashCode());
-	}
-	
-	private void setAppHashid(int appHashid){
-		values.put(Constants.KEY_APPLICATION_HASHID, appHashid);
 	}
 	
 	public int getHashid() {
@@ -181,14 +157,17 @@ public class Application {
 	}
 
 	
-	
+
+	/**
+	 * ViewApplication object reuse, clean references
+	 */
 	public void clean(){
 		this.values = null;
 		this.categoryHashid = Constants.EMPTY_INT;
 	}
 	
 	/**
-	 * reuse, Application object reconstructor
+	 * ViewApplication object reuse, reConstructor
 	 * 
 	 * @param String applicationName
 	 * @param String packageName
@@ -211,7 +190,7 @@ public class Application {
 	}
 	
 	/**
-	 * reuse, Application object reconstructor
+	 * ViewApplication object reuse, reConstructor
 	 * 
 	 * @param String packageName
 	 * @param int versionCode
@@ -228,26 +207,6 @@ public class Application {
 		setVersionCode(versionCode);
 		setAppHashid(packageName, versionCode);
 	}
-	
-	/**
-	 * reuse, Application object minimalistic reconstructor
-	 * 
-	 * @param String applicationName
-	 * @param String versionName
-	 * @param int appHashid
-	 * @param boolean isInstalled
-	 * 
-	 */
-	public void reuse(String applicationName, String versionName, int appHashid, boolean installed) {
-		if(installed){
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED-2);
-		}else{
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION-2);			
-		}
-		setAppHashid(appHashid);
-		setApplicationName(applicationName);
-		setVersionName(versionName);
-	}
 
 
 	@Override
@@ -258,8 +217,8 @@ public class Application {
 
 	@Override
 	public boolean equals(Object object) {
-		if(object instanceof Application){
-			Application app = (Application) object;
+		if(object instanceof ViewApplication){
+			ViewApplication app = (ViewApplication) object;
 			if(app.hashCode() == this.hashCode()){
 				return true;
 			}
@@ -270,7 +229,7 @@ public class Application {
 
 	@Override
 	public String toString() {
-		return this.getApplicationName()+" "+getVersionName();
+		return this.getApplicationName()+" v"+getVersionName();
 	}
 	
 }

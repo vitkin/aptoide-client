@@ -1,5 +1,5 @@
 /*
- * Login,		auxilliary class to Aptoide's ServiceData
+ * ViewLogin,		auxilliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -25,19 +25,25 @@ import android.content.ContentValues;
 
 
  /**
- * Login, models a download's authentication
+ * ViewLogin, models a download's authentication
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class Login {
+public class ViewLogin {
 
 
 	private ContentValues loginValues;
 	
 
-	public Login(String username, String password) {
+	/**
+	 * ViewLogin Constructor
+	 *
+	 * @param username
+	 * @param password
+	 */
+	public ViewLogin(String username, String password) {
 		loginValues = new ContentValues(Constants.NUMBER_OF_COLUMNS_LOGIN);
 		setUsername(username);
 		setPassword(password);
@@ -67,11 +73,20 @@ public class Login {
 		return loginValues;
 	}
 	
-	
+
+	/**
+	 * ViewLogin object reuse clean references
+	 */
 	public void clean(){
 		this.loginValues = null;
 	}
 
+	/**
+	 * ViewLogin object reuse reConstructor
+	 * 
+	 * @param username
+	 * @param password
+	 */
 	public void reuse(String username, String password){
 		loginValues = new ContentValues(Constants.NUMBER_OF_COLUMNS_LOGIN);
 		setUsername(username);

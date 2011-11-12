@@ -1,5 +1,5 @@
 /*
- * Repository		part of Aptoide's data model
+ * ViewRepository		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -24,39 +24,30 @@ import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * Repository, models a repository
+ * ViewRepository, models a repository
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class Repository {
+public class ViewRepository {
 
 	private ContentValues values;
 	private boolean requiresLogin;
-	private Login login;
+	private ViewLogin login;
 	
 	
 	/**
-	 * Repository Constructor
+	 * ViewRepository Constructor
 	 *
 	 * @param String uri
-	 * @param boolean minimal
 	 */
-	public Repository(String uri, boolean minimal) {
+	public ViewRepository(String uri) {
 		this.requiresLogin = false;
-		if(minimal){
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO_MINIMAL);
-		}else{
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);			
-		}
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);			
 		setUri(uri);	
 	}
 
-	
-	public int getHashid() {
-		return values.getAsInteger(Constants.KEY_REPO_HASHID);
-	}
 	
 	private void setUri(String uri){
 		values.put(Constants.KEY_REPO_URI, uri);
@@ -65,6 +56,10 @@ public class Repository {
 
 	public String getUri() {
 		return values.getAsString(Constants.KEY_REPO_URI);
+	}
+	
+	public int getHashid() {
+		return values.getAsInteger(Constants.KEY_REPO_HASHID);
 	}
 	
 	public void setBasePath(String basePath){
@@ -112,7 +107,7 @@ public class Repository {
 	}
 
 	public boolean getInUse() {
-		return values.getAsInteger(Constants.KEY_REPO_SIZE)==Constants.DB_TRUE?true:false;
+		return (values.getAsInteger(Constants.KEY_REPO_IN_USE)==Constants.DB_TRUE?true:false);
 	}
 	
 	public ContentValues getValues(){
@@ -120,7 +115,7 @@ public class Repository {
 	}
 	
 	
-	public void setLogin(Login login){
+	public void setLogin(ViewLogin login){
 		this.requiresLogin = true;
 		this.login = login;
 		this.login.setRepoHashid(getHashid());
@@ -130,24 +125,30 @@ public class Repository {
 		return requiresLogin;
 	}
 
-	public Login getLogin() {
+	public ViewLogin getLogin() {
 		return login;			//TODO test isrequired and return nullobject pattern if not
 	}
 	
-	
+
+	/**
+	 * ViewRepository object reuse clean references
+	 *
+	 * @param String uri
+	 */
 	public void clean(){
 		this.values = null;
 		this.requiresLogin = false;
 		this.login = null;
 	}
-	
-	public void reuse(String uri, boolean minimal) {
+
+	/**
+	 * ViewRepository object reuse reConstructor
+	 *
+	 * @param String uri
+	 */
+	public void reuse(String uri) {
 		this.requiresLogin = false;
-		if(minimal){
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO_MINIMAL);
-		}else{
-			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
-		}
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
 		setUri(uri);
 	}
 
@@ -160,8 +161,8 @@ public class Repository {
 
 	@Override
 	public boolean equals(Object object) {
-		if(object instanceof Repository){
-			Repository repo = (Repository) object;
+		if(object instanceof ViewRepository){
+			ViewRepository repo = (ViewRepository) object;
 			if(repo.hashCode() == this.hashCode()){
 				return true;
 			}

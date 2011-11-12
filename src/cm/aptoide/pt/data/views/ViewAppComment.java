@@ -1,5 +1,5 @@
 /*
- * AppComment		part of Aptoide's data model
+ * ViewAppComment		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -24,23 +24,24 @@ import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * AppComment, models an app's comment
+ * ViewAppComment, models an app's comment
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class AppComment {
+public class ViewAppComment {
 
 	private ContentValues values;
 
 	
 	/**
-	 * AppComment Constructor
+	 * ViewAppComment Constructor
 	 * 
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
+	 * @param int commentId id from server
 	 */
-	public AppComment(int applicationFullHashid, int commentId) {
+	public ViewAppComment(int applicationFullHashid, int commentId) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_COMMENTS);
 		setAppFullHashid(applicationFullHashid);
 		setCommentId(commentId);
@@ -76,11 +77,20 @@ public class AppComment {
 		return this.values;
 	}
 	
-	
+
+	/**
+	 * ViewAppComment object reuse, clean references
+	 */
 	public void clean(){
 		this.values = null;
 	}
-	
+
+	/**
+	 * ViewAppComment object reuse, reConstructor
+	 * 
+	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
+	 * @param int commentId id from server
+	 */
 	public void reuse(int applicationFullHashid, int commentId) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_COMMENTS);
 		setAppFullHashid(applicationFullHashid);

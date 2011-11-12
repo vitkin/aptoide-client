@@ -1,5 +1,5 @@
 /*
- * ListApps		part of Aptoide's data model
+ * ViewListApps		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -23,46 +23,49 @@ package cm.aptoide.pt.data.views;
 import java.util.LinkedHashMap;
 
  /**
- * ListApps, models a list of Apps,
+ * ViewListApps, models a list of Apps,
  * 			 maintains insertion order
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ListApps {
+public class ViewListApps {
 
-	private LinkedHashMap<Integer, Application> appsList;
+	private LinkedHashMap<Integer, ViewDisplayApplication> appsList;
 
 	
 	/**
-	 * ListApps Constructor
+	 * ViewListApps Constructor
 	 * 
-	 * @param Application app
+	 * @param ViewDisplayApplication app
 	 */
-	public ListApps(Application app) {
+	public ViewListApps(ViewDisplayApplication app) {
 		this();
 		addApp(app);
 	}
 	
-	public ListApps() {
-		this.appsList = new LinkedHashMap<Integer, Application>(1);
+	/**
+	 * ViewListApps Constructor
+	 */
+	public ViewListApps() {
+		this.appsList = new LinkedHashMap<Integer, ViewDisplayApplication>(1);
 	}
 	
 	
-	public void addApp(Application app){
-		this.appsList.put(app.getHashid(), app);		
+	public void addApp(ViewDisplayApplication app){
+		this.appsList.put(app.getAppHashid(), app);		
 	}
 	
 	public void removeApp(int appHashid){
 		this.appsList.remove(appHashid);		
 	}
 	
-	public void removeApp(Application app){
-		this.appsList.remove(app.getHashid());		
+	public void removeApp(ViewDisplayApplication app){
+		this.appsList.remove(app.getAppHashid());		
 	}
 	
-	public Application getApp(int appHashid){
+	public ViewDisplayApplication getApp(int appHashid){
 		return this.appsList.get(appHashid);
 	}
 	
@@ -73,18 +76,26 @@ public class ListApps {
 	 * 
 	 * @return LinkedHashMap<Integer, Application> appsList
 	 */
-	public LinkedHashMap<Integer, Application> getList(){
+	public LinkedHashMap<Integer, ViewDisplayApplication> getList(){
 		return this.appsList;
 	}
 
 	
-	
+
+	/**
+	 * ViewListApps object reuse, clean references
+	 */
 	public void clean(){
 		this.appsList = null;
 	}
-	
-	public void reuse(Application app) {
-		this.appsList = new LinkedHashMap<Integer, Application>(1);
+
+	/**
+	 * ViewListApps object reuse, reConstructor
+	 * 
+	 * @param ViewDisplayApplication app
+	 */
+	public void reuse(ViewDisplayApplication app) {
+		this.appsList = new LinkedHashMap<Integer, ViewDisplayApplication>(1);
 		addApp(app);
 	}
 	

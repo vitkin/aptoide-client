@@ -1,5 +1,5 @@
 /*
- * Category		part of Aptoide's data model
+ * ViewCategory		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -26,25 +26,30 @@ import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * Category, models a category from applications categories
+ * ViewCategory, models a category from applications categories
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class Category {
+public class ViewCategory {
 
 	private ContentValues values;
 	private int parentHashid;
 	private boolean hasChilds;
-	private ArrayList<Category> subCategories;
+	private ArrayList<ViewCategory> subCategories;
 	
 	
-	public Category(String categoryName) {
+	/**
+	 * ViewCategory Constructor
+	 *
+	 * @param categoryName
+	 */
+	public ViewCategory(String categoryName) {
 		this.hasChilds = false;
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_CATEGORY);
 		setCategoryName(categoryName);
-		subCategories = new ArrayList<Category>();
+		subCategories = new ArrayList<ViewCategory>();
 		this.parentHashid = Constants.TOP_CATEGORY;
 	}
 	
@@ -80,7 +85,7 @@ public class Category {
 		return hasChilds;
 	}
 		
-	public void addChild(Category subCategory){
+	public void addChild(ViewCategory subCategory){
 		subCategory.setParentHashid(getHashid());
 		subCategories.add(subCategory);
 		if(!this.hasChilds){
@@ -88,18 +93,26 @@ public class Category {
 		}
 	}
 	
-	public ArrayList<Category> getSubCategories(){	//TODO return null Category object if !hasChilds
+	public ArrayList<ViewCategory> getSubCategories(){	//TODO return null Category object if !hasChilds
 		return subCategories;
 	}
 	
-	
+
+	/**
+	 * ViewCategory object reuse, clean references
+	 */
 	public void clean(){
 		this.values = null;
 		this.hasChilds = false;
 		this.subCategories = null;
 		this.parentHashid = Constants.TOP_CATEGORY;
 	}
-	
+
+	/**
+	 * ViewCategory object reuse, reConstructor
+	 *
+	 * @param categoryName
+	 */
 	public void reuse(String categoryName) {
 		this.hasChilds = false;
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_CATEGORY);

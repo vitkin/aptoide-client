@@ -1,5 +1,5 @@
 /*
- * ListIds		part of Aptoide's data model
+ * ViewListIds		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -23,49 +23,72 @@ package cm.aptoide.pt.data.views;
 import java.util.ArrayList;
 
  /**
- * ListIds, models an list of Ids
+ * ViewListIds, models an list of Ids
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ListIds {
+public class ViewListIds {
 
-	private ArrayList<String> idList;
-
+	private ArrayList<Integer> idList;
 	
 	/**
-	 * Icon Constructor
+	 * ViewListIds Constructor
 	 * 
 	 * @param String id
 	 */
-	public ListIds(String id) {
-		this.idList = new ArrayList<String>();
+	public ViewListIds() {
+		this.idList = new ArrayList<Integer>(1);
+	}
+	
+	/**
+	 * ViewListIds Constructor
+	 * 
+	 * @param String id
+	 */
+	public ViewListIds(Integer id) {
+		this();
 		addId(id);
 	}
 	
 	
-	public void addId(String id){
+	public void addId(Integer id){
 		this.idList.add(id);		
 	}
 	
-	public void removeId(String id){
+	public void removeId(Integer id){
 		this.idList.remove(id);		
 	}
 	
 	
-	public ArrayList<String> getList(){
+	public ArrayList<Integer> getList(){
 		return this.idList;
 	}
 
 	
-	
+
+	/**
+	 * ViewListIds object reuse clean references
+	 */
 	public void clean(){
 		this.idList = null;
 	}
 	
-	public void reuse(String id) {
-		this.idList = new ArrayList<String>();
+	/**
+	 * ViewListIds object reuse reConstructor
+	 */
+	public void reuse() {
+		this.idList = new ArrayList<Integer>(1);
+	}
+	
+	/**
+	 * ViewListIds object reuse reConstructor
+	 * 
+	 * @param String id
+	 */
+	public void reuse(Integer id) {
+		reuse();
 		addId(id);
 	}
 	
