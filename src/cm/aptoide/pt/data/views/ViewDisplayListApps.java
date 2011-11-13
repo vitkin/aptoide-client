@@ -20,53 +20,50 @@
 
 package cm.aptoide.pt.data.views;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Map;
 
  /**
- * ViewListApps, models a list of Apps,
+ * ViewDisplayListApps, models a list of Apps,
  * 			 maintains insertion order
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewListApps {
+public class ViewDisplayListApps {
 
-	private LinkedHashMap<Integer, ViewDisplayApplication> appsList;
+	private ArrayList<Map<String, Object>> appsList;
 
 	
 	/**
-	 * ViewListApps Constructor
+	 * ViewDisplayListApps Constructor
 	 * 
 	 * @param ViewDisplayApplication app
 	 */
-	public ViewListApps(ViewDisplayApplication app) {
-		this();
+	public ViewDisplayListApps(ViewDisplayApplication app) {
+		this(1);
 		addApp(app);
 	}
 	
 	/**
-	 * ViewListApps Constructor
+	 * ViewDisplayListApps Constructor
 	 */
-	public ViewListApps() {
-		this.appsList = new LinkedHashMap<Integer, ViewDisplayApplication>(1);
+	public ViewDisplayListApps(int size) {
+		this.appsList = new ArrayList<Map<String, Object>>(size);
 	}
 	
 	
 	public void addApp(ViewDisplayApplication app){
-		this.appsList.put(app.getAppHashid(), app);		
+		this.appsList.add(app.getDiplayMap());		
 	}
 	
-	public void removeApp(int appHashid){
-		this.appsList.remove(appHashid);		
+	public void removeApp(int index){
+		this.appsList.remove(index);		
 	}
 	
-	public void removeApp(ViewDisplayApplication app){
-		this.appsList.remove(app.getAppHashid());		
-	}
-	
-	public ViewDisplayApplication getApp(int appHashid){
-		return this.appsList.get(appHashid);
+	public Map<String, Object> getApp(int index){
+		return this.appsList.get(index);
 	}
 	
 	
@@ -74,28 +71,37 @@ public class ViewListApps {
 	 * getList, retrieves apps list,
 	 * 			maintains insertion order
 	 * 
-	 * @return LinkedHashMap<Integer, Application> appsList
+	 * @return ArrayList<Map<String, Object>> appsList
 	 */
-	public LinkedHashMap<Integer, ViewDisplayApplication> getList(){
+	public ArrayList<Map<String, Object>> getList(){
 		return this.appsList;
 	}
 
 	
 
 	/**
-	 * ViewListApps object reuse, clean references
+	 * ViewDisplayListApps object reuse, clean references
 	 */
 	public void clean(){
 		this.appsList = null;
 	}
 
 	/**
-	 * ViewListApps object reuse, reConstructor
+	 * ViewDisplayListApps object reuse, reConstructor
+	 * 
+	 * @param int size
+	 */
+	public void reuse(int size) {
+		this.appsList = new ArrayList<Map<String, Object>>(size);
+	}
+
+	/**
+	 * ViewDisplayListApps object reuse, reConstructor
 	 * 
 	 * @param ViewDisplayApplication app
 	 */
 	public void reuse(ViewDisplayApplication app) {
-		this.appsList = new LinkedHashMap<Integer, ViewDisplayApplication>(1);
+		reuse(1);
 		addApp(app);
 	}
 	

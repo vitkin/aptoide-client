@@ -1,5 +1,5 @@
 /*
- * ViewListRepos		part of Aptoide's data model
+ * ViewDisplayListRepos		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -20,53 +20,50 @@
 
 package cm.aptoide.pt.data.views;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Map;
 
  /**
- * ViewListRepos, models a list of Repos,
+ * ViewDisplayListRepos, models a list of Repos,
  * 			 maintains insertion order
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewListRepos {
+public class ViewDisplayListRepos {
 
-	private LinkedHashMap<Integer, ViewDisplayRepository> reposList;
+	private ArrayList<Map<String, Object>> reposList;
 
 	
 	/**
-	 * ViewListRepos Constructor
+	 * ViewDisplayListRepos Constructor
 	 * 
-	 * @param ViewRepository repo
+	 * @param ViewDisplayRepository repo
 	 */
-	public ViewListRepos(ViewDisplayRepository repo) {
-		this();
+	public ViewDisplayListRepos(ViewDisplayRepository repo) {
+		this(1);
 		addRepo(repo);
 	}
 	
 	/**
-	 * ViewListRepos Constructor
+	 * ViewDisplayListRepos Constructor
 	 */
-	public ViewListRepos() {
-		this.reposList = new LinkedHashMap<Integer, ViewDisplayRepository>(1);
+	public ViewDisplayListRepos(int size) {
+		this.reposList = new ArrayList<Map<String,Object>>(size);
 	}
 	
 	
 	public void addRepo(ViewDisplayRepository repo){
-		this.reposList.put(repo.getRepoHashid(), repo);
+		this.reposList.add(repo.getDiplayMap());
 	}
 	
-	public void removeRepo(int repoHashid){
-		this.reposList.remove(repoHashid);		
+	public void removeRepo(int index){
+		this.reposList.remove(index);		
 	}
 	
-	public void removeRepo(ViewDisplayRepository repo){
-		this.reposList.remove(repo.getRepoHashid());		
-	}
-	
-	public ViewDisplayRepository getRepo(int repoHashid){
-		return this.reposList.get(repoHashid);
+	public Map<String, Object> getRepo(int index){
+		return this.reposList.get(index);
 	}
 	
 	
@@ -74,27 +71,34 @@ public class ViewListRepos {
 	 * getList, retrieves repos list,
 	 * 			maintains insertion order
 	 * 
-	 * @return LinkedHashMap<Integer, ViewDisplayRepository> reposList
+	 * @return ArrayList<Map<String, Object>> reposList
 	 */
-	public LinkedHashMap<Integer, ViewDisplayRepository> getList(){
+	public ArrayList<Map<String, Object>> getList(){
 		return this.reposList;
 	}
 
 	
 	/**
-	 * ViewListRepos object reuse clean references
+	 * ViewDisplayListRepos object reuse clean references
 	 */
 	public void clean(){
 		this.reposList = null;
 	}
 	
 	/**
-	 * ViewListRepos object reuse reConstructor
+	 * ViewDisplayListRepos object reuse reConstructor
+	 */
+	public void reuse() {
+		this.reposList = new ArrayList<Map<String, Object>>(1);
+	}
+	
+	/**
+	 * ViewDisplayListRepos object reuse reConstructor
 	 * 
 	 * @param ViewDisplayRepository repo
 	 */
 	public void reuse(ViewDisplayRepository repo) {
-		this.reposList = new LinkedHashMap<Integer, ViewDisplayRepository>(1);
+		reuse();
 		addRepo(repo);
 	}
 	

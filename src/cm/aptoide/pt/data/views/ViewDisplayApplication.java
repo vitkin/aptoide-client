@@ -34,7 +34,6 @@ import cm.aptoide.pt.data.Constants;
 public class ViewDisplayApplication {
 
 	private HashMap<String, Object> map;
-	private int appHashid;
 	
 	
 
@@ -62,16 +61,20 @@ public class ViewDisplayApplication {
 	 * @param appHashid
 	 * @param appName
 	 * @param installedVersionName
+	 * @param isUpdatable
 	 * @param upToDateVersionName
-	 * @param downgradeAvailable
+	 * @param isDowngradable
+	 * @param DowngradeVersionName
 	 */
-	public ViewDisplayApplication(int appHashid, String appName, String installedVersionName, String upToDateVersionName, boolean downgradeAvailable) {
+	public ViewDisplayApplication(int appHashid, String appName, String installedVersionName, boolean isUpdatable, String upToDateVersionName, boolean isDowngradable, String downgradeVersionName) {
 		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_INSTALLED);
 		setAppHashid(appHashid);
 		setAppName(appName);
 		setInstalledVersionName(installedVersionName);
+		setIsUpdatable(isUpdatable);
 		setUpTodateVersionName(upToDateVersionName);
-		setDowngradeAvailable(downgradeAvailable);
+		setIsDowngradable(isDowngradable);
+		setDowngradeVersionName(downgradeVersionName);
 	}
 
 	/**
@@ -92,65 +95,83 @@ public class ViewDisplayApplication {
 	
 	
 	private void setAppHashid(int appHashid){
-		this.appHashid = appHashid;
-		map.put(Constants.DISPLAY_APP_ICON_CACHE_PATH, Constants.PATH_CACHE_ICONS+appHashid);
+		this.map.put(Constants.KEY_APPLICATION_HASHID, appHashid);
+		this.map.put(Constants.DISPLAY_APP_ICON_CACHE_PATH, Constants.PATH_CACHE_ICONS+appHashid);
 	}
 	
 	public int getAppHashid() {
-		return this.appHashid;
+		return (Integer)this.map.get(Constants.KEY_APPLICATION_HASHID);
 	}
 
 	public String getIconCachePath() {
-		return (String)map.get(Constants.DISPLAY_APP_ICON_CACHE_PATH);
+		return (String)this.map.get(Constants.DISPLAY_APP_ICON_CACHE_PATH);
 	}
 	
 	private void setAppName(String appName){
-		map.put(Constants.KEY_APPLICATION_NAME, appName);
+		this.map.put(Constants.KEY_APPLICATION_NAME, appName);
 	}
 
 	public String getAppName() {
-		return (String)map.get(Constants.KEY_APPLICATION_NAME);
+		return (String)this.map.get(Constants.KEY_APPLICATION_NAME);
 	}
 	
 	private void setStars(float stars){
-		map.put(Constants.KEY_STATS_STARS, stars);
+		this.map.put(Constants.KEY_STATS_STARS, stars);
 	}
 
 	public float getStars() {
-		return (Float)map.get(Constants.KEY_STATS_STARS);
+		return (Float)this.map.get(Constants.KEY_STATS_STARS);
 	}
 	
 	private void setDownloads(int downloads){
-		map.put(Constants.KEY_STATS_DOWNLOADS, downloads);
+		this.map.put(Constants.KEY_STATS_DOWNLOADS, downloads);
 	}
 
 	public int getDownloads() {
-		return (Integer)map.get(Constants.KEY_STATS_DOWNLOADS);
-	}
-	
-	private void setUpTodateVersionName(String upToDateVersionName){
-		map.put(Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, upToDateVersionName);
-	}
-
-	public String getUpTodateVersionName() {
-		return (String)map.get(Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME);
+		return (Integer)this.map.get(Constants.KEY_STATS_DOWNLOADS);
 	}
 	
 	private void setInstalledVersionName(String installedVersionName){
-		map.put(Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, installedVersionName);
+		this.map.put(Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, installedVersionName);
 	}
 
 	public String getInstalledVersionName() {
-		return (String)map.get(Constants.DISPLAY_APP_INSTALLED_VERSION_NAME);
+		return (String)this.map.get(Constants.DISPLAY_APP_INSTALLED_VERSION_NAME);
 	}
 	
-	private void setDowngradeAvailable(boolean downgradeAvailable){
-		map.put(Constants.DISPLAY_APP_DOWNGRADE_AVAILABLE, downgradeAvailable);
+	private void setIsUpdatable(boolean isUpdatable){
+		this.map.put(Constants.DISPLAY_APP_IS_UPDATABLE, isUpdatable);
 	}
 
-	public boolean getDowngradeAvailable() {
-		return (Boolean)map.get(Constants.DISPLAY_APP_DOWNGRADE_AVAILABLE);
+	public boolean isUpdatable() {
+		return (Boolean)this.map.get(Constants.DISPLAY_APP_IS_UPDATABLE);
 	}
+	
+	private void setUpTodateVersionName(String upToDateVersionName){
+		this.map.put(Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, upToDateVersionName);
+	}
+
+	public String getUpTodateVersionName() {
+		return (String)this.map.get(Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME);
+	}
+	
+	private void setIsDowngradable(boolean isDowngradable){
+		this.map.put(Constants.DISPLAY_APP_IS_DOWNGRADABLE, isDowngradable);
+	}
+
+	public boolean isDowngradeable() {
+		return (Boolean)this.map.get(Constants.DISPLAY_APP_IS_DOWNGRADABLE);
+	}
+	
+	private void setDowngradeVersionName(String downgradeVersionName){
+		this.map.put(Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME, downgradeVersionName);
+	}
+
+	public String getDowngradeVersionName() {
+		return (String)this.map.get(Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME);
+	}
+	
+	
 	
 	public HashMap<String, Object> getDiplayMap(){
 		return this.map;
@@ -164,7 +185,6 @@ public class ViewDisplayApplication {
 	 */
 	public void clean(){
 		this.map = null;
-		this.appHashid = 0;
 	}
 	/**
 	 * ViewDisplayApplication available object reuse reConstructor
@@ -190,16 +210,20 @@ public class ViewDisplayApplication {
 	 * @param appHashid
 	 * @param appName
 	 * @param installedVersionName
+	 * @param isUpdatable
 	 * @param upToDateVersionName
-	 * @param downgradeAvailable
+	 * @param isDowngradable
+	 * @param downgradeVersionName
 	 */
-	public void reuse(int appHashid, String appName, String installedVersionName, String upToDateVersionName, boolean downgradeAvailable) {
+	public void reuse(int appHashid, String appName, String installedVersionName, boolean isUpdatable, String upToDateVersionName, boolean isDowngradable, String downgradeVersionName) {
 		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_INSTALLED);
 		setAppHashid(appHashid);
 		setAppName(appName);
 		setInstalledVersionName(installedVersionName);
+		setIsUpdatable(isUpdatable);
 		setUpTodateVersionName(upToDateVersionName);
-		setDowngradeAvailable(downgradeAvailable);
+		setIsDowngradable(isDowngradable);
+		setDowngradeVersionName(downgradeVersionName);
 	}
 
 	/**

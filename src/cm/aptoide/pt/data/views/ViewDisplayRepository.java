@@ -34,18 +34,19 @@ import cm.aptoide.pt.data.Constants;
 public class ViewDisplayRepository {
 
 	private HashMap<String, Object> map;
-	private int repoHashid;
-	private ViewLogin login;
 	
 	
 	/**
 	 * ViewDisplayRepository Constructor
 	 *
-	 * @param String uri
+	 * @param repoHashid
+	 * @param uri
+	 * @param inUse
+	 * @param size
 	 */
 	public ViewDisplayRepository(int repoHashid, String uri, boolean inUse, int size) {
-		this.map.put(Constants.DISPLAY_REPO_REQUIRES_LOGIN, false);
 		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_REPO);
+		this.map.put(Constants.DISPLAY_REPO_REQUIRES_LOGIN, false);
 		setRepoHashid(repoHashid);
 		setUri(uri);
 		setInUse(inUse);
@@ -54,35 +55,35 @@ public class ViewDisplayRepository {
 
 	
 	private void setRepoHashid(int repoHashid){
-		this.repoHashid = repoHashid;
+		this.map.put(Constants.KEY_REPO_HASHID, repoHashid);
 	}
 	
 	public int getRepoHashid() {
-		return this.repoHashid;
+		return (Integer)this.map.get(Constants.KEY_REPO_HASHID);
 	}
 	
 	private void setUri(String uri){
-		map.put(Constants.KEY_REPO_URI, uri);
+		this.map.put(Constants.KEY_REPO_URI, uri);
 	}
 
 	public String getUri() {
-		return (String)map.get(Constants.KEY_REPO_URI);
+		return (String)this.map.get(Constants.KEY_REPO_URI);
 	}
 	
 	private void setSize(int size){
-		map.put(Constants.KEY_REPO_SIZE, size);
+		this.map.put(Constants.KEY_REPO_SIZE, size);
 	}
 
 	public int getSize() {
-		return (Integer)map.get(Constants.KEY_REPO_SIZE);
+		return (Integer)this.map.get(Constants.KEY_REPO_SIZE);
 	}
 	
 	private void setInUse(boolean inUse){
-		map.put(Constants.KEY_REPO_IN_USE, inUse);
+		this.map.put(Constants.KEY_REPO_IN_USE, inUse);
 	}
 
 	public boolean getInUse() {
-		return (Boolean)map.get(Constants.KEY_REPO_IN_USE);
+		return (Boolean)this.map.get(Constants.KEY_REPO_IN_USE);
 	}
 	
 	public HashMap<String, Object> getDiplayMap(){
@@ -92,16 +93,16 @@ public class ViewDisplayRepository {
 	
 	public void setLogin(ViewLogin login){
 		this.map.put(Constants.DISPLAY_REPO_REQUIRES_LOGIN, true);
-		this.login = login;
-		this.login.setRepoHashid(getRepoHashid());
+		login.setRepoHashid(getRepoHashid());
+		this.map.put(Constants.DISPLAY_REPO_LOGIN, login);
 	}
 	
 	public boolean requiresLogin() {
-		return (Boolean)map.get(Constants.DISPLAY_REPO_REQUIRES_LOGIN);
+		return (Boolean)this.map.get(Constants.DISPLAY_REPO_REQUIRES_LOGIN);
 	}
 
 	public ViewLogin getLogin() {
-		return login;			//TODO test isrequired and return nullobject pattern if not
+		return (ViewLogin)this.map.get(Constants.DISPLAY_REPO_LOGIN);			//TODO test isrequired and return nullobject pattern if not
 	}
 	
 
@@ -112,20 +113,23 @@ public class ViewDisplayRepository {
 	 */
 	public void clean(){
 		this.map = null;
-		this.map.put(Constants.DISPLAY_REPO_REQUIRES_LOGIN, false);
-		this.login = null;
-		this.repoHashid = 0;
 	}
-
+	
 	/**
 	 * ViewDisplayRepository object reuse reConstructor
 	 *
-	 * @param String uri
+	 * @param repoHashid
+	 * @param uri
+	 * @param inUse
+	 * @param size
 	 */
-	public void reuse(String uri) {
+	public void reuse(int repoHashid, String uri, boolean inUse, int size) {
+		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_REPO);
 		this.map.put(Constants.DISPLAY_REPO_REQUIRES_LOGIN, false);
-		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_COLUMNS_REPO);
+		setRepoHashid(repoHashid);
 		setUri(uri);
+		setInUse(inUse);
+		setSize(size);
 	}
 
 
