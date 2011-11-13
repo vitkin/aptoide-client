@@ -36,23 +36,30 @@ public class Constants {
 	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
 	public static final String URI_LATEST_VERSION_CODE = "http://aptoide.com/latest_version.xml";
 	
+	public static final int ARRAY_INDEX_FROM_SIZE_CORRECTION = 1;
 
-	/**  uri + size + inUse + requiresLogin  */
-	public static final int NUMBER_OF_DISPLAY_FIELDS_REPO = 4;
+	/**  repoHashid + uri + size + inUse + requiresLogin + login */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_REPO = 6;
 
-	/**  appName + stars + downloads + upToDateVersionName  */
-	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_AVAILABLE = 5;
-	/**  appName + installedVersionName + upToDateVersionName + downgradeAvailable  */
-	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_INSTALLED = 5;
-	/**  appName + installedVersionName + upToDateVersionName  */
-	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_UPDATE = 4;
+	/**  appHashid + iconCachePath + appName + stars + downloads + upToDateVersionName  */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_AVAILABLE = 6;
+	/**  appHashid + iconCachePath + appName + installedVersionName + isUpdatable + upToDateVersionName + isDowngradable + downgradeVersionName  */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_INSTALLED = 8;
+	/**  appHashid + iconCachePath + appName + installedVersionName + upToDateVersionName  */
+	public static final int NUMBER_OF_DISPLAY_FIELDS_APP_UPDATE = 5;
 	
 	
 	public static final String DISPLAY_REPO_REQUIRES_LOGIN = "requires_login";
+	public static final String DISPLAY_REPO_LOGIN = "login";
 	public static final String DISPLAY_APP_ICON_CACHE_PATH = "iconCachePath";
-	public static final String DISPLAY_APP_UP_TO_DATE_VERSION_NAME = "upToDateVersionName";
 	public static final String DISPLAY_APP_INSTALLED_VERSION_NAME = "installedVersionName";
-	public static final String DISPLAY_APP_DOWNGRADE_AVAILABLE = "downgradeAvailable";
+	public static final String DISPLAY_APP_IS_UPDATABLE = "isUpdatable";
+	public static final String DISPLAY_APP_UP_TO_DATE_VERSION_NAME = "upToDateVersionName";
+	public static final String DISPLAY_APP_IS_DOWNGRADABLE = "isDowngradable";
+	public static final String DISPLAY_APP_DOWNGRADE_VERSION_NAME = "downgradeVersionName";
+	
+	public static final String DISPLAY_APP_UP_TO_DATE_VERSION_CODE = "upToDateVersionCode";
+	public static final String DISPLAY_APP_DOWNGRADE_VERSION_CODE = "downgradeVersionCode";
 	
 	// **************************** Database definitions ********************************* //
 	
@@ -79,7 +86,8 @@ public class Constants {
 	public static final int COLUMN_FIFTH = 4;
 	public static final int COLUMN_SIXTH = 5;
 	public static final int COLUMN_SEVENTH = 6;
-	public static final int COLUMN_EIGTH = 7;		
+	public static final int COLUMN_EIGTH = 7;
+	public static final int COLUMN_NINTH = 8;			
 	
 	
 	
