@@ -43,11 +43,11 @@ public class ViewApplication {
 	 * @param String packageName
 	 * @param String versionName
 	 * @param int versionCode
-	 * @param boolean isInstalled
+	 * @param boolean isTypeInstalled
 	 * 
 	 */
-	public ViewApplication(String applicationName, String packageName, String versionName, int versionCode, boolean isInstalled) {
-		this(packageName, versionCode, isInstalled);
+	public ViewApplication(String applicationName, String packageName, String versionName, int versionCode, boolean isTypeInstalled) {
+		this(packageName, versionCode, isTypeInstalled);
 		setVersionName(versionName);
 		setApplicationName(applicationName);
 	}
@@ -57,11 +57,11 @@ public class ViewApplication {
 	 * 
 	 * @param String packageName
 	 * @param int versionCode
-	 * @param boolean isInstalled
+	 * @param boolean isTypeInstalled
 	 * 
 	 */
-	public ViewApplication(String packageName, int versionCode, boolean isInstalled) {
-		if(isInstalled){
+	public ViewApplication(String packageName, int versionCode, boolean isTypeInstalled) {
+		if(isTypeInstalled){
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
 		}else{
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
@@ -173,11 +173,11 @@ public class ViewApplication {
 	 * @param String packageName
 	 * @param String versionName
 	 * @param int versionCode
-	 * @param boolean isInstalled
+	 * @param boolean isTypeInstalled
 	 * 
 	 */
-	public void reuse(String applicationName, String packageName, String versionName, int versionCode, boolean isInstalled) {
-		if(isInstalled){
+	public void reuse(String applicationName, String packageName, String versionName, int versionCode, boolean isTypeInstalled) {
+		if(isTypeInstalled){
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
 		}else{
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			
@@ -194,11 +194,11 @@ public class ViewApplication {
 	 * 
 	 * @param String packageName
 	 * @param int versionCode
-	 * @param boolean isInstalled
+	 * @param boolean isTypeInstalled
 	 * 
 	 */
-	public void reuse(String packageName, int versionCode, boolean isInstalled) {
-		if(isInstalled){
+	public void reuse(String packageName, int versionCode, boolean isTypeInstalled) {
+		if(isTypeInstalled){
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_INSTALLED);
 		}else{
 			this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APPLICATION);			

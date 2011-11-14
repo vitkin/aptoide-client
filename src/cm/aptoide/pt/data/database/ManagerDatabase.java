@@ -57,7 +57,6 @@ public class ManagerDatabase {
 	private static SQLiteDatabase db = null;
 	
 	/**
-	 * 
 	 * ManagerDatabase Constructor, opens Aptoide's database or creates it if it doens't exist yet 
 	 *
 	 * @param Context context, Aptoide's activity context
@@ -118,6 +117,17 @@ public class ManagerDatabase {
 		}
 		db.execSQL(Constants.PRAGMA_FOREIGN_KEYS_OFF);
 		db.execSQL(Constants.PRAGMA_RECURSIVE_TRIGGERS_OFF);
+	}
+	
+	/**
+	 * CloseDB, handles closing of db
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void closeDB(){
+		db.close();
 	}
 	
 	
