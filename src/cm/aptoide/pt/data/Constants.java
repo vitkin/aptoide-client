@@ -60,6 +60,7 @@ public class Constants {
 	
 	public static final String DISPLAY_APP_UP_TO_DATE_VERSION_CODE = "upToDateVersionCode";
 	public static final String DISPLAY_APP_DOWNGRADE_VERSION_CODE = "downgradeVersionCode";
+	//TODO create static display fields for the ones that are using keyes - change in unit tests and display views
 	
 	// **************************** Database definitions ********************************* //
 	

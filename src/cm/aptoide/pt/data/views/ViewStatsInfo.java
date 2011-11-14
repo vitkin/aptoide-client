@@ -62,7 +62,7 @@ public class ViewStatsInfo {
 		return this.values.getAsInteger(Constants.KEY_STATS_DOWNLOADS);
 	}
 	
-	public void setStars(float stars){
+	private void setStars(float stars){
 		this.values.put(Constants.KEY_STATS_STARS, stars);
 	}
 	
@@ -70,7 +70,13 @@ public class ViewStatsInfo {
 		return this.values.getAsFloat(Constants.KEY_STATS_STARS);
 	}
 	
-	public void setLikes(int likes){
+	public void setLikesDislikes(int likes, int dislikes){
+		setLikes(likes);
+		setDislikes(dislikes);
+		setStars(likes/(likes+dislikes));	//TODO check if this is the correct formula
+	}
+	
+	private void setLikes(int likes){
 		this.values.put(Constants.KEY_STATS_LIKES, likes);
 	}
 	
@@ -78,7 +84,7 @@ public class ViewStatsInfo {
 		return this.values.getAsInteger(Constants.KEY_STATS_LIKES);
 	}
 	
-	public void setDislikes(int dislikes){
+	private void setDislikes(int dislikes){
 		this.values.put(Constants.KEY_STATS_DISLIKES, dislikes);
 	}
 	
