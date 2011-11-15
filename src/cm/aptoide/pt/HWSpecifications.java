@@ -1,41 +1,50 @@
 package cm.aptoide.pt;
 
 
-import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.content.res.Configuration;
 import android.os.Build;
-import android.os.Bundle;
 
-public class HWSpecifications extends Activity{
-/* (non-Javadoc)
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.catglist);
-		
+public class HWSpecifications{
+
+
+public int sdkVer;
+public String screenSize;
+public String esglVer;
+
+
+public HWSpecifications(Context context) {
+	// TODO Auto-generated constructor stub
+	this.sdkVer= Build.VERSION.SDK_INT;
+	
+	
+	int screenSizeInt=context.getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;
+	
+	switch (screenSizeInt) {
+	case 1:
+		this.screenSize="smallScreen";
+		break;
+	case 2:
+		this.screenSize="normalScreen";
+	break;
+	
+	case 3:
+		this.screenSize="largeScreen";
+		break;
+
+	default:
+		this.screenSize="Undefined Screen Size";
+		break;
 	}
+	
+	ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+	ConfigurationInfo configInfo = activityManager.getDeviceConfigurationInfo();
+	this.esglVer=configInfo.getGlEsVersion();
+}
 
-private int sdkVer = Build.VERSION.SDK_INT;
 
-private int screenSize;
-private String esglVer;
-
-
-//public HWSpecifications(Context context) {
-//	// TODO Auto-generated constructor stub
-//	this.screenSize=context.getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;
-//	ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//ConfigurationInfo configInfo = activityManager.getDeviceConfigurationInfo();
-//	
-//	this.esglVer=configInfo.getGlEsVersion();
-//}
 
 /**
  * @return the sdkVer
@@ -48,7 +57,7 @@ public int getSdkVer() {
 /**
  * @return the screenSize
  */
-public int getScreenSize() {
+public String getScreenSize() {
 	return screenSize;
 }
 

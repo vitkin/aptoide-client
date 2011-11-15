@@ -88,7 +88,7 @@
 		<service android:name=".FetchIconsService"></service>
 		<service android:name=".FetchExtrasService"></service>
 		<service android:name=".DownloadQueueService" />
-		<activity android:name="HWSpecifications"></activity>
+		<activity android:name="HWSpecActivity"></activity>
 		
 
 	</application>

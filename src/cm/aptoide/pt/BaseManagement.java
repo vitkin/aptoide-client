@@ -9,17 +9,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -27,12 +24,12 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.CheckBoxPreference;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -87,6 +84,7 @@ public class BaseManagement extends Activity {
 		 "Travel", "Demo", "Software Libraries", "Other"};
 	private static final String[] game_ctg = {"Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual", "Other"};
 	
+	private HWSpecifications specs;
 
 	private DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -120,7 +118,7 @@ public class BaseManagement extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-		
+		specs = new HWSpecifications(this);
 		mPm = getPackageManager();
 		db = new DbHandler(this);
 		mctx = this;
@@ -148,6 +146,7 @@ public class BaseManagement extends Activity {
         		apk_line.put("cat_count","0 available");
         	else
         		apk_line.put("cat_count",main_ctg_count[p] + " available");
+        	
             main_catg.add(apk_line);
             p++;
 		}
@@ -406,6 +405,8 @@ public class BaseManagement extends Activity {
 		}
 	}
 
+	protected int filteredApps =0;
+	
 	protected void redraw(){
 		
 		Log.d("Aptoide","======================= I REDRAW");
@@ -417,6 +418,8 @@ public class BaseManagement extends Activity {
 
 
 		new Thread() {
+
+			
 
 			public void run(){
 
@@ -478,7 +481,10 @@ public class BaseManagement extends Activity {
 						}else{
 							apk_line.put("status", "Version: " + node.ver);
 							apk_line.put("name", node.name);
-							availMap.add(apk_line);
+							if(node.sdkVer<=specs.getSdkVer())
+								availMap.add(apk_line);
+							
+							
 						}
 						
 					}
@@ -530,7 +536,6 @@ public class BaseManagement extends Activity {
 				
 					//Log.d("Aptoide", e.getMessage()+"");
 				}finally{
-					
 					Log.d("Aptoide","======================= I REDRAW SAY KILL");
 					stop_pd.sendEmptyMessage(0);
 					
@@ -540,7 +545,7 @@ public class BaseManagement extends Activity {
 			
 			
 		}.start();
-		 
+		
 	}
 	
 	class LstBinder implements ViewBinder
@@ -658,6 +663,7 @@ public class BaseManagement extends Activity {
 	 }
 	 
 	 protected SimpleAdapter getGivenCatg(String ctg, int ord){
+		 filteredApps =0;
 		 List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
 		 Map<String, Object> apk_line;
 		 Vector<ApkNode> tmp_lst = null;
@@ -678,7 +684,12 @@ public class BaseManagement extends Activity {
 			 apk_line.put("name", node.name);
 			 if(node.down >= 0)
 				 apk_line.put("down", node.down + " Down.");
-			 availMap.add(apk_line);
+			 if(node.sdkVer<=specs.getSdkVer()){
+					availMap.add(apk_line);
+				}else{
+					
+					filteredApps++;
+				}
 		 }
 
 

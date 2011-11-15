@@ -40,6 +40,13 @@ public class ApkNode extends Object{
 	//Only used for update 
 	public int vercode;
 	
+	//Hardware Filters
+	public int sdkVer;
+	public String screenSize;
+	public String ESGLVer;
+	
+	
+	
 	public ApkNode(){
 		
 	}

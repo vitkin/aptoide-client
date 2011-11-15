@@ -17,6 +17,10 @@ public class ApkNodeFull extends Object{
 	
 	public boolean isnew;
 	
+	public int sdkVer;
+	public String screenSize;
+	public String ESGLVer;
+	
 	public ApkNodeFull(String apkid){
 		this.apkid = apkid;
 	}

@@ -695,7 +695,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		pd.setCancelable(false);
 		pd.setCanceledOnTouchOutside(false);
-		
+		pd.show();
 //		pd.setMax(1);
 		
 		
@@ -823,7 +823,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
-	    		xml_file = new File(XML_PATH);
+	    		xml_file = new File(LOCAL_PATH+"/info.xml");
 	    	}else{
 	    		ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
 	    		xr.setContentHandler(handler);
@@ -1079,6 +1079,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			
 			pd.incrementProgressBy(1);
 		}
 		
@@ -1094,7 +1095,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 			pd.setProgress(0);
 			pd.setMax(msg.what);
-			pd.show();
+//			if(!pd.isShowing())
+				
+			
 
 		}
 		

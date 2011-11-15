@@ -40,10 +40,16 @@
         android:key="setcredentials" />
         
   </PreferenceCategory>
-  
+  <PreferenceCategory
+        android:title="Hardware Filters">
       <Preference
      	android:title="Hardware Specs"
         android:summary="Check your hardware specifications"
         android:key="hwspecs" />
-  
+      <CheckBoxPreference
+     	android:title="Filter Applications"
+        android:summary="Don't show applications not compatible with your device."
+        android:key="hwspecsChkBox" />
+     
+  </PreferenceCategory>
 </PreferenceScreen>
