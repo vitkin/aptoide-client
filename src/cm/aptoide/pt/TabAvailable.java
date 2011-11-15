@@ -266,24 +266,32 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
 			deep = 1;
+			if(filteredApps>0)
+				Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 		}else if(pkg_id.equals("apps")){
 			shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 			main_shown_now = 1;
 			Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+			
 			lv.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
 			deep = 2;
+			if (filteredApps > 0)
+				Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 		}else if(pkg_id.equals("games")){
 			shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 			main_shown_now = 0;
 			Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+			
 			lv.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);
 			deep = 3;
+			if (filteredApps > 0)
+				Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 		}else{
 			
 			Intent apkinfo = new Intent(this,ApkInfo.class);

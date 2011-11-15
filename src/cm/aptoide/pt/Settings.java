@@ -41,6 +41,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -63,6 +64,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	ListPreference lst_pref_icns = null;
 	
 	private Preference clear_cache = null;
+	private CheckBoxPreference box;
 	
 	private DownloadQueueService downloadQueueService;
 	
@@ -143,14 +145,17 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		
 		Log.d("Aptoide","The preference is: " + sPref.getString("icdown", "error"));
 		Log.d("Aptoide","The preference is: " + sPrefFull.getString("icdown", "error"));
+		Log.d("Aptoide","The preference is: " + sPrefFull.getBoolean("hwspecsChkBox", false));
 		
 		lst_pref_icns = (ListPreference) findPreference("icdown");
 		Preference clear_credentials = (Preference)findPreference("clearcredentials");
 		Preference set_credentials = (Preference)findPreference("setcredentials");
 		Preference hwspecs = (Preference)findPreference("hwspecs");
-		hwspecs.setIntent(new Intent(
-				getBaseContext()
-				,HWSpecifications.class));
+		hwspecs.setIntent(new Intent(getBaseContext(),HWSpecActivity.class));
+		box = (CheckBoxPreference) findPreference("hwspecsChkBox");
+		
+		
+		
 		if((Configs.COMMENTS_ADD_ON && Configs.COMMENTS_ON) || (Configs.TASTE_ADD_ON && Configs.TASTE_ON)){
 			
 			if(userPref.getString(Configs.LOGIN_USER_NAME, null)==null){
@@ -284,7 +289,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		});
 		
 		getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-
+		
 		
 		
 	}
@@ -299,6 +304,14 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,	String key) {
 		if(key.equalsIgnoreCase("icdown")){
 			updateSum();
+		}else if(key.equalsIgnoreCase("hwspecsChkBox")){
+			Log.d("a","a");
+			if(box.isChecked()){
+				prefEditFull.putBoolean("hwspecsChkBox", true);
+			}else{
+				prefEditFull.putBoolean("hwspecsChkBox", false);
+			}
+			
 		}
 	}
 	
@@ -320,6 +333,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	@Override
 	public void finish() {
 		prefEditFull.putString("icdown", sPref.getString("icdown", "error"));
+		
 		prefEditFull.commit();
 		if(sPref.getString("icdown", "error").equalsIgnoreCase("nd")){
 			Intent serv = new Intent(mctx,FetchIconsService.class);
