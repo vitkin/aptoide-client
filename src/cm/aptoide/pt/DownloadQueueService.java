@@ -206,7 +206,7 @@ public class DownloadQueueService extends Service {
     	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
 				
     	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.finished_download_alrt)+" "+appName, System.currentTimeMillis());
-    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.contentView = contentView;
 
 
@@ -221,7 +221,7 @@ public class DownloadQueueService extends Service {
     	notificationManager.notify(apkidHash, notification); 
     	
 //		Log.d("Aptoide-DownloadQueueService", "Notification Set");
-    	context.startActivity(onClick);
+//    	context.startActivity(onClick);
 		
 	}
 	

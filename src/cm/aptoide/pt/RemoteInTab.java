@@ -222,6 +222,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.d("RemoteInTab"," onCreate");
 		intentFilter = new IntentFilter();
     	intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
     	
@@ -312,10 +313,12 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			});
 			upd_alrt.show();
 			
-		}else{
+		}
+		else{
 			
-			Intent installApkIntent = getIntent();
-			final String action = installApkIntent.getAction();
+			
+			Intent installApkIntent = this.getIntent();
+			String action = installApkIntent.getAction();
 			if(action != null){
 				if(action.equals("pt.caixamagica.aptoide.INSTALL_APK")){
 					Log.d("Aptoide","* * * * *  InstallApk 1 * * * * *");
@@ -323,6 +326,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 						keepScreenOn.release();
 					}
 					installApk(installApkIntent);
+					this.getIntent().setAction("android.intent.action.VIEW");
+					startActivity(getIntent());
 					return;
 				}
 			} 
@@ -601,6 +606,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		// TODO Auto-generated method stub
 		unregisterReceiver(broadcastReceiver);
 		super.onPause();
+		
+		Log.d("RemoteInTab"," onPause");
 	}
 
 	/* (non-Javadoc)
@@ -608,8 +615,11 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	 */
 	@Override
 	protected void onResume() {
-		registerReceiver(broadcastReceiver , intentFilter);
 		super.onResume();
+		registerReceiver(broadcastReceiver , intentFilter);
+		Log.d("RemoteInTab"," onResume");
+		
+		
 	}
 
 	@Override
@@ -823,7 +833,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
-	    		xml_file = new File(LOCAL_PATH+"/info.xml");
+	    		xml_file = new File(XML_PATH);
 	    	}else{
 	    		ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
 	    		xr.setContentHandler(handler);
@@ -1202,8 +1212,11 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		}else if(intent.hasExtra("linkxml")){
 			
 		}
+		getIntent().setAction("android.intent.action.VIEW");
 	}
 	
+
+
 	private void installApk(Intent intent){
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
@@ -1230,7 +1243,10 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
     	installApkAction.putExtra("localPath", localPath);
     	installApkAction.putExtra("version", version);
 	    	
-		sendOrderedBroadcast(installApkAction, null); 
+		sendOrderedBroadcast(installApkAction, null);
+		getIntent().setAction("android.intent.action.VIEW");
+		startActivity(getIntent());
+		
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
 
