@@ -74,6 +74,8 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
@@ -220,10 +222,15 @@ public class Aptoide extends Activity {
 		}
 			
         Log.d("Aptoide","******* \n Downloads will be made to: " + Environment.getExternalStorageDirectory().getPath() + "\n ********");
-
+       
+        
+        
+        
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
-        
+		prefEdit.putBoolean("schDwnBox", true);
+		prefEdit.commit();
+		
    		
    		PackageManager mPm = getPackageManager();
    		try {

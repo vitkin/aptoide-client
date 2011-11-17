@@ -52,4 +52,14 @@
         android:key="hwspecsChkBox" />
      
   </PreferenceCategory>
+  
+      <PreferenceCategory
+        android:title="Scheduled Downloads">
+      
+      <CheckBoxPreference
+     	android:title="Automatic Install"
+        android:summary="Install scheduled downloads automatically when a Wifi connection is present"
+        android:key="schDwnBox" 
+        android:defaultValue="true"/>
+      </PreferenceCategory>
 </PreferenceScreen>
