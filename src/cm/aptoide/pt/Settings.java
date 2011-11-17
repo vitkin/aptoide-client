@@ -37,6 +37,9 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -64,7 +67,8 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	ListPreference lst_pref_icns = null;
 	
 	private Preference clear_cache = null;
-	private CheckBoxPreference box;
+	private CheckBoxPreference hwbox;
+	private CheckBoxPreference schDwnBox;	
 	
 	private DownloadQueueService downloadQueueService;
 	
@@ -116,7 +120,8 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	        Log.d("Aptoide-Settings","DownloadQueueService unbound from Settings");
 	    }
 
-	};	
+	};
+	BroadcastReceiver receiver;
 	
 	
 	@Override
@@ -144,15 +149,19 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		
 		
 		Log.d("Aptoide","The preference is: " + sPref.getString("icdown", "error"));
+		Log.d("Aptoide","The preference is: " + sPref.getBoolean("hwspecsChkBox", false));
+		Log.d("Aptoide","The preference is: " + sPref.getBoolean("schDwnBox", false));
 		Log.d("Aptoide","The preference is: " + sPrefFull.getString("icdown", "error"));
 		Log.d("Aptoide","The preference is: " + sPrefFull.getBoolean("hwspecsChkBox", false));
+		Log.d("Aptoide","The preference is: " + sPrefFull.getBoolean("schDwnBox", false));
 		
 		lst_pref_icns = (ListPreference) findPreference("icdown");
 		Preference clear_credentials = (Preference)findPreference("clearcredentials");
 		Preference set_credentials = (Preference)findPreference("setcredentials");
 		Preference hwspecs = (Preference)findPreference("hwspecs");
 		hwspecs.setIntent(new Intent(getBaseContext(),HWSpecActivity.class));
-		box = (CheckBoxPreference) findPreference("hwspecsChkBox");
+		hwbox = (CheckBoxPreference) findPreference("hwspecsChkBox");
+		schDwnBox = (CheckBoxPreference) findPreference("schDwnBox");
 		
 		
 		
@@ -200,8 +209,9 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 			});
 			
 			Log.d("Aptoide", "Broadcast registered");
-			
-			registerReceiver(new LoginListener(clear_credentials, userPref), new IntentFilter("pt.caixamagica.aptoide.LOGIN_ACTION"));
+			receiver = new LoginListener(clear_credentials, userPref);
+			IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.LOGIN_ACTION");
+			registerReceiver(receiver, filter);
 			
 		}else{
 			clear_credentials.setEnabled(false);
@@ -306,12 +316,19 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 			updateSum();
 		}else if(key.equalsIgnoreCase("hwspecsChkBox")){
 			Log.d("a","a");
-			if(box.isChecked()){
+			if(hwbox.isChecked()){
 				prefEditFull.putBoolean("hwspecsChkBox", true);
 			}else{
 				prefEditFull.putBoolean("hwspecsChkBox", false);
 			}
 			
+			
+		}else if(key.equalsIgnoreCase("schDwnBox")){
+			if(schDwnBox.isChecked()){
+				prefEditFull.putBoolean("schDwnBox", true);
+			}else{
+				prefEditFull.putBoolean("schDwnBox", false);
+			}
 		}
 	}
 	
@@ -335,13 +352,25 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		prefEditFull.putString("icdown", sPref.getString("icdown", "error"));
 		
 		prefEditFull.commit();
+		
 		if(sPref.getString("icdown", "error").equalsIgnoreCase("nd")){
 			Intent serv = new Intent(mctx,FetchIconsService.class);
 			mctx.stopService(serv);
 		}
+		if (sPref.getBoolean("schDwnBox", true)) {
+			Intent i = new Intent(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+			ConnectivityManager netstate = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			if (netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() 
+					== NetworkInfo.State.CONNECTED)
+				i.putExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, true);
+			sendBroadcast(i);
+		}
 		//rtrn.putExtra("settings", 0);
+		unregisterReceiver(receiver);
 		this.setResult(RESULT_OK, rtrn);
+		
 		super.finish();
+		
 	}
 
 	private Handler done_handler = new Handler() {

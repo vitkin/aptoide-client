@@ -61,6 +61,7 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -70,6 +71,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -165,17 +167,16 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
 			final String action = intent.getAction();
+			Log.d("RemoteInTab - IntentAction",action);
 		    if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
 		        if (intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false)) {
 		            //do stuff
 		        	
-		        	Toast.makeText(mctx, "Wi-Fi Connected", Toast.LENGTH_LONG).show();
-		        	if(!db.getScheduledListNames().isEmpty()){		        		
-		        	Intent intent1 = new Intent(RemoteInTab.this,ScheduledDownload.class);
-		        	intent1.putExtra("downloadAll", "");
-		        	startActivity(intent1);}
+		        	Toast.makeText(mctx, "Wi-Fi Connected " +sPref.getBoolean("schDwnBox", true), Toast.LENGTH_LONG).show();
+		        	schDownAll();
 		        } else {
 		            // wifi connection was lost
+		        	
 		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
 		        }
 
@@ -225,7 +226,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		Log.d("RemoteInTab"," onCreate");
 		intentFilter = new IntentFilter();
     	intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-    	
+    	registerReceiver(broadcastReceiver, intentFilter);
 		
 		super.onCreate(savedInstanceState);
 		
@@ -247,6 +248,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		db = new DbHandler(this);
 		
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+		
 		prefEdit = sPref.edit();
 		prefEdit.putBoolean("update", true);
 		prefEdit.commit();
@@ -441,6 +443,17 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			}
 		}
 		
+		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
+			schDownAll();
+    	}
+		
+	}
+
+	private void schDownAll() {
+		if(!db.getScheduledListNames().isEmpty()&&sPref.getBoolean("schDwnBox", false)){		        		
+        	Intent intent1 = new Intent(RemoteInTab.this,ScheduledDownload.class);
+        	intent1.putExtra("downloadAll", "");
+        	startActivity(intent1);}
 	}
 	
 	
@@ -604,10 +617,10 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-		unregisterReceiver(broadcastReceiver);
+//		unregisterReceiver(broadcastReceiver);
 		super.onPause();
 		
-		Log.d("RemoteInTab"," onPause");
+		Log.d("RemoteInTab","onPause");
 	}
 
 	/* (non-Javadoc)
@@ -616,8 +629,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		registerReceiver(broadcastReceiver , intentFilter);
-		Log.d("RemoteInTab"," onResume");
+//		registerReceiver(broadcastReceiver , intentFilter);
+		
+		Log.d("RemoteInTab","onResume");
 		
 		
 	}
@@ -625,6 +639,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		
+		Log.d("RemoteInTab Result",resultCode + " "+requestCode+" "+data);
 		if(requestCode == NEWREPO_FLAG){
 			if(data != null && data.hasExtra("update")){
 				final AlertDialog alrt = new AlertDialog.Builder(this).create();
@@ -657,6 +673,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 				startActivityForResult(intserver, NEWREPO_FLAG);
 
 		}
+		
 	}
 	
 	public boolean updateRepos(){
