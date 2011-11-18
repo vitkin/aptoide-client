@@ -20,11 +20,16 @@ public class HWSpecActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
 		specs = new HWSpecifications(this);
+		
 		setContentView(R.layout.hwspecs);
+		
+		
 		sdkVer= (TextView) findViewById(R.id.sdkver);
 		screenSize = (TextView) findViewById(R.id.screenSize);
 		esglVer = (TextView) findViewById(R.id.esglVer);
+		
 		sdkVer.setText(new Integer(specs.getSdkVer()).toString());
 		screenSize.setText(specs.getScreenSize());
 		esglVer.setText(specs.getEsglVer());

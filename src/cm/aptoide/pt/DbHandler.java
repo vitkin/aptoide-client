@@ -77,7 +77,7 @@ public class DbHandler {
 				+ " secure integer default 0 not null, updatetime text default 0 not null, base_path text, delta text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text, sdk number default 'Other' not null,"
+				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text, sdk number, esgl text, screensize text default 'Other' not null,"
 				+ " catg_ord integer default 2 not null, primary key(apkid));";
 	
 	private static final String CREATE_TABLE_OLD_VERSIONS = "create table if not exists " + TABLE_NAME_OLD_VERSIONS
@@ -255,7 +255,9 @@ public class DbHandler {
 				}
 			}
 			
-		}catch(Exception e){ }
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void delApk(String apkid, String ver){
@@ -264,7 +266,7 @@ public class DbHandler {
 		db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"' and ver='"+ver+"'", null);
 	}
 	 
-	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size, int sdk){
+	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size, int sdk, String esgl, String screensize){
 
 		if(delfirst){
 			db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
@@ -294,6 +296,8 @@ public class DbHandler {
 			}
 		}
 		tmp.put("sdk", sdk);
+		tmp.put("esgl", esgl);
+		tmp.put("screensize", screensize);
 		db.insert(TABLE_NAME_EXTRA, null, tmp);
 		
    		PackageManager mPm = mctx.getPackageManager();
@@ -517,7 +521,7 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord, b.sdk from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord, b.sdk, b.esgl, b.screensize from "
 				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
@@ -573,6 +577,8 @@ public class DbHandler {
 				node.catg = c.getString(9);
 				node.catg_ord = c.getInt(10);
 				node.sdkVer =c.getInt(11);
+				node.ESGLVer =c.getString(12);
+				node.screenSize =c.getString(13);
 				tmp.add(node);
 				c.moveToNext();
 			}
@@ -593,7 +599,7 @@ public class DbHandler {
 			if(ctg == null)
 				catgi = "";
 			
-			final String basic_query = "select * from (select distinct c.apkid, c.name as name, c.instver as instver, c.lastver, c.instvercode, c.lastvercode ,b.dt as dt, b.rat as rat, b.dwn as dwn, b.catg as catg, b.catg_ord as catg_ord, b.sdk as sdk from "
+			final String basic_query = "select * from (select distinct c.apkid, c.name as name, c.instver as instver, c.lastver, c.instvercode, c.lastvercode ,b.dt as dt, b.rat as rat, b.dwn as dwn, b.catg as catg, b.catg_ord as catg_ord, b.sdk as sdk,b.esgl as esgl, b.screensize as screensize from "
 				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid) as d where " + catgi + "d.catg_ord = " + ord + " and d.instver is null";
@@ -629,6 +635,8 @@ public class DbHandler {
 				node.rat = c.getFloat(7);
 				node.down = c.getInt(8);
 				node.sdkVer = c.getInt(11);
+				node.ESGLVer =c.getString(12);
+				node.screenSize =c.getString(13);
 				tmp.add(node);
 				c.moveToNext();
 			}

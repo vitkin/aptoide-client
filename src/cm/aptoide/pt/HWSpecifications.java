@@ -11,7 +11,7 @@ public class HWSpecifications{
 
 
 public int sdkVer;
-public String screenSize;
+public int screenSize;
 public String esglVer;
 
 
@@ -20,24 +20,24 @@ public HWSpecifications(Context context) {
 	this.sdkVer= Build.VERSION.SDK_INT;
 	
 	
-	int screenSizeInt=context.getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;
+	this.screenSize=context.getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;
 	
-	switch (screenSizeInt) {
-	case 1:
-		this.screenSize="smallScreen";
-		break;
-	case 2:
-		this.screenSize="normalScreen";
-	break;
-	
-	case 3:
-		this.screenSize="largeScreen";
-		break;
-
-	default:
-		this.screenSize="Undefined Screen Size";
-		break;
-	}
+//	switch (screenSizeInt) {
+//	case 1:
+//		this.screenSize="smallScreen";
+//		break;
+//	case 2:
+//		this.screenSize="normalScreen";
+//	break;
+//	
+//	case 3:
+//		this.screenSize="largeScreen";
+//		break;
+//
+//	default:
+//		this.screenSize="Undefined Screen Size";
+//		break;
+//	}
 	
 	ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 	ConfigurationInfo configInfo = activityManager.getDeviceConfigurationInfo();
@@ -57,7 +57,7 @@ public int getSdkVer() {
 /**
  * @return the screenSize
  */
-public String getScreenSize() {
+public int getScreenSize() {
 	return screenSize;
 }
 
