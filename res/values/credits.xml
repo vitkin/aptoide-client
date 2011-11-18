@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>    
+    <string name="change_log_url">http://aptoide.com/changelog_3_0.html</string>
+   
+    <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n\n
+    Credits:\n\n
+    &#160;Creator:\n
+    \t\t Roberto Jacinto &amp; Caixa Mágica\n\n
+    &#160;Maintainer:\n
+    \t\t Duarte Silveira &amp; Caixa Mágica\n\n
+    &#160;Developers:\n
+    \t\t Duarte Silveira \n\n
+    \t\t Rui Mateus \n\n
+    \t\t &amp; Caixa Mágica\n\n
+    &#160;Designer:\n
+    \t\t Teresa Deus &amp; Caixa Mágica\n\n
+    &#160;Contributers:\n
+    \t\t Rafael Campos \n\n
+    \t\t Roberto Jacinto \n\n
+    \t\t &amp; Caixa Mágica\n\n
+    &#160;Translators:\n\n
+    &#160;&#160;&#160;Spanish:\n
+    \t\t\tFrancisco \"ppelao3k\"\n
+    &#160;&#160;&#160;Arabic:\n
+    \t\t\tManaa Alshihe\n
+    &#160;&#160;&#160;Italian:\n
+    \t\t\tPavo Baxter\n
+    &#160;&#160;&#160;French:\n
+    \t\t\tAlexis Bonvin\n
+    &#160;&#160;&#160;Chinese:\n
+    \t\t\tTheodore Wte\n
+    &#160;&#160;&#160;Polish:\n
+    \t\t\tStanislaw \"trurl3\"\n
+    &#160;&#160;&#160;German:\n
+    \t\t\tMartin Nehrdich\n
+    &#160;&#160;&#160;Turkish:\n
+    \t\t\tAnonymous\n
+    &#160;&#160;&#160;Bosnian/Croatian/Serbian&#160;:\n
+    \t\t\tRijad \"rijads\"\n
+    </string>
+    
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
