@@ -221,7 +221,7 @@ public class DownloadQueueService extends Service {
     	notificationManager.notify(apkidHash, notification); 
     	
 //		Log.d("Aptoide-DownloadQueueService", "Notification Set");
-//    	context.startActivity(onClick);
+    	context.startActivity(onClick);
 		
 	}
 	

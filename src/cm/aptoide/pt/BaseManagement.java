@@ -482,7 +482,7 @@ public class BaseManagement extends Activity {
 						}else{
 							apk_line.put("status", "Version: " + node.ver);
 							apk_line.put("name", node.name);
-							if(node.sdkVer<=specs.getSdkVer())
+//							if(filterPass(node))
 								availMap.add(apk_line);
 							
 							
@@ -542,11 +542,40 @@ public class BaseManagement extends Activity {
 					
 				}
 			}
+
+			
 			
 			
 			
 		}.start();
 		
+	}
+	
+	private boolean filterPass(ApkNode node) {
+		
+		if(node.sdkVer>specs.getSdkVer())
+			return false;
+		
+		float esglver = Float.parseFloat(node.ESGLVer);
+		float localesglver = Float.parseFloat(specs.esglVer);
+		
+		if (esglver>localesglver)
+			return false;
+		
+		int screensizeint = 0;
+		if(node.screenSize.equals("smallScreen")){
+			screensizeint = 1;
+		}else if(node.screenSize.equals("normalScreen")){
+			screensizeint = 2;
+		}else if(node.screenSize.equals("largeScreen")){
+			screensizeint = 3;
+		}
+		
+		if(screensizeint>specs.screenSize){
+			return false;
+		}
+		
+		return true;
 	}
 	
 	class LstBinder implements ViewBinder
@@ -685,12 +714,13 @@ public class BaseManagement extends Activity {
 			 apk_line.put("name", node.name);
 			 if(node.down >= 0)
 				 apk_line.put("down", node.down + " Down.");
-			 if(node.sdkVer<=specs.getSdkVer()){
+			 if(filterPass(node))
+//			 {
 					availMap.add(apk_line);
-				}else{
+//				}else{
 					
-					filteredApps++;
-				}
+//					filteredApps++;
+//				}
 		 }
 
 

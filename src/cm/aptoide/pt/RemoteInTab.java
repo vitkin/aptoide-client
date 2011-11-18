@@ -61,7 +61,6 @@ import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.NetworkInfo.State;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Environment;
@@ -71,7 +70,6 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -847,6 +845,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    	sp = spf.newSAXParser();
 	    	xr = sp.getXMLReader();
 	    	if(type){
+	    		Log.d(""+type, "type");
 	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
@@ -864,6 +863,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    	keepScreenOn.release();
 	    	
 	    } catch (Exception e){
+	    	e.printStackTrace();
 	    	xr = null;
 		}finally{
 			xml_file.delete();
