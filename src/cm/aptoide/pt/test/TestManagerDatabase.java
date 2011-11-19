@@ -18,16 +18,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt.data.database.test;
+package cm.aptoide.pt.test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
 import android.test.AndroidTestCase;
+import android.util.Log;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.views.ViewApplication;
+import cm.aptoide.pt.data.views.ViewCategory;
 import cm.aptoide.pt.data.views.ViewDisplayListApps;
 import cm.aptoide.pt.data.views.ViewDisplayListRepos;
 import cm.aptoide.pt.data.views.ViewLogin;
@@ -42,69 +44,115 @@ public class TestManagerDatabase extends AndroidTestCase {
 	
 	ManagerDatabase db;
 	
-	ViewRepository repo;
-	ViewLogin login;
-	ArrayList<ViewApplication> apps;
-	ViewApplication app1;
-	ViewApplication app2;
-	ViewApplication appInstalled;
+	final String CATG = "catg1";
+	final int CATG_PARENT = 0;
 	
 	final String USER1 = "user1";
 	final String PASS1 = "pass1";
 	final String URI = "http://apps.bazaarandroid.com/";
 	final int REPO_SIZE = 2;
+	final String DELTA = "abc123";
+	final String BPATH = "http://base/";
+	final String IPATH = "icons";
+	final String SPATH = "screens";
+	
 	final String NAME1 = "app1";
-	final String PACKAGE_NAME1 = "pt.app1";	
+	final String PACKAGE_NAME1 = "pt.app1";
+	final int RATING = 1;
+	
 	final String VERSION_NAME1 = "1.0";
 	final int VERSION_CODE1 = 1;
 	final String VERSION_NAME2 = "2.0";
 	final int VERSION_CODE2 = 2;
 	final String VERSION_NAME3 = "3.0";
 	final int VERSION_CODE3 = 3;
+	
+	ViewDisplayListRepos displayRepos;
+	ViewDisplayListApps displayApps;
+	
 
 	public TestManagerDatabase() {
 		super();
 	}
-
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
-	 */
+	
+	
+	
+	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		
+		ViewCategory catg;
+		ViewRepository repo;
+		ViewLogin login;
+		ArrayList<ViewApplication> apps;
+		ViewApplication app1;
+		ViewApplication app2;
+		ViewApplication appInstalled;
+		
 		db = new ManagerDatabase(getContext());
+		
+		catg = new ViewCategory(CATG);
+		catg.setParentHashid(CATG_PARENT);
+		
+		db.insertCategory(catg);
+		Log.d("TestAptoide", "Catg:"+catg.toString());
+		
 		login = new ViewLogin(USER1, PASS1);
 		repo = new ViewRepository(URI);
 		repo.setSize(REPO_SIZE);
+		repo.setBasePath(BPATH);
+		repo.setIconsPath(IPATH);
+		repo.setScreensPath(SPATH);
+		repo.setDelta(DELTA);
 		repo.setInUse(true);
 		repo.setLogin(login);
-		
+
+		db.insertRepository(repo);
+				
 		apps = new ArrayList<ViewApplication>(2);
+		
 		app1 = new ViewApplication(NAME1, PACKAGE_NAME1, VERSION_NAME1, VERSION_CODE1, false);
+		app1.setRating(RATING);
+		app1.setCategoryHashid(catg.getHashid());
+		app1.setRepoHashid(repo.getHashid());
 		apps.add(app1);
-		app2 = new ViewApplication(NAME1, PACKAGE_NAME1,VERSION_NAME3, VERSION_CODE3, false);
+
+		app2 = new ViewApplication(NAME1, PACKAGE_NAME1, VERSION_NAME3, VERSION_CODE3, false);
+		app2.setRating(RATING);
+		app2.setCategoryHashid(catg.getHashid());
+		app2.setRepoHashid(repo.getHashid());
 		apps.add(app2);
+		
+		db.insertApplications(apps);
+		
 		appInstalled = new ViewApplication(NAME1, PACKAGE_NAME1, VERSION_NAME2, VERSION_CODE2, true);
+
+		db.insertInstalledApplication(appInstalled);
 		
 		
+		displayRepos = db.getReposDisplayInfo();
+		
+		displayApps = db.getInstalledAppsDisplayInfo(0, 10);
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
-	 */
+
+
+	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
-		File db_file = new File("/data/data/cm.aptoide.pt.test/databases/aptoide_db");
+		
 		db.closeDB();
+		File db_file = new File("/data/data/cm.aptoide.pt/databases/aptoide_db");
 		db_file.delete();
 	}
+
 
 	/**
 	 * Test method for {@link cm.aptoide.pt.data.database.ManagerDatabase#getReposDisplayInfo()}.
 	 */
 	public final void testGetReposDisplayInfo() {
-		db.insertRepository(repo);
-		ViewDisplayListRepos displayRepos = db.getReposDisplayInfo();
+
+		Log.d("TestAptoide", "Repo: "+displayRepos.getRepo(0).toString());
 		
 		assertEquals("wrong size reposList",1, displayRepos.getList().size());
 		Map<String,Object> displayRepo = displayRepos.getRepo(0);
@@ -128,9 +176,7 @@ public class TestManagerDatabase extends AndroidTestCase {
 	 * Test method for {@link cm.aptoide.pt.data.database.ManagerDatabase#getInstalledAppsDisplayInfo(int, int)}.
 	 */
 	public final void testGetInstalledAppsDisplayInfo() {
-		db.insertApplications(apps);
-		db.insertInstalledApplication(appInstalled);
-		ViewDisplayListApps displayApps = db.getInstalledAppsDisplayInfo(0, 10);
+		Log.d("TestAptoide", "App: "+displayApps.getApp(0).toString());
 		
 		assertEquals("wrong size appsList",1, displayApps.getList().size());
 		Map<String,Object> displayApp = displayApps.getApp(0);
