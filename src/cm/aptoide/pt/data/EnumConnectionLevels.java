@@ -1,6 +1,6 @@
 /**
- * Splash, part of Aptoide
- * Copyright (C) 2011 Duarte Silveira
+ * EnumConnectionLevels,	auxilliary class to Aptoide's ServiceData
+ * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,24 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.widget.ProgressBar;
+package cm.aptoide.pt.data;
 
-
-public class Splash extends Activity {
-
-	private ProgressBar mProgress;
-	private int mProgressStatus = 0;
+/**
+ * EnumConnectionLevels, typeSafes ConnectionLevels
+ * 
+ * @author dsilveira
+ * @since 3.0
+ *
+ */
+public enum EnumConnectionLevels {
+	MOBILE,
+	OTHER,
+	NONE;
 	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
+	public static EnumConnectionLevels reverseOrdinal(int ordinal){
+		return values()[ordinal];
 	}
-
-	
-
 }

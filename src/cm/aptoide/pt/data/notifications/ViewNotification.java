@@ -1,5 +1,5 @@
 /**
- * Notifier,		auxilliary class to Aptoide's ServiceData
+ * ViewNotification,		auxilliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,20 +18,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.notifiers;
+package cm.aptoide.pt.data.notifications;
 
 import java.util.ArrayList;
 
  /**
- * Notifier, models a notification
+ * ViewNotification, models a notification
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class Notifier {
+public class ViewNotification {
 
-	private EnumNotifierTypes notifierType;
+	private EnumNotificationTypes notificationType;
 	private String actionsTargetName;	//Name and version if it's relevant
 	private String targetsUniqueId;		//Combined from target's id (pkg.vercode in case of an apk)
 	private int uniqueId; 				//Combined from target's unique id and the action ongoing
@@ -39,18 +39,18 @@ public class Notifier {
 	private int progressCompletion;
 	private boolean completed;
 	
-	private ArrayList<Notifier> subNotifiers;
+	private ArrayList<ViewNotification> subNotifications;
 
-	public Notifier(EnumNotifierTypes notifierType, String actionsTargetName, String targetsUniqueId, int progressCompletion) {
-		this.notifierType = notifierType;
+	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, String targetsUniqueId, int progressCompletion) {
+		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
 		this.targetsUniqueId = targetsUniqueId;
-		this.uniqueId = (targetsUniqueId+notifierType.toString()).hashCode();
+		this.uniqueId = (targetsUniqueId+notificationType.toString()).hashCode();
 		this.currentProgress = 0;
 		this.progressCompletion = progressCompletion;
 		this.completed = false;
 		
-		this.subNotifiers = new ArrayList<Notifier>();
+		this.subNotifications = new ArrayList<ViewNotification>();
 	}
 
 	public void setCurrentProgress(int currentProgress) {
@@ -65,28 +65,28 @@ public class Notifier {
 		this.completed = completed;
 	}
 
-	public ArrayList<Notifier> getSubNotifiers() {
-		return subNotifiers;
+	public ArrayList<ViewNotification> getSubNotifications() {
+		return subNotifications;
 	}
 	
-	public void addSubNotifier(Notifier subNotifier){
-		this.subNotifiers.add(subNotifier);
+	public void addSubNotification(ViewNotification subNotification){
+		this.subNotifications.add(subNotification);
 	}
 	
-	public Notifier removeSubNotifier(int position){
-		return this.subNotifiers.remove(position);
+	public ViewNotification removeSubNotification(int position){
+		return this.subNotifications.remove(position);
 	}
 	
-	public boolean removeSubNotifier(Notifier subNotifier){
-		return this.subNotifiers.remove(subNotifier);
+	public boolean removeSubNotification(ViewNotification subNotification){
+		return this.subNotifications.remove(subNotification);
 	}
 
-	public void setSubNotifiers(ArrayList<Notifier> subNotifiers) {
-		this.subNotifiers = subNotifiers;
+	public void setSubNotifications(ArrayList<ViewNotification> subNotifications) {
+		this.subNotifications = subNotifications;
 	}
 
-	public EnumNotifierTypes getNotifierType() {
-		return notifierType;
+	public EnumNotificationTypes getNotificationType() {
+		return notificationType;
 	}
 
 	public String getActionsTargetName() {
@@ -107,7 +107,7 @@ public class Notifier {
 	
 	
 	public int incrementProgress(int increment){
-		if(subNotifiers.isEmpty()){
+		if(subNotifications.isEmpty()){
 			this.currentProgress += increment;
 			if(this.currentProgress >= this.progressCompletion){
 				setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
@@ -119,12 +119,12 @@ public class Notifier {
 	}
 
 	public int getCurrentProgress(){
-		if(!subNotifiers.isEmpty()){
+		if(!subNotifications.isEmpty()){
 				this.progressCompletion = 0;
 				this.currentProgress = 0;
-			for (Notifier subNotifier : this.subNotifiers) {
-				this.progressCompletion += subNotifier.progressCompletion;
-				this.currentProgress += subNotifier.currentProgress;
+			for (ViewNotification subNotification : this.subNotifications) {
+				this.progressCompletion += subNotification.progressCompletion;
+				this.currentProgress += subNotification.currentProgress;
 			}
 		}
 		if(this.currentProgress >= this.progressCompletion){
@@ -135,7 +135,7 @@ public class Notifier {
 	
 	
 	public void clean(){
-		this.notifierType = null;
+		this.notificationType = null;
 		this.actionsTargetName = null;
 		this.targetsUniqueId = null;
 		this.uniqueId = 0;
@@ -143,19 +143,19 @@ public class Notifier {
 		this.progressCompletion = 0;
 		this.completed = false;
 		
-		this.subNotifiers = null;
+		this.subNotifications = null;
 	}
 	
-	public void reuse(EnumNotifierTypes notifierType, String actionsTargetName, String targetsUniqueId, int progressCompletion) {
-		this.notifierType = notifierType;
+	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, String targetsUniqueId, int progressCompletion) {
+		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
 		this.targetsUniqueId = targetsUniqueId;
-		this.uniqueId = (targetsUniqueId+notifierType.toString()).hashCode();
+		this.uniqueId = (targetsUniqueId+notificationType.toString()).hashCode();
 		this.currentProgress = 0;
 		this.progressCompletion = progressCompletion;
 		this.completed = false;
 		
-		this.subNotifiers = new ArrayList<Notifier>();
+		this.subNotifications = new ArrayList<ViewNotification>();
 	}
 		
 }

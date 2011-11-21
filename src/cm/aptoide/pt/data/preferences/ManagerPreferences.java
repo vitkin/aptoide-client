@@ -24,9 +24,13 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.ServiceData;
 import cm.aptoide.pt.data.ClientStatistics;
 import cm.aptoide.pt.data.system.ScreenDimensions;
+import cm.aptoide.pt.debug.AptoideLog;
+import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
 /**
  * ManagerPreferences, manages aptoide's preferences I/O
@@ -35,19 +39,28 @@ import cm.aptoide.pt.data.system.ScreenDimensions;
  * @since 3.0
  *
  */
-public class ManagerPreferences {
+public class ManagerPreferences implements InterfaceAptoideLog{
 	
+	private final String TAG = "Aptoide-ServiceData-ManagerPreferences";
 	private SharedPreferences getPreferences;
 	private SharedPreferences.Editor setPreferences;
-	
+
+
+	@Override
+	public String getTag() {
+		return TAG;
+	}
 
 	public ManagerPreferences(ServiceData serviceData) {
-		getPreferences = serviceData.getSharedPreferences("aptoide_preferences", Context.MODE_PRIVATE);
+		getPreferences = serviceData.getSharedPreferences(Constants.FILE_PREFERENCES, Context.MODE_PRIVATE);
 		setPreferences = getPreferences.edit();
+		AptoideLog.v(this, "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
+		if(getAptoideClientUUID() == null){
+			setAptoideClientUUID( UUID.randomUUID().toString() );
+		}
 		
-		String aptoideClientUUID = getPreferences.getString("aptoideClientUUID", null);
-		if(aptoideClientUUID == null){
-			aptoideClientUUID = UUID.randomUUID().toString();
+		if(getAuthorizedDownloadConnections() == EnumConnectionLevels.NONE){
+			setAuthorizedDownloadConnections(EnumConnectionLevels.OTHER);
 		}
 	}
 
@@ -61,21 +74,36 @@ public class ManagerPreferences {
 	}
 
 	
+	private void setAptoideClientUUID(String uuid){
+		setPreferences.putString(EnumPreferences.APTOIDE_CLIENT_UUID.name(), uuid);
+		setPreferences.commit();
+	}
+	
 	public String getAptoideClientUUID(){
-		return getPreferences.getString("aptoideClientUUID", null);
+		return getPreferences.getString(EnumPreferences.APTOIDE_CLIENT_UUID.name(), null);
 	}
 	
 	public void setScreenDimensions(ScreenDimensions screenDimensions){
-		setPreferences.putInt("screenWidth", screenDimensions.getWidth());
-		setPreferences.putInt("screenHeight", screenDimensions.getHeight());
+		setPreferences.putInt(EnumPreferences.SCREEN_WIDTH.name(), screenDimensions.getWidth());
+		setPreferences.putInt(EnumPreferences.SCREEN_HEIGHT.name(), screenDimensions.getHeight());
+		setPreferences.commit();
 	}
 	
 	public ScreenDimensions getScreenDimensions(){
-		return new ScreenDimensions(getPreferences.getInt("screenWidth", 0), getPreferences.getInt("screenWidth", 0));
+		return new ScreenDimensions(getPreferences.getInt(EnumPreferences.SCREEN_WIDTH.name(), Constants.NO_SCREEN), getPreferences.getInt(EnumPreferences.SCREEN_HEIGHT.name(), Constants.NO_SCREEN));
 	}
 	
 	public void completeStatistics(ClientStatistics statistics){
 		statistics.completeStatistics(getAptoideClientUUID(), getScreenDimensions());
+	}
+	
+	public void setAuthorizedDownloadConnections(EnumConnectionLevels connectionLevel){
+		setPreferences.putInt(EnumPreferences.AUTHORIZED_DOWNLOAD_CONNECTIONS.name(), connectionLevel.ordinal());
+		setPreferences.commit();
+	}
+	
+	public EnumConnectionLevels getAuthorizedDownloadConnections(){
+		return EnumConnectionLevels.reverseOrdinal(getPreferences.getInt(EnumPreferences.AUTHORIZED_DOWNLOAD_CONNECTIONS.name(), EnumConnectionLevels.NONE.ordinal()));
 	}
 	
 }

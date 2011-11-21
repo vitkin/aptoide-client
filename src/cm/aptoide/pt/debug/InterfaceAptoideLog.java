@@ -1,6 +1,6 @@
 /**
- * ScreenDimensions,	 auxiliary class to Aptoide's ServiceData
- * Copyright (C) 2011 Duarte Silveira
+ * InterfaceAptoideLog,		part of Aptoide
+ * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,38 +17,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt.data.system;
-
-import java.io.Serializable;
+package cm.aptoide.pt.debug;
 
 /**
- * ScreenDimensions, models the aptoide client's screen dimensions
- *
+ * InterfaceAptoideLog, specifies the interface for Aptoide classes wishing to Log
+ * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ScreenDimensions implements Serializable{
-	private static final long serialVersionUID = -2430264934162700841L;
-	private int width;
-	private int height;
-	
-	public ScreenDimensions(int width, int height) {
-		this.width = width;
-		this.height = height;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-	
-	public int getHeight() {
-		return height;
-	}
-
-	@Override
-	public String toString() {
-		return "Width: "+width+" Height: "+height;
-	}
-	
+public interface InterfaceAptoideLog {
+	public String getTag();
 }

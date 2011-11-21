@@ -119,5 +119,15 @@ public class ViewCategory {
 		setCategoryName(categoryName);
 		this.parentHashid = Constants.TOP_CATEGORY;
 	}
+
+
+	@Override
+	public String toString() {
+		String ret = "CategoryHashid: "+getHashid()+" CategoryName: "+getCategoryName()+" CategoryParent: "+getParentHashid()+" SubCategories+ ";
+		for (ViewCategory subCategory : getSubCategories()) {
+			ret += subCategory.toString();
+		}
+		return ret;
+	}
 	
 }
