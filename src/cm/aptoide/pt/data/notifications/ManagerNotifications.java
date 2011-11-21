@@ -72,26 +72,26 @@ public class ManagerNotifications {
 	public ManagerNotifications(ServiceData serviceData) {
 		this.serviceData = serviceData;
 
-		
-		notificationManager = (NotificationManager)serviceData.getSystemService(serviceData.NOTIFICATION_SERVICE);
+		notificationManager = (NotificationManager)serviceData.getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		/************ Compatibility with API level 4, ignore following these lines *************/
 		try {
-	        startForeground = getClass().getMethod("startForeground", startForegroundSignature);
-	        stopForeground = getClass().getMethod("stopForeground", stopForegroundSignature);
+	        startForeground = serviceData.getClass().getMethod("startForeground", startForegroundSignature);
+	        stopForeground = serviceData.getClass().getMethod("stopForeground", stopForegroundSignature);
 	    } catch (NoSuchMethodException e) {
 	        // Running on an older platform.
 	        startForeground = stopForeground = null;
 	        return;
 	    }
 	    try {
-	        setForeground = getClass().getMethod("setForeground", setForegroundSignature);
+	        setForeground = serviceData.getClass().getMethod("setForeground", setForegroundSignature);
 	    } catch (NoSuchMethodException e) {
 	        throw new IllegalStateException("OS doesn't have Service.startForeground OR Service.setForeground!");
 	    }
 		/***************************************************************************************/
 		
 		startForegroundCompat(R.string.aptoide_started, getNotification());
+//	    notificationManager.notify(R.string.aptoide_started, getNotification());
 		
 		PowerManager powerManager = (PowerManager) serviceData.getSystemService(Context.POWER_SERVICE);
         keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
@@ -314,7 +314,7 @@ public class ManagerNotifications {
 
 	void invokeMethod(Method method, Object[] args) {
 	    try {
-	        startForeground.invoke(serviceData, startForegroundArgs);
+	        method.invoke(serviceData, args);
 	    } catch (InvocationTargetException e) {
 	        // Should not happen.
 	        Log.w("Aptoide ServiceData", "Unable to invoke method", e);
