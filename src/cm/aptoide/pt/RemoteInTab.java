@@ -866,7 +866,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    	e.printStackTrace();
 	    	xr = null;
 		}finally{
-			xml_file.delete();
+//			xml_file.delete();
 		}
 	}
 	
