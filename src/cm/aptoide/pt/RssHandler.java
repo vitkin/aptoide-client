@@ -327,7 +327,7 @@ public class RssHandler extends DefaultHandler{
 			apk_basepath = false;
 		}else if (localName.trim().equals("minSdk")) {
 			apk_sdk=false;
-		}else if (localName.trim().equals("minEsgl")) {
+		}else if (localName.trim().equals("minGles")) {
 			apk_esgl=false;
 		}else if (localName.trim().equals("minScreen")) {
 			apk_screensize=false;
@@ -380,7 +380,7 @@ public class RssHandler extends DefaultHandler{
 			apk_basepath = true;
 		}else if (localName.trim().equals("minSdk")) {
 			apk_sdk=true;
-		}else if (localName.trim().equals("minEsgl")) {
+		}else if (localName.trim().equals("minGles")) {
 			apk_esgl=true;
 		}else if (localName.trim().equals("minScreen")) {
 			apk_screensize=true;
