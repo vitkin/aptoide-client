@@ -69,6 +69,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	private Preference clear_cache = null;
 	private CheckBoxPreference hwbox;
 	private CheckBoxPreference schDwnBox;	
+	private boolean changed = false;
 	
 	private DownloadQueueService downloadQueueService;
 	
@@ -326,8 +327,10 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		}else if(key.equalsIgnoreCase("schDwnBox")){
 			if(schDwnBox.isChecked()){
 				prefEditFull.putBoolean("schDwnBox", true);
+				changed = true;
 			}else{
 				prefEditFull.putBoolean("schDwnBox", false);
+				
 			}
 		}
 	}
@@ -357,7 +360,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 			Intent serv = new Intent(mctx,FetchIconsService.class);
 			mctx.stopService(serv);
 		}
-		if (sPref.getBoolean("schDwnBox", true)) {
+		if (sPref.getBoolean("schDwnBox", true)&&changed) {
 			Intent i = new Intent(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
 			ConnectivityManager netstate = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 			if (netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() 

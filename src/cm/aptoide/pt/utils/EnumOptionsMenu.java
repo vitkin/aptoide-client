@@ -29,7 +29,7 @@ public enum EnumOptionsMenu {
 	SEARCH_MENU,
 	SETTINGS,
 	ABOUT,
-	SCHEDULEd_DOWNLOADS;
+	SCHEDULED_DOWNLOADS;
 	
 	public static EnumOptionsMenu reverseOrdinal(int ordinal){
 		return values()[ordinal];
