@@ -335,7 +335,7 @@ public class ServiceData extends Service implements InterfaceAptoideLog{
 	}
 	
 	private void syncInstalledPackages(){
-		//TODO start sync
+		managerDatabase.insertInstalledApplications(managerSystemSync.getInstalledApps());
 		//TODO start notification with splash
 	}
 	
