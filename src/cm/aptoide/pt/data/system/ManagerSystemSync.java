@@ -39,9 +39,11 @@ import cm.aptoide.pt.data.views.ViewApplication;
  */
 public class ManagerSystemSync {
 
+	ServiceData serviceData;
 	PackageManager packageManager;
 	
 	public ManagerSystemSync(ServiceData serviceData){
+		this.serviceData = serviceData;
 		packageManager = serviceData.getPackageManager();
 	}
 	
@@ -72,7 +74,11 @@ public class ManagerSystemSync {
 		ArrayList<ViewApplication> installedApps = new ArrayList<ViewApplication>(systemInstalledList.size());
 		ViewApplication installedApp;
 		for (PackageInfo installedAppInfo : systemInstalledList) {
-			installedApp = new ViewApplication(installedAppInfo.applicationInfo.name, installedAppInfo.packageName, installedAppInfo.versionName, installedAppInfo.versionCode, true);
+			if(installedAppInfo.applicationInfo.sourceDir.split("[/]+")[1].equals("system")){
+//				continue;
+				//TODO mark as system
+			}
+			installedApp = new ViewApplication((packageManager.getApplicationLabel(installedAppInfo.applicationInfo)).toString(), installedAppInfo.packageName, installedAppInfo.versionName, installedAppInfo.versionCode, true);
 			installedApps.add(installedApp);
 		}
 		return installedApps;
