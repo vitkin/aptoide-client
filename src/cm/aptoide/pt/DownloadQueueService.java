@@ -232,6 +232,7 @@ public class DownloadQueueService extends Service {
 	}
 	
 	public void dismissNotification(int apkidHash){
+		if(notificationManager!=null)
 		notificationManager.cancel(apkidHash);
 //		notifications.remove(apkidHash);
 	}

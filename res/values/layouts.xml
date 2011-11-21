@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="add_repo_text">URI to repository: </string>
+    <string name="add_repo_text">URI to store: </string>
     <string name="add_repo_private">Private </string>
     
     <string name="order_popup_title1">Order applications by: </string>

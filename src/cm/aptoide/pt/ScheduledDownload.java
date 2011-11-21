@@ -416,6 +416,18 @@ public class ScheduledDownload extends ListActivity {
         public TextView version;
     }
 
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
+	 */
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.d("ScheduledResult",requestCode + " "+ resultCode);
+
+	}
+
+    
 	
 
 }

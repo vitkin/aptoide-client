@@ -337,7 +337,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				switch (type) {
 				case 0:
 					if(checkbox.isChecked()){
-						Toast.makeText(mctx, "Added to Scheduled DOwnloads", Toast.LENGTH_LONG).show();
+						Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
 						db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
@@ -350,7 +350,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 1:
 					
 					if(checkbox.isChecked()){
-						Toast.makeText(mctx, "Added to Scheduled DOwnloads", Toast.LENGTH_LONG).show();
+						Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
 						db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
@@ -368,7 +368,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 2:
 					
 					if(checkbox.isChecked()){
-						Toast.makeText(mctx, "Added to Scheduled DOwnloads", Toast.LENGTH_LONG).show();
+						Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
 						db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);

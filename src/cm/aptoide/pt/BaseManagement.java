@@ -366,8 +366,7 @@ public class BaseManagement extends Activity {
 			String apkid = sPref.getString("pkg", null);
 			try {
 				pkginfo = mPm.getPackageInfo(apkid, 0);
-				db.deleteScheduledDownload(apkid);
-				downloadQueueService.dismissNotification(apkid.hashCode());
+				
 				db.insertInstalled(apkid, sPref.getString("ver", null));
 				prefEdit.remove("pkg"); prefEdit.remove("ver");
 				prefEdit.commit();
@@ -455,14 +454,20 @@ public class BaseManagement extends Activity {
 							apk_line.put("down", node.down + " Down.");
 						
 						if(node.status == 1){
-							
+							db.deleteScheduledDownload(node.apkid);
+
+							if(downloadQueueService!=null)
+								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
 							
 						}else if(node.status == 2){
-							
+							db.deleteScheduledDownload(node.apkid);
+
+//							if(downloadQueueService!=null)
+//								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
 							apk_line.put("name2", node.name);
 //							apk_line.put("statusSort", 2);
@@ -470,14 +475,16 @@ public class BaseManagement extends Activity {
 							instMap.add(apk_line);
 							
 						}else if(node.status == 3){
-							
+							db.deleteScheduledDownload(node.apkid);
+//							if(downloadQueueService!=null)
+//								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 3);
 //							updtMap.add(apk_line);
 							instMap.add(apk_line);
-
+							
 							
 						}else{
 							apk_line.put("status", "Version: " + node.ver);
@@ -487,6 +494,7 @@ public class BaseManagement extends Activity {
 							
 							
 						}
+						
 						
 					}
 					
@@ -552,7 +560,8 @@ public class BaseManagement extends Activity {
 	}
 	
 	private boolean filterPass(ApkNode node) {
-		
+		if(!sPref.getBoolean("hwspecsChkBox", false))
+			return true;
 		if(node.sdkVer>specs.getSdkVer())
 			return false;
 		
@@ -718,7 +727,6 @@ public class BaseManagement extends Activity {
 			 {
 					availMap.add(apk_line);
 				}else{
-					
 					filteredApps++;
 				}
 		 }

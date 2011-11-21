@@ -281,6 +281,7 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		Log.d("TabInstalledResult",requestCode + " "+ resultCode);
 		if(requestCode == 30 && data != null && data.hasExtra("apkid")){
 			if(data.getBooleanExtra("rm", false)){
 				new Thread() {

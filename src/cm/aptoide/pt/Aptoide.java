@@ -228,8 +228,8 @@ public class Aptoide extends Activity {
         
         sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
-		prefEdit.putBoolean("schDwnBox", true);
-		prefEdit.commit();
+		
+		
 		
    		
    		PackageManager mPm = getPackageManager();
@@ -279,6 +279,14 @@ public class Aptoide extends Activity {
 		
 		if(sPref.getString("icdown", null) == null){
 			prefEdit.putString("icdown", "g3w");
+			prefEdit.commit();
+		}
+		if(!sPref.contains("schDwnBox")){
+			prefEdit.putBoolean("schDwnBox", true);
+			prefEdit.commit();
+		}
+		if(!sPref.contains("hwspecsChkBox")){
+			prefEdit.putBoolean("hwspecsChkBox", false);
 			prefEdit.commit();
 		}
     

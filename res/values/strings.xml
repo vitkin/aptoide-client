@@ -10,7 +10,7 @@
     <string name="repo_noinfo">No information</string>
     
     <string name="no_found">No application found!</string>
-    <string name="no_repo">There are no repositories!</string>
+    <string name="no_repo">There are no stores!</string>
  
  	<string name="not_inst">Not Installed</string>
     <string name="installed">Installed - Ver.:</string>
@@ -84,6 +84,7 @@
    <string name="schDown_nodownloads">No Scheduled Downloads</string>
    <string name="schDown_nodownloadselect">No Downloads Selected</string>
    <string name="schDown_downerror">Download error. Path not found in Aptoide cache.</string>
+   <string name="addSchDown">Added to Scheduled Downloads</string>
 </resources>
 
 <!--

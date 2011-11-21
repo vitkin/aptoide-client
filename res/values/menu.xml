@@ -4,7 +4,7 @@
     
     <string name="menu_update_repo">List Update</string>
     <string name="menu_update_all">Update all</string>
-    <string name="menu_manage">Manage Repo</string>
+    <string name="menu_manage">Manage Store</string>
     <string name="menu_display_options">Display Options</string>
     <string name="menu_order">Change Order</string>
     <string name="menu_settings">Settings</string>
@@ -12,9 +12,9 @@
     <string name="menu_search">Search</string>
     
     
-    <string name="menu_add_repo">New Repository</string>
-    <string name="menu_rem_repo">Remove Repository</string>
-    <string name="menu_edit_repo">Edit Repository</string>
+    <string name="menu_add_repo">New Store</string>
+    <string name="menu_rem_repo">Remove Store</string>
+    <string name="menu_edit_repo">Edit Store</string>
     
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
