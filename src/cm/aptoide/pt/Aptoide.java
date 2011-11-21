@@ -163,7 +163,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog{
         super.onCreate(savedInstanceState);
         
 		makeSureServiceDataIsRunning();
-		setFullScreen();     
+//		setFullScreen();     
 		
 //		tabHost = getTabHost();
 				
