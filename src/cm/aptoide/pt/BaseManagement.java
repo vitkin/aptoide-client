@@ -482,7 +482,7 @@ public class BaseManagement extends Activity {
 						}else{
 							apk_line.put("status", "Version: " + node.ver);
 							apk_line.put("name", node.name);
-//							if(filterPass(node))
+							if(filterPass(node))
 								availMap.add(apk_line);
 							
 							
@@ -715,12 +715,12 @@ public class BaseManagement extends Activity {
 			 if(node.down >= 0)
 				 apk_line.put("down", node.down + " Down.");
 			 if(filterPass(node))
-//			 {
+			 {
 					availMap.add(apk_line);
-//				}else{
+				}else{
 					
-//					filteredApps++;
-//				}
+					filteredApps++;
+				}
 		 }
 
 
