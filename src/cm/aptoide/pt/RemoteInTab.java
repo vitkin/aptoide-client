@@ -849,7 +849,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
-	    		xml_file = new File(XML_PATH);
+	    		xml_file = new File(LOCAL_PATH+"/info.xml");
 	    	}else{
 	    		ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
 	    		xr.setContentHandler(handler);

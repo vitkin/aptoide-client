@@ -563,11 +563,11 @@ public class BaseManagement extends Activity {
 			return false;
 		
 		int screensizeint = 0;
-		if(node.screenSize.equals("smallScreen")){
+		if(node.screenSize.equals("small")){
 			screensizeint = 1;
-		}else if(node.screenSize.equals("normalScreen")){
+		}else if(node.screenSize.equals("normal")){
 			screensizeint = 2;
-		}else if(node.screenSize.equals("largeScreen")){
+		}else if(node.screenSize.equals("large")){
 			screensizeint = 3;
 		}
 		
