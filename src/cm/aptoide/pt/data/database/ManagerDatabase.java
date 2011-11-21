@@ -23,6 +23,7 @@ package cm.aptoide.pt.data.database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -216,6 +217,7 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: send to errorHandler the exception
+			e.printStackTrace();
 		}finally{
 			db.endTransaction();
 		}
@@ -321,6 +323,7 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: send to errorHandler the exception
+			e.printStackTrace();
 		}finally{
 			db.endTransaction();
 		}
@@ -946,7 +949,7 @@ public class ManagerDatabase {
 		ViewDisplayListRepos listRepos = null;
 		
 		String selectRepos = "SELECT "+Constants.KEY_REPO_HASHID+","+Constants.KEY_REPO_URI
-									  +Constants.KEY_REPO_IN_USE+","+Constants.KEY_REPO_SIZE
+									  +","+Constants.KEY_REPO_IN_USE+","+Constants.KEY_REPO_SIZE
 							+" FROM "+Constants.TABLE_REPOSITORY+";";
 		ViewDisplayRepository repo;
 		Cursor reposCursor;
@@ -982,7 +985,7 @@ public class ManagerDatabase {
 			loginsCursor.moveToFirst();
 			do{
 				login = new ViewLogin(loginsCursor.getString(USERNAME),loginsCursor.getString(PASSWORD));
-				listRepos.getRepo(indexMap.get(reposCursor.getInt(LOGIN_REPO_HASHID))).put(Constants.DISPLAY_REPO_LOGIN, login);
+				listRepos.getRepo(indexMap.get(loginsCursor.getInt(LOGIN_REPO_HASHID))).put(Constants.DISPLAY_REPO_LOGIN, login);
 			}while(loginsCursor.moveToNext());
 			loginsCursor.close();
 

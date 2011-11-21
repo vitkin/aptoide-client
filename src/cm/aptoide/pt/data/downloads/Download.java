@@ -21,7 +21,7 @@
 package cm.aptoide.pt.data.downloads;
 
 import cm.aptoide.pt.data.cache.Cache;
-import cm.aptoide.pt.data.notifiers.Notifier;
+import cm.aptoide.pt.data.notifications.ViewNotification;
 import cm.aptoide.pt.data.views.ViewDownloadInfo;
 import cm.aptoide.pt.data.views.ViewLogin;
 
@@ -40,10 +40,10 @@ public class Download {
 	private ViewLogin login;
 	
 	private Cache cache;
-	private Notifier notifier;
+	private ViewNotification notifier;
 	
 	
-	public Download(InterfaceDownloadInfo downloadInfo, Cache cache, Notifier notifier) {
+	public Download(InterfaceDownloadInfo downloadInfo, Cache cache, ViewNotification notifier) {
 		if(downloadInfo.getClass().equals(BareDownloadInfo.class)){	//TODO does this work, or how do I get around it
 			this.bareInfo = true;
 		}else{
@@ -55,7 +55,7 @@ public class Download {
 		this.notifier = notifier;
 	}
 	
-	public Download(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, Notifier notifier) {
+	public Download(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, ViewNotification notifier) {
 		if(downloadInfo.getClass().equals(BareDownloadInfo.class)){	//TODO does this work, or how do I get around it
 			this.bareInfo = true;
 		}else{
@@ -85,7 +85,7 @@ public class Download {
 		return cache;
 	}
 
-	public Notifier getNotifier() {
+	public ViewNotification getNotifier() {
 		return notifier;
 	}
 	
@@ -98,7 +98,7 @@ public class Download {
 		this.notifier = null;
 	}
 	
-	public void reuse(InterfaceDownloadInfo downloadInfo, boolean loginRequired, ViewLogin login, Cache cache, Notifier notifier) {
+	public void reuse(InterfaceDownloadInfo downloadInfo, boolean loginRequired, ViewLogin login, Cache cache, ViewNotification notifier) {
 		this.downloadInfo = downloadInfo;
 		this.loginRequired = loginRequired;
 		this.login = login;

@@ -92,5 +92,12 @@ public class ViewLogin {
 		setUsername(username);
 		setPassword(password);
 	}
+
+	@Override
+	public String toString() {
+		return "Username: "+getUsername()+" Password: "+getPassword();
+	}
+	
+	
 	
 }

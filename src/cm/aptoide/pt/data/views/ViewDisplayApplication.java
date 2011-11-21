@@ -263,7 +263,7 @@ public class ViewDisplayApplication {
 
 	@Override
 	public String toString() {
-		return this.getAppName();
+		return "AppHashid: "+getAppHashid()+" Name: "+getAppName()+" InstalledVersion: "+getInstalledVersionName()+" isDowngradable: "+isDowngradeable()+" DowngradeVersion: "+getDowngradeVersionName()+" isUpdatable: "+isUpdatable()+" UpToDateVersion: "+getUpTodateVersionName()+" Downloads: "+getDownloads()+" Stars: "+getStars() ;
 	}
 		
 }

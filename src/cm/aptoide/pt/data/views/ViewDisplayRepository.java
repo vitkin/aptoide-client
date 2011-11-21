@@ -153,7 +153,7 @@ public class ViewDisplayRepository {
 
 	@Override
 	public String toString() {
-		return this.getUri();
+		return "RepoHashid: "+getRepoHashid()+" Uri: "+getUri()+" Size: "+getSize()+" InUse: "+getInUse()+ "Login+ "+getLogin().toString();
 	}
 		
 }

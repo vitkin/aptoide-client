@@ -28,6 +28,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -37,8 +38,14 @@ import android.util.Log;
 import android.widget.Toast;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.Notifier;
+import cm.aptoide.pt.data.database.ManagerDatabase;
+import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
+import cm.aptoide.pt.data.system.ScreenDimensions;
+import cm.aptoide.pt.debug.AptoideLog;
+import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
 /**
  * ServiceData, Aptoide's data I/O manager for the activity classes
@@ -47,16 +54,17 @@ import cm.aptoide.pt.data.system.ManagerSystemSync;
  * @since 3.0
  *
  */
-public class ServiceData extends Service {
+public class ServiceData extends Service implements InterfaceAptoideLog{
 
-	private NotificationManager notificationManager;
+	private final String TAG = "Aptoide-ServiceData";
+	
 	private ArrayList<Messenger> serviceClients;
 	private EnumServiceDataMessage latestRequest;
 
-	private WakeLock keepScreenOn;
-	
 	private ManagerPreferences managerPreferences;
 	private ManagerSystemSync managerSystemSync;
+	private ManagerDatabase managerDatabase;
+	private ManagerNotifications managerNotifications;
 	
 	
 	class IncomingRequestHandler extends Handler {
@@ -64,6 +72,18 @@ public class ServiceData extends Service {
         public void handleMessage(Message msg) {
         	latestRequest = EnumServiceDataMessage.reverseOrdinal(msg.what);
             switch (latestRequest) {
+	            case SYNC_INSTALLED_PACKAGES:
+	            	AptoideLog.d(ServiceData.this, "received Sync Installed Packages message");
+	            	syncInstalledPackages();
+	            	break;
+	            case STORE_SCREEN_DIMENSIONS:
+	            	AptoideLog.d(ServiceData.this, "received Store screen dimensions message");
+	            	Object bundleContent = msg.getData().getSerializable(EnumServiceDataMessage.STORE_SCREEN_DIMENSIONS.toString());
+	            	if(bundleContent instanceof ScreenDimensions){
+	            		storeScreenDimensions((ScreenDimensions)bundleContent);	
+	            		AptoideLog.d(ServiceData.this, "received budle with screen dimensions");
+	            	}
+	            	break;
 //                case MSG_REGISTER_CLIENT:
 //                    mClients.add(msg.replyTo);
 //                    break;
@@ -84,8 +104,8 @@ public class ServiceData extends Service {
 //                        }
 //                    }
 //                    break;
-                default:
-                    super.handleMessage(msg);
+	            default:
+	            	super.handleMessage(msg);
             }
         }
     }
@@ -102,51 +122,197 @@ public class ServiceData extends Service {
 		return serviceRequestReceiver.getBinder();
 	}
 	
-    	
+	
+	public String getTag() {
+		return TAG;
+	}
+
+
+	public ManagerPreferences getManagerPreferences() {
+		return managerPreferences;
+	}
+	
+	public ManagerSystemSync getManagerSystemSync() {
+		return managerSystemSync;
+	}	
+	
+	public ManagerDatabase getManagerDatabase() {
+		return managerDatabase;
+	}
+
+	public ManagerNotifications getManagerNotifications() {
+		return managerNotifications;
+	}
+
+
+
+
 	@Override
 	public void onCreate() {
-				
-		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-		
-		/** Compatibility with API level 4, ignore following try catches */
-		try {
-	        startForeground = getClass().getMethod("startForeground", startForegroundSignature);
-	        stopForeground = getClass().getMethod("stopForeground", stopForegroundSignature);
-	    } catch (NoSuchMethodException e) {
-	        // Running on an older platform.
-	        startForeground = stopForeground = null;
-	        return;
-	    }
-	    try {
-	        setForeground = getClass().getMethod("setForeground", setForegroundSignature);
-	    } catch (NoSuchMethodException e) {
-	        throw new IllegalStateException(
-	                "OS doesn't have Service.startForeground OR Service.setForeground!");
-	    }
-		/*****************************************************************/
 	    
 		serviceClients = new ArrayList<Messenger>();
 		
 		managerPreferences = new ManagerPreferences(this);
 		managerSystemSync = new ManagerSystemSync(this);
-
+		managerDatabase = new ManagerDatabase(this);
+		managerNotifications = new ManagerNotifications(this);
+		
 		
 		checkForSelfUpdate();
 		
 		
-		startForegroundCompat(R.string.aptoide_started, getNotification());
 		Log.d("Aptoide ServiceData", "Service started");
 		super.onCreate();
 	}
 	
 	@Override
 	public void onStart(Intent intent, int startId) {
+		if(intent.getData() != null){
+			launchAptoide();
+			
+			//TODO myapp handling section -- move partly to download/xml/ classes
+		    
+//			private static final int LOAD_TABS = 0;			//TODO Probably unneeded
+//		    private Vector<String> server_lst = null;	//TODO to dataService
+//		    private Vector<String[]> get_apps = null;	//TODO to dataService
+			
+//			private Handler startHandler = new Handler() {
+		//
+//				@Override
+//				public void handleMessage(Message msg) {
+//					switch(msg.what){
+//					case LOAD_TABS:
+//						Intent i = new Intent(Aptoide.this, RemoteInTab.class);
+//						Intent get = getIntent();
+//						if(get.getData() != null){
+//							String uri = get.getDataString();
+//								Log.d("Aptoide-startHandler", "receiving a myapp file");
+//								downloadMyappFile(uri);
+//								try {
+//									parseMyappFile(TMP_MYAPP_FILE);
+//									i.putExtra("repos", server_lst);
+//									if(get_apps.size() > 0){
+//										//i.putExtra("uri", TMP_SRV_FILE);
+//										i.putExtra("apps", get_apps);
+		//	
+//									}
+//								} catch (Exception e) {
+//									Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
+//									onCreate(savedInstanceState);
+//								}
+//						}
+//						startActivityForResult(i,0);
+//						break;
+//					}
+//					super.handleMessage(msg);
+//				} 
+//		    }; 
+
+			
+			
+//			private void downloadMyappFile(String myappUri){
+//				try{
+//					keepScreenOn.acquire();
+//					
+//					BufferedInputStream getit = new BufferedInputStream(new URL(myappUri).openStream());
+		//
+//					File file_teste = new File(TMP_MYAPP_FILE);
+//					if(file_teste.exists())
+//						file_teste.delete();
+//					
+//					FileOutputStream saveit = new FileOutputStream(TMP_MYAPP_FILE);
+//					BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
+//					byte data[] = new byte[1024];
+//					
+//					int readed = getit.read(data,0,1024);
+//					while(readed != -1) {
+//						bout.write(data,0,readed);
+//						readed = getit.read(data,0,1024);
+//					}
+//					
+//					keepScreenOn.release();
+//					
+//					bout.close();
+//					getit.close();
+//					saveit.close();
+//				} catch(Exception e){
+//					AlertDialog p = new AlertDialog.Builder(this).create();
+//					p.setTitle(getText(R.string.top_error));
+//					p.setMessage(getText(R.string.aptoide_error));
+//					p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
+//					      public void onClick(DialogInterface dialog, int which) {
+//					          return;
+//					        } });
+//					p.show();
+//				}
+//			}
+		//	
+//			private void parseMyappFile(String file){
+//				SAXParserFactory spf = SAXParserFactory.newInstance();
+//			    try {
+//			    	keepScreenOn.acquire();
+//			    	
+//			    	SAXParser sp = spf.newSAXParser();
+//			    	XMLReader xr = sp.getXMLReader();
+//			    	NewServerRssHandler handler = new NewServerRssHandler(this);
+//			    	xr.setContentHandler(handler);
+//			    	
+//			    	InputStreamReader isr = new FileReader(new File(file));
+//			    	InputSource is = new InputSource(isr);
+//			    	xr.parse(is);
+//			    	File xml_file = new File(file);
+//			    	xml_file.delete();
+//			    	server_lst = handler.getNewSrvs();
+//			    	get_apps = handler.getNewApps();
+//			    	
+//			    	keepScreenOn.release();
+//			    	
+//			    } catch (IOException e) {
+//			    	e.printStackTrace();
+//			    } catch (SAXException e) {
+//			    	e.printStackTrace();
+//			    } catch (ParserConfigurationException e) {
+//					e.printStackTrace();
+//				}
+//			}
+		//	
+//			private void parseXmlString(String file){
+//				SAXParserFactory spf = SAXParserFactory.newInstance();
+//			    try {
+//			    	keepScreenOn.acquire();
+//			    	
+//			    	SAXParser sp = spf.newSAXParser();
+//			    	XMLReader xr = sp.getXMLReader();
+//			    	NewServerRssHandler handler = new NewServerRssHandler(this);
+//			    	xr.setContentHandler(handler);
+//			    	
+//			    	InputSource is = new InputSource();
+//			    	is.setCharacterStream(new StringReader(file));
+//			    	xr.parse(is);
+//			    	server_lst = handler.getNewSrvs();
+//			    	get_apps = handler.getNewApps();
+//			    	
+//			    	keepScreenOn.release();
+//			    	
+//			    } catch (IOException e) {
+//			    } catch (SAXException e) {
+//			    } catch (ParserConfigurationException e) {
+//				}
+//			}
+			
+			
+		//--------------------------------------------------------------------------
+
+			
+		}
 		super.onStart(intent, startId);
+		
 	}
-	
+
+
 	@Override
 	public void onDestroy() {
-		stopForegroundCompat(R.string.aptoide_started);
+		managerNotifications.destroy();
 		Toast.makeText(this, R.string.aptoide_stopped, Toast.LENGTH_LONG).show();
 		stopSelf();
 		Log.d("Aptoide ServiceData", "Service stopped");
@@ -154,15 +320,7 @@ public class ServiceData extends Service {
 	}
 
 	
-	public ManagerPreferences getManagerPreferences() {
-		return managerPreferences;
-	}
-	
-	public ManagerSystemSync getManagerSystemSync() {
-		return managerSystemSync;
-	}
-	
-	public void checkForSelfUpdate(){	//TODO use Splash Activity with it's progress bar as selfupdate activity
+	public void checkForSelfUpdate(){	//TODO use NotificationManager class to load Splash Activity with it's progress bar as selfupdate activity
 //   		try{
 //			if( this.managerSystemSync.getAptoideVersionInUse() < Integer.parseInt( getXmlElement("versionCode") ) ){
 //				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
@@ -176,103 +334,27 @@ public class ServiceData extends Service {
 //   		}
 	}
 	
+	private void syncInstalledPackages(){
+		//TODO start sync
+		//TODO start notification with splash
+	}
+	
+	private void storeScreenDimensions(ScreenDimensions screenDimensions){
+		managerPreferences.setScreenDimensions(screenDimensions);
+		AptoideLog.d(this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
+	}
+	
+
+	public void launchAptoide() {
+		Intent aptoide = new Intent(this, Aptoide.class);
+		startActivity(aptoide);
+	}
+	
+	
 	public ClientStatistics getStatistics(){
 		ClientStatistics statistics = new ClientStatistics(managerSystemSync.getAptoideVersionNameInUse());
 		managerPreferences.completeStatistics(statistics);
 		return statistics;
 	}
-	
-	
-	private Notification getNotification() {
-        // Set the icon, scrolling text and timestamp
-        Notification notification = new Notification(R.drawable.ic_notification, getText(R.string.aptoide_started), System.currentTimeMillis());
 
-        // The PendingIntent to launch our activity if the user selects this notification
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, Aptoide.class), 0);
-
-        // Set the info for the views that show in the notification panel.
-        notification.setLatestEventInfo(this, getText(R.string.app_name), managerSystemSync.getAptoideVersionNameInUse(), contentIntent);
-        
-        return notification; 
-	}
-
-
-	/**
-	 * From this point forward is stuff needed TODO support for API level 4
-	 * :P 
-	 */
-	
-	private static final Class<?>[] setForegroundSignature = new Class[] {
-	    boolean.class};
-	private static final Class<?>[] startForegroundSignature = new Class[] {
-	    int.class, Notification.class};
-	private static final Class<?>[] stopForegroundSignature = new Class[] {
-	    boolean.class};
-
-	private Method setForeground;
-	private Method startForeground;
-	private Method stopForeground;
-	private Object[] setForegroundArgs = new Object[1];
-	private Object[] startForegroundArgs = new Object[2];
-	private Object[] stopForegroundArgs = new Object[1];
-
-	void invokeMethod(Method method, Object[] args) {
-	    try {
-	        startForeground.invoke(this, startForegroundArgs);
-	    } catch (InvocationTargetException e) {
-	        // Should not happen.
-	        Log.w("Aptoide ServiceData", "Unable to invoke method", e);
-	    } catch (IllegalAccessException e) {
-	        // Should not happen.
-	        Log.w("Aptoide ServiceData", "Unable to invoke method", e);
-	    }
-	}
-
-	/**
-	 * This is a wrapper around the new startForeground method, using the older
-	 * APIs if it is not available.
-	 */
-	void startForegroundCompat(int id, Notification notification) {
-	    // If we have the new startForeground API, then use it.
-	    if (startForeground != null) {
-	        startForegroundArgs[0] = Integer.valueOf(id);
-	        startForegroundArgs[1] = notification;
-	        invokeMethod(startForeground, startForegroundArgs);
-	        return;
-	    }
-
-	    // Fall back on the old API.
-	    setForegroundArgs[0] = Boolean.TRUE;
-	    invokeMethod(setForeground, setForegroundArgs);
-	    notificationManager.notify(id, notification);
-	}
-
-	/**
-	 * This is a wrapper around the new stopForeground method, using the older
-	 * APIs if it is not available.
-	 */
-	void stopForegroundCompat(int id) {
-	    // If we have the new stopForeground API, then use it.
-	    if (stopForeground != null) {
-	        stopForegroundArgs[0] = Boolean.TRUE;
-	        try {
-	            stopForeground.invoke(this, stopForegroundArgs);
-	        } catch (InvocationTargetException e) {
-	            // Should not happen.
-	            Log.w("Aptoide ServiceData", "Unable to invoke stopForeground", e);
-	        } catch (IllegalAccessException e) {
-	            // Should not happen.
-	            Log.w("Aptoide ServiceData", "Unable to invoke stopForeground", e);
-	        }
-	        return;
-	    }
-
-	    // Fall back on the old API.  Note to cancel BEFORE changing the
-	    // foreground state, since we could be killed at that point.
-	    notificationManager.cancel(id);
-	    setForegroundArgs[0] = Boolean.FALSE;
-	    invokeMethod(setForeground, setForegroundArgs);
-	}
-
-	
 }
