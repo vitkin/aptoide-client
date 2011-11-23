@@ -20,6 +20,7 @@
 
 package cm.aptoide.pt.data.views;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -31,8 +32,9 @@ import java.util.Map;
  * @since 3.0
  *
  */
-public class ViewDisplayListApps {
+public class ViewDisplayListApps implements Serializable{
 
+	private static final long serialVersionUID = -4055758104736323306L;
 	private ArrayList<Map<String, Object>> appsList;
 
 	

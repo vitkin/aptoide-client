@@ -19,13 +19,8 @@
 */
 package cm.aptoide.pt.data;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,17 +28,18 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.PowerManager.WakeLock;
+import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.Notifier;
+import cm.aptoide.pt.Splash;
 import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
 import cm.aptoide.pt.data.system.ScreenDimensions;
+import cm.aptoide.pt.data.views.ViewDisplayListApps;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
@@ -57,6 +53,7 @@ import cm.aptoide.pt.debug.InterfaceAptoideLog;
 public class ServiceData extends Service implements InterfaceAptoideLog{
 
 	private final String TAG = "Aptoide-ServiceData";
+	private boolean isRunning = false;
 	
 	private ArrayList<Messenger> serviceClients;
 	private EnumServiceDataMessage latestRequest;
@@ -75,13 +72,14 @@ public class ServiceData extends Service implements InterfaceAptoideLog{
 	            case SYNC_INSTALLED_PACKAGES:
 	            	AptoideLog.d(ServiceData.this, "received Sync Installed Packages message");
 	            	syncInstalledPackages();
+	        		serviceClients.add(msg.replyTo);
 	            	break;
 	            case STORE_SCREEN_DIMENSIONS:
 	            	AptoideLog.d(ServiceData.this, "received Store screen dimensions message");
 	            	Object bundleContent = msg.getData().getSerializable(EnumServiceDataMessage.STORE_SCREEN_DIMENSIONS.toString());
 	            	if(bundleContent instanceof ScreenDimensions){
 	            		storeScreenDimensions((ScreenDimensions)bundleContent);	
-	            		AptoideLog.d(ServiceData.this, "received budle with screen dimensions");
+	            		AptoideLog.d(ServiceData.this, "received bundle with screen dimensions");
 	            	}
 	            	break;
 //                case MSG_REGISTER_CLIENT:
@@ -149,19 +147,20 @@ public class ServiceData extends Service implements InterfaceAptoideLog{
 
 	@Override
 	public void onCreate() {
-	    
-		serviceClients = new ArrayList<Messenger>();
-		
-		managerPreferences = new ManagerPreferences(this);
-		managerSystemSync = new ManagerSystemSync(this);
-		managerDatabase = new ManagerDatabase(this);
-		managerNotifications = new ManagerNotifications(this);
-		
-		
-		checkForSelfUpdate();
-		
-		
-		Log.d("Aptoide ServiceData", "Service started");
+	    if(!isRunning){
+			serviceClients = new ArrayList<Messenger>();
+			
+			managerPreferences = new ManagerPreferences(this);
+			managerSystemSync = new ManagerSystemSync(this);
+			managerDatabase = new ManagerDatabase(this);
+			managerNotifications = new ManagerNotifications(this);
+			
+			
+			checkForSelfUpdate();
+		    
+			isRunning = true;
+			Log.d("Aptoide ServiceData", "Service started");
+	    }
 		super.onCreate();
 	}
 	
@@ -335,8 +334,25 @@ public class ServiceData extends Service implements InterfaceAptoideLog{
 	}
 	
 	private void syncInstalledPackages(){
+		Intent splash = new Intent(this, Splash.class);
+		splash.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(splash);
 		managerDatabase.insertInstalledApplications(managerSystemSync.getInstalledApps());
-		//TODO start notification with splash
+		showInstalledApps(managerDatabase.getInstalledAppsDisplayInfo(0, 100));
+	}
+	
+	private void showInstalledApps(ViewDisplayListApps installedApps){
+		Message showInstalled = Message.obtain(null, EnumServiceDataReverseMessage.UPDATE_INSTALLED_LIST.ordinal());
+		Bundle installedPackages = new Bundle();
+		installedPackages.putSerializable(EnumServiceDataReverseMessage.UPDATE_INSTALLED_LIST.toString(), installedApps);
+		showInstalled.setData(installedPackages);
+		try {
+			serviceClients.get(0).send(showInstalled);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		;
 	}
 	
 	private void storeScreenDimensions(ScreenDimensions screenDimensions){
@@ -347,6 +363,7 @@ public class ServiceData extends Service implements InterfaceAptoideLog{
 
 	public void launchAptoide() {
 		Intent aptoide = new Intent(this, Aptoide.class);
+		aptoide.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(aptoide);
 	}
 	

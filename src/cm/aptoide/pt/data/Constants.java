@@ -105,7 +105,10 @@ public class Constants {
 	/** 
 	 * 		HashIds are the hashcodes of the real E-A primary keys separated by pipe symbols. 
 	 *		Reasoning behind them is that sqlite is noticeably more efficient
-	 *		handling integer indexes than text ones. 
+	 *		handling integer indexes than text ones.
+	 *		If for a table the primary key column is declared as INTEGER PRIMARY KEY
+	 *		this value is used as rowid, thus searching for a value in this column takes
+	 *		only one search in table's B-tree, making it twice as fast as any other index search.  
 	 *
 	 *		Primary Key collision is a possibility due to java's hascode algorithm, 
 	 *		but, I expect, highly unlikely for our use case. Anyway, if it does happen,
@@ -241,15 +244,15 @@ public class Constants {
 	 */
 	
 	public static final String CREATE_TABLE_REPOSITORY = "CREATE TABLE IF NOT EXISTS " + TABLE_REPOSITORY + " ("
-			+ KEY_REPO_HASHID + " INTEGER NOT NULL, "
-			+ KEY_REPO_URI + " TEXT UNIQUE NOT NULL, "
-			+ KEY_REPO_BASE_PATH + " TEXT UNIQUE NOT NULL, "
-			+ KEY_REPO_ICONS_PATH + " TEXT UNIQUE NOT NULL, "
-			+ KEY_REPO_SCREENS_PATH + " TEXT UNIQUE NOT NULL, "
+			+ KEY_REPO_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
+			+ KEY_REPO_URI + " TEXT NOT NULL, "
+			+ KEY_REPO_BASE_PATH + " TEXT NOT NULL, "
+			+ KEY_REPO_ICONS_PATH + " TEXT NOT NULL, "
+			+ KEY_REPO_SCREENS_PATH + " TEXT NOT NULL, "
 			+ KEY_REPO_SIZE + " INTEGER NOT NULL DEFAULT (0) CHECK ("+KEY_REPO_SIZE+">=0), "
 			+ KEY_REPO_DELTA + " TEXT NOT NULL DEFAULT (0), "
-			+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT (1), "		/** stupid sqlite doesn't know booleans */
-			+ "PRIMARY KEY("+ KEY_REPO_HASHID +") );";
+			+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT (1) ); ";		/** stupid sqlite doesn't know booleans */
+//			+ "PRIMARY KEY("+ KEY_REPO_HASHID +") );";
 	
 	public static final String FOREIGN_KEY_UPDATE_REPO_REPO_HASHID_STRONG = "foreign_key_update_repo_repo_hashid_strong";
 	public static final String FOREIGN_KEY_DELETE_REPO = "foreign_key_delete_repo";
@@ -257,11 +260,11 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_LOGIN = "CREATE TABLE IF NOT EXISTS " + TABLE_LOGIN + " ("
-			+ KEY_LOGIN_REPO_HASHID + " INTEGER NOT NULL, "
+			+ KEY_LOGIN_REPO_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_LOGIN_USERNAME + " TEXT NOT NULL, "
 			+ KEY_LOGIN_PASSWORD + " TEXT NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_LOGIN_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +")," 
-			+ "PRIMARY KEY("+ KEY_LOGIN_REPO_HASHID +") );";
+			+ "FOREIGN KEY("+ KEY_LOGIN_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +") );"; 
+//			+ "PRIMARY KEY("+ KEY_LOGIN_REPO_HASHID +") );";
 	
 	public static final String FOREIGN_KEY_INSERT_LOGIN = "foreign_key_insert_login_repo";
 	public static final String FOREIGN_KEY_UPDATE_LOGIN_REPO_HASHID_WEAK = "foreign_key_update_login_repo_hashid_weak";
@@ -269,7 +272,7 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_APPLICATION = "CREATE TABLE IF NOT EXISTS " + TABLE_APPLICATION + " ("
-			+ KEY_APPLICATION_FULL_HASHID + " INTEGER NOT NULL, "
+			+ KEY_APPLICATION_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_APPLICATION_REPO_HASHID + " INTEGER NOT NULL, "
 			+ KEY_APPLICATION_HASHID + " INTEGER NOT NULL, "
 			+ KEY_APPLICATION_PACKAGE_NAME + " TEXT NOT NULL, "
@@ -277,8 +280,8 @@ public class Constants {
 			+ KEY_APPLICATION_VERSION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_RATING + " INTEGER NOT NULL CHECK ("+KEY_APPLICATION_RATING+">0), "
-			+ "FOREIGN KEY("+ KEY_APPLICATION_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +")," 
-			+ "PRIMARY KEY("+ KEY_APPLICATION_FULL_HASHID +") );";	
+			+ "FOREIGN KEY("+ KEY_APPLICATION_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +") );"; 
+//			+ "PRIMARY KEY("+ KEY_APPLICATION_FULL_HASHID +") );";	
 
 	public static final String FOREIGN_KEY_INSERT_APPLICATION = "foreign_key_insert_application";
 	public static final String FOREIGN_KEY_UPDATE_APPLICATION_REPO_HASHID_WEAK = "foreign_key_update_application_repo_hashid_weak";
@@ -289,9 +292,9 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_CATEGORY + " ("
-			+ KEY_CATEGORY_HASHID + " INTEGER NOT NULL, "
-			+ KEY_CATEGORY_NAME + " TEXT NOT NULL, "
-			+ "PRIMARY KEY("+ KEY_CATEGORY_HASHID +"));";
+			+ KEY_CATEGORY_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
+			+ KEY_CATEGORY_NAME + " TEXT NOT NULL); ";
+//			+ "PRIMARY KEY("+ KEY_CATEGORY_HASHID +"));";
 
 	public static final String FOREIGN_KEY_UPDATE_CATEGORY_CATEGORY_HASHID_STRONG = "foreign_key_update_category_hashid_strong";
 	public static final String FOREIGN_KEY_DELETE_CATEGORY = "foreign_key_delete_category";
@@ -299,11 +302,11 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_SUB_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_SUB_CATEGORY + " ("
+			+ KEY_SUB_CATEGORY_CHILD + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_SUB_CATEGORY_PARENT + " INTEGER NOT NULL, "
-			+ KEY_SUB_CATEGORY_CHILD + " INTEGER NOT NULL, "
 			+ "FOREIGN KEY("+ KEY_SUB_CATEGORY_PARENT +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_HASHID +"),"
-			+ "FOREIGN KEY("+ KEY_SUB_CATEGORY_CHILD +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_SUB_CATEGORY_CHILD +"));";	
+			+ "FOREIGN KEY("+ KEY_SUB_CATEGORY_CHILD +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_SUB_CATEGORY_CHILD +"));";	
 
 	public static final String FOREIGN_KEY_INSERT_SUB_CATEGORY = "foreign_key_insert_sub_category";
 	public static final String FOREIGN_KEY_UPDATE_SUB_CATEGORY_PARENT_WEAK = "foreign_key_update_sub_category_parent_weak";
@@ -312,11 +315,11 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_APP_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_CATEGORY + " ("
+			+ KEY_APP_CATEGORY_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_APP_CATEGORY_CATEGORY_HASHID + " INTEGER NOT NULL, "
-			+ KEY_APP_CATEGORY_APP_FULL_HASHID + " INTEGER NOT NULL, "
 			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_CATEGORY_HASHID +") REFERENCES "+ TABLE_CATEGORY +"("+ KEY_CATEGORY_HASHID +"),"
-			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_APP_CATEGORY_APP_FULL_HASHID +"));";
+			+ "FOREIGN KEY("+ KEY_APP_CATEGORY_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_APP_CATEGORY_APP_FULL_HASHID +"));";
 	
 	public static final String FOREIGN_KEY_INSERT_APP_CATEGORY = "foreign_key_insert_app_category";
 	public static final String FOREIGN_KEY_UPDATE_APP_CATEGORY_CATEGORY_HASHID_WEAK = "foreign_key_update_app_category_category_hashid_weak";
@@ -329,12 +332,12 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_APP_INSTALLED = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_INSTALLED + " ("
-			+ KEY_APP_INSTALLED_HASHID + " INTEGER NOT NULL, "
+			+ KEY_APP_INSTALLED_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_APP_INSTALLED_PACKAGE_NAME + " TEXT NOT NULL, "
 			+ KEY_APP_INSTALLED_VERSION_CODE + " INTEGER NOT NULL CHECK ("+KEY_APPLICATION_VERSION_CODE+">=0), "
 			+ KEY_APP_INSTALLED_VERSION_NAME + " TEXT NOT NULL, "
-			+ KEY_APP_INSTALLED_NAME + " TEXT NOT NULL, "
-			+ "PRIMARY KEY("+ KEY_APP_INSTALLED_HASHID +") );";	
+			+ KEY_APP_INSTALLED_NAME + " TEXT NOT NULL); ";
+//			+ "PRIMARY KEY("+ KEY_APP_INSTALLED_HASHID +") );";	
 
 	public static final String DROP_TABLE_APP_INSTALLED = "DROP TABLE IF EXISTS "+ TABLE_APP_INSTALLED;
 	
@@ -343,22 +346,22 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_ICON_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_ICON_INFO + " ("
-			+ KEY_ICON_APP_FULL_HASHID + " INTEGER NOT NULL, "
+			+ KEY_ICON_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_ICON_MD5HASH + " TEXT NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_ICON_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_ICON_APP_FULL_HASHID +"));";
+			+ "FOREIGN KEY("+ KEY_ICON_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_ICON_APP_FULL_HASHID +"));";
 
 	public static final String FOREIGN_KEY_INSERT_ICON_INFO = "foreign_key_insert_icon_info";
 	public static final String FOREIGN_KEY_UPDATE_ICON_INFO_APP_FULL_HASHID_WEAK = "foreign_key_update_icon_info_app_full_hashid_weak";
 	
 	
 	public static final String CREATE_TABLE_DOWNLOAD_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_DOWNLOAD_INFO + " ("
-			+ KEY_DOWNLOAD_APP_FULL_HASHID + " INTEGER NOT NULL, "
+			+ KEY_DOWNLOAD_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_DOWNLOAD_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
 			+ KEY_DOWNLOAD_MD5HASH + " TEXT NOT NULL, "
 			+ KEY_DOWNLOAD_SIZE + " INTEGER NOT NULL CHECK ("+KEY_DOWNLOAD_SIZE+">0), "
-			+ "FOREIGN KEY("+ KEY_DOWNLOAD_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_DOWNLOAD_APP_FULL_HASHID +") );";
+			+ "FOREIGN KEY("+ KEY_DOWNLOAD_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_DOWNLOAD_APP_FULL_HASHID +") );";
 	
 	public static final String FOREIGN_KEY_INSERT_DOWNLOAD_INFO = "foreign_key_insert_download_info";
 	public static final String FOREIGN_KEY_UPDATE_DOWNLOAD_INFO_APP_FULL_HASHID_WEAK = "foreign_key_update_download_info_app_full_hashid_weak";
@@ -366,13 +369,13 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_STATS_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_STATS_INFO + " ("
-			+ KEY_STATS_APP_FULL_HASHID + " INTEGER NOT NULL, "
+			+ KEY_STATS_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_STATS_DOWNLOADS + " INTEGER NOT NULL CHECK ("+KEY_STATS_DOWNLOADS+">=0), "
 			+ KEY_STATS_STARS + " REAL NOT NULL CHECK ("+KEY_STATS_STARS+">=0), "
 			+ KEY_STATS_LIKES + " INTEGER NOT NULL CHECK ("+KEY_STATS_LIKES+">=0), "
 			+ KEY_STATS_DISLIKES + " INTEGER NOT NULL CHECK ("+KEY_STATS_DISLIKES+">=0), "
-			+ "FOREIGN KEY("+ KEY_STATS_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_STATS_APP_FULL_HASHID +") );";
+			+ "FOREIGN KEY("+ KEY_STATS_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_STATS_APP_FULL_HASHID +") );";
 
 	public static final String FOREIGN_KEY_INSERT_STATS_INFO = "foreign_key_insert_stats_info";
 	public static final String FOREIGN_KEY_UPDATE_STATS_INFO_APP_FULL_HASHID_WEAK = "foreign_key_update_stats_info_app_full_hashid_weak";
@@ -380,10 +383,10 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_EXTRA_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_EXTRA_INFO + " ("
-			+ KEY_EXTRA_APP_FULL_HASHID + " INTEGER NOT NULL, "
+			+ KEY_EXTRA_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_EXTRA_DESCRIPTION + " TEXT NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_EXTRA_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_EXTRA_APP_FULL_HASHID +") );";
+			+ "FOREIGN KEY("+ KEY_EXTRA_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_EXTRA_APP_FULL_HASHID +") );";
 
 	public static final String FOREIGN_KEY_INSERT_EXTRA_INFO = "foreign_key_insert_extra_info";
 	public static final String FOREIGN_KEY_UPDATE_EXTRA_INFO_APP_FULL_HASHID_WEAK = "foreign_key_update_extra_info_app_full_hashid_weak";
@@ -391,11 +394,11 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_APP_COMMENTS = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_COMMENTS + " ("
+			+ KEY_APP_COMMENT_ID + " INTEGER PRIMARY KEY NOT NULL CHECK ("+KEY_APP_COMMENT_ID+">0), "
 			+ KEY_APP_COMMENTS_APP_FULL_HASHID + " INTEGER NOT NULL, "
-			+ KEY_APP_COMMENT_ID + " INTEGER NOT NULL CHECK ("+KEY_APP_COMMENT_ID+">0), "
 			+ KEY_APP_COMMENT + " TEXT NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_APP_COMMENTS_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +"),"
-			+ "PRIMARY KEY("+ KEY_APP_COMMENT_ID +") );";
+			+ "FOREIGN KEY("+ KEY_APP_COMMENTS_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_APP_COMMENT_ID +") );";
 
 	public static final String FOREIGN_KEY_INSERT_APP_COMMENT = "foreign_key_insert_app_comment";
 	public static final String FOREIGN_KEY_UPDATE_APP_COMMENT_APP_FULL_HASHID_WEAK = "foreign_key_update_app_comment_app_full_hashid_weak";

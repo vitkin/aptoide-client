@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="aptoide_started">Aptoide has started</string><string name="aptoide_stopped">Aptoide has successfully stopped</string>
+    <string name="available">Available</string>
+    <string name="installed">Installed</string>
+    <string name="updates">Updates</string>
+
+    <string name="aptoide_started">Aptoide has started</string>
+    <string name="aptoide_stopped">Aptoide has successfully stopped</string>
     
     <string name="update_self_title">Update available</string>
     <string name="update_self_msg">There is a new version of aptoide available,\ndo you wish to update?</string>
