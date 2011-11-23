@@ -48,6 +48,8 @@ import cm.aptoide.pt.data.views.ViewStatsInfo;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
+ * 					regarding concurrency, the usage of SQLiteDatabase enforces a readers/writers model
+ * 					so we don't need to worry about that in this manager.
  * 
  * @author dsilveira
  * @since 3.0
