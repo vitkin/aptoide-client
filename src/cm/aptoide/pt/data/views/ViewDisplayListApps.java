@@ -35,7 +35,7 @@ import android.os.Parcelable;
  * @since 3.0
  *
  */
-public class ViewDisplayListApps implements Parcelable, Serializable{
+public class ViewDisplayListApps implements Parcelable,Serializable{
 
 	private static final long serialVersionUID = -3819976171445335382L;
 	private ArrayList<Map<String, Object>> appsList;
@@ -110,6 +110,21 @@ public class ViewDisplayListApps implements Parcelable, Serializable{
 		addApp(app);
 	}
 
+	
+	// Parcelable stuff //
+	
+
+	public static final Parcelable.Creator<ViewDisplayListApps> CREATOR = new
+			Parcelable.Creator<ViewDisplayListApps>() {
+		public ViewDisplayListApps createFromParcel(Parcel in) {
+			return new ViewDisplayListApps(in);
+		}
+
+		public ViewDisplayListApps[] newArray(int size) {
+			return new ViewDisplayListApps[size];
+		}
+	};
+
 	/** 
 	 * we're annoyingly forced to create this even if we clearly don't need it,
 	 *  so we just use the default return 0
@@ -121,11 +136,15 @@ public class ViewDisplayListApps implements Parcelable, Serializable{
 		return 0;
 	}
 
+	private ViewDisplayListApps(Parcel in){
+		readFromParcel(in);
+	}
+
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeSerializable(appsList);
 	}
-	
+
 	public void readFromParcel(Parcel in) {
 		appsList = (ArrayList<Map<String, Object>>) in.readSerializable();	
 	}
