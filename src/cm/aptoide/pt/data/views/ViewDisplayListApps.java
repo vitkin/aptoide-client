@@ -24,6 +24,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
  /**
  * ViewDisplayListApps, models a list of Apps,
  * 			 maintains insertion order
@@ -32,9 +35,9 @@ import java.util.Map;
  * @since 3.0
  *
  */
-public class ViewDisplayListApps implements Serializable{
+public class ViewDisplayListApps implements Parcelable, Serializable{
 
-	private static final long serialVersionUID = -4055758104736323306L;
+	private static final long serialVersionUID = -3819976171445335382L;
 	private ArrayList<Map<String, Object>> appsList;
 
 	
@@ -105,6 +108,26 @@ public class ViewDisplayListApps implements Serializable{
 	public void reuse(ViewDisplayApplication app) {
 		reuse(1);
 		addApp(app);
+	}
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeSerializable(appsList);
+	}
+	
+	public void readFromParcel(Parcel in) {
+		appsList = (ArrayList<Map<String, Object>>) in.readSerializable();	
 	}
 	
 }

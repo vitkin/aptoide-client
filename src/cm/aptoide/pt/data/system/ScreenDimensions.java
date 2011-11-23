@@ -21,6 +21,9 @@ package cm.aptoide.pt.data.system;
 
 import java.io.Serializable;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * ScreenDimensions, models the aptoide client's screen dimensions
  *
@@ -28,7 +31,7 @@ import java.io.Serializable;
  * @since 3.0
  *
  */
-public class ScreenDimensions implements Serializable{
+public class ScreenDimensions implements Parcelable,Serializable{
 	private static final long serialVersionUID = -2430264934162700841L;
 	private int width;
 	private int height;
@@ -49,6 +52,47 @@ public class ScreenDimensions implements Serializable{
 	@Override
 	public String toString() {
 		return "Width: "+width+" Height: "+height;
+	}
+
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ScreenDimensions> CREATOR = new
+			Parcelable.Creator<ScreenDimensions>() {
+			        public ScreenDimensions createFromParcel(Parcel in) {
+			            return new ScreenDimensions(in);
+			        }
+
+			        public ScreenDimensions[] newArray(int size) {
+			            return new ScreenDimensions[size];
+			        }
+			    };
+	
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+	
+	private ScreenDimensions(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeInt(width);
+		out.writeInt(height);
+	}
+	
+	public void readFromParcel(Parcel in) {
+		width = in.readInt();
+		height = in.readInt();
 	}
 	
 }
