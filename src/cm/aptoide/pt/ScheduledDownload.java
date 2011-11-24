@@ -294,7 +294,14 @@ public class ScheduledDownload extends ListActivity {
 	private void downloadAll() {
 		// TODO Auto-generated method stub
 		for (int i =0; i!=sch_list.size();i++){
-			downloadQueueService.startDownload(doDownloadNode(i));
+			DownloadNode downloadnode = doDownloadNode(i);
+			if(downloadnode!=null){
+				downloadQueueService.startDownload(downloadnode);
+			}
+			else{
+				Toast.makeText(getApplicationContext(), getString(R.string.schDown_downerror, new Object[]{db.getScheduledDwnServer(sch_list.get(i).apkid)}), Toast.LENGTH_LONG).show();
+
+			}
 		}
 		
 	}
