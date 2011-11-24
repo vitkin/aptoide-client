@@ -52,7 +52,7 @@ public class ChangeTab extends SimpleOnGestureListener {
 	
 	private Animation inFromRightAnimation() {
     	Animation inFromRight = new TranslateAnimation(
-    	Animation.RELATIVE_TO_PARENT,  +1.0f, Animation.RELATIVE_TO_PARENT,  0.0f,
+    	Animation.RELATIVE_TO_PARENT,  +2.0f, Animation.RELATIVE_TO_PARENT,  0.0f,
     	Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,   0.0f
     	);
     	inFromRight.setDuration(500);
@@ -62,17 +62,17 @@ public class ChangeTab extends SimpleOnGestureListener {
 
     private Animation outToLeftAnimation() {
     	Animation outtoLeft = new TranslateAnimation(
-    	 Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,  -1.0f,
+    	 Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,  -2.0f,
     	 Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,   0.0f
     	);
-    	outtoLeft.setDuration(200);
+    	outtoLeft.setDuration(500);
     	outtoLeft.setInterpolator(new AccelerateInterpolator());
     	return outtoLeft;
     }
 	    
     private Animation inFromLeftAnimation() {
     	Animation inFromLeft = new TranslateAnimation(
-    	Animation.RELATIVE_TO_PARENT,  -1.0f, Animation.RELATIVE_TO_PARENT,  0.0f,
+    	Animation.RELATIVE_TO_PARENT,  -2.0f, Animation.RELATIVE_TO_PARENT,  0.0f,
     	Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,   0.0f
     	);
     	inFromLeft.setDuration(500);
@@ -82,10 +82,10 @@ public class ChangeTab extends SimpleOnGestureListener {
 	    
     private Animation outToRightAnimation() {
     	Animation outtoRight = new TranslateAnimation(
-    	 Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,  +1.0f,
+    	 Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,  +2.0f,
     	 Animation.RELATIVE_TO_PARENT,  0.0f, Animation.RELATIVE_TO_PARENT,   0.0f
     	);
-    	outtoRight.setDuration(200);
+    	outtoRight.setDuration(500);
     	outtoRight.setInterpolator(new AccelerateInterpolator());
     	return outtoRight;
     }

@@ -337,8 +337,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				switch (type) {
 				case 0:
 					if(checkbox.isChecked()){
-						Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
-						db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
+						if(!db.existScheduledDownload(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion())){
+							db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
+							Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
+						}
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					rtrn_intent.putExtra("in", true);
@@ -350,8 +352,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 1:
 					
 					if(checkbox.isChecked()){
-						Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
-						db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
+						if(!db.existScheduledDownload(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion())){
+							db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
+							Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
+						}
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					
@@ -368,8 +372,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				case 2:
 					
 					if(checkbox.isChecked()){
-						Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
-						db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
+						
+						if(!db.existScheduledDownload(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion())){
+							db.insertScheduled(apk_id, ((VersionApk)spinnerMulti.getSelectedItem()).getVersion());
+							Toast.makeText(mctx, R.string.addSchDown, Toast.LENGTH_LONG).show();
+						}
 					}else{
 					rtrn_intent.putExtra("apkid", apk_id);
 					jback = true;

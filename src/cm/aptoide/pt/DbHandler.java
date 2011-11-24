@@ -70,14 +70,14 @@ public class DbHandler {
 				+ "instver text not null, instvercode number not null, primary key(apkid));";
 	
 	private static final String CREATE_TABLE_SCHEDULED = "create table if not exists " + TABLE_NAME_SCHEDULED + " (apkid text, "
-	+ "name text, instver text not null, instvercode number not null, primary key(apkid));";
+	+ "name text, instver text not null,server text not null);";
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
 				+ " secure integer default 0 not null, updatetime text default 0 not null, base_path text, delta text default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
-				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text, sdk number, esgl text, screensize text default 'Other' not null,"
+				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, sdk number, esgl text, screensize text,"
 				+ " catg_ord integer default 2 not null, primary key(apkid));";
 	
 	private static final String CREATE_TABLE_OLD_VERSIONS = "create table if not exists " + TABLE_NAME_OLD_VERSIONS
@@ -107,13 +107,34 @@ public class DbHandler {
 		}
 	}
 	
+	int[] getCountMainCtg(int sdk){
+		final String basic_query = "select a.catg_ord, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where a.sdk <='"+sdk+"'and not exists " +
+				                   "(select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg_ord;";
+		//final String basic_query2 = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " group by catg_ord;";		
+		int[] rtn = new int[3];
+		Cursor q = null;
+		
+		q = db.rawQuery(basic_query, null);
+		if(q.moveToFirst()){
+			rtn[q.getInt(0)] = q.getInt(1);
+			while(q.moveToNext()){
+				rtn[q.getInt(0)] = q.getInt(1);
+			}
+			q.close();
+			return rtn;
+		}else{
+			q.close();
+			return null;
+		}
+	}
+	
 	int[] getCountMainCtg(){
 		final String basic_query = "select a.catg_ord, count(a.apkid) from " + TABLE_NAME_EXTRA + " as a where not exists " +
 				                   "(select * from " + TABLE_NAME_LOCAL + " as b where b.apkid = a.apkid) group by catg_ord;";
 		//final String basic_query2 = "select catg_ord, count(*) from " + TABLE_NAME_EXTRA + " group by catg_ord;";		
 		int[] rtn = new int[3];
 		Cursor q = null;
-
+		
 		q = db.rawQuery(basic_query, null);
 		if(q.moveToFirst()){
 			rtn[q.getInt(0)] = q.getInt(1);
@@ -391,29 +412,38 @@ public class DbHandler {
 	public boolean insertScheduled(String apkid, String ver){
 		ContentValues tmp = new ContentValues();
 		tmp.put("apkid", apkid);
-		Cursor c = db.query(TABLE_NAME, new String[] {"name","lastvercode"}, " apkid=\""+apkid+"\" and lastver=\""+ver+"\" ", null, null, null, null);
+		Cursor c = db.query(TABLE_NAME, new String[] {"name","lastvercode","server"}, " apkid=\""+apkid+"\" and lastver=\""+ver+"\" ", null, null, null, null);
 		c.moveToFirst();
+		if(c.getCount()==0){
+			c = db.query(TABLE_NAME_OLD_VERSIONS, new String[] {"name","vercode","server"}, " apkid=\""+apkid+"\" and ver=\""+ver+"\" ", null, null, null, null);
+			c.moveToFirst();
+		}
 		tmp.put("name", c.getString(0));
 		
 		tmp.put("instver", ver);
-		tmp.put("instvercode", c.getInt(1));
+		tmp.put("server", c.getString(2));
+		
+		
 		
 		c.close();
 		
 		return (db.insert(TABLE_NAME_SCHEDULED, null, tmp) > 0); 
 	}
 	
-	public boolean existScheduledDownload(String apkid) {
+	public boolean existScheduledDownload(String apkid, String ver) {
 		Cursor cursor = null;
 		String existsapkid = null;
 		try {
 			
-			cursor = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid"}, null, null, null, null, null);
+			cursor = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid","instver"}, null, null, null, null, null);
 			cursor.moveToFirst();
 			for(int i=0; i<cursor.getCount(); i++){
 				existsapkid=cursor.getString(0);
-				if(existsapkid.equals(apkid)){
-					return true;
+				if (existsapkid.equals(apkid)) {
+					String existsversion = cursor.getString(1);
+					if (existsversion.equals(ver)){
+						return true;
+					}
 				}
 				cursor.moveToNext();
 			}
@@ -427,17 +457,21 @@ public class DbHandler {
 		
 	}
 	
-	public boolean deleteScheduledDownload(String apkid){
-		return db.delete(TABLE_NAME_SCHEDULED, "apkid='"+apkid+"'", null)>0;
+	public boolean deleteScheduledDownload(String apkid,String ver){
+		return db.delete(TABLE_NAME_SCHEDULED, "apkid='"+apkid+"' and instver='"+ver+"'", null)>0;
 	}
-	
+	public String getScheduledDwnServer(String apkid){
+		Cursor c = db.query(TABLE_NAME_SCHEDULED, new String[]{"server"}, "apkid='"+apkid+"'", null, null, null, null);
+		c.moveToFirst();
+		return c.getString(0);
+	}
 	public Vector<ApkNode> getScheduledListNames() {
 		// TODO Auto-generated method stub
 		Vector<ApkNode> out = new Vector<ApkNode>();
 		Cursor c = null;
 		try {
 			//c = db.rawQuery("select uri from " + TABLE_NAME_URI + " order by uri collate nocase", null);
-			c = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid","name","instver","instvercode"}, null, null, null, null, null);
+			c = db.query(TABLE_NAME_SCHEDULED, new String[]{"apkid","name","instver"}, null, null, null, null, null);
 			c.moveToFirst();
 			
 			for(int i=0; i<c.getCount(); i++){
@@ -445,7 +479,7 @@ public class DbHandler {
 				apknode.apkid=c.getString(0);
 				apknode.name=c.getString(1);
 				apknode.ver=c.getString(2);
-				apknode.vercode=c.getInt(3);
+				
 				out.add(apknode);
 				c.moveToNext();
 			}

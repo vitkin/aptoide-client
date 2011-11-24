@@ -31,7 +31,7 @@ public class HWSpecActivity extends Activity {
 		esglVer = (TextView) findViewById(R.id.esglVer);
 		
 		sdkVer.setText(new Integer(specs.getSdkVer()).toString());
-		screenSize.setText(specs.getScreenSize());
+		screenSize.setText(specs.getScreenSize()+"");
 		esglVer.setText(specs.getEsglVer());
 		
 		

@@ -170,7 +170,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		        if (intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false)) {
 		            //do stuff
 		        	
-		        	Toast.makeText(mctx, "Wi-Fi Connected ", Toast.LENGTH_LONG).show();
+		        	Toast.makeText(mctx, "Wi-Fi Connected", Toast.LENGTH_LONG).show();
 		        	schDownAll();
 		        } else {
 		            // wifi connection was lost
@@ -442,7 +442,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		}
 		
 		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
-			schDownAll();
+//			schDownAll();
     	}
 		
 	}
@@ -511,7 +511,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
-		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),"Sch. Downloads");
+		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(R.drawable.ic_menu_scheduled);
 		return true;
 	}
 	
@@ -1038,6 +1038,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         	while(pd.isShowing()){
         		Log.d("Aptoide","======================= I U KILL");
         		pd.dismiss();
+        		schDownAll();
 //        		downloadQueueService.dismissAllNotifications();
         	}
         	/*if(updt_pd.isShowing())
@@ -1099,7 +1100,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 					Log.d("Aptoide","Extras thread DONE!");
 				}
 			}.start();*/ 
+    		
         }
+        
 	};
 
 	private Handler update_updater_tick = new Handler(){

@@ -51,7 +51,8 @@
     
     <string name="update_self_title">Update available</string>
     <string name="update_self_msg">There is a new version of aptoide available,\ndo you wish to update?</string>
-    <string name="schDown_downselected">Download Selected</string>
+    
+    <string name="schDown_downselected">Install Selected</string>
     <string name="schDown_invertselection">Invert Selection</string>
     <string name="schDown_removeselected">Remove Selected</string>
     <string name="schDown_sureremove">Are you sure you want to remove?</string>
