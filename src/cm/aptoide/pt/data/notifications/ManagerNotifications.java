@@ -36,7 +36,7 @@ import android.util.Log;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.Notifier;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.data.ServiceData;
+import cm.aptoide.pt.data.AptoideServiceData;
 
 /**
  * ManagerNotifications, centralizes all notifications' updates
@@ -50,7 +50,7 @@ public class ManagerNotifications {
 	private NotificationManager notificationManager;
 	
 	private WakeLock keepScreenOn;
-	private ServiceData serviceData;
+	private AptoideServiceData serviceData;
 	
 	/** Ongoing */
 	private Notification globalNotification;
@@ -69,7 +69,7 @@ public class ManagerNotifications {
 //	private Context context;											//TODO deprecate
 	
 	
-	public ManagerNotifications(ServiceData serviceData) {
+	public ManagerNotifications(AptoideServiceData serviceData) {
 		this.serviceData = serviceData;
 
 		notificationManager = (NotificationManager)serviceData.getSystemService(Context.NOTIFICATION_SERVICE);

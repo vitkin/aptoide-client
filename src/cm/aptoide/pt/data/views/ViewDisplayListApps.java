@@ -23,6 +23,7 @@ package cm.aptoide.pt.data.views;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -110,10 +111,24 @@ public class ViewDisplayListApps implements Parcelable,Serializable{
 		addApp(app);
 	}
 
+
+	@Override
+	public String toString() {
+		StringBuilder listApps = new StringBuilder("Apps: ");
+		for (Map<String,Object> app : getList()) {
+			listApps.append("app: ");
+			for (Entry<String, Object> appDetail : app.entrySet()) {
+				listApps.append(appDetail.getKey()+"-"+appDetail.getValue()+" ");
+			}
+		}
+		return listApps.toString();
+	}
+	
+	
 	
 	// Parcelable stuff //
 	
-
+	
 	public static final Parcelable.Creator<ViewDisplayListApps> CREATOR = new
 			Parcelable.Creator<ViewDisplayListApps>() {
 		public ViewDisplayListApps createFromParcel(Parcel in) {

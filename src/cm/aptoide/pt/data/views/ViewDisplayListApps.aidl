@@ -1,6 +1,6 @@
 /**
- * EnumServiceDataMessage,		part of aptoide
- * Copyright (C) 2011  Duarte Silveira
+ * ViewDisplayListApps,		part of Aptoide's ServiceData
+ * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,21 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-
-package cm.aptoide.pt.data;
+package cm.aptoide.pt.data.views;
 
 /**
- * EnumServiceDataMessage, typeSafes ServiceData Reverse Messaging in Aptoide
- * 
+ * ViewDisplayListApps, models ViewDisplayListApps's AIDL IPC
+ *
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumServiceDataReverseMessage {
-	UPDATE_INSTALLED_LIST,
-	UPDATE_AVAILABLE_LIST;
-	
-	public static EnumServiceDataReverseMessage reverseOrdinal(int ordinal){
-		return values()[ordinal];
-	}
-}
+parcelable ViewDisplayListApps;

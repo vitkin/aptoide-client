@@ -123,6 +123,8 @@ public class Constants {
 	 *				* Stored procedures
 	 *				* multiple value inserts
 	 *				* booleans
+	 *				* Left inner joins
+	 *				* full outer joins
 	 *				* ... 			
 	 */
 	

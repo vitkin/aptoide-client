@@ -1,6 +1,6 @@
 /**
- * AIDLAptoideServiceData,		part of Aptoide's ServiceData
- * Copyright (C) 2011 Duarte Silveira
+ * EnumServiceDataMessage,		part of aptoide
+ * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,24 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+
 package cm.aptoide.pt.data;
 
-import cm.aptoide.pt.data.system.ScreenDimensions;
-import cm.aptoide.pt.AIDLAptoide;
-import cm.aptoide.pt.data.views.ViewDisplayListApps;
-
 /**
- * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
- *
+ * EnumServiceDataMessage, typeSafes ServiceData Reverse Messaging in Aptoide
+ * 
  * @author dsilveira
  * @since 3.0
  *
  */
-interface AIDLAptoideServiceData {
-
-	void callStoreScreenDimensions(in ScreenDimensions screenDimensions);
-	void callSyncInstalledPackages();
-	void callRegisterInstalledPackagesObserver(in AIDLAptoide installedPackagesObserver);
-	ViewDisplayListApps callGetInstalledPackages(in int offset, in int range);
+public enum EnumServiceDataCallback {
+	UPDATE_INSTALLED_LIST,
+	UPDATE_AVAILABLE_LIST;
 	
+	public static EnumServiceDataCallback reverseOrdinal(int ordinal){
+		return values()[ordinal];
+	}
 }

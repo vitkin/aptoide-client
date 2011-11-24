@@ -26,7 +26,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.EnumConnectionLevels;
-import cm.aptoide.pt.data.ServiceData;
+import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ClientStatistics;
 import cm.aptoide.pt.data.system.ScreenDimensions;
 import cm.aptoide.pt.debug.AptoideLog;
@@ -51,7 +51,7 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		return TAG;
 	}
 
-	public ManagerPreferences(ServiceData serviceData) {
+	public ManagerPreferences(AptoideServiceData serviceData) {
 		getPreferences = serviceData.getSharedPreferences(Constants.FILE_PREFERENCES, Context.MODE_PRIVATE);
 		setPreferences = getPreferences.edit();
 		AptoideLog.v(this, "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
