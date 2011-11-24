@@ -23,13 +23,13 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.preference.CheckBoxPreference;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
+import android.net.NetworkInfo;
 
 public class BaseManagement extends Activity {
 
@@ -129,6 +130,7 @@ public class BaseManagement extends Activity {
 	}
 	
 	private void redrawCatgList(){
+		
 		int[] main_ctg_count = db.getCountMainCtg();
         Map<String, Object> count_lst_app = db.getCountSecCatg(1);
         Map<String, Object> count_lst_games = db.getCountSecCatg(0);
@@ -143,9 +145,9 @@ public class BaseManagement extends Activity {
         	apk_line = new HashMap<String, Object>();
         	apk_line.put("name", node);
         	if(main_ctg_count == null)
-        		apk_line.put("cat_count","0 available");
+        		apk_line.put("cat_count","0 "+getString(R.string.ctg_available));
         	else
-        		apk_line.put("cat_count",main_ctg_count[p] + " available");
+        		apk_line.put("cat_count",main_ctg_count[p] + " "+getString(R.string.ctg_available));
         	
             main_catg.add(apk_line);
             p++;
@@ -164,7 +166,7 @@ public class BaseManagement extends Activity {
         	apk_line = new HashMap<String, Object>();
         	apk_line.put("cntrl", "apps");
         	apk_line.put("name", node);
-            apk_line.put("cat_count",count + " available");
+            apk_line.put("cat_count",count + " "+getString(R.string.ctg_available));
             app_catg.add(apk_line);
 		}
         app_catg_adpt = new SimpleAdapter(mctx, app_catg, R.layout.catglist, 
@@ -182,7 +184,7 @@ public class BaseManagement extends Activity {
         	apk_line = new HashMap<String, Object>();
         	apk_line.put("cntrl", "games");
         	apk_line.put("name", node);
-        	apk_line.put("cat_count",count + " files");
+        	apk_line.put("cat_count",count + " "+getString(R.string.ctg_files));
         	game_catg.add(apk_line);
         }
         
@@ -395,7 +397,7 @@ public class BaseManagement extends Activity {
 			if(db.wasUpdateOrDowngrade(apkid, vercode)){
 				db.removeInstalled(apkid);
 				db.insertInstalled(apkid, version);
-				db.deleteScheduledDownload(apkid);
+				db.deleteScheduledDownload(apkid,version);
 				downloadQueueService.dismissNotification(apkid.hashCode());
 				prefEdit.remove("pkg"); prefEdit.remove("ver");
 				prefEdit.commit();
@@ -454,7 +456,7 @@ public class BaseManagement extends Activity {
 							apk_line.put("down", node.down + " Down.");
 						
 						if(node.status == 1){
-							db.deleteScheduledDownload(node.apkid);
+							db.deleteScheduledDownload(node.apkid,node.ver);
 
 							if(downloadQueueService!=null)
 								downloadQueueService.dismissNotification(node.apkid.hashCode());
@@ -464,7 +466,7 @@ public class BaseManagement extends Activity {
 							instMap.add(apk_line);
 							
 						}else if(node.status == 2){
-							db.deleteScheduledDownload(node.apkid);
+							db.deleteScheduledDownload(node.apkid,node.ver);
 
 //							if(downloadQueueService!=null)
 //								downloadQueueService.dismissNotification(node.apkid.hashCode());
@@ -475,7 +477,7 @@ public class BaseManagement extends Activity {
 							instMap.add(apk_line);
 							
 						}else if(node.status == 3){
-							db.deleteScheduledDownload(node.apkid);
+							db.deleteScheduledDownload(node.apkid,node.ver);
 //							if(downloadQueueService!=null)
 //								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
@@ -487,7 +489,7 @@ public class BaseManagement extends Activity {
 							
 							
 						}else{
-							apk_line.put("status", "Version: " + node.ver);
+							apk_line.put("status", getString(R.string.ctg_version)+" " + node.ver);
 							apk_line.put("name", node.name);
 							if(filterPass(node))
 								availMap.add(apk_line);
@@ -596,7 +598,8 @@ public class BaseManagement extends Activity {
 				tmpr.setRating(new Float(textRepresentation));
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
 				TextView tmpr = (TextView)view;
-				tmpr.setText(textRepresentation);
+					tmpr.setText(textRepresentation);	
+				
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
 				ImageView tmpr = (ImageView)view;	
 				File icn = new File(textRepresentation);
@@ -610,6 +613,7 @@ public class BaseManagement extends Activity {
 				LinearLayout tmpr = (LinearLayout)view;
 				tmpr.setTag(textRepresentation);
 			}else{
+				
 				return false;
 			}
 			return true;
@@ -750,6 +754,7 @@ public class BaseManagement extends Activity {
 			while(pd.isShowing()){
 				Log.d("Aptoide","======================= I KILL");
 				pd.dismiss();
+				schDownAll();
 			}
 			prefEdit.putBoolean("changeavail", true);
 			prefEdit.putBoolean("changeinst", true);
@@ -760,7 +765,14 @@ public class BaseManagement extends Activity {
 		 
 	 };
 	 
-	 
+	 private void schDownAll() {
+		 	ConnectivityManager netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+			if(!db.getScheduledListNames().isEmpty()&&netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED&&sPref.getBoolean("schDwnBox", false)){		        		
+	        	Intent intent1 = new Intent(BaseManagement.this,ScheduledDownload.class);
+	        	intent1.putExtra("downloadAll", "");
+	        	startActivity(intent1);
+	        	}
+		}
 
 
 	@Override

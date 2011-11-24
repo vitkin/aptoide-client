@@ -78,13 +78,17 @@
     <string name="recognized">Recognized</string>
    <string name="not_recognized">Not recognized</string>
    <string name="new_account">New account</string>
+   
    <string name="chkBoxSchDwn">Schedule Download</string>
    <string name="no_sch_downloads">No Scheduled Downloads</string>
    <string name="schDown_wireless_detected">Wireless detected: Download all aplications on Scheduled Downloads?</string>
    <string name="schDown_nodownloads">No Scheduled Downloads</string>
    <string name="schDown_nodownloadselect">No Downloads Selected</string>
-   <string name="schDown_downerror">Download error. Path not found in Aptoide cache.</string>
+   <string name="schDown_downerror">Download error. Add %1$s Store.</string>
    <string name="addSchDown">Added to Scheduled Downloads</string>
+   <string name="ctg_available">available</string>
+   <string name="ctg_files">files</string>
+   <string name="ctg_version">Version:</string>
 </resources>
 
 <!--
