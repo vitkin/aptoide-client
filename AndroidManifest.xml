@@ -10,8 +10,7 @@
 
     <application android:icon="@drawable/icon" android:label="@string/app_name"> 
     
-    											    <!-- @string/app_name -->
-		<activity android:name=".Aptoide" android:label="@string/installed" android:process=":aptoideInterface"
+		<activity android:name=".Aptoide" android:label="@string/app_name" android:process=":aptoideInterface"
 				  android:launchMode="singleTask" android:configChanges="keyboardHidden|orientation">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -23,7 +22,7 @@
 				  android:launchMode="singleTask" android:configChanges="keyboardHidden|orientation">
 		</activity>
 		
-		<service android:name=".data.ServiceData" android:process=":aptoideData">
+		<service android:name=".data.AptoideServiceData" android:process=":aptoideData">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />

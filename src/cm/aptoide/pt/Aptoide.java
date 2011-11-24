@@ -37,23 +37,22 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.SimpleAdapter.ViewBinder;
+import cm.aptoide.pt.data.AIDLAptoideServiceData;
+import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.EnumServiceDataMessage;
-import cm.aptoide.pt.data.EnumServiceDataReverseMessage;
-import cm.aptoide.pt.data.ServiceData;
+import cm.aptoide.pt.data.EnumServiceDataCallback;
 import cm.aptoide.pt.data.system.ScreenDimensions;
 import cm.aptoide.pt.data.views.ViewDisplayListApps;
 import cm.aptoide.pt.debug.AptoideLog;
@@ -67,27 +66,27 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ListView installedAppsList = null;
 	private SimpleAdapter installedAdapter = null;
 		
-	private Messenger serviceDataOutboundMessenger = null;
+	private AIDLAptoideServiceData serviceDataCaller = null;
 
 	private boolean serviceDataSeenRunning = false;
 	private boolean serviceDataIsBound = false;
+
+	
 	private ServiceConnection serviceDataConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
 			// established, giving us the object we can use to
 			// interact with the service.  We are communicating with the
-			// service using a Messenger, so here we get a client-side
-			// representation of that from the raw IBinder object.
-			serviceDataOutboundMessenger = new Messenger(service);
+			// service using AIDL, so here we set the remote service interface.
+			serviceDataCaller = AIDLAptoideServiceData.Stub.asInterface(service);
 			serviceDataIsBound = true;
 			
 			AptoideLog.v(Aptoide.this, "Connected to ServiceData");
 
 			if(!serviceDataSeenRunning){
-				Message syncInstalledPackages = Message.obtain(null, EnumServiceDataMessage.SYNC_INSTALLED_PACKAGES.ordinal());
 				try {
-		            serviceDataOutboundMessenger.send(syncInstalledPackages);
 		            AptoideLog.v(Aptoide.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
+		            serviceDataCaller.callSyncInstalledPackages();
 		        } catch (RemoteException e) {
 					// TODO Auto-generated catch block
 		            e.printStackTrace();
@@ -98,13 +97,25 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 			ScreenDimensions screenDimensions = new ScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
 			AptoideLog.d(Aptoide.this, screenDimensions.toString());
-			Bundle screenDimensionsBundle = new Bundle();
-			screenDimensionsBundle.putSerializable(EnumServiceDataMessage.STORE_SCREEN_DIMENSIONS.toString(), screenDimensions);
-			Message storeScreenDimensions = Message.obtain(null, EnumServiceDataMessage.STORE_SCREEN_DIMENSIONS.ordinal());
-			storeScreenDimensions.setData(screenDimensionsBundle);
 	        try {
-	            serviceDataOutboundMessenger.send(storeScreenDimensions);
 	            AptoideLog.v(Aptoide.this, "Called for screenDimensions storage");
+	            serviceDataCaller.callStoreScreenDimensions(screenDimensions);
+	        } catch (RemoteException e) {
+				// TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+	        
+	        try {
+	            AptoideLog.v(Aptoide.this, "Called for registering as InstalledPackages Observer");
+	            serviceDataCaller.callRegisterInstalledPackagesObserver(serviceDataCallback);
+	        } catch (RemoteException e) {
+				// TODO Auto-generated catch block
+	            e.printStackTrace();
+	        }
+	        
+	        try {
+	            AptoideLog.v(Aptoide.this, "Called for getting InstalledPackages");
+	            displayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
 	            e.printStackTrace();
@@ -114,24 +125,34 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		public void onServiceDisconnected(ComponentName className) {
 			// This is called when the connection with the service has been
 			// unexpectedly disconnected -- that is, its process crashed.
-			serviceDataOutboundMessenger = null;
+			serviceDataCaller = null;
 			serviceDataIsBound = false;
 			
 			AptoideLog.v(Aptoide.this, "Disconnected from ServiceData");
 		}
 	};
+	
+	private AIDLAptoide.Stub serviceDataCallback = new AIDLAptoide.Stub() {
+		
+		@Override
+		public void newListDataAvailable() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received newListDataAvailable callback");
+			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_INSTALLED_LIST.ordinal());
+		}
+	};
     
-    class ServiceDataInboundHandler extends Handler {
+    private Handler serviceDataCallbackHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	EnumServiceDataReverseMessage message = EnumServiceDataReverseMessage.reverseOrdinal(msg.what);
+        	EnumServiceDataCallback message = EnumServiceDataCallback.reverseOrdinal(msg.what);
         	switch (message) {
 			case UPDATE_INSTALLED_LIST:
-				Object bundleContent = msg.getData().getSerializable(EnumServiceDataReverseMessage.UPDATE_INSTALLED_LIST.toString());
-            	if(bundleContent instanceof ViewDisplayListApps){
-            		displayInstalled((ViewDisplayListApps)bundleContent);	
-            		AptoideLog.d(Aptoide.this, "received bundle with installed apps");
-            	}
+				try {
+					displayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
 				break;
 
 			default:
@@ -145,30 +166,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //                    super.handleMessage(msg);
 //            }
         }
-    }
-
-    /**
-     * Target we publish for clients to send messages to ServiceDataInboundHandler.
-     */
-    final Messenger serviceDataInboundMessenger = new Messenger(new ServiceDataInboundHandler());
+    };
 
 
-    /** example service usage code 
-    
-    public void sayHello(View v) {
-        if (!serviceDataIsBound) return;
-        // Create and send a message to the service, using a supported 'what' value
-        Message msg = Message.obtain(null, MessengerService.MSG_SAY_HELLO, 0, 0);
-        try {
-            serviceDataOutboundMessenger.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    ****************************** */
-
-    
     @Override
 	public String getTag() {
 		return TAG;
@@ -177,7 +177,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState); 
         
 		makeSureServiceDataIsRunning();
 		
@@ -186,9 +186,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     }
     
     public void displayInstalled(ViewDisplayListApps installedApps){
-		installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.apps_list, 
+    	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
+		installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.app_row, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
-				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.isinst, R.id.isDowngradeAvailable, R.id.app_icon});
+				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
+		
+		installedAdapter.setViewBinder(new InstalledAppsListBinder());
+		
+		installedAppsList.setAdapter(installedAdapter);
+		setContentView(installedAppsList);
+		installedAppsList.setSelection(-1);
     }
 
 	private void makeSureServiceDataIsRunning(){
@@ -200,10 +207,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			}
 		}
     	if(!serviceDataSeenRunning){
-            startService(new Intent(this, ServiceData.class));
+    		new Thread() {
+    			public void run(){
+    	    		Intent splash = new Intent(Aptoide.this, Splash.class);
+    	    		splash.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+    	    		startActivity(splash);    				
+    			}
+    		}.start();
+    		
+//            startService(new Intent(this, AptoideServiceData.class));
     	}
     	if(!serviceDataIsBound){
-    		bindService(new Intent(this, ServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
+    		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
     	}
     }
 
@@ -238,7 +253,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 
-	class InstalledListBinder implements ViewBinder
+	class InstalledAppsListBinder implements ViewBinder
 	{
 		public boolean setViewValue(View view, Object data, String textRepresentation)
 		{

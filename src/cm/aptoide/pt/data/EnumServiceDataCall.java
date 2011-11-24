@@ -27,13 +27,13 @@ package cm.aptoide.pt.data;
  * @since 3.0
  *
  */
-public enum EnumServiceDataMessage {
+public enum EnumServiceDataCall {
 	ON_START,
 	SYNC_INSTALLED_PACKAGES,
 	STORE_SCREEN_DIMENSIONS,
 	INSERT_REPO;
 	
-	public static EnumServiceDataMessage reverseOrdinal(int ordinal){
+	public static EnumServiceDataCall reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

@@ -71,10 +71,15 @@ public class ViewDisplayApplication {
 		setAppHashid(appHashid);
 		setAppName(appName);
 		setInstalledVersionName(installedVersionName);
-		setIsUpdatable(isUpdatable);
-		setUpTodateVersionName(upToDateVersionName);
-		setIsDowngradable(isDowngradable);
-		setDowngradeVersionName(downgradeVersionName);
+//		setIsUpdatable(isUpdatable);
+		if(isUpdatable){
+			setUpTodateVersionName(upToDateVersionName);
+		}
+//		setIsDowngradable(isDowngradable);
+		if(isDowngradable){
+			setIsDowngradable(isDowngradable);
+//			setDowngradeVersionName(downgradeVersionName);
+		}
 	}
 
 	/**

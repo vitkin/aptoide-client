@@ -781,6 +781,7 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+			e.printStackTrace();
 		}finally{
 			db.endTransaction();
 		}
@@ -1056,9 +1057,9 @@ public class ManagerDatabase {
 			appsCursor.moveToFirst();
 			do{
 				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
-												 ,(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE))
+												 ,(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE)))
 												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
-												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE))
+												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) <= 0?false:(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE)))
 												 , appsCursor.getString(DOWNGRADE_VERSION_NAME));
 				installedApps.addApp(app);
 
@@ -1068,6 +1069,7 @@ public class ManagerDatabase {
 		}catch (Exception e) {
 			db.endTransaction();
 			// TODO: handle exception
+			e.printStackTrace();
 		}
 		return installedApps;
 	}

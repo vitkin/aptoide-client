@@ -1,5 +1,5 @@
 /**
- * AIDLAptoideServiceData,		part of Aptoide's ServiceData
+ * AIDLAptoide,		part of Aptoide
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -17,24 +17,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt.data;
-
-import cm.aptoide.pt.data.system.ScreenDimensions;
-import cm.aptoide.pt.AIDLAptoide;
-import cm.aptoide.pt.data.views.ViewDisplayListApps;
+package cm.aptoide.pt;
 
 /**
- * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
+ * AIDLAptoide, models Aptoide's AIDL IPC
  *
  * @author dsilveira
  * @since 3.0
  *
  */
-interface AIDLAptoideServiceData {
-
-	void callStoreScreenDimensions(in ScreenDimensions screenDimensions);
-	void callSyncInstalledPackages();
-	void callRegisterInstalledPackagesObserver(in AIDLAptoide installedPackagesObserver);
-	ViewDisplayListApps callGetInstalledPackages(in int offset, in int range);
+interface AIDLAptoide{
+	
+	void newListDataAvailable();
 	
 }

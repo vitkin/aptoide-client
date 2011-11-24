@@ -32,6 +32,7 @@ import android.os.Parcelable;
  *
  */
 public class ScreenDimensions implements Parcelable,Serializable{
+//public class ScreenDimensions implements Serializable{
 	private static final long serialVersionUID = -2430264934162700841L;
 	private int width;
 	private int height;

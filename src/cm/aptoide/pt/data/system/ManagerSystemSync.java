@@ -27,7 +27,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.Drawable;
-import cm.aptoide.pt.data.ServiceData;
+import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.views.ViewApplication;
 
 /**
@@ -39,10 +39,10 @@ import cm.aptoide.pt.data.views.ViewApplication;
  */
 public class ManagerSystemSync {
 
-	ServiceData serviceData;
+	AptoideServiceData serviceData;
 	PackageManager packageManager;
 	
-	public ManagerSystemSync(ServiceData serviceData){
+	public ManagerSystemSync(AptoideServiceData serviceData){
 		this.serviceData = serviceData;
 		packageManager = serviceData.getPackageManager();
 	}
