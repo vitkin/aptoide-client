@@ -468,8 +468,8 @@ public class BaseManagement extends Activity {
 						}else if(node.status == 2){
 							db.deleteScheduledDownload(node.apkid,node.ver);
 
-//							if(downloadQueueService!=null)
-//								downloadQueueService.dismissNotification(node.apkid.hashCode());
+							if(downloadQueueService!=null)
+								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
 							apk_line.put("name2", node.name);
 //							apk_line.put("statusSort", 2);
@@ -478,8 +478,8 @@ public class BaseManagement extends Activity {
 							
 						}else if(node.status == 3){
 							db.deleteScheduledDownload(node.apkid,node.ver);
-//							if(downloadQueueService!=null)
-//								downloadQueueService.dismissNotification(node.apkid.hashCode());
+							if(downloadQueueService!=null)
+								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
 							apk_line.put("name", node.name);
@@ -491,7 +491,7 @@ public class BaseManagement extends Activity {
 						}else{
 							apk_line.put("status", getString(R.string.ctg_version)+" " + node.ver);
 							apk_line.put("name", node.name);
-							if(filterPass(node))
+//							if(filterPass(node))
 								availMap.add(apk_line);
 							
 							
@@ -561,33 +561,7 @@ public class BaseManagement extends Activity {
 		
 	}
 	
-	private boolean filterPass(ApkNode node) {
-		if(!sPref.getBoolean("hwspecsChkBox", false))
-			return true;
-		if(node.sdkVer>specs.getSdkVer())
-			return false;
-		
-		float esglver = Float.parseFloat(node.ESGLVer);
-		float localesglver = Float.parseFloat(specs.esglVer);
-		
-		if (esglver>localesglver)
-			return false;
-		
-		int screensizeint = 0;
-		if(node.screenSize.equals("small")){
-			screensizeint = 1;
-		}else if(node.screenSize.equals("normal")){
-			screensizeint = 2;
-		}else if(node.screenSize.equals("large")){
-			screensizeint = 3;
-		}
-		
-		if(screensizeint>specs.screenSize){
-			return false;
-		}
-		
-		return true;
-	}
+
 	
 	class LstBinder implements ViewBinder
 	{
@@ -727,12 +701,12 @@ public class BaseManagement extends Activity {
 			 apk_line.put("name", node.name);
 			 if(node.down >= 0)
 				 apk_line.put("down", node.down + " Down.");
-			 if(filterPass(node))
-			 {
+//			 if(filterPass(node))
+//			 {
 					availMap.add(apk_line);
-				}else{
-					filteredApps++;
-				}
+//				}else{
+//					filteredApps++;
+//				}
 		 }
 
 
