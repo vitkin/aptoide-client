@@ -123,6 +123,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 
 	};
 	BroadcastReceiver receiver;
+	private boolean changed2 =false;
 	
 	
 	@Override
@@ -319,8 +320,10 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 			Log.d("a","a");
 			if(hwbox.isChecked()){
 				prefEditFull.putBoolean("hwspecsChkBox", true);
+				changed2 =true;
 			}else{
 				prefEditFull.putBoolean("hwspecsChkBox", false);
+				changed2 =true;
 			}
 			
 			
@@ -369,6 +372,10 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 			sendBroadcast(i);
 		}
 		//rtrn.putExtra("settings", 0);
+		if(changed2){
+			Intent i = new Intent(WifiManager.EXTRA_BSSID);
+			sendBroadcast(i);
+		}
 		unregisterReceiver(receiver);
 		this.setResult(RESULT_OK, rtrn);
 		

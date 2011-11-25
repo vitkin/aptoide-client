@@ -178,6 +178,11 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
 		        }
 
+		}else if(action.equals(WifiManager.EXTRA_BSSID)){
+			for (ServerNode node: db.getServers()) {
+				db.resetServerCacheUse(node.uri);
+			}
+			updateRepos();
 		}
 	}
 		};
@@ -224,6 +229,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		Log.d("RemoteInTab"," onCreate");
 		intentFilter = new IntentFilter();
     	intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+    	intentFilter.addAction(WifiManager.EXTRA_BSSID);
     	registerReceiver(broadcastReceiver, intentFilter);
 		
 		super.onCreate(savedInstanceState);
