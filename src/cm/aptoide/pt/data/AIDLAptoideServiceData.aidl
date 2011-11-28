@@ -19,9 +19,10 @@
 */
 package cm.aptoide.pt.data;
 
-import cm.aptoide.pt.data.system.ScreenDimensions;
-import cm.aptoide.pt.AIDLAptoide;
+import cm.aptoide.pt.data.system.ViewScreenDimensions;
+import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.data.views.ViewDisplayListApps;
+import cm.aptoide.pt.data.views.ViewRepository;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
@@ -32,9 +33,11 @@ import cm.aptoide.pt.data.views.ViewDisplayListApps;
  */
 interface AIDLAptoideServiceData {
 
-	void callStoreScreenDimensions(in ScreenDimensions screenDimensions);
+	void callStoreScreenDimensions(in ViewScreenDimensions screenDimensions);
 	void callSyncInstalledPackages();
-	void callRegisterInstalledPackagesObserver(in AIDLAptoide installedPackagesObserver);
+	void callAddRepo(in ViewRepository repository);
+	void callRegisterInstalledPackagesObserver(in AIDLAptoideInterface installedPackagesObserver);
+	void callRegisterAvailablePackagesObserver(in AIDLAptoideInterface installedPackagesObserver);
 	ViewDisplayListApps callGetInstalledPackages(in int offset, in int range);
 	
 }

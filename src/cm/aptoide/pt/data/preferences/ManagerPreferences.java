@@ -28,7 +28,7 @@ import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ClientStatistics;
-import cm.aptoide.pt.data.system.ScreenDimensions;
+import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
@@ -83,14 +83,14 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		return getPreferences.getString(EnumPreferences.APTOIDE_CLIENT_UUID.name(), null);
 	}
 	
-	public void setScreenDimensions(ScreenDimensions screenDimensions){
+	public void setScreenDimensions(ViewScreenDimensions screenDimensions){
 		setPreferences.putInt(EnumPreferences.SCREEN_WIDTH.name(), screenDimensions.getWidth());
 		setPreferences.putInt(EnumPreferences.SCREEN_HEIGHT.name(), screenDimensions.getHeight());
 		setPreferences.commit();
 	}
 	
-	public ScreenDimensions getScreenDimensions(){
-		return new ScreenDimensions(getPreferences.getInt(EnumPreferences.SCREEN_WIDTH.name(), Constants.NO_SCREEN), getPreferences.getInt(EnumPreferences.SCREEN_HEIGHT.name(), Constants.NO_SCREEN));
+	public ViewScreenDimensions getScreenDimensions(){
+		return new ViewScreenDimensions(getPreferences.getInt(EnumPreferences.SCREEN_WIDTH.name(), Constants.NO_SCREEN), getPreferences.getInt(EnumPreferences.SCREEN_HEIGHT.name(), Constants.NO_SCREEN));
 	}
 	
 	public void completeStatistics(ClientStatistics statistics){

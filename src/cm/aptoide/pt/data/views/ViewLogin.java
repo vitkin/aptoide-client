@@ -20,8 +20,13 @@
 
 package cm.aptoide.pt.data.views;
 
-import cm.aptoide.pt.data.Constants;
+import java.util.ArrayList;
+import java.util.Map;
+
 import android.content.ContentValues;
+import android.os.Parcel;
+import android.os.Parcelable;
+import cm.aptoide.pt.data.Constants;
 
 
  /**
@@ -31,7 +36,7 @@ import android.content.ContentValues;
  * @since 3.0
  *
  */
-public class ViewLogin {
+public class ViewLogin implements Parcelable{
 
 
 	private ContentValues loginValues;
@@ -97,6 +102,49 @@ public class ViewLogin {
 	public String toString() {
 		return "Username: "+getUsername()+" Password: "+getPassword();
 	}
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewLogin> CREATOR = new
+			Parcelable.Creator<ViewLogin>() {
+
+		@Override
+		public ViewLogin createFromParcel(Parcel in) {
+			return new ViewLogin(in);
+		}
+
+		public ViewLogin[] newArray(int size) {
+			return new ViewLogin[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	private ViewLogin(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeParcelable(loginValues, 0);
+	}
+
+	public void readFromParcel(Parcel in) {
+		loginValues = in.readParcelable(null);
+	}
+		
 	
 	
 	

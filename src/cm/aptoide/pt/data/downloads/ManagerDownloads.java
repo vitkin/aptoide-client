@@ -66,10 +66,10 @@ import android.widget.Toast;
 public class ManagerDownloads {
 	
 	/** Ongoing */
-	private ArrayList<Download> downloads;
+	private ArrayList<ViewDownload> downloads;
 	
 	/** Object reuse pool */
-	private ArrayList<Download> downloadPool;
+	private ArrayList<ViewDownload> downloadPool;
 	private ArrayList<ViewLogin> loginPool;
 
 //	private final static int KBYTES_TO_BYTES = 1024;					// moved to constants.xml

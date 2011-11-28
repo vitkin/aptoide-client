@@ -1,5 +1,5 @@
 /**
- * Aptoide, Alternative client-side Android Package Manager
+ * Installed, part of Aptoide
  * from v3.0 Copyright (C) 2011 Duarte Silveira 
  * duarte.silveira@caixamagica.pt
  * 
@@ -59,19 +59,19 @@ import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
 /**
- * Aptoide, the main interface class
- * 			displays the available apps list
+ * Installed, aptoide interface class which
+ * 			displays the installed apps list
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClickListener{ 
+public class Installed extends Activity implements InterfaceAptoideLog, OnItemClickListener{ 
 	
-	private final String TAG = "Aptoide-Available";
+	private final String TAG = "Aptoide-Installed";
 
-	private ListView availableAppsList = null;
-	private SimpleAdapter availableAdapter = null;
+	private ListView installedAppsList = null;
+	private SimpleAdapter installedAdapter = null;
 		
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -88,11 +88,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			serviceDataCaller = AIDLAptoideServiceData.Stub.asInterface(service);
 			serviceDataIsBound = true;
 			
-			AptoideLog.v(Aptoide.this, "Connected to ServiceData");
+			AptoideLog.v(Installed.this, "Connected to ServiceData");
 
 			if(!serviceDataSeenRunning){
 				try {
-		            AptoideLog.v(Aptoide.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
+		            AptoideLog.v(Installed.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
 		            serviceDataCaller.callSyncInstalledPackages();
 		        } catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -100,33 +100,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		        }
 			}
 			
-			DisplayMetrics displayMetrics = new DisplayMetrics();
-			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-			ViewScreenDimensions screenDimensions = new ViewScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
-			AptoideLog.d(Aptoide.this, screenDimensions.toString());
+			
 	        try {
-	            AptoideLog.v(Aptoide.this, "Called for screenDimensions storage");
-	            serviceDataCaller.callStoreScreenDimensions(screenDimensions);
+	            AptoideLog.v(Installed.this, "Called for registering as InstalledPackages Observer");
+	            serviceDataCaller.callRegisterInstalledPackagesObserver(serviceDataCallback);
+	            
+	            AptoideLog.v(Installed.this, "Called for getting InstalledPackages");
+	            displayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
 	            e.printStackTrace();
 	        }
 	        
-	        try {
-	            AptoideLog.v(Aptoide.this, "Called for registering as AvailablePackages Observer");
-	            serviceDataCaller.callRegisterAvailablePackagesObserver(serviceDataCallback);
-	        } catch (RemoteException e) {
-				// TODO Auto-generated catch block
-	            e.printStackTrace();
-	        }
-	        //TODO call addRepo and getavailableapps
-//	        try {
-//	            AptoideLog.v(Aptoide.this, "Called for getting AvailablePackages");
-//	            displayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
-//	        } catch (RemoteException e) {
-//				// TODO Auto-generated catch block
-//	            e.printStackTrace();
-//	        }
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -135,7 +120,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			serviceDataCaller = null;
 			serviceDataIsBound = false;
 			
-			AptoideLog.v(Aptoide.this, "Disconnected from ServiceData");
+			AptoideLog.v(Installed.this, "Disconnected from ServiceData");
 		}
 	};
 	
@@ -143,7 +128,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		
 		@Override
 		public void newListDataAvailable() throws RemoteException {
-			AptoideLog.v(Aptoide.this, "received newListDataAvailable callback");
+			AptoideLog.v(Installed.this, "received newListDataAvailable callback");
 			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_INSTALLED_LIST.ordinal());
 		}
 	};
@@ -184,26 +169,25 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.splash);
+        super.onCreate(savedInstanceState); 
         
 		makeSureServiceDataIsRunning();
 		
-		availableAppsList = new ListView(this);
-		availableAppsList.setOnItemClickListener(this);
+		installedAppsList = new ListView(this);
+		installedAppsList.setOnItemClickListener(this);
     }
     
     public void displayInstalled(ViewDisplayListApps installedApps){
-    	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
-		availableAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.app_row, 
+    	AptoideLog.d(Installed.this, "InstalledList: "+installedApps);
+		installedAdapter = new SimpleAdapter(Installed.this, installedApps.getList(), R.layout.app_row, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
 		
-		availableAdapter.setViewBinder(new InstalledAppsListBinder());
+		installedAdapter.setViewBinder(new InstalledAppsListBinder());
 		
-		availableAppsList.setAdapter(availableAdapter);
-		setContentView(availableAppsList);
-		availableAppsList.setSelection(-1);
+		installedAppsList.setAdapter(installedAdapter);
+		setContentView(installedAppsList);
+		installedAppsList.setSelection(-1);
     }
 
 	private void makeSureServiceDataIsRunning(){
@@ -217,7 +201,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //    	if(!serviceDataSeenRunning){
 //    		new Thread() {
 //    			public void run(){
-//    	    		Intent splash = new Intent(Aptoide.this, Splash.class);
+//    	    		Intent splash = new Intent(Installed.this, Splash.class);
 //    	    		splash.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 //    	    		startActivity(splash);    				
 //    			}
