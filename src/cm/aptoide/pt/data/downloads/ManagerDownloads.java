@@ -35,7 +35,10 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.cache.Cache;
+import cm.aptoide.pt.data.notifications.ViewNotification;
 import cm.aptoide.pt.data.views.ViewLogin;
 
 import android.app.Notification;
@@ -65,6 +68,8 @@ import android.widget.Toast;
  */
 public class ManagerDownloads {
 	
+	private AptoideServiceData serviceData;
+	
 	/** Ongoing */
 	private ArrayList<ViewDownload> downloads;
 	
@@ -80,8 +85,33 @@ public class ManagerDownloads {
 	
 
 	
-	public ManagerDownloads() {
+	public ManagerDownloads(AptoideServiceData serviceData) {
+		this.serviceData = serviceData;
 		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.PATH_CACHE + "\n ********");
+	}
+				//TODO refactor all thie to reduce data redundancy and memory waste
+	public ViewDownload getViewDownloadBare(InterfaceDownloadInfo bareDownloadInfo, Cache cache, ViewNotification notifier){
+		if(downloadPool.isEmpty()){
+			return new ViewDownload(bareDownloadInfo, cache, notifier);
+		}else{
+			ViewDownload viewDownload = downloadPool.remove(0);
+			viewDownload.reuse(bareDownloadInfo, cache, notifier);
+			return viewDownload;
+		}
+	}
+	
+	public ViewDownload getViewDownloadFull(InterfaceDownloadInfo fullDownloadInfo, Cache cache, ViewNotification notifier){
+		if(downloadPool.isEmpty()){
+			return new ViewDownload(fullDownloadInfo, cache, notifier);
+		}else{
+			ViewDownload viewDownload = downloadPool.remove(0);
+			viewDownload.reuse(fullDownloadInfo, cache, notifier);
+			return viewDownload;
+		}
+	}
+	
+	public void startXmlDownload(){
+		
 	}
 	
 

@@ -32,6 +32,7 @@ import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.Splash;
 import cm.aptoide.pt.data.database.ManagerDatabase;
+import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
@@ -59,6 +60,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	private ManagerPreferences managerPreferences;
 	private ManagerSystemSync managerSystemSync;
 	private ManagerDatabase managerDatabase;
+	private ManagerDownloads managerDownloads;
 	private ManagerNotifications managerNotifications;
 	
 	
@@ -68,7 +70,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.d("Aptoide ServiceData", "binding new client");
+		AptoideLog.d(AptoideServiceData.this, "binding new client");
 		return aptoideServiceDataCallReceiver;
 	}
 	
@@ -101,8 +103,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 
 		@Override
 		public void callAddRepo(ViewRepository repository) throws RemoteException {
-			addRepo(repository);
-			
+			addRepo(repository);			
 		}
 	}; 
 
@@ -151,6 +152,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 			managerPreferences = new ManagerPreferences(this);
 			managerSystemSync = new ManagerSystemSync(this);
 			managerDatabase = new ManagerDatabase(this);
+			managerDownloads = new ManagerDownloads(this);
 			managerNotifications = new ManagerNotifications(this);
 			
 			
@@ -353,6 +355,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	
 	public void addRepo(ViewRepository repository){
 		managerDatabase.insertRepository(repository);
+//		ManagerDownloads.
 		//TODO start the process of downloading and parsing xml and filling the data
 	}
 	
