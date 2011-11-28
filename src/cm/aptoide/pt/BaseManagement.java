@@ -87,7 +87,7 @@ public class BaseManagement extends Activity {
 	
 	private HWSpecifications specs;
 
-	private DownloadQueueService downloadQueueService;
+	DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
 	        // This is called when the connection with the service has been
@@ -458,8 +458,6 @@ public class BaseManagement extends Activity {
 						if(node.status == 1){
 							db.deleteScheduledDownload(node.apkid,node.ver);
 
-							if(downloadQueueService!=null)
-								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
@@ -468,8 +466,6 @@ public class BaseManagement extends Activity {
 						}else if(node.status == 2){
 							db.deleteScheduledDownload(node.apkid,node.ver);
 
-							if(downloadQueueService!=null)
-								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status2", getString(R.string.ctg_version)+" - " + node.verUpdate);
 							apk_line.put("name2", node.name);
 							updtMap.add(apk_line);
@@ -491,9 +487,6 @@ public class BaseManagement extends Activity {
 							
 							
 						}else if(node.status == 3){
-							db.deleteScheduledDownload(node.apkid,node.ver);
-							if(downloadQueueService!=null)
-								downloadQueueService.dismissNotification(node.apkid.hashCode());
 							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
 							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
 							apk_line.put("name", node.name);

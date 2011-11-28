@@ -44,7 +44,11 @@ public class TabInstalled extends BaseManagement implements OnItemClickListener{
 			Log.d("Aptoide-TabInstalled", "Tab Installed, broadcast received.");
 			if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
 				installApk(intent.getStringExtra("localPath"), intent.getStringExtra("version"));
+				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));
+				db.deleteScheduledDownload(intent.getStringExtra("packageName"), intent.getStringExtra("version"));
 			}
+			
+			
 		}
 	}
 	

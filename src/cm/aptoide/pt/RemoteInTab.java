@@ -1269,8 +1269,10 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
     	installApkAction.putExtra("localPath", localPath);
     	installApkAction.putExtra("version", version);
+    	installApkAction.putExtra("apkidHash", apkidHash);
+    	installApkAction.putExtra("packageName", packageName);
 	    	
-		sendOrderedBroadcast(installApkAction, null);
+		sendBroadcast(installApkAction, null);
 		getIntent().setAction("android.intent.action.VIEW");
 		startActivity(getIntent());
 		
