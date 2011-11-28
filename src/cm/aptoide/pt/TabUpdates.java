@@ -349,6 +349,7 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 			super.handleMessage(msg);
 			redraw();
 			lv.setAdapter(updateAdpt);
+			
 			setContentView(lv);
 			lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			lv.setSelection(pos-1);

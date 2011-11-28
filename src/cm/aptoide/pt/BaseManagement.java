@@ -470,11 +470,25 @@ public class BaseManagement extends Activity {
 
 							if(downloadQueueService!=null)
 								downloadQueueService.dismissNotification(node.apkid.hashCode());
-							apk_line.put("status2", getString(R.string.installed_update) + " " + node.ver);
+							apk_line.put("status2", getString(R.string.ctg_version)+" - " + node.verUpdate);
+							apk_line.put("name2", node.name);
+							updtMap.add(apk_line);
+							
+							apk_line = new HashMap<String, Object>();
+							apk_line.put("pkg", node.apkid);
+							iconpath = new String(getString(R.string.icons_path)+node.apkid);
+							apk_line.put("icon", iconpath);
+							apk_line.put("rat", node.rat);
+							
+							
+							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+							apk_line.put("status3", ", "+"Upgrade Available");
 							apk_line.put("name2", node.name);
 //							apk_line.put("statusSort", 2);
-							updtMap.add(apk_line);
 							instMap.add(apk_line);
+							
+							
+							
 							
 						}else if(node.status == 3){
 							db.deleteScheduledDownload(node.apkid,node.ver);
