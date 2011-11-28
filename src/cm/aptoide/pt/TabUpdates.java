@@ -53,6 +53,8 @@ public class TabUpdates extends BaseManagement implements OnItemClickListener{
 				Log.d("Aptoide-TabUpdates", "Tab Updates, broadcast received.");
 				if ( intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
 					updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"), intent.getStringExtra("version"));
+					downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));
+					db.deleteScheduledDownload(intent.getStringExtra("packageName"), intent.getStringExtra("version"));
 				}
 		}
 	}
