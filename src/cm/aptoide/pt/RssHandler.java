@@ -250,24 +250,38 @@ public class RssHandler extends DefaultHandler{
 				}
 				
 				ApkNode node = new ApkNode(tmp_apk.apkid, tmp_apk.vercode);
-				if(filterPass(tmp_apk)){
-				if(!listapks.contains(node)){
-					db.insertApk(false,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size, tmp_apk.sdkVer,tmp_apk.ESGLVer,tmp_apk.screenSize);
-					listapks.add(node);
-				}else{
-					int pos = listapks.indexOf(node);
-					ApkNode list = listapks.get(pos);
-					if(list.vercode < node.vercode){
-						
-						db.copyFromRecentApkToOldApk(tmp_apk.apkid, mserver);
-						db.insertApk(true,tmp_apk.name, tmp_apk.path, tmp_apk.ver, tmp_apk.vercode,tmp_apk.apkid, tmp_apk.date, tmp_apk.rat, mserver, tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg, tmp_apk.catg_type, tmp_apk.size,tmp_apk.sdkVer,tmp_apk.ESGLVer,tmp_apk.screenSize);
+				if (filterPass(tmp_apk)) {
+					if (!listapks.contains(node)) {
+						db.insertApk(false, tmp_apk.name, tmp_apk.path,
+								tmp_apk.ver, tmp_apk.vercode, tmp_apk.apkid,
+								tmp_apk.date, tmp_apk.rat, mserver,
+								tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg,
+								tmp_apk.catg_type, tmp_apk.size,
+								tmp_apk.sdkVer, tmp_apk.ESGLVer,
+								tmp_apk.screenSize);
 						listapks.add(node);
-					} else if(list.vercode != node.vercode){
-						
-						db.insertOldApk(tmp_apk, mserver); 
-						
+					} else {
+						int pos = listapks.indexOf(node);
+						ApkNode list = listapks.get(pos);
+						if (list.vercode < node.vercode) {
+
+							db
+									.copyFromRecentApkToOldApk(tmp_apk.apkid,
+											mserver);
+							db.insertApk(true, tmp_apk.name, tmp_apk.path,
+									tmp_apk.ver, tmp_apk.vercode,
+									tmp_apk.apkid, tmp_apk.date, tmp_apk.rat,
+									mserver, tmp_apk.md5hash, tmp_apk.down,
+									tmp_apk.catg, tmp_apk.catg_type,
+									tmp_apk.size, tmp_apk.sdkVer,
+									tmp_apk.ESGLVer, tmp_apk.screenSize);
+							listapks.add(node);
+						} else if (list.vercode != node.vercode) {
+
+							db.insertOldApk(tmp_apk, mserver);
+
+						}
 					}
-				}
 				}
 				
 			}

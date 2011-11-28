@@ -601,10 +601,12 @@ public class DbHandler {
 							node.status = 3;
 						}
 						
-					}else{
+						node.ver = c.getString(2);
+					}else if(instvercode < lastvercode){
 						node.status = 2;
+						node.verUpdate = c.getString(3);
+						node.ver = c.getString(2);
 					}
-					node.ver = c.getString(2);
 				}
 				node.rat = c.getFloat(7);
 				node.down = c.getInt(8);
