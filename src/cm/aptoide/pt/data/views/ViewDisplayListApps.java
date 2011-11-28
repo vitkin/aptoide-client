@@ -160,6 +160,7 @@ public class ViewDisplayListApps implements Parcelable,Serializable{
 		out.writeSerializable(appsList);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void readFromParcel(Parcel in) {
 		appsList = (ArrayList<Map<String, Object>>) in.readSerializable();	
 	}

@@ -32,22 +32,24 @@ import java.util.ArrayList;
 public class ViewNotification {
 
 	private EnumNotificationTypes notificationType;
-	private String actionsTargetName;	//Name and version if it's relevant
-	private String targetsUniqueId;		//Combined from target's id (pkg.vercode in case of an apk)
-	private int uniqueId; 				//Combined from target's unique id and the action ongoing
+	/** Name and version if it's relevant */
+	private String actionsTargetName;
+	private String targetsHashid;
+	/** Combined from target's unique id and the action ongoing */
+	private int notificationHashid; 	
 	private int currentProgress;
-	private int progressCompletion;
+	private int progressCompletionTarget;
 	private boolean completed;
 	
 	private ArrayList<ViewNotification> subNotifications;
 
-	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, String targetsUniqueId, int progressCompletion) {
+	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, String targetsHashid, int progressCompletionTarget) {
 		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
-		this.targetsUniqueId = targetsUniqueId;
-		this.uniqueId = (targetsUniqueId+notificationType.toString()).hashCode();
+		this.targetsHashid = targetsHashid;
+		this.notificationHashid = (targetsHashid+"|"+notificationType).hashCode();
 		this.currentProgress = 0;
-		this.progressCompletion = progressCompletion;
+		this.progressCompletionTarget = progressCompletionTarget;
 		this.completed = false;
 		
 		this.subNotifications = new ArrayList<ViewNotification>();
@@ -93,23 +95,23 @@ public class ViewNotification {
 		return actionsTargetName;
 	}
 
-	public String getTargetsUniqueId() {
-		return targetsUniqueId;
+	public String getTargetsHashid() {
+		return targetsHashid;
 	}
 
-	public int getUniqueId() {
-		return uniqueId;
+	public int getNotificationHashid() {
+		return notificationHashid;
 	}
 
-	public int getProgressCompletion() {
-		return progressCompletion;
+	public int getProgressCompletionTarget() {
+		return progressCompletionTarget;
 	}
 	
 	
 	public int incrementProgress(int increment){
 		if(subNotifications.isEmpty()){
 			this.currentProgress += increment;
-			if(this.currentProgress >= this.progressCompletion){
+			if(this.currentProgress >= this.progressCompletionTarget){
 				setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
 			}
 			return this.currentProgress;
@@ -120,14 +122,14 @@ public class ViewNotification {
 
 	public int getCurrentProgress(){
 		if(!subNotifications.isEmpty()){
-				this.progressCompletion = 0;
+				this.progressCompletionTarget = 0;
 				this.currentProgress = 0;
 			for (ViewNotification subNotification : this.subNotifications) {
-				this.progressCompletion += subNotification.progressCompletion;
+				this.progressCompletionTarget += subNotification.progressCompletionTarget;
 				this.currentProgress += subNotification.currentProgress;
 			}
 		}
-		if(this.currentProgress >= this.progressCompletion){
+		if(this.currentProgress >= this.progressCompletionTarget){
 			setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
 		}
 		return this.currentProgress;
@@ -137,22 +139,22 @@ public class ViewNotification {
 	public void clean(){
 		this.notificationType = null;
 		this.actionsTargetName = null;
-		this.targetsUniqueId = null;
-		this.uniqueId = 0;
+		this.targetsHashid = null;
+		this.notificationHashid = 0;
 		this.currentProgress = 0;
-		this.progressCompletion = 0;
+		this.progressCompletionTarget = 0;
 		this.completed = false;
 		
 		this.subNotifications = null;
 	}
 	
-	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, String targetsUniqueId, int progressCompletion) {
+	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, String targetsHashid, int progressCompletion) {
 		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
-		this.targetsUniqueId = targetsUniqueId;
-		this.uniqueId = (targetsUniqueId+notificationType.toString()).hashCode();
+		this.targetsHashid = targetsHashid;
+		this.notificationHashid = (targetsHashid+notificationType.toString()).hashCode();
 		this.currentProgress = 0;
-		this.progressCompletion = progressCompletion;
+		this.progressCompletionTarget = progressCompletion;
 		this.completed = false;
 		
 		this.subNotifications = new ArrayList<ViewNotification>();

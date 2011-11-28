@@ -29,7 +29,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"/>
             
-		<TextView android:id="@+id/name_when_updatable"
+		<TextView android:id="@+id/app_name_when_updatable"
             android:textSize="21sp"
             android:layout_alignParentTop="true"
             android:textStyle="bold"
@@ -97,6 +97,10 @@
  
 </LinearLayout>
 <!--
+ * Copyright (C) 2011 Duarte Silveira
+ * duarte.silveira@caixamagica.pt
+ *
+ * derivative work of listicons.xml with
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *

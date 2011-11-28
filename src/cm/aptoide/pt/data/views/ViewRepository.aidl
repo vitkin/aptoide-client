@@ -1,5 +1,5 @@
 /**
- * ScreenDimensions,		part of Aptoide's ServiceData
+ * ViewRepository,		part of Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt.data.system;
+package cm.aptoide.pt.data.views;
 
 /**
- * ScreenDimensions, models ScreenDimensions's AIDL IPC
+ * ViewRepository, models ViewRepository's AIDL IPC
  *
  * @author dsilveira
  * @since 3.0
  *
  */
-parcelable ScreenDimensions;
+parcelable ViewRepository;

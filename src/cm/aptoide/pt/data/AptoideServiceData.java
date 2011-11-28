@@ -27,15 +27,17 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
-import cm.aptoide.pt.AIDLAptoide;
+import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.Splash;
 import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
-import cm.aptoide.pt.data.system.ScreenDimensions;
+import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.views.ViewDisplayListApps;
+import cm.aptoide.pt.data.views.ViewRepository;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
@@ -51,7 +53,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	private final String TAG = "Aptoide-ServiceData";
 	private boolean isRunning = false;
 	
-	private HashMap<EnumServiceDataCallback, AIDLAptoide> serviceClients;
+	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> serviceClients;
 	private EnumServiceDataCall latestRequest;
 
 	private ManagerPreferences managerPreferences;
@@ -78,12 +80,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		}
 		
 		@Override
-		public void callStoreScreenDimensions(ScreenDimensions screenDimensions) throws RemoteException {
+		public void callStoreScreenDimensions(ViewScreenDimensions screenDimensions) throws RemoteException {
 			storeScreenDimensions(screenDimensions);	
+		}
+
+		@Override
+		public void callRegisterAvailablePackagesObserver(AIDLAptoideInterface installedPackagesObserver) throws RemoteException {
+			registerAvailableDataObserver(installedPackagesObserver);
 		}
 		
 		@Override
-		public void callRegisterInstalledPackagesObserver(AIDLAptoide installedPackagesObserver) throws RemoteException {
+		public void callRegisterInstalledPackagesObserver(AIDLAptoideInterface installedPackagesObserver) throws RemoteException {
 			registerInstalledDataObserver(installedPackagesObserver);
 		}
 		
@@ -91,9 +98,20 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		public ViewDisplayListApps callGetInstalledPackages(int offset, int range) throws RemoteException {
 			return getInstalledPackes(offset, range);
 		}
+
+		@Override
+		public void callAddRepo(ViewRepository repository) throws RemoteException {
+			addRepo(repository);
+			
+		}
 	}; 
+
+	public void registerAvailableDataObserver(AIDLAptoideInterface installedPackagesObserver){
+		serviceClients.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, installedPackagesObserver);
+    	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
+	}
 	
-	public void registerInstalledDataObserver(AIDLAptoide installedPackagesObserver){
+	public void registerInstalledDataObserver(AIDLAptoideInterface installedPackagesObserver){
 		serviceClients.put(EnumServiceDataCallback.UPDATE_INSTALLED_LIST, installedPackagesObserver);
     	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
 	}
@@ -126,7 +144,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	@Override
 	public void onCreate() {
 	    if(!isRunning){
-			serviceClients = new HashMap<EnumServiceDataCallback, AIDLAptoide>();
+	    	splash();
+	    	
+			serviceClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
 			
 			managerPreferences = new ManagerPreferences(this);
 			managerSystemSync = new ManagerSystemSync(this);
@@ -326,9 +346,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 //		;
 //	}
 	
-	public void storeScreenDimensions(ScreenDimensions screenDimensions){
+	public void storeScreenDimensions(ViewScreenDimensions screenDimensions){
 		managerPreferences.setScreenDimensions(screenDimensions);
 		AptoideLog.d(AptoideServiceData.this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
+	}
+	
+	public void addRepo(ViewRepository repository){
+		managerDatabase.insertRepository(repository);
+		//TODO start the process of downloading and parsing xml and filling the data
 	}
 	
 	public ViewDisplayListApps getInstalledPackes(int offset, int range){
@@ -336,7 +361,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		return managerDatabase.getInstalledAppsDisplayInfo(offset, range);
 	}
 	
-	 
+	public void splash(){
+		new Thread() {
+			public void run(){
+	    		Intent splash = new Intent(AptoideServiceData.this, Splash.class);
+	    		splash.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+	    		startActivity(splash);    				
+			}
+		}.start();
+	}
 	
 
 	public void launchAptoide() {

@@ -19,7 +19,7 @@
 */
 package cm.aptoide.pt.data;
 
-import cm.aptoide.pt.data.system.ScreenDimensions;
+import cm.aptoide.pt.data.system.ViewScreenDimensions;
 
 /**
  * Clientstatistics, models stored and observed statistics
@@ -33,7 +33,7 @@ public class ClientStatistics {
 	private String aptoideVersionNameInUse;
 	private String aptoideClientUUID;
 	
-	private ScreenDimensions screenDimensions;
+	private ViewScreenDimensions screenDimensions;
 
 	public ClientStatistics(String aptoideVersionNameInUse) {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
@@ -42,16 +42,16 @@ public class ClientStatistics {
 	public ClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, int screenWidth, int screenHeight) {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
 		this.aptoideClientUUID = aptoideClientUUID;
-		this.screenDimensions = new ScreenDimensions(screenWidth, screenHeight);
+		this.screenDimensions = new ViewScreenDimensions(screenWidth, screenHeight);
 	}	
 	
-	public ClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, ScreenDimensions screenDimensions) {
+	public ClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, ViewScreenDimensions screenDimensions) {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
 		this.aptoideClientUUID = aptoideClientUUID;
 		this.screenDimensions = screenDimensions;
 	}
 
-	public void completeStatistics(String aptoideClientUUID, ScreenDimensions screenDimensions){
+	public void completeStatistics(String aptoideClientUUID, ViewScreenDimensions screenDimensions){
 		this.aptoideClientUUID = aptoideClientUUID;
 		this.screenDimensions = screenDimensions;
 	}
@@ -64,7 +64,7 @@ public class ClientStatistics {
 		return aptoideClientUUID;
 	}
 
-	public ScreenDimensions getScreenDimensions() {
+	public ViewScreenDimensions getScreenDimensions() {
 		return screenDimensions;
 	}
 	

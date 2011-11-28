@@ -31,13 +31,13 @@ import android.os.Parcelable;
  * @since 3.0
  *
  */
-public class ScreenDimensions implements Parcelable,Serializable{
+public class ViewScreenDimensions implements Parcelable,Serializable{
 //public class ScreenDimensions implements Serializable{
 	private static final long serialVersionUID = -2430264934162700841L;
 	private int width;
 	private int height;
 	
-	public ScreenDimensions(int width, int height) {
+	public ViewScreenDimensions(int width, int height) {
 		this.width = width;
 		this.height = height;
 	}
@@ -59,14 +59,14 @@ public class ScreenDimensions implements Parcelable,Serializable{
 	// Parcelable stuff //
 	
 	
-	public static final Parcelable.Creator<ScreenDimensions> CREATOR = new
-			Parcelable.Creator<ScreenDimensions>() {
-			        public ScreenDimensions createFromParcel(Parcel in) {
-			            return new ScreenDimensions(in);
+	public static final Parcelable.Creator<ViewScreenDimensions> CREATOR = new
+			Parcelable.Creator<ViewScreenDimensions>() {
+			        public ViewScreenDimensions createFromParcel(Parcel in) {
+			            return new ViewScreenDimensions(in);
 			        }
 
-			        public ScreenDimensions[] newArray(int size) {
-			            return new ScreenDimensions[size];
+			        public ViewScreenDimensions[] newArray(int size) {
+			            return new ViewScreenDimensions[size];
 			        }
 			    };
 	
@@ -81,7 +81,7 @@ public class ScreenDimensions implements Parcelable,Serializable{
 		return 0;
 	}
 	
-	private ScreenDimensions(Parcel in){
+	private ViewScreenDimensions(Parcel in){
 		readFromParcel(in);
 	}
 

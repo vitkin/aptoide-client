@@ -32,9 +32,9 @@ import cm.aptoide.pt.data.views.ViewLogin;
  * @since 3.0
  *
  */
-public class Download {
+public class ViewDownload {
 
-	private InterfaceDownloadInfo downloadInfo;		//TODO this doesn't allow one to use methods not in interface? if confirmed refactor, maybe use DownloadInfo globally
+	private InterfaceDownloadInfo downloadInfo;
 	private boolean bareInfo;
 	private boolean loginRequired;
 	private ViewLogin login;
@@ -43,8 +43,8 @@ public class Download {
 	private ViewNotification notifier;
 	
 	
-	public Download(InterfaceDownloadInfo downloadInfo, Cache cache, ViewNotification notifier) {
-		if(downloadInfo.getClass().equals(BareDownloadInfo.class)){	//TODO does this work, or how do I get around it
+	public ViewDownload(InterfaceDownloadInfo downloadInfo, Cache cache, ViewNotification notifier) {
+		if(downloadInfo instanceof BareDownloadInfo){
 			this.bareInfo = true;
 		}else{
 			this.bareInfo = false;
@@ -55,8 +55,8 @@ public class Download {
 		this.notifier = notifier;
 	}
 	
-	public Download(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, ViewNotification notifier) {
-		if(downloadInfo.getClass().equals(BareDownloadInfo.class)){	//TODO does this work, or how do I get around it
+	public ViewDownload(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, ViewNotification notifier) {
+		if(downloadInfo instanceof BareDownloadInfo){
 			this.bareInfo = true;
 		}else{
 			this.bareInfo = false;
@@ -69,16 +69,25 @@ public class Download {
 	}
 
 
-	public InterfaceDownloadInfo getDownloadInfo() {
+	public InterfaceDownloadInfo getDownloadInfoBare() {
 		return downloadInfo;
 	}
+
+	public ViewDownloadInfo getDownloadInfoFull() {
+		if(!bareInfo){
+			return (ViewDownloadInfo) downloadInfo;
+		}else{
+			return null;	//TODO throw exception instead or null object
+		}
+	}
+	
 
 	public boolean isLoginRequired() {
 		return loginRequired;
 	}
 
 	public ViewLogin getLogin() {
-		return login;			//TODO test isrequired and return nullobject pattern if not
+		return login;			//TODO test isrequired and return nullobject pattern or exception if not 
 	}
 
 	public Cache getCache() {
@@ -98,9 +107,26 @@ public class Download {
 		this.notifier = null;
 	}
 	
-	public void reuse(InterfaceDownloadInfo downloadInfo, boolean loginRequired, ViewLogin login, Cache cache, ViewNotification notifier) {
+	public void reuse(InterfaceDownloadInfo downloadInfo, Cache cache, ViewNotification notifier) {
+		if(downloadInfo instanceof BareDownloadInfo){
+			this.bareInfo = true;
+		}else{
+			this.bareInfo = false;
+		}
 		this.downloadInfo = downloadInfo;
-		this.loginRequired = loginRequired;
+		this.loginRequired = false;
+		this.cache = cache;
+		this.notifier = notifier;
+	}
+	
+	public void reuse(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, ViewNotification notifier) {
+		if(downloadInfo instanceof BareDownloadInfo){
+			this.bareInfo = true;
+		}else{
+			this.bareInfo = false;
+		}
+		this.downloadInfo = downloadInfo;
+		this.loginRequired = true;
 		this.login = login;
 		this.cache = cache;
 		this.notifier = notifier;

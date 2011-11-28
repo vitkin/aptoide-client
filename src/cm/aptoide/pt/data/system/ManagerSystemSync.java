@@ -75,8 +75,8 @@ public class ManagerSystemSync {
 		ViewApplication installedApp;
 		for (PackageInfo installedAppInfo : systemInstalledList) {
 			if(installedAppInfo.applicationInfo.sourceDir.split("[/]+")[1].equals("system")){
-//				continue;
-				//TODO mark as system
+				continue;
+				//TODO maybe show it but mark as system
 			}
 			installedApp = new ViewApplication((packageManager.getApplicationLabel(installedAppInfo.applicationInfo)).toString(), installedAppInfo.packageName, installedAppInfo.versionName, installedAppInfo.versionCode, true);
 			installedApps.add(installedApp);

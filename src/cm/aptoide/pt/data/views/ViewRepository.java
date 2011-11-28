@@ -21,6 +21,8 @@
 package cm.aptoide.pt.data.views;
 
 import android.content.ContentValues;
+import android.os.Parcel;
+import android.os.Parcelable;
 import cm.aptoide.pt.data.Constants;
 
  /**
@@ -30,7 +32,7 @@ import cm.aptoide.pt.data.Constants;
  * @since 3.0
  *
  */
-public class ViewRepository {
+public class ViewRepository implements Parcelable{
 
 	private ContentValues values;
 	private boolean requiresLogin;
@@ -174,6 +176,50 @@ public class ViewRepository {
 	@Override
 	public String toString() {
 		return this.getUri();
+	}
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewRepository> CREATOR = new
+			Parcelable.Creator<ViewRepository>() {
+		public ViewRepository createFromParcel(Parcel in) {
+			return new ViewRepository(in);
+		}
+
+		public ViewRepository[] newArray(int size) {
+			return new ViewRepository[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	private ViewRepository(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeParcelable(values, 0);
+		out.writeValue(requiresLogin);
+		out.writeParcelable(login, 0);
+	}
+
+	public void readFromParcel(Parcel in) {
+		values = in.readParcelable(null);
+		requiresLogin = (Boolean) in.readValue(null);
+		login = in.readParcelable(null);
 	}
 		
 }
