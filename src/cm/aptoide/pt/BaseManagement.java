@@ -458,7 +458,7 @@ public class BaseManagement extends Activity {
 						if(node.status == 1){
 							db.deleteScheduledDownload(node.apkid,node.ver);
 
-							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+							apk_line.put("status", getString(R.string.ctg_version) +" "+node.ver);
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
@@ -466,8 +466,8 @@ public class BaseManagement extends Activity {
 						}else if(node.status == 2){
 							db.deleteScheduledDownload(node.apkid,node.ver);
 
-							apk_line.put("status2", getString(R.string.ctg_version)+" - " + node.verUpdate);
-							apk_line.put("name2", node.name);
+							apk_line.put("status", getString(R.string.ctg_version) +" "+ node.verUpdate);
+							apk_line.put("name", node.name);
 							updtMap.add(apk_line);
 							
 							apk_line = new HashMap<String, Object>();
@@ -477,9 +477,9 @@ public class BaseManagement extends Activity {
 							apk_line.put("rat", node.rat);
 							
 							
-							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
-							apk_line.put("status3", ", "+"Upgrade Available");
-							apk_line.put("name2", node.name);
+							apk_line.put("status", getString(R.string.ctg_version) +" "+node.ver);
+							apk_line.put("status2", ", upgrade available");
+							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 2);
 							instMap.add(apk_line);
 							
@@ -487,7 +487,7 @@ public class BaseManagement extends Activity {
 							
 							
 						}else if(node.status == 3){
-							apk_line.put("status", getString(R.string.installed) + " " + node.ver);
+							apk_line.put("status", getString(R.string.ctg_version) +" "+node.ver);
 							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 3);

@@ -373,7 +373,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		}
 		//rtrn.putExtra("settings", 0);
 		if(changed2){
-			Intent i = new Intent(WifiManager.EXTRA_BSSID);
+			Intent i = new Intent("pt.caixamagica.aptoide.FILTER_CHANGED");
 			sendBroadcast(i);
 		}
 		unregisterReceiver(receiver);

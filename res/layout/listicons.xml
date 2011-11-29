@@ -60,12 +60,14 @@
 	            
         <!-- </LinearLayout>-->
            
-		<TextView android:id="@+id/isupdt"
-            android:textSize="12sp"
-            android:layout_below="@id/name" 
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFA812"/>
+		<TextView
+		    android:id="@+id/isupdt"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@id/name"
+		    android:layout_toRightOf="@id/isinst"
+		    android:textColor="#FFA812"
+		    android:textSize="12sp" />
             
         <RelativeLayout
         	android:layout_width="fill_parent"

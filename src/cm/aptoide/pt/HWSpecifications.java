@@ -42,6 +42,8 @@ public HWSpecifications(Context context) {
 	ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
 	ConfigurationInfo configInfo = activityManager.getDeviceConfigurationInfo();
 	this.esglVer=configInfo.getGlEsVersion();
+	
+	
 }
 
 
