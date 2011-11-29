@@ -78,7 +78,9 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -178,11 +180,24 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
 		        }
 
-		}else if(action.equals(WifiManager.EXTRA_BSSID)){
-			for (ServerNode node: db.getServers()) {
-				db.resetServerCacheUse(node.uri);
-			}
-			updateRepos();
+		}else if(action.equals("pt.caixamagica.aptoide.FILTER_CHANGED")){
+			AlertDialog alrt = new AlertDialog.Builder(mctx).create();
+			alrt.setMessage("The filtering configuration has changed. You need to update stores. Proceed?");
+			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					for (ServerNode node: db.getServers()) {
+						db.resetServerCacheUse(node.uri);
+					}
+					updateRepos();
+					return;
+				} }); 
+			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}});
+			alrt.show();
+			
+			
 		}
 	}
 		};
@@ -229,7 +244,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		Log.d("RemoteInTab"," onCreate");
 		intentFilter = new IntentFilter();
     	intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
-    	intentFilter.addAction(WifiManager.EXTRA_BSSID);
+    	intentFilter.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
     	registerReceiver(broadcastReceiver, intentFilter);
 		
 		super.onCreate(savedInstanceState);
