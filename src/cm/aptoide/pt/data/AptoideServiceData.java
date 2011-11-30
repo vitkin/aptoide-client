@@ -31,14 +31,16 @@ import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.Splash;
+import cm.aptoide.pt.data.cache.ManagerCache;
+import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
+import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
+import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
-import cm.aptoide.pt.data.views.ViewDisplayListApps;
-import cm.aptoide.pt.data.views.ViewRepository;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
@@ -133,6 +135,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	
 	public ManagerDatabase getManagerDatabase() {
 		return managerDatabase;
+	}	
+	
+	public ManagerDownloads getManagerDownloads() {
+		return managerDownloads;
 	}
 
 	public ManagerNotifications getManagerNotifications() {
@@ -353,9 +359,28 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		AptoideLog.d(AptoideServiceData.this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
 	}
 	
-	public void addRepo(ViewRepository repository){
-		managerDatabase.insertRepository(repository);
-//		ManagerDownloads.
+	public void addRepo(final ViewRepository repository){
+		try{
+
+			new Thread(){
+				public void run(){
+					this.setPriority(Thread.MAX_PRIORITY);
+					managerDatabase.insertRepository(repository);
+					if(!managerDownloads.isConnectionAvailable()){
+						//TODO raise exception to ask for what to do
+					}
+					ViewCache bareInfoCache = managerDownloads.startRepoDownload(repository, "bare");	//TODO replace arg with enum
+					//TODO process xml		*******************    HERE   ********************** 
+					//TODO download other parts of xml and process them
+				}
+			}.start();
+
+
+		} catch(Exception e){
+			/** this should never happen */
+			//TODO handle exception
+			e.printStackTrace();
+		}
 		//TODO start the process of downloading and parsing xml and filling the data
 	}
 	
@@ -382,8 +407,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	}
 	
 	
-	public ClientStatistics getStatistics(){
-		ClientStatistics statistics = new ClientStatistics(managerSystemSync.getAptoideVersionNameInUse());
+	public ViewClientStatistics getStatistics(){
+		ViewClientStatistics statistics = new ViewClientStatistics(managerSystemSync.getAptoideVersionNameInUse());
 		managerPreferences.completeStatistics(statistics);
 		return statistics;
 	}

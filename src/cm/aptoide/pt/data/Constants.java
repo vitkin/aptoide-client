@@ -38,8 +38,18 @@ public class Constants {
 	public static final int EMPTY_INT = 0;
 	public static final int NO_SCREEN = 0;
 	
+	public static final int FIRST_ELEMENT = 0;
+	public static final int SKIP_URI_PREFIX = 6;
+	
 	public static final String PATH_CACHE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/";
+	public static final String PATH_CACHE_REPOS = PATH_CACHE + "repos/";
 	public static final String PATH_CACHE_ICONS = PATH_CACHE + "icons/";
+	public static final String PATH_CACHE_SCREENS = PATH_CACHE + "screens/";
+	
+	public static final String PATH_REPO_INFO_XML = "info.xml/v3/";
+	public static final String PATH_REPO_EXTRAS_XML = "extras.xml/v3/";
+	public static final String PATH_REPO_STATS_XML = "stats.xml/v3/";
+	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/latest_version.xml";
 	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
 	public static final String FILE_LATEST_MYAPP = PATH_CACHE + "latest.myapp";

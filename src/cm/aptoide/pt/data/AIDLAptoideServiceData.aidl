@@ -21,8 +21,8 @@ package cm.aptoide.pt.data;
 
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.AIDLAptoideInterface;
-import cm.aptoide.pt.data.views.ViewDisplayListApps;
-import cm.aptoide.pt.data.views.ViewRepository;
+import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.model.ViewRepository;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData

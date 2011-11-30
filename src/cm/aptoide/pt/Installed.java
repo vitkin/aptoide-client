@@ -53,8 +53,8 @@ import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.EnumServiceDataCallback;
+import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
-import cm.aptoide.pt.data.views.ViewDisplayListApps;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 

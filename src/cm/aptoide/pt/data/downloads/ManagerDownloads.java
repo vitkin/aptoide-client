@@ -21,7 +21,6 @@
 
 package cm.aptoide.pt.data.downloads;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
@@ -35,29 +34,19 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.util.Log;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.cache.Cache;
+import cm.aptoide.pt.data.ViewClientStatistics;
+import cm.aptoide.pt.data.cache.ManagerCache;
+import cm.aptoide.pt.data.cache.ViewCache;
+import cm.aptoide.pt.data.model.ViewLogin;
+import cm.aptoide.pt.data.model.ViewRepository;
+import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ViewNotification;
-import cm.aptoide.pt.data.views.ViewLogin;
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Binder;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.util.Log;
-import android.widget.RemoteViews;
-import android.widget.Toast;
 
 /**
  * ManagerDownloads, centralizes all download processes
@@ -69,9 +58,11 @@ import android.widget.Toast;
 public class ManagerDownloads {
 	
 	private AptoideServiceData serviceData;
+	private ManagerCache managerCache;
+	private ConnectivityManager connectivityState;
 	
 	/** Ongoing */
-	private ArrayList<ViewDownload> downloads;
+	private HashMap<Integer, ViewDownload> downloads;
 	
 	/** Object reuse pool */
 	private ArrayList<ViewDownload> downloadPool;
@@ -83,38 +74,258 @@ public class ManagerDownloads {
 //	private Context context;											//TODO deprecate
 //	private WakeLock keepScreenOn;										//moved to ServiceData
 	
-
+	public ManagerCache getManagerCache(){
+		return this.managerCache;
+	}
+	
+	public ViewDownload getDownload(int notificationHashid) {
+		return downloads.get(notificationHashid);
+	}
+	
+	private ViewClientStatistics getClientStatistics(){
+		return serviceData.getStatistics();
+	}
+	
 	
 	public ManagerDownloads(AptoideServiceData serviceData) {
 		this.serviceData = serviceData;
+		managerCache = new ManagerCache();
+		
+		connectivityState = (ConnectivityManager)serviceData.getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		this.downloads = new HashMap<Integer, ViewDownload>();
+		this.downloadPool = new ArrayList<ViewDownload>();
+		this.loginPool = new ArrayList<ViewLogin>();
+		
 		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.PATH_CACHE + "\n ********");
 	}
-				//TODO refactor all thie to reduce data redundancy and memory waste
-	public ViewDownload getViewDownloadBare(InterfaceDownloadInfo bareDownloadInfo, Cache cache, ViewNotification notifier){
-		if(downloadPool.isEmpty()){
-			return new ViewDownload(bareDownloadInfo, cache, notifier);
-		}else{
-			ViewDownload viewDownload = downloadPool.remove(0);
-			viewDownload.reuse(bareDownloadInfo, cache, notifier);
-			return viewDownload;
-		}
-	}
-	
-	public ViewDownload getViewDownloadFull(InterfaceDownloadInfo fullDownloadInfo, Cache cache, ViewNotification notifier){
-		if(downloadPool.isEmpty()){
-			return new ViewDownload(fullDownloadInfo, cache, notifier);
-		}else{
-			ViewDownload viewDownload = downloadPool.remove(0);
-			viewDownload.reuse(fullDownloadInfo, cache, notifier);
-			return viewDownload;
-		}
-	}
-	
-	public void startXmlDownload(){
 		
-	}
 	
 
+	//TODO refactor all thie to reduce data redundancy and memory waste
+	public synchronized ViewDownload getNewViewDownload(String remotePath, ViewCache cache, ViewNotification notification){
+		ViewDownload download;
+		if(downloadPool.isEmpty()){
+			download = new ViewDownload(remotePath, cache, notification);
+		}else{
+			ViewDownload viewDownload = downloadPool.remove(Constants.FIRST_ELEMENT);
+			viewDownload.reuse(remotePath, cache, notification);
+			download = viewDownload;
+		}
+		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
+		return download;
+	}
+	
+	public synchronized ViewDownload getNewViewDownload(String remotePath, ViewLogin login, ViewCache cache, ViewNotification notification){
+		ViewDownload download;
+		if(downloadPool.isEmpty()){
+			download = new ViewDownload(remotePath, login, cache, notification);
+		}else{
+			ViewDownload viewDownload = downloadPool.remove(Constants.FIRST_ELEMENT);
+			viewDownload.reuse(remotePath, login, cache, notification);
+			download = viewDownload;
+		}
+		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
+		return download;
+	}
+	
+	public boolean isConnectionAvailable(){
+		boolean connectionAvailable = false;
+		try {
+			connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+			
+		} catch (Exception e) { }
+		try {
+			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+			
+		} catch (Exception e) { }
+		
+		return connectionAvailable;
+	}
+	
+	
+	public ViewCache startRepoDownload(ViewRepository repository, String infoType){ //TODO use infoType and complete with the other protocol args
+		ViewCache cache;
+		ViewNotification notification;
+		ViewDownload download;
+		int retrysCount = 3;
+		boolean downloadSuccess = false; 
+		
+		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split(".")[Constants.FIRST_ELEMENT];
+		
+//		String bareInfoXmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=bare";
+		String bareInfoXmlPath = "http://aptoide.com/testing/xml/info.xml";
+		cache = managerCache.getNewRepoViewCache(repository.getHashid());
+		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
+		if(repository.isLoginRequired()){	//TODO get login from pool
+			download = getNewViewDownload(bareInfoXmlPath, repository.getLogin(), cache, notification);
+		}else{
+			download = getNewViewDownload(bareInfoXmlPath, cache, notification);
+		}
+		
+		do{
+			downloadSuccess = download(download.getNotification().getNotificationHashid(), true);
+			retrysCount--;
+		}while( !downloadSuccess && retrysCount > 0 );
+		
+//		if(!downloadSuccess){
+//			//TODO raise exception
+//		}
+		return cache;
+	}
+	
+//	public void startRepoDownloadAndProcessing(ViewRepository repository){
+//		ViewCache cache;
+//		ViewNotification notification;
+//		ViewDownload download;
+//		
+//		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split(".")[Constants.FIRST_ELEMENT];
+//		
+////		String bareInfoXmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=bare";
+//		String bareInfoXmlPath = "http://aptoide.com/testing/xml/info.xml";
+//		cache = managerCache.getNewRepoViewCache(repository.getHashid());
+//		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid(), 1);
+//		if(repository.isLoginRequired()){	//TODO get login from pool
+//			download = getNewViewDownload(bareInfoXmlPath, repository.getLogin(), cache, notification);
+//		}else{
+//			download = getNewViewDownload(bareInfoXmlPath, cache, notification);
+//		}
+//		download(download.getNotification().getNotificationHashid(), true);
+//		//TODO set notification's progressCompletionTarget
+//	}
+	
+	
+	
+	//TODO refactor magic numbers, logs and exceptions
+	private boolean download(final int notificationHashid, final boolean overwriteCache){
+//					if(!keepScreenOn.isHeld()){
+//						keepScreenOn.acquire();
+//					}
+//					int threadApkidHash = apkidHash;
+//					
+//					String remotePath = notifications.get(threadApkidHash).get("remotePath");
+//					String md5sum = notifications.get(threadApkidHash).get("md5sum");
+//					
+//					String localPath = notifications.get(threadApkidHash).get("localPath");
+//					 Log.d("Aptoide-DownloadQueuService","thread apkidHash: "+threadApkidHash +" localPath: "+localPath);	
+
+		ViewDownload download = getDownload(notificationHashid);
+		ViewCache localCache = download.getCache();
+		ViewNotification notification = download.getNotification();
+
+		String localPath = localCache.getLocalPath();
+		String remotePath = download.getRemotePath();
+		int targetBytes;
+		ViewClientStatistics clientStatistics = getClientStatistics();
+
+		//					Message downloadArguments = new Message();
+		try{
+
+			getManagerCache().clearCache(localCache);
+
+			FileOutputStream fileOutputStream = new FileOutputStream(localPath);
+			DefaultHttpClient httpClient = new DefaultHttpClient();
+			HttpGet httpGet = new HttpGet(remotePath);
+
+//						SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+//						String myid = sPref.getString("myId", "NoInfo");
+//						String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+
+//TODO refactor this user-agent string
+//						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+
+			if(download.isLoginRequired()){
+				URL url = new URL(remotePath);
+				httpClient.getCredentialsProvider().setCredentials(
+						new AuthScope(url.getHost(), url.getPort()),
+						new UsernamePasswordCredentials(download.getLogin().getUsername(), download.getLogin().getPassword()));
+			}
+
+			HttpResponse httpResponse = httpClient.execute(httpGet);
+
+			if(httpResponse == null){
+				Log.d("Aptoide","Problem in network... retry...");	
+				httpResponse = httpClient.execute(httpGet);
+				if(httpResponse == null){
+					Log.d("Aptoide","Major network exception... Exiting!");
+					/*msg_al.arg1= 1;
+								 download_error_handler.sendMessage(msg_al);*/
+					throw new TimeoutException();
+				}
+			}
+
+			if(httpResponse.getStatusLine().getStatusCode() == 401){
+				throw new TimeoutException();
+			}else{
+				if(download.isSizeKnown()){
+					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;
+				}else{
+					targetBytes = httpResponse.getAllHeaders().length;
+					notification.setProgressCompletionTarget(targetBytes);
+				}
+
+				InputStream inputStream = httpResponse.getEntity().getContent();
+				byte data[] = new byte[8096];
+				int bytesRead;
+				bytesRead = inputStream.read(data, 0, 8096);
+
+//							int progressNotificationUpdate = 200;
+//							int intermediateProgress = 0;
+				while(bytesRead != -1) {
+//								if(progressNotificationUpdate == 0){
+//									if(!keepScreenOn.isHeld()){
+//										keepScreenOn.acquire();
+//									}
+//									progressNotificationUpdate = 200;
+//									Message progressArguments = new Message();
+//									progressArguments.arg1 = threadApkidHash;
+//									progressArguments.arg2 = intermediateProgress;
+//									downloadProgress.sendMessage(progressArguments);
+//									intermediateProgress = 0;
+//								}else{
+//									intermediateProgress += red;
+//									progressNotificationUpdate--;
+//								}
+					notification.incrementProgress(bytesRead);
+					fileOutputStream.write(data,0,bytesRead);
+					bytesRead = inputStream.read(data, 0, 8096);
+				}
+				Log.d("Aptoide","Download done! targetHashid: "+notificationHashid +" localPath: "+localPath);
+				notification.setCompleted(true);
+				fileOutputStream.flush();
+				fileOutputStream.close();
+				inputStream.close();
+
+//						if(keepScreenOn.isHeld()){
+//							keepScreenOn.release();
+//						}
+
+				if(localCache.hasMd5Sum()){
+					getManagerCache().md5CheckOk(localCache);
+					//TODO md5check boolean return handle  by  raising exception
+				}
+				
+				return true;
+			}
+
+		}catch (Exception e) { 
+//						if(keepScreenOn.isHeld()){
+//							keepScreenOn.release();
+//						}
+//						downloadArguments.arg1= 1;
+//						downloadArguments.arg2 =threadApkidHash;
+//						downloadErrorHandler.sendMessage(downloadArguments);
+			
+			//TODO handle exception
+			e.printStackTrace();
+			return false;
+		}
+	}
+	
+	
+	
 //TODO refactor	
 	
 //	public void startDownload(DownloadNode downloadNode){
@@ -252,133 +463,7 @@ public class ManagerDownloads {
 	
 //TODO refactor
 	
-//	private void downloadFile(final int apkidHash){
-//			
-//		try{
-//			
-//			new Thread(){
-//				public void run(){
-//					this.setPriority(Thread.MAX_PRIORITY);
-//					
-//					if(!keepScreenOn.isHeld()){
-//						keepScreenOn.acquire();
-//					}
-//					int threadApkidHash = apkidHash;
-//					
-//					String remotePath = notifications.get(threadApkidHash).get("remotePath");
-//					String md5sum = notifications.get(threadApkidHash).get("md5sum");
-//					
-//					String localPath = notifications.get(threadApkidHash).get("localPath");
-//					 Log.d("Aptoide-DownloadQueuService","thread apkidHash: "+threadApkidHash +" localPath: "+localPath);	
-//					
-//					
-//					Message downloadArguments = new Message();
-//					try{
-//						
-//						// If file exists, removes it...
-//						 File f_chk = new File(localPath);
-//						 if(f_chk.exists()){
-//							 f_chk.delete();
-//						 }
-//						 f_chk = null;
-//						
-//						FileOutputStream saveit = new FileOutputStream(localPath);
-//						DefaultHttpClient mHttpClient = new DefaultHttpClient();
-//						HttpGet mHttpGet = new HttpGet(remotePath);
-//						
-//						SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-//						String myid = sPref.getString("myId", "NoInfo");
-//						String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
-//						
-//						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
-//						
-//						if(Boolean.parseBoolean(notifications.get(threadApkidHash).get("loginRequired"))){
-//							URL mUrl = new URL(remotePath);
-//							mHttpClient.getCredentialsProvider().setCredentials(
-//									new AuthScope(mUrl.getHost(), mUrl.getPort()),
-//									new UsernamePasswordCredentials(notifications.get(threadApkidHash).get("username"), notifications.get(threadApkidHash).get("password") ));
-//						}
-//
-//						HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-//						
-//						if(mHttpResponse == null){
-//							 Log.d("Aptoide","Problem in network... retry...");	
-//							 mHttpResponse = mHttpClient.execute(mHttpGet);
-//							 if(mHttpResponse == null){
-//								 Log.d("Aptoide","Major network exception... Exiting!");
-//								 /*msg_al.arg1= 1;
-//								 download_error_handler.sendMessage(msg_al);*/
-//								 throw new TimeoutException();
-//							 }
-//						 }
-//						
-//						if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-//							throw new TimeoutException();
-//						}else{
-//							InputStream getit = mHttpResponse.getEntity().getContent();
-//							byte data[] = new byte[8096];
-//							int red;
-//							red = getit.read(data, 0, 8096);
-//
-//							int progressNotificationUpdate = 200;
-//							int intermediateProgress = 0;
-//							while(red != -1) {
-//								if(progressNotificationUpdate == 0){
-//									if(!keepScreenOn.isHeld()){
-//										keepScreenOn.acquire();
-//									}
-//									progressNotificationUpdate = 200;
-//									Message progressArguments = new Message();
-//									progressArguments.arg1 = threadApkidHash;
-//									progressArguments.arg2 = intermediateProgress;
-//									downloadProgress.sendMessage(progressArguments);
-//									intermediateProgress = 0;
-//								}else{
-//									intermediateProgress += red;
-//									progressNotificationUpdate--;
-//								}
-//																
-//								saveit.write(data,0,red);
-//								red = getit.read(data, 0, 8096);
-//							}
-//							Log.d("Aptoide","Download done! apkidHash: "+threadApkidHash +" localPath: "+localPath);
-//							saveit.flush();
-//							saveit.close();
-//							getit.close();
-//						}
-//
-//						if(keepScreenOn.isHeld()){
-//							keepScreenOn.release();
-//						}
-//
-//						File f = new File(localPath);
-//						Md5Handler hash = new Md5Handler();
-//						if(md5sum == null || md5sum.equalsIgnoreCase(hash.md5Calc(f))){
-//							downloadArguments.arg1 = 1;
-//							downloadArguments.arg2 = threadApkidHash;
-//							downloadArguments.obj = localPath;
-//							downloadHandler.sendMessage(downloadArguments);
-//						}else{
-//							Log.d("Aptoide",md5sum + " VS " + hash.md5Calc(f));
-//							downloadArguments.arg1 = 0;
-//							downloadArguments.arg2 = threadApkidHash;
-//							downloadErrorHandler.sendMessage(downloadArguments);
-//						}
-//
-//					}catch (Exception e) { 
-//						if(keepScreenOn.isHeld()){
-//							keepScreenOn.release();
-//						}
-//						downloadArguments.arg1= 1;
-//						downloadArguments.arg2 =threadApkidHash;
-//						downloadErrorHandler.sendMessage(downloadArguments);
-//					}
-//				}
-//			}.start();
-//			
-//			
-//		} catch(Exception e){	}
-//	}
+
 //	
 //	
 //	/*

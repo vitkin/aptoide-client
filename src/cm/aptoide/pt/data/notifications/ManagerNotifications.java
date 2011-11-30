@@ -53,16 +53,16 @@ public class ManagerNotifications {
 	private AptoideServiceData serviceData;
 	
 	/** Ongoing */
-	private Notification globalNotification;
-	private Notification packageManagerSync;
-	private Notification reposUpdate;
-	private Notification gettingIcons;
-	private Notification gettingExtras;
-	private ArrayList<Notification> gettingApps;
-	private ArrayList<Notification> gettingUpdates;
+	private ViewNotification globalNotification;
+	private ViewNotification packageManagerSync;
+	private ViewNotification reposUpdate;
+	private ViewNotification gettingIcons;
+	private ViewNotification gettingExtras;
+	private ArrayList<ViewNotification> gettingApps;
+	private ArrayList<ViewNotification> gettingUpdates;
 	
 	/** Object reuse pool */
-	private ArrayList<Notification> notificationPool;
+	private ArrayList<ViewNotification> notificationPool;
 	
 //	private final static int KBYTES_TO_BYTES = 1024;					// moved to constants.xml
 //	private NotificationManager notificationManager;					//TODO move to notifications within ServiceData
@@ -95,9 +95,9 @@ public class ManagerNotifications {
 		PowerManager powerManager = (PowerManager) serviceData.getSystemService(Context.POWER_SERVICE);
         keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
         
-		notificationPool = new ArrayList<Notification>(10);
-		gettingApps = new ArrayList<Notification>(5);
-		gettingUpdates = new ArrayList<Notification>(5);
+		notificationPool = new ArrayList<ViewNotification>(15);
+		gettingApps = new ArrayList<ViewNotification>(5);
+		gettingUpdates = new ArrayList<ViewNotification>(5);
 	}
 		
 	public void startNotification(ViewNotification notification){
@@ -113,6 +113,34 @@ public class ManagerNotifications {
 	
 	public void startNotifier(){
 		serviceData.startActivity(new Intent(serviceData, Notifier.class));
+	}
+	
+	
+	
+	public synchronized ViewNotification getNewViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget){
+		ViewNotification notification;
+		if(notificationPool.isEmpty()){
+			notification = new ViewNotification(notificationType, actionsTargetName, targetsHashid, progressCompletionTarget);
+		}else{
+			ViewNotification viewNotification = notificationPool.remove(0);
+			viewNotification.reuse(notificationType, actionsTargetName, targetsHashid, progressCompletionTarget);
+			notification = viewNotification;
+		}
+		
+		switch (notificationType) {
+		case REPOS_UPDATE:
+			reposUpdate = notification;
+			break;
+
+		default:
+			break;
+		}
+		
+		return notification;
+	}
+	
+	public ViewNotification getNewViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid){
+		return getNewViewNotification(notificationType, actionsTargetName, targetsHashid, 1);
 	}
 
 //TODO refactor

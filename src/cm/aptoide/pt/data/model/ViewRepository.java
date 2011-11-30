@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.views;
+package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
 import android.os.Parcel;
@@ -35,7 +35,7 @@ import cm.aptoide.pt.data.Constants;
 public class ViewRepository implements Parcelable{
 
 	private ContentValues values;
-	private boolean requiresLogin;
+	private boolean loginRequired;
 	private ViewLogin login;
 	
 	
@@ -45,7 +45,7 @@ public class ViewRepository implements Parcelable{
 	 * @param String uri
 	 */
 	public ViewRepository(String uri) {
-		this.requiresLogin = false;
+		this.loginRequired = false;
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);			
 		setUri(uri);	
 	}
@@ -118,13 +118,13 @@ public class ViewRepository implements Parcelable{
 	
 	
 	public void setLogin(ViewLogin login){
-		this.requiresLogin = true;
+		this.loginRequired = true;
 		this.login = login;
 		this.login.setRepoHashid(getHashid());
 	}
 	
-	public boolean requiresLogin() {
-		return requiresLogin;
+	public boolean isLoginRequired() {
+		return loginRequired;
 	}
 
 	public ViewLogin getLogin() {
@@ -139,7 +139,7 @@ public class ViewRepository implements Parcelable{
 	 */
 	public void clean(){
 		this.values = null;
-		this.requiresLogin = false;
+		this.loginRequired = false;
 		this.login = null;
 	}
 
@@ -149,7 +149,7 @@ public class ViewRepository implements Parcelable{
 	 * @param String uri
 	 */
 	public void reuse(String uri) {
-		this.requiresLogin = false;
+		this.loginRequired = false;
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
 		setUri(uri);
 	}
@@ -212,13 +212,13 @@ public class ViewRepository implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeParcelable(values, 0);
-		out.writeValue(requiresLogin);
+		out.writeValue(loginRequired);
 		out.writeParcelable(login, 0);
 	}
 
 	public void readFromParcel(Parcel in) {
 		values = in.readParcelable(null);
-		requiresLogin = (Boolean) in.readValue(null);
+		loginRequired = (Boolean) in.readValue(null);
 		login = in.readParcelable(null);
 	}
 		

@@ -1,5 +1,5 @@
 /**
- * ViewAppComment,		part of Aptoide's data model
+ * ViewIconInfo,		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,83 +18,76 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.views;
+package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * ViewAppComment, models an app's comment
+ * ViewIconInfo, models an icon's download info
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewAppComment {
+public class ViewIconInfo {
 
 	private ContentValues values;
 
 	
 	/**
-	 * ViewAppComment Constructor
+	 * ViewIcon Constructor
 	 * 
+	 * @param String iconRemotePathTail, icon's remote path tail (what comes after repository's base path)
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
-	 * @param int commentId id from server
 	 */
-	public ViewAppComment(int applicationFullHashid, int commentId) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_COMMENTS);
+	public ViewIconInfo(String iconRemotePathTail, int applicationFullHashid) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
+		setMd5Hash(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
-		setCommentId(commentId);
 	}
 	
 	
+	private void setMd5Hash(String md5hash){
+		values.put(Constants.KEY_ICON_MD5HASH, md5hash);		
+	}
+	
+	public String getMd5Hash(){
+		return values.getAsString(Constants.KEY_ICON_MD5HASH);
+	}
+	
 	private void setAppFullHashid(int appFullHashid){
-		this.values.put(Constants.KEY_APP_COMMENTS_APP_FULL_HASHID, appFullHashid);
+		values.put(Constants.KEY_ICON_APP_FULL_HASHID, appFullHashid);
 	}
 	
 	public int getAppFullHashid() {
-		return values.getAsInteger(Constants.KEY_APP_COMMENTS_APP_FULL_HASHID);
+		return values.getAsInteger(Constants.KEY_ICON_APP_FULL_HASHID);
 	}
 	
-	private void setCommentId(int commentId){
-		this.values.put(Constants.KEY_APP_COMMENT_ID, commentId);
-	}
-	
-	public int getCommentId(){
-		return this.values.getAsInteger(Constants.KEY_APP_COMMENT_ID);
-	}
-	
-	public void setComment(String comment){
-		this.values.put(Constants.KEY_APP_COMMENT, comment);
-	}
-	
-	public String getComment(){
-		return this.values.getAsString(Constants.KEY_APP_COMMENT);
-	}
-		
 	
 	public ContentValues getValues(){
 		return this.values;
 	}
+
 	
 
 	/**
-	 * ViewAppComment object reuse, clean references
+	 * ViewIcon object reuse, clean references
 	 */
 	public void clean(){
 		this.values = null;
 	}
 
 	/**
-	 * ViewAppComment object reuse, reConstructor
+	 * ViewIcon object reuse, reConstructor
 	 * 
+	 * @param String iconRemotePathTail, icon's remote path tail (what comes after repository's base path)
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
-	 * @param int commentId id from server
 	 */
-	public void reuse(int applicationFullHashid, int commentId) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_COMMENTS);
+	public void reuse(String iconRemotePathTail, int applicationFullHashid) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
+		setMd5Hash(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
-		setCommentId(commentId);
 	}
 	
 }

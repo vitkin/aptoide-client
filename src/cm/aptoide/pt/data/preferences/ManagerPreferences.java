@@ -27,7 +27,7 @@ import android.content.SharedPreferences;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.ClientStatistics;
+import cm.aptoide.pt.data.ViewClientStatistics;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
@@ -93,7 +93,7 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		return new ViewScreenDimensions(getPreferences.getInt(EnumPreferences.SCREEN_WIDTH.name(), Constants.NO_SCREEN), getPreferences.getInt(EnumPreferences.SCREEN_HEIGHT.name(), Constants.NO_SCREEN));
 	}
 	
-	public void completeStatistics(ClientStatistics statistics){
+	public void completeStatistics(ViewClientStatistics statistics){
 		statistics.completeStatistics(getAptoideClientUUID(), getScreenDimensions());
 	}
 	

@@ -1,5 +1,5 @@
 /**
- * ViewIconInfo,		part of Aptoide's data model
+ * ViewExtraInfo,		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,75 +18,70 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.views;
+package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * ViewIconInfo, models an icon's download info
+ * ViewExtraInfo, models an app's extra info
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewIconInfo {
+public class ViewExtraInfo {
 
 	private ContentValues values;
 
 	
 	/**
-	 * ViewIcon Constructor
+	 * ViewExtraInfo Constructor
 	 * 
-	 * @param String iconRemotePathTail, icon's remote path tail (what comes after repository's base path)
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public ViewIconInfo(String iconRemotePathTail, int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
-		setMd5Hash(iconRemotePathTail);
+	public ViewExtraInfo(int applicationFullHashid) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_EXTRA_INFO);
 		setAppFullHashid(applicationFullHashid);
 	}
 	
 	
-	private void setMd5Hash(String md5hash){
-		values.put(Constants.KEY_ICON_MD5HASH, md5hash);		
-	}
-	
-	public String getMd5Hash(){
-		return values.getAsString(Constants.KEY_ICON_MD5HASH);
-	}
-	
 	private void setAppFullHashid(int appFullHashid){
-		values.put(Constants.KEY_ICON_APP_FULL_HASHID, appFullHashid);
+		this.values.put(Constants.KEY_EXTRA_APP_FULL_HASHID, appFullHashid);
 	}
 	
 	public int getAppFullHashid() {
-		return values.getAsInteger(Constants.KEY_ICON_APP_FULL_HASHID);
+		return values.getAsInteger(Constants.KEY_EXTRA_APP_FULL_HASHID);
 	}
 	
+	public void setDescription(String description){
+		this.values.put(Constants.KEY_EXTRA_DESCRIPTION, description);
+	}
+	
+	public String getDescription(){
+		return this.values.getAsString(Constants.KEY_EXTRA_DESCRIPTION);
+	}
+		
 	
 	public ContentValues getValues(){
 		return this.values;
 	}
-
 	
 
 	/**
-	 * ViewIcon object reuse, clean references
+	 * ViewExtraInfo object reuse, clean references
 	 */
 	public void clean(){
 		this.values = null;
 	}
 
 	/**
-	 * ViewIcon object reuse, reConstructor
+	 * ViewExtraInfo object reuse, reConstructor
 	 * 
-	 * @param String iconRemotePathTail, icon's remote path tail (what comes after repository's base path)
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public void reuse(String iconRemotePathTail, int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
-		setMd5Hash(iconRemotePathTail);
+	public void reuse(int applicationFullHashid) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_EXTRA_INFO);
 		setAppFullHashid(applicationFullHashid);
 	}
 	

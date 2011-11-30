@@ -23,28 +23,30 @@ package cm.aptoide.pt.data.database;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
+import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.views.ViewAppComment;
-import cm.aptoide.pt.data.views.ViewApplication;
-import cm.aptoide.pt.data.views.ViewCategory;
-import cm.aptoide.pt.data.views.ViewDisplayApplication;
-import cm.aptoide.pt.data.views.ViewDisplayListApps;
-import cm.aptoide.pt.data.views.ViewDisplayListRepos;
-import cm.aptoide.pt.data.views.ViewDisplayRepository;
-import cm.aptoide.pt.data.views.ViewDownloadInfo;
-import cm.aptoide.pt.data.views.ViewExtraInfo;
-import cm.aptoide.pt.data.views.ViewIconInfo;
-import cm.aptoide.pt.data.views.ViewListIds;
-import cm.aptoide.pt.data.views.ViewLogin;
-import cm.aptoide.pt.data.views.ViewRepository;
-import cm.aptoide.pt.data.views.ViewStatsInfo;
+import cm.aptoide.pt.data.cache.ViewCache;
+import cm.aptoide.pt.data.display.ViewDisplayApplication;
+import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.display.ViewDisplayListRepos;
+import cm.aptoide.pt.data.display.ViewDisplayRepository;
+import cm.aptoide.pt.data.downloads.ViewDownload;
+import cm.aptoide.pt.data.model.ViewAppComment;
+import cm.aptoide.pt.data.model.ViewApplication;
+import cm.aptoide.pt.data.model.ViewCategory;
+import cm.aptoide.pt.data.model.ViewDownloadInfo;
+import cm.aptoide.pt.data.model.ViewExtraInfo;
+import cm.aptoide.pt.data.model.ViewIconInfo;
+import cm.aptoide.pt.data.model.ViewListIds;
+import cm.aptoide.pt.data.model.ViewLogin;
+import cm.aptoide.pt.data.model.ViewRepository;
+import cm.aptoide.pt.data.model.ViewStatsInfo;
+import cm.aptoide.pt.data.notifications.ViewNotification;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -56,7 +58,8 @@ import cm.aptoide.pt.data.views.ViewStatsInfo;
  *
  */
 public class ManagerDatabase {
-	
+
+	private AptoideServiceData serviceData;
 	private static SQLiteDatabase db = null;
 	
 	/**
@@ -68,9 +71,10 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ManagerDatabase(Context context) {
+	public ManagerDatabase(AptoideServiceData serviceData) {
+		this.serviceData = serviceData;
 		if(db == null){
-			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
+			db = serviceData.openOrCreateDatabase(Constants.DATABASE, 0, null);
 			db.beginTransaction();
 			
 			db.execSQL(Constants.CREATE_TABLE_REPOSITORY);
@@ -116,7 +120,7 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 		}else if(!db.isOpen()){
-			db = context.openOrCreateDatabase(Constants.DATABASE, 0, null);
+			db = serviceData.openOrCreateDatabase(Constants.DATABASE, 0, null);
 		}
 		db.execSQL(Constants.PRAGMA_FOREIGN_KEYS_OFF);
 		db.execSQL(Constants.PRAGMA_RECURSIVE_TRIGGERS_OFF);
@@ -280,7 +284,7 @@ public class ManagerDatabase {
 				if(insertRepository.insert(repository.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
-				if(repository.requiresLogin()){
+				if(repository.isLoginRequired()){
 					loginsValues.add(repository.getLogin().getValues());
 				}
 			}
@@ -317,7 +321,7 @@ public class ManagerDatabase {
 			if(db.insert(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
-			if(repository.requiresLogin()){
+			if(repository.isLoginRequired()){
 				if(db.insert(Constants.TABLE_LOGIN, null, repository.getLogin().getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -1073,6 +1077,25 @@ public class ManagerDatabase {
 		}
 		return installedApps;
 	}
+	
+	/**
+	 * getRepoDownloadInfo, retrieves a repo's info for Download
+	 * 
+	 * @param repoHashid
+	 * 
+	 * @return ViewDownload, set of objects that describe a repo's download 
+	 *  
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+//	public ViewDownload getRepoDownloadInfo(int repoHashid){
+//		ViewCache cacheinfo = null;
+//		ViewNotification notifier = null;
+//		ViewDownload downloadinfo = null;
+//		
+//		
+//	}
 	
 	/**
 	 * getAppsUpdates, retrieves a list of all apps' updates
