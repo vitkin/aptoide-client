@@ -21,6 +21,7 @@
 package cm.aptoide.pt.data.notifications;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
  /**
  * ViewNotification, models a notification
@@ -34,29 +35,41 @@ public class ViewNotification {
 	private EnumNotificationTypes notificationType;
 	/** Name and version if it's relevant */
 	private String actionsTargetName;
-	private String targetsHashid;
+	private int targetsHashid;
 	/** Combined from target's unique id and the action ongoing */
 	private int notificationHashid; 	
-	private int currentProgress;
+	private AtomicInteger currentProgress;
 	private int progressCompletionTarget;
 	private boolean completed;
 	
 	private ArrayList<ViewNotification> subNotifications;
 
-	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, String targetsHashid, int progressCompletionTarget) {
+	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget) {
 		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
 		this.targetsHashid = targetsHashid;
 		this.notificationHashid = (targetsHashid+"|"+notificationType).hashCode();
-		this.currentProgress = 0;
+		this.currentProgress.set(0);
 		this.progressCompletionTarget = progressCompletionTarget;
 		this.completed = false;
 		
 		this.subNotifications = new ArrayList<ViewNotification>();
 	}
+	
+	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid) {
+		this(notificationType, actionsTargetName, targetsHashid, 1);
+	}
+	
+	
+	public void setProgressCompletionTarget(int target){
+		this.progressCompletionTarget = target;
+	}
 
-	public void setCurrentProgress(int currentProgress) {
-		this.currentProgress = currentProgress;
+	public void progressSetCurrent(int currentProgress) {
+//		if(currentProgress > this.currentProgress.get()){
+//			//TODO raise exception
+//		}
+		this.currentProgress.set(currentProgress);
 	}
 
 	public boolean isCompleted() {
@@ -64,6 +77,9 @@ public class ViewNotification {
 	}
 
 	public void setCompleted(boolean completed) {
+		if(completed){
+			this.currentProgress.set(this.progressCompletionTarget);
+		}
 		this.completed = completed;
 	}
 
@@ -95,7 +111,7 @@ public class ViewNotification {
 		return actionsTargetName;
 	}
 
-	public String getTargetsHashid() {
+	public int getTargetsHashid() {
 		return targetsHashid;
 	}
 
@@ -110,11 +126,13 @@ public class ViewNotification {
 	
 	public int incrementProgress(int increment){
 		if(subNotifications.isEmpty()){
-			this.currentProgress += increment;
-			if(this.currentProgress >= this.progressCompletionTarget){
-				setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
+			if(!isCompleted()){
+				this.currentProgress.addAndGet(increment);
+				if(this.currentProgress.get() >= this.progressCompletionTarget){
+					setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
+				}
 			}
-			return this.currentProgress;
+			return this.currentProgress.get();
 		}else{
 			return -1;	//TODO raise exception
 		}
@@ -123,41 +141,45 @@ public class ViewNotification {
 	public int getCurrentProgress(){
 		if(!subNotifications.isEmpty()){
 				this.progressCompletionTarget = 0;
-				this.currentProgress = 0;
+				this.currentProgress.set(0);
 			for (ViewNotification subNotification : this.subNotifications) {
 				this.progressCompletionTarget += subNotification.progressCompletionTarget;
-				this.currentProgress += subNotification.currentProgress;
+				this.currentProgress.addAndGet(subNotification.getCurrentProgress());
 			}
 		}
-		if(this.currentProgress >= this.progressCompletionTarget){
+		if(this.currentProgress.get() >= this.progressCompletionTarget){
 			setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
 		}
-		return this.currentProgress;
+		return this.currentProgress.get();
 	}
 	
 	
 	public void clean(){
 		this.notificationType = null;
 		this.actionsTargetName = null;
-		this.targetsHashid = null;
+		this.targetsHashid = 0;
 		this.notificationHashid = 0;
-		this.currentProgress = 0;
+		this.currentProgress.set(0);
 		this.progressCompletionTarget = 0;
 		this.completed = false;
 		
 		this.subNotifications = null;
 	}
 	
-	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, String targetsHashid, int progressCompletion) {
+	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget) {
 		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
 		this.targetsHashid = targetsHashid;
 		this.notificationHashid = (targetsHashid+notificationType.toString()).hashCode();
-		this.currentProgress = 0;
-		this.progressCompletionTarget = progressCompletion;
+		this.currentProgress.set(0);
+		this.progressCompletionTarget = progressCompletionTarget;
 		this.completed = false;
 		
 		this.subNotifications = new ArrayList<ViewNotification>();
+	}
+	
+	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid){
+		reuse(notificationType, actionsTargetName, targetsHashid, 1);
 	}
 		
 }

@@ -18,11 +18,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.views;
+package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.downloads.InterfaceDownloadInfo;
 
  /**
  * ViewDownloadInfo, models a download's info
@@ -31,10 +30,9 @@ import cm.aptoide.pt.data.downloads.InterfaceDownloadInfo;
  * @since 3.0
  *
  */
-public class ViewDownloadInfo implements InterfaceDownloadInfo {
+public class ViewDownloadInfo {
 
 	private ContentValues values;
-	private String remoteBasePath;
 
 	
 	/**
@@ -64,18 +62,6 @@ public class ViewDownloadInfo implements InterfaceDownloadInfo {
 	
 	public int getAppFullHashid() {
 		return values.getAsInteger(Constants.KEY_DOWNLOAD_APP_FULL_HASHID);
-	}
-	
-	public void setRemoteBasePath(String remoteBasePath){
-		this.remoteBasePath = remoteBasePath;
-	}
-	
-	public String getRemoteBasePath(){
-		return this.remoteBasePath;
-	}
-	
-	public String getRemotePath(){
-		return getRemoteBasePath() + getRemotePathTail();
 	}
 	
 	public void setMd5hash(int md5hash){

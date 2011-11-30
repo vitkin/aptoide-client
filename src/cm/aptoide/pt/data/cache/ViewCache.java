@@ -1,5 +1,5 @@
 /**
- * Cache,		auxilliary class to Aptoide's ServiceData
+ * ViewCache,		auxilliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -22,26 +22,37 @@ package cm.aptoide.pt.data.cache;
 
 
  /**
- * Cache, models a cache file
+ * ViewCache, models a cache file
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class Cache {
+public class ViewCache {
 
 	private String localPath;
+	private boolean hasMd5Sum;
 	private String md5sum;
 	
-	
-	public Cache(String localPath, String md5sum) {
+
+	public ViewCache(String localPath) {
 		this.localPath = localPath;
+		this.hasMd5Sum = false;
+	}
+	
+	public ViewCache(String localPath, String md5sum) {
+		this(localPath);
+		this.hasMd5Sum = true;
 		this.md5sum = md5sum;
 	}
 
 
 	public String getLocalPath() {
 		return localPath;
+	}
+	
+	public boolean hasMd5Sum(){
+		return hasMd5Sum;
 	}
 
 	public String getMd5sum() {
@@ -51,11 +62,18 @@ public class Cache {
 	
 	public void clean(){
 		this.localPath = null;
+		this.hasMd5Sum = false;
 		this.md5sum = null;
 	}
 	
-	public void reuse(String localPath, String md5sum) {
+	public void reuse(String localPath) {
 		this.localPath = localPath;
+		this.hasMd5Sum = false;
+	}
+	
+	public void reuse(String localPath, String md5sum) {
+		reuse(localPath);
+		this.hasMd5Sum = true;
 		this.md5sum = md5sum;
 	}
 	

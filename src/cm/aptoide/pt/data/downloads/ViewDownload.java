@@ -20,10 +20,10 @@
 
 package cm.aptoide.pt.data.downloads;
 
-import cm.aptoide.pt.data.cache.Cache;
+import cm.aptoide.pt.data.cache.ViewCache;
+import cm.aptoide.pt.data.model.ViewDownloadInfo;
+import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.notifications.ViewNotification;
-import cm.aptoide.pt.data.views.ViewDownloadInfo;
-import cm.aptoide.pt.data.views.ViewLogin;
 
  /**
  * Download, models a download
@@ -34,102 +34,102 @@ import cm.aptoide.pt.data.views.ViewLogin;
  */
 public class ViewDownload {
 
-	private InterfaceDownloadInfo downloadInfo;
-	private boolean bareInfo;
+	private String remotePath;
 	private boolean loginRequired;
 	private ViewLogin login;
+	private boolean sizeIsKnown;
+	private int size;
 	
-	private Cache cache;
-	private ViewNotification notifier;
+	private ViewCache cache;
+	private ViewNotification notification;
 	
 	
-	public ViewDownload(InterfaceDownloadInfo downloadInfo, Cache cache, ViewNotification notifier) {
-		if(downloadInfo instanceof BareDownloadInfo){
-			this.bareInfo = true;
-		}else{
-			this.bareInfo = false;
-		}
-		this.downloadInfo = downloadInfo;
+	public ViewDownload(String remotePath, ViewCache cache, ViewNotification notification) {
+		this.remotePath = remotePath;
 		this.loginRequired = false;
 		this.cache = cache;
-		this.notifier = notifier;
+		this.notification = notification;
+		this.sizeIsKnown = false;
 	}
 	
-	public ViewDownload(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, ViewNotification notifier) {
-		if(downloadInfo instanceof BareDownloadInfo){
-			this.bareInfo = true;
-		}else{
-			this.bareInfo = false;
-		}
-		this.downloadInfo = downloadInfo;
+	public ViewDownload(String remotePath, ViewLogin login, ViewCache cache, ViewNotification notification) {
+		this(remotePath, cache, notification);
 		this.loginRequired = true;
 		this.login = login;
-		this.cache = cache;
-		this.notifier = notifier;
-	}
-
-
-	public InterfaceDownloadInfo getDownloadInfoBare() {
-		return downloadInfo;
-	}
-
-	public ViewDownloadInfo getDownloadInfoFull() {
-		if(!bareInfo){
-			return (ViewDownloadInfo) downloadInfo;
-		}else{
-			return null;	//TODO throw exception instead or null object
-		}
+		this.sizeIsKnown = false;
 	}
 	
+	public ViewDownload(String remotePath, int size, ViewCache cache, ViewNotification notification) {
+		this.remotePath = remotePath;
+		this.loginRequired = false;
+		this.cache = cache;
+		this.notification = notification;
+		this.sizeIsKnown = true;
+		this.size = size;
+	}
+	
+	public ViewDownload(String remotePath, int size, ViewLogin login, ViewCache cache, ViewNotification notification) {
+		this(remotePath, cache, notification);
+		this.loginRequired = true;
+		this.login = login;
+		this.sizeIsKnown = true;
+		this.size = size;
+	}
+
+
+	public String getRemotePath() {
+		return remotePath;
+	}	
 
 	public boolean isLoginRequired() {
 		return loginRequired;
+	}
+	
+	public void setLogin(ViewLogin login){
+		this.loginRequired = true;
+		this.login = login;
+	}
+	
+	public boolean isSizeKnown(){
+		return sizeIsKnown;
+	}
+	
+	public int getSize(){
+		return this.size;
 	}
 
 	public ViewLogin getLogin() {
 		return login;			//TODO test isrequired and return nullobject pattern or exception if not 
 	}
 
-	public Cache getCache() {
+	public ViewCache getCache() {
 		return cache;
 	}
 
-	public ViewNotification getNotifier() {
-		return notifier;
+	public ViewNotification getNotification() {
+		return notification;
 	}
 	
 	
 	public void clean(){
-		this.downloadInfo = null;
+		this.remotePath = null;
 		this.loginRequired = false;
 		this.login = null;
 		this.cache = null;
-		this.notifier = null;
+		this.notification = null;
 	}
 	
-	public void reuse(InterfaceDownloadInfo downloadInfo, Cache cache, ViewNotification notifier) {
-		if(downloadInfo instanceof BareDownloadInfo){
-			this.bareInfo = true;
-		}else{
-			this.bareInfo = false;
-		}
-		this.downloadInfo = downloadInfo;
+	public void reuse(String remotePath, ViewCache cache, ViewNotification notifier) {
+		this.remotePath = remotePath;
 		this.loginRequired = false;
 		this.cache = cache;
-		this.notifier = notifier;
+		this.notification = notifier;
 	}
 	
-	public void reuse(InterfaceDownloadInfo downloadInfo, ViewLogin login, Cache cache, ViewNotification notifier) {
-		if(downloadInfo instanceof BareDownloadInfo){
-			this.bareInfo = true;
-		}else{
-			this.bareInfo = false;
-		}
-		this.downloadInfo = downloadInfo;
+	public void reuse(String remotePath, ViewLogin login, ViewCache cache, ViewNotification notifier) {
+		reuse(remotePath, cache, notifier);
 		this.loginRequired = true;
 		this.login = login;
-		this.cache = cache;
-		this.notifier = notifier;
 	}
 	
 }

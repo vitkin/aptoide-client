@@ -1,5 +1,5 @@
 /**
- * ViewExtraInfo,		part of Aptoide's data model
+ * ViewAppComment,		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,48 +18,58 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.views;
+package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
 import cm.aptoide.pt.data.Constants;
 
  /**
- * ViewExtraInfo, models an app's extra info
+ * ViewAppComment, models an app's comment
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewExtraInfo {
+public class ViewAppComment {
 
 	private ContentValues values;
 
 	
 	/**
-	 * ViewExtraInfo Constructor
+	 * ViewAppComment Constructor
 	 * 
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
+	 * @param int commentId id from server
 	 */
-	public ViewExtraInfo(int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_EXTRA_INFO);
+	public ViewAppComment(int applicationFullHashid, int commentId) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_COMMENTS);
 		setAppFullHashid(applicationFullHashid);
+		setCommentId(commentId);
 	}
 	
 	
 	private void setAppFullHashid(int appFullHashid){
-		this.values.put(Constants.KEY_EXTRA_APP_FULL_HASHID, appFullHashid);
+		this.values.put(Constants.KEY_APP_COMMENTS_APP_FULL_HASHID, appFullHashid);
 	}
 	
 	public int getAppFullHashid() {
-		return values.getAsInteger(Constants.KEY_EXTRA_APP_FULL_HASHID);
+		return values.getAsInteger(Constants.KEY_APP_COMMENTS_APP_FULL_HASHID);
 	}
 	
-	public void setDescription(String description){
-		this.values.put(Constants.KEY_EXTRA_DESCRIPTION, description);
+	private void setCommentId(int commentId){
+		this.values.put(Constants.KEY_APP_COMMENT_ID, commentId);
 	}
 	
-	public String getDescription(){
-		return this.values.getAsString(Constants.KEY_EXTRA_DESCRIPTION);
+	public int getCommentId(){
+		return this.values.getAsInteger(Constants.KEY_APP_COMMENT_ID);
+	}
+	
+	public void setComment(String comment){
+		this.values.put(Constants.KEY_APP_COMMENT, comment);
+	}
+	
+	public String getComment(){
+		return this.values.getAsString(Constants.KEY_APP_COMMENT);
 	}
 		
 	
@@ -69,20 +79,22 @@ public class ViewExtraInfo {
 	
 
 	/**
-	 * ViewExtraInfo object reuse, clean references
+	 * ViewAppComment object reuse, clean references
 	 */
 	public void clean(){
 		this.values = null;
 	}
 
 	/**
-	 * ViewExtraInfo object reuse, reConstructor
+	 * ViewAppComment object reuse, reConstructor
 	 * 
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
+	 * @param int commentId id from server
 	 */
-	public void reuse(int applicationFullHashid) {
-		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_EXTRA_INFO);
+	public void reuse(int applicationFullHashid, int commentId) {
+		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_COMMENTS);
 		setAppFullHashid(applicationFullHashid);
+		setCommentId(commentId);
 	}
 	
 }
