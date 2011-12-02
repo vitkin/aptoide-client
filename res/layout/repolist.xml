@@ -7,10 +7,14 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"/>
   	
-  <TextView android:id="@android:id/empty"
-        	android:layout_width="wrap_content"
-        	android:layout_height="150px"
-        	android:text="@string/no_repo"/>
+  <TextView
+      android:id="@android:id/empty"
+      android:layout_width="fill_parent"
+      android:layout_height="fill_parent"
+      android:gravity="center_vertical|center_horizontal"
+      android:text="@string/no_repo"
+      android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </LinearLayout>
 <!--
  * Copyright (C) 2009  Roberto Jacinto

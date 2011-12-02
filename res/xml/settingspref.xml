@@ -49,7 +49,8 @@
       <CheckBoxPreference
      	android:title="Filter Applications"
         android:summary="Don't show applications not compatible with your device."
-        android:key="hwspecsChkBox" />
+        android:key="hwspecsChkBox"
+        android:defaultValue="true" />
      
   </PreferenceCategory>
   
@@ -60,6 +61,6 @@
      	android:title="Automatic Install"
         android:summary="Install scheduled downloads automatically when a Wifi connection is present"
         android:key="schDwnBox" 
-        android:defaultValue="true"/>
+        />
       </PreferenceCategory>
 </PreferenceScreen>

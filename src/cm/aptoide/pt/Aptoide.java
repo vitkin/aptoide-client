@@ -282,11 +282,11 @@ public class Aptoide extends Activity {
 			prefEdit.commit();
 		}
 		if(!sPref.contains("schDwnBox")){
-			prefEdit.putBoolean("schDwnBox", true);
+			prefEdit.putBoolean("schDwnBox", false);
 			prefEdit.commit();
 		}
 		if(!sPref.contains("hwspecsChkBox")){
-			prefEdit.putBoolean("hwspecsChkBox", false);
+			prefEdit.putBoolean("hwspecsChkBox", true);
 			prefEdit.commit();
 		}
     

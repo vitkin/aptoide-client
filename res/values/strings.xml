@@ -80,7 +80,7 @@
    <string name="new_account">New account</string>
    
    <string name="chkBoxSchDwn">Schedule Download</string>
-   <string name="no_sch_downloads">No Scheduled Downloads</string>
+   <string name="no_sch_downloads">No scheduled downloads!</string>
    <string name="schDown_wireless_detected">Wireless detected: Download all aplications on Scheduled Downloads?</string>
    <string name="schDown_nodownloads">No Scheduled Downloads</string>
    <string name="schDown_nodownloadselect">No Downloads Selected</string>
