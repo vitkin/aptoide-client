@@ -39,21 +39,23 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter.ViewBinder;
+import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.EnumServiceDataCallback;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
@@ -119,7 +121,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				// TODO Auto-generated catch block
 	            e.printStackTrace();
 	        }
-	        //TODO call addRepo and getavailableapps
+	        
+	        try {
+				serviceDataCaller.callAddRepo(new ViewRepository("http://dsilveira.bazaarandroid.com/"));
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        //TODO call getavailableapps
 //	        try {
 //	            AptoideLog.v(Aptoide.this, "Called for getting AvailablePackages");
 //	            displayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
@@ -144,7 +154,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		@Override
 		public void newListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received newListDataAvailable callback");
-			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_INSTALLED_LIST.ordinal());
+			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST.ordinal());
 		}
 	};
     
@@ -153,9 +163,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         public void handleMessage(Message msg) {
         	EnumServiceDataCallback message = EnumServiceDataCallback.reverseOrdinal(msg.what);
         	switch (message) {
-			case UPDATE_INSTALLED_LIST:
+			case UPDATE_AVAILABLE_LIST:
 				try {
-					displayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+					displayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -186,18 +196,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.splash);
-        
+       
 		makeSureServiceDataIsRunning();
 		
 		availableAppsList = new ListView(this);
 		availableAppsList.setOnItemClickListener(this);
     }
     
-    public void displayInstalled(ViewDisplayListApps installedApps){
-    	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
-		availableAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.app_row, 
-				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
-				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
+    public void displayAvailable(ViewDisplayListApps availableApps){
+    	AptoideLog.d(Aptoide.this, "InstalledList: "+availableApps);
+		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.app_row, 
+				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
+				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
 		
 		availableAdapter.setViewBinder(new InstalledAppsListBinder());
 		

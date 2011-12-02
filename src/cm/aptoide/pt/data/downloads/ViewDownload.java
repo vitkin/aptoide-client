@@ -21,7 +21,6 @@
 package cm.aptoide.pt.data.downloads;
 
 import cm.aptoide.pt.data.cache.ViewCache;
-import cm.aptoide.pt.data.model.ViewDownloadInfo;
 import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.notifications.ViewNotification;
 
@@ -119,15 +118,15 @@ public class ViewDownload {
 		this.notification = null;
 	}
 	
-	public void reuse(String remotePath, ViewCache cache, ViewNotification notifier) {
+	public void reuse(String remotePath, ViewCache cache, ViewNotification notification) {
 		this.remotePath = remotePath;
 		this.loginRequired = false;
 		this.cache = cache;
-		this.notification = notifier;
+		this.notification = notification;
 	}
 	
-	public void reuse(String remotePath, ViewLogin login, ViewCache cache, ViewNotification notifier) {
-		reuse(remotePath, cache, notifier);
+	public void reuse(String remotePath, ViewLogin login, ViewCache cache, ViewNotification notification) {
+		reuse(remotePath, cache, notification);
 		this.loginRequired = true;
 		this.login = login;
 	}

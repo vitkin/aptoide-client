@@ -39,10 +39,14 @@ public class Constants {
 	public static final int NO_SCREEN = 0;
 	
 	public static final int FIRST_ELEMENT = 0;
-	public static final int SKIP_URI_PREFIX = 6;
+	public static final int SKIP_URI_PREFIX = 7;
 	
-	public static final String PATH_CACHE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/";
+	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
+	
+	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
+	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
 	public static final String PATH_CACHE_REPOS = PATH_CACHE + "repos/";
+	public static final String PATH_CACHE_APKS = PATH_CACHE + "apks/";
 	public static final String PATH_CACHE_ICONS = PATH_CACHE + "icons/";
 	public static final String PATH_CACHE_SCREENS = PATH_CACHE + "screens/";
 	
@@ -180,7 +184,9 @@ public class Constants {
 	public static final String KEY_APPLICATION_VERSION_CODE = "version_code";
 	public static final String KEY_APPLICATION_VERSION_NAME = "version_name";
 	public static final String KEY_APPLICATION_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increase lookup performance
-	public static final String KEY_APPLICATION_RATING = "rating";
+	public static final String KEY_APPLICATION_TIMESTAMP = "timestamp";
+//	public static final String KEY_APPLICATION_RATING = "rating";
+//	public static final int NUMBER_OF_COLUMNS_APPLICATION = 9;
 	public static final int NUMBER_OF_COLUMNS_APPLICATION = 8;
 	
 	
@@ -291,7 +297,8 @@ public class Constants {
 			+ KEY_APPLICATION_VERSION_CODE + " INTEGER NOT NULL CHECK ("+KEY_APPLICATION_VERSION_CODE+">=0), "
 			+ KEY_APPLICATION_VERSION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_NAME + " TEXT NOT NULL, "
-			+ KEY_APPLICATION_RATING + " INTEGER NOT NULL CHECK ("+KEY_APPLICATION_RATING+">0), "
+			+ KEY_APPLICATION_TIMESTAMP + " INTEGER NOT NULL, "
+//			+ KEY_APPLICATION_RATING + " INTEGER NOT NULL CHECK ("+KEY_APPLICATION_RATING+">0), "
 			+ "FOREIGN KEY("+ KEY_APPLICATION_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +") );"; 
 //			+ "PRIMARY KEY("+ KEY_APPLICATION_FULL_HASHID +") );";	
 
@@ -338,7 +345,7 @@ public class Constants {
 	public static final String FOREIGN_KEY_UPDATE_APP_CATEGORY_APP_FULL_HASHID_WEAK = "foreign_key_update_app_category_app_full_hashid_weak";
 
 	
-	
+	//TODO table app_filters
 	//TODO table install later pk = fk app_full_hash_id + triggers
 	
 	

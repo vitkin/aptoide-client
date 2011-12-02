@@ -37,10 +37,15 @@ import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.model.ViewRepository;
+import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
+import cm.aptoide.pt.data.notifications.ViewNotification;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
+import cm.aptoide.pt.data.xml.ManagerXml;
+import cm.aptoide.pt.data.xml.RepoBareParser;
+import cm.aptoide.pt.data.xml.ViewXmlParse;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
@@ -64,6 +69,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	private ManagerDatabase managerDatabase;
 	private ManagerDownloads managerDownloads;
 	private ManagerNotifications managerNotifications;
+	private ManagerXml managerXml;
 	
 	
 	/**
@@ -89,8 +95,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		}
 
 		@Override
-		public void callRegisterAvailablePackagesObserver(AIDLAptoideInterface installedPackagesObserver) throws RemoteException {
-			registerAvailableDataObserver(installedPackagesObserver);
+		public void callRegisterAvailablePackagesObserver(AIDLAptoideInterface availablePackagesObserver) throws RemoteException {
+			registerAvailableDataObserver(availablePackagesObserver);
 		}
 		
 		@Override
@@ -100,18 +106,23 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		
 		@Override
 		public ViewDisplayListApps callGetInstalledPackages(int offset, int range) throws RemoteException {
-			return getInstalledPackes(offset, range);
+			return getInstalledPackages(offset, range);
 		}
 
 		@Override
 		public void callAddRepo(ViewRepository repository) throws RemoteException {
 			addRepo(repository);			
 		}
+
+		@Override
+		public ViewDisplayListApps callGetAvailablePackages(int offset, int range) throws RemoteException {
+			return getAvailablePackages(offset, range);
+		}
 	}; 
 
-	public void registerAvailableDataObserver(AIDLAptoideInterface installedPackagesObserver){
-		serviceClients.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, installedPackagesObserver);
-    	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
+	public void registerAvailableDataObserver(AIDLAptoideInterface availablePackagesObserver){
+		serviceClients.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, availablePackagesObserver);
+    	AptoideLog.d(AptoideServiceData.this, "Registered Available Data Observer");
 	}
 	
 	public void registerInstalledDataObserver(AIDLAptoideInterface installedPackagesObserver){
@@ -140,11 +151,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	public ManagerDownloads getManagerDownloads() {
 		return managerDownloads;
 	}
+	
+	public ManagerCache getManagerCache() {
+		return managerDownloads.getManagerCache();
+	}
 
 	public ManagerNotifications getManagerNotifications() {
 		return managerNotifications;
 	}
 
+	public ManagerXml getManagerXml(){
+		return managerXml;
+	}
 
 
 
@@ -160,6 +178,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 			managerDatabase = new ManagerDatabase(this);
 			managerDownloads = new ManagerDownloads(this);
 			managerNotifications = new ManagerNotifications(this);
+			managerXml = new ManagerXml(this);
 			
 			
 			checkForSelfUpdate();
@@ -354,6 +373,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 //		;
 //	}
 	
+	public void updateLists(){
+		try {
+			serviceClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newListDataAvailable();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void storeScreenDimensions(ViewScreenDimensions screenDimensions){
 		managerPreferences.setScreenDimensions(screenDimensions);
 		AptoideLog.d(AptoideServiceData.this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
@@ -365,13 +393,19 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 			new Thread(){
 				public void run(){
 					this.setPriority(Thread.MAX_PRIORITY);
-					managerDatabase.insertRepository(repository);
+//					managerDatabase.insertRepository(repository);
 					if(!managerDownloads.isConnectionAvailable()){
-						//TODO raise exception to ask for what to do
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}
-					ViewCache bareInfoCache = managerDownloads.startRepoDownload(repository, "bare");	//TODO replace arg with enum
-					//TODO process xml		*******************    HERE   ********************** 
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					ViewCache cache = managerDownloads.startRepoDownload(repository, "bare");	//TODO replace arg with enum
+					repository.setDelta(cache.getMd5sum());
+					
+					managerXml.repoParse(repository, cache);
 					//TODO download other parts of xml and process them
+					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
 			}.start();
 
@@ -384,9 +418,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		//TODO start the process of downloading and parsing xml and filling the data
 	}
 	
-	public ViewDisplayListApps getInstalledPackes(int offset, int range){
+	public ViewDisplayListApps getInstalledPackages(int offset, int range){
 		AptoideLog.d(AptoideServiceData.this, "Getting Installed Packages");
 		return managerDatabase.getInstalledAppsDisplayInfo(offset, range);
+	}
+	
+	public ViewDisplayListApps getAvailablePackages(int offset, int range){
+		AptoideLog.d(AptoideServiceData.this, "Getting Available Packages");
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range);
 	}
 	
 	public void splash(){

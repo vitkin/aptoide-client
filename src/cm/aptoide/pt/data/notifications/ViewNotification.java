@@ -49,7 +49,7 @@ public class ViewNotification {
 		this.actionsTargetName = actionsTargetName;
 		this.targetsHashid = targetsHashid;
 		this.notificationHashid = (targetsHashid+"|"+notificationType).hashCode();
-		this.currentProgress.set(0);
+		this.currentProgress = new AtomicInteger(0);
 		this.progressCompletionTarget = progressCompletionTarget;
 		this.completed = false;
 		
@@ -159,7 +159,7 @@ public class ViewNotification {
 		this.actionsTargetName = null;
 		this.targetsHashid = 0;
 		this.notificationHashid = 0;
-		this.currentProgress.set(0);
+		this.currentProgress = null;
 		this.progressCompletionTarget = 0;
 		this.completed = false;
 		
@@ -171,7 +171,7 @@ public class ViewNotification {
 		this.actionsTargetName = actionsTargetName;
 		this.targetsHashid = targetsHashid;
 		this.notificationHashid = (targetsHashid+notificationType.toString()).hashCode();
-		this.currentProgress.set(0);
+		this.currentProgress = new AtomicInteger(0);
 		this.progressCompletionTarget = progressCompletionTarget;
 		this.completed = false;
 		

@@ -153,11 +153,11 @@ public class ManagerDownloads {
 		int retrysCount = 3;
 		boolean downloadSuccess = false; 
 		
-		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split(".")[Constants.FIRST_ELEMENT];
+		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
 		
 //		String bareInfoXmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=bare";
 		String bareInfoXmlPath = "http://aptoide.com/testing/xml/info.xml";
-		cache = managerCache.getNewRepoViewCache(repository.getHashid());
+		cache = managerCache.getNewRepoViewCache(repository.getHashid());	//TODO send args to have different filenames for each different xml of same repoid
 		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
 		if(repository.isLoginRequired()){	//TODO get login from pool
 			download = getNewViewDownload(bareInfoXmlPath, repository.getLogin(), cache, notification);
@@ -172,7 +172,10 @@ public class ManagerDownloads {
 		
 //		if(!downloadSuccess){
 //			//TODO raise exception
+//		}else{
+			managerCache.calculateMd5Hash(cache);
 //		}
+		
 		return cache;
 	}
 	
@@ -244,7 +247,7 @@ public class ManagerDownloads {
 			}
 
 			HttpResponse httpResponse = httpClient.execute(httpGet);
-
+//TODO check for gzip (code in remoteintab 1013 #531)
 			if(httpResponse == null){
 				Log.d("Aptoide","Problem in network... retry...");	
 				httpResponse = httpClient.execute(httpGet);
@@ -292,7 +295,7 @@ public class ManagerDownloads {
 					fileOutputStream.write(data,0,bytesRead);
 					bytesRead = inputStream.read(data, 0, 8096);
 				}
-				Log.d("Aptoide","Download done! targetHashid: "+notificationHashid +" localPath: "+localPath);
+				Log.d("Aptoide","Download done! notificationTargetName: "+notification.getActionsTargetName() +" localPath: "+localPath);
 				notification.setCompleted(true);
 				fileOutputStream.flush();
 				fileOutputStream.close();
