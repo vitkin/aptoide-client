@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
-
-
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.ComponentName;
@@ -15,25 +13,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.telephony.ServiceState;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
@@ -76,11 +68,11 @@ public class ScheduledDownload extends ListActivity {
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
-	private MyCustomAdapter mAdapter;
 	private DbHandler db = new DbHandler(this);
 	private Vector<ApkNode> sch_list;
 	private DownloadNode downloadNode;
 	Boolean noneChecked = true;
+	private Button installButton;
 	
 	
 	
@@ -106,7 +98,7 @@ public class ScheduledDownload extends ListActivity {
         
         
         setContentView(R.layout.sch_downloadempty);
-        mAdapter = new MyCustomAdapter();
+        installButton = (Button) findViewById(R.id.sch_down);
         
         sch_list=db.getScheduledListNames();
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
@@ -123,32 +115,51 @@ public class ScheduledDownload extends ListActivity {
         	
         }
         SimpleAdapter show_out = new SimpleAdapter(this, result, R.layout.sch_download, 
-        		new String[] {"name", "iconpath", "version"}, new int[] {R.id.name, R.id.appicon, R.id.isinst});
+        		new String[] {"name", "iconpath", "version"}, 
+        		new int[] {R.id.name, R.id.appicon, R.id.isinst});
         
         setListAdapter(show_out);
         if(sch_list.isEmpty()){
 			Toast.makeText(this, R.string.no_sch_downloads, Toast.LENGTH_LONG).show();
-			setContentView(R.layout.sch_downloadempty);
-			
+//			setContentView(R.layout.sch_downloadempty);
+			installButton.setVisibility(View.GONE);
         }
+        
+        installButton.setText("Install Selected");
+        installButton.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				if(isAllChecked()){
+					for(int i=0; i < getListAdapter().getCount(); i++){
+						LinearLayout itemLayout = (LinearLayout)getListView().getChildAt(i);
+						CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
+
+						if (cb.isChecked()){
+							DownloadNode downloadnode = doDownloadNode(i);
+							if(downloadnode!=null){
+								downloadQueueService.startDownload(downloadnode);
+							}
+							else{
+								Toast.makeText(ctx, getString(R.string.schDown_downerror, new Object[]{db.getScheduledDwnServer(sch_list.get(i).apkid)}), Toast.LENGTH_LONG).show();
+
+							}
+						}
+					}
+
+				} else {
+					Toast.makeText(ctx, R.string.schDown_nodownloadselect,
+							Toast.LENGTH_LONG).show();
+				}
+				
+			}
+		});
         Intent intent = getIntent();
+        
+        
     	if(intent.hasExtra("downloadAll")){
-//    		AlertDialog alrt = new AlertDialog.Builder(this).create();
-//    		alrt.setMessage(getText(R.string.schDown_wireless_detected));
-//			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
-//				public void onClick(DialogInterface dialog, int which) {
-//					downloadAll();
-//					return;
-//				} }); 
-//			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
-//				public void onClick(DialogInterface dialog, int which) {
-//					finish();
-//					return;
-//				}});
-//			alrt.show();
-    		
     		serviceConnected=true;
     		finish();
+    		
     	}
         
         
@@ -166,7 +177,6 @@ public class ScheduledDownload extends ListActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
 		
-		menu.add(Menu.NONE,2, 2, R.string.schDown_downselected).setIcon(R.drawable.ic_menu_save);
 		menu.add(Menu.NONE,3, 3, R.string.schDown_invertselection).setIcon(R.drawable.ic_menu_invert);
 		menu.add(Menu.NONE,4, 3, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		
@@ -214,53 +224,7 @@ public class ScheduledDownload extends ListActivity {
 
 		case 2:
 			
-//			String programs = "";
-//			boolean existsDownloads=false;
-			if(isAllChecked()){
-				for(int i=0; i < this.getListAdapter().getCount(); i++){
-					LinearLayout itemLayout = (LinearLayout)getListView().getChildAt(i);
-					CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
-
-					if (cb.isChecked()){
-						DownloadNode downloadnode = doDownloadNode(i);
-						if(downloadnode!=null){
-							downloadQueueService.startDownload(downloadnode);
-						}
-						else{
-							Toast.makeText(ctx, getString(R.string.schDown_downerror, new Object[]{db.getScheduledDwnServer(sch_list.get(i).apkid)}), Toast.LENGTH_LONG).show();
-
-						}
-					}
-				}
-
-				//					programs=programs.concat("\n"+getListAdapter().getItem(i).toString());
-				//					schDownToDelete.add(sch_list.get(i).apkid);
-				//					existsDownloads = true;
-				//				}
-
-
-				//			}
-				//			if(existsDownloads){
-				//				alrt.setMessage("Delete Scheduled Downloads? "+programs);
-				//				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
-				//					public void onClick(DialogInterface dialog, int which) {
-				//						for (String apkid : schDownToDelete){
-				//							db.deleteScheduledDownload(apkid);
-				//						}
-				//						redraw();
-				//						return;
-				//					} }); 
-				//				alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
-				//					public void onClick(DialogInterface dialog, int which) {
-				//						return;
-				//					}});
-				//				alrt.show();
-
-
-			} else {
-				Toast.makeText(this, R.string.schDown_nodownloadselect,
-						Toast.LENGTH_LONG).show();
-			}
+			
 				
 			break;
 		case 3:
@@ -357,7 +321,12 @@ public class ScheduledDownload extends ListActivity {
         		new String[] {"name", "iconpath", "version"}, new int[] {R.id.name, R.id.appicon, R.id.isinst});
         
         setListAdapter(show_out);
-		
+        
+        if(sch_list.isEmpty()){
+			Toast.makeText(this, R.string.no_sch_downloads, Toast.LENGTH_LONG).show();
+//			setContentView(R.layout.sch_downloadempty);
+			installButton.setVisibility(View.GONE);
+        }
 		
 	}
 
@@ -405,88 +374,6 @@ public class ScheduledDownload extends ListActivity {
 	}
 
 
-	private class MyCustomAdapter extends BaseAdapter {
- 
-        private ArrayList<String> name = new ArrayList<String>();
-        private ArrayList<String> iconpath = new ArrayList<String>();
-        private ArrayList<String> version = new ArrayList<String>();
-        
-        private LayoutInflater mInflater;
- 
-        public MyCustomAdapter() {
-            mInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
- 
-        public void addName(final String item) {
-            name.add(item);
-            notifyDataSetChanged();
-        }
-        
-        public void addIconpath(final String item) {
-            iconpath.add(item);
-            notifyDataSetChanged();
-        }
-        
-        public void addVersion(final String item) {
-            version.add("Version: "+item);
-            notifyDataSetChanged();
-        }
- 
-        public int getCount() {
-            return name.size();
-        }
- 
-        public String getItem(int position) {
-            return name.get(position);
-        }
- 
-        public long getItemId(int position) {
-            return position;
-        }
- 
-        public View getView(int position, View convertView, ViewGroup parent) {
-            System.out.println("getView " + position + " " + convertView);
-            ViewHolder holder = null;
-          
-            if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.sch_download, null);
-                holder = new ViewHolder();
-                holder.name = (TextView)convertView.findViewById(R.id.name);
-                holder.iconpath = (ImageView)convertView.findViewById(R.id.appicon);
-                holder.version=(TextView)convertView.findViewById(R.id.isinst);
-                
-                
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder)convertView.getTag();
-            }
-            holder.version.setText(version.get(position));
-            
-            
-            new Uri.Builder().build();
-            holder.name.setText(name.get(position));
-            holder.iconpath.setImageURI(Uri.parse(iconpath.get(position)));
-            return convertView;
-        }
- 
-    }
- 
-    public static class ViewHolder {
-        public TextView name;
-        public ImageView iconpath;
-        public TextView version;
-    }
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
-	 */
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		super.onActivityResult(requestCode, resultCode, data);
-		Log.d("ScheduledResult",requestCode + " "+ resultCode);
-
-	}
 
     
 	

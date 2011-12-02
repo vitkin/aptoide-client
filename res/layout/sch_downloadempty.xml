@@ -1,21 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:orientation="vertical" >
 
-  <ListView android:id="@android:id/list"
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"/>
+        android:layout_height="wrap_content"
+        android:gravity="top" >
 
-  <TextView
-      android:id="@android:id/empty"
-      android:layout_width="fill_parent" 
-    android:layout_height="fill_parent" 
-    android:gravity="center_vertical|center_horizontal"
+        <RelativeLayout
+            android:id="@+id/relativeLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/sch_down"
+            android:gravity="bottom" >
 
-     
-      
-      android:text="@string/no_sch_downloads"
-      android:textAppearance="?android:attr/textAppearanceLarge" />
+            <ListView
+                android:id="@android:id/list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+            </ListView>
+
+            <TextView
+                android:id="@android:id/empty"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/no_sch_downloads"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/sch_down"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="Button" />
+    </RelativeLayout>
 
 </LinearLayout>
