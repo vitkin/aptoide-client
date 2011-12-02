@@ -47,7 +47,8 @@ public class ViewRepository implements Parcelable{
 	public ViewRepository(String uri) {
 		this.loginRequired = false;
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);			
-		setUri(uri);	
+		setUri(uri);
+		setInUse(true);
 	}
 
 	
@@ -152,6 +153,7 @@ public class ViewRepository implements Parcelable{
 		this.loginRequired = false;
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_REPO);
 		setUri(uri);
+		setInUse(true);
 	}
 
 

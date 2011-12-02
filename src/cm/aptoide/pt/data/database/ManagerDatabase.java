@@ -450,18 +450,19 @@ public class ManagerDatabase {
 				
 			}
 			insertApplication.close();
-			
-			InsertHelper insertAppCategoryRelation = new InsertHelper(db, Constants.TABLE_APP_CATEGORY);
-			for (ContentValues appCategoryRelationValues : appCategoriesRelations) {
-				if(insertAppCategoryRelation.insert(appCategoryRelationValues) == Constants.DB_ERROR){
-					//TODO throw exception;
-				}
-			}
-			insertAppCategoryRelation.close();
+			//TODO martelar cateorias e descomentar o seguinte codigo
+//			InsertHelper insertAppCategoryRelation = new InsertHelper(db, Constants.TABLE_APP_CATEGORY);
+//			for (ContentValues appCategoryRelationValues : appCategoriesRelations) {
+//				if(insertAppCategoryRelation.insert(appCategoryRelationValues) == Constants.DB_ERROR){
+//					//TODO throw exception;
+//				}
+//			}
+//			insertAppCategoryRelation.close();
 			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+			e.printStackTrace();
 		}finally{
 			db.endTransaction();
 		}
@@ -1077,6 +1078,66 @@ public class ManagerDatabase {
 		}
 		return installedApps;
 	}
+	
+	
+	/**
+	 * getAvailableApps, retrieves a list of all available apps
+	 * 
+	 * @param int offset, number of row to start from
+	 * @param int range, number of rows to list
+	 * 
+	 * @return ViewDisplayListApps list of available apps
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range){
+		
+		final int APP_NAME = Constants.COLUMN_FIRST;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int PACKAGE_NAME = Constants.COLUMN_THIRD;
+		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_FOURTH;
+		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
+		
+		ViewDisplayListApps availableApps = null;
+		ViewDisplayApplication app;							//TODO check if this superQuery works as it's supposed to
+		
+		String selectAvailableApps = "SELECT "+Constants.KEY_APPLICATION_NAME+", "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
+										+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+										+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+										+" FROM "+Constants.TABLE_APPLICATION
+										+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
+										+" ORDER BY "+Constants.KEY_APPLICATION_NAME
+										+" LIMIT ?"
+										+" OFFSET ?;";
+		String[] selectAvailableAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+		
+		db.beginTransaction();
+		try{
+			Cursor appsCursor = aptoideNonAtomicQuery(selectAvailableApps, selectAvailableAppsArgs);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			availableApps = new ViewDisplayListApps(appsCursor.getCount());
+			
+			appsCursor.moveToFirst();
+			do{																			//TODO correct these magic numbers
+				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), 5, 100, appsCursor.getString(UP_TO_DATE_VERSION_NAME));
+				availableApps.addApp(app);
+
+			}while(appsCursor.moveToNext());
+			appsCursor.close();
+	
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return availableApps;
+	}
+	
 	
 	/**
 	 * getRepoDownloadInfo, retrieves a repo's info for Download

@@ -54,6 +54,10 @@ public class ViewCache {
 	public boolean hasMd5Sum(){
 		return hasMd5Sum;
 	}
+	
+	public void setMd5Sum(String md5sum){
+		this.md5sum = md5sum;
+	}
 
 	public String getMd5sum() {
 		return md5sum;
