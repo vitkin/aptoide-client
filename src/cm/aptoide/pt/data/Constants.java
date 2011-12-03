@@ -33,6 +33,14 @@ public class Constants {
 	
 	public static final EnumLogLevels LOG_LEVEL_FILTER = EnumLogLevels.DEBUG;
 	
+	public static final int FIRST = 0;
+	public static final int SECOND = 1;
+	public static final int THIRD = 2;
+	
+	public static final int AVAILABLE = FIRST;
+	public static final int INSTALLED = SECOND;
+	public static final int UPDATES = THIRD;
+	
 	public static final int ARRAY_INDEX_FROM_SIZE_CORRECTION = 1;
 	public static final int KBYTES_TO_BYTES = 1024;
 	public static final int EMPTY_INT = 0;

@@ -3,6 +3,8 @@
     <string name="available">Available</string>
     <string name="installed">Installed</string>
     <string name="updates">Updates</string>
+    
+    <string name="no_apps">No apps to display!</string>
 
     <string name="aptoide_started">Aptoide has started</string>
     <string name="aptoide_stopped">Aptoide has successfully stopped</string>

@@ -25,6 +25,7 @@ package cm.aptoide.pt;
 
 import java.io.File;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ListActivity;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -40,18 +41,16 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
+import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
@@ -70,13 +69,10 @@ import cm.aptoide.pt.debug.InterfaceAptoideLog;
  * @since 3.0
  *
  */
-public class Aptoide extends ListActivity implements InterfaceAptoideLog{ 
+public class Available extends ListActivity implements InterfaceAptoideLog, OnItemClickListener{ 
 	
-	private final String TAG = "Aptoide-MainView";
+	private final String TAG = "Aptoide-Available";
 
-	private GestureDetector swypeDetector;
-//	private ViewFlipper viewFlipper = null;
-		
 	private ListView availableAppsList = null;
 	private SimpleAdapter availableAdapter = null;
 		
@@ -95,11 +91,11 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 			serviceDataCaller = AIDLAptoideServiceData.Stub.asInterface(service);
 			serviceDataIsBound = true;
 			
-			AptoideLog.v(Aptoide.this, "Connected to ServiceData");
+			AptoideLog.v(Available.this, "Connected to ServiceData");
 
 			if(!serviceDataSeenRunning){
 				try {
-		            AptoideLog.v(Aptoide.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
+		            AptoideLog.v(Available.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
 		            serviceDataCaller.callSyncInstalledPackages();
 		        } catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -110,9 +106,9 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 			DisplayMetrics displayMetrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 			ViewScreenDimensions screenDimensions = new ViewScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
-			AptoideLog.d(Aptoide.this, screenDimensions.toString());
+			AptoideLog.d(Available.this, screenDimensions.toString());
 	        try {
-	            AptoideLog.v(Aptoide.this, "Called for screenDimensions storage");
+	            AptoideLog.v(Available.this, "Called for screenDimensions storage");
 	            serviceDataCaller.callStoreScreenDimensions(screenDimensions);
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -120,7 +116,7 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 	        }
 	        
 	        try {
-	            AptoideLog.v(Aptoide.this, "Called for registering as AvailablePackages Observer");
+	            AptoideLog.v(Available.this, "Called for registering as AvailablePackages Observer");
 	            serviceDataCaller.callRegisterAvailablePackagesObserver(serviceDataCallback);
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -150,7 +146,7 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 			serviceDataCaller = null;
 			serviceDataIsBound = false;
 			
-			AptoideLog.v(Aptoide.this, "Disconnected from ServiceData");
+			AptoideLog.v(Available.this, "Disconnected from ServiceData");
 		}
 	};
 	
@@ -158,7 +154,7 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 		
 		@Override
 		public void newListDataAvailable() throws RemoteException {
-			AptoideLog.v(Aptoide.this, "received newListDataAvailable callback");
+			AptoideLog.v(Available.this, "received newListDataAvailable callback");
 			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST.ordinal());
 		}
 	};
@@ -196,32 +192,6 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 		return TAG;
 	}
     
-    
-    
-    class SwypeDetector extends SimpleOnGestureListener {
-
-    	private static final int SWIPE_MIN_DISTANCE = 120;
-    	private static final int SWIPE_MAX_OFF_PATH = 250;
-    	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-
-    	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-    		Log.d("Aptoide","onFling");
-    		if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-    			return false;
-    		if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
-    				&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-//    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_in));
-//    			viewFlipper.showNext();
-    		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
-    				&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-//    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_out));
-//    			viewFlipper.showPrevious();
-    		}
-    		return super.onFling(e1, e2, velocityX, velocityY);
-    	}
-    }
-
-    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -229,40 +199,22 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
         setContentView(R.layout.apps_list);
        
 		makeSureServiceDataIsRunning();
-        
-        
-//		viewFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
-//		viewFlipper.addView(Aptoide.this.findViewById(R.id.available), Constants.AVAILABLE);
-//		viewFlipper.addView(Aptoide.this.findViewById(R.id.installed), Constants.INSTALLED);
-//		viewFlipper.addView(Aptoide.this.findViewById(R.id.updates), Constants.UPDATES);
-
-//		availableAppsList = new ListView(this);
-//		availableAppsList.setOnItemClickListener(this);
-		swypeDetector = new GestureDetector(new SwypeDetector());
-		getListView().setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-	    		Log.d("Aptoide","onFling");
-				if (swypeDetector.onTouchEvent(event)) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-		});
-
+		
+		availableAppsList = getListView();
+		availableAppsList.setOnItemClickListener(this);
     }
     
     public void displayAvailable(ViewDisplayListApps availableApps){
-    	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
-		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.app_row, 
+    	AptoideLog.d(Available.this, "InstalledList: "+availableApps);
+		availableAdapter = new SimpleAdapter(Available.this, availableApps.getList(), R.layout.app_row, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
 		
 		availableAdapter.setViewBinder(new InstalledAppsListBinder());
 		
-		setListAdapter(availableAdapter);
-//		setContentView(availableAppsList);
-//		availableAppsList.setSelection(-1);
+		availableAppsList.setAdapter(availableAdapter);
+		setContentView(availableAppsList);
+		availableAppsList.setSelection(-1);
     }
 
 	private void makeSureServiceDataIsRunning(){
@@ -289,11 +241,8 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
     	}
     }
 
-	
-	
-	
-//	@Override
-//	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+	@Override
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 //		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 //
 //		pos = arg2;
@@ -320,16 +269,8 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 //		apkinfo.putExtra("type", 1);
 //		
 //		startActivityForResult(apkinfo,30);
-//	}
-	
-
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		// TODO Auto-generated method stub
-		super.onListItemClick(l, v, position, id);
 	}
-
-
+	
 
 	class InstalledAppsListBinder implements ViewBinder
 	{
@@ -369,6 +310,7 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
         }
 		super.onDestroy();
 	}
-
+	
+	
 	
 }
