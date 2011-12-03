@@ -23,10 +23,10 @@ package cm.aptoide.pt.data.cache;
 import java.io.File;
 import java.util.ArrayList;
 
-import util.Md5Handler;
 import android.os.StatFs;
 import android.util.Log;
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Md5Handler;
 
 /**
  * ManagerCache, models cache I/O
