@@ -24,10 +24,12 @@ package cm.aptoide.pt;
 
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.ActivityManager;
-import android.app.ListActivity;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -41,17 +43,20 @@ import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.View.OnTouchListener;
+import android.view.View.OnClickListener;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
 import android.widget.SimpleAdapter.ViewBinder;
+import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
@@ -70,11 +75,16 @@ import cm.aptoide.pt.debug.InterfaceAptoideLog;
  * @since 3.0
  *
  */
-public class Aptoide extends ListActivity implements InterfaceAptoideLog{ 
+public class Aptoide extends ListActivity implements InterfaceAptoideLog { 
 	
 	private final String TAG = "Aptoide-MainView";
-
+	
+	private ListView listView;
+	private ScrollDetector scrollListener;
 	private GestureDetector swypeDetector;
+	private View.OnTouchListener swypeListener;
+	private AtomicBoolean swyping = null;
+	
 //	private ViewFlipper viewFlipper = null;
 		
 	private ListView availableAppsList = null;
@@ -200,26 +210,100 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
     
     class SwypeDetector extends SimpleOnGestureListener {
 
-    	private static final int SWIPE_MIN_DISTANCE = 120;
+    	private static final int SWIPE_MIN_DISTANCE = 80;
     	private static final int SWIPE_MAX_OFF_PATH = 250;
-    	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    	private static final int SWIPE_THRESHOLD_VELOCITY = 150;
+    	
+//    	private static final int SMALL_SCROLL = 10;
+//    	private static final int BIG_SCROLL = 40;
+//
+//    	@Override
+//		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+//    		boolean down = (Math.signum(distanceY) > 0);
+//    		int absDistanceY = Math.round(Math.abs(distanceY));
+//    		if(absDistanceY > SMALL_SCROLL && absDistanceY < BIG_SCROLL){
+//    			if(down){
+//    			Log.d("Aptoide","Small Scroll down");
+//    			}else{
+//        			Log.d("Aptoide","Small Scroll up");    				
+//    			}
+//    		}else if(absDistanceY > BIG_SCROLL){
+//    			if(down){
+//    			Log.d("Aptoide","Big Scroll down");
+//    			}else{
+//        			Log.d("Aptoide","Big Scroll up");    				
+//    			}
+//    		}
+//			return super.onScroll(e1, e2, distanceX, distanceY);
+//		}
 
+		@Override
     	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-    		Log.d("Aptoide","onFling");
-    		if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+//    		Toast.makeText( Aptoide.this, availableAdapter.getItem( availableAppsList.pointToPosition(Math.round(e1.getX()), Math.round(e1.getY()) )).toString(), Toast.LENGTH_LONG );
+    		if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
     			return false;
-    		if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE
-    				&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-//    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_in));
-//    			viewFlipper.showNext();
-    		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE
-    				&& Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-//    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_out));
-//    			viewFlipper.showPrevious();
+    		}else{
+    			swyping.set(true);
+	    		if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+	        		Log.d("Aptoide","Swype right");
+//	    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_in));
+//	    			viewFlipper.showNext();
+	    		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+	        		Log.d("Aptoide","Swype left");
+//	    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_out));
+//	    			viewFlipper.showPrevious();
+	    		}
+	    		return super.onFling(e1, e2, velocityX, velocityY);
     		}
-    		return super.onFling(e1, e2, velocityX, velocityY);
     	}
+		
     }
+    
+    class ScrollDetector implements OnScrollListener{
+
+    	AtomicInteger initialFirstVisileItem = new AtomicInteger(0);
+    	AtomicInteger firstVisibleItem = new AtomicInteger(0);
+    	AtomicInteger visibleItemCount = new AtomicInteger(0);
+    	
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+			this.firstVisibleItem.set(firstVisibleItem);
+			this.visibleItemCount.set(visibleItemCount);
+			if(this.initialFirstVisileItem.get()+visibleItemCount < firstVisibleItem){
+				this.initialFirstVisileItem.set(firstVisibleItem);
+				Log.d("Aptoide","New Scroll down page");
+			}else if(this.initialFirstVisileItem.get()-visibleItemCount > firstVisibleItem){
+				this.initialFirstVisileItem.set(firstVisibleItem);
+				Log.d("Aptoide","New Scroll up page");
+			}
+		}
+
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			if(scrollState == SCROLL_STATE_IDLE){
+				initialFirstVisileItem.set(firstVisibleItem.get());
+				swyping.set(false);
+				Log.d("Aptoide","Scroll offset: "+firstVisibleItem+" range: "+visibleItemCount);				
+			}
+		}
+    	
+    }
+	
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+//		AptoideLog.d(this,"onTouch");
+		return swypeDetector.onTouchEvent(event);
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		if(!swyping.get()){
+			AptoideLog.d(this, "Onclick");
+		}
+		super.onListItemClick(l, v, position, id);
+	}
+	
+	
 
     
 
@@ -238,19 +322,24 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 
 //		availableAppsList = new ListView(this);
 //		availableAppsList.setOnItemClickListener(this);
+
 		swypeDetector = new GestureDetector(new SwypeDetector());
-		getListView().setOnTouchListener(new OnTouchListener() {
-			public boolean onTouch(View v, MotionEvent event) {
-	    		Log.d("Aptoide","onFling");
-				if (swypeDetector.onTouchEvent(event)) {
-					return false;
-				} else {
-					return true;
-				}
-			}
-		});
+		swypeListener = new View.OnTouchListener() {
+								@Override
+								public boolean onTouch(View v, MotionEvent event) {
+//									Log.d("Aptoide","onFling");
+									return swypeDetector.onTouchEvent(event);
+								}
+							};
+		swyping = new AtomicBoolean(false);		
+		
+		scrollListener = new ScrollDetector();
+		listView = (ListView) findViewById(android.R.id.list);
+		listView.setOnTouchListener(swypeListener);
+		listView.setOnScrollListener(scrollListener);
 
     }
+    
     
     public void displayAvailable(ViewDisplayListApps availableApps){
     	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
@@ -261,6 +350,7 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 		availableAdapter.setViewBinder(new InstalledAppsListBinder());
 		
 		setListAdapter(availableAdapter);
+		
 //		setContentView(availableAppsList);
 //		availableAppsList.setSelection(-1);
     }
@@ -323,12 +413,6 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
 //	}
 	
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		// TODO Auto-generated method stub
-		super.onListItemClick(l, v, position, id);
-	}
-
 
 
 	class InstalledAppsListBinder implements ViewBinder
@@ -369,6 +453,5 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog{
         }
 		super.onDestroy();
 	}
-
 	
 }
