@@ -124,7 +124,6 @@ public class Aptoide extends Activity {
 	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
 
 	        downloadQueueService.setCurrentContext(mctx);
-	        
 	        Log.d("Aptoide", "DownloadQueueService bound to Aptoide");
 	    }
 	    

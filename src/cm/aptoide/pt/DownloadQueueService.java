@@ -102,6 +102,7 @@ public class DownloadQueueService extends Service {
 
 	
 	public void startDownload(DownloadNode downloadNode){
+		if(!notifications.containsKey(downloadNode.getPackageName().hashCode())){
 		HashMap<String,String> notification = new HashMap<String,String>();
 		notification.put("remotePath", downloadNode.getRemotePath());
 		notification.put("md5sum", downloadNode.getMd5sum());
@@ -123,7 +124,10 @@ public class DownloadQueueService extends Service {
 		Log.d("Aptoide-DowloadQueueService", "download Started");
 		notifications.put(downloadNode.getPackageName().hashCode(), notification);
 		setNotification(downloadNode.getPackageName().hashCode(), 0);
-		downloadFile(downloadNode.getPackageName().hashCode());
+		
+			
+			downloadFile(downloadNode.getPackageName().hashCode());
+		}
 	}
 	
 //	public void startExternalDownload(String remotePath, String localPath, String apkName, Context context){
@@ -206,7 +210,7 @@ public class DownloadQueueService extends Service {
     	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
 				
     	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.finished_download_alrt)+" "+appName, System.currentTimeMillis());
-//    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.contentView = contentView;
 
 
@@ -365,6 +369,7 @@ public class DownloadQueueService extends Service {
 						if(keepScreenOn.isHeld()){
 							keepScreenOn.release();
 						}
+						e.printStackTrace();
 						downloadArguments.arg1= 1;
 						downloadArguments.arg2 =threadApkidHash;
 						downloadErrorHandler.sendMessage(downloadArguments);
@@ -388,7 +393,7 @@ public class DownloadQueueService extends Service {
         		String localPath =  (String) downloadArguments.obj;
 //        		notificationManager.cancel(downloadArguments.arg2);
         		setFinishedNotification(apkidHash, localPath);
-//   			 	notifications.remove(apkidHash);
+   			 	notifications.remove(apkidHash);
         	}else{ }
         }
 	};
@@ -415,7 +420,7 @@ public class DownloadQueueService extends Service {
 		 public void handleMessage(Message downloadArguments) {
 			 int apkHash = downloadArguments.arg2;
 			 notificationManager.cancel(apkHash);
-//			 notifications.remove(apkHash);
+			 notifications.remove(apkHash);
 			 if(downloadArguments.arg1 == 1){
 				 Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_LONG).show();
 			 }else{

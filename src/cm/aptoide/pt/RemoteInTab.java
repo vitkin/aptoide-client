@@ -123,7 +123,7 @@ public class RemoteInTab extends TabActivity {
     private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
 	
-	private ConnectivityManager netstate = null; 
+	public ConnectivityManager netstate = null; 
 	
 	private Vector<String> failed_repo = new Vector<String>();
 	private ArrayList<ServerNode> extras_repo = new ArrayList<ServerNode>();
@@ -167,18 +167,29 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
 			final String action = intent.getAction();
+			
 			Log.d("RemoteInTab - IntentAction",action);
-		    if (action.equals(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION)) {
-		        if (intent.getBooleanExtra(WifiManager.EXTRA_SUPPLICANT_CONNECTED, false)) {
+			Log.i("RemoteInTab - IntentAction",intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO).toString());
+			NetworkInfo netstate = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+			Log.d("RemoteInTab - IntentAction",netstate.getState().toString());
+			Log.d("RemoteInTab - IntentAction",NetworkInfo.State.CONNECTED.toString());
+		    if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+		        if ( ((NetworkInfo)intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)).getState()==NetworkInfo.State.CONNECTED) {
 		            //do stuff
 		        	
 		        	Toast.makeText(mctx, "Wi-Fi Connected", Toast.LENGTH_LONG).show();
 		        	schDownAll();
-		        } else {
-		            // wifi connection was lost
-		        	
-		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
-		        }
+		        	if(!db.getScheduledListNames().isEmpty()&&sPref.getBoolean("schDwnBox", false)){		        		
+		            	Intent intent1 = new Intent(getApplicationContext(),ScheduledDownload.class);
+		            	intent1.putExtra("downloadAll", "");
+		            	sendBroadcast(intent1);
+		            	}
+		        } 
+//		        else {
+//		            // wifi connection was lost
+//		        	
+//		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
+//		        }
 
 		}else if(action.equals("pt.caixamagica.aptoide.FILTER_CHANGED")){
 			AlertDialog alrt = new AlertDialog.Builder(mctx).create();
@@ -199,7 +210,10 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			
 			
 		}
+		    
 	}
+		
+		
 		};
 	
 		IntentFilter intentFilter;
@@ -243,8 +257,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("RemoteInTab"," onCreate");
 		intentFilter = new IntentFilter();
-    	intentFilter.addAction(WifiManager.SUPPLICANT_CONNECTION_CHANGE_ACTION);
+    	intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
     	intentFilter.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
+    	
     	registerReceiver(broadcastReceiver, intentFilter);
 		
 		super.onCreate(savedInstanceState);
@@ -462,18 +477,14 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			}
 		}
 		
-		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
+//		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
 //			schDownAll();
-    	}
+//    	}
 		
 	}
 
 	private void schDownAll() {
-		if(!db.getScheduledListNames().isEmpty()&&sPref.getBoolean("schDwnBox", false)){		        		
-        	Intent intent1 = new Intent(RemoteInTab.this,ScheduledDownload.class);
-        	intent1.putExtra("downloadAll", "");
-        	startActivity(intent1);
-        	}
+		
 	}
 	
 	
@@ -651,6 +662,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		super.onResume();
 //		registerReceiver(broadcastReceiver , intentFilter);
 		Log.d("RemoteInTab","onResume");
+		
 		
 		
 	}
@@ -1059,7 +1071,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         	while(pd.isShowing()){
         		Log.d("Aptoide","======================= I U KILL");
         		pd.dismiss();
-        		schDownAll();
+//        		schDownAll();
 //        		downloadQueueService.dismissAllNotifications();
         	}
         	/*if(updt_pd.isShowing())

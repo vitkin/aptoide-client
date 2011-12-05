@@ -50,6 +50,8 @@
 				<action android:name="pt.caixamagica.aptoide.INSTALL_APK" />
 				<action android:name="pt.caixamagica.aptoide.UPDATE_REPOS" />
 			</intent-filter>
+			
+			    
 		</activity>
 		
 		
