@@ -118,6 +118,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		public ViewDisplayListApps callGetAvailablePackages(int offset, int range) throws RemoteException {
 			return getAvailablePackages(offset, range);
 		}
+
+		@Override
+		public void callRegisterUpdatablePackagesObserver(AIDLAptoideInterface updatablePackagesObserver) throws RemoteException {
+			registerUpdatableDataObserver(updatablePackagesObserver);
+		}
+
+		@Override
+		public ViewDisplayListApps callGetUpdatablePackages(int offset, int range) throws RemoteException {
+			return getUpdatablePackages(offset, range);
+		}
 	}; 
 
 	public void registerAvailableDataObserver(AIDLAptoideInterface availablePackagesObserver){
@@ -129,6 +139,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		serviceClients.put(EnumServiceDataCallback.UPDATE_INSTALLED_LIST, installedPackagesObserver);
     	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
 	}
+	
+	public void registerUpdatableDataObserver(AIDLAptoideInterface installedPackagesObserver){
+		serviceClients.put(EnumServiceDataCallback.UPDATE_UPDATES_LIST, installedPackagesObserver);
+    	AptoideLog.d(AptoideServiceData.this, "Registered Updatable Data Observer");
+	}
+	
 	
 	
 	public String getTag() {
@@ -418,6 +434,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		//TODO start the process of downloading and parsing xml and filling the data
 	}
 	
+	
 	public ViewDisplayListApps getInstalledPackages(int offset, int range){
 		AptoideLog.d(AptoideServiceData.this, "Getting Installed Packages");
 		return managerDatabase.getInstalledAppsDisplayInfo(offset, range);
@@ -427,6 +444,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Packages");
 		return managerDatabase.getAvailableAppsDisplayInfo(offset, range);
 	}
+	
+	public ViewDisplayListApps getUpdatablePackages(int offset, int range){
+		AptoideLog.d(AptoideServiceData.this, "Getting Updatable Packages");
+		return managerDatabase.getUpdatableAppsDisplayInfo(offset, range);
+	}
+	
 	
 	public void splash(){
 		new Thread() {
