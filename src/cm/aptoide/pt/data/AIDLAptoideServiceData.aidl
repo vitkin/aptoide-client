@@ -38,7 +38,9 @@ interface AIDLAptoideServiceData {
 	void callAddRepo(in ViewRepository repository);
 	void callRegisterInstalledPackagesObserver(in AIDLAptoideInterface installedPackagesObserver);
 	void callRegisterAvailablePackagesObserver(in AIDLAptoideInterface availablePackagesObserver);
+	void callRegisterUpdatablePackagesObserver(in AIDLAptoideInterface updatablePackagesObserver);
 	ViewDisplayListApps callGetInstalledPackages(in int offset, in int range);
 	ViewDisplayListApps callGetAvailablePackages(in int offset, in int range);
+	ViewDisplayListApps callGetUpdatablePackages(in int offset, in int range);
 	
 }

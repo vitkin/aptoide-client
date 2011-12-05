@@ -29,7 +29,8 @@ package cm.aptoide.pt.data;
  */
 public enum EnumServiceDataCallback {
 	UPDATE_INSTALLED_LIST,
-	UPDATE_AVAILABLE_LIST;
+	UPDATE_AVAILABLE_LIST,
+	UPDATE_UPDATES_LIST;
 	
 	public static EnumServiceDataCallback reverseOrdinal(int ordinal){
 		return values()[ordinal];

@@ -1028,7 +1028,7 @@ public class ManagerDatabase {
 		final int DOWNGRADE_VERSION_CODE = Constants.COLUMN_EIGTH;
 		
 		ViewDisplayListApps installedApps = null;
-		ViewDisplayApplication app;							//TODO check if this superQuery works as it's supposed to
+		ViewDisplayApplication app;							
 		
 		String selectInstalledApps = "SELECT I."+Constants.KEY_APP_INSTALLED_NAME+",I."+Constants.KEY_APP_INSTALLED_HASHID
 											+",I."+Constants.KEY_APP_INSTALLED_VERSION_NAME+",I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
@@ -1101,16 +1101,16 @@ public class ManagerDatabase {
 		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
 		
 		ViewDisplayListApps availableApps = null;
-		ViewDisplayApplication app;							//TODO check if this superQuery works as it's supposed to
+		ViewDisplayApplication app;							
 		
 		String selectAvailableApps = "SELECT "+Constants.KEY_APPLICATION_NAME+", "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
-										+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-										+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-										+" FROM "+Constants.TABLE_APPLICATION
-										+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
-										+" ORDER BY "+Constants.KEY_APPLICATION_NAME
-										+" LIMIT ?"
-										+" OFFSET ?;";
+											+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+											+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+									+" FROM "+Constants.TABLE_APPLICATION
+									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
+									+" ORDER BY "+Constants.KEY_APPLICATION_NAME
+									+" LIMIT ?"
+									+" OFFSET ?;";
 		String[] selectAvailableAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
 		
 		db.beginTransaction();
@@ -1159,7 +1159,7 @@ public class ManagerDatabase {
 //	}
 	
 	/**
-	 * getAppsUpdates, retrieves a list of all apps' updates
+	 * getUpdatableAppsDisplayInfo, retrieves a list of all apps' updates
 	 * 
 	 * @param int offset, number of row to start from
 	 * @param int range, number of rows to list
@@ -1170,66 +1170,56 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getAppsUpdates(int offset, int range){	//TODO refactor from installedApps to appsUpdates
-		return null; //TODO remove
-//		final int APP_NAME = Constants.COLUMN_FIRST;
-//		final int APP_HASHID = Constants.COLUMN_SECOND;
-//		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
-//		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FOURTH;
-//		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
-//		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_SIXTH;
-//		final int DOWNGRADE_VERSION_NAME = Constants.COLUMN_SEVENTH;
-//		final int DOWNGRADE_VERSION_CODE = Constants.COLUMN_EIGTH;
-//		
-//		ViewDisplayListApps installedApps = null;
-//		ViewDisplayApplication app;							//TODO check if this superQuery works as it's supposed to
+	public ViewDisplayListApps getUpdatableAppsDisplayInfo(int offset, int range){
+		final int APP_NAME = Constants.COLUMN_FIRST;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
+		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FOURTH;
+		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
+		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_SIXTH;
 		
-//		String selectInstalledApps = "SELECT I."+Constants.KEY_APP_INSTALLED_NAME+",I."+Constants.KEY_APP_INSTALLED_HASHID
-//											+",I."+Constants.KEY_APP_INSTALLED_VERSION_NAME+",I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
-//											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-//											+",D."+Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME+",D."+Constants.DISPLAY_APP_DOWNGRADE_VERSION_CODE
-//									+" FROM "+Constants.TABLE_APP_INSTALLED+" I"
-//										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
-//																	+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-//																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-//															 +" FROM "+Constants.TABLE_APPLICATION
-//															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
-//										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
-//																	+",MIN("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_DOWNGRADE_VERSION_CODE
-//																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME
-//															 +" FROM "+Constants.TABLE_APPLICATION
-//															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") D"
-//									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME
-//									+" LIMIT ?"
-//									+" OFFSET ?;";
-//		String[] selectInstalledAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
-//		
-//		db.beginTransaction();
-//		try{
-//			Cursor appsCursor = aptoideNonAtomicQuery(selectInstalledApps, selectInstalledAppsArgs);
-//
-//			db.setTransactionSuccessful();
-//			db.endTransaction();
-//
-//			installedApps = new ViewDisplayListApps(appsCursor.getCount());
-//			
-//			appsCursor.moveToFirst();
-//			do{
-//				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
-//												 ,(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE))
-//												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
-//												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE))
-//												 , appsCursor.getString(DOWNGRADE_VERSION_NAME));
-//				installedApps.addApp(app);
-//
-//			}while(appsCursor.moveToNext());
-//			appsCursor.close();
-//	
-//		}catch (Exception e) {
-//			db.endTransaction();
-//			// TODO: handle exception
-//		}
-//		return installedApps;
+		ViewDisplayListApps updatableApps = null;
+		ViewDisplayApplication app;	
+		
+		String selectUpdatableApps = "SELECT I."+Constants.KEY_APP_INSTALLED_NAME+",I."+Constants.KEY_APP_INSTALLED_HASHID
+											+",I."+Constants.KEY_APP_INSTALLED_VERSION_NAME+",I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
+											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+									+" FROM "+Constants.TABLE_APP_INSTALLED+" I"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
+																	+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+															 +" FROM "+Constants.TABLE_APPLICATION
+															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
+									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME
+									+" LIMIT ?"
+									+" OFFSET ?;";
+		String[] selectUpdatableAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+		
+		db.beginTransaction();
+		try{
+			Cursor appsCursor = aptoideNonAtomicQuery(selectUpdatableApps, selectUpdatableAppsArgs);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			updatableApps = new ViewDisplayListApps(1);
+			
+			appsCursor.moveToFirst();
+			do{
+				if( (appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE))) ){
+					app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
+							 , appsCursor.getString(UP_TO_DATE_VERSION_NAME));
+					updatableApps.addApp(app);
+				}
+
+			}while(appsCursor.moveToNext());
+			appsCursor.close();
+	
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+		}
+		return updatableApps;
 	}
 	
 	//TODO rest of activity support classes (depends on activity Layout definitions, for performance reasons)
