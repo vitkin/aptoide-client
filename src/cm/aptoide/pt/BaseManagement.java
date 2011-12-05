@@ -746,13 +746,13 @@ public class BaseManagement extends Activity {
 		 
 	 };
 	 
-	 private void schDownAll() {
-		 	ConnectivityManager netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-			if(!db.getScheduledListNames().isEmpty()&&netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED&&sPref.getBoolean("schDwnBox", false)){		        		
-	        	Intent intent1 = new Intent(BaseManagement.this,ScheduledDownload.class);
-	        	intent1.putExtra("downloadAll", "");
-	        	startActivity(intent1);
-	        	}
+	 protected void schDownAll() {
+//		 	ConnectivityManager netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+//			if(!db.getScheduledListNames().isEmpty()&&netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED&&sPref.getBoolean("schDwnBox", false)){		        		
+//	        	Intent intent1 = new Intent(getApplicationContext(),ScheduledDownload.class);
+//	        	intent1.putExtra("downloadAll", "");
+//	        	startActivity(intent1);
+//	        	}
 		}
 
 
