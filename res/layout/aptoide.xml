@@ -5,7 +5,5 @@
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
-    <include android:id="@+id/available" layout="@layout/apps_list" />
-    <include android:id="@+id/installed" layout="@layout/apps_list" />
-    <include android:id="@+id/updates" layout="@layout/apps_list" />
+    
 </ViewFlipper>

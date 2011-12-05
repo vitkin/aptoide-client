@@ -27,9 +27,9 @@ import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
-import android.app.ListActivity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -46,9 +46,11 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -56,7 +58,7 @@ import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ViewFlipper;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
@@ -75,20 +77,28 @@ import cm.aptoide.pt.debug.InterfaceAptoideLog;
  * @since 3.0
  *
  */
-public class Aptoide extends ListActivity implements InterfaceAptoideLog { 
+public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClickListener { 
 	
 	private final String TAG = "Aptoide-MainView";
 	
-	private ListView listView;
 	private ScrollDetector scrollListener;
 	private GestureDetector swypeDetector;
 	private View.OnTouchListener swypeListener;
 	private AtomicBoolean swyping = null;
 	
-//	private ViewFlipper viewFlipper = null;
-		
+	private ViewFlipper appsListFlipper = null;
 	private ListView availableAppsList = null;
+	private ListView installedAppsList = null;
+	private ListView updatesAppsList = null;
+	private EnumAppsLists currentAppsList = null;
+	
+	private ViewDisplayListApps availableApps = null;
+	private ViewDisplayListApps installedApps = null;
+	private ViewDisplayListApps updatesApps = null;
+	
 	private SimpleAdapter availableAdapter = null;
+	private SimpleAdapter installedAdapter = null;
+	private SimpleAdapter updatesAdapter = null;
 		
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -180,7 +190,10 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog {
         	switch (message) {
 			case UPDATE_AVAILABLE_LIST:
 				try {
-					displayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
+					availableApps = serviceDataCaller.callGetAvailablePackages(0, 100);
+					displayAvailable();
+					installedApps = serviceDataCaller.callGetInstalledPackages(0, 100);
+					displayInstalled();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -246,12 +259,24 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog {
     			swyping.set(true);
 	    		if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 	        		Log.d("Aptoide","Swype right");
-//	    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_in));
-//	    			viewFlipper.showNext();
+	        		if(EnumAppsLists.getNext(currentAppsList).equals(currentAppsList)){
+	        			appsListFlipper.startAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_resist_next));
+	        		}else{
+		        		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_next));
+		    			appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
+		    			appsListFlipper.showNext();
+		    			currentAppsList = EnumAppsLists.getNext(currentAppsList);
+	        		}
 	    		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 	        		Log.d("Aptoide","Swype left");
-//	    			viewFlipper.setAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.push_left_out));
-//	    			viewFlipper.showPrevious();
+	        		if(EnumAppsLists.getPrevious(currentAppsList).equals(currentAppsList)){
+	        			appsListFlipper.startAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_resist_previous));
+	        		}else{
+		        		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_previous));
+		        		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
+		        		appsListFlipper.showPrevious();
+		        		currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+	        		}
 	    		}
 	    		return super.onFling(e1, e2, velocityX, velocityY);
     		}
@@ -283,7 +308,7 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog {
 			if(scrollState == SCROLL_STATE_IDLE){
 				initialFirstVisileItem.set(firstVisibleItem.get());
 				swyping.set(false);
-				Log.d("Aptoide","Scroll offset: "+firstVisibleItem+" range: "+visibleItemCount);				
+				Log.d("Aptoide","Scroll currentList: "+currentAppsList+" offset: "+firstVisibleItem+" range: "+visibleItemCount);				
 			}
 		}
     	
@@ -295,91 +320,23 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog {
 		return swypeDetector.onTouchEvent(event);
 	}
 
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		if(!swyping.get()){
-			AptoideLog.d(this, "Onclick");
-		}
-		super.onListItemClick(l, v, position, id);
-	}
-	
+	/** TODO relocate this to each list **/
+//	@Override
+//	protected void onListItemClick(ListView l, View v, int position, long id) {
+//		if(!swyping.get()){
+//			AptoideLog.d(this, "Onclick");
+//		}
+//		super.onListItemClick(l, v, position, id);
+//	}
 	
 
-    
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.apps_list);
-       
-		makeSureServiceDataIsRunning();
-        
-        
-//		viewFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
-//		viewFlipper.addView(Aptoide.this.findViewById(R.id.available), Constants.AVAILABLE);
-//		viewFlipper.addView(Aptoide.this.findViewById(R.id.installed), Constants.INSTALLED);
-//		viewFlipper.addView(Aptoide.this.findViewById(R.id.updates), Constants.UPDATES);
-
-//		availableAppsList = new ListView(this);
-//		availableAppsList.setOnItemClickListener(this);
-
-		swypeDetector = new GestureDetector(new SwypeDetector());
-		swypeListener = new View.OnTouchListener() {
-								@Override
-								public boolean onTouch(View v, MotionEvent event) {
-//									Log.d("Aptoide","onFling");
-									return swypeDetector.onTouchEvent(event);
-								}
-							};
-		swyping = new AtomicBoolean(false);		
-		
-		scrollListener = new ScrollDetector();
-		listView = (ListView) findViewById(android.R.id.list);
-		listView.setOnTouchListener(swypeListener);
-		listView.setOnScrollListener(scrollListener);
-
-    }
-    
-    
-    public void displayAvailable(ViewDisplayListApps availableApps){
-    	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
-		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.app_row, 
-				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
-				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
-		
-		availableAdapter.setViewBinder(new InstalledAppsListBinder());
-		
-		setListAdapter(availableAdapter);
-		
-//		setContentView(availableAppsList);
-//		availableAppsList.setSelection(-1);
-    }
-
-	private void makeSureServiceDataIsRunning(){
-    	ActivityManager activityManager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
-    	for (RunningServiceInfo runningService : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-			if(runningService.service.getClassName().equals(Constants.SERVICE_DATA_CLASS_NAME)){
-				this.serviceDataSeenRunning = true;
-				break;
-			}
-		}
-//    	if(!serviceDataSeenRunning){
-//    		new Thread() {
-//    			public void run(){
-//    	    		Intent splash = new Intent(Aptoide.this, Splash.class);
-//    	    		splash.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-//    	    		startActivity(splash);    				
-//    			}
-//    		}.start();
-//    		
-////            startService(new Intent(this, AptoideServiceData.class));
-//    	}
-    	if(!serviceDataIsBound){
-    		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+    	if(!swyping.get()){
+    		AptoideLog.d(this, "Onclick");
     	}
-    }
-
-	
+	}
 	
 	
 //	@Override
@@ -412,6 +369,129 @@ public class Aptoide extends ListActivity implements InterfaceAptoideLog {
 //		startActivityForResult(apkinfo,30);
 //	}
 	
+
+    
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.aptoide);
+       
+		makeSureServiceDataIsRunning();
+        
+        
+//		viewFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
+//		viewFlipper.addView(Aptoide.this.findViewById(R.id.available), Constants.AVAILABLE);
+//		viewFlipper.addView(Aptoide.this.findViewById(R.id.installed), Constants.INSTALLED);
+//		viewFlipper.addView(Aptoide.this.findViewById(R.id.updates), Constants.UPDATES);
+
+//		availableAppsList = new ListView(this);
+//		availableAppsList.setOnItemClickListener(this);
+
+		swypeDetector = new GestureDetector(new SwypeDetector());
+		swypeListener = new View.OnTouchListener() {
+								@Override
+								public boolean onTouch(View v, MotionEvent event) {
+//									Log.d("Aptoide","onFling");
+									return swypeDetector.onTouchEvent(event);
+								}
+							};
+		swyping = new AtomicBoolean(false);		
+		scrollListener = new ScrollDetector();
+		
+		appsListFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
+		
+		availableAppsList = new ListView(this);
+		availableAppsList.setOnTouchListener(swypeListener);
+		availableAppsList.setOnScrollListener(scrollListener);
+		availableAppsList.setOnItemClickListener(this);
+		appsListFlipper.addView(availableAppsList);
+		
+		installedAppsList = new ListView(this);
+		installedAppsList.setOnTouchListener(swypeListener);
+		installedAppsList.setOnScrollListener(scrollListener);
+		installedAppsList.setOnItemClickListener(this);
+		appsListFlipper.addView(installedAppsList);
+		
+		updatesAppsList = new ListView(this);
+		updatesAppsList.setOnTouchListener(swypeListener);
+		updatesAppsList.setOnScrollListener(scrollListener);
+		updatesAppsList.setOnItemClickListener(this);
+		appsListFlipper.addView(updatesAppsList);
+
+		currentAppsList = EnumAppsLists.AVAILABLE;
+    }
+    
+    
+
+	public void displayAvailable(){
+    	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
+		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.app_row, 
+				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
+				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
+		
+		availableAdapter.setViewBinder(new InstalledAppsListBinder());
+		
+		availableAppsList.setAdapter(availableAdapter);
+		
+//		setContentView(availableAppsList);
+//		availableAppsList.setSelection(-1);
+    }
+    
+    
+    public void displayInstalled(){
+    	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
+    	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.app_row, 
+				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
+				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
+		
+		installedAdapter.setViewBinder(new InstalledAppsListBinder());
+		
+		installedAppsList.setAdapter(installedAdapter);
+		
+//		setContentView(availableAppsList);
+//		availableAppsList.setSelection(-1);
+    }
+    
+    
+    public void displayUpdates(){
+    	AptoideLog.d(Aptoide.this, "UpdatesList: "+updatesApps);
+		updatesAdapter = new SimpleAdapter(Aptoide.this, updatesApps.getList(), R.layout.app_row, 
+				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
+				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
+		
+		updatesAdapter.setViewBinder(new InstalledAppsListBinder());
+		
+		updatesAppsList.setAdapter(updatesAdapter);
+		
+//		setContentView(availableAppsList);
+//		availableAppsList.setSelection(-1);
+    }
+
+	private void makeSureServiceDataIsRunning(){
+    	ActivityManager activityManager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
+    	for (RunningServiceInfo runningService : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+			if(runningService.service.getClassName().equals(Constants.SERVICE_DATA_CLASS_NAME)){
+				this.serviceDataSeenRunning = true;
+				break;
+			}
+		}
+//    	if(!serviceDataSeenRunning){
+//    		new Thread() {
+//    			public void run(){
+//    	    		Intent splash = new Intent(Aptoide.this, Splash.class);
+//    	    		splash.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+//    	    		startActivity(splash);    				
+//    			}
+//    		}.start();
+//    		
+////            startService(new Intent(this, AptoideServiceData.class));
+//    	}
+    	if(!serviceDataIsBound){
+    		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
+    	}
+    }
+
 
 
 
