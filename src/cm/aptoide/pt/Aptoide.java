@@ -191,8 +191,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         	switch (message) {
 			case UPDATE_AVAILABLE_LIST:
 				try {
-					availableApps = serviceDataCaller.callGetAvailablePackages(0, 100);
-					displayAvailable();
+					updateDisplayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
 					
 					installedApps = serviceDataCaller.callGetInstalledPackages(0, 100);
 					displayInstalled();
@@ -257,8 +256,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     
 
-	public void displayAvailable(){
-    	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
+	public void initDisplayAvailable(){
 		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.app_row, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
@@ -266,6 +264,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		availableAdapter.setViewBinder(new AvailableAppsListBinder());
 		availableAppsList.setAdapter(availableAdapter);
     }
+	
+	public void updateDisplayAvailable(ViewDisplayListApps availableApps){
+    	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
+		boolean newList = availableApps.getList().isEmpty();
+    	if(newList){
+    		this.availableApps = availableApps;
+    		initDisplayAvailable();
+    	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
+    		this.availableApps.getList().addAll(availableApps.getList());
+    		availableAdapter.notifyDataSetChanged();
+    	}
+		
+	}
     
     
     public void displayInstalled(){
