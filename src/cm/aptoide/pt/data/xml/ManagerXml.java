@@ -29,6 +29,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
 
@@ -85,26 +86,35 @@ public class ManagerXml{
 	}
 	
 	public void parsingFinished(){
-		serviceData.updateLists();
+		serviceData.updateAvailableLists();
 	}
 
 
-	public void repoParse(ViewRepository repository, ViewCache cache){
+	public void repoParse(ViewRepository repository, ViewCache cache, EnumInfoType infoType){
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
 		
 		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
 		ViewXmlParse parseInfo = getNewViewXmlParse(repository, cache, notification);
-		
+		DefaultHandler repoParser = null;
 	    try {
 	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-	    	RepoBareParser repoBareParser = new RepoBareParser(this, parseInfo);
-	    	xmlReader.setContentHandler(repoBareParser);
-	    	xmlReader.setErrorHandler(repoBareParser);
-//	    	}else{
-//	    		ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
-//	    		xr.setContentHandler(handler);
-//	    		xml_file = new File(EXTRAS_XML_PATH);
-//	    	}
+	    	switch (infoType) {
+				case BARE:
+					repoParser = new RepoBareParser(this, parseInfo);
+					break;
+				case ICON:
+					repoParser = new RepoIconParser(this, parseInfo);
+					break;
+				case EXTRAS:
+//					repoParser = new RepoExtrasParser(this, parseInfo);		//TODO create this parser
+					break;
+	
+				default:
+					break;
+			}
+	    	
+	    	xmlReader.setContentHandler(repoParser);
+	    	xmlReader.setErrorHandler(repoParser);
 	    	
 	    	InputSource inputSource = new InputSource(new FileReader(new File(parseInfo.getLocalPath())));
 	    	Log.d("Aptoide-managerXml", parseInfo.getLocalPath());
@@ -113,6 +123,15 @@ public class ManagerXml{
 	    } catch (Exception e){
 	    	e.printStackTrace();
 	    }
+	}
+
+
+	public void repoBareParse(ViewRepository repository, ViewCache cache){
+		repoParse(repository, cache, EnumInfoType.BARE);
+	}
+	
+	public void repoIconParse(ViewRepository repository, ViewCache cache){
+		repoParse(repository, cache, EnumInfoType.ICON);
 	}
 	
 }

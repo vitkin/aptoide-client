@@ -47,6 +47,7 @@ import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ViewNotification;
+import cm.aptoide.pt.data.xml.EnumInfoType;
 
 /**
  * ManagerDownloads, centralizes all download processes
@@ -145,24 +146,59 @@ public class ManagerDownloads {
 		return connectionAvailable;
 	}
 	
+	public ViewCache startRepoBareDownload(ViewRepository repository){
+		return startRepoDownload(repository, EnumInfoType.BARE);
+	}
 	
-	public ViewCache startRepoDownload(ViewRepository repository, String infoType){ //TODO use infoType and complete with the other protocol args
-		ViewCache cache;
+	public ViewCache startRepoIconDownload(ViewRepository repository){
+		return startRepoDownload(repository, EnumInfoType.ICON);
+	}
+	
+	public ViewCache startRepoExtraDownload(ViewRepository repository){
+		return startRepoDownload(repository, EnumInfoType.EXTRAS);
+	}
+	
+	
+	public ViewCache startRepoDownload(ViewRepository repository, EnumInfoType infoType){
+		ViewCache cache = null;
 		ViewNotification notification;
 		ViewDownload download;
 		int retrysCount = 3;
 		boolean downloadSuccess = false; 
 		
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+		String xmlPath = null;
 		
-//		String bareInfoXmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=bare";
-		String bareInfoXmlPath = "http://aptoide.com/testing/xml/info.xml";
-		cache = managerCache.getNewRepoViewCache(repository.getHashid());	//TODO send args to have different filenames for each different xml of same repoid
+		switch (infoType) {
+			case BARE:
+//				xmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=bare";	//TODO implement rest of args
+				xmlPath = "http://aptoide.com/testing/xml/info.xml";
+				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
+				break;
+			case ICON:
+//				xmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=icon";	//TODO implement rest of args
+				xmlPath = "http://aptoide.com/testing/xml/info_icon.xml";
+				cache = managerCache.getNewRepoIconViewCache(repository.getHashid());
+				break;
+			case DOWNLOAD:
+//				xmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=download";	//TODO implement rest of args
+//				xmlPath = "http://aptoide.com/testing/xml/info_download.xml";
+//				cache = managerCache.getNewRepoDownloadViewCache(repository.getHashid());
+				break;
+			case EXTRAS:
+//				xmlPath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML;	//TODO implement rest of args
+				xmlPath = "http://aptoide.com/testing/xml/extras.xml";
+				cache = managerCache.getNewRepoExtrasViewCache(repository.getHashid());
+				break;
+				
+			default:
+				break;
+		}
 		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
 		if(repository.isLoginRequired()){	//TODO get login from pool
-			download = getNewViewDownload(bareInfoXmlPath, repository.getLogin(), cache, notification);
+			download = getNewViewDownload(xmlPath, repository.getLogin(), cache, notification);
 		}else{
-			download = getNewViewDownload(bareInfoXmlPath, cache, notification);
+			download = getNewViewDownload(xmlPath, cache, notification);
 		}
 		
 		do{
@@ -172,8 +208,6 @@ public class ManagerDownloads {
 		
 //		if(!downloadSuccess){
 //			//TODO raise exception
-//		}else{
-			managerCache.calculateMd5Hash(cache);
 //		}
 		
 		return cache;

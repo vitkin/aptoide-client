@@ -74,9 +74,18 @@ public class ManagerCache {
 		}
 	}
 	
-	public ViewCache getNewRepoViewCache(int repoHashid){
-		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".xml");
+	public ViewCache getNewRepoBareViewCache(int repoHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".bare"+".xml");
 	}
+	
+	public ViewCache getNewRepoIconViewCache(int repoHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".icon"+".xml");
+	}
+	
+	public ViewCache getNewRepoExtrasViewCache(int repoHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".extras"+".xml");
+	}
+	
 	
 	public boolean isFreeSpaceInSdcard(){
 		File sdcard_file = new File(Constants.PATH_SDCARD);

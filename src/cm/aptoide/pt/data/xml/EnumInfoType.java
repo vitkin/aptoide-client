@@ -1,5 +1,5 @@
 /**
- * EnumXmlTags,	auxiliary class to Aptoide's ServiceData
+ * EnumInfoType,		part of aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -21,32 +21,19 @@
 package cm.aptoide.pt.data.xml;
 
 /**
- * EnumXmlTags, typeSafes XML tags
+ * EnumInfoType, typeSafes xml info types in Aptoide
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumXmlTags {
-	apklst,
-	repository,
-	basepath,
-	iconspath,
-	screenspath,
-	appscount,
-	pkg,
-	apphashid,
-	apkid,
-	vercode,
-	ver,
-	name,
-	catg2,
-	timestamp,
-	minSdk,
-	minScreen,
-	minGles;
+public enum EnumInfoType {
+	BARE,
+	ICON,
+	DOWNLOAD,
+	EXTRAS;
 	
-	public static EnumXmlTags reverseOrdinal(int ordinal){
+	public static EnumInfoType reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }
