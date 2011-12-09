@@ -43,22 +43,22 @@ import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.SimpleAdapter.ViewBinder;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
@@ -90,7 +90,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ViewFlipper appsListFlipper = null;
 	private ListView availableAppsList = null;
 	private ListView installedAppsList = null;
-	private ListView updatesAppsList = null;
+	private ListView updatableAppsList = null;
 	private EnumAppsLists currentAppsList = null;
 	
 	private ViewDisplayListApps availableApps = null;
@@ -99,7 +99,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	private SimpleAdapter availableAdapter = null;
 	private SimpleAdapter installedAdapter = null;
-	private SimpleAdapter updatesAdapter = null;
+	private SimpleAdapter updatableAdapter = null;
 		
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -147,9 +147,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	            AptoideLog.v(Aptoide.this, "Called for registering as InstalledPackages Observer");
 	            serviceDataCaller.callRegisterInstalledPackagesObserver(serviceDataCallback);
 
-	            AptoideLog.v(Aptoide.this, "Called for registering as UpdatablePackages Observer");
-	            serviceDataCaller.callRegisterUpdatablePackagesObserver(serviceDataCallback);
-	            
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
 	            e.printStackTrace();
@@ -176,10 +173,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	
 	private AIDLAptoideInterface.Stub serviceDataCallback = new AIDLAptoideInterface.Stub() {
+
+		@Override
+		public void newInstalledListDataAvailable() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received newInstalledListDataAvailable callback");
+			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_INSTALLED_LIST.ordinal());
+		}
 		
 		@Override
-		public void newListDataAvailable() throws RemoteException {
-			AptoideLog.v(Aptoide.this, "received newListDataAvailable callback");
+		public void newAvailableListDataAvailable() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received newAvailableListDataAvailable callback");
 			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST.ordinal());
 		}
 	};
@@ -189,15 +192,24 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         public void handleMessage(Message msg) {
         	EnumServiceDataCallback message = EnumServiceDataCallback.reverseOrdinal(msg.what);
         	switch (message) {
+        	case UPDATE_INSTALLED_LIST:
+        		try {
+					updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+					
+//					updateDisplayUpdatable(serviceDataCaller.callGetUpdatablePackages(0, 100));
+					
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+				break;
 			case UPDATE_AVAILABLE_LIST:
 				try {
+					updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+					
 					updateDisplayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
 					
-					installedApps = serviceDataCaller.callGetInstalledPackages(0, 100);
-					displayInstalled();
-
-					updatableApps = serviceDataCaller.callGetUpdatablePackages(0, 100);
-					displayUpdates();
+					updateDisplayUpdates(serviceDataCaller.callGetUpdatablePackages(0, 100));
 					
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -219,6 +231,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         setContentView(R.layout.aptoide);
        
 		makeSureServiceDataIsRunning();
+		
+		installedApps = new ViewDisplayListApps(100);
+		availableApps = new ViewDisplayListApps(100);
+		updatableApps = new ViewDisplayListApps(100);
 
 		swypeDetector = new GestureDetector(new SwypeDetector());
 		swypeListener = new View.OnTouchListener() {
@@ -245,11 +261,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		installedAppsList.setOnItemClickListener(this);
 		appsListFlipper.addView(installedAppsList);
 		
-		updatesAppsList = new ListView(this);
-		updatesAppsList.setOnTouchListener(swypeListener);
-		updatesAppsList.setOnScrollListener(scrollListener);
-		updatesAppsList.setOnItemClickListener(this);
-		appsListFlipper.addView(updatesAppsList);
+		updatableAppsList = new ListView(this);
+		updatableAppsList.setOnTouchListener(swypeListener);
+		updatableAppsList.setOnScrollListener(scrollListener);
+		updatableAppsList.setOnItemClickListener(this);
+		appsListFlipper.addView(updatableAppsList);
 
 		currentAppsList = EnumAppsLists.AVAILABLE;
     }
@@ -279,8 +295,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
     
     
-    public void displayInstalled(){
-    	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
+    public void initDisplayInstalled(){
     	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.app_row, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
@@ -288,19 +303,44 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		installedAdapter.setViewBinder(new InstalledAppsListBinder());
 		installedAppsList.setAdapter(installedAdapter);
     }
+	
+	public void updateDisplayInstalled(ViewDisplayListApps installedApps){
+    	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
+		boolean newList = installedApps.getList().isEmpty();
+    	if(newList){
+    		this.installedApps = installedApps;
+    		initDisplayInstalled();
+    	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
+    		this.availableApps.getList().addAll(installedApps.getList());
+    		installedAdapter.notifyDataSetChanged();
+    	}
+		
+	}
     
     
-    public void displayUpdates(){
-    	AptoideLog.d(Aptoide.this, "UpdatesList: "+updatableApps);
+    public void initDisplayUpdates(){
     	if(!updatableApps.getList().isEmpty()){
-			updatesAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.app_row, 
+			updatableAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.app_row, 
 					new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
 					new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
 			
-			updatesAdapter.setViewBinder(new UpdatesAppsListBinder());
-			updatesAppsList.setAdapter(updatesAdapter);
+			updatableAdapter.setViewBinder(new UpdatableAppsListBinder());
+			updatableAppsList.setAdapter(updatableAdapter);
     	}
     }
+	
+	public void updateDisplayUpdates(ViewDisplayListApps updatableApps){
+    	AptoideLog.d(Aptoide.this, "UpdatesList: "+updatableApps);
+		boolean newList = updatableApps.getList().isEmpty();
+    	if(newList){
+    		this.updatableApps = updatableApps;
+    		initDisplayInstalled();
+    	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
+    		this.updatableApps.getList().addAll(updatableApps.getList());
+    		updatableAdapter.notifyDataSetChanged();
+    	}
+		
+	}
 
 	private void makeSureServiceDataIsRunning(){
     	ActivityManager activityManager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
@@ -377,7 +417,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 
 
-	class UpdatesAppsListBinder implements ViewBinder
+	class UpdatableAppsListBinder implements ViewBinder
 	{
 		public boolean setViewValue(View view, Object data, String textRepresentation)
 		{

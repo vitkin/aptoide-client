@@ -111,17 +111,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 
 		@Override
 		public void callAddRepo(ViewRepository repository) throws RemoteException {
-			addRepo(repository);			
+			addRepoBare(repository);			
 		}
 
 		@Override
 		public ViewDisplayListApps callGetAvailablePackages(int offset, int range) throws RemoteException {
 			return getAvailablePackages(offset, range);
-		}
-
-		@Override
-		public void callRegisterUpdatablePackagesObserver(AIDLAptoideInterface updatablePackagesObserver) throws RemoteException {
-			registerUpdatableDataObserver(updatablePackagesObserver);
 		}
 
 		@Override
@@ -138,11 +133,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	public void registerInstalledDataObserver(AIDLAptoideInterface installedPackagesObserver){
 		serviceClients.put(EnumServiceDataCallback.UPDATE_INSTALLED_LIST, installedPackagesObserver);
     	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
-	}
-	
-	public void registerUpdatableDataObserver(AIDLAptoideInterface installedPackagesObserver){
-		serviceClients.put(EnumServiceDataCallback.UPDATE_UPDATES_LIST, installedPackagesObserver);
-    	AptoideLog.d(AptoideServiceData.this, "Registered Updatable Data Observer");
 	}
 	
 	
@@ -374,6 +364,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 //   		}
 	}
 	
+	public void storeScreenDimensions(ViewScreenDimensions screenDimensions){
+		managerPreferences.setScreenDimensions(screenDimensions);
+		AptoideLog.d(AptoideServiceData.this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
+	}
+	
 	public void syncInstalledPackages(){
 		managerDatabase.insertInstalledApplications(managerSystemSync.getInstalledApps());
     	AptoideLog.d(AptoideServiceData.this, "Sync'ed Installed Packages");
@@ -389,25 +384,21 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 //		;
 //	}
 	
-	public void updateLists(){
+	public void updateInstalledLists(){
 		try {
-			serviceClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newListDataAvailable();
+			serviceClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	public void storeScreenDimensions(ViewScreenDimensions screenDimensions){
-		managerPreferences.setScreenDimensions(screenDimensions);
-		AptoideLog.d(AptoideServiceData.this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
-	}
-	
-	public void addRepo(final ViewRepository repository){
+	public void addRepoBare(final ViewRepository originalRepository){
 		try{
 
 			new Thread(){
 				public void run(){
+					ViewRepository repository = originalRepository;
 					this.setPriority(Thread.MAX_PRIORITY);
 //					managerDatabase.insertRepository(repository);
 					if(!managerDownloads.isConnectionAvailable()){
@@ -416,11 +407,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 					if(!getManagerCache().isFreeSpaceInSdcard()){
 						//TODO raise exception
 					}
-					ViewCache cache = managerDownloads.startRepoDownload(repository, "bare");	//TODO replace arg with enum
+					ViewCache cache = managerDownloads.startRepoBareDownload(repository);
 					repository.setDelta(cache.getMd5sum());
 					
-					managerXml.repoParse(repository, cache);
-					//TODO download other parts of xml and process them
+					managerXml.repoBareParse(repository, cache);
 					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
 			}.start();
@@ -431,8 +421,45 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 			//TODO handle exception
 			e.printStackTrace();
 		}
-		//TODO start the process of downloading and parsing xml and filling the data
 	}
+	
+	public void addRepoIcon(final ViewRepository repository){
+		try{
+
+			new Thread(){
+				public void run(){
+					this.setPriority(Thread.MAX_PRIORITY);
+					if(!managerDownloads.isConnectionAvailable()){
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					ViewCache cache = managerDownloads.startRepoIconDownload(repository);
+					
+					managerXml.repoIconParse(repository, cache);
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}
+			}.start();
+
+
+		} catch(Exception e){
+			/** this should never happen */
+			//TODO handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateAvailableLists(){
+		try {
+			serviceClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	
 	public ViewDisplayListApps getInstalledPackages(int offset, int range){

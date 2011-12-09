@@ -1,5 +1,5 @@
 /**
- * RepoBareParser, 	auxiliary class to Aptoide's ServiceData
+ * RepoIconParser, 	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  * 
@@ -34,35 +34,36 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.util.Log;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewApplication;
+import cm.aptoide.pt.data.model.ViewIconInfo;
 
 /**
- * RepoBareParser, handles Bare Repo xml Sax parsing
+ * RepoIconParser, handles Icon Repo xml Sax parsing
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class RepoBareParser extends DefaultHandler{
+public class RepoIconParser extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewXmlParse parseInfo;
-	private ViewApplication application;	
+	private ViewIconInfo iconInfo;	
 	private ArrayList<ViewApplication> applications = new ArrayList<ViewApplication>(Constants.APPLICATIONS_IN_EACH_INSERT);
 	
-	private EnumXmlTagsBare tag = EnumXmlTagsBare.apklst;
-	private HashMap<String, EnumXmlTagsBare> tagMap = new HashMap<String, EnumXmlTagsBare>();
+	private EnumXmlTagsIcon tag = EnumXmlTagsIcon.apklst;
+	private HashMap<String, EnumXmlTagsIcon> tagMap = new HashMap<String, EnumXmlTagsIcon>();
 	
-	private String packageName = "";
+	private int appHashid = 0;
 	private int parsedAppsNumber = 0;
 	
 	private StringBuilder tagContentBuilder;
 	
 		
-	public RepoBareParser(ManagerXml managerXml, ViewXmlParse parseInfo){
+	public RepoIconParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
 		
-		for (EnumXmlTagsBare tag : EnumXmlTagsBare.values()) {
+		for (EnumXmlTagsIcon tag : EnumXmlTagsIcon.values()) {
 			tagMap.put(tag.name(), tag);
 		}
 	}
@@ -78,68 +79,35 @@ public class RepoBareParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		switch (tag) {
-			case apkid:
-				packageName = tagContentBuilder.toString();
-				break;
-			case vercode:
-				int versionCode = Integer.parseInt(tagContentBuilder.toString());
-				application = new ViewApplication(packageName, versionCode, false);
-				break;
-			case ver:
-				application.setVersionName(tagContentBuilder.toString());
-				break;
-			case name:
-				application.setApplicationName(tagContentBuilder.toString());
-				break;
-			case catg2:
-				application.setCategoryHashid((tagContentBuilder.toString()).hashCode());
-				break;
-			case timestamp:
-				application.setTimestamp(Integer.parseInt(tagContentBuilder.toString()));
-				break;
-//			case minSdk:	//TODO filters
-//				application.setVersionName(new String(chars).substring(start, start + length));
-//				break;
-				
-			case pkg:
-				application.setRepoHashid(parseInfo.getRepository().getHashid());
-				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-					parsedAppsNumber = 0;
-					
-					managerXml.getManagerDatabase().insertApplications(applications);
-					applications = new ArrayList<ViewApplication>(Constants.APPLICATIONS_IN_EACH_INSERT);
-				}
-				parsedAppsNumber++;
-				parseInfo.getNotification().incrementProgress(1);
-				
-				applications.add(application);
-				break;
+		case apphashid:
+			appHashid = Integer.parseInt(tagContentBuilder.toString());
+			break;
+		case icon:
+			String iconRemotePathTail = tagContentBuilder.toString();
+			iconInfo = new ViewIconInfo(iconRemotePathTail, appHashid);
+			break;
 			
-				
-			case basepath:
-				parseInfo.getRepository().setBasePath(tagContentBuilder.toString());
-				break;	
-			case iconspath:
-				parseInfo.getRepository().setIconsPath(tagContentBuilder.toString());
-				break;	
-			case screenspath:
-				parseInfo.getRepository().setScreensPath(tagContentBuilder.toString());
-				break;	
-			case appscount:
-				parseInfo.getRepository().setSize(Integer.parseInt(tagContentBuilder.toString()));		
-				parseInfo.getNotification().setProgressCompletionTarget(parseInfo.getRepository().getSize());
-				break;
-			case hash:
-				parseInfo.getRepository().setDelta(tagContentBuilder.toString());
-				break;
-				
-			case repository:
-				managerXml.getManagerDatabase().insertRepository(parseInfo.getRepository());
-				break;
-				
-			default:
-				break;
+		default:
+			break;
 		}
+		
+		
+//		if(localName.trim().equals("package")){
+//			application.setRepoHashid(parseInfo.getRepository().getHashid());
+//			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+//				parsedAppsNumber = 0;
+//				
+//				managerXml.getManagerDatabase().insertApplications(applications);
+//				applications = new ArrayList<ViewApplication>(Constants.APPLICATIONS_IN_EACH_INSERT);
+//			}
+//			parsedAppsNumber++;
+//			parseInfo.getNotification().incrementProgress(1);
+//			
+//			applications.add(application);
+//
+//		}else if(localName.trim().equals("repository")){
+//			managerXml.getManagerDatabase().insertRepository(parseInfo.getRepository());
+//		}
 	}
 
 	@Override

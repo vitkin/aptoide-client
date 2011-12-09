@@ -1,6 +1,6 @@
 /**
- * AIDLAptoideInterface,		part of Aptoide
- * Copyright (C) 2011 Duarte Silveira
+ * EnumXmlTagsBare,	auxiliary class to Aptoide's ServiceData
+ * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,18 +17,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt;
+
+package cm.aptoide.pt.data.xml;
 
 /**
- * AIDLAptoideInterface, models Aptoide's interface classes AIDL IPC
- *
+ * EnumXmlTagsBare, typeSafes bare info XML tags
+ * 
  * @author dsilveira
  * @since 3.0
  *
  */
-interface AIDLAptoideInterface{
+public enum EnumXmlTagsBare {
+	apklst,
+	repository,
+	basepath,
+	iconspath,
+	screenspath,
+	appscount,
+	hash,
+	pkg,
+	apkid,
+	vercode,
+	ver,
+	name,
+	catg2,
+	timestamp,
+	minSdk,
+	minScreen,
+	minGles;
 	
-	void newInstalledListDataAvailable();
-	void newAvailableListDataAvailable();
-	
+	public static EnumXmlTagsBare reverseOrdinal(int ordinal){
+		return values()[ordinal];
+	}
 }

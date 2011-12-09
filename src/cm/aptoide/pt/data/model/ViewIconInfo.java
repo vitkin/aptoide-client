@@ -38,7 +38,7 @@ public class ViewIconInfo {
 	/**
 	 * ViewIcon Constructor
 	 * 
-	 * @param String iconRemotePathTail, icon's remote path tail (what comes after repository's base path)
+	 * @param String iconRemotePathTail, icon's remote path tail (what comes after repository's icons path)
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
 	public ViewIconInfo(String iconRemotePathTail, int applicationFullHashid) {
