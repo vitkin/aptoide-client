@@ -25,6 +25,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream.PutField;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
@@ -228,7 +229,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
 		};
 		IntentFilter intentFilter;
-	
+		IntentFilter intentFilter2 = new IntentFilter();
 //	private Handler fetchHandler = new Handler() {
 //
 //		@Override
@@ -270,7 +271,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
 		
 		intentFilter = new IntentFilter();
-		IntentFilter intentFilter2 = new IntentFilter();
+		
 //    	intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
     	intentFilter2.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
     	
@@ -430,7 +431,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 					call.putExtra("uri", "http://apps.bazaarandroid.com/");
 					startActivityForResult(call,NEWREPO_FLAG);
 				}
-
+				if (sPref.getBoolean("intentChanged", false)) {
 				Intent i = getIntent();
 				if(i.hasExtra("repos")){
 					if(i.hasExtra("apps")){
@@ -498,8 +499,11 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 					startActivity(call);
 					
 				}
+				
 			}
-			
+			prefEdit.putBoolean("intentChanged", false);
+			prefEdit.commit();
+			}
 		}
 		
 //		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
@@ -676,11 +680,28 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 //		if(isRegistered)
 		
 		super.onPause();
-		
+		prefEdit.putBoolean("intentChanged", false);
+		prefEdit.commit();
 		
 		Log.d("RemoteInTab","onPause");
 	}
-
+	
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		unregisterReceiver(broadcastReceiver2);
+	}
+	
+	
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		
+		registerReceiver(broadcastReceiver2, intentFilter2);
+		
+	}
 	/* (non-Javadoc)
 	 * @see android.app.ActivityGroup#onResume()
 	 */
@@ -1239,7 +1260,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		}
 
 		Log.d("Aptoide-RemoteInTab", "onNewIntent");
-		Log.i("intentChanged", sPref.getBoolean("intentChanged", true) + "");
+		Log.i("intentChanged", sPref.getBoolean("intentChanged", false) + "");
 		if (sPref.getBoolean("intentChanged", false)) {
 			prefEdit.putBoolean("intentChanged", false);
 			prefEdit.commit();

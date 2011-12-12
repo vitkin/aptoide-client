@@ -211,7 +211,7 @@
 	       			android:layout_width="fill_parent" 
 	       			android:layout_height="50dp"
 	       			android:textSize="12sp"
-	       			
+	       			android:singleLine="true"
 	       			android:text="@string/btn_search_market"
 	       			
             		

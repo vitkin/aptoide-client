@@ -3,16 +3,17 @@
    
     
     <string name="menu_update_repo">Update</string>
-    <string name="menu_manage">Gerir repos</string>
+    <string name="menu_manage">Gerir stores</string>
     <string name="menu_order">Alterar ordem</string>
     <string name="menu_settings">Definições</string>
+    <string name="menu_display_options">Opções de Exibição</string>
     <string name="menu_about">Sobre</string>
     <string name="menu_search">Procurar</string>
     
     
-    <string name="menu_add_repo">Adicionar Repositório</string>
-    <string name="menu_rem_repo">Remover Repositório</string>
-    <string name="menu_edit_repo">Editar Repositório</string>
+    <string name="menu_add_repo">Adicionar store</string>
+    <string name="menu_rem_repo">Remover store</string>
+    <string name="menu_edit_repo">Editar store</string>
     
     <string name="btn_yes">Sim</string>
     <string name="btn_no">Não</string>
@@ -22,6 +23,8 @@
     <string name="btn_done">Feito</string>
     <string name="btn_chlog">Changelog</string>
     <string name="btn_search_market">Procurar no Market</string>
+	<string name="schDwnBtn">Downloads Agendados</string>
+        
     
 </resources>
 <!--
