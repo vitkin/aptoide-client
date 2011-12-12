@@ -59,7 +59,7 @@ public class ManagerXml{
 	/** Object reuse pool */
 	private ArrayList<ViewXmlParse> xmlParseViewsPool;
 	
-	public synchronized ViewXmlParse getNewViewXmlParse(ViewRepository repository, ViewCache cache, ViewNotification notification){
+	public synchronized ViewXmlParse getNewViewRepoXmlParse(ViewRepository repository, ViewCache cache, ViewNotification notification){
 		ViewXmlParse xmlParseView;
 		if(xmlParseViewsPool.isEmpty()){
 			xmlParseView = new ViewXmlParse(repository, cache, notification);
@@ -84,17 +84,13 @@ public class ManagerXml{
 	public ManagerDatabase getManagerDatabase(){
 		return serviceData.getManagerDatabase();
 	}
-	
-	public void parsingFinished(){
-		serviceData.updateAvailableLists();
-	}
 
 
 	public void repoParse(ViewRepository repository, ViewCache cache, EnumInfoType infoType){
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
 		
 		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
-		ViewXmlParse parseInfo = getNewViewXmlParse(repository, cache, notification);
+		ViewXmlParse parseInfo = getNewViewRepoXmlParse(repository, cache, notification);
 		DefaultHandler repoParser = null;
 	    try {
 	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
@@ -104,6 +100,7 @@ public class ManagerXml{
 					break;
 				case ICON:
 					repoParser = new RepoIconParser(this, parseInfo);
+					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
 					break;
 				case EXTRAS:
 //					repoParser = new RepoExtrasParser(this, parseInfo);		//TODO create this parser
@@ -130,8 +127,16 @@ public class ManagerXml{
 		repoParse(repository, cache, EnumInfoType.BARE);
 	}
 	
+	public void parsingRepoBareFinished(ViewRepository repository){
+		serviceData.parsingRepoBareFinished(repository);
+	}
+	
 	public void repoIconParse(ViewRepository repository, ViewCache cache){
 		repoParse(repository, cache, EnumInfoType.ICON);
+	}
+	
+	public void parsingRepoIconsFinished(ViewRepository repository){
+		serviceData.parsingRepoIconsFinished(repository);
 	}
 	
 }

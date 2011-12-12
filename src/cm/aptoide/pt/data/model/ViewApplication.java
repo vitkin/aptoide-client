@@ -135,7 +135,7 @@ public class ViewApplication {
 	 */
 	public void setRepoHashid(int repoHashid){
 		values.put(Constants.KEY_APPLICATION_REPO_HASHID, repoHashid);
-		values.put(Constants.KEY_APPLICATION_FULL_HASHID, (getPackageName()+'|'+getVersionCode()+'|'+repoHashid).hashCode());
+		values.put(Constants.KEY_APPLICATION_FULL_HASHID, (getHashid()+"|"+repoHashid).hashCode());
 	}
 	
 	public int getRepoHashid(){

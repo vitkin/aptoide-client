@@ -283,11 +283,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	public void updateDisplayAvailable(ViewDisplayListApps availableApps){
     	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
-		boolean newList = availableApps.getList().isEmpty();
+		boolean newList = this.availableApps.getList().isEmpty();
     	if(newList){
     		this.availableApps = availableApps;
     		initDisplayAvailable();
     	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
+    		AptoideLog.d(this, "available list not empty");
     		this.availableApps.getList().addAll(availableApps.getList());
     		availableAdapter.notifyDataSetChanged();
     	}
@@ -306,12 +307,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	public void updateDisplayInstalled(ViewDisplayListApps installedApps){
     	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
-		boolean newList = installedApps.getList().isEmpty();
+		boolean newList = this.installedApps.getList().isEmpty();
     	if(newList){
     		this.installedApps = installedApps;
     		initDisplayInstalled();
     	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
-    		this.availableApps.getList().addAll(installedApps.getList());
+    		AptoideLog.d(this, "installed list not empty");
+    		this.installedApps.getList().addAll(installedApps.getList());
     		installedAdapter.notifyDataSetChanged();
     	}
 		
@@ -331,11 +333,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	public void updateDisplayUpdates(ViewDisplayListApps updatableApps){
     	AptoideLog.d(Aptoide.this, "UpdatesList: "+updatableApps);
-		boolean newList = updatableApps.getList().isEmpty();
+		boolean newList = this.updatableApps.getList().isEmpty();
     	if(newList){
     		this.updatableApps = updatableApps;
-    		initDisplayInstalled();
-    	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
+    		initDisplayUpdates();
+    	}else{	//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
+    		AptoideLog.d(this, "update list not empty");
     		this.updatableApps.getList().addAll(updatableApps.getList());
     		updatableAdapter.notifyDataSetChanged();
     	}

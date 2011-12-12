@@ -43,6 +43,7 @@ import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.ViewClientStatistics;
 import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
+import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
@@ -67,7 +68,6 @@ public class ManagerDownloads {
 	
 	/** Object reuse pool */
 	private ArrayList<ViewDownload> downloadPool;
-	private ArrayList<ViewLogin> loginPool;
 
 //	private final static int KBYTES_TO_BYTES = 1024;					// moved to constants.xml
 //	private HashMap<Integer, HashMap<String, String>> notifications;	//TODO move to notifications within ServiceData
@@ -79,7 +79,7 @@ public class ManagerDownloads {
 		return this.managerCache;
 	}
 	
-	public ViewDownload getDownload(int notificationHashid) {
+	public synchronized ViewDownload getDownload(int notificationHashid) {
 		return downloads.get(notificationHashid);
 	}
 	
@@ -94,16 +94,15 @@ public class ManagerDownloads {
 		
 		connectivityState = (ConnectivityManager)serviceData.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		this.downloads = new HashMap<Integer, ViewDownload>();
-		this.downloadPool = new ArrayList<ViewDownload>();
-		this.loginPool = new ArrayList<ViewLogin>();
+		this.downloads = new HashMap<Integer, ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
+		this.downloadPool = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		
 		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.PATH_CACHE + "\n ********");
 	}
 		
 	
 
-	//TODO refactor all thie to reduce data redundancy and memory waste
+	//TODO refactor all this to reduce data redundancy and memory waste
 	public synchronized ViewDownload getNewViewDownload(String remotePath, ViewCache cache, ViewNotification notification){
 		ViewDownload download;
 		if(downloadPool.isEmpty()){
@@ -146,6 +145,64 @@ public class ManagerDownloads {
 		return connectionAvailable;
 	}
 	
+	/******************************************* TODO refactor with push pop from waiting lists ***************************************/
+	public void getRepoIcons(ViewRepository repository, int offset, ArrayList<ViewDownloadInfo> iconsInfo){
+		int iconsCount = iconsInfo.size();
+		ViewDownloadInfo iconInfo = null;
+		ViewCache cache = null;
+		ViewNotification notification;
+		int downloaded;
+		
+		do{
+			
+			for(downloaded = 0; downloaded < Constants.MAX_PARALLEL_DOWNLOADS; ){ //TODO howto keep always only max number concurrent downloads going
+				final ViewDownload download;
+				iconInfo = iconsInfo.get(downloaded);
+				cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
+				notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
+				
+				if(repository.isLoginRequired()){
+					download = getNewViewDownload(iconInfo.getRemotePath(), repository.getLogin(), cache, notification);
+				}else{
+					download = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
+				}
+				try{
+
+					new Thread(){
+						public void run(){
+							this.setPriority(Thread.MAX_PRIORITY);
+							
+							int retrysCount = 3;
+							boolean downloadSuccess = false; 
+							
+							do{
+								downloadSuccess = download(download.getNotification().getNotificationHashid(), true);
+								retrysCount--;
+							}while( !downloadSuccess && retrysCount > 0 );
+							
+							if(downloadSuccess){
+								//TODO increment downloaded
+							}
+						}
+					}.start();
+
+				} catch(Exception e){
+					/** this should never happen */
+					//TODO handle exception
+					e.printStackTrace();
+				}
+			}
+			iconsCount -= downloaded;
+			
+		}while (iconsCount > 0);
+		
+		if(repository.getSize() > offset){
+			serviceData.getRepoIcons(repository, offset+iconsCount);
+		}
+	}
+	
+	
+	
 	public ViewCache startRepoBareDownload(ViewRepository repository){
 		return startRepoDownload(repository, EnumInfoType.BARE);
 	}
@@ -167,17 +224,17 @@ public class ManagerDownloads {
 		boolean downloadSuccess = false; 
 		
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
-		String xmlPath = null;
+		String xmlRemotePath = null;
 		
 		switch (infoType) {
 			case BARE:
 //				xmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=bare";	//TODO implement rest of args
-				xmlPath = "http://aptoide.com/testing/xml/info.xml";
+				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
 				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
 				break;
 			case ICON:
 //				xmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=icon";	//TODO implement rest of args
-				xmlPath = "http://aptoide.com/testing/xml/info_icon.xml";
+				xmlRemotePath = "http://aptoide.com/testing/xml/info_icon.xml";
 				cache = managerCache.getNewRepoIconViewCache(repository.getHashid());
 				break;
 			case DOWNLOAD:
@@ -187,7 +244,7 @@ public class ManagerDownloads {
 				break;
 			case EXTRAS:
 //				xmlPath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML;	//TODO implement rest of args
-				xmlPath = "http://aptoide.com/testing/xml/extras.xml";
+				xmlRemotePath = "http://aptoide.com/testing/xml/extras.xml";
 				cache = managerCache.getNewRepoExtrasViewCache(repository.getHashid());
 				break;
 				
@@ -195,10 +252,10 @@ public class ManagerDownloads {
 				break;
 		}
 		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
-		if(repository.isLoginRequired()){	//TODO get login from pool
-			download = getNewViewDownload(xmlPath, repository.getLogin(), cache, notification);
+		if(repository.isLoginRequired()){
+			download = getNewViewDownload(xmlRemotePath, repository.getLogin(), cache, notification);
 		}else{
-			download = getNewViewDownload(xmlPath, cache, notification);
+			download = getNewViewDownload(xmlRemotePath, cache, notification);
 		}
 		
 		do{

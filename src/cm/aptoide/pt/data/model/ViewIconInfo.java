@@ -43,17 +43,17 @@ public class ViewIconInfo {
 	 */
 	public ViewIconInfo(String iconRemotePathTail, int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
-		setMd5Hash(iconRemotePathTail);
+		setIconRemotePathTail(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}
 	
 	
-	private void setMd5Hash(String md5hash){
-		values.put(Constants.KEY_ICON_MD5HASH, md5hash);		
+	private void setIconRemotePathTail(String iconRemotePathTail){
+		values.put(Constants.KEY_ICON_REMOTE_PATH_TAIL, iconRemotePathTail);		
 	}
 	
-	public String getMd5Hash(){
-		return values.getAsString(Constants.KEY_ICON_MD5HASH);
+	public String getIconRemotePathTail(){
+		return values.getAsString(Constants.KEY_ICON_REMOTE_PATH_TAIL);
 	}
 	
 	private void setAppFullHashid(int appFullHashid){
@@ -86,7 +86,7 @@ public class ViewIconInfo {
 	 */
 	public void reuse(String iconRemotePathTail, int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_ICON_INFO);
-		setMd5Hash(iconRemotePathTail);
+		setIconRemotePathTail(iconRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
 	}
 	
