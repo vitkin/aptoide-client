@@ -141,7 +141,14 @@ public class Aptoide extends Activity {
 	
 	private Handler mHandler = new Handler();
 
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		
+	}
 	
+
 	private Handler startHandler = new Handler() {
 
 		@Override
@@ -152,14 +159,21 @@ public class Aptoide extends Activity {
 				Intent get = getIntent();
 				sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 				prefEdit = sPref.edit();
+				
 				if(get.getData() != null){
 					String uri = get.getDataString();
 					if(uri.startsWith("aptoiderepo")){
+						
 						Log.d("Aptoide-startHandler", "aptoiderepo-scheme");
 						String repo = uri.substring(14);
 						i.putExtra("newrepo", repo);
+						Log.d(get.getFlags()+"","passou aqui!");
 						prefEdit.putBoolean("intentChanged", true);
 						prefEdit.commit();
+						setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
+						startActivity(getIntent());
+						
+						
 
 					}else if(uri.startsWith("aptoidexml")){
 						Log.d("Aptoide-startHandler", "aptoidexml-scheme");
@@ -171,7 +185,8 @@ public class Aptoide extends Activity {
 							i.putExtra("apps", get_apps);
 							prefEdit.putBoolean("intentChanged", true);
 							prefEdit.commit();
-
+							setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
+							startActivity(getIntent());
 						}
 						//i.putExtra("linkxml", repo);
 					}else{
@@ -185,6 +200,8 @@ public class Aptoide extends Activity {
 								i.putExtra("apps", get_apps);
 								prefEdit.putBoolean("intentChanged", true);
 								prefEdit.commit();
+								setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
+								startActivity(getIntent());
 							}
 						} catch (Exception e) {
 							Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
@@ -209,7 +226,7 @@ public class Aptoide extends Activity {
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
-        
+        this.savedInstanceState=savedInstanceState;
         mctx = this;
        
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -222,7 +239,7 @@ public class Aptoide extends Activity {
 //@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
     	ActivityManager activityManager = (ActivityManager)mctx.getSystemService(Context.ACTIVITY_SERVICE);
     	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
-    	Log.i("", "ola");
+    	
     	for (RunningTaskInfo runningTask : running) {
 			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.RemoteInTab")){	//RemoteInTab is the real Aptoide Activity
 				Message msg = new Message();

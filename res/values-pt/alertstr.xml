@@ -1,29 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
     <string name="up_server">Servidores: </string>
-    <string name="lstver">Versão no Servidor: </string>
+    <string name="lstver">Versão do servidor: </string>
     <string name="dwn_n">Número de downloads: </string>
-    <string name="isinst">Instalada: </string>
+    <string name="isinst">Instalado: </string>
     <string name="instver">Versão Instalada: </string>
     <string name="install">Instalar </string>
     <string name="about_alrt">Sobre: </string>
-    <string name="rem">Remover </string>
+    <string name="rem">Desinstalar </string>
     <string name="update">Update</string>
     
-    <string name="update_alrt">Existem updates disponíveis.\nDeseja vê-los?</string>
-    <string name="repo_alrt">A lista de repositórios foi alterada.\nDeseja realizar um update?</string>
+    <string name="update_alrt">Há updates disponíveis para algumas aplicações.\nDeseja vê-los?</string>
+    <string name="repo_alrt">A lista de lojas em uso foi alterada.\nDeseja actualizá-las?</string>
     
-    <string name="title_repo_alrt">Atenção</string>
-    <string name="myrepo_alrt">Não tem nenhum repositório.\nSugerimos que use o nosso.\nDeseja adicioná-lo?\n(Pode procurar mais repositórios online)\n\n</string>
-    <string name="newrepo_alrt">Deseja adicionar este repositório à sua lista?\n\n</string>
+    <string name="title_repo_alrt">Atencão</string>
+    <string name="myrepo_alrt">Não tem nenhuma loja adicionada.\nSugerimos que use a nossa.\nDeseja adicionar a nossa loja?\n(Pode adicionar mais lojas online)\n\n</string>
+    <string name="newrepo_alrt">Deseja adicionar esta loja à sua lista?\n\n</string>
     
-    <string name="error_download_alrt">Impossivel ligar ao servidor ou o pacote está corrupto!</string>
-    <string name="download_alrt">A fazer download de:\n </string>
+    <string name="error_download_alrt">Falhou a conexão ao servidor ou o ficheiro APK está corrupto!</string>
+    <string name="download_alrt">Recebendo aplicação:\n </string>
+    <string name="finished_download_alrt">Iniciando instalação:\n </string>
+    <string name="finished_download_message">Clique para instalar a aplicação:\n </string>
+     
+    <string name="md5_error">The downloaded application md5 check failed!\nPlease update your stores before retrying.</string>
+    <string name="md5_auto_update_error">Update package checksum failed!  Keeping current version.</string>
+    <string name="network_auto_update_error">Update connection failed!  Keeping current version.</string>
+    <string name="network_error">Ocorreu um erro durante o download.\nPor favor tente novamente.</string>
     
-    
-    <string name="md5_error">O hash md5 do download não é igual ao da base de dados.\nPor favor faça update antes de voltar a tentar.</string>
-    <string name="network_error">Ocorreu uma excepção no download do ficheiro.\nTente novamente.</string>
-    
+    <string name="failed_update">O update da aplicação falhou!</string>
+    <string name="failed_install">A instalação da aplicação falhou!</string>
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Desinstalar</string>
     
 </resources>
 <!--
