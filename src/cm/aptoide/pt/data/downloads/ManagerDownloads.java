@@ -66,6 +66,11 @@ public class ManagerDownloads {
 	/** Ongoing */
 	private HashMap<Integer, ViewDownload> downloads;
 	
+	/** Waiting **/
+	private HashMap<Integer, ViewDownload> waitingIcons;
+	private HashMap<Integer, ViewDownload> waitingScreens;
+	private HashMap<Integer, ViewDownload> waitingApks;
+	
 	/** Object reuse pool */
 	private ArrayList<ViewDownload> downloadPool;
 
@@ -146,60 +151,65 @@ public class ManagerDownloads {
 	}
 	
 	/******************************************* TODO refactor with push pop from waiting lists ***************************************/
+
 	public void getRepoIcons(ViewRepository repository, int offset, ArrayList<ViewDownloadInfo> iconsInfo){
-		int iconsCount = iconsInfo.size();
-		ViewDownloadInfo iconInfo = null;
-		ViewCache cache = null;
-		ViewNotification notification;
-		int downloaded;
 		
-		do{
-			
-			for(downloaded = 0; downloaded < Constants.MAX_PARALLEL_DOWNLOADS; ){ //TODO howto keep always only max number concurrent downloads going
-				final ViewDownload download;
-				iconInfo = iconsInfo.get(downloaded);
-				cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
-				notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
-				
-				if(repository.isLoginRequired()){
-					download = getNewViewDownload(iconInfo.getRemotePath(), repository.getLogin(), cache, notification);
-				}else{
-					download = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
-				}
-				try{
-
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
-							
-							int retrysCount = 3;
-							boolean downloadSuccess = false; 
-							
-							do{
-								downloadSuccess = download(download.getNotification().getNotificationHashid(), true);
-								retrysCount--;
-							}while( !downloadSuccess && retrysCount > 0 );
-							
-							if(downloadSuccess){
-								//TODO increment downloaded
-							}
-						}
-					}.start();
-
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
-				}
-			}
-			iconsCount -= downloaded;
-			
-		}while (iconsCount > 0);
-		
-		if(repository.getSize() > offset){
-			serviceData.getRepoIcons(repository, offset+iconsCount);
-		}
 	}
+	
+//	public void getRepoIcons(ViewRepository repository, int offset, ArrayList<ViewDownloadInfo> iconsInfo){
+//		int iconsCount = iconsInfo.size();
+//		ViewDownloadInfo iconInfo = null;
+//		ViewCache cache = null;
+//		ViewNotification notification;
+//		int downloaded;
+//		
+//		do{
+//			
+//			for(downloaded = 0; downloaded < Constants.MAX_PARALLEL_DOWNLOADS; ){ //TODO howto keep always only max number concurrent downloads going
+//				final ViewDownload download;
+//				iconInfo = iconsInfo.get(downloaded);
+//				cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
+//				notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
+//				
+//				if(repository.isLoginRequired()){
+//					download = getNewViewDownload(iconInfo.getRemotePath(), repository.getLogin(), cache, notification);
+//				}else{
+//					download = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
+//				}
+//				try{
+//
+//					new Thread(){
+//						public void run(){
+//							this.setPriority(Thread.MAX_PRIORITY);
+//							
+//							int retrysCount = 3;
+//							boolean downloadSuccess = false; 
+//							
+//							do{
+//								downloadSuccess = download(download.getNotification().getNotificationHashid(), true);
+//								retrysCount--;
+//							}while( !downloadSuccess && retrysCount > 0 );
+//							
+//							if(downloadSuccess){
+//								//TODO increment downloaded
+//							}
+//						}
+//					}.start();
+//
+//				} catch(Exception e){
+//					/** this should never happen */
+//					//TODO handle exception
+//					e.printStackTrace();
+//				}
+//			}
+//			iconsCount -= downloaded;
+//			
+//		}while (iconsCount > 0);
+//		
+//		if(repository.getSize() > offset){
+//			serviceData.getRepoIcons(repository, offset+iconsCount);
+//		}
+//	}
 	
 	
 	
