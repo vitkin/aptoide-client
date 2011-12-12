@@ -15,8 +15,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.gesture.GestureOverlayView;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;

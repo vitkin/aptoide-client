@@ -74,8 +74,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Window;
@@ -152,12 +150,17 @@ public class Aptoide extends Activity {
 			case LOAD_TABS:
 				Intent i = new Intent(Aptoide.this, RemoteInTab.class);
 				Intent get = getIntent();
+				sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+				prefEdit = sPref.edit();
 				if(get.getData() != null){
 					String uri = get.getDataString();
 					if(uri.startsWith("aptoiderepo")){
 						Log.d("Aptoide-startHandler", "aptoiderepo-scheme");
 						String repo = uri.substring(14);
 						i.putExtra("newrepo", repo);
+						prefEdit.putBoolean("intentChanged", true);
+						prefEdit.commit();
+
 					}else if(uri.startsWith("aptoidexml")){
 						Log.d("Aptoide-startHandler", "aptoidexml-scheme");
 						String repo = uri.substring(13);
@@ -166,6 +169,8 @@ public class Aptoide extends Activity {
 						if(get_apps.size() > 0){
 							//i.putExtra("uri", TMP_SRV_FILE);
 							i.putExtra("apps", get_apps);
+							prefEdit.putBoolean("intentChanged", true);
+							prefEdit.commit();
 
 						}
 						//i.putExtra("linkxml", repo);
@@ -178,7 +183,8 @@ public class Aptoide extends Activity {
 							if(get_apps.size() > 0){
 								//i.putExtra("uri", TMP_SRV_FILE);
 								i.putExtra("apps", get_apps);
-	
+								prefEdit.putBoolean("intentChanged", true);
+								prefEdit.commit();
 							}
 						} catch (Exception e) {
 							Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
@@ -187,6 +193,11 @@ public class Aptoide extends Activity {
 					}
 				}
 				startActivityForResult(i,0);
+				
+				
+				
+				
+				
 				break;
 			}
 			super.handleMessage(msg);
@@ -200,7 +211,7 @@ public class Aptoide extends Activity {
         super.onCreate(savedInstanceState);
         
         mctx = this;
-
+       
         PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
         keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
     	DownloadQueueServiceIntent = new Intent(mctx, DownloadQueueService.class);
@@ -211,6 +222,7 @@ public class Aptoide extends Activity {
 //@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
     	ActivityManager activityManager = (ActivityManager)mctx.getSystemService(Context.ACTIVITY_SERVICE);
     	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
+    	Log.i("", "ola");
     	for (RunningTaskInfo runningTask : running) {
 			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.RemoteInTab")){	//RemoteInTab is the real Aptoide Activity
 				Message msg = new Message();
@@ -236,9 +248,11 @@ public class Aptoide extends Activity {
 			pkginfo = mPm.getPackageInfo("cm.aptoide.pt", 0);
    		} catch (NameNotFoundException e) {	}
    		
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-   		try{
+		 requestWindowFeature(Window.FEATURE_NO_TITLE);
+			setContentView(R.layout.sch_downloadempty);
+		try{
 			if( pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode") ) ){
 				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
 				requestUpdateSelf();

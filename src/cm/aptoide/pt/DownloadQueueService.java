@@ -202,7 +202,7 @@ public class DownloadQueueService extends Service {
     	onClick.putExtra("packageName", packageName);
     	onClick.putExtra("apkidHash", apkidHash);
     	onClick.putExtra("isUpdate", Boolean.parseBoolean(notifications.get(packageName.hashCode()).get("isUpdate")));
-    	/*Changed by Rafael Campos*/
+//    	/*Changed by Rafael Campos*/
     	onClick.putExtra("version", version);
 		 Log.d("Aptoide-DownloadQueuService","finished notification apkidHash: "+apkidHash +" localPath: "+localPath);	
     	
@@ -210,7 +210,7 @@ public class DownloadQueueService extends Service {
     	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
 				
     	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.finished_download_alrt)+" "+appName, System.currentTimeMillis());
-    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//    	notification.flags |= Notification.FLAG_AUTO_CANCEL;
 		notification.contentView = contentView;
 
 

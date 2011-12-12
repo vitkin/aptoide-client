@@ -1,18 +1,25 @@
 package cm.aptoide.pt;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
+
+import cm.aptoide.pt.BaseManagement.LstBinder;
+import cm.aptoide.pt.TabInstalled.InstallApkListener;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -23,11 +30,15 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.SimpleAdapter.ViewBinder;
 
 
 public class ScheduledDownload extends ListActivity {
@@ -35,7 +46,6 @@ public class ScheduledDownload extends ListActivity {
 	private DownloadQueueService downloadQueueService;
 	Context ctx = this;
 	private boolean serviceConnected = false;
-	
 	
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
@@ -75,7 +85,6 @@ public class ScheduledDownload extends ListActivity {
 	private Button installButton;
 	
 	
-	
 	 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -94,8 +103,9 @@ public class ScheduledDownload extends ListActivity {
         
         
 //        registerForContextMenu(this.getListView());
+		
         getApplicationContext().bindService(new Intent(this, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-        
+        Log.i("", "OLAAA");
         
         setContentView(R.layout.sch_downloadempty);
         installButton = (Button) findViewById(R.id.sch_down);
@@ -117,7 +127,7 @@ public class ScheduledDownload extends ListActivity {
         SimpleAdapter show_out = new SimpleAdapter(this, result, R.layout.sch_download, 
         		new String[] {"name", "iconpath", "version"}, 
         		new int[] {R.id.name, R.id.appicon, R.id.isinst});
-        
+        show_out.setViewBinder(new LstBinder());
         setListAdapter(show_out);
         if(sch_list.isEmpty()){
 			Toast.makeText(this, R.string.no_sch_downloads, Toast.LENGTH_LONG).show();
@@ -125,7 +135,7 @@ public class ScheduledDownload extends ListActivity {
 			installButton.setVisibility(View.GONE);
         }
         
-        installButton.setText("Install Selected");
+        installButton.setText(getText(R.string.schDown_installselected));
         installButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -155,12 +165,12 @@ public class ScheduledDownload extends ListActivity {
 		});
         Intent intent = getIntent();
         
-        
-    	if(intent.hasExtra("downloadAll")){
+        if(intent.hasExtra("downloadAll")){
     		serviceConnected=true;
-    		finish();
+    		
     		
     	}
+    	
         
         
         
@@ -257,21 +267,69 @@ public class ScheduledDownload extends ListActivity {
 	
 	private void downloadAll() {
 		// TODO Auto-generated method stub
-		for (int i =0; i!=sch_list.size();i++){
-			DownloadNode downloadnode = doDownloadNode(i);
-			if(downloadnode!=null){
-				downloadQueueService.startDownload(downloadnode);
-			}
-			else{
-				Toast.makeText(getApplicationContext(), getString(R.string.schDown_downerror, new Object[]{db.getScheduledDwnServer(sch_list.get(i).apkid)}), Toast.LENGTH_LONG).show();
-
-			}
-		}
+		
+		AlertDialog alrt = new AlertDialog.Builder(ctx).create();
+		alrt.setMessage(getText(R.string.schDown_install));
+		alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				for (int i =0; i!=sch_list.size();i++){
+					DownloadNode downloadnode = doDownloadNode(i);
+					if(downloadnode!=null){
+						downloadQueueService.startDownload(downloadnode);
+					}
+					else{
+						Toast.makeText(getApplicationContext(), getString(R.string.schDown_downerror, new Object[]{db.getScheduledDwnServer(sch_list.get(i).apkid)}), Toast.LENGTH_LONG).show();
+					}
+				}
+				finish();
+				return;
+			} }); 
+		alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+				return;
+			}});
+		alrt.show();
+		
+		
+		
+		
+		
+		
 		
 	}
 
 	
-
+	class LstBinder implements ViewBinder
+	{
+		public boolean setViewValue(View view, Object data, String textRepresentation)
+		{
+			if(view.getClass().toString().equalsIgnoreCase("class android.widget.RatingBar")){
+				RatingBar tmpr = (RatingBar)view;
+				tmpr.setRating(new Float(textRepresentation));
+			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
+				TextView tmpr = (TextView)view;
+					tmpr.setText(textRepresentation);	
+				
+			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
+				ImageView tmpr = (ImageView)view;	
+				File icn = new File(textRepresentation);
+				if(icn.exists() && icn.length() > 0){
+					new Uri.Builder().build();
+					tmpr.setImageURI(Uri.parse(textRepresentation));
+				}else{
+					tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
+				}
+			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
+				LinearLayout tmpr = (LinearLayout)view;
+				tmpr.setTag(textRepresentation);
+			}else{
+				
+				return false;
+			}
+			return true;
+		}
+	}
 
 	
 	
@@ -320,6 +378,8 @@ public class ScheduledDownload extends ListActivity {
         SimpleAdapter show_out = new SimpleAdapter(this, result, R.layout.sch_download, 
         		new String[] {"name", "iconpath", "version"}, new int[] {R.id.name, R.id.appicon, R.id.isinst});
         
+        
+       show_out.setViewBinder(new LstBinder());
         setListAdapter(show_out);
         
         if(sch_list.isEmpty()){
