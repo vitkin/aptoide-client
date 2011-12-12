@@ -23,7 +23,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,7 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
-import android.net.NetworkInfo;
 
 public class BaseManagement extends Activity {
 
@@ -85,7 +83,6 @@ public class BaseManagement extends Activity {
 		 "Travel", "Demo", "Software Libraries", "Other"};
 	private static final String[] game_ctg = {"Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual", "Other"};
 	
-	private HWSpecifications specs;
 
 	DownloadQueueService downloadQueueService;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -119,7 +116,6 @@ public class BaseManagement extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
-		specs = new HWSpecifications(this);
 		mPm = getPackageManager();
 		db = new DbHandler(this);
 		mctx = this;

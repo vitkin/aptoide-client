@@ -78,9 +78,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,7 +86,6 @@ import android.widget.ViewFlipper;
 
 public class RemoteInTab extends TabActivity {
 
-	
 	
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 	private String LOCAL_PATH = SDCARD+"/.aptoide";
@@ -160,62 +157,76 @@ public class RemoteInTab extends TabActivity {
 	    }
 
 	};	
-	
+	private BroadcastReceiver broadcastReceiver2 = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			// TODO Auto-generated method stub
+			String action = intent.getAction();
+			if(action.equals("pt.caixamagica.aptoide.FILTER_CHANGED")){
+				AlertDialog alrt = new AlertDialog.Builder(mctx).create();
+				alrt.setMessage("The filtering configuration has changed. You need to update stores. Proceed?");
+				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						for (ServerNode node: db.getServers()) {
+							db.resetServerCacheUse(node.uri);
+						}
+						updateRepos();
+						return;
+					} }); 
+				alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						return;
+					}});
+				alrt.show();
+				
+				
+			}
+			
+		}
+	};
 private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
+			
 			final String action = intent.getAction();
 			
-			Log.d("RemoteInTab - IntentAction",action);
-			Log.i("RemoteInTab - IntentAction",intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO).toString());
-			NetworkInfo netstate = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-			Log.d("RemoteInTab - IntentAction",netstate.getState().toString());
-			Log.d("RemoteInTab - IntentAction",NetworkInfo.State.CONNECTED.toString());
+			Log.d("RemoteInTab - IntentAction",((NetworkInfo)intent.getParcelableExtra("networkInfo")).isRoaming()+"");
 		    if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
 		        if ( ((NetworkInfo)intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)).getState()==NetworkInfo.State.CONNECTED) {
 		            //do stuff
-		        	
+//		        	if(((NetworkInfo)intent.getParcelableExtra("networkInfo")).isRoaming()){
 		        	Toast.makeText(mctx, "Wi-Fi Connected", Toast.LENGTH_LONG).show();
-		        	schDownAll();
+		        	
 		        	if(!db.getScheduledListNames().isEmpty()&&sPref.getBoolean("schDwnBox", false)){		        		
-		            	Intent intent1 = new Intent(getApplicationContext(),ScheduledDownload.class);
-		            	intent1.putExtra("downloadAll", "");
-		            	sendBroadcast(intent1);
+		            	try{
+		            		Intent onClick = new Intent();
+		            		onClick.setClassName("cm.aptoide.pt", "cm.aptoide.pt.ScheduledDownload");
+		            		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+		            		onClick.putExtra("downloadAll", "");
+		            		mctx.startActivity(onClick);
+		            	Log.d("RemoteInTab - IntentAction","OLA");
+		            	}catch(Exception e){
+		            		e.printStackTrace();
+		            		}
+		        	}
 		            	}
-		        } 
+		            	
+//		        } 
 //		        else {
 //		            // wifi connection was lost
 //		        	
 //		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
 //		        }
 
-		}else if(action.equals("pt.caixamagica.aptoide.FILTER_CHANGED")){
-			AlertDialog alrt = new AlertDialog.Builder(mctx).create();
-			alrt.setMessage("The filtering configuration has changed. You need to update stores. Proceed?");
-			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					for (ServerNode node: db.getServers()) {
-						db.resetServerCacheUse(node.uri);
-					}
-					updateRepos();
-					return;
-				} }); 
-			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int which) {
-					return;
-				}});
-			alrt.show();
-			
-			
 		}
 		    
 	}
 		
 		
 		};
-	
 		IntentFilter intentFilter;
 	
 //	private Handler fetchHandler = new Handler() {
@@ -256,11 +267,15 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("RemoteInTab"," onCreate");
+		
+		
 		intentFilter = new IntentFilter();
-    	intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-    	intentFilter.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
+		IntentFilter intentFilter2 = new IntentFilter();
+//    	intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+    	intentFilter2.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
     	
-    	registerReceiver(broadcastReceiver, intentFilter);
+//    	registerReceiver(broadcastReceiver, intentFilter);
+    	registerReceiver(broadcastReceiver2, intentFilter2);
 		
 		super.onCreate(savedInstanceState);
 		
@@ -355,6 +370,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			
 			Intent installApkIntent = this.getIntent();
 			String action = installApkIntent.getAction();
+			Log.i("action",action+"");
 			if(action != null){
 				if(action.equals("pt.caixamagica.aptoide.INSTALL_APK")){
 					Log.d("Aptoide","* * * * *  InstallApk 1 * * * * *");
@@ -468,24 +484,32 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 						}
 					}
 				}else if(i.hasExtra("newrepo")){
-					Intent call = new Intent(this, ManageRepo.class);
+					Log.d("","olaaaaaaaaaaaa");
+					Intent call = new Intent(mctx, ManageRepo.class);
 					call.putExtra("newrepo", i.getStringExtra("newrepo"));
 					startActivityForResult(call,NEWREPO_FLAG);
+					
 				}else if(i.hasExtra("linkxml")){
+					
+				}else if(i.hasExtra("downloadAll")){
+					Intent call = new Intent(mctx, ScheduledDownload.class);
+					call.putExtra("downloadAll", "");
+					Log.d("passou aqui","");
+					startActivity(call);
 					
 				}
 			}
+			
 		}
 		
 //		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
 //			schDownAll();
 //    	}
+//		registerReceiver(broadcastReceiver , intentFilter);
 		
 	}
 
-	private void schDownAll() {
-		
-	}
+	
 	
 	
 	
@@ -639,6 +663,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			}
 		}
 		upd_alrt.show();
+		
 	}
 	
 	
@@ -648,8 +673,10 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	@Override
 	protected void onPause() {
 		// TODO Auto-generated method stub
-//		unregisterReceiver(broadcastReceiver);
+//		if(isRegistered)
+		
 		super.onPause();
+		
 		
 		Log.d("RemoteInTab","onPause");
 	}
@@ -660,8 +687,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	@Override
 	protected void onResume() {
 		super.onResume();
-//		registerReceiver(broadcastReceiver , intentFilter);
+		
 		Log.d("RemoteInTab","onResume");
+		
 		
 		
 		
@@ -1194,79 +1222,116 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		super.onConfigurationChanged(newConfig);
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		Log.d("Aptoide-RemoteInTab", "onNewIntent");
-		final String action = intent.getAction();
-		if(action != null){
-			if(action.equals("pt.caixamagica.aptoide.INSTALL_APK")){
-				Log.d("Aptoide","* * * * *  InstallApk 2 * * * * *");
+		
+		String action = intent.getAction();
+//		Intent intent = getIntent();
+		if (action != null) {
+			if (action.equals("pt.caixamagica.aptoide.INSTALL_APK")) {
+				Log.d("Aptoide", "* * * * *  InstallApk 2 * * * * *");
 				installApk(intent);
-			}else if(action.equals("pt.caixamagica.aptoide.UPDATE_REPOS")){
+			} else if (action.equals("pt.caixamagica.aptoide.UPDATE_REPOS")) {
 				forceUpdateRepos();
 			}
 		}
-		if(intent.hasExtra("repos")){
-			if(intent.hasExtra("apps")){
-				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
-				if(servers_lst != null && servers_lst.size() > 0){
-					intserver = new Intent(this, ManageRepo.class);
-					intserver.putExtra("uri", intent.getSerializableExtra("repos"));
-				}else{
-					intserver = null;
+
+		Log.d("Aptoide-RemoteInTab", "onNewIntent");
+		Log.i("intentChanged", sPref.getBoolean("intentChanged", true) + "");
+		if (sPref.getBoolean("intentChanged", false)) {
+			prefEdit.putBoolean("intentChanged", false);
+			prefEdit.commit();
+//			setIntent(intent1);
+		
+			if (intent.hasExtra("repos")) {
+				if (intent.hasExtra("apps")) {
+					ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
+					if (servers_lst != null && servers_lst.size() > 0) {
+						intserver = new Intent(this, ManageRepo.class);
+						intserver.putExtra("uri",
+								intent.getSerializableExtra("repos"));
+					} else {
+						intserver = null;
+					}
+
+					final String[] app = ((ArrayList<String[]>) intent.getSerializableExtra("apps")).get(0);
+					final AlertDialog alrt = new AlertDialog.Builder(this).create();
+					alrt.setTitle("Install");
+					alrt.setMessage("Do you wish to install: " + app[1] + " ?");
+					alrt.setButton(getText(R.string.btn_yes),
+							new OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int which) {
+							alrt.dismiss();
+							// pd = ProgressDialog.show(mctx,
+							// getText(R.string.top_download),
+							// getText(R.string.fetch_apk) + ": " +
+							// app[1], true);
+							// pd.setIcon(android.R.drawable.ic_dialog_info);
+
+							// new Thread(new Runnable() {
+							// public void run() {
+							// installFromLink(nodi[0]);
+							// }
+							// }).start();
+
+							Log.d("Aptoide-RemoteInTab",
+									"queueing download: " + app[0]
+											+ " " + app[1] + " "
+											+ app[2] + " " + app[3]
+													+ " " + app[4]);
+
+							DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3]) / 1000,SDCARD + "/.aptoide/" + app[4]+ ".apk", app[4]);
+							downloadNode.setAppName(app[1]);
+							downloadQueueService
+							.startDownload(downloadNode);
+
+							startActivityForResult(intserver,
+									NEWREPO_FLAG);
+						}
+					});
+					alrt.setButton2(getText(R.string.btn_no),
+							new OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int which) {
+							alrt.dismiss();
+
+							startActivityForResult(intserver,NEWREPO_FLAG);
+						}
+					});
+					alrt.show();
+				} else {
+					Intent call = new Intent(this, ManageRepo.class);
+					ArrayList<String> servers_lst = (ArrayList<String>) intent
+							.getSerializableExtra("repos");
+					if (servers_lst != null && servers_lst.size() > 0) {
+						call.putExtra("uri",
+								intent.getSerializableExtra("repos"));
+						startActivityForResult(call, NEWREPO_FLAG);
+					}
 				}
-				
-				final String[] app = ((ArrayList<String[]>) intent.getSerializableExtra("apps")).get(0);
-				final AlertDialog alrt = new AlertDialog.Builder(this).create();
-				alrt.setTitle("Install");
-				alrt.setMessage("Do you wish to install: " + app[1] + " ?");
-				alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						alrt.dismiss();
-//						pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + app[1], true);
-//						pd.setIcon(android.R.drawable.ic_dialog_info);
-						
-//						new Thread(new Runnable() {
-//							public void run() {
-//								installFromLink(nodi[0]);
-//							}
-//						}).start();
-						
-						Log.d("Aptoide-RemoteInTab","queueing download: "+app[0]+" "+app[1]+ " "+app[2]+" "+app[3]+" "+app[4]);	
+			} else if (intent.hasExtra("newrepo")) {
 
-						DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3])/1000, SDCARD+"/.aptoide/"+app[4]+".apk", app[4]);
-						downloadNode.setAppName(app[1]);
-						downloadQueueService.startDownload(downloadNode);
-
-						startActivityForResult(intserver, NEWREPO_FLAG);
-					}
-				});
-				alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						alrt.dismiss();
-
-						startActivityForResult(intserver, NEWREPO_FLAG);
-					}
-				});
-				alrt.show();
-			}else{
 				Intent call = new Intent(this, ManageRepo.class);
-				ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
-				if(servers_lst != null && servers_lst.size() > 0){
-					call.putExtra("uri", intent.getSerializableExtra("repos"));
-					startActivityForResult(call,NEWREPO_FLAG);
-				}
+				call.putExtra("newrepo", intent.getStringExtra("newrepo"));
+				startActivityForResult(call, NEWREPO_FLAG);
+
+				Log.d("", intent.hasExtra("newrepo") + "");
+			} else if (intent.hasExtra("linkxml")) {
+
+			} else if (intent.hasExtra("downloadAll")) {
+				Intent call = new Intent(this, ScheduledDownload.class);
+				call.putExtra("downloadAll", "");
+				startActivity(call);
+				
+				
 			}
-		}else if(intent.hasExtra("newrepo")){
-			Intent call = new Intent(this, ManageRepo.class);
-			call.putExtra("newrepo", intent.getStringExtra("newrepo"));
-			startActivityForResult(call,NEWREPO_FLAG);
-		}else if(intent.hasExtra("linkxml")){
-			
+
 		}
-		getIntent().setAction("android.intent.action.VIEW");
+		
+		
 	}
 	
 

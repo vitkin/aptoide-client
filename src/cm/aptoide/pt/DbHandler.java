@@ -606,6 +606,7 @@ public class DbHandler {
 						node.status = 2;
 						node.verUpdate = c.getString(3);
 						node.ver = c.getString(2);
+						
 					}
 				}
 				node.rat = c.getFloat(7);

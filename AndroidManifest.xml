@@ -44,8 +44,8 @@
 		</activity>
 		
 		
-		<activity android:name="RemoteInTab" android:configChanges="keyboardHidden|orientation|locale" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask">
-			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
+		<activity android:name="RemoteInTab" android:configChanges="keyboardHidden|orientation|locale" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTask"	>
+		    	    		<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
 			<intent-filter>
 				<action android:name="pt.caixamagica.aptoide.INSTALL_APK" />
 				<action android:name="pt.caixamagica.aptoide.UPDATE_REPOS" />
@@ -79,8 +79,15 @@
 
 		<activity android:name="ManageRepo" android:configChanges="keyboardHidden|orientation|locale" android:theme="@android:style/Theme.NoTitleBar" android:launchMode="singleTop">
 			<meta-data android:name="android.app.default_searchable" android:value=".RemoteInSearch" />
-		</activity><activity android:name="ScheduledDownload" android:theme="@android:style/Theme.NoTitleBar"></activity>
-
+		</activity>
+		
+		<activity android:name="ScheduledDownload"></activity>
+<receiver android:name=".ScheduledDownloadReceiver">
+    <intent-filter >
+        <action android:name="android.net.wifi.STATE_CHANGE"/>
+    </intent-filter>
+    
+</receiver>
 
 		<activity android:name="Settings" android:launchMode="singleTask"/>
 		

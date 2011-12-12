@@ -89,6 +89,8 @@
    <string name="ctg_available">available</string>
    <string name="ctg_files">files</string>
    <string name="ctg_version">Version:</string>
+   <string name="schDown_install">Do you want to install all scheduled downloads?</string>
+   <string name="schDown_installselected">Install Selected</string>
 </resources>
 
 <!--
