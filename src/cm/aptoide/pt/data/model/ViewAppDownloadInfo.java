@@ -30,7 +30,7 @@ import cm.aptoide.pt.data.Constants;
  * @since 3.0
  *
  */
-public class ViewDownloadInfo {
+public class ViewAppDownloadInfo {
 
 	private ContentValues values;
 
@@ -41,7 +41,7 @@ public class ViewDownloadInfo {
 	 * @param String remotePathTail, what comes after repository's base path
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public ViewDownloadInfo(String remotePathTail, int applicationFullHashid) {
+	public ViewAppDownloadInfo(String remotePathTail, int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_DOWNLOAD_INFO);
 		setRemotePathTail(remotePathTail);
 		setAppFullHashid(applicationFullHashid);

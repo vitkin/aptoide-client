@@ -48,6 +48,7 @@ public class RepoBareParser extends DefaultHandler{
 	private ViewXmlParse parseInfo;
 	private ViewApplication application;	
 	private ArrayList<ViewApplication> applications = new ArrayList<ViewApplication>(Constants.APPLICATIONS_IN_EACH_INSERT);
+	private ArrayList<ArrayList<ViewApplication>> applicationsInsertStack = new ArrayList<ArrayList<ViewApplication>>(2);
 	
 	private EnumXmlTagsBare tag = EnumXmlTagsBare.apklst;
 	private HashMap<String, EnumXmlTagsBare> tagMap = new HashMap<String, EnumXmlTagsBare>();
@@ -105,8 +106,24 @@ public class RepoBareParser extends DefaultHandler{
 				application.setRepoHashid(parseInfo.getRepository().getHashid());
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
 					parsedAppsNumber = 0;
+					applicationsInsertStack.add(applications);
 					
-					managerXml.getManagerDatabase().insertApplications(applications);
+					try{
+						new Thread(){
+							public void run(){
+								this.setPriority(Thread.MAX_PRIORITY);
+								final ArrayList<ViewApplication> applicationsInserting = applicationsInsertStack.remove(Constants.FIRST_ELEMENT);
+								
+								managerXml.getManagerDatabase().insertApplications(applicationsInserting);
+							}
+						}.start();
+
+					} catch(Exception e){
+						/** this should never happen */
+						//TODO handle exception
+						e.printStackTrace();
+					}
+					
 					applications = new ArrayList<ViewApplication>(Constants.APPLICATIONS_IN_EACH_INSERT);
 				}
 				parsedAppsNumber++;
@@ -163,9 +180,14 @@ public class RepoBareParser extends DefaultHandler{
 	public void endDocument() throws SAXException {
 		Log.d("Aptoide-RepoBareHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
 		if(!applications.isEmpty()){
-			managerXml.getManagerDatabase().insertApplications(applications);
+			applicationsInsertStack.add(applications);
 		}
-		managerXml.parsingFinished();
+		
+		while(!applicationsInsertStack.isEmpty()){
+			managerXml.getManagerDatabase().insertApplications(applicationsInsertStack.remove(Constants.FIRST_ELEMENT));
+		}
+		
+		managerXml.parsingRepoBareFinished(parseInfo.getRepository());
 		super.endDocument();
 	}
 

@@ -82,6 +82,10 @@ public class ManagerCache {
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".icon"+".xml");
 	}
 	
+	public ViewCache getNewIconViewCache(int appHashid){
+		return getNewViewCache(Constants.PATH_CACHE_ICONS+appHashid);
+	}
+	
 	public ViewCache getNewRepoExtrasViewCache(int repoHashid){
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".extras"+".xml");
 	}

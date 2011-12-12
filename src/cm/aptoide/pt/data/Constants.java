@@ -49,7 +49,9 @@ public class Constants {
 	public static final int FIRST_ELEMENT = 0;
 	public static final int SKIP_URI_PREFIX = 7;
 	
+	public static final int SIZE_CACHE_OF_DISPLAY_LISTS = 100;
 	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
+	public static final int MAX_PARALLEL_DOWNLOADS = 3;
 	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
@@ -183,7 +185,7 @@ public class Constants {
 	
 	
 	public static final String TABLE_APPLICATION = "application";
-	/** base: package_name|versioncode|repo_hashid */
+	/** base: app_hashid|repo_hashid */
 	public static final String KEY_APPLICATION_FULL_HASHID = "app_full_hashid";
 	public static final String KEY_APPLICATION_REPO_HASHID = KEY_REPO_HASHID;
 	/** base: package_name|versioncode */
@@ -229,7 +231,7 @@ public class Constants {
 	
 	public static final String TABLE_ICON_INFO = "icon_info";
 	public static final String KEY_ICON_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
-	public static final String KEY_ICON_MD5HASH = "icon_md5hash";
+	public static final String KEY_ICON_REMOTE_PATH_TAIL = "icon_remote_path_tail";
 	public static final int NUMBER_OF_COLUMNS_ICON_INFO = 2;
 	
 	
@@ -374,7 +376,7 @@ public class Constants {
 	
 	public static final String CREATE_TABLE_ICON_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_ICON_INFO + " ("
 			+ KEY_ICON_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
-			+ KEY_ICON_MD5HASH + " TEXT NOT NULL, "
+			+ KEY_ICON_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
 			+ "FOREIGN KEY("+ KEY_ICON_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
 //			+ "PRIMARY KEY("+ KEY_ICON_APP_FULL_HASHID +"));";
 

@@ -39,7 +39,7 @@ import cm.aptoide.pt.data.downloads.ViewDownload;
 import cm.aptoide.pt.data.model.ViewAppComment;
 import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewCategory;
-import cm.aptoide.pt.data.model.ViewDownloadInfo;
+import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
 import cm.aptoide.pt.data.model.ViewExtraInfo;
 import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewListIds;
@@ -593,12 +593,12 @@ public class ManagerDatabase {
 	 * 
 	 * @param ArrayList<DownloadInfo> downloadsInfo
 	 */
-	public void insertDownloadsInfo(ArrayList<ViewDownloadInfo> downloadsInfo){
+	public void insertDownloadsInfo(ArrayList<ViewAppDownloadInfo> downloadsInfo){
 		db.beginTransaction();
 		try{
 			InsertHelper insertDownloadInfo = new InsertHelper(db, Constants.TABLE_DOWNLOAD_INFO);
 			
-			for (ViewDownloadInfo downloadInfo : downloadsInfo) {
+			for (ViewAppDownloadInfo downloadInfo : downloadsInfo) {
 				if(insertDownloadInfo.insert(downloadInfo.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
@@ -616,9 +616,9 @@ public class ManagerDatabase {
 	/**
 	 * insertDownloadInfo, handles single application's download info insertion
 	 * 
-	 * @param ViewDownloadInfo downloadInfo
+	 * @param ViewAppDownloadInfo downloadInfo
 	 */
-	public void insertDownloadInfo(ViewDownloadInfo downloadInfo){
+	public void insertDownloadInfo(ViewAppDownloadInfo downloadInfo){
 		db.beginTransaction();
 		try{
 			if(db.insert(Constants.TABLE_DOWNLOAD_INFO, null, downloadInfo.getValues()) == Constants.DB_ERROR){

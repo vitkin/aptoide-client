@@ -423,6 +423,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		}
 	}
 	
+	public void parsingRepoBareFinished(ViewRepository repository){
+		updateAvailableLists();
+		addRepoIcon(repository);
+	}
+	
 	public void addRepoIcon(final ViewRepository repository){
 		try{
 
@@ -449,6 +454,67 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 			e.printStackTrace();
 		}
 	}
+	
+	public void parsingRepoIconsFinished(ViewRepository repository){
+		getAppsStats(repository);
+		getRepoIcons(repository, Constants.FIRST_ELEMENT);
+	}
+	
+	public void getAppsStats(final ViewRepository repository){
+		//TODO get Stats
+	}
+	
+	public void getRepoIcons(final ViewRepository repository, final int offset){
+		try{
+
+			new Thread(){
+				public void run(){
+					this.setPriority(Thread.MAX_PRIORITY);
+					if(!managerDownloads.isConnectionAvailable()){
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					managerDownloads.getIcons(repository, offset, managerDatabase.getIconsDownloadInfo(repository.getHashid(), offset, Constants.SIZE_CACHE_OF_DISPLAY_LISTS));
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}
+			}.start();
+
+
+		} catch(Exception e){
+			/** this should never happen */
+			//TODO handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	public void getRepoIconsExtraordinarily(final ViewRepository repository, final int offset){
+		try{
+
+			new Thread(){
+				public void run(){
+					this.setPriority(Thread.MAX_PRIORITY);
+					if(!managerDownloads.isConnectionAvailable()){
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					managerDownloads.getIconsExtraordinarily(repository, managerDatabase.getIconsDownloadInfo(repository.getHashid(), offset, Constants.SIZE_CACHE_OF_DISPLAY_LISTS));
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}
+			}.start();
+
+
+		} catch(Exception e){
+			/** this should never happen */
+			//TODO handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	public void updateAvailableLists(){
 		try {
