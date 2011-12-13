@@ -2,17 +2,19 @@
 <resources>
     
     
-    <string name="menu_update_repo">Aktualisieren</string>
-    <string name="menu_manage">Quellen verwalten</string>
+    <string name="menu_update_repo">Liste Aktualisieren</string>
+    <string name="menu_update_all">Alle Aktualisieren</string>
+    <string name="menu_manage">Store verwalten</string>
+    <string name="menu_display_options">Display Options</string>
     <string name="menu_order">Anzeigeoptionen</string>
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_about">Über</string>
     <string name="menu_search">Suche</string>
     
     
-    <string name="menu_add_repo">Neue Quelle</string>
-    <string name="menu_rem_repo">Quelle entfernen</string>
-    <string name="menu_edit_repo">Quelle bearbeiten</string>
+    <string name="menu_add_repo">Neuer Store</string>
+    <string name="menu_rem_repo">Store entfernen</string>
+    <string name="menu_edit_repo">Store bearbeiten</string>
     
     <string name="btn_yes">Ja</string>
     <string name="btn_no">Nein</string>
@@ -22,6 +24,7 @@
     <string name="btn_done">Fertig</string>
     <string name="btn_chlog">Changelog</string>
     <string name="btn_search_market">Market durchsuchen</string>
+    <string name="schDwnBtn">Geplante Dwnl.</string>
     
     
     
@@ -34,7 +37,7 @@
  * Dieses Programm ist freie Software. Sie können es unter den
  * Bedingungen der GNU General Public License, wie von der
  * Free Software Foundation veröffentlicht, weitergeben und/oder
- * modifizieren, entweder gemäß Version 3 der Lizenz oder
+ * modifizieren, entweder gemäß Version 2 der Lizenz oder
  * (nach Ihrer Option) jeder späteren Version.
 
  * Die Veröffentlichung dieses Programms erfolgt in der Hoffnung,
