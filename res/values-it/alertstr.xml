@@ -6,22 +6,31 @@
     <string name="isinst">Installato: </string>
     <string name="instver">Versione installata: </string>
     <string name="install">Installa </string>
-    <string name="about_alrt">Riguardo: </string>
+    <string name="about_alrt">Info: </string>
     <string name="rem">Disinstalla </string>
-    <string name="update">Update</string>
+    <string name="update">Aggiorna</string>
     
-    <string name="update_alrt">Ci sono update disponibili per alcune applicazioni.\nVuoi vederli?</string>
-    <string name="repo_alrt">La lista dei repository in uso è cambiata.\nVuoi fare un update?</string>
+    <string name="update_alrt">Ci sono aggiornamenti disponibili per alcune applicazioni installate.\nVuoi vederli?</string>
+    <string name="repo_alrt">I repository in uso sono cambiati.\nVuoi eseguire un aggiornamento?</string>
     
     <string name="title_repo_alrt">Attenzione</string>
-    <string name="myrepo_alrt">Sembra che tu non abbia aggiunto alcun repository.\nTi suggeriamo di usare il nostro.\nVuoi usare il nostro?\n(Puoi cercare altri repository online)\n\n</string>
-    <string name="newrepo_alrt">Vuoi aggiungere questo repository alla lista?\n\n</string>
+    <string name="myrepo_alrt">Sembra che tu non abbia aggiunto alcun repository.\nTi consigliamo di aggiungere i nostri\nVuoi aggiungerli?\n(Puoi cercare altri repository in rete)\n\n</string>
+    <string name="newrepo_alrt">Vuoi aggiungere questo repository alla tua lista?\n\n</string>
     
-    <string name="error_download_alrt">O non riesco a connettermi o l\'apk è danneggiato</string>
-    <string name="download_alrt">Scaricando l\'applicazione da:\n </string>
+    <string name="error_download_alrt">Non posso connettermi al server o il file apk è corrotto!</string>
+    <string name="download_alrt">Scaricando l\'applicazione:\n </string>
+    <string name="finished_download_alrt">Pronto per installare:\n </string>
+    <string name="finished_download_message">Clicca per installare l\'applicazione:\n </string>
      
-    <string name="md5_error">Il controllo del md5 dell\'applicazione è fallito!\nPer favore fai un update del tuo systema prima di riprovare.</string>
+    <string name="md5_error">Il controllo md5 dell\'applicazione scaricata è fallito!\nPer favore aggiorna i tuoi repository prima di riprovare.</string>
+    <string name="md5_auto_update_error">Il controllo del pacchetto di aggiornamento è fallito! Mantengo la stessa versione.</string>
+    <string name="network_auto_update_error">La connessione per l\'aggiornamento è fallita! Mantengo la stessa versione.</string>
     <string name="network_error">C\'è stato un errore scaricando l\'applicazione.\nPer favore riprova.</string>
+    
+    <string name="failed_update">Aggiornamento fallito!</string>
+    <string name="failed_install">Installazione fallita</string>
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Disinstalla</string>
     
 </resources>
 <!--
