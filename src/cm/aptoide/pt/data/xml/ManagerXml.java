@@ -99,8 +99,8 @@ public class ManagerXml{
 					repoParser = new RepoBareParser(this, parseInfo);
 					break;
 				case ICON:
-					repoParser = new RepoIconParser(this, parseInfo);
 					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+					repoParser = new RepoIconParser(this, parseInfo);
 					break;
 				case EXTRAS:
 //					repoParser = new RepoExtrasParser(this, parseInfo);		//TODO create this parser
