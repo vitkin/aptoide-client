@@ -86,11 +86,17 @@ public class RepoIconParser extends DefaultHandler{
 			String iconRemotePathTail = tagContentBuilder.toString();
 			iconInfo = new ViewIconInfo(iconRemotePathTail, appFullHashid);
 			break;
-		case pkg:
+			
+		default:
+			break;
+		}
+		
+		if(localName.trim().equals(EnumXmlTagsIcon.pkg.toString())){
 			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
 				parsedAppsNumber = 0;
 				iconsInfoInsertStack.add(iconsInfo);
-				
+
+				Log.d("Aptoide-RepoIconParser", "bucket full, inserting apps: "+iconsInfo.size());
 				try{
 					new Thread(){
 						public void run(){
@@ -100,7 +106,7 @@ public class RepoIconParser extends DefaultHandler{
 							managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);
 						}
 					}.start();
-
+	
 				} catch(Exception e){
 					/** this should never happen */
 					//TODO handle exception
@@ -113,10 +119,6 @@ public class RepoIconParser extends DefaultHandler{
 			parseInfo.getNotification().incrementProgress(1);
 			
 			iconsInfo.add(iconInfo);
-			break;
-			
-		default:
-			break;
 		}
 	}
 
@@ -140,10 +142,13 @@ public class RepoIconParser extends DefaultHandler{
 	@Override
 	public void endDocument() throws SAXException {
 		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		
 		if(!iconsInfo.isEmpty()){
+			Log.d("Aptoide-RepoIconParser", "bucket not empty, apps: "+iconsInfo.size());
 			iconsInfoInsertStack.add(iconsInfo);
 		}
-		
+
+		Log.d("Aptoide-RepoInfoParser", "buckets: "+iconsInfoInsertStack.size());
 		while(!iconsInfoInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}

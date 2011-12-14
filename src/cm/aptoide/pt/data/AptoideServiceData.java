@@ -425,7 +425,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	
 	public void parsingRepoBareFinished(ViewRepository repository){
 		updateAvailableLists();
-//		addRepoIcon(repository);
+		addRepoIcon(repository);
 	}
 	
 	public void addRepoIcon(final ViewRepository repository){
@@ -455,7 +455,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 		}
 	}
 	
-	public void parsingRepoIconsFinished(ViewRepository repository){
+	public void parsingRepoIconsFinished(ViewRepository repository){	/********************** HERE ****************************/
 //		getAppsStats(repository);
 //		getRepoIcons(repository, Constants.FIRST_ELEMENT);
 	}

@@ -1235,62 +1235,62 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ArrayList<ViewDownloadInfo> getIconsDownloadInfo(ViewRepository repo, int offset, int range){
-		
-		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
-		final int APP_HASHID = Constants.COLUMN_SECOND;
-		final int APP_NAME = Constants.COLUMN_THIRD;
-		final int ICONS_PATH = Constants.COLUMN_FOURTH;
-		
-		
-		ViewDisplayListApps installedApps = null;
-		ViewDisplayApplication app;							
-		
-		String selectInstalledApps = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
-											+",A."+Constants.KEY_APPLICATION_NAME+",R."+Constants.KEY_REPO_ICONS_PATH
-									+" FROM "+Constants.TABLE_ICON_INFO+" I"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_HASHID
-																	+","+Constants.KEY_APPLICATION_NAME
-																	+","+Constants.KEY_APPLICATION_REPO_HASHID
-															 +" FROM "+Constants.TABLE_APPLICATION
-															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
-																	+","+Constants.KEY_REPO_ICONS_PATH
-															 +" FROM "+Constants.TABLE_REPOSITORY
-															 +" GROUP BY "+Constants.KEY_REPO_HASHID+") R"
-									+" ORDER BY I."+Constants.KEY_APPLICATION_TIMESTAMP
-									+" LIMIT ?"
-									+" OFFSET ?;";
-		String[] selectInstalledAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
-		
-		db.beginTransaction();
-		try{
-			Cursor appsCursor = aptoideNonAtomicQuery(selectInstalledApps, selectInstalledAppsArgs);
-
-			db.setTransactionSuccessful();
-			db.endTransaction();
-
-			installedApps = new ViewDisplayListApps(appsCursor.getCount());
-			
-			appsCursor.moveToFirst();
-			do{
-				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
-												 ,(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE)))
-												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
-												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) <= 0?false:(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE)))
-												 , appsCursor.getString(DOWNGRADE_VERSION_NAME));
-				installedApps.addApp(app);
-
-			}while(appsCursor.moveToNext());
-			appsCursor.close();
-	
-		}catch (Exception e) {
-			db.endTransaction();
-			// TODO: handle exception
-			e.printStackTrace();
-		}
-		return installedApps;
-	}
+//	public ArrayList<ViewDownloadInfo> getIconsDownloadInfo(ViewRepository repo, int offset, int range){
+//		
+//		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
+//		final int APP_HASHID = Constants.COLUMN_SECOND;
+//		final int APP_NAME = Constants.COLUMN_THIRD;
+//		final int ICONS_PATH = Constants.COLUMN_FOURTH;
+//		
+//		
+//		ViewDisplayListApps installedApps = null;
+//		ViewDisplayApplication app;							
+//		
+//		String selectInstalledApps = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
+//											+",A."+Constants.KEY_APPLICATION_NAME+",R."+Constants.KEY_REPO_ICONS_PATH
+//									+" FROM "+Constants.TABLE_ICON_INFO+" I"
+//										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_HASHID
+//																	+","+Constants.KEY_APPLICATION_NAME
+//																	+","+Constants.KEY_APPLICATION_REPO_HASHID
+//															 +" FROM "+Constants.TABLE_APPLICATION
+//															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
+//										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+//																	+","+Constants.KEY_REPO_ICONS_PATH
+//															 +" FROM "+Constants.TABLE_REPOSITORY
+//															 +" GROUP BY "+Constants.KEY_REPO_HASHID+") R"
+//									+" ORDER BY I."+Constants.KEY_APPLICATION_TIMESTAMP
+//									+" LIMIT ?"
+//									+" OFFSET ?;";
+//		String[] selectInstalledAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+//		
+//		db.beginTransaction();
+//		try{
+//			Cursor appsCursor = aptoideNonAtomicQuery(selectInstalledApps, selectInstalledAppsArgs);
+//
+//			db.setTransactionSuccessful();
+//			db.endTransaction();
+//
+//			installedApps = new ViewDisplayListApps(appsCursor.getCount());
+//			
+//			appsCursor.moveToFirst();
+//			do{
+//				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
+//												 ,(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE)))
+//												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
+//												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) <= 0?false:(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE)))
+//												 , appsCursor.getString(DOWNGRADE_VERSION_NAME));
+//				installedApps.addApp(app);
+//
+//			}while(appsCursor.moveToNext());
+//			appsCursor.close();
+//	
+//		}catch (Exception e) {
+//			db.endTransaction();
+//			// TODO: handle exception
+//			e.printStackTrace();
+//		}
+//		return installedApps;
+//	}
 	
 	//TODO rest of activity support classes (depends on activity Layout definitions, for performance reasons)
 	
