@@ -474,7 +474,7 @@ public class BaseManagement extends Activity {
 							
 							
 							apk_line.put("status", getString(R.string.ctg_version) +" "+node.ver);
-							apk_line.put("status2", ", upgrade available");
+							apk_line.put("status2", getString(R.string.upgrd_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 2);
 							instMap.add(apk_line);

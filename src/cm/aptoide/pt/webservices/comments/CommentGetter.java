@@ -26,6 +26,7 @@ import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * @author rafael
@@ -84,6 +85,7 @@ public class CommentGetter {
 	
 	public void reset(String repo, String apkid, String apkversion){
 		urlReal = String.format(Configs.WEB_SERVICE_COMMENTS_LIST,repo, apkid, apkversion);
+		Log.d("",urlReal);
 	}
 	
 	/**

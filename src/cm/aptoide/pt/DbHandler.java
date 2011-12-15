@@ -690,6 +690,66 @@ public class DbHandler {
 	/*
 	 * Same get type function, used in search
 	 */
+	public Vector<ApkNode> getSearchById(String exp){
+		Vector<ApkNode> tmp = new Vector<ApkNode>();
+		Cursor c = null;
+		try{
+			
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode, b.dt, b.rat, b.dwn from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, a.lastver as lastver, l.instvercode as instvercode, a.lastvercode as lastvercode from "
+				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
+				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid where c.apkid like '%" + exp.trim() + "%'";
+			
+			final String iu = " order by instver desc";
+			final String rat = " order by rat desc";
+			final String mr = " order by dt desc";
+			final String alfb = " order by name collate nocase";
+			//final String down = " order by dwn desc";
+
+			
+			String search;
+			
+				search = basic_query;
+			
+			
+			c = db.rawQuery(search, null);
+			c.moveToFirst();
+			for(int i = 0; i< c.getCount(); i++){
+				ApkNode node = new ApkNode();
+				node.apkid = c.getString(0);
+				node.name = c.getString(1);
+				if(c.getString(2) == null){
+					node.status = 0;
+				}else{
+					//if(c.getString(2).equalsIgnoreCase(c.getString(3))){
+					node.ver = c.getString(2);
+					if(c.getInt(4) == c.getInt(5)){
+						node.status = 1;
+					}else{
+						int instvercode = c.getInt(4);
+						int lastvercode = c.getInt(5);
+						if(instvercode < lastvercode){
+							node.status = 2;
+							node.ver += "/ new: " + c.getString(3);
+						}else{
+							node.status = 1;
+						}
+					}
+					
+				}
+				node.rat = c.getFloat(7);
+				tmp.add(node);
+				c.moveToNext();
+			}
+			//c.close();
+		}catch (Exception e){ }
+		finally{
+			if(c != null)
+				c.close();
+		}
+		return tmp;
+	}
+	
 	public Vector<ApkNode> getSearch(String exp, String type){
 		Vector<ApkNode> tmp = new Vector<ApkNode>();
 		Cursor c = null;
