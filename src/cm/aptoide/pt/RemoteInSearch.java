@@ -158,12 +158,24 @@ public class RemoteInSearch extends ListActivity{
 		lv.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
 		Intent i = getIntent();
-		query = i.getStringExtra(SearchManager.QUERY);
+		if(i.hasExtra(SearchManager.QUERY)){
+			query = i.getStringExtra(SearchManager.QUERY);
+
+			//@dsilveira #529 search doens't handle hiphens well		
+			query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
+			apk_lst = db.getSearch(query,order_lst);
+		}else if(i.hasExtra("market")){
+			String apk_id= i.getStringExtra("market");
+			query=apk_id;
+			apk_lst = db.getSearchById(apk_id);
+			if(!apk_lst.isEmpty())
+			Log.d("",apk_lst.get(0).apkid);
+			
+			if(i.hasExtra("install")){
+			onListItemClick(getListView(), getListView(), 0, 0);
+			}
+		}
 		
-//@dsilveira #529 search doens't handle hiphens well		
-		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]", " ");
-		
-		apk_lst = db.getSearch(query,order_lst);
 		
 		bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 	}
@@ -171,12 +183,16 @@ public class RemoteInSearch extends ListActivity{
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		query = intent.getStringExtra(SearchManager.QUERY);
+		if(intent.hasExtra(SearchManager.QUERY)){
+			query = intent.getStringExtra(SearchManager.QUERY);
 
-//@dsilveira #529 search doens't handle hiphens well	
-		query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]", " ");
+			//@dsilveira #529 search doens't handle hiphens well	
+			query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
+			
+			apk_lst = db.getSearch(query,order_lst);
+			
+		}
 		
-		apk_lst = db.getSearch(query,order_lst);
 	}
 
 	@Override
@@ -362,7 +378,7 @@ public class RemoteInSearch extends ListActivity{
 	 */
 	private void redraw(){
 
-		apk_lst = db.getSearch(query,order_lst);
+//		apk_lst = db.getSearch(query,order_lst);
 		
 		List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         Map<String, Object> apk_line;

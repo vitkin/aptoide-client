@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
  */
 public class Configs {
 	 
-	public final static SimpleDateFormat TIME_STAMP_FORMAT = new SimpleDateFormat("d-M-y H:m:s");
+	public final static SimpleDateFormat TIME_STAMP_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	
 	public final static String LINE_SEPARATOR = System.getProperty("line.separator");
 	

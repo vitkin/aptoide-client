@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
@@ -132,6 +133,8 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		public void run(){
 			try{
+				
+				
 				String ws_repo = apk_repo_str.substring(7).split("[\\.]")[0];
 				String fetch_imgs = Configs.WEB_SERVICE_SCREENS_LIST+ws_repo+"/"+apk_id+"/"+version+"/json";
 
@@ -240,6 +243,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
+
 		super.onCreate(savedInstanceState);
 		apkinfo = getIntent();
 		db = new DbHandler(this);
@@ -276,6 +280,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		mctx = this;
+		
+		
+		
 		screens = new LinkedList<ImageView>();
 		
 		noscreens = (TextView) linearLayout.findViewById(R.id.noscreens);
@@ -294,6 +301,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		String apk_descr = apkinfo.getStringExtra("about");
 		apk_repo_str = apkinfo.getStringExtra("server");
 		String apk_rat_str = apkinfo.getStringExtra("rat");
+		
+		
+		
 		
 		
 		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
@@ -695,6 +705,9 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			this.dislikes.getLayoutParams().height=0;
 		}
 		
+		
+		
+
 	}
 	
 	/**

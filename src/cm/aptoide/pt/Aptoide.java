@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
@@ -51,11 +52,14 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import cm.aptoide.pt.multiversion.VersionApk;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -189,7 +193,34 @@ public class Aptoide extends Activity {
 							startActivity(getIntent());
 						}
 						//i.putExtra("linkxml", repo);
-					}else{
+					}else if(uri.startsWith("market")){
+						Log.d("",get.getDataString());
+						Boolean install = true;
+						String string = get.getDataString();
+						String params = string.split("&")[0];
+						String param = params.split("=")[1];
+						if(param.contains("pname:")){
+							param= param.substring(6);
+							install=false;
+						}else{
+							
+							i= new Intent(mctx,RemoteInSearch.class);
+							i.putExtra("market", param);
+							if(install&&!db.getApk(param).isEmpty()){
+								i.putExtra("install", true);
+								Toast.makeText(mctx, param + " Ver:" +db.getApk(param).get(7), 1).show();
+							}
+							
+							
+						}
+						
+						
+						
+						
+				        
+						
+					}
+					else{
 						Log.d("Aptoide-startHandler", "receiving a myapp file");
 						downloadMyappFile(uri);
 						try {
@@ -267,7 +298,7 @@ public class Aptoide extends Activity {
    		
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		 requestWindowFeature(Window.FEATURE_NO_TITLE);
+//		 requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.sch_downloadempty);
 		try{
 			if( pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode") ) ){
@@ -381,6 +412,7 @@ public class Aptoide extends Activity {
 			case UPDATE_SELF:
 				proceed();
 				break;
+			
 			default:
 				super.onActivityResult(requestCode, resultCode, data);
 				try{
@@ -393,6 +425,10 @@ public class Aptoide extends Activity {
 		}
 	}
     
+	
+	
+	
+	
 	private void downloadMyappFile(String myappUri){
 		try{
 			keepScreenOn.acquire();
