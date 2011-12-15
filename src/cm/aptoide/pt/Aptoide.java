@@ -185,6 +185,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			AptoideLog.v(Aptoide.this, "received newAvailableListDataAvailable callback");
 			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST.ordinal());
 		}
+
+		@Override
+		public void refreshAvailableDisplay() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received refreshAvailableDisplay callback");
+			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.REFRESH_AVAILABLE_DISPLAY.ordinal());
+			
+		}
 	};
     
     private Handler serviceDataCallbackHandler = new Handler() {
@@ -215,6 +222,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}	
+				break;
+				
+			case REFRESH_AVAILABLE_DISPLAY:
+				refreshAvailableDisplay();
 				break;
 
 			default:
@@ -290,9 +301,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
     		AptoideLog.d(this, "available list not empty");
     		this.availableApps.getList().addAll(availableApps.getList());
-    		availableAdapter.notifyDataSetChanged();
+    		refreshAvailableDisplay();
     	}
 		
+	}
+	
+	public void refreshAvailableDisplay(){
+		availableAdapter.notifyDataSetChanged();
 	}
     
     

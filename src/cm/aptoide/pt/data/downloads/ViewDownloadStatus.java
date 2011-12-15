@@ -1,5 +1,5 @@
 /**
- * ViewDownloadInfo,		part of Aptoide's data model
+ * ViewDownloadStatus,		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -21,19 +21,19 @@
 package cm.aptoide.pt.data.downloads;
 
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.model.ViewRepository;
 
  /**
- * ViewDownloadInfo, models a download's info
+ * ViewDownloadStatus, models a download's status
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewDownloadInfo {
+public class ViewDownloadStatus {
 
-	private String remotePath;
-	private String appName;
-	private int appHashid;
+	private ViewRepository repo;
+	private int offset;
 	private EnumDownloadType downloadType;
 
 	
@@ -45,24 +45,23 @@ public class ViewDownloadInfo {
 	 * @param appHashid
 	 * @param downloadType
 	 */
-	public ViewDownloadInfo(String remotePath, String appName, int appHashid, EnumDownloadType downloadType) {
-		this.remotePath = remotePath;
-		this.appName = appName;
-		this.appHashid = appHashid;
+	public ViewDownloadStatus(ViewRepository repo, int offset, EnumDownloadType downloadType) {
+		this.repo = repo;
+		this.offset = offset;
 		this.downloadType = downloadType;
 	}
 	
 
-	public String getRemotePath() {
-		return remotePath;
+	public int getOffset() {
+		return offset;
 	}
 
-	public String getAppName() {
-		return appName;
+	public void incrementOffset(int increment) {
+		this.offset += increment;
 	}
 
-	public int getAppHashid() {
-		return appHashid;
+	public ViewRepository getRepository() {
+		return repo;
 	}
 
 	public EnumDownloadType getDownloadType() {
@@ -75,9 +74,8 @@ public class ViewDownloadInfo {
 	 * ViewIcon object reuse, clean references
 	 */
 	public void clean(){
-		this.remotePath = null;
-		this.appName = null;
-		this.appHashid = Constants.EMPTY_INT;
+		this.repo = null;
+		this.offset = Constants.EMPTY_INT;
 		this.downloadType = null;
 	}
 
@@ -89,10 +87,9 @@ public class ViewDownloadInfo {
 	 * @param applicationHashid
 	 * @param downloadType
 	 */
-	public void reuse(String remotePath, String appName, int applicationHashid, EnumDownloadType downloadType) {
-		this.remotePath = remotePath;
-		this.appName = appName;
-		this.appHashid = applicationHashid;
+	public void reuse(ViewRepository repo, int offset, EnumDownloadType downloadType) {
+		this.repo = repo;
+		this.offset = offset;
 		this.downloadType = downloadType;
 	}
 	

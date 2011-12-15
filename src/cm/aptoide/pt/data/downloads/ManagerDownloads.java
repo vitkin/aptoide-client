@@ -67,9 +67,10 @@ public class ManagerDownloads {
 	private HashMap<Integer, ViewDownload> downloads;
 	
 	/** Waiting **/
-	private HashMap<Integer, ViewDownload> waitingIcons;
-	private HashMap<Integer, ViewDownload> waitingScreens;
-	private HashMap<Integer, ViewDownload> waitingApks;
+	private ArrayList<ViewDownload> waitingIcons;
+	private ViewDownloadStatus iconsListStatus = null;
+	private ArrayList<ViewDownload> waitingScreens;
+	private ArrayList<ViewDownload> waitingApks;
 	
 	/** Object reuse pool */
 	private ArrayList<ViewDownload> downloadPool;
@@ -84,10 +85,6 @@ public class ManagerDownloads {
 		return this.managerCache;
 	}
 	
-	public synchronized ViewDownload getDownload(int notificationHashid) {
-		return downloads.get(notificationHashid);
-	}
-	
 	private ViewClientStatistics getClientStatistics(){
 		return serviceData.getStatistics();
 	}
@@ -100,6 +97,9 @@ public class ManagerDownloads {
 		connectivityState = (ConnectivityManager)serviceData.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		this.downloads = new HashMap<Integer, ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
+		this.waitingIcons = new ArrayList<ViewDownload>(Constants.SIZE_CACHE_OF_DISPLAY_LISTS);
+		this.waitingScreens = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
+		this.waitingApks = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		this.downloadPool = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		
 		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.PATH_CACHE + "\n ********");
@@ -117,7 +117,7 @@ public class ManagerDownloads {
 			viewDownload.reuse(remotePath, cache, notification);
 			download = viewDownload;
 		}
-		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
+//		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
 		return download;
 	}
 	
@@ -130,7 +130,7 @@ public class ManagerDownloads {
 			viewDownload.reuse(remotePath, login, cache, notification);
 			download = viewDownload;
 		}
-		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
+//		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
 		return download;
 	}
 	
@@ -150,9 +150,30 @@ public class ManagerDownloads {
 		return connectionAvailable;
 	}
 	
-	/******************************************* TODO refactor with push pop from waiting lists ***************************************/
 
-	public void getRepoIcons(ViewRepository repository, int offset, ArrayList<ViewDownloadInfo> iconsInfo){
+	public void getRepoIcons(ViewDownloadStatus downloadStatus, ArrayList<ViewDownloadInfo> iconsInfo){
+		
+		for (ViewDownloadInfo iconInfo : iconsInfo) {
+			if(managerCache.isIconCached(iconInfo.getAppHashid())){
+				Log.d("Aptoide-ManagerCache", "Icon exists "+iconInfo.getAppName());
+				continue;
+			}else{
+				ViewDownload download;
+				ViewCache cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
+				ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
+				
+				if(downloadStatus.getRepository().isLoginRequired()){
+					download = getNewViewDownload(iconInfo.getRemotePath(), downloadStatus.getRepository().getLogin(), cache, notification);
+				}else{
+					download = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
+				}
+				
+				waitingIcons.add(download);
+			}
+		}
+		
+		iconsListStatus = downloadStatus;
+		notifyIconDownloadSlotAvailable();
 		
 	}
 	
@@ -230,8 +251,6 @@ public class ManagerDownloads {
 		ViewCache cache = null;
 		ViewNotification notification;
 		ViewDownload download;
-		int retrysCount = 3;
-		boolean downloadSuccess = false; 
 		
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
 		String xmlRemotePath = null;
@@ -268,14 +287,7 @@ public class ManagerDownloads {
 			download = getNewViewDownload(xmlRemotePath, cache, notification);
 		}
 		
-		do{
-			downloadSuccess = download(download.getNotification().getNotificationHashid(), true);
-			retrysCount--;
-		}while( !downloadSuccess && retrysCount > 0 );
-		
-//		if(!downloadSuccess){
-//			//TODO raise exception
-//		}
+		download(download, true);
 		
 		return cache;
 	}
@@ -301,21 +313,37 @@ public class ManagerDownloads {
 //	}
 	
 	
-	
-	//TODO refactor magic numbers, logs and exceptions
-	private boolean download(final int notificationHashid, final boolean overwriteCache){
-//					if(!keepScreenOn.isHeld()){
-//						keepScreenOn.acquire();
-//					}
-//					int threadApkidHash = apkidHash;
-//					
-//					String remotePath = notifications.get(threadApkidHash).get("remotePath");
-//					String md5sum = notifications.get(threadApkidHash).get("md5sum");
-//					
-//					String localPath = notifications.get(threadApkidHash).get("localPath");
-//					 Log.d("Aptoide-DownloadQueuService","thread apkidHash: "+threadApkidHash +" localPath: "+localPath);	
+	private synchronized void notifyIconDownloadSlotAvailable(){
 
-		ViewDownload download = getDownload(notificationHashid);
+		int maxDownloads = Math.min(waitingIcons.size(), Constants.MAX_PARALLEL_DOWNLOADS-downloads.size());
+		
+		for(int downloading = 0; downloading < maxDownloads; downloading++){
+			ViewDownload download = waitingIcons.remove(Constants.FIRST_ELEMENT);
+			downloads.put(download.getNotification().getNotificationHashid(), download);
+			downloadInNewThread(download, true);
+		}
+		
+		if(waitingIcons.isEmpty()){
+			iconsListStatus.incrementOffset(Constants.SIZE_CACHE_OF_DISPLAY_LISTS);
+			serviceData.getRepoIcons(iconsListStatus);
+		}
+	}
+	
+	
+	private void downloadInNewThread(final ViewDownload download, final boolean overwriteCache){
+
+		new Thread(){
+			public void run(){
+				this.setPriority(Thread.MAX_PRIORITY);
+				
+				download(download, overwriteCache);
+			}
+		}.start();
+
+	}
+
+	//TODO refactor magic numbers, logs and exceptions
+	private void download(ViewDownload download, boolean overwriteCache){
 		ViewCache localCache = download.getCache();
 		ViewNotification notification = download.getNotification();
 
@@ -324,21 +352,19 @@ public class ManagerDownloads {
 		int targetBytes;
 		ViewClientStatistics clientStatistics = getClientStatistics();
 
-		//					Message downloadArguments = new Message();
+		getManagerCache().clearCache(localCache);
+
 		try{
-
-			getManagerCache().clearCache(localCache);
-
 			FileOutputStream fileOutputStream = new FileOutputStream(localPath);
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(remotePath);
 
-//						SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-//						String myid = sPref.getString("myId", "NoInfo");
-//						String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+//				SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+//				String myid = sPref.getString("myId", "NoInfo");
+//				String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 
 //TODO refactor this user-agent string
-//						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+//				mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
 
 			if(download.isLoginRequired()){
 				URL url = new URL(remotePath);
@@ -355,7 +381,7 @@ public class ManagerDownloads {
 				if(httpResponse == null){
 					Log.d("Aptoide","Major network exception... Exiting!");
 					/*msg_al.arg1= 1;
-								 download_error_handler.sendMessage(msg_al);*/
+						 download_error_handler.sendMessage(msg_al);*/
 					throw new TimeoutException();
 				}
 			}
@@ -364,7 +390,7 @@ public class ManagerDownloads {
 				throw new TimeoutException();
 			}else{
 				if(download.isSizeKnown()){
-					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;
+					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;	//TODO check if server sends kbytes or bytes
 				}else{
 					targetBytes = httpResponse.getAllHeaders().length;
 					notification.setProgressCompletionTarget(targetBytes);
@@ -375,56 +401,30 @@ public class ManagerDownloads {
 				int bytesRead;
 				bytesRead = inputStream.read(data, 0, 8096);
 
-//							int progressNotificationUpdate = 200;
-//							int intermediateProgress = 0;
 				while(bytesRead != -1) {
-//								if(progressNotificationUpdate == 0){
-//									if(!keepScreenOn.isHeld()){
-//										keepScreenOn.acquire();
-//									}
-//									progressNotificationUpdate = 200;
-//									Message progressArguments = new Message();
-//									progressArguments.arg1 = threadApkidHash;
-//									progressArguments.arg2 = intermediateProgress;
-//									downloadProgress.sendMessage(progressArguments);
-//									intermediateProgress = 0;
-//								}else{
-//									intermediateProgress += red;
-//									progressNotificationUpdate--;
-//								}
 					notification.incrementProgress(bytesRead);
 					fileOutputStream.write(data,0,bytesRead);
 					bytesRead = inputStream.read(data, 0, 8096);
 				}
-				Log.d("Aptoide","Download done! notificationTargetName: "+notification.getActionsTargetName() +" localPath: "+localPath);
+				Log.d("Aptoide-ManagerDownloads","Download done! notificationTargetName: "+notification.getActionsTargetName() +" localPath: "+localPath);
 				notification.setCompleted(true);
 				fileOutputStream.flush();
 				fileOutputStream.close();
 				inputStream.close();
 
-//						if(keepScreenOn.isHeld()){
-//							keepScreenOn.release();
-//						}
-
 				if(localCache.hasMd5Sum()){
 					getManagerCache().md5CheckOk(localCache);
 					//TODO md5check boolean return handle  by  raising exception
 				}
-				
-				return true;
-			}
 
+				if(download.getNotification().getNotificationType().equals(EnumNotificationTypes.GET_ICONS)){
+					downloads.remove(download.getNotification().getNotificationHashid());
+					notifyIconDownloadSlotAvailable();
+				}
+			}
 		}catch (Exception e) { 
-//						if(keepScreenOn.isHeld()){
-//							keepScreenOn.release();
-//						}
-//						downloadArguments.arg1= 1;
-//						downloadArguments.arg2 =threadApkidHash;
-//						downloadErrorHandler.sendMessage(downloadArguments);
-			
 			//TODO handle exception
 			e.printStackTrace();
-			return false;
 		}
 	}
 	
