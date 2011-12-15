@@ -35,6 +35,7 @@ import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayRepository;
+import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ViewDownload;
 import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
 import cm.aptoide.pt.data.model.ViewAppComment;
@@ -1234,63 +1235,70 @@ public class ManagerDatabase {
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
-	 */
-//	public ArrayList<ViewDownloadInfo> getIconsDownloadInfo(ViewRepository repo, int offset, int range){
-//		
-//		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
-//		final int APP_HASHID = Constants.COLUMN_SECOND;
-//		final int APP_NAME = Constants.COLUMN_THIRD;
-//		final int ICONS_PATH = Constants.COLUMN_FOURTH;
-//		
-//		
-//		ViewDisplayListApps installedApps = null;
-//		ViewDisplayApplication app;							
-//		
-//		String selectInstalledApps = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
-//											+",A."+Constants.KEY_APPLICATION_NAME+",R."+Constants.KEY_REPO_ICONS_PATH
-//									+" FROM "+Constants.TABLE_ICON_INFO+" I"
-//										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_HASHID
-//																	+","+Constants.KEY_APPLICATION_NAME
-//																	+","+Constants.KEY_APPLICATION_REPO_HASHID
-//															 +" FROM "+Constants.TABLE_APPLICATION
-//															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
-//										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
-//																	+","+Constants.KEY_REPO_ICONS_PATH
-//															 +" FROM "+Constants.TABLE_REPOSITORY
-//															 +" GROUP BY "+Constants.KEY_REPO_HASHID+") R"
-//									+" ORDER BY I."+Constants.KEY_APPLICATION_TIMESTAMP
-//									+" LIMIT ?"
-//									+" OFFSET ?;";
-//		String[] selectInstalledAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
-//		
-//		db.beginTransaction();
-//		try{
-//			Cursor appsCursor = aptoideNonAtomicQuery(selectInstalledApps, selectInstalledAppsArgs);
-//
-//			db.setTransactionSuccessful();
-//			db.endTransaction();
-//
-//			installedApps = new ViewDisplayListApps(appsCursor.getCount());
-//			
-//			appsCursor.moveToFirst();
-//			do{
-//				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
-//												 ,(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE)))
-//												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
-//												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) <= 0?false:(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE)))
-//												 , appsCursor.getString(DOWNGRADE_VERSION_NAME));
-//				installedApps.addApp(app);
-//
-//			}while(appsCursor.moveToNext());
-//			appsCursor.close();
-//	
-//		}catch (Exception e) {
-//			db.endTransaction();
-//			// TODO: handle exception
-//			e.printStackTrace();
-//		}
-//		return installedApps;
-//	}
+	 */		//TODO refactor data transport -> move ArrayList to a full data transport object with it's size properly initialized
+	public ArrayList<ViewDownloadInfo> getIconsDownloadInfo(ViewRepository repo, int offset, int range){
+		
+		final int ICONS_PATH = Constants.COLUMN_FIRST;
+		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int APP_NAME = Constants.COLUMN_THIRD;
+		
+		
+		ArrayList<ViewDownloadInfo> iconsInfo = null;
+		ViewDownloadInfo iconInfo;							
+		
+		String selectRepoIconsPath = "SELECT "+Constants.KEY_REPO_ICONS_PATH
+									+" FROM "+Constants.TABLE_REPOSITORY
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repo.getHashid()+";";
+		
+		String selectIconDownloadInfo = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
+											+",A."+Constants.KEY_APPLICATION_NAME
+									+" FROM "+Constants.TABLE_ICON_INFO+" I"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
+																	+","+Constants.KEY_APPLICATION_REPO_HASHID
+																	+","+Constants.KEY_APPLICATION_HASHID
+																	+","+Constants.KEY_APPLICATION_NAME
+																	+","+Constants.KEY_APPLICATION_TIMESTAMP
+															 +" FROM "+Constants.TABLE_APPLICATION
+															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+															 +" FROM "+Constants.TABLE_REPOSITORY
+															 +" GROUP BY "+Constants.KEY_REPO_HASHID+")"
+									+" ORDER BY A."+Constants.KEY_APPLICATION_TIMESTAMP
+									+" LIMIT ?"
+									+" OFFSET ?;";
+		String[] selectIconDownloadInfoArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+		
+		db.beginTransaction();
+		try{
+			Cursor repoCursor = aptoideNonAtomicQuery(selectRepoIconsPath);
+			Cursor iconsCursor = aptoideNonAtomicQuery(selectIconDownloadInfo, selectIconDownloadInfoArgs);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			repoCursor.moveToFirst();
+			String repoIconsPath = repoCursor.getString(ICONS_PATH);
+			repoCursor.close();
+			
+			iconsInfo = new ArrayList<ViewDownloadInfo>(iconsCursor.getCount());
+			
+			iconsCursor.moveToFirst();
+			do{
+				iconInfo = new ViewDownloadInfo(repoIconsPath+iconsCursor.getString(REMOTE_PATH_TAIL), iconsCursor.getString(APP_NAME)
+												, iconsCursor.getInt(APP_HASHID), EnumDownloadType.ICON);
+				iconsInfo.add(iconInfo);
+
+			}while(iconsCursor.moveToNext());
+			iconsCursor.close();
+	
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return iconsInfo;
+	}
 	
 	//TODO rest of activity support classes (depends on activity Layout definitions, for performance reasons)
 	

@@ -35,7 +35,9 @@ import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
+import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
@@ -457,37 +459,48 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){	/********************** HERE ****************************/
 //		getAppsStats(repository);
-//		getRepoIcons(repository, Constants.FIRST_ELEMENT);
+		getRepoIcons(new ViewDownloadStatus(repository, Constants.FIRST_ELEMENT, EnumDownloadType.ICON));
 	}
 	
 	public void getAppsStats(final ViewRepository repository){
 		//TODO get Stats
 	}
 	
-//	public void getRepoIcons(final ViewRepository repository, final int offset){
-//		try{
-//
-//			new Thread(){
-//				public void run(){
-//					this.setPriority(Thread.MAX_PRIORITY);
-//					if(!managerDownloads.isConnectionAvailable()){
-//						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-//					}
-//					if(!getManagerCache().isFreeSpaceInSdcard()){
-//						//TODO raise exception
-//					}
-//					managerDownloads.getRepoIcons(repository, offset, managerDatabase.getIconsDownloadInfo(repository, offset, Constants.SIZE_CACHE_OF_DISPLAY_LISTS));
-//					//TODO find some way to track global parsing completion status, probably in managerXml
-//				}
-//			}.start();
-//
-//
-//		} catch(Exception e){
-//			/** this should never happen */
-//			//TODO handle exception
-//			e.printStackTrace();
-//		}
-//	}
+	public void getRepoIcons(final ViewDownloadStatus downloadStatus){
+		if(downloadStatus.getRepository().getSize() < downloadStatus.getOffset()){
+			refreshAvailableDisplay();
+			return;
+		}else{
+			if(downloadStatus.getOffset() > Constants.FIRST_ELEMENT){
+				refreshAvailableDisplay();
+			}
+
+			try{
+
+				new Thread(){
+					public void run(){
+						this.setPriority(Thread.MAX_PRIORITY);
+						if(!managerDownloads.isConnectionAvailable()){
+							AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+						}
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							//TODO raise exception
+						}
+
+						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), Constants.SIZE_CACHE_OF_DISPLAY_LISTS));
+						//TODO find some way to track global parsing completion status, probably in managerXml
+					}
+				}.start();
+
+
+			} catch(Exception e){
+				/** this should never happen */
+				//TODO handle exception
+				e.printStackTrace();
+			}
+			
+		}
+	}
 	
 //	public void getRepoIconsExtraordinarily(final ViewRepository repository, final int offset){
 //		try{
@@ -515,6 +528,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 //	}
 	
 	
+	
+	public void refreshAvailableDisplay(){
+		try {
+			serviceClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public void updateAvailableLists(){
 		try {
