@@ -155,7 +155,7 @@ public class ManagerDownloads {
 		
 		for (ViewDownloadInfo iconInfo : iconsInfo) {
 			if(managerCache.isIconCached(iconInfo.getAppHashid())){
-				Log.d("Aptoide-ManagerCache", "Icon exists "+iconInfo.getAppName());
+				Log.d("Aptoide-ManagerDownloads", "Icon already exists: "+iconInfo.getAppName());
 				continue;
 			}else{
 				ViewDownload download;

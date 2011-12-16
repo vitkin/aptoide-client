@@ -411,7 +411,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 				public void run(){
 					ViewRepository repository = originalRepository;
 					this.setPriority(Thread.MAX_PRIORITY);
-//					managerDatabase.insertRepository(repository);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}

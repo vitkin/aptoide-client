@@ -191,13 +191,17 @@ public class ManagerCache {
 	}
 	
 	public void cacheIcon(int appHashid, Bitmap icon){
-		try {
-			FileOutputStream out = new FileOutputStream(Constants.PATH_CACHE_ICONS+appHashid);
-			icon.compress(Bitmap.CompressFormat.PNG, 90, out);
-			Log.d("Aptoide-ManagerCache", "stored installed app icon in: "+Constants.PATH_CACHE_ICONS+appHashid);
-		} catch (Exception e) {
-			//TODO handle exception
-			e.printStackTrace();
+		if(isIconCached(appHashid)){
+			Log.d("Aptoide-ManagerCache", "installed app icon already exists: "+appHashid);
+		}else{
+			try {
+				FileOutputStream out = new FileOutputStream(Constants.PATH_CACHE_ICONS+appHashid);
+				icon.compress(Bitmap.CompressFormat.PNG, 90, out);
+				Log.d("Aptoide-ManagerCache", "stored installed app icon in: "+Constants.PATH_CACHE_ICONS+appHashid);
+			} catch (Exception e) {
+				//TODO handle exception
+				e.printStackTrace();
+			}
 		}
 	}
 	
