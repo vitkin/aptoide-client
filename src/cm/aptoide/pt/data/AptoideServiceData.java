@@ -372,9 +372,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	}
 	
 	public void syncInstalledPackages(){
-		managerDatabase.insertInstalledApplications(managerSystemSync.getInstalledApps());
-    	AptoideLog.d(AptoideServiceData.this, "Sync'ed Installed Packages");
+		new Thread(){
+			public void run(){
+				this.setPriority(Thread.MAX_PRIORITY);
+				managerDatabase.insertInstalledApplications(managerSystemSync.getInstalledApps());
+				AptoideLog.d(AptoideServiceData.this, "Sync'ed Installed Packages");
+				
+				managerSystemSync.cacheInstalledIcons();
+			}
+		}.start();
 	}
+	
+	
 	
 //	public void newListInstalledAppsAvailable(){
 //		try {

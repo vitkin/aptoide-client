@@ -21,8 +21,11 @@
 package cm.aptoide.pt.data.cache;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.StatFs;
 import android.util.Log;
 import cm.aptoide.pt.data.Constants;
@@ -187,6 +190,17 @@ public class ManagerCache {
 		return icon.exists();
 	}
 	
+	public void cacheIcon(int appHashid, Bitmap icon){
+		try {
+			FileOutputStream out = new FileOutputStream(Constants.PATH_CACHE_ICONS+appHashid);
+			icon.compress(Bitmap.CompressFormat.PNG, 90, out);
+			Log.d("Aptoide-ManagerCache", "stored installed app icon in: "+Constants.PATH_CACHE_ICONS+appHashid);
+		} catch (Exception e) {
+			//TODO handle exception
+			e.printStackTrace();
+		}
+	}
+	
 	public void calculateMd5Hash(ViewCache cache){
 		File file = new File(cache.getLocalPath());
 		Md5Handler hash = new Md5Handler();
@@ -200,7 +214,7 @@ public class ManagerCache {
 		if(cache.getMd5sum().equalsIgnoreCase(hash.md5Calc(file))){
 			return true;
 		}else{
-			Log.d("Aptoide",cache.getMd5sum()+ " VS " + hash.md5Calc(file));	//TODO refactor log
+			Log.d("Aptoide-ManagerCache",cache.getMd5sum()+ " VS " + hash.md5Calc(file));	//TODO refactor log
 			return false;
 		}
 	}
