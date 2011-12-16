@@ -26,7 +26,7 @@ import java.util.List;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.graphics.drawable.Drawable;
+import android.graphics.drawable.BitmapDrawable;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.model.ViewApplication;
 
@@ -82,6 +82,17 @@ public class ManagerSystemSync {
 			installedApps.add(installedApp);
 		}
 		return installedApps;
+	}
+	
+	public void cacheInstalledIcons(){
+		List<PackageInfo> systemInstalledList = packageManager.getInstalledPackages(0);
+		for (PackageInfo installedAppInfo : systemInstalledList) {
+			if(installedAppInfo.applicationInfo.sourceDir.split("[/]+")[1].equals("system")){
+				continue;
+				//TODO maybe show it but mark as system
+			}
+			serviceData.getManagerCache().cacheIcon((installedAppInfo.packageName+"|"+installedAppInfo.versionCode).hashCode(), ((BitmapDrawable)installedAppInfo.applicationInfo.loadIcon(packageManager)).getBitmap());
+		}
 	}
 	
 //	public Drawable getInstalledAppIcon(String packageName){
