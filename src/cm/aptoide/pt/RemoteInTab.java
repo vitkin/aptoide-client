@@ -686,34 +686,12 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		Log.d("RemoteInTab","onPause");
 	}
 	
+	
 	@Override
-	protected void onStop() {
+	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		super.onStop();
+		super.onDestroy();
 		unregisterReceiver(broadcastReceiver2);
-	}
-	
-	
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-		registerReceiver(broadcastReceiver2, intentFilter2);
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.ActivityGroup#onResume()
-	 */
-	@Override
-	protected void onResume() {
-		super.onResume();
-		
-		Log.d("RemoteInTab","onResume");
-		
-		
-		
-		
 	}
 
 	@Override
