@@ -164,6 +164,8 @@ public class Aptoide extends Activity {
 				sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 				prefEdit = sPref.edit();
 				
+				
+				
 				if(get.getData() != null){
 					String uri = get.getDataString();
 					if(uri.startsWith("aptoiderepo")){
@@ -193,26 +195,30 @@ public class Aptoide extends Activity {
 							startActivity(getIntent());
 						}
 						//i.putExtra("linkxml", repo);
-					}else if(uri.startsWith("market")){
-						Log.d("",get.getDataString());
+					} else if (uri.startsWith("market")) {
+						Log.d("", get.getDataString());
 						Boolean install = true;
-						String string = get.getDataString();
-						String params = string.split("&")[0];
+						
+						String params = uri.split("&")[0];
 						String param = params.split("=")[1];
-						if(param.contains("pname:")){
-							param= param.substring(6);
-							install=false;
-						}else{
-							
-							i= new Intent(mctx,RemoteInSearch.class);
-							i.putExtra("market", param);
-							if(install&&!db.getApk(param).isEmpty()){
-								i.putExtra("install", true);
-								Toast.makeText(mctx, param + " Ver:" +db.getApk(param).get(7), 1).show();
-							}
-							
-							
+						if (param.contains("pname:")) {
+							param = param.substring(6);
+							install = false;
+						} else if (param.contains("pub:")) {
+							param = param.substring(4);
+							install = false;
 						}
+						
+						Toast.makeText(mctx,param ,1).show();
+						
+						i = new Intent(mctx, RemoteInSearch.class);
+						i.putExtra("market", param);
+						if (install && !db.getApk(param).isEmpty()) {
+							i.putExtra("install", true);
+						}
+							
+							
+						
 						
 						
 						
