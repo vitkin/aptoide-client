@@ -43,22 +43,23 @@ import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.Window;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
+import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.SimpleAdapter.ViewBinder;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
@@ -239,6 +240,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.aptoide);
        
 		makeSureServiceDataIsRunning();
@@ -247,38 +249,38 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		availableApps = new ViewDisplayListApps(100);
 		updatableApps = new ViewDisplayListApps(100);
 
-		swypeDetector = new GestureDetector(new SwypeDetector());
-		swypeListener = new View.OnTouchListener() {
-								@Override
-								public boolean onTouch(View v, MotionEvent event) {
-									return swypeDetector.onTouchEvent(event);
-								}
-							};
-		swyping = new AtomicBoolean(false);
-		swypeDelayHandler = new Handler();
+//		swypeDetector = new GestureDetector(new SwypeDetector());
+//		swypeListener = new View.OnTouchListener() {
+//								@Override
+//								public boolean onTouch(View v, MotionEvent event) {
+//									return swypeDetector.onTouchEvent(event);
+//								}
+//							};
+//		swyping = new AtomicBoolean(false);
+//		swypeDelayHandler = new Handler();
 		scrollListener = new ScrollDetector();
 		
-		appsListFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
+//		appsListFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
 		
-		availableAppsList = new ListView(this);
-		availableAppsList.setOnTouchListener(swypeListener);
-		availableAppsList.setOnScrollListener(scrollListener);
-		availableAppsList.setOnItemClickListener(this);
-		appsListFlipper.addView(availableAppsList);
-		
-		installedAppsList = new ListView(this);
-		installedAppsList.setOnTouchListener(swypeListener);
-		installedAppsList.setOnScrollListener(scrollListener);
-		installedAppsList.setOnItemClickListener(this);
-		appsListFlipper.addView(installedAppsList);
-		
-		updatableAppsList = new ListView(this);
-		updatableAppsList.setOnTouchListener(swypeListener);
-		updatableAppsList.setOnScrollListener(scrollListener);
-		updatableAppsList.setOnItemClickListener(this);
-		appsListFlipper.addView(updatableAppsList);
-
-		currentAppsList = EnumAppsLists.AVAILABLE;
+//		availableAppsList = new ListView(this);
+//		availableAppsList.setOnTouchListener(swypeListener);
+//		availableAppsList.setOnScrollListener(scrollListener);
+//		availableAppsList.setOnItemClickListener(this);
+//		appsListFlipper.addView(availableAppsList);
+//		
+//		installedAppsList = new ListView(this);
+//		installedAppsList.setOnTouchListener(swypeListener);
+//		installedAppsList.setOnScrollListener(scrollListener);
+//		installedAppsList.setOnItemClickListener(this);
+//		appsListFlipper.addView(installedAppsList);
+//		
+//		updatableAppsList = new ListView(this);
+//		updatableAppsList.setOnTouchListener(swypeListener);
+//		updatableAppsList.setOnScrollListener(scrollListener);
+//		updatableAppsList.setOnItemClickListener(this);
+//		appsListFlipper.addView(updatableAppsList);
+//
+//		currentAppsList = EnumAppsLists.AVAILABLE;
     }
     
     
