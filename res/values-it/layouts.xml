@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="add_repo_text">Varaston URL: </string>
-    <string name="add_repo_private">Yksityinen </string>
+    <string name="add_repo_text">URI al repository: </string>
+    <string name="add_repo_private">Privato </string>
     
-    <string name="order_popup_title1">Järjestä sovellukset: </string>
-    <string name="order_popup_lst1">Viimeisin ensin </string>
-    <string name="order_popup_lst2">Aakkosjärjestys </string>
-    <string name="order_popup_lst3">Luokitus </string>
-    <string name="order_popup_lst4">Latausmäärä </string>
+    <string name="order_popup_title1">Ordina applicazioni per: </string>
+    <string name="order_popup_lst1">Prima il più recente </string>
+    <string name="order_popup_lst2">Alfabeticamente </string>
+    <string name="order_popup_lst3">Voto </string>
+    <string name="order_popup_lst4">Numero di download </string>
 
-    <string name="order_popup_title2">Näytä sovellukset: </string>
-    <string name="order_popup_catg1">Kategorioittain </string>
-    <string name="order_popup_catg2">Kaikki sovellukset </string>
+    <string name="order_popup_title2">Mostra applicazioni: </string>
+    <string name="order_popup_catg1">Per categoria </string>
+    <string name="order_popup_catg2">Tutte </string>
     
-    <string name="order_popup_title">Näyttöasetukset </string>
+    <string name="order_popup_title">Mostra Opzioni </string>
     
-    <string name="settings_title_bar">Aptoiden asetukset</string>
+    <string name="settings_title_bar">Impostazioni di Aptoide</string>
     
-    <string name="save_btn">Tallenna </string>
-    <string name="clear_cache_title">Välimuisti</string>
-    <string name="clear_cache_btn">Tyhjennä välimuisti </string>
-    <string name="clear_cache_msg">Varoitus: poistaa kaikki kuvakkeet, odottavat asennukset ja päivitykset Aptoiden välimuistista. Don\'t do this if you have ongoing downloads!</string>
+    <string name="save_btn">Salva </string>
+    <string name="clear_cache_title">Cache</string>
+    <string name="clear_cache_btn">Pulisci cache </string>
+    <string name="clear_cache_msg">Attenzione: rimuovi tutte le icone che Aptoide ha in cache, come tutte quelle installate e aggiornate. Non farlo se hai download in corso!</string>
     
-    <string name="clear_dwn_title">Lataukset</string>
-    <string name="clear_dwn_btn">Lataa kuvakkeet</string>
-    <string name="clear_dwn_msg">Kuvakkeiden lataussäännöt </string>
+    <string name="clear_dwn_title">Download</string>
+    <string name="clear_dwn_btn">Scarica icone</string>
+    <string name="clear_dwn_msg">Scarica le regole delle icone </string>
     
-    <string name="auto_updating">Odota. Päivitystä ladataan...</string>
+    <string name="auto_updating">Per favore aspetta mentre scarico l\'aggiornamento...</string>
     
     <string-array name="dwnif">
-        <item>3G ja WLAN</item>
-        <item>Vain WLAN</item>
-        <item>Älä lataa</item>
+        <item>3G e Wifi</item>
+        <item>Solo Wifi</item>
+        <item>Non scaricare</item>
     </string-array>
     
     

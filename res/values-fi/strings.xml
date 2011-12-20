@@ -91,6 +91,16 @@
    <string name="ctg_version">Versio:</string>
    <string name="schDown_install">Haluatko asentaa kaikki ajastetut lataukset?</string>
    <string name="schDown_installselected">Asenna valitut</string>
+   
+   <string name="upgrd_available">, päivitys saatavilla</string>
+   <string name="setting_hwfiltertitle">Laitteistosuotimet</string>
+   <string name="setting_hwspecstitle">Laitteistotiedot</string>
+   <string name="setting_hwspecssum">Tarkista laitteistosi tiedot</string>
+   <string name="setting_appfiltertitle">Suodata sovelluksia</string>
+   <string name="setting_appfiltersum">Älä näytä sovelluksia, jotka eivät ole laitteesi kanssa yhteensopivia.</string>
+   <string name="setting_schdwntitle">Ajastetut lataukset</string>
+   <string name="setting_schdwninstalltitle">Automaattinen asennus</string>
+   <string name="setting_schdwninstallsum">Asenna ajastetut lataukset automaattisesti, kun WLAN-yhteys on käytettävissä</string>
 </resources>
 
 <!--

@@ -196,6 +196,7 @@ public class Aptoide extends Activity {
 						}
 						//i.putExtra("linkxml", repo);
 					} else if (uri.startsWith("market")) {
+						db=new DbHandler(mctx);
 						Log.d("", get.getDataString());
 						Boolean install = true;
 						
@@ -209,7 +210,6 @@ public class Aptoide extends Activity {
 							install = false;
 						}
 						
-						Toast.makeText(mctx,param ,1).show();
 						
 						i = new Intent(mctx, RemoteInSearch.class);
 						i.putExtra("market", param);
@@ -217,7 +217,8 @@ public class Aptoide extends Activity {
 							i.putExtra("install", true);
 						}
 							
-							
+						setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS|-Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
+						startActivity(getIntent());
 						
 						
 						

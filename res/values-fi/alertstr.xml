@@ -11,11 +11,11 @@
     <string name="update">Päivitä</string>
     
     <string name="update_alrt">Joihinkin asentamiisi sovelluksiin on päivityksiä.\nHaluatko nähdä päivitykset?</string>
-    <string name="repo_alrt">Asennuslähdeluetteloon on tullut muutoksia.\nHaluatko päivittää ne?</string>
+    <string name="repo_alrt">Varastoihin on tullut muutoksia.\nHaluatko päivittää ne?</string>
     
     <string name="title_repo_alrt">Huomio</string>
-    <string name="myrepo_alrt">Näyttää siltä, että sinulla ei ole lisättynä yhtään varastoa.\nSuosittelemme omaamme.\nHalutko lisätä oman varastomme?\n(Voit etsiä varastoja (repository) internetistä)\n\n</string>
-    <string name="newrepo_alrt">Haluatko lisätä tämän asennuslähteen luetteloosi?\n\n</string>
+    <string name="myrepo_alrt">Näyttää siltä, että sinulla ei ole lisättynä yhtään varastoa. Suosittelemme omaamme.\nHaluatko lisätä oman varastomme?\n(Voit etsiä varastoja (repository) internetistä)\n\n</string>
+    <string name="newrepo_alrt">Haluatko lisätä tämän varaston luetteloosi?\n\n</string>
     
     <string name="error_download_alrt">Palvelinyhteyttä ei voitu muodostaa tai apk-tiedosto on vioittunut!</string>
     <string name="download_alrt">Haetaan sovellusta kohteesta:\n </string>

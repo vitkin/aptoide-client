@@ -21,13 +21,86 @@
     <string name="srch_hint">Uygulamanın adı</string>
     
     <string name="about_txt1">Android cihazınıza paket yükleyicisi.\n</string>
-
-    <string name="about_site">Resmi site: </string>
+        
+    <string name="about_site">Resmî site: </string>
     
-    <string name="about_mail">İletişim: </string>
+    <string name="about_mail">İrtibat: </string>
     
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>
+    <string name="multi_ver_prompt">Uygulama sürümü seç</string>
+    <string name="version">Sürüm</string>
+    <string name="size">Boyut</string>
+    <string name="comments">Yorumlar:</string>
+    <string name="commentsproblem">Yorumlar yüklenemedi</string>
+    <string name="reinstall">Yeniden kur</string>
+    <string name="version_inst">Kurulu sürüm</string>
+    <string name="installed_downgrade">Eski sürüme dönüş mümkün.</string>
+    <string name="reply">Cevap</string>
+    <string name="whattodo">Ne yapılsın?</string>
+    <string name="likes">Beğeniler: </string>
+    <string name="dislikes">Beğenmemeler: </string>
+    <string name="copyclip">Panoya kopyala</string>
+    <string name="commentlabel">Uygulamayı yorumla...</string>
+    <string name="submit">Gönder</string>
+    <string name="clear">Temizle</string>
+    <string name="body">Gövde..</string>
+    <string name="subject">Mevzu...</string>
+    <string name="user">Kullanıcı adı...</string>
+    <string name="pass">Parola...</string>
+    <string name="showpass">Parolayı göster</string>
+    <string name="hidepass">Parolayı sakla</string>
+    <string name="failedcredentials">Girilen verilerle oturum açılamadı</string>
+    <string name="comments_unavailable">Yorumlar yüklenemedi</string>
+    <string name="credentialssettings">Bazaar oturumu</string>
+    <string name="clearcredentials">Oturumu temizle</string>
+    <string name="clearcredentials_summary">Şimdiki oturum verilerini kaldır</string>
+    <string name="setcredentials">Bazaar Oturumu</string>
+    <string name="setcredentials_summary">Yeni oturum yapılandır</string>
+    <string name="credentialscleared">Oturum verileri temizlendi</string>
+    <string name="credentialscleared_des">Oturum verileriniz kaldırıldı</string>
+    <string name="commentadded">Yorumunuz başarılı bir şekilde yollandı</string>
+    <string name="enterbody">Yorumunuzu gövde kısmında giriniz</string>
+    <string name="inresponseto">\@</string>
+    <string name="usernotdef">Kullanıcı tanımlanmamıştır</string>
+    <string name="passwordnotdef">Parola tanımlanmamıştır</string>
+    <string name="loading_likes">Beğeniler yükleniyor...</string>
+    <string name="postingcomment">Yorumunuz yollanıyor...</string>
+    <string name="unabletoexecutecheknet">Çalıştırılamıyor. İnternet durumunu kontrol ediniz.</string>
+    <string name="opinionsuccess">Girdiniz başarılı bir şekilde yollandı</string>
+    <string name="postingtaste">Girdiniz gönderiliyor</string>
+    <string name="unabletoexecute">Çalıştırılamıyor</string>
+    <string name="loggingin">Oturum açılıyor...</string>
+    <string name="tastenotavailable">Beğeniler yüklenemedi</string>
+    <string name="downgrade_available">eski sürüm mevcut</string>
+    <string name="loading_comments">Yorumlar yükleniyor...</string>
+    <string name="moving_to">Şuraya taşınıyor</string>
+    <string name="recognized">Tanındı</string>
+   <string name="not_recognized">Tanınmadı</string>
+   <string name="new_account">Yeni hesap</string>
+   
+   <string name="chkBoxSchDwn">İndirme Programla</string>
+   <string name="no_sch_downloads">Programlanmış hiçbir indirme yok!</string>
+   <string name="schDown_wireless_detected">Telsiz bağlantı tespit edildi: programlanmış tüm indirmeler indirilsin mi?</string>
+   <string name="schDown_nodownloads">Programlanmış hiçbir indirme yok</string>
+   <string name="schDown_nodownloadselect">Hiçbir indirme seçilmedi</string>
+   <string name="schDown_downerror">İndirme hatası. %1$ deposunu ekleyiniz.</string>
+   <string name="addSchDown">Programlanmış indirmelere eklendi</string>
+   <string name="ctg_available">müsait</string>
+   <string name="ctg_files">dosya</string>
+   <string name="ctg_version">Sürüm:</string>
+   <string name="schDown_install">Tüm programlanmış indirmeleri kurmak istiyor musunuz?</string>
+   <string name="schDown_installselected">Seçilenleri Kur</string>
+   
+   <string name="upgrd_available">, güncelleme mevcut</string>
+   <string name="setting_hwfiltertitle">Donanım Filtreleri</string>
+   <string name="setting_hwspecstitle">Donanım Özellikleri</string>
+   <string name="setting_hwspecssum">Donanım özelliklerini denetle</string>
+   <string name="setting_appfiltertitle">Uygulamaları Filtrele</string>
+   <string name="setting_appfiltersum">Cihazla uyumsuz uygulamaları gösterme.</string>
+   <string name="setting_schdwntitle">Programlanmış İndirmeler</string>
+   <string name="setting_schdwninstalltitle">Otomatik Yükleme</string>
+   <string name="setting_schdwninstallsum">Programlanmış indirmeleri bir WiFi bağlantısı bulunduğunda otomatik olarak yükle</string>
 </resources>
 
 <!--
@@ -48,3 +121,4 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 -->
+

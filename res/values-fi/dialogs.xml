@@ -29,7 +29,7 @@
     <string name="update_repos">Päivitä varasto</string>
     <string name="update_main">Varastoluetteloon on tullut muutoksia.\nHaluatko päivittää ne?</string>
     
-    <string name="updating_3g">Et ole yhteydessä WLAN-verkkoihin. Päivitykseen on suositeltavaa käyttää WLAN-yhteyttä.\nPäivitä joka tapauksessa?</string>
+    <string name="updating_3g">Et ole yhteydessä WLAN-verkkoihin. Päivitykseen suositellaan WLAN-yhteyttä.\nPäivitä joka tapauksessa?</string>
     <string name="updating_cfrm">Vahvista Aptoiden varastojen päivitys?</string>
     <string name="updating_norepos">Luettelossasi ei ole yhtään käytössä olevaa asennuslähdettä.\nLisää asennuslähde tai ota niitä käyttöön.</string>
     
@@ -49,7 +49,7 @@
     <string name="dialog_yes">Kyllä</string>
     <string name="dialog_no">Ei</string>
     
-    <string name="update_self_title">Päivitys saatavillaUpdate available</string>
+    <string name="update_self_title">Päivitys saatavilla</string>
     <string name="update_self_msg">Aptoiden uudempi versio on saatavilla,\nhaluatko päivittää?</string>
     
     <string name="schDown_downselected">Asenna valitut</string>

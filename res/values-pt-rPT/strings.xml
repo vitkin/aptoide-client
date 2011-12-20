@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Aptoide</string>
+    
+    <string name="tab_avail">Disponíveis</string>
+    <string name="tab_inst">Instalados</string>
+    <string name="tab_updt">Actualizações</string>
+    
+    <string name="repo_app">Aplicações:</string>
+    <string name="repo_noinfo">Sem informação</string>
+    
+    <string name="no_found">Aplicação não encontrada</string>
+    <string name="no_repo">Não existem stores!</string>
+ 
+ 	<string name="not_inst">Não instalado</string>
+    <string name="installed">Instalado - Ver.:</string>
+    <string name="installed_update">Actualização possível - Ver.:</string>
+    <string name="srv_version">Versão disponível:</string>
+    
+    <string name="srch_label">Aptoide</string>
+    <string name="srch_hint">Nome da aplicação</string>
+    
+    <string name="about_txt1">Your package installer to Android phone.\n</string>
+        
+    <string name="about_site">Home: </string>
+    
+    <string name="about_mail">Contact: </string>
+    
+    <string name="about_txt2"> www.aptoide.com</string>
+    <string name="about_txt3"> aptoide@aptoide.com</string>
+    <string name="multi_ver_prompt">Seleccione uma versão</string>
+    <string name="version">Versão</string>
+    <string name="size">Tamanho</string>
+    <string name="comments">Comentários:</string>
+    <string name="commentsproblem">COmentários não disponíveis</string>
+    <string name="reinstall">Reinstalar</string>
+    <string name="version_inst">Versão instalada</string>
+    <string name="installed_downgrade">Downgrade possível.</string>
+    <string name="reply">Responder</string>
+    <string name="whattodo">O que fazer?</string>
+    <string name="likes">Likes: </string>
+    <string name="dislikes">Don\'t likes: </string>
+    <string name="copyclip">Copiar para a clipboard</string>
+    <string name="commentlabel">Comentar aplicação...</string>
+    <string name="submit">Submeter</string>
+    <string name="clear">Limpar</string>
+    <string name="body">Corpo..</string>
+    <string name="subject">Assunto...</string>
+    <string name="user">User name...</string>
+    <string name="pass">Password...</string>
+    <string name="showpass">Mostrar password</string>
+    <string name="hidepass">Esconder password</string>
+    <string name="failedcredentials">Login inválido</string>
+    <string name="comments_unavailable">Comnetários não disponíveis</string>
+    <string name="credentialssettings">Bazaar login</string>
+    <string name="clearcredentials">Limpar login</string>
+    <string name="clearcredentials_summary">Limpar login actual</string>
+    <string name="setcredentials">Bazaar Login</string>
+    <string name="setcredentials_summary">Definir novo login</string>
+    <string name="credentialscleared">Login limpo</string>
+    <string name="credentialscleared_des">Credenciais limpas</string>
+    <string name="commentadded">Comentário submetido com sucesso</string>
+    <string name="enterbody">Enter your review on the body section</string>
+    <string name="inresponseto">\@</string>
+    <string name="usernotdef">Uilizador não definido</string>
+    <string name="passwordnotdef">Password não definida</string>
+    <string name="loading_likes">A carregar likes...</string>
+    <string name="postingcomment">A submeter...</string>
+    <string name="unabletoexecutecheknet">Erro. Verifique ligação à internet.</string>
+    <string name="opinionsuccess">O pedido foi submetido com sucesso</string>
+    <string name="postingtaste">O pedido está a ser submetido</string>
+    <string name="unabletoexecute">Erro</string>
+    <string name="loggingin">Logging in...</string>
+    <string name="tastenotavailable">Likes não disponíveis</string>
+    <string name="downgrade_available">downgrade disponível</string>
+    <string name="loading_comments">A carregar comentários...</string>
+    <string name="moving_to">A mover para</string>
+    <string name="recognized">Reconhecido</string>
+   <string name="not_recognized">Não reconhecido</string>
+   <string name="new_account">Nova conta</string>
+   
+   <string name="chkBoxSchDwn">Downloads agendados</string>
+   <string name="no_sch_downloads">Sem downloads agendados!</string>
+   <string name="schDown_wireless_detected">Wireless detectado: Fazer download de todas as aplicações nos down. agendados?</string>
+   <string name="schDown_nodownloads">Sem downloads agendados</string>
+   <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
+   <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
+   <string name="addSchDown">Download agendado</string>
+   <string name="ctg_available">disponível</string>
+   <string name="ctg_files">ficheiros</string>
+   <string name="ctg_version">Versão:</string>
+   <string name="schDown_install">Instalar todos os downloads agendados?</string>
+   <string name="schDown_installselected">Instalar seleccionados</string>
+   
+       <string name="upgrd_available">, upgrade disponível</string>
+       <string name="setting_hwfiltertitle">Filtros Hardware</string>
+       <string name="setting_hwspecstitle">Especificações Hardware</string>
+       <string name="setting_hwspecssum">Verifique as especificações do hardware</string>
+       <string name="setting_appfiltertitle">Filtrar Aplicações</string>
+       <string name="setting_appfiltersum">Não mostrar aplicações não compatíveis com este dispositivo</string>
+       <string name="setting_schdwntitle">Downloads agendados</string>
+       <string name="setting_schdwninstalltitle">Instalação automática</string>
+       <string name="setting_schdwninstallsum">Instalar downloads agendados automaticamente quando uma ligação Wifi está presente.</string>
+       
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

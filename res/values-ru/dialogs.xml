@@ -27,7 +27,7 @@
     
     <string name="updating_msg">Обновление списка приложений...</string>
     <string name="update_repos">Обновление магазинов</string>
-    <string name="update_main">Список магазинов был изменен. \ NВы хотите обновить их?</string>
+    <string name="update_main">Список магазинов был изменен. \ Вы хотите обновить их?</string>
     
     <string name="updating_3g">Вы подключены через WIFI или ethernet. Рекомендуется обновление по WiFi или ethernet соединениям.\nОбновить все равно?</string>
     <string name="updating_cfrm">Подтвердите обновления Aptoide магазинов?</string>
@@ -44,7 +44,7 @@
     <string name="repo_edt_msg2">Редактировать магазин</string>
 
     <string name="update_done_msg1">Магазины успешно обновлены.</string>
-    <string name="update_process">Обновление магазина %1$d of %2$d</string>
+    <string name="update_process">Обновление магазина %1$d из %2$d</string>
     
     <string name="dialog_yes">Да</string>
     <string name="dialog_no">Нет</string>

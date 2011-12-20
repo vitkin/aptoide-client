@@ -92,15 +92,15 @@
    <string name="schDown_install">Želite li instalirati sve download\'e na rasporedu?</string>
    <string name="schDown_installselected">Instalirati odabrano</string>
    
-       <string name="upgrd_available">, upgrade available</string>
-       <string name="setting_hwfiltertitle">Hardware Filters</string>
-       <string name="setting_hwspecstitle">Hardware Specs</string>
-       <string name="setting_hwspecssum">Check your hardware specifications</string>
-       <string name="setting_appfiltertitle">Filter Applications</string>
-       <string name="setting_appfiltersum">Don\'t show applications not compatible with your device.</string>
-       <string name="setting_schdwntitle">Scheduled Downloads</string>
-       <string name="setting_schdwninstalltitle">Automatic Install</string>
-       <string name="setting_schdwninstallsum">Install scheduled downloads automatically when a Wifi connection is present</string>
+       <string name="upgrd_available">, nadogradi dostupno</string>
+       <string name="setting_hwfiltertitle">Hardware Filteri</string>
+       <string name="setting_hwspecstitle">Hardware Specifikacije</string>
+       <string name="setting_hwspecssum">Pogledajte vaše hardware specifikacije</string>
+       <string name="setting_appfiltertitle">Filtriraj aplikacije</string>
+       <string name="setting_appfiltersum">Nemoj pokazivati da aplikacije nisu kompatibilne sa uređajem.</string>
+       <string name="setting_schdwntitle">Pripremljeni download-i</string>
+       <string name="setting_schdwninstalltitle">Automatska instalacija</string>
+       <string name="setting_schdwninstallsum">Instaliraj pripremljene download-e automatski kada wifi bude dostupan.</string>
 </resources>
 
 <!--

@@ -20,7 +20,7 @@
     <string name="srch_label">Aptoide</string>
     <string name="srch_hint">Имя приложения</string>
     
-    <string name="about_txt1">Ваш пакет установки для телефонов Андроид.\n</string>
+    <string name="about_txt1">Ваш пакет установки для телефона Андроид.\n</string>
         
     <string name="about_site">Домой: </string>
     
@@ -38,23 +38,23 @@
     <string name="installed_downgrade">Понижение доступно.</string>
     <string name="reply">Повторить</string>
     <string name="whattodo">Что делать?</string>
-    <string name="likes">Like: </string>
-    <string name="dislikes">Don\'t likes: </string>
+    <string name="likes">Нравится: </string>
+    <string name="dislikes">Не нравится: </string>
     <string name="copyclip">Копировать в буфер обмена</string>
     <string name="commentlabel">Комментарий приложения...</string>
     <string name="submit">Принять</string>
     <string name="clear">Очистить</string>
-    <string name="body">Body..</string>
+    <string name="body">Текст..</string>
     <string name="subject">Тема...</string>
     <string name="user">Имя пользователя...</string>
     <string name="pass">Пароль...</string>
     <string name="showpass">Показать пароль</string>
     <string name="hidepass">Скрыть пароль</string>
-    <string name="failedcredentials">Failed to login the given credentials</string>
+    <string name="failedcredentials">Ошибка входа</string>
     <string name="comments_unavailable">Комментарии недоступны</string>
     <string name="credentialssettings">Bazaar логин</string>
     <string name="clearcredentials">Очистка логин</string>
- <string name="clearcredentials_summary">Отключенное текущего login</string>
+ <string name="clearcredentials_summary">Отключение текущего логина</string>
     <string name="setcredentials">Bazaar логин</string>
     <string name="setcredentials_summary">Установить новый логин</string>
     <string name="credentialscleared">Логин очищен</string>
@@ -64,14 +64,14 @@
     <string name="inresponseto">\@</string>
     <string name="usernotdef">Пользователь не определен</string>
     <string name="passwordnotdef">Пароль не определен</string>
-    <string name="loading_likes">Likes загрузка...</string>
+    <string name="loading_likes">Нравится загрузка...</string>
     <string name="postingcomment">Размещение комментария...</string>
     <string name="unabletoexecutecheknet">Невозможно выполнить. Проверьте статус интернета.</string>
     <string name="opinionsuccess">Ваша заявка была успешно отправлена</string>
     <string name="postingtaste">Ваша заявка представляется</string>
     <string name="unabletoexecute">Невозможно выполнить</string>
     <string name="loggingin">Вход в систему...</string>
-    <string name="tastenotavailable">Likes не доступно</string>
+    <string name="tastenotavailable">Нравится не доступно</string>
     <string name="downgrade_available">Понижение доступно</string>
     <string name="loading_comments">Загрузка комментариев...</string>
     <string name="moving_to">Перемещение в</string>
@@ -91,7 +91,6 @@
    <string name="ctg_version">Версия:</string>
     <string name="schDown_install">Вы хотите, установить все запланированные загрузки?</string>
    <string name="schDown_installselected">Установить выбранные</string>
-
 <string name="upgrd_available">, Обновление доступно</string>
 <string name="setting_hwfiltertitle">Аппаратные фильтры</string>
 <string name="setting_hwspecstitle">Аппаратные характеристики</string>
@@ -100,7 +99,7 @@
 <string name="setting_appfiltersum">Не показывать приложений, не совместимых с устройством.</string>
 <string name="setting_schdwntitle">Запланированные загрузки</string>
 <string name="setting_schdwninstalltitle">Автоматическая установка</string>
-<string name="setting_schdwninstallsum">Устанавливать заплпнированные загрузки автоматически когда соединение по Wifi присутствует</string>
+<string name="setting_schdwninstallsum">Устанавливать запланированные загрузки автоматически когда соединение по Wifi присутствует</string>
 
 </resources>
 <!--

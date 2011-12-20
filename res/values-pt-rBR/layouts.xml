@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="add_repo_text">Endereço do repositório: </string>
-    <string name="add_repo_private">Privado </string>
+    <string name="add_repo_text">URL para loja: </string>
+    <string name="add_repo_private">Privada </string>
     
-    <string name="order_popup_title1">Ordenar aplicações por: </string>
-    <string name="order_popup_lst1">Mais recentes </string>
+    <string name="order_popup_title1">Ordenar aplicativos por: </string>
+    <string name="order_popup_lst1">Mais recente </string>
     <string name="order_popup_lst2">Alfabeticamente </string>
-    <string name="order_popup_lst3">Classificação </string>
+    <string name="order_popup_lst3">Avaliação </string>
     <string name="order_popup_lst4">Número de downloads </string>
 
-    <string name="order_popup_title2">Mostrar aplicações: </string>
+    <string name="order_popup_title2">Mostra aplicativos: </string>
     <string name="order_popup_catg1">Por categoria </string>
-    <string name="order_popup_catg2">Todas as aplicações </string>
+    <string name="order_popup_catg2">Todos aplicativos </string>
     
-    <string name="order_popup_title">Opções de Exibição </string>
+    <string name="order_popup_title">Mostra Opções </string>
     
-    <string name="settings_title_bar">Definições do Aptoide</string>
+    <string name="settings_title_bar">Configurações do Aptoide</string>
     
-    <string name="save_btn">Guardar </string>
+    <string name="save_btn">Salvar </string>
     <string name="clear_cache_title">Cache</string>
-    <string name="clear_cache_btn">Limpar Cache </string>
-    <string name="clear_cache_msg">ATENÇÃO: remove todos os icons guardados </string>
+    <string name="clear_cache_btn">Limpa cache </string>
+    <string name="clear_cache_msg">Aviso: remove todos os ícones que o Aptoide tem mantido em cache, bem como todas as intalações e atualizações pendentes. Não faça isso se você tiver downloads em andamento!</string>
     
     <string name="clear_dwn_title">Downloads</string>
-    <string name="clear_dwn_btn">Download de icons</string>
-    <string name="clear_dwn_msg">Regras para download dos icons </string>
+    <string name="clear_dwn_btn">Baixar ícones</string>
+    <string name="clear_dwn_msg">Baixar regras de ícones </string>
+    
+    <string name="auto_updating">Favor aguardar enquanto o download da atualização é processado...</string>
     
     <string-array name="dwnif">
         <item>3G e Wifi</item>
-        <item>Apenas Wifi</item>
-        <item>Nunca fazer</item>
+        <item>Wifi apenas</item>
+        <item>Nunca baixar</item>
     </string-array>
     
     

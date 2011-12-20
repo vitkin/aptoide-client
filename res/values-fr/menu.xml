@@ -1,31 +1,25 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
-    
-    <string name="menu_update_repo">Mise à jour</string>
-    <string name="menu_manage">Gérer les dépôts</string>
-    <string name="menu_order">Options d\'affichage</string>
-    <string name="menu_settings">Paramètres</string>
-    <string name="menu_about">À propos</string>
-    <string name="menu_search">Rechercher</string>
-    
-    
-    <string name="menu_add_repo">Nouveau dépôt</string>
-    <string name="menu_rem_repo">Enlever le dépôt</string>
-    <string name="menu_edit_repo">Éditer le dépôt</string>
-    
-    <string name="btn_yes">Oui</string>
-    <string name="btn_no">Non</string>
-    <string name="btn_ok">OK</string>
-    <string name="btn_add">Ajouter</string>
-    <string name="btn_cancel">Annuler</string>
-    <string name="btn_done">Terminé</string>
-    <string name="btn_chlog">Journal des modifications</string>
-    <string name="btn_search_market">Rechercher sur Market</string>
-    
-    
-    
-    
+  <string name="menu_update_repo">MàJ liste</string>
+  <string name="menu_update_all">Tout mettre à jour</string>
+  <string name="menu_manage">Gérer les dépôts</string>
+  <string name="menu_display_options">Option d\'afficahge</string>
+  <string name="menu_order">Changer ordre</string>
+  <string name="menu_settings">Paramètres</string>
+  <string name="menu_about">A propos</string>
+  <string name="menu_search">Recherche</string>
+  <string name="menu_add_repo">Nouveau dépôt</string>
+  <string name="menu_rem_repo">Effacer dépôt</string>
+  <string name="menu_edit_repo">Editer dépôt</string>
+  <string name="btn_yes">Oui</string>
+  <string name="btn_no">Non</string>
+  <string name="btn_ok">Ok</string>
+  <string name="btn_add">Ajouter</string>
+  <string name="btn_cancel">Annuler</string>
+  <string name="btn_done">Fait</string>
+  <string name="btn_chlog">Changelog</string>
+  <string name="btn_search_market">Rechercher dans Market</string>
+  <string name="schDwnBtn">Téléchargement programmé</string>
 </resources>
 <!--
  * Copyright (C) 2009  Roberto Jacinto

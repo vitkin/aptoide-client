@@ -92,15 +92,15 @@
    <string name="schDown_install">Alle geplanten Downloads installieren?</string>
    <string name="schDown_installselected">Auswahl installieren</string>
    
-   <string name="upgrd_available">, upgrade available</string>
-       <string name="setting_hwfiltertitle">Hardware Filters</string>
-       <string name="setting_hwspecstitle">Hardware Specs</string>
-       <string name="setting_hwspecssum">Check your hardware specifications</string>
-       <string name="setting_appfiltertitle">Filter Applications</string>
-       <string name="setting_appfiltersum">Don\'t show applications not compatible with your device.</string>
-       <string name="setting_schdwntitle">Scheduled Downloads</string>
-       <string name="setting_schdwninstalltitle">Automatic Install</string>
-       <string name="setting_schdwninstallsum">Install scheduled downloads automatically when a Wifi connection is present</string>
+   <string name="upgrd_available">, Upgrade verfügbar</string>
+       <string name="setting_hwfiltertitle">Hardware Filter</string>
+       <string name="setting_hwspecstitle">Technische Daten</string>
+       <string name="setting_hwspecssum">Überprüfen Sie Ihre technischen Daten</string>
+       <string name="setting_appfiltertitle">App Filter</string>
+       <string name="setting_appfiltersum">Apps ausblenden, die nicht mit Ihrem Gerät kompatibel sind.</string>
+       <string name="setting_schdwntitle">Geplante Downloads</string>
+       <string name="setting_schdwninstalltitle">Automatische Installation</string>
+       <string name="setting_schdwninstallsum">Geplante Downloads automatisch installieren, wenn eine WiFi-Verbindung besteht</string>
 </resources>
 
 <!--
