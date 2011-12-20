@@ -185,7 +185,6 @@ public class ScheduledDownload extends ListActivity {
 	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
 		
 		menu.add(Menu.NONE,3, 3, R.string.schDown_invertselection).setIcon(R.drawable.ic_menu_invert);
 		menu.add(Menu.NONE,4, 3, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
@@ -203,7 +202,6 @@ public class ScheduledDownload extends ListActivity {
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		AlertDialog alrt = new AlertDialog.Builder(this).create();
-		// TODO Auto-generated method stub
 		switch (item.getItemId()) {
 		case 4:
 			if(isAllChecked()){
@@ -266,7 +264,6 @@ public class ScheduledDownload extends ListActivity {
 	}
 	
 	private void downloadAll() {
-		// TODO Auto-generated method stub
 		
 		AlertDialog alrt = new AlertDialog.Builder(ctx).create();
 		alrt.setMessage(getText(R.string.schDown_install));
@@ -335,32 +332,10 @@ public class ScheduledDownload extends ListActivity {
 	
 
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
-	 */
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		// TODO Auto-generated method stub
-		AdapterContextMenuInfo itemInfo = (AdapterContextMenuInfo) item.getMenuInfo();
-
-		switch (item.getItemId()) {
-		case 4:
-			db.deleteScheduledDownload(sch_list.get(itemInfo.position).apkid,sch_list.get(itemInfo.position).ver);
-			sch_list.remove(itemInfo.position);
-			redraw();
-			break;
-
-		default:
-			break;
-		}
-		return super.onContextItemSelected(item);
-		
-		
-	}
+	
 
 
 	private void redraw() {
-		// TODO Auto-generated method stub
 		sch_list=db.getScheduledListNames();
         List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
         Map<String, Object> server_line;

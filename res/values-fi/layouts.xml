@@ -20,7 +20,7 @@
     <string name="save_btn">Tallenna </string>
     <string name="clear_cache_title">Välimuisti</string>
     <string name="clear_cache_btn">Tyhjennä välimuisti </string>
-    <string name="clear_cache_msg">Varoitus: poistaa kaikki kuvakkeet, odottavat asennukset ja päivitykset Aptoiden välimuistista. Don\'t do this if you have ongoing downloads!</string>
+    <string name="clear_cache_msg">Varoitus: poistaa kaikki kuvakkeet, odottavat asennukset ja päivitykset Aptoiden välimuistista. Älä tee tätä, jos sinulla on latauksia kesken!</string>
     
     <string name="clear_dwn_title">Lataukset</string>
     <string name="clear_dwn_btn">Lataa kuvakkeet</string>

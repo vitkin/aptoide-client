@@ -2,12 +2,14 @@
 <resources>
     
     
-    <string name="menu_update_repo">Güncelle</string>
+    <string name="menu_update_repo">Güncellemeleri Listele</string>
+    <string name="menu_update_all">Tümünü güncelle</string>
     <string name="menu_manage">Depoyu Yönet</string>
-    <string name="menu_order">Görünüm Ayarları</string>
+    <string name="menu_display_options">Görünüm Ayarları</string>
+    <string name="menu_order">Sıralamayı Değiştir</string>
     <string name="menu_settings">Ayarlar</string>
     <string name="menu_about">Hakkında</string>
-    <string name="menu_search">Arama</string>
+    <string name="menu_search">Ara</string>
     
     
     <string name="menu_add_repo">Yeni Depo</string>
@@ -19,9 +21,10 @@
     <string name="btn_ok">Tamam</string>
     <string name="btn_add">Ekle</string>
     <string name="btn_cancel">Vazgeç</string>
-    <string name="btn_done">Tamam</string>
+    <string name="btn_done">Tamamlandı</string>
     <string name="btn_chlog">Değişiklikler</string>
     <string name="btn_search_market">Markette Ara</string>
+    <string name="schDwnBtn">Programlanmış İnd.</string>
     
     
     

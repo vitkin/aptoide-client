@@ -14,14 +14,23 @@
     <string name="repo_alrt">Kullanılan depoların listesi değişti.\nGüncellemek ister misiniz?</string>
     
     <string name="title_repo_alrt">Dikkatinize</string>
-    <string name="myrepo_alrt">Hiçbir depo eklememişsiniz gibi görünüyor.\nBizim depomuzu eklemenizi öneririz.\nBizim depomuzu eklemek ister misiniz?\n(Çevrimiçinde ilave depolar arayabilirsiniz)\n\n</string>
+    <string name="myrepo_alrt">Hiçbir depo eklememişsiniz gibi görünüyor.\nBizim depomuzu eklemenizi öneririz.\nBizim depomuzu eklemek ister misiniz?\n(Çevrimiçinde ilâve depolar arayabilirsiniz)\n\n</string>
     <string name="newrepo_alrt">Bu depoyu listenize eklemek ister misiniz?\n\n</string>
     
     <string name="error_download_alrt">Sunucuya bağlanılamadı ya da apk dosyası bozuk!</string>
     <string name="download_alrt">Uygulama buradan indiriliyor:\n </string>
+    <string name="finished_download_alrt">Yüklenmeye hazır:\n </string>
+    <string name="finished_download_message">Uygulamayı yüklemek için dokununuz:\n </string>
      
-    <string name="md5_error">İndirilen uygulamanın md5 karma değeri doğrulanamadı!\nUygulama sisteminizi güncelleyip yeniden deneyiniz.</string>
+    <string name="md5_error">İndirilen uygulamanın md5 karma değeri doğrulanamadı!\nDepolarınızı güncelleyip yeniden deneyiniz.</string>
+    <string name="md5_auto_update_error">Güncelleme karma değer denetimi başarısızlığa uğradı!  Hâlihazırdaki sürüm tutulacaktır.</string>
+    <string name="network_auto_update_error">Güncelleme bağlantısı başarısız oldu!  Hâlihazırdaki sürüm tutulacaktır.</string>
     <string name="network_error">Uygulama indirilirken bir hata oluştu.\nTekrar deneyiniz.</string>
+    
+    <string name="failed_update">Uygulamanın güncellenmesi başarısızlığa uğradı!</string>
+    <string name="failed_install">Uygulamanın yüklenmesi başarısızlığa uğradı!</string>
+    <string name="downgrade">Eski sürüme dön</string>
+    <string name="uninstall">Kaldır</string>
     
 </resources>
 <!--

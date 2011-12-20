@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="top_please_wait">Aguarde</string>
-	<string name="top_error">Erro</string>
+	<string name="top_please_wait">Please Wait</string>
+	<string name="top_error">Error</string>
 	<string name="top_download">Download</string>
 
-	<string name="fetch_apk">A receber aplicação</string>
+	<string name="fetch_apk">Fetching application</string>
 
-	<string name="aptoide_error">Não é possível ligar ao servidor remoto</string>
+	<string name="aptoide_error">Can\'t connect to the remote server</string>
 	
-	<string name="manage_repo_add">Adcionar nova loja</string>
+	<string name="manage_repo_add">Add new store</string>
 	<string name="manage_repo_answ_wrongl">Login is wrong</string>
 	<string name="manage_repo_answ_cc">Can\'t connect to server</string>
 	<string name="manage_repo_answ_lr">Login required</string>
