@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="up_server">Servers: </string>
-    <string name="lstver">Server version: </string>
-    <string name="dwn_n">Number of downloads: </string>
-    <string name="isinst">Installed: </string>
-    <string name="instver">Installed version: </string>
-    <string name="install">Install </string>
-    <string name="about_alrt">About: </string>
-    <string name="rem">Uninstall </string>
-    <string name="update">Update</string>
+    <string name="up_server">Servidores: </string>
+    <string name="lstver">Versão do servidor: </string>
+    <string name="dwn_n">Numero de downloads: </string>
+    <string name="isinst">Instalado: </string>
+    <string name="instver">Versão  Instalada: </string>
+    <string name="install">Instalar </string>
+    <string name="about_alrt">Sobre: </string>
+    <string name="rem">Desinstalar </string>
+    <string name="update">Actualizar</string>
     
-    <string name="update_alrt">There are updates available for some installed applications.\nDo you wish to see them?</string>
-    <string name="repo_alrt">The list of stores in use has been changed.\nDo you wish to update them?</string>
+    <string name="update_alrt">Há actualizações disponíveis.\nDeseja vê-las?</string>
+    <string name="repo_alrt">A lista de stores em uso mudou.\nDeseja actualizá-las?</string>
     
-    <string name="title_repo_alrt">Attention</string>
-    <string name="myrepo_alrt">It looks like you don\'t have any added store.\nWe suggest you use ours.\nDo you want to add our store?\n(You can search for more stores online)\n\n</string>
-    <string name="newrepo_alrt">Do you want to add this store to your list?\n\n</string>
+    <string name="title_repo_alrt">Atenção</string>
+    <string name="myrepo_alrt">Não tem nenhuma store adicionada.\nSugerimos que use a nossa.\nDeseja adicionar a nossa store?\n(Pode procurar por mais stores online)\n\n</string>
+    <string name="newrepo_alrt">Deseja adicionar esta store à sua lista?\n\n</string>
     
-    <string name="error_download_alrt">Could not connect to server or apk file is corrupt!</string>
-    <string name="download_alrt">Getting application:\n </string>
-    <string name="finished_download_alrt">Ready to install:\n </string>
+    <string name="error_download_alrt">Erro de ligação ou ficheiro apk está corrupto!</string>
+    <string name="download_alrt">Recebendo aplicação:\n </string>
+    <string name="finished_download_alrt">Iniciando instalação:\n </string>
     <string name="finished_download_message">Click to install application:\n </string>
      
-    <string name="md5_error">The downloaded application md5 check failed!\nPlease update your stores before retrying.</string>
+    <string name="md5_error">Ocorreu um erro no download (MD5 Check failed)!\nPor favor actualize as suas stores e tente novamente.</string>
     <string name="md5_auto_update_error">Update package checksum failed!  Keeping current version.</string>
     <string name="network_auto_update_error">Update connection failed!  Keeping current version.</string>
-    <string name="network_error">There has been an error while fetching the application.\nPlease try again.</string>
+    <string name="network_error">Ocorreu um erro.\nVerifique a sua ligação à internet e tente novamente.</string>
     
-    <string name="failed_update">Application update has failed!</string>
-    <string name="failed_install">Application install has failed!</string>
+    <string name="failed_update">Actualização da aplicação falhou!</string>
+    <string name="failed_install">Instalação da aplicação falhou!</string>
     <string name="downgrade">Downgrade</string>
-    <string name="uninstall">Uninstall</string>
+    <string name="uninstall">Desinstalar</string>
     
 </resources>
 <!--

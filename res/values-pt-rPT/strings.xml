@@ -85,8 +85,8 @@
    <string name="schDown_nodownloads">Sem downloads agendados</string>
    <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
    <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
-   <string name="addSchDown">Download agendado</string>
-   <string name="ctg_available">disponível</string>
+   <string name="addSchDown">Agendar Download</string>
+   <string name="ctg_available">disponíveis</string>
    <string name="ctg_files">ficheiros</string>
    <string name="ctg_version">Versão:</string>
    <string name="schDown_install">Instalar todos os downloads agendados?</string>

@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="add_repo_text">URI to store: </string>
-    <string name="add_repo_private">Private </string>
+    <string name="add_repo_text">URI da store: </string>
+    <string name="add_repo_private">Privado </string>
     
-    <string name="order_popup_title1">Order applications by: </string>
-    <string name="order_popup_lst1">Most recent first </string>
-    <string name="order_popup_lst2">Alphabetically </string>
+    <string name="order_popup_title1">Ordenar aplicações por: </string>
+    <string name="order_popup_lst1">Recentes </string>
+    <string name="order_popup_lst2">Alfabeticamente </string>
     <string name="order_popup_lst3">Rating </string>
-    <string name="order_popup_lst4">Download number </string>
+    <string name="order_popup_lst4">Número Downloads </string>
 
-    <string name="order_popup_title2">Show applications: </string>
-    <string name="order_popup_catg1">By category </string>
-    <string name="order_popup_catg2">All applications </string>
+    <string name="order_popup_title2">Mostrar Aplicações: </string>
+    <string name="order_popup_catg1">Por categoria </string>
+    <string name="order_popup_catg2">Todas as aplicações </string>
     
-    <string name="order_popup_title">Display Options </string>
+    <string name="order_popup_title">Opções de Exibição </string>
     
-    <string name="settings_title_bar">Aptoide settings</string>
+    <string name="settings_title_bar">Definições</string>
     
-    <string name="save_btn">Save </string>
+    <string name="save_btn">Guardar </string>
     <string name="clear_cache_title">Cache</string>
-    <string name="clear_cache_btn">Clear cache </string>
-    <string name="clear_cache_msg">Warning: removes all icons Aptoide has cached, as well as all pending installs and updates. Don\'t do this if you have ongoing downloads!</string>
+    <string name="clear_cache_btn">Limpar cache </string>
+    <string name="clear_cache_msg">Aviso: remove todos os icons que o Aptoide tem guardados. Não faça isto se estiver com downloads activos.</string>
     
     <string name="clear_dwn_title">Downloads</string>
-    <string name="clear_dwn_btn">Download icons</string>
-    <string name="clear_dwn_msg">Download icon rules </string>
+    <string name="clear_dwn_btn">Download de icons</string>
+    <string name="clear_dwn_msg">Regras de Download de icons </string>
     
-    <string name="auto_updating">Please wait while processing update download...</string>
+    <string name="auto_updating">Por favor aguarde enquanto de processa o download...</string>
     
     <string-array name="dwnif">
-        <item>3G and Wifi</item>
-        <item>Wifi only</item>
-        <item>Never download</item>
+        <item>3G e Wifi</item>
+        <item>Wifi apenas</item>
+        <item>Nunca download</item>
     </string-array>
     
     
