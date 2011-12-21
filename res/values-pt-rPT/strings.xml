@@ -79,13 +79,13 @@
    <string name="not_recognized">Não reconhecido</string>
    <string name="new_account">Nova conta</string>
    
-   <string name="chkBoxSchDwn">Downloads agendados</string>
+   <string name="chkBoxSchDwn">Agendar download</string>
    <string name="no_sch_downloads">Sem downloads agendados!</string>
    <string name="schDown_wireless_detected">Wireless detectado: Fazer download de todas as aplicações nos down. agendados?</string>
    <string name="schDown_nodownloads">Sem downloads agendados</string>
    <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
    <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
-   <string name="addSchDown">Agendar Download</string>
+   <string name="addSchDown">Download agendado</string>
    <string name="ctg_available">disponíveis</string>
    <string name="ctg_files">ficheiros</string>
    <string name="ctg_version">Versão:</string>
