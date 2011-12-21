@@ -75,12 +75,21 @@
     <string name="schDown_wireless_detected">רשת אלחוטית זמינה! להתחיל בביצוע ההורדות הממתינות?</string>
     <string name="schDown_nodownloads">אין הורדות ממתינות</string>
     <string name="schDown_nodownloadselect">לא נבחרו הורדות</string>
-    <string name="schDown_downerror">שגיאת הורדה. הוסף חנות %1$s </string>
+    <string name="schDown_downerror">שגיאת הורדה. הוסף חנות %1$s</string>
     <string name="addSchDown">נוסף לרשימת ההמתנה</string>
     <string name="ctg_available">זמין</string>
     <string name="ctg_files">קבצים</string>
     <string name="ctg_version">גרסה:</string>
     <string name="schDown_install">האם ברצונך להתקין את כל ההורדות הממתינות?</string>
     <string name="schDown_installselected">התקן נבחרים</string>
+    <string name="upgrd_available">, עדכון זמין</string>
+    <string name="setting_hwfiltertitle">מסנני חומרה</string>
+    <string name="setting_hwspecstitle">מאפייני חומרה</string>
+    <string name="setting_hwspecssum">בדוק את מאפייני החומרה של המכשיר</string>
+    <string name="setting_appfiltertitle">סינון יישומים</string>
+    <string name="setting_appfiltersum">אל תציג יישומים שאינם תואמים את חומרת המכשיר שלי.</string>
+    <string name="setting_schdwntitle">הורדות ממתינות</string>
+    <string name="setting_schdwninstalltitle">התקנה אוטומטית</string>
+    <string name="setting_schdwninstallsum">התקן אוטומטית הורדות ממתינות כאשר ישנה רשת אלחוטית זמינה</string>
 
 </resources>
