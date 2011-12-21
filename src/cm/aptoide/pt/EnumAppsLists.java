@@ -28,7 +28,6 @@ package cm.aptoide.pt;
  *
  */
 public enum EnumAppsLists {
-	Top,
 	Available,
 	Installed,
 	Update;
@@ -52,5 +51,9 @@ public enum EnumAppsLists {
 		}else{
 			return current;
 		}
+	}
+	
+	public static int getCount(){
+		return values().length;
 	}
 }
