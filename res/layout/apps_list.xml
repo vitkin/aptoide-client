@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#ffffff" >
+	
+	<!--	Top App Banner	-->
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_height="wrap_content"
+	android:background="#ffffff" android:layout_width="fill_parent" android:id="@+id/bannerlayout">
+		<TextView android:id="@+id/topappbanner"  
+			android:layout_gravity="center" 
+			android:text="@string/header"
+			android:layout_height="70sp" 
+			android:layout_width="fill_parent" 
+			android:textColor="#000000"	/>
+	</LinearLayout>  	
+	
+	
+	<ListView android:id="@android:id/list"
+		android:layout_width="fill_parent" 
+		android:layout_height="wrap_content"/>
+	<TextView android:id="@android:id/empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:text="@string/no_apps" 
+		android:textColor="#000000"/>
+ </LinearLayout>
