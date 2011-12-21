@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="available">Available</string>
+    <string name="installed">Installed</string>
+    <string name="updates">Updates</string>
+    
+    <string name="no_apps">No apps to display!</string>
+
+    <string name="aptoide_started">Aptoide has started</string>
+    <string name="aptoide_stopped">Aptoide has successfully stopped</string>
+    
+    <string name="update_self_title">Update available</string>
+    <string name="update_self_msg">There is a new version of aptoide available,\ndo you wish to update?</string>
+
+    <string name="auto_updating">Please wait while processing update download...</string>
+    
+    <string name="dialog_yes">Yes</string>
+    <string name="dialog_no">No</string>
+    <string name="header">Header Image</string>
+    <string name="no_screens">No screenshots to display!</string>
+    <string name="multi_ver_prompt">Select an app version</string>
+        
+</resources>
