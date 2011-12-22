@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:gravity="center" android:orientation="vertical"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:background="#ffffff">
+
+	<TextView android:textAppearance="?android:textAppearanceLarge"
+		android:textSize="18.0sp" android:textColor="#a8a8a8" android:gravity="left"
+		android:layout_gravity="top" android:paddingTop="10.0dip"
+		android:paddingLeft="5.0sp" android:paddingRight="5.0sp"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:text="About:" />
+
+	<TextView android:id="@+id/descript" android:gravity="left"
+		android:layout_gravity="top" android:paddingTop="10.0dip"
+		android:textColor="#7e7e7e" android:paddingLeft="5.0sp"
+		android:paddingRight="5.0sp" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+
+	<TextView android:textAppearance="?android:textAppearanceLarge"
+		android:textSize="18.0sp" android:textColor="#a8a8a8" android:gravity="left"
+		android:layout_gravity="top" android:paddingTop="10.0dip"
+		android:paddingLeft="5.0sp" android:paddingRight="5.0sp"
+		android:paddingBottom="5.0sp" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:text="Screenshots:" />
+
+	<ProgressBar android:id="@+id/pscreens"
+		android:layout_width="wrap_content" android:layout_height="wrap_content" />
+
+	<TextView android:id="@+id/noscreens" android:gravity="center"
+		android:layout_gravity="center" android:paddingTop="10.0dip"
+		android:textColor="#a8a8a8" android:paddingLeft="5.0sp"
+		android:paddingRight="5.0sp" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:visibility="invisible" />
+
+	<Gallery android:id="@+id/galleryScreens" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
+
+	<TableLayout android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:paddingTop="10.0dip"
+		android:paddingLeft="5.0sp" android:paddingRight="5.0sp"
+		android:stretchColumns="0">
+
+		<TableRow>
+			<TableLayout android:layout_width="fill_parent"
+				android:layout_height="wrap_content" android:stretchColumns="0">
+
+				<TableRow>
+
+					<TextView android:textColor="#a8a8a8" android:id="@+id/likes"
+						android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+					<TextView android:textColor="#a8a8a8" android:id="@+id/dislikes"
+						android:layout_width="fill_parent" android:layout_height="wrap_content" />
+
+				</TableRow>
+
+				<TableRow>
+
+					<ImageView android:id="@+id/likesImage"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:layout_gravity="left" android:visibility="visible"
+						android:src="@drawable/like" />
+
+					<ImageView android:id="@+id/dislikesImage"
+						android:layout_width="fill_parent" android:layout_height="wrap_content"
+						android:layout_gravity="left" android:visibility="visible"
+						android:src="@drawable/dontlike" />
+
+				</TableRow>
+
+			</TableLayout>
+
+		</TableRow>
+
+		<TableRow android:paddingTop="15.0dip">
+			<Spinner android:id="@+id/spinnerMultiVersion"
+				android:prompt="@string/multi_ver_prompt" android:layout_gravity="left"
+				android:layout_width="40sp" android:layout_height="wrap_content" />
+		</TableRow>
+
+		<TableRow>
+			<Button android:text="@string/tell_friend" android:id="@+id/btcommentapp"
+				android:padding="3sp" android:layout_width="fill_parent"
+				android:layout_height="wrap_content"></Button>
+		</TableRow>
+		
+		<TableRow>
+			<CheckBox android:id="@+id/schedule_download_box"
+				android:paddingLeft="40sp" android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:text="@string/scheduled_download"
+				android:textColor="#7e7e7e" />
+		</TableRow>
+
+	</TableLayout>
+
+</LinearLayout>
