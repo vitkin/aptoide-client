@@ -69,19 +69,19 @@ android:background="#ffffffff">
 <!--     		android:layout_centerInParent="true" -->
 <!--     		android:layout_alignParentTop="true" /> -->
 <!--    	</RelativeLayout> -->
-   		
-	<android.support.v4.view.ViewPager
-		android:id="@+id/pager"
-		android:layout_width="fill_parent"
-		android:layout_height="0dip"
-		android:layout_weight="1" />
+<!--   		-->
+<!--	<android.support.v4.view.ViewPager-->
+<!--		android:id="@+id/pager"-->
+<!--		android:layout_width="fill_parent"-->
+<!--		android:layout_height="0dip"-->
+<!--		android:layout_weight="1" />-->
 	
-<!-- 	<ViewFlipper -->
-<!-- 		android:id="@+id/list_flipper" -->
-<!-- 		android:orientation="vertical" -->
-<!-- 		android:layout_width="fill_parent" -->
-<!-- 		android:layout_height="fill_parent" -->
-<!-- 		android:background="#ffffff"> -->
-<!-- 	 </ViewFlipper> -->
+ 	<ViewFlipper 
+ 		android:id="@+id/list_flipper" 
+ 		android:orientation="vertical" 
+ 		android:layout_width="fill_parent" 
+ 		android:layout_height="fill_parent" 
+ 		android:background="#ffffff"> 
+ 	 </ViewFlipper> 
 	 
 </LinearLayout>
