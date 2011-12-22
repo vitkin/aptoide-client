@@ -26,20 +26,20 @@
 		    android:id="@+id/aptoideicon" 
 		    android:layout_alignParentTop="true" 
 		    android:layout_toRightOf="@+id/greenbar" 
-		    android:layout_margin="2sp"/>
-	    <ImageView android:layout_width="wrap_content" 
-		    android:layout_height="wrap_content" 
-		    android:src="@drawable/aptoidebrand"
-		    android:id="@+id/imageView1" 
-		    android:layout_marginTop="10sp" 
-		    android:layout_marginBottom="10sp" 
-		    android:layout_centerInParent="true"></ImageView>
+		    android:layout_margin="2sp" 
+		    android:layout_centerVertical="true" />
+	    <ImageView android:layout_height="wrap_content" 
+			android:src="@drawable/aptoidebrand" 
+			android:id="@+id/aptoidebrand" 
+			android:layout_width="wrap_content" 
+			android:padding="10sp" 
+			android:layout_centerVertical="true"/>
 	    <ImageButton android:layout_width="wrap_content" 
 		    android:id="@+id/btsearch" 
 		    android:layout_height="wrap_content" 
 		    android:background="@drawable/btsearch" 
 		    android:layout_alignParentRight="true" 
-		    android:layout_centerVertical="true"></ImageButton>
+		    android:layout_centerVertical="true"/>
 	</RelativeLayout>
 
 	<cm.aptoide.pt.ui.ViewPagerIndicator 
@@ -71,13 +71,13 @@
     		android:layout_centerInParent="true"
     		android:layout_alignParentTop="true" />
    	</RelativeLayout>
-
-	<android.support.v4.view.ViewPager
-		android:id="@+id/pager" 
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent" 
-		android:layout_below="@+id/indicator_arrow"
-		android:layout_above="@+id/bottombar" />
+  		
+  	<android.support.v4.view.ViewPager
+    	android:id="@+id/pager"
+       	android:layout_width="fill_parent"
+       	android:layout_height="fill_parent" 
+       	android:layout_below="@+id/indicator_arrow" 
+           android:layout_above="@+id/bottombar"/>
 	
 <!--	<ViewFlipper-->
 <!--		android:id="@+id/list_flipper"-->
@@ -107,5 +107,6 @@
 			android:layout_weight="0.5"
 			android:id="@+id/filter"></Button>
 	</LinearLayout>
+	
 	 
 </RelativeLayout>
