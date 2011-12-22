@@ -198,7 +198,7 @@ public class DbHandler {
 	/*
 	 * Code for DB update on new version of Aptoide
 	 */
-	public void UpdateTables(){
+	public void updateTables(){
 		String[] repos = null;
 		int[] inuser = null;
 		boolean[] secure = null;
@@ -214,7 +214,7 @@ public class DbHandler {
 				secure = new boolean[c.getCount()+1];
 				login_pwd = new String[c.getCount()+1];
 				login_user = new String[c.getCount()+1];
-				repos[i] = "http://apps.bazaarandroid.com";
+				repos[i] = "http://apps.bazaarandroid.com/";
 				inuser[i] = 1;
 				secure[i] = false;
 

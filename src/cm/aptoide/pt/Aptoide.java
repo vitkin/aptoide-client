@@ -307,7 +307,6 @@ public class Aptoide extends Activity {
    		
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//		 requestWindowFeature(Window.FEATURE_NO_TITLE);
 			setContentView(R.layout.sch_downloadempty);
 		try{
 			if( pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode") ) ){
@@ -327,7 +326,7 @@ public class Aptoide extends Activity {
    		db = new DbHandler(this);
    		
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
-	   		db.UpdateTables();
+	   		db.updateTables();
 	   		prefEdit.putBoolean("mode", true);
 	   		prefEdit.putInt("version", pkginfo.versionCode);
 	   		prefEdit.commit();
