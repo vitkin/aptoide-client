@@ -378,7 +378,9 @@ public class DownloadQueueService extends Service {
 			}.start();
 			
 			
-		} catch(Exception e){	}
+		} catch(Exception e){	
+			e.printStackTrace();
+		}
 	}
 	
 	/*
