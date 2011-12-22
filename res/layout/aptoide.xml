@@ -42,50 +42,52 @@
 		    android:layout_centerVertical="true"/>
 	</RelativeLayout>
 
-	<cm.aptoide.pt.ui.ViewPagerIndicator 
-			android:layout_below="@+id/actionbar"
-    		android:id="@+id/indicator"
-    		android:layout_width="fill_parent"
-    		android:layout_height="wrap_content"
-    		android:background="#ffeaeaea"
-    		android:paddingLeft="5sp"
-    		android:paddingRight="5sp" >
-	</cm.aptoide.pt.ui.ViewPagerIndicator>
-    	
-   	<RelativeLayout 
-   		android:layout_below="@+id/indicator"
-   		android:layout_width="fill_parent"
-    	android:layout_height="wrap_content"
-    	android:background="#ffeaeaea" 
-    	android:id="@+id/indicator_arrow"> 
-    	<View 
-    		android:layout_width="fill_parent"
-    		android:layout_height="1px"
-    		android:layout_alignBottom="@+id/current"
-    		android:background="#ffbdbdbd" />
-   		<ImageView 
-   			android:id="@+id/current"
-    		android:layout_width="wrap_content"
-    		android:layout_height="wrap_content"
-    		android:src="@drawable/current_arrow"
-    		android:layout_centerInParent="true"
-    		android:layout_alignParentTop="true" />
-   	</RelativeLayout>
-  		
-  	<android.support.v4.view.ViewPager
-    	android:id="@+id/pager"
-       	android:layout_width="fill_parent"
-       	android:layout_height="fill_parent" 
-       	android:layout_below="@+id/indicator_arrow" 
-           android:layout_above="@+id/bottombar"/>
+<!--	<cm.aptoide.pt.ui.ViewPagerIndicator -->
+<!--			android:layout_below="@+id/actionbar"-->
+<!--    		android:id="@+id/indicator"-->
+<!--    		android:layout_width="fill_parent"-->
+<!--    		android:layout_height="wrap_content"-->
+<!--    		android:background="#ffeaeaea"-->
+<!--    		android:paddingLeft="5sp"-->
+<!--    		android:paddingRight="5sp" >-->
+<!--	</cm.aptoide.pt.ui.ViewPagerIndicator>-->
+<!--    	-->
+<!--   	<RelativeLayout -->
+<!--   		android:layout_below="@+id/indicator"-->
+<!--   		android:layout_width="fill_parent"-->
+<!--    	android:layout_height="wrap_content"-->
+<!--    	android:background="#ffeaeaea" -->
+<!--    	android:id="@+id/indicator_arrow"> -->
+<!--    	<View -->
+<!--    		android:layout_width="fill_parent"-->
+<!--    		android:layout_height="1px"-->
+<!--    		android:layout_alignBottom="@+id/current"-->
+<!--    		android:background="#ffbdbdbd" />-->
+<!--   		<ImageView -->
+<!--   			android:id="@+id/current"-->
+<!--    		android:layout_width="wrap_content"-->
+<!--    		android:layout_height="wrap_content"-->
+<!--    		android:src="@drawable/current_arrow"-->
+<!--    		android:layout_centerInParent="true"-->
+<!--    		android:layout_alignParentTop="true" />-->
+<!--   	</RelativeLayout>-->
+<!--  		-->
+<!--  	<android.support.v4.view.ViewPager-->
+<!--    	android:id="@+id/pager"-->
+<!--       	android:layout_width="fill_parent"-->
+<!--       	android:layout_height="fill_parent" -->
+<!--       	android:layout_below="@+id/indicator_arrow" -->
+<!--           android:layout_above="@+id/bottombar"/>-->
 	
-<!--	<ViewFlipper-->
-<!--		android:id="@+id/list_flipper"-->
-<!--		android:orientation="vertical"-->
-<!--		android:layout_width="fill_parent"-->
-<!--		android:layout_height="fill_parent"-->
-<!--		android:background="#ffffff">-->
-<!--	 </ViewFlipper>-->
+	<ViewFlipper
+		android:id="@+id/list_flipper"
+		android:layout_below="@+id/actionbar"
+		android:layout_above="@+id/bottombar"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="#ffffff">
+	 </ViewFlipper>
 	 
 	<!--	Bottom Bar 	-->
 	<LinearLayout android:layout_width="fill_parent" 
