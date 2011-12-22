@@ -16,5 +16,12 @@
     
     <string name="dialog_yes">Yes</string>
     <string name="dialog_no">No</string>
+    
+    <string name="install">Install</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="search_market">Search Market</string>
+    <string name="select_version">Select version</string>
+    <string name="schedule_download">Schedule Download</string>
+    
         
 </resources>
