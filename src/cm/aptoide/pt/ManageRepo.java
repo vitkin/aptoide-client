@@ -543,7 +543,8 @@ public class ManageRepo extends ListActivity{
 			builder.setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
                 		public void onClick(DialogInterface dialog, int	whichButton) {
                 			db.removeServer(rem_lst);
-                			change = true;
+                			change = false;
+                			forceUpdate=true;
                 			redraw();
                 		}
             });
