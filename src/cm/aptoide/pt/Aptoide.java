@@ -94,6 +94,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ListView updatableAppsList = null;
 	private EnumAppsLists currentAppsList = null;
 	
+	private TextView listTitle = null;
+	private ImageView previousView = null; 
+	private ImageView nextView = null;
+	
 	private ViewDisplayListApps availableApps = null;
 	private ViewDisplayListApps installedApps = null;
 	private ViewDisplayListApps updatableApps = null;
@@ -261,6 +265,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		
 		appsListFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
 		
+		listTitle = (TextView) findViewById(R.id.title);
+		
+		previousView = (ImageView) findViewById(R.id.previous);
+		previousView.setVisibility(View.INVISIBLE);
+		nextView = (ImageView) findViewById(R.id.next);
+		
 		availableAppsList = new ListView(this);
 		availableAppsList.setBackgroundColor(Color.WHITE);
 		availableAppsList.setCacheColorHint(Color.TRANSPARENT);
@@ -291,8 +301,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		updatableAppsList.setOnItemClickListener(this);
 		appsListFlipper.addView(updatableAppsList);
 
-
 		currentAppsList = EnumAppsLists.Available;
+		listTitle.setText(currentAppsList.Available.toString());
+		
     }
     
     
@@ -480,13 +491,35 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
     
     
-    
+   
     class SwypeDetector extends SimpleOnGestureListener {
 
     	private static final int SWIPE_MIN_DISTANCE = 80;
     	private static final int SWIPE_MAX_OFF_PATH = 250;
     	private static final int SWIPE_THRESHOLD_VELOCITY = 150;
 
+    	 public void putElementsIntoTitleBar(EnumAppsLists currentAppList){
+    		 switch(currentAppList){
+	    		 case Available: 
+	    			 nextView.setVisibility(View.VISIBLE);
+	    			 previousView.setVisibility(View.INVISIBLE);
+	    			 listTitle.setText(currentAppsList.Available.toString());
+	    			 //getNext()
+	    			 break;
+	    		 case Installed:
+	    			 nextView.setVisibility(View.VISIBLE);
+	    			 previousView.setVisibility(View.VISIBLE);
+	    			 listTitle.setText(currentAppList.Installed.toString());
+	    			 break;
+	    		 case Update:
+	    			 nextView.setVisibility(View.INVISIBLE);
+	    			 previousView.setVisibility(View.VISIBLE);
+	    			 listTitle.setText(currentAppList.Update.toString());
+	    			 break; 
+    		 }
+
+    	 }
+    	
 		@Override
     	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 //    		Toast.makeText( Aptoide.this, availableAdapter.getItem( availableAppsList.pointToPosition(Math.round(e1.getX()), Math.round(e1.getY()) )).toString(), Toast.LENGTH_LONG );
@@ -496,14 +529,17 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     			swyping.set(true);
 	    		if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 	        		Log.d("Aptoide","Swype right");
+	        		
 	        		if(EnumAppsLists.getNext(currentAppsList).equals(currentAppsList)){
 	        			appsListFlipper.startAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_resist_next));
-	        		}else{
+	           		}else{
 		        		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_next));
 		    			appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
 		    			appsListFlipper.showNext();
 		    			currentAppsList = EnumAppsLists.getNext(currentAppsList);
+		    			putElementsIntoTitleBar(currentAppsList);
 	        		}
+	        		
 	    		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 	        		Log.d("Aptoide","Swype left");
 	        		if(EnumAppsLists.getPrevious(currentAppsList).equals(currentAppsList)){
@@ -513,6 +549,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		        		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
 		        		appsListFlipper.showPrevious();
 		        		currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+		        		putElementsIntoTitleBar(currentAppsList);
+		        		//mudar title e arrow_para_a_direita.setVisibility(View.INVISIBLE) se estiver no último
 	        		}
 	    		}
 	    		new Thread(){
