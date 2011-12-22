@@ -83,6 +83,7 @@ public class ManageRepo extends ListActivity{
 	private final int EDIT_REPO_POP = 5;
 	
 	private boolean change = false;
+	private boolean forceUpdate=false;
 	
 	private Intent rtrn = new Intent();
 	
@@ -96,6 +97,8 @@ public class ManageRepo extends ListActivity{
 	private AlertDialog alert2;
 	
 	private AlertDialog alrt = null;
+
+	private String repo;
 	
 	private enum returnStatus {OK, LOGIN_REQUIRED, BAD_LOGIN, FAIL, EXCEPTION};
 	
@@ -170,7 +173,11 @@ public class ManageRepo extends ListActivity{
 		}else if(i.hasExtra("newrepo")){
 			
 			
-			final String repo = i.getStringExtra("newrepo");
+			repo = i.getStringExtra("newrepo");
+			if (!repo.endsWith("/")) {
+				
+				repo = repo + "/";
+			}
 			Vector<String> server_lst = db.getServersName();
 			if(serverContainsRepo(server_lst, repo)){
 				Toast.makeText(this, "Repo "+ repo+ " already exists.", 5000).show();
@@ -328,9 +335,12 @@ public class ManageRepo extends ListActivity{
 			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 			builder.setMessage(getString(R.string.repo_del_msg) + " " + repo_selected + " ?");
 			builder.setPositiveButton(getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
-                		public void onClick(DialogInterface dialog, int	whichButton) {
+                		
+
+						public void onClick(DialogInterface dialog, int	whichButton) {
                 			db.removeServer(repo_selected);
-                			change = true;
+                			change = false;
+                			forceUpdate=true;
                 			redraw();
                 		}
             });
@@ -761,7 +771,13 @@ public class ManageRepo extends ListActivity{
 
 	@Override
 	public void finish() {
-		if(change){
+		if (forceUpdate){
+			rtrn.putExtra("forceupdate", true);
+			for (String node: server_to_reset_count) {
+				db.resetServerCacheUse(node);
+			}
+			
+		}else if(change){
 			rtrn.putExtra("update", true);
 			for (String node: server_to_reset_count) {
 				db.resetServerCacheUse(node);

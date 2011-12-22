@@ -715,6 +715,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 					}
 				});
 				alrt.show();
+			}else if (data != null && data.hasExtra("forceupdate")){
+				updateRepos();
 			}
 		}else if(requestCode == SETTINGS_FLAG){
 			
@@ -926,7 +928,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    	e.printStackTrace();
 	    	xr = null;
 		}finally{
-//			xml_file.delete();
+			xml_file.delete();
 		}
 	}
 	

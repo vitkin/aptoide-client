@@ -38,6 +38,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DbHandler {
 	
@@ -1235,6 +1236,11 @@ public class DbHandler {
 	 */
 	public void addServer(String srv){
 		ContentValues tmp = new ContentValues();
+		if (!srv.endsWith("/")) {
+			
+			srv = srv + "/";
+			Log.d("",srv);
+		}
 		tmp.put("uri", srv);
 		tmp.put("inuse", 1);
 		db.insert(TABLE_NAME_URI, null, tmp);
@@ -1253,6 +1259,10 @@ public class DbHandler {
 	}
 	
 	public void updateServer(String old, String repo){
+		if (!repo.endsWith("/")) {
+			
+			repo = repo + "/";
+		}
 		db.execSQL("update " + TABLE_NAME_URI + " set uri='" + repo + "' where uri='" + old + "'");
 	}
 	

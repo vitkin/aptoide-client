@@ -168,6 +168,7 @@ public class Aptoide extends Activity {
 				
 				if(get.getData() != null){
 					String uri = get.getDataString();
+					Log.d("",uri);
 					if(uri.startsWith("aptoiderepo")){
 						
 						Log.d("Aptoide-startHandler", "aptoiderepo-scheme");
@@ -182,6 +183,7 @@ public class Aptoide extends Activity {
 						
 
 					}else if(uri.startsWith("aptoidexml")){
+						
 						Log.d("Aptoide-startHandler", "aptoidexml-scheme");
 						String repo = uri.substring(13);
 						parseXmlString(repo);
@@ -236,11 +238,11 @@ public class Aptoide extends Activity {
 							if(get_apps.size() > 0){
 								//i.putExtra("uri", TMP_SRV_FILE);
 								i.putExtra("apps", get_apps);
-								prefEdit.putBoolean("intentChanged", true);
-								prefEdit.commit();
-								setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
-								startActivity(getIntent());
 							}
+							prefEdit.putBoolean("intentChanged", true);
+							prefEdit.commit();
+							setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS));
+							startActivity(getIntent());
 						} catch (Exception e) {
 							Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
 							onCreate(savedInstanceState);
@@ -470,6 +472,7 @@ public class Aptoide extends Activity {
 			          return;
 			        } });
 			p.show();
+			Log.d("","Passou aqui 2");
 		}
 	}
 	
