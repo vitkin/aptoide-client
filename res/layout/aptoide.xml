@@ -1,80 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical" 
-	android:gravity="center_horizontal"
-	android:layout_width="fill_parent" 
-	android:layout_height="fill_parent"
-	android:background="#ffffffff" android:weightSum="1">
-    
+	android:orientation="vertical" android:gravity="center_horizontal"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:background="#edece9">
+
 	<!--	Green Bar  	-->
-     <RelativeLayout 
-	    android:orientation="vertical" 
-	    android:layout_gravity="top" 
-	    android:layout_height="44sp" 
-	    android:id="@+id/actionbar" 
-	    android:layout_width="fill_parent"
-	    android:background="#83c200">
-	    <LinearLayout android:layout_width="wrap_content" 
-		    android:layout_height="wrap_content" 
-		    android:orientation="horizontal" 
-		    android:layout_gravity="center" 
-		    android:id="@+id/greenbar">
-	    </LinearLayout>
-	    <ImageView android:layout_width="wrap_content" 
-		    android:layout_height="wrap_content" 
-		    android:src="@drawable/icon" 
-		    android:id="@+id/aptoideicon" 
-		    android:layout_alignParentTop="true" 
-		    android:layout_toRightOf="@+id/greenbar" 
-		    android:layout_margin="2sp" 
-		    android:layout_centerVertical="true" />
-	    <ImageView android:layout_height="wrap_content" 
-			android:src="@drawable/aptoidebrand" 
-			android:id="@+id/aptoidebrand" 
-			android:layout_width="wrap_content" 
-			android:padding="10sp" 
-			android:layout_centerVertical="true"/>
-	    <ImageButton android:layout_width="wrap_content" 
-		    android:id="@+id/btsearch" 
-		    android:layout_height="wrap_content" 
-		    android:background="@drawable/btsearch" 
-		    android:layout_alignParentRight="true" 
-		    android:layout_centerVertical="true"/>
+	<RelativeLayout android:orientation="vertical"
+		android:layout_gravity="top" android:layout_height="44sp" android:id="@+id/actionbar"
+		android:layout_width="fill_parent" android:background="#83c200">
+		<LinearLayout android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:orientation="horizontal"
+			android:layout_gravity="center" android:id="@+id/greenbar">
+		</LinearLayout>
+		<ImageView android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:src="@drawable/icon"
+			android:id="@+id/aptoideicon" android:layout_alignParentTop="true"
+			android:layout_toRightOf="@+id/greenbar" android:layout_margin="2sp"
+			android:layout_centerVertical="true" />
+		<ImageView android:layout_height="wrap_content" android:src="@drawable/aptoidebrand"
+			android:id="@+id/aptoidebrand" android:layout_width="wrap_content"
+			android:padding="10sp" android:layout_centerVertical="true" />
+		<ImageButton android:layout_width="wrap_content"
+			android:id="@+id/btsearch" android:layout_height="wrap_content"
+			android:background="@drawable/btsearch"
+			android:layout_alignParentRight="true" android:layout_centerVertical="true" />
 	</RelativeLayout>
 
-	<include android:id="@+id/indicator" 
-		android:layout_below="@+id/actionbar"
+	<include android:id="@+id/indicator" android:layout_below="@+id/actionbar"
 		layout="@layout/title_indicator" />
 
-	<ViewFlipper
-		android:id="@+id/list_flipper"
-		android:layout_above="@+id/bottombar"
-		android:orientation="vertical"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:background="#ffffff">
-	 </ViewFlipper>
-	 
-	<!--	Bottom Bar 	-->
-	<LinearLayout android:layout_width="fill_parent" 
-		android:layout_height="40dp"
-		android:layout_alignParentBottom="true" 
-		android:id="@+id/bottombar">
-		<Button android:text="sort" 
-			android:layout_height="fill_parent" 
-			android:layout_marginLeft="72sp" 
-			android:layout_weight="0.5"
-			android:id="@+id/sortby" 
-			android:layout_width="fill_parent"></Button>
-		<Button android:text="filter" 
-			android:layout_width="fill_parent" 
-			android:layout_height="fill_parent" 
-			android:layout_alignParentTop="true" 
-			android:layout_alignParentRight="true" 
-			android:layout_marginRight="72sp" 
-			android:layout_weight="0.5"
-			android:id="@+id/filter"></Button>
+	<LinearLayout android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:gravity="center"
+		android:background="#edece9" android:paddingBottom="10sp"
+		android:paddingLeft="10sp" android:paddingRight="10sp"
+		android:orientation="vertical">
+
+		<RelativeLayout android:layout_width="fill_parent"
+			android:gravity="center" android:layout_gravity="center"
+			android:background="@drawable/border" android:paddingBottom="10sp"
+			android:paddingLeft="10sp" android:paddingRight="10sp"
+			android:layout_height="fill_parent">
+
+			<ViewFlipper android:id="@+id/list_flipper"
+				android:layout_below="@+id/indicator" android:orientation="vertical"
+				android:layout_width="fill_parent" android:layout_height="fill_parent"
+				android:layout_alignParentTop="true"
+				android:layout_centerHorizontal="true">
+			</ViewFlipper>
+
+		</RelativeLayout>
 	</LinearLayout>
-	
-	 
+
+
+<!--		Bottom Bar 	-->
+<!--	<LinearLayout android:layout_width="fill_parent"-->
+<!--		android:layout_height="40dp" android:layout_alignParentBottom="true"-->
+<!--		android:id="@+id/bottombar">-->
+<!--		<Button android:text="sort" android:layout_height="fill_parent"-->
+<!--			android:layout_marginLeft="72sp" android:layout_weight="0.5"-->
+<!--			android:id="@+id/sortby" android:layout_width="fill_parent"></Button>-->
+<!--		<Button android:text="filter" android:layout_width="fill_parent"-->
+<!--			android:layout_height="fill_parent" android:layout_alignParentTop="true"-->
+<!--			android:layout_alignParentRight="true" android:layout_marginRight="72sp"-->
+<!--			android:layout_weight="0.5" android:id="@+id/filter"></Button>-->
+<!--	</LinearLayout>-->
+
+
 </LinearLayout>
