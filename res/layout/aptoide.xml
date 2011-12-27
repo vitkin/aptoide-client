@@ -51,7 +51,7 @@
 		android:layout_above="@+id/bottombar"
 		android:orientation="vertical"
 		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
+		android:layout_height="wrap_content"
 		android:background="#ffffff">
 	 </ViewFlipper>
 	 
