@@ -14,16 +14,19 @@
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:textColor="#83c200"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:layout_alignParentLeft="true" android:id="@+id/previous_title"></TextView>
+			android:layout_alignParentLeft="true" android:id="@+id/previous_title"
+			android:onClick="previous" android:clickable="true"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:textColor="#83c200"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:textStyle="bold"
-			android:layout_centerHorizontal="true" android:id="@+id/current_title"></TextView>
+			android:textStyle="bold" android:layout_centerHorizontal="true"
+			android:id="@+id/current_title"
+			android:onClick="current" android:clickable="true"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:textColor="#83c200"
 			android:textAppearance="?android:attr/textAppearanceSmall"
-			android:layout_alignParentRight="true" android:id="@+id/next_title"></TextView>
+			android:layout_alignParentRight="true" android:id="@+id/next_title"
+			android:onClick="next" android:clickable="true"></TextView>
 
 	</RelativeLayout>
 
@@ -36,9 +39,9 @@
 			android:layout_alignParentLeft="true" android:layout_centerVertical="true" />
 
 		<ImageView android:id="@+id/current" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:src="@drawable/indicator_current" 
-			android:layout_centerHorizontal="true" android:layout_alignParentTop="true"/>
-			
+			android:layout_height="wrap_content" android:src="@drawable/indicator_current"
+			android:layout_centerHorizontal="true" android:layout_alignParentTop="true" />
+
 		<ImageView android:id="@+id/next" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:src="@drawable/indicator_next_arrow"
 			android:layout_alignParentRight="true" android:layout_centerVertical="true" />
