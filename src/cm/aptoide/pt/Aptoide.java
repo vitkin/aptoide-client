@@ -94,7 +94,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ListView updatableAppsList = null;
 	private EnumAppsLists currentAppsList = null;
 	
-	private TextView listTitle = null;
+	private TextView previousListTitle = null;
+	private TextView currentListTitle = null;
+	private TextView nextListTitle = null;
+	private String emptyListTitle = null;
 	private ImageView previousView = null; 
 	private ImageView nextView = null;
 	
@@ -265,7 +268,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		
 		appsListFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
 		
-		listTitle = (TextView) findViewById(R.id.title);
+		previousListTitle = (TextView) findViewById(R.id.previous_title);
+		currentListTitle = (TextView) findViewById(R.id.current_title);
+		nextListTitle = (TextView) findViewById(R.id.next_title);
 		
 		previousView = (ImageView) findViewById(R.id.previous);
 		previousView.setVisibility(View.INVISIBLE);
@@ -302,7 +307,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		appsListFlipper.addView(updatableAppsList);
 
 		currentAppsList = EnumAppsLists.Available;
-		listTitle.setText(currentAppsList.Available.toString());
+		currentListTitle.setText(currentAppsList.Available.toString());
+		nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+		previousListTitle.setText(emptyListTitle);
 		
     }
     
@@ -503,18 +510,23 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	    		 case Available: 
 	    			 nextView.setVisibility(View.VISIBLE);
 	    			 previousView.setVisibility(View.INVISIBLE);
-	    			 listTitle.setText(currentAppsList.Available.toString());
-	    			 //getNext()
+	    			 currentListTitle.setText(currentAppsList.Available.toString());
+	    			 nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+	    			 previousListTitle.setText(emptyListTitle);
 	    			 break;
 	    		 case Installed:
 	    			 nextView.setVisibility(View.VISIBLE);
 	    			 previousView.setVisibility(View.VISIBLE);
-	    			 listTitle.setText(currentAppList.Installed.toString());
+	    			 currentListTitle.setText(currentAppList.Installed.toString());
+	    			 nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+	    			 previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
 	    			 break;
 	    		 case Update:
 	    			 nextView.setVisibility(View.INVISIBLE);
 	    			 previousView.setVisibility(View.VISIBLE);
-	    			 listTitle.setText(currentAppList.Update.toString());
+	    			 currentListTitle.setText(currentAppList.Update.toString());
+	    			 nextListTitle.setText(emptyListTitle);
+	    			 previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
 	    			 break; 
     		 }
 
