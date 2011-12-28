@@ -98,10 +98,17 @@ public class ManagerXml{
 				case BARE:
 					repoParser = new RepoBareParser(this, parseInfo);
 					break;
+					
 				case ICON:
 					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
 					repoParser = new RepoIconParser(this, parseInfo);
-					break;
+					break;	
+					
+//				case DOWNLOAD:
+//					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+//					repoParser = new RepoDownloadParser(this, parseInfo);
+//					break;
+					
 				case EXTRAS:
 //					repoParser = new RepoExtrasParser(this, parseInfo);		//TODO create this parser
 					break;
@@ -137,6 +144,38 @@ public class ManagerXml{
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
 		serviceData.parsingRepoIconsFinished(repository);
+	}
+	
+//	public void repoDownloadParse(ViewRepository repository, ViewCache cache){
+//		repoParse(repository, cache, EnumInfoType.DOWNLOAD);
+//	}
+	
+	public void repoDownloadParse(ViewRepository repository, ViewCache cache, int appHashid){
+		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+		
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
+		ViewXmlParse parseInfo = getNewViewRepoXmlParse(repository, cache, notification);
+		DefaultHandler repoParser = null;
+	    try {
+	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+	    	
+	    	notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+	    	repoParser = new RepoDownloadParser(this, parseInfo, appHashid);
+				    	
+	    	xmlReader.setContentHandler(repoParser);
+	    	xmlReader.setErrorHandler(repoParser);
+	    	
+	    	InputSource inputSource = new InputSource(new FileReader(new File(parseInfo.getLocalPath())));
+	    	Log.d("Aptoide-managerXml", parseInfo.getLocalPath());
+	    	xmlReader.parse(inputSource);
+	    	
+	    } catch (Exception e){
+	    	e.printStackTrace();
+	    }
+	}
+	
+	public void parsingRepoDownloadFinished(ViewRepository repository, int appHashid){
+		serviceData.parsingRepoAppDownloadInfoFinished(repository, appHashid);
 	}
 	
 }

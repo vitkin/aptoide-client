@@ -10,16 +10,20 @@
 
     <application android:icon="@drawable/icon" android:label="@string/app_name"> 
     
-		<activity android:name=".Aptoide" android:label="@string/app_name" android:process=":aptoideInterface"
-				  android:launchMode="singleTask" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name=".Aptoide" android:label="@string/app_name" android:process=":aptoideInterface" android:launchMode="singleTask"
+		    	  android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 
-		<activity android:name=".Splash" android:process=":aptoideInterface"
-				  android:launchMode="singleTask" android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+		<activity android:name=".Splash" android:process=":aptoideInterface" android:launchMode="singleTask" 
+		    	  android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+		</activity>
+		
+		<activity android:name=".AppInfo" android:process=":aptoideInterface" android:launchMode="singleTask" 
+		    	  android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
 		</activity>
 		
 		<service android:name=".data.AptoideServiceData" android:process=":aptoideData">

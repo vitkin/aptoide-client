@@ -27,6 +27,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
+import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.R;
@@ -63,7 +64,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	private final String TAG = "Aptoide-ServiceData";
 	private boolean isRunning = false;
 	
-	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> serviceClients;
+	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClients;
+	private HashMap<Integer, AIDLAppInfo> appInfoClients;
 	private EnumServiceDataCall latestRequest;
 
 	private ManagerPreferences managerPreferences;
@@ -128,12 +130,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	}; 
 
 	public void registerAvailableDataObserver(AIDLAptoideInterface availablePackagesObserver){
-		serviceClients.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, availablePackagesObserver);
+		aptoideClients.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, availablePackagesObserver);
     	AptoideLog.d(AptoideServiceData.this, "Registered Available Data Observer");
 	}
 	
 	public void registerInstalledDataObserver(AIDLAptoideInterface installedPackagesObserver){
-		serviceClients.put(EnumServiceDataCallback.UPDATE_INSTALLED_LIST, installedPackagesObserver);
+		aptoideClients.put(EnumServiceDataCallback.UPDATE_INSTALLED_LIST, installedPackagesObserver);
     	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
 	}
 	
@@ -179,7 +181,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	    if(!isRunning){
 	    	splash();
 	    	
-			serviceClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
+			aptoideClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
 			
 			managerPreferences = new ManagerPreferences(this);
 			managerSystemSync = new ManagerSystemSync(this);
@@ -397,7 +399,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	
 	public void updateInstalledLists(){
 		try {
-			serviceClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable();
+			aptoideClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -435,10 +437,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	
 	public void parsingRepoBareFinished(ViewRepository repository){
 		updateAvailableLists();
-		addRepoIcon(repository);
+		addRepoIconsInfo(repository);
 	}
 	
-	public void addRepoIcon(final ViewRepository repository){
+	public void addRepoIconsInfo(final ViewRepository repository){
 		try{
 
 			new Thread(){
@@ -535,11 +537,79 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 //		}
 //	}
 	
+//	public void addRepoDownloadsInfo(final ViewRepository repository){
+//		try{
+//
+//			new Thread(){
+//				public void run(){
+//					this.setPriority(Thread.MAX_PRIORITY);
+//					if(!managerDownloads.isConnectionAvailable()){
+//						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+//					}
+//					if(!getManagerCache().isFreeSpaceInSdcard()){
+//						//TODO raise exception
+//					}
+//					ViewCache cache = managerDownloads.startRepoAppDownloads(repository);
+//					
+//					managerXml.repoDownloadParse(repository, cache);
+//					//TODO find some way to track global parsing completion status, probably in managerXml
+//				}
+//			}.start();
+//
+//
+//		} catch(Exception e){
+//			/** this should never happen */
+//			//TODO handle exception
+//			e.printStackTrace();
+//		}
+//	}
+	
+	
+	public void fillAppInfo(final ViewRepository repository, final int appHashid){
+		//TODO parallel check icon, download immediately if necessary
+		//TODO parallel get DownloadInfo
+		//TODO parallel get ExtraInfo
+		//TODO parallel get StatsInfo
+		//TODO parallel get likes
+		//TODO parallel get Comments
+	}
+	
+	public void addRepoDownloadInfo(final ViewRepository repository, final int appHashid){
+		try{
+
+			new Thread(){
+				public void run(){
+					this.setPriority(Thread.MAX_PRIORITY);
+					if(!managerDownloads.isConnectionAvailable()){
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid);
+					
+					managerXml.repoDownloadParse(repository, cache, appHashid);
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}
+			}.start();
+
+
+		} catch(Exception e){
+			/** this should never happen */
+			//TODO handle exception
+			e.printStackTrace();
+		}
+	}
+	
+	public void parsingRepoAppDownloadInfoFinished(ViewRepository repository, int appHashid){
+		updateAppInfo(appHashid);
+	}
+	
 	
 	
 	public void refreshAvailableDisplay(){
 		try {
-			serviceClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
+			aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -548,7 +618,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog{
 	
 	public void updateAvailableLists(){
 		try {
-			serviceClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
+			aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void updateAppInfo(int appHashid){
+		try {
+			appInfoClients.get(appHashid).newAppDownloadInfoAvailable();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

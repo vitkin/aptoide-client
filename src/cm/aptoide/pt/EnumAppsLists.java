@@ -28,9 +28,9 @@ package cm.aptoide.pt;
  *
  */
 public enum EnumAppsLists {
-	AVAILABLE,
-	INSTALLED,
-	UPDATES;
+	Available,
+	Installed,
+	Updates;
 	
 	public static EnumAppsLists reverseOrdinal(int ordinal){
 		return values()[ordinal];
@@ -50,5 +50,9 @@ public enum EnumAppsLists {
 		}else{
 			return current;
 		}
+	}
+	
+	public static int getCount(){
+		return values().length-1;
 	}
 }

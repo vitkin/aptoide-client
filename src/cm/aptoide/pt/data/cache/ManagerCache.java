@@ -85,12 +85,24 @@ public class ManagerCache {
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".icon"+".xml");
 	}
 	
-	public ViewCache getNewIconViewCache(int appHashid){
-		return getNewViewCache(Constants.PATH_CACHE_ICONS+appHashid);
+	public ViewCache getNewRepoDownloadViewCache(int repoHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".download"+".xml");
 	}
 	
 	public ViewCache getNewRepoExtrasViewCache(int repoHashid){
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".extras"+".xml");
+	}
+	
+	public ViewCache getNewIconViewCache(int appHashid){
+		return getNewViewCache(Constants.PATH_CACHE_ICONS+appHashid);
+	}
+	
+	public ViewCache getNewScreenViewCache(int appHashid, int orderNumber){
+		return getNewViewCache(Constants.PATH_CACHE_SCREENS+appHashid+"."+orderNumber);
+	}
+	
+	public ViewCache getNewAppViewCache(int appHashid){
+		return getNewViewCache(Constants.PATH_CACHE_APKS+appHashid);
 	}
 	
 	

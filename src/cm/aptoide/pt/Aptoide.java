@@ -278,7 +278,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		updatableAppsList.setOnItemClickListener(this);
 		appsListFlipper.addView(updatableAppsList);
 
-		currentAppsList = EnumAppsLists.AVAILABLE;
+		currentAppsList = EnumAppsLists.Available;
     }
     
     
@@ -557,6 +557,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	if(!swyping.get()){
     		final String appHashid = ((LinearLayout)arg1).getTag().toString();
     		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
+    		Intent apkinfo = new Intent(this,AppInfo.class);
+    		startActivity(apkinfo);
     	}
 	}
 	
