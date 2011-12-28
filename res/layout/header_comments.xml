@@ -80,7 +80,7 @@
 		</TableRow>
 
 		<TableRow>
-			<Button android:text="@string/tell_friend" android:id="@+id/btcommentapp"
+			<Button android:text="Tell a friend" android:id="@+id/btcommentapp"
 				android:padding="3sp" android:layout_width="fill_parent"
 				android:layout_height="wrap_content"></Button>
 		</TableRow>
