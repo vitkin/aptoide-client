@@ -1,5 +1,5 @@
 /**
- * EnumServiceDataMessage,		part of aptoide
+ * EnumXmlTagsDownload,	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,22 +18,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data;
+package cm.aptoide.pt.data.xml;
 
 /**
- * EnumServiceDataMessage, typeSafes ServiceData Reverse Messaging in Aptoide
+ * EnumXmlTagsDownload, typeSafes Download info XML tags
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumServiceDataCallback {
-	UPDATE_INSTALLED_LIST,
-	UPDATE_AVAILABLE_LIST,
-	REFRESH_AVAILABLE_DISPLAY,
-	UPDATE_APPLICATION_INFO;
+public enum EnumXmlTagsDownload {
+	apklst,
+	pkg,
+	apphashid,
+	path,
+	md5h,
+	sz;
 	
-	public static EnumServiceDataCallback reverseOrdinal(int ordinal){
+	public static EnumXmlTagsDownload reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

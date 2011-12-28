@@ -1,6 +1,6 @@
 /**
- * EnumServiceDataMessage,		part of aptoide
- * Copyright (C) 2011  Duarte Silveira
+ * AIDLAppInfo,		part of Aptoide
+ * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,23 +17,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-
-package cm.aptoide.pt.data;
+package cm.aptoide.pt;
 
 /**
- * EnumServiceDataMessage, typeSafes ServiceData Reverse Messaging in Aptoide
- * 
+ * AIDLAppInfo, models AppInfo's AIDL IPC
+ *
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumServiceDataCallback {
-	UPDATE_INSTALLED_LIST,
-	UPDATE_AVAILABLE_LIST,
-	REFRESH_AVAILABLE_DISPLAY,
-	UPDATE_APPLICATION_INFO;
+interface AIDLAppInfo{
 	
-	public static EnumServiceDataCallback reverseOrdinal(int ordinal){
-		return values()[ordinal];
-	}
+	void refreshIcon();
+	void newAppDownloadInfoAvailable();
+	void newStatsInfoAvailable();
+	void newDescriptionAvailable();
+	void newScreensAvailable();
+	void newCommentsAvailable();
+	
 }

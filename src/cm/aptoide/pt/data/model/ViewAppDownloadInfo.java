@@ -64,12 +64,12 @@ public class ViewAppDownloadInfo {
 		return values.getAsInteger(Constants.KEY_DOWNLOAD_APP_FULL_HASHID);
 	}
 	
-	public void setMd5hash(int md5hash){
+	public void setMd5hash(String md5hash){
 		this.values.put(Constants.KEY_DOWNLOAD_MD5HASH, md5hash);
 	}
 	
-	public int getMd5hash(){
-		return this.values.getAsInteger(Constants.KEY_DOWNLOAD_MD5HASH);
+	public String getMd5hash(){
+		return this.values.getAsString(Constants.KEY_DOWNLOAD_MD5HASH);
 	}
 	
 	public void setSize(int size){
