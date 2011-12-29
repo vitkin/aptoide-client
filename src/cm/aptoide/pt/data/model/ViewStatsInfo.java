@@ -73,7 +73,7 @@ public class ViewStatsInfo {
 	public void setLikesDislikes(int likes, int dislikes){
 		setLikes(likes);
 		setDislikes(dislikes);
-		setStars(likes/(likes+dislikes));	//TODO check if this is the correct formula
+		setStars((Float.valueOf(likes)/Float.valueOf(likes+dislikes))*Constants.NUMBER_OF_STARS);
 	}
 	
 	private void setLikes(int likes){

@@ -28,6 +28,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
@@ -1021,7 +1022,6 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	@SuppressWarnings("unused")
 	private Cursor aptoideAtomicQuery(String sqlQuery){
 		return aptoideAtomicQuery(sqlQuery, null);
 	}
@@ -1194,14 +1194,19 @@ public class ManagerDatabase {
 		final int PACKAGE_NAME = Constants.COLUMN_THIRD;
 		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_FOURTH;
 		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
+		final int STARS = Constants.COLUMN_SIXTH;
+		final int DOWNLOADS = Constants.COLUMN_SEVENTH;
 		
 		ViewDisplayListApps availableApps = null;
 		ViewDisplayApplication app;							
 		
-		String selectAvailableApps = "SELECT "+Constants.KEY_APPLICATION_NAME+", "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
-											+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-											+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-									+" FROM "+Constants.TABLE_APPLICATION
+		String selectAvailableApps = "SELECT A."+Constants.KEY_APPLICATION_NAME+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_PACKAGE_NAME
+											+", MAX(A."+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+											+", S."+Constants.KEY_STATS_STARS+", S."+Constants.KEY_STATS_DOWNLOADS
+									+" FROM "+Constants.TABLE_APPLICATION+" A"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
+															+" FROM "+Constants.TABLE_STATS_INFO+") S"
 									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
 									+" ORDER BY "+Constants.KEY_APPLICATION_NAME
 									+" LIMIT ?"
@@ -1218,8 +1223,9 @@ public class ManagerDatabase {
 			availableApps = new ViewDisplayListApps(appsCursor.getCount());
 			
 			appsCursor.moveToFirst();
-			do{																			//TODO correct these magic numbers
-				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), 5, 100, appsCursor.getString(UP_TO_DATE_VERSION_NAME));
+			do{																			
+				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
+												, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
 				availableApps.addApp(app);
 
 			}while(appsCursor.moveToNext());
@@ -1272,6 +1278,8 @@ public class ManagerDatabase {
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FOURTH;
 		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
 		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_SIXTH;
+		final int UPDATE_STARS = Constants.COLUMN_SEVENTH;
+		final int UPDATE_DOWNLOADS = Constants.COLUMN_EIGTH;
 		
 		ViewDisplayListApps updatableApps = null;
 		ViewDisplayApplication app;	
@@ -1279,12 +1287,16 @@ public class ManagerDatabase {
 		String selectUpdatableApps = "SELECT I."+Constants.KEY_APP_INSTALLED_NAME+",I."+Constants.KEY_APP_INSTALLED_HASHID
 											+",I."+Constants.KEY_APP_INSTALLED_VERSION_NAME+",I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
 											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+											+",S."+Constants.KEY_STATS_STARS+",S."+Constants.KEY_STATS_DOWNLOADS
 									+" FROM "+Constants.TABLE_APP_INSTALLED+" I"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME+", "+Constants.KEY_APPLICATION_FULL_HASHID
 																	+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
 															 +" FROM "+Constants.TABLE_APPLICATION
 															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
+															 +" FROM "+Constants.TABLE_STATS_INFO
+															 +" GROUP BY "+Constants.KEY_APPLICATION_FULL_HASHID+") S"
 									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME
 									+" LIMIT ?"
 									+" OFFSET ?;";
@@ -1303,7 +1315,7 @@ public class ManagerDatabase {
 			do{
 				if( (appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE))) ){
 					app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
-							 , appsCursor.getString(UP_TO_DATE_VERSION_NAME));
+							 , appsCursor.getString(UP_TO_DATE_VERSION_NAME), appsCursor.getFloat(UPDATE_STARS), appsCursor.getInt(UPDATE_DOWNLOADS));
 					updatableApps.addApp(app);
 				}
 
@@ -1397,14 +1409,13 @@ public class ManagerDatabase {
 		final int COUNT = Constants.COLUMN_FIRST;
 		
 		String selectAppInRepo = "SELECT count(distinct A."+Constants.KEY_APPLICATION_HASHID+")"
-									+" FROM "
-										+"(SELECT "+Constants.KEY_APPLICATION_HASHID
-											+", "+Constants.KEY_APPLICATION_REPO_HASHID
-											+" FROM "+Constants.TABLE_APPLICATION+") A"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
-																+" FROM "+Constants.TABLE_REPOSITORY
-																+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") R"
-									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid;
+								+" FROM "
+									+"(SELECT "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
+									+" FROM "+Constants.TABLE_APPLICATION+") A"
+								+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
+															+" FROM "+Constants.TABLE_REPOSITORY
+															+" GROUP BY "+Constants.KEY_REPO_HASHID+") R"
+								+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+" AND "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+";";
 		
 		Cursor appInRepoCursor = aptoideAtomicQuery(selectAppInRepo);
 		appInRepoCursor.moveToFirst();
@@ -1412,17 +1423,60 @@ public class ManagerDatabase {
 		boolean appInRepo = (appInRepoCursor.getInt(COUNT)==Constants.DB_TRUE?true:false);
 		
 		appInRepoCursor.close();
+		Log.d("Aptoide-appInRepo", "appInrepo? "+appInRepo);
 		
 		return appInRepo;
 	}
 	
 	public ViewRepository getAppRepo(int appHashid){
-		/********** HERE *********************/
+		final int REPO_HASHID = Constants.COLUMN_FIRST;
+		final int URI = Constants.COLUMN_SECOND;
+		final int IN_USE = Constants.COLUMN_THIRD;
+		final int SIZE = Constants.COLUMN_FOURTH;
+		final int BASE_PATH = Constants.COLUMN_FIFTH;
+		final int ICONS_PATH = Constants.COLUMN_SIXTH;
+		final int SCREENS_PATH = Constants.COLUMN_SEVENTH;
+		final int DELTA = Constants.COLUMN_EIGTH;
 		
-//		if(appInRepo(Constants.APPS_REPO_HASHID, appHashid)){
-//			return 
-//		}
-		return new ViewRepository("http://dsilveira.bazaarandroid.com/");	//TODO delete (doesn't really work, incomplete info
+		final int LOGIN_REPO_HASHID = Constants.COLUMN_FIRST;
+		final int USERNAME = Constants.COLUMN_SECOND;
+		final int PASSWORD = Constants.COLUMN_THIRD;
+
+		String selectRepo = "SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI+", "+Constants.KEY_REPO_IN_USE+", "+Constants.KEY_REPO_SIZE
+									+", "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_ICONS_PATH+", "+Constants.KEY_REPO_SCREENS_PATH
+									+", "+Constants.KEY_REPO_DELTA
+							+" FROM "+Constants.TABLE_REPOSITORY;
+		if(appInRepo(Constants.APPS_REPO_HASHID, appHashid)){
+				selectRepo+=" WHERE "+Constants.KEY_REPO_HASHID+"="+Constants.APPS_REPO_HASHID+";";
+		}else{
+				selectRepo+=" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_HASHID
+												+", "+Constants.KEY_APPLICATION_REPO_HASHID
+												+" FROM "+Constants.TABLE_APPLICATION
+												+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") "
+							+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+";";
+		}
+		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
+		repoCursor.moveToFirst();
+		
+		String selectLogin = "SELECT *"
+							 +" FROM "+Constants.TABLE_LOGIN
+							 +" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+"="+repoCursor.getInt(REPO_HASHID)+";";
+		Cursor loginCursor = aptoideAtomicQuery(selectLogin);
+		
+		ViewRepository repo = new ViewRepository(repoCursor.getString(URI), repoCursor.getInt(SIZE), repoCursor.getString(BASE_PATH)
+												, repoCursor.getString(ICONS_PATH), repoCursor.getString(SCREENS_PATH), repoCursor.getString(DELTA));
+		
+		if( !(loginCursor.getCount() == Constants.EMPTY_INT) ){
+			loginCursor.moveToFirst();
+			ViewLogin login = new ViewLogin(loginCursor.getString(USERNAME),loginCursor.getString(PASSWORD));
+			repo.setLogin(login);
+		}
+		loginCursor.close();
+		Log.d("Aptoide-getAppRepo", "appRepo: "+repo);
+		
+		repoCursor.close();
+		
+		return repo;
 	}
 	
 	//TODO rest of activity support classes (depends on activity Layout definitions, for performance reasons)

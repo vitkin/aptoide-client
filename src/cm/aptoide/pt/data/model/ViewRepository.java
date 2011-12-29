@@ -50,6 +50,15 @@ public class ViewRepository implements Parcelable{
 		setUri(uri);
 		setInUse(true);
 	}
+	
+	public ViewRepository(String uri, int size, String basePath, String iconsPath, String screensPath, String delta){
+		this(uri);
+		setSize(size);
+		setBasePath(basePath);
+		setIconsPath(iconsPath);
+		setScreensPath(screensPath);
+		setDelta(delta);
+	}
 
 	
 	private void setUri(String uri){
@@ -155,6 +164,15 @@ public class ViewRepository implements Parcelable{
 		setUri(uri);
 		setInUse(true);
 	}
+	
+	public void reuse(String uri, int size, String basePath, String iconsPath, String screensPath, String delta){
+		reuse(uri);
+		setSize(size);
+		setBasePath(basePath);
+		setIconsPath(iconsPath);
+		setScreensPath(screensPath);
+		setDelta(delta);
+	}
 
 
 	@Override
@@ -177,7 +195,20 @@ public class ViewRepository implements Parcelable{
 
 	@Override
 	public String toString() {
-		return this.getUri();
+		StringBuilder description = new StringBuilder(" Uri: "+this.getUri()+" Hashid: "+this.getHashid());
+		try {
+			description.append(" Size: "+this.getSize());
+			description.append(" Delta: "+this.getDelta());
+			description.append(" BasePath: "+this.getBasePath());
+			description.append(" IconsPath: "+this.getIconsPath());
+			description.append(" ScreensPath: "+this.getScreensPath());
+		} catch (NullPointerException e) {}
+		
+		if(loginRequired){
+			description.append(this.getLogin().toString());
+		}
+		
+		return description.toString();
 	}
 	
 	
@@ -185,8 +216,7 @@ public class ViewRepository implements Parcelable{
 	// Parcelable stuff //
 	
 	
-	public static final Parcelable.Creator<ViewRepository> CREATOR = new
-			Parcelable.Creator<ViewRepository>() {
+	public static final Parcelable.Creator<ViewRepository> CREATOR = new Parcelable.Creator<ViewRepository>() {
 		public ViewRepository createFromParcel(Parcel in) {
 			return new ViewRepository(in);
 		}

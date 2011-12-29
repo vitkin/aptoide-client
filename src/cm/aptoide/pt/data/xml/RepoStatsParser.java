@@ -165,7 +165,7 @@ public class RepoStatsParser extends DefaultHandler{
 			statsListInsertStack.add(statsList);
 		}
 
-		Log.d("Aptoide-RepoInfoParser", "buckets: "+statsListInsertStack.size());
+		Log.d("Aptoide-RepoStatsParser", "buckets: "+statsListInsertStack.size());
 		while(!statsListInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertStats(statsListInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}

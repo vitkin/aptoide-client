@@ -91,12 +91,14 @@ public class ViewDisplayApplication {
 	 * @param installedVersionName
 	 * @param upToDateVersionName
 	 */
-	public ViewDisplayApplication(int appHashid, String appName, String installedVersionName, String upToDateVersionName) {
+	public ViewDisplayApplication(int appHashid, String appName, String installedVersionName, String upToDateVersionName, float updatestars, int updateDownloads) {
 		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_UPDATE);
 		setAppHashid(appHashid);
 		setAppName(appName);
 		setInstalledVersionName(installedVersionName);
 		setUpTodateVersionName(upToDateVersionName);
+		setStars(updatestars);
+		setDownloads(updateDownloads);
 	}
 	
 	
@@ -240,12 +242,14 @@ public class ViewDisplayApplication {
 	 * @param installedVersionName
 	 * @param upToDateVersionName
 	 */
-	public void reuse(int appHashid, String appName, String installedVersionName, String upToDateVersionName) {
+	public void reuse(int appHashid, String appName, String installedVersionName, String upToDateVersionName, float updatestars, int updateDownloads) {
 		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_UPDATE);
 		setAppHashid(appHashid);
 		setAppName(appName);
 		setInstalledVersionName(installedVersionName);
 		setUpTodateVersionName(upToDateVersionName);
+		setStars(updatestars);
+		setDownloads(updateDownloads);
 	}
 
 
