@@ -55,7 +55,8 @@ public class ManagerNotifications {
 	/** Ongoing */
 	private ViewNotification globalNotification;
 	private ViewNotification packageManagerSync;
-	private ViewNotification reposUpdate;
+	private ViewNotification repoUpdate;
+	private ArrayList<ViewNotification> repoAppUpdates;
 	private ViewNotification gettingIcons;
 	private ViewNotification gettingExtras;
 	private ArrayList<ViewNotification> gettingApps;
@@ -98,6 +99,7 @@ public class ManagerNotifications {
 		notificationPool = new ArrayList<ViewNotification>(15);
 		gettingApps = new ArrayList<ViewNotification>(5);
 		gettingUpdates = new ArrayList<ViewNotification>(5);
+		repoAppUpdates = new ArrayList<ViewNotification>(5);
 	}
 		
 	public void startNotification(ViewNotification notification){
@@ -128,12 +130,16 @@ public class ManagerNotifications {
 		}
 		
 		switch (notificationType) {
-		case REPOS_UPDATE:
-			reposUpdate = notification;
-			break;
-
-		default:
-			break;
+			case REPO_UPDATE:
+				repoUpdate = notification;
+				break;
+				
+			case REPO_APP_UPDATE:
+				repoAppUpdates.add(notification);
+				break;
+	
+			default:
+				break;
 		}
 		
 		return notification;

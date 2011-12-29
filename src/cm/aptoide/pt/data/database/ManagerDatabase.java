@@ -30,25 +30,23 @@ import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayRepository;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
-import cm.aptoide.pt.data.downloads.ViewDownload;
 import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
 import cm.aptoide.pt.data.model.ViewAppComment;
+import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
 import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewCategory;
-import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
 import cm.aptoide.pt.data.model.ViewExtraInfo;
 import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewListIds;
 import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
+import cm.aptoide.pt.data.model.ViewScreenInfo;
 import cm.aptoide.pt.data.model.ViewStatsInfo;
-import cm.aptoide.pt.data.notifications.ViewNotification;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -87,6 +85,7 @@ public class ManagerDatabase {
 			db.execSQL(Constants.CREATE_TABLE_APP_CATEGORY);
 			db.execSQL(Constants.CREATE_TABLE_APP_INSTALLED);
 			db.execSQL(Constants.CREATE_TABLE_ICON_INFO);
+			db.execSQL(Constants.CREATE_TABLE_SCREEN_INFO);
 			db.execSQL(Constants.CREATE_TABLE_DOWNLOAD_INFO);
 			db.execSQL(Constants.CREATE_TABLE_STATS_INFO);
 			db.execSQL(Constants.CREATE_TABLE_EXTRA_INFO);
@@ -110,6 +109,8 @@ public class ManagerDatabase {
 			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_UPDATE_CATEGORY_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_ICON_INFO_INSERT);
 			db.execSQL(Constants.CREATE_TRIGGER_ICON_INFO_UPDATE_APP_FULL_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_SCREEN_INFO_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_SCREEN_INFO_UPDATE_APP_FULL_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_INFO_INSERT);
 			db.execSQL(Constants.CREATE_TRIGGER_DOWNLOAD_INFO_UPDATE_APP_FULL_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_STATS_INFO_INSERT);
@@ -571,7 +572,7 @@ public class ManagerDatabase {
 	}
 	
 	/**
-	 * insertIconsInfo, handles single application's icon info insertion
+	 * insertIconInfo, handles single application's icon info insertion
 	 * 
 	 * @param ViewIconInfo iconInfo
 	 */
@@ -579,6 +580,53 @@ public class ManagerDatabase {
 		db.beginTransaction();
 		try{
 			if(db.insert(Constants.TABLE_ICON_INFO, null, iconInfo.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	
+	
+	/**
+	 * insertScreensInfo, handles multiple application's screen info insertion
+	 * 
+	 * @param ArrayList<ScreenInfo> screensInfo
+	 */
+	public void insertScreensInfo(ArrayList<ViewScreenInfo> screensInfo){
+		db.beginTransaction();
+		try{
+			InsertHelper insertScreenInfo = new InsertHelper(db, Constants.TABLE_SCREEN_INFO);
+			
+			for (ViewScreenInfo screenInfo : screensInfo) {
+				if(insertScreenInfo.insert(screenInfo.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertScreenInfo.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertScreenInfo, handles single application's screen info insertion
+	 * 
+	 * @param ViewScreenInfo screenInfo
+	 */
+	public void insertScreenInfo(ViewScreenInfo screenInfo){
+		db.beginTransaction();
+		try{
+			if(db.insert(Constants.TABLE_SCREEN_INFO, null, screenInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
 			
@@ -636,9 +684,54 @@ public class ManagerDatabase {
 	}
 	
 	/**
+	 * insertStats, handles multiple application's stats info insertion
+	 * 
+	 * @param ArrayList<ViewStatsInfo> statsInfos
+	 */
+	public void insertStats(ArrayList<ViewStatsInfo> stats){
+		db.beginTransaction();
+		try{
+			InsertHelper insertStats = new InsertHelper(db, Constants.TABLE_STATS_INFO);
+			
+			for (ViewStatsInfo stat : stats) {
+				if(insertStats.insert(stat.getValues()) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertStats.close();
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * insertStat, handles single application's stat info insertion
+	 * 
+	 * @param ViewStatsInfo stat
+	 */
+	public void insertStat(ViewStatsInfo stat){
+		db.beginTransaction();
+		try{
+			if(db.insert(Constants.TABLE_STATS_INFO, null, stat.getValues()) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
 	 * insertExtraInfos, handles multiple application's extra info insertion
 	 * 
-	 * @param ArrayList<ExtraInfo> extraInfos
+	 * @param ArrayList<ViewExtraInfo> extraInfos
 	 */
 	public void insertExtras(ArrayList<ViewExtraInfo> extraInfos){
 		db.beginTransaction();
@@ -1298,6 +1391,38 @@ public class ManagerDatabase {
 			e.printStackTrace();
 		}
 		return iconsInfo;
+	}
+	
+	public boolean appInRepo(int repoHashid, int appHashid){
+		final int COUNT = Constants.COLUMN_FIRST;
+		
+		String selectAppInRepo = "SELECT count(distinct A."+Constants.KEY_APPLICATION_HASHID+")"
+									+" FROM "
+										+"(SELECT "+Constants.KEY_APPLICATION_HASHID
+											+", "+Constants.KEY_APPLICATION_REPO_HASHID
+											+" FROM "+Constants.TABLE_APPLICATION+") A"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+																+" FROM "+Constants.TABLE_REPOSITORY
+																+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") R"
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid;
+		
+		Cursor appInRepoCursor = aptoideAtomicQuery(selectAppInRepo);
+		appInRepoCursor.moveToFirst();
+		
+		boolean appInRepo = (appInRepoCursor.getInt(COUNT)==Constants.DB_TRUE?true:false);
+		
+		appInRepoCursor.close();
+		
+		return appInRepo;
+	}
+	
+	public ViewRepository getAppRepo(int appHashid){
+		/********** HERE *********************/
+		
+//		if(appInRepo(Constants.APPS_REPO_HASHID, appHashid)){
+//			return 
+//		}
+		return new ViewRepository("http://dsilveira.bazaarandroid.com/");	//TODO delete (doesn't really work, incomplete info
 	}
 	
 	//TODO rest of activity support classes (depends on activity Layout definitions, for performance reasons)

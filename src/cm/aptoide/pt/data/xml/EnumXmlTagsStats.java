@@ -1,5 +1,5 @@
 /**
- * EnumInfoType,		part of aptoide
+ * EnumXmlTagsStats,	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -21,20 +21,21 @@
 package cm.aptoide.pt.data.xml;
 
 /**
- * EnumInfoType, typeSafes xml info types in Aptoide
+ * EnumXmlTagsStats, typeSafes stats info XML tags
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumInfoType {
-	BARE,
-	ICON,
-	DOWNLOAD,
-	EXTRAS,
-	STATS;
+public enum EnumXmlTagsStats {
+	apklst,
+	pkg,
+	apphashid,
+	dwn,
+	likes,
+	dislikes;
 	
-	public static EnumInfoType reverseOrdinal(int ordinal){
+	public static EnumXmlTagsStats reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

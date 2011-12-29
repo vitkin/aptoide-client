@@ -79,16 +79,16 @@ public class RepoIconParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		switch (tag) {
-		case apphashid:
-			appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
-			break;
-		case icon:
-			String iconRemotePathTail = tagContentBuilder.toString();
-			iconInfo = new ViewIconInfo(iconRemotePathTail, appFullHashid);
-			break;
-			
-		default:
-			break;
+			case apphashid:
+				appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
+				break;
+			case icon:
+				String iconRemotePathTail = tagContentBuilder.toString();
+				iconInfo = new ViewIconInfo(iconRemotePathTail, appFullHashid);
+				break;
+				
+			default:
+				break;
 		}
 		
 		if(localName.trim().equals(EnumXmlTagsIcon.pkg.toString())){

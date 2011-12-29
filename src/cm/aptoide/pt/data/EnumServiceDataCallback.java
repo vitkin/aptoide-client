@@ -31,7 +31,12 @@ public enum EnumServiceDataCallback {
 	UPDATE_INSTALLED_LIST,
 	UPDATE_AVAILABLE_LIST,
 	REFRESH_AVAILABLE_DISPLAY,
-	UPDATE_APPLICATION_INFO;
+	REFRESH_ICON,
+	UPDATE_APP_DOWNLOAD_INFO,
+	UPDATE_APP_STATS,
+	UPDATE_APP_EXTRAS,
+	UPDATE_APP_COMMENTS,
+	REFRESH_SCREENS;
 	
 	public static EnumServiceDataCallback reverseOrdinal(int ordinal){
 		return values()[ordinal];

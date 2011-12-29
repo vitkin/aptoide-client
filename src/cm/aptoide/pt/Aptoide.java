@@ -199,37 +199,37 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         public void handleMessage(Message msg) {
         	EnumServiceDataCallback message = EnumServiceDataCallback.reverseOrdinal(msg.what);
         	switch (message) {
-        	case UPDATE_INSTALLED_LIST:
-        		try {
-					updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+	        	case UPDATE_INSTALLED_LIST:
+	        		try {
+						updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+						
+//						updateDisplayUpdatable(serviceDataCaller.callGetUpdatablePackages(0, 100));
+						
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+					break;
+				case UPDATE_AVAILABLE_LIST:
+					try {
+						updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+						
+						updateDisplayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
+						
+						updateDisplayUpdates(serviceDataCaller.callGetUpdatablePackages(0, 100));
+						
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+					break;
 					
-//					updateDisplayUpdatable(serviceDataCaller.callGetUpdatablePackages(0, 100));
-					
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-				break;
-			case UPDATE_AVAILABLE_LIST:
-				try {
-					updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
-					
-					updateDisplayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
-					
-					updateDisplayUpdates(serviceDataCaller.callGetUpdatablePackages(0, 100));
-					
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-				break;
-				
-			case REFRESH_AVAILABLE_DISPLAY:
-				refreshAvailableDisplay();
-				break;
-
-			default:
-				break;
+				case REFRESH_AVAILABLE_DISPLAY:
+					refreshAvailableDisplay();
+					break;
+	
+				default:
+					break;
 			}
         }
     };
@@ -557,8 +557,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	if(!swyping.get()){
     		final String appHashid = ((LinearLayout)arg1).getTag().toString();
     		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
-    		Intent apkinfo = new Intent(this,AppInfo.class);
-    		startActivity(apkinfo);
+    		Intent appInfo = new Intent(this,AppInfo.class);
+    		appInfo.putExtra("appHashid", appHashid);
+    		startActivity(appInfo);
     	}
 	}
 	
