@@ -8,9 +8,7 @@
 	<ImageView android:id="@+id/imagebutton"
 		android:src="@drawable/splashv3"
 		android:cropToPadding="true"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_weight="1"/>
+		android:layout_weight="1" android:layout_width="fill_parent" android:layout_height="fill_parent"/>
 <!--  	  
 	<ProgressBar
 		android:id="@+id/pbar"

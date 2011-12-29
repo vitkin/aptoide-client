@@ -102,8 +102,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ImageView previousView = null; 
 	private ImageView nextView = null;
 
-	private OnClickListener onClickHandler;
-	
 	private ViewDisplayListApps availableApps = null;
 	private ViewDisplayListApps installedApps = null;
 	private ViewDisplayListApps updatableApps = null;
@@ -310,8 +308,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		appsListFlipper.addView(updatableAppsList);
 
 		currentAppsList = EnumAppsLists.Available;
+		
 		currentListTitle.setText(currentAppsList.Available.toString());
-				
+
 		nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
 		nextListTitle.setOnClickListener(new OnNextClickedListener());
 
@@ -553,7 +552,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 
 	}
-	
+
 	class SwypeDetector extends SimpleOnGestureListener {
 
 		private static final int SWIPE_MIN_DISTANCE = 80;
@@ -647,6 +646,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		if(!swyping.get()){
 			AptoideLog.d(this, "Onclick");
+//			final String appHashid = ((LinearLayout)arg1).getTag().toString();
+//    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
+//    		Intent appInfo = new Intent(this,AppInfo.class);
+//    		appInfo.putExtra("appHashid", appHashid);
+//    		startActivity(appInfo);
 		}
 	}
 
