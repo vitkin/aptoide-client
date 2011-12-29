@@ -282,7 +282,7 @@ public class ManagerDownloads {
 			case STATS:
 //				xmlPath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML;	//TODO implement rest of args
 				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
-				cache = managerCache.getNewRepoExtrasViewCache(repository.getHashid());
+				cache = managerCache.getNewRepoStatsViewCache(repository.getHashid());
 				break;	
 				
 //			case EXTRAS:
@@ -325,13 +325,13 @@ public class ManagerDownloads {
 			case EXTRAS:
 //				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML+"?apphashid="+appHashid;
 				xmlRemotePath = "http://aptoide.com/testing/xml/extras.xml";
-				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
+				cache = managerCache.getNewRepoAppExtrasViewCache(repository.getHashid(), appHashid);
 				break;
 			
 			case STATS:
 //				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"?apphashid="+appHashid;
 				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
-				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
+				cache = managerCache.getNewRepoAppStatsViewCache(repository.getHashid(), appHashid);
 				break;
 	
 			default:
@@ -417,6 +417,7 @@ public class ManagerDownloads {
 			FileOutputStream fileOutputStream = new FileOutputStream(localPath);
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(remotePath);
+			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
 
 //				SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 //				String myid = sPref.getString("myId", "NoInfo");

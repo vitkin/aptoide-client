@@ -64,7 +64,7 @@ public class AppInfo extends Activity{// implements OnDismissListener{
 	        
 	        try {
 	            Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
-	            serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback);
+	            serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
 	           
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -127,6 +127,7 @@ public class AppInfo extends Activity{// implements OnDismissListener{
 			
 		}
 	};
+
     
     private Handler serviceDataCallbackHandler = new Handler() {
         @Override
@@ -188,6 +189,12 @@ public class AppInfo extends Activity{// implements OnDismissListener{
 		}else{
 			icon.setImageResource(android.R.drawable.sym_def_app_icon);
 		}
+	}
+	
+	@Override
+	public void finish() {
+		unbindService(serviceDataConnection);
+		super.finish();
 	}
 	
 	
@@ -1045,13 +1052,6 @@ public class AppInfo extends Activity{// implements OnDismissListener{
 //		}	
 //		
 //	}
-	
-	@Override
-	public void finish() {
-		if(jback)
-			this.setResult(RESULT_OK, rtrn_intent);
-		super.finish();
-	}
 	
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {

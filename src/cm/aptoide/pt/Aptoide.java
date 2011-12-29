@@ -201,7 +201,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         	switch (message) {
 	        	case UPDATE_INSTALLED_LIST:
 	        		try {
-						updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+						resetDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
 						
 //						updateDisplayUpdatable(serviceDataCaller.callGetUpdatablePackages(0, 100));
 						
@@ -212,11 +212,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					break;
 				case UPDATE_AVAILABLE_LIST:
 					try {
-						updateDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
+						resetDisplayInstalled(serviceDataCaller.callGetInstalledPackages(0, 100));
 						
-						updateDisplayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
+						resetDisplayAvailable(serviceDataCaller.callGetAvailablePackages(0, 100));
 						
-						updateDisplayUpdates(serviceDataCaller.callGetUpdatablePackages(0, 100));
+						resetDisplayUpdates(serviceDataCaller.callGetUpdatablePackages(0, 100));
 						
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
@@ -292,6 +292,17 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		availableAppsList.setAdapter(availableAdapter);
     }
 	
+	public void resetDisplayAvailable(ViewDisplayListApps availableApps){
+    	AptoideLog.d(Aptoide.this, "new AvailableList: "+availableApps);
+		boolean newList = this.updatableApps.getList().isEmpty();
+    	this.availableApps = availableApps;
+    	initDisplayAvailable();
+    	if(!newList){
+    		refreshAvailableDisplay();
+    	}
+		
+	}
+	
 	public void updateDisplayAvailable(ViewDisplayListApps availableApps){
     	AptoideLog.d(Aptoide.this, "AvailableList: "+availableApps);
 		boolean newList = this.availableApps.getList().isEmpty();
@@ -313,12 +324,24 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     public void initDisplayInstalled(){
     	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.app_row, 
-				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
+				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+    						, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
 		
 		installedAdapter.setViewBinder(new InstalledAppsListBinder());
 		installedAppsList.setAdapter(installedAdapter);
     }
+	
+	public void resetDisplayInstalled(ViewDisplayListApps installedApps){
+    	AptoideLog.d(Aptoide.this, "new InstalledList: "+installedApps);
+		boolean newList = this.updatableApps.getList().isEmpty();
+    	this.installedApps = installedApps;
+    	initDisplayInstalled();
+    	if(!newList){
+    		installedAdapter.notifyDataSetChanged();
+    	}
+		
+	}
 	
 	public void updateDisplayInstalled(ViewDisplayListApps installedApps){
     	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
@@ -336,15 +359,25 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     
     public void initDisplayUpdates(){
-    	if(!updatableApps.getList().isEmpty()){
-			updatableAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.app_row, 
-					new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
-					new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
-			
-			updatableAdapter.setViewBinder(new UpdatableAppsListBinder());
-			updatableAppsList.setAdapter(updatableAdapter);
-    	}
+    	updatableAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.app_row, 
+    			new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+    						, Constants.KEY_STATS_DOWNLOADS, Constants.KEY_STATS_STARS, Constants.DISPLAY_APP_ICON_CACHE_PATH},
+    		new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
+
+    	updatableAdapter.setViewBinder(new UpdatableAppsListBinder());
+    	updatableAppsList.setAdapter(updatableAdapter);
     }
+	
+	public void resetDisplayUpdates(ViewDisplayListApps updatableApps){
+    	AptoideLog.d(Aptoide.this, "new UpdatesList: "+updatableApps);
+		boolean newList = this.updatableApps.getList().isEmpty();
+    	this.updatableApps = updatableApps;
+    	initDisplayUpdates();
+    	if(!newList){
+    		updatableAdapter.notifyDataSetChanged();
+    	}
+		
+	}
 	
 	public void updateDisplayUpdates(ViewDisplayListApps updatableApps){
     	AptoideLog.d(Aptoide.this, "UpdatesList: "+updatableApps);

@@ -101,7 +101,7 @@ public class RepoExtrasParser extends DefaultHandler{
 			case screen:
 				String screenRemotePathTail = tagContentBuilder.toString();
 				screenInfo = new ViewScreenInfo(screenRemotePathTail, appFullHashid);
-				screensInfo.add(screenInfo);
+				screensInfo.add(screenInfo);	//TODO why inserting twice!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				break;
 							
 			default:
@@ -176,30 +176,30 @@ public class RepoExtrasParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoIconHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoExtrasHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoExtrasHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
 		
 		if(!extras.isEmpty()){
-			Log.d("Aptoide-RepoIconParser", "bucket not empty, apps: "+extras.size());
+			Log.d("Aptoide-RepoExtrasParser", "bucket not empty, apps: "+extras.size());
 			extrasInsertStack.add(extras);
 		}
 
-		Log.d("Aptoide-RepoInfoParser", "buckets: "+extrasInsertStack.size());
+		Log.d("Aptoide-RepoExtrasParser", "buckets: "+extrasInsertStack.size());
 		while(!extrasInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertExtras(extrasInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}
 		
 		if(!screensInfo.isEmpty()){
-			Log.d("Aptoide-RepoIconParser", "screens bucket not empty, screens: "+screensInfo.size());
+			Log.d("Aptoide-RepoExtrasParser", "screens bucket not empty, screens: "+screensInfo.size());
 			screensInfoInsertStack.add(screensInfo);
 		}
 
-		Log.d("Aptoide-RepoInfoParser", "screens buckets: "+screensInfoInsertStack.size());
+		Log.d("Aptoide-RepoExtrasParser", "screens buckets: "+screensInfoInsertStack.size());
 		while(!screensInfoInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertScreensInfo(screensInfoInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}

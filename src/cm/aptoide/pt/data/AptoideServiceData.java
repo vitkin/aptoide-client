@@ -24,6 +24,7 @@ import java.util.HashMap;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
@@ -90,6 +91,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private final AIDLAptoideServiceData.Stub aptoideServiceDataCallReceiver = new AIDLAptoideServiceData.Stub() {
 		
 		@Override
+		public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+			try {
+				return super.onTransact(code, data, reply, flags);
+			} catch (RuntimeException e) {
+				Log.w("MyClass", "Unexpected remote exception", e);
+				throw e;
+			}
+		}
+
+		@Override
 		public void callSyncInstalledPackages() throws RemoteException {
 	    	syncInstalledPackages();			
 		}
@@ -130,9 +141,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public void callRegisterAppInfoObserver(AIDLAppInfo appInfoOberver) throws RemoteException {
-			// TODO Auto-generated method stub
-			
+		public void callRegisterAppInfoObserver(AIDLAppInfo appInfoObserver, int appHashid) throws RemoteException {
+//			registerAppInfoObserver(appInfoObserver, appHashid);	//TODO investigate why null pointer exception on appInfoObserver?? 
 		}
 
 		@Override
@@ -152,6 +162,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
     	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
 	}
 	
+	
+	public void registerAppInfoObserver(AIDLAppInfo appInfoObserver, int appHashid){
+		appInfoClients.put(appHashid, appInfoObserver);
+    	AptoideLog.d(AptoideServiceData.this, "Registered App Info Observer: "+appHashid);
+	}
+	
+		
 	
 	
 	public String getTag() {
@@ -502,7 +519,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
-//		addRepoStats(repository);
+		addRepoStats(repository);
 		getRepoIcons(new ViewDownloadStatus(repository, Constants.FIRST_ELEMENT, EnumDownloadType.ICON));
 	}
 	
@@ -626,13 +643,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 //	}
 	
 	
-	public void fillAppInfo(final int appHashid){
+	public void fillAppInfo(final int appHashid){	/***************** HERE ***************************/
 		ViewRepository repository = managerDatabase.getAppRepo(appHashid);
-				
 		//TODO parallel check icon, download immediately if necessary
+		//TODO parallel check if the 3 types of info already exist, and only if not get them
 		addRepoDownloadInfo(repository, appHashid);
 		addRepoAppStats(repository, appHashid);
-		addRepoExtras(repository, appHashid);
+		addRepoAppExtras(repository, appHashid);
 		//TODO parallel get Comments
 	}
 	
@@ -703,7 +720,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	
-	public void addRepoExtras(final ViewRepository repository, final int appHashid){
+	public void addRepoAppExtras(final ViewRepository repository, final int appHashid){
 		try{
 
 			new Thread(){
@@ -735,36 +752,36 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void updateAppInfo(int appHashid, EnumServiceDataCallback callBack){
-		try {
-			switch (callBack) {
-				case REFRESH_ICON:
-					appInfoClients.get(appHashid).refreshIcon();
-					break;
-					
-				case UPDATE_APP_DOWNLOAD_INFO:
-					appInfoClients.get(appHashid).newAppDownloadInfoAvailable();
-					break;
-					
-				case UPDATE_APP_STATS:
-					appInfoClients.get(appHashid).newStatsInfoAvailable();
-					break;
-					
-				case UPDATE_APP_EXTRAS:
-					appInfoClients.get(appHashid).newExtrasAvailable();
-					break;
-					
-				case REFRESH_SCREENS:
-					appInfoClients.get(appHashid).refreshScreens();
-					break;
-					
-				default:
-					break;
-			}
-			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			switch (callBack) {
+//				case REFRESH_ICON:
+//					appInfoClients.get(appHashid).refreshIcon();
+//					break;
+//					
+//				case UPDATE_APP_DOWNLOAD_INFO:
+//					appInfoClients.get(appHashid).newAppDownloadInfoAvailable();
+//					break;
+//					
+//				case UPDATE_APP_STATS:
+//					appInfoClients.get(appHashid).newStatsInfoAvailable();
+//					break;
+//					
+//				case UPDATE_APP_EXTRAS:
+//					appInfoClients.get(appHashid).newExtrasAvailable();
+//					break;
+//					
+//				case REFRESH_SCREENS:
+//					appInfoClients.get(appHashid).refreshScreens();
+//					break;
+//					
+//				default:
+//					break;
+//			}
+//			
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	

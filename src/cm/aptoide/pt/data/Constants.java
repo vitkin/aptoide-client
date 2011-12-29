@@ -53,6 +53,8 @@ public class Constants {
 	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
 	public static final int MAX_PARALLEL_DOWNLOADS = 3;
 	
+	public static final int NUMBER_OF_STARS = 5;
+	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
 	public static final String PATH_CACHE_REPOS = PATH_CACHE + "repos/";
@@ -103,7 +105,8 @@ public class Constants {
 			 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
 			 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
 	
-	public static final int APPS_REPO_HASHID = ("http://apps.bazaarandroid.com/").hashCode();
+	public static final String APPS_REPO = "http://apps.bazaarandroid.com/";
+	public static final int APPS_REPO_HASHID = (APPS_REPO).hashCode();
 	
 	/** stupid sqlite doesn't know booleans */
 	public static final int DB_TRUE = 1;
@@ -124,7 +127,9 @@ public class Constants {
 	public static final int COLUMN_SIXTH = 5;
 	public static final int COLUMN_SEVENTH = 6;
 	public static final int COLUMN_EIGTH = 7;
-	public static final int COLUMN_NINTH = 8;			
+	public static final int COLUMN_NINTH = 8;
+	public static final int COLUMN_TENTH = 9;
+	public static final int COLUMN_ELEVENTH = 10;					
 	
 	
 	

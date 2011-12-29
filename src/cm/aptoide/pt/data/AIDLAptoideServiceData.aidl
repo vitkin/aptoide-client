@@ -43,7 +43,7 @@ interface AIDLAptoideServiceData {
 	ViewDisplayListApps callGetAvailablePackages(in int offset, in int range);
 	ViewDisplayListApps callGetUpdatablePackages(in int offset, in int range);
 	
-	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoOberver);
+	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
 	void CallFillAppInfo(in int appHashid);
 	
 }
