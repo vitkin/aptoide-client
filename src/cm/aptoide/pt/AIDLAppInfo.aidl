@@ -31,8 +31,8 @@ interface AIDLAppInfo{
 	void refreshIcon();
 	void newAppDownloadInfoAvailable();
 	void newStatsInfoAvailable();
-	void newDescriptionAvailable();
-	void newScreensAvailable();
+	void newExtrasAvailable();
+	void refreshScreens();
 	void newCommentsAvailable();
 	
 }

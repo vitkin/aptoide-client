@@ -103,6 +103,8 @@ public class Constants {
 			 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
 			 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
 	
+	public static final int APPS_REPO_HASHID = ("http://apps.bazaarandroid.com/").hashCode();
+	
 	/** stupid sqlite doesn't know booleans */
 	public static final int DB_TRUE = 1;
 	/** stupid sqlite doesn't know booleans */
@@ -233,6 +235,12 @@ public class Constants {
 	public static final String KEY_ICON_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
 	public static final String KEY_ICON_REMOTE_PATH_TAIL = "icon_remote_path_tail";
 	public static final int NUMBER_OF_COLUMNS_ICON_INFO = 2;
+	
+	
+	public static final String TABLE_SCREEN_INFO = "screen_info";
+	public static final String KEY_SCREEN_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
+	public static final String KEY_SCREEN_REMOTE_PATH_TAIL = "screen_remote_path_tail";
+	public static final int NUMBER_OF_COLUMNS_SCREEN_INFO = 2;
 	
 	
 	public static final String TABLE_DOWNLOAD_INFO = "download_info";
@@ -382,6 +390,16 @@ public class Constants {
 
 	public static final String FOREIGN_KEY_INSERT_ICON_INFO = "foreign_key_insert_icon_info";
 	public static final String FOREIGN_KEY_UPDATE_ICON_INFO_APP_FULL_HASHID_WEAK = "foreign_key_update_icon_info_app_full_hashid_weak";
+
+	
+	public static final String CREATE_TABLE_SCREEN_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_SCREEN_INFO + " ("
+			+ KEY_SCREEN_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
+			+ KEY_SCREEN_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
+			+ "FOREIGN KEY("+ KEY_SCREEN_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
+//			+ "PRIMARY KEY("+ KEY_SCREEN_APP_FULL_HASHID +"));";
+
+	public static final String FOREIGN_KEY_INSERT_SCREEN_INFO = "foreign_key_insert_screen_info";
+	public static final String FOREIGN_KEY_UPDATE_SCREEN_INFO_APP_FULL_HASHID_WEAK = "foreign_key_update_screen_info_app_full_hashid_weak";
 	
 	
 	public static final String CREATE_TABLE_DOWNLOAD_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_DOWNLOAD_INFO + " ("
@@ -600,6 +618,24 @@ public class Constants {
 			+ " FOR EACH ROW BEGIN"
 			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_ICON_INFO +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_ICON_INFO_APP_FULL_HASHID_WEAK +"')"
 			+ "    WHERE (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_ICON_APP_FULL_HASHID +") IS NULL;"
+			+ " END;";
+	
+	
+	
+	
+	public static final String CREATE_TRIGGER_SCREEN_INFO_INSERT = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_INSERT_SCREEN_INFO
+			+ " BEFORE INSERT ON " + TABLE_SCREEN_INFO
+			+ " FOR EACH ROW BEGIN"
+			+ "     SELECT RAISE(ROLLBACK, 'insert on table "+ TABLE_SCREEN_INFO +" violates foreign key constraint "+ FOREIGN_KEY_INSERT_SCREEN_INFO +"')"
+			+ "     WHERE NEW."+ KEY_SCREEN_APP_FULL_HASHID +" IS NOT NULL"
+			+ "	        AND (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_SCREEN_APP_FULL_HASHID +") IS NULL;"
+			+ " END;";
+	
+	public static final String CREATE_TRIGGER_SCREEN_INFO_UPDATE_APP_FULL_HASHID_WEAK = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_UPDATE_SCREEN_INFO_APP_FULL_HASHID_WEAK
+			+ " BEFORE UPDATE OF "+ KEY_SCREEN_APP_FULL_HASHID  +" ON " + TABLE_SCREEN_INFO
+			+ " FOR EACH ROW BEGIN"
+			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_SCREEN_INFO +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_SCREEN_INFO_APP_FULL_HASHID_WEAK +"')"
+			+ "    WHERE (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_SCREEN_APP_FULL_HASHID +") IS NULL;"
 			+ " END;";
 	
 	

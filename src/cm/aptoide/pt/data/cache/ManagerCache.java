@@ -85,12 +85,32 @@ public class ManagerCache {
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".icon"+".xml");
 	}
 	
+	public ViewCache getNewRepoAppIconViewCache(int repoHashid, int appHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".icon."+appHashid+".xml");
+	}
+	
 	public ViewCache getNewRepoDownloadViewCache(int repoHashid){
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".download"+".xml");
 	}
 	
+	public ViewCache getNewRepoAppDownloadViewCache(int repoHashid, int appHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".download."+appHashid+".xml");
+	}
+	
 	public ViewCache getNewRepoExtrasViewCache(int repoHashid){
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".extras"+".xml");
+	}
+	
+	public ViewCache getNewRepoAppExtrasViewCache(int repoHashid, int appHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".extras."+appHashid+".xml");
+	}
+	
+	public ViewCache getNewRepoStatsViewCache(int repoHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".stats"+".xml");
+	}
+	
+	public ViewCache getNewRepoAppStatsViewCache(int repoHashid, int appHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".stats."+appHashid+".xml");
 	}
 	
 	public ViewCache getNewIconViewCache(int appHashid){

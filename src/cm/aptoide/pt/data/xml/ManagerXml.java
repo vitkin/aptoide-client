@@ -89,7 +89,7 @@ public class ManagerXml{
 	public void repoParse(ViewRepository repository, ViewCache cache, EnumInfoType infoType){
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
 		
-		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_UPDATE, repoName, repository.getHashid());
 		ViewXmlParse parseInfo = getNewViewRepoXmlParse(repository, cache, notification);
 		DefaultHandler repoParser = null;
 	    try {
@@ -108,10 +108,16 @@ public class ManagerXml{
 //					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
 //					repoParser = new RepoDownloadParser(this, parseInfo);
 //					break;
-					
-				case EXTRAS:
-//					repoParser = new RepoExtrasParser(this, parseInfo);		//TODO create this parser
+				
+				case STATS:
+					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+					repoParser = new RepoStatsParser(this, parseInfo);
 					break;
+					
+//				case EXTRAS:
+//					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+//					repoParser = new RepoExtrasParser(this, parseInfo);
+//					break;
 	
 				default:
 					break;
@@ -147,21 +153,64 @@ public class ManagerXml{
 	}
 	
 //	public void repoDownloadParse(ViewRepository repository, ViewCache cache){
-//		repoParse(repository, cache, EnumInfoType.DOWNLOAD);
+//		repoAppParse(repository, cache, EnumInfoType.DOWNLOAD);
 //	}
 	
-	public void repoDownloadParse(ViewRepository repository, ViewCache cache, int appHashid){
+	public void parsingRepoDownloadFinished(ViewRepository repository){
+//		serviceData.parsingRepoDownloadInfoFinished(repository);
+	}
+	
+	public void repoStatsParse(ViewRepository repository, ViewCache cache){
+		repoParse(repository, cache, EnumInfoType.STATS);
+	}
+	
+	public void parsingRepoStatsFinished(ViewRepository repository){
+		serviceData.parsingRepoStatsFinished(repository);
+	}
+	
+//	public void repoExtrasParse(ViewRepository repository, ViewCache cache){
+//		repoAppParse(repository, cache, EnumInfoType.EXTRAS);
+//	}
+	
+	public void parsingRepoExtrasFinished(ViewRepository repository){
+//		serviceData.parsingRepoExtrasFinished(repository);
+	}
+	
+	
+	
+	public void repoAppParse(ViewRepository repository, ViewCache cache, int appHashid, EnumInfoType infoType){
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
 		
-		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_APP_UPDATE, repoName, appHashid);
 		ViewXmlParse parseInfo = getNewViewRepoXmlParse(repository, cache, notification);
 		DefaultHandler repoParser = null;
 	    try {
 	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+	    	switch (infoType) {
+//				case ICON:
+//					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+//					repoParser = new RepoIconParser(this, parseInfo);
+//					break;	
+					
+				case DOWNLOAD:
+					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+					repoParser = new RepoDownloadParser(this, parseInfo, appHashid);
+					break;
+				
+				case STATS:
+					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+					repoParser = new RepoStatsParser(this, parseInfo, appHashid);
+					break;
+					
+				case EXTRAS:
+					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+					repoParser = new RepoExtrasParser(this, parseInfo, appHashid);
+					break;
+	
+				default:
+					break;
+			}
 	    	
-	    	notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-	    	repoParser = new RepoDownloadParser(this, parseInfo, appHashid);
-				    	
 	    	xmlReader.setContentHandler(repoParser);
 	    	xmlReader.setErrorHandler(repoParser);
 	    	
@@ -174,8 +223,28 @@ public class ManagerXml{
 	    }
 	}
 	
-	public void parsingRepoDownloadFinished(ViewRepository repository, int appHashid){
+	public void repoAppDownloadParse(ViewRepository repository, ViewCache cache, int appHashid){
+		repoAppParse(repository, cache, appHashid, EnumInfoType.DOWNLOAD);
+	}
+	
+	public void parsingRepoAppDownloadFinished(ViewRepository repository, int appHashid){
 		serviceData.parsingRepoAppDownloadInfoFinished(repository, appHashid);
+	}
+	
+	public void repoAppStatsParse(ViewRepository repository, ViewCache cache, int appHashid){
+		repoAppParse(repository, cache, appHashid, EnumInfoType.STATS);
+	}
+	
+	public void parsingRepoAppStatsFinished(ViewRepository repository, int appHashid){
+		serviceData.parsingRepoAppStatsFinished(repository, appHashid);
+	}
+	
+	public void repoAppExtrasParse(ViewRepository repository, ViewCache cache, int appHashid){
+		repoAppParse(repository, cache, appHashid, EnumInfoType.EXTRAS);
+	}
+	
+	public void parsingRepoAppExtrasFinished(ViewRepository repository, int appHashid){
+		serviceData.parsingRepoAppExtrasFinished(repository, appHashid);
 	}
 	
 }

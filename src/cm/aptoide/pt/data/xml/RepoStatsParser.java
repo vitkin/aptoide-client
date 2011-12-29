@@ -1,5 +1,5 @@
 /**
- * RepoDownloadParser, 	auxiliary class to Aptoide's ServiceData
+ * RepoStatsParser, 	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  * 
@@ -33,44 +33,45 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
-import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
-import cm.aptoide.pt.data.model.ViewIconInfo;
+import cm.aptoide.pt.data.model.ViewStatsInfo;
 
 /**
- * RepoDownloadParser, handles Download Repo xml Sax parsing
+ * RepoStatsParser, handles Stats Repo xml Sax parsing
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class RepoDownloadParser extends DefaultHandler{
+public class RepoStatsParser extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewXmlParse parseInfo;
-	private ViewAppDownloadInfo downloadInfo;	
-	private ArrayList<ViewAppDownloadInfo> downloadsInfo = new ArrayList<ViewAppDownloadInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
-	private ArrayList<ArrayList<ViewAppDownloadInfo>> downloadsInfoInsertStack = new ArrayList<ArrayList<ViewAppDownloadInfo>>(2);
+	private ViewStatsInfo stats;	
+	private ArrayList<ViewStatsInfo> statsList = new ArrayList<ViewStatsInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+	private ArrayList<ArrayList<ViewStatsInfo>> statsListInsertStack = new ArrayList<ArrayList<ViewStatsInfo>>(2);
 	
-	private EnumXmlTagsDownload tag = EnumXmlTagsDownload.apklst;
-	private HashMap<String, EnumXmlTagsDownload> tagMap = new HashMap<String, EnumXmlTagsDownload>();
+	private EnumXmlTagsStats tag = EnumXmlTagsStats.apklst;
+	private HashMap<String, EnumXmlTagsStats> tagMap = new HashMap<String, EnumXmlTagsStats>();
 	
+
 	private int appHashid = Constants.EMPTY_INT;
 	private int appFullHashid = Constants.EMPTY_INT;
+	private int likes = Constants.EMPTY_INT;
 	private int parsedAppsNumber = Constants.EMPTY_INT;
 	
 	private StringBuilder tagContentBuilder;
 	
 		
-	public RepoDownloadParser(ManagerXml managerXml, ViewXmlParse parseInfo){
+	public RepoStatsParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
 		
-		for (EnumXmlTagsDownload tag : EnumXmlTagsDownload.values()) {
+		for (EnumXmlTagsStats tag : EnumXmlTagsStats.values()) {
 			tagMap.put(tag.name(), tag);
 		}
-	}	
-	public RepoDownloadParser(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
+	}
+	
+	public RepoStatsParser(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
 		this(managerXml, parseInfo);
 		this.appHashid = appHashid;
 	}
@@ -88,38 +89,38 @@ public class RepoDownloadParser extends DefaultHandler{
 		switch (tag) {
 			case apphashid:
 				appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
+				stats = new ViewStatsInfo(appFullHashid);
 				break;
 				
-			case path:
-				String appRemotePathTail = tagContentBuilder.toString();
-				downloadInfo = new ViewAppDownloadInfo(appRemotePathTail, appFullHashid);
+			case dwn:
+				stats.setDownloads(Integer.parseInt(tagContentBuilder.toString()));
 				break;
 				
-			case md5h:
-				downloadInfo.setMd5hash(tagContentBuilder.toString());
+			case likes:
+				likes = Integer.parseInt(tagContentBuilder.toString());
 				break;
 				
-			case sz:
-				downloadInfo.setSize(Integer.parseInt(tagContentBuilder.toString()));
+			case dislikes:
+				stats.setLikesDislikes(likes, Integer.parseInt(tagContentBuilder.toString()));
 				break;
 				
 			default:
 				break;
 		}
 		
-		if(localName.trim().equals(EnumXmlTagsIcon.pkg.toString())){
+		if(localName.trim().equals(EnumXmlTagsStats.pkg.toString())){
 			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
 				parsedAppsNumber = 0;
-				downloadsInfoInsertStack.add(downloadsInfo);
+				statsListInsertStack.add(statsList);
 
-				Log.d("Aptoide-RepoDownloadParser", "bucket full, inserting download infos: "+downloadsInfo.size());
+				Log.d("Aptoide-RepoStatsParser", "bucket full, inserting stats: "+statsList.size());
 				try{
 					new Thread(){
 						public void run(){
 							this.setPriority(Thread.MAX_PRIORITY);
-							final ArrayList<ViewAppDownloadInfo> downloadsInfoInserting = downloadsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
+							final ArrayList<ViewStatsInfo> statsInserting = statsListInsertStack.remove(Constants.FIRST_ELEMENT);
 							
-							managerXml.getManagerDatabase().insertDownloadsInfo(downloadsInfoInserting);
+							managerXml.getManagerDatabase().insertStats(statsInserting);
 						}
 					}.start();
 	
@@ -129,12 +130,12 @@ public class RepoDownloadParser extends DefaultHandler{
 					e.printStackTrace();
 				}
 				
-				downloadsInfo = new ArrayList<ViewAppDownloadInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+				statsList = new ArrayList<ViewStatsInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
 			}
 			parsedAppsNumber++;
 			parseInfo.getNotification().incrementProgress(1);
 			
-			downloadsInfo.add(downloadInfo);
+			statsList.add(stats);
 		}
 	}
 
@@ -151,28 +152,28 @@ public class RepoDownloadParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoDownloadHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoStatsHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoStatsHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
 		
-		if(!downloadsInfo.isEmpty()){
-			Log.d("Aptoide-RepoDownloadParser", "bucket not empty, apps: "+downloadsInfo.size());
-			downloadsInfoInsertStack.add(downloadsInfo);
+		if(!statsList.isEmpty()){
+			Log.d("Aptoide-RepoStatsParser", "bucket not empty, stats: "+statsList.size());
+			statsListInsertStack.add(statsList);
 		}
 
-		Log.d("Aptoide-RepoInfoParser", "buckets: "+downloadsInfoInsertStack.size());
-		while(!downloadsInfoInsertStack.isEmpty()){
-			managerXml.getManagerDatabase().insertDownloadsInfo(downloadsInfoInsertStack.remove(Constants.FIRST_ELEMENT));			
+		Log.d("Aptoide-RepoInfoParser", "buckets: "+statsListInsertStack.size());
+		while(!statsListInsertStack.isEmpty()){
+			managerXml.getManagerDatabase().insertStats(statsListInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}
 		
 		if(appHashid != Constants.EMPTY_INT){
-			managerXml.parsingRepoAppDownloadFinished(parseInfo.getRepository(), appHashid);
+			managerXml.parsingRepoAppStatsFinished(parseInfo.getRepository(), appHashid);
 		}else{
-			managerXml.parsingRepoDownloadFinished(parseInfo.getRepository());			
+			managerXml.parsingRepoStatsFinished(parseInfo.getRepository());			
 		}
 		super.endDocument();
 	}

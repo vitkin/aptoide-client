@@ -1,5 +1,5 @@
 /**
- * EnumInfoType,		part of aptoide
+ * EnumXmlTagsExtras,	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -21,20 +21,20 @@
 package cm.aptoide.pt.data.xml;
 
 /**
- * EnumInfoType, typeSafes xml info types in Aptoide
+ * EnumXmlTagsExtras, typeSafes extras XML tags
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumInfoType {
-	BARE,
-	ICON,
-	DOWNLOAD,
-	EXTRAS,
-	STATS;
+public enum EnumXmlTagsExtras {
+	apklst,
+	pkg,
+	apphashid,
+	cmt,
+	screen;
 	
-	public static EnumInfoType reverseOrdinal(int ordinal){
+	public static EnumXmlTagsExtras reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

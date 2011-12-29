@@ -23,6 +23,7 @@ import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.model.ViewRepository;
+import cm.aptoide.pt.AIDLAppInfo;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
@@ -41,5 +42,8 @@ interface AIDLAptoideServiceData {
 	ViewDisplayListApps callGetInstalledPackages(in int offset, in int range);
 	ViewDisplayListApps callGetAvailablePackages(in int offset, in int range);
 	ViewDisplayListApps callGetUpdatablePackages(in int offset, in int range);
+	
+	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoOberver);
+	void CallFillAppInfo(in int appHashid);
 	
 }

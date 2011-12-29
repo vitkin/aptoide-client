@@ -279,6 +279,12 @@ public class ManagerDownloads {
 //				cache = managerCache.getNewRepoDownloadViewCache(repository.getHashid());
 //				break;
 				
+			case STATS:
+//				xmlPath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML;	//TODO implement rest of args
+				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
+				cache = managerCache.getNewRepoExtrasViewCache(repository.getHashid());
+				break;	
+				
 //			case EXTRAS:
 ////				xmlPath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML;	//TODO implement rest of args
 //				xmlRemotePath = "http://aptoide.com/testing/xml/extras.xml";
@@ -288,7 +294,7 @@ public class ManagerDownloads {
 			default:
 				break;
 		}
-		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
+		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_UPDATE, repoName, repository.getHashid());
 		if(repository.isLoginRequired()){
 			download = getNewViewDownload(xmlRemotePath, repository.getLogin(), cache, notification);
 		}else{
@@ -301,16 +307,39 @@ public class ManagerDownloads {
 	}
 	
 	
-	public ViewCache startRepoAppDownload(ViewRepository repository, int appHashid){
+	public ViewCache startRepoAppDownload(ViewRepository repository, int appHashid, EnumInfoType infoType){
+		ViewCache cache = null;
+		ViewNotification notification;
 		ViewDownload download;
 		
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+		String xmlRemotePath = null;
 		
-//		String xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=download&apphashid="+appHashid;
-		String xmlRemotePath = "http://aptoide.com/testing/xml/info_download.xml";
-		ViewCache cache = managerCache.getNewRepoDownloadViewCache(repository.getHashid());
+		switch (infoType) {
+			case DOWNLOAD:
+//				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=download&apphashid="+appHashid;
+				xmlRemotePath = "http://aptoide.com/testing/xml/info_download.xml";
+				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
+				break;
+				
+			case EXTRAS:
+//				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML+"?apphashid="+appHashid;
+				xmlRemotePath = "http://aptoide.com/testing/xml/extras.xml";
+				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
+				break;
+			
+			case STATS:
+//				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"?apphashid="+appHashid;
+				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
+				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
+				break;
+	
+			default:
+				break;
+		}
+
 		
-		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPOS_UPDATE, repoName, repository.getHashid());
+		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_APP_UPDATE, repoName, appHashid);
 		if(repository.isLoginRequired()){
 			download = getNewViewDownload(xmlRemotePath, repository.getLogin(), cache, notification);
 		}else{
