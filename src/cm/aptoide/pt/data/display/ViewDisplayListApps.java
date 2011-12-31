@@ -36,7 +36,7 @@ import android.os.Parcelable;
  * @since 3.0
  *
  */
-public class ViewDisplayListApps implements Parcelable,Serializable{
+public class ViewDisplayListApps implements Parcelable,Serializable{	//TODO remove serializable
 
 	private static final long serialVersionUID = -3819976171445335382L;
 	private ArrayList<Map<String, Object>> appsList;
@@ -157,7 +157,7 @@ public class ViewDisplayListApps implements Parcelable,Serializable{
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeSerializable(appsList);
+		out.writeSerializable(appsList);	//TODO writeList instead of serializable
 	}
 
 	@SuppressWarnings("unchecked")

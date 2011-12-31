@@ -61,6 +61,8 @@ public class RepoExtrasParser extends DefaultHandler{
 	private int appFullHashid = Constants.EMPTY_INT;
 	private int parsedAppsNumber = Constants.EMPTY_INT;
 	
+	private int screenOrderNumber = 1;
+	
 	private StringBuilder tagContentBuilder;
 	
 		
@@ -100,12 +102,16 @@ public class RepoExtrasParser extends DefaultHandler{
 				
 			case screen:
 				String screenRemotePathTail = tagContentBuilder.toString();
-				screenInfo = new ViewScreenInfo(screenRemotePathTail, appFullHashid);
-				screensInfo.add(screenInfo);	//TODO why inserting twice!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				screenInfo = new ViewScreenInfo(screenRemotePathTail, screenOrderNumber, appFullHashid);
 				break;
 							
 			default:
 				break;
+		}
+		
+		if(localName.trim().equals(EnumXmlTagsExtras.screen.toString())){
+			screensInfo.add(screenInfo);
+			screenOrderNumber++;
 		}
 		
 		if(localName.trim().equals(EnumXmlTagsExtras.pkg.toString())){
@@ -160,6 +166,8 @@ public class RepoExtrasParser extends DefaultHandler{
 			parseInfo.getNotification().incrementProgress(1);
 			
 			extras.add(extraInfo);
+			
+			screenOrderNumber = 1;
 		}
 	}
 

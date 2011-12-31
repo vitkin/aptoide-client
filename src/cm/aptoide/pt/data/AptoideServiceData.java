@@ -36,6 +36,7 @@ import cm.aptoide.pt.Splash;
 import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
@@ -149,6 +150,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		public void CallFillAppInfo(int appHashid) throws RemoteException {
 			fillAppInfo(appHashid);
 			
+		}
+
+		@Override
+		public ViewDisplayAppVersionsInfo callGetAppInfo(int appHashid) throws RemoteException {
+			return getAppInfo(appHashid);
 		}
 	}; 
 
@@ -645,6 +651,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void fillAppInfo(final int appHashid){	/***************** HERE ***************************/
 		ViewRepository repository = managerDatabase.getAppRepo(appHashid);
+		if(repository == null){
+			return;
+		}
 		//TODO parallel check icon, download immediately if necessary
 		//TODO parallel check if the 3 types of info already exist, and only if not get them
 		addRepoDownloadInfo(repository, appHashid);
@@ -785,6 +794,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	
+	public ViewDisplayAppVersionsInfo getAppInfo(int appHashid){
+		AptoideLog.d(AptoideServiceData.this, "Getting App Versions Info: "+appHashid);
+		return managerDatabase.getAppDisplayInfo(appHashid);
+	}
 	
 	
 	public ViewDisplayListApps getInstalledPackages(int offset, int range){

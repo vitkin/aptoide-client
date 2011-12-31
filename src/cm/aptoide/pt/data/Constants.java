@@ -156,6 +156,7 @@ public class Constants {
 	 *				* booleans
 	 *				* Left inner joins
 	 *				* full outer joins
+	 *				* count(*distinct* column_name)
 	 *				* ... 			
 	 */
 	
@@ -244,6 +245,7 @@ public class Constants {
 	
 	public static final String TABLE_SCREEN_INFO = "screen_info";
 	public static final String KEY_SCREEN_APP_FULL_HASHID = KEY_APPLICATION_FULL_HASHID;
+	public static final String KEY_SCREEN_ORDER_NUMBER = "screen_order_number";
 	public static final String KEY_SCREEN_REMOTE_PATH_TAIL = "screen_remote_path_tail";
 	public static final int NUMBER_OF_COLUMNS_SCREEN_INFO = 2;
 	
@@ -398,10 +400,11 @@ public class Constants {
 
 	
 	public static final String CREATE_TABLE_SCREEN_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_SCREEN_INFO + " ("
-			+ KEY_SCREEN_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
+			+ KEY_SCREEN_APP_FULL_HASHID + " INTEGER NOT NULL, "
+			+ KEY_SCREEN_ORDER_NUMBER +" INTEGER NOT NULL, "
 			+ KEY_SCREEN_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
-			+ "FOREIGN KEY("+ KEY_SCREEN_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
-//			+ "PRIMARY KEY("+ KEY_SCREEN_APP_FULL_HASHID +"));";
+			+ "FOREIGN KEY("+ KEY_SCREEN_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") "
+			+ "PRIMARY KEY("+ KEY_SCREEN_APP_FULL_HASHID +","+KEY_SCREEN_ORDER_NUMBER+"));";
 
 	public static final String FOREIGN_KEY_INSERT_SCREEN_INFO = "foreign_key_insert_screen_info";
 	public static final String FOREIGN_KEY_UPDATE_SCREEN_INFO_APP_FULL_HASHID_WEAK = "foreign_key_update_screen_info_app_full_hashid_weak";

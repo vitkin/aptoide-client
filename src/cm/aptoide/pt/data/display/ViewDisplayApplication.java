@@ -26,7 +26,7 @@ import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewApplication;
 
  /**
- * ViewDisplayApplication, models a repository
+ * ViewDisplayApplication, models an Application
  * 
  * @author dsilveira
  * @since 3.0
