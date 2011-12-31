@@ -22,6 +22,7 @@ package cm.aptoide.pt.data;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.AIDLAppInfo;
 
@@ -45,5 +46,6 @@ interface AIDLAptoideServiceData {
 	
 	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
 	void CallFillAppInfo(in int appHashid);
+	ViewDisplayAppVersionsInfo callGetAppInfo(in int appHashid);
 	
 }

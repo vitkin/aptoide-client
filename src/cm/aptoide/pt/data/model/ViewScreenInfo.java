@@ -39,12 +39,14 @@ public class ViewScreenInfo {
 	 * ViewScreenInfo Constructor
 	 * 
 	 * @param String screenRemotePathTail, screen's remote path tail (what comes after repository's screens path)
+	 * @param int orderNumber, screen's app order number
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public ViewScreenInfo(String screenRemotePathTail, int applicationFullHashid) {
+	public ViewScreenInfo(String screenRemotePathTail, int orderNumber, int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_SCREEN_INFO);
 		setScreenRemotePathTail(screenRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
+		setOrderNumber(orderNumber);
 	}
 	
 	
@@ -54,6 +56,14 @@ public class ViewScreenInfo {
 	
 	public String getScreenRemotePathTail(){
 		return values.getAsString(Constants.KEY_SCREEN_REMOTE_PATH_TAIL);
+	}
+	
+	private void setOrderNumber(int orderNumber){
+		values.put(Constants.KEY_SCREEN_ORDER_NUMBER, orderNumber);
+	}
+	
+	public int getOrderNumber() {
+		return values.getAsInteger(Constants.KEY_SCREEN_ORDER_NUMBER);
 	}
 	
 	private void setAppFullHashid(int appFullHashid){
@@ -82,12 +92,14 @@ public class ViewScreenInfo {
 	 * ViewScreen object reuse, reConstructor
 	 * 
 	 * @param String screenRemotePathTail, screen's remote path tail (what comes after repository's base path)
+	 * @param int orderNumber, screen's app order number
 	 * @param int applicationFullHashid, (applicationPackageName+'|'+applicationVersionCode+'|'+repositoryHashid).hashCode()
 	 */
-	public void reuse(String screenRemotePathTail, int applicationFullHashid) {
+	public void reuse(String screenRemotePathTail, int orderNumber, int applicationFullHashid) {
 		this.values = new ContentValues(Constants.NUMBER_OF_COLUMNS_SCREEN_INFO);
 		setScreenRemotePathTail(screenRemotePathTail);
 		setAppFullHashid(applicationFullHashid);
+		setOrderNumber(orderNumber);
 	}
 	
 }

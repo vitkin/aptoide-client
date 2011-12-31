@@ -31,6 +31,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
@@ -1405,6 +1409,19 @@ public class ManagerDatabase {
 		return iconsInfo;
 	}
 	
+	
+	/**
+	 * appInRepo, checks if the app/version referenced by appHashid is present on the repo referenced by the repoHashid
+	 * 
+	 * @param int repoHashid
+	 * @param int appHashid
+	 * 
+	 * @return boolean is app in repo?
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
 	public boolean appInRepo(int repoHashid, int appHashid){
 		final int COUNT = Constants.COLUMN_FIRST;
 		
@@ -1415,7 +1432,8 @@ public class ManagerDatabase {
 								+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
 															+" FROM "+Constants.TABLE_REPOSITORY
 															+" GROUP BY "+Constants.KEY_REPO_HASHID+") R"
-								+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+" AND "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+";";
+								+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE
+									+" AND "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+";";
 		
 		Cursor appInRepoCursor = aptoideAtomicQuery(selectAppInRepo);
 		appInRepoCursor.moveToFirst();
@@ -1428,6 +1446,18 @@ public class ManagerDatabase {
 		return appInRepo;
 	}
 	
+	
+	/**
+	 * getAppRepo, get a repo that contains the app/version represented by the appHashid
+	 * 
+	 * @param int appHashid
+	 * 
+	 * @return ViewRepository the repository
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
 	public ViewRepository getAppRepo(int appHashid){
 		final int REPO_HASHID = Constants.COLUMN_FIRST;
 		final int URI = Constants.COLUMN_SECOND;
@@ -1456,7 +1486,11 @@ public class ManagerDatabase {
 							+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+";";
 		}
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
-		repoCursor.moveToFirst();
+		if(repoCursor.getCount()==Constants.EMPTY_INT){
+			return null;		//TODO refactor null object
+		}else{
+			repoCursor.moveToFirst();
+		}
 		
 		String selectLogin = "SELECT *"
 							 +" FROM "+Constants.TABLE_LOGIN
@@ -1477,6 +1511,125 @@ public class ManagerDatabase {
 		repoCursor.close();
 		
 		return repo;
+	}
+	
+	/**
+	 * getAppDisplayInfo, retrieves information about all the versions of the app referenced by the appHashid
+	 * 
+	 * @param int appHashid
+	 * 
+	 * @return ViewDisplayAppVersionsInfo app versions info
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewDisplayAppVersionsInfo getAppDisplayInfo(int appHashid){
+		
+		final int APP_FULL_HASHID = Constants.COLUMN_FIRST;
+		final int VERSION_CODE = Constants.COLUMN_SECOND;
+		final int VERSION_NAME = Constants.COLUMN_THIRD;
+		final int APP_NAME = Constants.COLUMN_FOURTH;
+		final int LIKES = Constants.COLUMN_FIFTH;
+		final int DISLIKES = Constants.COLUMN_SIXTH;
+		final int STARS = Constants.COLUMN_SEVENTH;
+		final int DOWNLOADS = Constants.COLUMN_EIGTH;
+		final int DESCRIPTION = Constants.COLUMN_NINTH;
+		
+		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FIRST;
+		final int INSTALLED_VERSION_NAME = Constants.COLUMN_SECOND;
+		final int INSTALLED_NAME = Constants.COLUMN_THIRD;
+		
+		int installedVersionCode = Constants.EMPTY_INT;
+		
+		ViewDisplayAppVersionsInfo appVersions = new ViewDisplayAppVersionsInfo();
+		ViewDisplayAppVersionInfo appVersion;
+		
+		String selectAppVersions = "SELECT A."+Constants.KEY_APPLICATION_FULL_HASHID+", A."+Constants.KEY_APPLICATION_VERSION_CODE
+											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
+											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
+											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
+									+" FROM "+Constants.TABLE_APPLICATION+" A"
+									+" NATURAL LEFT JOIN (SELECT *"
+															+" FROM "+Constants.TABLE_STATS_INFO+") S"
+									+" NATURAL LEFT JOIN (SELECT *"
+															+" FROM "+Constants.TABLE_EXTRA_INFO+") E"
+//									+" NATURAL LEFT JOIN (SELECT "
+//															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
+//															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
+									+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
+											+" (SELECT DISTINCT "+Constants.KEY_APPLICATION_PACKAGE_NAME
+												+" FROM "+Constants.TABLE_APPLICATION
+												+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
+										+" UNION "
+											+"SELECT DISTINCT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
+												+" FROM "+Constants.TABLE_APP_INSTALLED
+												+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")"
+									+" ORDER BY "+Constants.KEY_APPLICATION_VERSION_CODE+" DESC;";
+		
+		String selectInstalledAppVersion = " SELECT "+Constants.KEY_APP_INSTALLED_VERSION_CODE+", "+Constants.KEY_APP_INSTALLED_VERSION_NAME
+													+", "+Constants.KEY_APP_INSTALLED_NAME
+											+" FROM "+Constants.TABLE_APP_INSTALLED
+											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
+													+" (SELECT DISTINCT "+Constants.KEY_APPLICATION_PACKAGE_NAME
+														+" FROM "+Constants.TABLE_APPLICATION
+														+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
+												+" UNION "
+													+"SELECT DISTINCT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
+														+" FROM "+Constants.TABLE_APP_INSTALLED
+														+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+");";
+		
+		db.beginTransaction();
+		try{
+			Cursor appVersionsCursor = aptoideNonAtomicQuery(selectAppVersions);
+			Cursor installedVersionCursor = aptoideNonAtomicQuery(selectInstalledAppVersion);
+			
+			db.setTransactionSuccessful();
+			db.endTransaction();
+						
+			if(installedVersionCursor.getCount() != Constants.EMPTY_INT){
+				installedVersionCursor.moveToFirst();
+				installedVersionCode = installedVersionCursor.getInt(INSTALLED_VERSION_CODE);
+			}
+			
+			if(appVersionsCursor.getCount() == Constants.EMPTY_INT){
+				if(installedVersionCode == Constants.EMPTY_INT){
+					//TODO throw exception (Unrecognized appHashid)
+				}else{
+					appVersion = new ViewDisplayAppVersionInfo(installedVersionCursor.getString(INSTALLED_NAME), installedVersionCursor.getString(INSTALLED_VERSION_NAME)
+																, installedVersionCode, Constants.EMPTY_INT, true);
+					appVersions.addAppVersionInfo(appVersion);
+				}
+				installedVersionCursor.close();
+			}else{
+				installedVersionCursor.close();
+				appVersionsCursor.moveToFirst();
+				
+				do{
+					appVersion = new ViewDisplayAppVersionInfo(appVersionsCursor.getString(APP_NAME), appVersionsCursor.getString(VERSION_NAME)
+																, appVersionsCursor.getInt(VERSION_CODE), appVersionsCursor.getInt(APP_FULL_HASHID)
+																, (appVersionsCursor.getInt(VERSION_CODE)==installedVersionCode?true:false));
+					appVersion.setStats(new ViewDisplayAppVersionStats(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getInt(LIKES)
+																		, appVersionsCursor.getInt(DISLIKES), appVersionsCursor.getFloat(STARS)
+																		, appVersionsCursor.getInt(DOWNLOADS)));
+					if(appVersionsCursor.getString(DESCRIPTION)!=null){
+						ViewDisplayAppVersionExtras extras = new ViewDisplayAppVersionExtras(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getString(DESCRIPTION));
+						appVersion.setExtras(extras);
+					}
+					appVersions.addAppVersionInfo(appVersion);
+				}while(appVersionsCursor.moveToNext());
+			}
+			appVersionsCursor.close();
+			
+		}catch (Exception e) {
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return appVersions;
 	}
 	
 	//TODO rest of activity support classes (depends on activity Layout definitions, for performance reasons)
