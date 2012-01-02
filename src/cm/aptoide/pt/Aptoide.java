@@ -585,6 +585,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		return swypeDetector.onTouchEvent(event);
 	}
 
+	
+	
     @Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
     	if(!swyping.get()){
@@ -593,6 +595,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		Intent appInfo = new Intent(this,AppInfo.class);
     		appInfo.putExtra("appHashid", appHashid);
     		startActivity(appInfo);
+    		//TODO click change color effect
     	}
 	}
 	

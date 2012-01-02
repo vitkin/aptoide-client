@@ -262,14 +262,14 @@ public class ManagerDownloads {
 		
 		switch (infoType) {
 			case BARE:
-//				xmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=bare";	//TODO implement rest of args
-				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix=true";	//TODO implement rest of args
+//				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
 				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
 				break;
 				
 			case ICON:
-//				xmlPath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=icon";	//TODO implement rest of args
-				xmlRemotePath = "http://aptoide.com/testing/xml/info_icon.xml";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=icon&show_apphashid=true";	//TODO implement rest of args
+//				xmlRemotePath = "http://aptoide.com/testing/xml/info_icon.xml";
 				cache = managerCache.getNewRepoIconViewCache(repository.getHashid());
 				break;
 				
@@ -280,8 +280,8 @@ public class ManagerDownloads {
 //				break;
 				
 			case STATS:
-//				xmlPath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML;	//TODO implement rest of args
-				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true";	//TODO implement rest of args
+//				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
 				cache = managerCache.getNewRepoStatsViewCache(repository.getHashid());
 				break;	
 				
@@ -317,20 +317,20 @@ public class ManagerDownloads {
 		
 		switch (infoType) {
 			case DOWNLOAD:
-//				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"?info=download&apphashid="+appHashid;
-				xmlRemotePath = "http://aptoide.com/testing/xml/info_download.xml";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=download&show_apphashid=true&apphashid="+appHashid;
+//				xmlRemotePath = "http://aptoide.com/testing/xml/info_download.xml";
 				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
 				break;
 				
 			case EXTRAS:
-//				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML+"?apphashid="+appHashid;
-				xmlRemotePath = "http://aptoide.com/testing/xml/extras.xml";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML+"show_apphashid=true&apphashid="+appHashid;
+//				xmlRemotePath = "http://aptoide.com/testing/xml/extras.xml";
 				cache = managerCache.getNewRepoAppExtrasViewCache(repository.getHashid(), appHashid);
 				break;
 			
 			case STATS:
-//				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"?apphashid="+appHashid;
-				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true&apphashid="+appHashid;
+//				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
 				cache = managerCache.getNewRepoAppStatsViewCache(repository.getHashid(), appHashid);
 				break;
 	

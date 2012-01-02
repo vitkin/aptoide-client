@@ -65,9 +65,9 @@ public class Constants {
 	public static final String PATH_CACHE_ICONS = PATH_CACHE + "icons/";
 	public static final String PATH_CACHE_SCREENS = PATH_CACHE + "screens/";
 	
-	public static final String PATH_REPO_INFO_XML = "info.xml/v3/";
-	public static final String PATH_REPO_EXTRAS_XML = "extras.xml/v3/";
-	public static final String PATH_REPO_STATS_XML = "stats.xml/v3/";
+	public static final String PATH_REPO_INFO_XML = "v2/info.xml?";
+	public static final String PATH_REPO_EXTRAS_XML = "v2/extras.xml?";
+	public static final String PATH_REPO_STATS_XML = "v2/stats.xml?";
 	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/latest_version.xml";
 	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code

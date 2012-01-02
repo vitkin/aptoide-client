@@ -73,7 +73,7 @@ public class ViewStatsInfo {
 	public void setLikesDislikes(int likes, int dislikes){
 		setLikes(likes);
 		setDislikes(dislikes);
-		setStars((Float.valueOf(likes)/Float.valueOf(likes+dislikes))*Constants.NUMBER_OF_STARS);
+		setStars((Float.valueOf(likes)/Float.valueOf(((likes+dislikes)==0?1:likes+dislikes)))*Constants.NUMBER_OF_STARS);
 	}
 	
 	private void setLikes(int likes){

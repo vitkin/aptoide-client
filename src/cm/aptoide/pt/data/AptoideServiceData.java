@@ -143,7 +143,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public void callRegisterAppInfoObserver(AIDLAppInfo appInfoObserver, int appHashid) throws RemoteException {
-//			registerAppInfoObserver(appInfoObserver, appHashid);	//TODO investigate why null pointer exception on appInfoObserver?? 
+			registerAppInfoObserver(appInfoObserver, appHashid);	//TODO investigate why null pointer exception on appInfoObserver?? 
 		}
 
 		@Override
@@ -218,6 +218,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	    	splash();
 	    	
 			aptoideClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
+			appInfoClients = new HashMap<Integer, AIDLAppInfo>();
 			
 			managerPreferences = new ManagerPreferences(this);
 			managerSystemSync = new ManagerSystemSync(this);
