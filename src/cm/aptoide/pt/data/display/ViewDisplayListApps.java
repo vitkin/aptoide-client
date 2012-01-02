@@ -20,13 +20,13 @@
 
 package cm.aptoide.pt.data.display;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import cm.aptoide.pt.data.Constants;
 
  /**
  * ViewDisplayListApps, models a list of Apps,
@@ -36,10 +36,11 @@ import android.os.Parcelable;
  * @since 3.0
  *
  */
-public class ViewDisplayListApps implements Parcelable,Serializable{	//TODO remove serializable
+public class ViewDisplayListApps implements Parcelable{ 
 
-	private static final long serialVersionUID = -3819976171445335382L;
 	private ArrayList<Map<String, Object>> appsList;
+	private int displayOffset;
+	private int displayRange;
 
 	
 	/**
@@ -57,6 +58,8 @@ public class ViewDisplayListApps implements Parcelable,Serializable{	//TODO remo
 	 */
 	public ViewDisplayListApps(int size) {
 		this.appsList = new ArrayList<Map<String, Object>>(size);
+		this.displayOffset = 0;
+		this.displayRange = Constants.DISPLAY_LISTS_PAGE_SIZE;
 	}
 	
 	
@@ -70,6 +73,37 @@ public class ViewDisplayListApps implements Parcelable,Serializable{	//TODO remo
 	
 	public Map<String, Object> getApp(int index){
 		return this.appsList.get(index);
+	}
+	
+	public EnumOffsetChange increaseDisplayRange(int increase){
+		displayRange+= increase;
+		if(displayRange>displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER){
+			displayOffset+=Constants.DISPLAY_LISTS_PAGE_SIZE;
+			return EnumOffsetChange.increase;
+		}else{
+			return EnumOffsetChange.no_change;
+		}
+	}
+	
+	public EnumOffsetChange decreaseDisplayRange(int decrease){
+		if(displayRange<=Constants.DISPLAY_LISTS_PAGE_SIZE){
+			return EnumOffsetChange.no_change;
+		}
+		displayRange-= decrease;
+		if(displayRange<displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE){
+			displayOffset-=Constants.DISPLAY_LISTS_PAGE_SIZE;
+			return EnumOffsetChange.decrease;
+		}else{
+			return EnumOffsetChange.no_change;
+		}
+	}
+	
+	public int getCacheOffset(){
+		return displayOffset;
+	}
+	
+	public int getCacheRange(){
+		return displayOffset+Constants.DISPLAY_LISTS_CACHE_SIZE;
 	}
 	
 	
@@ -99,6 +133,8 @@ public class ViewDisplayListApps implements Parcelable,Serializable{	//TODO remo
 	 */
 	public void reuse(int size) {
 		this.appsList = new ArrayList<Map<String, Object>>(size);
+		this.displayOffset = 0;
+		this.displayRange = Constants.DISPLAY_LISTS_PAGE_SIZE;
 	}
 
 	/**
@@ -157,7 +193,7 @@ public class ViewDisplayListApps implements Parcelable,Serializable{	//TODO remo
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeSerializable(appsList);	//TODO writeList instead of serializable
+		out.writeSerializable(appsList);	//TODO use list or parcelable instead of serializable
 	}
 
 	@SuppressWarnings("unchecked")

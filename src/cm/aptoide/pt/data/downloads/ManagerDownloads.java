@@ -98,7 +98,7 @@ public class ManagerDownloads {
 		connectivityState = (ConnectivityManager)serviceData.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		this.downloads = new HashMap<Integer, ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
-		this.waitingIcons = new ArrayList<ViewDownload>(Constants.SIZE_CACHE_OF_DISPLAY_LISTS);
+		this.waitingIcons = new ArrayList<ViewDownload>(Constants.DISPLAY_LISTS_CACHE_SIZE);
 		this.waitingScreens = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		this.waitingApks = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		this.downloadPool = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
@@ -383,7 +383,7 @@ public class ManagerDownloads {
 		}
 		
 		if(waitingIcons.isEmpty()){
-			iconsListStatus.incrementOffset(Constants.SIZE_CACHE_OF_DISPLAY_LISTS);
+			iconsListStatus.incrementOffset(Constants.DISPLAY_LISTS_CACHE_SIZE);
 			serviceData.getRepoIcons(iconsListStatus);
 		}
 	}
