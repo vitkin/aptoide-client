@@ -646,11 +646,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 		if(!swyping.get()){
 			AptoideLog.d(this, "Onclick");
-//			final String appHashid = ((LinearLayout)arg1).getTag().toString();
-//    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
-//    		Intent appInfo = new Intent(this,AppInfo.class);
-//    		appInfo.putExtra("appHashid", appHashid);
-//    		startActivity(appInfo);
+			final String appHashid = ((LinearLayout)arg1).getTag().toString();
+    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
+    		Intent appInfo = new Intent(this,AppInfo.class);
+    		appInfo.putExtra("appHashid", appHashid);
+    		startActivity(appInfo);
 		}
 	}
 

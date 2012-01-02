@@ -17,7 +17,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:orientation="vertical">
 
         <TextView
@@ -37,9 +37,10 @@
             android:layout_alignParentTop="true"
             android:textStyle="bold"
             android:textColor="#4f4f4f"
+            android:singleLine="true"
             android:maxLines="1"
-            android:ellipsize="marquee"
-            android:layout_width="fill_parent"
+            android:ellipsize="end"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
             
         <!-- <LinearLayout
@@ -67,34 +68,37 @@
 		<TextView android:id="@+id/uptodate_versionname"
             android:textSize="12sp"
             android:layout_below="@id/app_name" 
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#4f4f4f"/>
             
-        <RelativeLayout
-        	android:layout_width="fill_parent"
-        	android:layout_height="fill_parent"
-        	android:orientation="vertical"
-        	android:gravity="right">
+<!--         <RelativeLayout -->
+<!--         	android:layout_width="fill_parent" -->
+<!--         	android:layout_height="fill_parent" -->
+<!--         	android:orientation="vertical" -->
+<!--         	android:gravity="right"> -->
         	
-        	<TextView android:id="@+id/downloads"
-            	android:textSize="12sp"
-				android:gravity="right"
-            	android:layout_width="wrap_content"
-            	android:layout_height="wrap_content"
-            	android:textColor="#b3b3b3"
-            	/>
+        	<TextView
+        	    android:id="@+id/downloads"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_alignParentRight="true"
+        	    android:layout_centerVertical="true"
+        	    android:textColor="#b3b3b3"
+        	    android:textSize="12sp" />
             
-        	<RatingBar android:id="@+id/stars"
-        		style="?android:attr/ratingBarStyleSmall"
-        		android:layout_below="@id/downloads"
-        		android:layout_width="wrap_content"
-        		android:layout_height="wrap_content"
-        		android:isIndicator="true"
-        		android:numStars="5"
-        		/>
+        	<RatingBar
+        	    android:id="@+id/stars"
+        	    style="?android:attr/ratingBarStyleSmall"
+        	    android:layout_width="wrap_content"
+        	    android:layout_height="wrap_content"
+        	    android:layout_below="@+id/downloads"
+        	    android:layout_centerVertical="true"
+        	    android:layout_alignParentRight="true"
+        	    android:isIndicator="true"
+        	    android:numStars="5" />
         		
-	    </RelativeLayout>
+<!-- 	    </RelativeLayout> -->
             
             
      </RelativeLayout>
