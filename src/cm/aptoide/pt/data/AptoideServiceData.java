@@ -581,7 +581,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 							//TODO raise exception
 						}
 
-						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), Constants.SIZE_CACHE_OF_DISPLAY_LISTS));
+						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), Constants.DISPLAY_LISTS_CACHE_SIZE));
 						//TODO find some way to track global parsing completion status, probably in managerXml
 					}
 				}.start();
