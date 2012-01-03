@@ -160,17 +160,17 @@ public class AppInfo extends Activity{
 		fillData();
 		
 		
-		Handler threadHandler = new Handler();
-		threadHandler.postDelayed(new Runnable() {
-            public void run() {
-            	fillRest();
-            }
-        }, 2000);
-		threadHandler.postDelayed(new Runnable() {
-            public void run() {
-            	fillRest();
-            }
-        }, 10000);
+//		Handler threadHandler = new Handler();
+//		threadHandler.postDelayed(new Runnable() {
+//            public void run() {
+//            	fillRest();
+//            }
+//        }, 2000);
+//		threadHandler.postDelayed(new Runnable() {
+//            public void run() {
+//            	fillRest();
+//            }
+//        }, 10000);
     }
 	
 	protected void fillData(){

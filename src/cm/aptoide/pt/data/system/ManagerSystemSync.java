@@ -78,7 +78,7 @@ public class ManagerSystemSync {
 				continue;
 				//TODO maybe show it but mark as system
 			}
-			installedApp = new ViewApplication((packageManager.getApplicationLabel(installedAppInfo.applicationInfo)).toString(), installedAppInfo.packageName, installedAppInfo.versionName, installedAppInfo.versionCode, true);
+			installedApp = new ViewApplication((packageManager.getApplicationLabel(installedAppInfo.applicationInfo)).toString(), installedAppInfo.packageName, ((installedAppInfo.versionName==null)?Integer.toBinaryString(installedAppInfo.versionCode):installedAppInfo.versionName), installedAppInfo.versionCode, true);
 			installedApps.add(installedApp);
 		}
 		return installedApps;
@@ -93,6 +93,7 @@ public class ManagerSystemSync {
 			}
 			serviceData.getManagerCache().cacheIcon((installedAppInfo.packageName+"|"+installedAppInfo.versionCode).hashCode(), ((BitmapDrawable)installedAppInfo.applicationInfo.loadIcon(packageManager)).getBitmap());
 		}
+//		serviceData.updateInstalledLists();
 	}
 	
 //	public Drawable getInstalledAppIcon(String packageName){

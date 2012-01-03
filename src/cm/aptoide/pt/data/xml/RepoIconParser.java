@@ -78,6 +78,9 @@ public class RepoIconParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
+		
+		tag = tagMap.get(localName.trim());
+		
 		switch (tag) {
 			case apphashid:
 				appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
@@ -87,39 +90,40 @@ public class RepoIconParser extends DefaultHandler{
 				iconInfo = new ViewIconInfo(iconRemotePathTail, appFullHashid);
 				break;
 				
+			case pkg:
+				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					parsedAppsNumber = 0;
+					iconsInfoInsertStack.add(iconsInfo);
+
+					Log.d("Aptoide-RepoIconParser", "bucket full, inserting apps: "+iconsInfo.size());
+					try{
+						new Thread(){
+							public void run(){
+								this.setPriority(Thread.MAX_PRIORITY);
+								final ArrayList<ViewIconInfo> iconsInfoInserting = iconsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
+								
+								managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);
+							}
+						}.start();
+		
+					} catch(Exception e){
+						/** this should never happen */
+						//TODO handle exception
+						e.printStackTrace();
+					}
+					
+					iconsInfo = new ArrayList<ViewIconInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+				}
+				parsedAppsNumber++;
+				parseInfo.getNotification().incrementProgress(1);
+				
+				iconsInfo.add(iconInfo);
+				break;
+				
 			default:
 				break;
 		}
 		
-		if(localName.trim().equals(EnumXmlTagsIcon.pkg.toString())){
-			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-				parsedAppsNumber = 0;
-				iconsInfoInsertStack.add(iconsInfo);
-
-				Log.d("Aptoide-RepoIconParser", "bucket full, inserting apps: "+iconsInfo.size());
-				try{
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
-							final ArrayList<ViewIconInfo> iconsInfoInserting = iconsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
-							
-							managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);
-						}
-					}.start();
-	
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
-				}
-				
-				iconsInfo = new ArrayList<ViewIconInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
-			}
-			parsedAppsNumber++;
-			parseInfo.getNotification().incrementProgress(1);
-			
-			iconsInfo.add(iconInfo);
-		}
 	}
 
 	@Override
@@ -127,7 +131,7 @@ public class RepoIconParser extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 
 		tagContentBuilder = new StringBuilder();
-		tag = tagMap.get(localName.trim());
+		
 	}
 	
 	

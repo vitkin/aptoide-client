@@ -85,6 +85,9 @@ public class RepoDownloadParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
+		
+		tag = tagMap.get(localName.trim());
+		
 		switch (tag) {
 			case apphashid:
 				appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
@@ -103,39 +106,40 @@ public class RepoDownloadParser extends DefaultHandler{
 				downloadInfo.setSize(Integer.parseInt(tagContentBuilder.toString()));
 				break;
 				
+			case pkg:
+				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					parsedAppsNumber = 0;
+					downloadsInfoInsertStack.add(downloadsInfo);
+
+					Log.d("Aptoide-RepoDownloadParser", "bucket full, inserting download infos: "+downloadsInfo.size());
+					try{
+						new Thread(){
+							public void run(){
+								this.setPriority(Thread.MAX_PRIORITY);
+								final ArrayList<ViewAppDownloadInfo> downloadsInfoInserting = downloadsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
+								
+								managerXml.getManagerDatabase().insertDownloadsInfo(downloadsInfoInserting);
+							}
+						}.start();
+		
+					} catch(Exception e){
+						/** this should never happen */
+						//TODO handle exception
+						e.printStackTrace();
+					}
+					
+					downloadsInfo = new ArrayList<ViewAppDownloadInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+				}
+				parsedAppsNumber++;
+				parseInfo.getNotification().incrementProgress(1);
+				
+				downloadsInfo.add(downloadInfo);
+				break;
+				
 			default:
 				break;
 		}
 		
-		if(localName.trim().equals(EnumXmlTagsIcon.pkg.toString())){
-			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-				parsedAppsNumber = 0;
-				downloadsInfoInsertStack.add(downloadsInfo);
-
-				Log.d("Aptoide-RepoDownloadParser", "bucket full, inserting download infos: "+downloadsInfo.size());
-				try{
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
-							final ArrayList<ViewAppDownloadInfo> downloadsInfoInserting = downloadsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
-							
-							managerXml.getManagerDatabase().insertDownloadsInfo(downloadsInfoInserting);
-						}
-					}.start();
-	
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
-				}
-				
-				downloadsInfo = new ArrayList<ViewAppDownloadInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
-			}
-			parsedAppsNumber++;
-			parseInfo.getNotification().incrementProgress(1);
-			
-			downloadsInfo.add(downloadInfo);
-		}
 	}
 
 	@Override
@@ -143,7 +147,7 @@ public class RepoDownloadParser extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 
 		tagContentBuilder = new StringBuilder();
-		tag = tagMap.get(localName.trim());
+		
 	}
 	
 	

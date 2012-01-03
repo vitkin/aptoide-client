@@ -427,6 +427,35 @@ public class ManagerDatabase {
 			db.endTransaction();
 		}
 	}
+	
+	/**
+	 * toggleRepositoryInUse, handles single repository inUse toggle
+	 * 
+	 * @param int repoHashids
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void toggleRepositoryInUse(int repoHashid, boolean setInUse){
+		db.beginTransaction();
+		try{
+			ContentValues setTrue = new ContentValues();
+			setTrue.put(Constants.KEY_REPO_IN_USE, (setInUse?Constants.DB_TRUE:Constants.DB_FALSE) );
+			
+			String updateWhere = Constants.KEY_REPO_HASHID+" IN ("+repoHashid+")";
+			
+			if(db.update(Constants.TABLE_REPOSITORY, setTrue, updateWhere, null) == Constants.DB_NO_CHANGES_MADE){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
 		
 	
 	
@@ -476,6 +505,7 @@ public class ManagerDatabase {
 		}
 	}
 	
+		
 	/**
 	 * insertApplication, handles single application insertion
 	 * 
@@ -689,51 +719,6 @@ public class ManagerDatabase {
 	}
 	
 	/**
-	 * insertStats, handles multiple application's stats info insertion
-	 * 
-	 * @param ArrayList<ViewStatsInfo> statsInfos
-	 */
-	public void insertStats(ArrayList<ViewStatsInfo> stats){
-		db.beginTransaction();
-		try{
-			InsertHelper insertStats = new InsertHelper(db, Constants.TABLE_STATS_INFO);
-			
-			for (ViewStatsInfo stat : stats) {
-				if(insertStats.insert(stat.getValues()) == Constants.DB_ERROR){
-					//TODO throw exception;
-				}
-			}
-			insertStats.close();
-			
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-	}
-	
-	/**
-	 * insertStat, handles single application's stat info insertion
-	 * 
-	 * @param ViewStatsInfo stat
-	 */
-	public void insertStat(ViewStatsInfo stat){
-		db.beginTransaction();
-		try{
-			if(db.insert(Constants.TABLE_STATS_INFO, null, stat.getValues()) == Constants.DB_ERROR){
-				//TODO throw exception;
-			}
-			
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-	}
-	
-	/**
 	 * insertExtraInfos, handles multiple application's extra info insertion
 	 * 
 	 * @param ArrayList<ViewExtraInfo> extraInfos
@@ -884,6 +869,7 @@ public class ManagerDatabase {
 			insertInstalledApplication.close();
 			
 			db.setTransactionSuccessful();
+			serviceData.updateInstalledLists();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 			e.printStackTrace();
@@ -910,6 +896,7 @@ public class ManagerDatabase {
 			}
 			
 			db.setTransactionSuccessful();
+			serviceData.updateInstalledLists();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
@@ -934,6 +921,7 @@ public class ManagerDatabase {
 			}
 			
 			db.setTransactionSuccessful();
+			serviceData.updateInstalledLists();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
@@ -1028,6 +1016,44 @@ public class ManagerDatabase {
 	 */
 	private Cursor aptoideAtomicQuery(String sqlQuery){
 		return aptoideAtomicQuery(sqlQuery, null);
+	}
+	
+	
+	
+	/**
+	 * repoIsManaged, checks if repository referenced by this hashid is already managed
+	 * 
+	 * @return boolean
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public boolean repoIsManaged(int repoHashid){
+		String selectRepo = "SELECT count("+Constants.KEY_REPO_HASHID+")"
+							+" FROM "+Constants.TABLE_REPOSITORY
+							+" WHERE "+Constants.KEY_REPO_HASHID+"='"+repoHashid+"';";
+		
+		db.beginTransaction();
+		Cursor repoCursor = null;
+		try{
+			repoCursor = aptoideNonAtomicQuery(selectRepo);
+			db.setTransactionSuccessful();
+			if(db.inTransaction())
+			db.endTransaction();
+		}catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			
+		}
+		repoCursor.moveToFirst();
+		boolean repoisManaged = (repoCursor.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
+		repoCursor.close();
+		if(repoisManaged){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 	
@@ -1373,7 +1399,7 @@ public class ManagerDatabase {
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
 															 +" FROM "+Constants.TABLE_REPOSITORY
 															 +" GROUP BY "+Constants.KEY_REPO_HASHID+")"
-									+" ORDER BY A."+Constants.KEY_APPLICATION_TIMESTAMP
+									+" ORDER BY A."+Constants.KEY_APPLICATION_NAME
 									+" LIMIT ?"
 									+" OFFSET ?;";
 		String[] selectIconDownloadInfoArgs = new String[] {Integer.toString(range), Integer.toString(offset)};

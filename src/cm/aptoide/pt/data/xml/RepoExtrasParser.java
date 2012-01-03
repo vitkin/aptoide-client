@@ -90,6 +90,9 @@ public class RepoExtrasParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
+		
+		tag = tagMap.get(localName.trim());
+		
 		switch (tag) {
 			case apphashid:
 				appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
@@ -103,72 +106,70 @@ public class RepoExtrasParser extends DefaultHandler{
 			case screen:
 				String screenRemotePathTail = tagContentBuilder.toString();
 				screenInfo = new ViewScreenInfo(screenRemotePathTail, screenOrderNumber, appFullHashid);
+				screensInfo.add(screenInfo);
+				screenOrderNumber++;
+				break;
+				
+			case pkg:
+				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					parsedAppsNumber = 0;
+					extrasInsertStack.add(extras);
+
+					Log.d("Aptoide-RepoExtrasParser", "bucket full, inserting extras: "+extras.size());
+					try{
+						new Thread(){
+							public void run(){
+								this.setPriority(Thread.MAX_PRIORITY);
+								final ArrayList<ViewExtraInfo> extrasInfoInserting = extrasInsertStack.remove(Constants.FIRST_ELEMENT);
+								
+								managerXml.getManagerDatabase().insertExtras(extrasInfoInserting);
+							}
+						}.start();
+		
+					} catch(Exception e){
+						/** this should never happen */
+						//TODO handle exception
+						e.printStackTrace();
+					}
+					
+					extras = new ArrayList<ViewExtraInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+				}
+				
+				if(screensInfo.size() >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					screensInfoInsertStack.add(screensInfo);
+					
+					Log.d("Aptoide-RepoExtrasParser", "screens bucket full, inserting screens: "+screensInfo.size());
+					try{
+						new Thread(){
+							public void run(){
+								this.setPriority(Thread.MAX_PRIORITY);
+								final ArrayList<ViewScreenInfo> screensInfoInserting = screensInfoInsertStack.remove(Constants.FIRST_ELEMENT);
+								
+								managerXml.getManagerDatabase().insertScreensInfo(screensInfoInserting);
+							}
+						}.start();
+		
+					} catch(Exception e){
+						/** this should never happen */
+						//TODO handle exception
+						e.printStackTrace();
+					}
+					
+					extras = new ArrayList<ViewExtraInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+				}
+				
+				parsedAppsNumber++;
+				parseInfo.getNotification().incrementProgress(1);
+				
+				extras.add(extraInfo);
+				
+				screenOrderNumber = 1;
 				break;
 							
 			default:
 				break;
 		}
 		
-		if(localName.trim().equals(EnumXmlTagsExtras.screen.toString())){
-			screensInfo.add(screenInfo);
-			screenOrderNumber++;
-		}
-		
-		if(localName.trim().equals(EnumXmlTagsExtras.pkg.toString())){
-			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-				parsedAppsNumber = 0;
-				extrasInsertStack.add(extras);
-
-				Log.d("Aptoide-RepoExtrasParser", "bucket full, inserting extras: "+extras.size());
-				try{
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
-							final ArrayList<ViewExtraInfo> extrasInfoInserting = extrasInsertStack.remove(Constants.FIRST_ELEMENT);
-							
-							managerXml.getManagerDatabase().insertExtras(extrasInfoInserting);
-						}
-					}.start();
-	
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
-				}
-				
-				extras = new ArrayList<ViewExtraInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
-			}
-			
-			if(screensInfo.size() >= Constants.APPLICATIONS_IN_EACH_INSERT){
-				screensInfoInsertStack.add(screensInfo);
-				
-				Log.d("Aptoide-RepoExtrasParser", "screens bucket full, inserting screens: "+screensInfo.size());
-				try{
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
-							final ArrayList<ViewScreenInfo> screensInfoInserting = screensInfoInsertStack.remove(Constants.FIRST_ELEMENT);
-							
-							managerXml.getManagerDatabase().insertScreensInfo(screensInfoInserting);
-						}
-					}.start();
-	
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
-				}
-				
-				extras = new ArrayList<ViewExtraInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
-			}
-			
-			parsedAppsNumber++;
-			parseInfo.getNotification().incrementProgress(1);
-			
-			extras.add(extraInfo);
-			
-			screenOrderNumber = 1;
-		}
 	}
 
 	@Override
@@ -176,7 +177,7 @@ public class RepoExtrasParser extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 
 		tagContentBuilder = new StringBuilder();
-		tag = tagMap.get(localName.trim());
+		
 	}
 	
 	

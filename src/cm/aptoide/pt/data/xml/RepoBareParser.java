@@ -78,6 +78,8 @@ public class RepoBareParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
+		tag = tagMap.get(localName.trim());
+		
 		switch (tag) {
 			case apkid:
 				packageName = tagContentBuilder.toString();
@@ -101,6 +103,36 @@ public class RepoBareParser extends DefaultHandler{
 //			case minSdk:	//TODO filters
 //				application.setVersionName(new String(chars).substring(start, start + length));
 //				break;
+				
+			case pkg:
+				application.setRepoHashid(parseInfo.getRepository().getHashid());
+				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					parsedAppsNumber = 0;
+					applicationsInsertStack.add(applications);
+			
+					Log.d("Aptoide-RepoBareParser", "bucket full, inserting apps: "+applications.size());
+					try{
+						new Thread(){
+							public void run(){
+								this.setPriority(Thread.MAX_PRIORITY);
+								final ArrayList<ViewApplication> applicationsInserting = applicationsInsertStack.remove(Constants.FIRST_ELEMENT);
+								managerXml.getManagerDatabase().insertApplications(applicationsInserting);
+							}
+						}.start();
+			
+					} catch(Exception e){
+						/** this should never happen */
+						//TODO handle exception
+						e.printStackTrace();
+					}
+					
+					applications = new ArrayList<ViewApplication>(Constants.APPLICATIONS_IN_EACH_INSERT);
+				}
+				parsedAppsNumber++;
+				parseInfo.getNotification().incrementProgress(1);
+				
+				applications.add(application);
+				break;
 			
 				
 			case basepath:
@@ -120,45 +152,13 @@ public class RepoBareParser extends DefaultHandler{
 				parseInfo.getRepository().setDelta(tagContentBuilder.toString());
 				break;
 				
+			case repository:
+				managerXml.getManagerDatabase().insertRepository(parseInfo.getRepository());
+				break;
+				
 			default:
 				break;
-		}
-		
-		//TODO refactor to switch outer tags also
-		if(localName.trim().equals(EnumXmlTagsBare.pkg.toString())){
-			application.setRepoHashid(parseInfo.getRepository().getHashid());
-			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-				parsedAppsNumber = 0;
-				applicationsInsertStack.add(applications);
-		
-				Log.d("Aptoide-RepoBareParser", "bucket full, inserting apps: "+applications.size());
-				try{
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
-							final ArrayList<ViewApplication> applicationsInserting = applicationsInsertStack.remove(Constants.FIRST_ELEMENT);
-							
-							managerXml.getManagerDatabase().insertApplications(applicationsInserting);
-						}
-					}.start();
-		
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
-				}
-				
-				applications = new ArrayList<ViewApplication>(Constants.APPLICATIONS_IN_EACH_INSERT);
-			}
-			parsedAppsNumber++;
-			parseInfo.getNotification().incrementProgress(1);
-			
-			applications.add(application);
-		}else if(localName.trim().equals(EnumXmlTagsBare.repository.toString())){
-			managerXml.getManagerDatabase().insertRepository(parseInfo.getRepository());
-		}
-		
-		
+		}		
 	}
 
 	@Override
@@ -166,7 +166,7 @@ public class RepoBareParser extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 
 		tagContentBuilder = new StringBuilder();
-		tag = tagMap.get(localName.trim());
+		
 	}
 	
 	

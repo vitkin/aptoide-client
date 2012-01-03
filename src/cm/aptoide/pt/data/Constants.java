@@ -54,7 +54,7 @@ public class Constants {
 	public static final int DISPLAY_LISTS_CACHE_SIZE = DISPLAY_LISTS_PAGE_SIZE*(DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER+1);
 	
 	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
-	public static final int MAX_PARALLEL_DOWNLOADS = 3;
+	public static final int MAX_PARALLEL_DOWNLOADS = 1;
 	
 	public static final int NUMBER_OF_STARS = 5;
 	

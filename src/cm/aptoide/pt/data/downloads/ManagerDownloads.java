@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeoutException;
+import java.util.zip.GZIPInputStream;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -374,12 +375,16 @@ public class ManagerDownloads {
 	
 	private synchronized void notifyIconDownloadSlotAvailable(){
 
-		int maxDownloads = Math.min(waitingIcons.size(), Constants.MAX_PARALLEL_DOWNLOADS-downloads.size());
+		int maxDownloads = Math.min(waitingIcons.size(), Constants.MAX_PARALLEL_DOWNLOADS);//((Constants.MAX_PARALLEL_DOWNLOADS-downloads.size())<0?1:Constants.MAX_PARALLEL_DOWNLOADS-downloads.size()));
 		
 		for(int downloading = 0; downloading < maxDownloads; downloading++){
 			ViewDownload download = waitingIcons.remove(Constants.FIRST_ELEMENT);
 			downloads.put(download.getNotification().getNotificationHashid(), download);
-			downloadInNewThread(download, true);
+			downloadInNewThread(download, true, Thread.MIN_PRIORITY);
+		}
+		
+		if(waitingIcons.size()%(Constants.DISPLAY_LISTS_CACHE_SIZE/3) == 0){
+			serviceData.refreshAvailableDisplay();
 		}
 		
 		if(waitingIcons.isEmpty()){
@@ -389,11 +394,11 @@ public class ManagerDownloads {
 	}
 	
 	
-	private void downloadInNewThread(final ViewDownload download, final boolean overwriteCache){
+	private void downloadInNewThread(final ViewDownload download, final boolean overwriteCache, final int threadPriority){
 
 		new Thread(){
 			public void run(){
-				this.setPriority(Thread.MAX_PRIORITY);
+				this.setPriority(threadPriority);
 				
 				download(download, overwriteCache);
 			}
@@ -426,7 +431,7 @@ public class ManagerDownloads {
 //TODO refactor this user-agent string
 //				mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
 
-			if(download.isLoginRequired()){
+			if(download.isLoginRequired()){		//TODO refactor using username/password args when using webservices (only exception left is when getting hard-disk files)
 				URL url = new URL(remotePath);
 				httpClient.getCredentialsProvider().setCredentials(
 						new AuthScope(url.getHost(), url.getPort()),
@@ -456,7 +461,20 @@ public class ManagerDownloads {
 					notification.setProgressCompletionTarget(targetBytes);
 				}
 
-				InputStream inputStream = httpResponse.getEntity().getContent();
+				InputStream inputStream= null;
+				
+				if((httpResponse.getEntity().getContentEncoding() != null) && (httpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
+
+					Log.d("Aptoide-ManagerDownloads","with gzip");
+					inputStream = new GZIPInputStream(httpResponse.getEntity().getContent());
+
+				}else{
+
+					Log.d("Aptoide-ManagerDownloads","No gzip");
+					inputStream = httpResponse.getEntity().getContent();
+
+				}
+				
 				byte data[] = new byte[8096];
 				int bytesRead;
 				bytesRead = inputStream.read(data, 0, 8096);
@@ -482,7 +500,7 @@ public class ManagerDownloads {
 					notifyIconDownloadSlotAvailable();
 				}
 			}
-		}catch (Exception e) { 
+		}catch (Exception e) { //TODO  retry on java.net.SocketException: The operation timed out
 			//TODO handle exception
 			e.printStackTrace();
 		}
