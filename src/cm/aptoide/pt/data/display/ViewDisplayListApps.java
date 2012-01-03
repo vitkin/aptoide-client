@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 import cm.aptoide.pt.data.Constants;
 
  /**
@@ -40,6 +41,7 @@ public class ViewDisplayListApps implements Parcelable{
 
 	private ArrayList<Map<String, Object>> appsList;
 	private int displayOffset;
+	private int maximumDisplayOffsetReached;
 	private int displayRange;
 
 	
@@ -58,7 +60,7 @@ public class ViewDisplayListApps implements Parcelable{
 	 */
 	public ViewDisplayListApps(int size) {
 		this.appsList = new ArrayList<Map<String, Object>>(size);
-		this.displayOffset = 0;
+		this.maximumDisplayOffsetReached = this.displayOffset = 0;
 		this.displayRange = Constants.DISPLAY_LISTS_PAGE_SIZE;
 	}
 	
@@ -77,33 +79,48 @@ public class ViewDisplayListApps implements Parcelable{
 	
 	public EnumOffsetChange increaseDisplayRange(int increase){
 		displayRange+= increase;
-		if(displayRange>displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER){
+		Log.d("Aptoide-ViewDisplayListApps", "increaseDisplayRange current: "+displayRange +" increase: "+increase+" boundary: "+displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER);
+		if(displayRange>(displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER)){
 			displayOffset+=Constants.DISPLAY_LISTS_PAGE_SIZE;
-			return EnumOffsetChange.increase;
+			if(displayOffset > maximumDisplayOffsetReached){
+				maximumDisplayOffsetReached = displayOffset;
+				return EnumOffsetChange.increase;
+			}
+			Log.d("Aptoide-ViewDisplayListApps", "increaseDisplayOffset now: "+displayOffset);
+			return EnumOffsetChange.no_change;
 		}else{
+			Log.d("Aptoide-ViewDisplayListApps", "increaseDisplayOffset no change: "+displayOffset);
 			return EnumOffsetChange.no_change;
 		}
 	}
 	
 	public EnumOffsetChange decreaseDisplayRange(int decrease){
-		if(displayRange<=Constants.DISPLAY_LISTS_PAGE_SIZE){
-			return EnumOffsetChange.no_change;
-		}
 		displayRange-= decrease;
-		if(displayRange<displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE){
+		Log.d("Aptoide-ViewDisplayListApps", "decreaseDisplayRange current: "+displayRange +" decrease: "+ decrease+" boundary: "+displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE);
+		if(displayRange<(displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE) && displayRange>Constants.DISPLAY_LISTS_PAGE_SIZE){
 			displayOffset-=Constants.DISPLAY_LISTS_PAGE_SIZE;
+			Log.d("Aptoide-ViewDisplayListApps", "decreaseDisplayOffset now: "+displayOffset);
 			return EnumOffsetChange.decrease;
 		}else{
+			Log.d("Aptoide-ViewDisplayListApps", "decreaseDisplayOffset no change: "+displayOffset);
 			return EnumOffsetChange.no_change;
 		}
 	}
 	
-	public int getCacheOffset(){
+	public int getDisplayOffset(){
 		return displayOffset;
 	}
 	
-	public int getCacheRange(){
+	public int getDisplayRange(){
 		return displayOffset+Constants.DISPLAY_LISTS_CACHE_SIZE;
+	}
+	
+	public int getCacheOffset(){
+		return Constants.DISPLAY_LISTS_CACHE_SIZE+displayOffset;
+	}
+	
+	public int getCacheRange(){
+		return Constants.DISPLAY_LISTS_CACHE_SIZE+displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE;
 	}
 	
 	
@@ -133,7 +150,7 @@ public class ViewDisplayListApps implements Parcelable{
 	 */
 	public void reuse(int size) {
 		this.appsList = new ArrayList<Map<String, Object>>(size);
-		this.displayOffset = 0;
+		this.maximumDisplayOffsetReached = this.displayOffset = 0;
 		this.displayRange = Constants.DISPLAY_LISTS_PAGE_SIZE;
 	}
 

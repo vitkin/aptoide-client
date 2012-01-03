@@ -140,6 +140,10 @@ public class ManagerXml{
 		repoParse(repository, cache, EnumInfoType.BARE);
 	}
 	
+	public void addRepoIconsInfo(ViewRepository repository){
+		serviceData.addRepoIconsInfo(repository);
+	}
+	
 	public void parsingRepoBareFinished(ViewRepository repository){
 		serviceData.parsingRepoBareFinished(repository);
 	}

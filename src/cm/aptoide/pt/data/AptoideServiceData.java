@@ -24,6 +24,7 @@ import java.util.HashMap;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
@@ -128,7 +129,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public void callAddRepo(ViewRepository repository) throws RemoteException {
-			addRepoBare(repository);			
+//			if(repoAlreadyManaged(repository.getHashid())){
+//				//TODO check for delta
+//				updateAvailableLists();
+//			}else{
+				addRepoBare(repository);			
+//			}
 		}
 
 		@Override
@@ -436,7 +442,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void updateInstalledLists(){
 		try {
-			aptoideClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable();
+			aptoideClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable(); 
+//			Looper.prepare();
+//			Toast.makeText(getApplicationContext(), "installed list now available in next -> tab", Toast.LENGTH_LONG).show();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -462,11 +470,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 	}
 	
+	public boolean repoAlreadyManaged(int repoHashid){
+		return managerDatabase.repoIsManaged(repoHashid);
+	}
+	
 	
 	
 	public void addRepoBare(final ViewRepository originalRepository){
 		try{
-
+			
 			new Thread(){
 				public void run(){
 					ViewRepository repository = originalRepository;
@@ -478,13 +490,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 						//TODO raise exception
 					}
 					ViewCache cache = managerDownloads.startRepoBareDownload(repository);
-					repository.setDelta(cache.getMd5sum());
+//					repository.setDelta(cache.getMd5sum());
+//					Looper.prepare();
+//					Toast.makeText(getApplicationContext(), "finisehd downloading bare list", Toast.LENGTH_LONG).show();
 					
 					managerXml.repoBareParse(repository, cache);
 					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
 			}.start();
-
 
 		} catch(Exception e){
 			/** this should never happen */
@@ -503,7 +516,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 			new Thread(){
 				public void run(){
-					this.setPriority(Thread.MAX_PRIORITY);
+					this.setPriority(Thread.NORM_PRIORITY);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}
@@ -526,8 +539,47 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
-		addRepoStats(repository);
 		getRepoIcons(new ViewDownloadStatus(repository, Constants.FIRST_ELEMENT, EnumDownloadType.ICON));
+		addRepoStats(repository);
+	}
+	
+	public void getRepoIcons(final ViewDownloadStatus downloadStatus){
+		if(downloadStatus.getRepository().getSize() < downloadStatus.getOffset()){
+//			refreshAvailableDisplay();
+			return;
+		}else{
+//			if(downloadStatus.getOffset() >  Constants.FIRST_ELEMENT){
+//				refreshAvailableDisplay();
+//			}
+			
+			try{
+
+				new Thread(){
+					public void run(){
+						this.setPriority(Thread.MIN_PRIORITY);
+						if(!managerDownloads.isConnectionAvailable()){
+							AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+						}
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							//TODO raise exception
+						}
+
+						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), Constants.DISPLAY_LISTS_CACHE_SIZE));
+//						if(downloadStatus.getOffset() ==  Constants.FIRST_ELEMENT){//+Constants.DISPLAY_LISTS_CACHE_SIZE){
+//							addRepoStats(downloadStatus.getRepository());
+//						}
+						//TODO find some way to track global parsing completion status, probably in managerXml
+					}
+				}.start();
+
+
+			} catch(Exception e){
+				/** this should never happen */
+				//TODO handle exception
+				e.printStackTrace();
+			}
+			
+		}
 	}
 	
 	public void addRepoStats(final ViewRepository repository){
@@ -535,7 +587,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 			new Thread(){
 				public void run(){
-					this.setPriority(Thread.MAX_PRIORITY);
+					this.setPriority(Thread.MIN_PRIORITY);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}
@@ -559,42 +611,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void parsingRepoStatsFinished(ViewRepository repository){
 		updateAvailableLists();
-	}
-	
-	public void getRepoIcons(final ViewDownloadStatus downloadStatus){
-		if(downloadStatus.getRepository().getSize() < downloadStatus.getOffset()){
-			refreshAvailableDisplay();
-			return;
-		}else{
-			if(downloadStatus.getOffset() > Constants.FIRST_ELEMENT){
-				refreshAvailableDisplay();
-			}
-
-			try{
-
-				new Thread(){
-					public void run(){
-						this.setPriority(Thread.MAX_PRIORITY);
-						if(!managerDownloads.isConnectionAvailable()){
-							AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-						}
-						if(!getManagerCache().isFreeSpaceInSdcard()){
-							//TODO raise exception
-						}
-
-						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), Constants.DISPLAY_LISTS_CACHE_SIZE));
-						//TODO find some way to track global parsing completion status, probably in managerXml
-					}
-				}.start();
-
-
-			} catch(Exception e){
-				/** this should never happen */
-				//TODO handle exception
-				e.printStackTrace();
-			}
-			
-		}
+//		Toast.makeText(AptoideServiceData.this, "app stats available", Toast.LENGTH_LONG).show();
 	}
 	
 //	public void getRepoIconsExtraordinarily(final ViewRepository repository, final int offset){
@@ -762,36 +779,36 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void updateAppInfo(int appHashid, EnumServiceDataCallback callBack){
-//		try {
-//			switch (callBack) {
-//				case REFRESH_ICON:
-//					appInfoClients.get(appHashid).refreshIcon();
-//					break;
-//					
-//				case UPDATE_APP_DOWNLOAD_INFO:
-//					appInfoClients.get(appHashid).newAppDownloadInfoAvailable();
-//					break;
-//					
-//				case UPDATE_APP_STATS:
-//					appInfoClients.get(appHashid).newStatsInfoAvailable();
-//					break;
-//					
-//				case UPDATE_APP_EXTRAS:
-//					appInfoClients.get(appHashid).newExtrasAvailable();
-//					break;
-//					
-//				case REFRESH_SCREENS:
-//					appInfoClients.get(appHashid).refreshScreens();
-//					break;
-//					
-//				default:
-//					break;
-//			}
-//			
-//		} catch (RemoteException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			switch (callBack) {
+				case REFRESH_ICON:
+					appInfoClients.get(appHashid).refreshIcon();
+					break;
+					
+				case UPDATE_APP_DOWNLOAD_INFO:
+					appInfoClients.get(appHashid).newAppDownloadInfoAvailable();
+					break;
+					
+				case UPDATE_APP_STATS:
+					appInfoClients.get(appHashid).newStatsInfoAvailable();
+					break;
+					
+				case UPDATE_APP_EXTRAS:
+					appInfoClients.get(appHashid).newExtrasAvailable();
+					break;
+					
+				case REFRESH_SCREENS:
+					appInfoClients.get(appHashid).refreshScreens();
+					break;
+					
+				default:
+					break;
+			}
+			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

@@ -86,6 +86,9 @@ public class RepoStatsParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
+		
+		tag = tagMap.get(localName.trim());
+		
 		switch (tag) {
 			case apphashid:
 				appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
@@ -104,39 +107,40 @@ public class RepoStatsParser extends DefaultHandler{
 				stats.setLikesDislikes(likes, Integer.parseInt(tagContentBuilder.toString()));
 				break;
 				
+			case pkg:
+				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					parsedAppsNumber = 0;
+					statsListInsertStack.add(statsList);
+
+					Log.d("Aptoide-RepoStatsParser", "bucket full, inserting stats: "+statsList.size());
+					try{
+						new Thread(){
+							public void run(){
+								this.setPriority(Thread.MAX_PRIORITY);
+								final ArrayList<ViewStatsInfo> statsInserting = statsListInsertStack.remove(Constants.FIRST_ELEMENT);
+								
+								managerXml.getManagerDatabase().insertOrReplaceStatsInfos(statsInserting);
+							}
+						}.start();
+		
+					} catch(Exception e){
+						/** this should never happen */
+						//TODO handle exception
+						e.printStackTrace();
+					}
+					
+					statsList = new ArrayList<ViewStatsInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+				}
+				parsedAppsNumber++;
+				parseInfo.getNotification().incrementProgress(1);
+				
+				statsList.add(stats);
+				break;
+				
 			default:
 				break;
 		}
-		
-		if(localName.trim().equals(EnumXmlTagsStats.pkg.toString())){
-			if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-				parsedAppsNumber = 0;
-				statsListInsertStack.add(statsList);
 
-				Log.d("Aptoide-RepoStatsParser", "bucket full, inserting stats: "+statsList.size());
-				try{
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
-							final ArrayList<ViewStatsInfo> statsInserting = statsListInsertStack.remove(Constants.FIRST_ELEMENT);
-							
-							managerXml.getManagerDatabase().insertStats(statsInserting);
-						}
-					}.start();
-	
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
-				}
-				
-				statsList = new ArrayList<ViewStatsInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
-			}
-			parsedAppsNumber++;
-			parseInfo.getNotification().incrementProgress(1);
-			
-			statsList.add(stats);
-		}
 	}
 
 	@Override
@@ -144,7 +148,6 @@ public class RepoStatsParser extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 
 		tagContentBuilder = new StringBuilder();
-		tag = tagMap.get(localName.trim());
 	}
 	
 	
@@ -167,7 +170,7 @@ public class RepoStatsParser extends DefaultHandler{
 
 		Log.d("Aptoide-RepoStatsParser", "buckets: "+statsListInsertStack.size());
 		while(!statsListInsertStack.isEmpty()){
-			managerXml.getManagerDatabase().insertStats(statsListInsertStack.remove(Constants.FIRST_ELEMENT));			
+			managerXml.getManagerDatabase().insertOrReplaceStatsInfos(statsListInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}
 		
 		if(appHashid != Constants.EMPTY_INT){
