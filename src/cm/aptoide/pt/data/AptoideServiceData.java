@@ -229,8 +229,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			managerPreferences = new ManagerPreferences(this);
 			managerSystemSync = new ManagerSystemSync(this);
 			managerDatabase = new ManagerDatabase(this);
-			managerDownloads = new ManagerDownloads(this);
 			managerNotifications = new ManagerNotifications(this);
+			managerDownloads = new ManagerDownloads(this);
 			managerXml = new ManagerXml(this);
 			
 			

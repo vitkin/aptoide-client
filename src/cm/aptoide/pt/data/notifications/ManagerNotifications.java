@@ -75,7 +75,16 @@ public class ManagerNotifications {
 
 		notificationManager = (NotificationManager)serviceData.getSystemService(Context.NOTIFICATION_SERVICE);
 		
-		/************ Compatibility with API level 4, ignore following these lines *************/
+		
+		PowerManager powerManager = (PowerManager) serviceData.getSystemService(Context.POWER_SERVICE);
+        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
+        
+		notificationPool = new ArrayList<ViewNotification>(15);
+		gettingApps = new ArrayList<ViewNotification>(5);
+		gettingUpdates = new ArrayList<ViewNotification>(5);
+		repoAppUpdates = new ArrayList<ViewNotification>(5);
+		
+		/************ Compatibility with API level 4, ignore following lines (must be at bottom of constructor) *************/
 		try {
 	        startForeground = serviceData.getClass().getMethod("startForeground", startForegroundSignature);
 	        stopForeground = serviceData.getClass().getMethod("stopForeground", stopForegroundSignature);
@@ -89,17 +98,11 @@ public class ManagerNotifications {
 	    } catch (NoSuchMethodException e) {
 	        throw new IllegalStateException("OS doesn't have Service.startForeground OR Service.setForeground!");
 	    }
-		/***************************************************************************************/
-		
+	
 		startForegroundCompat(R.string.aptoide_started, getNotification());
 		
-		PowerManager powerManager = (PowerManager) serviceData.getSystemService(Context.POWER_SERVICE);
-        keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
-        
-		notificationPool = new ArrayList<ViewNotification>(15);
-		gettingApps = new ArrayList<ViewNotification>(5);
-		gettingUpdates = new ArrayList<ViewNotification>(5);
-		repoAppUpdates = new ArrayList<ViewNotification>(5);
+
+		/********************************************************************************************************************/
 	}
 		
 	public void startNotification(ViewNotification notification){
