@@ -123,8 +123,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 		
 		@Override
-		public ViewDisplayListApps callGetInstalledPackages(int offset, int range) throws RemoteException {
-			return getInstalledPackages(offset, range);
+		public ViewDisplayListApps callGetInstalledPackages() throws RemoteException {
+			return getInstalledPackages();
 		}
 
 		@Override
@@ -143,8 +143,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public ViewDisplayListApps callGetUpdatablePackages(int offset, int range) throws RemoteException {
-			return getUpdatablePackages(offset, range);
+		public ViewDisplayListApps callGetUpdatablePackages() throws RemoteException {
+			return getUpdatablePackages();
 		}
 
 		@Override
@@ -818,9 +818,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	
-	public ViewDisplayListApps getInstalledPackages(int offset, int range){
+	public ViewDisplayListApps getInstalledPackages(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Installed Packages");
-		return managerDatabase.getInstalledAppsDisplayInfo(offset, range);
+		return managerDatabase.getInstalledAppsDisplayInfo();
 	}
 	
 	public ViewDisplayListApps getAvailablePackages(int offset, int range){
@@ -828,9 +828,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerDatabase.getAvailableAppsDisplayInfo(offset, range);
 	}
 	
-	public ViewDisplayListApps getUpdatablePackages(int offset, int range){
+	public ViewDisplayListApps getUpdatablePackages(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Updatable Packages");
-		return managerDatabase.getUpdatableAppsDisplayInfo(offset, range);
+		return managerDatabase.getUpdatableAppsDisplayInfo();
 	}
 	
 	

@@ -40,9 +40,9 @@ interface AIDLAptoideServiceData {
 	void callAddRepo(in ViewRepository repository);
 	void callRegisterInstalledPackagesObserver(in AIDLAptoideInterface installedPackagesObserver);
 	void callRegisterAvailablePackagesObserver(in AIDLAptoideInterface availablePackagesObserver);
-	ViewDisplayListApps callGetInstalledPackages(in int offset, in int range);
+	ViewDisplayListApps callGetInstalledPackages();
 	ViewDisplayListApps callGetAvailablePackages(in int offset, in int range);
-	ViewDisplayListApps callGetUpdatablePackages(in int offset, in int range);
+	ViewDisplayListApps callGetUpdatablePackages();
 	
 	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
 	void CallFillAppInfo(in int appHashid);

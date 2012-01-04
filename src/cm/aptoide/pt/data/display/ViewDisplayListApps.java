@@ -80,8 +80,8 @@ public class ViewDisplayListApps implements Parcelable{
 	public EnumOffsetChange increaseDisplayRange(int increase){
 		displayRange+= increase;
 		Log.d("Aptoide-ViewDisplayListApps", "increaseDisplayRange current: "+displayRange +" increase: "+increase+" boundary: "+displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER);
-		if(displayRange>(displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER)){
-			displayOffset+=Constants.DISPLAY_LISTS_PAGE_SIZE;
+		if(displayRange>(displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE)){
+			displayOffset+=Constants.DISPLAY_LISTS_CACHE_SIZE;
 			if(displayOffset > maximumDisplayOffsetReached){
 				maximumDisplayOffsetReached = displayOffset;
 				return EnumOffsetChange.increase;
@@ -97,7 +97,7 @@ public class ViewDisplayListApps implements Parcelable{
 	public EnumOffsetChange decreaseDisplayRange(int decrease){
 		displayRange-= decrease;
 		Log.d("Aptoide-ViewDisplayListApps", "decreaseDisplayRange current: "+displayRange +" decrease: "+ decrease+" boundary: "+displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE);
-		if(displayRange<(displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE) && displayRange>Constants.DISPLAY_LISTS_PAGE_SIZE){
+		if(displayRange<(displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER) && displayRange>Constants.DISPLAY_LISTS_PAGE_SIZE*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER){
 			displayOffset-=Constants.DISPLAY_LISTS_PAGE_SIZE;
 			Log.d("Aptoide-ViewDisplayListApps", "decreaseDisplayOffset now: "+displayOffset);
 			return EnumOffsetChange.decrease;
@@ -120,7 +120,11 @@ public class ViewDisplayListApps implements Parcelable{
 	}
 	
 	public int getCacheRange(){
-		return Constants.DISPLAY_LISTS_CACHE_SIZE+displayOffset+Constants.DISPLAY_LISTS_PAGE_SIZE;
+		return Constants.DISPLAY_LISTS_CACHE_SIZE+displayOffset+Constants.DISPLAY_LISTS_CACHE_SIZE;
+	}
+	
+	private void setList(ArrayList<Map<String, Object>> list){
+		this.appsList = list;
 	}
 	
 	
@@ -175,6 +179,14 @@ public class ViewDisplayListApps implements Parcelable{
 			}
 		}
 		return listApps.toString();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ViewDisplayListApps clone() {
+		ViewDisplayListApps clone = new ViewDisplayListApps(appsList.size());
+		clone.setList((ArrayList<Map<String, Object>>) appsList.clone());
+		return clone;
 	}
 	
 	
