@@ -1131,17 +1131,14 @@ public class ManagerDatabase {
 	
 	/**
 	 * getInstalledApps, retrieves a list of all installed apps
-	 * 
-	 * @param int offset, number of row to start from
-	 * @param int range, number of rows to list
-	 * 
+	 *  
 	 * @return ViewDisplayListApps list of installed apps
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getInstalledAppsDisplayInfo(int offset, int range){
+	public ViewDisplayListApps getInstalledAppsDisplayInfo(){
 		
 		final int APP_NAME = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
@@ -1170,14 +1167,11 @@ public class ManagerDatabase {
 																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME
 															 +" FROM "+Constants.TABLE_APPLICATION
 															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") D"
-									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME
-									+" LIMIT ?"
-									+" OFFSET ?;";
-		String[] selectInstalledAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME+";";
 		
 		db.beginTransaction();
 		try{
-			Cursor appsCursor = aptoideNonAtomicQuery(selectInstalledApps, selectInstalledAppsArgs);
+			Cursor appsCursor = aptoideNonAtomicQuery(selectInstalledApps);
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -1301,7 +1295,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getUpdatableAppsDisplayInfo(int offset, int range){
+	public ViewDisplayListApps getUpdatableAppsDisplayInfo(){
 		final int APP_NAME = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
 		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
@@ -1327,14 +1321,11 @@ public class ManagerDatabase {
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
 															 +" FROM "+Constants.TABLE_STATS_INFO
 															 +" GROUP BY "+Constants.KEY_APPLICATION_FULL_HASHID+") S"
-									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME
-									+" LIMIT ?"
-									+" OFFSET ?;";
-		String[] selectUpdatableAppsArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
+									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME+";";
 		
 		db.beginTransaction();
 		try{
-			Cursor appsCursor = aptoideNonAtomicQuery(selectUpdatableApps, selectUpdatableAppsArgs);
+			Cursor appsCursor = aptoideNonAtomicQuery(selectUpdatableApps);
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
