@@ -751,16 +751,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //									e.printStackTrace();
 //								}
 //							}
-							Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" diff: "+this.differential.get()+"     "+ (this.displayOffset.get()+this.differential.get())+" % "+(Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER+(this.displayOffset.get() < Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER?0:Constants.DISPLAY_LISTS_CACHE_SIZE))+" = "+
-									( this.displayOffset.get()+this.differential.get() 
-										% (Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER+(this.displayOffset.get() < Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER?0:Constants.DISPLAY_LISTS_CACHE_SIZE)) )
-									+" < "+this.visibleItemCount.get()*2 );
-							if( (this.displayOffset.addAndGet(this.differential.get()) >= Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER 
-										&& ( this.displayOffset.get() % Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER ) < this.visibleItemCount.get()*2
-										&& this.scrollRegionOrigin.getAndIncrement() <  ( this.displayOffset.get() % Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER  )) 
-									|| (this.displayOffset.get() >= Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE
-										&& ( this.displayOffset.get() % (Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE) ) < this.visibleItemCount.get()*2
-										&& this.scrollRegionOrigin.get() <  ( this.displayOffset.get() % Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE )) ){
+							int currentDisplayOffset = this.displayOffset.addAndGet(this.differential.get());
+							int previousScrollRegion = this.scrollRegionOrigin.getAndIncrement();
+							Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+currentDisplayOffset+" diff: "+this.differential.get());
+							
+							if( (currentDisplayOffset >= Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER 
+										&& currentDisplayOffset < Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + this.visibleItemCount.get()*2
+										&& previousScrollRegion <  ( currentDisplayOffset / Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER  )) 
+									|| (currentDisplayOffset >= Constants.DISPLAY_LISTS_CACHE_SIZE + Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER
+										&& ( currentDisplayOffset % (Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE) ) < this.visibleItemCount.get()*2
+										&& previousScrollRegion <  ( currentDisplayOffset / Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE )) ){
 								
 								availableAppsManager.request(EnumAvailableRequestType.increase);
 								Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
@@ -775,8 +775,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					this.initialFirstVisibleItem.set(firstVisibleItem);
 					Log.d("Aptoide","New Scroll up page");
 					switch (currentAppsList) {
-						case Available:
-//							availableApps.decreaseDisplayRange(this.differential.get());
+						case Available:														/********************* HERE **********************************/
+//							availableApps.decreaseDisplayRange(this.differential.get());	//TODO same improvements here and onscrollstatechanged has above
 
 							Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" diff: "+this.differential.get());
 							if( (this.displayOffset.addAndGet(this.differential.get()) >= (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER-this.visibleItemCount.get()*2)
