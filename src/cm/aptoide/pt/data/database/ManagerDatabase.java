@@ -1023,6 +1023,8 @@ public class ManagerDatabase {
 	/**
 	 * repoIsManaged, checks if repository referenced by this hashid is already managed
 	 * 
+	 * @param ViewRepository repository
+	 * 
 	 * @return boolean
 	 * 
 	 * @author dsilveira
@@ -1030,30 +1032,32 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public boolean repoIsManaged(int repoHashid){
-		String selectRepo = "SELECT count("+Constants.KEY_REPO_HASHID+")"
+		
+		String selectRepo = "SELECT count(*)"
 							+" FROM "+Constants.TABLE_REPOSITORY
 							+" WHERE "+Constants.KEY_REPO_HASHID+"='"+repoHashid+"';";
+		
+		boolean repoisManaged = false;
 		
 		db.beginTransaction();
 		Cursor repoCursor = null;
 		try{
 			repoCursor = aptoideNonAtomicQuery(selectRepo);
 			db.setTransactionSuccessful();
-			if(db.inTransaction())
 			db.endTransaction();
+			
+			repoCursor.moveToFirst();
+			repoisManaged = (repoCursor.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
+			repoCursor.close();
+			return repoisManaged;
 		}catch (Exception e) {
+			db.endTransaction();
 			// TODO: handle exception
 			e.printStackTrace();
+			return false;
 			
 		}
-		repoCursor.moveToFirst();
-		boolean repoisManaged = (repoCursor.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
-		repoCursor.close();
-		if(repoisManaged){
-			return false;
-		}else{
-			return true;
-		}
+		
 	}
 	
 	
