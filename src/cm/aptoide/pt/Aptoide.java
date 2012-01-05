@@ -24,11 +24,7 @@ package cm.aptoide.pt;
 
 
 import java.io.File;
-import java.util.Collection;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Queue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -50,27 +46,26 @@ import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.SimpleAdapter.ViewBinder;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.EnumServiceDataCallback;
-import cm.aptoide.pt.data.display.EnumOffsetChange;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
@@ -676,6 +671,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	private static final int SWIPE_MIN_DISTANCE = 80;
     	private static final int SWIPE_MAX_OFF_PATH = 250;
     	private static final int SWIPE_THRESHOLD_VELOCITY = 150;
+    	
+    	private ExecutorService scrollBlocker = Executors.newSingleThreadExecutor();
 
 		@Override
     	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -705,20 +702,22 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		        		currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
 	        		}
 	    		}
-	    		new Thread(){
-	    			public void run(){
-	    				swypeDelayHandler.postDelayed(new Runnable() {
-	    	                public void run() {
-	    	                	swyping.set(false);
-	    	                }
-	    	            }, 500);
-	    			}
-	    		}.start();
-	    		
+	    		scrollBlocker.execute(new Swyping());
 				
 	    		return super.onFling(e1, e2, velocityX, velocityY);
     		}
     	}
+		
+		class Swyping implements Runnable{
+			@Override
+			public void run() {
+				swypeDelayHandler.postDelayed(new Runnable() {
+	                public void run() {
+	                	swyping.set(false);
+	                }
+	            }, 500);
+			}
+		}
 		
     }
     
@@ -731,6 +730,34 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	AtomicInteger displayOffset = new AtomicInteger(0);
     	AtomicInteger scrollRegionOrigin = new AtomicInteger(0);
     	
+    	private void detectAvailableAppsCacheIncrease(int triggerMargin, int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
+    		Log.d("Aptoide","Scroll "+currentList+" discerning increase, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" triggerMargin:  "+triggerMargin);
+			
+			if( previousScrollRegion <  (( currentDisplayOffset / Constants.DISPLAY_LISTS_CACHE_SIZE) + 1)	
+				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) < (triggerMargin + Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER)					
+				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) > Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER ){
+				
+				this.scrollRegionOrigin.incrementAndGet();
+				availableAppsManager.request(EnumAvailableRequestType.increase);
+				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
+				
+			}
+    	}
+    	
+    	private void detectAvailableAppsCacheDecrease(int triggerMargin, int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
+    		Log.d("Aptoide","Scroll "+currentList+" discerning decrease, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" triggerMargin:  "+triggerMargin);
+			
+			if( previousScrollRegion >  (( currentDisplayOffset / Constants.DISPLAY_LISTS_CACHE_SIZE) + 1)
+				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) > (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER - triggerMargin)
+				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) < Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER ){
+				
+				this.scrollRegionOrigin.decrementAndGet();
+				availableAppsManager.request(EnumAvailableRequestType.decrease);
+				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
+				
+			}
+    	}
+    	
 		@Override
 		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 			if(!swyping.get()){
@@ -738,6 +765,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				this.visibleItemCount.set(visibleItemCount);
 //				Log.d("Aptoide","Scroll currentList: "+currentAppsList+" initialfirstVisibleItem: "+initialFirstVisibleItem+" firstVisibleItem: "+firstVisibleItem);
 				this.differential.set(Math.abs(firstVisibleItem-this.initialFirstVisibleItem.get()));
+				
 				if(this.initialFirstVisibleItem.get()+visibleItemCount < firstVisibleItem){
 					this.initialFirstVisibleItem.set(firstVisibleItem);
 					Log.d("Aptoide","New Scroll down page");
@@ -751,21 +779,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //									e.printStackTrace();
 //								}
 //							}
+
+							int triggerMargin = this.visibleItemCount.get()*2;
 							int currentDisplayOffset = this.displayOffset.addAndGet(this.differential.get());
-							int previousScrollRegion = this.scrollRegionOrigin.getAndIncrement();
-							Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+currentDisplayOffset+" diff: "+this.differential.get());
-							
-							if( (currentDisplayOffset >= Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER 
-										&& currentDisplayOffset < Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + this.visibleItemCount.get()*2
-										&& previousScrollRegion <  ( currentDisplayOffset / Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER  )) 
-									|| (currentDisplayOffset >= Constants.DISPLAY_LISTS_CACHE_SIZE + Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER
-										&& ( currentDisplayOffset % (Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE) ) < this.visibleItemCount.get()*2
-										&& previousScrollRegion <  ( currentDisplayOffset / Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE )) ){
-								
-								availableAppsManager.request(EnumAvailableRequestType.increase);
-								Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
-								
-							}
+							int previousScrollRegion = this.scrollRegionOrigin.get();
+							detectAvailableAppsCacheIncrease(triggerMargin, currentDisplayOffset, previousScrollRegion, currentAppsList);
 							break;
 		
 						default:
@@ -775,24 +793,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					this.initialFirstVisibleItem.set(firstVisibleItem);
 					Log.d("Aptoide","New Scroll up page");
 					switch (currentAppsList) {
-						case Available:														/********************* HERE **********************************/
-//							availableApps.decreaseDisplayRange(this.differential.get());	//TODO same improvements here and onscrollstatechanged has above
+						case Available:														
+//							availableApps.decreaseDisplayRange(this.differential.get());
 
-							Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" diff: "+this.differential.get());
-							if( (this.displayOffset.addAndGet(this.differential.get()) >= (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER-this.visibleItemCount.get()*2)
-									&& ( this.displayOffset.get() % Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER + this.visibleItemCount.get()*2) < this.visibleItemCount.get()*2
-									&& this.scrollRegionOrigin.getAndDecrement() <  ( this.displayOffset.get() % (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER + this.visibleItemCount.get()*2)))
-								||	(this.displayOffset.get() 
-										>= (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE - (this.visibleItemCount.get()*2))
-									&& ( this.displayOffset.get() % (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE + this.visibleItemCount.get()*2)
-										< this.visibleItemCount.get()*2) 
-									&& this.scrollRegionOrigin.get() 
-										<  ( this.displayOffset.get() % (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER + Constants.DISPLAY_LISTS_CACHE_SIZE + this.visibleItemCount.get()*2))) ){
-								
-								availableAppsManager.request(EnumAvailableRequestType.decrease);
-								Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
-								
-							}
+							int triggerMargin = this.visibleItemCount.get()*2;
+							int currentDisplayOffset = this.displayOffset.addAndGet(-this.differential.get());
+							int previousScrollRegion = this.scrollRegionOrigin.get();
+							detectAvailableAppsCacheDecrease(triggerMargin, currentDisplayOffset, previousScrollRegion, currentAppsList);
 							break;
 		
 						default:
@@ -807,6 +814,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			if( !swyping.get() && scrollState == SCROLL_STATE_IDLE){
 //				Log.d("Aptoide","Scroll currentList: "+currentAppsList+" initialFirstVisibleItem: "+initialFirstVisibleItem+" firstVisibleItem: "+firstVisibleItem);
 				this.differential.set(Math.abs(firstVisibleItem.get()-this.initialFirstVisibleItem.get()));
+				
+				
 				if((firstVisibleItem.get()-initialFirstVisibleItem.get())>0){
 					switch (currentAppsList) {
 						case Available:
@@ -818,16 +827,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //									e.printStackTrace();
 //								}
 //							}
-							Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" diff: "+this.differential.get());
-							if( ( this.displayOffset.addAndGet(this.differential.get()) 
-									% (Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER+(this.displayOffset.get() < Constants.DISPLAY_LISTS_CACHE_SIZE?0:Constants.DISPLAY_LISTS_CACHE_SIZE)) )
-								< this.visibleItemCount.get() ){
-								
-								availableAppsManager.request(EnumAvailableRequestType.increase);
-								Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
-								
-							}
-							
+
+							int triggerMargin = this.visibleItemCount.get()*2;
+							int currentDisplayOffset = this.displayOffset.addAndGet(this.differential.get());
+							int previousScrollRegion = this.scrollRegionOrigin.get();
+							detectAvailableAppsCacheIncrease(triggerMargin, currentDisplayOffset, previousScrollRegion, currentAppsList);
 							break;
 		
 						default:
@@ -837,16 +841,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					switch (currentAppsList) {
 						case Available:
 //							availableApps.decreaseDisplayRange(differential.get());
-							
-							Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" diff: "+this.differential.get());
-							if( (  (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER+(this.displayOffset.addAndGet(this.differential.get()) < Constants.DISPLAY_LISTS_CACHE_SIZE?0:Constants.DISPLAY_LISTS_CACHE_SIZE))
-									% this.displayOffset.get() )
-								< this.visibleItemCount.get() ){
-								
-								availableAppsManager.request(EnumAvailableRequestType.decrease);
-								Log.d("Aptoide","Scroll "+currentAppsList+" display offset: "+this.displayOffset.get()+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
-								
-							}
+
+							int triggerMargin = this.visibleItemCount.get()*2;
+							int currentDisplayOffset = this.displayOffset.addAndGet(-this.differential.get());
+							int previousScrollRegion = this.scrollRegionOrigin.get();
+							detectAvailableAppsCacheDecrease(triggerMargin, currentDisplayOffset, previousScrollRegion, currentAppsList);
 							break;
 		
 						default:

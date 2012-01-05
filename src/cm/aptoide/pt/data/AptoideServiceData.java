@@ -129,12 +129,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public void callAddRepo(ViewRepository repository) throws RemoteException {
-//			if(repoAlreadyManaged(repository.getHashid())){
-//				//TODO check for delta
-//				updateAvailableLists();
-//			}else{
+			if(repoAlreadyManaged(repository.getHashid())){
+				//TODO check for delta
+				updateAvailableLists();
+			}else{
 				addRepoBare(repository);			
-//			}
+			}
 		}
 
 		@Override
