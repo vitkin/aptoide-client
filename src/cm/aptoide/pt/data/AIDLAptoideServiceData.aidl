@@ -38,11 +38,11 @@ interface AIDLAptoideServiceData {
 	void callStoreScreenDimensions(in ViewScreenDimensions screenDimensions);
 	void callSyncInstalledPackages();
 	void callAddRepo(in ViewRepository repository);
-	void callRegisterInstalledPackagesObserver(in AIDLAptoideInterface installedPackagesObserver);
-	void callRegisterAvailablePackagesObserver(in AIDLAptoideInterface availablePackagesObserver);
-	ViewDisplayListApps callGetInstalledPackages();
-	ViewDisplayListApps callGetAvailablePackages(in int offset, in int range);
-	ViewDisplayListApps callGetUpdatablePackages();
+	void callRegisterInstalledAppsObserver(in AIDLAptoideInterface installedAppsObserver);
+	void callRegisterAvailableAppsObserver(in AIDLAptoideInterface availableAppsObserver);
+	ViewDisplayListApps callGetInstalledApps();
+	ViewDisplayListApps callGetAvailableApps(in int offset, in int range);
+	ViewDisplayListApps callGetUpdatableApps();
 	
 	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
 	void CallFillAppInfo(in int appHashid);

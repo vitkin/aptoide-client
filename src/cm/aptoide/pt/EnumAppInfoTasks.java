@@ -1,5 +1,5 @@
 /**
- * EnumServiceDataCallback,		part of aptoide
+ * EnumAppInfoTasks,		part of aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,26 +18,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data;
+package cm.aptoide.pt;
 
 /**
- * EnumServiceDataCallback, typeSafes ServiceData Callbacks in Aptoide
+ * EnumAppInfoTasks, typeSafes App Info Tasks management in Aptoide
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumServiceDataCallback {
-	UPDATE_INSTALLED_LIST,
-	UPDATE_AVAILABLE_LIST,
-	REFRESH_ICON,
+public enum EnumAppInfoTasks {
 	UPDATE_APP_DOWNLOAD_INFO,
 	UPDATE_APP_STATS,
 	UPDATE_APP_EXTRAS,
 	UPDATE_APP_COMMENTS,
 	REFRESH_SCREENS;
 	
-	public static EnumServiceDataCallback reverseOrdinal(int ordinal){
+	public static EnumAppInfoTasks reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }
