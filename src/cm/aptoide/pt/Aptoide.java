@@ -37,6 +37,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,6 +56,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -65,7 +67,6 @@ import android.widget.SimpleAdapter.ViewBinder;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.EnumServiceDataCallback;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
@@ -91,10 +92,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private Handler swypeDelayHandler = null;
 	
 	private ViewFlipper appsListFlipper = null;
-	private ListView availableAppsList = null;
-	private ListView installedAppsList = null;
-	private ListView updatableAppsList = null;
+	private TextView emptyAvailableAppsList;
+	private TextView emptyInstalledAppsList;
+	private TextView emptyUpdatableAppsList;
+	private ProgressBar loadingAvailableAppsList;
+	private ProgressBar loadingInstalledAppsList;
+	private ProgressBar loadingUpdatableAppsList;
+	private ListView availableAppsListView = null;
+	private ListView installedAppsListView = null;
+	private ListView updatableAppsListView = null;
 	private EnumAppsLists currentAppsList = null;
+	
+	private enum EnumFlipperChildType{ EMPTY, LOADING, LIST };
 	
 	private ViewDisplayListApps freshAvailableApps = null;
 	private ViewDisplayListApps availableApps = null;
@@ -103,6 +112,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ViewDisplayListApps freshUpdatableApps = null;
 	private ViewDisplayListApps updatableApps = null;
 	
+	private StaticListsManager staticListsManager;
 	private AvailableAppsManager availableAppsManager;
 	
 	private SimpleAdapter availableAdapter = null;
@@ -129,6 +139,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			if(!serviceDataSeenRunning){
 				try {
 		            AptoideLog.v(Aptoide.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
+
+//		            switchInstalledToProgressBar();
+//		            showInstalledList();
+		            
 		            serviceDataCaller.callSyncInstalledPackages();
 		        } catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -150,10 +164,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	        
 	        try {
 	            AptoideLog.v(Aptoide.this, "Called for registering as AvailablePackages Observer");
-	            serviceDataCaller.callRegisterAvailablePackagesObserver(serviceDataCallback);
+	            serviceDataCaller.callRegisterAvailableAppsObserver(serviceDataCallback);
 	            
 	            AptoideLog.v(Aptoide.this, "Called for registering as InstalledPackages Observer");
-	            serviceDataCaller.callRegisterInstalledPackagesObserver(serviceDataCallback);
+	            serviceDataCaller.callRegisterInstalledAppsObserver(serviceDataCallback);
 
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -185,19 +199,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		@Override
 		public void newInstalledListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received newInstalledListDataAvailable callback");
-			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_INSTALLED_LIST.ordinal());
+			staticListsManager.resetInstalledApps();
 		}
 		
 		@Override
 		public void newAvailableListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received newAvailableListDataAvailable callback");
-			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST.ordinal());
+			availableAppsManager.request(EnumAvailableRequestType.RESET);
 		}
 
 		@Override
 		public void refreshAvailableDisplay() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received refreshAvailableDisplay callback");
-			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.REFRESH_AVAILABLE_DISPLAY.ordinal());
+			serviceDataCallbackHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.REFRESH_AVAILABLE_DISPLAY.ordinal());
 			
 		}
 	};
@@ -206,50 +220,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     private Handler serviceDataCallbackHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	EnumServiceDataCallback message = EnumServiceDataCallback.reverseOrdinal(msg.what);
+        	EnumAptoideAppsListsTasks message = EnumAptoideAppsListsTasks.reverseOrdinal(msg.what);
         	switch (message) {
-	        	case UPDATE_INSTALLED_LIST:
-        			new Thread(){
-        				public void run(){
-        					this.setPriority(Thread.MAX_PRIORITY);
-							try {
-								setFreshInstalledApps(serviceDataCaller.callGetInstalledPackages());
-								
-								serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_INSTALLED_LIST_DISPLAY.ordinal());
-							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							
-        				}
-        			}.start();
+	        	case RESET_INSTALLED_LIST_DISPLAY:
+	        		resetDisplayInstalled();
 					break;
-	        	case  UPDATE_INSTALLED_LIST_DISPLAY:
-					resetDisplayInstalled();	        		
-	        		break;
 				
-				case UPDATE_AVAILABLE_LIST:
-					new Thread(){
-						public void run(){
-        					this.setPriority(Thread.MAX_PRIORITY);
-        					try {
-								
-        						setFreshAvailableApps(serviceDataCaller.callGetAvailablePackages(availableApps.getDisplayOffset(), availableApps.getDisplayRange()));
-								
-								setFreshUpdatableApps(serviceDataCaller.callGetUpdatablePackages());
-								
-								serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
-								
-        					} catch (Exception e) {
-        						// TODO Auto-generated catch block
-        						e.printStackTrace();
-        					}	
-						}
-					}.start();
-					break;
 				case RESET_AVAILABLE_LIST_DISPLAY:
 					resetDisplayAvailable();
-					resetDisplayUpdates();
 					break;
 					
 				case UPDATE_AVAILABLE_LIST_DISPLAY:
@@ -259,6 +237,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				case REFRESH_AVAILABLE_DISPLAY:
 					refreshAvailableDisplay();
 					break;
+				
+				case RESET_UPDATABLE_LIST_DISPLAY:
+					resetDisplayUpdates();
+					break;
+					
+				case REFRESH_UPDATABLE_DISPLAY:
+					refreshUpdatableDisplay();
+					break;
 	
 				default:
 					break;
@@ -266,7 +252,42 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         }
     };
     
-    private enum EnumAvailableRequestType { increase, decrease, reset };
+    
+    
+    private class StaticListsManager{
+    	private ExecutorService installedColectorsPool;
+    	
+    	public StaticListsManager(){
+    		installedColectorsPool = Executors.newSingleThreadExecutor();
+    	}
+    	
+    	public void resetInstalledApps(){
+        	installedColectorsPool.execute(new GetInstalledApps());
+        }
+    	
+    	private class GetInstalledApps implements Runnable{
+
+			@Override
+			public void run() {
+				try {
+					setFreshInstalledApps(serviceDataCaller.callGetInstalledApps());
+					serviceDataCallbackHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_INSTALLED_LIST_DISPLAY.ordinal());
+					if(!(availableApps.getList().size()==0)){
+						setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
+						serviceDataCallbackHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+					}
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+    		
+    	}
+    }
+    
+    
+    private enum EnumAvailableRequestType { INCREASE, DECREASE, RESET };
     
     private class AvailableAppsManager{
     	
@@ -281,18 +302,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		
 		//TODO lock access to requestFifo while suming
 		public synchronized int getRequestsSum(){
+			Log.d("Aptoide", "requestFifo: "+requestFifo);
 			int requestsSum = 0;
 			while( !getRequestFifo().isEmpty() ) {
 				switch (getRequestFifo().removeFirst()) {
-					case increase:
+					case INCREASE:
 						requestsSum++;
 						break;
 						
-					case decrease:
+					case DECREASE:
 						requestsSum--;
 						break;
 						
-					case reset:
+					case RESET:
 						break;
 	
 					default:
@@ -323,12 +345,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 			@Override
 			public void run() {
-				if(!getRequestFifo().isEmpty() && getRequestFifo().getFirst().equals(EnumAvailableRequestType.reset)){
+				if(!getRequestFifo().isEmpty() && getRequestFifo().getFirst().equals(EnumAvailableRequestType.RESET)){
+					getRequestFifo().removeFirst();
 					int cacheOffset = cacheListOffset.get();
 					try {
-						setFreshAvailableApps(serviceDataCaller.callGetAvailablePackages(cacheOffset*Constants.DISPLAY_LISTS_CACHE_SIZE, availableAppsList.getCount()));
-						setFreshUpdatableApps(serviceDataCaller.callGetUpdatablePackages());
-						serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
+						Log.d("Aptoide","resetting available list.  offset: "+cacheOffset*Constants.DISPLAY_LISTS_CACHE_SIZE+" range: "+(availableApps.getList().size()==0?cacheOffset*Constants.DISPLAY_LISTS_CACHE_SIZE+Constants.DISPLAY_LISTS_CACHE_SIZE:availableApps.getList().size()));
+						setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(cacheOffset*Constants.DISPLAY_LISTS_CACHE_SIZE
+												, (availableApps.getList().size()==0?cacheOffset*Constants.DISPLAY_LISTS_CACHE_SIZE+Constants.DISPLAY_LISTS_CACHE_SIZE:availableApps.getList().size()) ));
+						serviceDataCallbackHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
+						
+						setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
+						serviceDataCallbackHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+						
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -343,7 +371,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				int currentCacheOffset = cacheListOffset.get();
 				try {
 					if(requestsSum>0){
-						setFreshAvailableApps(serviceDataCaller.callGetAvailablePackages((previousCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE, (currentCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE));
+						Log.d("Aptoide","adding to available list.  offset: "+(previousCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE+" range: "+(currentCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE);
+						setFreshAvailableApps(serviceDataCaller.callGetAvailableApps((previousCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE, (currentCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE));
 						
 						if(currentCacheOffset>2){
 							if(previousCacheOffset<2){
@@ -352,7 +381,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							}
 						}
 						
-						serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
+						serviceDataCallbackHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 						
 					}else{
 //						addBeginningFreshAvailableApps(serviceDataCaller.callGetAvailablePackages(previousCacheOffset*Constants.DISPLAY_LISTS_CACHE_SIZE, currentCacheOffset*Constants.DISPLAY_LISTS_CACHE_SIZE));
@@ -382,7 +411,42 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.aptoide);
        
+		staticListsManager = new StaticListsManager();
+		availableAppsManager = new AvailableAppsManager();
+		
 		makeSureServiceDataIsRunning();
+		
+		
+		emptyAvailableAppsList = new TextView(this);
+		emptyAvailableAppsList.setBackgroundColor(Color.WHITE);
+		emptyAvailableAppsList.setTextColor(Color.BLACK);
+		emptyAvailableAppsList.setTextSize(24);
+		emptyAvailableAppsList.setText(R.string.loading_available_apps);
+		emptyAvailableAppsList.setTag(EnumFlipperChildType.EMPTY);
+		
+		emptyInstalledAppsList = new TextView(this);
+		emptyInstalledAppsList.setBackgroundColor(Color.WHITE);
+		emptyInstalledAppsList.setTextColor(Color.BLACK);
+		emptyInstalledAppsList.setTextSize(24);
+		emptyInstalledAppsList.setText(R.string.loading_installed_apps);
+		emptyInstalledAppsList.setTag(EnumFlipperChildType.EMPTY);
+		
+		emptyUpdatableAppsList = new TextView(this);
+		emptyUpdatableAppsList.setBackgroundColor(Color.WHITE);
+		emptyUpdatableAppsList.setTextColor(Color.BLACK);
+		emptyUpdatableAppsList.setTextSize(24);
+		emptyUpdatableAppsList.setText(R.string.loading_updatable_apps);
+		emptyUpdatableAppsList.setTag(EnumFlipperChildType.EMPTY);
+		
+		loadingAvailableAppsList = new ProgressBar(this);
+		loadingAvailableAppsList.setTag(EnumFlipperChildType.LOADING);
+		
+		loadingInstalledAppsList = new ProgressBar(this);
+		loadingInstalledAppsList.setTag(EnumFlipperChildType.LOADING);
+		
+		loadingUpdatableAppsList = new ProgressBar(this);
+		loadingUpdatableAppsList.setTag(EnumFlipperChildType.LOADING);
+		
 		
 		installedApps = new ViewDisplayListApps(Constants.DISPLAY_LISTS_CACHE_SIZE);
 		availableApps = new ViewDisplayListApps(Constants.DISPLAY_LISTS_CACHE_SIZE);
@@ -399,29 +463,34 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		swypeDelayHandler = new Handler();
 		scrollListener = new ScrollDetector();
 		
-		appsListFlipper = ((ViewFlipper) Aptoide.this.findViewById(R.id.list_flipper));
+		appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
 		
-		availableAppsList = new ListView(this);
-		availableAppsList.setOnTouchListener(swypeListener);
-		availableAppsList.setOnScrollListener(scrollListener);
-		availableAppsList.setOnItemClickListener(this);
-		appsListFlipper.addView(availableAppsList);
+		availableAppsListView = new ListView(this);
+		availableAppsListView.setOnTouchListener(swypeListener);
+		availableAppsListView.setOnScrollListener(scrollListener);
+		availableAppsListView.setOnItemClickListener(this);
+		availableAppsListView.setTag(EnumFlipperChildType.LIST);
+//		appsListFlipper.addView(availableAppsList);
 		
-		installedAppsList = new ListView(this);
-		installedAppsList.setOnTouchListener(swypeListener);
-		installedAppsList.setOnScrollListener(scrollListener);
-		installedAppsList.setOnItemClickListener(this);
-		appsListFlipper.addView(installedAppsList);
+		installedAppsListView = new ListView(this);
+		installedAppsListView.setOnTouchListener(swypeListener);
+		installedAppsListView.setOnScrollListener(scrollListener);
+		installedAppsListView.setOnItemClickListener(this);
+		installedAppsListView.setTag(EnumFlipperChildType.LIST);
+//		appsListFlipper.addView(installedAppsList);
 		
-		updatableAppsList = new ListView(this);
-		updatableAppsList.setOnTouchListener(swypeListener);
-		updatableAppsList.setOnScrollListener(scrollListener);
-		updatableAppsList.setOnItemClickListener(this);
-		appsListFlipper.addView(updatableAppsList);
+		updatableAppsListView = new ListView(this);
+		updatableAppsListView.setOnTouchListener(swypeListener);
+		updatableAppsListView.setOnScrollListener(scrollListener);
+		updatableAppsListView.setOnItemClickListener(this);
+		updatableAppsListView.setTag(EnumFlipperChildType.LIST);
+//		appsListFlipper.addView(updatableAppsList);
 
-		currentAppsList = EnumAppsLists.Available;
+		appsListFlipper.addView(emptyAvailableAppsList);
+		appsListFlipper.addView(emptyInstalledAppsList);
+		appsListFlipper.addView(emptyUpdatableAppsList);
 		
-		availableAppsManager = new AvailableAppsManager();
+		currentAppsList = EnumAppsLists.Available;
 
     }
     
@@ -432,7 +501,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
 		
 		availableAdapter.setViewBinder(new AvailableAppsListBinder());
-		availableAppsList.setAdapter(availableAdapter);
+		availableAppsListView.setAdapter(availableAdapter);
     }
 	
 	public synchronized void setFreshAvailableApps(ViewDisplayListApps freshAvailableApps){
@@ -447,16 +516,20 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void resetDisplayAvailable(){
+//		if(availableApps.getList().size()==0){
+			switchAvailableToList();
+//			showAvailableList();			
+//		}
     	AptoideLog.d(Aptoide.this, "new AvailableList: "+freshAvailableApps);
 		boolean newList = this.updatableApps.getList().isEmpty();
-		int scrollRestorePosition = availableAppsList.getFirstVisiblePosition();
-		int partialScrollRestorePosition = (availableAppsList.getChildAt(0)==null?0:availableAppsList.getChildAt(0).getTop());
+		int scrollRestorePosition = availableAppsListView.getFirstVisiblePosition();
+		int partialScrollRestorePosition = (availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
     	this.availableApps = freshAvailableApps;
     	initDisplayAvailable();
     	if(!newList){
     		refreshAvailableDisplay();
     	}
-    	availableAppsList.setSelectionFromTop(scrollRestorePosition, partialScrollRestorePosition);
+    	availableAppsListView.setSelectionFromTop(scrollRestorePosition, partialScrollRestorePosition);
 	}
 	
 	public void updateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
@@ -489,7 +562,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
 		
 		installedAdapter.setViewBinder(new InstalledAppsListBinder());
-		installedAppsList.setAdapter(installedAdapter);
+		installedAppsListView.setAdapter(installedAdapter);
     }
 	
 	public synchronized void setFreshInstalledApps(ViewDisplayListApps freshInstalledApps){
@@ -497,6 +570,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void resetDisplayInstalled(){
+//		boolean bootingUp = false;
+//		if(installedApps.getList().size()==0){
+			switchInstalledToList();
+//	    	showInstalledList();
+//	    	bootingUp = true;
+//		}
     	AptoideLog.d(Aptoide.this, "new InstalledList: "+freshInstalledApps);
 		boolean newList = this.updatableApps.getList().isEmpty();
     	this.installedApps = freshInstalledApps;
@@ -504,6 +583,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	if(!newList){
     		installedAdapter.notifyDataSetChanged();
     	}
+//    	if(bootingUp && availableApps.getList().size()==0){
+//			switchAvailableToProgressBar();
+//			showAvailableList();
+//		}
 	}
 	
 	public void updateDisplayInstalled(ViewDisplayListApps installedApps){
@@ -528,7 +611,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
 
     	updatableAdapter.setViewBinder(new UpdatableAppsListBinder());
-    	updatableAppsList.setAdapter(updatableAdapter);
+    	updatableAppsListView.setAdapter(updatableAdapter);
     }
 	
 	public synchronized void setFreshUpdatableApps(ViewDisplayListApps freshUpdatableApps){
@@ -536,6 +619,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void resetDisplayUpdates(){
+//		if(updatableApps.getList().size()==0){
+		switchUpdatableToList();
+//		showUpdatableList();			
+//	}
     	AptoideLog.d(Aptoide.this, "new UpdatesList: "+freshUpdatableApps);
 		boolean newList = this.updatableApps.getList().isEmpty();
     	this.updatableApps = freshUpdatableApps;
@@ -557,6 +644,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		updatableAdapter.notifyDataSetChanged();
     	}
 		
+	}
+	
+	public void refreshUpdatableDisplay(){
+		updatableAdapter.notifyDataSetChanged();
 	}
 
 	private void makeSureServiceDataIsRunning(){
@@ -663,7 +754,117 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 	}
 
+	private void switchAvailableToProgressBar(){
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
+        appsListFlipper.addView(loadingAvailableAppsList, EnumAppsLists.Available.ordinal());
+	}
+
+	private void switchAvailableToList(){
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
+        appsListFlipper.addView(availableAppsListView, EnumAppsLists.Available.ordinal());
+	}
+
+	private void switchInstalledToProgressBar(){
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
+        appsListFlipper.addView(loadingInstalledAppsList, EnumAppsLists.Installed.ordinal());
+	}
+
+	private void switchInstalledToList(){
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
+        appsListFlipper.addView(installedAppsListView, EnumAppsLists.Installed.ordinal());
+	}
+
+	private void switchUpdatableToList(){
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
+        appsListFlipper.addView(updatableAppsListView, EnumAppsLists.Updates.ordinal());
+	}
+	
+	private void showAvailableList(){
+		switch (currentAppsList) {
+			case Available:
+				appsListFlipper.setAnimation(null);
+				appsListFlipper.showNext();
+				appsListFlipper.showPrevious();
+				break;
+		
+			case Installed:
+				showPreviousList();
+				break;
+			
+			case Updates:
+				showPreviousList();
+				showPreviousList();
+				break;
+	
+			default:
+				break;
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void showInstalledList(){
+		switch (currentAppsList) {
+			case Available:
+				showNextList();
+				break;
+			
+			case Updates:
+				showPreviousList();
+				break;
+	
+			case Installed:
+				appsListFlipper.setAnimation(null);
+				appsListFlipper.showNext();
+				appsListFlipper.showPrevious();
+				break;
+				
+			default:
+				break;
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private void showUpdatableList(){
+		switch (currentAppsList) {
+			case Available:
+				showNextList();
+				showNextList();
+				break;
+			
+			case Installed:
+				showNextList();
+				break;
+			
+			case Updates:
+				appsListFlipper.setAnimation(null);
+				appsListFlipper.showNext();
+				appsListFlipper.showPrevious();
+				break;
+	
+			default:
+				break;
+		}
+	}
+	
     
+	private void showNextList(){
+		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_next));
+		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
+		appsListFlipper.showNext();
+		currentAppsList = EnumAppsLists.getNext(currentAppsList);
+	}
+	
+	private void showPreviousList(){
+		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_previous));
+		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
+		appsListFlipper.showPrevious();
+		currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+	}
     
     
     class SwypeDetector extends SimpleOnGestureListener {
@@ -686,20 +887,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	        		if(EnumAppsLists.getNext(currentAppsList).equals(currentAppsList)){
 	        			appsListFlipper.startAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_resist_next));
 	        		}else{
-		        		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_next));
-		    			appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
-		    			appsListFlipper.showNext();
-		    			currentAppsList = EnumAppsLists.getNext(currentAppsList);
+		        		showNextList();
 	        		}
 	    		} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
 	        		Log.d("Aptoide","Swype left");
 	        		if(EnumAppsLists.getPrevious(currentAppsList).equals(currentAppsList)){
 	        			appsListFlipper.startAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_resist_previous));
 	        		}else{
-		        		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_previous));
-		        		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
-		        		appsListFlipper.showPrevious();
-		        		currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+		        		showPreviousList();
 	        		}
 	    		}
 	    		scrollBlocker.execute(new Swyping());
@@ -738,7 +933,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) > Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER ){
 				
 				this.scrollRegionOrigin.incrementAndGet();
-				availableAppsManager.request(EnumAvailableRequestType.increase);
+				availableAppsManager.request(EnumAvailableRequestType.INCREASE);
 				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
 				
 			}
@@ -752,7 +947,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) < Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER ){
 				
 				this.scrollRegionOrigin.decrementAndGet();
-				availableAppsManager.request(EnumAvailableRequestType.decrease);
+				availableAppsManager.request(EnumAvailableRequestType.DECREASE);
 				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
 				
 			}

@@ -1,6 +1,18 @@
-/**
- * EnumServiceDataCallback,		part of aptoide
- * Copyright (C) 2011  Duarte Silveira
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+    android:background="#ffffff" >
+	<TextView android:id="@+id/empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textColor="#000000"
+		android:text="@string/no_apps" />
+ </LinearLayout>
+<!--
+ * Copyright (C) 2012  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -16,28 +28,4 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
-
-package cm.aptoide.pt.data;
-
-/**
- * EnumServiceDataCallback, typeSafes ServiceData Callbacks in Aptoide
- * 
- * @author dsilveira
- * @since 3.0
- *
- */
-public enum EnumServiceDataCallback {
-	UPDATE_INSTALLED_LIST,
-	UPDATE_AVAILABLE_LIST,
-	REFRESH_ICON,
-	UPDATE_APP_DOWNLOAD_INFO,
-	UPDATE_APP_STATS,
-	UPDATE_APP_EXTRAS,
-	UPDATE_APP_COMMENTS,
-	REFRESH_SCREENS;
-	
-	public static EnumServiceDataCallback reverseOrdinal(int ordinal){
-		return values()[ordinal];
-	}
-}
+-->

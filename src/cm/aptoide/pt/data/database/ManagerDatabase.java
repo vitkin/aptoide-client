@@ -1260,7 +1260,9 @@ public class ManagerDatabase {
 			appsCursor.close();
 	
 		}catch (Exception e) {
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 			// TODO: handle exception
 			e.printStackTrace();
 		}

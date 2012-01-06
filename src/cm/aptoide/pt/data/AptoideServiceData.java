@@ -113,18 +113,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public void callRegisterAvailablePackagesObserver(AIDLAptoideInterface availablePackagesObserver) throws RemoteException {
+		public void callRegisterAvailableAppsObserver(AIDLAptoideInterface availablePackagesObserver) throws RemoteException {
 			registerAvailableDataObserver(availablePackagesObserver);
 		}
 		
 		@Override
-		public void callRegisterInstalledPackagesObserver(AIDLAptoideInterface installedPackagesObserver) throws RemoteException {
+		public void callRegisterInstalledAppsObserver(AIDLAptoideInterface installedPackagesObserver) throws RemoteException {
 			registerInstalledDataObserver(installedPackagesObserver);
 		}
 		
 		@Override
-		public ViewDisplayListApps callGetInstalledPackages() throws RemoteException {
-			return getInstalledPackages();
+		public ViewDisplayListApps callGetInstalledApps() throws RemoteException {
+			return getInstalledApps();
 		}
 
 		@Override
@@ -138,13 +138,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public ViewDisplayListApps callGetAvailablePackages(int offset, int range) throws RemoteException {
-			return getAvailablePackages(offset, range);
+		public ViewDisplayListApps callGetAvailableApps(int offset, int range) throws RemoteException {
+			return getAvailableApps(offset, range);
 		}
 
 		@Override
-		public ViewDisplayListApps callGetUpdatablePackages() throws RemoteException {
-			return getUpdatablePackages();
+		public ViewDisplayListApps callGetUpdatableApps() throws RemoteException {
+			return getUpdatableApps();
 		}
 
 		@Override
@@ -818,17 +818,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	
-	public ViewDisplayListApps getInstalledPackages(){
+	public ViewDisplayListApps getInstalledApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Installed Packages");
 		return managerDatabase.getInstalledAppsDisplayInfo();
 	}
 	
-	public ViewDisplayListApps getAvailablePackages(int offset, int range){
+	public ViewDisplayListApps getAvailableApps(int offset, int range){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Packages");
 		return managerDatabase.getAvailableAppsDisplayInfo(offset, range);
 	}
 	
-	public ViewDisplayListApps getUpdatablePackages(){
+	public ViewDisplayListApps getUpdatableApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Updatable Packages");
 		return managerDatabase.getUpdatableAppsDisplayInfo();
 	}

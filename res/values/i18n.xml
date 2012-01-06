@@ -5,6 +5,10 @@
     <string name="updates">Updates</string>
     
     <string name="no_apps">No apps to display!</string>
+    
+    <string name="loading_available_apps">Loading available apps!</string>
+    <string name="loading_installed_apps">Loading installed apps!</string>
+    <string name="loading_updatable_apps">Loading updatable apps!</string>
 
     <string name="aptoide_started">Aptoide has started</string>
     <string name="aptoide_stopped">Aptoide has successfully stopped</string>
