@@ -1180,7 +1180,7 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
-			installedApps = new ViewDisplayListApps(appsCursor.getCount());
+			installedApps = new ViewDisplayListApps();
 			
 			appsCursor.moveToFirst();
 			do{
@@ -1248,9 +1248,14 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
-			availableApps = new ViewDisplayListApps(appsCursor.getCount());
+			availableApps = new ViewDisplayListApps();
 			
 			appsCursor.moveToFirst();
+			
+			if(appsCursor.getCount() == 0){
+				return availableApps;
+			}
+			
 			do{																			
 				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
 												, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
@@ -1336,7 +1341,7 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
-			updatableApps = new ViewDisplayListApps(1);
+			updatableApps = new ViewDisplayListApps();
 			
 			appsCursor.moveToFirst();
 			do{
