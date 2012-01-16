@@ -1,45 +1,58 @@
+/**
+ * AppInfo,		part of Aptoide
+ * 
+ * from v3.0 Copyright (C) 2011 Duarte Silveira 
+ * duarte.silveira@caixamagica.pt
+ * 
+ * derivative work of ApkInfo from earlier Aptoide's versions with
+ * Copyright (C) 2009 Roberto Jacinto
+ * roberto.jacinto@caixamágica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+*/
 package cm.aptoide.pt;
 
 import java.io.File;
-import java.util.LinkedList;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Gallery;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RatingBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
-import cm.aptoide.pt.data.EnumServiceDataCallback;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
-import cm.aptoide.pt.data.volatil.EnumUserTaste;
 
+/**
+ * AppInfo, interface class to display the details
+ * 			of a specific application
+ * 
+ * @author dsilveira
+ * @since 3.0
+ *
+ */
 public class AppInfo extends Activity{
 	
 	
@@ -104,15 +117,21 @@ public class AppInfo extends Activity{
 		}
 		
 		@Override
+		public void newAppDownloadInfoAvailable() throws RemoteException {
+			Log.v("Aptoide-AppInfo", "received newAppDownloadInfoAvailable callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_DOWNLOAD_INFO.ordinal());
+		}
+		
+		@Override
 		public void newStatsInfoAvailable() throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			Log.v("Aptoide-AppInfo", "received newStatsInfoAvailable callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_STATS.ordinal());
 		}
 		
 		@Override
 		public void newExtrasAvailable() throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newExtrasAvailable callback");
-			serviceDataCallbackHandler.sendEmptyMessage(EnumServiceDataCallback.UPDATE_APP_EXTRAS.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_EXTRAS.ordinal());
 		}
 		
 		@Override
@@ -120,20 +139,23 @@ public class AppInfo extends Activity{
 			// TODO Auto-generated method stub
 			
 		}
-		
-		@Override
-		public void newAppDownloadInfoAvailable() throws RemoteException {
-			// TODO Auto-generated method stub
-			
-		}
 	};
 
     
-    private Handler serviceDataCallbackHandler = new Handler() {
+    private Handler interfaceTasksHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	EnumServiceDataCallback message = EnumServiceDataCallback.reverseOrdinal(msg.what);
-        	switch (message) {
+        	EnumAppInfoTasks task = EnumAppInfoTasks.reverseOrdinal(msg.what);
+        	switch (task) {
+        	
+	    		case UPDATE_APP_DOWNLOAD_INFO:
+	    			fillRest();
+	    			break;
+        	
+        		case UPDATE_APP_STATS:
+        			fillRest();
+        			break;
+        			
 				case UPDATE_APP_EXTRAS:
 					fillRest();
 					break;
@@ -149,7 +171,7 @@ public class AppInfo extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
 
-		appHashid = Integer.parseInt(getIntent().getStringExtra("appHashid"));
+		appHashid = getIntent().getIntExtra("appHashid", 0);
 		
 		if(!serviceDataIsBound){
     		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);

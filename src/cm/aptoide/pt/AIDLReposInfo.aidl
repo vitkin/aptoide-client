@@ -1,5 +1,5 @@
 /**
- * AIDLAptoideInterface,		part of Aptoide
+ * AIDLReposInfo,		part of Aptoide
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -20,17 +20,14 @@
 package cm.aptoide.pt;
 
 /**
- * AIDLAptoideInterface, models Aptoide's interface classes AIDL IPC
+ * AIDLReposInfo, models AppInfo's AIDL IPC
  *
  * @author dsilveira
  * @since 3.0
  *
  */
-interface AIDLAptoideInterface{
+interface AIDLReposInfo{
 	
-	void newInstalledListDataAvailable();
-	void newAvailableListDataAvailable();
-	void resetAvailableListData();
-	void refreshAvailableDisplay();
+	void updateReposBasicInfo();
 	
 }

@@ -20,9 +20,6 @@
 
 package cm.aptoide.pt.data.model;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;

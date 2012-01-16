@@ -7,7 +7,7 @@
 	android:gravity="center_vertical|center_horizontal">
     <TextView 
     	android:id="@+id/auto_updating"
-    	android:text="@string/auto_updating" 
+    	android:text="@string/self_updating" 
     	android:layout_height="wrap_content" 
     	android:layout_alignParentTop="true"
     	android:layout_width="fill_parent"

@@ -1,5 +1,5 @@
 /**
- * ViewDisplayRepository,		part of Aptoide's data model
+ * ViewDisplayRepo,		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -20,32 +20,37 @@
 
 package cm.aptoide.pt.data.display;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewLogin;
 
  /**
- * ViewDisplayRepository, models a repository
+ * ViewDisplayRepo, models a Repo's display info
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewDisplayRepository {
+public class ViewDisplayRepo implements Parcelable, Serializable{
 
+	private static final long serialVersionUID = -3173949598300380133L;
 	private HashMap<String, Object> map;
+	private int arrayIndex;
 	
 	
 	/**
-	 * ViewDisplayRepository Constructor
+	 * ViewDisplayStore Constructor
 	 *
 	 * @param repoHashid
 	 * @param uri
 	 * @param inUse
 	 * @param size
 	 */
-	public ViewDisplayRepository(int repoHashid, String uri, boolean inUse, int size) {
+	public ViewDisplayRepo(int repoHashid, String uri, boolean inUse, int size) {
 		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_REPO);
 		this.map.put(Constants.DISPLAY_REPO_REQUIRES_LOGIN, false);
 		setRepoHashid(repoHashid);
@@ -87,6 +92,14 @@ public class ViewDisplayRepository {
 		return (Boolean)this.map.get(Constants.KEY_REPO_IN_USE);
 	}
 	
+	public void setArrayIndex(int arrayIndex){
+		this.arrayIndex = arrayIndex;
+	}
+	
+	public int getArrayIndex(){
+		return this.arrayIndex;
+	}
+	
 	public HashMap<String, Object> getDiplayMap(){
 		return this.map;
 	}
@@ -108,7 +121,7 @@ public class ViewDisplayRepository {
 	
 
 	/**
-	 * ViewDisplayRepository object reuse clean references
+	 * ViewDisplayRepo object reuse clean references
 	 *
 	 * @param String uri
 	 */
@@ -117,7 +130,7 @@ public class ViewDisplayRepository {
 	}
 	
 	/**
-	 * ViewDisplayRepository object reuse reConstructor
+	 * ViewDisplayRepoobject reuse reConstructor
 	 *
 	 * @param repoHashid
 	 * @param uri
@@ -142,8 +155,8 @@ public class ViewDisplayRepository {
 
 	@Override
 	public boolean equals(Object object) {
-		if(object instanceof ViewDisplayRepository){
-			ViewDisplayRepository repo = (ViewDisplayRepository) object;
+		if(object instanceof ViewDisplayRepo){
+			ViewDisplayRepo repo = (ViewDisplayRepo) object;
 			if(repo.hashCode() == this.hashCode()){
 				return true;
 			}
@@ -154,7 +167,54 @@ public class ViewDisplayRepository {
 
 	@Override
 	public String toString() {
-		return "RepoHashid: "+getRepoHashid()+" Uri: "+getUri()+" Size: "+getSize()+" InUse: "+getInUse()+ "Login+ "+getLogin().toString();
+		StringBuilder description = new StringBuilder("RepoHashid: "+getRepoHashid()+" Uri: "+getUri()+" Size: "+getSize()+" InUse: "+getInUse());
+		if(requiresLogin()){
+			description.append("Login+ "+getLogin().toString());
+		}
+		return description.toString();
+	}
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewDisplayRepo> CREATOR = new
+			Parcelable.Creator<ViewDisplayRepo>() {
+		public ViewDisplayRepo createFromParcel(Parcel in) {
+			return new ViewDisplayRepo(in);
+		}
+
+		public ViewDisplayRepo[] newArray(int size) {
+			return new ViewDisplayRepo[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	private ViewDisplayRepo(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeSerializable(map);	//TODO use list or parcelable instead of serializable
+		out.writeInt(arrayIndex);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void readFromParcel(Parcel in) {
+		map = (HashMap<String, Object>) in.readSerializable();
+		arrayIndex = in.readInt();
 	}
 		
 }

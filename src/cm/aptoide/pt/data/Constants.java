@@ -50,12 +50,14 @@ public class Constants {
 	public static final int SKIP_URI_PREFIX = 7;
 	
 	public static final int DISPLAY_LISTS_PAGE_SIZE = 100;
+	public static final int ICONS_REFRESH_INTERVAL = 10;
 	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER = 1*DISPLAY_LISTS_PAGE_SIZE;
 	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER = 3*DISPLAY_LISTS_PAGE_SIZE;
 	public static final int DISPLAY_LISTS_CACHE_SIZE = DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER;
 	
 	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
 	public static final int MAX_PARALLEL_DOWNLOADS = 1;
+	public static final int MAX_PARALLEL_SERVICE_REQUESTS = 4;
 	
 	public static final int NUMBER_OF_STARS = 5;
 	
@@ -293,11 +295,11 @@ public class Constants {
 	public static final String CREATE_TABLE_REPOSITORY = "CREATE TABLE IF NOT EXISTS " + TABLE_REPOSITORY + " ("
 			+ KEY_REPO_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_REPO_URI + " TEXT NOT NULL, "
-			+ KEY_REPO_BASE_PATH + " TEXT NOT NULL, "
-			+ KEY_REPO_ICONS_PATH + " TEXT NOT NULL, "
-			+ KEY_REPO_SCREENS_PATH + " TEXT NOT NULL, "
-			+ KEY_REPO_SIZE + " INTEGER NOT NULL DEFAULT (0) CHECK ("+KEY_REPO_SIZE+">=0), "
-			+ KEY_REPO_DELTA + " TEXT NOT NULL DEFAULT (0), "
+			+ KEY_REPO_BASE_PATH + " TEXT DEFAULT ('/'), "
+			+ KEY_REPO_ICONS_PATH + " TEXT DEFAULT ('icons/'), "
+			+ KEY_REPO_SCREENS_PATH + " TEXT DEFAULT ('screens/'), "
+			+ KEY_REPO_SIZE + " INTEGER DEFAULT (0) CHECK ("+KEY_REPO_SIZE+">=0), "
+			+ KEY_REPO_DELTA + " TEXT DEFAULT (0), "
 			+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT (1) ); ";		/** stupid sqlite doesn't know booleans */
 //			+ "PRIMARY KEY("+ KEY_REPO_HASHID +") );";
 	

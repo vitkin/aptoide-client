@@ -20,6 +20,7 @@
 
 package cm.aptoide.pt.data.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
  /**
@@ -29,8 +30,9 @@ import java.util.ArrayList;
  * @since 3.0
  *
  */
-public class ViewListIds {
+public class ViewListIds implements Serializable{
 
+	private static final long serialVersionUID = -6067969538026377610L;
 	private ArrayList<Integer> idList;
 	
 	/**
@@ -65,7 +67,7 @@ public class ViewListIds {
 	public ArrayList<Integer> getList(){
 		return this.idList;
 	}
-
+	
 	
 
 	/**
@@ -90,6 +92,13 @@ public class ViewListIds {
 	public void reuse(Integer id) {
 		reuse();
 		addId(id);
+	}
+
+	
+
+	@Override
+	public String toString() {
+		return idList.toString();
 	}
 	
 }

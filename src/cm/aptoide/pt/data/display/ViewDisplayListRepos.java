@@ -21,27 +21,34 @@
 package cm.aptoide.pt.data.display;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
- * ViewDisplayListRepos, models a list of Repos,
+ * ViewDisplayListRepos, models a list of Repos' display info,
  * 			 maintains insertion order
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewDisplayListRepos {
+public class ViewDisplayListRepos implements Parcelable{
 
 	private ArrayList<Map<String, Object>> reposList;
+	
+	private HashMap<Integer, ViewDisplayRepo> reposHash;
 
 	
 	/**
-	 * ViewDisplayListRepos Constructor
+	 * ViewDisplayListReposConstructor
 	 * 
-	 * @param ViewDisplayRepository repo
+	 * @param ViewDisplayRepo store
 	 */
-	public ViewDisplayListRepos(ViewDisplayRepository repo) {
+	public ViewDisplayListRepos(ViewDisplayRepo repo) {
 		this(1);
 		addRepo(repo);
 	}
@@ -51,19 +58,43 @@ public class ViewDisplayListRepos {
 	 */
 	public ViewDisplayListRepos(int size) {
 		this.reposList = new ArrayList<Map<String,Object>>(size);
+		this.reposHash = new HashMap<Integer, ViewDisplayRepo>(size);
 	}
 	
 	
-	public void addRepo(ViewDisplayRepository repo){
+	public void addRepo(ViewDisplayRepo repo){
+		this.reposHash.put(repo.getRepoHashid(), repo);
 		this.reposList.add(repo.getDiplayMap());
 	}
 	
-	public void removeRepo(int index){
-		this.reposList.remove(index);		
+	public void removeRepo(int repoHashid){
+		ViewDisplayRepo repo = this.reposHash.remove(repoHashid);
+		this.reposList.remove(repo.getArrayIndex());		
 	}
 	
-	public Map<String, Object> getRepo(int index){
+	public Map<String, Object> getRepoMap(int index){
 		return this.reposList.get(index);
+	}
+	
+	public ViewDisplayRepo getRepo(int repoHashid){
+		return this.reposHash.get(repoHashid);
+	}
+	
+	
+	public void regenerateList(){
+		ArrayList<Map<String, Object>> newList = new ArrayList<Map<String,Object>>();
+		
+		for (ViewDisplayRepo repo : this.reposHash.values()) {
+			newList.add(repo.getDiplayMap());
+		}
+		
+		this.reposList = newList;
+	}
+	
+	
+	
+	public HashMap<Integer, ViewDisplayRepo> getHashMap(){
+		return this.reposHash;
 	}
 	
 	
@@ -95,11 +126,67 @@ public class ViewDisplayListRepos {
 	/**
 	 * ViewDisplayListRepos object reuse reConstructor
 	 * 
-	 * @param ViewDisplayRepository repo
+	 * @param ViewDisplayRepo repo
 	 */
-	public void reuse(ViewDisplayRepository repo) {
+	public void reuse(ViewDisplayRepo repo) {
 		reuse();
 		addRepo(repo);
+	}
+
+
+	@Override
+	public String toString() {
+		StringBuilder listRepos = new StringBuilder("Repos: ");
+		for (Map<String,Object> repo : getList()) {
+			listRepos.append("repo: ");
+			for (Entry<String, Object> appDetail : repo.entrySet()) {
+				listRepos.append(appDetail.getKey()+"-"+appDetail.getValue()+" ");
+			}
+		}
+		return listRepos.toString();
+	}
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewDisplayListRepos> CREATOR = new
+			Parcelable.Creator<ViewDisplayListRepos>() {
+		public ViewDisplayListRepos createFromParcel(Parcel in) {
+			return new ViewDisplayListRepos(in);
+		}
+
+		public ViewDisplayListRepos[] newArray(int size) {
+			return new ViewDisplayListRepos[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	private ViewDisplayListRepos(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeSerializable(reposList);	//TODO use list or parcelable instead of serializable
+		out.writeSerializable(reposHash);
+	}
+
+	@SuppressWarnings("unchecked")
+	public void readFromParcel(Parcel in) {
+		reposList = (ArrayList<Map<String, Object>>) in.readSerializable();
+		reposHash = (HashMap<Integer, ViewDisplayRepo>) in.readSerializable();
 	}
 	
 }

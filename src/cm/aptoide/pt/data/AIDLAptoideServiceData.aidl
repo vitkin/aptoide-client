@@ -22,9 +22,12 @@ package cm.aptoide.pt.data;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
+import cm.aptoide.pt.data.model.ViewManageRepos;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.AIDLAppInfo;
+import cm.aptoide.pt.AIDLReposInfo;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
@@ -36,10 +39,17 @@ import cm.aptoide.pt.AIDLAppInfo;
 interface AIDLAptoideServiceData {
 
 	void callStoreScreenDimensions(in ViewScreenDimensions screenDimensions);
-	void callSyncInstalledPackages();
-	void callAddRepo(in ViewRepository repository);
+	
+	void callSyncInstalledApps();
+	
+	void callRegisterReposObserver(in AIDLReposInfo reposInfoObserver);
+	ViewDisplayListRepos callGetRepos();
+	void callManageRepos(in ViewManageRepos reposToManage);
+	void callAddRepo(in ViewRepository repo);
+	
 	void callRegisterInstalledAppsObserver(in AIDLAptoideInterface installedAppsObserver);
 	void callRegisterAvailableAppsObserver(in AIDLAptoideInterface availableAppsObserver);
+	
 	ViewDisplayListApps callGetInstalledApps();
 	ViewDisplayListApps callGetAvailableApps(in int offset, in int range);
 	ViewDisplayListApps callGetUpdatableApps();

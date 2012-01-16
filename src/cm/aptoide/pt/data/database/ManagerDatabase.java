@@ -38,7 +38,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
-import cm.aptoide.pt.data.display.ViewDisplayRepository;
+import cm.aptoide.pt.data.display.ViewDisplayRepo;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
 import cm.aptoide.pt.data.model.ViewAppComment;
@@ -289,7 +289,7 @@ public class ManagerDatabase {
 			ArrayList<ContentValues> loginsValues = new ArrayList<ContentValues>(repositories.size());
 			
 			for (ViewRepository repository : repositories) {
-				if(insertRepository.insert(repository.getValues()) == Constants.DB_ERROR){
+				if(insertRepository.replace(repository.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 				if(repository.isLoginRequired()){
@@ -300,7 +300,7 @@ public class ManagerDatabase {
 			
 			InsertHelper insertLogin = new InsertHelper(db, Constants.TABLE_LOGIN);
 			for (ContentValues loginValues : loginsValues) {
-				if(insertLogin.insert(loginValues) == Constants.DB_ERROR){
+				if(insertLogin.replace(loginValues) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 			}
@@ -311,6 +311,7 @@ public class ManagerDatabase {
 			// TODO: send to errorHandler the exception
 		}finally{
 			db.endTransaction();
+//			serviceData.updateReposLists();
 		}
 	}
 	
@@ -326,11 +327,11 @@ public class ManagerDatabase {
 	public void insertRepository(ViewRepository repository){
 		db.beginTransaction();
 		try{
-			if(db.insert(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
+			if(db.replace(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
 			if(repository.isLoginRequired()){
-				if(db.insert(Constants.TABLE_LOGIN, null, repository.getLogin().getValues()) == Constants.DB_ERROR){
+				if(db.replace(Constants.TABLE_LOGIN, null, repository.getLogin().getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
 			}
@@ -340,6 +341,7 @@ public class ManagerDatabase {
 			e.printStackTrace();
 		}finally{
 			db.endTransaction();
+			serviceData.updateReposLists();
 		}
 	}
 	
@@ -352,7 +354,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public void removeRepositories(ViewListIds repoHashids){
+	public void removeRepositories(ViewListIds repoHashids){	//TODO manually cascade triggers, because they don't automatically do it
 		db.beginTransaction();
 		try{
 			StringBuilder deleteWhere = new StringBuilder();
@@ -421,6 +423,9 @@ public class ManagerDatabase {
 			}
 			
 			db.setTransactionSuccessful();
+			
+//			serviceData.resetAvailableLists();
+			
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
@@ -454,6 +459,7 @@ public class ManagerDatabase {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
 			db.endTransaction();
+			serviceData.updateReposLists();
 		}
 	}
 		
@@ -1021,9 +1027,7 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * repoIsManaged, checks if repository referenced by this hashid is already managed
-	 * 
-	 * @param ViewRepository repository
+	 * anyReposInUse, checks if there are any managed repos in use
 	 * 
 	 * @return boolean
 	 * 
@@ -1031,25 +1035,25 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public boolean repoIsManaged(int repoHashid){
+	public boolean anyReposInUse(){
 		
-		String selectRepo = "SELECT count(*)"
+		String selectReposInUse = "SELECT count(*)"
 							+" FROM "+Constants.TABLE_REPOSITORY
-							+" WHERE "+Constants.KEY_REPO_HASHID+"='"+repoHashid+"';";
+							+" WHERE "+Constants.KEY_REPO_IN_USE+"='"+Constants.DB_TRUE+"';";
 		
-		boolean repoisManaged = false;
+		boolean anyReposInUse = false;
 		
 		db.beginTransaction();
-		Cursor repoCursor = null;
+		Cursor reposInUseCursor = null;
 		try{
-			repoCursor = aptoideNonAtomicQuery(selectRepo);
+			reposInUseCursor = aptoideNonAtomicQuery(selectReposInUse);
 			db.setTransactionSuccessful();
 			db.endTransaction();
 			
-			repoCursor.moveToFirst();
-			repoisManaged = (repoCursor.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
-			repoCursor.close();
-			return repoisManaged;
+			reposInUseCursor.moveToFirst();
+			anyReposInUse = (reposInUseCursor.getInt(Constants.COLUMN_FIRST) > 0?true:false);
+			reposInUseCursor.close();
+			return anyReposInUse;
 		}catch (Exception e) {
 			db.endTransaction();
 			// TODO: handle exception
@@ -1063,10 +1067,52 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * getReposDisplayInfo, retrieves a list of all known repositories
+	 * repoIsManaged, checks if repo referenced by this hashid is already managed
+	 * 
+	 * @param int repoHashid
+	 * 
+	 * @return boolean
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public boolean repoIsManaged(int repoHashid){
+		
+		String selectRepo = "SELECT count(*)"
+							+" FROM "+Constants.TABLE_REPOSITORY
+							+" WHERE "+Constants.KEY_REPO_HASHID+"='"+repoHashid+"';";
+		
+		boolean repoIsManaged = false;
+		
+		db.beginTransaction();
+		Cursor repoCursor = null;
+		try{
+			repoCursor = aptoideNonAtomicQuery(selectRepo);
+			db.setTransactionSuccessful();
+			db.endTransaction();
+			
+			repoCursor.moveToFirst();
+			repoIsManaged = (repoCursor.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
+			repoCursor.close();
+			return repoIsManaged;
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+			return false;
+			
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * getReposDisplayInfo, retrieves a list of all known repos
 	 * 					   with display relevant information (uri, inUse, Login if required)
 	 * 
-	 * @return ViewDisplayListRepos list of repos with it's logins
+	 * @return ViewDisplayListRepos list of stores with it's logins
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
@@ -1088,7 +1134,7 @@ public class ManagerDatabase {
 		String selectRepos = "SELECT "+Constants.KEY_REPO_HASHID+","+Constants.KEY_REPO_URI
 									  +","+Constants.KEY_REPO_IN_USE+","+Constants.KEY_REPO_SIZE
 							+" FROM "+Constants.TABLE_REPOSITORY+";";
-		ViewDisplayRepository repo;
+		ViewDisplayRepo repo;
 		Cursor reposCursor;
 		
 		String selectLogins = "SELECT *"
@@ -1106,23 +1152,34 @@ public class ManagerDatabase {
 			db.endTransaction();
 			
 			listRepos = new ViewDisplayListRepos(reposCursor.getCount());
-			/**  repoHashid, arrayIndex */
+			/**  storeHashid, arrayIndex */
 			HashMap<Integer,Integer> indexMap = new HashMap<Integer, Integer>(reposCursor.getCount());
 
 			reposCursor.moveToFirst();
+			
+			if(reposCursor.getCount() == 0){
+				reposCursor.close();
+				loginsCursor.close();
+				return listRepos;
+			}
+			
 			do{
-				repo = new ViewDisplayRepository(reposCursor.getInt(REPO_HASHID), reposCursor.getString(URI), (reposCursor.getInt(IN_USE)==Constants.DB_TRUE?true:false), reposCursor.getInt(SIZE) );				
+				repo = new ViewDisplayRepo(reposCursor.getInt(REPO_HASHID), reposCursor.getString(URI), (reposCursor.getInt(IN_USE)==Constants.DB_TRUE?true:false), reposCursor.getInt(SIZE) );				
 				listRepos.addRepo(repo);
 				indexMap.put(reposCursor.getInt(REPO_HASHID), reposCursor.getPosition());
 			}while(reposCursor.moveToNext());
 			reposCursor.close();
 
-
-
 			loginsCursor.moveToFirst();
+			
+			if(loginsCursor.getCount() == 0){
+				loginsCursor.close();
+				return listRepos;
+			}
+			
 			do{
 				login = new ViewLogin(loginsCursor.getString(USERNAME),loginsCursor.getString(PASSWORD));
-				listRepos.getRepo(indexMap.get(loginsCursor.getInt(LOGIN_REPO_HASHID))).put(Constants.DISPLAY_REPO_LOGIN, login);
+				listRepos.getRepo(indexMap.get(loginsCursor.getInt(LOGIN_REPO_HASHID))).setLogin(login);
 			}while(loginsCursor.moveToNext());
 			loginsCursor.close();
 
@@ -1219,8 +1276,8 @@ public class ManagerDatabase {
 		
 		final int APP_NAME = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
-		final int PACKAGE_NAME = Constants.COLUMN_THIRD;
-		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_FOURTH;
+//		final int PACKAGE_NAME = Constants.COLUMN_THIRD;
+//		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_FOURTH;
 		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
 		final int STARS = Constants.COLUMN_SIXTH;
 		final int DOWNLOADS = Constants.COLUMN_SEVENTH;
@@ -1232,7 +1289,12 @@ public class ManagerDatabase {
 											+", MAX(A."+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
 											+", S."+Constants.KEY_STATS_STARS+", S."+Constants.KEY_STATS_DOWNLOADS
-									+" FROM "+Constants.TABLE_APPLICATION+" A"
+									+" FROM (SELECT *"
+											+" FROM "+Constants.TABLE_APPLICATION
+											+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
+												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
+														+" FROM "+Constants.TABLE_REPOSITORY
+														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) A"
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
 															+" FROM "+Constants.TABLE_STATS_INFO+") S"
 									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
@@ -1253,6 +1315,7 @@ public class ManagerDatabase {
 			appsCursor.moveToFirst();
 			
 			if(appsCursor.getCount() == 0){
+				appsCursor.close();
 				return availableApps;
 			}
 			
@@ -1274,25 +1337,6 @@ public class ManagerDatabase {
 		return availableApps;
 	}
 	
-	
-	/**
-	 * getRepoDownloadInfo, retrieves a repo's info for Download
-	 * 
-	 * @param repoHashid
-	 * 
-	 * @return ViewDownload, set of objects that describe a repo's download 
-	 *  
-	 * @author dsilveira
-	 * @since 3.0
-	 * 
-	 */
-//	public ViewDownload getRepoDownloadInfo(int repoHashid){
-//		ViewCache cacheinfo = null;
-//		ViewNotification notifier = null;
-//		ViewDownload downloadinfo = null;
-//		
-//		
-//	}
 	
 	/**
 	 * getUpdatableAppsDisplayInfo, retrieves a list of all apps' updates
@@ -1327,11 +1371,16 @@ public class ManagerDatabase {
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME+", "+Constants.KEY_APPLICATION_FULL_HASHID
 																	+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-															 +" FROM "+Constants.TABLE_APPLICATION
-															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
+															+" FROM (SELECT *"
+																	+" FROM "+Constants.TABLE_APPLICATION
+																	+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
+																		+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
+																				+" FROM "+Constants.TABLE_REPOSITORY
+																				+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+"))"	
+															+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
-															 +" FROM "+Constants.TABLE_STATS_INFO
-															 +" GROUP BY "+Constants.KEY_APPLICATION_FULL_HASHID+") S"
+															+" FROM "+Constants.TABLE_STATS_INFO
+															+" GROUP BY "+Constants.KEY_APPLICATION_FULL_HASHID+") S"
 									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME+";";
 		
 		db.beginTransaction();
@@ -1489,14 +1538,14 @@ public class ManagerDatabase {
 	public ViewRepository getAppRepo(int appHashid){
 		final int REPO_HASHID = Constants.COLUMN_FIRST;
 		final int URI = Constants.COLUMN_SECOND;
-		final int IN_USE = Constants.COLUMN_THIRD;
+//		final int IN_USE = Constants.COLUMN_THIRD;
 		final int SIZE = Constants.COLUMN_FOURTH;
 		final int BASE_PATH = Constants.COLUMN_FIFTH;
 		final int ICONS_PATH = Constants.COLUMN_SIXTH;
 		final int SCREENS_PATH = Constants.COLUMN_SEVENTH;
 		final int DELTA = Constants.COLUMN_EIGTH;
 		
-		final int LOGIN_REPO_HASHID = Constants.COLUMN_FIRST;
+//		final int LOGIN_REPO_HASHID = Constants.COLUMN_FIRST;
 		final int USERNAME = Constants.COLUMN_SECOND;
 		final int PASSWORD = Constants.COLUMN_THIRD;
 
@@ -1515,6 +1564,7 @@ public class ManagerDatabase {
 		}
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
 		if(repoCursor.getCount()==Constants.EMPTY_INT){
+			repoCursor.close();
 			return null;		//TODO refactor null object
 		}else{
 			repoCursor.moveToFirst();
