@@ -247,7 +247,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		super.onCreate(savedInstanceState);
 		apkinfo = getIntent();
 		db = new DbHandler(this);
-		setContentView(R.layout.apkinfo);
+		setContentView(R.layout.apk_info);
 		
 		sharedPreferences = ApkInfo.this.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		
@@ -306,7 +306,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		
-		Button serch_mrkt = (Button)findViewById(R.id.btn_market);
+		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
 		serch_mrkt.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
@@ -321,7 +321,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			}
 			
 		});
-		final Button action = (Button) findViewById(R.id.btn1);
+		final Button action = (Button) findViewById(R.id.btinstall);
 //		switch (type) {
 //		case 0:
 //			action.setText(getString(R.string.install));
@@ -403,7 +403,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			}
 		});
 		
-		ImageView icon = (ImageView) findViewById(R.id.appicon);
+		ImageView icon = (ImageView) findViewById(R.id.app_hashid);
 		File test_icon = new File(icon_path);
 		
 		
@@ -420,10 +420,10 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		String desc_parsed = Html.fromHtml(apk_descr).toString();
 		apk_about.setText(desc_parsed);
 		
-		final TextView apk_repo = (TextView)findViewById(R.id.app_repo);
+		final TextView apk_repo = (TextView)findViewById(R.id.app_store);
 		apk_repo.setText(apk_repo_str);
 		
-		TextView apk_version = (TextView)findViewById(R.id.app_ver);
+		TextView apk_version = (TextView)findViewById(R.id.app_version);
 		
 		if(type == 1 || type == 2){
 			apk_version.setText(this.getString(R.string.version_inst)+": " + ( versionInstApk!=null?versionInstApk.getVersion(): "Not available" ) );
@@ -535,7 +535,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				
 			} else if(type==1){
 				
-				Button uninstall = (Button)findViewById(R.id.btnUninstall);
+				Button uninstall = (Button)findViewById(R.id.btuninstall);
 				uninstall.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, uninstall.getLayoutParams().height, 0.5f));
 				uninstall.setOnClickListener(new OnClickListener(){
 	

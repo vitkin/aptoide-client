@@ -102,7 +102,6 @@ public class DownloadQueueService extends Service {
 
 	
 	public void startDownload(DownloadNode downloadNode){
-		if(!notifications.containsKey(downloadNode.getPackageName().hashCode())){
 		HashMap<String,String> notification = new HashMap<String,String>();
 		notification.put("remotePath", downloadNode.getRemotePath());
 		notification.put("md5sum", downloadNode.getMd5sum());
@@ -127,7 +126,6 @@ public class DownloadQueueService extends Service {
 		
 			
 			downloadFile(downloadNode.getPackageName().hashCode());
-		}
 	}
 	
 //	public void startExternalDownload(String remotePath, String localPath, String apkName, Context context){

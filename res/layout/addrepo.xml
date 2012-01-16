@@ -1,87 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    android:orientation="vertical" >
+
     <TextView
-    	android:text="@string/add_repo_text"
-    	android:layout_width="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:ems="20"
-        android:textSize="16dip"
-        android:layout_height="wrap_content"/>
-    
+        android:text="@string/add_repo_text"
+        android:textColor="#4f4f4f"
+        android:textSize="16dip" />
+
     <EditText
         android:id="@+id/edit_uri"
-        android:maxLines="1"
         android:layout_width="wrap_content"
-        android:ems="20"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:inputType="textUri"/>
-        
-        
-        <TextView
+        android:ems="20"
+        android:inputType="textUri"
+        android:maxLines="1"
+        android:singleLine="true" />
+
+    <TextView
         android:id="@+id/sec_msg"
-    	android:text="Can't connect to store"
-    	android:layout_width="wrap_content"
-    	android:layout_gravity="center"
-    	android:textColor="#CC1100"
-        android:textSize="16dip"
-        android:visibility="gone"
-        android:layout_height="wrap_content"/>
-        
-	<View
-	android:layout_marginTop="10dip"
-	android:layout_marginBottom="10dip"
-	android:layout_marginLeft="25dip"
-	android:layout_marginRight="25dip"
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:paddingLeft="25dip"
-    android:background="#FFF5F5F5"
-	/>
-	
-	<TextView
-    	android:id="@+id/sec_msg2"
-    	android:layout_width="wrap_content"
-    	android:layout_gravity="center"
-    	android:textColor="#CC1100"
-        android:textSize="16dip"
-        android:visibility="gone"
-        android:layout_height="wrap_content"/>
-	
-  <CheckBox
-  	android:id="@+id/secure_chk"
-  	android:layout_width="wrap_content"
-  	android:layout_height="wrap_content"
-  	android:text="@string/add_repo_private"
-  	/>
-	
-   <EditText
-        android:id="@+id/sec_user"
-        android:maxLines="1"
         android:layout_width="wrap_content"
-        android:ems="20"
-        android:hint="Username"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:enabled="false"/>
+        android:layout_gravity="center"
+        android:text="Can&apos;t connect to store"
+        android:textColor="#4f4f4f"
+        android:textSize="16dip"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/sec_msg2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#4f4f4f"
+            android:textSize="16dip"
+            android:visibility="gone" />
+
+        <CheckBox
+            android:id="@+id/secure_chk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:padding="10sp"/>
         
+        <TextView android:id="@+id/repo_private"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:textColor="#4f4f4f"
+            android:text="@string/add_repo_private"/>
+        
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/sec_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="20"
+        android:enabled="false"
+        android:hint="Username"
+        android:maxLines="1"
+        android:singleLine="true" />
+
     <EditText
         android:id="@+id/sec_pwd"
-        android:maxLines="1"
         android:layout_width="wrap_content"
-        android:ems="20"
-        android:hint="Password"
-        android:password="true"
         android:layout_height="wrap_content"
-        android:singleLine="true"
-        android:enabled="false"/>  
-        
-        
-</LinearLayout>
-<!--
+        android:ems="20"
+        android:enabled="false"
+        android:hint="Password"
+        android:maxLines="1"
+        android:password="true"
+        android:singleLine="true" />
+
+</LinearLayout><!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *

@@ -125,7 +125,7 @@ public class BaseManagement extends Activity {
 		redrawCatgList();
 	}
 	
-	private void redrawCatgList(){
+	protected void redrawCatgList(){
 		
 		int[] main_ctg_count = db.getCountMainCtg();
         Map<String, Object> count_lst_app = db.getCountSecCatg(1);
@@ -279,6 +279,7 @@ public class BaseManagement extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		Log.d("","onResume");
 		if(sPref.getBoolean("search_updt", false)){
 			prefEdit.remove("search_updt");
 			prefEdit.commit();
@@ -351,7 +352,7 @@ public class BaseManagement extends Activity {
 	    	startActivityForResult(intent,UPDATE);
 			Log.d("Aptoide-BaseManagement", "Updating Apk: "+apk_path);
 		} catch (Exception e) {
-			Toast.makeText(getApplicationContext(), getApplicationContext().getString(R.string.failed_update), Toast.LENGTH_LONG);
+			Toast.makeText(mctx, mctx.getString(R.string.failed_update), Toast.LENGTH_LONG);
 		}
 	}
 	
@@ -454,7 +455,7 @@ public class BaseManagement extends Activity {
 						if(node.status == 1){
 							db.deleteScheduledDownload(node.apkid,node.ver);
 
-							apk_line.put("status", getString(R.string.ctg_version) +" "+node.ver);
+							apk_line.put("status",node.ver);
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
 							instMap.add(apk_line);
@@ -462,7 +463,7 @@ public class BaseManagement extends Activity {
 						}else if(node.status == 2){
 							db.deleteScheduledDownload(node.apkid,node.ver);
 
-							apk_line.put("status", getString(R.string.ctg_version) +" "+ node.verUpdate);
+							apk_line.put("status",node.verUpdate);
 							apk_line.put("name", node.name);
 							updtMap.add(apk_line);
 							
@@ -473,7 +474,7 @@ public class BaseManagement extends Activity {
 							apk_line.put("rat", node.rat);
 							
 							
-							apk_line.put("status", getString(R.string.ctg_version) +" "+node.ver);
+							apk_line.put("status", node.ver);
 							apk_line.put("status2", getString(R.string.upgrd_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 2);
@@ -483,7 +484,7 @@ public class BaseManagement extends Activity {
 							
 							
 						}else if(node.status == 3){
-							apk_line.put("status", getString(R.string.ctg_version) +" "+node.ver);
+							apk_line.put("status", node.ver);
 							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 3);
@@ -492,7 +493,7 @@ public class BaseManagement extends Activity {
 							
 							
 						}else{
-							apk_line.put("status", getString(R.string.ctg_version)+" " + node.ver);
+							apk_line.put("status", node.ver);
 							apk_line.put("name", node.name);
 //							if(filterPass(node))
 								availMap.add(apk_line);
@@ -531,20 +532,21 @@ public class BaseManagement extends Activity {
 					
 					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
 					
-					availAdpt = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
-							new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
+					availAdpt = new SimpleAdapter(mctx, availMap, R.layout.app_row, 
+							 new String[] {"pkg", "name", "status", "icon", "rat", "down"}, 
+							 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.app_icon, R.id.stars, R.id.downloads});
 
 					availAdpt.setViewBinder(new LstBinder());
 
-					instAdpt = new SimpleAdapter(mctx, instMap, R.layout.listicons, 
-							new String[] {	"pkg", 		"name", 	"name2", 		"status", 		"status2", 		"status3", 						"icon", 		"rat"}, 
-							new int[] {		R.id.pkg, 	R.id.name, 	R.id.nameup, 	R.id.isinst, 	R.id.isupdt, 	R.id.isDowngradeAvailable, 		R.id.appicon, 	R.id.rating});
+					instAdpt = new SimpleAdapter(mctx, instMap, R.layout.app_row, 
+							 new String[] {"pkg", "name", "status","status2","status3", "icon", "rat", "down"}, 
+							 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.uptodate_versionname,R.id.isDowngradeAvailable,R.id.app_icon, R.id.stars, R.id.downloads});
   
 					instAdpt.setViewBinder(new LstBinder());
 
-					updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.listicons, 
-							new String[] {	"pkg", 		"name", 	"name2", 		"status", 		"status2", 		"status3",					"icon", 		"rat"}, 
-							new int[] {		R.id.pkg, 	R.id.name, 	R.id.nameup, 	R.id.isinst, 	R.id.isupdt, 	R.id.isDowngradeAvailable,	R.id.appicon, 	R.id.rating});
+					updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.app_row, 
+							 new String[] {"pkg", "name", "status","status3", "icon", "rat", "down"}, 
+							 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.isDowngradeAvailable,R.id.app_icon, R.id.stars, R.id.downloads});
 
 					updateAdpt.setViewBinder(new LstBinder());
 				
@@ -700,7 +702,7 @@ public class BaseManagement extends Activity {
 			 String iconpath = new String(getString(R.string.icons_path)+node.apkid);
 			 apk_line.put("icon", iconpath);
 			 apk_line.put("rat", node.rat);
-			 apk_line.put("status", "Version: " + node.ver);
+			 apk_line.put("status", "" + node.ver);
 			 apk_line.put("name", node.name);
 			 if(node.down >= 0)
 				 apk_line.put("down", node.down + " Down.");
@@ -713,8 +715,9 @@ public class BaseManagement extends Activity {
 		 }
 
 
-		 rtnadp = new SimpleAdapter(mctx, availMap, R.layout.listicons, 
-				 new String[] {"pkg", "name", "name2", "status", "status2", "icon", "rat", "down"}, new int[] {R.id.pkg, R.id.name, R.id.nameup, R.id.isinst, R.id.isupdt, R.id.appicon, R.id.rating, R.id.dwn});
+		 rtnadp = new SimpleAdapter(mctx, availMap, R.layout.app_row, 
+				 new String[] {"pkg", "name", "status", "icon", "rat", "down"}, 
+				 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.app_icon, R.id.stars, R.id.downloads});
 
 		 rtnadp.setViewBinder(new LstBinder());
 
@@ -728,16 +731,50 @@ public class BaseManagement extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			Intent i = new Intent("pt.caixamagica.aptoide.REDRAW");
 			while(pd.isShowing()){
 				Log.d("Aptoide","======================= I KILL");
 				pd.dismiss();
-				schDownAll();
+				
+				
+					
+				
+						
+					
+				
+		    	
 			}
 			prefEdit.putBoolean("changeavail", true);
 			prefEdit.putBoolean("changeinst", true);
 			prefEdit.putBoolean("changeupdt", true);
 			prefEdit.putBoolean("redrawis", false);
 			prefEdit.commit();
+			sendBroadcast(i);
+			startReposService();
+		}
+
+		private void startReposService() {
+			
+			new Thread(){
+				@Override
+				public void run() {
+					super.run();
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Intent checkReposServiceIntent = new Intent(mctx, CheckReposService.class);
+					startService(checkReposServiceIntent);
+					
+					
+				}
+				
+			}.start();	
+			
+	
+			
 		}
 		 
 	 };

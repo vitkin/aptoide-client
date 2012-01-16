@@ -25,13 +25,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream.PutField;
 import java.math.BigInteger;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -43,11 +44,12 @@ import org.apache.http.client.ClientProtocolException;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+
+import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.TabActivity;
 import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -58,7 +60,13 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
+import android.gesture.GestureOverlayView;
+import android.graphics.Color;
+import android.inputmethodservice.Keyboard.Key;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -73,19 +81,28 @@ import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 
-public class RemoteInTab extends TabActivity {
+
+public class RemoteInTab extends BaseManagement {
 
 	
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
@@ -132,9 +149,26 @@ public class RemoteInTab extends TabActivity {
 
 	private boolean fetch_extra = true;
 	
+	ListView installView ;
+	ListView updateView ;
+
+	private TextView previousListTitle = null;
+	private TextView currentListTitle = null;
+	private TextView nextListTitle = null;
+	private String emptyListTitle = null;
+	private ImageView previousView = null; 
+	private ImageView nextView = null;
+	
 	private GestureDetector detectChangeTab;
 
-	private DownloadQueueService downloadQueueService;
+	public DownloadQueueService downloadQueueService;
+	
+	IntentFilter intentFilter;
+	IntentFilter intentFilter2 = new IntentFilter();
+	protected int nApks;
+	ViewFlipper vf;
+	
+	
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
 	        // This is called when the connection with the service has been
@@ -182,66 +216,47 @@ public class RemoteInTab extends TabActivity {
 				alrt.show();
 				
 				
+			}else if(action.equals("pt.caixamagica.aptoide.HAS_UPDATES")){
+				Log.d("","BroadCast Received:" + action);
+				int apps = intent.getIntExtra("appscount", 123);
+				AlertDialog alrt = new AlertDialog.Builder(mctx).create();
+				if(apps>0){
+					alrt.setMessage("You have "+apps+" new apps on your selected stores. Update?");
+				}else{
+					alrt.setMessage("You have new updates on your selected stores. Update?");
+				}
+				alrt.setButton(AlertDialog.BUTTON_POSITIVE, getText(R.string.btn_yes), new OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						updateRepos();
+					}
+				});
+				alrt.setButton(AlertDialog.BUTTON_NEGATIVE, getText(R.string.btn_no), new OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						return;
+					}
+				});
+				alrt.show();
+			}else if ( intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
+				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"), intent.getStringExtra("version"));
+				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));
+				db.deleteScheduledDownload(intent.getStringExtra("packageName"), intent.getStringExtra("version"));
+			}else if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
+				installApk(intent.getStringExtra("localPath"), intent.getStringExtra("version"));
+				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));
+				db.deleteScheduledDownload(intent.getStringExtra("packageName"), intent.getStringExtra("version"));
+			}else if (intent.getAction().equals("pt.caixamagica.aptoide.REDRAW")){
+				displayrefresh2.sendEmptyMessage(0);
 			}
 			
 		}
 	};
-private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			
-			final String action = intent.getAction();
-			
-			Log.d("RemoteInTab - IntentAction",((NetworkInfo)intent.getParcelableExtra("networkInfo")).isRoaming()+"");
-		    if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
-		        if ( ((NetworkInfo)intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)).getState()==NetworkInfo.State.CONNECTED) {
-		            //do stuff
-//		        	if(((NetworkInfo)intent.getParcelableExtra("networkInfo")).isRoaming()){
-		        	Toast.makeText(mctx, "Wi-Fi Connected", Toast.LENGTH_LONG).show();
-		        	
-		        	if(!db.getScheduledListNames().isEmpty()&&sPref.getBoolean("schDwnBox", false)){		        		
-		            	try{
-		            		Intent onClick = new Intent();
-		            		onClick.setClassName("cm.aptoide.pt", "cm.aptoide.pt.ScheduledDownload");
-		            		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-		            		onClick.putExtra("downloadAll", "");
-		            		mctx.startActivity(onClick);
-		            	Log.d("RemoteInTab - IntentAction","OLA");
-		            	}catch(Exception e){
-		            		e.printStackTrace();
-		            		}
-		        	}
-		            	}
-		            	
-//		        } 
-//		        else {
-//		            // wifi connection was lost
-//		        	
-//		        	Toast.makeText(mctx, "Wi-Fi Disconnected", Toast.LENGTH_LONG).show();
-//		        }
-
-		}
-		    
-	}
+	
 		
 		
-		};
-		IntentFilter intentFilter;
-		IntentFilter intentFilter2 = new IntentFilter();
-//	private Handler fetchHandler = new Handler() {
-//
-//		@Override
-//		public void handleMessage(Message msg) {
-//			if(pd.isShowing())
-//				pd.dismiss();
-//			
-//	    	startActivityForResult(intp, FETCH_APK);
-//			super.handleMessage(msg);
-//		}
-//		
-//	};
     
 	private void addTab(String label, int drawableId, Class<?> classToLauch, TabHost tabHost) {
 		//For the style of the tabs
@@ -255,8 +270,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 								);
 		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
 		title.setText(label);
-		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.icon);
-		icon.setImageResource(drawableId);
+//		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.);
+//		icon.setImageResource(drawableId);
 		
 		spec.setIndicator(tabIndicator);
 		spec.setContent(intent);
@@ -264,18 +279,38 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
 	}
 	
+	
+	
+	ListView availView ;
+	private int pos = -1;
+	
+	private int deep = 0;
+		
+	private String shown_now = null;
+	private int main_shown_now = -1;
+	
+	
+	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+
+		
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("RemoteInTab"," onCreate");
 		
-		
+		availView = new ListView(this);
+		installView = new ListView(this);
+		updateView = new ListView(this);
 		intentFilter = new IntentFilter();
-		
-//    	intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+		currentAppsList = EnumAppsLists.Available;
     	intentFilter2.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
-    	
-//    	registerReceiver(broadcastReceiver, intentFilter);
+    	intentFilter2.addAction("pt.caixamagica.aptoide.HAS_UPDATES");
+    	intentFilter2.addAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
+    	intentFilter2.addAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
+    	intentFilter2.addAction("pt.caixamagica.aptoide.REDRAW");
     	registerReceiver(broadcastReceiver2, intentFilter2);
 		
 		super.onCreate(savedInstanceState);
@@ -302,52 +337,500 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		prefEdit = sPref.edit();
 		prefEdit.putBoolean("update", true);
 		prefEdit.commit();
-		
-		myTabHost = getTabHost();
+		swypeDetector = new GestureDetector(new SwypeDetector());
+		swypeListener = new View.OnTouchListener() {
+			public boolean onTouch(View v, MotionEvent event) {
+				return swypeDetector.onTouchEvent(event);
+			}
+		};
+//		myTabHost = getTabHost();
 		if(Configs.INTERFACE_SILVER_TABS_ON){
 		
-			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
-			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());
-			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class, getTabHost());
+//			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
+//			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());
+//			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class, getTabHost());
 			
 		}else{
 			 
-			myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
-			myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)) );
-			myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details)).setContent(new Intent(this, TabUpdates.class)));
+//			myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
+//			myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)) );
+//			myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details))
+//					.setContent(new Intent(this, TabUpdates.class)));
+			
+			OnItemClickListener installListener = new OnItemClickListener() {
+
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					if(!swyping.get()){
+					final String pkg_id = ((LinearLayout)arg1).getTag().toString();
+
+					pos = arg2;
+
+					Intent apkinfo = new Intent(mctx,ApkInfo.class);
+					apkinfo.putExtra("name", db.getName(pkg_id));
+					apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
+					apkinfo.putExtra("apk_id", pkg_id);
+					
+					String tmpi = db.getDescript(pkg_id);
+					if(!(tmpi == null)){
+						apkinfo.putExtra("about", tmpi);
+					}else{
+						apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+					}
+					
+
+					Vector<String> tmp_get = db.getApk(pkg_id);
+					apkinfo.putExtra("server", tmp_get.firstElement());
+					apkinfo.putExtra("rat", tmp_get.get(5));
+					apkinfo.putExtra("type", 1);
+					
+					ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+					VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
+					versions.add(versionApkPassed);
+					
+					
+					
+					try {
+						PackageManager mPm = getApplicationContext().getPackageManager();
+						PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+						VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1,-1);
+						apkinfo.putExtra("instversion", versionInstApk);
+//						Iterator<VersionApk> iteratorVersion = versions.iterator();
+//						while(iteratorVersion.hasNext()){
+//							if(iteratorVersion.next().compareTo(versionInstApk)>0){
+//								iteratorVersion.remove();
+//							}
+//						}
+					} catch (NameNotFoundException e) {
+						//Not installed... do nothing, not going to happen hear
+					}
+					
+					
+					
+					apkinfo.putParcelableArrayListExtra("versions", versions);
+					startActivityForResult(apkinfo,30);
+					
+					/*
+					Vector<String> tmp_get = db.getApk(pkg_id);
+					String tmp_path = this.getString(R.string.icons_path)+pkg_id;
+					File test_icon = new File(tmp_path);
+
+					LayoutInflater li = LayoutInflater.from(this);
+					View view = li.inflate(R.layout.alertscroll, null);
+					Builder alrt = new AlertDialog.Builder(this).setView(view);
+					final AlertDialog p = alrt.create();
+					if(test_icon.exists() && test_icon.length() > 0){
+						p.setIcon(new BitmapDrawable(tmp_path));
+					}else{
+						p.setIcon(android.R.drawable.sym_def_app_icon);
+					}
+					p.setTitle(db.getName(pkg_id));
+					TextView t1 = (TextView) view.findViewById(R.id.n11);
+					t1.setText(tmp_get.firstElement());
+					TextView t2 = (TextView) view.findViewById(R.id.n22);
+					t2.setText(tmp_get.get(1));
+					TextView t3 = (TextView) view.findViewById(R.id.n33);
+					t3.setText(tmp_get.get(2));
+					TextView t4 = (TextView) view.findViewById(R.id.n44);
+					t4.setText(tmp_get.get(3));
+					TextView t5 = (TextView) view.findViewById(R.id.n55);
+					String tmpi = db.getDescript(pkg_id);
+					if(!(tmpi == null)){
+						t5.setText(tmpi);
+					}else{
+						t5.setText(getText(R.string.app_pop_up_no_info));
+					}
+
+					TextView t6 = (TextView) view.findViewById(R.id.down_n);
+					t6.setText(tmp_get.get(4));
+
+					p.setButton2(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							return;
+						} });
+
+					p.setButton(getString(R.string.rem), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							removeApk(pkg_id);
+						} });
+					p.setButton3(getText(R.string.btn_search_market), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							p.dismiss();					
+							Intent intent = new Intent();
+							intent.setAction(android.content.Intent.ACTION_VIEW);
+							intent.setData(Uri.parse("market://details?id="+pkg_id));
+							try{
+								startActivity(intent);
+							}catch (ActivityNotFoundException e){
+								Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+							}
+						} });
+
+					p.show();
+					*/
+				}}
+					
+				
+				
+				
+			};
+			
+			OnItemClickListener updateListener = new OnItemClickListener() {
+
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					if(!swyping.get()){
+					final String pkg_id = ((LinearLayout)arg1).getTag().toString();
+
+					pos = arg2;
+					
+					Intent apkinfo = new Intent(mctx,ApkInfo.class);
+					apkinfo.putExtra("name", db.getName(pkg_id));
+					apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
+					apkinfo.putExtra("apk_id", pkg_id);
+					
+					String tmpi = db.getDescript(pkg_id);
+					if(!(tmpi == null)){
+						apkinfo.putExtra("about",tmpi);
+					}else{
+						apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+					}
+					
+
+					Vector<String> tmp_get = db.getApk(pkg_id);
+					apkinfo.putExtra("server", tmp_get.firstElement());
+					apkinfo.putExtra("rat", tmp_get.get(5));
+					apkinfo.putExtra("type", 2);
+					
+					ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+					VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
+					versions.add(versionApkPassed);
+					
+					try {
+						PackageManager mPm = getApplicationContext().getPackageManager();
+						PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+						VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode, pkg_id,-1,-1);
+						apkinfo.putExtra("instversion", versionInstApk);
+						Iterator<VersionApk> iteratorVersion = versions.iterator();
+						while(iteratorVersion.hasNext()){
+							if(iteratorVersion.next().compareTo(versionInstApk)<=0){
+								iteratorVersion.remove();
+							}
+						}
+					} catch (NameNotFoundException e) {
+						//Not installed... do nothing
+					}
+					
+					apkinfo.putParcelableArrayListExtra("versions", versions);
+					
+					startActivityForResult(apkinfo,30);
+					
+					/*
+					Vector<String> tmp_get = db.getApk(pkg_id);
+					String tmp_path = this.getString(R.string.icons_path)+pkg_id;
+					File test_icon = new File(tmp_path);
+
+					LayoutInflater li = LayoutInflater.from(this);
+					View view = li.inflate(R.layout.alertscroll, null);
+					Builder alrt = new AlertDialog.Builder(this).setView(view);
+					final AlertDialog p = alrt.create();
+					if(test_icon.exists() && test_icon.length() > 0){
+						p.setIcon(new BitmapDrawable(tmp_path));
+					}else{
+						p.setIcon(android.R.drawable.sym_def_app_icon);
+					}
+					p.setTitle(db.getName(pkg_id));
+					TextView t1 = (TextView) view.findViewById(R.id.n11);
+					t1.setText(tmp_get.firstElement());
+					TextView t2 = (TextView) view.findViewById(R.id.n22);
+					t2.setText(tmp_get.get(1));
+					TextView t3 = (TextView) view.findViewById(R.id.n33);
+					t3.setText(tmp_get.get(2));
+					TextView t4 = (TextView) view.findViewById(R.id.n44);
+					t4.setText(tmp_get.get(3));
+					TextView t5 = (TextView) view.findViewById(R.id.n55);
+					String tmpi = db.getDescript(pkg_id);
+					if(!(tmpi == null)){
+						t5.setText(tmpi);
+					}else{
+						t5.setText(getText(R.string.app_pop_up_no_info));
+					}
+
+					TextView t6 = (TextView) view.findViewById(R.id.down_n);
+					t6.setText(tmp_get.get(4));
+
+					p.setButton2(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							return;
+						} });
+
+					p.setButton(getString(R.string.update), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							p.dismiss();					
+							new Thread() {
+								public void run() {
+									String apk_path = downloadFile(pkg_id);
+									Message msg_alt = new Message();
+									if(apk_path == null){
+										msg_alt.arg1 = 1;
+										download_error_handler.sendMessage(msg_alt);
+									}else if(apk_path.equals("*md5*")){
+										msg_alt.arg1 = 0;
+										download_error_handler.sendMessage(msg_alt);
+									}else{
+										Message msg = new Message();
+										msg.arg1 = 1;
+										download_handler.sendMessage(msg);
+										updateApk(apk_path, pkg_id);
+									}
+								}
+							}.start(); 	
+						} });
+					p.setButton3(getText(R.string.btn_search_market), new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							p.dismiss();					
+							Intent intent = new Intent();
+							intent.setAction(android.content.Intent.ACTION_VIEW);
+							intent.setData(Uri.parse("market://details?id="+pkg_id));
+							try{
+								startActivity(intent);
+							}catch (ActivityNotFoundException e){
+								Toast.makeText(mctx, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+							}
+						} });
+
+					p.show();
+					*/
+					
+				}}
+				
+			};
+			
+			OnItemClickListener availListener = new OnItemClickListener() {
+
+				
+				
+				
+				
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					if(!swyping.get()){
+					pos = arg2;
+					
+					final String pkg_id = ((LinearLayout)arg1).getTag().toString();
+
+					if(pkg_id.equals("Applications")){
+						shown_now = null;
+						Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
+						availView.setAdapter(getAppCtg());
+//						setContentView(lv);
+						availView.setSelection(pos-1);
+						deep = 1;
+					}else if(pkg_id.equals("Games")){
+						shown_now = null;
+						Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
+						availView.setAdapter(getGamesCtg());
+//						setContentView(lv);
+						availView.setSelection(pos-1);
+						deep = 1;
+					}else if(pkg_id.equals("Others")){
+						shown_now = null;
+						main_shown_now = 2;
+						Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
+						availView.setAdapter(getGivenCatg(null, 2));
+//						setContentView(lv);
+						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						availView.setSelection(pos-1);
+						deep = 1;
+						if(filteredApps>0)
+							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+					}else if(pkg_id.equals("apps")){
+						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+						main_shown_now = 1;
+						Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+						
+						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
+//						setContentView(lv);
+						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						availView.setSelection(pos-1);
+						deep = 2;
+						if (filteredApps > 0)
+							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+					}else if(pkg_id.equals("games")){
+						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+						main_shown_now = 0;
+						Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+						
+						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
+//						setContentView(lv);
+						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+						availView.setSelection(pos-1);
+						deep = 3;
+						if (filteredApps > 0)
+							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+					}else{
+						
+						Intent apkinfo = new Intent(mctx,ApkInfo.class);
+						apkinfo.putExtra("name", db.getName(pkg_id));
+						apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
+						apkinfo.putExtra("apk_id", pkg_id);
+						
+						String tmpi = db.getDescript(pkg_id);
+						if(!(tmpi == null)){
+							apkinfo.putExtra("about",tmpi);
+						}else{
+							apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+						}
+						
+						Vector<String> tmp_get = db.getApk(pkg_id);
+						apkinfo.putExtra("server", tmp_get.firstElement());
+						apkinfo.putExtra("rat", tmp_get.get(5));
+						apkinfo.putExtra("type", 0);
+						
+						ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+						VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
+						versions.add(versionApkPassed);
+						
+						try {
+							PackageManager mPm = getApplicationContext().getPackageManager();
+							PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+							apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName, pkginfo.versionCode,pkg_id,-1,-1));
+						} catch (NameNotFoundException e) {
+							//Not installed... do nothing
+						}
+						
+						apkinfo.putParcelableArrayListExtra("versions", versions);
+						
+						startActivityForResult(apkinfo,30);
+					
+					}
+					
+				}}
+			};
+			
+			
+			
+			
+			availView.setOnItemClickListener(availListener);
+			installView.setOnItemClickListener(installListener);
+			updateView.setOnItemClickListener(updateListener);
+//			lv.setAdapter(getAvailable(null,-1));
+			setContentView(R.layout.aptoide);
+			vf = (ViewFlipper) findViewById(R.id.list_flipper);
+			
+			
+			
+			
+			
+			previousListTitle = (TextView) findViewById(R.id.previous_title);
+			currentListTitle = (TextView) findViewById(R.id.current_title);
+			nextListTitle = (TextView) findViewById(R.id.next_title);
+			
+			availView.setOnTouchListener(swypeListener);
+			installView.setOnTouchListener(swypeListener);
+			updateView.setOnTouchListener(swypeListener);
+			availView.setBackgroundColor(Color.WHITE);
+			availView.setCacheColorHint(Color.TRANSPARENT);
+			installView.setBackgroundColor(Color.WHITE);
+			installView.setCacheColorHint(Color.TRANSPARENT);
+			updateView.setBackgroundColor(Color.WHITE);
+			updateView.setCacheColorHint(Color.TRANSPARENT);
+			
+			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			nextListTitle.setOnClickListener(new OnNextClickedListener());
+
+			currentListTitle.setText(currentAppsList.Available.toString());
+			currentListTitle.setClickable(false);
+			previousView = (ImageView) findViewById(R.id.previous);
+			nextView = (ImageView) findViewById(R.id.next);
+			previousView.setVisibility(View.INVISIBLE);
+			previousListTitle.setText(emptyListTitle);
+			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
+			
+			new Thread(){
+				@Override
+				public void run() {
+					super.run();
+					try {
+					while(sPref.getBoolean("redrawis", true)){
+						
+						Thread.sleep(10);
+						
+					}
+					} catch (InterruptedException e) { }
+					
+				}
+				
+			}.start();	
+			vf.addView(availView);
+			vf.addView(installView);
+			vf.addView(updateView);
+			
+			
 			
 		}
+		
+		
+		
+		
+		View.OnClickListener searchListener = new View.OnClickListener() {
+			
+			public void onClick(View v) {
+				
+				onSearchRequested();
+			}
+		};
+		
+		
+		ImageButton searchView = (ImageButton) findViewById(R.id.btsearch);
+		
+		
+		searchView.setOnClickListener(searchListener);
+		
+		
+		
+		
+		
+		
 		
 		/**
 		 * @author rafael
 		 *
 		 */
+		
+		
+		
+		
+		
+		
 		class ClickForce implements View.OnClickListener {
 			private ViewFlipper flipper;
 			private int index;
 			
 			public ClickForce(int index, ViewFlipper flipper) {
 				this.flipper = flipper;
-				getTabHost().setCurrentTab(index);
+				
+				
+//				getTabHost().setCurrentTab(index);
 				flipper.setDisplayedChild(index);
 				this.index = index;
 			}
 			public void onClick(View v) {
-		        getTabHost().setCurrentTab(this.index);
+//		        getTabHost().setCurrentTab(this.index);
 		        flipper.setInAnimation(null);
 		        flipper.setOutAnimation(null);
 				flipper.setDisplayedChild(this.index);
 			}
 		}
-		ViewFlipper flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
-		for (int i = 0; i < getTabWidget().getChildCount(); i++) {
-			getTabWidget().getChildAt(i).setOnClickListener(new ClickForce(i,flipper));
-		}
-		getTabHost().setCurrentTab(0);
-		flipper.setDisplayedChild(0);
+//		ViewFlipper flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
+//		for (int i = 0; i < getTabWidget().getChildCount(); i++) {
+//			getTabWidget().getChildAt(i).setOnClickListener(new ClickForce(i,flipper));
+//		}
+//		getTabHost().setCurrentTab(0);
+//		flipper.setDisplayedChild(0);
 		
 		
-		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
+//		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
 		
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
@@ -425,6 +908,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 
 				Vector<ServerNode> srv_lst = db.getServers();
+				
 				if (srv_lst.isEmpty()){
 					Intent call = new Intent(this, ManageRepo.class);
 					call.putExtra("empty", true);
@@ -510,7 +994,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 //			schDownAll();
 //    	}
 //		registerReceiver(broadcastReceiver , intentFilter);
-		
+		if(db.checkNPackages()){
+			updateRepos();
+		}
 	}
 
 	
@@ -561,8 +1047,20 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		menu.clear();
+		
+		if(currentAppsList==EnumAppsLists.Available){
+		menu.add(Menu.NONE,EnumOptionsMenu.UPDATE_REPO.ordinal(),EnumOptionsMenu.UPDATE_REPO.ordinal(),R.string.menu_update_repo)
+		.setIcon(android.R.drawable.ic_menu_rotate);
+		}
+		if(currentAppsList==EnumAppsLists.Update){
+			menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.menu_update_all)
+			.setIcon(R.drawable.ic_menu_refresh);
+		}
+		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options)
+		.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
 		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
@@ -572,6 +1070,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
 		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(R.drawable.ic_menu_scheduled);
+		
 		return true;
 	}
 	
@@ -581,6 +1080,56 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
 		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
 		switch (menuEntry) {
+		case UPDATE_ALL:
+			updateAll();
+			break;
+		case UPDATE_REPO:
+			Intent remoteUpdate = new Intent("pt.caixamagica.aptoide.UPDATE_REPOS");
+			remoteUpdate.setClassName("cm.aptoide.pt", "cm.aptoide.pt.RemoteInTab");
+			startActivity(remoteUpdate);
+			return true;
+		case DISPLAY_OPTIONS:
+			final AlertDialog p = resumeMe();
+			p.show();
+			
+			new Thread(){
+				@Override
+				public void run() {
+					super.run();
+					while(p.isShowing()){
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {	}
+					}
+					if(sPref.getBoolean("pop_changes", false)){
+						prefEdit.remove("pop_changes");
+						prefEdit.commit();
+						if(sPref.getBoolean("mode", false)){
+							if(!(shown_now == null) || main_shown_now == 2){
+								handler_adpt = getGivenCatg(shown_now, main_shown_now);
+							}else{
+								handler_adpt = getRootCtg();
+							}
+							displayRefresh.sendEmptyMessage(0);
+						}else{
+							shown_now = null;
+							handler_adpt = null;
+							redrawHandler.sendEmptyMessage(0);
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e1) { }
+							while(sPref.getBoolean("redrawis", false)){
+								try {
+									Thread.sleep(500);
+								} catch (InterruptedException e) { }
+							}
+							displayRefresh.sendEmptyMessage(0);
+						}
+					}
+				}
+			}.start();
+			break;
+			
 		case MANAGE_REPO:
 			Intent i = new Intent(this, ManageRepo.class);
 			startActivityForResult(i,NEWREPO_FLAG);
@@ -593,8 +1142,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			View view = li.inflate(R.layout.about, null);
 			TextView info = (TextView)view.findViewById(R.id.about11);
 			info.setText(mctx.getString(R.string.about_txt11, mctx.getString(R.string.ver_str)));
-			Builder p = new AlertDialog.Builder(this).setView(view);
-			final AlertDialog alrt = p.create();
+			Builder pd = new AlertDialog.Builder(this).setView(view);
+			final AlertDialog alrt = pd.create();
 			alrt.setIcon(R.drawable.icon);
 			alrt.setTitle(R.string.app_name);
 			alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
@@ -676,8 +1225,6 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	 */
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
-//		if(isRegistered)
 		
 		super.onPause();
 		prefEdit.putBoolean("intentChanged", false);
@@ -689,15 +1236,14 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	
 	@Override
 	protected void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		unregisterReceiver(broadcastReceiver2);
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
+
 		Log.d("RemoteInTab Result",resultCode + " "+requestCode+" "+data);
 		if(requestCode == NEWREPO_FLAG){
 			if(data != null && data.hasExtra("update")){
@@ -719,7 +1265,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 				updateRepos();
 			}
 		}else if(requestCode == SETTINGS_FLAG){
-			
+
 			/*if(data != null && data.hasExtra("mode")){
 				prefEdit.putBoolean("mode", data.getExtras().getBoolean("mode"));
 	        	prefEdit.commit();
@@ -732,8 +1278,28 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 			if(intserver != null)
 				startActivityForResult(intserver, NEWREPO_FLAG);
 
+		}else if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
+			String apk_id = data.getStringExtra("apkid");
+			Log.d("Aptoide", "....... getting: " + apk_id);
+			queueDownload(apk_id, data.getStringExtra("version"), false);
+
+		}else if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+
+			if(data.getBooleanExtra("rm", false)){
+				new Thread() {
+					public void run() {
+						String apk_id = data.getStringExtra("apkid");
+						Log.d("Aptoide", ".... removing: " + apk_id);
+						removeApk(apk_id);
+					}
+				}.start();
+			} else if(data.getBooleanExtra("install", false) && data.hasExtra("version")){
+				String apk_id = data.getStringExtra("apkid");
+				Log.d("Aptoide", "....... getting: " + apk_id);
+				queueDownload(apk_id, data.getStringExtra("version"), true);
+			}
 		}
-		
+
 	}
 	
 	public boolean updateRepos(){
@@ -808,7 +1374,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
 		
 		if(connectionAvailable){
-			myTabHost.setCurrentTabByTag("inst");
+//			myTabHost.setCurrentTabByTag("inst");
 			
 			new Thread() {
 				public void run() {
@@ -878,6 +1444,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 					finally{
 						Log.d("Aptoide","======================= I UPDATEREPOS SAY KILL");
 						update_handler.sendEmptyMessage(0);
+						
 					}
 				}
 			}.start();
@@ -908,7 +1475,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 	    	xr = sp.getXMLReader();
 	    	if(type){
 	    		Log.d(""+type, "type");
-	    		RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
+	    		RssHandler handler = new RssHandler(this,this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
 	    		xr.setContentHandler(handler);
 	    		xr.setErrorHandler(handler);
 	    		xml_file = new File(XML_PATH);
@@ -1106,8 +1673,8 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         	/*if(updt_pd.isShowing())
         		updt_pd.dismiss();*/
         	
-        	myTabHost.setCurrentTabByTag("avail");
-    		
+//        	myTabHost.setCurrentTabByTag("avail");
+        	onResume();
     		if(failed_repo.size() > 0){
     			final AlertDialog p = new AlertDialog.Builder(mctx).create();
     			p.setTitle(getText(R.string.top_error));
@@ -1163,8 +1730,25 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 				}
 			}.start();*/ 
     		
+    		prefEdit.putBoolean("redrawis", true);
+    		prefEdit.commit();
+    		new Thread(){
+				@Override
+				public void run() {
+					super.run();
+					try {
+					while(sPref.getBoolean("redrawis", true)){
+						
+						Thread.sleep(10);
+						
+					}
+					} catch (InterruptedException e) { }
+					displayrefresh2.sendEmptyMessage(0);
+				}
+				
+			}.start();
         }
-        
+       
 	};
 
 	private Handler update_updater_tick = new Handler(){
@@ -1180,6 +1764,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		
 	};
 	
+	
 	private Handler update_updater_set = new Handler(){
 
 		@Override
@@ -1188,6 +1773,7 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
 			pd.setProgress(0);
 			pd.setMax(msg.what);
+			
 //			if(!pd.isShowing())
 				
 			
@@ -1217,6 +1803,9 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		}
 		 
 	};
+	
+	
+	
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
@@ -1352,25 +1941,243 @@ private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 		if(isUpdate){
 			installApkAction.setAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
 	    	installApkAction.putExtra("packageName", packageName);
-			myTabHost.setCurrentTabByTag("updt");
+//			myTabHost.setCurrentTabByTag("updt");
 		}else{
 			installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
-			myTabHost.setCurrentTabByTag("inst");
+//			myTabHost.setCurrentTabByTag("inst");
 		}
 			
 		installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
+//		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
     	installApkAction.putExtra("localPath", localPath);
     	installApkAction.putExtra("version", version);
     	installApkAction.putExtra("apkidHash", apkidHash);
     	installApkAction.putExtra("packageName", packageName);
-	    	
-		sendBroadcast(installApkAction, null);
+    	
+//    	IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
+//	    registerReceiver(new InstallApkListener(), filter);
+		sendBroadcast(installApkAction);
 		getIntent().setAction("android.intent.action.VIEW");
 		startActivity(getIntent());
 		
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
 
+	class OnPreviousClickedListener implements View.OnClickListener{
+		public void onClick(View v) {
+			Log.d("previous title", "previous title click");
+			vf.setOutAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_out_previous));
+			vf.setInAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_in_previous));
+			vf.showPrevious();
+			currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+			putElementsIntoTitleBar(currentAppsList);
+		}
+	}
 
+	class OnNextClickedListener implements View.OnClickListener{
+		public void onClick(View v) {
+			Log.d("next title", "next title click");
+			vf.setOutAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_out_next));
+			vf.setInAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_in_next));
+			vf.showNext();
+			currentAppsList = EnumAppsLists.getNext(currentAppsList);
+			putElementsIntoTitleBar(currentAppsList);
+		}
+	}
+
+	public void putElementsIntoTitleBar(EnumAppsLists currentAppList){
+		switch(currentAppList){
+		case Available: 
+			nextView.setVisibility(View.VISIBLE);
+			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			previousView.setVisibility(View.INVISIBLE);
+			previousListTitle.setText(emptyListTitle);
+			currentListTitle.setText(currentAppsList.Available.toString());
+			break;
+		case Installed:
+			nextView.setVisibility(View.VISIBLE);
+			previousView.setVisibility(View.VISIBLE);
+			currentListTitle.setText(currentAppList.Installed.toString());
+			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
+			break;
+		case Update:
+			
+			
+			
+			
+			nextView.setVisibility(View.INVISIBLE);
+			previousView.setVisibility(View.VISIBLE);
+			currentListTitle.setText(currentAppList.Update.toString());
+			nextListTitle.setText(emptyListTitle);
+			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
+			break; 
+		}
+
+	}
+	
+	class SwypeDetector extends SimpleOnGestureListener {
+
+		private static final int SWIPE_MIN_DISTANCE = 80;
+		private static final int SWIPE_MAX_OFF_PATH = 250;
+		private static final int SWIPE_THRESHOLD_VELOCITY = 150;
+
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+			//    		Toast.makeText( Aptoide.this, availableAdapter.getItem( availableAppsList.pointToPosition(Math.round(e1.getX()), Math.round(e1.getY()) )).toString(), Toast.LENGTH_LONG );
+			if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH){
+				return false;
+			}else{
+				swyping.set(true);
+				if (e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+					Log.d("Aptoide","Swype right");
+
+					if(EnumAppsLists.getNext(currentAppsList).equals(currentAppsList)){
+						vf.startAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_resist_next));
+					}else{
+						vf.setOutAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_out_next));
+						vf.setInAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_in_next));
+						vf.showNext();
+						currentAppsList = EnumAppsLists.getNext(currentAppsList);
+						putElementsIntoTitleBar(currentAppsList);
+					}
+
+				} else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+					Log.d("Aptoide","Swype left");
+					if(EnumAppsLists.getPrevious(currentAppsList).equals(currentAppsList)){
+						vf.startAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_resist_previous));
+					}else{
+						vf.setOutAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_out_previous));
+						vf.setInAnimation(AnimationUtils.loadAnimation(RemoteInTab.this, R.anim.flip_in_previous));
+						vf.showPrevious();
+						currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+						putElementsIntoTitleBar(currentAppsList);
+					}
+				}
+				new Thread(){
+					public void run(){
+						swypeDelayHandler.postDelayed(new Runnable() {
+							public void run() {
+								swyping.set(false);
+							}
+						}, 100);
+					}
+				}.start();
+
+
+				return super.onFling(e1, e2, velocityX, velocityY);
+			}
+		}
+
+	}
+	private AtomicBoolean swyping = new AtomicBoolean(false);;
+	private EnumAppsLists currentAppsList = null;
+	private Handler swypeDelayHandler = new Handler();
+	
+	private GestureDetector swypeDetector;
+	private View.OnTouchListener swypeListener;
+	private ListAdapter handler_adpt;
+	
+	
+	
+	protected Handler displayRefresh = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			if(handler_adpt == null){
+				handler_adpt = availAdpt;
+			}
+			availView.setAdapter(handler_adpt);
+			availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+			availView.setSelection(pos-1);
+		}
+		 
+	 };
+	 
+	 protected Handler redrawHandler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			redraw();
+		}
+		 
+	 };
+	 
+	 protected Handler onResumeHandler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			availView.setAdapter(getAvailable(null,-1));
+		}
+		 
+	 };
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public Handler displayrefresh2 = new Handler(){
+		
+
+		
+
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			if(sPref.getBoolean("changeinst", false)){
+				availView.setAdapter(getAvailable(shown_now,main_shown_now));
+				installView.setAdapter(instAdpt);
+				updateView.setAdapter(updateAdpt);
+				
+				prefEdit.remove("changeinst");
+				prefEdit.commit();
+			}
+		}
+	};
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && sPref.getBoolean("mode", false) && deep > 0) {
+	        switch (deep) {
+			case 1:
+				availView.setAdapter(getRootCtg());
+				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				deep = 0;
+				break;
+			case 2:
+				availView.setAdapter(getAppCtg());
+				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				deep = 1;
+				break;
+			case 3:
+				availView.setAdapter(getGamesCtg());
+				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				deep = 1;
+				break;
+			}
+			
+	        return true;
+	    }
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	
+	public void updateAll(){
+		Log.d("Aptoide-TabUpdates", "Starting download of all possible updates");
+		
+		for(ApkNode node: apk_lst){
+			
+			if(node.status == 2){
+				queueDownload(node.apkid, node.verUpdate, true);
+			}
+		}
+	}
 }
+
+

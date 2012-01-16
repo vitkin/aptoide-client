@@ -145,12 +145,7 @@ public class Aptoide extends Activity {
 	
 	private Handler mHandler = new Handler();
 
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-		
-	}
+
 	
 
 	private Handler startHandler = new Handler() {
@@ -273,7 +268,7 @@ public class Aptoide extends Activity {
         keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power"); 
     	DownloadQueueServiceIntent = new Intent(mctx, DownloadQueueService.class);
     	startService(DownloadQueueServiceIntent);
-
+    	
     	mctx.bindService(new Intent(mctx, DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     	
 //@dsilveira  #534 +10lines Check if Aptoide is already running to avoid wasting time and showing the splash
@@ -358,6 +353,8 @@ public class Aptoide extends Activity {
 			prefEdit.putBoolean("hwspecsChkBox", true);
 			prefEdit.commit();
 		}
+		prefEdit.putBoolean("redrawis", true);
+		prefEdit.commit();
     
         setContentView(R.layout.start);
         

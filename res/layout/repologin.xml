@@ -3,7 +3,8 @@
 	android:id="@+id/user_pass_dialog_root"
 	android:layout_height="wrap_content" 
 	android:orientation="vertical" 
-	android:layout_width="fill_parent">
+	android:layout_width="fill_parent"
+	android:background="#ffffff">
 	
 	<EditText 
 		android:id="@+id/login_user"

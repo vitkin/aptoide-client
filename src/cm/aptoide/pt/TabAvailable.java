@@ -63,13 +63,13 @@ public class TabAvailable extends BaseManagement implements OnItemClickListener{
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		lv = new ListView(this);
 		
-		if(Configs.BACKGROUND_ON_TABS){
-			if(Configs.INTERFACE_TABS_ON_BOTTOM){
-				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava_tab_bottom));
-			}else{
-				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava_tab_top));
-			}
-		}
+//		if(Configs.BACKGROUND_ON_TABS){
+//			if(Configs.INTERFACE_TABS_ON_BOTTOM){
+//				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava_tab_bottom));
+//			}else{
+//				lv.setBackgroundDrawable(this.getApplicationContext().getResources().getDrawable(R.drawable.backgroundlistava_tab_top));
+//			}
+//		}
 		
 		lv.setCacheColorHint(0);
 		lv.setOnItemClickListener(this);

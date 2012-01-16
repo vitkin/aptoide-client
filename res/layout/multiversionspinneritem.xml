@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-	
-	<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 04	    android:orientation="vertical"
 05	    android:layout_width="fill_parent"
 06	    android:layout_height="fill_parent" >
@@ -14,45 +14,37 @@
 14	    android:layout_gravity="center"
 15	        android:text="@string/hello" /> 
 16	    </LinearLayout>
-17	</LinearLayout>-->
-	
-	 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:stretchColumns="0">
-		<TableRow>
-			
-			<TextView 
-					android:id="@+id/versionspinnermultiversion"
-					android:textColor="#000000"
-					android:layout_width="wrap_content" 
-					android:layout_height="fill_parent"
-					android:textSize="20dip"
-					android:layout_gravity="center_vertical"
-					/>
-	      	 
-      	 </TableRow>
-      	 	
-      	 <TableRow>
-      	 
-      			<TextView 
-					android:id="@+id/infoMultiversion" 
-					android:textSize="12sp"
-					android:textColor="#000000"
-					android:layout_width="wrap_content" 
-					android:layout_height="fill_parent"
-					/>
-	      	 	
-      	 </TableRow>
-      	 	
-      	 
-
-      	 
-      </TableLayout>
-       
-<!-- 
-@author rafael
+17	</LinearLayout>
 -->
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:stretchColumns="0" 
+    android:background="#ffffff">
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/versionspinnermultiversion"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:textColor="#4f4f4f"
+            android:textSize="20dip" />
+    </TableRow>
+
+    <TableRow>
+
+        <TextView
+            android:id="@+id/infoMultiversion"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:textColor="#4f4f4f"
+            android:textSize="12sp" />
+    </TableRow>
+
+</TableLayout><!-- @author rafael -->
 <!--
  <RadioGroup
 	android:layout_width="wrap_content"
@@ -67,4 +59,4 @@
 		android:enabled="false"
 					/>
  </RadioGroup> 
-  -->
+-->
