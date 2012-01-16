@@ -30,6 +30,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources.NotFoundException;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
@@ -91,7 +92,7 @@ public class ManagerNotifications {
 	    } catch (NoSuchMethodException e) {
 	        // Running on an older platform.
 	        startForeground = stopForeground = null;
-	        return;
+//	        return;
 	    }
 	    try {
 	        setForeground = serviceData.getClass().getMethod("setForeground", setForegroundSignature);
@@ -150,6 +151,11 @@ public class ManagerNotifications {
 	
 	public ViewNotification getNewViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid){
 		return getNewViewNotification(notificationType, actionsTargetName, targetsHashid, 1);
+	}
+	
+	public void recycleNotification(ViewNotification notification){
+		notification.clean();
+		notificationPool.add(notification);
 	}
 
 //TODO refactor

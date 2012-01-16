@@ -25,8 +25,10 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
 
 import org.apache.http.HttpResponse;
@@ -44,8 +46,6 @@ import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.ViewClientStatistics;
 import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
-import cm.aptoide.pt.data.model.ViewApplication;
-import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
@@ -66,13 +66,12 @@ public class ManagerDownloads {
 	private ConnectivityManager connectivityState;
 	
 	/** Ongoing */
-	private HashMap<Integer, ViewDownload> downloads;
+//	private HashMap<Integer, ViewDownload> downloads;
 	
 	/** Waiting **/
-	private ArrayList<ViewDownload> waitingIcons;
-	private ViewDownloadStatus iconsListStatus = null;
-	private ArrayList<ViewDownload> waitingScreens;
-	private ArrayList<ViewDownload> waitingApks;
+	private IconsDownloadManager iconsDownloadManager;
+//	private ScreensDownloadManager screensDownloadManager;
+//	private apksDownloadManager apksDownloadManager;
 	
 	/** Object reuse pool */
 	private ArrayList<ViewDownload> downloadPool;
@@ -82,6 +81,43 @@ public class ManagerDownloads {
 //	private NotificationManager notificationManager;					//TODO move to notifications within ServiceData
 //	private Context context;											//TODO deprecate
 //	private WakeLock keepScreenOn;										//moved to ServiceData
+	
+    private class IconsDownloadManager{
+    	private ExecutorService iconGettersPool;
+    	private AtomicInteger iconsDownloadedCounter;
+    	
+    	public IconsDownloadManager(){
+    		iconGettersPool = Executors.newFixedThreadPool(Constants.MAX_PARALLEL_DOWNLOADS);
+    		iconsDownloadedCounter = new AtomicInteger(0);
+    	}
+    	
+    	public void executeDownload(ViewDownload downloadInfo){
+    		iconGettersPool.execute(new GetInstalledApps(downloadInfo));
+        }
+    	
+    	private class GetInstalledApps implements Runnable{
+
+    		private ViewDownload iconDownload;
+    		
+			public GetInstalledApps(ViewDownload iconDownloadInfo) {
+				this.iconDownload = iconDownloadInfo;
+			}
+
+			@Override
+			public void run() {
+//				downloads.put(download.getNotification().getNotificationHashid(), download);
+				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+				download(iconDownload, false);
+				recicleViewDownload(iconDownload);
+				if(iconsDownloadedCounter.incrementAndGet() >= Constants.ICONS_REFRESH_INTERVAL){
+					iconsDownloadedCounter.set(0);
+					serviceData.refreshAvailableDisplay();
+				}
+			}
+    		
+    	}
+    }
+	
 	
 	public ManagerCache getManagerCache(){
 		return this.managerCache;
@@ -97,11 +133,9 @@ public class ManagerDownloads {
 		managerCache = new ManagerCache();
 		
 		connectivityState = (ConnectivityManager)serviceData.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		iconsDownloadManager = new IconsDownloadManager();
 		
-		this.downloads = new HashMap<Integer, ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
-		this.waitingIcons = new ArrayList<ViewDownload>(Constants.DISPLAY_LISTS_CACHE_SIZE);
-		this.waitingScreens = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
-		this.waitingApks = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		this.downloadPool = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		
 		Log.d("Aptoide","******* \n Downloads will be made to: " + Constants.PATH_CACHE + "\n ********");
@@ -136,6 +170,12 @@ public class ManagerDownloads {
 		return download;
 	}
 	
+	public synchronized void recicleViewDownload(ViewDownload download){
+//		serviceData.getManagerNotifications().recycleNotification(download.getNotification());
+		download.clean();
+		downloadPool.add(download);
+	}
+	
 	public boolean isConnectionAvailable(){
 		boolean connectionAvailable = false;
 		try {
@@ -160,24 +200,25 @@ public class ManagerDownloads {
 				Log.d("Aptoide-ManagerDownloads", "Icon already exists: "+iconInfo.getAppName());
 				continue;
 			}else{
-				ViewDownload download;
+				ViewDownload downloadInfo;
 				ViewCache cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
 				ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
 				
 				if(downloadStatus.getRepository().isLoginRequired()){
-					download = getNewViewDownload(iconInfo.getRemotePath(), downloadStatus.getRepository().getLogin(), cache, notification);
+					downloadInfo = getNewViewDownload(iconInfo.getRemotePath(), downloadStatus.getRepository().getLogin(), cache, notification);
 				}else{
-					download = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
+					downloadInfo = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
 				}
 				
-				waitingIcons.add(download);
+				iconsDownloadManager.executeDownload(downloadInfo);
 			}
 		}
 		
-		iconsListStatus = downloadStatus;
-		notifyIconDownloadSlotAvailable();
+		downloadStatus.incrementOffset(Constants.DISPLAY_LISTS_CACHE_SIZE);
+		serviceData.getRepoIcons(downloadStatus);
 		
 	}
+
 	
 //	public void getRepoIcons(ViewRepository repository, int offset, ArrayList<ViewDownloadInfo> iconsInfo){
 //		int iconsCount = iconsInfo.size();
@@ -373,39 +414,7 @@ public class ManagerDownloads {
 //	}
 	
 	
-	private synchronized void notifyIconDownloadSlotAvailable(){
-
-		int maxDownloads = Math.min(waitingIcons.size(), Constants.MAX_PARALLEL_DOWNLOADS);//((Constants.MAX_PARALLEL_DOWNLOADS-downloads.size())<0?1:Constants.MAX_PARALLEL_DOWNLOADS-downloads.size()));
-		
-		for(int downloading = 0; downloading < maxDownloads; downloading++){
-			ViewDownload download = waitingIcons.remove(Constants.FIRST_ELEMENT);
-			downloads.put(download.getNotification().getNotificationHashid(), download);
-			downloadInNewThread(download, true, Thread.MIN_PRIORITY);
-		}
-		
-		if(waitingIcons.size()%(Constants.DISPLAY_LISTS_CACHE_SIZE/3) == 0){
-			serviceData.refreshAvailableDisplay();
-		}
-		
-		if(waitingIcons.isEmpty()){
-			iconsListStatus.incrementOffset(Constants.DISPLAY_LISTS_CACHE_SIZE);
-			serviceData.getRepoIcons(iconsListStatus);
-		}
-	}
 	
-	
-	private void downloadInNewThread(final ViewDownload download, final boolean overwriteCache, final int threadPriority){
-
-		new Thread(){
-			public void run(){
-				this.setPriority(threadPriority);
-				
-				download(download, overwriteCache);
-			}
-		}.start();
-
-	}
-
 	//TODO refactor magic numbers, logs and exceptions
 	private void download(ViewDownload download, boolean overwriteCache){
 		ViewCache localCache = download.getCache();
@@ -439,7 +448,6 @@ public class ManagerDownloads {
 			}
 
 			HttpResponse httpResponse = httpClient.execute(httpGet);
-//TODO check for gzip (code in remoteintab 1013 #531)
 			if(httpResponse == null){
 				Log.d("Aptoide","Problem in network... retry...");	
 				httpResponse = httpClient.execute(httpGet);
@@ -495,10 +503,6 @@ public class ManagerDownloads {
 					//TODO md5check boolean return handle  by  raising exception
 				}
 
-				if(download.getNotification().getNotificationType().equals(EnumNotificationTypes.GET_ICONS)){
-					downloads.remove(download.getNotification().getNotificationHashid());
-					notifyIconDownloadSlotAvailable();
-				}
 			}
 		}catch (Exception e) { //TODO  retry on java.net.SocketException: The operation timed out
 			//TODO handle exception

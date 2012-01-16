@@ -42,6 +42,7 @@ public class ViewNotification {
 	private int progressCompletionTarget;
 	private boolean completed;
 	
+	private ViewNotification parentNotification;
 	private ArrayList<ViewNotification> subNotifications;
 
 	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget) {
@@ -53,6 +54,7 @@ public class ViewNotification {
 		this.progressCompletionTarget = progressCompletionTarget;
 		this.completed = false;
 		
+		this.parentNotification = null;		//TODO refactor null to nullobject
 		this.subNotifications = new ArrayList<ViewNotification>();
 	}
 	
@@ -82,12 +84,21 @@ public class ViewNotification {
 		}
 		this.completed = completed;
 	}
+	
+	private void setParentNotification(ViewNotification parent){
+		this.parentNotification = parent;
+	}
+	
+	public void dissociateFromParent(){
+		this.parentNotification.removeSubNotification(this);
+	}
 
 	public ArrayList<ViewNotification> getSubNotifications() {
 		return subNotifications;
 	}
 	
 	public void addSubNotification(ViewNotification subNotification){
+		subNotification.setParentNotification(this);
 		this.subNotifications.add(subNotification);
 	}
 	
@@ -99,6 +110,13 @@ public class ViewNotification {
 		return this.subNotifications.remove(subNotification);
 	}
 
+	public void removeSubNotifications(){
+		for (ViewNotification subNotification : subNotifications) {
+			subNotification.dissociateFromParent();
+		}
+		return;
+	}
+	
 	public void setSubNotifications(ArrayList<ViewNotification> subNotifications) {
 		this.subNotifications = subNotifications;
 	}
@@ -163,6 +181,8 @@ public class ViewNotification {
 		this.progressCompletionTarget = 0;
 		this.completed = false;
 		
+		dissociateFromParent();
+		removeSubNotifications();
 		this.subNotifications = null;
 	}
 	

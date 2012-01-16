@@ -28,6 +28,7 @@ package cm.aptoide.pt.data;
  *
  */
 public enum EnumServiceDataCallback {
+	UPDATE_REPOS_INFO,
 	UPDATE_INSTALLED_LIST,
 	UPDATE_AVAILABLE_LIST,
 	REFRESH_ICON,
