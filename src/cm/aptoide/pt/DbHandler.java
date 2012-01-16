@@ -75,7 +75,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
-				+ " secure integer default 0 not null, updatetime text default 0 not null, base_path text, delta text default 0 not null);";
+				+ " secure integer default 0 not null, updatetime text default 0 not null, base_path text, delta text default 0 not null, npackage integer default 0 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
 				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, sdk number, esgl text, screensize text,"
@@ -1418,6 +1418,44 @@ public class DbHandler {
 		int o = db.delete(TABLE_NAME_OLD_VERSIONS, "server='"+repo+"'", null);
 		Log.d("Aptoide","RemovedOld: " + o);
 		
+	}
+	
+	public void updateNPackages(String srv, int i){
+		ContentValues tmp = new ContentValues();
+		
+		tmp.put("npackage", i);
+		db.update(TABLE_NAME_URI, tmp, "uri='" + srv + "'", null);
+	}
+	
+	public boolean checkNPackages(){
+		Cursor c = null;
+		int npackages;
+		int inuse;
+		try{
+			
+			c = db.query(TABLE_NAME_URI, new String[] {"npackage", "uri","inuse"},null, null, null, null, null);
+			c.moveToFirst();
+			
+			for(int i=0; i<c.getCount(); i++){
+				npackages=c.getInt(0);
+				inuse = c.getInt(2);
+				if (npackages==0&&inuse==1){
+					resetServerCacheUse(c.getString(1));
+					return true;
+					
+				}
+				c.moveToNext();
+			}
+			
+			
+			return false;
+			
+		}catch (Exception e) {
+			return false;
+			}
+		finally{
+			c.close();
+		}
 	}
 
 	

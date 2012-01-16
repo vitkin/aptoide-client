@@ -3,14 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pkg"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:layout_height="fill_parent"
+    android:orientation="horizontal"
+    android:background="#ffffff">
     
 
     <ImageView android:id="@+id/appicon"
         android:layout_width="35px"
         android:layout_height="35px"
         android:cropToPadding ="true"
+        android:padding="4sp"
         android:scaleType="fitCenter" 
         android:layout_gravity="center_vertical|center_horizontal"/>
 
@@ -27,13 +29,14 @@
             android:ellipsize="marquee"
             android:marqueeRepeatLimit ="marquee_forever"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+           	android:textColor="#4f4f4f"/>
             
 		<TextView android:id="@+id/nameup"
             android:textSize="21sp"
             android:layout_alignParentTop="true"
             android:textStyle="bold"
-            android:textColor="#FFFFAA"
+            android:textColor="#4f4f4f"
             android:maxLines="1"
             android:ellipsize="marquee"
             android:layout_width="fill_parent"
@@ -48,7 +51,8 @@
 	            android:textSize="12sp"
 	            android:layout_below="@id/name" 
 	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"/>
+	            android:layout_height="wrap_content"
+	            android:textColor="#4f4f4f"/>
 	        
 	        <TextView android:id="@+id/isDowngradeAvailable"
 	            android:textSize="12sp"
@@ -82,7 +86,8 @@
         	    android:layout_height="wrap_content"
         	    android:layout_alignParentRight="true"
         	    android:gravity="right"
-        	    android:textSize="12sp" />
+        	    android:textSize="12sp" 
+        	    android:textColor="#4f4f4f"/>
             
         	<RatingBar
         	    android:id="@+id/rating"

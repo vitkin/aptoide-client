@@ -3,16 +3,16 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:background="#ffffff"
-    >
+    android:gravity="center" 
+    android:background="#ffffff">
     
-	<ImageView android:id="@+id/imagebutton"
-		android:src="@drawable/splashaptoide2"
-		android:cropToPadding="true"
-		android:layout_width="fill_parent"
-		android:layout_height="fill_parent"
-		android:layout_weight="1"/>
+	<ImageView
+	    android:id="@+id/imagebutton"
+	    android:layout_width="wrap_content"
+	    android:layout_height="fill_parent"
+	    android:layout_weight="1"
+	    android:cropToPadding="true"
+	    android:src="@drawable/splash" />
 	  
 	<ProgressBar
 		android:id="@+id/pbar"

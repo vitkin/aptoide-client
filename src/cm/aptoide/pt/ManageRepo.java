@@ -50,6 +50,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -371,7 +372,7 @@ public class ManageRepo extends ListActivity{
 		switch(item.getItemId()){
 		case ADD_REPO:
 			View view = li.inflate(R.layout.addrepo, null);
-			
+			view.setBackgroundColor(Color.WHITE);
 			final TextView sec_msg = (TextView) view.findViewById(R.id.sec_msg);
 			final TextView sec_msg2 = (TextView) view.findViewById(R.id.sec_msg2);
 			
@@ -393,7 +394,10 @@ public class ManageRepo extends ListActivity{
 			
 			
 			Builder p = new AlertDialog.Builder(this).setView(view);
+			
+			
 			alrt = p.create();
+			
 			alrt.setIcon(android.R.drawable.ic_menu_add);
 			alrt.setTitle(getText(R.string.manage_repo_add));
 

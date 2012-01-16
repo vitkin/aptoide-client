@@ -104,11 +104,18 @@ public class RssHandler extends DefaultHandler{
 	private int apks_n = -1;
 
 	private HWSpecifications specs;
+
+	private int nPackages;
+
+	private RemoteInTab rit;
+
+	
 	
 
 	//private boolean is_last = false;
 		
-	public RssHandler(Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
+	public RssHandler(RemoteInTab rit, Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
+		this.rit=rit;
 		mctx = ctx;
 		mserver = srv;
 		db = new DbHandler(mctx);
@@ -134,7 +141,7 @@ public class RssHandler extends DefaultHandler{
 		this.pd_tick = pd_tick;
 		
 		this.extras_hd = extras_hd;
-		
+		nPackages=0;
 		//this.is_last = is_last;
 		
 		sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
@@ -212,6 +219,7 @@ public class RssHandler extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
 		super.endElement(uri, localName, qName);
+		
 		if(localName.trim().equals("package")){
 			if(listapks == null){
 				listapks = db.getForUpdate();
@@ -285,7 +293,8 @@ public class RssHandler extends DefaultHandler{
 				}
 				
 			}
-			 
+			endTime = System.currentTimeMillis();
+			Log.d(new Long(endTime-startTime).toString(), tmp_apk.name);
 			/*readed++;
 			if(readed >= 10){
 				readed = 0;
@@ -308,6 +317,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.screenSize="small";
 			tmp_apk.ESGLVer="0.0";
 			pd_tick.sendEmptyMessage(0);
+			
 		}else if(localName.trim().equals("name")){
 			apk_name = false;
 		}else if(localName.trim().equals("path")){
@@ -358,13 +368,28 @@ public class RssHandler extends DefaultHandler{
 		}else if (localName.trim().equals("minScreen")) {
 			apk_screensize=false;
 		}
+		
+		
+		
+		
+		
+		
+		
 	}
+	
+	long endTime;
+	long startTime;
+	long endTotalTime;
+	long startTotalTime;
 
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
 		super.startElement(uri, localName, qName, attributes);
+		
+		startTime = System.currentTimeMillis();
 		if(localName.trim().equals("package")){
+			nPackages++;
 			//new_apk = true;
 		}else if(localName.trim().equals("name")){
 			apk_name = true;
@@ -420,6 +445,8 @@ public class RssHandler extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {
+		startTotalTime = System.currentTimeMillis();
+		db.updateNPackages(mserver,0);
 		String[] logins = null; 
 		logins = db.getLogin(mserver);
 		if(logins != null){
@@ -483,6 +510,7 @@ public class RssHandler extends DefaultHandler{
 		}.start();*/
 		
 		db.startTrans();
+		
 		super.startDocument();
 	}
 
@@ -573,6 +601,11 @@ public class RssHandler extends DefaultHandler{
 			}
 		}catch (Exception e){
 		}*/
+		if(napk<=nPackages){
+			db.updateNPackages(mserver,1);
+		}
+		endTotalTime = System.currentTimeMillis();
+		Log.d(new Long(endTotalTime-startTotalTime).toString(), "Total time");
 		super.endDocument();
 	}
 	

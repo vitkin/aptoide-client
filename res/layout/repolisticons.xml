@@ -1,38 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/vw1"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">    
+    android:orientation="horizontal" 
+    android:background="#ffffff">
 
-    <ImageView android:id="@+id/img"
+    <ImageView
+        android:id="@+id/img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical" 
+        android:background="#ffffff">
 
-        <TextView android:id="@+id/uri"
-            android:textSize="21sp"
-            android:textStyle="bold"
-            android:singleLine="true"
+        <TextView
+            android:id="@+id/uri"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:ellipsize="marquee"
-            android:layout_width="fill_parent"
-    		android:layout_height="fill_parent"/>
-    		
-    		<TextView android:id="@+id/numberapks"
-            android:textSize="12sp"
-            android:layout_below="@id/uri" 
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
+            android:singleLine="true"
+            android:textSize="21sp"
+            android:textColor="#4f4f4f"
+            android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/numberapks"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/uri"
+            android:textSize="12sp" 
+            android:textColor="#4f4f4f"/>
     </LinearLayout>
 
-</LinearLayout>
-<!--
+</LinearLayout><!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *

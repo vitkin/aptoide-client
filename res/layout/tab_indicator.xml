@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0sp"
+    android:layout_height="65sp"
+    android:orientation="vertical"
+    android:padding="5sp" 
+    android:background="@drawable/tabindicator">
 
-android:layout_width="0dip"
-android:layout_height="64dip"
-android:layout_weight="1"
-android:orientation="vertical"
-android:background="@drawable/tabindicator"
-android:padding="5dp">
-
-	<ImageView android:id="@+id/icon"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:layout_centerHorizontal="true" />
-	
-	<TextView android:id="@+id/title"
-	android:layout_width="wrap_content"
-	android:layout_height="wrap_content"
-	android:layout_alignParentBottom="true"
-	android:layout_centerHorizontal="true"
-	style="?android:attr/tabWidgetStyle"
-	 />
+    <TextView
+        android:id="@+id/title"
+        style="?android:attr/tabWidgetStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

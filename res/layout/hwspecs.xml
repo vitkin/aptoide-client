@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#ffffff"
     android:orientation="vertical" >
 
     <TextView
@@ -9,38 +10,44 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SDK Version"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#4f4f4f" />
 
     <TextView
         android:id="@+id/sdkver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text=""
+        android:textColor="#4f4f4f" />
 
     <TextView
         android:id="@+id/screenSizeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Screen Size"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#4f4f4f" />
 
     <TextView
         android:id="@+id/screenSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="" 
+        android:textColor="#4f4f4f"/>
 
     <TextView
         android:id="@+id/esglVerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ESGL Version"
+        android:textColor="#4f4f4f"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/esglVer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="" 
+        android:textColor="#4f4f4f"/>
 
 </LinearLayout>
