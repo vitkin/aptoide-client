@@ -151,7 +151,8 @@ public class RemoteInTab extends BaseManagement {
 	
 	ListView installView ;
 	ListView updateView ;
-
+	
+	boolean updating = false; 
 	private TextView previousListTitle = null;
 	private TextView currentListTitle = null;
 	private TextView nextListTitle = null;
@@ -218,6 +219,8 @@ public class RemoteInTab extends BaseManagement {
 				
 			}else if(action.equals("pt.caixamagica.aptoide.HAS_UPDATES")){
 				Log.d("","BroadCast Received:" + action);
+				
+				if(!updating){
 				int apps = intent.getIntExtra("appscount", 123);
 				AlertDialog alrt = new AlertDialog.Builder(mctx).create();
 				if(apps>0){
@@ -240,6 +243,7 @@ public class RemoteInTab extends BaseManagement {
 					}
 				});
 				alrt.show();
+				}
 			}else if ( intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
 				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"), intent.getStringExtra("version"));
 				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));
@@ -1338,7 +1342,7 @@ public class RemoteInTab extends BaseManagement {
 //			}
 //			
 //	    } //End of Fetch class
-		
+		updating=true;
 		prefEdit.putBoolean("kill_thread", true);
     	prefEdit.commit();
     	Log.d("Aptoide","======================= I UPDATEREPOS");
@@ -1346,6 +1350,7 @@ public class RemoteInTab extends BaseManagement {
 		pd.setTitle(getText(R.string.top_please_wait));
 		pd.setMessage(getText(R.string.updating_msg));
 		pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+		pd.setIndeterminate(true);
 		pd.setCancelable(false);
 		pd.setCanceledOnTouchOutside(false);
 		pd.show();
@@ -1412,7 +1417,10 @@ public class RemoteInTab extends BaseManagement {
 						for(ServerNode node: inuse_serv){
 							Log.d("Aptoide",node.uri + " is starting... : " + node.inuse);
 							//if(node.inuse){
-							pd.setProgress(0);
+							
+							
+							
+							
 							in_repo++;
 							counter_msg = null;
 							counter_msg = new Message();
@@ -1424,7 +1432,7 @@ public class RemoteInTab extends BaseManagement {
 							if(parse == 0){
 								//db.cleanRepoApps(node.uri);
 								xmlPass(node.uri,true,last_tmp.equals(node));
-								pd.setProgress(100);
+//								pd.setProgress(100);
 								if(fetch_extra){
 									Log.d("Aptoide","Adding repo to extras list...");
 									extras_repo.add(node);
@@ -1444,10 +1452,13 @@ public class RemoteInTab extends BaseManagement {
 					finally{
 						Log.d("Aptoide","======================= I UPDATEREPOS SAY KILL");
 						update_handler.sendEmptyMessage(0);
+						updating=false;
 						
 					}
 				}
 			}.start();
+			
+			
 			
 			return true;
 		}else{
@@ -1770,7 +1781,8 @@ public class RemoteInTab extends BaseManagement {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-
+			pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			pd.setIndeterminate(false);
 			pd.setProgress(0);
 			pd.setMax(msg.what);
 			
@@ -2060,7 +2072,7 @@ public class RemoteInTab extends BaseManagement {
 							public void run() {
 								swyping.set(false);
 							}
-						}, 100);
+						}, 1000);
 					}
 				}.start();
 

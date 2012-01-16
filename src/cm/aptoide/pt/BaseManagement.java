@@ -1,6 +1,8 @@
 package cm.aptoide.pt;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -9,6 +11,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -108,7 +120,29 @@ public class BaseManagement extends Activity {
 	    }
 
 	};	
-	
+	private ServiceConnection serviceConnection2 = new ServiceConnection() {
+	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+	        // This is called when the connection with the service has been
+	        // established, giving us the service object we can use to
+	        // interact with the service.  Because we have bound to a explicit
+	        // service that we know is running in our own process, we can
+	        // cast its IBinder to a concrete class and directly access it.
+//	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+	        Log.d("Aptoide-BaseManagement", "DownloadQueueService bound to a Tab");
+	    }
+	    
+	    public void onServiceDisconnected(ComponentName className) {
+	        // This is called when the connection with the service has been
+	        // unexpectedly disconnected -- that is, its process crashed.
+	        // Because it is running in our same process, we should never
+	        // see this happen.
+	        downloadQueueService = null;
+	        
+	        Log.d("Aptoide-BaseManagement","DownloadQueueService unbound from a Tab");
+	    }
+
+	};	
 
 	
 	@Override
@@ -750,44 +784,182 @@ public class BaseManagement extends Activity {
 			prefEdit.putBoolean("redrawis", false);
 			prefEdit.commit();
 			sendBroadcast(i);
-			startReposService();
+			reposCheck();
 		}
 
-		private void startReposService() {
-			
-			new Thread(){
-				@Override
-				public void run() {
-					super.run();
-					try {
-						Thread.sleep(5000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Intent checkReposServiceIntent = new Intent(mctx, CheckReposService.class);
-					startService(checkReposServiceIntent);
-					
-					
-				}
-				
-			}.start();	
-			
-	
-			
-		}
+		
 		 
 	 };
 	 
-	 protected void schDownAll() {
-//		 	ConnectivityManager netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-//			if(!db.getScheduledListNames().isEmpty()&&netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED&&sPref.getBoolean("schDwnBox", false)){		        		
-//	        	Intent intent1 = new Intent(getApplicationContext(),ScheduledDownload.class);
-//	        	intent1.putExtra("downloadAll", "");
-//	        	startActivity(intent1);
-//	        	}
+	 
+	 
+	 private class ServerEntry {
+			public String repo;
+			public boolean updates;
+			public int appscount;
+			
+			public ServerEntry(String repo, boolean updates, int appscount) {
+				this.repo = repo;
+				this.updates = updates;
+				this.appscount = appscount;
+			}
+			
 		}
+	 
+	 
+	 private void reposCheck() {
+		
+			new Thread(){
+				@Override
+				public void run() {
+					try{
+					Vector<ServerNode> allServers;
+					Vector<String> hashids = new Vector<String>();
+					Vector<String> servers= new Vector<String>();
+					Vector<ServerEntry> entries = new Vector<ServerEntry>();
+					db = new DbHandler(mctx);
+					allServers = db.getServers();
+					if(allServers!=null&&!allServers.isEmpty()){
+					for(ServerNode server : allServers){
+						if (server.inuse) {
+							servers.add(server.uri);
+							hashids.add(db.getServerDelta(server.uri));
+						}
+					}
+					String url_servers="";
+					String url_hashids="";
+					if(!hashids.isEmpty()){
+					for (int i=0; i!=servers.size();i++){
+						if(i==0){
+							url_servers=servers.get(i).split("http://")[1].split(".bazaarandroid.com/")[0];
+							url_hashids=hashids.get(i);
+						}else{
+							url_servers+=","+servers.get(i).split("http://")[1].split(".bazaarandroid.com/")[0];
+							url_hashids+=","+hashids.get(i);
+						}
+					}
+					String url = "https://www.bazaarandroid.com/webservices/listRepositoryChange/"+url_servers+"/"+url_hashids+"/"+"xml";
+					Log.d("",url);
+					BufferedInputStream bstream = new BufferedInputStream(NetworkApis.getInputStream(mctx, url));
+					SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError
+					SAXParser sp = spf.newSAXParser();
+					sp.parse(new InputSource(bstream), handler);
+					
+					int totalapps =0;
+					boolean updates =false; 
+					for(ServerEntry entry : entries){
+						if(entry.updates){
+							totalapps+=entry.appscount;
+							updates = true;
+						}
+					}
+					if(updates){
+						Intent i = new Intent("pt.caixamagica.aptoide.HAS_UPDATES");
+						i.putExtra("appscount", totalapps);
+						sendBroadcast(i);
+					}
+					}
+					}
+				} catch (ParserConfigurationException e) {
+					e.printStackTrace();
+				} catch (SAXException e) {
+					e.printStackTrace();
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				} 
+					
+				}
+				
+			}.start();
+		}
+	 
+	 
+	 private Vector<ServerEntry> entries = new Vector<ServerEntry>();
+	 private DefaultHandler handler= new DefaultHandler(){
+			
+			private boolean t_entry = false;
+			private boolean t_repo = false;
+			private boolean t_hasupdates = false;
+			
+			private String repo;
+			private boolean hasUpdates;
+			private int appscount;
+			private boolean t_added;
+			
+			@Override
+			public void startElement(String uri, String localName, String qName,
+					Attributes attributes) throws SAXException {
+				// TODO Auto-generated method stub
+				super.startElement(uri, localName, qName, attributes);
+				
+				if(qName.equalsIgnoreCase("entry")){
+					t_entry=true;
+					 
+				}else if(qName.equalsIgnoreCase("repo")){
+					t_repo=true;
+				}else if(qName.equalsIgnoreCase("hasupdates")){
+					t_hasupdates=true;
+				}
+				else if(qName.equalsIgnoreCase("added")){
+					t_added=true;
+				}
+				
+				
+				
+				
+			}
+			
+			@Override
+			public void characters(char[] ch, int start, int length)
+					throws SAXException {
+				// TODO Auto-generated method stub
+				super.characters(ch, start, length);
+				
+				
+//				if(t_entry){
+					
+//				}else 
+					if(t_repo){
+					repo=new String(ch,start,length);
+					
+					
+					
+				}else if (t_hasupdates){
+					hasUpdates=Boolean.parseBoolean((new String(ch,start,length)));
+					if(!hasUpdates){
+						appscount=0;
+					}
+				}else if (t_added){
+					appscount=Integer.parseInt((new String(ch,start,length)));
+				}
+				
+				
+			}
 
+			@Override
+			public void endElement(String uri, String localName, String qName)
+					throws SAXException {
+				// TODO Auto-generated method stub
+				super.endElement(uri, localName, qName);
+				if(qName.equalsIgnoreCase("entry")){
+					t_entry=false;
+					ServerEntry entry = new ServerEntry(repo,hasUpdates,appscount);
+					entries.add(entry);
+				}else if(qName.equalsIgnoreCase("repo")){
+					t_repo=false;
+				}else if(qName.equalsIgnoreCase("hasupdates")){
+					t_hasupdates=false;
+				}
+				else if(qName.equalsIgnoreCase("added")){
+					t_added=false;
+				}
+				
+			}
+
+			
+			
+		};
 
 	@Override
 	protected void onPause() {
