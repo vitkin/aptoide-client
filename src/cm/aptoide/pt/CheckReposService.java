@@ -16,8 +16,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import cm.aptoide.pt.DownloadQueueService.DownloadQueueBinder;
+
 import android.app.Service;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -28,7 +31,8 @@ public class CheckReposService extends Service {
 	Vector<String> servers= new Vector<String>();
 	Vector<ServerEntry> entries = new Vector<ServerEntry>();
 	private Vector<ServerNode> allServers;
-	
+    private final IBinder binder = new CheckReposBinder();
+
 	
 	private class ServerEntry {
 		public String repo;
@@ -42,6 +46,12 @@ public class CheckReposService extends Service {
 		}
 		
 	}
+	
+	public class CheckReposBinder extends Binder {
+    	CheckReposService getService() {
+            return CheckReposService.this;
+        }
+    }
 	
 	
 	DefaultHandler handler= new DefaultHandler(){
@@ -130,17 +140,15 @@ public class CheckReposService extends Service {
 	};
 	
 
+
+ 
+
+	
+
 	@Override
 	public IBinder onBind(Intent arg0) {
 		// TODO Auto-generated method stub
-		return null;
-	}
- 
-	
-	@Override
-	public void onCreate() {
-		// TODO Auto-generated method stub
-		super.onCreate();
+		
 		Log.d("CheckReposServer", "Started");
 		try {
 			db = new DbHandler(this);
@@ -182,7 +190,6 @@ public class CheckReposService extends Service {
 					updates = true;
 				}
 			}
-			
 			if(updates){
 				Intent i = new Intent("pt.caixamagica.aptoide.HAS_UPDATES");
 				i.putExtra("appscount", totalapps);
@@ -200,6 +207,7 @@ public class CheckReposService extends Service {
 		} 
 		
 		stopSelf();
+		return binder;
 	}
 	
 	
