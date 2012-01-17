@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:cropToPadding="true"
             android:scaleType="centerInside"
-            android:src="@android:drawable/ic_menu_more" />
+            android:src="@drawable/ic_menu_more" />
     </LinearLayout>
 
 </LinearLayout>
