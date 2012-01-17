@@ -1209,7 +1209,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //				Builder p = new AlertDialog.Builder(this).setView(view);
 //				final AlertDialog alrt = p.create();
 //				alrt.setIcon(R.drawable.icon);
-//				alrt.setTitle(R.string.app_name);
+//				alrt.setTitle(R.string.aptoide);
 //				alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
 //					public void onClick(DialogInterface dialog, int	whichButton) {
 //						Uri uri = Uri.parse(getString(R.string.change_log_url));

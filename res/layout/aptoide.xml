@@ -45,6 +45,7 @@ android:background="#ffffffff">
 	    </LinearLayout>
 	</FrameLayout>
 
+
 <!-- 	<cm.aptoide.pt.ui.ViewPagerIndicator  -->
 <!--     		android:id="@+id/indicator" -->
 <!--     		android:layout_width="fill_parent" -->

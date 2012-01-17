@@ -54,8 +54,13 @@ interface AIDLAptoideServiceData {
 	ViewDisplayListApps callGetAvailableApps(in int offset, in int range);
 	ViewDisplayListApps callGetUpdatableApps();
 	
+	ViewDisplayListApps callGetAppSearchResults(in String searchString);
+	
 	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
 	void CallFillAppInfo(in int appHashid);
 	ViewDisplayAppVersionsInfo callGetAppInfo(in int appHashid);
+	
+	void callInstallApp(in int appHashid);
+	void callRemoveApp(in int appHashid);
 	
 }

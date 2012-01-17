@@ -192,7 +192,7 @@ public class ManagerNotifications {
 //
 //		// Set the info for the notification panel.
 //    	notification.contentIntent = onClickAction;
-////    	notification.setLatestEventInfo(this, getText(R.string.app_name), getText(R.string.add_repo_text), contentIntent);
+////    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
 //
 //
 //		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -236,7 +236,7 @@ public class ManagerNotifications {
 //
 //		// Set the info for the notification panel.
 //    	notification.contentIntent = onClickAction;
-////    	notification.setLatestEventInfo(this, getText(R.string.app_name), getText(R.string.add_repo_text), contentIntent);
+////    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
 //
 //
 //		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
@@ -327,7 +327,7 @@ public class ManagerNotifications {
         PendingIntent contentIntent = PendingIntent.getActivity(serviceData, 0, new Intent(serviceData, Aptoide.class), 0);
 
         // Set the info for the views that show in the notification panel.
-        notification.setLatestEventInfo(serviceData.getApplicationContext(), serviceData.getText(R.string.app_name), serviceData.getManagerSystemSync().getAptoideVersionNameInUse(), contentIntent);
+        notification.setLatestEventInfo(serviceData.getApplicationContext(), serviceData.getText(R.string.aptoide), serviceData.getManagerSystemSync().getAptoideVersionNameInUse(), contentIntent);
         
         return notification; 
 	}

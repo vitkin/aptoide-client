@@ -106,7 +106,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			try {
 				return super.onTransact(code, data, reply, flags);
 			} catch (RuntimeException e) {
-				Log.w("MyClass", "Unexpected remote exception", e);
+				Log.w("Aptoide-ServiceData", "Unexpected remote exception", e);
 				throw e;
 			}
 		}
@@ -167,8 +167,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public ViewDisplayListApps callGetAppSearchResults(String searchString) throws RemoteException {
+			return getAppSearchResults(searchString);
+		}
+
+		@Override
 		public void callRegisterAppInfoObserver(AIDLAppInfo appInfoObserver, int appHashid) throws RemoteException {
-			registerAppInfoObserver(appInfoObserver, appHashid);	//TODO investigate why null pointer exception on appInfoObserver?? 
+			registerAppInfoObserver(appInfoObserver, appHashid);
 		}
 
 		@Override
@@ -185,6 +190,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		@Override
 		public void callManageRepos(ViewManageRepos reposToManage) throws RemoteException {
 			manageRepos(reposToManage);
+		}
+
+		@Override
+		public void callInstallApp(int appHashid) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void callRemoveApp(int appHashid) throws RemoteException {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}; 
@@ -898,6 +915,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	public ViewDisplayListApps getUpdatableApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Updatable Apps");
 		return managerDatabase.getUpdatableAppsDisplayInfo();
+	}
+	
+	public ViewDisplayListApps getAppSearchResults(String searchString){
+		AptoideLog.d(AptoideServiceData.this, "Getting App Search Results: "+searchString);
+		return managerDatabase.getAppSearchResultsDisplayInfo(searchString);
 	}
 	
 	
