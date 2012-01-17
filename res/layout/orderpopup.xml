@@ -4,7 +4,7 @@
 	android:layout_width="fill_parent" android:layout_height="fill_parent"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<LinearLayout android:orientation="vertical"
+	<LinearLayout android:orientation="vertical" android:background="#ffffff"
 		android:layout_width="fill_parent" android:minWidth="280dip"
 		android:layout_height="wrap_content">
 
@@ -17,15 +17,15 @@
 				android:id="@+id/groupbtn">
 				<TextView android:layout_width="fill_parent" style="@style/DialogText.Title"
 					android:layout_height="wrap_content" android:text="@string/order_popup_title1"
-					android:textStyle="bold" android:textColor="#a8a8a8" />
+					android:textStyle="bold" android:textColor="#4f4f4f" />
 				<RadioButton android:checked="false" android:text="@string/order_popup_lst1"
-					android:textColor="#a8a8a8" android:id="@+id/org_rct" />
+					android:textColor="#4f4f4f" android:id="@+id/org_rct" />
 				<RadioButton android:checked="false" android:text="@string/order_popup_lst2"
-					android:textColor="#a8a8a8" android:id="@+id/org_abc" />
+					android:textColor="#4f4f4f" android:id="@+id/org_abc" />
 				<RadioButton android:checked="false" android:text="@string/order_popup_lst3"
-					android:textColor="#a8a8a8" android:id="@+id/org_rat" />
+					android:textColor="#4f4f4f" android:id="@+id/org_rat" />
 				<RadioButton android:checked="false" android:text="@string/order_popup_lst4"
-					android:textColor="#a8a8a8" android:id="@+id/org_dwn" />
+					android:textColor="#4f4f4f" android:id="@+id/org_dwn" />
 			</RadioGroup>
 		</LinearLayout>
 
@@ -38,11 +38,11 @@
 				android:id="@+id/groupshow">
 				<TextView android:layout_width="fill_parent" style="@style/DialogText.Title"
 					android:layout_height="wrap_content" android:text="@string/order_popup_title2"
-					android:textStyle="bold" android:textColor="#a8a8a8" />
+					android:textStyle="bold" android:textColor="#4f4f4f"/>
 				<RadioButton android:checked="false" android:text="@string/order_popup_catg1"
-					android:textColor="#a8a8a8" android:id="@+id/shw_ct" />
+					android:textColor="#4f4f4f" android:id="@+id/shw_ct" />
 				<RadioButton android:checked="true" android:text="@string/order_popup_catg2"
-					android:textColor="#a8a8a8" android:id="@+id/shw_all" />
+					android:textColor="#4f4f4f" android:id="@+id/shw_all" />
 			</RadioGroup>
 		</LinearLayout>
 		
