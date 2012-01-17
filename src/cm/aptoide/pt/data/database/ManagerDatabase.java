@@ -1410,6 +1410,82 @@ public class ManagerDatabase {
 		return updatableApps;
 	}
 	
+	
+	/**
+	 * getAppSearchResults, retrieves a list of available Apps matching the search string parameters
+	 * 
+	 * @param String searchString, search parameters
+	 * 
+	 * @return ViewDisplayListApps, list of available Apps matching the search string parameters
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */	
+	public ViewDisplayListApps getAppSearchResultsDisplayInfo(String searchString){
+		
+		final int APP_NAME = Constants.COLUMN_FIRST;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+//		final int PACKAGE_NAME = Constants.COLUMN_THIRD;
+//		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_FOURTH;
+		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
+		final int STARS = Constants.COLUMN_SIXTH;
+		final int DOWNLOADS = Constants.COLUMN_SEVENTH;
+		
+		ViewDisplayListApps availableApps = null;
+		ViewDisplayApplication app;							
+		
+		String selectAvailableApps = "SELECT A."+Constants.KEY_APPLICATION_NAME+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_PACKAGE_NAME
+											+", MAX(A."+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+											+", S."+Constants.KEY_STATS_STARS+", S."+Constants.KEY_STATS_DOWNLOADS
+									+" FROM (SELECT *"
+											+" FROM "+Constants.TABLE_APPLICATION
+											+" WHERE "+Constants.KEY_APPLICATION_NAME+" LIKE '%"+searchString+"%'"
+											+" AND "+Constants.KEY_APPLICATION_REPO_HASHID
+												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
+														+" FROM "+Constants.TABLE_REPOSITORY
+														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) A"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
+															+" FROM "+Constants.TABLE_STATS_INFO+") S"
+									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
+									+" ORDER BY "+Constants.KEY_APPLICATION_NAME+";";
+		
+		db.beginTransaction();
+		try{
+			Cursor appsCursor = aptoideNonAtomicQuery(selectAvailableApps);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			availableApps = new ViewDisplayListApps();
+			
+			appsCursor.moveToFirst();
+			
+			if(appsCursor.getCount() == 0){
+				appsCursor.close();
+				return availableApps;
+			}
+			
+			do{																			
+				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
+												, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
+				availableApps.addApp(app);
+
+			}while(appsCursor.moveToNext());
+			appsCursor.close();
+	
+		}catch (Exception e) {
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return availableApps;
+	}
+	
+	
 	/**
 	 * getIconsDownloadInfo, retrieves a list of icons Download Info
 	 * 
