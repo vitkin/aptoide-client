@@ -48,7 +48,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/btsearch" />
+            android:layout_marginRight="14dp"
+            android:background="@drawable/btsearch"
+            android:paddingRight="5sp" />
+        
     </RelativeLayout>
 
     <include
