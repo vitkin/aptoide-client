@@ -222,6 +222,12 @@ public class ManagerCache {
 		return icon.exists();
 	}
 	
+	public boolean isApkCached(int appHashid){
+		String iconPath = Constants.PATH_CACHE_APKS+appHashid;
+		File icon = new File(iconPath);
+		return icon.exists();
+	}
+	
 	public void cacheIcon(int appHashid, Bitmap icon){
 		if(isIconCached(appHashid)){
 			Log.d("Aptoide-ManagerCache", "installed app icon already exists: "+appHashid);

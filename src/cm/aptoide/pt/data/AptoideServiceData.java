@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Service;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.RemoteException;
@@ -194,14 +195,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public void callInstallApp(int appHashid) throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			downloadApp(appHashid);
 		}
 
 		@Override
 		public void callRemoveApp(int appHashid) throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			removeApp(appHashid);
 		}
 		
 	}; 
@@ -769,7 +768,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 //	}
 	
 	
-	public void fillAppInfo(final int appHashid){	/***************** HERE ***************************/
+	public void fillAppInfo(final int appHashid){
 		ViewRepository repository = managerDatabase.getAppRepo(appHashid);
 		if(repository == null){
 			return;
@@ -920,6 +919,37 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	public ViewDisplayListApps getAppSearchResults(String searchString){
 		AptoideLog.d(AptoideServiceData.this, "Getting App Search Results: "+searchString);
 		return managerDatabase.getAppSearchResultsDisplayInfo(searchString);
+	}
+	
+	public void downloadApp(final int appHashid){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				ViewCache apk = managerDownloads.downloadApk(managerDatabase.getAppDownload(appHashid));
+				installApp(apk, appHashid);
+			}
+		});
+	}
+	
+	public void installApp(ViewCache apk, int appHashid){
+		Intent install = new Intent();
+		install.setAction(android.content.Intent.ACTION_VIEW);
+		install.setDataAndType(Uri.parse("file://" + apk.getLocalPath()), "application/vnd.android.package-archive");
+		startActivity(install);
+		AptoideLog.d(AptoideServiceData.this, "Installing app: "+appHashid);
+	}
+	
+	public void removeApp(int appHashid){
+		Uri uri = Uri.fromParts("package", managerDatabase.getInstalledAppPackageName(appHashid), null);
+		Intent remove = new Intent(Intent.ACTION_DELETE, uri);
+		startActivity(remove);
+		AptoideLog.d(AptoideServiceData.this, "Removing app: "+appHashid);
 	}
 	
 	

@@ -40,6 +40,7 @@ import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayRepo;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
+import cm.aptoide.pt.data.downloads.ViewDownload;
 import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
 import cm.aptoide.pt.data.model.ViewAppComment;
 import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
@@ -1703,23 +1704,21 @@ public class ManagerDatabase {
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
 											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
 											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
-									+" FROM "+Constants.TABLE_APPLICATION+" A"
-									+" NATURAL LEFT JOIN (SELECT *"
-															+" FROM "+Constants.TABLE_STATS_INFO+") S"
-									+" NATURAL LEFT JOIN (SELECT *"
-															+" FROM "+Constants.TABLE_EXTRA_INFO+") E"
-//									+" NATURAL LEFT JOIN (SELECT "
-//															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
-//															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
-									+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
+									+" FROM (SELECT * " 
+											+" FROM "+Constants.TABLE_APPLICATION
+											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
 											+" (SELECT DISTINCT "+Constants.KEY_APPLICATION_PACKAGE_NAME
 												+" FROM "+Constants.TABLE_APPLICATION
 												+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
-										+" UNION "
-											+"SELECT DISTINCT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
+											+" UNION SELECT DISTINCT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
 												+" FROM "+Constants.TABLE_APP_INSTALLED
-												+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")"
-									+" ORDER BY "+Constants.KEY_APPLICATION_VERSION_CODE+" DESC;";
+												+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")) A"
+									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_STATS_INFO+") S"
+									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_EXTRA_INFO+") E"
+//									+" NATURAL LEFT JOIN (SELECT "
+//															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
+//															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
+									+" ORDER BY A."+Constants.KEY_APPLICATION_VERSION_CODE+" DESC;";
 		
 		String selectInstalledAppVersion = " SELECT "+Constants.KEY_APP_INSTALLED_VERSION_CODE+", "+Constants.KEY_APP_INSTALLED_VERSION_NAME
 													+", "+Constants.KEY_APP_INSTALLED_NAME
@@ -1784,6 +1783,120 @@ public class ManagerDatabase {
 		}
 		
 		return appVersions;
+	}
+	
+	/**
+	 * getAppDownload, retrieves the best download information for the app referenced by the appHashid
+	 * 
+	 * @param int appHashid
+	 * 
+	 * @return ViewDownload downloadInfo
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewDownload getAppDownload(int appHashid){
+		
+		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
+		final int SIZE = Constants.COLUMN_SECOND;
+		final int MD5HASH = Constants.COLUMN_THIRD;
+		final int REMOTE_PATH_BASE = Constants.COLUMN_FOURTH;
+		final int APP_NAME = Constants.COLUMN_FIFTH;
+		final int REPO_HASHID = Constants.COLUMN_SIXTH;
+		
+		final int USERNAME = Constants.COLUMN_FIRST;
+		final int PASSWORD = Constants.COLUMN_SECOND;
+		
+		ViewDownload appDownload = null;
+		
+		String selectAppDownloadInfo = "SELECT D."+Constants.KEY_DOWNLOAD_REMOTE_PATH_TAIL+", D."+Constants.KEY_DOWNLOAD_SIZE+", D."+Constants.KEY_DOWNLOAD_MD5HASH
+											+", R."+Constants.KEY_REPO_BASE_PATH+", A."+Constants.KEY_APPLICATION_NAME+", R."+Constants.KEY_REPO_HASHID
+									+" FROM (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID+", "+Constants.KEY_APPLICATION_NAME
+											+" FROM "+Constants.TABLE_APPLICATION
+											+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid;
+		if(appInRepo(Constants.APPS_REPO_HASHID, appHashid)){
+			selectAppDownloadInfo +=			" AND "+Constants.KEY_APPLICATION_REPO_HASHID+"="+Constants.APPS_REPO_HASHID+") A";
+		}else{
+			selectAppDownloadInfo +=			") A";
+		}
+			selectAppDownloadInfo += " NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
+									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_HASHID+") R;";
+		
+		db.beginTransaction();
+		try{
+			Cursor appDownloadInfoCursor = aptoideNonAtomicQuery(selectAppDownloadInfo);
+						
+			if(appDownloadInfoCursor.getCount() == Constants.EMPTY_INT){
+					//TODO throw exception (Unrecognized appHashid)
+			}
+			appDownloadInfoCursor.moveToFirst();
+			
+			String selectLogin = "SELECT *"
+				 +" FROM "+Constants.TABLE_LOGIN
+				 +" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+"="+appDownloadInfoCursor.getInt(REPO_HASHID)+";";
+			Cursor loginCursor = aptoideNonAtomicQuery(selectLogin);
+			
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			if(loginCursor.getCount() == Constants.EMPTY_INT){
+				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid, appDownloadInfoCursor.getString(APP_NAME)
+									, appDownloadInfoCursor.getString(REMOTE_PATH_BASE), appDownloadInfoCursor.getString(REMOTE_PATH_TAIL)
+									, appDownloadInfoCursor.getInt(SIZE), appDownloadInfoCursor.getString(MD5HASH));
+			}else{
+				ViewLogin login = new ViewLogin(loginCursor.getString(USERNAME), loginCursor.getString(PASSWORD));
+				
+				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid, appDownloadInfoCursor.getString(APP_NAME)
+						, appDownloadInfoCursor.getString(REMOTE_PATH_BASE), appDownloadInfoCursor.getString(REMOTE_PATH_TAIL), login
+						, appDownloadInfoCursor.getInt(SIZE), appDownloadInfoCursor.getString(MD5HASH));
+			}
+			loginCursor.close();
+			appDownloadInfoCursor.close();
+			
+		}catch (Exception e) {
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
+		return appDownload;
+	}
+	
+	
+	/**
+	 * getInstalledAppPackageName, retrieves the packageName for the installed app referenced by the appHashid
+	 * 
+	 * @param int appHashid
+	 * 
+	 * @return String packageName
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */	
+	public String getInstalledAppPackageName(int appHashid){
+		final int PACKAGE_NAME = Constants.COLUMN_FIRST;
+		
+		String packageName = null;
+		
+		String selectInstalledApp = "SELECT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
+									+" FROM "+Constants.TABLE_APP_INSTALLED
+									+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+";";
+		
+		Cursor installedAppCursor = aptoideAtomicQuery(selectInstalledApp);
+		
+		if(installedAppCursor.getCount() == Constants.EMPTY_INT){
+			//TODO raise exception app not installed
+		}
+		
+		installedAppCursor.moveToFirst();
+		packageName = installedAppCursor.getString(PACKAGE_NAME);
+		installedAppCursor.close();
+		
+		return packageName;
 	}
 	
 	//TODO rest of activity support classes (depends on activity Layout definitions, for performance reasons)

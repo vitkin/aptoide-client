@@ -170,6 +170,32 @@ public class ManagerDownloads {
 		return download;
 	}
 	
+	public synchronized ViewDownload getNewViewDownload(String remotePath, int size, ViewLogin login, ViewCache cache, ViewNotification notification){
+		ViewDownload download;
+		if(downloadPool.isEmpty()){
+			download = new ViewDownload(remotePath, size, login, cache, notification);
+		}else{
+			ViewDownload viewDownload = downloadPool.remove(Constants.FIRST_ELEMENT);
+			viewDownload.reuse(remotePath, size, login, cache, notification);
+			download = viewDownload;
+		}
+//		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
+		return download;
+	}
+	
+	public synchronized ViewDownload getNewViewDownload(String remotePath, int size, ViewCache cache, ViewNotification notification){
+		ViewDownload download;
+		if(downloadPool.isEmpty()){
+			download = new ViewDownload(remotePath, size, cache, notification);
+		}else{
+			ViewDownload viewDownload = downloadPool.remove(Constants.FIRST_ELEMENT);
+			viewDownload.reuse(remotePath, size, cache, notification);
+			download = viewDownload;
+		}
+//		downloads.put(notification.getNotificationHashid(), download);	//TODO check for concurrency issues
+		return download;
+	}
+	
 	public synchronized void recicleViewDownload(ViewDownload download){
 //		serviceData.getManagerNotifications().recycleNotification(download.getNotification());
 		download.clean();
@@ -393,6 +419,26 @@ public class ManagerDownloads {
 		return cache;
 	}
 	
+	public ViewDownload prepareApkDownload(int appHashid, String appName, String remotePathBase, String remotePathTail, ViewLogin login, int size, String md5Hash){
+		ViewCache cache = managerCache.getNewAppViewCache(appHashid);
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_APP, appName, appHashid, size);
+		return getNewViewDownload(remotePathBase+remotePathTail, size, login, cache, notification);
+	}
+	
+	public ViewDownload prepareApkDownload(int appHashid, String appName, String remotePathBase, String remotePathTail, int size, String md5Hash){
+		ViewCache cache = managerCache.getNewAppViewCache(appHashid);
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_APP, appName, appHashid, size);
+		return getNewViewDownload(remotePathBase+remotePathTail, size, cache, notification);
+	}
+	
+	public ViewCache downloadApk(ViewDownload download){
+		if(!getManagerCache().isApkCached(download.getNotification().getTargetsHashid()) || !getManagerCache().md5CheckOk(download.getCache())){
+			download(download, false);
+		}
+		
+		return download.getCache();
+	}
+	
 //	public void startRepoDownloadAndProcessing(ViewRepository repository){
 //		ViewCache cache;
 //		ViewNotification notification;
@@ -425,7 +471,9 @@ public class ManagerDownloads {
 		int targetBytes;
 		ViewClientStatistics clientStatistics = getClientStatistics();
 
-		getManagerCache().clearCache(localCache);
+		if(overwriteCache){
+			getManagerCache().clearCache(localCache);
+		}
 
 		try{
 			FileOutputStream fileOutputStream = new FileOutputStream(localPath);
