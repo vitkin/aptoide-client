@@ -116,6 +116,7 @@ public class ViewDownload {
 		this.login = null;
 		this.cache = null;
 		this.notification = null;
+		this.sizeIsKnown = false;
 	}
 	
 	public void reuse(String remotePath, ViewCache cache, ViewNotification notification) {
@@ -129,6 +130,18 @@ public class ViewDownload {
 		reuse(remotePath, cache, notification);
 		this.loginRequired = true;
 		this.login = login;
+	}
+	
+	public void reuse(String remotePath, int size, ViewLogin login, ViewCache cache, ViewNotification notification) {
+		reuse(remotePath, login, cache, notification);
+		this.sizeIsKnown = true;
+		this.size = size;
+	}
+	
+	public void reuse(String remotePath, int size, ViewCache cache, ViewNotification notification) {
+		reuse(remotePath, cache, notification);
+		this.sizeIsKnown = true;
+		this.size = size;
 	}
 	
 }
