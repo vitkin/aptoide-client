@@ -28,8 +28,8 @@
 		android:id="@+id/apkinfoheader" android:layout_below="@+id/actionbar">
 
 		<ImageView android:id="@+id/app_hashid"
-			android:layout_height="wrap_content" android:src="@drawable/icon"
-			android:layout_width="wrap_content" android:layout_marginLeft="20sp"
+			android:layout_height="30dp" android:src="@drawable/icon"
+			android:layout_width="30dp" android:layout_marginLeft="20sp"
 			android:layout_marginTop="20sp" />
 
 		<TextView android:id="@+id/app_name" android:textAppearance="?android:attr/textAppearanceLarge"
