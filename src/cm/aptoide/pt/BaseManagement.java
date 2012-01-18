@@ -503,6 +503,7 @@ public class BaseManagement extends Activity {
 							
 							apk_line = new HashMap<String, Object>();
 							apk_line.put("pkg", node.apkid);
+							apk_line.put("down", node.down + " Down.");
 							iconpath = new String(getString(R.string.icons_path)+node.apkid);
 							apk_line.put("icon", iconpath);
 							apk_line.put("rat", node.rat);
@@ -816,7 +817,6 @@ public class BaseManagement extends Activity {
 					Vector<ServerNode> allServers;
 					Vector<String> hashids = new Vector<String>();
 					Vector<String> servers= new Vector<String>();
-					Vector<ServerEntry> entries = new Vector<ServerEntry>();
 					db = new DbHandler(mctx);
 					allServers = db.getServers();
 					if(allServers!=null&&!allServers.isEmpty()){
@@ -867,6 +867,7 @@ public class BaseManagement extends Activity {
 				}
 				catch (IOException e) {
 					e.printStackTrace();
+					Toast.makeText(mctx, "failed", 1).show();
 				} 
 					
 				}
