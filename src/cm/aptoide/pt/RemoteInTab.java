@@ -98,6 +98,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -637,6 +638,7 @@ public class RemoteInTab extends BaseManagement {
 //						Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
 						currentCatName = "Applications";
 						categoryName.setText(currentCatName);
+						categoryName.setVisibility(View.VISIBLE);
 						availView.setAdapter(getAppCtg());
 //						setContentView(lv);
 						availView.setSelection(pos-1);
@@ -647,6 +649,7 @@ public class RemoteInTab extends BaseManagement {
 						currentCatName = "Games";
 						categoryName.setText(currentCatName);
 						availView.setAdapter(getGamesCtg());
+						categoryName.setVisibility(View.VISIBLE);
 //						setContentView(lv);
 						availView.setSelection(pos-1);
 						deep = 1;
@@ -656,6 +659,7 @@ public class RemoteInTab extends BaseManagement {
 //						Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
 						currentCatName = "Others";
 						categoryName.setText(currentCatName);
+						categoryName.setVisibility(View.VISIBLE);
 						availView.setAdapter(getGivenCatg(null, 2));
 //						setContentView(lv);
 						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -744,6 +748,7 @@ public class RemoteInTab extends BaseManagement {
 			availView.setOnItemClickListener(availListener);
 			installView.setOnItemClickListener(installListener);
 			updateView.setOnItemClickListener(updateListener);
+			
 //			lv.setAdapter(getAvailable(null,-1));
 			setContentView(R.layout.aptoide);
 			vf = (ViewFlipper) findViewById(R.id.list_flipper);
@@ -776,9 +781,7 @@ public class RemoteInTab extends BaseManagement {
 			previousListTitle.setText(emptyString);
 			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
 			categoryName = (TextView) findViewById(R.id.catname);
-			
-			mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
-			
+			categoryName.setVisibility(View.GONE);			
 			new Thread(){
 				@Override
 				public void run() {
@@ -796,7 +799,11 @@ public class RemoteInTab extends BaseManagement {
 			}.start();	
 			vf.addView(availView);
 			vf.addView(installView);
+				
 			vf.addView(updateView);
+			
+			
+			
 			
 			
 			
@@ -2046,6 +2053,12 @@ public class RemoteInTab extends BaseManagement {
 			previousListTitle.setText(emptyString);
 			currentListTitle.setText(currentAppsList.Available.toString());
 			categoryName.setText(currentCatName);
+			if(deep>0){
+				categoryName.setVisibility(View.VISIBLE);
+			}else{
+				categoryName.setVisibility(View.GONE);
+			}
+			
 			break;
 		case Installed:
 			nextView.setVisibility(View.VISIBLE);
@@ -2053,8 +2066,9 @@ public class RemoteInTab extends BaseManagement {
 			currentListTitle.setText(currentAppList.Installed.toString());
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
-			categoryName.setText(emptyString);
-//			mainLayout.
+			categoryName.setVisibility(View.GONE);			
+			
+			
 			break;
 		case Update:
 			nextView.setVisibility(View.INVISIBLE);
@@ -2062,7 +2076,7 @@ public class RemoteInTab extends BaseManagement {
 			currentListTitle.setText(currentAppList.Update.toString());
 			nextListTitle.setText(emptyString);
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
-			categoryName.setText(emptyString);
+			categoryName.setVisibility(View.GONE);
 			break; 
 		}
 
@@ -2186,7 +2200,6 @@ public class RemoteInTab extends BaseManagement {
 				availView.setAdapter(getAvailable(shown_now,main_shown_now));
 				installView.setAdapter(instAdpt);
 				updateView.setAdapter(updateAdpt);
-				
 				prefEdit.remove("changeinst");
 				prefEdit.commit();
 			}
@@ -2201,7 +2214,7 @@ public class RemoteInTab extends BaseManagement {
 				availView.setAdapter(getRootCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				currentCatName = emptyString;
-				categoryName.setText(currentCatName);
+				categoryName.setVisibility(View.GONE);
 				deep = 0;
 				break;
 			case 2:
