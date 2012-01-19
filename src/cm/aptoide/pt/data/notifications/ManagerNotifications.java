@@ -92,6 +92,7 @@ public class ManagerNotifications {
 	    } catch (NoSuchMethodException e) {
 	        // Running on an older platform.
 	        startForeground = stopForeground = null;
+	        Log.w("Aptoide-ManagerNotifications", "No foreground service support on this android", e);
 //	        return;
 	    }
 	    try {
@@ -359,10 +360,10 @@ public class ManagerNotifications {
 	        method.invoke(serviceData, args);
 	    } catch (InvocationTargetException e) {
 	        // Should not happen.
-	        Log.w("Aptoide ServiceData", "Unable to invoke method", e);
+	        Log.w("Aptoide-ManagerNotifications", "Unable to invoke method", e);
 	    } catch (IllegalAccessException e) {
 	        // Should not happen.
-	        Log.w("Aptoide ServiceData", "Unable to invoke method", e);
+	        Log.w("Aptoide-ManagerNotifications", "Unable to invoke method", e);
 	    }
 	}
 
