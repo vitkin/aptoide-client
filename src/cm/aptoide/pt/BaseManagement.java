@@ -120,29 +120,7 @@ public class BaseManagement extends Activity {
 	    }
 
 	};	
-	private ServiceConnection serviceConnection2 = new ServiceConnection() {
-	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-	        // This is called when the connection with the service has been
-	        // established, giving us the service object we can use to
-	        // interact with the service.  Because we have bound to a explicit
-	        // service that we know is running in our own process, we can
-	        // cast its IBinder to a concrete class and directly access it.
-//	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
-
-	        Log.d("Aptoide-BaseManagement", "DownloadQueueService bound to a Tab");
-	    }
-	    
-	    public void onServiceDisconnected(ComponentName className) {
-	        // This is called when the connection with the service has been
-	        // unexpectedly disconnected -- that is, its process crashed.
-	        // Because it is running in our same process, we should never
-	        // see this happen.
-	        downloadQueueService = null;
-	        
-	        Log.d("Aptoide-BaseManagement","DownloadQueueService unbound from a Tab");
-	    }
-
-	};	
+	
 
 	
 	@Override
@@ -809,7 +787,7 @@ public class BaseManagement extends Activity {
 	 
 	 
 	 private void reposCheck() {
-		
+		 	if(sPref.getBoolean("checkRepos", false)){
 			new Thread(){
 				@Override
 				public void run() {
@@ -817,6 +795,7 @@ public class BaseManagement extends Activity {
 					Vector<ServerNode> allServers;
 					Vector<String> hashids = new Vector<String>();
 					Vector<String> servers= new Vector<String>();
+					entries = new Vector<ServerEntry>();
 					db = new DbHandler(mctx);
 					allServers = db.getServers();
 					if(allServers!=null&&!allServers.isEmpty()){
@@ -867,16 +846,18 @@ public class BaseManagement extends Activity {
 				}
 				catch (IOException e) {
 					e.printStackTrace();
-					Toast.makeText(mctx, "failed", 1).show();
 				} 
 					
 				}
 				
 			}.start();
+			prefEdit.putBoolean("checkRepos", false);
+			prefEdit.commit();
+			}
 		}
 	 
 	 
-	 private Vector<ServerEntry> entries = new Vector<ServerEntry>();
+	 private Vector<ServerEntry> entries;
 	 private DefaultHandler handler= new DefaultHandler(){
 			
 			private boolean t_entry = false;
