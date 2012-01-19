@@ -95,7 +95,8 @@ public class RepoBareParser extends DefaultHandler{
 				application.setApplicationName(tagContentBuilder.toString());
 				break;
 			case catg2:
-				application.setCategoryHashid((tagContentBuilder.toString()).hashCode());
+				application.setCategoryHashid((tagContentBuilder.toString().trim()).hashCode());
+//				Log.d("Aptoide-RepoBareParser", "app: "+application.getApplicationName()+", appHashid (Not full): "+application.getHashid()+", category: "+tagContentBuilder.toString().trim()+", categoryHashid: "+application.getCategoryHashid());
 				break;
 			case timestamp:
 				application.setTimestamp(Integer.parseInt(tagContentBuilder.toString()));

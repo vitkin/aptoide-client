@@ -328,7 +328,7 @@ public class ManagerNotifications {
         PendingIntent contentIntent = PendingIntent.getActivity(serviceData, 0, new Intent(serviceData, Aptoide.class), 0);
 
         // Set the info for the views that show in the notification panel.
-        notification.setLatestEventInfo(serviceData.getApplicationContext(), serviceData.getText(R.string.aptoide), serviceData.getManagerSystemSync().getAptoideVersionNameInUse(), contentIntent);
+        notification.setLatestEventInfo(serviceData.getApplicationContext(), serviceData.getText(R.string.app_name), serviceData.getManagerSystemSync().getAptoideVersionNameInUse(), contentIntent);
         
         return notification; 
 	}

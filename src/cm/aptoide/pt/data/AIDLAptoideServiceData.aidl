@@ -61,6 +61,6 @@ interface AIDLAptoideServiceData {
 	ViewDisplayAppVersionsInfo callGetAppInfo(in int appHashid);
 	
 	void callInstallApp(in int appHashid);
-	void callRemoveApp(in int appHashid);
+	void callUninstallApp(in int appHashid);
 	
 }

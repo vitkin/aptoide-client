@@ -128,6 +128,8 @@ public class ManagerDatabase {
 			
 			db.setTransactionSuccessful();
 			db.endTransaction();
+			
+			hammerCategories();
 		}else if(!db.isOpen()){
 			db = serviceData.openOrCreateDatabase(Constants.DATABASE, 0, null);
 		}
@@ -145,6 +147,14 @@ public class ManagerDatabase {
 	public void closeDB(){
 		db.close();
 	}
+	
+	
+	/* ******************************************************** *
+	 * 															*
+	 *                     Dirty methods						*
+	 * 															*
+	 * ******************************************************** */
+	
 	
 	
 	
@@ -177,6 +187,36 @@ public class ManagerDatabase {
 		
 	}
 	
+	
+	
+	/**
+	 * hammerCategories, inserts a hammered list of categories 
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void hammerCategories(){
+		ArrayList<ViewCategory> categories = new ArrayList<ViewCategory>(2);
+		
+		ViewCategory applications = new ViewCategory("Applications");
+		for (String subCategory : Constants.CATEGORIES_APPLICATIONS) {
+			applications.addChild(new ViewCategory(subCategory));
+		}
+
+		categories.add(applications);
+		
+		ViewCategory games = new ViewCategory("Games");
+		for (String subCategory : Constants.CATEGORIES_GAMES) {
+			games.addChild(new ViewCategory(subCategory));
+		}
+		
+		categories.add(games);
+		
+		
+		insertCategories(categories);
+		
+	}
 	
 	
 	/* ******************************************************** *
@@ -477,38 +517,52 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertApplications(ArrayList<ViewApplication> applications){
+		ArrayList<ContentValues> appCategoriesRelations = new ArrayList<ContentValues>(applications.size());
 		db.beginTransaction();
 		try{
 			InsertHelper insertApplication = new InsertHelper(db, Constants.TABLE_APPLICATION);
-			ArrayList<ContentValues> appCategoriesRelations = new ArrayList<ContentValues>(applications.size());
 			ContentValues appCategoryRelation;
 			
 			for (ViewApplication application : applications) {
 				if(insertApplication.insert(application.getValues()) == Constants.DB_ERROR){
 					//TODO throw exception;
 				}
-				appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_CATEGORY); //TODO check if this implicit object recycling works 
+				appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_CATEGORY);
 				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_APP_FULL_HASHID, application.getFullHashid());
 				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID, application.getCategoryHashid());
 				appCategoriesRelations.add(appCategoryRelation);
 				
 			}
 			insertApplication.close();
-			//TODO martelar cateorias e descomentar o seguinte codigo
-//			InsertHelper insertAppCategoryRelation = new InsertHelper(db, Constants.TABLE_APP_CATEGORY);
-//			for (ContentValues appCategoryRelationValues : appCategoriesRelations) {
-//				if(insertAppCategoryRelation.insert(appCategoryRelationValues) == Constants.DB_ERROR){
-//					//TODO throw exception;
-//				}
-//			}
-//			insertAppCategoryRelation.close();
 			
 			db.setTransactionSuccessful();
+			
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 			e.printStackTrace();
 		}finally{
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
+		}
+		
+		db.beginTransaction();
+		try{
+			InsertHelper insertAppCategoryRelation = new InsertHelper(db, Constants.TABLE_APP_CATEGORY);
+			for (ContentValues appCategoryRelationValues : appCategoriesRelations) {
+				if(insertAppCategoryRelation.insert(appCategoryRelationValues) == Constants.DB_ERROR){
+					//TODO throw exception;
+				}
+			}
+			insertAppCategoryRelation.close();
+			db.setTransactionSuccessful();
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+		}finally{
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 		}
 	}
 	
@@ -920,10 +974,35 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public void removeInstalledApplication(String appHashid){
+	public void removeInstalledApplication(int appHashid){
 		db.beginTransaction();
 		try{
 			if(db.delete(Constants.TABLE_APP_INSTALLED, Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid, null) == Constants.DB_NO_CHANGES_MADE){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+			serviceData.updateInstalledLists();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * removeInstalledApplication, handles single application removal
+	 * 
+	 * @param String packageName
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void removeInstalledApplication(String packageName){
+		db.beginTransaction();
+		try{
+			if(db.delete(Constants.TABLE_APP_INSTALLED, Constants.KEY_APP_INSTALLED_PACKAGE_NAME+"=?",new String[]{packageName}) == Constants.DB_NO_CHANGES_MADE){
 				//TODO throw exception;
 			}
 			

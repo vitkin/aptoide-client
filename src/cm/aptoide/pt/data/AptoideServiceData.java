@@ -26,7 +26,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -50,6 +53,7 @@ import cm.aptoide.pt.data.display.ViewDisplayRepo;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
+import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewManageRepos;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
@@ -199,8 +203,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public void callRemoveApp(int appHashid) throws RemoteException {
-			removeApp(appHashid);
+		public void callUninstallApp(int appHashid) throws RemoteException {
+			uninstallApp(appHashid);
 		}
 		
 	}; 
@@ -235,6 +239,23 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		reposInfoClient = reposInfoObserver;
 	}
 	
+	
+	private BroadcastReceiver installedAppsChangeListener = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context receivedContext, Intent receivedIntent) {
+			if(receivedIntent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)){
+				String packageName = receivedIntent.getData().getEncodedSchemeSpecificPart();
+				Log.d("Aptoide-ServiceData", "installedAppsChangeListener - package added: "+packageName);
+				addApp(packageName);
+				
+			}else if(receivedIntent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)){
+				String packageName = receivedIntent.getData().getEncodedSchemeSpecificPart();
+				Log.d("Aptoide-ServiceData", "installedAppsChangeListener - package removed: "+packageName);
+				removeApp(packageName);
+			}
+		}
+	};
 		
 	
 	
@@ -293,8 +314,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			
 			syncingInstalledApps = new AtomicBoolean(false);
 			
+			IntentFilter installedAppsChangeFilter = new IntentFilter();
+			installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+			installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+			installedAppsChangeFilter.addDataScheme(Constants.URI_PACKAGE_PREFIX);
+			registerReceiver(installedAppsChangeListener, installedAppsChangeFilter);
+			
 			checkForSelfUpdate();
-		    
+			
 			isRunning = true;
 			Log.d("Aptoide ServiceData", "Service started");
 
@@ -937,6 +964,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	
+	public void addApp(String packageName){
+		ViewApplication installedApp = managerSystemSync.getInstalledApp(packageName);
+		if(installedApp != null){
+			managerDatabase.insertInstalledApplication(installedApp);
+		}
+	}
+	
+	public void removeApp(String packageName){
+		managerDatabase.removeInstalledApplication(packageName);
+	}
+	
 	public void installApp(ViewCache apk, int appHashid){
 		Intent install = new Intent();
 		install.setAction(android.content.Intent.ACTION_VIEW);
@@ -945,7 +984,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		AptoideLog.d(AptoideServiceData.this, "Installing app: "+appHashid);
 	}
 	
-	public void removeApp(int appHashid){
+	public void uninstallApp(int appHashid){
 		Uri uri = Uri.fromParts("package", managerDatabase.getInstalledAppPackageName(appHashid), null);
 		Intent remove = new Intent(Intent.ACTION_DELETE, uri);
 		startActivity(remove);

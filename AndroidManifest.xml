@@ -51,6 +51,13 @@
 				<data android:host="*" />
 				<data android:mimeType="application/vnd.cm.aptoide.pt" />
 			</intent-filter>
+<!-- ###### THIS NEXT INTENT FILTER IS ONLY FOR REFERENCE SINCE IT IS DYNAMICALLY FILTERED ######
+  			<intent-filter>
+				<action android:name="android.intent.action.PACKAGE_ADDED" />
+				<action android:name="android.intent.action.PACKAGE_REMOVED" />
+				<data android:scheme="package" />
+			</intent-filter>
+     ############################################################################################ -->
 		</service>
 
     </application>
