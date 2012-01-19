@@ -79,6 +79,9 @@ public class Constants {
 	
 	public static final String SERVICE_DATA_CLASS_NAME = "cm.aptoide.pt.data.ServiceData";
 	
+	public static final String URI_PACKAGE_PREFIX = "package";
+	
+	
 
 	/**  repoHashid + uri + size + inUse + requiresLogin + login */
 	public static final int NUMBER_OF_DISPLAY_FIELDS_REPO = 6;
@@ -107,9 +110,11 @@ public class Constants {
 	// **************************** Database definitions ********************************* //
 	
 	//TODO deprecate
-	public static final String[] CATEGORIES = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", 
-			 "News & Weather", "Productivity", "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", 
-			 "Travel, Demo", "Software Libraries", "Arcade & Action", "Brain & Puzzle", "Cards & Casino", "Casual"};
+	public static final String[] CATEGORIES_APPLICATIONS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", "News&Weather", "Productivity"
+															, "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", "Travel", "Demo", "Software Libraries", "Business", "Weather"
+															, "Travel&Local", "Transportation", "Medical", "Libraries&Demo", "News&Magazines", "Music&Audio", "Photography"
+															, "Personalization", "Books&Reference", "Health&Fitness", "Media&Video", "Education"};
+	public static final String[] CATEGORIES_GAMES = {"Arcade&Action", "Brain&Puzzle", "Cards&Casino", "Casual", "Sports Games", "Racing"};
 	
 	public static final String APPS_REPO = "http://apps.bazaarandroid.com/";
 	public static final int APPS_REPO_HASHID = (APPS_REPO).hashCode();

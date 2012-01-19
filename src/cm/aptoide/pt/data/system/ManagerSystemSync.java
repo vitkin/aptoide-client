@@ -84,6 +84,20 @@ public class ManagerSystemSync {
 		return installedApps;
 	}
 	
+	public ViewApplication getInstalledApp(String packageName){
+		ViewApplication installedApp = null;
+		try {
+			PackageInfo installedAppInfo = packageManager.getPackageInfo(packageName, 0);
+			
+			installedApp = new ViewApplication((packageManager.getApplicationLabel(installedAppInfo.applicationInfo)).toString(), installedAppInfo.packageName, ((installedAppInfo.versionName==null)?Integer.toBinaryString(installedAppInfo.versionCode):installedAppInfo.versionName), installedAppInfo.versionCode, true);
+			
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return installedApp;
+	}
+	
 	public void cacheInstalledIcons(){
 		List<PackageInfo> systemInstalledList = packageManager.getInstalledPackages(0);
 		for (PackageInfo installedAppInfo : systemInstalledList) {
