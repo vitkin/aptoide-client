@@ -354,6 +354,9 @@ public class Aptoide extends Activity {
 		}
 		prefEdit.putBoolean("redrawis", true);
 		prefEdit.commit();
+		
+		prefEdit.putBoolean("checkRepos", true);
+		prefEdit.commit();
     
         setContentView(R.layout.start);
         
