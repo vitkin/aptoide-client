@@ -66,6 +66,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.gesture.GestureOverlayView;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.inputmethodservice.Keyboard.Key;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -96,6 +97,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -156,9 +158,13 @@ public class RemoteInTab extends BaseManagement {
 	private TextView previousListTitle = null;
 	private TextView currentListTitle = null;
 	private TextView nextListTitle = null;
-	private String emptyListTitle = null;
+	private String emptyString = null;
 	private ImageView previousView = null; 
 	private ImageView nextView = null;
+	
+	private TextView categoryName = null;
+	private String currentCatName = null;
+	private RelativeLayout mainLayout;
 	
 	private GestureDetector detectChangeTab;
 
@@ -308,6 +314,9 @@ public class RemoteInTab extends BaseManagement {
 		availView = new ListView(this);
 		installView = new ListView(this);
 		updateView = new ListView(this);
+		
+		
+		
 		intentFilter = new IntentFilter();
 		currentAppsList = EnumAppsLists.Available;
     	intentFilter2.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
@@ -625,14 +634,18 @@ public class RemoteInTab extends BaseManagement {
 
 					if(pkg_id.equals("Applications")){
 						shown_now = null;
-						Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
+						currentCatName = "Applications";
+						categoryName.setText(currentCatName);
 						availView.setAdapter(getAppCtg());
 //						setContentView(lv);
 						availView.setSelection(pos-1);
 						deep = 1;
 					}else if(pkg_id.equals("Games")){
 						shown_now = null;
-						Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
+						currentCatName = "Games";
+						categoryName.setText(currentCatName);
 						availView.setAdapter(getGamesCtg());
 //						setContentView(lv);
 						availView.setSelection(pos-1);
@@ -640,38 +653,51 @@ public class RemoteInTab extends BaseManagement {
 					}else if(pkg_id.equals("Others")){
 						shown_now = null;
 						main_shown_now = 2;
-						Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
+						currentCatName = "Others";
+						categoryName.setText(currentCatName);
 						availView.setAdapter(getGivenCatg(null, 2));
 //						setContentView(lv);
 						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 						availView.setSelection(pos-1);
 						deep = 1;
-						if(filteredApps>0)
-							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+						if(filteredApps>0){
+//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+							currentCatName = "Filtered "+filteredApps+" applications.";
+							categoryName.setText(currentCatName);
+						}
 					}else if(pkg_id.equals("apps")){
 						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 						main_shown_now = 1;
-						Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
-						
+//						Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+						currentCatName = "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+						categoryName.setText(currentCatName);
 						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
 //						setContentView(lv);
 						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 						availView.setSelection(pos-1);
 						deep = 2;
-						if (filteredApps > 0)
-							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+						if (filteredApps > 0){
+//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+							currentCatName = "Filtered "+filteredApps+" applications.";
+							categoryName.setText(currentCatName);
+						}
 					}else if(pkg_id.equals("games")){
 						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 						main_shown_now = 0;
-						Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
-						
+//						Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+						currentCatName = "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+						categoryName.setText(currentCatName);
 						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
 //						setContentView(lv);
 						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 						availView.setSelection(pos-1);
 						deep = 3;
-						if (filteredApps > 0)
-							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+						if (filteredApps > 0){
+//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+							currentCatName = "Filtered "+filteredApps+" applications.";
+							categoryName.setText(currentCatName);
+						}
 					}else{
 						
 						Intent apkinfo = new Intent(mctx,ApkInfo.class);
@@ -723,8 +749,7 @@ public class RemoteInTab extends BaseManagement {
 			vf = (ViewFlipper) findViewById(R.id.list_flipper);
 			
 			
-			
-			
+		
 			
 			previousListTitle = (TextView) findViewById(R.id.previous_title);
 			currentListTitle = (TextView) findViewById(R.id.current_title);
@@ -748,8 +773,11 @@ public class RemoteInTab extends BaseManagement {
 			previousView = (ImageView) findViewById(R.id.previous);
 			nextView = (ImageView) findViewById(R.id.next);
 			previousView.setVisibility(View.INVISIBLE);
-			previousListTitle.setText(emptyListTitle);
+			previousListTitle.setText(emptyString);
 			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
+			categoryName = (TextView) findViewById(R.id.catname);
+			
+			mainLayout = (RelativeLayout) findViewById(R.id.mainLayout);
 			
 			new Thread(){
 				@Override
@@ -776,21 +804,38 @@ public class RemoteInTab extends BaseManagement {
 		
 		
 		
-		
-		View.OnClickListener searchListener = new View.OnClickListener() {
+		View.OnTouchListener upDownListener = new View.OnTouchListener() {
 			
-			public void onClick(View v) {
-				
-				onSearchRequested();
-			}
+			public boolean onTouch(View v, MotionEvent event) {
+				 if(event.getAction() == MotionEvent.ACTION_DOWN) {
+		                // Button was pressed, change button background
+		                v.setBackgroundResource(R.drawable.btsearchover);
+		                onSearchRequested();
+		                return true;
+		            } else if(event.getAction() == MotionEvent.ACTION_UP) {
+		                // Button was released, reset button background
+		                v.setBackgroundResource(R.drawable.btsearch);
+		                return true;
+		            }
+
+		            return false;
+		        }
+
 		};
-		
+//		View.OnClickListener searchListener = new View.OnClickListener() {
+//			
+//			public void onClick(View v) {
+//				
+//				onSearchRequested();
+//			}
+//		};
+//		
 		
 		ImageButton searchView = (ImageButton) findViewById(R.id.btsearch);
 		
 		
-		searchView.setOnClickListener(searchListener);
-		
+//		searchView.setOnClickListener(searchListener);
+		searchView.setOnTouchListener(upDownListener);
 		
 		
 		
@@ -1067,8 +1112,6 @@ public class RemoteInTab extends BaseManagement {
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.menu_manage)
 			.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
-			.setIcon(android.R.drawable.ic_menu_search);
 		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
 			.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
@@ -1137,9 +1180,6 @@ public class RemoteInTab extends BaseManagement {
 		case MANAGE_REPO:
 			Intent i = new Intent(this, ManageRepo.class);
 			startActivityForResult(i,NEWREPO_FLAG);
-			return true;
-		case SEARCH_MENU:
-			onSearchRequested();
 			return true;
 		case ABOUT:
 			LayoutInflater li = LayoutInflater.from(this);
@@ -2003,8 +2043,9 @@ public class RemoteInTab extends BaseManagement {
 			nextView.setVisibility(View.VISIBLE);
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
 			previousView.setVisibility(View.INVISIBLE);
-			previousListTitle.setText(emptyListTitle);
+			previousListTitle.setText(emptyString);
 			currentListTitle.setText(currentAppsList.Available.toString());
+			categoryName.setText(currentCatName);
 			break;
 		case Installed:
 			nextView.setVisibility(View.VISIBLE);
@@ -2012,17 +2053,16 @@ public class RemoteInTab extends BaseManagement {
 			currentListTitle.setText(currentAppList.Installed.toString());
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
+			categoryName.setText(emptyString);
+//			mainLayout.
 			break;
 		case Update:
-			
-			
-			
-			
 			nextView.setVisibility(View.INVISIBLE);
 			previousView.setVisibility(View.VISIBLE);
 			currentListTitle.setText(currentAppList.Update.toString());
-			nextListTitle.setText(emptyListTitle);
+			nextListTitle.setText(emptyString);
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
+			categoryName.setText(emptyString);
 			break; 
 		}
 
@@ -2160,16 +2200,22 @@ public class RemoteInTab extends BaseManagement {
 			case 1:
 				availView.setAdapter(getRootCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				currentCatName = emptyString;
+				categoryName.setText(currentCatName);
 				deep = 0;
 				break;
 			case 2:
 				availView.setAdapter(getAppCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				currentCatName = "Applications";
+				categoryName.setText(currentCatName);
 				deep = 1;
 				break;
 			case 3:
 				availView.setAdapter(getGamesCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+				currentCatName = "Games";
+				categoryName.setText(currentCatName);
 				deep = 1;
 				break;
 			}
