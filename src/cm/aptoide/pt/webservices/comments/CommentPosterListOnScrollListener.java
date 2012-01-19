@@ -8,13 +8,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
 
-import cm.aptoide.pt.Configs;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.webservices.exceptions.CancelRequestSAXException;
-import cm.aptoide.pt.webservices.exceptions.EmptyRequestException;
-import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
-import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -23,9 +16,16 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import cm.aptoide.pt.Configs;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.webservices.exceptions.CancelRequestSAXException;
+import cm.aptoide.pt.webservices.exceptions.EmptyRequestException;
+import cm.aptoide.pt.webservices.exceptions.EndOfRequestReachedSAXException;
+import cm.aptoide.pt.webservices.exceptions.FailedRequestSAXException;
 
 /**
  * @author rafael
@@ -44,7 +44,7 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
     private CommentGetter 				commentGetter; 			// Comment xml parser
     
     private ExecutingController pendingFetch;					// The fetch comment asynctask being run
-    private GifView 		   load;
+    private ProgressBar 		   load;
     
     private AtomicBoolean 	stoped;								//	If mode comments should be fetch
     private TextView 		loadingText;						//	Text field displaying a loading message for messages
@@ -71,8 +71,8 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
     	
     	this.pendingFetch 	= null;
     	
-    	load 				= ((GifView)loadingLayout.findViewById(R.id.loadImageComments));
-    	load.startAnimation(R.drawable.loading, 40);
+    	load 				= ((ProgressBar)loadingLayout.findViewById(R.id.progressBar1));
+//    	load.startAnimation(R.drawable.loading, 40);
     	loadingText 		= ((TextView)loadingLayout.findViewById(R.id.loadTextComments));
     	
     	reset();
@@ -189,7 +189,7 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 				}
 			} else {
 				loadingText.setVisibility(View.GONE);
-				load.stopAnimation();
+				load.setVisibility(View.GONE);
 			}
 			Log.d("Aptoide", "Comment, fetcher as finished");
 			finish();
@@ -331,7 +331,7 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
 		@Override
 		public void handleMessage(Message msg) {
 			loadingText.setVisibility(View.VISIBLE);
-	    	load.startAnimation();
+	    	load.setVisibility(View.VISIBLE);
 		}
 	}
     

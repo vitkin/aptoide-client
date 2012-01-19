@@ -6,11 +6,11 @@
     android:gravity="center"
     android:orientation="horizontal" >
 
-    <cm.aptoide.pt.webservices.comments.GifView
-        android:id="@+id/loadImageComments"
-        android:background="#ffffff"
-        android:layout_width="40px"
-        android:layout_height="40px" />
+      <ProgressBar
+        android:id="@+id/progressBar1"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/loadTextComments"
