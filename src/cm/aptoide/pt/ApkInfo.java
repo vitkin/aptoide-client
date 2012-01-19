@@ -440,8 +440,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		}else{
 			apk_ver_str_raw = null;
 		}
-		
-		apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
+		if(apk_repo_str.contains(".bazaarandroid.com")){
+			apk_repo_str_raw 	= apk_repo_str.substring("http://".length(),apk_repo_str.indexOf(".bazaarandroid.com"));
+		}else{
+			apk_repo_str_raw = apk_repo_str;
+		}
 		
 		listView.addHeaderView(linearLayout, null, false);
 		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
