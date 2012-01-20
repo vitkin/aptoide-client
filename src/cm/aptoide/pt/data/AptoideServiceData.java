@@ -160,6 +160,19 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		public ViewDisplayListRepos callGetRepos() throws RemoteException {
 			return getRepos();
 		}
+		
+
+		@Override
+		public boolean callAreListsByCategory() throws RemoteException {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void callSetListsBy(boolean byCategory) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
 
 		@Override
 		public ViewDisplayListApps callGetAvailableApps(int offset, int range) throws RemoteException {
@@ -925,6 +938,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	public ViewDisplayAppVersionsInfo getAppInfo(int appHashid){
 		AptoideLog.d(AptoideServiceData.this, "Getting App Versions Info: "+appHashid);
 		return managerDatabase.getAppDisplayInfo(appHashid);
+	}
+	
+	public boolean getShowApplicationsByCategory(){
+		return managerPreferences.getShowApplicationsByCategory();
+	}
+	
+	public void setShowApplicationsByCategory(boolean byCategory){
+		managerPreferences.setShowApplicationsByCategory(byCategory);
 	}
 	
 	

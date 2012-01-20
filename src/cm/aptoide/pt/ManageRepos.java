@@ -432,7 +432,7 @@ public class ManageRepos extends ListActivity{
 	}
 
 	private void initReposList(){
-        reposListAdapter = new SimpleAdapter(this, repos.getList(), R.layout.repo_row
+        reposListAdapter = new SimpleAdapter(this, repos.getList(), R.layout.row_repo
         								,new String[] {Constants.KEY_REPO_HASHID, Constants.KEY_REPO_URI, Constants.KEY_REPO_IN_USE, Constants.KEY_REPO_SIZE}
         								,new int[] {R.id.repo_hashid, R.id.uri, R.id.in_use, R.id.size});
         reposListAdapter.setViewBinder(new ReposListBinder());

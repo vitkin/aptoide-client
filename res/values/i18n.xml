@@ -24,6 +24,19 @@
     <string name="private_repo">Private </string>
     
     
+    <string name="display_options">Display Options</string>
+    
+    <string name="show_applications_by">Show applications by: </string>
+    <string name="by_category">Category </string>
+    <string name="by_all">All applications </string>
+    
+    <string name="order_applications_by">Order applications by: </string>
+    <string name="order_most_recent">Freshness</string>
+    <string name="order_alphabetic">Alphabetic</string>
+    <string name="order_rating">Rating</string>
+    <string name="order_downloads">Downloads</string>
+    
+    
     <string name="available">Available</string>
     <string name="installed">Installed</string>
     <string name="updates">Updates</string>

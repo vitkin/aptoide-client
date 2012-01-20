@@ -106,4 +106,12 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		return EnumConnectionLevels.reverseOrdinal(getPreferences.getInt(EnumPreferences.AUTHORIZED_DOWNLOAD_CONNECTIONS.name(), EnumConnectionLevels.NONE.ordinal()));
 	}
 	
+	public boolean getShowApplicationsByCategory(){
+		return getPreferences.getBoolean(EnumPreferences.SHOW_APPLICATIONS_BY_CATEGORY.name(), false);
+	}
+	
+	public void setShowApplicationsByCategory(boolean byCategory){
+		setPreferences.putBoolean(EnumPreferences.SHOW_APPLICATIONS_BY_CATEGORY.name(), byCategory);
+	}
+	
 }
