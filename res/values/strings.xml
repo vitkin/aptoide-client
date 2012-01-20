@@ -101,6 +101,7 @@
        <string name="setting_schdwntitle">Scheduled Downloads</string>
        <string name="setting_schdwninstalltitle">Automatic Install</string>
        <string name="setting_schdwninstallsum">Install scheduled downloads automatically when a Wifi connection is present</string>
+       <string name="no_updates">All applications are up to date</string>
        
 </resources>
 
