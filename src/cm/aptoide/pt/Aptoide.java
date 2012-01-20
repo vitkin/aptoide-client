@@ -32,9 +32,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ActivityManager.RunningServiceInfo;
+import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
@@ -47,25 +50,29 @@ import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
+import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.SimpleAdapter.ViewBinder;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
@@ -542,13 +549,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 
     	if(!serviceDataIsBound){
+//    		startService(new Intent(this, AptoideServiceData.class));	//TODO uncomment this to make service independent of Aptoide's lifecycle
     		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
     	}
     }
     
 
 	public void initDisplayAvailable(){
-		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.app_row, 
+		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.row_app, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
 		
@@ -650,7 +658,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     
     public void initDisplayInstalled(){
-    	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.app_row, 
+    	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.row_app, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
     						, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
@@ -701,7 +709,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     
     public void initDisplayUpdates(){
-    	updatableAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.app_row, 
+    	updatableAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.row_app, 
     			new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
     						, Constants.KEY_STATS_DOWNLOADS, Constants.KEY_STATS_STARS, Constants.DISPLAY_APP_ICON_CACHE_PATH},
     		new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
@@ -1174,17 +1182,27 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
-			.setIcon(android.R.drawable.ic_menu_agenda);
-//		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
-//			.setIcon(android.R.drawable.ic_menu_search);
-//		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
-//			.setIcon(android.R.drawable.ic_menu_preferences);
-//		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
-//			.setIcon(android.R.drawable.ic_menu_help);
-//		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(R.drawable.ic_menu_scheduled);
+		switch (currentAppsList) {
+		case Available:
+			menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
+				.setIcon(android.R.drawable.ic_menu_agenda);
+			menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
+				.setIcon(android.R.drawable.ic_menu_sort_by_size);
+//			menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
+//				.setIcon(android.R.drawable.ic_menu_search);
+//			menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
+//				.setIcon(android.R.drawable.ic_menu_preferences);
+//			menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
+//				.setIcon(android.R.drawable.ic_menu_help);
+//			menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(R.drawable.ic_menu_scheduled);
+			break;
+
+		default:
+			break;
+		}
 		return true;
 	}
 	
@@ -1198,6 +1216,126 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				Intent manageRepo = new Intent(this, ManageRepos.class);
 				startActivity(manageRepo);
 				return true;
+			case DISPLAY_OPTIONS:
+					//TODO refactor extract dialog management class
+					LayoutInflater li = LayoutInflater.from(this);
+					View view = li.inflate(R.layout.dialog_display_options, null);
+					Builder alrt = new AlertDialog.Builder(this).setView(view);
+					final AlertDialog p = alrt.create();
+					p.setIcon(android.R.drawable.ic_menu_sort_by_size);
+					p.setTitle(getString(R.string.display_options));
+					
+					p.setButton(getString(R.string.done), new DialogInterface.OnClickListener() {
+						
+						public void onClick(DialogInterface dialog, int which) {
+							//TODO change 
+							p.dismiss();
+						}
+					});
+					
+					// ***********************************************************
+					// Categories
+					final RadioButton byCategory = (RadioButton) view.findViewById(R.id.shw_ct);
+					final RadioButton byAll = (RadioButton) view.findViewById(R.id.shw_all);
+					if(sPref.getBoolean("mode", false)){
+						byCategory.setChecked(true);
+					}else{
+						byAll.setChecked(true);
+					}
+					final RadioGroup grp2 = (RadioGroup) view.findViewById(R.id.groupshow);
+					grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+						public void onCheckedChanged(RadioGroup group, int checkedId) {
+							if(checkedId == byCategory.getId()){
+								pop_change = true;
+								prefEdit.putBoolean("mode", true);
+							}else{
+								pop_change = true;
+								prefEdit.putBoolean("mode", false);
+							}
+							
+						}
+					});
+
+					// ***********************************************************
+					
+					// ***********************************************************
+					// Order
+//					final RadioButton ord_rct = (RadioButton) view.findViewById(R.id.org_rct);
+//					final RadioButton ord_abc = (RadioButton) view.findViewById(R.id.org_abc);
+//					final RadioButton ord_rat = (RadioButton) view.findViewById(R.id.org_rat);
+//					final RadioButton ord_dwn = (RadioButton) view.findViewById(R.id.org_dwn);
+//					
+//					if(order_lst.equals("abc"))
+//						ord_abc.setChecked(true);
+//					else if(order_lst.equals("rct"))
+//						ord_rct.setChecked(true);
+//					else if(order_lst.equals("rat"))
+//						ord_rat.setChecked(true);
+//					else if(order_lst.equals("dwn"))
+//						ord_dwn.setChecked(true);
+//					
+//					final RadioGroup grp1 = (RadioGroup) view.findViewById(R.id.groupbtn);
+//					grp1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//						public void onCheckedChanged(RadioGroup group, int checkedId) {
+//							if(checkedId == ord_rct.getId()){
+//								pop_change = true;
+//								order_lst = "rct";
+//							}else if(checkedId == ord_abc.getId()){
+//								pop_change = true;
+//								order_lst = "abc";
+//							}else if(checkedId == ord_rat.getId()){
+//								pop_change = true;
+//								order_lst = "rat";
+//							}else if(checkedId == ord_dwn.getId()){
+//								pop_change = true;
+//								order_lst = "dwn";
+//							}
+//						}
+//					});
+					
+					// ***********************************************************
+					
+					
+//				p.show();
+//				
+//				new Thread(){
+//					@Override
+//					public void run() {
+//						super.run();
+//						while(p.isShowing()){
+//							try {
+//								Thread.sleep(1000);
+//							} catch (InterruptedException e) {	}
+//						}
+//						if(sPref.getBoolean("pop_changes", false)){
+//							prefEdit.remove("pop_changes");
+//							prefEdit.commit();
+//							if(sPref.getBoolean("mode", false)){
+//								if(!(shown_now == null) || main_shown_now == 2){
+//									handler_adpt = getGivenCatg(shown_now, main_shown_now);
+//								}else{
+//									handler_adpt = getRootCtg();
+//								}
+//								displayRefresh.sendEmptyMessage(0);
+//							}else{
+//								shown_now = null;
+//								handler_adpt = null;
+//								redrawHandler.sendEmptyMessage(0);
+//								try {
+//									Thread.sleep(1000);
+//								} catch (InterruptedException e1) { }
+//								while(sPref.getBoolean("redrawis", false)){
+//									try {
+//										Thread.sleep(500);
+//									} catch (InterruptedException e) { }
+//								}
+//								displayRefresh.sendEmptyMessage(0);
+//							}
+//						}
+//					}
+//				}.start();
+				return true;
+				
 //			case SEARCH_MENU:
 //				onSearchRequested();
 //				return true;

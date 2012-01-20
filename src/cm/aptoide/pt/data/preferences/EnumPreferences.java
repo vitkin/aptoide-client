@@ -31,7 +31,8 @@ public enum EnumPreferences {
 	APTOIDE_CLIENT_UUID,
 	SCREEN_WIDTH,
 	SCREEN_HEIGHT,
-	AUTHORIZED_DOWNLOAD_CONNECTIONS;
+	AUTHORIZED_DOWNLOAD_CONNECTIONS,
+	SHOW_APPLICATIONS_BY_CATEGORY;
 	
 	public static EnumPreferences reverseOrdinal(int ordinal){
 		return values()[ordinal];

@@ -105,16 +105,28 @@ public class Constants {
 	
 	public static final String DISPLAY_APP_UP_TO_DATE_VERSION_CODE = "upToDateVersionCode";
 	public static final String DISPLAY_APP_DOWNGRADE_VERSION_CODE = "downgradeVersionCode";
+	
+	public static final String DISPLAY_CATEGORY_APPS = "category_apps";
+	
 	//TODO create static display fields for the ones that are using keyes - change in unit tests and display views
 	
 	// **************************** Database definitions ********************************* //
 	
 	//TODO deprecate
-	public static final String[] CATEGORIES_APPLICATIONS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", "News&Weather", "Productivity"
+	public static final String CATEGORY_APPLICATIONS = "Applications";
+	public static final int CATEGORY_HASHID_APPLICATIONS = (CATEGORY_APPLICATIONS).hashCode();
+	public static final String[] SUB_CATEGORIES_APPLICATIONS = {"Comics", "Communication", "Entertainment", "Finance", "Health", "Lifestyle", "Multimedia", "News&Weather", "Productivity"
 															, "Reference", "Shopping", "Social", "Sports", "Themes", "Tools", "Travel", "Demo", "Software Libraries", "Business", "Weather"
 															, "Travel&Local", "Transportation", "Medical", "Libraries&Demo", "News&Magazines", "Music&Audio", "Photography"
 															, "Personalization", "Books&Reference", "Health&Fitness", "Media&Video", "Education"};
-	public static final String[] CATEGORIES_GAMES = {"Arcade&Action", "Brain&Puzzle", "Cards&Casino", "Casual", "Sports Games", "Racing"};
+	//TODO deprecate
+	public static final String CATEGORY_GAMES = "Games";
+	public static final int CATEGORY_HASHID_GAMES = (CATEGORY_GAMES).hashCode();
+	public static final String[] SUB_CATEGORIES_GAMES = {"Arcade&Action", "Brain&Puzzle", "Cards&Casino", "Casual", "Sports Games", "Racing"};
+	//TODO deprecate
+	public static final String CATEGORY_OTHERS = "Others";
+	public static final int CATEGORY_HASHID_OTHERS = (CATEGORY_OTHERS).hashCode();
+	
 	
 	public static final String APPS_REPO = "http://apps.bazaarandroid.com/";
 	public static final int APPS_REPO_HASHID = (APPS_REPO).hashCode();

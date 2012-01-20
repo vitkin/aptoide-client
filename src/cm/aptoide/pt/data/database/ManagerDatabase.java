@@ -36,6 +36,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
+import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayRepo;
@@ -67,6 +68,7 @@ public class ManagerDatabase {
 
 	private AptoideServiceData serviceData;
 	private static SQLiteDatabase db = null;
+	private ArrayList<Integer> categories_hashids;
 	
 	/**
 	 * ManagerDatabase Constructor, opens Aptoide's database or creates it if it doens't exist yet 
@@ -197,22 +199,27 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void hammerCategories(){
+		categories_hashids = new ArrayList<Integer>();
 		ArrayList<ViewCategory> categories = new ArrayList<ViewCategory>(2);
 		
-		ViewCategory applications = new ViewCategory("Applications");
-		for (String subCategory : Constants.CATEGORIES_APPLICATIONS) {
+		ViewCategory applications = new ViewCategory(Constants.CATEGORY_APPLICATIONS);
+		for (String subCategory : Constants.SUB_CATEGORIES_APPLICATIONS) {
 			applications.addChild(new ViewCategory(subCategory));
+			categories_hashids.add(subCategory.hashCode());
 		}
 
 		categories.add(applications);
 		
-		ViewCategory games = new ViewCategory("Games");
-		for (String subCategory : Constants.CATEGORIES_GAMES) {
+		ViewCategory games = new ViewCategory(Constants.CATEGORY_GAMES);
+		for (String subCategory : Constants.SUB_CATEGORIES_GAMES) {
 			games.addChild(new ViewCategory(subCategory));
+			categories_hashids.add(subCategory.hashCode());
 		}
 		
 		categories.add(games);
 		
+		ViewCategory others = new ViewCategory(Constants.CATEGORY_OTHERS);
+		categories.add(others);
 		
 		insertCategories(categories);
 		
@@ -529,7 +536,8 @@ public class ManagerDatabase {
 				}
 				appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_CATEGORY);
 				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_APP_FULL_HASHID, application.getFullHashid());
-				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID, application.getCategoryHashid());
+				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+										, (categories_hashids.contains(application.getCategoryHashid())?application.getCategoryHashid():Constants.CATEGORY_HASHID_OTHERS));
 				appCategoriesRelations.add(appCategoryRelation);
 				
 			}
@@ -577,7 +585,7 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertApplication(ViewApplication application){
-		ContentValues appCategoryRelation;
+		ContentValues appCategoryRelation = null;
 
 		db.beginTransaction();
 		try{
@@ -586,17 +594,31 @@ public class ManagerDatabase {
 			}
 			appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_CATEGORY); //TODO check if this implicit object recycling works 
 			appCategoryRelation.put(Constants.KEY_APP_CATEGORY_APP_FULL_HASHID, application.getFullHashid());
-			appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID, application.getCategoryHashid());
-
-			if(db.insert(Constants.TABLE_APP_CATEGORY ,null, appCategoryRelation) == Constants.DB_ERROR){
-				//TODO throw exception;
-			}
+			appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+									, (categories_hashids.contains(application.getCategoryHashid())?application.getCategoryHashid():Constants.CATEGORY_HASHID_OTHERS));
 			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
 			// TODO: send to errorHandler the exception
 		}finally{
 			db.endTransaction();
+		}
+		
+		db.beginTransaction();
+		try{
+
+			if(db.insert(Constants.TABLE_APP_CATEGORY ,null, appCategoryRelation) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+
+			db.setTransactionSuccessful();
+			
+		}catch (Exception e) {
+			// TODO: handle exception
+		}finally{
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 		}
 	}
 	
@@ -1271,7 +1293,126 @@ public class ManagerDatabase {
 	}
 	
 	/**
-	 * getInstalledApps, retrieves a list of all installed apps
+	 * getCategoriesDisplayInfo, retrieves a hierarquical list of categories
+	 *  
+	 * @return ViewDisplayCategory top category with its childs
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewDisplayCategory getCategoriesDisplayInfo(){
+		
+		final int CATEGORY_HASHID = Constants.COLUMN_FIRST;
+		final int CATEGORY_NAME = Constants.COLUMN_SECOND;
+		final int CATEGORY_APPS = Constants.COLUMN_THIRD;
+		
+		final int OTHERS_APPS = Constants.COLUMN_SECOND;
+		
+		String selectApplicationsSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", A."+Constants.DISPLAY_CATEGORY_APPS
+												+" FROM (SELECT * FROM "+Constants.TABLE_CATEGORY
+														+" WHERE "+Constants.KEY_CATEGORY_HASHID
+														+" IN (SELECT "+Constants.KEY_SUB_CATEGORY_CHILD
+															+" FROM "+Constants.TABLE_SUB_CATEGORY
+															+" WHERE "+Constants.KEY_SUB_CATEGORY_PARENT+"="+Constants.CATEGORY_HASHID_APPLICATIONS+")) C"
+												+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+																			+", count("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+") AS "+Constants.DISPLAY_CATEGORY_APPS
+																		+" FROM "+Constants.TABLE_APP_CATEGORY
+																		+" WHERE "+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
+																				+" IN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
+																					+" FROM "+Constants.TABLE_APPLICATION
+																					+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
+																						+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
+																								+" FROM "+Constants.TABLE_REPOSITORY
+																								+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) "
+																		+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+") A;";
+		
+		String selectGamesSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", A."+Constants.DISPLAY_CATEGORY_APPS
+										+" FROM (SELECT * FROM "+Constants.TABLE_CATEGORY
+												+" WHERE "+Constants.KEY_CATEGORY_HASHID
+												+" IN (SELECT "+Constants.KEY_SUB_CATEGORY_CHILD
+														+" FROM "+Constants.TABLE_SUB_CATEGORY
+														+" WHERE "+Constants.KEY_SUB_CATEGORY_PARENT+"="+Constants.CATEGORY_HASHID_GAMES+")) C"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+																	+", count("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+") AS "+Constants.DISPLAY_CATEGORY_APPS
+															+" FROM "+Constants.TABLE_APP_CATEGORY
+															+" WHERE "+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
+																	+" IN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
+																		+" FROM "+Constants.TABLE_APPLICATION
+																		+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
+																			+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
+																					+" FROM "+Constants.TABLE_REPOSITORY
+																					+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) "
+															+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+") A;";
+
+		String selectOthersApplications = "SELECT "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+												+", count("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+") AS "+Constants.DISPLAY_CATEGORY_APPS
+										+" FROM "+Constants.TABLE_APP_CATEGORY
+										+" WHERE "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+"="+Constants.CATEGORY_HASHID_OTHERS
+										+" AND "+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
+										+" IN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
+											+" FROM "+Constants.TABLE_APPLICATION
+											+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
+												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
+														+" FROM "+Constants.TABLE_REPOSITORY
+														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) "
+										+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+";";
+		
+		
+		ViewDisplayCategory topCategory = new ViewDisplayCategory("TOP", Constants.TOP_CATEGORY, 0);
+		
+		db.beginTransaction();
+		try{
+			Cursor cursorApplicationsSubCategories = aptoideNonAtomicQuery(selectApplicationsSubCategories);
+			Cursor cursorGamesSubCategories = aptoideNonAtomicQuery(selectGamesSubCategories);
+			Cursor cursorOthersApplications = aptoideNonAtomicQuery(selectOthersApplications);
+			
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			cursorOthersApplications.moveToFirst();
+			topCategory.addSubCategory(new ViewDisplayCategory(Constants.CATEGORY_OTHERS, Constants.CATEGORY_HASHID_OTHERS
+															, cursorOthersApplications.getInt(OTHERS_APPS)));
+			cursorOthersApplications.close();
+			
+			ViewDisplayCategory category;
+
+			
+			ViewDisplayCategory applications = new ViewDisplayCategory(Constants.CATEGORY_APPLICATIONS, Constants.CATEGORY_HASHID_APPLICATIONS, 0);
+			cursorApplicationsSubCategories.moveToFirst();
+			do{
+				category = new ViewDisplayCategory(cursorApplicationsSubCategories.getString(CATEGORY_NAME), cursorApplicationsSubCategories.getInt(CATEGORY_HASHID)
+												, cursorApplicationsSubCategories.getInt(CATEGORY_APPS));
+				applications.addSubCategory(category);
+				
+			}while(cursorApplicationsSubCategories.moveToNext());
+			cursorApplicationsSubCategories.close();
+			topCategory.addSubCategory(applications);
+
+			
+			ViewDisplayCategory games = new ViewDisplayCategory(Constants.CATEGORY_GAMES, Constants.CATEGORY_HASHID_GAMES, 0);
+			cursorGamesSubCategories.moveToFirst();
+			do{
+				category = new ViewDisplayCategory(cursorGamesSubCategories.getString(CATEGORY_NAME), cursorGamesSubCategories.getInt(CATEGORY_HASHID)
+												, cursorGamesSubCategories.getInt(CATEGORY_APPS));
+				games.addSubCategory(category);
+				
+			}while(cursorGamesSubCategories.moveToNext());
+			cursorGamesSubCategories.close();
+			topCategory.addSubCategory(games);
+			
+		}catch (Exception e) {
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return topCategory;
+	}
+	
+	/**
+	 * getInstalledAppsDisplayInfo, retrieves a list of all installed apps
 	 *  
 	 * @return ViewDisplayListApps list of installed apps
 	 * 
@@ -1341,7 +1482,7 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * getAvailableApps, retrieves a list of all available apps
+	 * getAvailableAppsDisplayInfo, retrieves a list of all available apps
 	 * 
 	 * @param int offset, number of row to start from
 	 * @param int range, number of rows to list
