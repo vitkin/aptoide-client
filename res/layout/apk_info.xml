@@ -52,8 +52,8 @@
 
         <ImageView
             android:id="@+id/app_hashid"
-            android:layout_width="50sp"
-            android:layout_height="50sp"
+            android:layout_width="48sp"
+            android:layout_height="48sp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="24sp"
             android:layout_marginTop="22sp"
@@ -61,10 +61,14 @@
 
         <TextView
             android:id="@+id/app_name"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/app_hashid"
             android:layout_marginLeft="10sp"
+            android:layout_toLeftOf="@id/app_hashid"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#4f4f4f" />
 
