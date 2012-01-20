@@ -49,6 +49,7 @@ import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
@@ -81,6 +82,8 @@ import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -749,7 +752,7 @@ public class RemoteInTab extends BaseManagement {
 			
 			
 			
-			
+			registerForContextMenu(installView);
 			availView.setOnItemClickListener(availListener);
 			installView.setOnItemClickListener(installListener);
 			updateView.setOnItemClickListener(updateListener);
@@ -1114,6 +1117,37 @@ public class RemoteInTab extends BaseManagement {
 		}
 		return false;
 	}
+
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		// TODO Auto-generated method stub
+		
+		
+		
+		menu.add("Uninstall");
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+
+	
+	
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		
+		
+		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+		View tmp = ((View)(info.targetView)).findViewById(R.id.app_hashid);
+		final String apkid = ((LinearLayout)tmp).getTag().toString();
+		
+		removeApk(apkid);
+		
+		return super.onContextItemSelected(item);
+	}
+
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -2066,11 +2100,12 @@ public class RemoteInTab extends BaseManagement {
 			previousListTitle.setText(emptyString);
 			currentListTitle.setText(currentAppsList.Available.toString());
 			listTextHeader.setText(currentCatName);
-			if(deep>0){
+			if(deep>0&&sPref.getBoolean("mode", false)){
 				listTextHeader.setVisibility(View.VISIBLE);
 			}else{
 				listTextHeader.setVisibility(View.GONE);
 			}
+			
 			break;
 		case Installed:
 			nextView.setVisibility(View.VISIBLE);
@@ -2215,6 +2250,7 @@ public class RemoteInTab extends BaseManagement {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			if(sPref.getBoolean("changeinst", false)){
+				
 				availView.setAdapter(getAvailable(shown_now,main_shown_now));
 				installView.setAdapter(instAdpt);
 				if(updateAdpt.getCount()==0){
@@ -2226,6 +2262,10 @@ public class RemoteInTab extends BaseManagement {
 				}else{
 					updateView.setAdapter(updateAdpt);
 				}
+				if(!sPref.getBoolean("mode", false)){
+					listTextHeader.setVisibility(View.GONE);
+				}
+				
 				prefEdit.remove("changeinst");
 				prefEdit.commit();
 			}
