@@ -82,6 +82,7 @@ import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -136,7 +137,7 @@ public class RemoteInTab extends BaseManagement {
 	//private String order_lst = "abc";
 	//private String lst_mode = "mix";
 	
-    private TabHost myTabHost;
+//    private TabHost myTabHost;
     
     private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
@@ -163,9 +164,11 @@ public class RemoteInTab extends BaseManagement {
 	private ImageView previousView = null; 
 	private ImageView nextView = null;
 	
-	private TextView categoryName = null;
+	private TextView listTextHeader = null;
 	private String currentCatName = null;
 	private RelativeLayout mainLayout;
+	
+//	private TextView emptyUpdatesList;
 	
 	private GestureDetector detectChangeTab;
 
@@ -313,6 +316,8 @@ public class RemoteInTab extends BaseManagement {
 		Log.d("RemoteInTab"," onCreate");
 		
 		availView = new ListView(this);
+		availView.setFastScrollEnabled(true);
+		
 		installView = new ListView(this);
 		updateView = new ListView(this);
 		
@@ -329,11 +334,11 @@ public class RemoteInTab extends BaseManagement {
 		
 		super.onCreate(savedInstanceState);
 		
-		if(Configs.INTERFACE_TABS_ON_BOTTOM){
-			super.setContentView(R.layout.tabhostbottom);
-		} else {
-			super.setContentView(R.layout.tabhosttop);
-		}
+//		if(Configs.INTERFACE_TABS_ON_BOTTOM){
+//			super.setContentView(R.layout.tabhostbottom);
+//		} else {
+//			super.setContentView(R.layout.tabhosttop);
+//		}
 		
 		//detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
 		
@@ -637,8 +642,8 @@ public class RemoteInTab extends BaseManagement {
 						shown_now = null;
 //						Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
 						currentCatName = "Applications";
-						categoryName.setText(currentCatName);
-						categoryName.setVisibility(View.VISIBLE);
+						listTextHeader.setText(currentCatName);
+						listTextHeader.setVisibility(View.VISIBLE);
 						availView.setAdapter(getAppCtg());
 //						setContentView(lv);
 						availView.setSelection(pos-1);
@@ -647,9 +652,9 @@ public class RemoteInTab extends BaseManagement {
 						shown_now = null;
 //						Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
 						currentCatName = "Games";
-						categoryName.setText(currentCatName);
+						listTextHeader.setText(currentCatName);
 						availView.setAdapter(getGamesCtg());
-						categoryName.setVisibility(View.VISIBLE);
+						listTextHeader.setVisibility(View.VISIBLE);
 //						setContentView(lv);
 						availView.setSelection(pos-1);
 						deep = 1;
@@ -658,8 +663,8 @@ public class RemoteInTab extends BaseManagement {
 						main_shown_now = 2;
 //						Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
 						currentCatName = "Others";
-						categoryName.setText(currentCatName);
-						categoryName.setVisibility(View.VISIBLE);
+						listTextHeader.setText(currentCatName);
+						listTextHeader.setVisibility(View.VISIBLE);
 						availView.setAdapter(getGivenCatg(null, 2));
 //						setContentView(lv);
 						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -668,14 +673,14 @@ public class RemoteInTab extends BaseManagement {
 						if(filteredApps>0){
 //							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 							currentCatName = "Filtered "+filteredApps+" applications.";
-							categoryName.setText(currentCatName);
+							listTextHeader.setText(currentCatName);
 						}
 					}else if(pkg_id.equals("apps")){
 						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 						main_shown_now = 1;
 //						Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
 						currentCatName = "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
-						categoryName.setText(currentCatName);
+						listTextHeader.setText(currentCatName);
 						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
 //						setContentView(lv);
 						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -684,14 +689,14 @@ public class RemoteInTab extends BaseManagement {
 						if (filteredApps > 0){
 //							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 							currentCatName = "Filtered "+filteredApps+" applications.";
-							categoryName.setText(currentCatName);
+							listTextHeader.setText(currentCatName);
 						}
 					}else if(pkg_id.equals("games")){
 						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 						main_shown_now = 0;
 //						Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
 						currentCatName = "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
-						categoryName.setText(currentCatName);
+						listTextHeader.setText(currentCatName);
 						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
 //						setContentView(lv);
 						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -700,7 +705,7 @@ public class RemoteInTab extends BaseManagement {
 						if (filteredApps > 0){
 //							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 							currentCatName = "Filtered "+filteredApps+" applications.";
-							categoryName.setText(currentCatName);
+							listTextHeader.setText(currentCatName);
 						}
 					}else{
 						
@@ -753,7 +758,6 @@ public class RemoteInTab extends BaseManagement {
 			setContentView(R.layout.aptoide);
 			vf = (ViewFlipper) findViewById(R.id.list_flipper);
 			
-			
 		
 			
 			previousListTitle = (TextView) findViewById(R.id.previous_title);
@@ -770,6 +774,13 @@ public class RemoteInTab extends BaseManagement {
 			updateView.setBackgroundColor(Color.WHITE);
 			updateView.setCacheColorHint(Color.TRANSPARENT);
 			
+//			emptyUpdatesList = new TextView(mctx);
+//			emptyUpdatesList.setBackgroundColor(Color.WHITE);
+//			emptyUpdatesList.setTextColor(Color.DKGRAY);
+//			emptyUpdatesList.setTextSize(15);
+//			emptyUpdatesList.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+//			emptyUpdatesList.setGravity(Gravity.CENTER_HORIZONTAL);
+			
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
 			nextListTitle.setOnClickListener(new OnNextClickedListener());
 
@@ -780,8 +791,10 @@ public class RemoteInTab extends BaseManagement {
 			previousView.setVisibility(View.INVISIBLE);
 			previousListTitle.setText(emptyString);
 			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
-			categoryName = (TextView) findViewById(R.id.catname);
-			categoryName.setVisibility(View.GONE);			
+			
+			listTextHeader = (TextView) findViewById(R.id.textheader);
+			listTextHeader.setVisibility(View.GONE);			
+			
 			new Thread(){
 				@Override
 				public void run() {
@@ -2052,13 +2065,12 @@ public class RemoteInTab extends BaseManagement {
 			previousView.setVisibility(View.INVISIBLE);
 			previousListTitle.setText(emptyString);
 			currentListTitle.setText(currentAppsList.Available.toString());
-			categoryName.setText(currentCatName);
+			listTextHeader.setText(currentCatName);
 			if(deep>0){
-				categoryName.setVisibility(View.VISIBLE);
+				listTextHeader.setVisibility(View.VISIBLE);
 			}else{
-				categoryName.setVisibility(View.GONE);
+				listTextHeader.setVisibility(View.GONE);
 			}
-			
 			break;
 		case Installed:
 			nextView.setVisibility(View.VISIBLE);
@@ -2066,9 +2078,7 @@ public class RemoteInTab extends BaseManagement {
 			currentListTitle.setText(currentAppList.Installed.toString());
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
-			categoryName.setVisibility(View.GONE);			
-			
-			
+			listTextHeader.setVisibility(View.GONE);			
 			break;
 		case Update:
 			nextView.setVisibility(View.INVISIBLE);
@@ -2076,7 +2086,13 @@ public class RemoteInTab extends BaseManagement {
 			currentListTitle.setText(currentAppList.Update.toString());
 			nextListTitle.setText(emptyString);
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
-			categoryName.setVisibility(View.GONE);
+			listTextHeader.setText(R.string.no_updates);
+			if(updateView.getCount()==0){
+				listTextHeader.setVisibility(View.VISIBLE);
+			}else{
+				listTextHeader.setVisibility(View.GONE);
+			}
+			
 			break; 
 		}
 
@@ -2194,12 +2210,22 @@ public class RemoteInTab extends BaseManagement {
 
 		
 
+		
+
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			if(sPref.getBoolean("changeinst", false)){
 				availView.setAdapter(getAvailable(shown_now,main_shown_now));
 				installView.setAdapter(instAdpt);
-				updateView.setAdapter(updateAdpt);
+				if(updateView.getCount()==0){
+//					vf.removeView(updateView);
+//					vf.addView(emptyUpdatesList);
+					
+					listTextHeader.setText(R.string.no_updates);
+					
+				}else{
+					updateView.setAdapter(updateAdpt);
+				}
 				prefEdit.remove("changeinst");
 				prefEdit.commit();
 			}
@@ -2214,21 +2240,21 @@ public class RemoteInTab extends BaseManagement {
 				availView.setAdapter(getRootCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				currentCatName = emptyString;
-				categoryName.setVisibility(View.GONE);
+				listTextHeader.setVisibility(View.GONE);
 				deep = 0;
 				break;
 			case 2:
 				availView.setAdapter(getAppCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				currentCatName = "Applications";
-				categoryName.setText(currentCatName);
+				listTextHeader.setText(currentCatName);
 				deep = 1;
 				break;
 			case 3:
 				availView.setAdapter(getGamesCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				currentCatName = "Games";
-				categoryName.setText(currentCatName);
+				listTextHeader.setText(currentCatName);
 				deep = 1;
 				break;
 			}
