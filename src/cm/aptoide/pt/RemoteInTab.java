@@ -2087,7 +2087,7 @@ public class RemoteInTab extends BaseManagement {
 			nextListTitle.setText(emptyString);
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
 			listTextHeader.setText(R.string.no_updates);
-			if(updateView.getCount()==0){
+			if(updateView.getId()==0){
 				listTextHeader.setVisibility(View.VISIBLE);
 			}else{
 				listTextHeader.setVisibility(View.GONE);
@@ -2217,7 +2217,7 @@ public class RemoteInTab extends BaseManagement {
 			if(sPref.getBoolean("changeinst", false)){
 				availView.setAdapter(getAvailable(shown_now,main_shown_now));
 				installView.setAdapter(instAdpt);
-				if(updateView.getCount()==0){
+				if(updateView.getId()==0){
 //					vf.removeView(updateView);
 //					vf.addView(emptyUpdatesList);
 					
