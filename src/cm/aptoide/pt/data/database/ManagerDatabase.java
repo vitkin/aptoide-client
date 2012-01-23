@@ -1370,9 +1370,11 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
-			cursorOthersApplications.moveToFirst();
-			topCategory.addSubCategory(new ViewDisplayCategory(Constants.CATEGORY_OTHERS, Constants.CATEGORY_HASHID_OTHERS
-															, cursorOthersApplications.getInt(OTHERS_APPS)));
+			if(cursorOthersApplications.getCount() != Constants.EMPTY_INT){
+				cursorOthersApplications.moveToFirst();
+				topCategory.addSubCategory(new ViewDisplayCategory(Constants.CATEGORY_OTHERS, Constants.CATEGORY_HASHID_OTHERS
+																, cursorOthersApplications.getInt(OTHERS_APPS)));
+			}
 			cursorOthersApplications.close();
 			
 			ViewDisplayCategory category;
@@ -1381,10 +1383,11 @@ public class ManagerDatabase {
 			ViewDisplayCategory applications = new ViewDisplayCategory(Constants.CATEGORY_APPLICATIONS, Constants.CATEGORY_HASHID_APPLICATIONS, 0);
 			cursorApplicationsSubCategories.moveToFirst();
 			do{
-				category = new ViewDisplayCategory(cursorApplicationsSubCategories.getString(CATEGORY_NAME), cursorApplicationsSubCategories.getInt(CATEGORY_HASHID)
-												, cursorApplicationsSubCategories.getInt(CATEGORY_APPS));
-				applications.addSubCategory(category);
-				
+				if(cursorApplicationsSubCategories.getInt(CATEGORY_APPS) != Constants.EMPTY_INT){
+					category = new ViewDisplayCategory(cursorApplicationsSubCategories.getString(CATEGORY_NAME), cursorApplicationsSubCategories.getInt(CATEGORY_HASHID)
+													, cursorApplicationsSubCategories.getInt(CATEGORY_APPS));
+					applications.addSubCategory(category);
+				}
 			}while(cursorApplicationsSubCategories.moveToNext());
 			cursorApplicationsSubCategories.close();
 			topCategory.addSubCategory(applications);
@@ -1393,10 +1396,11 @@ public class ManagerDatabase {
 			ViewDisplayCategory games = new ViewDisplayCategory(Constants.CATEGORY_GAMES, Constants.CATEGORY_HASHID_GAMES, 0);
 			cursorGamesSubCategories.moveToFirst();
 			do{
-				category = new ViewDisplayCategory(cursorGamesSubCategories.getString(CATEGORY_NAME), cursorGamesSubCategories.getInt(CATEGORY_HASHID)
-												, cursorGamesSubCategories.getInt(CATEGORY_APPS));
-				games.addSubCategory(category);
-				
+				if(cursorGamesSubCategories.getInt(CATEGORY_APPS) != Constants.EMPTY_INT){
+					category = new ViewDisplayCategory(cursorGamesSubCategories.getString(CATEGORY_NAME), cursorGamesSubCategories.getInt(CATEGORY_HASHID)
+													, cursorGamesSubCategories.getInt(CATEGORY_APPS));
+					games.addSubCategory(category);
+				}
 			}while(cursorGamesSubCategories.moveToNext());
 			cursorGamesSubCategories.close();
 			topCategory.addSubCategory(games);

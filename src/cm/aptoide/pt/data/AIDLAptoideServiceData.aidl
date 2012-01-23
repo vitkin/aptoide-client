@@ -21,6 +21,7 @@ package cm.aptoide.pt.data;
 
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.AIDLAptoideInterface;
+import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
@@ -52,6 +53,8 @@ interface AIDLAptoideServiceData {
 	
 	boolean callAreListsByCategory();
 	void callSetListsBy(in boolean byCategory);
+	
+	ViewDisplayCategory callGetCategories();
 	
 	ViewDisplayListApps callGetInstalledApps();
 	ViewDisplayListApps callGetAvailableApps(in int offset, in int range);
