@@ -47,6 +47,7 @@ import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
+import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayRepo;
@@ -172,6 +173,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		public void callSetListsBy(boolean byCategory) throws RemoteException {
 			// TODO Auto-generated method stub
 			
+		}
+
+		@Override
+		public ViewDisplayCategory callGetCategories() throws RemoteException {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 		@Override
@@ -513,7 +520,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void checkIfAnyReposInUse(){
 		if(managerDatabase.anyReposInUse()){
-			updateAvailableLists();
+			resetAvailableLists();
 			return;
 		}else{
 			manageRepos();  				
