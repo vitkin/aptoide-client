@@ -66,6 +66,22 @@ public class ViewManageRepos implements Parcelable{
 	public ViewListIds getReposToUnsetInUse() {
 		return reposToUnsetInUse;
 	}
+	
+	public boolean hasLocalChanges(){
+		return (this.reposToRemove.getList().size()!= 0 || this.reposToSetInUse.getList().size()!=0 || this.reposToUnsetInUse.getList().size()!=0);
+	}
+	
+	public boolean hasReposToRemove(){
+		return (this.reposToRemove.getList().size()!= 0);
+	}
+	
+	public boolean hasReposToSetInUse(){
+		return (this.reposToSetInUse.getList().size()!=0);
+	}
+	
+	public boolean hasReposToUnsetInUse(){
+		return (this.reposToUnsetInUse.getList().size()!=0);
+	}
 
 	
 	

@@ -245,18 +245,18 @@ public class ManagerDatabase {
 	 */
 	public void insertCategories(ArrayList<ViewCategory> categories){
 		db.beginTransaction();
-		try{
+		try{			
 			InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
 			ArrayList<ContentValues> subCategoriesRelations = new ArrayList<ContentValues>(categories.size());
 			ContentValues subCategoryRelation;
 			
 			for (ViewCategory category : categories) {
-				if(insertCategory.insert(category.getValues()) == Constants.DB_ERROR){
+				if(insertCategory.replace(category.getValues()) == Constants.DB_ERROR){		//TODO should be insert
 					//TODO throw exception;
 				}
 				if(category.hasChilds()){
 					for (ViewCategory subCategory : category.getSubCategories()) {
-						if(insertCategory.insert(subCategory.getValues()) == Constants.DB_ERROR){
+						if(insertCategory.replace(subCategory.getValues()) == Constants.DB_ERROR){		//TODO should be insert
 							//TODO throw exception;
 						}
 						subCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_SUB_CATEGORY); //TODO check if this implicit object recycling works 
@@ -270,7 +270,7 @@ public class ManagerDatabase {
 			
 			InsertHelper insertCategoryRelation = new InsertHelper(db, Constants.TABLE_SUB_CATEGORY);
 			for (ContentValues categoryRelationValues : subCategoriesRelations) {
-				if(insertCategoryRelation.insert(categoryRelationValues) == Constants.DB_ERROR){
+				if(insertCategoryRelation.replace(categoryRelationValues) == Constants.DB_ERROR){		//TODO should be insert
 					//TODO throw exception;
 				}
 			}
@@ -1486,10 +1486,11 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * getAvailableAppsDisplayInfo, retrieves a list of all available apps
+	 * getAvailableAppsDisplayInfo, retrieves a list of all available apps by category
 	 * 
 	 * @param int offset, number of row to start from
 	 * @param int range, number of rows to list
+	 * @param int categoryHashid, hashid of category
 	 * 
 	 * @return ViewDisplayListApps list of available apps
 	 * 
@@ -1497,7 +1498,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range){
+	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, int categoryHashid){
 		
 		final int APP_NAME = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
@@ -1519,8 +1520,15 @@ public class ManagerDatabase {
 											+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
 												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
 														+" FROM "+Constants.TABLE_REPOSITORY
-														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) A"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
+														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")";
+				if(categoryHashid != Constants.TOP_CATEGORY){
+					selectAvailableApps += 		" AND "+Constants.KEY_APPLICATION_FULL_HASHID+" IN (SELECT "+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
+																									+" FROM "+Constants.TABLE_APP_CATEGORY
+																									+" WHERE "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+"="+categoryHashid+")) A";
+				}else{
+					selectAvailableApps += 	") A";
+				}
+				selectAvailableApps +=		" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
 															+" FROM "+Constants.TABLE_STATS_INFO+") S"
 									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
 									+" ORDER BY "+Constants.KEY_APPLICATION_NAME
@@ -1560,6 +1568,23 @@ public class ManagerDatabase {
 			e.printStackTrace();
 		}
 		return availableApps;
+	}
+	
+	
+	/**
+	 * getAvailableAppsDisplayInfo, retrieves a list of all available apps
+	 * 
+	 * @param int offset, number of row to start from
+	 * @param int range, number of rows to list
+	 * 
+	 * @return ViewDisplayListApps list of available apps
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range){
+		return getAvailableAppsDisplayInfo(offset, range, Constants.TOP_CATEGORY);
 	}
 	
 	
