@@ -158,12 +158,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 			if(!serviceDataSeenRunning){
 				try {
+		            
 		            AptoideLog.v(Aptoide.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
 
 //		            switchInstalledToProgressBar();
 //		            showInstalledList();
 		            
-		            serviceDataCaller.callSyncInstalledApps();
+		            serviceDataCaller.callSyncInstalledApps();	
+		            
+		            AptoideLog.v(Aptoide.this, "Called for registering as InstalledApps Observer");
+		            serviceDataCaller.callRegisterInstalledAppsObserver(serviceDataCallback);
 		        } catch (RemoteException e) {
 					// TODO Auto-generated catch block
 		            e.printStackTrace();
@@ -188,9 +192,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	        	
 	            AptoideLog.v(Aptoide.this, "Called for registering as AvailableApps Observer");
 	            serviceDataCaller.callRegisterAvailableAppsObserver(serviceDataCallback);
-	            
-	            AptoideLog.v(Aptoide.this, "Called for registering as InstalledApps Observer");
-	            serviceDataCaller.callRegisterInstalledAppsObserver(serviceDataCallback);
 
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -402,7 +403,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							try {
 								Log.d("Aptoide","resetting categories list.");
 								setFreshCategories(serviceDataCaller.callGetCategories());
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_CATEGORIES.ordinal());
+								if(category != null && category.hasChildren()){
+									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_CATEGORIES.ordinal());
+								}else{
+									offset = 0;
+									
+									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE);
+									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, Constants.DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
+									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
+								}
 								
 								setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
 								interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
@@ -412,12 +421,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 								e.printStackTrace();
 							}
 						}else{
-							if(!category.hasChildren()){
+							if(category != null && !category.hasChildren()){
 								offset = cacheListOffset.get()*Constants.DISPLAY_LISTS_CACHE_SIZE;
 								
 								try {
 									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE);
-									setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, Constants.DISPLAY_LISTS_CACHE_SIZE));
+									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, Constants.DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 									
 									setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
@@ -1327,19 +1336,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					p.setIcon(android.R.drawable.ic_menu_sort_by_size);
 					p.setTitle(getString(R.string.display_options));
 					
-					p.setButton(getString(R.string.done), new DialogInterface.OnClickListener() {
-						
-						public void onClick(DialogInterface dialog, int which) {
-							//TODO change 
-							p.dismiss();
-						}
-					});
-					
 					// ***********************************************************
 					// Categories
 					final RadioButton byCategory = (RadioButton) view.findViewById(R.id.shw_ct);
 					final RadioButton byAll = (RadioButton) view.findViewById(R.id.shw_all);
-					if(sPref.getBoolean("mode", false)){
+					if(availableByCategory){
 						byCategory.setChecked(true);
 					}else{
 						byAll.setChecked(true);
@@ -1347,13 +1348,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					final RadioGroup grp2 = (RadioGroup) view.findViewById(R.id.groupshow);
 					grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 						public void onCheckedChanged(RadioGroup group, int checkedId) {
-							if(checkedId == byCategory.getId()){
-								pop_change = true;
-								prefEdit.putBoolean("mode", true);
-							}else{
-								pop_change = true;
-								prefEdit.putBoolean("mode", false);
-							}
+//							if(checkedId == byCategory.getId()){
+//								pop_change = true;
+//								prefEdit.putBoolean("mode", true);
+//							}else{
+//								pop_change = true;
+//								prefEdit.putBoolean("mode", false);
+//							}
 							
 						}
 					});
@@ -1396,7 +1397,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //					});
 					
 					// ***********************************************************
+
 					
+					p.setButton(getString(R.string.done), new DialogInterface.OnClickListener() {
+						
+						public void onClick(DialogInterface dialog, int which) {
+							if(byCategory.isChecked() != availableByCategory){
+								availableByCategory = byCategory.isChecked();
+								availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);
+							}
+							p.dismiss();
+						}
+					});
 					
 //				p.show();
 //				

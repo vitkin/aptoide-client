@@ -20,6 +20,7 @@
 
 package cm.aptoide.pt.data.display;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -36,8 +37,9 @@ import cm.aptoide.pt.data.Constants;
  * @since 3.0
  *
  */
-public class ViewDisplayCategory implements Parcelable{ 
+public class ViewDisplayCategory implements Parcelable, Serializable{ 
 
+	private static final long serialVersionUID = 1412655092087101812L;
 	private LinkedList<Map<String, Object>> subCategoriesDisplayList;
 	private HashMap<Integer, ViewDisplayCategory> subCategories;
 	private ViewDisplayCategory parentCategory;

@@ -165,20 +165,22 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public boolean callAreListsByCategory() throws RemoteException {
-			// TODO Auto-generated method stub
-			return false;
+			return getShowApplicationsByCategory();
 		}
 
 		@Override
 		public void callSetListsBy(boolean byCategory) throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			setShowApplicationsByCategory(byCategory);
 		}
 
 		@Override
 		public ViewDisplayCategory callGetCategories() throws RemoteException {
-			// TODO Auto-generated method stub
-			return null;
+			return getCategories();
+		}
+
+		@Override
+		public ViewDisplayListApps callGetAvailableAppsByCategory(int offset, int range, int categoryHashid) throws RemoteException {
+			return getAvailableApps(offset, range, categoryHashid);
 		}
 
 		@Override
@@ -611,16 +613,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				if(reposToManage.getReposToRemove().getList().size()!=0){
-					managerDatabase.removeRepositories(reposToManage.getReposToRemove());
+				if(reposToManage.hasLocalChanges()){
+					if(reposToManage.hasReposToRemove()){
+						managerDatabase.removeRepositories(reposToManage.getReposToRemove());
+					}
+					if(reposToManage.hasReposToSetInUse()){
+						managerDatabase.toggleRepositoriesInUse(reposToManage.getReposToSetInUse(), true);
+					}
+					if(reposToManage.hasReposToUnsetInUse()){
+						managerDatabase.toggleRepositoriesInUse(reposToManage.getReposToUnsetInUse(), false);
+					}
+					resetAvailableLists();
 				}
-				if(reposToManage.getReposToSetInUse().getList().size()!=0){
-					managerDatabase.toggleRepositoriesInUse(reposToManage.getReposToSetInUse(), true);
-				}
-				if(reposToManage.getReposToUnsetInUse().getList().size()!=0){
-					managerDatabase.toggleRepositoriesInUse(reposToManage.getReposToUnsetInUse(), false);
-				}
-				resetAvailableLists();
 			}
 		});
 		if(reposToManage.getReposToInsert().size()!=0){
@@ -955,6 +959,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		managerPreferences.setShowApplicationsByCategory(byCategory);
 	}
 	
+	public ViewDisplayCategory getCategories(){
+		AptoideLog.d(AptoideServiceData.this, "Getting Categories");
+		return managerDatabase.getCategoriesDisplayInfo();
+	}
+	
 	
 	public ViewDisplayListApps getInstalledApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Installed Apps");
@@ -964,6 +973,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	public ViewDisplayListApps getAvailableApps(int offset, int range){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps");
 		return managerDatabase.getAvailableAppsDisplayInfo(offset, range);
+	}
+	
+	public ViewDisplayListApps getAvailableApps(int offset, int range, int categoryHashid){
+		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps for category: "+categoryHashid);
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, categoryHashid);
 	}
 	
 	public ViewDisplayListApps getUpdatableApps(){

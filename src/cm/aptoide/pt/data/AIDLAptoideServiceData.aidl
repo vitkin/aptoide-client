@@ -58,6 +58,7 @@ interface AIDLAptoideServiceData {
 	
 	ViewDisplayListApps callGetInstalledApps();
 	ViewDisplayListApps callGetAvailableApps(in int offset, in int range);
+	ViewDisplayListApps callGetAvailableAppsByCategory(in int offset, in int range, in int categoryHashid);
 	ViewDisplayListApps callGetUpdatableApps();
 	
 	ViewDisplayListApps callGetAppSearchResults(in String searchString);
