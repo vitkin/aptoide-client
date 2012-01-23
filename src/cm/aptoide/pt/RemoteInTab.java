@@ -832,12 +832,10 @@ public class RemoteInTab extends BaseManagement {
 			public boolean onTouch(View v, MotionEvent event) {
 				 if(event.getAction() == MotionEvent.ACTION_DOWN) {
 		                // Button was pressed, change button background
-		                v.setBackgroundResource(R.drawable.btsearchover);
 		                onSearchRequested();
 		                return true;
 		            } else if(event.getAction() == MotionEvent.ACTION_UP) {
 		                // Button was released, reset button background
-		                v.setBackgroundResource(R.drawable.btsearch);
 		                return true;
 		            }
 
@@ -854,7 +852,7 @@ public class RemoteInTab extends BaseManagement {
 //		};
 //		
 		
-		ImageButton searchView = (ImageButton) findViewById(R.id.btsearch);
+		ImageView searchView = (ImageView) findViewById(R.id.btsearch);
 		
 		
 //		searchView.setOnClickListener(searchListener);

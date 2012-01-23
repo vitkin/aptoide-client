@@ -42,15 +42,27 @@
             android:padding="10sp"
             android:src="@drawable/aptoidebrand" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/btsearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="2sp"
+            android:layout_marginRight="1sp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="8sp"
-            android:background="@drawable/btsearch"
-            android:paddingRight="5sp" />
+            android:src="@android:drawable/ic_menu_search"
+            android:tint="#ffffff" />
+
+        <View
+            android:layout_width="0.5sp"
+            android:layout_height="fill_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="2sp"
+            android:layout_marginTop="2sp"
+            android:layout_marginBottom="2sp"
+            android:layout_toLeftOf="@+id/btsearch"
+            android:background="#8acc00" />
+
     </RelativeLayout>
 
     <include
@@ -75,10 +87,10 @@
             android:layout_gravity="center"
             android:background="@drawable/border"
             android:gravity="center"
+            android:orientation="vertical"
             android:paddingBottom="10sp"
             android:paddingLeft="10sp"
-            android:paddingRight="10sp" 
-            android:orientation="vertical">
+            android:paddingRight="10sp" >
 
             <TextView
                 android:id="@+id/textheader"
@@ -94,7 +106,6 @@
                 android:layout_height="fill_parent"
                 android:background="#ffffff"
                 android:orientation="vertical" >
-
             </ViewFlipper>
         </LinearLayout>
     </LinearLayout>
