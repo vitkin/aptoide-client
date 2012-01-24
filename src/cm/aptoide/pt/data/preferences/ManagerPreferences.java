@@ -112,6 +112,7 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 	
 	public void setShowApplicationsByCategory(boolean byCategory){
 		setPreferences.putBoolean(EnumPreferences.SHOW_APPLICATIONS_BY_CATEGORY.name(), byCategory);
+		setPreferences.commit();
 	}
 	
 }

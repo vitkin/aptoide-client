@@ -1301,7 +1301,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayCategory getCategoriesDisplayInfo(){
+	public ViewDisplayCategory getCategoriesDisplayInfo(){	//TODO count only once per package
 		
 		final int CATEGORY_HASHID = Constants.COLUMN_FIRST;
 		final int CATEGORY_NAME = Constants.COLUMN_SECOND;
@@ -1737,8 +1737,9 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * getIconsDownloadInfo, retrieves a list of icons Download Info
+	 * getIconsDownloadInfo, retrieves a list of icons' Download Info
 	 * 
+	 * @param ViewRepository repository
 	 * @param int offset, number of row to start from
 	 * @param int range, number of rows to list
 	 * 
@@ -1748,7 +1749,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */		//TODO refactor data transport -> move ArrayList to a full data transport object with it's size properly initialized
-	public ArrayList<ViewDownloadInfo> getIconsDownloadInfo(ViewRepository repo, int offset, int range){
+	public ArrayList<ViewDownloadInfo> getIconsDownloadInfo(ViewRepository repository, int offset, int range){
 		
 		final int ICONS_PATH = Constants.COLUMN_FIRST;
 		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
@@ -1761,7 +1762,7 @@ public class ManagerDatabase {
 		
 		String selectRepoIconsPath = "SELECT "+Constants.KEY_REPO_ICONS_PATH
 									+" FROM "+Constants.TABLE_REPOSITORY
-									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repo.getHashid()+";";
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()+";";
 		
 		String selectIconDownloadInfo = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
 											+",A."+Constants.KEY_APPLICATION_NAME
@@ -1785,6 +1786,151 @@ public class ManagerDatabase {
 		try{
 			Cursor repoCursor = aptoideNonAtomicQuery(selectRepoIconsPath);
 			Cursor iconsCursor = aptoideNonAtomicQuery(selectIconDownloadInfo, selectIconDownloadInfoArgs);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			repoCursor.moveToFirst();
+			String repoIconsPath = repoCursor.getString(ICONS_PATH);
+			repoCursor.close();
+			
+			iconsInfo = new ArrayList<ViewDownloadInfo>(iconsCursor.getCount());
+			
+			iconsCursor.moveToFirst();
+			do{
+				iconInfo = new ViewDownloadInfo(repoIconsPath+iconsCursor.getString(REMOTE_PATH_TAIL), iconsCursor.getString(APP_NAME)
+												, iconsCursor.getInt(APP_HASHID), EnumDownloadType.ICON);
+				iconsInfo.add(iconInfo);
+
+			}while(iconsCursor.moveToNext());
+			iconsCursor.close();
+	
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return iconsInfo;
+	}
+	
+	
+	/**
+	 * getIconDownloadInfo, retrieves an icon's Download Info
+	 * 
+	 * @param ViewRepository repository
+	 * @param int appHashid
+	 * 
+	 * @return ViewDownloadInfo list of icons Download Info
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */	
+	public ViewDownloadInfo getIconDownloadInfo(ViewRepository repository, int appHashid){
+		final int ICONS_PATH = Constants.COLUMN_FIRST;
+		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int APP_NAME = Constants.COLUMN_THIRD;
+		
+		String repoIconsPath = repository.getIconsPath();
+		
+		ViewDownloadInfo iconInfo = null;							
+		
+		String selectRepoIconsPath = "SELECT "+Constants.KEY_REPO_ICONS_PATH
+									+" FROM "+Constants.TABLE_REPOSITORY
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()+";";
+		
+		String selectIconDownloadInfo = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_NAME
+									+" FROM "+Constants.TABLE_ICON_INFO+" I"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
+																	+","+Constants.KEY_APPLICATION_REPO_HASHID
+																	+","+Constants.KEY_APPLICATION_HASHID
+																	+","+Constants.KEY_APPLICATION_NAME
+																	+","+Constants.KEY_APPLICATION_TIMESTAMP
+															 +" FROM "+Constants.TABLE_APPLICATION
+															 +" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
+															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+															 +" FROM "+Constants.TABLE_REPOSITORY
+															 +" GROUP BY "+Constants.KEY_REPO_HASHID+")"
+									+" ORDER BY A."+Constants.KEY_APPLICATION_NAME+";";
+		
+		db.beginTransaction();
+		try{
+			if(repoIconsPath == null){
+				Cursor repoCursor = aptoideNonAtomicQuery(selectRepoIconsPath);
+				repoCursor.moveToFirst();
+				repoIconsPath = repoCursor.getString(ICONS_PATH);
+				repoCursor.close();
+			}
+			Cursor iconsCursor = aptoideNonAtomicQuery(selectIconDownloadInfo);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			iconsCursor.moveToFirst();
+			iconInfo = new ViewDownloadInfo(repoIconsPath+iconsCursor.getString(REMOTE_PATH_TAIL), iconsCursor.getString(APP_NAME)
+											, iconsCursor.getInt(APP_HASHID), EnumDownloadType.ICON);
+			iconsCursor.close();
+	
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return iconInfo;
+	}
+	
+	
+	/**
+	 * getScreensDownloadInfo, retrieves a list of icons' Download Info
+	 * 
+	 * @param ViewRepository repository
+	 * @param int offset, number of row to start from
+	 * @param int range, number of rows to list
+	 * 
+	 * @return ViewDownloadInfo list of icons Download Info
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */		//TODO refactor data transport -> move ArrayList to a full data transport object with it's size properly initialized
+	public ArrayList<ViewDownloadInfo> getScreensDownloadInfo(ViewRepository repository, int appHashid){
+		
+		final int ICONS_PATH = Constants.COLUMN_FIRST;
+		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int APP_NAME = Constants.COLUMN_THIRD;
+		
+		
+		ArrayList<ViewDownloadInfo> iconsInfo = null;
+		ViewDownloadInfo iconInfo;							
+		
+		String selectRepoIconsPath = "SELECT "+Constants.KEY_REPO_ICONS_PATH
+									+" FROM "+Constants.TABLE_REPOSITORY
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()+";";
+		
+		String selectIconDownloadInfo = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
+											+",A."+Constants.KEY_APPLICATION_NAME
+									+" FROM "+Constants.TABLE_ICON_INFO+" I"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
+																	+","+Constants.KEY_APPLICATION_REPO_HASHID
+																	+","+Constants.KEY_APPLICATION_HASHID
+																	+","+Constants.KEY_APPLICATION_NAME
+																	+","+Constants.KEY_APPLICATION_TIMESTAMP
+															 +" FROM "+Constants.TABLE_APPLICATION
+															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+															 +" FROM "+Constants.TABLE_REPOSITORY
+															 +" GROUP BY "+Constants.KEY_REPO_HASHID+")"
+									+" ORDER BY A."+Constants.KEY_APPLICATION_NAME
+									+" LIMIT ?"
+									+" OFFSET ?;";
+		
+		db.beginTransaction();
+		try{
+			Cursor repoCursor = aptoideNonAtomicQuery(selectRepoIconsPath);
+			Cursor iconsCursor = aptoideNonAtomicQuery(selectIconDownloadInfo);
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -2070,7 +2216,8 @@ public class ManagerDatabase {
 			selectAppDownloadInfo +=			") A";
 		}
 			selectAppDownloadInfo += " NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
-									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_HASHID+") R;";
+									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_HASHID
+														+" FROM "+Constants.TABLE_REPOSITORY+") R;";
 		
 		db.beginTransaction();
 		try{

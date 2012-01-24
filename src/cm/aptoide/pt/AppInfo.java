@@ -38,6 +38,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
@@ -149,15 +152,15 @@ public class AppInfo extends Activity{
         	switch (task) {
         	
 	    		case UPDATE_APP_DOWNLOAD_INFO:
-	    			fillRest();
+	    			setVersionsDescription();
 	    			break;
         	
         		case UPDATE_APP_STATS:
-        			fillRest();
+        			setVersionsDescription();
         			break;
         			
 				case UPDATE_APP_EXTRAS:
-					fillRest();
+					setVersionsDescription();
 					break;
 	
 				default:
@@ -178,8 +181,40 @@ public class AppInfo extends Activity{
     	}
 		
 		setContentView(R.layout.app_info);
+		
+		final Button install = (Button) findViewById(R.id.install);
+		install.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View view) {
+				Log.d("Aptoide-AppInfo", "called install app");
+				try {
+					serviceDataCaller.callInstallApp(appHashid);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				finish();
+			}
+		});
+		
+		final Button uninstall = (Button) findViewById(R.id.uninstall);
+		uninstall.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View view) {
+				Log.d("Aptoide-AppInfo", "called remove app");
+				try {
+					serviceDataCaller.callUninstallApp(appHashid);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				finish();
+			}
+		});
 	
-		fillData();
+		setIcon();
 		
 		
 //		Handler threadHandler = new Handler();
@@ -195,7 +230,7 @@ public class AppInfo extends Activity{
 //        }, 10000);
     }
 	
-	protected void fillData(){
+	protected void setIcon(){
 		String icon_path = Constants.PATH_CACHE_ICONS+appHashid;
 		ImageView icon = (ImageView) findViewById(R.id.icon);
 		File test_icon = new File(icon_path);
@@ -208,7 +243,7 @@ public class AppInfo extends Activity{
 		}
 	}
 	
-	protected void fillRest(){
+	protected void setVersionsDescription(){
 		try {
 			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
 			Log.d("Aptoide-AppInfo", "Got app versions: "+appVersions);
@@ -222,6 +257,7 @@ public class AppInfo extends Activity{
 		}
 		
 	}
+	
 	
 	
 	@Override

@@ -4,6 +4,7 @@
     android:id="@+id/category_hashid"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:background="#ffffff"
     android:orientation="horizontal">
     
     <LinearLayout
@@ -17,6 +18,7 @@
         <TextView android:id="@+id/category_name"
             android:textSize="21sp"
             android:textStyle="bold"
+            android:textColor="#000000"
             android:singleLine="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -25,6 +27,7 @@
             
         <TextView android:id="@+id/category_apps"
             android:textSize="12sp"
+            android:textColor="#000000"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
             

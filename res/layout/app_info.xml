@@ -14,44 +14,37 @@
 		    android:layout_width="fill_parent"
 		    android:layout_height="fill_parent"
 		    android:orientation="vertical" >
-	    <TextView android:id="@+id/description"
-	        android:textSize="18sp"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"/>
-	    <Gallery
-		android:id="@+id/galleryScreens"
-		android:layout_width="fill_parent" 
-		android:layout_height="wrap_content"/> 
-	    <LinearLayout 
-        		android:id="@+id/listview_footer"
-        		android:layout_height="wrap_content"
-     			android:layout_width="fill_parent"
-     			android:layout_alignParentBottom="true"
-     			android:orientation="horizontal">
-     	<Button 
-	       			android:id="@+id/btn1" 
-	       			android:layout_weight="1" 
-	       			android:layout_width="fill_parent" 
-	       			android:layout_height="50dp"
-	       			android:textSize="12sp" 
-	       			android:text="install"
-	       			
-	       			
-	       			android:textColor="#000000"	
-	       			/>
-	    <Button 
-	       			android:id="@+id/btnUninstall" 
-	       			android:layout_weight="1" 
-	       			android:layout_width="fill_parent" 
-	       			android:layout_height="50dp"
-	       			android:textSize="12sp"
-	       			android:text="uninstall"
-	       			
-	       			
-	       			android:textColor="#000000"
-	       				
-	       			 />
-	    </LinearLayout>	
+		    <TextView android:id="@+id/description"
+		        android:textSize="18sp"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"/>
+		    <Gallery
+			android:id="@+id/screens"
+			android:layout_width="fill_parent" 
+			android:layout_height="wrap_content"/> 
+		    <LinearLayout 
+	        		android:id="@+id/buttons"
+	        		android:layout_height="wrap_content"
+	     			android:layout_width="fill_parent"
+	     			android:layout_alignParentBottom="true"
+	     			android:orientation="horizontal">
+	     	<Button 
+		       			android:id="@+id/install" 
+		       			android:layout_weight="1" 
+		       			android:layout_width="fill_parent" 
+		       			android:layout_height="50dp"
+		       			android:textSize="12sp" 
+		       			android:text="install"
+		       			android:textColor="#000000"	/>
+		    <Button 
+		       			android:id="@+id/uninstall" 
+		       			android:layout_weight="1" 
+		       			android:layout_width="fill_parent" 
+		       			android:layout_height="50dp"
+		       			android:textSize="12sp"
+		       			android:text="uninstall"
+		       			android:textColor="#000000"/>
+		    </LinearLayout>	
 		</LinearLayout>
 	</ScrollView>
 </LinearLayout>

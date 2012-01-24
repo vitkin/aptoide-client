@@ -185,10 +185,10 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		StringBuilder string = new StringBuilder(" Name: "+appName+" Version: "+versionName+" VersionCode: "+versionCode
 														+" AppFullHashid: "+appFullHashid+" isInstalled: "+isInstalled);//+" localIconPath: "+localIconPath
 		if(statsAvailable){
-			string.append(stats.toString());
+			string.append("\n\n"+stats.toString());
 		}
 		if(extrasAvailable){
-			string.append(extras.toString());
+			string.append("\n\n"+extras.toString());
 		}
 		return string.toString();
 	}
