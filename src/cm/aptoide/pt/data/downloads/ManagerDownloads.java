@@ -218,25 +218,35 @@ public class ManagerDownloads {
 		return connectionAvailable;
 	}
 	
+	public boolean isIconCached(int appHashid){
+		if(managerCache.isIconCached(appHashid)){
+			Log.d("Aptoide-ManagerDownloads", "Icon already exists: "+appHashid);
+			return true;
+		}
+		return false;
+	}
+	
+	public void getIcon(ViewDownloadInfo iconInfo, boolean isLoginRequired, ViewLogin login){
+			ViewDownload download;
+			ViewCache cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
+			ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
+			
+			if(isLoginRequired){
+				download = getNewViewDownload(iconInfo.getRemotePath(), login, cache, notification);
+			}else{
+				download = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
+			}
+			iconsDownloadManager.executeDownload(download);		
+	}
+	
 
 	public void getRepoIcons(ViewDownloadStatus downloadStatus, ArrayList<ViewDownloadInfo> iconsInfo){
 		
 		for (ViewDownloadInfo iconInfo : iconsInfo) {
-			if(managerCache.isIconCached(iconInfo.getAppHashid())){
-				Log.d("Aptoide-ManagerDownloads", "Icon already exists: "+iconInfo.getAppName());
+			if(isIconCached(iconInfo.getAppHashid())){
 				continue;
 			}else{
-				ViewDownload downloadInfo;
-				ViewCache cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
-				ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
-				
-				if(downloadStatus.getRepository().isLoginRequired()){
-					downloadInfo = getNewViewDownload(iconInfo.getRemotePath(), downloadStatus.getRepository().getLogin(), cache, notification);
-				}else{
-					downloadInfo = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
-				}
-				
-				iconsDownloadManager.executeDownload(downloadInfo);
+				getIcon(iconInfo, downloadStatus.getRepository().isLoginRequired(), downloadStatus.getRepository().getLogin());
 			}
 		}
 		
@@ -244,6 +254,11 @@ public class ManagerDownloads {
 		serviceData.getRepoIcons(downloadStatus);
 		
 	}
+	
+	public void getScreens(ViewRepository repository, ArrayList<ViewDownloadInfo> screensInfo){
+		
+	}
+	
 
 	
 //	public void getRepoIcons(ViewRepository repository, int offset, ArrayList<ViewDownloadInfo> iconsInfo){
@@ -497,10 +512,10 @@ public class ManagerDownloads {
 
 			HttpResponse httpResponse = httpClient.execute(httpGet);
 			if(httpResponse == null){
-				Log.d("Aptoide","Problem in network... retry...");	
+				Log.d("Aptoide-ManagerDownloads","Problem in network... retry...");	
 				httpResponse = httpClient.execute(httpGet);
 				if(httpResponse == null){
-					Log.d("Aptoide","Major network exception... Exiting!");
+					Log.d("Aptoide-ManagerDownloads","Major network exception... Exiting!");
 					/*msg_al.arg1= 1;
 						 download_error_handler.sendMessage(msg_al);*/
 					throw new TimeoutException();
@@ -508,7 +523,15 @@ public class ManagerDownloads {
 			}
 
 			if(httpResponse.getStatusLine().getStatusCode() == 401){
+				Log.d("Aptoide-ManagerDownloads","401 Time out!");
+				fileOutputStream.close();
+				managerCache.clearCache(download.getCache());
 				throw new TimeoutException();
+			}else if(httpResponse.getStatusLine().getStatusCode() == 404){
+				Log.d("Aptoide-ManagerDownloads","404 Not found!");
+				fileOutputStream.close();
+				managerCache.clearCache(download.getCache());
+				throw new Exception();	//TODO not found exception
 			}else{
 				if(download.isSizeKnown()){
 					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;	//TODO check if server sends kbytes or bytes

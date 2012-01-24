@@ -49,7 +49,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	private int availableApps;
 	
 	/**
-	 * ViewDisplayCategories Constructor
+	 * ViewDisplayCategory Constructor
 	 */
 	public ViewDisplayCategory(String categoryName, int categoryHashid, int availableApps) {
 		this.subCategoriesDisplayList = new LinkedList<Map<String, Object>>();
@@ -112,6 +112,19 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 		}
 		
 	}
+	
+	public void regenerateDisplayList(){
+		if(hasChildren()){
+			Map<String, Object> childMap;
+			for (ViewDisplayCategory subCategory: subCategories.values()) {
+				childMap = new HashMap<String, Object>();
+				childMap.put(Constants.KEY_CATEGORY_HASHID, subCategory.getCategoryHashid());
+				childMap.put(Constants.KEY_CATEGORY_NAME, subCategory.getCategoryName());
+				childMap.put(Constants.DISPLAY_CATEGORY_APPS, subCategory.getAvailableApps());
+				subCategoriesDisplayList.add(childMap);
+			}
+		}
+	}
 
 	/**
 	 * getDisplayList, retrieves subCategories Maps list
@@ -119,6 +132,9 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	 * @return ArrayList<Map<String, Object>> categoriesList
 	 */
 	public LinkedList<Map<String, Object>> getDisplayList(){
+		if(subCategoriesDisplayList == null || subCategoriesDisplayList.isEmpty()){
+			regenerateDisplayList();
+		}
 		return this.subCategoriesDisplayList;
 	}
 
@@ -155,7 +171,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	public String toString() {
 		StringBuilder listApps = new StringBuilder("Category: "+categoryName+" subCategories: ");
 		for (ViewDisplayCategory subCategory : subCategories.values()) {
-			listApps.append(subCategory.getCategoryHashid()+" - "+subCategory.getCategoryName());
+			listApps.append(subCategory.getCategoryHashid()+" - "+subCategory.getCategoryName()+" ");
 		}
 		return listApps.toString();
 	}

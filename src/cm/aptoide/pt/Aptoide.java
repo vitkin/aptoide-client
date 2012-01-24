@@ -50,11 +50,13 @@ import android.os.RemoteException;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
@@ -403,12 +405,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							try {
 								Log.d("Aptoide","resetting categories list.");
 								setFreshCategories(serviceDataCaller.callGetCategories());
-								if(category != null && category.hasChildren()){
+								if( category == null || (category != null && category.hasChildren()) ){
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_CATEGORIES.ordinal());
 								}else{
 									offset = 0;
 									
-									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE);
+									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE+" category: "+category);
 									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, Constants.DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 								}
@@ -568,18 +570,21 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			availableAppsListView.setOnTouchListener(swypeListener);
 			availableAppsListView.setOnItemClickListener(this);
 			availableAppsListView.setTag(EnumFlipperChildType.LIST);
+			availableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(availableAppsList);
 			
 			installedAppsListView = new ListView(this);
 			installedAppsListView.setOnTouchListener(swypeListener);
 			installedAppsListView.setOnItemClickListener(this);
 			installedAppsListView.setTag(EnumFlipperChildType.LIST);
+			installedAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(installedAppsList);
 			
 			updatableAppsListView = new ListView(this);
 			updatableAppsListView.setOnTouchListener(swypeListener);
 			updatableAppsListView.setOnItemClickListener(this);
 			updatableAppsListView.setTag(EnumFlipperChildType.LIST);
+			updatableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(updatableAppsList);
 	
 			appsListFlipper.addView(emptyAvailableAppsList);
@@ -609,7 +614,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	}
     }
 	
-	
+	public void setAvailableListBy(boolean byCategory){
+		AptoideLog.d(Aptoide.this, "setAvailableList ByCategory? "+byCategory);
+		try {
+			serviceDataCaller.callSetListsBy(byCategory);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public void initDisplayCategories(){
 		categoriesAdapter = new SimpleAdapter(Aptoide.this, category.getDisplayList(), R.layout.row_category 
@@ -624,6 +637,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	public synchronized void setFreshCategories(ViewDisplayCategory freshCategory){
 		AptoideLog.d(Aptoide.this, "setFreshCategories");
 		this.freshCategory = freshCategory;
+		this.freshCategory.generateDisplayLists();
 	}
 	
 	public void resetDisplayCategories(){
@@ -1252,12 +1266,31 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     @Override
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
     	if(!swyping.get()){
-    		final int appHashid = Integer.parseInt(((LinearLayout)arg1).getTag().toString());
-    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
-    		Intent appInfo = new Intent(this,AppInfo.class);
-    		appInfo.putExtra("appHashid", appHashid);
-    		startActivity(appInfo);
-    		//TODO click change color effect
+    		if(availableByCategory){
+    			if(category.hasChildren()){
+    				final int categoryHashid = Integer.parseInt(((LinearLayout)arg1).getTag().toString());
+    				category = category.getSubCategory(categoryHashid);
+    				AptoideLog.d(this, "Onclick position: "+arg2+" categoryHashid: "+categoryHashid+" category: "+category);
+    				if(category.hasChildren()){
+    					initDisplayCategories();
+    				}else{
+    					availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);
+    				}
+    			}else{
+    				final int appHashid = Integer.parseInt(((LinearLayout)arg1).getTag().toString());
+    	    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
+    	    		Intent appInfo = new Intent(this,AppInfo.class);
+    	    		appInfo.putExtra("appHashid", appHashid);
+    	    		startActivity(appInfo);
+    			}
+    		}else{
+	    		final int appHashid = Integer.parseInt(((LinearLayout)arg1).getTag().toString());
+	    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
+	    		Intent appInfo = new Intent(this,AppInfo.class);
+	    		appInfo.putExtra("appHashid", appHashid);
+	    		startActivity(appInfo);
+	    		//TODO click change color effect
+    		}
     	}
 	}
 	
@@ -1292,6 +1325,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //		startActivityForResult(apkinfo,30);
 //	}
 
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && availableByCategory && category.getCategoryHashid() != Constants.TOP_CATEGORY) {
+			AptoideLog.d(this, "click back, new category: "+category.getParentCategory().getCategoryHashid());
+			category = category.getParentCategory();
+			initDisplayCategories();
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+    
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -1317,7 +1363,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		return true;
 	}
 	
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
@@ -1332,9 +1378,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					LayoutInflater li = LayoutInflater.from(this);
 					View view = li.inflate(R.layout.dialog_display_options, null);
 					Builder alrt = new AlertDialog.Builder(this).setView(view);
-					final AlertDialog p = alrt.create();
-					p.setIcon(android.R.drawable.ic_menu_sort_by_size);
-					p.setTitle(getString(R.string.display_options));
+					final AlertDialog sortDialog = alrt.create();
+					sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
+					sortDialog.setTitle(getString(R.string.display_options));
 					
 					// ***********************************************************
 					// Categories
@@ -1399,18 +1445,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					// ***********************************************************
 
 					
-					p.setButton(getString(R.string.done), new DialogInterface.OnClickListener() {
+					sortDialog.setButton(getString(R.string.done), new DialogInterface.OnClickListener() {
 						
 						public void onClick(DialogInterface dialog, int which) {
 							if(byCategory.isChecked() != availableByCategory){
 								availableByCategory = byCategory.isChecked();
 								availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);
+								setAvailableListBy(availableByCategory);
 							}
-							p.dismiss();
+							sortDialog.dismiss();
 						}
 					});
 					
-//				p.show();
+				sortDialog.show();
 //				
 //				new Thread(){
 //					@Override

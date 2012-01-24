@@ -98,7 +98,7 @@ public class ViewDisplayAppVersionsInfo implements Parcelable{
 		StringBuilder string = new StringBuilder();
 		
 		for (ViewDisplayAppVersionInfo appVersion : versionsList) {
-			string.append(appVersion.toString());
+			string.append(appVersion.toString()+"\n\n\n\n");
 		}
 		
 		return string.toString(); 

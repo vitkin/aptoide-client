@@ -499,6 +499,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	@Override
 	public void onDestroy() {
 		managerNotifications.destroy();
+		unregisterReceiver(installedAppsChangeListener);
 		Toast.makeText(this, R.string.aptoide_stopped, Toast.LENGTH_LONG).show();
 		stopSelf();
 		Log.d("Aptoide ServiceData", "Service stopped");
@@ -824,7 +825,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		if(repository == null){
 			return;
 		}
-		//TODO parallel check icon, download immediately if necessary
+		if(!managerDownloads.isIconCached(appHashid)){
+			managerDownloads.getIcon(managerDatabase.getIconDownloadInfo(repository, appHashid), repository.isLoginRequired(), repository.getLogin());
+		}
 		//TODO parallel check if the 3 types of info already exist, and only if not get them
 		addRepoAppDownloadInfo(repository, appHashid);
 		addRepoAppStats(repository, appHashid);
@@ -856,6 +859,28 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void parsingRepoAppDownloadInfoFinished(ViewRepository repository, int appHashid){
 		updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);
+		getRepoScreens(repository, appHashid);
+	}
+	
+	public void getRepoScreens(final ViewRepository repository, final int appHashid){
+				
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+					return;
+				}
+
+				managerDownloads.getScreens(repository, managerDatabase.getScreensDownloadInfo(repository, appHashid));
+				//TODO find some way to track global parsing completion status, probably in managerXml
+			}
+		});
+		
 	}
 	
 	
