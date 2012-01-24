@@ -792,7 +792,9 @@ public class RemoteInTab extends BaseManagement {
 			previousView = (ImageView) findViewById(R.id.previous);
 			nextView = (ImageView) findViewById(R.id.next);
 			previousView.setVisibility(View.INVISIBLE);
-			previousListTitle.setText(emptyString);
+			previousView.setOnClickListener(new OnPreviousClickedListener());
+			nextView.setOnClickListener(new OnNextClickedListener());
+			previousListTitle.setVisibility(View.GONE);
 			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
 			
 			listTextHeader = (TextView) findViewById(R.id.textheader);
@@ -1168,7 +1170,7 @@ public class RemoteInTab extends BaseManagement {
 			.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
 			.setIcon(android.R.drawable.ic_menu_help);
-		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(R.drawable.ic_menu_scheduled);
+		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(android.R.drawable.ic_menu_recent_history);
 		
 		return true;
 	}
@@ -2094,8 +2096,8 @@ public class RemoteInTab extends BaseManagement {
 		case Available: 
 			nextView.setVisibility(View.VISIBLE);
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
-			previousView.setVisibility(View.INVISIBLE);
-			previousListTitle.setText(emptyString);
+			previousView.setVisibility(View.GONE);
+			previousListTitle.setVisibility(View.GONE);
 			currentListTitle.setText(currentAppsList.Available.toString());
 			listTextHeader.setText(currentCatName);
 			if(deep>0&&sPref.getBoolean("mode", false)){
@@ -2109,16 +2111,18 @@ public class RemoteInTab extends BaseManagement {
 			nextView.setVisibility(View.VISIBLE);
 			previousView.setVisibility(View.VISIBLE);
 			currentListTitle.setText(currentAppList.Installed.toString());
+			nextListTitle.setVisibility(View.VISIBLE);
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			previousListTitle.setVisibility(View.VISIBLE);
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
 			listTextHeader.setVisibility(View.GONE);			
 			break;
 		case Update:
-			nextView.setVisibility(View.INVISIBLE);
+			nextView.setVisibility(View.GONE);
 			previousView.setVisibility(View.VISIBLE);
-			currentListTitle.setText(currentAppList.Update.toString());
-			nextListTitle.setText(emptyString);
-			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
+			currentListTitle.setText(EnumAppsLists.Update.toString());
+			nextListTitle.setVisibility(View.INVISIBLE);
+			previousListTitle.setText(EnumAppsLists.getPrevious(currentAppList).toString());
 			listTextHeader.setText(R.string.no_updates);
 			if(updateAdpt.getCount()==0){
 				listTextHeader.setVisibility(View.VISIBLE);
@@ -2251,15 +2255,14 @@ public class RemoteInTab extends BaseManagement {
 				
 				availView.setAdapter(getAvailable(shown_now,main_shown_now));
 				installView.setAdapter(instAdpt);
-				if(updateAdpt.getCount()==0){
+				
 //					vf.removeView(updateView);
 //					vf.addView(emptyUpdatesList);
 					
-					listTextHeader.setText(R.string.no_updates);
 					
-				}else{
+				
 					updateView.setAdapter(updateAdpt);
-				}
+				
 				if(!sPref.getBoolean("mode", false)){
 					listTextHeader.setVisibility(View.GONE);
 				}
