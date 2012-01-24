@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cm.aptoide.pt"
-    android:versionCode="325"
-    android:versionName="2.6" >
+    android:versionCode="323"
+    android:versionName="2.6.0" >
 
     <!-- android:installLocation="auto" -->
 	<uses-sdk android:minSdkVersion="4" />
@@ -132,7 +132,7 @@
                 android:name="android.app.default_searchable"
                 android:value=".RemoteInSearch" />
         </activity>
-        <activity android:name="ScheduledDownload" >
+        <activity android:name="ScheduledDownload" android:theme="@style/Theme.NoBarShadow">
         </activity>
 
         <receiver android:name=".ScheduledDownloadReceiver" >

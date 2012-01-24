@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="ver_str">&quot;2.5.4&quot;</string>
-    <string name="change_log_url">http://aptoide.com/changelog_2_5_4.html</string>
+    <string name="ver_str">&quot;2.6.0&quot;</string>
+    <string name="change_log_url">http://aptoide.com/changelog_2_6_0.html</string>
 </resources>
 
 <!--

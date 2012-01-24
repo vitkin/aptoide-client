@@ -15,18 +15,23 @@
 			android:layout_width="wrap_content" android:textColor="#83c200"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_alignParentLeft="true" android:id="@+id/previous_title"
-			android:onClick="previous" android:clickable="true"></TextView>
+			android:onClick="previous" android:clickable="true"
+			android:padding="5dp"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:textColor="#83c200"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:textStyle="bold" android:layout_centerHorizontal="true"
 			android:id="@+id/current_title"
-			android:onClick="current" android:clickable="true"></TextView>
+			android:onClick="current" android:clickable="true"
+			android:padding="5dp"></TextView>
 		<TextView android:layout_height="wrap_content"
 			android:layout_width="wrap_content" android:textColor="#83c200"
 			android:textAppearance="?android:attr/textAppearanceSmall"
 			android:layout_alignParentRight="true" android:id="@+id/next_title"
-			android:onClick="next" android:clickable="true"></TextView>
+			android:onClick="next" android:clickable="true"
+			android:padding="5dp">
+		    
+		</TextView>
 
 	</RelativeLayout>
 
@@ -36,7 +41,8 @@
 
 		<ImageView android:id="@+id/previous" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:src="@drawable/indicator_prev_arrow"
-			android:layout_alignParentLeft="true" android:layout_centerVertical="true" />
+			android:layout_alignParentLeft="true" android:layout_centerVertical="true" 
+			android:paddingRight="50dp"/>
 
 		<ImageView android:id="@+id/current" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:src="@drawable/indicator_current"
@@ -44,7 +50,8 @@
 
 		<ImageView android:id="@+id/next" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:src="@drawable/indicator_next_arrow"
-			android:layout_alignParentRight="true" android:layout_centerVertical="true" />
+			android:layout_alignParentRight="true" android:layout_centerVertical="true" 
+			android:paddingLeft="50dp"/>
 	</RelativeLayout>
 
 
