@@ -285,7 +285,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					break;
 					
 				case REFRESH_AVAILABLE_DISPLAY:
-					refreshAvailableDisplay();
+					if(!availableByCategory || !category.hasChildren()){
+						refreshAvailableDisplay();
+					}
 					break;
 				
 				case RESET_UPDATABLE_LIST_DISPLAY:

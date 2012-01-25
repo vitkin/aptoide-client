@@ -66,7 +66,10 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.versionName = versionName;
 		this.versionCode = versionCode;
 		this.appFullHashid = appFullHashid;
-		this.isInstalled = true;
+		this.isInstalled = isInstalled;
+		
+		this.statsAvailable = false;
+		this.extrasAvailable = false;
 	}
 	
 	
@@ -151,11 +154,12 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	 * @param int appFullHashid
 	 * @param boolean isInstalled
 	 */
-	public void reuse(String appName, String versionName, int versionCode, int appFullHashid){
+	public void reuse(String appName, String versionName, int versionCode, int appFullHashid, boolean isInstalled){
 		this.appName = appName;
 		this.versionName = versionName;
 		this.versionCode = versionCode;
 		this.appFullHashid = appFullHashid;
+		this.isInstalled = isInstalled;
 		
 		this.statsAvailable = false;
 		this.extrasAvailable = false;

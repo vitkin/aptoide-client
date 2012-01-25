@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt.data;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
@@ -1026,6 +1027,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					//TODO raise exception
 				}
 				ViewCache apk = managerDownloads.downloadApk(managerDatabase.getAppDownload(appHashid));
+				AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
 				installApp(apk, appHashid);
 			}
 		});
@@ -1044,18 +1046,19 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void installApp(ViewCache apk, int appHashid){
-		Intent install = new Intent();
-		install.setAction(android.content.Intent.ACTION_VIEW);
-		install.setDataAndType(Uri.parse("file://" + apk.getLocalPath()), "application/vnd.android.package-archive");
-		startActivity(install);
+		Intent install = new Intent(Intent.ACTION_VIEW);
+		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		install.setDataAndType(Uri.fromFile(apk.getFile()),"application/vnd.android.package-archive");
 		AptoideLog.d(AptoideServiceData.this, "Installing app: "+appHashid);
+		startActivity(install);
 	}
 	
 	public void uninstallApp(int appHashid){
 		Uri uri = Uri.fromParts("package", managerDatabase.getInstalledAppPackageName(appHashid), null);
 		Intent remove = new Intent(Intent.ACTION_DELETE, uri);
-		startActivity(remove);
+		remove.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		AptoideLog.d(AptoideServiceData.this, "Removing app: "+appHashid);
+		startActivity(remove);
 	}
 	
 	
