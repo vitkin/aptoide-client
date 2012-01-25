@@ -3,7 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#edece9"
-    android:gravity="center_horizontal"
     android:orientation="vertical" >
 
     <!-- Green Bar -->
@@ -44,23 +43,11 @@
 
         <ImageView
             android:id="@+id/btsearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="2sp"
+            android:layout_width="70sp"
+            android:layout_height="70sp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@android:drawable/ic_menu_search"
-            android:tint="#ffffff" />
-
-        <View
-            android:layout_width="0.5sp"
-            android:layout_height="fill_parent"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="2sp"
-            android:layout_marginBottom="2sp"
-            android:layout_toLeftOf="@+id/btsearch"
-            android:background="#8acc00" />
-
+            android:src="@drawable/btsearch" />
     </RelativeLayout>
 
     <include
