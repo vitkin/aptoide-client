@@ -435,21 +435,23 @@ public class ManagerDownloads {
 	}
 	
 	public ViewDownload prepareApkDownload(int appHashid, String appName, String remotePathBase, String remotePathTail, ViewLogin login, int size, String md5Hash){
-		ViewCache cache = managerCache.getNewAppViewCache(appHashid);
+		ViewCache cache = managerCache.getNewAppViewCache(appHashid, md5Hash);
 		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_APP, appName, appHashid, size);
 		return getNewViewDownload(remotePathBase+remotePathTail, size, login, cache, notification);
 	}
 	
 	public ViewDownload prepareApkDownload(int appHashid, String appName, String remotePathBase, String remotePathTail, int size, String md5Hash){
-		ViewCache cache = managerCache.getNewAppViewCache(appHashid);
+		ViewCache cache = managerCache.getNewAppViewCache(appHashid, md5Hash);
 		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_APP, appName, appHashid, size);
 		return getNewViewDownload(remotePathBase+remotePathTail, size, cache, notification);
 	}
 	
 	public ViewCache downloadApk(ViewDownload download){
+		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
 		if(!getManagerCache().isApkCached(download.getNotification().getTargetsHashid()) || !getManagerCache().md5CheckOk(download.getCache())){
 			download(download, false);
 		}
+		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getNotification().getTargetsHashid());
 		
 		return download.getCache();
 	}

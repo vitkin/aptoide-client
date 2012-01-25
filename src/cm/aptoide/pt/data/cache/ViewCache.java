@@ -20,6 +20,8 @@
 
 package cm.aptoide.pt.data.cache;
 
+import java.io.File;
+
 
  /**
  * ViewCache, models a cache file
@@ -51,6 +53,10 @@ public class ViewCache {
 		return localPath;
 	}
 	
+	public File getFile(){
+		return new File(localPath);
+	}
+	
 	public boolean hasMd5Sum(){
 		return hasMd5Sum;
 	}
@@ -63,7 +69,11 @@ public class ViewCache {
 		return md5sum;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "ViewCache:  localPath: "+localPath+" md5sum: "+md5sum;
+	}
+
 	public void clean(){
 		this.localPath = null;
 		this.hasMd5Sum = false;

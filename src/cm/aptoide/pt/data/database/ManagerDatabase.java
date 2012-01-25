@@ -1325,7 +1325,8 @@ public class ManagerDatabase {
 																						+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
 																								+" FROM "+Constants.TABLE_REPOSITORY
 																								+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) "
-																		+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+") A;";
+																		+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+") A"
+												+" ORDER BY C."+Constants.KEY_CATEGORY_NAME+";";
 		
 		String selectGamesSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", A."+Constants.DISPLAY_CATEGORY_APPS
 										+" FROM (SELECT * FROM "+Constants.TABLE_CATEGORY
@@ -1343,7 +1344,8 @@ public class ManagerDatabase {
 																			+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
 																					+" FROM "+Constants.TABLE_REPOSITORY
 																					+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) "
-															+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+") A;";
+															+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+") A"
+										+" ORDER BY C."+Constants.KEY_CATEGORY_NAME+";";
 
 		String selectOthersApplications = "SELECT "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
 												+", count("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+") AS "+Constants.DISPLAY_CATEGORY_APPS
@@ -1870,7 +1872,7 @@ public class ManagerDatabase {
 
 			iconsCursor.moveToFirst();
 			iconInfo = new ViewDownloadInfo(repoIconsPath+iconsCursor.getString(REMOTE_PATH_TAIL), iconsCursor.getString(APP_NAME)
-											, iconsCursor.getInt(APP_HASHID), EnumDownloadType.ICON);
+											, appHashid, EnumDownloadType.ICON);
 			iconsCursor.close();
 	
 		}catch (Exception e) {

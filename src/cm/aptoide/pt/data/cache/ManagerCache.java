@@ -121,8 +121,8 @@ public class ManagerCache {
 		return getNewViewCache(Constants.PATH_CACHE_SCREENS+appHashid+"."+orderNumber);
 	}
 	
-	public ViewCache getNewAppViewCache(int appHashid){
-		return getNewViewCache(Constants.PATH_CACHE_APKS+appHashid);
+	public ViewCache getNewAppViewCache(int appHashid, String md5sum){
+		return getNewViewCache(Constants.PATH_CACHE_APKS+appHashid, md5sum);
 	}
 	
 	
@@ -219,19 +219,27 @@ public class ManagerCache {
 	public boolean isIconCached(int appHashid){
 		String iconPath = Constants.PATH_CACHE_ICONS+appHashid;
 		File icon = new File(iconPath);
-		return icon.exists();
+		if(icon.exists()){
+			Log.d("Aptoide-ManagerCache", "icon already exists: "+appHashid);
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public boolean isApkCached(int appHashid){
-		String iconPath = Constants.PATH_CACHE_APKS+appHashid;
-		File icon = new File(iconPath);
-		return icon.exists();
+		String apkPath = Constants.PATH_CACHE_APKS+appHashid;
+		File apk = new File(apkPath);
+		if(apk.exists()){
+			Log.d("Aptoide-ManagerCache", "apk already exists: "+appHashid);			
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 	public void cacheIcon(int appHashid, Bitmap icon){
-		if(isIconCached(appHashid)){
-			Log.d("Aptoide-ManagerCache", "installed app icon already exists: "+appHashid);
-		}else{
+		if(!isIconCached(appHashid)){
 			try {
 				FileOutputStream out = new FileOutputStream(Constants.PATH_CACHE_ICONS+appHashid);
 				icon.compress(Bitmap.CompressFormat.PNG, 90, out);
@@ -254,6 +262,7 @@ public class ManagerCache {
 		File file = new File(cache.getLocalPath());
 		Md5Handler hash = new Md5Handler();
 		if(cache.getMd5sum().equalsIgnoreCase(hash.md5Calc(file))){
+			Log.d("Aptoide-ManagerCache", "md5Check OK!");
 			return true;
 		}else{
 			Log.d("Aptoide-ManagerCache",cache.getMd5sum()+ " VS " + hash.md5Calc(file));	//TODO refactor log
