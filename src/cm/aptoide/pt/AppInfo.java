@@ -25,13 +25,16 @@
 package cm.aptoide.pt;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -40,13 +43,17 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
+import cm.aptoide.pt.ifaceutil.ImageAdapter;
 
 /**
  * AppInfo, interface class to display the details
@@ -60,7 +67,9 @@ public class AppInfo extends Activity{
 	
 	
 	private int appHashid;
-	ViewDisplayAppVersionsInfo appVersions;
+	private String appName;
+	private ViewDisplayAppVersionsInfo appVersions;
+	Gallery galleryView;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -109,8 +118,8 @@ public class AppInfo extends Activity{
 		
 		@Override
 		public void refreshScreens() throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			Log.v("Aptoide-AppInfo", "received refreshScreens callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_SCREENS.ordinal());
 		}
 		
 		@Override
@@ -161,6 +170,10 @@ public class AppInfo extends Activity{
         			
 				case UPDATE_APP_EXTRAS:
 					setVersionsDescription();
+					break;
+					
+				case REFRESH_SCREENS:
+					setScreens();
 					break;
 	
 				default:
@@ -213,8 +226,11 @@ public class AppInfo extends Activity{
 				finish();
 			}
 		});
-	
+
+		galleryView = (Gallery) findViewById(R.id.screens);
+		
 		setIcon();
+		
 		
 		
 //		Handler threadHandler = new Handler();
@@ -250,12 +266,53 @@ public class AppInfo extends Activity{
 			
 			TextView description = (TextView) findViewById(R.id.description);
 			description.setText(appVersions.toString());
+			appName = appVersions.getVersionsList().get(0).getAppName();
 			
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
+	}
+	
+	protected void setScreens(){
+		ArrayList<Drawable> screensDrawables = new ArrayList<Drawable>();
+		int orderNumber = 0;
+		String screenPath = Constants.PATH_CACHE_SCREENS+appHashid+"."+orderNumber;
+		File screen = null;
+		do{
+			Drawable screenDrawable = Drawable.createFromPath(screenPath);
+			screensDrawables.add(screenDrawable);
+			orderNumber++;
+			screenPath = Constants.PATH_CACHE_SCREENS+appHashid+"."+orderNumber;
+			screen = new File(screenPath);
+		}while(screen.exists());
+		galleryView.setAdapter(new ImageAdapter(AppInfo.this, screensDrawables, appName));
+		galleryView.setOnItemClickListener(new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+	        	
+	        	//Log.d("Aptoide","This view.....");
+	    		final Dialog dialog = new Dialog(AppInfo.this);
+
+	    		dialog.setContentView(R.layout.screenshot);
+	    		dialog.setTitle(appName);
+
+	    		ImageView image = (ImageView) dialog.findViewById(R.id.image);
+	    		ImageView fetch = (ImageView) v;
+	    		image.setImageDrawable(fetch.getDrawable());
+	    		image.setOnClickListener(new OnClickListener() {
+	    			public void onClick(View v) {
+	    				dialog.dismiss();
+	    			}
+	    		});
+	    		
+	    		dialog.setCanceledOnTouchOutside(true);
+	    		
+	    		dialog.show();
+	    		
+	        }
+	    });
+		galleryView.setVisibility(View.VISIBLE);
 	}
 	
 	

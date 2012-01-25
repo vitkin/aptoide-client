@@ -34,6 +34,7 @@ public enum EnumNotificationTypes {
 	REPO_APP_UPDATE,
 	GET_ICONS,
 	GET_EXTRAS,
+	GET_SCREENS,
 	GET_APP,
 	GET_UPDATE,
 	FREE;

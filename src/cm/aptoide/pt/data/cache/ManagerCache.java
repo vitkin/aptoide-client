@@ -227,6 +227,17 @@ public class ManagerCache {
 		}
 	}
 	
+	public boolean isScreenCached(int appHashid, int orderNumber){
+		String iconPath = Constants.PATH_CACHE_SCREENS+appHashid+"."+orderNumber;
+		File icon = new File(iconPath);
+		if(icon.exists()){
+			Log.d("Aptoide-ManagerCache", "screen already exists: "+appHashid+" orderNumber: "+orderNumber);
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
 	public boolean isApkCached(int appHashid){
 		String apkPath = Constants.PATH_CACHE_APKS+appHashid;
 		File apk = new File(apkPath);

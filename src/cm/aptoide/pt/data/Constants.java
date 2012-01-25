@@ -72,6 +72,8 @@ public class Constants {
 	public static final String PATH_REPO_EXTRAS_XML = "v2/extras.xml?";
 	public static final String PATH_REPO_STATS_XML = "v2/stats.xml?";
 	
+	public static final String URI_FORMAT_COMMENTS_WS = "http://www.bazaarandroid.com/webservices/listApkComments/%1$s/%2$s/%3$s/xml";
+	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/latest_version.xml";
 	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
 	public static final String FILE_LATEST_MYAPP = PATH_CACHE + "latest.myapp";

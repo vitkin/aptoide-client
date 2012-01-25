@@ -21,7 +21,7 @@
 		    <Gallery
 			android:id="@+id/screens"
 			android:layout_width="fill_parent" 
-			android:layout_height="wrap_content"/> 
+			android:layout_height="100sp"/> 
 		    <LinearLayout 
 	        		android:id="@+id/buttons"
 	        		android:layout_height="wrap_content"
