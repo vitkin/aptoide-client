@@ -162,6 +162,7 @@ public class AppInfo extends Activity{
         	
 	    		case UPDATE_APP_DOWNLOAD_INFO:
 	    			setVersionsDescription();
+	    			setIcon();
 	    			break;
         	
         		case UPDATE_APP_STATS:

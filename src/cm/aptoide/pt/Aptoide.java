@@ -1330,7 +1330,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && availableByCategory && category.getCategoryHashid() != Constants.TOP_CATEGORY) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && availableByCategory && category != null && category.getCategoryHashid() != Constants.TOP_CATEGORY) {
 			AptoideLog.d(this, "click back, new category: "+category.getParentCategory().getCategoryHashid());
 			category = category.getParentCategory();
 			initDisplayCategories();

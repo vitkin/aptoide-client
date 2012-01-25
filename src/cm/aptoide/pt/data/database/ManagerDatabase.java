@@ -435,6 +435,32 @@ public class ManagerDatabase {
 	}
 	
 	/**
+	 * removeRepository, handles single repository removal
+	 * 
+	 * @param int repoHashid
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void removeRepository(int repoHashid){	//TODO manually cascade triggers, because they don't automatically do it
+		db.beginTransaction();
+		try{
+			String deleteWhere = Constants.KEY_REPO_HASHID+"=?";
+			
+			if(db.delete(Constants.TABLE_REPOSITORY, deleteWhere, new String[]{Integer.toString(repoHashid)}) == Constants.DB_NO_CHANGES_MADE){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
 	 * toggleRepositoriesInUse, handles multiple repositories inUse toggle
 	 * 
 	 * @param ViewListIds repoHashids
@@ -1392,7 +1418,9 @@ public class ManagerDatabase {
 				}
 			}while(cursorApplicationsSubCategories.moveToNext());
 			cursorApplicationsSubCategories.close();
-			topCategory.addSubCategory(applications);
+			if(applications.hasChildren()){
+				topCategory.addSubCategory(applications);
+			}
 
 			
 			ViewDisplayCategory games = new ViewDisplayCategory(Constants.CATEGORY_GAMES, Constants.CATEGORY_HASHID_GAMES, 0);
@@ -1405,7 +1433,9 @@ public class ManagerDatabase {
 				}
 			}while(cursorGamesSubCategories.moveToNext());
 			cursorGamesSubCategories.close();
-			topCategory.addSubCategory(games);
+			if(games.hasChildren()){
+				topCategory.addSubCategory(games);
+			}
 			
 		}catch (Exception e) {
 			if(db.inTransaction()){
@@ -1830,9 +1860,9 @@ public class ManagerDatabase {
 	 */	
 	public ViewDownloadInfo getIconDownloadInfo(ViewRepository repository, int appHashid){
 		final int ICONS_PATH = Constants.COLUMN_FIRST;
+		
 		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
-		final int APP_HASHID = Constants.COLUMN_SECOND;
-		final int APP_NAME = Constants.COLUMN_THIRD;
+		final int APP_NAME = Constants.COLUMN_SECOND;
 		
 		String repoIconsPath = repository.getIconsPath();
 		
@@ -1854,7 +1884,7 @@ public class ManagerDatabase {
 															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
 															 +" FROM "+Constants.TABLE_REPOSITORY
-															 +" GROUP BY "+Constants.KEY_REPO_HASHID+")"
+															 +" GROUP BY "+Constants.KEY_REPO_HASHID+") R"
 									+" ORDER BY A."+Constants.KEY_APPLICATION_NAME+";";
 		
 		db.beginTransaction();
