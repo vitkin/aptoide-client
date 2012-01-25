@@ -70,7 +70,7 @@ public class ManagerDownloads {
 	
 	/** Waiting **/
 	private IconsDownloadManager iconsDownloadManager;
-//	private ScreensDownloadManager screensDownloadManager;
+	private ScreensDownloadManager screensDownloadManager;
 //	private apksDownloadManager apksDownloadManager;
 	
 	/** Object reuse pool */
@@ -92,14 +92,14 @@ public class ManagerDownloads {
     	}
     	
     	public void executeDownload(ViewDownload downloadInfo){
-    		iconGettersPool.execute(new GetInstalledApps(downloadInfo));
+    		iconGettersPool.execute(new GetIcon(downloadInfo));
         }
     	
-    	private class GetInstalledApps implements Runnable{
+    	private class GetIcon implements Runnable{
 
     		private ViewDownload iconDownload;
     		
-			public GetInstalledApps(ViewDownload iconDownloadInfo) {
+			public GetIcon(ViewDownload iconDownloadInfo) {
 				this.iconDownload = iconDownloadInfo;
 			}
 
@@ -113,6 +113,45 @@ public class ManagerDownloads {
 					iconsDownloadedCounter.set(0);
 					serviceData.refreshAvailableDisplay();
 				}
+			}
+    		
+    	}
+    }
+    
+    private class ScreensDownloadManager{
+    	private ExecutorService screenGettersPool;
+    	private AtomicInteger screensDownloadedCounter;
+    	
+    	public ScreensDownloadManager(){
+    		screenGettersPool = Executors.newFixedThreadPool(Constants.MAX_PARALLEL_DOWNLOADS);
+    		screensDownloadedCounter = new AtomicInteger(0);
+    	}
+    	
+    	public void executeDownload(ViewDownload downloadInfo, int screensNumber, int orderNumber){
+    		screenGettersPool.execute(new GetScreen(downloadInfo, screensNumber, orderNumber));
+        }
+    	
+    	private class GetScreen implements Runnable{
+
+    		private ViewDownload screenDownload;
+        	private int screensNumber;
+        	private int orderNumber;
+    		
+			public GetScreen(ViewDownload screenDownload, int screensNumber, int orderNumber) {
+				this.screenDownload = screenDownload;
+	    		this.screensNumber = screensNumber;
+	    		this.orderNumber = orderNumber;
+			}
+
+			@Override
+			public void run() {
+//				downloads.put(download.getNotification().getNotificationHashid(), download);
+				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+				download(screenDownload, false);
+				if(orderNumber >= screensNumber){
+					serviceData.gettingAppScreensFinished(screenDownload.getNotification().getTargetsHashid());
+				}
+				recicleViewDownload(screenDownload);
 			}
     		
     	}
@@ -135,6 +174,7 @@ public class ManagerDownloads {
 		connectivityState = (ConnectivityManager)serviceData.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 		iconsDownloadManager = new IconsDownloadManager();
+		screensDownloadManager = new ScreensDownloadManager();
 		
 		this.downloadPool = new ArrayList<ViewDownload>(Constants.MAX_PARALLEL_DOWNLOADS);
 		
@@ -219,11 +259,7 @@ public class ManagerDownloads {
 	}
 	
 	public boolean isIconCached(int appHashid){
-		if(managerCache.isIconCached(appHashid)){
-			Log.d("Aptoide-ManagerDownloads", "Icon already exists: "+appHashid);
-			return true;
-		}
-		return false;
+		return managerCache.isIconCached(appHashid);
 	}
 	
 	public void getIcon(ViewDownloadInfo iconInfo, boolean isLoginRequired, ViewLogin login){
@@ -255,8 +291,45 @@ public class ManagerDownloads {
 		
 	}
 	
-	public void getScreens(ViewRepository repository, ArrayList<ViewDownloadInfo> screensInfo){
-		
+	public boolean isScreenCached(int appHashid, int orderNumber){
+		return managerCache.isScreenCached(appHashid, orderNumber);
+	}
+	
+	public void getScreen(ViewDownloadInfo screenInfo, boolean isLoginRequired, ViewLogin login, int screensNumber, int orderNumber){
+			ViewDownload download;
+			ViewCache cache = managerCache.getNewScreenViewCache(screenInfo.getAppHashid(), orderNumber);
+			ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_SCREENS, screenInfo.getAppName(), screenInfo.getAppHashid());
+			
+			if(isLoginRequired){
+				download = getNewViewDownload(screenInfo.getRemotePath(), login, cache, notification);
+			}else{
+				download = getNewViewDownload(screenInfo.getRemotePath(), cache, notification);
+			}
+			screensDownloadManager.executeDownload(download, screensNumber, orderNumber);		
+	}
+	
+	public void getAppScreens(ViewRepository repository, ArrayList<ViewDownloadInfo> screensInfo){
+		if(!(screensInfo.size()>0)){
+			return;
+		}
+		int orderNumber = 1;
+		for (ViewDownloadInfo screenInfo : screensInfo) {
+			Log.d("Aptoide-ManagerDownloads", "getAppScreens screen: "+screenInfo);
+			if(isScreenCached(screenInfo.getAppHashid(), orderNumber)){
+				orderNumber++;
+				if(orderNumber > screensInfo.size()){
+					serviceData.gettingAppScreensFinished(screenInfo.getAppHashid());
+				}
+				continue;
+			}else{
+				getScreen(screenInfo, repository.isLoginRequired(), repository.getLogin(), screensInfo.size(), orderNumber);
+				orderNumber++;
+				if(orderNumber > screensInfo.size()){
+					serviceData.gettingAppScreensFinished(screenInfo.getAppHashid());
+				}
+			}
+			
+		}
 	}
 	
 

@@ -70,6 +70,15 @@ public class ViewDownloadInfo {
 	}
 
 
+	@Override
+	public String toString() {
+		return "ViewDownloadInfo: "
+				+" remotePath: "+remotePath
+				+" appName: "+appName
+				+" appHashid: "+appHashid
+				+" downloadType: "+downloadType;
+	}
+
 
 	/**
 	 * ViewIcon object reuse, clean references

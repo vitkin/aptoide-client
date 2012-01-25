@@ -1885,7 +1885,7 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * getScreensDownloadInfo, retrieves a list of icons' Download Info
+	 * getScreensDownloadInfo, retrieves a list of screens' Download Info
 	 * 
 	 * @param ViewRepository repository
 	 * @param int offset, number of row to start from
@@ -1899,65 +1899,50 @@ public class ManagerDatabase {
 	 */		//TODO refactor data transport -> move ArrayList to a full data transport object with it's size properly initialized
 	public ArrayList<ViewDownloadInfo> getScreensDownloadInfo(ViewRepository repository, int appHashid){
 		
-		final int ICONS_PATH = Constants.COLUMN_FIRST;
-		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
-		final int APP_HASHID = Constants.COLUMN_SECOND;
-		final int APP_NAME = Constants.COLUMN_THIRD;
+		final int APP_HASHID = Constants.COLUMN_FIRST;
+		final int APP_NAME = Constants.COLUMN_SECOND;
+		final int SCREENS_BASE_PATH = Constants.COLUMN_THIRD;
+		final int REMOTE_PATH_TAIL = Constants.COLUMN_FOURTH;
 		
 		
-		ArrayList<ViewDownloadInfo> iconsInfo = null;
+		ArrayList<ViewDownloadInfo> screensInfo = null;
 		ViewDownloadInfo iconInfo;							
 		
-		String selectRepoIconsPath = "SELECT "+Constants.KEY_REPO_ICONS_PATH
-									+" FROM "+Constants.TABLE_REPOSITORY
-									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()+";";
-		
-		String selectIconDownloadInfo = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
-											+",A."+Constants.KEY_APPLICATION_NAME
-									+" FROM "+Constants.TABLE_ICON_INFO+" I"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
-																	+","+Constants.KEY_APPLICATION_REPO_HASHID
-																	+","+Constants.KEY_APPLICATION_HASHID
-																	+","+Constants.KEY_APPLICATION_NAME
-																	+","+Constants.KEY_APPLICATION_TIMESTAMP
+		String selectScreenDownloadInfo = "SELECT A."+Constants.KEY_APPLICATION_HASHID+",A."+Constants.KEY_APPLICATION_NAME
+												+", R."+Constants.KEY_REPO_SCREENS_PATH+", S."+Constants.KEY_SCREEN_REMOTE_PATH_TAIL
+									+" FROM ((SELECT * FROM "+Constants.TABLE_SCREEN_INFO+") S"
+										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+","+Constants.KEY_APPLICATION_HASHID
+																	+","+Constants.KEY_APPLICATION_NAME+","+Constants.KEY_APPLICATION_REPO_HASHID
 															 +" FROM "+Constants.TABLE_APPLICATION
-															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+															 +" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+") A"
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+","+Constants.KEY_REPO_SCREENS_PATH
 															 +" FROM "+Constants.TABLE_REPOSITORY
-															 +" GROUP BY "+Constants.KEY_REPO_HASHID+")"
-									+" ORDER BY A."+Constants.KEY_APPLICATION_NAME
-									+" LIMIT ?"
-									+" OFFSET ?;";
+															 +" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()+") R);";
 		
 		db.beginTransaction();
 		try{
-			Cursor repoCursor = aptoideNonAtomicQuery(selectRepoIconsPath);
-			Cursor iconsCursor = aptoideNonAtomicQuery(selectIconDownloadInfo);
+			Cursor screensCursor = aptoideNonAtomicQuery(selectScreenDownloadInfo);
 
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
-			repoCursor.moveToFirst();
-			String repoIconsPath = repoCursor.getString(ICONS_PATH);
-			repoCursor.close();
+			screensInfo = new ArrayList<ViewDownloadInfo>(screensCursor.getCount());
 			
-			iconsInfo = new ArrayList<ViewDownloadInfo>(iconsCursor.getCount());
-			
-			iconsCursor.moveToFirst();
+			screensCursor.moveToFirst();
 			do{
-				iconInfo = new ViewDownloadInfo(repoIconsPath+iconsCursor.getString(REMOTE_PATH_TAIL), iconsCursor.getString(APP_NAME)
-												, iconsCursor.getInt(APP_HASHID), EnumDownloadType.ICON);
-				iconsInfo.add(iconInfo);
+				iconInfo = new ViewDownloadInfo(screensCursor.getString(SCREENS_BASE_PATH)+screensCursor.getString(REMOTE_PATH_TAIL)
+											, screensCursor.getString(APP_NAME), screensCursor.getInt(APP_HASHID), EnumDownloadType.SCREEN);
+				screensInfo.add(iconInfo);
 
-			}while(iconsCursor.moveToNext());
-			iconsCursor.close();
+			}while(screensCursor.moveToNext());
+			screensCursor.close();
 	
 		}catch (Exception e) {
 			db.endTransaction();
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		return iconsInfo;
+		return screensInfo;
 	}
 	
 	
