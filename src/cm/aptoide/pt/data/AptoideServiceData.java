@@ -19,7 +19,6 @@
 */
 package cm.aptoide.pt.data;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,12 +49,10 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
-import cm.aptoide.pt.data.display.ViewDisplayRepo;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
 import cm.aptoide.pt.data.model.ViewApplication;
-import cm.aptoide.pt.data.model.ViewManageRepos;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
@@ -158,6 +155,21 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public void callRemoveRepo(int repoHashid) throws RemoteException {
+			removeRepo(repoHashid);
+		}
+
+		@Override
+		public void callSetInUseRepo(int repoHashid) throws RemoteException {
+			toggleInUseRepo(repoHashid, true);
+		}
+
+		@Override
+		public void callUnsetInUseRepo(int repoHashid) throws RemoteException {
+			toggleInUseRepo(repoHashid, false);
+		}
+
+		@Override
 		public ViewDisplayListRepos callGetRepos() throws RemoteException {
 			return getRepos();
 		}
@@ -212,11 +224,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		@Override
 		public ViewDisplayAppVersionsInfo callGetAppInfo(int appHashid) throws RemoteException {
 			return getAppInfo(appHashid);
-		}
-
-		@Override
-		public void callManageRepos(ViewManageRepos reposToManage) throws RemoteException {
-			manageRepos(reposToManage);
 		}
 
 		@Override
@@ -610,45 +617,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerDatabase.repoIsManaged(repoHashid);
 	}
 	
-	public void manageRepos(final ViewManageRepos reposToManage){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				if(reposToManage.hasLocalChanges()){
-					if(reposToManage.hasReposToRemove()){
-						managerDatabase.removeRepositories(reposToManage.getReposToRemove());
-					}
-					if(reposToManage.hasReposToSetInUse()){
-						managerDatabase.toggleRepositoriesInUse(reposToManage.getReposToSetInUse(), true);
-					}
-					if(reposToManage.hasReposToUnsetInUse()){
-						managerDatabase.toggleRepositoriesInUse(reposToManage.getReposToUnsetInUse(), false);
-					}
-					resetAvailableLists();
-				}
-			}
-		});
-		if(reposToManage.getReposToInsert().size()!=0){
-			cachedThreadPool.execute(new Runnable() {
-				@Override
-				public void run() {	
-					ArrayList<ViewRepository> reposToInsert = new ArrayList<ViewRepository>();
-					for (ViewDisplayRepo displayRepo : reposToManage.getReposToInsert()) {
-						ViewRepository repo = new ViewRepository(displayRepo.getUri());
-						repo.setInUse(displayRepo.getInUse());
-						if(displayRepo.requiresLogin()){
-							repo.setLogin(displayRepo.getLogin());
-						}
-						if(repo.getInUse()){	//TODO optimize multiple repo insertion
-							addRepoBare(repo);
-						}else{
-							reposToInsert.add(repo);
-						}
-					}
-					managerDatabase.insertRepositories(reposToInsert);
-				}
-			});
-		}
+	public void removeRepo(int repoHashid){
+		AptoideLog.d(AptoideServiceData.this, "Removing repo: "+repoHashid);
+		managerDatabase.removeRepository(repoHashid);
+		resetAvailableLists();
+	}
+	
+	public void toggleInUseRepo(int repoHashid, boolean inUse){
+		AptoideLog.d(AptoideServiceData.this, "Setting repo: "+repoHashid+" inUse: "+inUse);
+		managerDatabase.toggleRepositoryInUse(repoHashid, inUse);
+		resetAvailableLists();
 	}
 	
 	

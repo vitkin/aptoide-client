@@ -29,5 +29,6 @@ package cm.aptoide.pt;
 interface AIDLReposInfo{
 	
 	void updateReposBasicInfo();
+	void insertedRepo(in int repoHashid);
 	
 }

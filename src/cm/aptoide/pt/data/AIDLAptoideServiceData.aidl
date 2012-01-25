@@ -45,8 +45,10 @@ interface AIDLAptoideServiceData {
 	
 	void callRegisterReposObserver(in AIDLReposInfo reposInfoObserver);
 	ViewDisplayListRepos callGetRepos();
-	void callManageRepos(in ViewManageRepos reposToManage);
 	void callAddRepo(in ViewRepository repo);
+	void callRemoveRepo(in int repoHashid);
+	void callSetInUseRepo(in int repoHashid);
+	void callUnsetInUseRepo(in int repoHashid);
 	
 	void callRegisterInstalledAppsObserver(in AIDLAptoideInterface installedAppsObserver);
 	void callRegisterAvailableAppsObserver(in AIDLAptoideInterface availableAppsObserver);
