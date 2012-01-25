@@ -278,7 +278,9 @@ public class ManageRepos extends ListActivity{
 		alrt.setMessage(getString(R.string.add_apps_repo_confirm) + uri);
 		alrt.setButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
-		    	  reposManager.addRepo(uri);
+		    	  addDisplayRepo(new ViewDisplayRepo(uri.hashCode(), uri, true, 0));
+		    	  initReposList();	
+//		    	  reposManager.addRepo(uri);
 		    	  return;
 		      } }); 
 		alrt.setButton2(getText(R.string.no), new DialogInterface.OnClickListener() {
