@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-*/
+ */
 
 package cm.aptoide.pt;
 
@@ -111,54 +111,54 @@ import android.widget.ViewFlipper;
 
 public class RemoteInTab extends BaseManagement {
 
-	
+
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 	private String LOCAL_PATH = SDCARD+"/.aptoide";
 	private String ICON_PATH = LOCAL_PATH+"/icons";
 	private String XML_PATH = LOCAL_PATH+"/remapklst.xml";
 	private String EXTRAS_XML_PATH = LOCAL_PATH+"/extras.xml";
-	
-	
+
+
 	private String REMOTE_FILE = "/info.xml";
 
-//	private String REMOTE_EXTRAS_FILE = "/extras.xml";
-	
+	//	private String REMOTE_EXTRAS_FILE = "/extras.xml";
+
 	private static final int SETTINGS_FLAG = 31;
 	private static final int NEWREPO_FLAG = 33;
 	private static final int FETCH_APK = 35;
-	
+
 	private WakeLock keepScreenOn;
-	
+
 	private DbHandler db = null;
 
 	private ProgressDialog pd;
-	
+
 	//private Dialog updt_pd;
-	
+
 	private Context mctx;
-	
+
 	//private String order_lst = "abc";
 	//private String lst_mode = "mix";
-	
-//    private TabHost myTabHost;
-    
-    private SharedPreferences sPref;
+
+	//    private TabHost myTabHost;
+
+	private SharedPreferences sPref;
 	private SharedPreferences.Editor prefEdit;
-	
+
 	public ConnectivityManager netstate = null; 
-	
+
 	private Vector<String> failed_repo = new Vector<String>();
 	private ArrayList<ServerNode> extras_repo = new ArrayList<ServerNode>();
 	private boolean there_was_update = false;
-	
-//	private Intent intp;
+
+	//	private Intent intp;
 	private Intent intserver;
 
 	private boolean fetch_extra = true;
-	
+
 	ListView installView ;
 	ListView updateView ;
-	
+
 	boolean updating = false; 
 	private TextView previousListTitle = null;
 	private TextView currentListTitle = null;
@@ -166,48 +166,50 @@ public class RemoteInTab extends BaseManagement {
 	private String emptyString = null;
 	private ImageView previousView = null; 
 	private ImageView nextView = null;
-	
+
 	private TextView listTextHeader = null;
 	private String currentCatName = null;
 	private RelativeLayout mainLayout;
-	
-//	private TextView emptyUpdatesList;
-	
+
+	//	private TextView emptyUpdatesList;
+
 	private GestureDetector detectChangeTab;
 
 	public DownloadQueueService downloadQueueService;
-	
+
 	IntentFilter intentFilter;
 	IntentFilter intentFilter2 = new IntentFilter();
 	protected int nApks;
 	ViewFlipper vf;
-	
-	
-	private ServiceConnection serviceConnection = new ServiceConnection() {
-	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
-	        // This is called when the connection with the service has been
-	        // established, giving us the service object we can use to
-	        // interact with the service.  Because we have bound to a explicit
-	        // service that we know is running in our own process, we can
-	        // cast its IBinder to a concrete class and directly access it.
-	        downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
 
-	        Log.d("Aptoide-BaseManagement", "DownloadQueueService bound to a Tab");
-	    }
-	    
-	    public void onServiceDisconnected(ComponentName className) {
-	        // This is called when the connection with the service has been
-	        // unexpectedly disconnected -- that is, its process crashed.
-	        // Because it is running in our same process, we should never
-	        // see this happen.
-	        downloadQueueService = null;
-	        
-	        Log.d("Aptoide-BaseManagement","DownloadQueueService unbound from a Tab");
-	    }
+	private ImageView searchView;
+
+
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
+			// This is called when the connection with the service has been
+			// established, giving us the service object we can use to
+			// interact with the service.  Because we have bound to a explicit
+			// service that we know is running in our own process, we can
+			// cast its IBinder to a concrete class and directly access it.
+			downloadQueueService = ((DownloadQueueService.DownloadQueueBinder)serviceBinder).getService();
+
+			Log.d("Aptoide-BaseManagement", "DownloadQueueService bound to a Tab");
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			// Because it is running in our same process, we should never
+			// see this happen.
+			downloadQueueService = null;
+
+			Log.d("Aptoide-BaseManagement","DownloadQueueService unbound from a Tab");
+		}
 
 	};	
 	private BroadcastReceiver broadcastReceiver2 = new BroadcastReceiver() {
-		
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			// TODO Auto-generated method stub
@@ -228,34 +230,34 @@ public class RemoteInTab extends BaseManagement {
 						return;
 					}});
 				alrt.show();
-				
-				
+
+
 			}else if(action.equals("pt.caixamagica.aptoide.HAS_UPDATES")){
 				Log.d("","BroadCast Received:" + action);
-				
+
 				if(!updating){
-				int apps = intent.getIntExtra("appscount", 123);
-				AlertDialog alrt = new AlertDialog.Builder(mctx).create();
-				if(apps>0){
-					alrt.setMessage("You have "+apps+" new apps on your selected stores. Update?");
-				}else{
-					alrt.setMessage("You have new updates on your selected stores. Update?");
-				}
-				alrt.setButton(AlertDialog.BUTTON_POSITIVE, getText(R.string.btn_yes), new OnClickListener() {
-					
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						updateRepos();
+					int apps = intent.getIntExtra("appscount", 123);
+					AlertDialog alrt = new AlertDialog.Builder(mctx).create();
+					if(apps>0){
+						alrt.setMessage("You have "+apps+" new apps on your selected stores. Update?");
+					}else{
+						alrt.setMessage("You have new updates on your selected stores. Update?");
 					}
-				});
-				alrt.setButton(AlertDialog.BUTTON_NEGATIVE, getText(R.string.btn_no), new OnClickListener() {
-					
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						return;
-					}
-				});
-				alrt.show();
+					alrt.setButton(AlertDialog.BUTTON_POSITIVE, getText(R.string.btn_yes), new OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							updateRepos();
+						}
+					});
+					alrt.setButton(AlertDialog.BUTTON_NEGATIVE, getText(R.string.btn_no), new OnClickListener() {
+
+						public void onClick(DialogInterface dialog, int which) {
+							// TODO Auto-generated method stub
+							return;
+						}
+					});
+					alrt.show();
 				}
 			}else if ( intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
 				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"), intent.getStringExtra("version"));
@@ -268,94 +270,94 @@ public class RemoteInTab extends BaseManagement {
 			}else if (intent.getAction().equals("pt.caixamagica.aptoide.REDRAW")){
 				displayrefresh2.sendEmptyMessage(0);
 			}
-			
+
 		}
 	};
-	
-		
-		
-    
+
+
+
+
 	private void addTab(String label, int drawableId, Class<?> classToLauch, TabHost tabHost) {
 		//For the style of the tabs
 		Intent intent = new Intent(this, classToLauch);
 		TabHost.TabSpec spec = tabHost.newTabSpec(label);
-		
+
 		View tabIndicator = LayoutInflater.from(this).inflate(
-								R.layout.tab_indicator, 
-								tabHost.getTabWidget(), 
-								false
-								);
+				R.layout.tab_indicator, 
+				tabHost.getTabWidget(), 
+				false
+				);
 		TextView title = (TextView) tabIndicator.findViewById(R.id.title);
 		title.setText(label);
-//		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.);
-//		icon.setImageResource(drawableId);
-		
+		//		ImageView icon = (ImageView) tabIndicator.findViewById(R.id.);
+		//		icon.setImageResource(drawableId);
+
 		spec.setIndicator(tabIndicator);
 		spec.setContent(intent);
 		tabHost.addTab(spec);
-		
+
 	}
-	
-	
-	
+
+
+
 	ListView availView ;
 	private int pos = -1;
-	
+
 	private int deep = 0;
-		
+
 	private String shown_now = null;
 	private int main_shown_now = -1;
-	
-	
+
+
 	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
-		
+
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.d("RemoteInTab"," onCreate");
-		
+
 		availView = new ListView(this);
 		availView.setFastScrollEnabled(true);
-		
+
 		installView = new ListView(this);
 		updateView = new ListView(this);
-		
-		
-		
+
+
+
 		intentFilter = new IntentFilter();
 		currentAppsList = EnumAppsLists.Available;
-    	intentFilter2.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
-    	intentFilter2.addAction("pt.caixamagica.aptoide.HAS_UPDATES");
-    	intentFilter2.addAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
-    	intentFilter2.addAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
-    	intentFilter2.addAction("pt.caixamagica.aptoide.REDRAW");
-    	registerReceiver(broadcastReceiver2, intentFilter2);
-		
+		intentFilter2.addAction("pt.caixamagica.aptoide.FILTER_CHANGED");
+		intentFilter2.addAction("pt.caixamagica.aptoide.HAS_UPDATES");
+		intentFilter2.addAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
+		intentFilter2.addAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
+		intentFilter2.addAction("pt.caixamagica.aptoide.REDRAW");
+		registerReceiver(broadcastReceiver2, intentFilter2);
+
 		super.onCreate(savedInstanceState);
-		
-//		if(Configs.INTERFACE_TABS_ON_BOTTOM){
-//			super.setContentView(R.layout.tabhostbottom);
-//		} else {
-//			super.setContentView(R.layout.tabhosttop);
-//		}
-		
+
+		//		if(Configs.INTERFACE_TABS_ON_BOTTOM){
+		//			super.setContentView(R.layout.tabhostbottom);
+		//		} else {
+		//			super.setContentView(R.layout.tabhosttop);
+		//		}
+
 		//detectChangeTab = new GestureDetector(new ChangeTab(this.getTabHost()));
-		
+
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
-		
+
 		mctx = this;
-		
+
 		db = new DbHandler(this);
-		
+
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
-		
+
 		prefEdit = sPref.edit();
 		prefEdit.putBoolean("update", true);
 		prefEdit.commit();
@@ -365,74 +367,74 @@ public class RemoteInTab extends BaseManagement {
 				return swypeDetector.onTouchEvent(event);
 			}
 		};
-//		myTabHost = getTabHost();
+		//		myTabHost = getTabHost();
 		if(Configs.INTERFACE_SILVER_TABS_ON){
-		
-//			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
-//			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());
-//			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class, getTabHost());
-			
+
+			//			addTab(getString(R.string.tab_avail), android.R.drawable.ic_menu_add, TabAvailable.class, getTabHost());
+			//			addTab(getString(R.string.tab_inst), android.R.drawable.ic_menu_agenda, TabInstalled.class, getTabHost());
+			//			addTab(getString(R.string.tab_updt), android.R.drawable.ic_menu_info_details, TabUpdates.class, getTabHost());
+
 		}else{
-			 
-//			myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
-//			myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)) );
-//			myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details))
-//					.setContent(new Intent(this, TabUpdates.class)));
-			
+
+			//			myTabHost.addTab(myTabHost.newTabSpec("avail").setIndicator(getText(R.string.tab_avail),getResources().getDrawable(android.R.drawable.ic_menu_add)).setContent(new Intent(this, TabAvailable.class)));  
+			//			myTabHost.addTab(myTabHost.newTabSpec("inst").setIndicator(getText(R.string.tab_inst),getResources().getDrawable(android.R.drawable.ic_menu_agenda)).setContent(new Intent(this, TabInstalled.class)) );
+			//			myTabHost.addTab(myTabHost.newTabSpec("updt").setIndicator(getText(R.string.tab_updt),getResources().getDrawable(android.R.drawable.ic_menu_info_details))
+			//					.setContent(new Intent(this, TabUpdates.class)));
+
 			OnItemClickListener installListener = new OnItemClickListener() {
 
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					if(!swyping.get()){
-					final String pkg_id = ((LinearLayout)arg1).getTag().toString();
+						final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 
-					pos = arg2;
+						pos = arg2;
 
-					Intent apkinfo = new Intent(mctx,ApkInfo.class);
-					apkinfo.putExtra("name", db.getName(pkg_id));
-					apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
-					apkinfo.putExtra("apk_id", pkg_id);
-					
-					String tmpi = db.getDescript(pkg_id);
-					if(!(tmpi == null)){
-						apkinfo.putExtra("about", tmpi);
-					}else{
-						apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
-					}
-					
+						Intent apkinfo = new Intent(mctx,ApkInfo.class);
+						apkinfo.putExtra("name", db.getName(pkg_id));
+						apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
+						apkinfo.putExtra("apk_id", pkg_id);
 
-					Vector<String> tmp_get = db.getApk(pkg_id);
-					apkinfo.putExtra("server", tmp_get.firstElement());
-					apkinfo.putExtra("rat", tmp_get.get(5));
-					apkinfo.putExtra("type", 1);
-					
-					ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
-					VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
-					versions.add(versionApkPassed);
-					
-					
-					
-					try {
-						PackageManager mPm = getApplicationContext().getPackageManager();
-						PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
-						VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1,-1);
-						apkinfo.putExtra("instversion", versionInstApk);
-//						Iterator<VersionApk> iteratorVersion = versions.iterator();
-//						while(iteratorVersion.hasNext()){
-//							if(iteratorVersion.next().compareTo(versionInstApk)>0){
-//								iteratorVersion.remove();
-//							}
-//						}
-					} catch (NameNotFoundException e) {
-						//Not installed... do nothing, not going to happen hear
-					}
-					
-					
-					
-					apkinfo.putParcelableArrayListExtra("versions", versions);
-					startActivityForResult(apkinfo,30);
-					
-					/*
+						String tmpi = db.getDescript(pkg_id);
+						if(!(tmpi == null)){
+							apkinfo.putExtra("about", tmpi);
+						}else{
+							apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+						}
+
+
+						Vector<String> tmp_get = db.getApk(pkg_id);
+						apkinfo.putExtra("server", tmp_get.firstElement());
+						apkinfo.putExtra("rat", tmp_get.get(5));
+						apkinfo.putExtra("type", 1);
+
+						ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+						VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
+						versions.add(versionApkPassed);
+
+
+
+						try {
+							PackageManager mPm = getApplicationContext().getPackageManager();
+							PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+							VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode,pkg_id,-1,-1);
+							apkinfo.putExtra("instversion", versionInstApk);
+							//						Iterator<VersionApk> iteratorVersion = versions.iterator();
+							//						while(iteratorVersion.hasNext()){
+							//							if(iteratorVersion.next().compareTo(versionInstApk)>0){
+							//								iteratorVersion.remove();
+							//							}
+							//						}
+						} catch (NameNotFoundException e) {
+							//Not installed... do nothing, not going to happen hear
+						}
+
+
+
+						apkinfo.putParcelableArrayListExtra("versions", versions);
+						startActivityForResult(apkinfo,30);
+
+						/*
 					Vector<String> tmp_get = db.getApk(pkg_id);
 					String tmp_path = this.getString(R.string.icons_path)+pkg_id;
 					File test_icon = new File(tmp_path);
@@ -489,65 +491,65 @@ public class RemoteInTab extends BaseManagement {
 						} });
 
 					p.show();
-					*/
-				}}
-					
-				
-				
-				
+						 */
+					}}
+
+
+
+
 			};
-			
+
 			OnItemClickListener updateListener = new OnItemClickListener() {
 
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					if(!swyping.get()){
-					final String pkg_id = ((LinearLayout)arg1).getTag().toString();
+						final String pkg_id = ((LinearLayout)arg1).getTag().toString();
 
-					pos = arg2;
-					
-					Intent apkinfo = new Intent(mctx,ApkInfo.class);
-					apkinfo.putExtra("name", db.getName(pkg_id));
-					apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
-					apkinfo.putExtra("apk_id", pkg_id);
-					
-					String tmpi = db.getDescript(pkg_id);
-					if(!(tmpi == null)){
-						apkinfo.putExtra("about",tmpi);
-					}else{
-						apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
-					}
-					
+						pos = arg2;
 
-					Vector<String> tmp_get = db.getApk(pkg_id);
-					apkinfo.putExtra("server", tmp_get.firstElement());
-					apkinfo.putExtra("rat", tmp_get.get(5));
-					apkinfo.putExtra("type", 2);
-					
-					ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
-					VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
-					versions.add(versionApkPassed);
-					
-					try {
-						PackageManager mPm = getApplicationContext().getPackageManager();
-						PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
-						VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode, pkg_id,-1,-1);
-						apkinfo.putExtra("instversion", versionInstApk);
-						Iterator<VersionApk> iteratorVersion = versions.iterator();
-						while(iteratorVersion.hasNext()){
-							if(iteratorVersion.next().compareTo(versionInstApk)<=0){
-								iteratorVersion.remove();
-							}
+						Intent apkinfo = new Intent(mctx,ApkInfo.class);
+						apkinfo.putExtra("name", db.getName(pkg_id));
+						apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
+						apkinfo.putExtra("apk_id", pkg_id);
+
+						String tmpi = db.getDescript(pkg_id);
+						if(!(tmpi == null)){
+							apkinfo.putExtra("about",tmpi);
+						}else{
+							apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
 						}
-					} catch (NameNotFoundException e) {
-						//Not installed... do nothing
-					}
-					
-					apkinfo.putParcelableArrayListExtra("versions", versions);
-					
-					startActivityForResult(apkinfo,30);
-					
-					/*
+
+
+						Vector<String> tmp_get = db.getApk(pkg_id);
+						apkinfo.putExtra("server", tmp_get.firstElement());
+						apkinfo.putExtra("rat", tmp_get.get(5));
+						apkinfo.putExtra("type", 2);
+
+						ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+						VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
+						versions.add(versionApkPassed);
+
+						try {
+							PackageManager mPm = getApplicationContext().getPackageManager();
+							PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+							VersionApk versionInstApk = new VersionApk(pkginfo.versionName,pkginfo.versionCode, pkg_id,-1,-1);
+							apkinfo.putExtra("instversion", versionInstApk);
+							Iterator<VersionApk> iteratorVersion = versions.iterator();
+							while(iteratorVersion.hasNext()){
+								if(iteratorVersion.next().compareTo(versionInstApk)<=0){
+									iteratorVersion.remove();
+								}
+							}
+						} catch (NameNotFoundException e) {
+							//Not installed... do nothing
+						}
+
+						apkinfo.putParcelableArrayListExtra("versions", versions);
+
+						startActivityForResult(apkinfo,30);
+
+						/*
 					Vector<String> tmp_get = db.getApk(pkg_id);
 					String tmp_path = this.getString(R.string.icons_path)+pkg_id;
 					File test_icon = new File(tmp_path);
@@ -622,151 +624,151 @@ public class RemoteInTab extends BaseManagement {
 						} });
 
 					p.show();
-					*/
-					
-				}}
-				
+						 */
+
+					}}
+
 			};
-			
+
 			OnItemClickListener availListener = new OnItemClickListener() {
 
-				
-				
-				
-				
+
+
+
+
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 					if(!swyping.get()){
-					pos = arg2;
-					
-					final String pkg_id = ((LinearLayout)arg1).getTag().toString();
+						pos = arg2;
 
-					if(pkg_id.equals("Applications")){
-						shown_now = null;
-//						Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
-						currentCatName = "Applications";
-						listTextHeader.setText(currentCatName);
-						listTextHeader.setVisibility(View.VISIBLE);
-						availView.setAdapter(getAppCtg());
-//						setContentView(lv);
-						availView.setSelection(pos-1);
-						deep = 1;
-					}else if(pkg_id.equals("Games")){
-						shown_now = null;
-//						Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
-						currentCatName = "Games";
-						listTextHeader.setText(currentCatName);
-						availView.setAdapter(getGamesCtg());
-						listTextHeader.setVisibility(View.VISIBLE);
-//						setContentView(lv);
-						availView.setSelection(pos-1);
-						deep = 1;
-					}else if(pkg_id.equals("Others")){
-						shown_now = null;
-						main_shown_now = 2;
-//						Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
-						currentCatName = "Others";
-						listTextHeader.setText(currentCatName);
-						listTextHeader.setVisibility(View.VISIBLE);
-						availView.setAdapter(getGivenCatg(null, 2));
-//						setContentView(lv);
-						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						availView.setSelection(pos-1);
-						deep = 1;
-						if(filteredApps>0){
-//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
-							currentCatName = "Filtered "+filteredApps+" applications.";
+						final String pkg_id = ((LinearLayout)arg1).getTag().toString();
+
+						if(pkg_id.equals("Applications")){
+							shown_now = null;
+							//						Toast.makeText(mctx, "Applications", Toast.LENGTH_SHORT).show();
+							currentCatName = "Applications";
 							listTextHeader.setText(currentCatName);
-						}
-					}else if(pkg_id.equals("apps")){
-						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
-						main_shown_now = 1;
-//						Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
-						currentCatName = "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
-						listTextHeader.setText(currentCatName);
-						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
-//						setContentView(lv);
-						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						availView.setSelection(pos-1);
-						deep = 2;
-						if (filteredApps > 0){
-//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
-							currentCatName = "Filtered "+filteredApps+" applications.";
+							listTextHeader.setVisibility(View.VISIBLE);
+							availView.setAdapter(getAppCtg());
+							//						setContentView(lv);
+							availView.setSelection(pos-1);
+							deep = 1;
+						}else if(pkg_id.equals("Games")){
+							shown_now = null;
+							//						Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
+							currentCatName = "Games";
 							listTextHeader.setText(currentCatName);
-						}
-					}else if(pkg_id.equals("games")){
-						shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
-						main_shown_now = 0;
-//						Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
-						currentCatName = "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
-						listTextHeader.setText(currentCatName);
-						availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
-//						setContentView(lv);
-						availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-						availView.setSelection(pos-1);
-						deep = 3;
-						if (filteredApps > 0){
-//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
-							currentCatName = "Filtered "+filteredApps+" applications.";
+							availView.setAdapter(getGamesCtg());
+							listTextHeader.setVisibility(View.VISIBLE);
+							//						setContentView(lv);
+							availView.setSelection(pos-1);
+							deep = 1;
+						}else if(pkg_id.equals("Others")){
+							shown_now = null;
+							main_shown_now = 2;
+							//						Toast.makeText(mctx, "Others", Toast.LENGTH_SHORT).show();
+							currentCatName = "Others";
 							listTextHeader.setText(currentCatName);
-						}
-					}else{
-						
-						Intent apkinfo = new Intent(mctx,ApkInfo.class);
-						apkinfo.putExtra("name", db.getName(pkg_id));
-						apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
-						apkinfo.putExtra("apk_id", pkg_id);
-						
-						String tmpi = db.getDescript(pkg_id);
-						if(!(tmpi == null)){
-							apkinfo.putExtra("about",tmpi);
+							listTextHeader.setVisibility(View.VISIBLE);
+							availView.setAdapter(getGivenCatg(null, 2));
+							//						setContentView(lv);
+							availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							availView.setSelection(pos-1);
+							deep = 1;
+							if(filteredApps>0){
+								//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+								currentCatName = "Filtered "+filteredApps+" applications.";
+								listTextHeader.setText(currentCatName);
+							}
+						}else if(pkg_id.equals("apps")){
+							shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+							main_shown_now = 1;
+							//						Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+							currentCatName = "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+							listTextHeader.setText(currentCatName);
+							availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
+							//						setContentView(lv);
+							availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							availView.setSelection(pos-1);
+							deep = 2;
+							if (filteredApps > 0){
+								//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+								currentCatName = "Filtered "+filteredApps+" applications.";
+								listTextHeader.setText(currentCatName);
+							}
+						}else if(pkg_id.equals("games")){
+							shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+							main_shown_now = 0;
+							//						Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
+							currentCatName = "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
+							listTextHeader.setText(currentCatName);
+							availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
+							//						setContentView(lv);
+							availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+							availView.setSelection(pos-1);
+							deep = 3;
+							if (filteredApps > 0){
+								//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
+								currentCatName = "Filtered "+filteredApps+" applications.";
+								listTextHeader.setText(currentCatName);
+							}
 						}else{
-							apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+
+							Intent apkinfo = new Intent(mctx,ApkInfo.class);
+							apkinfo.putExtra("name", db.getName(pkg_id));
+							apkinfo.putExtra("icon", mctx.getString(R.string.icons_path)+pkg_id);
+							apkinfo.putExtra("apk_id", pkg_id);
+
+							String tmpi = db.getDescript(pkg_id);
+							if(!(tmpi == null)){
+								apkinfo.putExtra("about",tmpi);
+							}else{
+								apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
+							}
+
+							Vector<String> tmp_get = db.getApk(pkg_id);
+							apkinfo.putExtra("server", tmp_get.firstElement());
+							apkinfo.putExtra("rat", tmp_get.get(5));
+							apkinfo.putExtra("type", 0);
+
+							ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
+							VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
+							versions.add(versionApkPassed);
+
+							try {
+								PackageManager mPm = getApplicationContext().getPackageManager();
+								PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
+								apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName, pkginfo.versionCode,pkg_id,-1,-1));
+							} catch (NameNotFoundException e) {
+								//Not installed... do nothing
+							}
+
+							apkinfo.putParcelableArrayListExtra("versions", versions);
+
+							startActivityForResult(apkinfo,30);
+
 						}
-						
-						Vector<String> tmp_get = db.getApk(pkg_id);
-						apkinfo.putExtra("server", tmp_get.firstElement());
-						apkinfo.putExtra("rat", tmp_get.get(5));
-						apkinfo.putExtra("type", 0);
-						
-						ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
-						VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
-						versions.add(versionApkPassed);
-						
-						try {
-							PackageManager mPm = getApplicationContext().getPackageManager();
-							PackageInfo pkginfo = mPm.getPackageInfo(pkg_id, 0);
-							apkinfo.putExtra("instversion", new VersionApk(pkginfo.versionName, pkginfo.versionCode,pkg_id,-1,-1));
-						} catch (NameNotFoundException e) {
-							//Not installed... do nothing
-						}
-						
-						apkinfo.putParcelableArrayListExtra("versions", versions);
-						
-						startActivityForResult(apkinfo,30);
-					
-					}
-					
-				}}
+
+					}}
 			};
-			
-			
-			
+
+
+
 			registerForContextMenu(installView);
 			availView.setOnItemClickListener(availListener);
 			installView.setOnItemClickListener(installListener);
 			updateView.setOnItemClickListener(updateListener);
-			
-//			lv.setAdapter(getAvailable(null,-1));
+
+			//			lv.setAdapter(getAvailable(null,-1));
 			setContentView(R.layout.aptoide);
 			vf = (ViewFlipper) findViewById(R.id.list_flipper);
-			
-		
-			
+
+
+
 			previousListTitle = (TextView) findViewById(R.id.previous_title);
 			currentListTitle = (TextView) findViewById(R.id.current_title);
 			nextListTitle = (TextView) findViewById(R.id.next_title);
-			
+
 			availView.setOnTouchListener(swypeListener);
 			installView.setOnTouchListener(swypeListener);
 			updateView.setOnTouchListener(swypeListener);
@@ -776,14 +778,14 @@ public class RemoteInTab extends BaseManagement {
 			installView.setCacheColorHint(Color.TRANSPARENT);
 			updateView.setBackgroundColor(Color.WHITE);
 			updateView.setCacheColorHint(Color.TRANSPARENT);
-			
-//			emptyUpdatesList = new TextView(mctx);
-//			emptyUpdatesList.setBackgroundColor(Color.WHITE);
-//			emptyUpdatesList.setTextColor(Color.DKGRAY);
-//			emptyUpdatesList.setTextSize(15);
-//			emptyUpdatesList.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
-//			emptyUpdatesList.setGravity(Gravity.CENTER_HORIZONTAL);
-			
+
+			//			emptyUpdatesList = new TextView(mctx);
+			//			emptyUpdatesList.setBackgroundColor(Color.WHITE);
+			//			emptyUpdatesList.setTextColor(Color.DKGRAY);
+			//			emptyUpdatesList.setTextSize(15);
+			//			emptyUpdatesList.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+			//			emptyUpdatesList.setGravity(Gravity.CENTER_HORIZONTAL);
+
 			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
 			nextListTitle.setOnClickListener(new OnNextClickedListener());
 
@@ -796,119 +798,121 @@ public class RemoteInTab extends BaseManagement {
 			nextView.setOnClickListener(new OnNextClickedListener());
 			previousListTitle.setVisibility(View.GONE);
 			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
-			
+
 			listTextHeader = (TextView) findViewById(R.id.textheader);
 			listTextHeader.setVisibility(View.GONE);			
-			
+
 			new Thread(){
 				@Override
 				public void run() {
 					super.run();
 					try {
-					while(sPref.getBoolean("redrawis", true)){
-						
-						Thread.sleep(10);
-						
-					}
+						while(sPref.getBoolean("redrawis", true)){
+
+							Thread.sleep(10);
+
+						}
 					} catch (InterruptedException e) { }
-					
+
 				}
-				
+
 			}.start();	
 			vf.addView(availView);
 			vf.addView(installView);
-				
-			vf.addView(updateView);
-			
-			
-			
-			
-			
-			
-		}
-		
-		
-		
-		View.OnTouchListener upDownListener = new View.OnTouchListener() {
-			
-			public boolean onTouch(View v, MotionEvent event) {
-				 if(event.getAction() == MotionEvent.ACTION_DOWN) {
-		                // Button was pressed, change button background
-		                onSearchRequested();
-		                return true;
-		            } else if(event.getAction() == MotionEvent.ACTION_UP) {
-		                // Button was released, reset button background
-		                return true;
-		            }
 
-		            return false;
-		        }
+			vf.addView(updateView);
+
+
+
+
+
+
+		}
+
+
+
+		View.OnTouchListener upDownListener = new View.OnTouchListener() {
+
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_DOWN) {
+					// Button was pressed, change button background
+					searchView.setImageResource(R.drawable.btsearchover);
+					return true;
+				} else if(event.getAction() == MotionEvent.ACTION_UP) {
+					// Button was released, reset button background
+					searchView.setImageResource(R.drawable.btsearch);
+					onSearchRequested();
+					return true;
+				}
+
+				return true;
+			}
 
 		};
-//		View.OnClickListener searchListener = new View.OnClickListener() {
-//			
-//			public void onClick(View v) {
-//				
-//				onSearchRequested();
-//			}
-//		};
-//		
-		
-		ImageView searchView = (ImageView) findViewById(R.id.btsearch);
-		
-		
-//		searchView.setOnClickListener(searchListener);
+		//		View.OnClickListener searchListener = new View.OnClickListener() {
+		//			
+		//			public void onClick(View v) {
+		//				
+		//				onSearchRequested();
+		//			}
+		//		};
+		//		
+
+		searchView = (ImageView) findViewById(R.id.btsearch);
+
+
+		//		searchView.setOnClickListener(searchListener);
 		searchView.setOnTouchListener(upDownListener);
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 		/**
 		 * @author rafael
 		 *
 		 */
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
 		class ClickForce implements View.OnClickListener {
 			private ViewFlipper flipper;
 			private int index;
-			
+
 			public ClickForce(int index, ViewFlipper flipper) {
 				this.flipper = flipper;
-				
-				
-//				getTabHost().setCurrentTab(index);
+
+
+				//				getTabHost().setCurrentTab(index);
 				flipper.setDisplayedChild(index);
 				this.index = index;
 			}
 			public void onClick(View v) {
-//		        getTabHost().setCurrentTab(this.index);
-		        flipper.setInAnimation(null);
-		        flipper.setOutAnimation(null);
+				//		        getTabHost().setCurrentTab(this.index);
+				flipper.setInAnimation(null);
+				flipper.setOutAnimation(null);
 				flipper.setDisplayedChild(this.index);
 			}
 		}
-//		ViewFlipper flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
-//		for (int i = 0; i < getTabWidget().getChildCount(); i++) {
-//			getTabWidget().getChildAt(i).setOnClickListener(new ClickForce(i,flipper));
-//		}
-//		getTabHost().setCurrentTab(0);
-//		flipper.setDisplayedChild(0);
-		
-		
-//		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
-		
+		//		ViewFlipper flipper = ((ViewFlipper)RemoteInTab.this.findViewById(android.R.id.tabcontent));
+		//		for (int i = 0; i < getTabWidget().getChildCount(); i++) {
+		//			getTabWidget().getChildAt(i).setOnClickListener(new ClickForce(i,flipper));
+		//		}
+		//		getTabHost().setCurrentTab(0);
+		//		flipper.setDisplayedChild(0);
+
+
+		//		myTabHost.setPersistentDrawingCache(ViewGroup.PERSISTENT_SCROLLING_CACHE);
+
 		netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-		
+
 		File sdcard_file = new File(SDCARD);
 		if(!sdcard_file.exists() || !sdcard_file.canWrite()){
-			
+
 			final AlertDialog upd_alrt = new AlertDialog.Builder(mctx).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
@@ -919,11 +923,11 @@ public class RemoteInTab extends BaseManagement {
 				}
 			});
 			upd_alrt.show();
-			
+
 		}
 		else{
-			
-			
+
+
 			Intent installApkIntent = this.getIntent();
 			String action = installApkIntent.getAction();
 			Log.i("action",action+"");
@@ -940,7 +944,7 @@ public class RemoteInTab extends BaseManagement {
 				}
 			} 
 
-			
+
 			StatFs stat = new StatFs(sdcard_file.getPath());
 			long blockSize = stat.getBlockSize();
 			long totalBlocks = stat.getBlockCount();
@@ -980,7 +984,7 @@ public class RemoteInTab extends BaseManagement {
 
 
 				Vector<ServerNode> srv_lst = db.getServers();
-				
+
 				if (srv_lst.isEmpty()){
 					Intent call = new Intent(this, ManageRepo.class);
 					call.putExtra("empty", true);
@@ -988,122 +992,122 @@ public class RemoteInTab extends BaseManagement {
 					startActivityForResult(call,NEWREPO_FLAG);
 				}
 				if (sPref.getBoolean("intentChanged", false)) {
-				Intent i = getIntent();
-				if(i.hasExtra("repos")){
-					if(i.hasExtra("apps")){
-						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
-						if(servers_lst != null && servers_lst.size() > 0){
-							intserver = new Intent(this, ManageRepo.class);
-							intserver.putExtra("uri", i.getSerializableExtra("repos"));
+					Intent i = getIntent();
+					if(i.hasExtra("repos")){
+						if(i.hasExtra("apps")){
+							ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
+							if(servers_lst != null && servers_lst.size() > 0){
+								intserver = new Intent(this, ManageRepo.class);
+								intserver.putExtra("uri", i.getSerializableExtra("repos"));
+							}else{
+								intserver = null;
+							}
+
+							final String[] app = ((ArrayList<String[]>) i.getSerializableExtra("apps")).get(0);
+							final AlertDialog alrt = new AlertDialog.Builder(this).create();
+							alrt.setTitle("Install");
+							alrt.setMessage("Do you wish to install: " + app[1] + " ?");
+							alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									alrt.dismiss();
+									//								pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + nodi[1], true);
+									//								pd.setIcon(android.R.drawable.ic_dialog_info);
+									//								
+									//								new Thread(new Runnable() {
+									//									public void run() {
+									//										installFromLink(nodi[0]);
+									//									}fetched
+									//								}).start();
+
+									Log.d("Aptoide-RemoteInTab","queueing download: "+app[0]+" "+app[1]+ " "+app[2]+" "+app[3]+" "+app[4]);	
+
+									DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3])/1000, SDCARD+"/.aptoide/"+app[4]+".apk", app[4]);
+									downloadNode.setAppName(app[1]);
+									downloadQueueService.startDownload(downloadNode);
+
+									startActivityForResult(intserver, NEWREPO_FLAG);
+								}
+							});
+							alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
+								public void onClick(DialogInterface dialog, int which) {
+									alrt.dismiss();
+
+									startActivityForResult(intserver, NEWREPO_FLAG);
+								}
+							});
+							alrt.show();
 						}else{
-							intserver = null;
-						}
-						
-						final String[] app = ((ArrayList<String[]>) i.getSerializableExtra("apps")).get(0);
-						final AlertDialog alrt = new AlertDialog.Builder(this).create();
-						alrt.setTitle("Install");
-						alrt.setMessage("Do you wish to install: " + app[1] + " ?");
-						alrt.setButton(getText(R.string.btn_yes), new OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								alrt.dismiss();
-//								pd = ProgressDialog.show(mctx, getText(R.string.top_download), getText(R.string.fetch_apk) + ": " + nodi[1], true);
-//								pd.setIcon(android.R.drawable.ic_dialog_info);
-//								
-//								new Thread(new Runnable() {
-//									public void run() {
-//										installFromLink(nodi[0]);
-//									}fetched
-//								}).start();
-
-								Log.d("Aptoide-RemoteInTab","queueing download: "+app[0]+" "+app[1]+ " "+app[2]+" "+app[3]+" "+app[4]);	
-
-								DownloadNode downloadNode = new DownloadNode(app[0], app[2], Integer.parseInt(app[3])/1000, SDCARD+"/.aptoide/"+app[4]+".apk", app[4]);
-								downloadNode.setAppName(app[1]);
-								downloadQueueService.startDownload(downloadNode);
-
-								startActivityForResult(intserver, NEWREPO_FLAG);
+							Intent call = new Intent(this, ManageRepo.class);
+							ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
+							if(servers_lst != null && servers_lst.size() > 0){
+								call.putExtra("uri", i.getSerializableExtra("repos"));
+								startActivityForResult(call,NEWREPO_FLAG);
 							}
-						});
-						alrt.setButton2(getText(R.string.btn_no), new OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
-								alrt.dismiss();
-
-								startActivityForResult(intserver, NEWREPO_FLAG);
-							}
-						});
-						alrt.show();
-					}else{
-						Intent call = new Intent(this, ManageRepo.class);
-						ArrayList<String> servers_lst = (ArrayList<String>) i.getSerializableExtra("repos");
-						if(servers_lst != null && servers_lst.size() > 0){
-							call.putExtra("uri", i.getSerializableExtra("repos"));
-							startActivityForResult(call,NEWREPO_FLAG);
 						}
+					}else if(i.hasExtra("newrepo")){
+						Log.d("","olaaaaaaaaaaaa");
+						Intent call = new Intent(mctx, ManageRepo.class);
+						call.putExtra("newrepo", i.getStringExtra("newrepo"));
+						startActivityForResult(call,NEWREPO_FLAG);
+
+					}else if(i.hasExtra("linkxml")){
+
+					}else if(i.hasExtra("downloadAll")){
+						Intent call = new Intent(mctx, ScheduledDownload.class);
+						call.putExtra("downloadAll", "");
+						Log.d("passou aqui","");
+						startActivity(call);
+
 					}
-				}else if(i.hasExtra("newrepo")){
-					Log.d("","olaaaaaaaaaaaa");
-					Intent call = new Intent(mctx, ManageRepo.class);
-					call.putExtra("newrepo", i.getStringExtra("newrepo"));
-					startActivityForResult(call,NEWREPO_FLAG);
-					
-				}else if(i.hasExtra("linkxml")){
-					
-				}else if(i.hasExtra("downloadAll")){
-					Intent call = new Intent(mctx, ScheduledDownload.class);
-					call.putExtra("downloadAll", "");
-					Log.d("passou aqui","");
-					startActivity(call);
-					
+
 				}
-				
-			}
-			prefEdit.putBoolean("intentChanged", false);
-			prefEdit.commit();
+				prefEdit.putBoolean("intentChanged", false);
+				prefEdit.commit();
 			}
 		}
-		
-//		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
-//			schDownAll();
-//    	}
-//		registerReceiver(broadcastReceiver , intentFilter);
+
+		//		if(netstate.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()==NetworkInfo.State.CONNECTED){
+		//			schDownAll();
+		//    	}
+		//		registerReceiver(broadcastReceiver , intentFilter);
 		if(db.checkNPackages()){
 			updateRepos();
 		}
 	}
 
-	
-	
-	
-	
-//	private void installFromLink(String path){
-//		try{
-//			Log.d("Aptoide-RemoteInTab", "installing From Link: "+path);
-//			
-//			String file_out = new String(SDCARD+"/.aptoide/fetched.apk");
-//			FileOutputStream saveit = new FileOutputStream(file_out);
-//			DefaultHttpClient mHttpClient = new DefaultHttpClient();
-//			HttpGet mHttpGet = new HttpGet(path);
-//			
-//			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-//
-//			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-//				 return;
-//			 }
-//
-//            Log.d("Aptoide-RemoteInTab", "installFromLink Content-Lenght: "+mHttpResponse.getEntity().getContentLength());
-//			InputStream getit = mHttpResponse.getEntity().getContent();
-//			byte data[] = new byte[8096];
-//			int readed;
-//			while((readed = getit.read(data, 0, 8096)) != -1) {
-//				saveit.write(data,0,readed);
-//			}
-//			
-//			intp = new Intent();
-//	    	intp.setAction(android.content.Intent.ACTION_VIEW);
-//	    	intp.setDataAndType(Uri.parse("file://" + file_out), "application/vnd.android.package-archive");
-//	    	fetchHandler.sendEmptyMessage(0);
-//		}catch(IOException e) { }
-//	}
+
+
+
+
+	//	private void installFromLink(String path){
+	//		try{
+	//			Log.d("Aptoide-RemoteInTab", "installing From Link: "+path);
+	//			
+	//			String file_out = new String(SDCARD+"/.aptoide/fetched.apk");
+	//			FileOutputStream saveit = new FileOutputStream(file_out);
+	//			DefaultHttpClient mHttpClient = new DefaultHttpClient();
+	//			HttpGet mHttpGet = new HttpGet(path);
+	//			
+	//			HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+	//
+	//			if(mHttpResponse.getStatusLine().getStatusCode() == 401){
+	//				 return;
+	//			 }
+	//
+	//            Log.d("Aptoide-RemoteInTab", "installFromLink Content-Lenght: "+mHttpResponse.getEntity().getContentLength());
+	//			InputStream getit = mHttpResponse.getEntity().getContent();
+	//			byte data[] = new byte[8096];
+	//			int readed;
+	//			while((readed = getit.read(data, 0, 8096)) != -1) {
+	//				saveit.write(data,0,readed);
+	//			}
+	//			
+	//			intp = new Intent();
+	//	    	intp.setAction(android.content.Intent.ACTION_VIEW);
+	//	    	intp.setDataAndType(Uri.parse("file://" + file_out), "application/vnd.android.package-archive");
+	//	    	fetchHandler.sendEmptyMessage(0);
+	//		}catch(IOException e) { }
+	//	}
 
 	/**
 	 * @see android.app.Activity#onTouchEvent(android.view.MotionEvent)
@@ -1118,33 +1122,33 @@ public class RemoteInTab extends BaseManagement {
 		return false;
 	}
 
-	
-	
+
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		// TODO Auto-generated method stub
-		
-		
-		
+
+
+
 		menu.add("Uninstall");
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
-	
-	
-	
+
+
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		// TODO Auto-generated method stub
-		
-		
+
+
 		AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 		View tmp = ((View)(info.targetView)).findViewById(R.id.app_hashid);
 		final String apkid = ((LinearLayout)tmp).getTag().toString();
-		
+
 		removeApk(apkid);
-		
+
 		return super.onContextItemSelected(item);
 	}
 
@@ -1153,10 +1157,10 @@ public class RemoteInTab extends BaseManagement {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		super.onPrepareOptionsMenu(menu);
 		menu.clear();
-		
+
 		if(currentAppsList==EnumAppsLists.Available){
-		menu.add(Menu.NONE,EnumOptionsMenu.UPDATE_REPO.ordinal(),EnumOptionsMenu.UPDATE_REPO.ordinal(),R.string.menu_update_repo)
-		.setIcon(android.R.drawable.ic_menu_rotate);
+			menu.add(Menu.NONE,EnumOptionsMenu.UPDATE_REPO.ordinal(),EnumOptionsMenu.UPDATE_REPO.ordinal(),R.string.menu_update_repo)
+			.setIcon(android.R.drawable.ic_menu_rotate);
 		}
 		if(currentAppsList==EnumAppsLists.Update){
 			menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.menu_update_all)
@@ -1165,17 +1169,17 @@ public class RemoteInTab extends BaseManagement {
 		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options)
 		.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.menu_manage)
-			.setIcon(android.R.drawable.ic_menu_agenda);
+		.setIcon(android.R.drawable.ic_menu_agenda);
 		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
-			.setIcon(android.R.drawable.ic_menu_preferences);
+		.setIcon(android.R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
-			.setIcon(android.R.drawable.ic_menu_help);
+		.setIcon(android.R.drawable.ic_menu_help);
 		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(android.R.drawable.ic_menu_recent_history);
-		
+
 		return true;
 	}
-	
-	
+
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
@@ -1192,7 +1196,7 @@ public class RemoteInTab extends BaseManagement {
 		case DISPLAY_OPTIONS:
 			final AlertDialog p = resumeMe();
 			p.show();
-			
+
 			new Thread(){
 				@Override
 				public void run() {
@@ -1230,7 +1234,7 @@ public class RemoteInTab extends BaseManagement {
 				}
 			}.start();
 			break;
-			
+
 		case MANAGE_REPO:
 			Intent i = new Intent(this, ManageRepo.class);
 			startActivityForResult(i,NEWREPO_FLAG);
@@ -1263,7 +1267,7 @@ public class RemoteInTab extends BaseManagement {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public void forceUpdateRepos(){
 		final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
 		if(!db.areServers()){
@@ -1272,7 +1276,7 @@ public class RemoteInTab extends BaseManagement {
 			upd_alrt.setMessage(getText(R.string.updating_norepos));
 			upd_alrt.setButton(getText(R.string.btn_ok), new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					
+
 				}
 			});
 		}else{
@@ -1280,9 +1284,9 @@ public class RemoteInTab extends BaseManagement {
 			try {
 				freeConnectionAvailable = netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
 				freeConnectionAvailable = freeConnectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
-				
+
 			} catch (Exception e) { }
-			
+
 			if(freeConnectionAvailable){
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				upd_alrt.setTitle(getText(R.string.update_repos));
@@ -1314,24 +1318,24 @@ public class RemoteInTab extends BaseManagement {
 			}
 		}
 		upd_alrt.show();
-		
+
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see android.app.ActivityGroup#onPause()
 	 */
 	@Override
 	protected void onPause() {
-		
+
 		super.onPause();
 		prefEdit.putBoolean("intentChanged", false);
 		prefEdit.commit();
-		
+
 		Log.d("RemoteInTab","onPause");
 	}
-	
-	
+
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -1399,47 +1403,47 @@ public class RemoteInTab extends BaseManagement {
 		}
 
 	}
-	
+
 	public boolean updateRepos(){
-		
-		
-//		/**
-//	     * @author rafael
-//	     * @since summerinternship2011
-//	     * 
-//	     */
-//	    class UpdateRepos extends AsyncTask<Void, Void, Void> {
-//			
-//			/**
-//			 * 
-//			 * @param firstVisibleItem
-//			 * @param visibleItemCount
-//			 * @param totalItemCount
-//			 */
-//			public UpdateRepos() {
-//				
-//			}
-//			
-//			@Override
-//			protected Void doInBackground(Void... params) {
-//				return null;
-//			}
-//
-//			@Override
-//			protected Void onPostExecute(Void result) {
-//				return null;
-//			}
-//			
-//			@Override
-//			protected Void onCancelled() {
-//				return null;
-//			}
-//			
-//	    } //End of Fetch class
+
+
+		//		/**
+		//	     * @author rafael
+		//	     * @since summerinternship2011
+		//	     * 
+		//	     */
+		//	    class UpdateRepos extends AsyncTask<Void, Void, Void> {
+		//			
+		//			/**
+		//			 * 
+		//			 * @param firstVisibleItem
+		//			 * @param visibleItemCount
+		//			 * @param totalItemCount
+		//			 */
+		//			public UpdateRepos() {
+		//				
+		//			}
+		//			
+		//			@Override
+		//			protected Void doInBackground(Void... params) {
+		//				return null;
+		//			}
+		//
+		//			@Override
+		//			protected Void onPostExecute(Void result) {
+		//				return null;
+		//			}
+		//			
+		//			@Override
+		//			protected Void onCancelled() {
+		//				return null;
+		//			}
+		//			
+		//	    } //End of Fetch class
 		updating=true;
 		prefEdit.putBoolean("kill_thread", true);
-    	prefEdit.commit();
-    	Log.d("Aptoide","======================= I UPDATEREPOS");
+		prefEdit.commit();
+		Log.d("Aptoide","======================= I UPDATEREPOS");
 		pd = new ProgressDialog(this);
 		pd.setTitle(getText(R.string.top_please_wait));
 		pd.setMessage(getText(R.string.updating_msg));
@@ -1448,33 +1452,33 @@ public class RemoteInTab extends BaseManagement {
 		pd.setCancelable(false);
 		pd.setCanceledOnTouchOutside(false);
 		pd.show();
-//		pd.setMax(1);
-		
-		
+		//		pd.setMax(1);
+
+
 		/*updt_pd = new Dialog(this);
-		
+
 		updt_pd.setContentView(R.layout.updatebars);
 		updt_pd.setTitle(getText(R.string.top_please_wait));
-	
+
 		updt_pd.show();*/
-		
+
 		//Check for connection first!
 		boolean connectionAvailable = false;
 		try {
 			connectionAvailable = netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
-			
+
 		} catch (Exception e) { }
 		try {
 			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
-			
+
 		} catch (Exception e) { }
-		
-		
+
+
 		if(connectionAvailable){
-//			myTabHost.setCurrentTabByTag("inst");
-			
+			//			myTabHost.setCurrentTabByTag("inst");
+
 			new Thread() {
 				public void run() {
 					try{
@@ -1494,27 +1498,27 @@ public class RemoteInTab extends BaseManagement {
 								inuse_serv.add(node);
 							}else{
 								db.cleanRepoApps(node.uri);
-								
+
 							}
 						}
 						ServerNode last_tmp = inuse_serv.lastElement();
 						prefEdit.putBoolean("kill_thread", false);
-				    	prefEdit.commit();
-				    	if(sPref.getString("icdown", "nd").equalsIgnoreCase("nd")){
-				    		prefEdit.putBoolean("fetchicons", false);
-				    	}else if((sPref.getString("icdown", "nd").equalsIgnoreCase("wo")) && (netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED)){
-				    		prefEdit.putBoolean("fetchicons", false);
-				    	}else{
-				    		prefEdit.putBoolean("fetchicons", true);
-				    	}
-				    	prefEdit.commit();
+						prefEdit.commit();
+						if(sPref.getString("icdown", "nd").equalsIgnoreCase("nd")){
+							prefEdit.putBoolean("fetchicons", false);
+						}else if((sPref.getString("icdown", "nd").equalsIgnoreCase("wo")) && (netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED)){
+							prefEdit.putBoolean("fetchicons", false);
+						}else{
+							prefEdit.putBoolean("fetchicons", true);
+						}
+						prefEdit.commit();
 						for(ServerNode node: inuse_serv){
 							Log.d("Aptoide",node.uri + " is starting... : " + node.inuse);
 							//if(node.inuse){
-							
-							
-							
-							
+
+
+
+
 							in_repo++;
 							counter_msg = null;
 							counter_msg = new Message();
@@ -1526,7 +1530,7 @@ public class RemoteInTab extends BaseManagement {
 							if(parse == 0){
 								//db.cleanRepoApps(node.uri);
 								xmlPass(node.uri,true,last_tmp.equals(node));
-//								pd.setProgress(100);
+								//								pd.setProgress(100);
 								if(fetch_extra){
 									Log.d("Aptoide","Adding repo to extras list...");
 									extras_repo.add(node);
@@ -1547,86 +1551,86 @@ public class RemoteInTab extends BaseManagement {
 						Log.d("Aptoide","======================= I UPDATEREPOS SAY KILL");
 						update_handler.sendEmptyMessage(0);
 						updating=false;
-						
+
 					}
 				}
 			}.start();
-			
-			
-			
+
+
+
 			return true;
 		}else{
 			Log.d("Aptoide","======================= I UPDATEREPOS DISMISS");
 			pd.dismiss();
-            Toast.makeText(RemoteInTab.this, getText(R.string.aptoide_error), Toast.LENGTH_LONG).show(); 
+			Toast.makeText(RemoteInTab.this, getText(R.string.aptoide_error), Toast.LENGTH_LONG).show(); 
 			return false;
 		}
 	}
-	
+
 	/*
 	 * Pass XML info to BD
 	 * @type: true - info.xml
 	 * 		  false - extras.xml
 	 */
 	private void xmlPass(String srv, boolean type, boolean is_last){
-	    SAXParserFactory spf = SAXParserFactory.newInstance();
-	    File xml_file = null;
-	    SAXParser sp = null;
-    	XMLReader xr = null;
-	    try {
-	    	keepScreenOn.acquire();
-	    	
-	    	sp = spf.newSAXParser();
-	    	xr = sp.getXMLReader();
-	    	if(type){
-	    		Log.d(""+type, "type");
-	    		RssHandler handler = new RssHandler(this,this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
-	    		xr.setContentHandler(handler);
-	    		xr.setErrorHandler(handler);
-	    		xml_file = new File(XML_PATH);
-	    	}else{
-	    		ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
-	    		xr.setContentHandler(handler);
-	    		xml_file = new File(EXTRAS_XML_PATH);
-	    	}
-	    	
-	    	InputStreamReader isr = new FileReader(xml_file);
-	    	InputSource is = new InputSource(isr);
-	    	xr.parse(is);
-	    	
-	    	keepScreenOn.release();
-	    	
-	    } catch (Exception e){
-	    	e.printStackTrace();
-	    	xr = null;
+		SAXParserFactory spf = SAXParserFactory.newInstance();
+		File xml_file = null;
+		SAXParser sp = null;
+		XMLReader xr = null;
+		try {
+			keepScreenOn.acquire();
+
+			sp = spf.newSAXParser();
+			xr = sp.getXMLReader();
+			if(type){
+				Log.d(""+type, "type");
+				RssHandler handler = new RssHandler(this,this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
+				xr.setContentHandler(handler);
+				xr.setErrorHandler(handler);
+				xml_file = new File(XML_PATH);
+			}else{
+				ExtrasRssHandler handler = new ExtrasRssHandler(this, srv);
+				xr.setContentHandler(handler);
+				xml_file = new File(EXTRAS_XML_PATH);
+			}
+
+			InputStreamReader isr = new FileReader(xml_file);
+			InputSource is = new InputSource(isr);
+			xr.parse(is);
+
+			keepScreenOn.release();
+
+		} catch (Exception e){
+			e.printStackTrace();
+			xr = null;
 		}finally{
 			xml_file.delete();
 		}
 	}
-	
-	
+
+
 	/*
 	 * Get extras.xml file from server and save it in the SD card 
 	 */
 	/*private boolean downloadExtras(String srv, String delta_hash){
 		String url = srv+REMOTE_EXTRAS_FILE;
-		
+
         try {
         	//String delta_hash = db.getServerDelta(srv);
         	if(delta_hash.length()>2)
         		url = url.concat("?hash="+delta_hash);
-        	
+
         	Log.d("Aptoide","A fazer fetch extras de: " + url);
 
-        	
+
         	FileOutputStream saveit = new FileOutputStream(LOCAL_PATH+REMOTE_EXTRAS_FILE);
 
         	HttpResponse mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
-        	
+
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
-				
+
 				Log.d("Aptoide","extras.xml: " + mHttpResponse.getEntity().getContentEncoding());
-				
+
 				if((mHttpResponse.getEntity().getContentEncoding() != null) && (mHttpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
 
 					//byte[] buffer = EntityUtils.toByteArray(mHttpResponse.getEntity());
@@ -1660,50 +1664,50 @@ public class RemoteInTab extends BaseManagement {
 		  catch (ClientProtocolException e) { return false;} 
 		  catch (IOException e) { return false;}
 	}*/
-	
+
 	/*
 	 * Get info.xml file from server and save it in the SD card
 	 */
 	private int downloadList(String srv, String delta_hash){
 		String url = srv+REMOTE_FILE;
-        try {
-        	
-        	//String delta_hash = db.getServerDelta(srv);
-        	if(delta_hash.length()>2)
-        		url = url.concat("?hash="+delta_hash);
-        	
-        	Log.d("Aptoide","A fazer fetch info de: " + url);
-        	
-        	FileOutputStream saveit = new FileOutputStream(XML_PATH);
-        	        	
-        	
-        	HttpResponse mHttpResponse = null; //NetworkApis.getHttpResponse(url, srv, mctx);
-        	
-        	if(mHttpResponse == null){
-        		for(int xx=0; xx<2; xx++){
-        			try{
-        				mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
-        				if(mHttpResponse != null)
-        					break;
-        				else
-        					Log.d("Aptoide","--------------------->Connection is null");
-        			}catch (Exception e) {	continue;}
-        		}
-        		if(mHttpResponse == null)
-        			return -1;
-        	}
-        	
-        	Log.d("Aptoide","Got status: "+ mHttpResponse.getStatusLine().getStatusCode());
-        	
+		try {
+
+			//String delta_hash = db.getServerDelta(srv);
+			if(delta_hash.length()>2)
+				url = url.concat("?hash="+delta_hash);
+
+			Log.d("Aptoide","A fazer fetch info de: " + url);
+
+			FileOutputStream saveit = new FileOutputStream(XML_PATH);
+
+
+			HttpResponse mHttpResponse = null; //NetworkApis.getHttpResponse(url, srv, mctx);
+
+			if(mHttpResponse == null){
+				for(int xx=0; xx<2; xx++){
+					try{
+						mHttpResponse = NetworkApis.getHttpResponse(url, srv, mctx);
+						if(mHttpResponse != null)
+							break;
+						else
+							Log.d("Aptoide","--------------------->Connection is null");
+					}catch (Exception e) {	continue;}
+				}
+				if(mHttpResponse == null)
+					return -1;
+			}
+
+			Log.d("Aptoide","Got status: "+ mHttpResponse.getStatusLine().getStatusCode());
+
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				Log.d("Aptoide","Got status 200");
-				
+
 				keepScreenOn.acquire();
-				
+
 				// see last-modified...
 				MessageDigest md5hash = MessageDigest.getInstance("MD5");
 				Header lst_modif = mHttpResponse.getLastHeader("Last-Modified");
-				
+
 				if(lst_modif != null){
 					Log.d("Aptoide","lst_modif not null!");
 					String lst_modif_str = lst_modif.getValue();
@@ -1723,9 +1727,9 @@ public class RemoteInTab extends BaseManagement {
 						}
 					}
 				}
-//@dsilveira #531 +20lines fix OutOfMemory crash			
+				//@dsilveira #531 +20lines fix OutOfMemory crash			
 				InputStream instream = null;
-				
+
 				if((mHttpResponse.getEntity().getContentEncoding() != null) && (mHttpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
 
 					Log.d("Aptoide","with gzip");
@@ -1737,16 +1741,16 @@ public class RemoteInTab extends BaseManagement {
 					instream = mHttpResponse.getEntity().getContent();
 
 				}
-				
+
 				int nRead;
 				byte[] data = new byte[1024];
 
 				while ((nRead = instream.read(data, 0, data.length)) != -1) {
 					saveit.write(data, 0, nRead);
 				}
-				
+
 				keepScreenOn.release();
-				
+
 			}else{
 				return -1;
 				//Does nothing
@@ -1754,67 +1758,67 @@ public class RemoteInTab extends BaseManagement {
 			return 0;
 		} catch (UnknownHostException e){return -1;
 		} catch (ClientProtocolException e) { return -1;} 
-		  catch (IOException e) {  return -1;}
-		  catch (IllegalArgumentException e) { return -1;} 
-		  catch (NoSuchAlgorithmException e) { return -1;}
-		  catch (Exception e) {return -1;}
+		catch (IOException e) {  return -1;}
+		catch (IllegalArgumentException e) { return -1;} 
+		catch (NoSuchAlgorithmException e) { return -1;}
+		catch (Exception e) {return -1;}
 	}
-	
-	
+
+
 	/*
 	 * Handlers for thread functions that need to access GUI
 	 */
 	private Handler update_handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-        	prefEdit.putBoolean("update", true);
-        	prefEdit.commit();
-        	while(pd.isShowing()){
-        		Log.d("Aptoide","======================= I U KILL");
-        		pd.dismiss();
-//        		schDownAll();
-//        		downloadQueueService.dismissAllNotifications();
-        	}
-        	/*if(updt_pd.isShowing())
+		@Override
+		public void handleMessage(Message msg) {
+			prefEdit.putBoolean("update", true);
+			prefEdit.commit();
+			while(pd.isShowing()){
+				Log.d("Aptoide","======================= I U KILL");
+				pd.dismiss();
+				//        		schDownAll();
+				//        		downloadQueueService.dismissAllNotifications();
+			}
+			/*if(updt_pd.isShowing())
         		updt_pd.dismiss();*/
-        	
-//        	myTabHost.setCurrentTabByTag("avail");
-        	onResume();
-    		if(failed_repo.size() > 0){
-    			final AlertDialog p = new AlertDialog.Builder(mctx).create();
-    			p.setTitle(getText(R.string.top_error));
-    			p.setIcon(android.R.drawable.ic_dialog_alert);
-    			String report = getText(R.string.error_on_update).toString();
-    			for(String node: failed_repo){
-    				report = report.concat(node+"\n");
-    			}
-    			p.setMessage(report);
-    			p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
-    			      public void onClick(DialogInterface dialog, int which) {
-    			          p.dismiss();
-    			        } });
-    			p.show();
-    		}else{
-    			final AlertDialog p = new AlertDialog.Builder(mctx).create();
+
+			//        	myTabHost.setCurrentTabByTag("avail");
+			onResume();
+			if(failed_repo.size() > 0){
+				final AlertDialog p = new AlertDialog.Builder(mctx).create();
+				p.setTitle(getText(R.string.top_error));
+				p.setIcon(android.R.drawable.ic_dialog_alert);
+				String report = getText(R.string.error_on_update).toString();
+				for(String node: failed_repo){
+					report = report.concat(node+"\n");
+				}
+				p.setMessage(report);
+				p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						p.dismiss();
+					} });
+				p.show();
+			}else{
+				final AlertDialog p = new AlertDialog.Builder(mctx).create();
 				p.setIcon(android.R.drawable.ic_dialog_alert);
 				p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						p.dismiss();
 					} });
-    			
-    			if(there_was_update){
-    				p.setMessage(getString(R.string.update_done_msg1));
-    				there_was_update = false;
-    			}else{
-    				p.setMessage("No Repositories list needs update. Cache used.");
-    			}
+
+				if(there_was_update){
+					p.setMessage(getString(R.string.update_done_msg1));
+					there_was_update = false;
+				}else{
+					p.setMessage("No Repositories list needs update. Cache used.");
+				}
 				p.show();
-    		}
-    		
-    		Intent goExtraServ = new Intent(mctx, FetchExtrasService.class);
-    		goExtraServ.putExtra("lstex", extras_repo);
-    		mctx.startService(goExtraServ);
-        	/*new Thread() {
+			}
+
+			Intent goExtraServ = new Intent(mctx, FetchExtrasService.class);
+			goExtraServ.putExtra("lstex", extras_repo);
+			mctx.startService(goExtraServ);
+			/*new Thread() {
 				public void run() {
 					Log.d("Aptoide","Extras thread START!");
 					try{
@@ -1834,26 +1838,26 @@ public class RemoteInTab extends BaseManagement {
 					Log.d("Aptoide","Extras thread DONE!");
 				}
 			}.start();*/ 
-    		
-    		prefEdit.putBoolean("redrawis", true);
-    		prefEdit.commit();
-    		new Thread(){
+
+			prefEdit.putBoolean("redrawis", true);
+			prefEdit.commit();
+			new Thread(){
 				@Override
 				public void run() {
 					super.run();
 					try {
-					while(sPref.getBoolean("redrawis", true)){
-						
-						Thread.sleep(10);
-						
-					}
+						while(sPref.getBoolean("redrawis", true)){
+
+							Thread.sleep(10);
+
+						}
 					} catch (InterruptedException e) { }
 					displayrefresh2.sendEmptyMessage(0);
 				}
-				
+
 			}.start();
-        }
-       
+		}
+
 	};
 
 	private Handler update_updater_tick = new Handler(){
@@ -1861,15 +1865,15 @@ public class RemoteInTab extends BaseManagement {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			
+
 			pd.incrementProgressBy(1);
 		}
-		
-		
-		
+
+
+
 	};
-	
-	
+
+
 	private Handler update_updater_set = new Handler(){
 
 		@Override
@@ -1879,26 +1883,26 @@ public class RemoteInTab extends BaseManagement {
 			pd.setIndeterminate(false);
 			pd.setProgress(0);
 			pd.setMax(msg.what);
-			
-//			if(!pd.isShowing())
-				
-			
+
+			//			if(!pd.isShowing())
+
+
 
 		}
-		
+
 	};
-	
+
 	private Handler update_updater = new Handler(){
 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			pd.setMessage(getString(R.string.update_process, new Object[]{msg.arg1, msg.arg2}));//"Updating repository " + msg.arg1 + " of " + msg.arg2);
-			
+
 		}
-		
+
 	};
-	
+
 	private Handler disable_fetch_extra = new Handler(){
 
 		@Override
@@ -1907,24 +1911,24 @@ public class RemoteInTab extends BaseManagement {
 			fetch_extra = false;
 			Log.d("Aptoide","Extras is: " + fetch_extra);
 		}
-		 
+
 	};
-	
-	
-	
+
+
+
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 	}
 
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
-		
+
 		String action = intent.getAction();
-//		Intent intent = getIntent();
+		//		Intent intent = getIntent();
 		if (action != null) {
 			if (action.equals("pt.caixamagica.aptoide.INSTALL_APK")) {
 				Log.d("Aptoide", "* * * * *  InstallApk 2 * * * * *");
@@ -1939,8 +1943,8 @@ public class RemoteInTab extends BaseManagement {
 		if (sPref.getBoolean("intentChanged", false)) {
 			prefEdit.putBoolean("intentChanged", false);
 			prefEdit.commit();
-//			setIntent(intent1);
-		
+			//			setIntent(intent1);
+
 			if (intent.hasExtra("repos")) {
 				if (intent.hasExtra("apps")) {
 					ArrayList<String> servers_lst = (ArrayList<String>) intent.getSerializableExtra("repos");
@@ -2021,51 +2025,51 @@ public class RemoteInTab extends BaseManagement {
 				Intent call = new Intent(this, ScheduledDownload.class);
 				call.putExtra("downloadAll", "");
 				startActivity(call);
-				
-				
+
+
 			}
 
 		}
-		
-		
+
+
 	}
-	
+
 
 
 	private void installApk(Intent intent){
 		Bundle arguments = intent.getExtras();
 		String localPath = arguments.getString("localPath");
-		
+
 		String version = arguments.getString("version");
-		
+
 		String packageName = arguments.getString("packageName");
 		int apkidHash = arguments.getInt("apkidHash");
 		boolean isUpdate = arguments.getBoolean("isUpdate");
 		Log.d("Aptoide-RemoteInTab", "installApk: "+localPath+" apkidHash: "+apkidHash+" isUpdate: "+isUpdate);
-		
+
 		Intent installApkAction = new Intent();
 		if(isUpdate){
 			installApkAction.setAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
-	    	installApkAction.putExtra("packageName", packageName);
-//			myTabHost.setCurrentTabByTag("updt");
+			installApkAction.putExtra("packageName", packageName);
+			//			myTabHost.setCurrentTabByTag("updt");
 		}else{
 			installApkAction.setAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
-//			myTabHost.setCurrentTabByTag("inst");
+			//			myTabHost.setCurrentTabByTag("inst");
 		}
-			
+
 		installApkAction.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
-    	installApkAction.putExtra("localPath", localPath);
-    	installApkAction.putExtra("version", version);
-    	installApkAction.putExtra("apkidHash", apkidHash);
-    	installApkAction.putExtra("packageName", packageName);
-    	
-//    	IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
-//	    registerReceiver(new InstallApkListener(), filter);
+		//		installApkAction.setFlags(Intent.FLAG_RECEIVER_REGISTERED_ONLY);
+		installApkAction.putExtra("localPath", localPath);
+		installApkAction.putExtra("version", version);
+		installApkAction.putExtra("apkidHash", apkidHash);
+		installApkAction.putExtra("packageName", packageName);
+
+		//    	IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
+		//	    registerReceiver(new InstallApkListener(), filter);
 		sendBroadcast(installApkAction);
 		getIntent().setAction("android.intent.action.VIEW");
 		startActivity(getIntent());
-		
+
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
 
@@ -2105,7 +2109,7 @@ public class RemoteInTab extends BaseManagement {
 			}else{
 				listTextHeader.setVisibility(View.GONE);
 			}
-			
+
 			break;
 		case Installed:
 			nextView.setVisibility(View.VISIBLE);
@@ -2129,12 +2133,12 @@ public class RemoteInTab extends BaseManagement {
 			}else{
 				listTextHeader.setVisibility(View.GONE);
 			}
-			
+
 			break; 
 		}
 
 	}
-	
+
 	class SwypeDetector extends SimpleOnGestureListener {
 
 		private static final int SWIPE_MIN_DISTANCE = 80;
@@ -2192,13 +2196,13 @@ public class RemoteInTab extends BaseManagement {
 	private AtomicBoolean swyping = new AtomicBoolean(false);;
 	private EnumAppsLists currentAppsList = null;
 	private Handler swypeDelayHandler = new Handler();
-	
+
 	private GestureDetector swypeDetector;
 	private View.OnTouchListener swypeListener;
 	private ListAdapter handler_adpt;
-	
-	
-	
+
+
+
 	protected Handler displayRefresh = new Handler(){
 
 		@Override
@@ -2211,72 +2215,72 @@ public class RemoteInTab extends BaseManagement {
 			availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			availView.setSelection(pos-1);
 		}
-		 
-	 };
-	 
-	 protected Handler redrawHandler = new Handler(){
+
+	};
+
+	protected Handler redrawHandler = new Handler(){
 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			redraw();
 		}
-		 
-	 };
-	 
-	 protected Handler onResumeHandler = new Handler(){
+
+	};
+
+	protected Handler onResumeHandler = new Handler(){
 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			availView.setAdapter(getAvailable(null,-1));
 		}
-		 
-	 };
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	};
+
+
+
+
+
+
+
+
+
 	public Handler displayrefresh2 = new Handler(){
-		
 
-		
 
-		
+
+
+
 
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			if(sPref.getBoolean("changeinst", false)){
-				
+
 				availView.setAdapter(getAvailable(shown_now,main_shown_now));
 				installView.setAdapter(instAdpt);
-				
-//					vf.removeView(updateView);
-//					vf.addView(emptyUpdatesList);
-					
-					
-				
-					updateView.setAdapter(updateAdpt);
-				
+
+				//					vf.removeView(updateView);
+				//					vf.addView(emptyUpdatesList);
+
+
+
+				updateView.setAdapter(updateAdpt);
+
 				if(!sPref.getBoolean("mode", false)){
 					listTextHeader.setVisibility(View.GONE);
 				}
-				
+
 				prefEdit.remove("changeinst");
 				prefEdit.commit();
 			}
 		}
 	};
-	
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && sPref.getBoolean("mode", false) && deep > 0) {
-	        switch (deep) {
+			switch (deep) {
 			case 1:
 				availView.setAdapter(getRootCtg());
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -2299,18 +2303,18 @@ public class RemoteInTab extends BaseManagement {
 				deep = 1;
 				break;
 			}
-			
-	        return true;
-	    }
+
+			return true;
+		}
 		return super.onKeyDown(keyCode, event);
 	}
-	
-	
+
+
 	public void updateAll(){
 		Log.d("Aptoide-TabUpdates", "Starting download of all possible updates");
-		
+
 		for(ApkNode node: apk_lst){
-			
+
 			if(node.status == 2){
 				queueDownload(node.apkid, node.verUpdate, true);
 			}
