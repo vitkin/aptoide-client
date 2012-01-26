@@ -175,12 +175,33 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 		}
 		return listApps.toString();
 	}
+
+	
+	@Override
+	public int hashCode() {
+		return categoryHashid;
+	}
+
+	
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof ViewDisplayCategory){
+			ViewDisplayCategory category = (ViewDisplayCategory) object;
+			if(category.hashCode() == this.hashCode()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	
 		
 	
 	// Parcelable stuff //
 	
-	
+
+
 	public static final Parcelable.Creator<ViewDisplayCategory> CREATOR = new
 			Parcelable.Creator<ViewDisplayCategory>() {
 		public ViewDisplayCategory createFromParcel(Parcel in) {
