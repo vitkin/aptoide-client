@@ -25,7 +25,6 @@ import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
-import cm.aptoide.pt.data.model.ViewManageRepos;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLReposInfo;

@@ -407,12 +407,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							try {
 								Log.d("Aptoide","resetting categories list.");
 								setFreshCategories(serviceDataCaller.callGetCategories());
-								if( category == null || (category != null && category.hasChildren()) ){
+								if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_CATEGORIES.ordinal());
 								}else{
 									offset = 0;
 									
-									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE+" category: "+category);
+									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE+" "+category);
 									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, Constants.DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 								}

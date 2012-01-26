@@ -351,6 +351,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			
 			checkForSelfUpdate();
 			
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			
 			isRunning = true;
 			Log.d("Aptoide ServiceData", "Service started");
 
@@ -504,7 +506,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 
 	@Override
-	public void onDestroy() {
+	public void onDestroy() {	//TODO make sure to close all child threads
 		managerNotifications.destroy();
 		unregisterReceiver(installedAppsChangeListener);
 		Toast.makeText(this, R.string.aptoide_stopped, Toast.LENGTH_LONG).show();
@@ -626,16 +628,26 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerDatabase.repoIsManaged(repoHashid);
 	}
 	
-	public void removeRepo(int repoHashid){
-		AptoideLog.d(AptoideServiceData.this, "Removing repo: "+repoHashid);
-		managerDatabase.removeRepository(repoHashid);
-		resetAvailableLists();
+	public void removeRepo(final int repoHashid){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Removing repo: "+repoHashid);
+				managerDatabase.removeRepository(repoHashid);
+				resetAvailableLists();				
+			}
+		});
 	}
 	
-	public void toggleInUseRepo(int repoHashid, boolean inUse){
-		AptoideLog.d(AptoideServiceData.this, "Setting repo: "+repoHashid+" inUse: "+inUse);
-		managerDatabase.toggleRepositoryInUse(repoHashid, inUse);
-		resetAvailableLists();
+	public void toggleInUseRepo(final int repoHashid, final boolean inUse){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Setting repo: "+repoHashid+" inUse: "+inUse);
+				managerDatabase.toggleRepositoryInUse(repoHashid, inUse);
+				resetAvailableLists();				
+			}
+		});
 	}
 	
 	
@@ -655,7 +667,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				}
 				ViewCache cache = managerDownloads.startRepoBareDownload(repository);
 //				Looper.prepare();
-//				Toast.makeText(getApplicationContext(), "finisehd downloading bare list", Toast.LENGTH_LONG).show();
+//				Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
 				
 				managerXml.repoBareParse(repository, cache);
 				//TODO find some way to track global parsing completion status, probably in managerXml
@@ -755,30 +767,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 //		Toast.makeText(AptoideServiceData.this, "app stats available", Toast.LENGTH_LONG).show();
 	}
 	
-//	public void getRepoIconsExtraordinarily(final ViewRepository repository, final int offset){
-//		try{
-//
-//			new Thread(){
-//				public void run(){
-//					this.setPriority(Thread.MAX_PRIORITY);
-//					if(!managerDownloads.isConnectionAvailable()){
-//						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-//					}
-//					if(!getManagerCache().isFreeSpaceInSdcard()){
-//						//TODO raise exception
-//					}
-//					managerDownloads.getRepoIconsExtraordinarily(repository, managerDatabase.getIconsDownloadInfo(repository, offset, Constants.SIZE_CACHE_OF_DISPLAY_LISTS));
-//					//TODO find some way to track global parsing completion status, probably in managerXml
-//				}
-//			}.start();
-//
-//
-//		} catch(Exception e){
-//			/** this should never happen */
-//			//TODO handle exception
-//			e.printStackTrace();
-//		}
-//	}
 	
 //	public void addRepoDownloadsInfo(final ViewRepository repository){
 //		try{
@@ -809,14 +797,19 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void fillAppInfo(final int appHashid){
-		ViewRepository repository = managerDatabase.getAppRepo(appHashid);
+		final ViewRepository repository = managerDatabase.getAppRepo(appHashid);
 		if(repository == null){
 			return;
 		}
 		if(!managerDownloads.isIconCached(appHashid)){
-			managerDownloads.getIcon(managerDatabase.getIconDownloadInfo(repository, appHashid), repository.isLoginRequired(), repository.getLogin());
+			scheduledThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					managerDownloads.getIcon(managerDatabase.getIconDownloadInfo(repository, appHashid), repository.isLoginRequired(), repository.getLogin());
+					updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
+				}
+			});
 		}
-		//TODO parallel check if the next 2 types of info already exist, and only if not get them
 		addRepoAppDownloadInfo(repository, appHashid);
 		addRepoAppExtras(repository, appHashid);
 		
@@ -830,6 +823,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
+				//TODO check with database if info is present and only if not continue with the download and parse of this info
 				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 				if(!managerDownloads.isConnectionAvailable()){
 					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
@@ -883,6 +877,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
+				//TODO check with database if info is present and only if not continue with the download and parse of this info
 				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 				if(!managerDownloads.isConnectionAvailable()){
 					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do

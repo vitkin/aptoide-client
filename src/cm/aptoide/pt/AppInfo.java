@@ -117,15 +117,9 @@ public class AppInfo extends Activity{
 	private AIDLAppInfo.Stub serviceDataCallback = new AIDLAppInfo.Stub() {
 		
 		@Override
-		public void refreshScreens() throws RemoteException {
-			Log.v("Aptoide-AppInfo", "received refreshScreens callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_SCREENS.ordinal());
-		}
-		
-		@Override
 		public void refreshIcon() throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			Log.v("Aptoide-AppInfo", "received refreshIcon callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_ICON.ordinal());
 		}
 		
 		@Override
@@ -147,6 +141,12 @@ public class AppInfo extends Activity{
 		}
 		
 		@Override
+		public void refreshScreens() throws RemoteException {
+			Log.v("Aptoide-AppInfo", "received refreshScreens callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_SCREENS.ordinal());
+		}
+		
+		@Override
 		public void newCommentsAvailable() throws RemoteException {
 			// TODO Auto-generated method stub
 			
@@ -160,9 +160,12 @@ public class AppInfo extends Activity{
         	EnumAppInfoTasks task = EnumAppInfoTasks.reverseOrdinal(msg.what);
         	switch (task) {
         	
+        		case REFRESH_ICON:
+	    			setIcon();        			
+        			break;
+        	
 	    		case UPDATE_APP_DOWNLOAD_INFO:
 	    			setVersionsDescription();
-	    			setIcon();
 	    			break;
         	
         		case UPDATE_APP_STATS:

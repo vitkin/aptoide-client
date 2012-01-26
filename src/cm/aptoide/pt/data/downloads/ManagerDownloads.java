@@ -520,7 +520,7 @@ public class ManagerDownloads {
 	}
 	
 	public ViewCache downloadApk(ViewDownload download){
-		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
+//		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
 		if(!getManagerCache().isApkCached(download.getNotification().getTargetsHashid()) || !getManagerCache().md5CheckOk(download.getCache())){
 			download(download, false);
 		}
@@ -569,7 +569,7 @@ public class ManagerDownloads {
 			FileOutputStream fileOutputStream = new FileOutputStream(localPath);
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(remotePath);
-			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
+//			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
 
 //				SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 //				String myid = sPref.getString("myId", "NoInfo");
@@ -624,7 +624,7 @@ public class ManagerDownloads {
 
 				}else{
 
-					Log.d("Aptoide-ManagerDownloads","No gzip");
+//					Log.d("Aptoide-ManagerDownloads","No gzip");
 					inputStream = httpResponse.getEntity().getContent();
 
 				}
