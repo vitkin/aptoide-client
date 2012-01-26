@@ -43,10 +43,6 @@
     
     <string name="no_apps">No apps to display!</string>
     
-    <string name="loading_available_apps">Loading available apps!</string>
-    <string name="loading_installed_apps">Loading installed apps!</string>
-    <string name="loading_updatable_apps">Loading updatable apps!</string>
-    
     <string name="options">Options</string>
     <string name="edit">Edit</string>
     <string name="add">Add</string>
