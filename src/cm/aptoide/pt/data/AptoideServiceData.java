@@ -606,6 +606,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 	}
 	
+	public void insertedRepo(int repoHashid){
+		try {
+			reposInfoClient.insertedRepo(repoHashid);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 
 	public ViewDisplayListRepos getRepos(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Repos");
@@ -657,6 +666,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void parsingRepoBareFinished(ViewRepository repository){
 		resetAvailableLists();
+		insertedRepo(repository.getHashid());
 		addRepoIconsInfo(repository);
 	}
 	

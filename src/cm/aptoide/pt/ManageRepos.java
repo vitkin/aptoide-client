@@ -574,7 +574,7 @@ public class ManageRepos extends ListActivity{
 	}
 	
 	
-	private void validateRepo(final String originalUriString){
+	private void validateRepo(final String originalUriString, boolean editMode){
 		
 		LayoutInflater li = LayoutInflater.from(ctx); 
 		View view = li.inflate(R.layout.addrepo, null);
@@ -604,10 +604,18 @@ public class ManageRepos extends ListActivity{
 		
 		Builder p = new AlertDialog.Builder(ctx).setView(view);
 		alrt = p.create();
-		alrt.setIcon(android.R.drawable.ic_menu_add);
-		alrt.setTitle(getText(R.string.add_repo));
+		CharSequence actionButtonString;
+		if(editMode){
+			alrt.setIcon(android.R.drawable.ic_menu_edit);
+			alrt.setTitle(getText(R.string.edit_repo));
+			actionButtonString = getText(R.string.edit);
+		}else{
+			alrt.setIcon(android.R.drawable.ic_menu_add);
+			alrt.setTitle(getText(R.string.add_repo));
+			actionButtonString = getText(R.string.add);
+		}
 
-		alrt.setButton(getText(R.string.add), new DialogInterface.OnClickListener() {
+		alrt.setButton(actionButtonString, new DialogInterface.OnClickListener() {
 			
 			public void onClick(DialogInterface dialog, int which) {
 				String uriString = uri.getText().toString();
@@ -847,7 +855,7 @@ public class ManageRepos extends ListActivity{
 		popupOptions popupOption = popupOptions.values()[item.getItemId()];
 		switch (popupOption) {
 		case EDIT_REPO:
-			validateRepo(repo_selected);
+			validateRepo(repo_selected, true);
 			refreshReposList();
 			break;
 
@@ -888,7 +896,7 @@ public class ManageRepos extends ListActivity{
 		
 		EnumOptionsMenu option = EnumOptionsMenu.reverseOrdinal(item.getItemId());
 		
-		CharSequence[] reposArray = new CharSequence[0];
+		CharSequence[] reposArray = new CharSequence[repos.getList().size()-reposInserting.size()];
 		int j=0;
 		for(int i=0; i<repos.getList().size(); i++){
 			if(!reposInserting.containsKey(repos.getList().get(i).get(Constants.KEY_REPO_HASHID))){
@@ -899,7 +907,7 @@ public class ManageRepos extends ListActivity{
 		
 		switch(option){
 			case ADD_REPO:
-				validateRepo(null);
+				validateRepo(null, false);
 				break;
 			
 				
@@ -958,7 +966,7 @@ public class ManageRepos extends ListActivity{
 				builder2.setPositiveButton(getString(R.string.edit), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int	whichButton) {
 						alert2.dismiss();
-						validateRepo(updt_repo);
+						validateRepo(updt_repo, true);
 						return;
 					}
 				});
