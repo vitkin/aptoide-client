@@ -294,7 +294,9 @@ public class RssHandler extends DefaultHandler{
 				
 			}
 			endTime = System.currentTimeMillis();
-			Log.d(new Long(endTime-startTime).toString(), tmp_apk.name);
+//			Log.d(new Long(endTime-startTime).toString(), tmp_apk.name);
+			
+
 			/*readed++;
 			if(readed >= 10){
 				readed = 0;
