@@ -6,6 +6,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
 import android.text.Html;
+import android.util.Log;
 
 public class ExtrasRssHandler extends DefaultHandler{
 	
@@ -21,6 +22,7 @@ public class ExtrasRssHandler extends DefaultHandler{
 	
 	private String e_apkid = null;
 	private String e_cmt = null;
+	private String string;
 	
 	public ExtrasRssHandler(Context ctx, String srv){
 		mctx = ctx;
@@ -33,10 +35,12 @@ public class ExtrasRssHandler extends DefaultHandler{
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
 		super.characters(ch, start, length);
+		
 		if(apkid){
-			e_apkid = e_apkid.concat(new String(ch).substring(start, start + length));
+			e_apkid = e_apkid.concat(new String(ch,start, length));
 		}else if(cmt){
-			e_cmt = e_cmt.concat(new String(ch).substring(start, start + length));
+			string = new String(ch,start,length);
+			e_cmt = e_cmt.concat(string);
 		}
 	}
 
@@ -49,7 +53,12 @@ public class ExtrasRssHandler extends DefaultHandler{
 		}else if(localName.trim().equals("pkg")){
 			//pkg = false;
 			// Add fetched information to DB
-			e_cmt = Html.fromHtml(e_cmt).toString();
+			
+			
+			e_cmt = e_cmt.replace("\n", "<br>");
+			
+//			e_cmt = Html.fromHtml(e_cmt).toString();
+			
 			db.addExtraXML(e_apkid, e_cmt, server);
 			e_apkid = "";
 			e_cmt = "";
