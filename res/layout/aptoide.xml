@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/actionbar"
         android:layout_width="fill_parent"
-        android:layout_height="44sp"
+        android:layout_height="44dp"
         android:layout_gravity="top"
         android:background="@drawable/greenbar"
         android:orientation="vertical" >
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerVertical="true"
-            android:layout_margin="2sp"
+            android:layout_margin="3dp"
             android:layout_toRightOf="@+id/greenbar"
             android:src="@drawable/icon" />
 
@@ -37,8 +37,13 @@
             android:id="@+id/aptoidebrand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/aptoideicon"
+            android:layout_marginLeft="8dp"
+            
+            android:padding="5dp"
+            
             android:layout_centerVertical="true"
-            android:padding="10sp"
+            android:scaleType="fitStart"
             android:src="@drawable/aptoidebrand" />
 
         <ImageView
@@ -63,9 +68,9 @@
         android:background="#edece9"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="10sp"
-        android:paddingLeft="10sp"
-        android:paddingRight="10sp" >
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
 
         <LinearLayout
             android:id="@+id/mainLayout"
@@ -75,9 +80,9 @@
             android:background="@drawable/border"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingBottom="10sp"
-            android:paddingLeft="10sp"
-            android:paddingRight="10sp" >
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp" >
 
             <TextView
                 android:id="@+id/textheader"
