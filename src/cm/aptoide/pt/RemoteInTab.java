@@ -2279,7 +2279,7 @@ public class RemoteInTab extends BaseManagement {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && sPref.getBoolean("mode", false) && deep > 0) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && sPref.getBoolean("mode", false) && deep > 0&&currentAppsList.equals(EnumAppsLists.Available)) {
 			switch (deep) {
 			case 1:
 				availView.setAdapter(getRootCtg());
