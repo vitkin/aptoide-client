@@ -33,4 +33,8 @@ interface AIDLAptoideInterface{
 	void resetAvailableListData();
 	void refreshAvailableDisplay();
 	
+	void noAvailableListDataAvailable();
+	void loadingAvailableListDataAvailable();
+	void loadingInstalledListDataAvailable();
+	
 }

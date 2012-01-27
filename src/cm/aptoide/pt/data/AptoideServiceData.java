@@ -173,6 +173,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		public ViewDisplayListRepos callGetRepos() throws RemoteException {
 			return getRepos();
 		}
+
+		@Override
+		public void callNoRepos() throws RemoteException {
+			noAvailableListData();
+		}
+
+		@Override
+		public void callLoadingRepos() throws RemoteException {
+			loadingAvailableListData();
+		}
 		
 
 		@Override
@@ -561,60 +571,120 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void updateInstalledLists(){
-		try {
-			aptoideClient.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable(); 
-//			Looper.prepare();
-//			Toast.makeText(getApplicationContext(), "installed list now available in next -> tab", Toast.LENGTH_LONG).show();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClient.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable(); 
+//					Looper.prepare();
+//					Toast.makeText(getApplicationContext(), "installed list now available in next -> tab", Toast.LENGTH_LONG).show();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	
 	public void refreshAvailableDisplay(){
-		try {
-			aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void updateAvailableLists(){
-		try {
-			aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void resetAvailableLists(){
-		try {
-			aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).resetAvailableListData();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).resetAvailableListData();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void noAvailableListData(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "No available apps!");
+				try {
+					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).noAvailableListDataAvailable();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		});
+	}
+	
+	public void loadingAvailableListData(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Loading available apps!");
+				try {
+					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListDataAvailable();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		});
 	}
 	
 	public void updateReposLists(){
-		try {
-			reposInfoClient.updateReposBasicInfo();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					reposInfoClient.updateReposBasicInfo();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		});
 	}
 	
-	public void insertedRepo(int repoHashid){
-		try {
-			reposInfoClient.insertedRepo(repoHashid);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void insertedRepo(final int repoHashid){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					reposInfoClient.insertedRepo(repoHashid);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		});
 	}
 	
 
@@ -653,7 +723,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void addRepoBare(final ViewRepository originalRepository){
-		
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
