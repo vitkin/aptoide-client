@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -75,6 +76,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private final String TAG = "Aptoide-ServiceData";
 	private boolean isRunning = false;
 	
+	private int DISPLAY_LISTS_CACHE_SIZE;
+	
+	private ArrayList<Integer> reposInserting;
+	
 	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClient;
 	private HashMap<Integer, AIDLAppInfo> appInfoClient;
 	private AIDLReposInfo reposInfoClient;
@@ -121,6 +126,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		
 		@Override
 		public void callStoreScreenDimensions(ViewScreenDimensions screenDimensions) throws RemoteException {
+			DISPLAY_LISTS_CACHE_SIZE = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())/Constants.DISPLAY_SIZE_DIVIDER)*Constants.DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER;
 			storeScreenDimensions(screenDimensions);	
 		}
 
@@ -298,6 +304,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		
 	
 	
+	public int getDisplayListsCacheSize(){
+		return DISPLAY_LISTS_CACHE_SIZE;
+	}
+	
 	public String getTag() {
 		return TAG;
 	}
@@ -337,6 +347,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	public void onCreate() {
 	    if(!isRunning){
 	    	splash();
+	    	
+	    	reposInserting = new ArrayList<Integer>();
 	    	
 	    	cachedThreadPool = Executors.newCachedThreadPool();
 	    	scheduledThreadPool = Executors.newScheduledThreadPool(Constants.MAX_PARALLEL_SERVICE_REQUESTS);
@@ -699,6 +711,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void removeRepo(final int repoHashid){
+		if(reposInserting.contains(repoHashid)){
+			reposInserting.remove(Integer.valueOf(repoHashid));
+		}
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -723,6 +738,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void addRepoBare(final ViewRepository originalRepository){
+		reposInserting.add(originalRepository.getHashid());
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -734,11 +750,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				if(!getManagerCache().isFreeSpaceInSdcard()){
 					//TODO raise exception
 				}
-				ViewCache cache = managerDownloads.startRepoBareDownload(repository);
+				ViewCache cache = null;
+				if(reposInserting.contains(repository.getHashid())){
+					cache = managerDownloads.startRepoBareDownload(repository);
+				}
 //				Looper.prepare();
 //				Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
-				
-				managerXml.repoBareParse(repository, cache);
+				if(reposInserting.contains(repository.getHashid())){
+					managerXml.repoBareParse(repository, cache);
+				}
 				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
@@ -746,13 +766,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoBareFinished(ViewRepository repository){
-		resetAvailableLists();
-		insertedRepo(repository.getHashid());
-		addRepoIconsInfo(repository);
+		if(reposInserting.contains(repository.getHashid())){
+			if(managerPreferences.getShowApplicationsByCategory()){
+				resetAvailableLists();
+			}
+			insertedRepo(repository.getHashid());
+			addRepoIconsInfo(repository);
+		}
 	}
 	
 	public void addRepoIconsInfo(final ViewRepository repository){
-
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -763,18 +786,23 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				if(!getManagerCache().isFreeSpaceInSdcard()){
 					//TODO raise exception
 				}
-				ViewCache cache = managerDownloads.startRepoIconDownload(repository);
-
-				managerXml.repoIconParse(repository, cache);
-				//TODO find some way to track global parsing completion status, probably in managerXml
+				ViewCache cache = null;
+				if(reposInserting.contains(repository.getHashid())){
+					cache = managerDownloads.startRepoIconDownload(repository);
+				}
+				if(reposInserting.contains(repository.getHashid())){
+					managerXml.repoIconParse(repository, cache);
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}
 			}
 		});
-
 	}
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
-		getRepoIcons(new ViewDownloadStatus(repository, Constants.FIRST_ELEMENT, EnumDownloadType.ICON));
-		addRepoStats(repository);
+		if(reposInserting.contains(repository.getHashid())){
+			getRepoIcons(new ViewDownloadStatus(repository, Constants.FIRST_ELEMENT, EnumDownloadType.ICON));
+			addRepoStats(repository);
+		}
 	}
 	
 	public void getRepoIcons(final ViewDownloadStatus downloadStatus){
@@ -799,10 +827,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 						return;
 					}
 
-					managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), Constants.DISPLAY_LISTS_CACHE_SIZE));
-//					if(downloadStatus.getOffset() ==  Constants.FIRST_ELEMENT){//+Constants.DISPLAY_LISTS_CACHE_SIZE){
-//						addRepoStats(downloadStatus.getRepository());
-//					}
+					managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), DISPLAY_LISTS_CACHE_SIZE));
 					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
 			});
@@ -811,7 +836,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void addRepoStats(final ViewRepository repository){
-	
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -822,18 +846,24 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				if(!getManagerCache().isFreeSpaceInSdcard()){
 					//TODO raise exception
 				}
-				ViewCache cache = managerDownloads.startRepoDownload(repository, EnumInfoType.STATS);
-				
-				managerXml.repoStatsParse(repository, cache);
-				//TODO find some way to track global parsing completion status, probably in managerXml
+				ViewCache cache = null;
+				if(reposInserting.contains(repository.getHashid())){
+					cache = managerDownloads.startRepoDownload(repository, EnumInfoType.STATS);
+				}
+				if(reposInserting.contains(repository.getHashid())){	
+					managerXml.repoStatsParse(repository, cache);
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}
 			}
 		});
-
 	}
 	
 	public void parsingRepoStatsFinished(ViewRepository repository){
-		updateAvailableLists();
-//		Toast.makeText(AptoideServiceData.this, "app stats available", Toast.LENGTH_LONG).show();
+		if(reposInserting.contains(repository.getHashid())){
+			reposInserting.remove(Integer.valueOf(repository.getHashid()));
+			updateAvailableLists();
+//			Toast.makeText(AptoideServiceData.this, "app stats available", Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	

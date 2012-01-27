@@ -55,6 +55,7 @@ public class RepoBareParser extends DefaultHandler{
 	
 	private String packageName = "";
 	private int parsedAppsNumber = 0;
+	private boolean firstBucket = true;
 	
 	private StringBuilder tagContentBuilder;
 	
@@ -107,17 +108,30 @@ public class RepoBareParser extends DefaultHandler{
 				
 			case pkg:
 				application.setRepoHashid(parseInfo.getRepository().getHashid());
-				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+				
+				if((firstBucket && parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT/2) || parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					final boolean insertingFirstBucket; 
+					if(firstBucket){
+						insertingFirstBucket = true;
+						firstBucket = false;
+						Log.d("Aptoide-RepoStatsParser", "first half bucket full, inserting stats: "+applications.size());
+					}else{
+						insertingFirstBucket = false;
+						Log.d("Aptoide-RepoBareParser", "bucket full, inserting apps: "+applications.size());
+					}
 					parsedAppsNumber = 0;
 					applicationsInsertStack.add(applications);
 			
-					Log.d("Aptoide-RepoBareParser", "bucket full, inserting apps: "+applications.size());
 					try{
 						new Thread(){
 							public void run(){
 								this.setPriority(Thread.MAX_PRIORITY);
 								final ArrayList<ViewApplication> applicationsInserting = applicationsInsertStack.remove(Constants.FIRST_ELEMENT);
+								
 								managerXml.getManagerDatabase().insertApplications(applicationsInserting);
+								if(insertingFirstBucket && !managerXml.serviceData.getManagerPreferences().getShowApplicationsByCategory()){
+									managerXml.serviceData.resetAvailableLists();
+								}
 							}
 						}.start();
 			

@@ -137,7 +137,9 @@ public class ManagerXml{
 
 
 	public void repoBareParse(ViewRepository repository, ViewCache cache){
-		repoParse(repository, cache, EnumInfoType.BARE);
+		if(cache != null){
+			repoParse(repository, cache, EnumInfoType.BARE);
+		}
 	}
 	
 	public void addRepoIconsInfo(ViewRepository repository){
@@ -149,7 +151,9 @@ public class ManagerXml{
 	}
 	
 	public void repoIconParse(ViewRepository repository, ViewCache cache){
-		repoParse(repository, cache, EnumInfoType.ICON);
+		if(cache != null){
+			repoParse(repository, cache, EnumInfoType.ICON);
+		}
 	}
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
@@ -165,7 +169,9 @@ public class ManagerXml{
 	}
 	
 	public void repoStatsParse(ViewRepository repository, ViewCache cache){
-		repoParse(repository, cache, EnumInfoType.STATS);
+		if(cache != null){
+			repoParse(repository, cache, EnumInfoType.STATS);
+		}
 	}
 	
 	public void parsingRepoStatsFinished(ViewRepository repository){

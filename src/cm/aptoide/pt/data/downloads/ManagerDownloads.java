@@ -286,7 +286,7 @@ public class ManagerDownloads {
 			}
 		}
 		
-		downloadStatus.incrementOffset(Constants.DISPLAY_LISTS_CACHE_SIZE);
+		downloadStatus.incrementOffset(serviceData.getDisplayListsCacheSize());
 		serviceData.getRepoIcons(downloadStatus);
 		
 	}
@@ -418,13 +418,13 @@ public class ManagerDownloads {
 		
 		switch (infoType) {
 			case BARE:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix=true";	//TODO implement rest of args
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix=true&order_by=alphabetic&order_direction=ascending";	//TODO implement rest of args
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
 				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
 				break;
 				
 			case ICON:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=icon&show_apphashid=true";	//TODO implement rest of args
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=icon&show_apphashid=true&order_by=alphabetic&order_direction=ascending";	//TODO implement rest of args
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info_icon.xml";
 				cache = managerCache.getNewRepoIconViewCache(repository.getHashid());
 				break;
@@ -436,7 +436,7 @@ public class ManagerDownloads {
 //				break;
 				
 			case STATS:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true";	//TODO implement rest of args
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true&order_by=alphabetic&order_direction=ascending";	//TODO implement rest of args
 //				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
 				cache = managerCache.getNewRepoStatsViewCache(repository.getHashid());
 				break;	
