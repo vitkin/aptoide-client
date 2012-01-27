@@ -40,7 +40,8 @@ public enum EnumAptoideAppsListsTasks {
 	RESET_UPDATABLE_LIST_DISPLAY,
 	REFRESH_UPDATABLE_DISPLAY,
 	SWITCH_AVAILABLE_TO_PROGRESSBAR,
-	SWITCH_INSTALLED_TO_PROGRESSBAR;
+	SWITCH_INSTALLED_TO_PROGRESSBAR,
+	SWITCH_AVAILABLE_TO_NO_APPS;
 	
 	public static EnumAptoideAppsListsTasks reverseOrdinal(int ordinal){
 		return values()[ordinal];

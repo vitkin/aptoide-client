@@ -40,7 +40,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -64,7 +63,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RatingBar;
@@ -103,12 +101,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private Handler swypeDelayHandler = null;
 	
 	private ViewFlipper appsListFlipper = null;
-	private TextView emptyAvailableAppsList;
-	private TextView emptyInstalledAppsList;
-	private TextView emptyUpdatableAppsList;
-	private ProgressBar loadingAvailableAppsList;
-	private ProgressBar loadingInstalledAppsList;
-	private ProgressBar loadingUpdatableAppsList;
+	private View emptyAvailableAppsList;
+	private View emptyInstalledAppsList;
+	private View emptyUpdatableAppsList;
+	private View loadingAvailableAppsList;
+	private View loadingInstalledAppsList;
+	private View loadingUpdatableAppsList;
 	private ListView availableAppsListView = null;
 	private ListView installedAppsListView = null;
 	private ListView updatableAppsListView = null;
@@ -246,6 +244,24 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.REFRESH_AVAILABLE_DISPLAY.ordinal());
 			
 		}
+
+		@Override
+		public void noAvailableListDataAvailable() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received noAvailableApps callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_NO_APPS.ordinal());
+		}
+
+		@Override
+		public void loadingAvailableListDataAvailable() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received loadingAvailableApps callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
+		}
+
+		@Override
+		public void loadingInstalledListDataAvailable() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received loadingInstalledApps callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
+		}
 	};
 	
     
@@ -304,6 +320,22 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					
 				case SWITCH_INSTALLED_TO_PROGRESSBAR:
 		    		switchInstalledToProgressBar();					
+					break;
+					
+				case SWITCH_AVAILABLE_TO_NO_APPS:
+					switchAvailableToEmpty();
+					switch (currentAppsList) {
+						case Available:
+							showAvailableList();
+							break;
+							
+						case Updates:
+							showUpdatableList();
+							break;
+	
+						default:
+							break;
+					}
 					break;
 	
 				default:
@@ -525,39 +557,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			staticListsManager = new InstalledAppsManager();
 			availableAppsManager = new AvailableAppsManager();
 			
-			emptyAvailableAppsList = new TextView(this);
-			emptyAvailableAppsList.setBackgroundColor(Color.WHITE);
-			emptyAvailableAppsList.setTextColor(Color.BLACK);
-			emptyAvailableAppsList.setTextSize(24);
-			emptyAvailableAppsList.setText(R.string.no_apps);
+			emptyAvailableAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
 			emptyAvailableAppsList.setTag(EnumFlipperChildType.EMPTY);
-			
-			emptyInstalledAppsList = new TextView(this);
-			emptyInstalledAppsList.setBackgroundColor(Color.WHITE);
-			emptyInstalledAppsList.setTextColor(Color.BLACK);
-			emptyInstalledAppsList.setTextSize(24);
-			emptyInstalledAppsList.setText(R.string.no_apps);
+			emptyInstalledAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
 			emptyInstalledAppsList.setTag(EnumFlipperChildType.EMPTY);
-			
-			emptyUpdatableAppsList = new TextView(this);
-			emptyUpdatableAppsList.setBackgroundColor(Color.WHITE);
-			emptyUpdatableAppsList.setTextColor(Color.BLACK);
-			emptyUpdatableAppsList.setTextSize(24);
-			emptyUpdatableAppsList.setText(R.string.no_apps);
+			emptyUpdatableAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
 			emptyUpdatableAppsList.setTag(EnumFlipperChildType.EMPTY);
 			
-			loadingAvailableAppsList = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+			loadingAvailableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
 			loadingAvailableAppsList.setTag(EnumFlipperChildType.LOADING);
-			loadingAvailableAppsList.setIndeterminate(true);
-			
-			loadingInstalledAppsList = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+			loadingInstalledAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
 			loadingInstalledAppsList.setTag(EnumFlipperChildType.LOADING);
-			loadingInstalledAppsList.setIndeterminate(true);
-			
-			loadingUpdatableAppsList = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
+			loadingUpdatableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
 			loadingUpdatableAppsList.setTag(EnumFlipperChildType.LOADING);
-			loadingUpdatableAppsList.setIndeterminate(true);
-			
 			
 			installedApps = new ViewDisplayListApps();
 			availableApps = new ViewDisplayListApps();
@@ -602,9 +614,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			updatableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(updatableAppsList);
 	
-			appsListFlipper.addView(loadingAvailableAppsList);
-			appsListFlipper.addView(loadingInstalledAppsList);
-			appsListFlipper.addView(loadingUpdatableAppsList);
+			appsListFlipper.addView(emptyAvailableAppsList);
+			appsListFlipper.addView(emptyInstalledAppsList);
+			appsListFlipper.addView(emptyUpdatableAppsList);
 			
 			currentAppsList = EnumAppsLists.Available;
 			
@@ -656,7 +668,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void resetDisplayCategories(){
-		if(freshCategory == null){
+		if(freshCategory == null || (freshCategory.getCategoryHashid() == Constants.TOP_CATEGORY && !freshCategory.hasChildren())){
 			switchAvailableToEmpty();
 		}else{
 			switchAvailableToList();
@@ -1003,9 +1015,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 
 	private void switchAvailableToProgressBar(){
+		AptoideLog.d(Aptoide.this, "switching available to progressBar");
+		
         appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
         appsListFlipper.addView(loadingAvailableAppsList, EnumAppsLists.Available.ordinal());
+        
+        if(currentAppsList.equals(EnumAppsLists.Available)){
+        	showAvailableList();
+        }
         
         switchUpdatableToProgressBar();
 	}
@@ -1014,18 +1032,30 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
         appsListFlipper.addView(availableAppsListView, EnumAppsLists.Available.ordinal());
+        
+        if(updatableApps.getList().isEmpty()){
+        	switchUpdatableToEmpty();
+        }else{
+        	switchUpdatableToList();
+        }
 	}
 	
 	private void switchAvailableToEmpty(){
 		appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
         appsListFlipper.addView(emptyAvailableAppsList, EnumAppsLists.Available.ordinal());
+        
+        switchUpdatableToEmpty();
 	}
 
 	private void switchInstalledToProgressBar(){
         appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
         appsListFlipper.addView(loadingInstalledAppsList, EnumAppsLists.Installed.ordinal());
+        
+        if(currentAppsList.equals(EnumAppsLists.Installed)){
+        	showInstalledList();
+        }
         
         switchUpdatableToProgressBar();
 	}
@@ -1034,6 +1064,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
         appsListFlipper.addView(installedAppsListView, EnumAppsLists.Installed.ordinal());
+        
+        if(updatableApps.getList().isEmpty()){
+        	switchUpdatableToEmpty();
+        }else{
+        	switchUpdatableToList();
+        }
 	}
 	
 	private void switchInstalledToEmpty(){
@@ -1046,6 +1082,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
         appsListFlipper.addView(loadingUpdatableAppsList, EnumAppsLists.Updates.ordinal());
+        
+        if(currentAppsList.equals(EnumAppsLists.Updates)){
+        	showUpdatableList();
+        }
 	}
 
 	private void switchUpdatableToList(){
@@ -1065,7 +1105,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private void showAvailableList(){
 		switch (currentAppsList) {
 			case Available:
-				appsListFlipper.setAnimation(null);
+				appsListFlipper.clearAnimation();
 				appsListFlipper.showNext();
 				appsListFlipper.showPrevious();
 				break;
@@ -1095,7 +1135,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				break;
 	
 			case Installed:
-				appsListFlipper.setAnimation(null);
+				appsListFlipper.clearAnimation();
 				appsListFlipper.showNext();
 				appsListFlipper.showPrevious();
 				break;
@@ -1117,7 +1157,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				break;
 			
 			case Updates:
-				appsListFlipper.setAnimation(null);
+				appsListFlipper.clearAnimation();
 				appsListFlipper.showPrevious();
 				appsListFlipper.showNext();
 				break;

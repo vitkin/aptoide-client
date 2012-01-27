@@ -638,7 +638,7 @@ public class ManagerDownloads {
 					fileOutputStream.write(data,0,bytesRead);
 					bytesRead = inputStream.read(data, 0, 8096);
 				}
-				Log.d("Aptoide-ManagerDownloads","Download done! notificationTargetName: "+notification.getActionsTargetName() +" localPath: "+localPath);
+				Log.d("Aptoide-ManagerDownloads","Download done! Name: "+notification.getActionsTargetName() +" localPath: "+localPath);
 				notification.setCompleted(true);
 				fileOutputStream.flush();
 				fileOutputStream.close();

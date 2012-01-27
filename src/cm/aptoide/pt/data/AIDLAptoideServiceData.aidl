@@ -48,6 +48,8 @@ interface AIDLAptoideServiceData {
 	void callRemoveRepo(in int repoHashid);
 	void callSetInUseRepo(in int repoHashid);
 	void callUnsetInUseRepo(in int repoHashid);
+	void callNoRepos();
+	void callLoadingRepos();
 	
 	void callRegisterInstalledAppsObserver(in AIDLAptoideInterface installedAppsObserver);
 	void callRegisterAvailableAppsObserver(in AIDLAptoideInterface availableAppsObserver);

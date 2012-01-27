@@ -42,6 +42,7 @@
     <string name="updates">Updates</string>
     
     <string name="no_apps">No apps to display!</string>
+    <string name="loading_apps">Loading apps!...</string>
     
     <string name="options">Options</string>
     <string name="edit">Edit</string>

@@ -213,6 +213,13 @@ public class ManageRepos extends ListActivity{
 			@Override
 			public void run() {
 				try {
+					serviceDataCaller.callLoadingRepos();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				try {
 					serviceDataCaller.callAddRepo(new ViewRepository(uri));
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -230,6 +237,28 @@ public class ManageRepos extends ListActivity{
     		
 			@Override
 			public void run() {
+				boolean noUsableRepos = true;
+				for (Map<String, Object> repo: repos.getList()) {
+					if((Boolean)repo.get(Constants.KEY_REPO_IN_USE)){
+						noUsableRepos = false;
+					}
+				}
+				if(noUsableRepos){	
+					try {
+						serviceDataCaller.callNoRepos();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else{
+					try {
+						serviceDataCaller.callLoadingRepos();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 				try {
 					serviceDataCaller.callRemoveRepo(repoHashid);
 				} catch (RemoteException e) {
@@ -250,6 +279,13 @@ public class ManageRepos extends ListActivity{
 			@Override
 			public void run() {
 				try {
+					serviceDataCaller.callLoadingRepos();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				try {
 					serviceDataCaller.callSetInUseRepo(repoHashid);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -267,6 +303,28 @@ public class ManageRepos extends ListActivity{
     		
 			@Override
 			public void run() {
+				boolean noUsableRepos = true;
+				for (Map<String, Object> repo: repos.getList()) {
+					if((Boolean)repo.get(Constants.KEY_REPO_IN_USE)){
+						noUsableRepos = false;
+					}
+				}
+				if(noUsableRepos){	
+					try {
+						serviceDataCaller.callNoRepos();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else{
+					try {
+						serviceDataCaller.callLoadingRepos();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 				try {
 					serviceDataCaller.callUnsetInUseRepo(repoHashid);
 				} catch (RemoteException e) {
@@ -313,14 +371,14 @@ public class ManageRepos extends ListActivity{
     }
     
     private void removeDisplayRepo(int repoHashid){
-    	reposManager.removeRepo(repoHashid);
-    	
     	for (Map<String, Object> repo: repos.getList()) {
 			if(repoHashid == (Integer) repo.get(Constants.KEY_REPO_HASHID)){
 				repos.getList().remove(repo);
 				break;
 			}
 		}
+
+    	reposManager.removeRepo(repoHashid);
     }
     
     private void addDisplayRepo(ViewDisplayRepo repo){
@@ -648,7 +706,7 @@ public class ManageRepos extends ListActivity{
 							}
 
 					    	if(originalUriString != null && !originalUriString.equals(uriString)){
-					    		reposManager.removeRepo(originalUriString.hashCode());
+					    		removeDisplayRepo(originalUriString.hashCode());
 					    	}
 					    	if(!uriString.equals(originalUriString)){
 					    		addDisplayRepo(newRepo);
@@ -703,7 +761,7 @@ public class ManageRepos extends ListActivity{
 								}
 
 						    	if(originalUriString != null && !originalUriString.equals(uriString)){
-						    		reposManager.removeRepo(originalUriString.hashCode());
+						    		removeDisplayRepo(originalUriString.hashCode());
 						    	}
 						    	if(!uriString.equals(originalUriString)){
 						    		addDisplayRepo(newRepo);
@@ -986,7 +1044,6 @@ public class ManageRepos extends ListActivity{
 	
 	@Override
 	public void finish() {
-		
 		if(serviceDataIsBound){
 			unbindService(serviceDataConnection);
 		}
