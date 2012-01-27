@@ -1546,23 +1546,23 @@ public class ManagerDatabase {
 		String selectAvailableApps = "SELECT A."+Constants.KEY_APPLICATION_NAME+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_PACKAGE_NAME
 											+", MAX(A."+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-											+", S."+Constants.KEY_STATS_STARS+", S."+Constants.KEY_STATS_DOWNLOADS
+											+", A."+Constants.KEY_STATS_STARS+", A."+Constants.KEY_STATS_DOWNLOADS
 									+" FROM (SELECT *"
-											+" FROM "+Constants.TABLE_APPLICATION
-											+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
-												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
-														+" FROM "+Constants.TABLE_REPOSITORY
-														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")";
-				if(categoryHashid != Constants.TOP_CATEGORY){
-					selectAvailableApps += 		" AND "+Constants.KEY_APPLICATION_FULL_HASHID+" IN (SELECT "+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
-																									+" FROM "+Constants.TABLE_APP_CATEGORY
-																									+" WHERE "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+"="+categoryHashid+")) A";
-				}else{
-					selectAvailableApps += 	") A";
-				}
-				selectAvailableApps +=		" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
-															+" FROM "+Constants.TABLE_STATS_INFO+") S"
-									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
+											+" FROM "+Constants.TABLE_APPLICATION;
+			if(categoryHashid != Constants.TOP_CATEGORY){
+				selectAvailableApps += 			" NATURAL LEFT JOIN "+Constants.TABLE_APP_CATEGORY;
+			}
+				selectAvailableApps +=			" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
+																	+" FROM "+Constants.TABLE_REPOSITORY+")"
+												+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
+															+" FROM "+Constants.TABLE_STATS_INFO+")"
+											+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE;
+			if(categoryHashid != Constants.TOP_CATEGORY){
+				selectAvailableApps +=		" AND "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+"="+categoryHashid+") A";
+			}else{
+				selectAvailableApps += 		") A";
+			}
+				selectAvailableApps +=" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
 									+" ORDER BY "+Constants.KEY_APPLICATION_NAME
 									+" LIMIT ?"
 									+" OFFSET ?;";

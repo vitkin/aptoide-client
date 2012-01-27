@@ -121,6 +121,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private AtomicInteger adjustAvailableDisplayOffset;
 	private AtomicInteger availableDisplayOffsetAdjustments;
 	
+	private int DISPLAY_LISTS_CACHE_SIZE;
+	
 	private ViewDisplayCategory category = null;
 	private ViewDisplayCategory freshCategory = null;
 	private ViewDisplayListApps availableApps = null;
@@ -178,6 +180,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 			ViewScreenDimensions screenDimensions = new ViewScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
 			AptoideLog.d(Aptoide.this, screenDimensions.toString());
+			DISPLAY_LISTS_CACHE_SIZE = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())/Constants.DISPLAY_SIZE_DIVIDER)*Constants.DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER;
+			AptoideLog.d(Aptoide.this, "DISPLAY_LISTS_CACHE_SIZE: "+DISPLAY_LISTS_CACHE_SIZE);
 	        try {
 	            AptoideLog.v(Aptoide.this, "Called for screenDimensions storage");
 	            serviceDataCaller.callStoreScreenDimensions(screenDimensions);
@@ -447,15 +451,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 							try {
-								Log.d("Aptoide","resetting categories list.");
-								setFreshCategories(serviceDataCaller.callGetCategories());
 								if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
+									Log.d("Aptoide","resetting categories list.");
+									setFreshCategories(serviceDataCaller.callGetCategories());
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_CATEGORIES.ordinal());
 								}else{
 									offset = 0;
 									
-									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE+" "+category);
-									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, Constants.DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
+									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+DISPLAY_LISTS_CACHE_SIZE+" "+category);
+									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 								}
 								
@@ -468,11 +472,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							}
 						}else{
 							if(category != null && !category.hasChildren()){
-								offset = cacheListOffset.get()*Constants.DISPLAY_LISTS_CACHE_SIZE;
+								offset = cacheListOffset.get()*DISPLAY_LISTS_CACHE_SIZE;
 								
 								try {
-									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE);
-									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, Constants.DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
+									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+DISPLAY_LISTS_CACHE_SIZE);
+									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 									
 									setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
@@ -486,13 +490,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						}
 					}else{
 						if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 							offset = 0;
 						}else{
-							offset = cacheListOffset.get()*Constants.DISPLAY_LISTS_CACHE_SIZE;
+							offset = cacheListOffset.get()*DISPLAY_LISTS_CACHE_SIZE;
 						}
 						try {
-							Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE);
-							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, Constants.DISPLAY_LISTS_CACHE_SIZE));
+							Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+DISPLAY_LISTS_CACHE_SIZE);
+							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, DISPLAY_LISTS_CACHE_SIZE));
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 							
 							setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
@@ -514,11 +519,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				int currentCacheOffset = cacheListOffset.get();
 				try {
 					if(requestsSum>0){
-						Log.d("Aptoide","advancing available list forward.  offset: "+(previousCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE+" range: "+Constants.DISPLAY_LISTS_CACHE_SIZE);
-						setFreshAvailableApps(serviceDataCaller.callGetAvailableApps((previousCacheOffset+1)*Constants.DISPLAY_LISTS_CACHE_SIZE, Constants.DISPLAY_LISTS_CACHE_SIZE));
+						Log.d("Aptoide","advancing available list forward.  offset: "+(previousCacheOffset+1)*DISPLAY_LISTS_CACHE_SIZE+" range: "+DISPLAY_LISTS_CACHE_SIZE);
+						setFreshAvailableApps(serviceDataCaller.callGetAvailableApps((previousCacheOffset+1)*DISPLAY_LISTS_CACHE_SIZE, DISPLAY_LISTS_CACHE_SIZE));
 						
-						if(availableApps.getList().size() > (2*Constants.DISPLAY_LISTS_CACHE_SIZE)){
-							availableAppsTrimAmount = requestsSum*Constants.DISPLAY_LISTS_CACHE_SIZE;
+						if(availableApps.getList().size() > (2*DISPLAY_LISTS_CACHE_SIZE)){
+							availableAppsTrimAmount = requestsSum*DISPLAY_LISTS_CACHE_SIZE;
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.TRIM_APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 						}else{
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
@@ -526,11 +531,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						
 						
 					}else{
-						Log.d("Aptoide","advancing available list backward.  offset: "+(currentCacheOffset-1)*Constants.DISPLAY_LISTS_CACHE_SIZE+" range: "+(previousCacheOffset-1)*Constants.DISPLAY_LISTS_CACHE_SIZE);
-						setFreshAvailableApps(serviceDataCaller.callGetAvailableApps((currentCacheOffset-1)*Constants.DISPLAY_LISTS_CACHE_SIZE, Constants.DISPLAY_LISTS_CACHE_SIZE));
+						Log.d("Aptoide","advancing available list backward.  offset: "+(currentCacheOffset-1)*DISPLAY_LISTS_CACHE_SIZE+" range: "+(previousCacheOffset-1)*DISPLAY_LISTS_CACHE_SIZE);
+						setFreshAvailableApps(serviceDataCaller.callGetAvailableApps((currentCacheOffset-1)*DISPLAY_LISTS_CACHE_SIZE, DISPLAY_LISTS_CACHE_SIZE));
 
-						if(availableApps.getList().size() > (2*Constants.DISPLAY_LISTS_CACHE_SIZE)){
-							availableAppsTrimAmount = (Math.abs(requestsSum)*Constants.DISPLAY_LISTS_CACHE_SIZE);
+						if(availableApps.getList().size() > (2*DISPLAY_LISTS_CACHE_SIZE)){
+							availableAppsTrimAmount = (Math.abs(requestsSum)*DISPLAY_LISTS_CACHE_SIZE);
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 						}else{
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());							
@@ -1244,9 +1249,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	private void detectAvailableAppsCacheIncrease(int triggerMargin, int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
     		Log.d("Aptoide","Scroll "+currentList+" discerning increase, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+triggerMargin);
 			
-			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) <  (( currentDisplayOffset / Constants.DISPLAY_LISTS_CACHE_SIZE) + 1)	
-				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) < (triggerMargin + Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER)					
-				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) > Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER ){
+			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) <  (( currentDisplayOffset / DISPLAY_LISTS_CACHE_SIZE) + 1)	
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) < (triggerMargin + Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER)					
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) > Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER ){
 				
 				scrollRegionOrigin.incrementAndGet();
 				availableAppsManager.request(EnumAvailableRequestType.INCREASE);
@@ -1258,9 +1263,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	private void detectAvailableAppsCacheDecrease(int triggerMargin, int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
     		Log.d("Aptoide","Scroll "+currentList+" discerning decrease, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+triggerMargin);
 			
-			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) >  (( currentDisplayOffset / Constants.DISPLAY_LISTS_CACHE_SIZE) + 1)
-				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) > (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER - triggerMargin)
-				&& (currentDisplayOffset % Constants.DISPLAY_LISTS_CACHE_SIZE) < Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER ){
+			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) >  (( currentDisplayOffset / DISPLAY_LISTS_CACHE_SIZE) + 1)
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) > (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER - triggerMargin)
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) < Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER ){
 				
 				scrollRegionOrigin.decrementAndGet();
 				availableAppsManager.request(EnumAvailableRequestType.DECREASE);
@@ -1319,7 +1324,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			if( !swyping.get() && scrollState == SCROLL_STATE_IDLE){
 //				Log.d("Aptoide","Scroll currentList: "+currentAppsList+" initialFirstVisibleItem: "+initialFirstVisibleItem+" firstVisibleItem: "+firstVisibleItem);
 				this.differential.set(Math.abs(firstVisibleItem.get()-this.initialFirstVisibleItem.get()));
-				
+
+	    		AptoideLog.d(Aptoide.this, "visibleItems: "+visibleItemCount.get());
 				
 				if((firstVisibleItem.get()-initialFirstVisibleItem.get())>0){
 					switch (currentAppsList) {
@@ -1363,28 +1369,29 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	
     @Override
-	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+	public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
     	if(!swyping.get()){
     		if(availableByCategory){
     			if(category.hasChildren()){
-    				final int categoryHashid = Integer.parseInt(((LinearLayout)arg1).getTag().toString());
+    				final int categoryHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
     				category = category.getSubCategory(categoryHashid);
-    				AptoideLog.d(this, "Onclick position: "+arg2+" categoryHashid: "+categoryHashid+" category: "+category);
+    				AptoideLog.d(this, "Onclick position: "+position+" categoryHashid: "+categoryHashid+" category: "+category);
     				if(category.hasChildren()){
     					initDisplayCategories();
     				}else{
     					availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);
     				}
     			}else{
-    				final int appHashid = Integer.parseInt(((LinearLayout)arg1).getTag().toString());
-    	    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
+    	    		AptoideLog.d(this, "row height: "+view.getHeight());
+    				final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
+    	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
     	    		Intent appInfo = new Intent(this,AppInfo.class);
     	    		appInfo.putExtra("appHashid", appHashid);
     	    		startActivity(appInfo);
     			}
     		}else{
-	    		final int appHashid = Integer.parseInt(((LinearLayout)arg1).getTag().toString());
-	    		AptoideLog.d(this, "Onclick position: "+arg2+" appHashid: "+appHashid);
+	    		final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
+	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
 	    		Intent appInfo = new Intent(this,AppInfo.class);
 	    		appInfo.putExtra("appHashid", appHashid);
 	    		startActivity(appInfo);
@@ -1549,8 +1556,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						public void onClick(DialogInterface dialog, int which) {
 							if(byCategory.isChecked() != availableByCategory){
 								availableByCategory = byCategory.isChecked();
-								availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);
 								setAvailableListBy(availableByCategory);
+								availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);
 							}
 							sortDialog.dismiss();
 						}
