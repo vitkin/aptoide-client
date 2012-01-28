@@ -22,6 +22,7 @@ package cm.aptoide.pt.data.display;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 
 	private static final long serialVersionUID = 1412655092087101812L;
 	private LinkedList<Map<String, Object>> subCategoriesDisplayList;
-	private HashMap<Integer, ViewDisplayCategory> subCategories;
+	private LinkedHashMap<Integer, ViewDisplayCategory> subCategories;
 	private ViewDisplayCategory parentCategory;
 	
 	private String categoryName;
@@ -53,7 +54,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	 */
 	public ViewDisplayCategory(String categoryName, int categoryHashid, int availableApps) {
 		this.subCategoriesDisplayList = new LinkedList<Map<String, Object>>();
-		this.subCategories = new HashMap<Integer, ViewDisplayCategory>();
+		this.subCategories = new LinkedHashMap<Integer, ViewDisplayCategory>();
 		this.parentCategory = null;
 		this.categoryName = categoryName;
 		this.categoryHashid = categoryHashid;
@@ -159,7 +160,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	 */
 	public void reuse(String categoryName, int categoryHashid, int availableApps) {
 		this.subCategoriesDisplayList = new LinkedList<Map<String, Object>>();
-		this.subCategories = new HashMap<Integer, ViewDisplayCategory>();
+		this.subCategories = new LinkedHashMap<Integer, ViewDisplayCategory>();
 		this.parentCategory = null;
 		this.categoryName = categoryName;
 		this.categoryHashid = categoryHashid;
@@ -241,7 +242,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	@SuppressWarnings("unchecked")
 	public void readFromParcel(Parcel in) {
 		subCategoriesDisplayList = (LinkedList<Map<String, Object>>) in.readSerializable();
-		subCategories = (HashMap<Integer, ViewDisplayCategory>) in.readSerializable();
+		subCategories = (LinkedHashMap<Integer, ViewDisplayCategory>) in.readSerializable();
 		parentCategory = in.readParcelable(getClass().getClassLoader());
 		categoryName = in.readString();
 		categoryHashid = in.readInt();
