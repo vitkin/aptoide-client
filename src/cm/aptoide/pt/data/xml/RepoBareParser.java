@@ -114,7 +114,7 @@ public class RepoBareParser extends DefaultHandler{
 					if(firstBucket){
 						insertingFirstBucket = true;
 						firstBucket = false;
-						Log.d("Aptoide-RepoStatsParser", "first half bucket full, inserting stats: "+applications.size());
+						Log.d("Aptoide-RepoBareParser", "first half bucket full, inserting apps: "+applications.size());
 					}else{
 						insertingFirstBucket = false;
 						Log.d("Aptoide-RepoBareParser", "bucket full, inserting apps: "+applications.size());
