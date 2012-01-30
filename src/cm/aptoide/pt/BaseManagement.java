@@ -419,12 +419,15 @@ public class BaseManagement extends Activity {
 	protected int filteredApps =0;
 	
 	protected void redraw(){
-		
+		if(pd!=null&&pd.isShowing()){
+			pd.dismiss();
+		}
 		Log.d("Aptoide","======================= I REDRAW");
 		prefEdit.putBoolean("redrawis", true);
 		prefEdit.commit();
 
 		pd = ProgressDialog.show(mctx, getText(R.string.top_please_wait), getText(R.string.updating_msg), true);
+		
 		pd.setIcon(android.R.drawable.ic_dialog_info);
 
 

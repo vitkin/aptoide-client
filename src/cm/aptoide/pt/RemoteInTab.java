@@ -938,8 +938,8 @@ public class RemoteInTab extends BaseManagement {
 						keepScreenOn.release();
 					}
 					installApk(installApkIntent);
-					this.getIntent().setAction("android.intent.action.VIEW");
-					startActivity(getIntent());
+//					this.getIntent().setAction("android.intent.action.VIEW");
+//					startActivity(getIntent());
 					return;
 				}
 			} 
@@ -2067,8 +2067,8 @@ public class RemoteInTab extends BaseManagement {
 		//    	IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
 		//	    registerReceiver(new InstallApkListener(), filter);
 		sendBroadcast(installApkAction);
-		getIntent().setAction("android.intent.action.VIEW");
-		startActivity(getIntent());
+//		getIntent().setAction("android.intent.action.VIEW");
+//		startActivity(getIntent());
 
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
