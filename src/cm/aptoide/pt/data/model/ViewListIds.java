@@ -36,16 +36,14 @@ public class ViewListIds implements Serializable{
 	private ArrayList<Integer> idList;
 	
 	/**
-	 * ViewListIds Constructor
-	 * 
-	 * @param String id
+	 * ViewListIds Constructor, creates new empty list
 	 */
 	public ViewListIds() {
-		this.idList = new ArrayList<Integer>(1);
+		this.idList = new ArrayList<Integer>();
 	}
 	
 	/**
-	 * ViewListIds Constructor
+	 * ViewListIds Constructor, creates new list with id already inserted
 	 * 
 	 * @param String id
 	 */
@@ -68,6 +66,10 @@ public class ViewListIds implements Serializable{
 		return this.idList;
 	}
 	
+	public boolean isEmpty(){
+		return this.idList.isEmpty();
+	}
+	
 	
 
 	/**
@@ -81,7 +83,7 @@ public class ViewListIds implements Serializable{
 	 * ViewListIds object reuse reConstructor
 	 */
 	public void reuse() {
-		this.idList = new ArrayList<Integer>(1);
+		this.idList = new ArrayList<Integer>();
 	}
 	
 	/**

@@ -100,7 +100,7 @@ public class RepoBareParser extends DefaultHandler{
 //				Log.d("Aptoide-RepoBareParser", "app: "+application.getApplicationName()+", appHashid (Not full): "+application.getHashid()+", category: "+tagContentBuilder.toString().trim()+", categoryHashid: "+application.getCategoryHashid());
 				break;
 			case timestamp:
-				application.setTimestamp(Integer.parseInt(tagContentBuilder.toString()));
+				application.setTimestamp(Long.parseLong(tagContentBuilder.toString()));
 				break;
 //			case minSdk:	//TODO filters
 //				application.setVersionName(new String(chars).substring(start, start + length));

@@ -730,7 +730,37 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				AptoideLog.d(AptoideServiceData.this, "Setting repo: "+repoHashid+" inUse: "+inUse);
 				managerDatabase.toggleRepositoryInUse(repoHashid, inUse);
-				resetAvailableLists();				
+				resetAvailableLists();
+				if(inUse){
+					getDelta(repoHashid);
+				}
+			}
+		});
+	}
+	
+	public void getDelta(final int repoHashid){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				ViewRepository repository = managerDatabase.getRepoIfUpdateNeeded(repoHashid);
+				if(repository != null){
+					reposInserting.add(repoHashid);
+					if(!managerDownloads.isConnectionAvailable()){
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					ViewCache cache = null;
+					if(reposInserting.contains(repoHashid)){
+						cache = managerDownloads.startRepoDeltaDownload(repository);
+					}
+//					Looper.prepare();
+//					Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
+					if(reposInserting.contains(repoHashid)){
+						managerXml.repoDeltaParse(repository, cache);
+					}
+				}
 			}
 		});
 	}
