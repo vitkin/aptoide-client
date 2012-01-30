@@ -22,7 +22,9 @@
 package cm.aptoide.pt.data.database;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.TimeZone;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -373,6 +375,7 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertRepository(ViewRepository repository){
+		repository.setLastSynchroTime(Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis());
 		db.beginTransaction();
 		try{
 			if(db.replace(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
@@ -1318,6 +1321,96 @@ public class ManagerDatabase {
 		return listRepos;		
 	}
 	
+	
+	
+	/**
+	 * getRepoIfUpdateNeeded, decides based on last synchronization timestamp if the repository referenced by the repoHashid needs updating
+	 * 
+	 * @param int repoHashid, references repository
+	 * 
+	 * @return ViewRepository, repository if it needs updating, null otherwise //TODO nullObject
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewRepository getRepoIfUpdateNeeded(final int repoHashid){
+		final int REPO_URI = Constants.COLUMN_FIRST;
+		final int REPO_IN_USE = Constants.COLUMN_SECOND;
+		final int REPO_SIZE = Constants.COLUMN_THIRD;
+		final int REPO_DELTA = Constants.COLUMN_FOURTH;
+		final int REPO_LAST_SYNCHRO = Constants.COLUMN_FIFTH;
+		
+		final long currentTimeStamp = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
+		ViewRepository repositoryNeedingUpdate = null;
+		
+		String selectRepoNeedingUpdate = "SELECT "+Constants.KEY_REPO_URI+", "+Constants.KEY_REPO_IN_USE
+									+", "+Constants.KEY_REPO_SIZE+", "+Constants.KEY_REPO_DELTA+", "+Constants.KEY_REPO_LAST_SYNCHRO
+									+" FROM "+Constants.TABLE_REPOSITORY
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid
+									+" AND "+Constants.KEY_REPO_LAST_SYNCHRO+"<"+(currentTimeStamp-(Constants.REPOS_UPDATE_INTERVAL*Constants.HOURS_TO_MILISECONDS))+";";
+		
+		Cursor cursorRepoNeedingUpdate = aptoideAtomicQuery(selectRepoNeedingUpdate);
+		
+		if(!(cursorRepoNeedingUpdate.getCount() == Constants.EMPTY_INT)){
+			repositoryNeedingUpdate = new ViewRepository(cursorRepoNeedingUpdate.getString(REPO_URI));
+			repositoryNeedingUpdate.setInUse(cursorRepoNeedingUpdate.getInt(REPO_IN_USE)==Constants.DB_TRUE?true:false);
+			repositoryNeedingUpdate.setSize(cursorRepoNeedingUpdate.getInt(REPO_SIZE));
+			repositoryNeedingUpdate.setDelta(cursorRepoNeedingUpdate.getString(REPO_DELTA));
+			repositoryNeedingUpdate.setLastSynchroTime(cursorRepoNeedingUpdate.getLong(REPO_LAST_SYNCHRO));	
+			cursorRepoNeedingUpdate.close();		
+		}
+		return repositoryNeedingUpdate;
+	}
+	
+	
+	
+	/**
+	 * getReposNeedingUpdate, decides based on last synchronization timestamp if any of the repositories in use needs updating
+	 * 
+	 * @return ArrayList<ViewRepository>, list of repositories which need updating
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ArrayList<ViewRepository> getReposNeedingUpdate(){
+		final int REPO_URI = Constants.COLUMN_FIRST;
+		final int REPO_IN_USE = Constants.COLUMN_SECOND;
+		final int REPO_SIZE = Constants.COLUMN_THIRD;
+		final int REPO_DELTA = Constants.COLUMN_FOURTH;
+		final int REPO_LAST_SYNCHRO = Constants.COLUMN_FIFTH;
+		
+		final long currentTimeStamp = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
+		ArrayList<ViewRepository> reposNeedingUpdate = new ArrayList<ViewRepository>();
+		ViewRepository repositoryNeedingUpdate;
+		
+		String selectReposNeedingUpdate = "SELECT "+Constants.KEY_REPO_URI+", "+Constants.KEY_REPO_IN_USE
+									+", "+Constants.KEY_REPO_SIZE+", "+Constants.KEY_REPO_DELTA+", "+Constants.KEY_REPO_LAST_SYNCHRO
+									+" FROM "+Constants.TABLE_REPOSITORY
+									+" WHERE "+Constants.KEY_REPO_LAST_SYNCHRO+"<"+(currentTimeStamp-(Constants.REPOS_UPDATE_INTERVAL*Constants.HOURS_TO_MILISECONDS))+";";
+		
+		Cursor cursorReposNeedingUpdate = aptoideAtomicQuery(selectReposNeedingUpdate);
+		
+		if(!(cursorReposNeedingUpdate.getCount() == Constants.EMPTY_INT)){
+			cursorReposNeedingUpdate.moveToFirst();
+			do{
+				repositoryNeedingUpdate = new ViewRepository(cursorReposNeedingUpdate.getString(REPO_URI));
+				repositoryNeedingUpdate.setInUse(cursorReposNeedingUpdate.getInt(REPO_IN_USE)==Constants.DB_TRUE?true:false);
+				repositoryNeedingUpdate.setSize(cursorReposNeedingUpdate.getInt(REPO_SIZE));
+				repositoryNeedingUpdate.setDelta(cursorReposNeedingUpdate.getString(REPO_DELTA));
+				repositoryNeedingUpdate.setLastSynchroTime(cursorReposNeedingUpdate.getLong(REPO_LAST_SYNCHRO));	
+				
+				reposNeedingUpdate.add(repositoryNeedingUpdate);
+			}while(cursorReposNeedingUpdate.moveToNext());
+			cursorReposNeedingUpdate.close();
+		}
+		return reposNeedingUpdate;
+	}
+	
+	
+	
+	
 	/**
 	 * getCategoriesDisplayInfo, retrieves a hierarquical list of categories
 	 *  
@@ -1327,7 +1420,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayCategory getCategoriesDisplayInfo(){	//TODO count only once per package
+	public ViewDisplayCategory getCategoriesDisplayInfo(){	//TODO count only once per packageName
 		
 		final int CATEGORY_HASHID = Constants.COLUMN_FIRST;
 		final int CATEGORY_NAME = Constants.COLUMN_SECOND;

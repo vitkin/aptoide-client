@@ -61,6 +61,11 @@ public class Constants {
 	public static final int MAX_PARALLEL_SERVICE_REQUESTS = 4;
 	
 	public static final int NUMBER_OF_STARS = 5;
+	/** interval between repos updating, in hours **/
+	public static final int REPOS_UPDATE_INTERVAL = 24;
+	
+	public static final int HOURS_TO_MILISECONDS = 1000*60*60;
+	public static final String UTC_TIMEZONE = "UTC";
 	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
@@ -126,6 +131,7 @@ public class Constants {
 	public static final String CATEGORY_GAMES = "Games";
 	public static final int CATEGORY_HASHID_GAMES = (CATEGORY_GAMES).hashCode();
 	public static final String[] SUB_CATEGORIES_GAMES = {"Arcade&Action", "Brain&Puzzle", "Cards&Casino", "Casual", "Sports Games", "Racing"};
+	
 	//TODO deprecate
 	public static final String CATEGORY_OTHERS = "Others";
 	public static final int CATEGORY_HASHID_OTHERS = (CATEGORY_OTHERS).hashCode();
@@ -207,8 +213,9 @@ public class Constants {
 	public static final String KEY_REPO_SIZE = "repo_size";
 	/** identifies a single version of all non volatile xml files */
 	public static final String KEY_REPO_DELTA = "delta";
+	public static final String KEY_REPO_LAST_SYNCHRO = "last_synchro";
 	public static final String KEY_REPO_IN_USE = "in_use";
-	public static final int NUMBER_OF_COLUMNS_REPO = 8;
+	public static final int NUMBER_OF_COLUMNS_REPO = 9;
 	
 	
 	public static final String TABLE_LOGIN = "login";
@@ -320,6 +327,7 @@ public class Constants {
 			+ KEY_REPO_SCREENS_PATH + " TEXT DEFAULT ('screens/'), "
 			+ KEY_REPO_SIZE + " INTEGER DEFAULT (0) CHECK ("+KEY_REPO_SIZE+">=0), "
 			+ KEY_REPO_DELTA + " TEXT DEFAULT (0), "
+			+ KEY_REPO_LAST_SYNCHRO + " INTEGER DEFAULT (0), "
 			+ KEY_REPO_IN_USE + " INTEGER NOT NULL DEFAULT (1) ); ";		/** stupid sqlite doesn't know booleans */
 //			+ "PRIMARY KEY("+ KEY_REPO_HASHID +") );";
 	

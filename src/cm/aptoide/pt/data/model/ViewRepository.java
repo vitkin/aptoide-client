@@ -114,6 +114,14 @@ public class ViewRepository implements Parcelable{
 		return values.getAsString(Constants.KEY_REPO_DELTA);
 	}
 	
+	public void setLastSynchroTime(long lastSynchroTimeStamp){
+		values.put(Constants.KEY_REPO_LAST_SYNCHRO, lastSynchroTimeStamp);
+	}
+
+	public long getLastSynchroTime() {
+		return values.getAsLong(Constants.KEY_REPO_LAST_SYNCHRO);
+	}
+	
 	public void setInUse(boolean inUse){
 		values.put(Constants.KEY_REPO_IN_USE, inUse?Constants.DB_TRUE:Constants.DB_FALSE);
 	}

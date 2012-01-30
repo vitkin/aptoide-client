@@ -112,12 +112,12 @@ public class ViewApplication {
 		return values.getAsString(Constants.KEY_APPLICATION_NAME);
 	}
 	
-	public void setTimestamp(int timestamp){
+	public void setTimestamp(long timestamp){
 		values.put(Constants.KEY_APPLICATION_TIMESTAMP, timestamp);
 	}
 	
-	public int getTimestamp(){
-		return values.getAsInteger(Constants.KEY_APPLICATION_TIMESTAMP);
+	public long getTimestamp(){
+		return values.getAsLong(Constants.KEY_APPLICATION_TIMESTAMP);
 	}
 	
 //	public void setRating(int rating){
