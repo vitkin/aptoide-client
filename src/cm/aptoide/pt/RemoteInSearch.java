@@ -186,7 +186,7 @@ public class RemoteInSearch extends ListActivity{
 		if(intent.hasExtra(SearchManager.QUERY)){
 			query = intent.getStringExtra(SearchManager.QUERY);
 
-			//@dsilveira #529 search doens't handle hiphens well	
+			//@dsilveira #529 search doredraw()ens't handle hiphens well	
 			query = query.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
 			
 			apk_lst = db.getSearch(query,order_lst);
@@ -199,6 +199,7 @@ public class RemoteInSearch extends ListActivity{
 	protected void onResume() {
 		super.onResume();
 		redraw();
+		prefEdit.putBoolean("update", false);
 		lv.setSelection(pos-1);
 	}
 
@@ -356,16 +357,18 @@ public class RemoteInSearch extends ListActivity{
 				for(PackageInfo node: getapks){
 					if(node.packageName.equalsIgnoreCase(pkginfo.packageName)){
 						db.insertInstalled(apk_lst.get(requestCode).apkid, apk_lst.get(requestCode).ver);
-						prefEdit.putBoolean("search_updt", true);
-						prefEdit.commit();
+//						prefEdit.putBoolean("search_updt", true);
+//						prefEdit.commit();
+						
 						redraw();
 						lv.setSelection(pos-1);
 						return;
 					}
 				}
 				db.removeInstalled(apk_lst.get(requestCode).apkid);
-				prefEdit.putBoolean("search_updt", true);
-				prefEdit.commit();
+//				prefEdit.putBoolean("search_updt", true);
+//				prefEdit.commit();
+				
 				redraw();
 				lv.setSelection(pos-1);
 			}
