@@ -2,6 +2,7 @@
 <searchable xmlns:android="http://schemas.android.com/apk/res/android"
         android:label="@string/srch_label"
         android:hint="@string/srch_hint"
+        android:includeInGlobalSearch="true"
         android:searchSuggestIntentAction="android.intent.action.VIEW">
 </searchable>
 <!--
