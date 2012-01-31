@@ -77,6 +77,10 @@ public class ManagerCache {
 		}
 	}
 	
+	public ViewCache getNewRepoDeltaViewCache(int repoHashid){
+		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".delta"+".xml");
+	}
+	
 	public ViewCache getNewRepoBareViewCache(int repoHashid){
 		return getNewViewCache(Constants.PATH_CACHE_REPOS+repoHashid+".bare"+".xml");
 	}

@@ -32,7 +32,8 @@ public enum EnumInfoType {
 	ICON,
 	DOWNLOAD,
 	EXTRAS,
-	STATS;
+	STATS,
+	DELTA;
 	
 	public static EnumInfoType reverseOrdinal(int ordinal){
 		return values()[ordinal];
