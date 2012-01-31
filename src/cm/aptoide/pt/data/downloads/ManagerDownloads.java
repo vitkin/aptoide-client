@@ -389,7 +389,11 @@ public class ManagerDownloads {
 //		}
 //	}
 	
+
 	
+	public ViewCache startRepoDeltaDownload(ViewRepository repository){
+		return startRepoDownload(repository, EnumInfoType.DELTA);
+	}
 	
 	public ViewCache startRepoBareDownload(ViewRepository repository){
 		return startRepoDownload(repository, EnumInfoType.BARE);
@@ -417,6 +421,11 @@ public class ManagerDownloads {
 		String xmlRemotePath = null;
 		
 		switch (infoType) {
+			case DELTA:
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"unix=true&show_apphashid=true&hash="+repository.getDelta();
+				cache = managerCache.getNewRepoDeltaViewCache(repository.getHashid());
+				break;
+		
 			case BARE:
 				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix=true&order_by=alphabetic&order_direction=ascending";	//TODO implement rest of args
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
