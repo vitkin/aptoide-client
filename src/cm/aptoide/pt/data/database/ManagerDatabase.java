@@ -397,6 +397,81 @@ public class ManagerDatabase {
 	}
 	
 	/**
+	 * updateRepository, handles single repository updating
+	 * 
+	 * @param ViewRepository repository
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void updateRepository(ViewRepository repository){
+		repository.setLastSynchroTime(Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis());
+		db.beginTransaction();
+		try{
+			if(db.update(Constants.TABLE_REPOSITORY, repository.getValues(), Constants.KEY_REPO_HASHID+"=?", new String[]{Integer.toString(repository.getHashid())}) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+			e.printStackTrace();
+		}finally{
+			db.endTransaction();
+			serviceData.updateReposLists();
+		}
+	}
+	
+	/**
+	 * removeLogin, handles single repository's login removal
+	 * 
+	 * @param int repoHashid
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void removeLogin(int repoHashid){
+		db.beginTransaction();
+		try{
+			if(db.delete(Constants.TABLE_LOGIN, Constants.KEY_LOGIN_REPO_HASHID+"=?", new String[]{Integer.toString(repoHashid)}) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+			e.printStackTrace();
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * updateLogin, handles single repository's login updating
+	 * 
+	 * @param ViewRepository repository
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void updateLogin(ViewRepository repository){
+		db.beginTransaction();
+		try{
+			if(db.update(Constants.TABLE_LOGIN, repository.getLogin().getValues(), Constants.KEY_LOGIN_REPO_HASHID+"=?", new String[]{Integer.toString(repository.getHashid())}) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: send to errorHandler the exception
+			e.printStackTrace();
+		}finally{
+			db.endTransaction();
+			serviceData.updateReposLists();
+		}
+	}
+	
+	/**
 	 * removeRepositories, handles multiple repositories removal
 	 * 
 	 * @param ViewListIds repoHashids
@@ -1341,6 +1416,9 @@ public class ManagerDatabase {
 		final int REPO_DELTA = Constants.COLUMN_FOURTH;
 		final int REPO_LAST_SYNCHRO = Constants.COLUMN_FIFTH;
 		
+		final int USERNAME = Constants.COLUMN_FIRST;
+		final int PASSWORD = Constants.COLUMN_SECOND;
+		
 		final long currentTimeStamp = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 		ViewRepository repositoryNeedingUpdate = null;
 		
@@ -1350,14 +1428,25 @@ public class ManagerDatabase {
 									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid
 									+" AND "+Constants.KEY_REPO_LAST_SYNCHRO+"<"+(currentTimeStamp-(Constants.REPOS_UPDATE_INTERVAL*Constants.HOURS_TO_MILISECONDS))+";";
 		
-		Cursor cursorRepoNeedingUpdate = aptoideAtomicQuery(selectRepoNeedingUpdate);
+		String selectRepoLogin = "SELECT * FROM "+Constants.TABLE_LOGIN+" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+"="+repoHashid+";";
+		
+		db.beginTransaction();
+		Cursor cursorRepoNeedingUpdate = aptoideNonAtomicQuery(selectRepoNeedingUpdate);
+		Cursor cursorRepoLogin = aptoideNonAtomicQuery(selectRepoLogin);
+		db.setTransactionSuccessful();
+		db.endTransaction();
 		
 		if(!(cursorRepoNeedingUpdate.getCount() == Constants.EMPTY_INT)){
 			repositoryNeedingUpdate = new ViewRepository(cursorRepoNeedingUpdate.getString(REPO_URI));
 			repositoryNeedingUpdate.setInUse(cursorRepoNeedingUpdate.getInt(REPO_IN_USE)==Constants.DB_TRUE?true:false);
 			repositoryNeedingUpdate.setSize(cursorRepoNeedingUpdate.getInt(REPO_SIZE));
 			repositoryNeedingUpdate.setDelta(cursorRepoNeedingUpdate.getString(REPO_DELTA));
-			repositoryNeedingUpdate.setLastSynchroTime(cursorRepoNeedingUpdate.getLong(REPO_LAST_SYNCHRO));	
+			repositoryNeedingUpdate.setLastSynchroTime(cursorRepoNeedingUpdate.getLong(REPO_LAST_SYNCHRO));
+			
+			if(cursorRepoLogin.getCount() != Constants.EMPTY_INT){
+				repositoryNeedingUpdate.setLogin(new ViewLogin(cursorRepoLogin.getString(USERNAME),cursorRepoLogin.getString(PASSWORD)));
+			}
+			cursorRepoLogin.close();
 			cursorRepoNeedingUpdate.close();		
 		}
 		return repositoryNeedingUpdate;
@@ -1374,7 +1463,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ArrayList<ViewRepository> getReposNeedingUpdate(){
+	public ArrayList<ViewRepository> getReposNeedingUpdate(){	//TODO need login collection
 		final int REPO_URI = Constants.COLUMN_FIRST;
 		final int REPO_IN_USE = Constants.COLUMN_SECOND;
 		final int REPO_SIZE = Constants.COLUMN_THIRD;

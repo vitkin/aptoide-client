@@ -48,6 +48,8 @@ interface AIDLAptoideServiceData {
 	void callRemoveRepo(in int repoHashid);
 	void callSetInUseRepo(in int repoHashid);
 	void callUnsetInUseRepo(in int repoHashid);
+	void callRemoveLogin(in int repoHashid);
+	void callUpdateLogin(in ViewRepository repo);
 	void callNoRepos();
 	void callLoadingRepos();
 	

@@ -421,13 +421,13 @@ public class ManagerDownloads {
 		String xmlRemotePath = null;
 		
 		switch (infoType) {
-			case DELTA:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"unix=true&show_apphashid=true&hash="+repository.getDelta();
+			case DELTA:															//TODO info=bare+icon&
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"unix_timestamp=true&show_apphashid=true&hash="+repository.getDelta();
 				cache = managerCache.getNewRepoDeltaViewCache(repository.getHashid());
 				break;
 		
 			case BARE:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix=true&order_by=alphabetic&order_direction=ascending";	//TODO implement rest of args
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix_timestamp=true&order_by=alphabetic&order_direction=ascending";	//TODO implement rest of args
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
 				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
 				break;
@@ -461,10 +461,13 @@ public class ManagerDownloads {
 		}
 		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_UPDATE, repoName, repository.getHashid());
 		if(repository.isLoginRequired()){
-			download = getNewViewDownload(xmlRemotePath, repository.getLogin(), cache, notification);
-		}else{
-			download = getNewViewDownload(xmlRemotePath, cache, notification);
+			xmlRemotePath += "&username="+repository.getLogin().getUsername()+"&password="+repository.getLogin().getPassword();
 		}
+//		if(repository.isLoginRequired()){
+//			download = getNewViewDownload(xmlRemotePath, repository.getLogin(), cache, notification);
+//		}else{
+			download = getNewViewDownload(xmlRemotePath, cache, notification);
+//		}
 		
 		download(download, true);
 		
