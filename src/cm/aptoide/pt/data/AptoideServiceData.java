@@ -176,6 +176,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public void callRemoveLogin(int repoHashid) throws RemoteException {
+			removeLogin(repoHashid);
+		}
+
+		@Override
+		public void callUpdateLogin(ViewRepository repo) throws RemoteException {
+			updateLogin(repo);
+		}
+
+		@Override
 		public ViewDisplayListRepos callGetRepos() throws RemoteException {
 			return getRepos();
 		}
@@ -738,6 +748,26 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	public void removeLogin(final int repoHashid){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Setting repo to private: "+repoHashid);
+				managerDatabase.removeLogin(repoHashid);
+			}
+		});
+	}
+	
+	public void updateLogin(final ViewRepository repo){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "updating repo's login: "+repo);
+				managerDatabase.updateLogin(repo);
+			}
+		});
+	}
+	
 	public void getDelta(final int repoHashid){
 		cachedThreadPool.execute(new Runnable() {
 			@Override
@@ -764,8 +794,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			}
 		});
 	}
-	
-	
+		
+	public void parsingRepoDeltaFinished(ViewRepository repository){
+		if(reposInserting.contains(repository.getHashid())){
+			reposInserting.remove(Integer.valueOf(repository.getHashid()));
+			resetAvailableLists();
+			insertedRepo(repository.getHashid());
+		}
+	}
+		
 	
 	public void addRepoBare(final ViewRepository originalRepository){
 		reposInserting.add(originalRepository.getHashid());

@@ -95,6 +95,10 @@ public class ManagerXml{
 	    try {
 	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 	    	switch (infoType) {
+				case DELTA:
+					repoParser = new RepoDeltaParser(this, parseInfo);
+					break;
+					
 				case BARE:
 					repoParser = new RepoBareParser(this, parseInfo);
 					break;
@@ -136,18 +140,29 @@ public class ManagerXml{
 	}
 
 
+	public void repoDeltaParse(ViewRepository repository, ViewCache cache){
+		if(cache != null){
+			repoParse(repository, cache, EnumInfoType.DELTA);
+		}
+	}
+	
+	public void parsingRepoDeltaFinished(ViewRepository repository){
+		serviceData.parsingRepoDeltaFinished(repository);
+	}
+
+
 	public void repoBareParse(ViewRepository repository, ViewCache cache){
 		if(cache != null){
 			repoParse(repository, cache, EnumInfoType.BARE);
 		}
 	}
 	
-	public void addRepoIconsInfo(ViewRepository repository){
-		serviceData.addRepoIconsInfo(repository);
-	}
-	
 	public void parsingRepoBareFinished(ViewRepository repository){
 		serviceData.parsingRepoBareFinished(repository);
+	}
+	
+	public void addRepoIconsInfo(ViewRepository repository){
+		serviceData.addRepoIconsInfo(repository);
 	}
 	
 	public void repoIconParse(ViewRepository repository, ViewCache cache){

@@ -187,8 +187,8 @@ public class ManageRepos extends ListActivity{
     		reposThreadPool = Executors.newSingleThreadExecutor();
     	}
     	
-    	public void addRepo(String uri){
-        	reposThreadPool.execute(new AddRepo(uri));
+    	public void addRepo(ViewRepository repo){
+        	reposThreadPool.execute(new AddRepo(repo));
         }
     	
     	public void removeRepo(int repoHashid){
@@ -203,11 +203,19 @@ public class ManageRepos extends ListActivity{
     		reposThreadPool.execute(new UnsetInUseRepo(repoHashid));
     	}
     	
+    	public void removeLogin(int repoHashid){
+    		reposThreadPool.execute(new RemoveLogin(repoHashid));
+    	}
+    	
+    	public void updateLogin(ViewRepository repo){
+    		reposThreadPool.execute(new UpdateLogin(repo));
+    	}
+    	
     	private class AddRepo implements Runnable{
-    		String uri;
+    		ViewRepository repo;
     		
-    		private AddRepo(String uri){
-    			this.uri = uri;
+    		public AddRepo(ViewRepository repo){
+    			this.repo = repo;
     		}
     		
 			@Override
@@ -220,7 +228,7 @@ public class ManageRepos extends ListActivity{
 				}
 				
 				try {
-					serviceDataCaller.callAddRepo(new ViewRepository(uri));
+					serviceDataCaller.callAddRepo(repo);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -231,7 +239,7 @@ public class ManageRepos extends ListActivity{
     	private class RemoveRepo implements Runnable{
     		int repoHashid;
     		
-    		private RemoveRepo(int repoHashid){
+    		public RemoveRepo(int repoHashid){
     			this.repoHashid = repoHashid;
     		}
     		
@@ -272,7 +280,7 @@ public class ManageRepos extends ListActivity{
     	private class SetInUseRepo implements Runnable{
     		int repoHashid;
     		
-    		private SetInUseRepo(int repoHashid){
+    		public SetInUseRepo(int repoHashid){
     			this.repoHashid = repoHashid;
     		}
     		
@@ -297,7 +305,7 @@ public class ManageRepos extends ListActivity{
     	private class UnsetInUseRepo implements Runnable{
     		int repoHashid;
     		
-    		private UnsetInUseRepo(int repoHashid){
+    		public UnsetInUseRepo(int repoHashid){
     			this.repoHashid = repoHashid;
     		}
     		
@@ -331,6 +339,42 @@ public class ManageRepos extends ListActivity{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+    	}
+    	
+    	private class RemoveLogin implements Runnable{
+    		int repoHashid;
+    		
+    		public RemoveLogin(int repoHashid){
+    			this.repoHashid = repoHashid;
+    		}
+
+			@Override
+			public void run() {
+				try {
+					serviceDataCaller.callRemoveLogin(repoHashid);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}				
+			}
+    	}
+    	
+    	private class UpdateLogin implements Runnable{
+    		ViewRepository repo;
+    		
+    		public UpdateLogin(ViewRepository repo){
+    			this.repo = repo;
+    		}
+
+			@Override
+			public void run() {
+				try {
+					serviceDataCaller.callUpdateLogin(repo);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}				
 			}
     	}
     }
@@ -381,10 +425,11 @@ public class ManageRepos extends ListActivity{
     	reposManager.removeRepo(repoHashid);
     }
     
-    private void addDisplayRepo(ViewDisplayRepo repo){
-    	reposManager.addRepo(repo.getUri());
-    	reposInserting.put(repo.getRepoHashid(), repo);
-    	repos.getList().add(repo.getDiplayMap());
+    private void addDisplayRepo(ViewRepository repo){
+    	reposManager.addRepo(repo);
+    	ViewDisplayRepo newDisplayRepo = new ViewDisplayRepo(repo.getHashid(), repo.getUri(), true, 0);
+    	reposInserting.put(newDisplayRepo.getRepoHashid(), newDisplayRepo);
+    	repos.getList().add(newDisplayRepo.getDiplayMap());
     }
     
 	
@@ -396,7 +441,7 @@ public class ManageRepos extends ListActivity{
 		alrt.setMessage(getString(R.string.add_apps_repo_confirm) + uri);
 		alrt.setButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
-		    	  addDisplayRepo(new ViewDisplayRepo(uri.hashCode(), uri, true, 0));
+		    	  addDisplayRepo(new ViewRepository(uri));
 		    	  initReposList();	
 		    	  return;
 		      } }); 
@@ -633,6 +678,8 @@ public class ManageRepos extends ListActivity{
 	
 	
 	private void validateRepo(final String originalUriString, boolean editMode){
+
+		final ViewDisplayRepo originalRepo = repos.getRepo(originalUriString.hashCode());
 		
 		LayoutInflater li = LayoutInflater.from(ctx); 
 		View view = li.inflate(R.layout.addrepo, null);
@@ -664,10 +711,20 @@ public class ManageRepos extends ListActivity{
 		alrt = p.create();
 		CharSequence actionButtonString;
 		if(editMode){
+			if(originalRepo.requiresLogin()){
+				sec.setChecked(true);
+				sec_user.setText(originalRepo.getLogin().getUsername());																																																				 
+				sec_pwd.setText(originalRepo.getLogin().getPassword());
+			}else{
+				sec.setChecked(false);
+			}
+			
 			alrt.setIcon(android.R.drawable.ic_menu_edit);
 			alrt.setTitle(getText(R.string.edit_repo));
 			actionButtonString = getText(R.string.edit);
 		}else{
+			sec.setChecked(false);
+			
 			alrt.setIcon(android.R.drawable.ic_menu_add);
 			alrt.setTitle(getText(R.string.add_repo));
 			actionButtonString = getText(R.string.add);
@@ -696,22 +753,29 @@ public class ManageRepos extends ListActivity{
 					case OK:
 						Log.d("Aptoide-ManageRepo", "return ok");
 						msg.obj = 0;
-						if(isRepoManaged(uriString)){
+						if(isRepoManaged(uriString) && (originalRepo.requiresLogin()?(originalRepo.getLogin().getUsername().equals(user) && originalRepo.getLogin().getPassword().equals(pwd)):true)){
 							Toast.makeText(ctx, "Repo "+ uriString+ " already exists.", 5000).show();
 //							finish();
 						}else{
-							ViewDisplayRepo newRepo = new ViewDisplayRepo(uriString.hashCode(), uriString, true, 0);
-							if(user != null && pwd != null){
-								newRepo.setLogin(new ViewLogin(user, pwd));	
+							ViewRepository newRepo = new ViewRepository(uriString);
+							if(isRepoManaged(uriString)){
+								if(user != null && pwd != null){
+									reposManager.removeLogin(newRepo.getHashid());
+								}else{
+									newRepo.setLogin(new ViewLogin(user, pwd));
+									reposManager.updateLogin(newRepo);
+								}
+							}else{
+								if(user != null && pwd != null){
+									newRepo.setLogin(new ViewLogin(user, pwd));	
+								}
+						    	if(originalUriString != null){
+						    		removeDisplayRepo(originalUriString.hashCode());
+						    	}
+						    	addDisplayRepo(newRepo);
+						    	refreshReposList();
 							}
-
-					    	if(originalUriString != null && !originalUriString.equals(uriString)){
-					    		removeDisplayRepo(originalUriString.hashCode());
-					    	}
-					    	if(!uriString.equals(originalUriString)){
-					    		addDisplayRepo(newRepo);
-								refreshReposList();
-					    	}
+							
 							alrt.dismiss();
 						}
 						break;
@@ -751,22 +815,29 @@ public class ManageRepos extends ListActivity{
 						case OK:
 							Log.d("Aptoide-ManageRepo", "return ok");
 							msg.obj = 0;
-							if(isRepoManaged(uriString)){
+							if(isRepoManaged(uriString) && (originalRepo.requiresLogin()?(originalRepo.getLogin().getUsername().equals(user) && originalRepo.getLogin().getPassword().equals(pwd)):true)){
 								Toast.makeText(ctx, "Repo "+ uriString+ " already exists.", 5000).show();
 //								finish();
 							}else{
-								ViewDisplayRepo newRepo = new ViewDisplayRepo(uriString.hashCode(), uriString, true, 0);
-								if(user != null && pwd != null){
-									newRepo.setLogin(new ViewLogin(user, pwd));	
+								ViewRepository newRepo = new ViewRepository(uriString);
+								if(isRepoManaged(uriString)){
+									if(user != null && pwd != null){
+										reposManager.removeLogin(newRepo.getHashid());
+									}else{
+										newRepo.setLogin(new ViewLogin(user, pwd));
+										reposManager.updateLogin(newRepo);
+									}
+								}else{
+									if(user != null && pwd != null){
+										newRepo.setLogin(new ViewLogin(user, pwd));	
+									}
+							    	if(originalUriString != null){
+							    		removeDisplayRepo(originalUriString.hashCode());
+							    	}
+							    	addDisplayRepo(newRepo);
+							    	refreshReposList();
 								}
-
-						    	if(originalUriString != null && !originalUriString.equals(uriString)){
-						    		removeDisplayRepo(originalUriString.hashCode());
-						    	}
-						    	if(!uriString.equals(originalUriString)){
-						    		addDisplayRepo(newRepo);
-									refreshReposList();
-						    	}
+								
 								alrt.dismiss();
 							}
 							break;
