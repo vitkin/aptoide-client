@@ -245,26 +245,26 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		@Override
 		public void refreshAvailableDisplay() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received refreshAvailableDisplay callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.REFRESH_AVAILABLE_DISPLAY.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.REFRESH_AVAILABLE_DISPLAY.ordinal());
 			
 		}
 
 		@Override
 		public void noAvailableListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received noAvailableApps callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_NO_APPS.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_NO_APPS.ordinal());
 		}
 
 		@Override
 		public void loadingAvailableListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received loadingAvailableApps callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 		}
 
 		@Override
 		public void loadingInstalledListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received loadingInstalledApps callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
 		}
 	};
 	
@@ -272,7 +272,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     private Handler interfaceTasksHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        	EnumAptoideAppsListsTasks task = EnumAptoideAppsListsTasks.reverseOrdinal(msg.what);
+        	EnumAptoideInterfaceTasks task = EnumAptoideInterfaceTasks.reverseOrdinal(msg.what);
         	switch (task) {
 	        	case RESET_INSTALLED_LIST_DISPLAY:
 	        		resetDisplayInstalled();
@@ -365,13 +365,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 			@Override
 			public void run() {
-				interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
+				interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
 				try {
 					setFreshInstalledApps(serviceDataCaller.callGetInstalledApps());
-					interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_INSTALLED_LIST_DISPLAY.ordinal());
+					interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_INSTALLED_LIST_DISPLAY.ordinal());
 					if(!(availableApps.getList().size()==0)){
 						setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-						interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+						interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
 					}
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
@@ -449,22 +449,22 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					EnumAvailableRequestType request = getRequestFifo().removeFirst();
 					if(availableByCategory){
 						if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 							try {
 								if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
 									Log.d("Aptoide","resetting categories list.");
 									setFreshCategories(serviceDataCaller.callGetCategories());
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_CATEGORIES.ordinal());
+									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_CATEGORIES.ordinal());
 								}else{
 									offset = 0;
 									
 									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+DISPLAY_LISTS_CACHE_SIZE+" "+category);
 									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
+									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 								}
 								
 								setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
 								
 							} catch (RemoteException e) {
 								// TODO Auto-generated catch block
@@ -477,10 +477,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 								try {
 									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+DISPLAY_LISTS_CACHE_SIZE);
 									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, DISPLAY_LISTS_CACHE_SIZE, category.getCategoryHashid()));
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
+									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 									
 									setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
 									
 								} catch (RemoteException e) {
 									// TODO Auto-generated catch block
@@ -490,7 +490,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						}
 					}else{
 						if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 							offset = 0;
 						}else{
 							offset = cacheListOffset.get()*DISPLAY_LISTS_CACHE_SIZE;
@@ -498,10 +498,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						try {
 							Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+DISPLAY_LISTS_CACHE_SIZE);
 							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, DISPLAY_LISTS_CACHE_SIZE));
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 							
 							setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
 							
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
@@ -524,9 +524,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						
 						if(availableApps.getList().size() > (2*DISPLAY_LISTS_CACHE_SIZE)){
 							availableAppsTrimAmount = requestsSum*DISPLAY_LISTS_CACHE_SIZE;
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.TRIM_APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 						}else{
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 						}
 						
 						
@@ -536,9 +536,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 						if(availableApps.getList().size() > (2*DISPLAY_LISTS_CACHE_SIZE)){
 							availableAppsTrimAmount = (Math.abs(requestsSum)*DISPLAY_LISTS_CACHE_SIZE);
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 						}else{
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideAppsListsTasks.PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());							
+							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());							
 						}
 						
 					}
