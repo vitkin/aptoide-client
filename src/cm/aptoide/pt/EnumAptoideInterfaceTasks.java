@@ -27,7 +27,7 @@ package cm.aptoide.pt;
  * @since 3.0
  *
  */
-public enum EnumAptoideAppsListsTasks {
+public enum EnumAptoideInterfaceTasks {
 	RESET_INSTALLED_LIST_DISPLAY,
 	UPDATE_INSTALLED_LIST_DISPLAY,
 	RESET_CATEGORIES,
@@ -43,7 +43,7 @@ public enum EnumAptoideAppsListsTasks {
 	SWITCH_INSTALLED_TO_PROGRESSBAR,
 	SWITCH_AVAILABLE_TO_NO_APPS;
 	
-	public static EnumAptoideAppsListsTasks reverseOrdinal(int ordinal){
+	public static EnumAptoideInterfaceTasks reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

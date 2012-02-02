@@ -677,9 +677,9 @@ public class ManageRepos extends ListActivity{
 	}
 	
 	
-	private void validateRepo(final String originalUriString, boolean editMode){
+	private void validateRepo(final String originalUriString, final boolean editMode){
 
-		final ViewDisplayRepo originalRepo = repos.getRepo(originalUriString.hashCode());
+		final ViewDisplayRepo originalRepo;
 		
 		LayoutInflater li = LayoutInflater.from(ctx); 
 		View view = li.inflate(R.layout.addrepo, null);
@@ -711,6 +711,8 @@ public class ManageRepos extends ListActivity{
 		alrt = p.create();
 		CharSequence actionButtonString;
 		if(editMode){
+			
+			originalRepo = repos.getRepo(originalUriString.hashCode());
 			if(originalRepo.requiresLogin()){
 				sec.setChecked(true);
 				sec_user.setText(originalRepo.getLogin().getUsername());																																																				 
@@ -723,6 +725,8 @@ public class ManageRepos extends ListActivity{
 			alrt.setTitle(getText(R.string.edit_repo));
 			actionButtonString = getText(R.string.edit);
 		}else{
+			
+			originalRepo = null;
 			sec.setChecked(false);
 			
 			alrt.setIcon(android.R.drawable.ic_menu_add);
@@ -753,7 +757,7 @@ public class ManageRepos extends ListActivity{
 					case OK:
 						Log.d("Aptoide-ManageRepo", "return ok");
 						msg.obj = 0;
-						if(isRepoManaged(uriString) && (originalRepo.requiresLogin()?(originalRepo.getLogin().getUsername().equals(user) && originalRepo.getLogin().getPassword().equals(pwd)):true)){
+						if(isRepoManaged(uriString) && ((originalRepo != null && originalRepo.requiresLogin())?(originalRepo.getLogin().getUsername().equals(user) && originalRepo.getLogin().getPassword().equals(pwd)):true)){
 							Toast.makeText(ctx, "Repo "+ uriString+ " already exists.", 5000).show();
 //							finish();
 						}else{
@@ -815,7 +819,7 @@ public class ManageRepos extends ListActivity{
 						case OK:
 							Log.d("Aptoide-ManageRepo", "return ok");
 							msg.obj = 0;
-							if(isRepoManaged(uriString) && (originalRepo.requiresLogin()?(originalRepo.getLogin().getUsername().equals(user) && originalRepo.getLogin().getPassword().equals(pwd)):true)){
+							if(isRepoManaged(uriString) && ((originalRepo != null && originalRepo.requiresLogin())?(originalRepo.getLogin().getUsername().equals(user) && originalRepo.getLogin().getPassword().equals(pwd)):true)){
 								Toast.makeText(ctx, "Repo "+ uriString+ " already exists.", 5000).show();
 //								finish();
 							}else{
