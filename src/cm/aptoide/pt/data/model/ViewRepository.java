@@ -259,7 +259,7 @@ public class ViewRepository implements Parcelable{
 	public void readFromParcel(Parcel in) {
 		values = in.readParcelable(null);
 		loginRequired = (Boolean) in.readValue(null);
-		login = in.readParcelable(null);
+		login = in.readParcelable(ViewLogin.class.getClassLoader());
 	}
 		
 }

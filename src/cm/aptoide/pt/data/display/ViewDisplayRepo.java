@@ -105,7 +105,7 @@ public class ViewDisplayRepo implements Parcelable, Serializable{
 	}
 	
 	
-	public void setLogin(ViewLogin login){
+	public void setLogin(ViewDisplayLogin login){
 		this.map.put(Constants.DISPLAY_REPO_REQUIRES_LOGIN, true);
 		login.setRepoHashid(getRepoHashid());
 		this.map.put(Constants.DISPLAY_REPO_LOGIN, login);
@@ -115,8 +115,8 @@ public class ViewDisplayRepo implements Parcelable, Serializable{
 		return (Boolean)this.map.get(Constants.DISPLAY_REPO_REQUIRES_LOGIN);
 	}
 
-	public ViewLogin getLogin() {
-		return (ViewLogin)this.map.get(Constants.DISPLAY_REPO_LOGIN);			//TODO test isrequired and return nullobject pattern if not
+	public ViewDisplayLogin getLogin() {
+		return (ViewDisplayLogin)this.map.get(Constants.DISPLAY_REPO_LOGIN);			//TODO test isrequired and return nullobject pattern if not
 	}
 	
 
@@ -169,7 +169,7 @@ public class ViewDisplayRepo implements Parcelable, Serializable{
 	public String toString() {
 		StringBuilder description = new StringBuilder("RepoHashid: "+getRepoHashid()+" Uri: "+getUri()+" Size: "+getSize()+" InUse: "+getInUse());
 		if(requiresLogin()){
-			description.append("Login+ "+getLogin().toString());
+			description.append(" Login+ "+getLogin().toString());
 		}
 		return description.toString();
 	}

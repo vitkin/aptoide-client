@@ -1,5 +1,5 @@
 /**
- * ViewLogin,		auxilliary class to Aptoide's ServiceData
+ * ViewDisplayLogin,		auxilliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.model;
+package cm.aptoide.pt.data.display;
 
 import java.io.Serializable;
 
@@ -26,19 +26,22 @@ import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.model.ViewLogin;
 
 
  /**
- * ViewLogin, models a download's authentication
+ * ViewDisplayLogin, models a download's authentication
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class ViewLogin implements Parcelable, Serializable{
+public class ViewDisplayLogin implements Parcelable, Serializable{
 
 	private static final long serialVersionUID = -3283950206281665375L;
-	private ContentValues loginValues;
+	private String username;
+	private String password;
+	private int repoHashid;
 	
 
 	/**
@@ -47,34 +50,35 @@ public class ViewLogin implements Parcelable, Serializable{
 	 * @param username
 	 * @param password
 	 */
-	public ViewLogin(String username, String password) {
-		loginValues = new ContentValues(Constants.NUMBER_OF_COLUMNS_LOGIN);
+	public ViewDisplayLogin(String username, String password) {
 		setUsername(username);
 		setPassword(password);
 	}
 
 	private void setUsername(String username){
-		loginValues.put(Constants.KEY_LOGIN_USERNAME, username);
+		this.username = username;
 	}
 
 	private void setPassword(String password){
-		loginValues.put(Constants.KEY_LOGIN_PASSWORD, password);
+		this.password = password;
 	}
 
 	public String getUsername() {
-		return loginValues.getAsString(Constants.KEY_LOGIN_USERNAME);
+		return this.username;
 	}
 
 	public String getPassword() {
-		return loginValues.getAsString(Constants.KEY_LOGIN_PASSWORD);
+		return this.password;
 	}
 	
 	public void setRepoHashid(int repoHashid){
-		loginValues.put(Constants.KEY_LOGIN_REPO_HASHID, repoHashid);
+		this.repoHashid = repoHashid;
 	}
 	
 	public ContentValues getValues(){
-		return loginValues;
+		ViewLogin login = new ViewLogin(this.username, this.password);
+		login.setRepoHashid(this.repoHashid);
+		return login.getValues();
 	}
 	
 
@@ -82,7 +86,9 @@ public class ViewLogin implements Parcelable, Serializable{
 	 * ViewLogin object reuse clean references
 	 */
 	public void clean(){
-		this.loginValues = null;
+		this.username = null;
+		this.password = null;
+		this.repoHashid = Constants.EMPTY_INT;
 	}
 
 	/**
@@ -92,7 +98,6 @@ public class ViewLogin implements Parcelable, Serializable{
 	 * @param password
 	 */
 	public void reuse(String username, String password){
-		loginValues = new ContentValues(Constants.NUMBER_OF_COLUMNS_LOGIN);
 		setUsername(username);
 		setPassword(password);
 	}
@@ -107,16 +112,16 @@ public class ViewLogin implements Parcelable, Serializable{
 	// Parcelable stuff //
 	
 	
-	public static final Parcelable.Creator<ViewLogin> CREATOR = new
-			Parcelable.Creator<ViewLogin>() {
+	public static final Parcelable.Creator<ViewDisplayLogin> CREATOR = new
+			Parcelable.Creator<ViewDisplayLogin>() {
 
 		@Override
-		public ViewLogin createFromParcel(Parcel in) {
-			return new ViewLogin(in);
+		public ViewDisplayLogin createFromParcel(Parcel in) {
+			return new ViewDisplayLogin(in);
 		}
 
-		public ViewLogin[] newArray(int size) {
-			return new ViewLogin[size];
+		public ViewDisplayLogin[] newArray(int size) {
+			return new ViewDisplayLogin[size];
 		}
 	};
 
@@ -131,17 +136,21 @@ public class ViewLogin implements Parcelable, Serializable{
 		return 0;
 	}
 
-	private ViewLogin(Parcel in){
+	private ViewDisplayLogin(Parcel in){
 		readFromParcel(in);
 	}
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeParcelable(loginValues, 0);
+		out.writeString(this.username);
+		out.writeString(this.password);
+		out.writeInt(this.repoHashid);
 	}
 
 	public void readFromParcel(Parcel in) {
-		loginValues = in.readParcelable(null);
+		this.username = in.readString();
+		this.password = in.readString();
+		this.repoHashid = in.readInt();
 	}
 		
 	
