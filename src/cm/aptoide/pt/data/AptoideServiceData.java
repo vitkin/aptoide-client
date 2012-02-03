@@ -773,6 +773,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				ViewRepository repository = managerDatabase.getRepoIfUpdateNeeded(repoHashid);
+				AptoideLog.d(AptoideServiceData.this, "updating repo: "+repository);
 				if(repository != null){
 					reposInserting.add(repoHashid);
 					if(!managerDownloads.isConnectionAvailable()){

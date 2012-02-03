@@ -41,6 +41,7 @@ import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
+import cm.aptoide.pt.data.display.ViewDisplayLogin;
 import cm.aptoide.pt.data.display.ViewDisplayRepo;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ViewDownload;
@@ -670,6 +671,7 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			
 		}catch (Exception e) {
+			Log.d("Aptoide-ManagerDatabase", "insert applications, exception!");
 			// TODO: handle exception
 		}finally{
 			if(db.inTransaction()){
@@ -1345,7 +1347,7 @@ public class ManagerDatabase {
 		
 		String selectLogins = "SELECT *"
 							 +" FROM "+Constants.TABLE_LOGIN+";";
-		ViewLogin login;
+		ViewDisplayLogin login;
 		Cursor loginsCursor;
 
 		
@@ -1358,8 +1360,6 @@ public class ManagerDatabase {
 			db.endTransaction();
 			
 			listRepos = new ViewDisplayListRepos(reposCursor.getCount());
-			/**  storeHashid, arrayIndex */
-			HashMap<Integer,Integer> indexMap = new HashMap<Integer, Integer>(reposCursor.getCount());
 
 			reposCursor.moveToFirst();
 			
@@ -1372,7 +1372,6 @@ public class ManagerDatabase {
 			do{
 				repo = new ViewDisplayRepo(reposCursor.getInt(REPO_HASHID), reposCursor.getString(URI), (reposCursor.getInt(IN_USE)==Constants.DB_TRUE?true:false), reposCursor.getInt(SIZE) );				
 				listRepos.addRepo(repo);
-				indexMap.put(reposCursor.getInt(REPO_HASHID), reposCursor.getPosition());
 			}while(reposCursor.moveToNext());
 			reposCursor.close();
 
@@ -1382,14 +1381,15 @@ public class ManagerDatabase {
 				loginsCursor.close();
 				return listRepos;
 			}
-			
+
 			do{
-				login = new ViewLogin(loginsCursor.getString(USERNAME),loginsCursor.getString(PASSWORD));
-				listRepos.getRepo(indexMap.get(loginsCursor.getInt(LOGIN_REPO_HASHID))).setLogin(login);
+				login = new ViewDisplayLogin(loginsCursor.getString(USERNAME),loginsCursor.getString(PASSWORD));
+				listRepos.getRepo(loginsCursor.getInt(LOGIN_REPO_HASHID)).setLogin(login);
 			}while(loginsCursor.moveToNext());
 			loginsCursor.close();
 
 		}catch (Exception e) {
+			Log.d("Aptoide-ManagerDatabase", "get repos display info, exception! "+listRepos);
 			db.endTransaction();
 			// TODO: handle exception
 		}
@@ -1426,7 +1426,8 @@ public class ManagerDatabase {
 									+", "+Constants.KEY_REPO_SIZE+", "+Constants.KEY_REPO_DELTA+", "+Constants.KEY_REPO_LAST_SYNCHRO
 									+" FROM "+Constants.TABLE_REPOSITORY
 									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid
-									+" AND "+Constants.KEY_REPO_LAST_SYNCHRO+"<"+(currentTimeStamp-(Constants.REPOS_UPDATE_INTERVAL*Constants.HOURS_TO_MILISECONDS))+";";
+									+" AND "+Constants.KEY_REPO_LAST_SYNCHRO+"<"+(currentTimeStamp-(Constants.REPOS_UPDATE_INTERVAL*Constants.HOURS_TO_MILISECONDS))
+									+";";
 		
 		String selectRepoLogin = "SELECT * FROM "+Constants.TABLE_LOGIN+" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+"="+repoHashid+";";
 		
@@ -1437,6 +1438,7 @@ public class ManagerDatabase {
 		db.endTransaction();
 		
 		if(!(cursorRepoNeedingUpdate.getCount() == Constants.EMPTY_INT)){
+			cursorRepoNeedingUpdate.moveToFirst();			
 			repositoryNeedingUpdate = new ViewRepository(cursorRepoNeedingUpdate.getString(REPO_URI));
 			repositoryNeedingUpdate.setInUse(cursorRepoNeedingUpdate.getInt(REPO_IN_USE)==Constants.DB_TRUE?true:false);
 			repositoryNeedingUpdate.setSize(cursorRepoNeedingUpdate.getInt(REPO_SIZE));
@@ -1444,6 +1446,7 @@ public class ManagerDatabase {
 			repositoryNeedingUpdate.setLastSynchroTime(cursorRepoNeedingUpdate.getLong(REPO_LAST_SYNCHRO));
 			
 			if(cursorRepoLogin.getCount() != Constants.EMPTY_INT){
+				cursorRepoLogin.moveToFirst();
 				repositoryNeedingUpdate.setLogin(new ViewLogin(cursorRepoLogin.getString(USERNAME),cursorRepoLogin.getString(PASSWORD)));
 			}
 			cursorRepoLogin.close();
