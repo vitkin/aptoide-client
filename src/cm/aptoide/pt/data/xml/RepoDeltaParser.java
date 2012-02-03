@@ -32,7 +32,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewListIds;
@@ -85,90 +84,92 @@ public class RepoDeltaParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		tag = tagMap.get(localName.trim());
-		
-		switch (tag) {
-			case del:
-				toRemove = true;
-				break;
-			case apphashid:
-				if(toRemove){
-					removedApplications.addId(Integer.parseInt(tagContentBuilder.toString()));
-				}
-				break;
-		
-			case apkid:
-				packageName = tagContentBuilder.toString();
-				break;
-			case vercode:
-				int versionCode = Integer.parseInt(tagContentBuilder.toString());
-				application = new ViewApplication(packageName, versionCode, false);
-				break;
-			case ver:
-				application.setVersionName(tagContentBuilder.toString());
-				break;
-			case name:
-				application.setApplicationName(tagContentBuilder.toString());
-				break;
-			case catg2:
-				application.setCategoryHashid((tagContentBuilder.toString().trim()).hashCode());
-//				Log.d("Aptoide-RepoBareParser", "app: "+application.getApplicationName()+", appHashid (Not full): "+application.getHashid()+", category: "+tagContentBuilder.toString().trim()+", categoryHashid: "+application.getCategoryHashid());
-				break;
-			case timestamp:
-				application.setTimestamp(Long.parseLong(tagContentBuilder.toString()));
-				break;
-//			case minSdk:	//TODO filters
-//				application.setVersionName(new String(chars).substring(start, start + length));
-//				break;
-				
-//			case icon:
-//				icon = new ViewIconInfo(tagContentBuilder.toString(), application.getFullHashid());
-//				break;
-				
-			case pkg:
-				parseInfo.getNotification().incrementProgress(1);
-				if(toRemove){
-					repoSizeDifferential--;
-				}else{
-				application.setRepoHashid(parseInfo.getRepository().getHashid());
-				newApplications.add(application);
-//				newIcons.add(icon);
-				}
-				toRemove = false;
-				break;
+		if(tag != null){
+			switch (tag) {
+//				case del:
+//					toRemove = true;
+//					break;
+				case apphashid:
+					if(toRemove){
+						removedApplications.addId((Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode());
+					}
+					break;
 			
+				case apkid:
+					packageName = tagContentBuilder.toString();
+					break;
+				case vercode:
+					int versionCode = Integer.parseInt(tagContentBuilder.toString());
+					application = new ViewApplication(packageName, versionCode, false);
+					break;
+				case ver:
+					application.setVersionName(tagContentBuilder.toString());
+					break;
+				case name:
+					application.setApplicationName(tagContentBuilder.toString());
+					break;
+				case catg2:
+					application.setCategoryHashid((tagContentBuilder.toString().trim()).hashCode());
+	//				Log.d("Aptoide-RepoBareParser", "app: "+application.getApplicationName()+", appHashid (Not full): "+application.getHashid()+", category: "+tagContentBuilder.toString().trim()+", categoryHashid: "+application.getCategoryHashid());
+					break;
+				case timestamp:
+					application.setTimestamp(Long.parseLong(tagContentBuilder.toString()));
+					break;
+	//			case minSdk:	//TODO filters
+	//				application.setVersionName(new String(chars).substring(start, start + length));
+	//				break;
+					
+	//			case icon:
+	//				icon = new ViewIconInfo(tagContentBuilder.toString(), application.getFullHashid());
+	//				break;
+					
+				case pkg:
+					parseInfo.getNotification().incrementProgress(1);
+					if(toRemove){
+						repoSizeDifferential--;
+					}else{
+						repoSizeDifferential++;
+						application.setRepoHashid(parseInfo.getRepository().getHashid());
+						newApplications.add(application);
+	//					newIcons.add(icon);
+					}
+					toRemove = false;
+					break;
 				
-			case basepath:
-				path = tagContentBuilder.toString();
-				if(!path.equals(parseInfo.getRepository().getBasePath())){
-					parseInfo.getRepository().setBasePath(path);
-				}
-				break;	
-			case iconspath:
-				path = tagContentBuilder.toString();
-				if(!path.equals(parseInfo.getRepository().getIconsPath())){
-					parseInfo.getRepository().setIconsPath(tagContentBuilder.toString());
-				}
-				break;	
-			case screenspath:
-				path = tagContentBuilder.toString();
-				if(!path.equals(parseInfo.getRepository().getScreensPath())){
-					parseInfo.getRepository().setScreensPath(tagContentBuilder.toString());
-				}
-				break;	
-			case appscount:
-				repoSizeDifferential = Integer.parseInt(tagContentBuilder.toString());
-				parseInfo.getNotification().setProgressCompletionTarget(repoSizeDifferential);
-				break;
-			case delta:
-				parseInfo.getRepository().setDelta(tagContentBuilder.toString());
-				break;
-				
-			case repository:
-				break;
-				
-			default:
-				break;
-		}		
+					
+				case basepath:
+					path = tagContentBuilder.toString();
+					if(!path.equals(parseInfo.getRepository().getBasePath())){
+						parseInfo.getRepository().setBasePath(path);
+					}
+					break;	
+				case iconspath:
+					path = tagContentBuilder.toString();
+					if(!path.equals(parseInfo.getRepository().getIconsPath())){
+						parseInfo.getRepository().setIconsPath(tagContentBuilder.toString());
+					}
+					break;	
+				case screenspath:
+					path = tagContentBuilder.toString();
+					if(!path.equals(parseInfo.getRepository().getScreensPath())){
+						parseInfo.getRepository().setScreensPath(tagContentBuilder.toString());
+					}
+					break;	
+				case appscount:
+//					repoSizeDifferential = Integer.parseInt(tagContentBuilder.toString());
+					parseInfo.getNotification().setProgressCompletionTarget(repoSizeDifferential);
+					break;
+				case delta:
+					parseInfo.getRepository().setDelta(tagContentBuilder.toString());
+					break;
+					
+				case repository:
+					break;
+					
+				default:
+					break;
+			}
+		}
 	}
 
 	@Override
@@ -176,6 +177,10 @@ public class RepoDeltaParser extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 
 		tagContentBuilder = new StringBuilder();
+		
+		if(localName.trim().equals("del")){
+			toRemove = true;
+		}
 		
 	}
 	
@@ -190,11 +195,13 @@ public class RepoDeltaParser extends DefaultHandler{
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + parseInfo.getRepository() + " ...");
-
 		parseInfo.getRepository().setSize(parseInfo.getRepository().getSize()+repoSizeDifferential);
+		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + parseInfo.getRepository() + " ... size diff: "+repoSizeDifferential);
+		
 		managerXml.getManagerDatabase().updateRepository(parseInfo.getRepository());
+		Log.d("Aptoide-RepoBareParser","inserting new apps: " + newApplications + " ...");		
 		managerXml.getManagerDatabase().insertApplications(newApplications);
+		Log.d("Aptoide-RepoBareParser","removing apps: " + removedApplications + " ...");	
 		managerXml.getManagerDatabase().removeApplications(removedApplications);
 //		managerXml.getManagerDatabase().insertIconsInfo(newIcons);
 		

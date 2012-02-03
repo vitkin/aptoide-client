@@ -1429,7 +1429,8 @@ public class ManagerDatabase {
 									+" AND "+Constants.KEY_REPO_LAST_SYNCHRO+"<"+(currentTimeStamp-(Constants.REPOS_UPDATE_INTERVAL*Constants.HOURS_TO_MILISECONDS))
 									+";";
 		
-		String selectRepoLogin = "SELECT * FROM "+Constants.TABLE_LOGIN+" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+"="+repoHashid+";";
+		String selectRepoLogin = "SELECT "+Constants.KEY_LOGIN_USERNAME+", "+Constants.KEY_LOGIN_PASSWORD
+								+" FROM "+Constants.TABLE_LOGIN+" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+"="+repoHashid+";";
 		
 		db.beginTransaction();
 		Cursor cursorRepoNeedingUpdate = aptoideNonAtomicQuery(selectRepoNeedingUpdate);

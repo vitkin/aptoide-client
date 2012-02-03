@@ -213,7 +213,7 @@ public class ViewRepository implements Parcelable{
 		} catch (NullPointerException e) {}
 		
 		if(loginRequired){
-			description.append(this.getLogin().toString());
+			description.append(" "+this.getLogin().toString());
 		}
 		
 		return description.toString();

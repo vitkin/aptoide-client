@@ -835,7 +835,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void parsingRepoBareFinished(ViewRepository repository){
 		if(reposInserting.contains(repository.getHashid())){
-			if(managerPreferences.getShowApplicationsByCategory()){
+			if(managerPreferences.getShowApplicationsByCategory() || repository.getSize() < Constants.APPLICATIONS_IN_EACH_INSERT/2){
 				resetAvailableLists();
 			}
 			insertedRepo(repository.getHashid());
