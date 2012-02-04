@@ -79,7 +79,7 @@
 		           		        android:paddingLeft="40sp"
 		           		        android:layout_width="wrap_content"
 		           		        android:layout_height="wrap_content"
-		           		        android:text="@string/schedule_download" />
+		           		        android:text="@string/schedule" />
 		           		</TableRow>
 		           	
 		           		<TableRow android:paddingTop="10.0dip">

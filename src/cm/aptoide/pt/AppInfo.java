@@ -46,6 +46,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -70,6 +71,7 @@ public class AppInfo extends Activity{
 	private String appName;
 	private ViewDisplayAppVersionsInfo appVersions;
 	Gallery galleryView;
+	CheckBox later;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -86,6 +88,17 @@ public class AppInfo extends Activity{
 			serviceDataIsBound = true;
 			
 			Log.v("Aptoide-AppInfo", "Connected to ServiceData");
+			
+			try {
+				if(serviceDataCaller.callIsAppScheduledToInstall(appHashid)){
+					later.setChecked(true);
+				}else{
+					later.setChecked(false);
+				}
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 	        
 	        try {
 	            Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
@@ -192,21 +205,27 @@ public class AppInfo extends Activity{
     	super.onCreate(savedInstanceState);
 
 		appHashid = getIntent().getIntExtra("appHashid", 0);
+
+		setContentView(R.layout.app_info);
+		later = (CheckBox) findViewById(R.id.later);
 		
 		if(!serviceDataIsBound){
     		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
     	}
-		
-		setContentView(R.layout.app_info);
 		
 		final Button install = (Button) findViewById(R.id.install);
 		install.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View view) {
-				Log.d("Aptoide-AppInfo", "called install app");
 				try {
-					serviceDataCaller.callInstallApp(appHashid);
+					if(later.isChecked()){
+						serviceDataCaller.callScheduleInstallApp(appHashid);
+						Log.d("Aptoide-AppInfo", "called install app later");
+					}else{
+						serviceDataCaller.callInstallApp(appHashid);
+						Log.d("Aptoide-AppInfo", "called install app");
+					}
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
