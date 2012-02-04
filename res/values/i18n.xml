@@ -54,7 +54,8 @@
     <string name="cancel">Cancel</string>   
     <string name="search_market">Search Market</string>
     <string name="select_version">Select version</string>
-    <string name="schedule_download">Schedule Download</string>
+    <string name="scheduled_downloads">Scheduled Downloads</string>
+    <string name="schedule">Schedule</string>
     <string name="name_of_application">Name of the application</string>
 
     

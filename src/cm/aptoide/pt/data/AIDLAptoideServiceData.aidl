@@ -74,5 +74,8 @@ interface AIDLAptoideServiceData {
 	
 	void callInstallApp(in int appHashid);
 	void callUninstallApp(in int appHashid);
+	void callScheduleInstallApp(in int appHashid);
+	void callUnscheduleInstallApp(in int appHashid);
+	boolean callIsAppScheduledToInstall(in int appHashid);
 	
 }

@@ -260,6 +260,11 @@ public class Constants {
 	public static final int NUMBER_OF_COLUMNS_APP_CATEGORY = 2;
 	
 	
+	public static final String TABLE_APP_TO_INSTALL = "app_to_install";
+	public static final String KEY_APP_TO_INSTALL_HASHID = KEY_APPLICATION_HASHID;
+	public static final int NUMBER_OF_COLUMNS_APP_TO_INSTALL = 1;
+	
+	
 	public static final String TABLE_APP_INSTALLED = "app_installed";
 	/** base: package_name|versioncode */
 	public static final String KEY_APP_INSTALLED_HASHID = KEY_APPLICATION_HASHID;	
@@ -268,6 +273,11 @@ public class Constants {
 	public static final String KEY_APP_INSTALLED_VERSION_NAME = "version_name"; 
 	public static final String KEY_APP_INSTALLED_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increase lookup performance
 	public static final int NUMBER_OF_COLUMNS_APP_INSTALLED = 5;
+	
+	
+	public static final String TABLE_APP_TO_NEVER_UPDATE = "app_to_never_update";
+	public static final String KEY_APP_TO_NEVER_UPDATE_PACKAGE_NAME = KEY_APPLICATION_PACKAGE_NAME;
+	public static final int NUMBER_OF_COLUMNS_APP_TO_NEVER_UPDATE = 1;
 	
 	
 	public static final String TABLE_ICON_INFO = "icon_info";
@@ -405,9 +415,14 @@ public class Constants {
 
 	
 	//TODO table app_filters
-	//TODO table install later pk = fk app_full_hash_id + triggers
 	
-	
+
+	public static final String CREATE_TABLE_APP_TO_INSTALL = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_TO_INSTALL + " ("
+			+ KEY_APP_TO_INSTALL_HASHID + " INTEGER PRIMARY KEY NOT NULL); ";
+
+	public static final String FOREIGN_KEY_INSERT_APP_TO_INSTALL = "foreign_key_insert_app_to_install";
+	public static final String FOREIGN_KEY_UPDATE_APP_TO_INSTALL_HASHID_WEAK = "foreign_key_update_app_to_install_hashid_weak";
+		
 	
 	public static final String CREATE_TABLE_APP_INSTALLED = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_INSTALLED + " ("
 			+ KEY_APP_INSTALLED_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
@@ -643,6 +658,24 @@ public class Constants {
 			+ " FOR EACH ROW BEGIN"
 			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_APP_CATEGORY +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_APP_CATEGORY_CATEGORY_HASHID_WEAK +"')"
 			+ "    WHERE (SELECT "+ KEY_CATEGORY_HASHID +" FROM "+ TABLE_CATEGORY +" WHERE "+ KEY_CATEGORY_HASHID +" = NEW."+ KEY_APP_CATEGORY_CATEGORY_HASHID +") IS NULL;"
+			+ " END;";
+	
+	
+	
+	
+	public static final String CREATE_TRIGGER_APP_TO_INSTALL_INSERT = "CREATE TRIGGER IF NOT EXISTS "+FOREIGN_KEY_INSERT_APP_TO_INSTALL
+			+ " BEFORE INSERT ON "+TABLE_APP_TO_INSTALL
+			+ " FOR EACH ROW BEGIN"
+			+ "		SELECT RAISE(ROLLBACK, 'insert on table "+TABLE_APP_TO_INSTALL+" violates foreign key constraint "+FOREIGN_KEY_INSERT_APP_TO_INSTALL+"')"
+			+ "     WHERE NEW."+KEY_APP_TO_INSTALL_HASHID+" IS NOT NULL"
+			+ "	        AND (SELECT "+KEY_APPLICATION_HASHID+" FROM "+TABLE_APPLICATION+" WHERE "+KEY_APPLICATION_HASHID+" = NEW."+KEY_APP_TO_INSTALL_HASHID+") IS NULL;"
+			+ " END;";
+	
+	public static final String CREATE_TRIGGER_APP_TO_INSTALL_UPDATE_APP_FULL_HASHID_WEAK = "CREATE TRIGGER IF NOT EXISTS "+ FOREIGN_KEY_UPDATE_APP_TO_INSTALL_HASHID_WEAK
+			+ " BEFORE UPDATE OF "+ KEY_APP_TO_INSTALL_HASHID  +" ON " + TABLE_APP_TO_INSTALL
+			+ " FOR EACH ROW BEGIN"
+			+ "    SELECT RAISE(ROLLBACK, 'update on table "+ TABLE_APP_TO_INSTALL +" violates foreign key constraint "+ FOREIGN_KEY_UPDATE_APP_TO_INSTALL_HASHID_WEAK +"')"
+			+ "    WHERE (SELECT "+ KEY_APPLICATION_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_HASHID +" = NEW."+ KEY_APP_TO_INSTALL_HASHID +") IS NULL;"
 			+ " END;";
 	
 	

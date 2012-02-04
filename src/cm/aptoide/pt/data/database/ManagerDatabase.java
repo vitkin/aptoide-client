@@ -30,6 +30,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.UrlQuerySanitizer.ValueSanitizer;
 import android.util.Log;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.Constants;
@@ -94,6 +95,7 @@ public class ManagerDatabase {
 			db.execSQL(Constants.CREATE_TABLE_CATEGORY);
 			db.execSQL(Constants.CREATE_TABLE_SUB_CATEGORY);
 			db.execSQL(Constants.CREATE_TABLE_APP_CATEGORY);
+			db.execSQL(Constants.CREATE_TABLE_APP_TO_INSTALL);
 			db.execSQL(Constants.CREATE_TABLE_APP_INSTALLED);
 			db.execSQL(Constants.CREATE_TABLE_ICON_INFO);
 			db.execSQL(Constants.CREATE_TABLE_SCREEN_INFO);
@@ -118,6 +120,8 @@ public class ManagerDatabase {
 			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_INSERT);
 			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_UPDATE_APP_FULL_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_APP_CATEGORY_UPDATE_CATEGORY_HASHID_WEAK);
+			db.execSQL(Constants.CREATE_TRIGGER_APP_TO_INSTALL_INSERT);
+			db.execSQL(Constants.CREATE_TRIGGER_APP_TO_INSTALL_UPDATE_APP_FULL_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_ICON_INFO_INSERT);
 			db.execSQL(Constants.CREATE_TRIGGER_ICON_INFO_UPDATE_APP_FULL_HASHID_WEAK);
 			db.execSQL(Constants.CREATE_TRIGGER_SCREEN_INFO_INSERT);
@@ -1029,6 +1033,61 @@ public class ManagerDatabase {
 			db.endTransaction();
 		}
 	}
+	
+	
+	
+	/**
+	 * insertApplicationToInstall, handles single application store for later install
+	 * 										 
+	 * 
+	 * @param int appHashid
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void insertApplicationToInstall(int appHashid){
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(Constants.KEY_APP_TO_INSTALL_HASHID, appHashid);
+		
+		db.beginTransaction();
+		try{
+			if(db.insert(Constants.TABLE_APP_TO_INSTALL ,null, contentValues) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
+	
+	/**
+	 * removeApplicationToInstall, handles single application store for later install
+	 * 										 
+	 * 
+	 * @param int appHashid
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public void removeApplicationToInstall(int appHashid){
+		db.beginTransaction();
+		try{
+			if(db.delete(Constants.TABLE_APP_TO_INSTALL ,Constants.KEY_APP_TO_INSTALL_HASHID+"=?", new String[]{Integer.toString(appHashid)}) == Constants.DB_ERROR){
+				//TODO throw exception;
+			}
+			
+			db.setTransactionSuccessful();
+		}catch (Exception e) {
+			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
+		}finally{
+			db.endTransaction();
+		}
+	}
 		
 	
 	
@@ -1622,6 +1681,31 @@ public class ManagerDatabase {
 			e.printStackTrace();
 		}
 		return topCategory;
+	}
+	
+	/**
+	 * isApplicationScheduledToInstall, returns true if an app is scheduled to install
+	 *  
+	 * @return boolean isAppToInstall
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public boolean isApplicationScheduledToInstall(int appHashid){
+		
+		String selectIsAppToInstall = "SELECT * FROM "+Constants.TABLE_APP_TO_INSTALL
+										+" WHERE "+Constants.KEY_APP_TO_INSTALL_HASHID+"="+appHashid+";";
+		
+		Cursor cursorIsAppToInstall = aptoideAtomicQuery(selectIsAppToInstall);
+		
+		if(cursorIsAppToInstall.getCount() == Constants.EMPTY_INT){
+			cursorIsAppToInstall.close();
+			return false;
+		}else{
+			cursorIsAppToInstall.close();
+			return true;
+		}
 	}
 	
 	/**

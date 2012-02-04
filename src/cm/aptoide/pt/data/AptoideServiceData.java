@@ -1,5 +1,5 @@
 /**
- * ServiceData, part of Aptoide
+ * AptoideServiceData, part of Aptoide
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -65,7 +65,7 @@ import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
 /**
- * ServiceData, Aptoide's data I/O manager for the activity classes
+ * AptoideServiceData, Aptoide's data I/O manager for the activity classes
  * 
  * @author dsilveira
  * @since 3.0
@@ -253,6 +253,21 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public void callScheduleInstallApp(int appHashid) throws RemoteException {
+			scheduleInstallApp(appHashid);
+		}
+
+		@Override
+		public void callUnscheduleInstallApp(int appHashid) throws RemoteException {
+			unscheduleInstallApp(appHashid);			
+		}
+
+		@Override
+		public boolean callIsAppScheduledToInstall(int appHashid) throws RemoteException {
+			return isAppScheduledToInstall(appHashid);
+		}
+
+		@Override
 		public void callInstallApp(int appHashid) throws RemoteException {
 			downloadApp(appHashid);
 		}
@@ -302,12 +317,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			if(receivedIntent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)){
 				String packageName = receivedIntent.getData().getEncodedSchemeSpecificPart();
 				Log.d("Aptoide-ServiceData", "installedAppsChangeListener - package added: "+packageName);
-				addApp(packageName);
+				addInstalledApp(packageName);
 				
 			}else if(receivedIntent.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)){
 				String packageName = receivedIntent.getData().getEncodedSchemeSpecificPart();
 				Log.d("Aptoide-ServiceData", "installedAppsChangeListener - package removed: "+packageName);
-				removeApp(packageName);
+				removeInstalledApp(packageName);
 			}
 		}
 	};
@@ -1169,6 +1184,30 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerDatabase.getAppSearchResultsDisplayInfo(searchString);
 	}
 	
+	
+	public void scheduleInstallApp(final int appHashid){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerDatabase.insertApplicationToInstall(appHashid);
+			}
+		});
+	}
+	
+	public void unscheduleInstallApp(final int appHashid){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerDatabase.removeApplicationToInstall(appHashid);
+			}
+		});
+	}
+	
+	public boolean isAppScheduledToInstall(final int appHashid){
+		return managerDatabase.isApplicationScheduledToInstall(appHashid);
+	}
+	
+	
 	public void downloadApp(final int appHashid){
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
@@ -1187,18 +1226,29 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	
-	public void addApp(String packageName){
-		ViewApplication installedApp = managerSystemSync.getInstalledApp(packageName);
-		if(installedApp != null){
-			managerDatabase.insertInstalledApplication(installedApp);
-		}
+	public void addInstalledApp(final String packageName){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				ViewApplication installedApp = managerSystemSync.getInstalledApp(packageName);
+				if(installedApp != null){
+					managerDatabase.insertInstalledApplication(installedApp);
+				}
+			}
+		});
 	}
 	
-	public void removeApp(String packageName){
-		managerDatabase.removeInstalledApplication(packageName);
+	public void removeInstalledApp(final String packageName){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerDatabase.removeInstalledApplication(packageName);
+			}
+		});
 	}
 	
 	public void installApp(ViewCache apk, int appHashid){
+		unscheduleInstallApp(appHashid);
 		Intent install = new Intent(Intent.ACTION_VIEW);
 		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		install.setDataAndType(Uri.fromFile(apk.getFile()),"application/vnd.android.package-archive");
