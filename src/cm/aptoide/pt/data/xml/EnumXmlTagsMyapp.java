@@ -1,5 +1,5 @@
 /**
- * EnumNotification,	auxilliary class to Aptoide's ServiceData
+ * EnumXmlTagsMyapp,	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,30 +18,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.notifications;
+package cm.aptoide.pt.data.xml;
 
 /**
- * EnumNotification, typeSafes Notifiers
+ * EnumXmlTagsMyapp, typeSafes myapp's XML tags
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumNotificationTypes {
-	GLOBAL,
-	PM_SYNC,
-	REPO_UPDATE,
-	REPO_APP_UPDATE,
-	GET_ICONS,
-	GET_EXTRAS,
-	GET_SCREENS,
-	GET_MYAPP,
-	PARSE_MYAPP,
-	GET_APP,
-	GET_UPDATE,
-	FREE;
+public enum EnumXmlTagsMyapp {
+	myapp,
+	getapp,
+	name,
+	md5sum,
+	intsize,
+	pname,
+	get,
+	newserver,
+	server;
 	
-	public static EnumNotificationTypes reverseOrdinal(int ordinal){
+	public static EnumXmlTagsMyapp reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

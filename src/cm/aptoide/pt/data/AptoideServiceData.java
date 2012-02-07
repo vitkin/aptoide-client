@@ -53,6 +53,7 @@ import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
+import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
@@ -79,6 +80,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private int DISPLAY_LISTS_CACHE_SIZE;
 	
 	private ArrayList<Integer> reposInserting;
+	private HashMap<Integer, ViewMyapp> importedApps;
+	private ViewDisplayListRepos importedRepos;
 	
 	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClient;
 	private HashMap<Integer, AIDLAppInfo> appInfoClient;
@@ -152,12 +155,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public void callAddRepo(ViewRepository repository) throws RemoteException {
-			if(repoIsManaged(repository.getHashid())){
-				//TODO check for delta
-				updateAvailableLists();
-			}else{
+//			if(repoIsManaged(repository.getHashid())){
+//				//TDO check for delta
+//				updateAvailableLists();
+//			}else{
 				addRepoBare(repository);			
-			}
+//			}
 		}
 
 		@Override
@@ -276,6 +279,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		public void callUninstallApp(int appHashid) throws RemoteException {
 			uninstallApp(appHashid);
 		}
+
+		@Override
+		public void callReceiveMyapp(String uriString) throws RemoteException {
+			receiveMyapp(uriString);
+		}
 		
 	}; 
 
@@ -374,6 +382,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	    	splash();
 	    	
 	    	reposInserting = new ArrayList<Integer>();
+	    	importedApps = new HashMap<Integer, ViewMyapp>();
 	    	
 	    	cachedThreadPool = Executors.newCachedThreadPool();
 	    	scheduledThreadPool = Executors.newScheduledThreadPool(Constants.MAX_PARALLEL_SERVICE_REQUESTS);
@@ -1205,6 +1214,34 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public boolean isAppScheduledToInstall(final int appHashid){
 		return managerDatabase.isApplicationScheduledToInstall(appHashid);
+	}
+	
+	public void receiveMyapp(final String uriString){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Receiving Myapp file: "+uriString);
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				launchAptoide();
+				String[] slashSplitUriString = uriString.split("/");
+				String myappName = slashSplitUriString[slashSplitUriString.length];
+				ViewCache cache = managerDownloads.downloadMyapp(uriString, myappName);
+				
+				managerXml.myappParse(cache, myappName);
+				
+			}
+		});
+	}
+	
+	public void parsingMyappFinished(ViewMyapp myapp, ViewDisplayListRepos newRepos){
+		importedApps.put(myapp.getMd5sum().hashCode(), myapp);
+		//TODO notify myappActionPopupListener
+		//TODO notify newReposActionPopupListener
 	}
 	
 	
