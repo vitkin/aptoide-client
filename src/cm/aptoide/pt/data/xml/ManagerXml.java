@@ -272,4 +272,23 @@ public class ManagerXml{
 		serviceData.parsingRepoAppExtrasFinished(repository, appHashid);
 	}
 	
+	public void myappParse(ViewCache cache, String myappName){
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.PARSE_MYAPP, myappName, myappName.hashCode());
+		DefaultHandler myappParser = null;
+	    try {
+	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+	    	myappParser = new MyappParser(this, cache);
+	    	
+	    	xmlReader.setContentHandler(myappParser);
+	    	xmlReader.setErrorHandler(myappParser);
+	    	
+	    	InputSource inputSource = new InputSource(new FileReader(cache.getFile()));
+	    	Log.d("Aptoide-managerXml", cache.getLocalPath());
+	    	xmlReader.parse(inputSource);
+	    	
+	    } catch (Exception e){
+	    	e.printStackTrace();
+	    }		
+	}
+	
 }

@@ -521,6 +521,18 @@ public class ManagerDownloads {
 		return cache;
 	}
 	
+	public ViewCache downloadMyapp(String uriString, String myappName){
+		ViewCache cache = managerCache.getNewMyappDownloadViewCache(myappName);
+		if(!managerCache.isMyAppCached(myappName)){
+			ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_MYAPP, "myapp", myappName.hashCode());
+			ViewDownload download = getNewViewDownload(uriString, cache, notification);
+			
+			download(download, false);
+		}
+		
+		return cache;
+	}
+	
 	public ViewDownload prepareApkDownload(int appHashid, String appName, String remotePathBase, String remotePathTail, ViewLogin login, int size, String md5Hash){
 		ViewCache cache = managerCache.getNewAppViewCache(appHashid, md5Hash);
 		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_APP, appName, appHashid, size);

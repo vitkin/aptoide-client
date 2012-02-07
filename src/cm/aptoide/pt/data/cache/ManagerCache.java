@@ -129,6 +129,10 @@ public class ManagerCache {
 		return getNewViewCache(Constants.PATH_CACHE_APKS+appHashid, md5sum);
 	}
 	
+	public ViewCache getNewMyappDownloadViewCache(String myappName){
+		return getNewViewCache(Constants.PATH_CACHE_MYAPPS+myappName);
+	}
+	
 	
 	public boolean isFreeSpaceInSdcard(){
 		File sdcard_file = new File(Constants.PATH_SDCARD);
@@ -236,6 +240,17 @@ public class ManagerCache {
 		File icon = new File(iconPath);
 		if(icon.exists()){
 			Log.d("Aptoide-ManagerCache", "screen already exists: "+appHashid+" orderNumber: "+orderNumber);
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
+	public boolean isMyAppCached(String myappName){
+		String myappPath = Constants.PATH_CACHE_MYAPPS+myappName;
+		File myapp = new File(myappPath);
+		if(myapp.exists()){
+			Log.d("Aptoide-ManagerCache", "myapp already exists: "+myappName);			
 			return true;
 		}else{
 			return false;

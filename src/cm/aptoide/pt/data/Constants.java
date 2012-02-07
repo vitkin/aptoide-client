@@ -73,6 +73,7 @@ public class Constants {
 	public static final String PATH_CACHE_APKS = PATH_CACHE + "apks/";
 	public static final String PATH_CACHE_ICONS = PATH_CACHE + "icons/";
 	public static final String PATH_CACHE_SCREENS = PATH_CACHE + "screens/";
+	public static final String PATH_CACHE_MYAPPS = PATH_CACHE + "myapps/";
 	
 	public static final String PATH_REPO_INFO_XML = "v2/info.xml?";
 	public static final String PATH_REPO_EXTRAS_XML = "v2/extras.xml?";
@@ -82,7 +83,6 @@ public class Constants {
 	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/latest_version.xml";
 	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
-	public static final String FILE_LATEST_MYAPP = PATH_CACHE + "latest.myapp";
 	public static final String FILE_PREFERENCES = "aptoide_preferences";
 	
 	public static final String SERVICE_DATA_CLASS_NAME = "cm.aptoide.pt.data.ServiceData";

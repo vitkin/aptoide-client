@@ -78,4 +78,6 @@ interface AIDLAptoideServiceData {
 	void callUnscheduleInstallApp(in int appHashid);
 	boolean callIsAppScheduledToInstall(in int appHashid);
 	
+	void callReceiveMyapp(in String uriString);
+	
 }
