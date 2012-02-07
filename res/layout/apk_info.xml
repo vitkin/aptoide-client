@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffffff"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <!-- Green Bar -->
+
+    <RelativeLayout
+        android:id="@+id/actionbar"
+        android:layout_width="fill_parent"
+        android:layout_height="44sp"
+        android:layout_gravity="top"
+        android:background="@drawable/greenbarwithshadow"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/greenbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal" >
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/aptoideicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="2sp"
+            android:layout_toRightOf="@+id/greenbar"
+            android:src="@drawable/icon" />
+
+        <ImageView
+            android:id="@+id/aptoidebrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/aptoideicon"
+            android:padding="5dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/aptoidebrand" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/apkinfoheader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionbar"
+        android:background="#ffffff" >
+
+        <ImageView
+            android:id="@+id/app_hashid"
+            android:layout_width="48sp"
+            android:layout_height="48sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24sp"
+            android:layout_marginTop="22sp"
+            android:src="@drawable/icon" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/app_hashid"
+            android:layout_marginLeft="10sp"
+            android:layout_toLeftOf="@id/app_hashid"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#4f4f4f" />
+
+        <TextView
+            android:id="@+id/versionInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_name"
+            android:layout_marginLeft="10sp"
+            android:textColor="#4f4f4f" />
+
+        <RatingBar
+            android:id="@+id/rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/versionInfo"
+            android:layout_marginLeft="10sp"
+            android:isIndicator="true"
+            android:numStars="5" />
+
+        <TextView
+            android:id="@+id/app_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rating"
+            android:layout_marginLeft="10sp"
+            android:textColor="#4f4f4f"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/app_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_store"
+            android:layout_marginLeft="10sp"
+            android:textColor="#4f4f4f"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/root"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/apkinfoheader" >
+
+        <ListView
+            android:id="@+id/listComments"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:cacheColorHint="#ffffff"
+            android:divider="@drawable/list_comments_divider"
+            android:dividerHeight="1px" />
+
+        <LinearLayout
+            android:id="@+id/listview_footer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btinstall"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_weight=".50"
+                android:text="@string/install"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btuninstall"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:text="@string/uninstall"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/btmarket"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_weight=".50"
+                android:singleLine="true"
+                android:text="Search Market"
+                android:textColor="#000000"
+                android:textSize="12sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>
