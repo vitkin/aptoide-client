@@ -23,8 +23,8 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,8 +35,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -46,17 +44,16 @@ import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.SimpleAdapter.ViewBinder;
 
 public class BaseManagement extends Activity {
 
@@ -90,9 +87,6 @@ public class BaseManagement extends Activity {
 	private static SimpleAdapter main_catg_adpt = null;
 	private static SimpleAdapter app_catg_adpt = null;
 	private static SimpleAdapter game_catg_adpt = null;
-	
-	private ImageView updateAvailable;
-	private ImageView downgradeAvailable;
 	
 	
 	private static final String[] main_ctg = {"Games", "Applications", "Others"};
@@ -141,7 +135,6 @@ public class BaseManagement extends Activity {
 		prefEdit = sPref.edit();
 		order_lst = sPref.getString("order_lst", "abc");
 		redrawCatgList();
-		
 	}
 	
 	protected void redrawCatgList(){
@@ -463,9 +456,6 @@ public class BaseManagement extends Activity {
 					 * 3 - installed don't need update but downgrade possible
 					 * 
 					 */
-					
-					
-					
 					for(ApkNode node: apk_lst){
 						
 						apk_line = new HashMap<String, Object>();
@@ -483,9 +473,6 @@ public class BaseManagement extends Activity {
 							apk_line.put("status",node.ver);
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 1);
-							apk_line.put("status2", "invisible");
-							
-							
 							instMap.add(apk_line);
 							
 						}else if(node.status == 2){
@@ -504,8 +491,7 @@ public class BaseManagement extends Activity {
 							
 							
 							apk_line.put("status", node.ver);
-							apk_line.put("status2", "upgrade");
-							
+							apk_line.put("status2", getString(R.string.upgrd_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 2);
 							instMap.add(apk_line);
@@ -515,8 +501,7 @@ public class BaseManagement extends Activity {
 							
 						}else if(node.status == 3){
 							apk_line.put("status", node.ver);
-							
-							apk_line.put("status2", "downgrade");
+							apk_line.put("status3", ", "+getString(R.string.downgrade_available));
 							apk_line.put("name", node.name);
 //							apk_line.put("statusSort", 3);
 //							updtMap.add(apk_line);
@@ -570,14 +555,14 @@ public class BaseManagement extends Activity {
 					availAdpt.setViewBinder(new LstBinder());
 
 					instAdpt = new SimpleAdapter(mctx, instMap, R.layout.app_row, 
-							 new String[] {"pkg", "name", "status", "status2", "icon", "rat", "down"}, 
-							 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname, R.id.app_downgrade,R.id.app_icon, R.id.stars, R.id.downloads});
+							 new String[] {"pkg", "name", "status","status2","status3", "icon", "rat", "down"}, 
+							 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.uptodate_versionname,R.id.isDowngradeAvailable,R.id.app_icon, R.id.stars, R.id.downloads});
   
 					instAdpt.setViewBinder(new LstBinder());
 
 					updateAdpt = new SimpleAdapter(mctx, updtMap, R.layout.app_row, 
-							 new String[] {"pkg", "name", "status", "icon", "rat", "down"}, 
-							 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname, R.id.app_icon, R.id.stars, R.id.downloads});
+							 new String[] {"pkg", "name", "status","status3", "icon", "rat", "down"}, 
+							 new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.isDowngradeAvailable,R.id.app_icon, R.id.stars, R.id.downloads});
 
 					updateAdpt.setViewBinder(new LstBinder());
 				
@@ -611,20 +596,11 @@ public class BaseManagement extends Activity {
 					tmpr.setText(textRepresentation);	
 				
 			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
-				Log.d(textRepresentation+"","");
 				ImageView tmpr = (ImageView)view;	
 				File icn = new File(textRepresentation);
 				if(icn.exists() && icn.length() > 0){
 					new Uri.Builder().build();
 					tmpr.setImageURI(Uri.parse(textRepresentation));
-				}else if(textRepresentation.equals("upgrade")){
-					tmpr.setVisibility(View.VISIBLE);
-					tmpr.setImageResource(R.drawable.upgrade);
-				}else if(textRepresentation.equals("downgrade")){
-					tmpr.setVisibility(View.VISIBLE);
-					tmpr.setImageResource(R.drawable.downgrade);
-				}else if(textRepresentation.equals("invisible")){
-					tmpr.setVisibility(View.GONE);
 				}else{
 					tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
 				}

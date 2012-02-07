@@ -66,34 +66,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/app_name"
-            android:layout_toRightOf="@id/installed_versionname"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
+            android:layout_toRightOf="@id/installed_versionname"
             android:textColor="#4f4f4f"
             android:textSize="12sp" />
 
-       
+        <!-- </LinearLayout> -->
 
         <TextView
             android:id="@+id/uptodate_versionname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/app_name"
-            android:layout_toRightOf="@id/installed_versionname"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
+            android:layout_toRightOf="@id/installed_versionname"
             android:textColor="#4f4f4f"
             android:textSize="12sp" />
-
-        <ImageView
-            android:id="@+id/app_downgrade"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="-10dp"
-            android:layout_below="@id/app_name"
-            android:layout_toRightOf="@id/installed_versionname" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -106,11 +98,11 @@
             android:id="@+id/downloads"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:textColor="#b3b3b3"
             android:textSize="12sp" />
 

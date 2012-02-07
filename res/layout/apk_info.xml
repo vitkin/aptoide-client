@@ -38,22 +38,9 @@
             android:id="@+id/aptoidebrand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/aptoideicon"
-            android:layout_marginLeft="8dp"
-            
-            android:padding="5dp"
-            
             android:layout_centerVertical="true"
-            android:scaleType="fitStart"
+            android:padding="10sp"
             android:src="@drawable/aptoidebrand" />
-        
-<!--         <ImageView -->
-<!--             android:id="@+id/aptoidebrand" -->
-<!--             android:layout_width="wrap_content" -->
-<!--             android:layout_height="wrap_content" -->
-<!--             android:layout_centerVertical="true" -->
-<!--             android:padding="10sp" -->
-<!--             android:src="@drawable/aptoidebrand" /> -->
     </RelativeLayout>
 
     <RelativeLayout
