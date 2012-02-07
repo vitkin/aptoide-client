@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="wrap_content"
+	android:background="#edece9" android:orientation="vertical">
+
+
+
+	<RelativeLayout android:id="@+id/title_list"
+		android:layout_height="30dp" android:background="@drawable/titlebar"
+		android:layout_alignBottom="@+id/indicator_arrow"
+		android:layout_centerHorizontal="true" android:layout_width="wrap_content"
+		android:gravity="center">
+
+		<TextView android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:textColor="#ffffff"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_alignParentLeft="true" android:id="@+id/previous_title"
+			android:onClick="previous" android:clickable="true"
+			android:padding="5dp"></TextView>
+		<TextView android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:textColor="#ffffff"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textStyle="bold" android:layout_centerHorizontal="true"
+			android:id="@+id/current_title"
+			android:onClick="current" android:clickable="true"
+			android:padding="5dp"></TextView>
+		<TextView android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:textColor="#ffffff"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_alignParentRight="true" android:id="@+id/next_title"
+			android:onClick="next" android:clickable="true"
+			android:padding="5dp">
+		    
+		</TextView>
+
+	</RelativeLayout>
+
+	<RelativeLayout android:id="@+id/indicator_arrow"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_below="@+id/title" android:background="#ffeaeaea">
+
+		<ImageView android:id="@+id/previous" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:src="@drawable/indicator_prev_arrow"
+			android:layout_alignParentLeft="true" android:layout_centerVertical="true" 
+			android:paddingRight="50dp"/>
+
+		<ImageView android:id="@+id/current" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:src="@drawable/indicator_current"
+			android:layout_centerHorizontal="true" android:layout_alignParentTop="true" />
+
+		<ImageView android:id="@+id/next" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:src="@drawable/indicator_next_arrow"
+			android:layout_alignParentRight="true" android:layout_centerVertical="true" 
+			android:paddingLeft="50dp"/>
+	</RelativeLayout>
+
+
+</LinearLayout>
