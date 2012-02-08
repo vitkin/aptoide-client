@@ -938,8 +938,8 @@ public class RemoteInTab extends BaseManagement {
 						keepScreenOn.release();
 					}
 					installApk(installApkIntent);
-//					this.getIntent().setAction("android.intent.action.VIEW");
-//					startActivity(getIntent());
+					//					this.getIntent().setAction("android.intent.action.VIEW");
+					//					startActivity(getIntent());
 					return;
 				}
 			} 
@@ -1161,13 +1161,14 @@ public class RemoteInTab extends BaseManagement {
 		if(currentAppsList==EnumAppsLists.Available){
 			menu.add(Menu.NONE,EnumOptionsMenu.UPDATE_REPO.ordinal(),EnumOptionsMenu.UPDATE_REPO.ordinal(),R.string.menu_update_repo)
 			.setIcon(android.R.drawable.ic_menu_rotate);
+			menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options)
+			.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		}
 		if(currentAppsList==EnumAppsLists.Update){
 			menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.menu_update_all)
 			.setIcon(R.drawable.ic_menu_refresh);
 		}
-		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options)
-		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+
 		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.menu_manage)
 		.setIcon(android.R.drawable.ic_menu_agenda);
 		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
@@ -2067,8 +2068,8 @@ public class RemoteInTab extends BaseManagement {
 		//    	IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
 		//	    registerReceiver(new InstallApkListener(), filter);
 		sendBroadcast(installApkAction);
-//		getIntent().setAction("android.intent.action.VIEW");
-//		startActivity(getIntent());
+		//		getIntent().setAction("android.intent.action.VIEW");
+		//		startActivity(getIntent());
 
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}
