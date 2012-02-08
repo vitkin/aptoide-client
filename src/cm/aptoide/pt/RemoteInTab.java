@@ -1164,7 +1164,7 @@ public class RemoteInTab extends BaseManagement {
 			menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options)
 			.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		}
-		if(currentAppsList==EnumAppsLists.Update){
+		if(currentAppsList==EnumAppsLists.Updates){
 			menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.menu_update_all)
 			.setIcon(R.drawable.ic_menu_refresh);
 		}
@@ -2122,10 +2122,10 @@ public class RemoteInTab extends BaseManagement {
 			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
 			listTextHeader.setVisibility(View.GONE);			
 			break;
-		case Update:
+		case Updates:
 			nextView.setVisibility(View.GONE);
 			previousView.setVisibility(View.VISIBLE);
-			currentListTitle.setText(EnumAppsLists.Update.toString());
+			currentListTitle.setText(EnumAppsLists.Updates.toString());
 			nextListTitle.setVisibility(View.INVISIBLE);
 			previousListTitle.setText(EnumAppsLists.getPrevious(currentAppList).toString());
 			listTextHeader.setText(R.string.no_updates);
