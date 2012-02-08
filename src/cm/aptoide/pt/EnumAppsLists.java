@@ -30,7 +30,7 @@ package cm.aptoide.pt;
 public enum EnumAppsLists {
 	Available,
 	Installed,
-	Update;
+	Updates;
 
 	
 	public static EnumAppsLists reverseOrdinal(int ordinal){
