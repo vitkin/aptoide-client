@@ -568,8 +568,9 @@ public class BaseManagement extends Activity {
 						}
 					};
 
+					//if sort alphabetically, no results to other sorts
 					Collections.sort(instMap, alphabeticComp);
-					//					Collections.sort(availMap, alphabeticComp); //if sort availMap alphabetically, no results to other sorts
+//					Collections.sort(availMap, alphabeticComp); 
 					Collections.sort(updtMap, alphabeticComp);
 
 					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
