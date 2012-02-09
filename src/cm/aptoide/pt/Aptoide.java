@@ -75,10 +75,10 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.SimpleAdapter.ViewBinder;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
+import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
@@ -167,15 +167,22 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //		            showInstalledList();
 		            
 		            serviceDataCaller.callSyncInstalledApps();	
-		            
-		            AptoideLog.v(Aptoide.this, "Called for registering as InstalledApps Observer");
-		            serviceDataCaller.callRegisterInstalledAppsObserver(serviceDataCallback);
 		        } catch (RemoteException e) {
 					// TODO Auto-generated catch block
 		            e.printStackTrace();
 		        }
 			}
 			
+            
+            try {
+                AptoideLog.v(Aptoide.this, "Called for registering as InstalledApps Observer");
+				serviceDataCaller.callRegisterInstalledAppsObserver(serviceDataCallback);
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+            
 			DisplayMetrics displayMetrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
 			ViewScreenDimensions screenDimensions = new ViewScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
@@ -202,12 +209,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	            e.printStackTrace();
 	        }
 	        
-//	        try {
-//				serviceDataCaller.callAddRepo(new ViewRepository("http://apps.bazaarandroid.com/"));
-//			} catch (RemoteException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
+	        handleIncomingIntent();
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -643,8 +645,23 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	if(!serviceDataIsBound){
 //    		startService(new Intent(this, AptoideServiceData.class));	//TODO uncomment this to make service independent of Aptoide's lifecycle
     		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
+    	}else{
+    		handleIncomingIntent();
     	}
     }
+	
+	private void handleIncomingIntent(){
+        if(getIntent().getData() != null){
+        	if(getIntent().getType().equals(Constants.MYAPP_MIMETYPE)){
+		        try {
+					serviceDataCaller.callReceiveMyapp(getIntent().getDataString());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}
+        }
+	}
 	
 	public void setAvailableListBy(boolean byCategory){
 		AptoideLog.d(Aptoide.this, "setAvailableList ByCategory? "+byCategory);

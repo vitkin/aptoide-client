@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt.data;
+package cm.aptoide.pt.data.util;
 
 import android.os.Environment;
 import cm.aptoide.pt.debug.EnumLogLevels;
@@ -88,6 +88,7 @@ public class Constants {
 	public static final String SERVICE_DATA_CLASS_NAME = "cm.aptoide.pt.data.ServiceData";
 	
 	public static final String URI_PACKAGE_PREFIX = "package";
+	public static final String MYAPP_MIMETYPE = "application/vnd.cm.aptoide.pt";
 	
 	
 

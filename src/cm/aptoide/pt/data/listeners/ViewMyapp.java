@@ -20,7 +20,7 @@
 
 package cm.aptoide.pt.data.listeners;
 
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
 
  /**

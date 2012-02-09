@@ -31,11 +31,11 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayRepo;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * MyappParser, handles myapp xml Sax parsing

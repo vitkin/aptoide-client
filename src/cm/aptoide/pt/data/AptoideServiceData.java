@@ -60,6 +60,7 @@ import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
+import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.xml.EnumInfoType;
 import cm.aptoide.pt.data.xml.ManagerXml;
 import cm.aptoide.pt.debug.AptoideLog;
@@ -416,10 +417,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		super.onCreate();
 	}
 	
-	@Override
-	public void onStart(Intent intent, int startId) {
-		if(intent.getData() != null){
-			launchAptoide();
+//	@Override
+//	public void onStart(Intent intent, int startId) {
+//		if(intent.getData() != null){
+//			launchAptoide();
 			
 			//TODO myapp handling section -- move partly to download/xml/ classes
 		    
@@ -555,10 +556,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		//--------------------------------------------------------------------------
 
 			
-		}
-		super.onStart(intent, startId);
-		
-	}
+//		}
+//		super.onStart(intent, startId);
+//		
+//	}
 
 
 	@Override
@@ -1227,10 +1228,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				if(!getManagerCache().isFreeSpaceInSdcard()){
 					//TODO raise exception
 				}
-				launchAptoide();
+//				launchAptoide();
 				String[] slashSplitUriString = uriString.split("/");
-				String myappName = slashSplitUriString[slashSplitUriString.length];
+				String myappName = slashSplitUriString[slashSplitUriString.length-1];
+				AptoideLog.d(AptoideServiceData.this, "Preparing download of Myapp file: "+myappName);
 				ViewCache cache = managerDownloads.downloadMyapp(uriString, myappName);
+				AptoideLog.d(AptoideServiceData.this, "Preparing parsing of Myapp file: "+cache.getLocalPath());
 				
 				managerXml.myappParse(cache, myappName);
 				

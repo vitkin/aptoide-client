@@ -23,7 +23,7 @@ package cm.aptoide.pt.data.model;
 import java.util.ArrayList;
 
 import android.content.ContentValues;
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewCategory, models a category from applications categories

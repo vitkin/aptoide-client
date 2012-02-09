@@ -24,11 +24,11 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
+import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 

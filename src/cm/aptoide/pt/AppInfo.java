@@ -52,8 +52,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
+import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.ifaceutil.ImageAdapter;
 
 /**

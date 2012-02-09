@@ -33,7 +33,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.UrlQuerySanitizer.ValueSanitizer;
 import android.util.Log;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
@@ -58,6 +57,7 @@ import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.model.ViewScreenInfo;
 import cm.aptoide.pt.data.model.ViewStatsInfo;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence

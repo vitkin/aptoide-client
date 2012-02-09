@@ -20,8 +20,8 @@
 
 package cm.aptoide.pt.data.downloads;
 
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewRepository;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewDownloadStatus, models a download's status

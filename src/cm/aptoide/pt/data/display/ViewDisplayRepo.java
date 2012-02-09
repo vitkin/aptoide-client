@@ -25,8 +25,8 @@ import java.util.HashMap;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewLogin;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewDisplayRepo, models a Repo's display info

@@ -52,8 +52,8 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter.ViewBinder;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.util.Constants;
 
 public class Search extends Activity implements OnItemClickListener{
 	

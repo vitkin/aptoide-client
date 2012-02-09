@@ -32,8 +32,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewStatsInfo;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * RepoStatsParser, handles Stats Repo xml Sax parsing

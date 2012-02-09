@@ -25,7 +25,7 @@ import java.io.Serializable;
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
 
  /**

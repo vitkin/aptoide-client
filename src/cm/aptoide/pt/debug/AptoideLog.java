@@ -20,7 +20,7 @@
 package cm.aptoide.pt.debug;
 
 import android.util.Log;
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * AptoideLog, handles global Log messaging
