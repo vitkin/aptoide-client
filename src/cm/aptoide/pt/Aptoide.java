@@ -28,9 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
@@ -52,14 +52,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import cm.aptoide.pt.multiversion.VersionApk;
-
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.ActivityManager.RunningTaskInfo;
-import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -80,7 +77,6 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -195,7 +191,7 @@ public class Aptoide extends Activity {
 					} else if (uri.startsWith("market")) {
 						db=new DbHandler(mctx);
 						Log.d("", get.getDataString());
-						Boolean install = true;
+						boolean install = true;
 						
 						String params = uri.split("&")[0];
 						String param = params.split("=")[1];
@@ -217,13 +213,21 @@ public class Aptoide extends Activity {
 						setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS|-Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
 						startActivity(getIntent());
 						
-						
-						
-						
-						
-				        
+					}else if(uri.startsWith("https://market.android.com/details?id=")){
+						db=new DbHandler(mctx);
+						String param = uri.split("=")[1];
+						boolean install = true;
+						i = new Intent(mctx, RemoteInSearch.class);
+						i.putExtra("market", param);
+						if (install && !db.getApk(param).isEmpty()) {
+							i.putExtra("install", true);
+						}
+						setIntent(getIntent().setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS|-Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET));
+						startActivity(getIntent());
+
 						
 					}
+					
 					else{
 						Log.d("Aptoide-startHandler", "receiving a myapp file");
 						downloadMyappFile(uri);
@@ -301,7 +305,7 @@ public class Aptoide extends Activity {
    		
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-			setContentView(R.layout.sch_downloadempty);
+		setContentView(R.layout.start);
 		try{
 			if( pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode") ) ){
 				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
@@ -530,8 +534,14 @@ public class Aptoide extends Activity {
 	private String getXmlElement(String name) throws ParserConfigurationException, MalformedURLException, SAXException, IOException{
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
-        Document dom = builder.parse( new InputSource(new URL(LATEST_VERSION_CODE_URI).openStream()) );
+		
+		URL urlObj = new URL(LATEST_VERSION_CODE_URI);
+		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
+		conn.setConnectTimeout(3000);
+		
+        Document dom = builder.parse(new InputSource(conn.getInputStream()));
         dom.getDocumentElement().normalize();
+        
         NodeList items = dom.getElementsByTagName(name);
         if(items.getLength()>0){
         	Node item = items.item(0);
