@@ -79,7 +79,7 @@ public class BaseManagement extends Activity {
 
 	static private String order_lst = "abc";
 
-	static protected SimpleAdapter availAdpt = null;
+	static protected AlphabeticalSimpleAdapter availAdpt = null;
 	static protected SimpleAdapter instAdpt = null;
 	static protected SimpleAdapter updateAdpt = null;
 
@@ -89,9 +89,9 @@ public class BaseManagement extends Activity {
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 
 
-	private static SimpleAdapter main_catg_adpt = null;
-	private static SimpleAdapter app_catg_adpt = null;
-	private static SimpleAdapter game_catg_adpt = null;
+	private static AlphabeticalSimpleAdapter main_catg_adpt = null;
+	private static AlphabeticalSimpleAdapter app_catg_adpt = null;
+	private static AlphabeticalSimpleAdapter game_catg_adpt = null;
 
 	private ImageView updateAvailable;
 	private ImageView downgradeAvailable;
@@ -173,7 +173,7 @@ public class BaseManagement extends Activity {
 			main_catg.add(apk_line);
 			p++;
 		}
-		main_catg_adpt = new SimpleAdapter(mctx, main_catg, R.layout.catglist, 
+		main_catg_adpt = new AlphabeticalSimpleAdapter(mctx, main_catg, R.layout.catglist, 
 				new String[] {"name", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
 
 
@@ -190,7 +190,7 @@ public class BaseManagement extends Activity {
 			apk_line.put("cat_count",count + " "+getString(R.string.ctg_available));
 			app_catg.add(apk_line);
 		}
-		app_catg_adpt = new SimpleAdapter(mctx, app_catg, R.layout.catglist, 
+		app_catg_adpt = new AlphabeticalSimpleAdapter(mctx, app_catg, R.layout.catglist, 
 				new String[] {"cntrl", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
 
 
@@ -209,7 +209,7 @@ public class BaseManagement extends Activity {
 			game_catg.add(apk_line);
 		}
 
-		game_catg_adpt = new SimpleAdapter(mctx, game_catg, R.layout.catglist, 
+		game_catg_adpt = new AlphabeticalSimpleAdapter(mctx, game_catg, R.layout.catglist, 
 				new String[] {"cntrl", "name", "cat_count"}, new int[] {R.id.cntrl, R.id.name, R.id.cat_count});
 	}
 
@@ -570,12 +570,12 @@ public class BaseManagement extends Activity {
 
 					//if sort alphabetically, no results to other sorts
 					Collections.sort(instMap, alphabeticComp);
-//					Collections.sort(availMap, alphabeticComp); 
+					//					Collections.sort(availMap, alphabeticComp); 
 					Collections.sort(updtMap, alphabeticComp);
 
 					for(Map<String, Object> map:instMap){ map.remove("statusSort"); }
 
-					availAdpt = new SimpleAdapter(mctx, availMap, R.layout.app_row, 
+					availAdpt = new AlphabeticalSimpleAdapter(mctx, availMap, R.layout.app_row, 
 							new String[] {"pkg", "name", "status", "icon", "rat", "down"}, 
 							new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.app_icon, R.id.stars, R.id.downloads});
 
@@ -608,7 +608,7 @@ public class BaseManagement extends Activity {
 
 
 
-	/*class AlphabeticalSimpleAdapter extends SimpleAdapter implements SectionIndexer{
+	class AlphabeticalSimpleAdapter extends SimpleAdapter implements SectionIndexer{
 
 
 		HashMap<String, Integer> alphaIndexer;
@@ -627,6 +627,7 @@ public class BaseManagement extends Activity {
 			}
 
 			Set<String> keys = alphaIndexer.keySet(); 
+			Log.d("",keys.toString());
 			Iterator<String> it = keys.iterator();
 			ArrayList<String> keyList = new ArrayList<String>();
 
@@ -642,32 +643,21 @@ public class BaseManagement extends Activity {
 		}
 
 		public int getPositionForSection(int section) {
-			//String letter = sections[section];
-			//return alphaIndexer.get(letter);
-			
-			for (Entry entry : this.getObjects()) {
-				if (entry.getKey().getName().substring(0, 1) == getSections()[section])
-					return this.getObjects().indexOf(entry);
-			}
-			return 0;
-
-
+			String letter = sections[section];
+			return alphaIndexer.get(letter);
 		}
 
 		public int getSectionForPosition(int position) {
-			//			return 0;
-			List<Object> sections = Arrays.asList(getSections());
-			return sections.indexOf(this.getObjects().get(position).getKey().getName().substring(0, 1).toUpperCase());
+			return 0;
 
 		}
 
 		public Object[] getSections() {
-			//			Log.d("", sections[0]);
-			//			return sections;
-			return "*1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+			Log.d("", sections[0]);
+			return sections;
 		}
 
-	}*/
+	}
 
 
 	private String formatDownloads(int down) {
@@ -784,22 +774,22 @@ public class BaseManagement extends Activity {
 		} catch(Exception e){	}
 	}
 
-	protected SimpleAdapter getRootCtg(){
+	protected AlphabeticalSimpleAdapter getRootCtg(){
 		main_catg_adpt.setViewBinder(new SimpeLstBinder());
 		return main_catg_adpt;
 	}
 
-	protected SimpleAdapter getAppCtg(){
+	protected AlphabeticalSimpleAdapter getAppCtg(){
 		app_catg_adpt.setViewBinder(new SimpeLstBinder());
 		return app_catg_adpt;
 	}
 
-	protected SimpleAdapter getGamesCtg(){
+	protected AlphabeticalSimpleAdapter getGamesCtg(){
 		game_catg_adpt.setViewBinder(new SimpeLstBinder());
 		return game_catg_adpt;
 	}
 
-	protected SimpleAdapter getAvailable(String show_now, int main_show_now){
+	protected AlphabeticalSimpleAdapter getAvailable(String show_now, int main_show_now){
 		if(sPref.getBoolean("mode", false)){
 			if(!(show_now == null) || main_show_now == 2){
 				return getGivenCatg(show_now, main_show_now);
@@ -810,12 +800,12 @@ public class BaseManagement extends Activity {
 		return availAdpt;
 	}
 
-	protected SimpleAdapter getGivenCatg(String ctg, int ord){
+	protected AlphabeticalSimpleAdapter getGivenCatg(String ctg, int ord){
 		filteredApps =0;
 		List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
 		Map<String, Object> apk_line;
 		Vector<ApkNode> tmp_lst = null;
-		SimpleAdapter rtnadp = null;
+		AlphabeticalSimpleAdapter rtnadp = null;
 
 		/* if(tmp_lst != null)
 			 tmp_lst.clear();*/
@@ -841,12 +831,12 @@ public class BaseManagement extends Activity {
 		}
 
 
-		rtnadp = new SimpleAdapter(mctx, availMap, R.layout.app_row, 
+		rtnadp = new AlphabeticalSimpleAdapter(mctx, availMap, R.layout.app_row, 
 				new String[] {"pkg", "name", "status", "icon", "rat", "down"}, 
 				new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.app_icon, R.id.stars, R.id.downloads});
 
 		rtnadp.setViewBinder(new LstBinder());
-//		rtnadp.notifyDataSetChanged();
+		//		rtnadp.notifyDataSetChanged();
 		return rtnadp;
 	}
 
