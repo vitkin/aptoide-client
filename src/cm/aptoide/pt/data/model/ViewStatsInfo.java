@@ -21,7 +21,7 @@
 package cm.aptoide.pt.data.model;
 
 import android.content.ContentValues;
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewStatsInfo, models an app's stats info

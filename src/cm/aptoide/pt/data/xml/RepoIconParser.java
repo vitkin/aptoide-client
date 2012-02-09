@@ -32,8 +32,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewIconInfo;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * RepoIconParser, handles Icon Repo xml Sax parsing

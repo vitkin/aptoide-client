@@ -42,7 +42,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.ViewClientStatistics;
 import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
@@ -50,6 +49,7 @@ import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ViewNotification;
+import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.xml.EnumInfoType;
 
 /**
@@ -529,7 +529,6 @@ public class ManagerDownloads {
 			
 			download(download, false);
 		}
-		
 		return cache;
 	}
 	

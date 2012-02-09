@@ -20,7 +20,7 @@
 
 package cm.aptoide.pt.data.downloads;
 
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewDownloadInfo, models a download's info

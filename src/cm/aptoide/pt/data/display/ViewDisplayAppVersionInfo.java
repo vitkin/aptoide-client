@@ -24,7 +24,7 @@ import java.io.Serializable;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewDisplayAppVersionInfo, models a single version of an application

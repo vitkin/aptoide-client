@@ -82,10 +82,13 @@ public class ListenerMyapp extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		
 		myappUriString = getIntent().getDataString();
 		Log.d("Aptoide-ListenerMyApp", "received a myapp Uri: "+myappUriString);
 		
 		if(!serviceDataIsBound){
+			startService(new Intent(this, AptoideServiceData.class));
 			bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
 		}
 	}

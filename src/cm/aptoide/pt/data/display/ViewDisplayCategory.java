@@ -28,7 +28,7 @@ import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewDisplayCategory, models a Category, and its sub-categories

@@ -83,11 +83,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayRepo;
 import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * ManageRepos, interface class to manage and display the details

@@ -16,7 +16,17 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
+			</intent-filter>	
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="http" />
+				<data android:scheme="https" />
+				<data android:scheme="file" />
+				<data android:host="*" />
+				<data android:mimeType="application/vnd.cm.aptoide.pt" />
+			</intent-filter>	
 		</activity>
 
 		<activity android:name=".Splash" android:process=":aptoideInterface" android:launchMode="singleTask" 
@@ -50,17 +60,7 @@
      ############################################################################################ -->
 		</service>
 		
-		<activity android:name=".data.listeners.ListenerMyapp" android:process=":aptoideData">	
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.BROWSABLE" />
-				<data android:scheme="http" />
-				<data android:scheme="https" />
-				<data android:scheme="file" />
-				<data android:host="*" />
-				<data android:mimeType="application/vnd.cm.aptoide.pt" />
-			</intent-filter>	
+		<activity android:name=".data.listeners.ListenerMyapp" android:process=":aptoideData">
 		</activity>
 
     </application>

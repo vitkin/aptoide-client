@@ -34,12 +34,12 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.util.Log;
 
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ViewNotification;
+import cm.aptoide.pt.data.util.Constants;
 
 
 /**

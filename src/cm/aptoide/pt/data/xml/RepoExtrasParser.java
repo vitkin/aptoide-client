@@ -32,9 +32,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewExtraInfo;
 import cm.aptoide.pt.data.model.ViewScreenInfo;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * RepoExtrasParser, handles Extras repo xml Sax parsing

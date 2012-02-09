@@ -28,7 +28,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.StatFs;
 import android.util.Log;
-import cm.aptoide.pt.data.Constants;
+import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.util.Md5Handler;
 
 /**
@@ -188,24 +188,34 @@ public class ManagerCache {
 				Log.d("Aptoide","* * * * * * * * * *");
 	
 				File cache_path = new File(Constants.PATH_CACHE);
-				if(!cache_path.exists())
+				if(!cache_path.exists()){
 					cache_path.mkdir();
+				}
 	
 				File icon_path = new File(Constants.PATH_CACHE_ICONS);
-				if(!icon_path.exists())
+				if(!icon_path.exists()){
 					icon_path.mkdir();
+				}
 				
 				File screens_path = new File(Constants.PATH_CACHE_SCREENS);
-				if(!screens_path.exists())
+				if(!screens_path.exists()){
 					screens_path.mkdir();
+				}
 				
 				File repos_path = new File(Constants.PATH_CACHE_REPOS);
-				if(!repos_path.exists())
+				if(!repos_path.exists()){
 					repos_path.mkdir();
+				}
 				
 				File apks_path = new File(Constants.PATH_CACHE_APKS);
-				if(!apks_path.exists())
+				if(!apks_path.exists()){
 					apks_path.mkdir();
+				}
+				
+				File myapps_path = new File(Constants.PATH_CACHE_MYAPPS);
+				if(!myapps_path.exists()){
+					myapps_path.mkdir();
+				}
 				
 				return true;
 			}
