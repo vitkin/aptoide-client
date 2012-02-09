@@ -87,8 +87,16 @@ public class Constants {
 	
 	public static final String SERVICE_DATA_CLASS_NAME = "cm.aptoide.pt.data.ServiceData";
 	
-	public static final String URI_PACKAGE_PREFIX = "package";
-	public static final String MYAPP_MIMETYPE = "application/vnd.cm.aptoide.pt";
+	public static final String MIMETYPE_MYAPP = "application/vnd.cm.aptoide.pt";
+	public static final String SCHEME_APTOIDE_REPO = "aptoiderepo"; 
+	public static final String SCHEME_APTOIDE_XML = "aptoidexml"; 
+	public static final String SCHEME_PACKAGE = "package";
+	public static final String SCHEME_MARKET = "market";
+	public static final String SCHEME_HTTPS = "https";
+	public static final String HOST_MARKET = "market.android.com";
+	public static final String QUERY_PARAMETER_ID = "id";
+	public static final String PREFIX_PNAME = "pname:";
+	public static final String PREFIX_PUB = "pub:";
 	
 	
 

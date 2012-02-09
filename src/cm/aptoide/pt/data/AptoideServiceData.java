@@ -403,7 +403,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			IntentFilter installedAppsChangeFilter = new IntentFilter();
 			installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
 			installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-			installedAppsChangeFilter.addDataScheme(Constants.URI_PACKAGE_PREFIX);
+			installedAppsChangeFilter.addDataScheme(Constants.SCHEME_PACKAGE);
 			registerReceiver(installedAppsChangeListener, installedAppsChangeFilter);
 			
 			checkForSelfUpdate();
