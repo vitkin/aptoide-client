@@ -181,6 +181,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+	        
+	        handleIncomingIntent(getIntent());
 			
             
 			DisplayMetrics displayMetrics = new DisplayMetrics();
@@ -209,7 +211,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	            e.printStackTrace();
 	        }
 	        
-	        handleIncomingIntent();
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -646,20 +647,56 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //    		startService(new Intent(this, AptoideServiceData.class));	//TODO uncomment this to make service independent of Aptoide's lifecycle
     		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
     	}else{
-    		handleIncomingIntent();
+    		handleIncomingIntent(getIntent());
     	}
     }
 	
-	private void handleIncomingIntent(){
-        if(getIntent().getData() != null){
-        	if(getIntent().getType().equals(Constants.MYAPP_MIMETYPE)){
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		handleIncomingIntent(intent);
+		super.onNewIntent(intent);
+	}
+	
+	private void cleanAptoideIntent(){
+		Intent aptoide = new Intent(this, Aptoide.class);
+		aptoide.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(aptoide);		
+	}
+
+	
+	private void handleIncomingIntent(Intent incomingIntent){
+        if(incomingIntent.getData() != null){
+    		AptoideLog.d(this, "received intent: "+incomingIntent.getDataString()); 
+        	if(incomingIntent.getType() != null && incomingIntent.getType().equals(Constants.MIMETYPE_MYAPP)){
+        		AptoideLog.d(this, "received myapp: "+incomingIntent.getDataString());        		
 		        try {
-					serviceDataCaller.callReceiveMyapp(getIntent().getDataString());
+					serviceDataCaller.callReceiveMyapp(incomingIntent.getDataString());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        	}else if(incomingIntent.getScheme().equals(Constants.SCHEME_MARKET) 
+        			|| (incomingIntent.getScheme().equals(Constants.SCHEME_HTTPS) && incomingIntent.getData().getHost().equals(Constants.HOST_MARKET))){
+        		String query = null;
+        		String encodedQuery = incomingIntent.getData().getQuery().split("&")[0].split("=")[1];
+        		if(encodedQuery.startsWith(Constants.PREFIX_PNAME)){
+        			query = encodedQuery.substring(Constants.PREFIX_PNAME.length());
+        		}else if(encodedQuery.startsWith(Constants.PREFIX_PUB)){
+        			query = encodedQuery.substring(Constants.PREFIX_PUB.length());        			
+        		}else{
+        			query = encodedQuery;
+        		}
+        		AptoideLog.d(this, "received market query: "+query);
+        		try {
+					serviceDataCaller.callGetAppSearchResults(query);
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
         	}
+        	
+        	cleanAptoideIntent();
         }
 	}
 	

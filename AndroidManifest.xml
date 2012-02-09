@@ -16,7 +16,8 @@
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>	
+			</intent-filter>
+<!-- THESE NEXT INTENT FILTERS SHOULD BELONG TO AptoideServiceData BUT ANDROID UNEXPLICABLY DOESN'T ALLOW THAT -->
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 				<category android:name="android.intent.category.DEFAULT" />
@@ -26,7 +27,30 @@
 				<data android:scheme="file" />
 				<data android:host="*" />
 				<data android:mimeType="application/vnd.cm.aptoide.pt" />
-			</intent-filter>	
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="aptoiderepo" />
+				<data android:scheme="aptoidexml" />
+			</intent-filter>
+			<intent-filter>
+				<action android:name="android.intent.action.VIEW" />
+				<category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.BROWSABLE" />
+				<data android:scheme="market" />
+			</intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" android:host="market.android.com"/>
+                
+            </intent-filter>
+<!-- ######################################################################################################### -->	
 		</activity>
 
 		<activity android:name=".Splash" android:process=":aptoideInterface" android:launchMode="singleTask" 
@@ -59,9 +83,6 @@
 			</intent-filter>
      ############################################################################################ -->
 		</service>
-		
-		<activity android:name=".data.listeners.ListenerMyapp" android:process=":aptoideData">
-		</activity>
 
     </application>
 </manifest>
