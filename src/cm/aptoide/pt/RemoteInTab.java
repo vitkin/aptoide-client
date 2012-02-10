@@ -96,6 +96,7 @@ import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -103,6 +104,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.SimpleAdapter;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -321,7 +323,7 @@ public class RemoteInTab extends BaseManagement {
 		Log.d("RemoteInTab"," onCreate");
 
 		availView = new ListView(this);
-//		availView.setFastScrollEnabled(true);
+		availView.setFastScrollEnabled(true);
 
 		installView = new ListView(this);
 		updateView = new ListView(this);
@@ -650,10 +652,7 @@ public class RemoteInTab extends BaseManagement {
 							listTextHeader.setText(currentCatName);
 							listTextHeader.setVisibility(View.VISIBLE);
 							
-							availView.setFastScrollEnabled(false);
 							availView.setAdapter(getAppCtg());
-							availView.setFastScrollEnabled(true);
-							
 							//						setContentView(lv);
 							availView.setSelection(pos-1);
 							deep = 1;
@@ -662,11 +661,7 @@ public class RemoteInTab extends BaseManagement {
 							//						Toast.makeText(mctx, "Games", Toast.LENGTH_SHORT).show();
 							currentCatName = "Games";
 							listTextHeader.setText(currentCatName);
-							
-							availView.setFastScrollEnabled(false);
 							availView.setAdapter(getGamesCtg());
-							availView.setFastScrollEnabled(true);
-							
 							listTextHeader.setVisibility(View.VISIBLE);
 							//						setContentView(lv);
 							availView.setSelection(pos-1);
@@ -678,12 +673,8 @@ public class RemoteInTab extends BaseManagement {
 							currentCatName = "Others";
 							listTextHeader.setText(currentCatName);
 							listTextHeader.setVisibility(View.VISIBLE);
-							
-							availView.setFastScrollEnabled(false);
 							availView.setAdapter(getGivenCatg(null, 2));
 							//						setContentView(lv);
-							availView.setFastScrollEnabled(true);
-							
 							availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 							availView.setSelection(pos-1);
 							deep = 1;
@@ -698,12 +689,7 @@ public class RemoteInTab extends BaseManagement {
 							//						Toast.makeText(mctx, "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
 							currentCatName = "Applications - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 							listTextHeader.setText(currentCatName);
-							availView.setFastScrollEnabled(false);
-
 							availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),1));
-							//						setContentView(lv);
-							availView.setFastScrollEnabled(true);
-
 							availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 							availView.setSelection(pos-1);
 							deep = 2;
@@ -718,12 +704,8 @@ public class RemoteInTab extends BaseManagement {
 							//						Toast.makeText(mctx, "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(), Toast.LENGTH_SHORT).show();
 							currentCatName = "Games - " + ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
 							listTextHeader.setText(currentCatName);
-							
-							availView.setFastScrollEnabled(false);
 							availView.setAdapter(getGivenCatg(((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString(),0));
 							//						setContentView(lv);
-							availView.setFastScrollEnabled(true);
-							
 							availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 							availView.setSelection(pos-1);
 							deep = 3;
@@ -2232,9 +2214,7 @@ public class RemoteInTab extends BaseManagement {
 			if(handler_adpt == null){
 				handler_adpt = availAdpt;
 			}
-			availView.setFastScrollEnabled(false);
 			availView.setAdapter(handler_adpt);
-			availView.setFastScrollEnabled(true);
 			
 			availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			availView.setSelection(pos-1);
@@ -2257,9 +2237,7 @@ public class RemoteInTab extends BaseManagement {
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			availView.setFastScrollEnabled(false);
 			availView.setAdapter(getAvailable(null,-1));
-			availView.setFastScrollEnabled(true);
 		}
 
 	};
@@ -2283,10 +2261,7 @@ public class RemoteInTab extends BaseManagement {
 			super.handleMessage(msg);
 			if(sPref.getBoolean("changeinst", false)){
 				
-				availView.setFastScrollEnabled(false);
 				availView.setAdapter(getAvailable(shown_now,main_shown_now));
-				availView.setFastScrollEnabled(true);
-				
 				installView.setAdapter(instAdpt);
 
 				//					vf.removeView(updateView);
@@ -2311,27 +2286,21 @@ public class RemoteInTab extends BaseManagement {
 		if (keyCode == KeyEvent.KEYCODE_BACK && sPref.getBoolean("mode", false) && deep > 0&&currentAppsList.equals(EnumAppsLists.Available)) {
 			switch (deep) {
 			case 1:
-				availView.setFastScrollEnabled(false);
 				availView.setAdapter(getRootCtg());
-				availView.setFastScrollEnabled(true);
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				currentCatName = emptyString;
 				listTextHeader.setVisibility(View.GONE);
 				deep = 0;
 				break;
 			case 2:
-				availView.setFastScrollEnabled(false);
 				availView.setAdapter(getAppCtg());
-				availView.setFastScrollEnabled(true);
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				currentCatName = "Applications";
 				listTextHeader.setText(currentCatName);
 				deep = 1;
 				break;
 			case 3:
-				availView.setFastScrollEnabled(false);
 				availView.setAdapter(getGamesCtg());
-				availView.setFastScrollEnabled(true);
 				availView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 				currentCatName = "Games";
 				listTextHeader.setText(currentCatName);
