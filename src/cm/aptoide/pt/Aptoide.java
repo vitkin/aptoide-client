@@ -112,6 +112,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ListView updatableAppsListView = null;
 	private EnumAppsLists currentAppsList = null;
 	
+	private AtomicBoolean synchronizingInstalledApps = null;
+	private String waitingSearchQuery = "";
+	
 	private enum EnumFlipperChildType{ EMPTY, LOADING, LIST };
 	
 	private ViewDisplayListApps freshAvailableApps = null;
@@ -159,6 +162,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			AptoideLog.v(Aptoide.this, "Connected to ServiceData");
 
 			if(!serviceDataSeenRunning){
+				synchronizingInstalledApps.set(true);
 				try {
 		            
 		            AptoideLog.v(Aptoide.this, "Called for a synchronization of installed Packages, because serviceData wasn't previously running");
@@ -229,6 +233,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 		@Override
 		public void newInstalledListDataAvailable() throws RemoteException {
+			if(synchronizingInstalledApps.get()){
+				synchronizingInstalledApps.set(false);
+				if(!waitingSearchQuery.equals("")){
+					startSearch(waitingSearchQuery, false, null, false);
+					waitingSearchQuery = "";
+				}
+			}
 			AptoideLog.v(Aptoide.this, "received newInstalledListDataAvailable callback");
 			staticListsManager.resetInstalledApps();
 		}
@@ -628,6 +639,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			currentAppsList = EnumAppsLists.Available;
 			
+			synchronizingInstalledApps = new AtomicBoolean(false);
+			
 			makeSureServiceDataIsRunning();
 			
 			isRunning = true;
@@ -678,22 +691,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				}
         	}else if(incomingIntent.getScheme().equals(Constants.SCHEME_MARKET) 
         			|| (incomingIntent.getScheme().equals(Constants.SCHEME_HTTPS) && incomingIntent.getData().getHost().equals(Constants.HOST_MARKET))){
-        		String query = null;
-        		String encodedQuery = incomingIntent.getData().getQuery().split("&")[0].split("=")[1];
-        		if(encodedQuery.startsWith(Constants.PREFIX_PNAME)){
-        			query = encodedQuery.substring(Constants.PREFIX_PNAME.length());
-        		}else if(encodedQuery.startsWith(Constants.PREFIX_PUB)){
-        			query = encodedQuery.substring(Constants.PREFIX_PUB.length());        			
-        		}else{
-        			query = encodedQuery;
+        		String query = incomingIntent.getData().getQuery().split("&")[0].split("=")[1];
+        		if(query.contains(":")){
+        			query = query.split(":")[1];
         		}
         		AptoideLog.d(this, "received market query: "+query);
-        		try {
-					serviceDataCaller.callGetAppSearchResults(query);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+        		if(!synchronizingInstalledApps.get()){
+        			startSearch(query, false, null, false);
+        		}else{
+        			waitingSearchQuery = query;
+        		}
         	}
         	
         	cleanAptoideIntent();

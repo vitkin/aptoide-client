@@ -1984,7 +1984,8 @@ public class ManagerDatabase {
 											+", S."+Constants.KEY_STATS_STARS+", S."+Constants.KEY_STATS_DOWNLOADS
 									+" FROM (SELECT *"
 											+" FROM "+Constants.TABLE_APPLICATION
-											+" WHERE "+Constants.KEY_APPLICATION_NAME+" LIKE '%"+searchString+"%'"
+											+" WHERE ("+Constants.KEY_APPLICATION_NAME+" LIKE '%"+searchString+"%'"
+												+ "OR "+Constants.KEY_APPLICATION_PACKAGE_NAME+" LIKE '%"+searchString+"%'"+")"
 											+" AND "+Constants.KEY_APPLICATION_REPO_HASHID
 												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
 														+" FROM "+Constants.TABLE_REPOSITORY

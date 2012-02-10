@@ -40,16 +40,18 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
-import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.SimpleAdapter.ViewBinder;
+import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
@@ -60,6 +62,7 @@ public class Search extends Activity implements OnItemClickListener{
 	private SimpleAdapter resultsAdapter;
 	private ListView resultsListView = null;
 	private ViewDisplayListApps searchResults;
+	private View bazaarSearchButton = null;
 	
 	private String searchString;
 	private String listOrdering;
@@ -160,7 +163,28 @@ public class Search extends Activity implements OnItemClickListener{
 		
 	}
 	
-	public void resetResultsList(){
+	private void resetBazaarSearchButton(){
+		if(bazaarSearchButton != null)
+        	resultsListView.removeFooterView(bazaarSearchButton);
+        
+        bazaarSearchButton = View.inflate(this, R.layout.btn_search_bazaar, null);
+        
+        Button search_baz = (Button) bazaarSearchButton.findViewById(R.id.bazaar_search);
+        search_baz.setText("Search '" + searchString + "' on Bazaar");
+        search_baz.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				String url = Constants.URI_SEARCH_BAZAAR+searchString;
+				Intent searchBazzar = new Intent(Intent.ACTION_VIEW);
+				searchBazzar.setData(Uri.parse(url));
+				startActivity(searchBazzar);
+			}
+		});
+        
+        resultsListView.addFooterView(bazaarSearchButton);
+	}
+	
+	public void resetResultsList(){		
 		resultsAdapter = new SimpleAdapter(Search.this, searchResults.getList(), R.layout.row_app, 
 				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
 				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
@@ -189,6 +213,8 @@ public class Search extends Activity implements OnItemClickListener{
 
 			//@dsilveira #529 search doens't handle hiphens well		
 			searchString = searchString.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
+			
+			resetBazaarSearchButton();
 //		}else if(searchIntent.hasExtra("market")){
 //			String apk_id= searchIntent.getStringExtra("market");
 //			searchString=apk_id;
@@ -226,6 +252,8 @@ public class Search extends Activity implements OnItemClickListener{
 
 			//@dsilveira #529 search doens't handle hiphens well	
 			searchString = searchString.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
+			
+			resetBazaarSearchButton();
 		}
 		
 	}

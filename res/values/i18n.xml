@@ -51,8 +51,11 @@
     <string name="install">Install</string>
     <string name="uninstall">Uninstall</string>
     <string name="done">Done</string>   
-    <string name="cancel">Cancel</string>   
-    <string name="search_market">Search Market</string>
+    <string name="cancel">Cancel</string>
+       
+    <string name="search_market">Search on Market</string>
+    <string name="search_bazaar">Search on Bazaar</string>
+    
     <string name="select_version">Select version</string>
     <string name="scheduled_downloads">Scheduled Downloads</string>
     <string name="schedule">Schedule</string>
