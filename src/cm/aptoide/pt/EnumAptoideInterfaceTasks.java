@@ -28,6 +28,7 @@ package cm.aptoide.pt;
  *
  */
 public enum EnumAptoideInterfaceTasks {
+	SYNCHRONIZED_INSTALLED_LIST,
 	RESET_INSTALLED_LIST_DISPLAY,
 	UPDATE_INSTALLED_LIST_DISPLAY,
 	RESET_CATEGORIES,

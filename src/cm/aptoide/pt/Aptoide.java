@@ -113,7 +113,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private EnumAppsLists currentAppsList = null;
 	
 	private AtomicBoolean synchronizingInstalledApps = null;
-	private String waitingSearchQuery = "";
+	private String blockedSearchQuery = "";
 	
 	private enum EnumFlipperChildType{ EMPTY, LOADING, LIST };
 	
@@ -233,14 +233,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 		@Override
 		public void newInstalledListDataAvailable() throws RemoteException {
-			if(synchronizingInstalledApps.get()){
-				synchronizingInstalledApps.set(false);
-				if(!waitingSearchQuery.equals("")){
-					startSearch(waitingSearchQuery, false, null, false);
-					waitingSearchQuery = "";
-				}
-			}
 			AptoideLog.v(Aptoide.this, "received newInstalledListDataAvailable callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SYNCHRONIZED_INSTALLED_LIST.ordinal());
 			staticListsManager.resetInstalledApps();
 		}
 		
@@ -288,6 +282,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         public void handleMessage(Message msg) {
         	EnumAptoideInterfaceTasks task = EnumAptoideInterfaceTasks.reverseOrdinal(msg.what);
         	switch (task) {
+        		case SYNCHRONIZED_INSTALLED_LIST:
+	    			if(synchronizingInstalledApps.get()){
+	    				synchronizingInstalledApps.set(false);
+	    				if(!blockedSearchQuery.equals("")){
+	    					startSearch(blockedSearchQuery, false, null, false);
+	    					blockedSearchQuery = "";
+	    				}        		
+	    			}	
+        			break;
+        	
 	        	case RESET_INSTALLED_LIST_DISPLAY:
 	        		resetDisplayInstalled();
 					break;
@@ -699,7 +703,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         		if(!synchronizingInstalledApps.get()){
         			startSearch(query, false, null, false);
         		}else{
-        			waitingSearchQuery = query;
+        			blockedSearchQuery = query;
         		}
         	}
         	
