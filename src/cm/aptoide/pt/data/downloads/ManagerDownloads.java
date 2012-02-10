@@ -422,7 +422,7 @@ public class ManagerDownloads {
 		
 		switch (infoType) {
 			case DELTA:															//TODO info=bare+icon&
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"unix_timestamp=true&show_apphashid=true&hash="+repository.getDelta();
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare+icon&unix_timestamp=true&show_apphashid=true&hash="+repository.getDelta();
 				cache = managerCache.getNewRepoDeltaViewCache(repository.getHashid());
 				break;
 		
