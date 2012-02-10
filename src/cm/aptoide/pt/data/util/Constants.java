@@ -79,6 +79,7 @@ public class Constants {
 	public static final String PATH_REPO_EXTRAS_XML = "v2/extras.xml?";
 	public static final String PATH_REPO_STATS_XML = "v2/stats.xml?";
 	
+	public static final String URI_SEARCH_BAZAAR = "http://m.bazaarandroid.com/searchview.php?search=";
 	public static final String URI_FORMAT_COMMENTS_WS = "http://www.bazaarandroid.com/webservices/listApkComments/%1$s/%2$s/%3$s/xml";
 	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/latest_version.xml";
@@ -94,9 +95,9 @@ public class Constants {
 	public static final String SCHEME_MARKET = "market";
 	public static final String SCHEME_HTTPS = "https";
 	public static final String HOST_MARKET = "market.android.com";
-	public static final String QUERY_PARAMETER_ID = "id";
-	public static final String PREFIX_PNAME = "pname:";
-	public static final String PREFIX_PUB = "pub:";
+//	public static final String QUERY_PARAMETER_ID = "id";
+//	public static final String PREFIX_PNAME = "pname:";
+//	public static final String PREFIX_PUB = "pub:";
 	
 	
 
