@@ -35,6 +35,7 @@ import android.util.Log;
 import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewListIds;
+import cm.aptoide.pt.data.preferences.EnumMinScreenSize;
 
 /**
  * RepoDeltaParser, handles Delta Repo xml Sax parsing
@@ -68,9 +69,9 @@ public class RepoDeltaParser extends DefaultHandler{
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
 		
-		for (EnumXmlTagsDelta tag : EnumXmlTagsDelta.values()) {
-			tagMap.put(tag.name(), tag);
-		}
+//		for (EnumXmlTagsDelta tag : EnumXmlTagsDelta.values()) {
+//			tagMap.put(tag.name(), tag);
+//		}
 	}
 	
 	@Override
@@ -83,12 +84,16 @@ public class RepoDeltaParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		tag = tagMap.get(localName.trim());
+//		tag = tagMap.get(localName.trim());
+		try {
+			tag = EnumXmlTagsDelta.valueOf(localName.trim());
+		} catch (Exception e) {
+			tag = null;
+			e.printStackTrace();
+		}
+		
 		if(tag != null){
 			switch (tag) {
-//				case del:
-//					toRemove = true;
-//					break;
 				case apphashid:
 					if(toRemove){
 						removedApplications.addId((Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode());
@@ -115,13 +120,19 @@ public class RepoDeltaParser extends DefaultHandler{
 				case timestamp:
 					application.setTimestamp(Long.parseLong(tagContentBuilder.toString()));
 					break;
-	//			case minSdk:	//TODO filters
-	//				application.setVersionName(new String(chars).substring(start, start + length));
-	//				break;
+				case minScreen:
+					application.setMinScreen(EnumMinScreenSize.valueOf(tagContentBuilder.toString().trim()).ordinal());
+					break;
+				case minSdk:
+					application.setMinSdk(Integer.parseInt(tagContentBuilder.toString().trim()));
+					break;
+//				case minGles:
+//					application.setMinGles(Integer.parseInt(tagContentBuilder.toString().trim()));
+//					break;
 					
-	//			case icon:
-	//				icon = new ViewIconInfo(tagContentBuilder.toString(), application.getFullHashid());
-	//				break;
+				case icon:
+					icon = new ViewIconInfo(tagContentBuilder.toString(), application.getFullHashid());
+					break;
 					
 				case pkg:
 					parseInfo.getNotification().incrementProgress(1);
@@ -131,7 +142,7 @@ public class RepoDeltaParser extends DefaultHandler{
 						repoSizeDifferential++;
 						application.setRepoHashid(parseInfo.getRepository().getHashid());
 						newApplications.add(application);
-	//					newIcons.add(icon);
+						newIcons.add(icon);
 					}
 					toRemove = false;
 					break;
@@ -203,7 +214,9 @@ public class RepoDeltaParser extends DefaultHandler{
 		managerXml.getManagerDatabase().insertApplications(newApplications);
 		Log.d("Aptoide-RepoBareParser","removing apps: " + removedApplications + " ...");	
 		managerXml.getManagerDatabase().removeApplications(removedApplications);
-//		managerXml.getManagerDatabase().insertIconsInfo(newIcons);
+		
+		Log.d("Aptoide-RepoBareParser","inserting new apps icons: " + newIcons + " ...");	
+		managerXml.getManagerDatabase().insertIconsInfo(newIcons);
 		
 		managerXml.parsingRepoDeltaFinished(parseInfo.getRepository());
 		super.endDocument();

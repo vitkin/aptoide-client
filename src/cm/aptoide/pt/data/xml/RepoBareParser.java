@@ -33,6 +33,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
 import cm.aptoide.pt.data.model.ViewApplication;
+import cm.aptoide.pt.data.preferences.EnumMinScreenSize;
 import cm.aptoide.pt.data.util.Constants;
 
 /**
@@ -64,9 +65,9 @@ public class RepoBareParser extends DefaultHandler{
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
 		
-		for (EnumXmlTagsBare tag : EnumXmlTagsBare.values()) {
-			tagMap.put(tag.name(), tag);
-		}
+//		for (EnumXmlTagsBare tag : EnumXmlTagsBare.values()) {
+//			tagMap.put(tag.name(), tag);
+//		}
 	}
 	
 	@Override
@@ -79,14 +80,15 @@ public class RepoBareParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		tag = tagMap.get(localName.trim());
+//		tag = tagMap.get(localName.trim());
+		tag = EnumXmlTagsBare.valueOf(localName.trim());
 		
 		switch (tag) {
 			case apkid:
 				packageName = tagContentBuilder.toString();
 				break;
 			case vercode:
-				int versionCode = Integer.parseInt(tagContentBuilder.toString());
+				int versionCode = Integer.parseInt(tagContentBuilder.toString().trim());
 				application = new ViewApplication(packageName, versionCode, false);
 				break;
 			case ver:
@@ -100,10 +102,16 @@ public class RepoBareParser extends DefaultHandler{
 //				Log.d("Aptoide-RepoBareParser", "app: "+application.getApplicationName()+", appHashid (Not full): "+application.getHashid()+", category: "+tagContentBuilder.toString().trim()+", categoryHashid: "+application.getCategoryHashid());
 				break;
 			case timestamp:
-				application.setTimestamp(Long.parseLong(tagContentBuilder.toString()));
+				application.setTimestamp(Long.parseLong(tagContentBuilder.toString().trim()));
 				break;
-//			case minSdk:	//TODO filters
-//				application.setVersionName(new String(chars).substring(start, start + length));
+			case minScreen:
+				application.setMinScreen(EnumMinScreenSize.valueOf(tagContentBuilder.toString().trim()).ordinal());
+				break;
+			case minSdk:
+				application.setMinSdk(Integer.parseInt(tagContentBuilder.toString().trim()));
+				break;
+//			case minGles:
+//				application.setMinGles(Integer.parseInt(tagContentBuilder.toString().trim()));
 //				break;
 				
 			case pkg:

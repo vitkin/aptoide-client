@@ -247,8 +247,15 @@ public class Constants {
 	public static final String KEY_APPLICATION_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increase lookup performance
 	public static final String KEY_APPLICATION_TIMESTAMP = "timestamp";
 //	public static final String KEY_APPLICATION_RATING = "rating";
-//	public static final int NUMBER_OF_COLUMNS_APPLICATION = 9;
-	public static final int NUMBER_OF_COLUMNS_APPLICATION = 8;
+	/** min_screen_size defaults to small (supports all screens) **/
+	public static final String KEY_APPLICATION_MIN_SCREEN = "min_screen";
+	/** min_sdk_version defaults to 1 (supports all versions) **/
+	public static final String KEY_APPLICATION_MIN_SDK = "min_sdk";
+	/** min_gles defaults to 1.0 encoded acording to integer representation rules of gles float version id 
+	 * found in: http://developer.android.com/guide/topics/manifest/uses-feature-element.html#glEsVersion  **/
+	public static final String KEY_APPLICATION_MIN_GLES = "min_gles";
+//	public static final int NUMBER_OF_COLUMNS_APPLICATION = 12;
+	public static final int NUMBER_OF_COLUMNS_APPLICATION = 11;
 	
 	
 	public static final String TABLE_CATEGORY = "category";
@@ -342,9 +349,9 @@ public class Constants {
 	public static final String CREATE_TABLE_REPOSITORY = "CREATE TABLE IF NOT EXISTS " + TABLE_REPOSITORY + " ("
 			+ KEY_REPO_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_REPO_URI + " TEXT NOT NULL, "
-			+ KEY_REPO_BASE_PATH + " TEXT DEFAULT ('/'), "
-			+ KEY_REPO_ICONS_PATH + " TEXT DEFAULT ('icons/'), "
-			+ KEY_REPO_SCREENS_PATH + " TEXT DEFAULT ('screens/'), "
+			+ KEY_REPO_BASE_PATH + " TEXT, "
+			+ KEY_REPO_ICONS_PATH + " TEXT, "
+			+ KEY_REPO_SCREENS_PATH + " TEXT, "
 			+ KEY_REPO_SIZE + " INTEGER DEFAULT (0) CHECK ("+KEY_REPO_SIZE+">=0), "
 			+ KEY_REPO_DELTA + " TEXT DEFAULT (0), "
 			+ KEY_REPO_LAST_SYNCHRO + " INTEGER DEFAULT (0), "
@@ -378,6 +385,13 @@ public class Constants {
 			+ KEY_APPLICATION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_TIMESTAMP + " INTEGER NOT NULL, "
 //			+ KEY_APPLICATION_RATING + " INTEGER NOT NULL CHECK ("+KEY_APPLICATION_RATING+">0), "
+			/** min_screen_size defaults to small (supports all screens) **/
+			+ KEY_APPLICATION_MIN_SCREEN + " INTEGER DEFAULT (0) CHECK("+KEY_APPLICATION_MIN_SCREEN+">=0), "
+			/** min_sdk_version defaults to 1 (supports all versions) **/
+			+ KEY_APPLICATION_MIN_SDK + " INTEGER DEFAULT (1) CHECK("+KEY_APPLICATION_MIN_SDK+">=1), "
+			/** min_gles defaults to 1.0 encoded acording to integer representation rules of gles float version id 
+			 * found in: http://developer.android.com/guide/topics/manifest/uses-feature-element.html#glEsVersion  **/
+			+ KEY_APPLICATION_MIN_GLES + " INTEGER DEFAULT (65536) CHECK("+KEY_APPLICATION_MIN_GLES+">=65536), "	
 			+ "FOREIGN KEY("+ KEY_APPLICATION_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +") );"; 
 //			+ "PRIMARY KEY("+ KEY_APPLICATION_FULL_HASHID +") );";	
 
@@ -424,9 +438,7 @@ public class Constants {
 	public static final String FOREIGN_KEY_UPDATE_APP_CATEGORY_APP_FULL_HASHID_WEAK = "foreign_key_update_app_category_app_full_hashid_weak";
 
 	
-	//TODO table app_filters
 	
-
 	public static final String CREATE_TABLE_APP_TO_INSTALL = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_TO_INSTALL + " ("
 			+ KEY_APP_TO_INSTALL_HASHID + " INTEGER PRIMARY KEY NOT NULL); ";
 

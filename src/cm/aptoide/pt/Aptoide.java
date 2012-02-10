@@ -40,6 +40,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -617,6 +618,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
 			
 			availableAppsListView = new ListView(this);
+//			availableAppsListView.setBackgroundColor(Color.WHITE);
 			availableAppsListView.setOnTouchListener(swypeListener);
 			availableAppsListView.setOnItemClickListener(this);
 			availableAppsListView.setTag(EnumFlipperChildType.LIST);
@@ -624,6 +626,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	//		appsListFlipper.addView(availableAppsList);
 			
 			installedAppsListView = new ListView(this);
+//			installedAppsListView.setBackgroundColor(Color.WHITE);
 			installedAppsListView.setOnTouchListener(swypeListener);
 			installedAppsListView.setOnItemClickListener(this);
 			installedAppsListView.setTag(EnumFlipperChildType.LIST);
@@ -631,6 +634,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	//		appsListFlipper.addView(installedAppsList);
 			
 			updatableAppsListView = new ListView(this);
+//			updatableAppsListView.setBackgroundColor(Color.WHITE);
 			updatableAppsListView.setOnTouchListener(swypeListener);
 			updatableAppsListView.setOnItemClickListener(this);
 			updatableAppsListView.setTag(EnumFlipperChildType.LIST);
