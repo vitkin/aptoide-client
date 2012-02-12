@@ -83,6 +83,9 @@ public class MyappParser extends DefaultHandler{
 			case name:
 				viewMyapp = new ViewMyapp(tagContentBuilder.toString());
 				break;
+			case pname:
+				viewMyapp.setPackageName(tagContentBuilder.toString());
+				break;
 			case md5sum:
 				viewMyapp.setMd5sum(tagContentBuilder.toString());
 				break;

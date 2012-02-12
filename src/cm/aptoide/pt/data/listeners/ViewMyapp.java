@@ -20,6 +20,8 @@
 
 package cm.aptoide.pt.data.listeners;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import cm.aptoide.pt.data.util.Constants;
 
 
@@ -30,9 +32,10 @@ import cm.aptoide.pt.data.util.Constants;
  * @since 3.0
  *
  */
-public class ViewMyapp {
+public class ViewMyapp implements Parcelable{
 
 	private String name;
+	private String pname;
 	private String md5sum;
 	private int size;
 	private String remotePath;
@@ -42,12 +45,14 @@ public class ViewMyapp {
 	 * ViewMyapp Constructor
 	 *
 	 * @param String name
+	 * @param String pname
 	 * @param String md5sum
 	 * @param int size
 	 * @param String remotePath
 	 */
-	public ViewMyapp(String name, String md5sum, int size, String remotePath) {
+	public ViewMyapp(String name, String pname, String md5sum, int size, String remotePath) {
 		this.name = name;
+		this.pname = pname;
 		this.md5sum = md5sum;
 		this.size = size;
 		this.remotePath = remotePath;
@@ -60,6 +65,11 @@ public class ViewMyapp {
 	 */
 	public ViewMyapp(String name){
 		this.name = name;
+	}
+	
+
+	public void setPackageName(String pname) {
+		this.pname = pname;
 	}
 
 	public void setMd5sum(String md5sum) {
@@ -76,6 +86,10 @@ public class ViewMyapp {
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public String getPackageName() {
+		return pname;
 	}
 
 	public String getMd5sum() {
@@ -96,6 +110,7 @@ public class ViewMyapp {
 	 */
 	public void clean(){
 		this.name = null;
+		this.pname = null;
 		this.md5sum = null;
 		this.size = Constants.EMPTY_INT;
 	}
@@ -104,12 +119,14 @@ public class ViewMyapp {
 	 * ViewMyapp object reuse reConstructor
 	 * 
 	 * @param String name
+	 * @param String pname
 	 * @param String md5sum
 	 * @param int size
 	 * @param String remotePath
 	 */
-	public void reuse(String name, String md5sum, int size, String remotePath) {
+	public void reuse(String name, String pname, String md5sum, int size, String remotePath) {
 		this.name = name;
+		this.pname = pname;
 		this.md5sum = md5sum;
 		this.size = size;
 		this.remotePath = remotePath;
@@ -127,7 +144,57 @@ public class ViewMyapp {
 
 	@Override
 	public String toString() {
-		return "Name: "+name+" md5sum: "+md5sum+" size: "+size+" remotePath: "+remotePath;
+		return "Name: "+name+" packageName: "+pname+" md5sum: "+md5sum+" size: "+size+" remotePath: "+remotePath;
+	}
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewMyapp> CREATOR = new
+			Parcelable.Creator<ViewMyapp>() {
+
+		@Override
+		public ViewMyapp createFromParcel(Parcel in) {
+			return new ViewMyapp(in);
+		}
+
+		public ViewMyapp[] newArray(int size) {
+			return new ViewMyapp[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	private ViewMyapp(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeString(this.name);
+		out.writeString(this.pname);
+		out.writeString(this.md5sum);
+		out.writeInt(this.size);
+		out.writeString(this.remotePath);
+	}
+
+	public void readFromParcel(Parcel in) {
+		this.name = in.readString();
+		this.pname = in.readString();
+		this.md5sum = in.readString();
+		this.size = in.readInt();
+		this.remotePath = in.readString();
 	}
 	
 }

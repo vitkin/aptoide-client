@@ -1707,6 +1707,32 @@ public class ManagerDatabase {
 			return true;
 		}
 	}
+
+	
+	/**
+	 * isApplicationInstalled, returns true if an app is already installed
+	 *  
+	 * @return boolean isApplicationInstalled
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public boolean isApplicationInstalled(String packageName){
+		
+		String selectIsAppInstalled = "SELECT * FROM "+Constants.TABLE_APP_INSTALLED
+										+" WHERE "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME+"="+packageName+";";
+		
+		Cursor cursorIsAppInstalled = aptoideAtomicQuery(selectIsAppInstalled);
+		
+		if(cursorIsAppInstalled.getCount() == Constants.EMPTY_INT){
+			cursorIsAppInstalled.close();
+			return false;
+		}else{
+			cursorIsAppInstalled.close();
+			return true;
+		}
+	}
 	
 	/**
 	 * getInstalledAppsDisplayInfo, retrieves a list of all installed apps

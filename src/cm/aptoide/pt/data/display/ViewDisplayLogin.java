@@ -152,8 +152,5 @@ public class ViewDisplayLogin implements Parcelable, Serializable{
 		this.password = in.readString();
 		this.repoHashid = in.readInt();
 	}
-		
-	
-	
 	
 }

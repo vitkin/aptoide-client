@@ -1,5 +1,5 @@
 /**
- * AIDLAptoideInterface,		part of Aptoide
+ * ViewMyapp,		part of Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -17,26 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt;
+package cm.aptoide.pt.data.listeners;
 
 /**
- * AIDLAptoideInterface, models Aptoide's interface classes AIDL IPC
+ * ViewMyapp, ViewMyapp's AIDL IPC
  *
  * @author dsilveira
  * @since 3.0
  *
  */
-interface AIDLAptoideInterface{
-	
-	void newInstalledListDataAvailable();
-	void newAvailableListDataAvailable();
-	void resetAvailableListData();
-	void refreshAvailableDisplay();
-	
-	void noAvailableListDataAvailable();
-	void loadingAvailableListDataAvailable();
-	void loadingInstalledListDataAvailable();
-	
-	void handleMyapp();
-	
-}
+parcelable ViewMyapp;
