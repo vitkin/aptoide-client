@@ -28,6 +28,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLReposInfo;
+import cm.aptoide.pt.data.listeners.ViewMyapp;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
@@ -78,6 +79,11 @@ interface AIDLAptoideServiceData {
 	void callUnscheduleInstallApp(in int appHashid);
 	boolean callIsAppScheduledToInstall(in int appHashid);
 	
+	void callRegisterMyappReceiver(in AIDLAptoideInterface myappObserver);
 	void callReceiveMyapp(in String uriString);
+	ViewMyapp callGetWaitingMyapp();
+	void callInstallMyapp(in ViewMyapp myapp);
+	void callRejectedMyapp();
+	ViewDisplayListRepos callGetWaitingMyappRepos();
 	
 }

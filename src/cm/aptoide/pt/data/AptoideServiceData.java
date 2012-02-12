@@ -81,11 +81,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private int DISPLAY_LISTS_CACHE_SIZE;
 	
 	private ArrayList<Integer> reposInserting;
-	private HashMap<Integer, ViewMyapp> importedApps;
-	private ViewDisplayListRepos importedRepos;
+	private ArrayList<ViewMyapp> waitingMyapps;
+	private ViewDisplayListRepos waitingMyappRepos;
 	
-	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClient;
-	private HashMap<Integer, AIDLAppInfo> appInfoClient;
+	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClients;
+	private HashMap<Integer, AIDLAppInfo> appInfoClients;
 	private AIDLReposInfo reposInfoClient;
 //	private EnumServiceDataCall latestRequest;
 
@@ -282,20 +282,52 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public void callRegisterMyappReceiver(AIDLAptoideInterface myappObserver) throws RemoteException {
+			registerMyappReceiver(myappObserver);
+		}
+
+		@Override
 		public void callReceiveMyapp(String uriString) throws RemoteException {
 			receiveMyapp(uriString);
+		}
+
+		@Override
+		public ViewMyapp callGetWaitingMyapp() throws RemoteException {
+			if(!waitingMyapps.isEmpty()){
+				return waitingMyapps.remove(0);
+			}else{
+				return null;
+			}
+		}
+
+		@Override
+		public void callInstallMyapp(ViewMyapp myapp) throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void callRejectedMyapp() throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public ViewDisplayListRepos callGetWaitingMyappRepos() throws RemoteException {
+			// TODO Auto-generated method stub
+			return null;
 		}
 		
 	}; 
 
 	public void registerAvailableDataObserver(AIDLAptoideInterface availableAppsObserver){
-		aptoideClient.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, availableAppsObserver);
+		aptoideClients.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, availableAppsObserver);
 		checkIfAnyReposInUse();
     	AptoideLog.d(AptoideServiceData.this, "Registered Available Data Observer");
 	}
 	
 	public void registerInstalledDataObserver(AIDLAptoideInterface installedAppsObserver){
-		aptoideClient.put(EnumServiceDataCallback.UPDATE_INSTALLED_LIST, installedAppsObserver);
+		aptoideClients.put(EnumServiceDataCallback.UPDATE_INSTALLED_LIST, installedAppsObserver);
 		if(!syncingInstalledApps.get()){
 			try {
 				installedAppsObserver.newInstalledListDataAvailable();
@@ -307,9 +339,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
     	AptoideLog.d(AptoideServiceData.this, "Registered Installed Data Observer");
 	}
 	
+	public void registerMyappReceiver(AIDLAptoideInterface myappObserver){
+		aptoideClients.put(EnumServiceDataCallback.HANDLE_MYAPP, myappObserver);
+    	AptoideLog.d(AptoideServiceData.this, "Registered Myapp Observer");		
+	}
+	
 	
 	public void registerAppInfoObserver(AIDLAppInfo appInfoObserver, int appHashid){
-		appInfoClient.put(appHashid, appInfoObserver);
+		appInfoClients.put(appHashid, appInfoObserver);
     	AptoideLog.d(AptoideServiceData.this, "Registered App Info Observer: "+appHashid);
 	}
 	
@@ -383,13 +420,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	    	splash();
 	    	
 	    	reposInserting = new ArrayList<Integer>();
-	    	importedApps = new HashMap<Integer, ViewMyapp>();
+			
+			waitingMyapps = new ArrayList<ViewMyapp>();
+			waitingMyappRepos = new ViewDisplayListRepos(0);
 	    	
 	    	cachedThreadPool = Executors.newCachedThreadPool();
 	    	scheduledThreadPool = Executors.newScheduledThreadPool(Constants.MAX_PARALLEL_SERVICE_REQUESTS);
 	    	
-			aptoideClient = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
-			appInfoClient = new HashMap<Integer, AIDLAppInfo>();
+			aptoideClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
+			appInfoClients = new HashMap<Integer, AIDLAppInfo>();
 			
 			managerPreferences = new ManagerPreferences(this);
 			managerSystemSync = new ManagerSystemSync(this);
@@ -622,7 +661,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				try {
-					aptoideClient.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable(); 
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable(); 
 //					Looper.prepare();
 //					Toast.makeText(getApplicationContext(), "installed list now available in next -> tab", Toast.LENGTH_LONG).show();
 				} catch (RemoteException e) {
@@ -639,7 +678,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				try {
-					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -653,7 +692,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				try {
-					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -667,7 +706,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				try {
-					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).resetAvailableListData();
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).resetAvailableListData();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -682,7 +721,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				AptoideLog.d(AptoideServiceData.this, "No available apps!");
 				try {
-					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).noAvailableListDataAvailable();
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).noAvailableListDataAvailable();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -697,7 +736,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				AptoideLog.d(AptoideServiceData.this, "Loading available apps!");
 				try {
-					aptoideClient.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListDataAvailable();
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListDataAvailable();
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -1120,23 +1159,23 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		try {
 			switch (callBack) {
 				case REFRESH_ICON:
-					appInfoClient.get(appHashid).refreshIcon();
+					appInfoClients.get(appHashid).refreshIcon();
 					break;
 					
 				case UPDATE_APP_DOWNLOAD_INFO:
-					appInfoClient.get(appHashid).newAppDownloadInfoAvailable();
+					appInfoClients.get(appHashid).newAppDownloadInfoAvailable();
 					break;
 					
 				case UPDATE_APP_STATS:
-					appInfoClient.get(appHashid).newStatsInfoAvailable();
+					appInfoClients.get(appHashid).newStatsInfoAvailable();
 					break;
 					
 				case UPDATE_APP_EXTRAS:
-					appInfoClient.get(appHashid).newExtrasAvailable();
+					appInfoClients.get(appHashid).newExtrasAvailable();
 					break;
 					
 				case REFRESH_SCREENS:
-					appInfoClient.get(appHashid).refreshScreens();
+					appInfoClients.get(appHashid).refreshScreens();
 					break;
 					
 				default:
@@ -1241,10 +1280,24 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
-	public void parsingMyappFinished(ViewMyapp myapp, ViewDisplayListRepos newRepos){
-		importedApps.put(myapp.getMd5sum().hashCode(), myapp);
-		//TODO notify myappActionPopupListener
-		//TODO notify newReposActionPopupListener
+	public void parsingMyappFinished(ViewMyapp myapp, ViewDisplayListRepos newRepos){ //TODO deal with repos only myapp
+		if(!managerDatabase.isApplicationInstalled(myapp.getPackageName())){
+			waitingMyapps.add(myapp);
+			waitingMyappRepos.addAll(newRepos);
+			scheduledThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						aptoideClients.get(EnumServiceDataCallback.HANDLE_MYAPP).handleMyapp();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+			});
+		}else{
+			Toast.makeText(this, "Application "+myapp.getName()+" already installed!", Toast.LENGTH_LONG).show();
+		}
 	}
 	
 	

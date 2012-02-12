@@ -67,6 +67,11 @@ public class ViewDisplayListRepos implements Parcelable{
 		this.reposList.add(repo.getDiplayMap());
 	}
 	
+	public void addAll(ViewDisplayListRepos repos){
+		this.reposHash.putAll(repos.getHashMap());
+		this.reposList.addAll(repos.getList());
+	}
+	
 	public void removeRepo(int repoHashid){
 		ViewDisplayRepo repo = this.reposHash.remove(repoHashid);
 		this.reposList.remove(repo.getArrayIndex());		

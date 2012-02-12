@@ -24,6 +24,7 @@ package cm.aptoide.pt;
 
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -78,6 +79,7 @@ import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.debug.AptoideLog;
@@ -136,6 +138,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ViewDisplayListApps updatableApps = null;
 	
 	private boolean availableByCategory = true;
+	
+	private ArrayList<ViewMyapp> handlingMyapps;
 	
 	private InstalledAppsManager staticListsManager;
 	private AvailableAppsManager availableAppsManager;
@@ -211,6 +215,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	            AptoideLog.v(Aptoide.this, "Called for registering as AvailableApps Observer");
 	            serviceDataCaller.callRegisterAvailableAppsObserver(serviceDataCallback);
 
+	            AptoideLog.v(Aptoide.this, "Called for registering as Myapp Observer");
+	            serviceDataCaller.callRegisterMyappReceiver(serviceDataCallback);
+
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
 	            e.printStackTrace();
@@ -274,6 +281,22 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		public void loadingInstalledListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received loadingInstalledApps callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
+		}
+
+		@Override
+		public void handleMyapp() throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received handleMyapp callback");
+			ViewMyapp myapp = null;
+			try {
+				myapp = serviceDataCaller.callGetWaitingMyapp();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(myapp != null){
+				handlingMyapps.add(myapp);
+			}
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.HANDLE_MYAPP.ordinal());
 		}
 	};
 	
@@ -359,6 +382,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						default:
 							break;
 					}
+					break;
+					
+				case HANDLE_MYAPP:
+					handleMyapp();
 					break;
 	
 				default:
@@ -599,6 +626,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			availableApps = new ViewDisplayListApps();
 			updatableApps = new ViewDisplayListApps();
 	
+			handlingMyapps = new ArrayList<ViewMyapp>();
+			
 			swypeDetector = new GestureDetector(new SwypeDetector());
 			swypeListener = new View.OnTouchListener() {
 									@Override
@@ -1702,6 +1731,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //				return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	public void handleMyapp(){
+		//TODO alertdialog to handle myapp
 	}
 
 
