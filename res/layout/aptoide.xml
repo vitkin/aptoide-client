@@ -1,88 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical" 
-android:gravity="center_horizontal"
-android:layout_width="fill_parent" 
-android:layout_height="fill_parent"
-android:background="#ffffff">
-    
-	<!--	Green Top Bar  	-->
-    <FrameLayout 
-    android:orientation="vertical" 
-    android:layout_width="wrap_content"
-    android:layout_height="44dp"
-    android:layout_gravity="top" 
-    android:id="@+id/LayoutNotificationBar">
-	    <ImageView android:src="@drawable/greenbar"
-	    android:id="@+id/ivbrandbar" 
-	    android:layout_height="wrap_content" android:layout_width="fill_parent"></ImageView>
-	    <LinearLayout android:layout_width="wrap_content" 
-	    android:layout_height="wrap_content" 
-	    android:orientation="horizontal" 
-	    android:layout_gravity="center">
-		    <ImageView android:id="@+id/ivAptoideIcon" 
-		    android:src="@drawable/icon" 
-		    android:layout_gravity="left|center"
-		    android:layout_marginLeft="10sp" android:layout_width="34dp" android:layout_height="34dp"></ImageView>
-		    <ImageView android:id="@+id/ivAptoideBrand" 
-		    android:src="@drawable/aptoidebrand" 
-		    android:layout_gravity="center" 
-		    android:layout_width="125sp" 
-	    	android:paddingTop="10sp" android:layout_marginLeft="10sp" android:layout_height="30dp"></ImageView>
-		   	<Button android:id="@+id/btNotification" 
-		    android:background="@drawable/btnotification"
-		    android:padding="10sp" 
-		    android:layout_weight="65"
-		    android:layout_height="30sp" 
-		    android:layout_width="30sp" android:layout_gravity="center" android:layout_marginLeft="55sp"></Button>
-		    <Button android:id="@+id/btSearch" 
-		    android:background="@drawable/btsearch"
-		    android:layout_weight="15"
-		    android:padding="10sp" 
-		    android:layout_height="30sp" 
-		    android:layout_width="30sp" android:layout_gravity="center" android:layout_marginLeft="15sp"></Button>
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
 
-	    </LinearLayout>
-	</FrameLayout>
+    <!-- Green Top Bar -->
 
+    <FrameLayout
+        android:id="@+id/LayoutNotificationBar"
+        android:layout_width="wrap_content"
+        android:layout_height="44dp"
+        android:layout_gravity="top"
+        android:orientation="vertical" >
 
-<!-- 	<cm.aptoide.pt.ui.ViewPagerIndicator  -->
-<!--     		android:id="@+id/indicator" -->
-<!--     		android:layout_width="fill_parent" -->
-<!--     		android:layout_height="wrap_content" -->
-<!--     		android:background="#ffeaeaea" -->
-<!--     		android:paddingLeft="5dp" -->
-<!--     		android:paddingRight="5dp" /> -->
-<!--    	<RelativeLayout  -->
-<!--    		android:layout_width="fill_parent" -->
-<!--     	android:layout_height="wrap_content" -->
-<!--     	android:background="#ffeaeaea" >  -->
-<!--     	<View  -->
-<!--     		android:layout_width="fill_parent" -->
-<!--     		android:layout_height="1px" -->
-<!--     		android:layout_alignBottom="@+id/current" -->
-<!--     		android:background="#ffbdbdbd" /> -->
-<!--    		<ImageView  -->
-<!--    			android:id="@+id/current" -->
-<!--     		android:layout_width="wrap_content" -->
-<!--     		android:layout_height="wrap_content" -->
-<!--     		android:src="@drawable/indicator_current" -->
-<!--     		android:layout_centerInParent="true" -->
-<!--     		android:layout_alignParentTop="true" /> -->
-<!--    	</RelativeLayout> -->
-<!--   		-->
-<!--	<android.support.v4.view.ViewPager-->
-<!--		android:id="@+id/pager"-->
-<!--		android:layout_width="fill_parent"-->
-<!--		android:layout_height="0dip"-->
-<!--		android:layout_weight="1" />-->
-	
- 	<ViewFlipper 
- 		android:id="@+id/list_flipper" 
- 		android:orientation="vertical" 
- 		android:layout_width="fill_parent" 
- 		android:layout_height="fill_parent" 
- 		android:background="#ffffff"> 
- 	 </ViewFlipper> 
-	 
+        <ImageView
+            android:id="@+id/ivbrandbar"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/greenbar" >
+        </ImageView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/ivAptoideIcon"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_gravity="left|center"
+                android:layout_marginLeft="10sp"
+                android:src="@drawable/icon" >
+            </ImageView>
+
+            <ImageView
+                android:id="@+id/ivAptoideBrand"
+                android:layout_width="125sp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="10sp"
+                android:paddingTop="10sp"
+                android:src="@drawable/aptoidebrand" >
+            </ImageView>
+
+            <Button
+                android:id="@+id/btNotification"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="55sp"
+                android:layout_weight="65"
+                android:background="@drawable/btnotification"
+                android:padding="10sp" >
+            </Button>
+
+            <Button
+                android:id="@+id/btSearch"
+                android:layout_width="30sp"
+                android:layout_height="30sp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15sp"
+                android:layout_weight="15"
+                android:background="@drawable/btsearch"
+                android:padding="10sp" >
+            </Button>
+        </LinearLayout>
+    </FrameLayout>
+
+    <ViewFlipper
+        android:id="@+id/list_flipper"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+    </ViewFlipper>
+
 </LinearLayout>
