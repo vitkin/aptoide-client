@@ -65,7 +65,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
 	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
-	            + "server text, md5hash text, size number default 0 not null, primary key(apkid, server));";
+	            + "server text, md5hash text, size number default 0 not null,age text not null, primary key(apkid, server));";
 	
 	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text, "
 				+ "instver text not null, instvercode number not null, primary key(apkid));";
@@ -75,7 +75,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_URI = "create table if not exists " + TABLE_NAME_URI 
 				+ " (uri text primary key, inuse integer not null, napk integer default -1 not null, user text, psd text,"
-				+ " secure integer default 0 not null, updatetime text default 0 not null, base_path text, delta text default 0 not null, npackage integer default 0 not null);";
+				+ " secure integer default 0 not null, updatetime text default 0 not null, base_path text, delta text default 0 not null, npackage integer default 0 not null,extended default 1 not null);";
 	
 	private static final String CREATE_TABLE_EXTRA = "create table if not exists " + TABLE_NAME_EXTRA
 				+ " (apkid text, rat number, dt date, desc text, dwn number, catg text default 'Other' not null, sdk number, esgl text, screensize text,"
@@ -288,7 +288,7 @@ public class DbHandler {
 		db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"' and ver='"+ver+"'", null);
 	}
 	 
-	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size, int sdk, String esgl, String screensize){
+	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size, String age){
 
 		if(delfirst){
 			db.delete(TABLE_NAME, "apkid='"+apkid+"'", null);
@@ -304,7 +304,9 @@ public class DbHandler {
 		tmp.put("server", serv);
 		tmp.put("md5hash", md5hash);
 		tmp.put("size", size);
+		tmp.put("age",age);
 		db.insert(TABLE_NAME, null, tmp);
+		
 		tmp.clear();
 		tmp.put("apkid", apkid);
 		tmp.put("rat", rat);
@@ -317,9 +319,8 @@ public class DbHandler {
 				break;
 			}
 		}
-		tmp.put("sdk", sdk);
-		tmp.put("esgl", esgl);
-		tmp.put("screensize", screensize);
+		
+		
 		db.insert(TABLE_NAME_EXTRA, null, tmp);
 		
    		PackageManager mPm = mctx.getPackageManager();
@@ -556,8 +557,8 @@ public class DbHandler {
 		Cursor c = null;
 		try{
 			
-			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord, b.sdk, b.esgl, b.screensize from "
-				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
+			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord, c.age from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.age,a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
 			
@@ -614,9 +615,8 @@ public class DbHandler {
 				node.down = c.getInt(8);
 				node.catg = c.getString(9);
 				node.catg_ord = c.getInt(10);
-				node.sdkVer =c.getInt(11);
-				node.ESGLVer =c.getString(12);
-				node.screenSize =c.getString(13);
+				node.age = c.getString(11);
+				
 				tmp.add(node);
 				c.moveToNext();
 			}
@@ -637,8 +637,8 @@ public class DbHandler {
 			if(ctg == null)
 				catgi = "";
 			
-			final String basic_query = "select * from (select distinct c.apkid, c.name as name, c.instver as instver, c.lastver, c.instvercode, c.lastvercode ,b.dt as dt, b.rat as rat, b.dwn as dwn, b.catg as catg, b.catg_ord as catg_ord, b.sdk as sdk,b.esgl as esgl, b.screensize as screensize from "
-				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.lastver as lastver, a.lastvercode as lastvercode from "
+			final String basic_query = "select * from (select distinct c.apkid, c.name as name, c.instver as instver, c.lastver, c.instvercode, c.lastvercode ,b.dt as dt, b.rat as rat, b.dwn as dwn, b.catg as catg, b.catg_ord as catg_ord, c.age from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.age, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid) as d where " + catgi + "d.catg_ord = " + ord + " and d.instver is null";
 			
@@ -672,9 +672,7 @@ public class DbHandler {
 				node.ver = c.getString(3);
 				node.rat = c.getFloat(7);
 				node.down = c.getInt(8);
-				node.sdkVer = c.getInt(11);
-				node.ESGLVer =c.getString(12);
-				node.screenSize =c.getString(13);
+				node.age=c.getString(11);
 				tmp.add(node);
 				c.moveToNext();
 			}
@@ -904,7 +902,8 @@ public class DbHandler {
 			}
 			tmp.add(tmp_serv);
 			c.moveToPrevious();*/
-			tmp.add(c.getString(0));
+			String server = c.getString(0);
+			tmp.add(server);
 			tmp.add("\t" + c.getString(1)+"\n");
 			size = c.getInt(2);
 			
@@ -925,6 +924,9 @@ public class DbHandler {
 			int downloads = c.getInt(0);
 			float rat = c.getFloat(1);
 			
+			c = db.query(TABLE_NAME_URI, new String[]{"extended"}, "uri=\"" +server+"\"", null, null, null, null);
+			c.moveToFirst();
+			
 			
 			tmp.add(Integer.toString(downloads));
 			
@@ -933,6 +935,8 @@ public class DbHandler {
 			tmp.add(new Integer(size).toString());
 
 			tmp.add(lastvercode);
+			
+			tmp.add(Integer.toString(c.getInt(0)));
 			//c.close();
 		}catch (Exception e){
 			//System.out.println(e.toString());
@@ -1234,7 +1238,7 @@ public class DbHandler {
 	 *  1 - yes
 	 *  0 - no
 	 */
-	public void addServer(String srv){
+	public void addServer(String srv, int extended){
 		ContentValues tmp = new ContentValues();
 		if (!srv.endsWith("/")) {
 			
@@ -1243,6 +1247,7 @@ public class DbHandler {
 		}
 		tmp.put("uri", srv);
 		tmp.put("inuse", 1);
+		tmp.put("extended", extended);
 		db.insert(TABLE_NAME_URI, null, tmp);
 	}
 	

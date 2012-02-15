@@ -12,6 +12,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdSize;
+import com.google.ads.AdView;
+
 import cm.aptoide.pt.multiversion.MultiversionSpinnerAdapter;
 import cm.aptoide.pt.multiversion.VersionApk;
 import cm.aptoide.pt.utils.ImageAdapter;
@@ -62,6 +66,7 @@ import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -451,7 +456,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Comments*/
-		if(Configs.COMMENTS_ON){
+		if(Configs.COMMENTS_ON&&getIntent().getBooleanExtra("extended", true)){
 			
 			if(Configs.COMMENTS_ADD_ON && versions.size()!=0){
 				TextView textView = new TextView(this);
@@ -460,7 +465,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 				textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
 				textView.setPadding(0, 10, 0, 10);
 				textView.setGravity(Gravity.CENTER_HORIZONTAL);
-				listView.addHeaderView(textView);
+//				listView.addHeaderView(textView);
 			}else{ headers--; }
 			LinearLayout loadComLayout = null;
 			if(versions.size()!=0){
@@ -604,6 +609,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					dislike.setVisibility(View.GONE);
 					((Button)findViewById(R.id.btn1)).setVisibility(View.GONE);
 					new GetScreenShots(apk_ver_str_raw).start();
+					
 				}
 				
 			} else if(type==0){
@@ -619,14 +625,23 @@ public class ApkInfo extends Activity implements OnDismissListener{
 							new Thread(newVersionFetchComments).start();
 						}
 						
-						if(previousGetter!=null)
-							previousGetter.cancel();
-						resetScreenshots.sendEmptyMessage(0);
+						
 						
 						((TextView)ApkInfo.this.findViewById(R.id.versionInfo)).setText(MultiversionSpinnerAdapter.formatInfo((VersionApk)spinnerMulti.getSelectedItem()));
+						if (getIntent().getBooleanExtra("extended", true)) {
+							if(previousGetter!=null)
+								previousGetter.cancel();
+							resetScreenshots.sendEmptyMessage(0);
+							previousGetter = new GetScreenShots(apk_ver_str_raw);
+							previousGetter.start();
+						} else {
+							ProgressBar pd = (ProgressBar) linearLayout.findViewById(R.id.pscreens);
+							pd.setVisibility(View.GONE);
+							noscreens.setVisibility(View.VISIBLE);
+							noscreens.setText("Non-extended store. Screenshots disabled.");
+						}
 						
-						previousGetter = new GetScreenShots(apk_ver_str_raw);
-						previousGetter.start();
+						
 					}
 					public void onNothingSelected(AdapterView<?> parent) {}
 				});
@@ -637,7 +652,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 		
 		
 		/*Taste*/
-		if(Configs.TASTE_ON){
+		if(Configs.TASTE_ON&&getIntent().getBooleanExtra("extended", true)){
 			
 			if(Configs.TASTE_ADD_ON){
 			this.like.setOnTouchListener(new OnTouchListener(){
@@ -707,6 +722,11 @@ public class ApkInfo extends Activity implements OnDismissListener{
 			this.likes.getLayoutParams().height=0;
 			this.dislikes.getLayoutParams().height=0;
 		}
+		 
+//		
+//		  AdView adView = (AdView)this.findViewById(R.id.adView);
+//		  adView.loadAd(new AdRequest());
+
 		
 		
 		

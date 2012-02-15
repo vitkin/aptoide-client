@@ -45,6 +45,8 @@ public class ApkNode extends Object{
 	public String screenSize;
 	public String ESGLVer;
 	
+	public String age;
+	
 	
 	
 	public ApkNode(){
