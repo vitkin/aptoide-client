@@ -647,7 +647,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
 			
 			availableAppsListView = new ListView(this);
-//			availableAppsListView.setBackgroundColor(Color.WHITE);
+			availableAppsListView.setCacheColorHint(Color.TRANSPARENT);
 			availableAppsListView.setOnTouchListener(swypeListener);
 			availableAppsListView.setOnItemClickListener(this);
 			availableAppsListView.setTag(EnumFlipperChildType.LIST);
@@ -655,7 +655,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	//		appsListFlipper.addView(availableAppsList);
 			
 			installedAppsListView = new ListView(this);
-//			installedAppsListView.setBackgroundColor(Color.WHITE);
+			installedAppsListView.setCacheColorHint(Color.TRANSPARENT);
 			installedAppsListView.setOnTouchListener(swypeListener);
 			installedAppsListView.setOnItemClickListener(this);
 			installedAppsListView.setTag(EnumFlipperChildType.LIST);
@@ -663,7 +663,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	//		appsListFlipper.addView(installedAppsList);
 			
 			updatableAppsListView = new ListView(this);
-//			updatableAppsListView.setBackgroundColor(Color.WHITE);
+			updatableAppsListView.setCacheColorHint(Color.TRANSPARENT);
 			updatableAppsListView.setOnTouchListener(swypeListener);
 			updatableAppsListView.setOnItemClickListener(this);
 			updatableAppsListView.setTag(EnumFlipperChildType.LIST);
