@@ -95,22 +95,6 @@
                 android:layout_height="wrap_content"
                 android:textSize="18sp" />
 
-            
-            
-            <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top"
-                android:gravity="left"
-                android:paddingBottom="5.0sp"
-                android:paddingLeft="5.0sp"
-                android:paddingRight="5.0sp"
-                android:paddingTop="10.0dip"
-                android:text="@string/screenshots"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="#3f3f3f"
-                android:textSize="18.0sp" />
-
             <Gallery
                 android:id="@+id/screens"
                 android:layout_width="fill_parent"
