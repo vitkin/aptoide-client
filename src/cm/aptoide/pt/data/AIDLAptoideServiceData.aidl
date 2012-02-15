@@ -41,6 +41,8 @@ interface AIDLAptoideServiceData {
 
 	void callStoreScreenDimensions(in ViewScreenDimensions screenDimensions);
 	
+	int callGetDisplayCacheSize();
+	
 	void callSyncInstalledApps();
 	
 	void callRegisterReposObserver(in AIDLReposInfo reposInfoObserver);

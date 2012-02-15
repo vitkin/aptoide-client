@@ -17,7 +17,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt.data.system;
+package cm.aptoide.pt.data.display;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -29,12 +29,13 @@ import android.os.Parcelable;
  * @since 3.0
  *
  */
-public class ViewScreenDimensions implements Parcelable{
-	private int width;
-	private int height;
-	private float density;
+public class ViewDisplayListsDimensions implements Parcelable{
+	private int increaseTrigger;
+	private int decreaseTrigger;
+	private int pageSize;
+	private int cacheSize;
 	
-	public ViewScreenDimensions(int width, int height, float density) {
+	public ViewDisplayListsDimensions(int width, int height, float density) {
 		this.width = width;
 		this.height = height;
 		this.density = density;
@@ -61,14 +62,14 @@ public class ViewScreenDimensions implements Parcelable{
 	// Parcelable stuff //
 	
 	
-	public static final Parcelable.Creator<ViewScreenDimensions> CREATOR = new
-			Parcelable.Creator<ViewScreenDimensions>() {
-			        public ViewScreenDimensions createFromParcel(Parcel in) {
-			            return new ViewScreenDimensions(in);
+	public static final Parcelable.Creator<ViewDisplayListsDimensions> CREATOR = new
+			Parcelable.Creator<ViewDisplayListsDimensions>() {
+			        public ViewDisplayListsDimensions createFromParcel(Parcel in) {
+			            return new ViewDisplayListsDimensions(in);
 			        }
 
-			        public ViewScreenDimensions[] newArray(int size) {
-			            return new ViewScreenDimensions[size];
+			        public ViewDisplayListsDimensions[] newArray(int size) {
+			            return new ViewDisplayListsDimensions[size];
 			        }
 			    };
 	
@@ -83,7 +84,7 @@ public class ViewScreenDimensions implements Parcelable{
 		return 0;
 	}
 	
-	private ViewScreenDimensions(Parcel in){
+	private ViewDisplayListsDimensions(Parcel in){
 		readFromParcel(in);
 	}
 
