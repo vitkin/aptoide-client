@@ -12,11 +12,6 @@
         android:id="@+id/actionbar"
         layout="@layout/actionbar" />
 
-    <!-- Swipe Title Indicator -->
-
-    <include
-        android:id="@+id/indicator"
-        layout="@layout/title_indicator" />
 
     <ViewFlipper
         android:id="@+id/list_flipper"
