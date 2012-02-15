@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
     android:orientation="vertical">
     <TextView
     	android:text="@string/repo_title"
     	android:layout_width="wrap_content"
         android:ems="20"
         android:textSize="16dip"
+        android:textColor="#4f4f4f"
         android:layout_height="wrap_content"/>
     
     <EditText
         android:id="@+id/edit_uri"
         android:maxLines="1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:ems="20"
         android:layout_height="wrap_content"
         android:singleLine="true"
@@ -56,12 +58,13 @@
   	android:layout_width="wrap_content"
   	android:layout_height="wrap_content"
   	android:text="@string/private_repo"
+  	android:textColor="#4f4f4f"
   	/>
 	
    <EditText
         android:id="@+id/sec_user"
         android:maxLines="1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:ems="20"
         android:hint="@string/username"
         android:layout_height="wrap_content"
@@ -71,7 +74,7 @@
     <EditText
         android:id="@+id/sec_pwd"
         android:maxLines="1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:ems="20"
         android:hint="@string/password"
         android:password="true"
