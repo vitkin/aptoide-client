@@ -93,8 +93,7 @@ public class BaseManagement extends Activity {
 	private static SimpleAdapter app_catg_adpt = null;
 	private static SimpleAdapter game_catg_adpt = null;
 
-	private ImageView updateAvailable;
-	private ImageView downgradeAvailable;
+
 
 
 	private static final String[] main_ctg = {"Games", "Applications", "Others"};
@@ -431,8 +430,9 @@ public class BaseManagement extends Activity {
 	}
 
 
-
+	final String age_filter="Mature";
 	protected void redraw(){
+		
 		if(pd!=null&&pd.isShowing()){
 			pd.dismiss();
 		}
@@ -474,7 +474,10 @@ public class BaseManagement extends Activity {
 
 
 					for(ApkNode node: apk_lst){
-
+						if(ageFilter(node.age,age_filter)){
+							filteredApps++;
+							continue;
+						}
 						apk_line = new HashMap<String, Object>();
 						apk_line.put("pkg", node.apkid);
 						String iconpath = new String(getString(R.string.icons_path)+node.apkid);
@@ -489,7 +492,6 @@ public class BaseManagement extends Activity {
 
 							apk_line.put("status",node.ver);
 							apk_line.put("name", node.name);
-							//							apk_line.put("statusSort", 1);
 							apk_line.put("status2", "invisible");
 
 
@@ -514,7 +516,6 @@ public class BaseManagement extends Activity {
 							apk_line.put("status2", "upgrade");
 
 							apk_line.put("name", node.name);
-							//							apk_line.put("statusSort", 2);
 							instMap.add(apk_line);
 
 
@@ -525,15 +526,12 @@ public class BaseManagement extends Activity {
 
 							apk_line.put("status2", "downgrade");
 							apk_line.put("name", node.name);
-							//							apk_line.put("statusSort", 3);
-							//							updtMap.add(apk_line);
 							instMap.add(apk_line);
 
 
-						}else{
+						}else if(!sPref.getBoolean("mode", false)){
 							apk_line.put("status", node.ver);
 							apk_line.put("name", node.name);
-							//							if(filterPass(node))
 							availMap.add(apk_line);
 
 
@@ -605,6 +603,17 @@ public class BaseManagement extends Activity {
 		}.start();
 
 	}
+
+
+
+	protected boolean ageFilter(String age, String age_filter) {
+		
+		boolean a = EnumAges.get(age).ordinal()>EnumAges.get(age_filter).ordinal();
+		Log.d(a+"",age);
+		return a;
+		
+	}
+
 
 
 	private String formatDownloads(int down) {
@@ -760,6 +769,10 @@ public class BaseManagement extends Activity {
 
 
 		for(ApkNode node: tmp_lst){
+			if(ageFilter(node.age, age_filter)){
+				filteredApps++;
+				continue;
+			}
 			apk_line = new HashMap<String, Object>();
 			apk_line.put("pkg", node.apkid);
 			String iconpath = new String(getString(R.string.icons_path)+node.apkid);
@@ -777,7 +790,7 @@ public class BaseManagement extends Activity {
 			//				}
 		}
 
-
+		
 		rtnadp = new SimpleAdapter(mctx, availMap, R.layout.app_row, 
 				new String[] {"pkg", "name", "status", "icon", "rat", "down"}, 
 				new int[] {R.id.app_hashid, R.id.app_name,R.id.installed_versionname,R.id.app_icon, R.id.stars, R.id.downloads});

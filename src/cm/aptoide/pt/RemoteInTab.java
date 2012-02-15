@@ -409,7 +409,9 @@ public class RemoteInTab extends BaseManagement {
 						apkinfo.putExtra("server", tmp_get.firstElement());
 						apkinfo.putExtra("rat", tmp_get.get(5));
 						apkinfo.putExtra("type", 1);
+						apkinfo.putExtra("extended", tmp_get.get(8).equals("1"));
 
+						
 						ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
 						VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
 						versions.add(versionApkPassed);
@@ -527,7 +529,10 @@ public class RemoteInTab extends BaseManagement {
 						apkinfo.putExtra("server", tmp_get.firstElement());
 						apkinfo.putExtra("rat", tmp_get.get(5));
 						apkinfo.putExtra("type", 2);
+						
+						apkinfo.putExtra("extended", tmp_get.get(8).equals("1"));
 
+						
 						ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
 						VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
 						versions.add(versionApkPassed);
@@ -681,7 +686,7 @@ public class RemoteInTab extends BaseManagement {
 							if(filteredApps>0){
 								//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 								currentCatName = "Filtered "+filteredApps+" applications.";
-								listTextHeader.setText(currentCatName);
+								listTextHeader.setText(currentCatName);	
 							}
 						}else if(pkg_id.equals("apps")){
 							shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
@@ -727,11 +732,13 @@ public class RemoteInTab extends BaseManagement {
 							}else{
 								apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
 							}
-
+							
 							Vector<String> tmp_get = db.getApk(pkg_id);
 							apkinfo.putExtra("server", tmp_get.firstElement());
 							apkinfo.putExtra("rat", tmp_get.get(5));
 							apkinfo.putExtra("type", 0);
+							
+							apkinfo.putExtra("extended", tmp_get.get(8).equals("1"));
 
 							ArrayList<VersionApk> versions = db.getOldApks(pkg_id);
 							VersionApk versionApkPassed = new VersionApk(tmp_get.get(1).substring(1,tmp_get.get(1).length()-1),Integer.parseInt(tmp_get.get(7)),pkg_id,Integer.parseInt(tmp_get.get(6)), Integer.parseInt(tmp_get.get(4)));
@@ -1587,7 +1594,7 @@ public class RemoteInTab extends BaseManagement {
 			xr = sp.getXMLReader();
 			if(type){
 				Log.d(""+type, "type");
-				RssHandler handler = new RssHandler(this,this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
+				RssHandler handler = new RssHandler(this,srv,update_updater_set, update_updater_tick, disable_fetch_extra, is_last);
 				xr.setContentHandler(handler);
 				xr.setErrorHandler(handler);
 				xml_file = new File(XML_PATH);

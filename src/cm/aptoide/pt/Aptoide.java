@@ -31,10 +31,12 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
+import java.util.jar.JarFile;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -56,6 +58,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -77,8 +80,10 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -260,11 +265,15 @@ public class Aptoide extends Activity {
 		} 
     }; 
 	
-	
+    boolean flag = false;
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	
         super.onCreate(savedInstanceState);
+        
+        
+        
+        
         this.savedInstanceState=savedInstanceState;
         mctx = this;
        
@@ -307,20 +316,78 @@ public class Aptoide extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		setContentView(R.layout.start);
 		try{
-			if( pkginfo.versionCode < Integer.parseInt( getXmlElement("versionCode") ) ){
-				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
-				requestUpdateSelf();
-			}else{
-				proceed();
-			}
+			dialog = new ProgressDialog(Aptoide.this);
+			dialog.setMessage("Checking for updates...");
+			
+			dialog.show();
+			
+			new Thread() {
+				
+				public void run(){
+					try{
+						
+						
+						proceedhandler.postDelayed(new Run(false), 4000);
+						
+						
+						
+						
+						
+					if( pkginfo.versionCode < Integer.parseInt(getXmlElement("versionCode") )){
+						Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
+						if(!flag)
+							proceedhandler.post(new Run(true));
+						
+
+					}else{
+						if(!flag)
+							proceedhandler.post(new Run(false));
+						
+					}
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+			}.start();
+			
    		}catch(Exception e){
    			e.printStackTrace();
    			proceed();
    		}
 		
     }
-    
+	ProgressDialog dialog;
+	
+	Handler proceedhandler = new Handler();
+	
+	class Run implements Runnable{
+		boolean update=false;
+		public Run(boolean update) {
+			// TODO Auto-generated constructor stub
+			this.update=update;
+		}
+		
+		
+		
+		public void run() {
+			// TODO Auto-generated method stub
+			dialog.dismiss();
+			if (!flag) {
+				flag=true;
+				if (update) {
+					requestUpdateSelf();
+				} else {
+					proceed();
+				}
+			}
+			
+			
+		}
+		
+	}
+
     private void proceed(){
+    	
    		db = new DbHandler(this);
    		
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
@@ -416,7 +483,7 @@ public class Aptoide extends Activity {
         }).start();
     }
 
-
+    
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode){
@@ -532,17 +599,26 @@ public class Aptoide extends Activity {
 	}
 	
 	private String getXmlElement(String name) throws ParserConfigurationException, MalformedURLException, SAXException, IOException{
+		
+		
+		
+		
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = factory.newDocumentBuilder();
 		
-		URL urlObj = new URL(LATEST_VERSION_CODE_URI);
-		HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
-		conn.setConnectTimeout(3000);
 		
-        Document dom = builder.parse(new InputSource(conn.getInputStream()));
+		URLConnection url = new URL(LATEST_VERSION_CODE_URI).openConnection();
+		url.setReadTimeout(3000);
+		url.setConnectTimeout(3000);
+		
+		InputStream a = new BufferedInputStream(url.getInputStream());
+        Document dom = builder.parse(new InputSource(a));
         dom.getDocumentElement().normalize();
         
         NodeList items = dom.getElementsByTagName(name);
+        
+        
+        
         if(items.getLength()>0){
         	Node item = items.item(0);
         	Log.d("Aptoide-XmlElement Name", item.getNodeName());
@@ -579,6 +655,8 @@ public class Aptoide extends Activity {
     	
     	alert.show();
 	}
+	
+	
 	
 	private class DownloadSelfUpdate extends AsyncTask<Void, Void, Void>{
 		private final ProgressDialog dialog = new ProgressDialog(Aptoide.this);
@@ -718,6 +796,8 @@ public class Aptoide extends Activity {
 		super.onDestroy();
 	}
 	
-	
+
 	
 }
+
+

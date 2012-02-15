@@ -43,8 +43,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.AlertDialog.Builder;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -56,21 +56,22 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class ManageRepo extends ListActivity{
 	
@@ -115,16 +116,17 @@ public class ManageRepo extends ListActivity{
 		db = new DbHandler(this);
 		
 		Intent i = getIntent();
-		if(i.hasExtra("empty")){
+		if(i.hasExtra("empty")){	
 			final String uri = i.getStringExtra("uri");
 			AlertDialog alrt = new AlertDialog.Builder(this).create();
+			
 			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			alrt.setMessage(getString(R.string.myrepo_alrt) +
 					uri);
 			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
-			    	  db.addServer(uri);
+			    	  db.addServer(uri,1);
 			    	  change = true;
 			    	  redraw();
 			    	  return;
@@ -139,6 +141,7 @@ public class ManageRepo extends ListActivity{
 			//Vector<String> new_serv_lst = getRemoteServLst(uri);
 			Vector<String> exist_server = db.getServersName();
 			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
+			
 			boolean isChanged=false;
 			for(final String uri_str: new_serv_lst){
 				final String srv = serverCheck(uri_str);
@@ -150,12 +153,17 @@ public class ManageRepo extends ListActivity{
 					
 				}else{
 				AlertDialog alrt = new AlertDialog.Builder(this).create();
+				LayoutInflater li = LayoutInflater.from(this);
+			    View v = li.inflate(R.layout.checkbox, (ViewGroup)findViewById(R.layout.repolisticons));
+			    final CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
+			    cb.setText("Extended Server");
+			    alrt.setView(v);
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				alrt.setMessage(getString(R.string.newrepo_alrt) + srv);
 				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 				      public void onClick(DialogInterface dialog, int which) {
-				    	  db.addServer(srv);
+				    	  db.addServer(srv,cb.isChecked()?1:0);
 				    	  change = true;
 				    	  redraw();
 				    	  return;
@@ -187,12 +195,17 @@ public class ManageRepo extends ListActivity{
 				
 			}else{
 			AlertDialog alrt = new AlertDialog.Builder(this).create();
+			LayoutInflater li = LayoutInflater.from(this);
+		    View v = li.inflate(R.layout.checkbox, (ViewGroup)findViewById(R.layout.repolisticons));
+		    final CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
+		    cb.setText("Extended Server");
+		    alrt.setView(v);
 			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			alrt.setMessage(getString(R.string.newrepo_alrt) + repo);
 			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 			      public void onClick(DialogInterface dialog, int which) {
-			    	  db.addServer(repo);
+			    	  db.addServer(repo,cb.isChecked()?1:0);
 			    	  change = true;
 			    	  redraw();
 			    	  return;
@@ -380,6 +393,7 @@ public class ManageRepo extends ListActivity{
 			final EditText sec_pwd = (EditText) view.findViewById(R.id.sec_pwd);
 			
 			final CheckBox sec = (CheckBox) view.findViewById(R.id.secure_chk);
+			final CheckBox extended = (CheckBox) view.findViewById(R.id.extended_chk);
 			sec.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					if(isChecked){
@@ -430,7 +444,7 @@ public class ManageRepo extends ListActivity{
 							Toast.makeText(ctx, "Repo "+ uri_str+ " already exists.", 5000).show();
 //							finish();
 						}else{
-						db.addServer(uri_str);
+						db.addServer(uri_str,extended.isChecked()?1:0);
 						if(user != null && pwd != null){
 							db.addLogin(user, pwd, uri_str);	
 						}
@@ -478,7 +492,7 @@ public class ManageRepo extends ListActivity{
 								Toast.makeText(ctx, "Repo "+ uri_str+ " already exists.", 5000).show();
 //								finish();
 							}else{
-							db.addServer(uri_str);
+							db.addServer(uri_str,extended.isChecked()?1:0);
 							if(user != null && pwd != null){
 								db.addLogin(user, pwd, uri_str);	
 							}
@@ -657,7 +671,7 @@ public class ManageRepo extends ListActivity{
 		if(resultCode == RESULT_OK){
 			Bundle b = data.getExtras();
 			String a = b.getString("URI");
-			db.addServer(a);
+			db.addServer(a,1);
 			change = true;
 			redraw();
 		}

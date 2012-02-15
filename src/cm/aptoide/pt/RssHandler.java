@@ -66,6 +66,7 @@ public class RssHandler extends DefaultHandler{
 	private boolean apk_sdk = false;
 	private boolean apk_esgl=false;
 	private boolean apk_screensize=false;
+	private boolean apk_age=false;
 	
 	private DbHandler db = null;
 	
@@ -107,15 +108,14 @@ public class RssHandler extends DefaultHandler{
 
 	private int nPackages;
 
-	private RemoteInTab rit;
 
 	
 	
 
 	//private boolean is_last = false;
 		
-	public RssHandler(RemoteInTab rit, Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
-		this.rit=rit;
+	public RssHandler(Context ctx, String srv, Handler pd_set, Handler pd_tick, Handler extras_hd, boolean is_last){
+		
 		mctx = ctx;
 		mserver = srv;
 		db = new DbHandler(mctx);
@@ -136,6 +136,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.sdkVer=0;
 		tmp_apk.screenSize="small";
 		tmp_apk.ESGLVer="0.0";
+		tmp_apk.age="Mature";
 		
 		this.pd_set = pd_set;
 		this.pd_tick = pd_tick;
@@ -211,6 +212,8 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.ESGLVer=new String(ch).substring(start, start + length);
 		}else if (apk_screensize) {
 			tmp_apk.screenSize=new String(ch).substring(start, start + length);
+		}else if(apk_age){
+			tmp_apk.age=new String(ch).substring(start, start + length);
 		}
 		
 	}
@@ -265,8 +268,7 @@ public class RssHandler extends DefaultHandler{
 								tmp_apk.date, tmp_apk.rat, mserver,
 								tmp_apk.md5hash, tmp_apk.down, tmp_apk.catg,
 								tmp_apk.catg_type, tmp_apk.size,
-								tmp_apk.sdkVer, tmp_apk.ESGLVer,
-								tmp_apk.screenSize);
+								tmp_apk.age);
 						listapks.add(node);
 					} else {
 						int pos = listapks.indexOf(node);
@@ -281,8 +283,7 @@ public class RssHandler extends DefaultHandler{
 									tmp_apk.apkid, tmp_apk.date, tmp_apk.rat,
 									mserver, tmp_apk.md5hash, tmp_apk.down,
 									tmp_apk.catg, tmp_apk.catg_type,
-									tmp_apk.size, tmp_apk.sdkVer,
-									tmp_apk.ESGLVer, tmp_apk.screenSize);
+									tmp_apk.size, tmp_apk.age);
 							listapks.add(node);
 						} else if (list.vercode != node.vercode) {
 
@@ -318,6 +319,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.sdkVer=0;
 			tmp_apk.screenSize="small";
 			tmp_apk.ESGLVer="0.0";
+			tmp_apk.age="Mature";
 			pd_tick.sendEmptyMessage(0);
 			
 		}else if(localName.trim().equals("name")){
@@ -369,6 +371,8 @@ public class RssHandler extends DefaultHandler{
 			apk_esgl=false;
 		}else if (localName.trim().equals("minScreen")) {
 			apk_screensize=false;
+		}else if(localName.trim().equals("age")){
+			apk_age=false;
 		}
 		
 		
@@ -437,6 +441,8 @@ public class RssHandler extends DefaultHandler{
 			apk_esgl=true;
 		}else if (localName.trim().equals("minScreen")) {
 			apk_screensize=true;
+		}else if(localName.trim().equals("age")){
+			apk_age=true;
 		}
 		
 		
