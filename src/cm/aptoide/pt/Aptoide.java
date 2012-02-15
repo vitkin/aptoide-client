@@ -196,9 +196,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
             
 			DisplayMetrics displayMetrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-			ViewScreenDimensions screenDimensions = new ViewScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels);
+			ViewScreenDimensions screenDimensions = new ViewScreenDimensions(displayMetrics.widthPixels, displayMetrics.heightPixels, displayMetrics.density);
 			AptoideLog.d(Aptoide.this, screenDimensions.toString());
-			DISPLAY_LISTS_CACHE_SIZE = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())/Constants.DISPLAY_SIZE_DIVIDER)*Constants.DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER;
+			DISPLAY_LISTS_CACHE_SIZE = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())/Math.round(Constants.DISPLAY_SIZE_DIVIDER*displayMetrics.density))*Constants.DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER;
 			AptoideLog.d(Aptoide.this, "DISPLAY_LISTS_CACHE_SIZE: "+DISPLAY_LISTS_CACHE_SIZE);
 	        try {
 	            AptoideLog.v(Aptoide.this, "Called for screenDimensions storage");
@@ -1348,8 +1348,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		Log.d("Aptoide","Scroll "+currentList+" discerning increase, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+triggerMargin);
 			
 			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) <  (( currentDisplayOffset / DISPLAY_LISTS_CACHE_SIZE) + 1)	
-				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) < (triggerMargin + Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER)					
-				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) > Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER ){
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) < (triggerMargin + Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL)					
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) > Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL ){
 				
 				scrollRegionOrigin.incrementAndGet();
 				availableAppsManager.request(EnumAvailableRequestType.INCREASE);
@@ -1362,8 +1362,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		Log.d("Aptoide","Scroll "+currentList+" discerning decrease, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+triggerMargin);
 			
 			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) >  (( currentDisplayOffset / DISPLAY_LISTS_CACHE_SIZE) + 1)
-				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) > (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER - triggerMargin)
-				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) < Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER ){
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) > (Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL - triggerMargin)
+				&& (currentDisplayOffset % DISPLAY_LISTS_CACHE_SIZE) < Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL ){
 				
 				scrollRegionOrigin.decrementAndGet();
 				availableAppsManager.request(EnumAvailableRequestType.DECREASE);

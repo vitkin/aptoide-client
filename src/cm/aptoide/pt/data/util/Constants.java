@@ -48,13 +48,13 @@ public class Constants {
 	
 	public static final int FIRST_ELEMENT = 0;
 	public static final int SKIP_URI_PREFIX = 7;
-	/** DISPLAY_SIZE_COMPARATOR (1/320)*8 used to determine visible apps rows from 320x240 reference screen size **/
-	public static final int DISPLAY_SIZE_DIVIDER = 40;		
-	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = 2;
+	/** DISPLAY_SIZE_COMPARATOR 1/((1/480)*10lines) used to determine visible apps rows from a reference screen size with a height of 480px, and density 1 **/
+	public static final int DISPLAY_SIZE_DIVIDER = 48;		
 	public static final int ICONS_REFRESH_INTERVAL = 10;
-	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER = 1*DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
-	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER = 3*DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
-	public static final int DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER = DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER;
+	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL = 1;
+	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL = 3;
+	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = (DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL);
+	public static final int DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER = DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER*3;
 	
 	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
 	public static final int MAX_PARALLEL_DOWNLOADS = 1;
@@ -388,10 +388,10 @@ public class Constants {
 			/** min_screen_size defaults to small (supports all screens) **/
 			+ KEY_APPLICATION_MIN_SCREEN + " INTEGER DEFAULT (0) CHECK("+KEY_APPLICATION_MIN_SCREEN+">=0), "
 			/** min_sdk_version defaults to 1 (supports all versions) **/
-			+ KEY_APPLICATION_MIN_SDK + " INTEGER DEFAULT (1) CHECK("+KEY_APPLICATION_MIN_SDK+">=1), "
+			+ KEY_APPLICATION_MIN_SDK + " INTEGER DEFAULT (1) CHECK("+KEY_APPLICATION_MIN_SDK+">=0), "
 			/** min_gles defaults to 1.0 encoded acording to integer representation rules of gles float version id 
 			 * found in: http://developer.android.com/guide/topics/manifest/uses-feature-element.html#glEsVersion  **/
-			+ KEY_APPLICATION_MIN_GLES + " INTEGER DEFAULT (65536) CHECK("+KEY_APPLICATION_MIN_GLES+">=65536), "	
+			+ KEY_APPLICATION_MIN_GLES + " INTEGER DEFAULT (1) CHECK("+KEY_APPLICATION_MIN_GLES+">=0), "	
 			+ "FOREIGN KEY("+ KEY_APPLICATION_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +") );"; 
 //			+ "PRIMARY KEY("+ KEY_APPLICATION_FULL_HASHID +") );";	
 

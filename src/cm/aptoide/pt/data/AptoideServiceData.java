@@ -130,8 +130,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		
 		@Override
 		public void callStoreScreenDimensions(ViewScreenDimensions screenDimensions) throws RemoteException {
-			DISPLAY_LISTS_CACHE_SIZE = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())/Constants.DISPLAY_SIZE_DIVIDER)*Constants.DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER;
+			DISPLAY_LISTS_CACHE_SIZE = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())/Math.round(Constants.DISPLAY_SIZE_DIVIDER*screenDimensions.getDensity()))*Constants.DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER;
 			storeScreenDimensions(screenDimensions);	
+		}
+
+		@Override
+		public int callGetDisplayCacheSize() throws RemoteException {
+			return 0;
 		}
 
 		@Override
