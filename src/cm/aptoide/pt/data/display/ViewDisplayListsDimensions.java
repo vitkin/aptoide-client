@@ -1,5 +1,5 @@
 /**
- * ScreenDimensions,	 auxiliary class to Aptoide's ServiceData
+ * ViewDisplayListsDimensions,	 auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -19,11 +19,13 @@
 */
 package cm.aptoide.pt.data.display;
 
+import cm.aptoide.pt.data.system.ViewScreenDimensions;
+import cm.aptoide.pt.data.util.Constants;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 /**
- * ScreenDimensions, models the aptoide client's screen dimensions
+ * ViewDisplayListsDimensions, models the aptoide client's display lists dimensions
  *
  * @author dsilveira
  * @since 3.0
@@ -32,30 +34,55 @@ import android.os.Parcelable;
 public class ViewDisplayListsDimensions implements Parcelable{
 	private int increaseTrigger;
 	private int decreaseTrigger;
+	private int triggerMargin;
 	private int pageSize;
 	private int cacheSize;
 	
-	public ViewDisplayListsDimensions(int width, int height, float density) {
-		this.width = width;
-		this.height = height;
-		this.density = density;
+	
+	public ViewDisplayListsDimensions(ViewScreenDimensions screenDimensions) {
+		pageSize = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())
+					/Math.round(Constants.DISPLAY_SIZE_COMPARATOR*screenDimensions.getDensity()))
+					*Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
+		
+		increaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
+		
+		decreaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
+		
+		triggerMargin = decreaseTrigger - increaseTrigger;
+		
+		cacheSize = pageSize*Constants.DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER;
+	}
+	
+	
+	public int getIncreaseTrigger() {
+		return increaseTrigger;
 	}
 
-	public int getWidth() {
-		return width;
+	public int getDecreaseTrigger() {
+		return decreaseTrigger;
 	}
 	
-	public int getHeight() {
-		return height;
+	public int getTriggerMargin() {
+		return triggerMargin;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public int getCacheSize() {
+		return cacheSize;
 	}
 	
-	public float getDensity(){
-		return density;
+	public int getFastReset(){
+		return increaseTrigger*2;
 	}
+
+
 
 	@Override
 	public String toString() {
-		return "Width: "+width+" Height: "+height+" Density: "+density;
+		return "pageSize: "+pageSize+" increaseTrigger: "+increaseTrigger+" decreaseTrigger: "+decreaseTrigger+" cacheSize: "+cacheSize+" triggerMargin: "+triggerMargin;
 	}
 
 	
@@ -90,13 +117,19 @@ public class ViewDisplayListsDimensions implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(width);
-		out.writeInt(height);
+		out.writeInt(increaseTrigger);
+		out.writeInt(decreaseTrigger);
+		out.writeInt(triggerMargin);
+		out.writeInt(pageSize);
+		out.writeInt(cacheSize);
 	}
 	
 	public void readFromParcel(Parcel in) {
-		width = in.readInt();
-		height = in.readInt();
+		increaseTrigger = in.readInt();
+		decreaseTrigger = in.readInt();
+		triggerMargin = in.readInt();
+		pageSize = in.readInt();
+		cacheSize = in.readInt();
 	}
 	
 }

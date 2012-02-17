@@ -21,6 +21,7 @@ package cm.aptoide.pt.data;
 
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.AIDLAptoideInterface;
+import cm.aptoide.pt.data.display.ViewDisplayListsDimensions;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
@@ -41,7 +42,7 @@ interface AIDLAptoideServiceData {
 
 	void callStoreScreenDimensions(in ViewScreenDimensions screenDimensions);
 	
-	int callGetDisplayCacheSize();
+	ViewDisplayListsDimensions callGetDisplayListsDimensions();
 	
 	void callSyncInstalledApps();
 	

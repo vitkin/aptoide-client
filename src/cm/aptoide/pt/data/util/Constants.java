@@ -48,13 +48,18 @@ public class Constants {
 	
 	public static final int FIRST_ELEMENT = 0;
 	public static final int SKIP_URI_PREFIX = 7;
-	/** DISPLAY_SIZE_COMPARATOR 1/((1/480)*10lines) used to determine visible apps rows from a reference screen size with a height of 480px, and density 1 **/
-	public static final int DISPLAY_SIZE_DIVIDER = 48;		
+	/** DISPLAY_SIZE_COMPARATOR (1/((1/480)*10lines)) used to determine visible apps rows from a reference screen size with a height of 480px, and density 1 **/
+	public static final int DISPLAY_SIZE_COMPARATOR = 48;
+	/** Number of icons to cache between list refreshes **/
 	public static final int ICONS_REFRESH_INTERVAL = 10;
-	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL = 1;
-	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL = 3;
-	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = (DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTIONAL_LEVEL);
-	public static final int DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER = DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER*3;
+	/**	Increase trigger level from beginning of cache page, in proportion (x/(x+decreaseTriggerLevel)) of page size **/
+	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 1;
+	/**	Decrease trigger level from beginning of cache page, in proportion (x/x+increaseTriggerLevel) of page size **/
+	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 7;
+	/** increaseLevel+decreaseLevel 	cache pageSize = multiplier*numberOfVisibleListItems->device dependent **/
+	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = (DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL);
+	/** number of cache pages to keep in memory **/
+	public static final int DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER = 3;
 	
 	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
 	public static final int MAX_PARALLEL_DOWNLOADS = 1;

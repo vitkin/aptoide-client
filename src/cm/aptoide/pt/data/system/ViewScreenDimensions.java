@@ -91,11 +91,13 @@ public class ViewScreenDimensions implements Parcelable{
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeInt(width);
 		out.writeInt(height);
+		out.writeFloat(density);
 	}
 	
 	public void readFromParcel(Parcel in) {
 		width = in.readInt();
 		height = in.readInt();
+		density = in.readFloat();
 	}
 	
 }

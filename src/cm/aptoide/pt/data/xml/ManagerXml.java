@@ -291,4 +291,8 @@ public class ManagerXml{
 	    }		
 	}
 	
+	public int getDisplayListsFastReset(){
+		return serviceData.getDisplayListsDimensions().getFastReset();
+	}
+	
 }
