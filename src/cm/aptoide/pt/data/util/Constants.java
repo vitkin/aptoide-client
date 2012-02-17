@@ -54,6 +54,7 @@ public class Constants {
 	public static final int ICONS_REFRESH_INTERVAL = 10;
 	/**	Increase trigger level from beginning of cache page, in proportion (x/(x+decreaseTriggerLevel)) of page size **/
 	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 1;
+	public static final int DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER = 3;
 	/**	Decrease trigger level from beginning of cache page, in proportion (x/x+increaseTriggerLevel) of page size **/
 	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 7;
 	/** increaseLevel+decreaseLevel 	cache pageSize = multiplier*numberOfVisibleListItems->device dependent **/
