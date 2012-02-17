@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffffff"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <!-- Green Bar -->
+
+    <include
+        android:id="@+id/actionbar"
+        layout="@layout/actionbar" />
+
+    <RelativeLayout
+        android:id="@+id/app_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionbar"
+        android:layout_marginTop="3sp"
+        android:layout_weight="1" >
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="48sp"
+            android:layout_height="48sp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24sp"
+            android:src="@drawable/icon" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/icon"
+            android:layout_marginLeft="10sp"
+            android:layout_toLeftOf="@+id/icon"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#4f4f4f" />
+
+        <TextView
+            android:id="@+id/app_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_name"
+            android:layout_marginLeft="10sp"
+            android:textColor="#4f4f4f" />
+
+        <TextView
+            android:id="@+id/app_downloads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_name"
+            android:layout_marginLeft="10sp"
+            android:layout_toRightOf="@+id/app_size"
+            android:textColor="#4f4f4f" />
+
+        <RatingBar
+            android:id="@+id/app_rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_downloads"
+            android:layout_marginLeft="10sp"
+            android:isIndicator="true"
+            android:numStars="5" />
+
+        <TextView
+            android:id="@+id/app_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_rating"
+            android:layout_marginLeft="10sp"
+            android:textColor="#4f4f4f" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/scroller"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buttons"
+        android:layout_below="@+id/app_header"
+        android:layout_centerHorizontal="true"
+        android:scrollbars="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TableLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5.0sp"
+                android:paddingRight="5.0sp"
+                android:stretchColumns="0" >
+
+                <TableRow android:layout_gravity="center" >
+
+                    <TableLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:stretchColumns="0,1" >
+
+                        <TableRow>
+
+                            <TextView
+                                android:id="@+id/app_likes"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#a8a8a8" />
+
+                            <TextView
+                                android:id="@+id/app_dislikes"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:textColor="#a8a8a8" />
+
+                        </TableRow>
+
+                        <TableRow>
+
+                            <ImageView
+                                android:id="@+id/likesImage"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/like"
+                                android:visibility="visible" />
+
+                            <ImageView
+                                android:id="@+id/dislikesImage"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:src="@drawable/dontlike"
+                                android:visibility="visible" />
+                        </TableRow>
+                    </TableLayout>
+                </TableRow>
+
+                <TableRow android:paddingTop="15.0dip" >
+
+                    <Spinner
+                        android:id="@+id/spinnerMultiVersion"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left"
+                        android:prompt="@string/select_version" />
+                </TableRow>
+
+                <TableRow>
+                </TableRow>
+
+                <TableRow>
+
+                    <CheckBox
+                        android:id="@+id/later"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="40sp"
+                        android:text="@string/schedule"
+                        android:textColor="#3f3f3f" />
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:paddingLeft="5.0sp"
+                android:paddingRight="5.0sp"
+                android:text="@string/about"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="#3f3f3f"
+                android:textSize="18.0sp" />
+
+            <TextView
+                android:id="@+id/app_description"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5.0sp"
+                android:paddingRight="5.0sp"
+                android:textSize="18sp" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:paddingLeft="5.0sp"
+                android:paddingRight="5.0sp"
+                android:text="@string/screenshots"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="#3f3f3f"
+                android:textSize="18.0sp" />
+
+            <Gallery
+                android:id="@+id/screens"
+                android:layout_width="fill_parent"
+                android:layout_height="182dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/install"
+            android:layout_width="fill_parent"
+            android:layout_height="50sp"
+            android:layout_weight="1"
+            android:text="@string/install"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/uninstall"
+            android:layout_width="fill_parent"
+            android:layout_height="50sp"
+            android:layout_weight="1"
+            android:text="@string/uninstall"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</RelativeLayout>
