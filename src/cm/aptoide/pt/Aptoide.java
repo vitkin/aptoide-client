@@ -59,6 +59,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.View.OnTouchListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -103,7 +104,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private View.OnTouchListener swypeListener;
 	private AtomicBoolean swyping = null;
 	private Handler swypeDelayHandler = null;
-	
+
+	private TextView previousListTitle = null;
+	private TextView currentListTitle = null;
+	private TextView nextListTitle = null;
+	private String emptyString = null;
+	private ImageView previousViewArrow = null;
+	private ImageView nextViewArrow = null;
+
+	private ImageView searchView;
 	private ViewFlipper appsListFlipper = null;
 	private View emptyAvailableAppsList;
 	private View emptyInstalledAppsList;
@@ -711,6 +720,29 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			currentAppsList = EnumAppsLists.Available;
 			
+			previousListTitle = (TextView) findViewById(R.id.previous_title);
+			currentListTitle = (TextView) findViewById(R.id.current_title);
+			nextListTitle = (TextView) findViewById(R.id.next_title);
+
+			nextListTitle.setText(currentAppsList.getNext(currentAppsList)
+					.toString());
+			nextListTitle.setOnClickListener(new OnNextClickedListener());
+
+			currentListTitle.setText(currentAppsList.Available.toString());
+			currentListTitle.setClickable(false);
+			previousViewArrow = (ImageView) findViewById(R.id.previous);
+			nextViewArrow = (ImageView) findViewById(R.id.next);
+			previousViewArrow.setVisibility(View.INVISIBLE);
+			previousViewArrow
+					.setOnClickListener(new OnPreviousClickedListener());
+			nextViewArrow.setOnClickListener(new OnNextClickedListener());
+			previousListTitle.setVisibility(View.GONE);
+			previousListTitle
+					.setOnClickListener(new OnPreviousClickedListener());
+
+			searchView = (ImageView) findViewById(R.id.search_button);
+			searchView.setOnTouchListener(new UpDownListener());
+			
 			synchronizingInstalledApps = new AtomicBoolean(false);
 			
 			makeSureServiceDataIsRunning();
@@ -1312,6 +1344,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
 		appsListFlipper.showNext();
 		currentAppsList = EnumAppsLists.getNext(currentAppsList);
+		putElementsIntoTitleBar(currentAppsList);
 	}
 	
 	private void showPreviousList(){
@@ -1319,9 +1352,52 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
 		appsListFlipper.showPrevious();
 		currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+		putElementsIntoTitleBar(currentAppsList);
 	}
     
-    
+	public void putElementsIntoTitleBar(EnumAppsLists currentAppList) {
+		switch (currentAppList) {
+		case Available:
+			nextViewArrow.setVisibility(View.VISIBLE);
+			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			previousViewArrow.setVisibility(View.GONE);
+			previousListTitle.setVisibility(View.GONE);
+			currentListTitle.setText(currentAppsList.Available.toString());
+			break;
+		case Installed:
+			nextViewArrow.setVisibility(View.VISIBLE);
+			previousViewArrow.setVisibility(View.VISIBLE);
+			currentListTitle.setText(currentAppList.Installed.toString());
+			nextListTitle.setVisibility(View.VISIBLE);
+			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			previousListTitle.setVisibility(View.VISIBLE);
+			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
+			break;
+		case Updates:
+			nextViewArrow.setVisibility(View.GONE);
+			previousViewArrow.setVisibility(View.VISIBLE);
+			currentListTitle.setText(EnumAppsLists.Updates.toString());
+			nextListTitle.setVisibility(View.INVISIBLE);
+			previousListTitle.setText(EnumAppsLists.getPrevious(currentAppList).toString());
+			break;
+		}
+
+	}
+
+	class OnPreviousClickedListener implements View.OnClickListener {
+		public void onClick(View v) {
+			Log.d("previous title", "previous title click");
+			showPreviousList();
+		}
+	}
+
+	class OnNextClickedListener implements View.OnClickListener {
+		public void onClick(View v) {
+			Log.d("next title", "next title click");
+			showNextList();
+		}
+	}
+
     class SwypeDetector extends SimpleOnGestureListener {
 
     	private static final int SWIPE_MIN_DISTANCE = 80;
@@ -1371,6 +1447,26 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		
     }
     
+
+	class UpDownListener implements OnTouchListener {
+
+		public boolean onTouch(View v, MotionEvent event) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				// Button was pressed, change button background
+				searchView.setImageResource(R.drawable.searchover);
+				return true;
+			} else if (event.getAction() == MotionEvent.ACTION_UP) {
+				// Button was released, reset button background
+				searchView.setImageResource(R.drawable.search);
+				onSearchRequested();
+				return true;
+			}
+
+			return true;
+		}
+
+	};
+
     class ScrollDetector implements OnScrollListener{
 
     	AtomicInteger initialFirstVisibleItem = new AtomicInteger(0);
