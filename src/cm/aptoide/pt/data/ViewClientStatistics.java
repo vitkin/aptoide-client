@@ -39,10 +39,10 @@ public class ViewClientStatistics {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
 	}
 	
-	public ViewClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, int screenWidth, int screenHeight) {
+	public ViewClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, int screenWidth, int screenHeight, int screenDensity) {
 		this.aptoideVersionNameInUse = aptoideVersionNameInUse;
 		this.aptoideClientUUID = aptoideClientUUID;
-		this.screenDimensions = new ViewScreenDimensions(screenWidth, screenHeight);
+		this.screenDimensions = new ViewScreenDimensions(screenWidth, screenHeight, screenDensity);
 	}	
 	
 	public ViewClientStatistics(String aptoideVersionNameInUse, String aptoideClientUUID, ViewScreenDimensions screenDimensions) {

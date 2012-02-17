@@ -50,6 +50,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
+import cm.aptoide.pt.data.display.ViewDisplayListsDimensions;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
@@ -78,7 +79,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private final String TAG = "Aptoide-ServiceData";
 	private boolean isRunning = false;
 	
-	private int DISPLAY_LISTS_CACHE_SIZE;
+	private ViewDisplayListsDimensions displayListsDimensions;
 	
 	private ArrayList<Integer> reposInserting;
 	private ArrayList<ViewMyapp> waitingMyapps;
@@ -130,13 +131,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		
 		@Override
 		public void callStoreScreenDimensions(ViewScreenDimensions screenDimensions) throws RemoteException {
-			DISPLAY_LISTS_CACHE_SIZE = ((screenDimensions.getHeight()>screenDimensions.getWidth()?screenDimensions.getHeight():screenDimensions.getWidth())/Math.round(Constants.DISPLAY_SIZE_DIVIDER*screenDimensions.getDensity()))*Constants.DISPLAY_LISTS_CACHE_SIZE_MULTIPLIER;
+			displayListsDimensions = new ViewDisplayListsDimensions(screenDimensions);
+			Log.d("Aptoide-ServiceData","displayListsDimensions"+displayListsDimensions);
 			storeScreenDimensions(screenDimensions);	
 		}
 
 		@Override
-		public int callGetDisplayCacheSize() throws RemoteException {
-			return 0;
+		public ViewDisplayListsDimensions callGetDisplayListsDimensions() throws RemoteException {
+			return displayListsDimensions;
 		}
 
 		@Override
@@ -380,8 +382,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		
 	
 	
-	public int getDisplayListsCacheSize(){
-		return DISPLAY_LISTS_CACHE_SIZE;
+	public ViewDisplayListsDimensions getDisplayListsDimensions(){
+		return displayListsDimensions;
 	}
 	
 	public String getTag() {
@@ -964,7 +966,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 						return;
 					}
 
-					managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), DISPLAY_LISTS_CACHE_SIZE));
+					managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), displayListsDimensions.getCacheSize()));
 					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
 			});

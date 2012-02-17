@@ -286,7 +286,7 @@ public class ManagerDownloads {
 			}
 		}
 		
-		downloadStatus.incrementOffset(serviceData.getDisplayListsCacheSize());
+		downloadStatus.incrementOffset(serviceData.getDisplayListsDimensions().getCacheSize());
 		serviceData.getRepoIcons(downloadStatus);
 		
 	}

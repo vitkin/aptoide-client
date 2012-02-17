@@ -57,6 +57,7 @@ public class RepoBareParser extends DefaultHandler{
 	private String packageName = "";
 	private int parsedAppsNumber = 0;
 	private boolean firstBucket = true;
+	private boolean secondBucket = false;
 	
 	private StringBuilder tagContentBuilder;
 	
@@ -117,12 +118,16 @@ public class RepoBareParser extends DefaultHandler{
 			case pkg:
 				application.setRepoHashid(parseInfo.getRepository().getHashid());
 				
-				if((firstBucket && parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT/2) || parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+				if(((firstBucket || secondBucket)&& parsedAppsNumber >= managerXml.getDisplayListsFastReset()) || parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
 					final boolean insertingFirstBucket; 
 					if(firstBucket){
 						insertingFirstBucket = true;
 						firstBucket = false;
-						Log.d("Aptoide-RepoBareParser", "first half bucket full, inserting apps: "+applications.size());
+						Log.d("Aptoide-RepoBareParser", "initial bucket full, inserting apps: "+applications.size());
+					}else if(secondBucket){
+						insertingFirstBucket = false;
+						secondBucket = false;
+						Log.d("Aptoide-RepoBareParser", "second initial bucket full, inserting apps: "+applications.size());
 					}else{
 						insertingFirstBucket = false;
 						Log.d("Aptoide-RepoBareParser", "bucket full, inserting apps: "+applications.size());
