@@ -108,7 +108,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private TextView previousListTitle = null;
 	private TextView currentListTitle = null;
 	private TextView nextListTitle = null;
-	private String emptyString = null;
 	private ImageView previousViewArrow = null;
 	private ImageView nextViewArrow = null;
 
@@ -511,10 +510,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 							try {
 								if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
+									// RESET CATEGORIES TO ZERO
 									Log.d("Aptoide","resetting categories list.");
 									setFreshCategories(serviceDataCaller.callGetCategories());
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_CATEGORIES.ordinal());
 								}else{
+									// RESET AVAILABLE APPS BY CATEGORY TO ZERO
 									cacheListOffset.set(-1);
 									offset = 0;
 									range = displayListsDimensions.getFastReset();
@@ -522,7 +523,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+range+" "+category);
 									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
-									availableAppsManager.request(EnumAvailableRequestType.INCREASE);
+//									availableAppsManager.request(EnumAvailableRequestType.INCREASE);
 								}
 								
 								setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
@@ -534,6 +535,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							}
 						}else{
 							if(category != null && !category.hasChildren()){
+								// RESET AVAILABLE APPS BY CATEGORY
 								if(cacheListOffset.get() == -1){
 									offset = 0;
 									range = displayListsDimensions.getFastReset();
@@ -558,6 +560,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						}
 					}else{
 						if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
+							//RESET AVAILABE APPS TO ZERO
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 							cacheListOffset.set(-1);
 							offset = 0;
@@ -575,7 +578,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+range);
 							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
-							availableAppsManager.request(EnumAvailableRequestType.INCREASE);
+//							if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
+//								availableAppsManager.request(EnumAvailableRequestType.INCREASE);
+//							}
 							
 							setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
 							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
@@ -597,9 +602,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					
 					try {
 						if(requestsSum>0){
+							// MOVE FORWARD IN AVAILABLE APPS LIST
 							if(previousCacheOffset == -1){
+//								offset = displayListsDimensions.getFastReset();
+//								range = displayListsDimensions.getPageSize()-offset;
+								previousCacheOffset = 1;
 								offset = displayListsDimensions.getFastReset();
-								range = displayListsDimensions.getPageSize()-offset;
+								range = (displayListsDimensions.getPageSize()-offset)+displayListsDimensions.getPageSize();
 							}else{
 								offset = (previousCacheOffset+1)*displayListsDimensions.getPageSize();
 								range = requestsSum*displayListsDimensions.getPageSize();
@@ -608,7 +617,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range);
 							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
 							
-							if(availableApps.getList().size() > (displayListsDimensions.getCacheSize()-displayListsDimensions.getPageSize())){
+							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;
 								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 							}else{
@@ -617,13 +626,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							
 							
 						}else{
-							offset = (currentCacheOffset)*displayListsDimensions.getPageSize();
+							// MOVE BACKWARD IN AVAILABLE APPS LIST
+							offset = (currentCacheOffset-1)*displayListsDimensions.getPageSize();
 							range = Math.abs(requestsSum)*displayListsDimensions.getPageSize();
 							
 							Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range);
 							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
 	
-							if(availableApps.getList().size() > (displayListsDimensions.getCacheSize()-displayListsDimensions.getPageSize())){
+							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;
 								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 							}else{
@@ -724,21 +734,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			currentListTitle = (TextView) findViewById(R.id.current_title);
 			nextListTitle = (TextView) findViewById(R.id.next_title);
 
-			nextListTitle.setText(currentAppsList.getNext(currentAppsList)
-					.toString());
+			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
 			nextListTitle.setOnClickListener(new OnNextClickedListener());
 
-			currentListTitle.setText(currentAppsList.Available.toString());
+			currentListTitle.setText(EnumAppsLists.Available.toString());
 			currentListTitle.setClickable(false);
 			previousViewArrow = (ImageView) findViewById(R.id.previous);
-			nextViewArrow = (ImageView) findViewById(R.id.next);
 			previousViewArrow.setVisibility(View.INVISIBLE);
-			previousViewArrow
-					.setOnClickListener(new OnPreviousClickedListener());
+			previousViewArrow.setOnClickListener(new OnPreviousClickedListener());
+			nextViewArrow = (ImageView) findViewById(R.id.next);
 			nextViewArrow.setOnClickListener(new OnNextClickedListener());
 			previousListTitle.setVisibility(View.GONE);
-			previousListTitle
-					.setOnClickListener(new OnPreviousClickedListener());
+			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
 
 			searchView = (ImageView) findViewById(R.id.search_button);
 			searchView.setOnTouchListener(new UpDownListener());
@@ -1359,19 +1366,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		switch (currentAppList) {
 		case Available:
 			nextViewArrow.setVisibility(View.VISIBLE);
-			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
 			previousViewArrow.setVisibility(View.GONE);
 			previousListTitle.setVisibility(View.GONE);
-			currentListTitle.setText(currentAppsList.Available.toString());
+			currentListTitle.setText(EnumAppsLists.Available.toString());
 			break;
 		case Installed:
 			nextViewArrow.setVisibility(View.VISIBLE);
 			previousViewArrow.setVisibility(View.VISIBLE);
-			currentListTitle.setText(currentAppList.Installed.toString());
+			currentListTitle.setText(EnumAppsLists.Installed.toString());
 			nextListTitle.setVisibility(View.VISIBLE);
-			nextListTitle.setText(currentAppsList.getNext(currentAppsList).toString());
+			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
 			previousListTitle.setVisibility(View.VISIBLE);
-			previousListTitle.setText(currentAppList.getPrevious(currentAppList).toString());
+			previousListTitle.setText(EnumAppsLists.getPrevious(currentAppList).toString());
 			break;
 		case Updates:
 			nextViewArrow.setVisibility(View.GONE);
@@ -1475,32 +1482,47 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	AtomicInteger differential = new AtomicInteger(0);
     	AtomicInteger displayOffset = new AtomicInteger(0);
 		AtomicInteger scrollRegionOrigin = new AtomicInteger(0);
+		AtomicBoolean detectingListChange = new AtomicBoolean(false);
     	
     	private void detectAvailableAppsCacheIncrease(int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
     		Log.d("Aptoide","Scroll "+currentList+" discerning increase, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+displayListsDimensions.getTriggerMargin());
-				// this first inequality ensures that the scroll hasn't started on the same cache region that it stopped
-			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) <  (( currentDisplayOffset / displayListsDimensions.getPageSize()) + 1)	
+
+    			// this ensures that we only get new bottom apps if they're not already cached
+			if( ((previousScrollRegion + availableDisplayOffsetAdjustments.get()) < 3 )
+				// this ensures that the scroll hasn't started on the same cache region that it stopped
+				&& previousScrollRegion <  (( currentDisplayOffset / displayListsDimensions.getPageSize()) + 1)	
+				// these ensure that we're past the trigger and inside the triggerMargin
 				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) < (displayListsDimensions.getTriggerMargin() + displayListsDimensions.getIncreaseTrigger())					
 				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) >  displayListsDimensions.getIncreaseTrigger()){
 				
 				scrollRegionOrigin.incrementAndGet();
+				detectingListChange.set(false);
 				availableAppsManager.request(EnumAvailableRequestType.INCREASE);
 				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
 				
+			}else{
+				detectingListChange.set(false);				
 			}
     	}
     	
     	private void detectAvailableAppsCacheDecrease(int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
     		Log.d("Aptoide","Scroll "+currentList+" discerning decrease, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+displayListsDimensions.getTriggerMargin());
-    			// this first inequality ensures that the scroll hasn't started on the same cache region that it stopped
-			if( (previousScrollRegion + availableDisplayOffsetAdjustments.get()) >  (( currentDisplayOffset / displayListsDimensions.getPageSize()) + 1)
+
+    			// this ensures that we only get new top apps if they're not already cached
+			if( ((previousScrollRegion + availableDisplayOffsetAdjustments.get()) > 1 )
+				// this ensures that the scroll hasn't started on the same cache region that it stopped	
+				&& previousScrollRegion >  ( currentDisplayOffset / displayListsDimensions.getPageSize())
+				// these ensure that we're past the trigger and inside the triggerMargin
 				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) > (displayListsDimensions.getDecreaseTrigger() - displayListsDimensions.getTriggerMargin())
 				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) <  displayListsDimensions.getDecreaseTrigger()){
 				
 				scrollRegionOrigin.decrementAndGet();
+				detectingListChange.set(false);
 				availableAppsManager.request(EnumAvailableRequestType.DECREASE);
 				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
 				
+			}else{
+				detectingListChange.set(false);				
 			}
     	}
     	
@@ -1517,13 +1539,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				
 				if(this.initialFirstVisibleItem.get()+visibleItemCount < firstVisibleItem){
 					this.initialFirstVisibleItem.set(firstVisibleItem);
-					Log.d("Aptoide","New Scroll down page");
+					Log.d("Aptoide","New Scroll down page, offset: "+firstVisibleItem+" range: "+visibleItemCount);
 					switch (currentAppsList) {
 						case Available:
 
 							int currentDisplayOffset = this.displayOffset.addAndGet(this.differential.get());
 							int previousScrollRegion = scrollRegionOrigin.get();
-							detectAvailableAppsCacheIncrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							if(!detectingListChange.get()){
+								detectingListChange.set(true);
+								detectAvailableAppsCacheIncrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							}
 							break;
 		
 						default:
@@ -1531,13 +1556,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					}
 				}else if(this.initialFirstVisibleItem.get()-visibleItemCount > firstVisibleItem){
 					this.initialFirstVisibleItem.set(firstVisibleItem);
-					Log.d("Aptoide","New Scroll up page");
+					Log.d("Aptoide","New Scroll up page, offset: "+firstVisibleItem+" range: "+visibleItemCount);
 					switch (currentAppsList) {
 						case Available:														
 
 							int currentDisplayOffset = this.displayOffset.addAndGet(-this.differential.get());
 							int previousScrollRegion = scrollRegionOrigin.get();
-							detectAvailableAppsCacheDecrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							if(!detectingListChange.get()){
+								detectingListChange.set(true);
+								detectAvailableAppsCacheDecrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							}
 							break;
 		
 						default:
@@ -1559,9 +1587,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					switch (currentAppsList) {
 						case Available:
 
+							Log.d("Aptoide","Scroll down, offset: "+firstVisibleItem+" range: "+visibleItemCount);
 							int currentDisplayOffset = this.displayOffset.addAndGet(this.differential.get());
 							int previousScrollRegion = scrollRegionOrigin.get();
-							detectAvailableAppsCacheIncrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							if(!detectingListChange.get()){
+								detectingListChange.set(true);
+								detectAvailableAppsCacheIncrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							}
 							break;
 		
 						default:
@@ -1571,9 +1603,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					switch (currentAppsList) {
 						case Available:
 
+							Log.d("Aptoide","Scroll up, offset: "+firstVisibleItem+" range: "+visibleItemCount);
 							int currentDisplayOffset = this.displayOffset.addAndGet(-this.differential.get());
 							int previousScrollRegion = scrollRegionOrigin.get();
-							detectAvailableAppsCacheDecrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							if(!detectingListChange.get()){
+								detectingListChange.set(true);
+								detectAvailableAppsCacheDecrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
+							}
 							break;
 		
 						default:
@@ -1581,7 +1617,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					}
 				}
 				initialFirstVisibleItem.set(firstVisibleItem.get());
-				Log.d("Aptoide","Scroll currentList: "+currentAppsList+" offset: "+firstVisibleItem+" range: "+visibleItemCount);
 			}
 		}
     	

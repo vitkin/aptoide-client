@@ -22,8 +22,8 @@ package cm.aptoide.pt.data.display;
 
 import java.util.HashMap;
 
-import cm.aptoide.pt.data.Constants;
 import cm.aptoide.pt.data.model.ViewLogin;
+import cm.aptoide.pt.data.util.Constants;
 
  /**
  * ViewDisplayRepository, models a repository

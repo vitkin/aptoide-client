@@ -75,7 +75,7 @@ public class ViewDisplayListsDimensions implements Parcelable{
 	}
 	
 	public int getFastReset(){
-		return increaseTrigger*2;
+		return increaseTrigger*Constants.DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER;
 	}
 
 
