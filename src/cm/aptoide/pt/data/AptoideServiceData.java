@@ -53,6 +53,7 @@ import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayListsDimensions;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
+import cm.aptoide.pt.data.downloads.ViewDownload;
 import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.model.ViewApplication;
@@ -309,8 +310,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public void callInstallMyapp(ViewMyapp myapp) throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			downloadMyapp(myapp);
 		}
 
 		@Override
@@ -1288,25 +1288,46 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingMyappFinished(ViewMyapp myapp, ViewDisplayListRepos newRepos){ //TODO deal with repos only myapp
-		if(!managerDatabase.isApplicationInstalled(myapp.getPackageName())){
-			waitingMyapps.add(myapp);
-			waitingMyappRepos.addAll(newRepos);
-			scheduledThreadPool.execute(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						aptoideClients.get(EnumServiceDataCallback.HANDLE_MYAPP).handleMyapp();
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}	
-				}
-			});
-		}else{
-			Toast.makeText(this, "Application "+myapp.getName()+" already installed!", Toast.LENGTH_LONG).show();
+		waitingMyappRepos.addAll(newRepos);
+		if(myapp != null){
+			if(!managerDatabase.isApplicationInstalled(myapp.getPackageName())){
+				waitingMyapps.add(myapp);
+				scheduledThreadPool.execute(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							aptoideClients.get(EnumServiceDataCallback.HANDLE_MYAPP).handleMyapp();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}	
+					}
+				});
+			}else{
+				Toast.makeText(this, "Application "+myapp.getName()+" already installed!", Toast.LENGTH_LONG).show();
+			}
 		}
 	}
 	
+	public void downloadMyapp(final ViewMyapp myapp){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				ViewDownload download = getManagerDownloads().prepareApkDownload(myapp.hashCode(), myapp.getName()
+										, myapp.getRemotePath(), myapp.getSize(), myapp.getMd5sum());
+				ViewCache apk = managerDownloads.downloadApk(download);
+				AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
+				installApp(apk, myapp.hashCode());
+			}
+		});		
+	}
+
 	
 	public void downloadApp(final int appHashid){
 		scheduledThreadPool.execute(new Runnable() {
@@ -1348,7 +1369,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void installApp(ViewCache apk, int appHashid){
-		unscheduleInstallApp(appHashid);
+		if(isAppScheduledToInstall(appHashid)){
+			unscheduleInstallApp(appHashid);
+		}
 		Intent install = new Intent(Intent.ACTION_VIEW);
 		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		install.setDataAndType(Uri.fromFile(apk.getFile()),"application/vnd.android.package-archive");

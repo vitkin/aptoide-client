@@ -48,8 +48,8 @@ public class MyappParser extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewCache myapp;
-	private ViewMyapp viewMyapp;
-	private ViewDisplayRepo repo;
+	private ViewMyapp viewMyapp = null;
+	private ViewDisplayRepo repo = null;
 	private ViewDisplayListRepos listRepos = new ViewDisplayListRepos(1);
 	
 	private EnumXmlTagsMyapp tag = EnumXmlTagsMyapp.myapp;
