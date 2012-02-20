@@ -103,6 +103,10 @@ public class ViewDisplayListRepos implements Parcelable{
 	}
 	
 	
+	public boolean isEmpty(){
+		return this.reposHash.isEmpty();
+	}
+	
 	/**
 	 * getList, retrieves repos list,
 	 * 			maintains insertion order

@@ -1334,7 +1334,7 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * repoIsManaged, checks if repo referenced by this hashid is already managed
+	 * isRepoManaged, checks if repo referenced by this hashid is already managed
 	 * 
 	 * @param int repoHashid
 	 * 
@@ -1344,7 +1344,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public boolean repoIsManaged(int repoHashid){
+	public boolean isRepoManaged(int repoHashid){
 		
 		String selectRepo = "SELECT count(*)"
 							+" FROM "+Constants.TABLE_REPOSITORY
@@ -1368,6 +1368,50 @@ public class ManagerDatabase {
 			// TODO: handle exception
 			e.printStackTrace();
 			return false;
+			
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * excludeManagedRepos, excludes from the list of repos, those that are already managed
+	 * 
+	 * @param ViewDisplayListRepos
+	 * 
+	 * @return boolean
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewDisplayListRepos excludeManagedRepos(ViewDisplayListRepos repos){
+				
+		String selectRepos = "SELECT "+Constants.KEY_REPO_HASHID
+							+" FROM "+Constants.TABLE_REPOSITORY
+							+" WHERE "+Constants.KEY_REPO_HASHID+" IN (";
+		for (Integer repoHashid : repos.getHashMap().keySet()) {
+			selectRepos += "'"+repoHashid+"', ";
+		}					
+		selectRepos += ");";
+		
+		try{
+			Cursor reposCursor = aptoideAtomicQuery(selectRepos);
+			if(reposCursor.getCount() != Constants.EMPTY_INT){
+				reposCursor.moveToFirst();
+				do{
+					repos.removeRepo(reposCursor.getInt(Constants.COLUMN_FIRST));
+				}while(reposCursor.moveToNext());
+			}
+			reposCursor.close();
+
+			return repos;
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+			return null;
 			
 		}
 		

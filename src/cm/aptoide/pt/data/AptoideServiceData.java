@@ -311,18 +311,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		@Override
 		public void callInstallMyapp(ViewMyapp myapp) throws RemoteException {
 			downloadMyapp(myapp);
+			manageMyappRepos();
 		}
 
 		@Override
 		public void callRejectedMyapp() throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			manageMyappRepos();
 		}
 
 		@Override
 		public ViewDisplayListRepos callGetWaitingMyappRepos() throws RemoteException {
-			// TODO Auto-generated method stub
-			return null;
+			return waitingMyappRepos;
 		}
 		
 	}; 
@@ -788,7 +787,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public boolean repoIsManaged(int repoHashid){
-		return managerDatabase.repoIsManaged(repoHashid);
+		return managerDatabase.isRepoManaged(repoHashid);
 	}
 	
 	public void removeRepo(final int repoHashid){
@@ -1277,8 +1276,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 //				launchAptoide();
 				String[] slashSplitUriString = uriString.split("/");
 				String myappName = slashSplitUriString[slashSplitUriString.length-1];
-				AptoideLog.d(AptoideServiceData.this, "Preparing download of Myapp file: "+myappName);
-				ViewCache cache = managerDownloads.downloadMyapp(uriString, myappName);
+				ViewCache cache;
+				if(uriString.startsWith(Constants.SCHEME_FILE_PREFIX)){
+					cache = managerDownloads.getManagerCache().cacheMyapp(uriString.substring(Constants.SCHEME_FILE_PREFIX.length()), myappName);
+				}else{
+					AptoideLog.d(AptoideServiceData.this, "Preparing download of Myapp file: "+myappName);
+					cache = managerDownloads.downloadMyapp(uriString, myappName);
+				}
 				AptoideLog.d(AptoideServiceData.this, "Preparing parsing of Myapp file: "+cache.getLocalPath());
 				
 				managerXml.myappParse(cache, myappName);
@@ -1287,8 +1291,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
-	public void parsingMyappFinished(ViewMyapp myapp, ViewDisplayListRepos newRepos){ //TODO deal with repos only myapp
-		waitingMyappRepos.addAll(newRepos);
+	public void parsingMyappFinished(ViewMyapp myapp, ViewDisplayListRepos newRepos){
+		ViewDisplayListRepos notManagedRepos = managerDatabase.excludeManagedRepos(newRepos);
+		if(!notManagedRepos.isEmpty()){
+			waitingMyappRepos.addAll(notManagedRepos);
+		}
 		if(myapp != null){
 			if(!managerDatabase.isApplicationInstalled(myapp.getPackageName())){
 				waitingMyapps.add(myapp);
@@ -1305,6 +1312,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				});
 			}else{
 				Toast.makeText(this, "Application "+myapp.getName()+" already installed!", Toast.LENGTH_LONG).show();
+				manageMyappRepos();
 			}
 		}
 	}
@@ -1326,6 +1334,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				installApp(apk, myapp.hashCode());
 			}
 		});		
+	}
+	
+	public void manageMyappRepos(){
+		if(!waitingMyappRepos.isEmpty()){
+			manageRepos(true);
+		}
 	}
 
 	
@@ -1394,10 +1408,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		startActivity(splash);    				
 	}
 	
-	public void manageRepos(){
+	public void manageRepos(boolean myappReposWaiting){
 		Intent manageRepos = new Intent(AptoideServiceData.this, ManageRepos.class);
 		manageRepos.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-		startActivity(manageRepos);  
+		if(myappReposWaiting){
+			manageRepos.putExtra(Constants.MYAPP_NEW_REPOS_WAITING, true);
+		}
+		startActivity(manageRepos);  		
+	}
+	
+	public void manageRepos(){
+		manageRepos(false);
 	}
 	
 

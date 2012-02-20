@@ -656,12 +656,10 @@ public class ManagerDownloads {
 				
 				byte data[] = new byte[8096];
 				int bytesRead;
-				bytesRead = inputStream.read(data, 0, 8096);
 
-				while(bytesRead != -1) {
+				while((bytesRead = inputStream.read(data, 0, 8096)) > 0) {
 					notification.incrementProgress(bytesRead);
 					fileOutputStream.write(data,0,bytesRead);
-					bytesRead = inputStream.read(data, 0, 8096);
 				}
 				Log.d("Aptoide-ManagerDownloads","Download done! Name: "+notification.getActionsTargetName() +" localPath: "+localPath);
 				notification.setCompleted(true);
