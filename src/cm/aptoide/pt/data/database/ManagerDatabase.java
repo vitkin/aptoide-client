@@ -1721,7 +1721,7 @@ public class ManagerDatabase {
 	public boolean isApplicationInstalled(String packageName){
 		
 		String selectIsAppInstalled = "SELECT * FROM "+Constants.TABLE_APP_INSTALLED
-										+" WHERE "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME+"="+packageName+";";
+										+" WHERE "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME+"='"+packageName+"';";
 		
 		Cursor cursorIsAppInstalled = aptoideAtomicQuery(selectIsAppInstalled);
 		
@@ -2543,13 +2543,13 @@ public class ManagerDatabase {
 
 			if(loginCursor.getCount() == Constants.EMPTY_INT){
 				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid, appDownloadInfoCursor.getString(APP_NAME)
-									, appDownloadInfoCursor.getString(REMOTE_PATH_BASE), appDownloadInfoCursor.getString(REMOTE_PATH_TAIL)
+									, appDownloadInfoCursor.getString(REMOTE_PATH_BASE)+appDownloadInfoCursor.getString(REMOTE_PATH_TAIL)
 									, appDownloadInfoCursor.getInt(SIZE), appDownloadInfoCursor.getString(MD5HASH));
 			}else{
 				ViewLogin login = new ViewLogin(loginCursor.getString(USERNAME), loginCursor.getString(PASSWORD));
 				
 				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid, appDownloadInfoCursor.getString(APP_NAME)
-						, appDownloadInfoCursor.getString(REMOTE_PATH_BASE), appDownloadInfoCursor.getString(REMOTE_PATH_TAIL), login
+						, appDownloadInfoCursor.getString(REMOTE_PATH_BASE)+appDownloadInfoCursor.getString(REMOTE_PATH_TAIL), login
 						, appDownloadInfoCursor.getInt(SIZE), appDownloadInfoCursor.getString(MD5HASH));
 			}
 			loginCursor.close();
