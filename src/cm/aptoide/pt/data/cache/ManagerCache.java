@@ -21,7 +21,11 @@
 package cm.aptoide.pt.data.cache;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
@@ -265,6 +269,33 @@ public class ManagerCache {
 		}else{
 			return false;
 		}
+	}
+	
+	public ViewCache cacheMyapp(String originalPath, String myappName){
+		try {
+			FileInputStream original = new FileInputStream(originalPath);
+			FileOutputStream cache = new FileOutputStream(Constants.PATH_CACHE_MYAPPS+myappName);
+			byte data[] = new byte[8096];
+			int bytesRead;
+			while((bytesRead = original.read(data, 0, 8096)) > 0){
+				cache.write(data, 0, bytesRead);
+			}
+			
+			cache.flush();
+			cache.close();
+			original.close();
+			
+			return getNewViewCache(Constants.PATH_CACHE_MYAPPS+myappName);
+			
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		} 
 	}
 	
 	public boolean isApkCached(int appHashid){
