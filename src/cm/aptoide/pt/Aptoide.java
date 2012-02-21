@@ -658,24 +658,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(!isRunning){
-	        setContentView(R.layout.aptoide);
-	       
+		       
 			staticListsManager = new InstalledAppsManager();
 			availableAppsManager = new AvailableAppsManager();
 			
-			emptyAvailableAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
-			emptyAvailableAppsList.setTag(EnumFlipperChildType.EMPTY);
-			emptyInstalledAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
-			emptyInstalledAppsList.setTag(EnumFlipperChildType.EMPTY);
-			emptyUpdatableAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
-			emptyUpdatableAppsList.setTag(EnumFlipperChildType.EMPTY);
-			
-			loadingAvailableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
-			loadingAvailableAppsList.setTag(EnumFlipperChildType.LOADING);
-			loadingInstalledAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
-			loadingInstalledAppsList.setTag(EnumFlipperChildType.LOADING);
-			loadingUpdatableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
-			loadingUpdatableAppsList.setTag(EnumFlipperChildType.LOADING);
 			
 			installedApps = new ViewDisplayListApps();
 			availableApps = new ViewDisplayListApps();
@@ -691,15 +677,65 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 									}
 								};
 			swyping = new AtomicBoolean(false);
+			swypeDelayHandler = new Handler();
+			
 			originalScrollPostition = new AtomicInteger(0);
 			originalPartialScrollPostition = new AtomicInteger(0);
 			adjustAvailableDisplayOffset = new AtomicInteger(0);
 			availableDisplayOffsetAdjustments = new AtomicInteger(0);
 	
-			swypeDelayHandler = new Handler();
 			scrollListener = new ScrollDetector();
 			
+			synchronizingInstalledApps = new AtomicBoolean(false);
+			
+			makeSureServiceDataIsRunning();
+			
+			isRunning = true;
+			
+			
+	        setContentView(R.layout.aptoide);
+
+			
+			searchView = (ImageView) findViewById(R.id.search_button);
+			searchView.setOnTouchListener(new UpDownListener());
+
+			
+			previousViewArrow = (ImageView) findViewById(R.id.previous);
+			previousViewArrow.setOnClickListener(new OnPreviousClickedListener());
+			previousViewArrow.setVisibility(View.INVISIBLE);
+			
+			previousListTitle = (TextView) findViewById(R.id.previous_title);
+			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
+			previousListTitle.setVisibility(View.GONE);
+			currentListTitle = (TextView) findViewById(R.id.current_title);
+			currentListTitle.setText(EnumAppsLists.Available.toString());
+			currentListTitle.setClickable(false);
+			nextListTitle = (TextView) findViewById(R.id.next_title);
+			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
+			nextListTitle.setOnClickListener(new OnNextClickedListener());
+
+			nextViewArrow = (ImageView) findViewById(R.id.next);
+			nextViewArrow.setOnClickListener(new OnNextClickedListener());
+
+			
+			
 			appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
+			
+			
+			emptyAvailableAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
+			emptyAvailableAppsList.setTag(EnumFlipperChildType.EMPTY);
+			emptyInstalledAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
+			emptyInstalledAppsList.setTag(EnumFlipperChildType.EMPTY);
+			emptyUpdatableAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
+			emptyUpdatableAppsList.setTag(EnumFlipperChildType.EMPTY);
+			
+			loadingAvailableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
+			loadingAvailableAppsList.setTag(EnumFlipperChildType.LOADING);
+			loadingInstalledAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
+			loadingInstalledAppsList.setTag(EnumFlipperChildType.LOADING);
+			loadingUpdatableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
+			loadingUpdatableAppsList.setTag(EnumFlipperChildType.LOADING);
+			
 			
 			availableAppsListView = new ListView(this);
 			availableAppsListView.setCacheColorHint(Color.TRANSPARENT);
@@ -730,32 +766,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			appsListFlipper.addView(emptyUpdatableAppsList);
 			
 			currentAppsList = EnumAppsLists.Available;
-			
-			previousListTitle = (TextView) findViewById(R.id.previous_title);
-			currentListTitle = (TextView) findViewById(R.id.current_title);
-			nextListTitle = (TextView) findViewById(R.id.next_title);
-
-			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
-			nextListTitle.setOnClickListener(new OnNextClickedListener());
-
-			currentListTitle.setText(EnumAppsLists.Available.toString());
-			currentListTitle.setClickable(false);
-			previousViewArrow = (ImageView) findViewById(R.id.previous);
-			previousViewArrow.setVisibility(View.INVISIBLE);
-			previousViewArrow.setOnClickListener(new OnPreviousClickedListener());
-			nextViewArrow = (ImageView) findViewById(R.id.next);
-			nextViewArrow.setOnClickListener(new OnNextClickedListener());
-			previousListTitle.setVisibility(View.GONE);
-			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
-
-			searchView = (ImageView) findViewById(R.id.search_button);
-			searchView.setOnTouchListener(new UpDownListener());
-			
-			synchronizingInstalledApps = new AtomicBoolean(false);
-			
-			makeSureServiceDataIsRunning();
-			
-			isRunning = true;
         }
     }
 
