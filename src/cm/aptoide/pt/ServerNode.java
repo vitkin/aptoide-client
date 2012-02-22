@@ -30,4 +30,6 @@ public class ServerNode extends Object implements Serializable{
 	public boolean inuse;
 	public int napk;
 	public String hash;
+	
+	public String extended;
 }

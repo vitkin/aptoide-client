@@ -83,8 +83,8 @@ public class TastePoster extends AsyncTask<Void, Integer, TasteGetter>{
 					dislike.setImageResource(R.drawable.dontlike);
 					like.setImageResource(R.drawable.like);
 					
-					likes.setText(context.getString(R.string.likes)+result.getLikes().toString());
-					dislikes.setText(context.getString(R.string.dislikes)+result.getDislikes().toString());
+					likes.setText(result.getLikes().toString());
+					dislikes.setText(result.getDislikes().toString());
 					
 					switch(result.getUserTaste()){
 						case LIKE:

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+import java.util.prefs.Preferences;
 
 import cm.aptoide.pt.multiversion.VersionApk;
 
@@ -32,6 +33,7 @@ import cm.aptoide.pt.multiversion.VersionApk;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -65,7 +67,7 @@ public class DbHandler {
 	
 	private static final String CREATE_TABLE_APTOIDE = "create table if not exists " + TABLE_NAME + " (apkid text, "
 	            + "name text not null, path text not null, lastver text not null, lastvercode number not null, "
-	            + "server text, md5hash text, size number default 0 not null,age text not null, primary key(apkid, server));";
+	            + "server text, md5hash text, size number default 0 not null,age text, primary key(apkid, server));";
 	
 	private static final String CREATE_TABLE_LOCAL = "create table if not exists " + TABLE_NAME_LOCAL + " (apkid text, "
 				+ "instver text not null, instvercode number not null, primary key(apkid));";
@@ -173,6 +175,7 @@ public class DbHandler {
 			
 		}else if(!db.isOpen()){
 			db = ctx.openOrCreateDatabase(DATABASE_NAME, 0, null);
+			
 		}
 	}
 	
@@ -286,6 +289,7 @@ public class DbHandler {
 		if(db.delete(TABLE_NAME, "apkid='"+apkid+"' and lastver='"+ver+"'", null)==1)
 			db.delete(TABLE_NAME_EXTRA, "apkid='"+apkid+"'", null);
 		db.delete(TABLE_NAME_OLD_VERSIONS, "apkid='"+apkid+"' and ver='"+ver+"'", null);
+		
 	}
 	 
 	public void insertApk(boolean delfirst, String name, String path, String ver, int vercode ,String apkid, String date, Float rat, String serv, String md5hash, int down, String catg, int catg_type, int size, String age){
@@ -459,8 +463,15 @@ public class DbHandler {
 		
 	}
 	
-	public boolean deleteScheduledDownload(String apkid,String ver){
-		return db.delete(TABLE_NAME_SCHEDULED, "apkid='"+apkid+"' and instver='"+ver+"'", null)>0;
+	public synchronized boolean deleteScheduledDownload(String apkid,String ver){
+		boolean i = false;
+		try{
+			i=db.delete(TABLE_NAME_SCHEDULED, "apkid='"+apkid+"' and instver='"+ver+"'", null)>0;
+		}catch (Exception e) {
+			deleteScheduledDownload(apkid, ver);
+		}
+		return i;
+		
 	}
 	public String getScheduledDwnServer(String apkid){
 		Cursor c = db.query(TABLE_NAME_SCHEDULED, new String[]{"server"}, "apkid='"+apkid+"'", null, null, null, null);
@@ -524,8 +535,16 @@ public class DbHandler {
 		return (db.update(TABLE_NAME_LOCAL, tmp, "apkid='" + apkid + "'", null) > 0); 
 	}
 	
-	public boolean removeInstalled(String apkid){
-		return (db.delete(TABLE_NAME_LOCAL, "apkid='"+apkid+"'", null) > 0);
+	public synchronized boolean removeInstalled(String apkid){
+		int i=0;
+		try{
+		i = db.delete(TABLE_NAME_LOCAL, "apkid='"+apkid+"'", null);
+		}catch (Exception e) {
+			removeInstalled(apkid);
+		}
+		
+		
+		return (i> 0);
 	}
 	
 	/*public boolean removeAlli(){
@@ -558,7 +577,7 @@ public class DbHandler {
 		try{
 			
 			final String basic_query = "select distinct c.apkid, c.name, c.instver, c.lastver, c.instvercode, c.lastvercode ,b.dt, b.rat, b.dwn, b.catg, b.catg_ord, c.age from "
-				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.age,a.lastver as lastver, a.lastvercode as lastvercode from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.age as age,a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid";
 			
@@ -638,7 +657,7 @@ public class DbHandler {
 				catgi = "";
 			
 			final String basic_query = "select * from (select distinct c.apkid, c.name as name, c.instver as instver, c.lastver, c.instvercode, c.lastvercode ,b.dt as dt, b.rat as rat, b.dwn as dwn, b.catg as catg, b.catg_ord as catg_ord, c.age from "
-				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.age, a.lastver as lastver, a.lastvercode as lastvercode from "
+				+ "(select distinct a.apkid as apkid, a.name as name, l.instver as instver, l.instvercode as instvercode, a.age as age, a.lastver as lastver, a.lastvercode as lastvercode from "
 				+ TABLE_NAME + " as a left join " + TABLE_NAME_LOCAL + " as l on a.apkid = l.apkid) as c left join "
 				+ TABLE_NAME_EXTRA + " as b on c.apkid = b.apkid) as d where " + catgi + "d.catg_ord = " + ord + " and d.instver is null";
 			
@@ -1160,7 +1179,7 @@ public class DbHandler {
 		Vector<ServerNode> out = new Vector<ServerNode>();
 		Cursor c = null;
 		try {
-			c = db.rawQuery("select uri, inuse, napk, delta from " + TABLE_NAME_URI + " order by uri collate nocase", null);
+			c = db.rawQuery("select uri, inuse, napk, delta,extended from " + TABLE_NAME_URI + " order by uri collate nocase", null);
 			c.moveToFirst();
 			for(int i=0; i<c.getCount(); i++){
 				ServerNode node = new ServerNode();
@@ -1172,6 +1191,7 @@ public class DbHandler {
 				}
 				node.napk = c.getInt(2);
 				node.hash = c.getString(3);
+				node.extended=c.getString(4);
 				out.add(node);
 				c.moveToNext();
 			}
@@ -1260,15 +1280,16 @@ public class DbHandler {
 	
 	public void removeServer(String serv){
 		cleanRepoApps(serv);
+		
 		db.delete(TABLE_NAME_URI, "uri='"+serv+"'", null);
 	}
 	
-	public void updateServer(String old, String repo){
+	public void updateServer(String old, String repo, int i){
 		if (!repo.endsWith("/")) {
 			
 			repo = repo + "/";
 		}
-		db.execSQL("update " + TABLE_NAME_URI + " set uri='" + repo + "' where uri='" + old + "'");
+		db.execSQL("update " + TABLE_NAME_URI + " set uri='"+ repo +"' , extended='"+i+"' where uri='" + old + "'");
 	}
 	
 	public void updateServerNApk(String repo, int napk){
@@ -1314,6 +1335,7 @@ public class DbHandler {
 	
 	public void addExtraXML(String apkid, String cmt, String srv){
 		Cursor c = null;
+		db.beginTransaction();
 		try{
 			c = db.query(TABLE_NAME, new String[] {"lastvercode"}, "server=\""+srv+"\" and apkid=\""+apkid+"\"", null, null, null, null);
 			if(c.getCount() > 0){
@@ -1324,11 +1346,15 @@ public class DbHandler {
 					extra.putNull("desc");
 				}
 				db.update(TABLE_NAME_EXTRA, extra, "apkid=\""+apkid+"\"", null);
+				db.setTransactionSuccessful();
 			}
+			
 		}catch(Exception e) { }
 		finally{
 			c.close();
+			db.endTransaction();
 		}
+		
 	}
 	
 	public String getDescript(String apkid){
@@ -1426,13 +1452,19 @@ public class DbHandler {
 	}
 	
 	public void updateNPackages(String srv, int i){
+		
 		ContentValues tmp = new ContentValues();
 		
 		tmp.put("npackage", i);
+		
 		db.update(TABLE_NAME_URI, tmp, "uri='" + srv + "'", null);
+		
 	}
 	
-	public boolean checkNPackages(){
+	public boolean checkNPackages(Boolean preference){
+		if(!preference){
+			return false;
+		}
 		Cursor c = null;
 		int npackages;
 		int inuse;
@@ -1462,7 +1494,23 @@ public class DbHandler {
 			c.close();
 		}
 	}
-
+	public boolean getExtendedStatus(String repo){
+		Cursor c = null;
+		try{
+			c = db.query(TABLE_NAME_URI, new String[]{"extended"}, "uri='"+repo+"'", null, null, null, null);
+			c.moveToFirst();
+			int result = c.getInt(0);
+			if(result==1){
+				return true;
+			}else{
+				return false;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+		
+	}
 	
 
 	
