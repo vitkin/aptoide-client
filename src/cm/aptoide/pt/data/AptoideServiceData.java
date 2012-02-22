@@ -168,7 +168,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 //				//TDO check for delta
 //				updateAvailableLists();
 //			}else{
-				addRepoBare(repository);			
+				addRepoBare(repository);	//TODO serialize requests (handle one at a time)			
 //			}
 		}
 

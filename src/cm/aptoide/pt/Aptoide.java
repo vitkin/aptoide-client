@@ -446,7 +446,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	private LinkedList<EnumAvailableRequestType> requestFifo;
     	private AtomicInteger cacheListOffset;
     	private ExecutorService dataColectorsPool;
-    	private AtomicBoolean fastReset;
 
 		
 		private synchronized LinkedList<EnumAvailableRequestType> getRequestFifo(){
@@ -482,7 +481,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		requestFifo = new LinkedList<Aptoide.EnumAvailableRequestType>();
     		cacheListOffset = new AtomicInteger(0);
     		dataColectorsPool = Executors.newSingleThreadExecutor();
-    		fastReset = new AtomicBoolean(false);
     	}
 		
 		public int getCacheOffset(){
@@ -666,6 +664,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			installedApps = new ViewDisplayListApps();
 			availableApps = new ViewDisplayListApps();
 			updatableApps = new ViewDisplayListApps();
+			
+			currentAppsList = EnumAppsLists.Available;
 	
 			handlingMyapps = new ArrayList<ViewMyapp>();
 			
@@ -691,11 +691,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			makeSureServiceDataIsRunning();
 			
 			isRunning = true;
-			
-			
-	        setContentView(R.layout.aptoide);
 
 			
+	        setContentView(R.layout.aptoide);
+			
+	        
 			searchView = (ImageView) findViewById(R.id.search_button);
 			searchView.setOnTouchListener(new UpDownListener());
 
@@ -716,10 +716,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 			nextViewArrow = (ImageView) findViewById(R.id.next);
 			nextViewArrow.setOnClickListener(new OnNextClickedListener());
-
-			
-			
-			appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
 			
 			
 			emptyAvailableAppsList = LinearLayout.inflate(this, R.layout.list_apps_empty, appsListFlipper);
@@ -760,12 +756,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			updatableAppsListView.setTag(EnumFlipperChildType.LIST);
 			updatableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(updatableAppsList);
+
+			
+			appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
 	
 			appsListFlipper.addView(emptyAvailableAppsList);
 			appsListFlipper.addView(emptyInstalledAppsList);
 			appsListFlipper.addView(emptyUpdatableAppsList);
 			
-			currentAppsList = EnumAppsLists.Available;
         }
     }
 

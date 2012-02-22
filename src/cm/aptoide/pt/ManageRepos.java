@@ -28,6 +28,7 @@ package cm.aptoide.pt;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -110,6 +111,8 @@ public class ManageRepos extends ListActivity{
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
 	private boolean serviceDataIsBound = false;
+	
+	private boolean handlingMyappRepos = false;
 
 	private ServiceConnection serviceDataConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -129,7 +132,8 @@ public class ManageRepos extends ListActivity{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	        
+
+			handleIncomingIntent(getIntent());
 			getReposList();
 			
 		}
@@ -388,7 +392,7 @@ public class ManageRepos extends ListActivity{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        if(repos == null || repos.getList().size() == 0){
+        if((repos == null || repos.getList().size() == 0) && !handlingMyappRepos){
         	interfaceTasksHandler.sendEmptyMessage(EnumReposInfoTasks.NO_MANAGED_REPOS.ordinal());
         }else{
         	initReposList();
@@ -483,73 +487,71 @@ public class ManageRepos extends ListActivity{
 		
 		registerForContextMenu(this.getListView());
 		
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		handleIncomingIntent(intent);
+		super.onNewIntent(intent);
+	}
+	
+	private void handleIncomingIntent(Intent incomingIntent){
+		if(incomingIntent.getExtras() != null && incomingIntent.getExtras().getBoolean(Constants.MYAPP_NEW_REPOS_WAITING)){
+			Log.d("Aptoide-ManageRepos", "incoming Myapp Repos");
+			handlingMyappRepos = true;
+			receiveMyappRepos();
+		}
+	}
+	
+	private void receiveMyappRepos(){
+		try {
+			final ViewDisplayListRepos myappRepos = serviceDataCaller.callGetWaitingMyappRepos();
+			
+			//TODO checkServerConnection
 		
-//		Intent i = getIntent();
-//		if(i.hasExtra("uri")){
-//			//String uri = i.getStringExtra("uri");
-//			//Vector<String> new_serv_lst = getRemoteServLst(uri);
-//			Vector<String> exist_server = db.getServersName();
-//			ArrayList<String> new_serv_lst = (ArrayList<String>) i.getSerializableExtra("uri");
-//			boolean isChanged=false;
-//			for(final String uri_str: new_serv_lst){
-//				final String srv = serverCheck(uri_str);
-//				if(serverContainsRepo(exist_server,srv)){
-//					Toast.makeText(this, "Repo "+ srv+ " already exists.", 5000).show();
-//					continue;
-////					finish();
-//					
-//					
-//				}else{
-//				AlertDialog alrt = new AlertDialog.Builder(this).create();
-//				alrt.setTitle(getString(R.string.title_repo_alrt));
-//				alrt.setIcon(android.R.drawable.ic_dialog_alert);
-//				alrt.setMessage(getString(R.string.newrepo_alrt) + srv);
-//				alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
-//				      public void onClick(DialogInterface dialog, int which) {
-//				    	  db.addServer(srv);
-//				    	  change = true;
-//				    	  redraw();
-//				    	  return;
-//				      } }); 
-//				alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
-//				      public void onClick(DialogInterface dialog, int which) {
-//				    	  return;
-//				      }});
-//				alrt.show();
-//				isChanged=true;
-//				
-//			}}
-//			if(!isChanged){
-//				finish();
-//			}
-//		}else if(i.hasExtra("newrepo")){
-//			
-//			
-//			final String repo = i.getStringExtra("newrepo");
-//			Vector<String> server_lst = db.getServersName();
-//			if(serverContainsRepo(server_lst, repo)){
-//				Toast.makeText(this, "Repo "+ repo+ " already exists.", 5000).show();
-//				finish();
-//				
-//				
-//			}else{
-//			AlertDialog alrt = new AlertDialog.Builder(this).create();
-//			alrt.setTitle(getString(R.string.title_repo_alrt));
-//			alrt.setIcon(android.R.drawable.ic_dialog_alert);
-//			alrt.setMessage(getString(R.string.newrepo_alrt) + repo);
-//			alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
-//			      public void onClick(DialogInterface dialog, int which) {
-//			    	  db.addServer(repo);
-//			    	  change = true;
-//			    	  redraw();
-//			    	  return;
-//			      } }); 
-//			alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
-//			      public void onClick(DialogInterface dialog, int which) {
-//			    	  //exit
-//			      }});
-//			alrt.show();
-//		}}
+			final CharSequence[] reposArray = new CharSequence[myappRepos.getList().size()];
+			for(int i=0; i<myappRepos.getList().size(); i++){
+					reposArray[i] = (String) myappRepos.getList().get(i).get(Constants.KEY_REPO_URI);
+			}
+	
+			final ArrayList<String> addList = new ArrayList<String>();
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getString(R.string.add_repo_choose));
+			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+			builder.setMultiChoiceItems(reposArray, null, new DialogInterface.OnMultiChoiceClickListener() {
+	            		public void onClick(DialogInterface dialog,int whichButton, boolean isChecked) {
+	            		        if(isChecked){
+	            		        	addList.add(reposArray[whichButton].toString());
+	            		        }else{
+	            		        	addList.remove(reposArray[whichButton].toString());
+	            		        }
+	            		 }
+	         }); 
+			builder.setPositiveButton(getString(R.string.add), new DialogInterface.OnClickListener() {
+	            		public void onClick(DialogInterface dialog, int	whichButton) {
+	            			for (String repoUri : addList) {
+								addDisplayRepo(new ViewRepository(repoUri));
+							}
+	            			alert.dismiss();
+	            			handlingMyappRepos = false;
+	            			refreshReposList();
+	            		}
+	        });
+			builder.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
+	            		public void onClick(DialogInterface dialog, int whichButton) {
+	            			alert.dismiss();
+	            			handlingMyappRepos = false;
+	            			finish();
+	            		}
+	        }); 
+			alert = builder.create();
+			alert.show();
+		
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private boolean isRepoManaged(String uri){
