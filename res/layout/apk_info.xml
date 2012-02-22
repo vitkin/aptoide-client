@@ -51,22 +51,24 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/actionbar"
-        android:background="#ffffff" >
+        android:background="#ffffff"
+        android:gravity="center_vertical" >
 
         <ImageView
             android:id="@+id/app_hashid"
             android:layout_width="48sp"
             android:layout_height="48sp"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="24sp"
-            android:layout_marginTop="22sp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="24dp"
+            android:padding="5dp"
             android:src="@drawable/icon" />
 
         <TextView
             android:id="@+id/app_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/app_hashid"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="10sp"
             android:layout_toLeftOf="@id/app_hashid"
             android:ellipsize="end"
@@ -74,59 +76,45 @@
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#4f4f4f" />
-
-        <TextView
-            android:id="@+id/versionInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/app_name"
-            android:layout_marginLeft="10sp"
-            android:textColor="#4f4f4f" />
-
-        <RatingBar
-            android:id="@+id/rating"
-            style="?android:attr/ratingBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/versionInfo"
-            android:layout_marginLeft="10sp"
-            android:isIndicator="true"
-            android:numStars="5" />
-
-        <TextView
-            android:id="@+id/app_store"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/rating"
-            android:layout_marginLeft="10sp"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/app_version"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/app_store"
-            android:layout_marginLeft="10sp"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
+         
     </RelativeLayout>
-
+    
     <RelativeLayout
         android:id="@+id/root"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/listview_footer"
         android:layout_below="@+id/apkinfoheader" >
 
         <ListView
             android:id="@+id/listComments"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
+            android:layout_above="@+id/listview_footer"
+            android:layout_alignParentTop="true"
             android:cacheColorHint="#ffffff"
             android:divider="@drawable/list_comments_divider"
             android:dividerHeight="1px" />
+
+        <LinearLayout
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/listview_footer"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical" >
+
+            <com.google.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                ads:adSize="BANNER"
+                ads:adUnitId="a14f30ff2e69698"
+                ads:loadAdOnCreate="true"
+                ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
+            </com.google.ads.AdView>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/listview_footer"
@@ -165,4 +153,7 @@
         </LinearLayout>
     </RelativeLayout>
 
+    
+    
+    
 </RelativeLayout>

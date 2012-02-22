@@ -1,122 +1,194 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:gravity="center" android:orientation="vertical"
-	android:layout_width="fill_parent" android:layout_height="wrap_content"
-	android:background="#ffffff">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="top" >
 
-    <TableLayout
+    <RelativeLayout
+        android:id="@+id/likesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp" >
+
+        <ImageView
+            android:id="@+id/likesImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/like"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/dislikesImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/dontlike"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/dislikes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/dislikesImage"
+            android:padding="5dp"
+            android:textColor="#a8a8a8" />
+
+        <TextView
+            android:id="@+id/likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/likesImage"
+            android:padding="5dp"
+            android:textColor="#a8a8a8" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/ratings"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="5.0sp"
-        android:paddingRight="5.0sp"
-        android:paddingTop="10.0dip"
-        android:stretchColumns="0" >
+        android:layout_below="@+id/likesLayout"
+        android:gravity="right" >
 
-        <TableRow>
+        <TextView
+            android:id="@+id/app_store"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:textColor="#4f4f4f"
+            android:paddingLeft="5dp"
+            android:paddingBottom="15dp"
+            android:textSize="12sp" />
 
-            <TableLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:stretchColumns="0" >
+        <RatingBar
+            android:id="@+id/rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            
+            android:layout_marginRight="10dp"
+            android:paddingBottom="15dp"
+            android:numStars="5" />
+    </RelativeLayout>
 
-                <TableRow>
+    <LinearLayout
+        android:id="@+id/version"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" 
+        
+        android:layout_below="@+id/ratings">
 
-                    <TextView
-                        android:id="@+id/likes"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="#a8a8a8" />
+        <TextView
+            android:id="@+id/app_version"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            
+            android:paddingLeft="5dp"
+            android:textColor="#4f4f4f"
+            android:textSize="12sp" />
 
-                    <TextView
-                        android:id="@+id/dislikes"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="#a8a8a8" />
-                </TableRow>
+        <Spinner
+            android:id="@+id/spinnerMultiVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:prompt="@string/multi_ver_prompt" />
 
-                <TableRow>
+        <TextView
+            android:id="@+id/versionInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp"
+            android:paddingLeft="5dp"
+            android:textColor="#4f4f4f"
+            android:textSize="12sp" />
 
-                    <ImageView
-                        android:id="@+id/likesImage"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:src="@drawable/like"
-                        android:visibility="visible" />
+        <CheckBox
+            android:id="@+id/schedule_download_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="40sp"
+            android:text="@string/chkBoxSchDwn"
+            android:textColor="#3f3f3f" />
 
-                    <ImageView
-                        android:id="@+id/dislikesImage"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:src="@drawable/dontlike"
-                        android:visibility="visible" />
-                </TableRow>
-            </TableLayout>
-        </TableRow>
+    </LinearLayout>
 
-        <TableRow android:paddingTop="15.0dip" >
+    <LinearLayout
+        android:id="@+id/screenshots"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/version"
+        android:orientation="vertical" >
 
-            <Spinner
-                android:id="@+id/spinnerMultiVersion"
-                android:layout_width="40sp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:prompt="@string/multi_ver_prompt" />
-        </TableRow>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="5.0sp"
+            android:paddingRight="5.0sp"
+            android:paddingTop="10.0dip"
+            android:text="About:"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="#3f3f3f"
+            android:textSize="18.0sp" />
 
-        <TableRow>
-        </TableRow>
+        <TextView
+            android:id="@+id/descript"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="5.0sp"
+            android:paddingRight="5.0sp"
+            android:paddingTop="10.0dip"
+            android:textColor="#7e7e7e" />
 
-        <TableRow>
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingBottom="5.0sp"
+            android:paddingLeft="5.0sp"
+            android:paddingRight="5.0sp"
+            android:paddingTop="10.0dip"
+            android:text="Screenshots:"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:textColor="#3f3f3f"
+            android:textSize="18.0sp" />
 
-            <CheckBox
-                android:id="@+id/schedule_download_box"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="40sp"
-                android:text="@string/chkBoxSchDwn"
-                android:textColor="#3f3f3f" />
-        </TableRow>
-    </TableLayout>
+        <ProgressBar
+            android:id="@+id/pscreens"
+            style="@android:style/Widget.ProgressBar.Large.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
 
-	<TextView android:textAppearance="?android:textAppearanceLarge"
-		android:textSize="18.0sp" android:textColor="#3f3f3f" android:gravity="left"
-		android:layout_gravity="top" android:paddingTop="10.0dip"
-		android:paddingLeft="5.0sp" android:paddingRight="5.0sp"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:text="About:" />
+        <TextView
+            android:id="@+id/noscreens"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingLeft="5.0sp"
+            android:paddingRight="5.0sp"
+            android:paddingTop="10.0dip"
+            android:textColor="#a8a8a8"
+            android:visibility="invisible" />
 
-	<TextView android:id="@+id/descript" android:gravity="left"
-		android:layout_gravity="top" android:paddingTop="10.0dip"
-		android:textColor="#7e7e7e" android:paddingLeft="5.0sp"
-		android:paddingRight="5.0sp" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" />
+        <Gallery
+            android:id="@+id/galleryScreens"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
 
-	<TextView android:textAppearance="?android:textAppearanceLarge"
-		android:textSize="18.0sp" android:textColor="#3f3f3f" android:gravity="left"
-		android:layout_gravity="top" android:paddingTop="10.0dip"
-		android:paddingLeft="5.0sp" android:paddingRight="5.0sp"
-		android:paddingBottom="5.0sp" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:text="Screenshots:" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="50dp" >
+        </LinearLayout>
 
-	<ProgressBar android:id="@+id/pscreens"
-		android:layout_width="wrap_content" android:layout_height="wrap_content" />
+    </LinearLayout>
 
-	<TextView android:id="@+id/noscreens" android:gravity="center"
-		android:layout_gravity="center" android:paddingTop="10.0dip"
-		android:textColor="#a8a8a8" android:paddingLeft="5.0sp"
-		android:paddingRight="5.0sp" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" android:visibility="invisible" />
-
-	<Gallery android:id="@+id/galleryScreens" android:layout_width="fill_parent"
-		android:layout_height="wrap_content" />
-
-	<LinearLayout
-	    android:id="@+id/linearLayout1"
-	    android:layout_width="match_parent"
-	    android:layout_height="50dp"
-	    android:orientation="vertical" >
-	</LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

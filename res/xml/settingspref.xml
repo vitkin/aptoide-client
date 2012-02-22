@@ -14,7 +14,7 @@
             android:entries="@array/dwnif"
             android:entryValues="@array/dwnifv" />
     </PreferenceCategory>
-            
+       
   
   <PreferenceCategory
         android:title="@string/clear_cache_title">
@@ -25,7 +25,16 @@
         android:key="clearcache" />
  
   </PreferenceCategory>
-  
+  <PreferenceCategory
+        android:title="Application Rating">
+        <ListPreference
+            android:title="Application Rating"
+            android:summary="Show applications rated as:"
+            android:key="app_rating"
+            android:defaultValue="All"
+            android:entries="@array/matureentries"
+            android:entryValues="@array/maturevalues" />
+    </PreferenceCategory>
   <PreferenceCategory
         android:title="@string/credentialssettings">
 	
@@ -61,6 +70,15 @@
      	android:title="@string/setting_schdwninstalltitle"
         android:summary="@string/setting_schdwninstallsum"
         android:key="schDwnBox" 
+        />
+      </PreferenceCategory>
+      <PreferenceCategory
+        android:title="Check Stores update">
+      
+      <CheckBoxPreference
+     	android:title="Check Stores update completion"
+        android:summary="Show popup at startup when any of your active stores update is not complete"
+        android:key="reposIsUpdate" 
         />
       </PreferenceCategory>
 </PreferenceScreen>
