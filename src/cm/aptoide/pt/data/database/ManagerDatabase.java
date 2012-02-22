@@ -30,7 +30,6 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.UrlQuerySanitizer.ValueSanitizer;
 import android.util.Log;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
@@ -1391,8 +1390,14 @@ public class ManagerDatabase {
 		String selectRepos = "SELECT "+Constants.KEY_REPO_HASHID
 							+" FROM "+Constants.TABLE_REPOSITORY
 							+" WHERE "+Constants.KEY_REPO_HASHID+" IN (";
+		
+		boolean firstWhere = true;
+		
 		for (Integer repoHashid : repos.getHashMap().keySet()) {
-			selectRepos += "'"+repoHashid+"', ";
+			if(!firstWhere){
+				selectRepos += ", ";
+			}
+			selectRepos += "'"+repoHashid+"'";
 		}					
 		selectRepos += ");";
 		

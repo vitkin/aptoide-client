@@ -30,7 +30,8 @@ package cm.aptoide.pt.data.preferences;
 public enum EnumMinScreenSize {
 	small,
 	normal,
-	large;
+	large,
+	xlarge;
 	
 	public static EnumMinScreenSize reverseOrdinal(int ordinal){
 		return values()[ordinal];

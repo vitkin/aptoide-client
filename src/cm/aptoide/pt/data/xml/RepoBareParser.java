@@ -25,7 +25,6 @@
 package cm.aptoide.pt.data.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -52,7 +51,6 @@ public class RepoBareParser extends DefaultHandler{
 	private ArrayList<ArrayList<ViewApplication>> applicationsInsertStack = new ArrayList<ArrayList<ViewApplication>>(2);
 	
 	private EnumXmlTagsBare tag = EnumXmlTagsBare.apklst;
-	private HashMap<String, EnumXmlTagsBare> tagMap = new HashMap<String, EnumXmlTagsBare>();
 	
 	private String packageName = "";
 	private int parsedAppsNumber = 0;
@@ -65,10 +63,6 @@ public class RepoBareParser extends DefaultHandler{
 	public RepoBareParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
-		
-//		for (EnumXmlTagsBare tag : EnumXmlTagsBare.values()) {
-//			tagMap.put(tag.name(), tag);
-//		}
 	}
 	
 	@Override
