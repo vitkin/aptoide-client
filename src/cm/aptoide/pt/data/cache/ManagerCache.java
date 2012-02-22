@@ -137,6 +137,10 @@ public class ManagerCache {
 		return getNewViewCache(Constants.PATH_CACHE_MYAPPS+myappName);
 	}
 	
+	public ViewCache getNewLatestVersionDownloadViewCache(){
+		return getNewViewCache(Constants.FILE_SELF_UPDATE);
+	}
+	
 	
 	public boolean isFreeSpaceInSdcard(){
 		File sdcard_file = new File(Constants.PATH_SDCARD);

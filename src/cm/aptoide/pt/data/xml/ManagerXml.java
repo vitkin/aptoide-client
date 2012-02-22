@@ -32,10 +32,12 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
+import cm.aptoide.pt.data.display.ViewDisplayListRepos;
+import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ViewNotification;
@@ -84,7 +86,33 @@ public class ManagerXml{
 	public ManagerDatabase getManagerDatabase(){
 		return serviceData.getManagerDatabase();
 	}
-
+	
+	
+	
+	public void latestVersionInfoParse(ViewCache cache){	//TODO use notification 
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_UPDATE
+									, serviceData.getString(R.string.self_update), R.string.self_update);
+		DefaultHandler latestVersionInfoParser = null;
+	    try {
+	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+	    	latestVersionInfoParser = new LatestVersionInfoParser(this, cache);
+	    	
+	    	xmlReader.setContentHandler(latestVersionInfoParser);
+	    	xmlReader.setErrorHandler(latestVersionInfoParser);
+	    	
+	    	InputSource inputSource = new InputSource(new FileReader(cache.getFile()));
+	    	Log.d("Aptoide-managerXml", cache.getLocalPath());
+	    	xmlReader.parse(inputSource);
+	    	
+	    } catch (Exception e){
+	    	e.printStackTrace();
+	    }		
+	}
+	
+	public void parsingLatestVersionInfoFinished(ViewLatestVersionInfo latestVersionInfo){
+		serviceData.parsingLatestVersionInfoFinished(latestVersionInfo);
+	}
+	
 
 	public void repoParse(ViewRepository repository, ViewCache cache, EnumInfoType infoType){
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
@@ -272,7 +300,7 @@ public class ManagerXml{
 		serviceData.parsingRepoAppExtrasFinished(repository, appHashid);
 	}
 	
-	public void myappParse(ViewCache cache, String myappName){
+	public void myappParse(ViewCache cache, String myappName){	//TODO use notification 
 		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.PARSE_MYAPP, myappName, myappName.hashCode());
 		DefaultHandler myappParser = null;
 	    try {
@@ -289,6 +317,10 @@ public class ManagerXml{
 	    } catch (Exception e){
 	    	e.printStackTrace();
 	    }		
+	}
+	
+	public void parsingMyappFinished(ViewMyapp viewMyapp, ViewDisplayListRepos listRepos){
+		serviceData.parsingMyappFinished(viewMyapp, listRepos);
 	}
 	
 	public int getDisplayListsFastReset(){

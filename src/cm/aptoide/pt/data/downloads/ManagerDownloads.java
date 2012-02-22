@@ -41,6 +41,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
 import cm.aptoide.pt.data.cache.ManagerCache;
@@ -257,6 +258,21 @@ public class ManagerDownloads {
 		
 		return connectionAvailable;
 	}
+	
+
+	
+	public ViewCache downloadLatestVersionInfo(){
+		ViewCache cache = managerCache.getNewLatestVersionDownloadViewCache();
+		ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_UPDATE
+									, serviceData.getString(R.string.self_update), R.string.self_update);
+		ViewDownload download = getNewViewDownload(Constants.URI_LATEST_VERSION_XML, cache, notification);
+
+		download(download, false);
+
+		return cache;
+	}
+	
+	
 	
 	public boolean isIconCached(int appHashid){
 		return managerCache.isIconCached(appHashid);
