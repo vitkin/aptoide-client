@@ -1,10 +1,14 @@
 package cm.aptoide.pt.utils;
 
+import java.util.LinkedList;
+
 import cm.aptoide.pt.R;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -22,18 +26,18 @@ public class ImageAdapter extends BaseAdapter {
 	
     private Context context;
     private int itemBackground;
-    private Drawable[] drawables;
+    private LinkedList<Bitmap> drawables;
     private String apk_name_str;
     
     /**
      * 
      * @param c
-     * @param drawables
+     * @param imageDrwb
      * @param apk_name_str
      */
-    public ImageAdapter(Context c, Drawable[] drawables, String apk_name_str) {
+    public ImageAdapter(Context c, LinkedList<Bitmap> imageDrwb, String apk_name_str) {
         context = c;
-        this.drawables = drawables;
+        this.drawables = imageDrwb;
         this.apk_name_str = apk_name_str;
         //Setting the style
         TypedArray a = context.obtainStyledAttributes(R.styleable.galleryScreens);
@@ -46,7 +50,7 @@ public class ImageAdapter extends BaseAdapter {
      * Returns the number of images
      */
     public int getCount() {
-        return drawables.length;
+        return drawables.size();
     }
     
     /**
@@ -65,16 +69,18 @@ public class ImageAdapter extends BaseAdapter {
      */
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView imageView = new ImageView(context);
-        imageView.setImageDrawable(drawables[position]);
+        imageView.setImageBitmap(drawables.get(position));
         imageView.setScaleType(ImageView.ScaleType.FIT_END);
-        if(drawables[position]!=null){
+        if(drawables.get(position)!=null){
 	        imageView.setLayoutParams(
 	        		new Gallery.LayoutParams(
-	        				(int)(drawables[position].getMinimumWidth()*0.5), 
-	        				(int)(drawables[position].getMinimumHeight()*0.5)
+	        				(int)(drawables.get(position).getWidth()*0.5), 
+	        				(int)(drawables.get(position).getHeight()*0.5)
 	        				)
 	        		);
 	        imageView.setBackgroundResource(itemBackground);
+        }else{
+        	Log.e("Aptoide","Screenshots Error");
         }
         
         

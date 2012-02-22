@@ -81,6 +81,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.StatFs;
 import android.os.PowerManager.WakeLock;
+import android.text.Layout;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -92,16 +93,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.SimpleAdapter;
@@ -172,6 +176,7 @@ public class RemoteInTab extends BaseManagement {
 	private TextView listTextHeader = null;
 	private String currentCatName = null;
 	private RelativeLayout mainLayout;
+	private ProgressBar extrasprogress;
 
 	//	private TextView emptyUpdatesList;
 
@@ -263,16 +268,24 @@ public class RemoteInTab extends BaseManagement {
 				}
 			}else if ( intent.getAction().equals("pt.caixamagica.aptoide.UPDATE_APK_ACTION")) {
 				updateApk(intent.getStringExtra("localPath"), intent.getStringExtra("packageName"), intent.getStringExtra("version"));
-				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));
+				if(downloadQueueService!=null){
+				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));}
 				db.deleteScheduledDownload(intent.getStringExtra("packageName"), intent.getStringExtra("version"));
 			}else if (intent.getAction().equals("pt.caixamagica.aptoide.INSTALL_APK_ACTION")) {
 				installApk(intent.getStringExtra("localPath"), intent.getStringExtra("version"));
-				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));
+				if(downloadQueueService!=null){
+				downloadQueueService.dismissNotification(intent.getIntExtra("apkidHash",0));}
 				db.deleteScheduledDownload(intent.getStringExtra("packageName"), intent.getStringExtra("version"));
 			}else if (intent.getAction().equals("pt.caixamagica.aptoide.REDRAW")){
 				displayrefresh2.sendEmptyMessage(0);
+			}else if (intent.getAction().equals("pt.caixamagica.aptoide.LIST_REDRAW")){
+				redraw();
+			}else if (intent.getAction().equals("pt.caixamagica.aptoide.SERVICE_STOP")){
+				extrasprogress.setVisibility(View.GONE);
+			}else if (intent.getAction().equals("pt.caixamagica.aptoide.SERVICE_START")){
+				extrasprogress.setVisibility(View.VISIBLE);
 			}
-
+			
 		}
 	};
 
@@ -337,10 +350,13 @@ public class RemoteInTab extends BaseManagement {
 		intentFilter2.addAction("pt.caixamagica.aptoide.UPDATE_APK_ACTION");
 		intentFilter2.addAction("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
 		intentFilter2.addAction("pt.caixamagica.aptoide.REDRAW");
+		intentFilter2.addAction("pt.caixamagica.aptoide.LIST_REDRAW");
+		intentFilter2.addAction("pt.caixamagica.aptoide.SERVICE_STOP");
+		intentFilter2.addAction("pt.caixamagica.aptoide.SERVICE_START");
 		registerReceiver(broadcastReceiver2, intentFilter2);
 
 		super.onCreate(savedInstanceState);
-
+		
 		//		if(Configs.INTERFACE_TABS_ON_BOTTOM){
 		//			super.setContentView(R.layout.tabhostbottom);
 		//		} else {
@@ -356,7 +372,7 @@ public class RemoteInTab extends BaseManagement {
 
 		mctx = this;
 
-		db = new DbHandler(this);
+		db = new DbHandler(getApplicationContext());
 
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 
@@ -369,6 +385,7 @@ public class RemoteInTab extends BaseManagement {
 				return swypeDetector.onTouchEvent(event);
 			}
 		};
+		
 		//		myTabHost = getTabHost();
 		if(Configs.INTERFACE_SILVER_TABS_ON){
 
@@ -684,9 +701,7 @@ public class RemoteInTab extends BaseManagement {
 							availView.setSelection(pos-1);
 							deep = 1;
 							if(filteredApps>0){
-								//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
-								currentCatName = "Filtered "+filteredApps+" applications.";
-								listTextHeader.setText(currentCatName);	
+															Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 							}
 						}else if(pkg_id.equals("apps")){
 							shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
@@ -699,9 +714,7 @@ public class RemoteInTab extends BaseManagement {
 							availView.setSelection(pos-1);
 							deep = 2;
 							if (filteredApps > 0){
-								//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
-								currentCatName = "Filtered "+filteredApps+" applications.";
-								listTextHeader.setText(currentCatName);
+															Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 							}
 						}else if(pkg_id.equals("games")){
 							shown_now = ((TextView)((LinearLayout)arg1).findViewById(R.id.name)).getText().toString();
@@ -715,9 +728,7 @@ public class RemoteInTab extends BaseManagement {
 							availView.setSelection(pos-1);
 							deep = 3;
 							if (filteredApps > 0){
-								//							Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
-								currentCatName = "Filtered "+filteredApps+" applications.";
-								listTextHeader.setText(currentCatName);
+															Toast.makeText(getApplicationContext(), "Filtered "+filteredApps+" applications.", Toast.LENGTH_SHORT).show();
 							}
 						}else{
 
@@ -770,6 +781,7 @@ public class RemoteInTab extends BaseManagement {
 
 			//			lv.setAdapter(getAvailable(null,-1));
 			setContentView(R.layout.aptoide);
+			extrasprogress = (ProgressBar) findViewById(R.id.progressBar1);
 			vf = (ViewFlipper) findViewById(R.id.list_flipper);
 
 
@@ -947,8 +959,8 @@ public class RemoteInTab extends BaseManagement {
 						keepScreenOn.release();
 					}
 					installApk(installApkIntent);
-					//					this.getIntent().setAction("android.intent.action.VIEW");
-					//					startActivity(getIntent());
+					getIntent().setAction("android.intent.action.VIEW");
+					startActivity(getIntent());
 					return;
 				}
 			} 
@@ -1054,7 +1066,6 @@ public class RemoteInTab extends BaseManagement {
 							}
 						}
 					}else if(i.hasExtra("newrepo")){
-						Log.d("","olaaaaaaaaaaaa");
 						Intent call = new Intent(mctx, ManageRepo.class);
 						call.putExtra("newrepo", i.getStringExtra("newrepo"));
 						startActivityForResult(call,NEWREPO_FLAG);
@@ -1064,7 +1075,7 @@ public class RemoteInTab extends BaseManagement {
 					}else if(i.hasExtra("downloadAll")){
 						Intent call = new Intent(mctx, ScheduledDownload.class);
 						call.putExtra("downloadAll", "");
-						Log.d("passou aqui","");
+						
 						startActivity(call);
 
 					}
@@ -1079,8 +1090,47 @@ public class RemoteInTab extends BaseManagement {
 		//			schDownAll();
 		//    	}
 		//		registerReceiver(broadcastReceiver , intentFilter);
-		if(db.checkNPackages()){
-			updateRepos();
+		boolean pref = sPref.getBoolean("reposIsUpdate", true);
+		boolean pref2 = sPref.getBoolean("reposIsAlwaysUpdate", false);
+		
+		if (db.checkNPackages(pref | pref2)) {
+			if (sPref.getBoolean("reposIsAlwaysUpdate", false)) {
+				updateRepos();
+			} else {
+				LayoutInflater li = LayoutInflater.from(this);
+				View v = li.inflate(R.layout.checkbox, (ViewGroup) findViewById(R.layout.aptoide));
+				final CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
+				cb.setText("Never show this again");
+				cb.setChecked(false);
+				AlertDialog ad = new AlertDialog.Builder(this).create();
+				ad.setTitle("Check Store update completion");
+				ad.setMessage("An incomplete update was detected in your active stores. Do you want to complete the update?");
+				ad.setButton("Yes", new OnClickListener() {
+
+					public void onClick(DialogInterface arg0, int arg1) {
+						updateRepos();
+						if (cb.isChecked()) {
+							prefEdit.putBoolean("reposIsAlwaysUpdate", true);
+							prefEdit.putBoolean("reposIsUpdate", false);
+							prefEdit.commit();
+						}
+					}
+				});
+				ad.setButton2("No", new OnClickListener() {
+
+					public void onClick(DialogInterface dialog, int which) {
+						if (cb.isChecked()) {
+
+							prefEdit.putBoolean("reposIsUpdate", false);
+							prefEdit.commit();
+						}
+
+					}
+				});
+				ad.setView(v);
+
+				ad.show();
+			}
 		}
 	}
 
@@ -1389,26 +1439,41 @@ public class RemoteInTab extends BaseManagement {
 		}else if(requestCode == FETCH_APK){
 			if(intserver != null)
 				startActivityForResult(intserver, NEWREPO_FLAG);
-
-		}else if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
-			String apk_id = data.getStringExtra("apkid");
-			Log.d("Aptoide", "....... getting: " + apk_id);
-			queueDownload(apk_id, data.getStringExtra("version"), false);
-
-		}else if(requestCode == 30 && data != null && data.hasExtra("apkid")){
-
-			if(data.getBooleanExtra("rm", false)){
-				new Thread() {
-					public void run() {
+			
+			
+		}else if(requestCode==30&&data!=null&&data.hasExtra("install")){
+			Log.d("TabInstalledResult",requestCode + " "+ resultCode);
+			if(requestCode == 30 && data != null && data.hasExtra("apkid")){
+				if(data.getBooleanExtra("rm", false)){
+					new Thread() {
+						public void run() {
+							String apk_id = data.getStringExtra("apkid");
+							Log.d("Aptoide", ".... removing: " + apk_id);
+							removeApk(apk_id);
+						}
+					}.start();
+				} else if(data.getBooleanExtra("install", false) && data.hasExtra("version")){
 						String apk_id = data.getStringExtra("apkid");
-						Log.d("Aptoide", ".... removing: " + apk_id);
-						removeApk(apk_id);
-					}
-				}.start();
-			} else if(data.getBooleanExtra("install", false) && data.hasExtra("version")){
+						Log.d("Aptoide", "....... getting: " + apk_id);
+						queueDownload(apk_id, data.getStringExtra("version"), true);
+				}
+			}
+			
+		}else if(requestCode == 30 && data != null && data.hasExtra("updates")){
+			if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
+				
+						String apk_id = data.getStringExtra("apkid");
+						Log.d("Aptoide", ".... updating: " + apk_id);
+						queueDownload(apk_id,data.getStringExtra("version"), true);
+						
+			}
+
+		}else if(requestCode == 30 && data != null && data.hasExtra("available")){
+
+			if(requestCode == 30 && data != null && data.hasExtra("apkid") && data.hasExtra("version")){
 				String apk_id = data.getStringExtra("apkid");
 				Log.d("Aptoide", "....... getting: " + apk_id);
-				queueDownload(apk_id, data.getStringExtra("version"), true);
+				queueDownload(apk_id, data.getStringExtra("version"), false);
 			}
 		}
 
@@ -1476,14 +1541,31 @@ public class RemoteInTab extends BaseManagement {
 		boolean connectionAvailable = false;
 		try {
 			connectionAvailable = netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
-			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
-			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
-
-		} catch (Exception e) { }
+		} catch (Exception e) {
+			
+			e.printStackTrace()	;
+			
+			}
 		try {
-			connectionAvailable = connectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectionAvailable
+					|| netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			connectionAvailable = connectionAvailable
+					|| netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
 
-		} catch (Exception e) { }
+		} catch (Exception e) {
+
+		}
+		try {
+			connectionAvailable = connectionAvailable
+					|| netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+
+		} catch (Exception e) {
+
+		}
 
 
 		if(connectionAvailable){
@@ -1827,6 +1909,7 @@ public class RemoteInTab extends BaseManagement {
 
 			Intent goExtraServ = new Intent(mctx, FetchExtrasService.class);
 			goExtraServ.putExtra("lstex", extras_repo);
+			
 			mctx.startService(goExtraServ);
 			/*new Thread() {
 				public void run() {
@@ -1908,7 +1991,7 @@ public class RemoteInTab extends BaseManagement {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			pd.setMessage(getString(R.string.update_process, new Object[]{msg.arg1, msg.arg2}));//"Updating repository " + msg.arg1 + " of " + msg.arg2);
-
+			
 		}
 
 	};
@@ -2077,8 +2160,8 @@ public class RemoteInTab extends BaseManagement {
 		//    	IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.INSTALL_APK_ACTION");
 		//	    registerReceiver(new InstallApkListener(), filter);
 		sendBroadcast(installApkAction);
-		//		getIntent().setAction("android.intent.action.VIEW");
-		//		startActivity(getIntent());
+				getIntent().setAction("android.intent.action.VIEW");
+				startActivity(getIntent());
 
 		Log.d("Aptoide-RemoteInTab", "install broadcast sent");
 	}

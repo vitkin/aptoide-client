@@ -140,7 +140,7 @@ public class BaseManagement extends Activity {
 
 		getApplicationContext().bindService(new Intent(getApplicationContext(), DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		mPm = getPackageManager();
-		db = new DbHandler(this);
+		db = new DbHandler(getApplicationContext());
 		mctx = this;
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		prefEdit = sPref.edit();
@@ -430,9 +430,9 @@ public class BaseManagement extends Activity {
 	}
 
 
-	final String age_filter="Mature";
+	String age_filter;
 	protected void redraw(){
-		
+		age_filter=sPref.getString("app_rating", "All");
 		if(pd!=null&&pd.isShowing()){
 			pd.dismiss();
 		}
@@ -533,10 +533,10 @@ public class BaseManagement extends Activity {
 							apk_line.put("status", node.ver);
 							apk_line.put("name", node.name);
 							availMap.add(apk_line);
-
+							
 
 						}
-
+						
 
 					}
 
@@ -607,10 +607,14 @@ public class BaseManagement extends Activity {
 
 
 	protected boolean ageFilter(String age, String age_filter) {
-		
-		boolean a = EnumAges.get(age).ordinal()>EnumAges.get(age_filter).ordinal();
-		Log.d(a+"",age);
-		return a;
+		boolean result;
+		try{
+			result = EnumAges.get(age.trim()).ordinal()>EnumAges.get(age_filter).ordinal();
+		}catch (Exception e) {
+			e.printStackTrace();
+			return true;
+		}
+		return result;
 		
 	}
 
@@ -757,6 +761,7 @@ public class BaseManagement extends Activity {
 	}
 
 	protected SimpleAdapter getGivenCatg(String ctg, int ord){
+		age_filter=sPref.getString("app_rating", "All");
 		filteredApps =0;
 		List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
 		Map<String, Object> apk_line;
@@ -859,11 +864,11 @@ public class BaseManagement extends Activity {
 						Vector<String> hashids = new Vector<String>();
 						Vector<String> servers= new Vector<String>();
 						entries = new Vector<ServerEntry>();
-						db = new DbHandler(mctx);
+						
 						allServers = db.getServers();
 						if(allServers!=null&&!allServers.isEmpty()){
 							for(ServerNode server : allServers){
-								if (server.inuse) {
+								if (server.inuse&&!server.hash.equals("0")&&server.extended.equals("1")) {
 									servers.add(server.uri);
 									hashids.add(db.getServerDelta(server.uri));
 								}

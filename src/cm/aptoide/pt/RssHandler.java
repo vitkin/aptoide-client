@@ -136,7 +136,7 @@ public class RssHandler extends DefaultHandler{
 		tmp_apk.sdkVer=0;
 		tmp_apk.screenSize="small";
 		tmp_apk.ESGLVer="0.0";
-		tmp_apk.age="Mature";
+		tmp_apk.age="All";
 		
 		this.pd_set = pd_set;
 		this.pd_tick = pd_tick;
@@ -319,7 +319,7 @@ public class RssHandler extends DefaultHandler{
 			tmp_apk.sdkVer=0;
 			tmp_apk.screenSize="small";
 			tmp_apk.ESGLVer="0.0";
-			tmp_apk.age="Mature";
+			tmp_apk.age="All";
 			pd_tick.sendEmptyMessage(0);
 			
 		}else if(localName.trim().equals("name")){
@@ -609,9 +609,9 @@ public class RssHandler extends DefaultHandler{
 			}
 		}catch (Exception e){
 		}*/
-		if(napk<=nPackages){
-			db.updateNPackages(mserver,1);
-		}
+		
+		db.updateNPackages(mserver,1);
+		
 		endTotalTime = System.currentTimeMillis();
 		Log.d(new Long(endTotalTime-startTotalTime).toString(), "Total time");
 		super.endDocument();

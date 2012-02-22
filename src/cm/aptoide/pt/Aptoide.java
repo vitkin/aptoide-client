@@ -388,7 +388,7 @@ public class Aptoide extends Activity {
 
     private void proceed(){
     	
-   		db = new DbHandler(this);
+   		db = new DbHandler(getApplicationContext());
    		
     	if(sPref.getInt("version", 0) < pkginfo.versionCode){
 	   		db.updateTables();
@@ -413,6 +413,10 @@ public class Aptoide extends Activity {
 		
 		if(sPref.getString("icdown", null) == null){
 			prefEdit.putString("icdown", "g3w");
+			prefEdit.commit();
+		}
+		if(!sPref.contains("app_rating")){
+			prefEdit.putString("app_rating", "All");
 			prefEdit.commit();
 		}
 		if(!sPref.contains("schDwnBox")){

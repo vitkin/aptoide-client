@@ -68,7 +68,9 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	
 	private Preference clear_cache = null;
 	private CheckBoxPreference hwbox;
-	private CheckBoxPreference schDwnBox;	
+	private CheckBoxPreference schDwnBox;
+	private CheckBoxPreference chkReposUpdates;	
+
 	private boolean changed = false;
 	
 	private DownloadQueueService downloadQueueService;
@@ -124,6 +126,8 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	};
 	BroadcastReceiver receiver;
 	private boolean changed2 =false;
+	private boolean changed3 =false;
+	private boolean changed4 =false;
 	
 	
 	@Override
@@ -164,6 +168,9 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		hwspecs.setIntent(new Intent(getBaseContext(),HWSpecActivity.class));
 		hwbox = (CheckBoxPreference) findPreference("hwspecsChkBox");
 		schDwnBox = (CheckBoxPreference) findPreference("schDwnBox");
+		chkReposUpdates=(CheckBoxPreference) findPreference("reposIsUpdate");
+		
+		chkReposUpdates.setChecked(sPrefFull.getBoolean("reposIsUpdate", true));
 		
 		
 		
@@ -335,6 +342,10 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 				prefEditFull.putBoolean("schDwnBox", false);
 				
 			}
+		}else if(key.equalsIgnoreCase("app_rating")){
+			changed3=true;
+		}else if(key.equalsIgnoreCase("repoIsUpdate")){
+			changed4=true;
 		}
 	}
 	
@@ -356,8 +367,17 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	@Override
 	public void finish() {
 		prefEditFull.putString("icdown", sPref.getString("icdown", "error"));
-		
+		prefEditFull.putString("app_rating", sPref.getString("app_rating", "All"));
+		prefEditFull.putBoolean("reposIsUpdate", chkReposUpdates.isChecked());
+		if(changed4&&chkReposUpdates.isChecked()){
+			prefEditFull.putBoolean("repoIsAlwaysUpdate", false);
+		}
 		prefEditFull.commit();
+		
+		if(changed3){
+			Intent i = new Intent("pt.caixamagica.aptoide.LIST_REDRAW");
+			sendBroadcast(i);
+		}
 		
 		if(sPref.getString("icdown", "error").equalsIgnoreCase("nd")){
 			Intent serv = new Intent(mctx,FetchIconsService.class);

@@ -156,7 +156,7 @@ public class ManageRepo extends ListActivity{
 				LayoutInflater li = LayoutInflater.from(this);
 			    View v = li.inflate(R.layout.checkbox, (ViewGroup)findViewById(R.layout.repolisticons));
 			    final CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
-			    cb.setText("Extended Server");
+			    cb.setText("Extended Server (Webservices)");
 			    alrt.setView(v);
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -198,7 +198,7 @@ public class ManageRepo extends ListActivity{
 			LayoutInflater li = LayoutInflater.from(this);
 		    View v = li.inflate(R.layout.checkbox, (ViewGroup)findViewById(R.layout.repolisticons));
 		    final CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
-		    cb.setText("Extended Server");
+		    cb.setText("Extended Server (Webservices)");
 		    alrt.setView(v);
 			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -634,6 +634,7 @@ public class ManageRepo extends ListActivity{
 		
 		String[] logins = null; 
 		logins = db.getLogin(repo);
+		
 		if(logins != null){
 			sec.setChecked(true);
 			sec_user.setText(logins[0]);																																																				 
@@ -641,13 +642,14 @@ public class ManageRepo extends ListActivity{
 		}else{
 			sec.setChecked(false);
 		}
-	
+		final CheckBox extended = (CheckBox) view.findViewById(R.id.extended_chk);
+		extended.setChecked(db.getExtendedStatus(repo));
 		alrt.setIcon(android.R.drawable.ic_menu_add);
 		alrt.setTitle(getString(R.string.repo_edt_msg2));
 		alrt.setButton(getText(R.string.btn_done), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				String new_repo = uri.getText().toString();
-				db.updateServer(repo, new_repo);
+				db.updateServer(repo, new_repo,extended.isChecked()?1:0);
 				if(sec.isChecked()){
 					db.addLogin(sec_user.getText().toString(), sec_pwd.getText().toString(), new_repo);
 				}else{

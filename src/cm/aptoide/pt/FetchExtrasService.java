@@ -81,6 +81,8 @@ public class FetchExtrasService extends Service{
 		
 		public void run() {
 			try{
+				Intent i = new Intent("pt.caixamagica.aptoide.SERVICE_START");
+				sendBroadcast(i);
 				for(ServerNode node: parsedList){
 					if(node.inuse){
 						Log.d("Aptoide", "-------------------------Extras for: " + node.uri);
@@ -103,6 +105,8 @@ public class FetchExtrasService extends Service{
 					}
 				}
 				Log.d("Aptoide","......................Extras service STOPING....");
+				i = new Intent("pt.caixamagica.aptoide.SERVICE_STOP");
+				sendBroadcast(i);
 				stopSelf();
 			}catch (Exception e){ 	}
 		}
