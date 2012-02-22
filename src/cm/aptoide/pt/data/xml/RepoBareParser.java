@@ -75,7 +75,6 @@ public class RepoBareParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-//		tag = tagMap.get(localName.trim());
 		tag = EnumXmlTagsBare.valueOf(localName.trim());
 		
 		switch (tag) {

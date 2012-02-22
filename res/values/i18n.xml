@@ -6,6 +6,7 @@
     <string name="update_available">Update available</string>
     <string name="update_confirm">There is a new version of aptoide available,\ndo you wish to update?</string>
     <string name="self_updating">Please wait while processing update download&#8230;</string>
+    <string name="self_update">Self update</string>
     
     
     <string name="manage_repos">Manage Stores</string>

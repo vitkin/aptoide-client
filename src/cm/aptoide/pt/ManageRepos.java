@@ -518,7 +518,7 @@ public class ManageRepos extends ListActivity{
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(getString(R.string.add_repo_choose));
-			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+			builder.setIcon(android.R.drawable.ic_menu_add);
 			builder.setMultiChoiceItems(reposArray, null, new DialogInterface.OnMultiChoiceClickListener() {
 	            		public void onClick(DialogInterface dialog,int whichButton, boolean isChecked) {
 	            		        if(isChecked){

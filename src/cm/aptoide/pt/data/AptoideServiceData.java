@@ -42,6 +42,7 @@ import cm.aptoide.pt.AIDLReposInfo;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.ManageRepos;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.SelfUpdate;
 import cm.aptoide.pt.Splash;
 import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
@@ -65,6 +66,7 @@ import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.xml.EnumInfoType;
 import cm.aptoide.pt.data.xml.ManagerXml;
+import cm.aptoide.pt.data.xml.ViewLatestVersionInfo;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 
@@ -85,6 +87,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private ArrayList<Integer> reposInserting;
 	private ArrayList<ViewMyapp> waitingMyapps;
 	private ViewDisplayListRepos waitingMyappRepos;
+	private ViewLatestVersionInfo waitingSelfUpdate;
 	
 	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClients;
 	private HashMap<Integer, AIDLAppInfo> appInfoClients;
@@ -461,150 +464,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	    }
 		super.onCreate();
 	}
-	
-//	@Override
-//	public void onStart(Intent intent, int startId) {
-//		if(intent.getData() != null){
-//			launchAptoide();
-			
-			//TODO myapp handling section -- move partly to download/xml/ classes
-		    
-//			private static final int LOAD_TABS = 0;			//TODO Probably unneeded
-//		    private Vector<String> server_lst = null;	//TODO to dataService
-//		    private Vector<String[]> get_apps = null;	//TODO to dataService
-			
-//			private Handler startHandler = new Handler() {
-		//
-//				@Override
-//				public void handleMessage(Message msg) {
-//					switch(msg.what){
-//					case LOAD_TABS:
-//						Intent i = new Intent(Aptoide.this, RemoteInTab.class);
-//						Intent get = getIntent();
-//						if(get.getData() != null){
-//							String uri = get.getDataString();
-//								Log.d("Aptoide-startHandler", "receiving a myapp file");
-//								downloadMyappFile(uri);
-//								try {
-//									parseMyappFile(TMP_MYAPP_FILE);
-//									i.putExtra("repos", server_lst);
-//									if(get_apps.size() > 0){
-//										//i.putExtra("uri", TMP_SRV_FILE);
-//										i.putExtra("apps", get_apps);
-		//	
-//									}
-//								} catch (Exception e) {
-//									Toast.makeText(mctx, mctx.getString(R.string.failed_install), Toast.LENGTH_LONG);
-//									onCreate(savedInstanceState);
-//								}
-//						}
-//						startActivityForResult(i,0);
-//						break;
-//					}
-//					super.handleMessage(msg);
-//				} 
-//		    }; 
-
-			
-			
-//			private void downloadMyappFile(String myappUri){
-//				try{
-//					keepScreenOn.acquire();
-//					
-//					BufferedInputStream getit = new BufferedInputStream(new URL(myappUri).openStream());
-		//
-//					File file_teste = new File(TMP_MYAPP_FILE);
-//					if(file_teste.exists())
-//						file_teste.delete();
-//					
-//					FileOutputStream saveit = new FileOutputStream(TMP_MYAPP_FILE);
-//					BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
-//					byte data[] = new byte[1024];
-//					
-//					int readed = getit.read(data,0,1024);
-//					while(readed != -1) {
-//						bout.write(data,0,readed);
-//						readed = getit.read(data,0,1024);
-//					}
-//					
-//					keepScreenOn.release();
-//					
-//					bout.close();
-//					getit.close();
-//					saveit.close();
-//				} catch(Exception e){
-//					AlertDialog p = new AlertDialog.Builder(this).create();
-//					p.setTitle(getText(R.string.top_error));
-//					p.setMessage(getText(R.string.aptoide_error));
-//					p.setButton(getText(R.string.btn_ok), new DialogInterface.OnClickListener() {
-//					      public void onClick(DialogInterface dialog, int which) {
-//					          return;
-//					        } });
-//					p.show();
-//				}
-//			}
-		//	
-//			private void parseMyappFile(String file){
-//				SAXParserFactory spf = SAXParserFactory.newInstance();
-//			    try {
-//			    	keepScreenOn.acquire();
-//			    	
-//			    	SAXParser sp = spf.newSAXParser();
-//			    	XMLReader xr = sp.getXMLReader();
-//			    	NewServerRssHandler handler = new NewServerRssHandler(this);
-//			    	xr.setContentHandler(handler);
-//			    	
-//			    	InputStreamReader isr = new FileReader(new File(file));
-//			    	InputSource is = new InputSource(isr);
-//			    	xr.parse(is);
-//			    	File xml_file = new File(file);
-//			    	xml_file.delete();
-//			    	server_lst = handler.getNewSrvs();
-//			    	get_apps = handler.getNewApps();
-//			    	
-//			    	keepScreenOn.release();
-//			    	
-//			    } catch (IOException e) {
-//			    	e.printStackTrace();
-//			    } catch (SAXException e) {
-//			    	e.printStackTrace();
-//			    } catch (ParserConfigurationException e) {
-//					e.printStackTrace();
-//				}
-//			}
-		//	
-//			private void parseXmlString(String file){
-//				SAXParserFactory spf = SAXParserFactory.newInstance();
-//			    try {
-//			    	keepScreenOn.acquire();
-//			    	
-//			    	SAXParser sp = spf.newSAXParser();
-//			    	XMLReader xr = sp.getXMLReader();
-//			    	NewServerRssHandler handler = new NewServerRssHandler(this);
-//			    	xr.setContentHandler(handler);
-//			    	
-//			    	InputSource is = new InputSource();
-//			    	is.setCharacterStream(new StringReader(file));
-//			    	xr.parse(is);
-//			    	server_lst = handler.getNewSrvs();
-//			    	get_apps = handler.getNewApps();
-//			    	
-//			    	keepScreenOn.release();
-//			    	
-//			    } catch (IOException e) {
-//			    } catch (SAXException e) {
-//			    } catch (ParserConfigurationException e) {
-//				}
-//			}
-			
-			
-		//--------------------------------------------------------------------------
-
-			
-//		}
-//		super.onStart(intent, startId);
-//		
-//	}
 
 
 	@Override
@@ -619,17 +478,38 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 	
 	public void checkForSelfUpdate(){	//TODO use NotificationManager class to load Splash Activity with it's progress bar as selfupdate activity
-//   		try{
-//			if( this.managerSystemSync.getAptoideVersionInUse() < Integer.parseInt( getXmlElement("versionCode") ) ){
-//				Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
-//				requestUpdateSelf();
-//			}else{
-//				proceed();
-//			}
-//   		}catch(Exception e){
-//   			e.printStackTrace();
-//   			proceed();
-//   		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				ViewCache cache = managerDownloads.downloadLatestVersionInfo();
+				managerXml.latestVersionInfoParse(cache);
+				//TODO find some way to track global parsing completion status, probably in managerXml
+			}
+		});
+	}
+	
+	public void parsingLatestVersionInfoFinished(final ViewLatestVersionInfo latestVersionInfo){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+				int currentVersion = managerSystemSync.getAptoideVersionInUse();
+				if( currentVersion < latestVersionInfo.getVersionCode()){
+					Log.d("Aptoide-ServiceData", "Using version "+currentVersion+", suggest update to "+latestVersionInfo.getVersionCode()+"!");
+					waitingSelfUpdate = latestVersionInfo;
+					handleSelfUpdate();
+				}else{
+					Log.d("Aptoide-ServiceData", "Using version "+currentVersion+", up to date!");
+				}
+			}
+		});
 	}
 	
 	public void checkIfAnyReposInUse(){
@@ -1406,6 +1286,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		Intent splash = new Intent(AptoideServiceData.this, Splash.class);
 		splash.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(splash);    				
+	}
+	
+	public void handleSelfUpdate(){
+		Intent selfUpdate = new Intent(AptoideServiceData.this, SelfUpdate.class);
+		selfUpdate.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(selfUpdate);    				
 	}
 	
 	public void manageRepos(boolean myappReposWaiting){
