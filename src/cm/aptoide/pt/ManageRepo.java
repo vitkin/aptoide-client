@@ -157,6 +157,7 @@ public class ManageRepo extends ListActivity{
 			    View v = li.inflate(R.layout.checkbox, (ViewGroup)findViewById(R.layout.repolisticons));
 			    final CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
 			    cb.setText("Extended Server (Webservices)");
+			    cb.setTextColor(Color.WHITE);
 			    alrt.setView(v);
 				alrt.setTitle(getString(R.string.title_repo_alrt));
 				alrt.setIcon(android.R.drawable.ic_dialog_alert);
@@ -199,6 +200,7 @@ public class ManageRepo extends ListActivity{
 		    View v = li.inflate(R.layout.checkbox, (ViewGroup)findViewById(R.layout.repolisticons));
 		    final CheckBox cb = (CheckBox) v.findViewById(R.id.checkbox);
 		    cb.setText("Extended Server (Webservices)");
+		    cb.setTextColor(Color.WHITE);
 		    alrt.setView(v);
 			alrt.setTitle(getString(R.string.title_repo_alrt));
 			alrt.setIcon(android.R.drawable.ic_dialog_alert);
