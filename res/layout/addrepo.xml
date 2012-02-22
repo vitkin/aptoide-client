@@ -71,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" 
             android:textColor="#4f4f4f"
-            android:text="Extended Server (Use Webservices)"/>
+            android:text="Extended Server (Webservices)"/>
         
     </LinearLayout>
 

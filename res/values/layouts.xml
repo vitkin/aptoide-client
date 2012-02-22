@@ -33,6 +33,12 @@
         <item>Wifi only</item>
         <item>Never download</item>
     </string-array>
+    <string-array name="matureentries">
+        <item>All ages</item>
+        <item>Pre-Teen</item>
+        <item>Teen</item>
+        <item>Mature</item>
+    </string-array>
     
     
 </resources>
