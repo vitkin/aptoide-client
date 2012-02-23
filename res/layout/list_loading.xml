@@ -22,15 +22,6 @@
 	 	android:visibility="visible"
 	 	style="?android:attr/progressBarStyleHorizontal" 
 	 	android:indeterminate="true"/>	
-<!--	<ProgressBar-->
-<!--		android:id="@+id/loading"-->
-<!--	 	android:layout_width="fill_parent"-->
-<!--	 	android:layout_height="70sp"-->
-<!--	 	android:orientation="horizontal"-->
-<!--	 	android:visibility="visible"-->
-<!--	 	style="?android:attr/progressBarStyleHorizontal" -->
-<!--	 	android:max="100" -->
-<!--		android:layout_weight="2"/>	-->
 </LinearLayout>
 <!--
  * Copyright (C) 2012  Duarte Silveira

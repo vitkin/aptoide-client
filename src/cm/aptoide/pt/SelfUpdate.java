@@ -19,209 +19,141 @@
 */
 package cm.aptoide.pt;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeoutException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.ProgressBar;
+import cm.aptoide.pt.data.AIDLAptoideServiceData;
+import cm.aptoide.pt.data.AptoideServiceData;
 
 
 public class SelfUpdate extends Activity {
 	
+	private AIDLAptoideServiceData serviceDataCaller = null;
+
+	private boolean serviceDataIsBound = false;
+
+	private ServiceConnection serviceDataConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the object we can use to
+			// interact with the service.  We are communicating with the
+			// service using AIDL, so here we set the remote service interface.
+			serviceDataCaller = AIDLAptoideServiceData.Stub.asInterface(service);
+			serviceDataIsBound = true;
+			
+			Log.v("Aptoide-AppInfo", "Connected to ServiceData");
+	        
+			try {
+				serviceDataCaller.callRegisterSelfUpdateObserver(serviceDataCallback);
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			handleSelfUpdate();
+			
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			serviceDataIsBound = false;
+			serviceDataCaller = null;
+			
+			Log.v("Aptoide-AppInfo", "Disconnected from ServiceData");
+		}
+	};
+	
+	private AIDLSelfUpdate.Stub serviceDataCallback = new AIDLSelfUpdate.Stub() {
+		
+		@Override
+		public void cancelUpdateActivity() throws RemoteException {
+			finish();
+		}
+	};
+	
+	
+	private void handleSelfUpdate(){
+		final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+    	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+    	alertBuilder.setCancelable(false)
+    				.setPositiveButton(R.string.yes , new DialogInterface.OnClickListener() {
+    					public void onClick(DialogInterface dialog, int id) {
+    						dialog.cancel();
+    						progressBar.setVisibility(View.VISIBLE);
+    						try {
+								serviceDataCaller.callAcceptSelfUpdate();
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+    					}
+    				})    	
+    				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+    					public void onClick(DialogInterface dialog, int id) {
+    						dialog.cancel();
+    						try {
+								serviceDataCaller.callRejectSelfUpdate();
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+    						finish();
+    					}
+    				})
+    				.setMessage(R.string.update_confirm)
+    				;
+    	
+    	AlertDialog alert = alertBuilder.create();
+    	
+    	alert.setTitle(R.string.update_available);
+    	alert.setIcon(R.drawable.icon);
+    	
+    	alert.show();
+	}
+	
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		setContentView(R.layout.auto_updating);
+    	
+		if(!serviceDataIsBound){
+    		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
+    	}
+		
+		super.onCreate(savedInstanceState);
+	}
+
+	
 //	@Override
-//	protected void onCreate(Bundle savedInstanceState) {
-//    	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-//    	alertBuilder.setCancelable(false)
-//    				.setPositiveButton(R.string.dialog_yes , new DialogInterface.OnClickListener() {
-//    					public void onClick(DialogInterface dialog, int id) {
-//    						dialog.cancel();
-//    						setContentView(R.layout.auto_updating);
-//    						new DownloadSelfUpdate().execute();
-//    					}
-//    				})    	
-//    				.setNegativeButton(R.string.dialog_no, new DialogInterface.OnClickListener() {
-//    					public void onClick(DialogInterface dialog, int id) {
-//    						dialog.cancel();
-//    						finish();
-//    					}
-//    				})
-//    				.setMessage(R.string.update_self_msg)
-//    				;
-//    	
-//    	AlertDialog alert = alertBuilder.create();
-//    	
-//    	alert.setTitle(R.string.update_self_title);
-//    	alert.setIcon(R.drawable.icon);
-//    	
-//    	alert.show();
-//    	
-//		super.onCreate(savedInstanceState);
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		if (keyCode == KeyEvent.KEYCODE_BACK ) {
+//			Log.d("Aptoide-SelfUpdate", "");
+//			//TODO cancel download
+//			return true;
+//		}
+//		return super.onKeyDown(keyCode, event);
 //	}
-//	
-//	private String getXmlElement(String name) throws ParserConfigurationException, MalformedURLException, SAXException, IOException{
-//		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-//		DocumentBuilder builder = factory.newDocumentBuilder();
-//        Document dom = builder.parse( new InputSource(new URL(LATEST_VERSION_CODE_URI).openStream()) );
-//        dom.getDocumentElement().normalize();
-//        NodeList items = dom.getElementsByTagName(name);
-//        if(items.getLength()>0){
-//        	Node item = items.item(0);
-//        	Log.d("Aptoide-XmlElement Name", item.getNodeName());
-//        	Log.d("Aptoide-XmlElement Value", item.getFirstChild().getNodeValue().trim());
-//        	return item.getFirstChild().getNodeValue().trim();
-//        }
-//        return "0";
-//	}
-//	
-//	private class DownloadSelfUpdate extends AsyncTask<Void, Void, Void>{
-//		private final ProgressDialog dialog = new ProgressDialog(SelfUpdate.this);
-//	
-//		String latestVersionUri;
-//		String referenceMd5;
-//		
-//		
-//		void retrieveUpdateParameters(){
-//			try{
-//				latestVersionUri = getXmlElement("uri");
-//				referenceMd5 = getXmlElement("md5");
-//			}catch (Exception e) {
-//				e.printStackTrace();
-//				Log.d("Aptoide-Auto-Update", "Update connection failed!  Keeping current version.");
-//			}
+	
+	@Override
+	public void finish() {
+//		if(serviceDataIsBound){
+//			unbindService(serviceDataConnection);
 //		}
-//		
-//		@Override
-//		protected void onPreExecute() {
-//			this.dialog.setMessage("Retrieving update...");
-//			this.dialog.show();
-//			super.onPreExecute();
-//			retrieveUpdateParameters();
-//		}
-//
-//		@Override
-//		protected Void doInBackground(Void... paramArrayOfParams) {
-//			try{
-//				if(latestVersionUri==null){
-//					retrieveUpdateParameters();
-//				}
-////				Message msg_al = new Message();
-//				// If file exists, removes it...
-//				 File f_chk = new File(TMP_UPDATE_FILE);
-//				 if(f_chk.exists()){
-//					 f_chk.delete();
-//				 }
-//				 f_chk = null;
-//				
-//				FileOutputStream saveit = new FileOutputStream(TMP_UPDATE_FILE);
-//				DefaultHttpClient mHttpClient = new DefaultHttpClient();
-//				HttpGet mHttpGet = new HttpGet(latestVersionUri);
-//	
-//				HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-//				
-//				if(mHttpResponse == null){
-//					 Log.d("Aptoide","Problem in network... retry...");	
-//					 mHttpResponse = mHttpClient.execute(mHttpGet);
-//					 if(mHttpResponse == null){
-//						 Log.d("Aptoide","Major network exception... Exiting!");
-//						 /*msg_al.arg1= 1;
-//						 download_error_handler.sendMessage(msg_al);*/
-//						 throw new TimeoutException();
-//					 }
-//				 }
-//				
-//				if(mHttpResponse.getStatusLine().getStatusCode() == 401){
-//					throw new TimeoutException();
-//				}else{
-//					InputStream getit = mHttpResponse.getEntity().getContent();
-//					byte data[] = new byte[8096];
-//					int bytesRead;
-//					bytesRead = getit.read(data, 0, 8096);
-//					while(bytesRead != -1) {
-//	//							download_tick.sendEmptyMessage(readed);
-//						saveit.write(data,0,bytesRead);
-//						bytesRead = getit.read(data, 0, 8096);
-//					}
-//					Log.d("Aptoide","Download done!");
-//					saveit.flush();
-//					saveit.close();
-//					getit.close();
-//				}
-//			}catch (Exception e) { 
-////						download_error_handler.sendMessage(msg_al);
-//				e.printStackTrace();
-//				Toast.makeText(mctx, mctx.getString(R.string.network_auto_update_error), Toast.LENGTH_LONG);
-//				Log.d("Aptoide-Auto-Update", "Update connection failed!  Keeping current version.");
-//			}
-//			return null;
-//		}
-//
-//		@Override
-//		protected void onPostExecute(Void result) {
-//			
-//			if (this.dialog.isShowing()) {
-//				this.dialog.dismiss();
-//			}
-//			super.onPostExecute(result);
-//			
-//			if(!(referenceMd5==null)){
-//				try{
-//					File apk = new File(TMP_UPDATE_FILE);
-//					Md5Handler hash = new Md5Handler();
-//					if( referenceMd5.equalsIgnoreCase(hash.md5Calc(apk))){
-//		//				msg_al.arg1 = 1;
-//		//						download_handler.sendMessage(msg_al);
-//						
-//						doUpdateSelf();
-//				    	
-//					}else{
-//						Log.d("Aptoide",referenceMd5 + " VS " + hash.md5Calc(apk));
-//		//				msg_al.arg1 = 0;
-//		//						download_error_handler.sendMessage(msg_al);
-//						throw new Exception(referenceMd5 + " VS " + hash.md5Calc(apk));
-//					}
-//				}catch (Exception e) {
-//					e.printStackTrace();
-//					Toast.makeText(mctx, mctx.getString(R.string.md5_auto_update_error), Toast.LENGTH_LONG);
-//					Log.d("Aptoide-Auto-Update", "Update package checksum failed!  Keeping current version.");
-//					if (this.dialog.isShowing()) {
-//						this.dialog.dismiss();
-//					}
-//					proceed();
-//					super.onPostExecute(result);
-//					
-//				}
-//			}
-//			
-//		}
-//		
-//	}
-//	
+		super.finish();
+	}
+
 //	private void doUpdateSelf(){
 //		Intent intent = new Intent();
 //    	intent.setAction(android.content.Intent.ACTION_VIEW);

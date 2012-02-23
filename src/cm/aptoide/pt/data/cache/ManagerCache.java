@@ -138,7 +138,7 @@ public class ManagerCache {
 	}
 	
 	public ViewCache getNewLatestVersionDownloadViewCache(){
-		return getNewViewCache(Constants.FILE_SELF_UPDATE);
+		return getNewViewCache(Constants.FILE_LATEST_VERSION_INFO);
 	}
 	
 	

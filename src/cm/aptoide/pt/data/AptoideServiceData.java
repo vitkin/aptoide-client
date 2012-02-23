@@ -39,6 +39,7 @@ import android.widget.Toast;
 import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.AIDLReposInfo;
+import cm.aptoide.pt.AIDLSelfUpdate;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.ManageRepos;
 import cm.aptoide.pt.R;
@@ -89,9 +90,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private ViewDisplayListRepos waitingMyappRepos;
 	private ViewLatestVersionInfo waitingSelfUpdate;
 	
+	private AIDLSelfUpdate selfUpdateClient = null;
 	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClients;
 	private HashMap<Integer, AIDLAppInfo> appInfoClients;
-	private AIDLReposInfo reposInfoClient;
+	private AIDLReposInfo reposInfoClient = null;
 //	private EnumServiceDataCall latestRequest;
 
 	private ManagerPreferences managerPreferences;
@@ -126,6 +128,22 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				Log.w("Aptoide-ServiceData", "Unexpected remote exception", e);
 				throw e;
 			}
+		}
+
+		@Override
+		public void callRegisterSelfUpdateObserver(AIDLSelfUpdate selfUpdateClient) throws RemoteException {
+			registerSelfUpdateObserver(selfUpdateClient);
+		}
+
+		@Override
+		public void callAcceptSelfUpdate() throws RemoteException {
+			downloadSelfUpdate(waitingSelfUpdate);
+			waitingSelfUpdate = null;
+		}
+
+		@Override
+		public void callRejectSelfUpdate() throws RemoteException {
+			rejectSelfUpdate();
 		}
 
 		@Override
@@ -328,6 +346,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 		
 	}; 
+	
+	public void registerSelfUpdateObserver(AIDLSelfUpdate selfUpdateClient){
+		this.selfUpdateClient = selfUpdateClient;
+	}
 
 	public void registerAvailableDataObserver(AIDLAptoideInterface availableAppsObserver){
 		aptoideClients.put(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST, availableAppsObserver);
@@ -432,6 +454,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			
 			waitingMyapps = new ArrayList<ViewMyapp>();
 			waitingMyappRepos = new ViewDisplayListRepos(0);
+			waitingSelfUpdate = null;
 	    	
 	    	cachedThreadPool = Executors.newCachedThreadPool();
 	    	scheduledThreadPool = Executors.newScheduledThreadPool(Constants.MAX_PARALLEL_SERVICE_REQUESTS);
@@ -475,6 +498,19 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		Log.d("Aptoide ServiceData", "Service stopped");
 		super.onDestroy();
 	}
+	
+	public void rejectSelfUpdate(){
+		if(selfUpdateClient != null){
+			try {
+				selfUpdateClient.cancelUpdateActivity();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		selfUpdateClient = null;
+		waitingSelfUpdate = null;
+	}
 
 	
 	public void checkForSelfUpdate(){	//TODO use NotificationManager class to load Splash Activity with it's progress bar as selfupdate activity
@@ -510,6 +546,29 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				}
 			}
 		});
+	}
+	
+	public void downloadSelfUpdate(final ViewLatestVersionInfo latesVersionInfo){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				
+				String aptoide = getApplicationInfo().name;
+				int aptoideHash = (aptoide+"|"+latesVersionInfo.getVersionCode()).hashCode();
+				ViewDownload download = getManagerDownloads().prepareApkDownload( aptoideHash, aptoide
+									, latesVersionInfo.getRemotePath(), latesVersionInfo.getSize(), latesVersionInfo.getMd5sum());
+				ViewCache apk = managerDownloads.downloadApk(download);
+				AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
+				installApp(apk, aptoideHash);
+				rejectSelfUpdate();
+			}
+		});		
 	}
 	
 	public void checkIfAnyReposInUse(){
