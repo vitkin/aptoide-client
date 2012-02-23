@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:gravity="center_vertical|center_horizontal">
+	android:layout_height="fill_parent">
     <TextView 
     	android:id="@+id/auto_updating"
-    	android:text="@string/self_updating" 
+    	android:text="@string/self_update" 
     	android:layout_height="wrap_content" 
-    	android:layout_alignParentTop="true"
     	android:layout_width="fill_parent"
-		android:gravity="center_vertical|center_horizontal"
+		android:gravity="top|center_horizontal"
 		android:textSize="25sp">
     </TextView>
+
+	<ProgressBar
+	    android:id="@+id/progress"
+	    style="?android:attr/progressBarStyleHorizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="30sp"
+	    android:indeterminate="true"
+	    android:orientation="horizontal"
+	    android:visibility="invisible" />
     
-</RelativeLayout>
+</LinearLayout>

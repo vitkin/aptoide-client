@@ -108,11 +108,11 @@ public class ManageRepos extends ListActivity{
 	
 	private ReposManager reposManager;
 	
+	private boolean handlingMyappRepos = false;
+	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
 	private boolean serviceDataIsBound = false;
-	
-	private boolean handlingMyappRepos = false;
 
 	private ServiceConnection serviceDataConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {

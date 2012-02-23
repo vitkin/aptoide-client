@@ -89,6 +89,7 @@ public class Constants {
 	public static final String URI_FORMAT_COMMENTS_WS = "http://www.bazaarandroid.com/webservices/listApkComments/%1$s/%2$s/%3$s/xml";
 	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/apks/dev/latest_version.xml";
+	public static final String FILE_LATEST_VERSION_INFO = PATH_CACHE + "latestVersionInfo.xml";
 	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
 	public static final String FILE_PREFERENCES = "aptoide_preferences";
 	

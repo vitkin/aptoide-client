@@ -29,6 +29,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLReposInfo;
+import cm.aptoide.pt.AIDLSelfUpdate;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 
 /**
@@ -39,6 +40,10 @@ import cm.aptoide.pt.data.listeners.ViewMyapp;
  *
  */
 interface AIDLAptoideServiceData {
+	
+	void callRegisterSelfUpdateObserver(in AIDLSelfUpdate selfUpdateClient);
+	void callAcceptSelfUpdate();
+	void callRejectSelfUpdate();
 
 	void callStoreScreenDimensions(in ViewScreenDimensions screenDimensions);
 	
