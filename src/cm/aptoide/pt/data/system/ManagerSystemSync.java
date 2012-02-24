@@ -73,6 +73,17 @@ public class ManagerSystemSync {
 		return aptoideInfo.versionName;
 	}
 	
+	public String getAptoideAppName(){
+		PackageInfo aptoideInfo;
+		try {
+			aptoideInfo = packageManager.getPackageInfo("cm.aptoide.pt", 0);
+   		} catch (NameNotFoundException e) {	
+   			/** this should never happen */
+   			return null;
+   		}
+		return packageManager.getApplicationLabel(aptoideInfo.applicationInfo).toString();
+	}
+	
 	public ArrayList<ViewApplication> getInstalledApps(){
 		List<PackageInfo> systemInstalledList = packageManager.getInstalledPackages(0);
 		ArrayList<ViewApplication> installedApps = new ArrayList<ViewApplication>(systemInstalledList.size());

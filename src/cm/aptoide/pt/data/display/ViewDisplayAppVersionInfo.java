@@ -36,10 +36,14 @@ import cm.aptoide.pt.data.util.Constants;
 public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 
 	private static final long serialVersionUID = -1659281166184815653L;
+	
 	private String appName;
 	private String versionName;
 	private int versionCode;
 	private int appFullHashid;
+	private int size = Constants.EMPTY_INT;
+	
+	private String repoUri = null;
 	
 	private String localIconPath;
 	
@@ -66,6 +70,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.versionName = versionName;
 		this.versionCode = versionCode;
 		this.appFullHashid = appFullHashid;
+		
 		this.isInstalled = isInstalled;
 		
 		this.statsAvailable = false;
@@ -88,6 +93,22 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 
 	public int getAppFullHashid() {
 		return appFullHashid;
+	}
+	
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public int getSize() {
+		return size;
+	}
+	
+	public void setRepoUri(String repoUri){
+		this.repoUri = repoUri;
+	}
+
+	public String getRepoUri() {
+		return repoUri;
 	}
 
 	public String getLocalIconPath() {
@@ -136,6 +157,8 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.versionName = null;
 		this.versionCode = Constants.EMPTY_INT;
 		this.appFullHashid = Constants.EMPTY_INT;
+		this.size = Constants.EMPTY_INT;
+		this.repoUri = null;
 		
 		this.localIconPath = null;
 		
@@ -159,6 +182,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.versionName = versionName;
 		this.versionCode = versionCode;
 		this.appFullHashid = appFullHashid;
+		
 		this.isInstalled = isInstalled;
 		
 		this.statsAvailable = false;
@@ -186,8 +210,8 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 
 	@Override
 	public String toString() {
-		StringBuilder string = new StringBuilder(" Name: "+appName+" Version: "+versionName+" VersionCode: "+versionCode
-														+" AppFullHashid: "+appFullHashid+" isInstalled: "+isInstalled);//+" localIconPath: "+localIconPath
+		StringBuilder string = new StringBuilder(" Name: "+appName+" Version: "+versionName+" VersionCode: "+versionCode+" AppFullHashid: "+appFullHashid
+												+" Size: "+size+" RepoUri: "+repoUri+" isInstalled: "+isInstalled);//+" localIconPath: "+localIconPath
 		if(statsAvailable){
 			string.append("\n\n"+stats.toString());
 		}
@@ -233,6 +257,8 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			out.writeString(versionName);
 			out.writeInt(versionCode);
 			out.writeInt(appFullHashid);
+			out.writeInt(size);
+			out.writeString(repoUri);
 			
 			out.writeString(localIconPath);
 			
@@ -254,6 +280,8 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			versionName = in.readString();
 			versionCode = in.readInt();
 			appFullHashid = in.readInt();
+			size = in.readInt();
+			repoUri = in.readString();
 			
 			localIconPath = in.readString();
 			
