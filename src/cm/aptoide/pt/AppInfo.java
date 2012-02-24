@@ -75,7 +75,7 @@ public class AppInfo extends Activity {
 	private int appDownloads;
 	private String appSize;
 	private float appStars;
-	private String appStore;
+	private String repoUri;
 	private int appLikes;
 	private int appDislikes;
 	private String appDescription;
@@ -90,7 +90,7 @@ public class AppInfo extends Activity {
 	private TextView appDownloadsTextView;
 	private TextView appSizeTextView;
 	private RatingBar appStarsRating;
-	private TextView appStoreTextView;
+	private TextView repoUriTextView;
 	private TextView appLikesTextView;
 	private TextView appDislikesTextView;
 	private TextView appDescriptionTextView;
@@ -108,8 +108,7 @@ public class AppInfo extends Activity {
 			// established, giving us the object we can use to
 			// interact with the service. We are communicating with the
 			// service using AIDL, so here we set the remote service interface.
-			serviceDataCaller = AIDLAptoideServiceData.Stub
-					.asInterface(service);
+			serviceDataCaller = AIDLAptoideServiceData.Stub.asInterface(service);
 			serviceDataIsBound = true;
 
 			Log.v("Aptoide-AppInfo", "Connected to ServiceData");
@@ -128,8 +127,7 @@ public class AppInfo extends Activity {
 			try {
 				Log.v("Aptoide-AppInfo",
 						"Called for registering as AppInfo Observer");
-				serviceDataCaller.callRegisterAppInfoObserver(
-						serviceDataCallback, appHashid);
+				serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
 
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
@@ -159,41 +157,32 @@ public class AppInfo extends Activity {
 		@Override
 		public void refreshIcon() throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received refreshIcon callback");
-			interfaceTasksHandler
-					.sendEmptyMessage(EnumAppInfoTasks.REFRESH_ICON.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_ICON.ordinal());
 		}
 
 		@Override
 		public void newAppDownloadInfoAvailable() throws RemoteException {
 			Log.v("Aptoide-AppInfo",
 					"received newAppDownloadInfoAvailable callback");
-			interfaceTasksHandler
-					.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_DOWNLOAD_INFO
-							.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_DOWNLOAD_INFO.ordinal());
 		}
 
 		@Override
 		public void newStatsInfoAvailable() throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newStatsInfoAvailable callback");
-			interfaceTasksHandler
-					.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_STATS
-							.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_STATS.ordinal());
 		}
 
 		@Override
 		public void newExtrasAvailable() throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newExtrasAvailable callback");
-			interfaceTasksHandler
-					.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_EXTRAS
-							.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_EXTRAS.ordinal());
 		}
 
 		@Override
 		public void refreshScreens() throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received refreshScreens callback");
-			interfaceTasksHandler
-					.sendEmptyMessage(EnumAppInfoTasks.REFRESH_SCREENS
-							.ordinal());
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_SCREENS.ordinal());
 		}
 
 		@Override
@@ -247,7 +236,7 @@ public class AppInfo extends Activity {
 		appDownloadsTextView = (TextView) findViewById(R.id.app_downloads);
 		appSizeTextView = (TextView) findViewById(R.id.app_size);
 		appStarsRating = (RatingBar) findViewById(R.id.app_rating);
-		appStoreTextView = (TextView) findViewById(R.id.app_store);
+		repoUriTextView = (TextView) findViewById(R.id.app_store);
 		appLikesTextView = (TextView) findViewById(R.id.app_likes);
 		appDislikesTextView = (TextView) findViewById(R.id.app_dislikes);
 		appDescriptionTextView = (TextView) findViewById(R.id.app_description);
@@ -326,24 +315,6 @@ public class AppInfo extends Activity {
 			icon.setImageResource(android.R.drawable.sym_def_app_icon);
 		}
 	}
-	
-	protected void setVersionDescription(int versionListPosition) {
-			
-			if(appVersions.getVersionsList().get(versionListPosition).isStatsAvailable()){
-				appDownloads = appVersions.getVersionsList().get(versionListPosition).getStats().getDownloads();
-				appDownloadsTextView.setText("Downloads: "+appDownloads);
-
-				appStars = appVersions.getVersionsList().get(versionListPosition).getStats().getStars();
-				appStarsRating.setRating(new Float(appStars));
-
-				appLikes = appVersions.getVersionsList().get(versionListPosition).getStats().getLikes();
-				appLikesTextView.setText("Likes: "+appLikes);
-
-				appDislikes = appVersions.getVersionsList().get(versionListPosition).getStats().getDislikes();
-				appDislikesTextView.setText("Don't likes: "+appDislikes);
-			}
-
-	}
 
 	protected void setVersions() {
 		try {
@@ -361,10 +332,18 @@ public class AppInfo extends Activity {
 		appName = appVersions.getVersionsList().get(0).getAppName();
 		appNameTextView.setText(appName);
 		
-//		size = appVersions.getVersionsList().get(0).
-		appSizeTextView.setText("Size: ");
-		appStore = appVersions.getVersionsList().get(0).getAppName();
-		appStoreTextView.setText("Store: ");
+		if(appVersions.getVersionsList().get(0).getSize() != Constants.EMPTY_INT){
+			appSize = Integer.toString(appVersions.getVersionsList().get(0).getSize());
+			appSizeTextView.setText("Size: "+appSize+"KB");
+		}else{
+			appSizeTextView.setText("Size: ");
+		}
+		if(appVersions.getVersionsList().get(0).getRepoUri() != null){
+			repoUri = appVersions.getVersionsList().get(0).getRepoUri();
+			repoUriTextView.setText("Store: "+repoUri);
+		}else{
+			repoUriTextView.setText("Store: Local");
+		}
 		
 
 		versions = new ArrayList<String>();
@@ -395,26 +374,40 @@ public class AppInfo extends Activity {
 			appDescriptionTextView.setText(""+appDescription);
 		}
 	}
+	
+	protected void setVersionDescription(int versionListPosition) {
+			
+			if(appVersions.getVersionsList().get(versionListPosition).isStatsAvailable()){
+				appDownloads = appVersions.getVersionsList().get(versionListPosition).getStats().getDownloads();
+				appDownloadsTextView.setText("Downloads: "+appDownloads);
+
+				appStars = appVersions.getVersionsList().get(versionListPosition).getStats().getStars();
+				appStarsRating.setRating(new Float(appStars));
+
+				appLikes = appVersions.getVersionsList().get(versionListPosition).getStats().getLikes();
+				appLikesTextView.setText("Likes: "+appLikes);
+
+				appDislikes = appVersions.getVersionsList().get(versionListPosition).getStats().getDislikes();
+				appDislikesTextView.setText("Don't likes: "+appDislikes);
+			}
+
+	}
 
 	protected void setScreens() {
 		ArrayList<Drawable> screensDrawables = new ArrayList<Drawable>();
 		int orderNumber = 0;
-		String screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "."
-				+ orderNumber;
+		String screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
 		File screen = null;
 		do {
 			Drawable screenDrawable = Drawable.createFromPath(screenPath);
 			screensDrawables.add(screenDrawable);
 			orderNumber++;
-			screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "."
-					+ orderNumber;
+			screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
 			screen = new File(screenPath);
 		} while (screen.exists());
-		galleryView.setAdapter(new ImageAdapter(AppInfo.this, screensDrawables,
-				appName));
+		galleryView.setAdapter(new ImageAdapter(AppInfo.this, screensDrawables, appName));
 		galleryView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v,
-					int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 
 				// Log.d("Aptoide","This view.....");
 				final Dialog dialog = new Dialog(AppInfo.this);

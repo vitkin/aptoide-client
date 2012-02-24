@@ -2461,6 +2461,8 @@ public class ManagerDatabase {
 		final int STARS = Constants.COLUMN_SEVENTH;
 		final int DOWNLOADS = Constants.COLUMN_EIGTH;
 		final int DESCRIPTION = Constants.COLUMN_NINTH;
+		final int SIZE = Constants.COLUMN_TENTH;
+		final int REPO_URI = Constants.COLUMN_ELEVENTH;
 		
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FIRST;
 		final int INSTALLED_VERSION_NAME = Constants.COLUMN_SECOND;
@@ -2475,6 +2477,7 @@ public class ManagerDatabase {
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
 											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
 											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
+											+", D."+Constants.KEY_DOWNLOAD_SIZE+", R."+Constants.KEY_REPO_URI
 									+" FROM (SELECT * " 
 											+" FROM "+Constants.TABLE_APPLICATION
 											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
@@ -2486,6 +2489,10 @@ public class ManagerDatabase {
 												+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")) A"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_STATS_INFO+") S"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_EXTRA_INFO+") E"
+									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+", "+Constants.KEY_DOWNLOAD_SIZE
+														+" FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
+									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI
+														+" FROM "+Constants.TABLE_REPOSITORY+") R"
 //									+" NATURAL LEFT JOIN (SELECT "
 //															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
 //															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
@@ -2533,10 +2540,16 @@ public class ManagerDatabase {
 					appVersion = new ViewDisplayAppVersionInfo(appVersionsCursor.getString(APP_NAME), appVersionsCursor.getString(VERSION_NAME)
 																, appVersionsCursor.getInt(VERSION_CODE), appVersionsCursor.getInt(APP_FULL_HASHID)
 																, (appVersionsCursor.getInt(VERSION_CODE)==installedVersionCode?true:false));
+					if(!appVersionsCursor.isNull(SIZE)){
+						appVersion.setSize(appVersionsCursor.getInt(SIZE));
+					}
+					if(!appVersionsCursor.isNull(REPO_URI)){
+						appVersion.setRepoUri(appVersionsCursor.getString(REPO_URI));
+					}
 					appVersion.setStats(new ViewDisplayAppVersionStats(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getInt(LIKES)
 																		, appVersionsCursor.getInt(DISLIKES), appVersionsCursor.getFloat(STARS)
 																		, appVersionsCursor.getInt(DOWNLOADS)));
-					if(appVersionsCursor.getString(DESCRIPTION)!=null){
+					if(!appVersionsCursor.isNull(DESCRIPTION)){
 						ViewDisplayAppVersionExtras extras = new ViewDisplayAppVersionExtras(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getString(DESCRIPTION));
 						appVersion.setExtras(extras);
 					}
