@@ -46,6 +46,8 @@ import cm.aptoide.pt.data.AptoideServiceData;
  */
 public class SelfUpdate extends Activity {
 	
+	AlertDialog selfUpdate;
+	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
 	private boolean serviceDataIsBound = false;
@@ -122,12 +124,12 @@ public class SelfUpdate extends Activity {
     				.setMessage(R.string.update_confirm)
     				;
     	
-    	AlertDialog alert = alertBuilder.create();
+    	selfUpdate = alertBuilder.create();
     	
-    	alert.setTitle(R.string.update_available);
-    	alert.setIcon(R.drawable.icon);
+    	selfUpdate.setTitle(R.string.update_available);
+    	selfUpdate.setIcon(R.drawable.icon);
     	
-    	alert.show();
+    	selfUpdate.show();
 	}
 	
 	
@@ -152,9 +154,10 @@ public class SelfUpdate extends Activity {
 //		}
 //		return super.onKeyDown(keyCode, event);
 //	}
-	
+
+
 	@Override
-	public void finish() {
+	public void finish() {	//TODO fix  java.lang.IllegalArgumentException: Service not registered: cm.aptoide.pt.SelfUpdate$1@405636c8 when unbinding
 //		if(serviceDataIsBound){
 //			unbindService(serviceDataConnection);
 //		}

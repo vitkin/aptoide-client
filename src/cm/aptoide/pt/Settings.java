@@ -20,21 +20,17 @@
 package cm.aptoide.pt;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.View;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ProgressBar;
-import android.widget.RadioButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.preferences.ViewSettings;
@@ -50,6 +46,8 @@ import cm.aptoide.pt.data.preferences.ViewSettings;
 public class Settings extends Activity {
 	
 	ViewSettings storedSettings;
+	
+	CheckBox hwFilter;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -87,60 +85,26 @@ public class Settings extends Activity {
 		}
 	};
 	
-//	private AIDLSelfUpdate.Stub serviceDataCallback = new AIDLSelfUpdate.Stub() {
-//		
-//		@Override
-//		public void cancelUpdateActivity() throws RemoteException {
-//			finish();
-//		}
-//	};
-	
-	
-//	private void handleSelfUpdate(){
-//		final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-//    	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-//    	alertBuilder.setCancelable(false)
-//    				.setPositiveButton(R.string.yes , new DialogInterface.OnClickListener() {
-//    					public void onClick(DialogInterface dialog, int id) {
-//    						dialog.cancel();
-//    						progressBar.setVisibility(View.VISIBLE);
-//    						try {
-//								serviceDataCaller.callAcceptSelfUpdate();
-//							} catch (RemoteException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//    					}
-//    				})    	
-//    				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-//    					public void onClick(DialogInterface dialog, int id) {
-//    						dialog.cancel();
-//    						try {
-//								serviceDataCaller.callRejectSelfUpdate();
-//							} catch (RemoteException e) {
-//								// TODO Auto-generated catch block
-//								e.printStackTrace();
-//							}
-//    						finish();
-//    					}
-//    				})
-//    				.setMessage(R.string.update_confirm)
-//    				;
-//    	
-//    	AlertDialog alert = alertBuilder.create();
-//    	
-//    	alert.setTitle(R.string.update_available);
-//    	alert.setIcon(R.drawable.icon);
-//    	
-//    	alert.show();
-//	}
-	
 	
 	private void showSettings(){
 		setContentView(R.layout.settings);
 		
-		RadioButton hwFilterButton = (RadioButton) findViewById(R.id.hw_filter);
-//		hwFilterButton.seton
+		hwFilter = (CheckBox) findViewById(R.id.hw_filter);
+		hwFilter.setChecked(storedSettings.isHwFilterOn());
+		hwFilter.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				Log.d("Aptoide-Settings", "checkbox: "+isChecked+" storedValue: "+storedSettings.isHwFilterOn());
+				if(isChecked != storedSettings.isHwFilterOn()){
+					try {
+						serviceDataCaller.callSetHwFilter(isChecked);
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 	
 	
@@ -167,9 +131,17 @@ public class Settings extends Activity {
 	
 	@Override
 	public void finish() {
-//		if(serviceDataIsBound){
-//			unbindService(serviceDataConnection);
-//		}
+		if(hwFilter.isChecked() != storedSettings.isHwFilterOn()){
+			try {
+				serviceDataCaller.callResetAvailableApps();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(serviceDataIsBound){
+			unbindService(serviceDataConnection);
+		}
 		super.finish();
 	}
 	

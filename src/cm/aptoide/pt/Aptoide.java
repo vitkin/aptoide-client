@@ -621,9 +621,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 								offset = (previousCacheOffset+1)*displayListsDimensions.getPageSize();
 								range = requestsSum*displayListsDimensions.getPageSize();
 							}							
-							
-							Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range+" category: "+category);
-							setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
+							if(availableByCategory && category != null && !category.hasChildren()){
+								Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range+" category: "+category);
+								setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
+							}else{
+								Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range);
+								setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
+							}
 							
 							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;
@@ -638,8 +642,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							offset = (currentCacheOffset+requestsSum-1)*displayListsDimensions.getPageSize();
 							range = Math.abs(requestsSum)*displayListsDimensions.getPageSize();
 							
-							Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range+" category: "+category);
-							setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
+							if(availableByCategory && category != null && !category.hasChildren()){
+								Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range+" category: "+category);
+								setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
+							}else{
+								Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range);
+								setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
+							}
 	
 							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;

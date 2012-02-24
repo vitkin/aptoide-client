@@ -23,10 +23,14 @@ package cm.aptoide.pt.data.system;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.model.ViewApplication;
 
@@ -108,6 +112,14 @@ public class ManagerSystemSync {
 			serviceData.getManagerCache().cacheIcon((installedAppInfo.packageName+"|"+installedAppInfo.versionCode).hashCode(), ((BitmapDrawable)installedAppInfo.applicationInfo.loadIcon(packageManager)).getBitmap());
 		}
 //		serviceData.updateInstalledLists();
+	}
+	
+	public ViewHwFilters getHwFilters(){
+		int sdkVersion = Build.VERSION.SDK_INT;;
+		int screenSize = serviceData.getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;;
+		String glEsVersion = ((ActivityManager) serviceData.getSystemService(Context.ACTIVITY_SERVICE)).getDeviceConfigurationInfo().getGlEsVersion();
+		
+		return new ViewHwFilters(sdkVersion, screenSize, Float.parseFloat(glEsVersion));
 	}
 	
 //	public Drawable getInstalledAppIcon(String packageName){

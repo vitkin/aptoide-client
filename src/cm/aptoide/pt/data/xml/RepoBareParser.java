@@ -104,9 +104,9 @@ public class RepoBareParser extends DefaultHandler{
 			case minSdk:
 				application.setMinSdk(Integer.parseInt(tagContentBuilder.toString().trim()));
 				break;
-//			case minGles:
-//				application.setMinGles(Integer.parseInt(tagContentBuilder.toString().trim()));
-//				break;
+			case minGles:
+				application.setMinGles(Float.parseFloat(tagContentBuilder.toString().trim()));
+				break;
 				
 			case pkg:
 				application.setRepoHashid(parseInfo.getRepository().getHashid());

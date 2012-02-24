@@ -401,7 +401,7 @@ public class Constants {
 			+ KEY_APPLICATION_MIN_SDK + " INTEGER DEFAULT (1) CHECK("+KEY_APPLICATION_MIN_SDK+">=0), "
 			/** min_gles defaults to 1.0 encoded acording to integer representation rules of gles float version id 
 			 * found in: http://developer.android.com/guide/topics/manifest/uses-feature-element.html#glEsVersion  **/
-			+ KEY_APPLICATION_MIN_GLES + " INTEGER DEFAULT (1) CHECK("+KEY_APPLICATION_MIN_GLES+">=0), "	
+			+ KEY_APPLICATION_MIN_GLES + " INTEGER DEFAULT (1.0) CHECK("+KEY_APPLICATION_MIN_GLES+">=0), "	
 			+ "FOREIGN KEY("+ KEY_APPLICATION_REPO_HASHID +") REFERENCES "+ TABLE_REPOSITORY +"("+ KEY_REPO_HASHID +") );"; 
 //			+ "PRIMARY KEY("+ KEY_APPLICATION_FULL_HASHID +") );";	
 

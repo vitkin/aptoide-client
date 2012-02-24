@@ -124,24 +124,24 @@ public class ViewApplication {
 		values.put(Constants.KEY_APPLICATION_MIN_SCREEN, minScreen);
 	}
 	
-	public long getMinScreen(){
-		return values.getAsLong(Constants.KEY_APPLICATION_MIN_SCREEN);
+	public int getMinScreen(){
+		return values.getAsInteger(Constants.KEY_APPLICATION_MIN_SCREEN);
 	}
 	
 	public void setMinSdk(int minSdk){
 		values.put(Constants.KEY_APPLICATION_MIN_SDK, minSdk);
 	}
 	
-	public long getMinSdk(){
-		return values.getAsLong(Constants.KEY_APPLICATION_MIN_SDK);
+	public int getMinSdk(){
+		return values.getAsInteger(Constants.KEY_APPLICATION_MIN_SDK);
 	}
 	
-	public void setMinGles(int minGles){
+	public void setMinGles(float minGles){
 		values.put(Constants.KEY_APPLICATION_MIN_SDK, minGles);
 	}
 	
-	public long getMinGles(){
-		return values.getAsLong(Constants.KEY_APPLICATION_MIN_GLES);
+	public float getMinGles(){
+		return values.getAsFloat(Constants.KEY_APPLICATION_MIN_GLES);
 	}
 	
 //	public void setRating(int rating){
