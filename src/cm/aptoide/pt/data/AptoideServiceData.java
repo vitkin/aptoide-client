@@ -62,6 +62,7 @@ import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
+import cm.aptoide.pt.data.preferences.ViewSettings;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
@@ -125,7 +126,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			try {
 				return super.onTransact(code, data, reply, flags);
 			} catch (RuntimeException e) {
-				Log.w("Aptoide-ServiceData", "Unexpected remote exception", e);
+				Log.w("Aptoide-ServiceData", "Unexpected serviceData exception", e);
 				throw e;
 			}
 		}
@@ -149,6 +150,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		@Override
 		public void callSyncInstalledApps() throws RemoteException {
 	    	syncInstalledApps();			
+		}
+
+		@Override
+		public String callGetAptoideVersionName() throws RemoteException {
+			return managerSystemSync.getAptoideVersionNameInUse();
 		}
 		
 		@Override
@@ -344,6 +350,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		public ViewDisplayListRepos callGetWaitingMyappRepos() throws RemoteException {
 			return waitingMyappRepos;
 		}
+
+		@Override
+		public ViewSettings callGetSettings() throws RemoteException {
+			return managerPreferences.getSettings();
+		}
 		
 	}; 
 	
@@ -524,6 +535,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				if(!getManagerCache().isFreeSpaceInSdcard()){
 					//TODO raise exception
 				}
+				Log.d("Aptoide-ServiceData", "Checking for self-update");
 				ViewCache cache = managerDownloads.downloadLatestVersionInfo();
 				managerXml.latestVersionInfoParse(cache);
 				//TODO find some way to track global parsing completion status, probably in managerXml

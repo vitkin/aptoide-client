@@ -1,5 +1,5 @@
 /**
- * SelfUpdate, part of Aptoide
+ * Settings, part of Aptoide
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -32,19 +32,24 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
+import cm.aptoide.pt.data.preferences.ViewSettings;
 
 
 /**
- * SelfUpdate, handles Aptoide's self-Update interface
+ * Settings, handles Aptoide's settings interface
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class SelfUpdate extends Activity {
+public class Settings extends Activity {
+	
+	ViewSettings storedSettings;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -59,16 +64,16 @@ public class SelfUpdate extends Activity {
 			serviceDataCaller = AIDLAptoideServiceData.Stub.asInterface(service);
 			serviceDataIsBound = true;
 			
-			Log.v("Aptoide-SelfUpdate", "Connected to ServiceData");
+			Log.v("Aptoide-Settings", "Connected to ServiceData");
 	        
 			try {
-				serviceDataCaller.callRegisterSelfUpdateObserver(serviceDataCallback);
+				storedSettings = serviceDataCaller.callGetSettings();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			handleSelfUpdate();
+			showSettings();
 			
 		}
 
@@ -78,62 +83,69 @@ public class SelfUpdate extends Activity {
 			serviceDataIsBound = false;
 			serviceDataCaller = null;
 			
-			Log.v("Aptoide-SelfUpdate", "Disconnected from ServiceData");
+			Log.v("Aptoide-Settings", "Disconnected from ServiceData");
 		}
 	};
 	
-	private AIDLSelfUpdate.Stub serviceDataCallback = new AIDLSelfUpdate.Stub() {
+//	private AIDLSelfUpdate.Stub serviceDataCallback = new AIDLSelfUpdate.Stub() {
+//		
+//		@Override
+//		public void cancelUpdateActivity() throws RemoteException {
+//			finish();
+//		}
+//	};
+	
+	
+//	private void handleSelfUpdate(){
+//		final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+//    	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+//    	alertBuilder.setCancelable(false)
+//    				.setPositiveButton(R.string.yes , new DialogInterface.OnClickListener() {
+//    					public void onClick(DialogInterface dialog, int id) {
+//    						dialog.cancel();
+//    						progressBar.setVisibility(View.VISIBLE);
+//    						try {
+//								serviceDataCaller.callAcceptSelfUpdate();
+//							} catch (RemoteException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//    					}
+//    				})    	
+//    				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+//    					public void onClick(DialogInterface dialog, int id) {
+//    						dialog.cancel();
+//    						try {
+//								serviceDataCaller.callRejectSelfUpdate();
+//							} catch (RemoteException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+//    						finish();
+//    					}
+//    				})
+//    				.setMessage(R.string.update_confirm)
+//    				;
+//    	
+//    	AlertDialog alert = alertBuilder.create();
+//    	
+//    	alert.setTitle(R.string.update_available);
+//    	alert.setIcon(R.drawable.icon);
+//    	
+//    	alert.show();
+//	}
+	
+	
+	private void showSettings(){
+		setContentView(R.layout.settings);
 		
-		@Override
-		public void cancelUpdateActivity() throws RemoteException {
-			finish();
-		}
-	};
-	
-	
-	private void handleSelfUpdate(){
-		final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-    	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-    	alertBuilder.setCancelable(false)
-    				.setPositiveButton(R.string.yes , new DialogInterface.OnClickListener() {
-    					public void onClick(DialogInterface dialog, int id) {
-    						dialog.cancel();
-    						progressBar.setVisibility(View.VISIBLE);
-    						try {
-								serviceDataCaller.callAcceptSelfUpdate();
-							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-    					}
-    				})    	
-    				.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-    					public void onClick(DialogInterface dialog, int id) {
-    						dialog.cancel();
-    						try {
-								serviceDataCaller.callRejectSelfUpdate();
-							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-    						finish();
-    					}
-    				})
-    				.setMessage(R.string.update_confirm)
-    				;
-    	
-    	AlertDialog alert = alertBuilder.create();
-    	
-    	alert.setTitle(R.string.update_available);
-    	alert.setIcon(R.drawable.icon);
-    	
-    	alert.show();
+		RadioButton hwFilterButton = (RadioButton) findViewById(R.id.hw_filter);
+//		hwFilterButton.seton
 	}
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		setContentView(R.layout.auto_updating);
     	
 		if(!serviceDataIsBound){
     		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
