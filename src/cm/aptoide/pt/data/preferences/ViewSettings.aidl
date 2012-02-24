@@ -1,6 +1,6 @@
 /**
- * EnumPreferences,	auxilliary class to Aptoide's ServiceData
- * Copyright (C) 2011  Duarte Silveira
+ * ViewSettings,		part of Aptoide's ServiceData
+ * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,26 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-
 package cm.aptoide.pt.data.preferences;
 
 /**
- * EnumPreferences, typeSafes Preferences
- * 
+ * ViewSettings, models Settings for AIDL IPC
+ *
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumPreferences {
-	APTOIDE_CLIENT_UUID,
-	SCREEN_WIDTH,
-	SCREEN_HEIGHT,
-	SCREEN_DENSITY,
-	AUTHORIZED_DOWNLOAD_CONNECTIONS,
-	SHOW_APPLICATIONS_BY_CATEGORY,
-	IS_HW_FILTER_ON;
-	
-	public static EnumPreferences reverseOrdinal(int ordinal){
-		return values()[ordinal];
-	}
-}
+parcelable ViewSettings;

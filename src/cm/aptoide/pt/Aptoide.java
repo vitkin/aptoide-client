@@ -98,6 +98,7 @@ import cm.aptoide.pt.debug.InterfaceAptoideLog;
 public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClickListener { 
 	
 	private final String TAG = "Aptoide";
+	private String versionName;
 	private boolean isRunning = false;
 	
 	private ScrollDetector scrollListener;
@@ -203,6 +204,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	        
 	        handleIncomingIntent(getIntent());
 			
+	        
+	        try {
+				versionName = serviceDataCaller.callGetAptoideVersionName();
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+	        
             
 			DisplayMetrics displayMetrics = new DisplayMetrics();
 			getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -613,8 +622,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 								range = requestsSum*displayListsDimensions.getPageSize();
 							}							
 							
-							Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range);
-							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
+							Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range+" category: "+category);
+							setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
 							
 							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;
@@ -629,8 +638,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							offset = (currentCacheOffset+requestsSum-1)*displayListsDimensions.getPageSize();
 							range = Math.abs(requestsSum)*displayListsDimensions.getPageSize();
 							
-							Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range);
-							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
+							Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range+" category: "+category);
+							setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
 	
 							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;
@@ -1691,37 +1700,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		}
     	}
 	}
-	
-	
-//	@Override
-//	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-//		final String pkg_id = ((LinearLayout)arg1).getTag().toString();
-//
-//		pos = arg2;
-//
-//		Intent apkinfo = new Intent(this,ApkInfo.class);
-//		apkinfo.putExtra("name", db.getName(pkg_id));
-//		apkinfo.putExtra("icon", this.getString(R.string.icons_path)+pkg_id);
-//		apkinfo.putExtra("apk_id", pkg_id);
-//		
-//		String tmpi = db.getDescript(pkg_id);
-//		if(!(tmpi == null)){
-//			apkinfo.putExtra("about",tmpi);
-//		}else{
-//			apkinfo.putExtra("about",getText(R.string.app_pop_up_no_info));
-//		}
-//		
-//
-//		Vector<String> tmp_get = db.getApk(pkg_id);
-//		apkinfo.putExtra("server", tmp_get.firstElement());
-//		apkinfo.putExtra("version", tmp_get.get(1));
-//		apkinfo.putExtra("dwn", tmp_get.get(4));
-//		apkinfo.putExtra("rat", tmp_get.get(5));
-//		apkinfo.putExtra("size", tmp_get.get(6));
-//		apkinfo.putExtra("type", 1);
-//		
-//		startActivityForResult(apkinfo,30);
-//	}
 
 	
 	@Override
@@ -1746,18 +1724,22 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				.setIcon(android.R.drawable.ic_menu_agenda);
 			menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
 				.setIcon(android.R.drawable.ic_menu_sort_by_size);
-//			menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
-//				.setIcon(android.R.drawable.ic_menu_search);
-//			menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.menu_settings)
-//				.setIcon(android.R.drawable.ic_menu_preferences);
-//			menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.menu_about)
-//				.setIcon(android.R.drawable.ic_menu_help);
-//			menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn).setIcon(R.drawable.ic_menu_scheduled);
+//			menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn)
+//				.setIcon(R.drawable.ic_menu_scheduled);
 			break;
 
 		default:
 			break;
 		}
+		
+//		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
+//			.setIcon(android.R.drawable.ic_menu_search);
+		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.settings)
+			.setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.about)
+			.setIcon(android.R.drawable.ic_menu_help);
+		
+		
 		return true;
 	}
 	
@@ -1773,23 +1755,23 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				return true;
 			case DISPLAY_OPTIONS:
 					//TODO refactor extract dialog management class
-					LayoutInflater li = LayoutInflater.from(this);
-					View view = li.inflate(R.layout.dialog_display_options, null);
-					Builder alrt = new AlertDialog.Builder(this).setView(view);
+					LayoutInflater displayOptionsInflater = LayoutInflater.from(this);
+					View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
+					Builder alrt = new AlertDialog.Builder(this).setView(displayOptions);
 					final AlertDialog sortDialog = alrt.create();
 					sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
 					sortDialog.setTitle(getString(R.string.display_options));
 					
 					// ***********************************************************
 					// Categories
-					final RadioButton byCategory = (RadioButton) view.findViewById(R.id.shw_ct);
-					final RadioButton byAll = (RadioButton) view.findViewById(R.id.shw_all);
+					final RadioButton byCategory = (RadioButton) displayOptions.findViewById(R.id.shw_ct);
+					final RadioButton byAll = (RadioButton) displayOptions.findViewById(R.id.shw_all);
 					if(availableByCategory){
 						byCategory.setChecked(true);
 					}else{
 						byAll.setChecked(true);
 					}
-					final RadioGroup grp2 = (RadioGroup) view.findViewById(R.id.groupshow);
+					final RadioGroup grp2 = (RadioGroup) displayOptions.findViewById(R.id.groupshow);
 					grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 						public void onCheckedChanged(RadioGroup group, int checkedId) {
 //							if(checkedId == byCategory.getId()){
@@ -1856,69 +1838,32 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					});
 					
 				sortDialog.show();
-//				
-//				new Thread(){
-//					@Override
-//					public void run() {
-//						super.run();
-//						while(p.isShowing()){
-//							try {
-//								Thread.sleep(1000);
-//							} catch (InterruptedException e) {	}
-//						}
-//						if(sPref.getBoolean("pop_changes", false)){
-//							prefEdit.remove("pop_changes");
-//							prefEdit.commit();
-//							if(sPref.getBoolean("mode", false)){
-//								if(!(shown_now == null) || main_shown_now == 2){
-//									handler_adpt = getGivenCatg(shown_now, main_shown_now);
-//								}else{
-//									handler_adpt = getRootCtg();
-//								}
-//								displayRefresh.sendEmptyMessage(0);
-//							}else{
-//								shown_now = null;
-//								handler_adpt = null;
-//								redrawHandler.sendEmptyMessage(0);
-//								try {
-//									Thread.sleep(1000);
-//								} catch (InterruptedException e1) { }
-//								while(sPref.getBoolean("redrawis", false)){
-//									try {
-//										Thread.sleep(500);
-//									} catch (InterruptedException e) { }
-//								}
-//								displayRefresh.sendEmptyMessage(0);
-//							}
-//						}
-//					}
-//				}.start();
 				return true;
 				
 //			case SEARCH_MENU:
 //				onSearchRequested();
 //				return true;
-//			case ABOUT:
-//				LayoutInflater li = LayoutInflater.from(this);
-//				View view = li.inflate(R.layout.about, null);
-//				TextView info = (TextView)view.findViewById(R.id.about11);
-//				info.setText(mctx.getString(R.string.about_txt11, mctx.getString(R.string.ver_str)));
-//				Builder p = new AlertDialog.Builder(this).setView(view);
-//				final AlertDialog alrt = p.create();
-//				alrt.setIcon(R.drawable.icon);
-//				alrt.setTitle(R.string.aptoide);
-//				alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dialog, int	whichButton) {
-//						Uri uri = Uri.parse(getString(R.string.change_log_url));
-//						startActivity(new Intent( Intent.ACTION_VIEW, uri));
-//					}
-//				});
-//				alrt.show();
-//				return true;
-//			case SETTINGS:
-//				Intent s = new Intent(RemoteInTab.this, Settings.class);
-//				startActivityForResult(s,SETTINGS_FLAG);
-//				return true;	
+			case ABOUT:
+				LayoutInflater aboutInflater = LayoutInflater.from(this);
+				View about = aboutInflater.inflate(R.layout.about, null);
+				TextView info = (TextView)about.findViewById(R.id.credits);
+				info.setText(getString(R.string.credits, versionName));
+				Builder aboutCreator = new AlertDialog.Builder(this).setView(about);
+				final AlertDialog aboutDialog = aboutCreator.create();
+				aboutDialog.setIcon(R.drawable.icon);
+				aboutDialog.setTitle(R.string.app_name);
+				aboutDialog.setButton(getText(R.string.changelog), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int	whichButton) {
+						Uri uri = Uri.parse(getString(R.string.changelog_url));
+						startActivity(new Intent( Intent.ACTION_VIEW, uri));
+					}
+				});
+				aboutDialog.show();
+				return true;
+			case SETTINGS:
+				Intent settings = new Intent(this, Settings.class);
+				startActivity(settings);
+				return true;	
 //			case SCHEDULED_DOWNLOADS:
 //				Intent sch_download = new Intent(RemoteInTab.this,ScheduledDownload.class);
 //				startActivity(sch_download);

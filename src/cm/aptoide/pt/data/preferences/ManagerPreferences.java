@@ -116,4 +116,17 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		setPreferences.commit();
 	}
 	
+	public void setHwFilterOn(boolean isHwFilterOn){
+		setPreferences.putBoolean(EnumPreferences.IS_HW_FILTER_ON.name(), isHwFilterOn);
+		setPreferences.commit();		
+	}
+	
+	public boolean isHwFilterOn(){
+		return getPreferences.getBoolean(EnumPreferences.IS_HW_FILTER_ON.name(), false);
+	}
+	
+	public ViewSettings getSettings(){
+		return new ViewSettings(isHwFilterOn());
+	}
+	
 }

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>    
-    <string name="change_log_url">http://aptoide.com/changelog_3_0.html</string>
+<resources>
+    <string name="changelog">Changelog</string>
+    <string name="changelog_url">http://aptoide.com/changelog_3_0.html</string>
    
-    <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n\n
+    <string name="credits">Version: %s\n(released under GNU GPL v2 license)\n\n
     Credits:\n\n
     &#160;Creator:\n
     \t\t Roberto Jacinto &amp; Caixa Mágica\n\n
@@ -38,7 +39,12 @@
     &#160;&#160;&#160;Bosnian/Croatian/Serbian&#160;:\n
     \t\t\tRijad \"rijads\"\n
     </string>
+        
+    <string name="home">Home: </string>
+    <string name="aptoide_url"> www.aptoide.com</string>
     
+    <string name="contact">Contact: </string>
+    <string name="aptoide_email"> aptoide@aptoide.com</string>
 </resources>
 
 <!--

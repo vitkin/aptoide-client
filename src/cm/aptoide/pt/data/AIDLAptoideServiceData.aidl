@@ -31,6 +31,7 @@ import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLReposInfo;
 import cm.aptoide.pt.AIDLSelfUpdate;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
+import cm.aptoide.pt.data.preferences.ViewSettings;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
@@ -45,6 +46,7 @@ interface AIDLAptoideServiceData {
 	void callAcceptSelfUpdate();
 	void callRejectSelfUpdate();
 
+	String callGetAptoideVersionName();
 	void callStoreScreenDimensions(in ViewScreenDimensions screenDimensions);
 	
 	ViewDisplayListsDimensions callGetDisplayListsDimensions();
@@ -93,5 +95,7 @@ interface AIDLAptoideServiceData {
 	void callInstallMyapp(in ViewMyapp myapp);
 	void callRejectedMyapp();
 	ViewDisplayListRepos callGetWaitingMyappRepos();
+	
+	ViewSettings callGetSettings();
 	
 }
