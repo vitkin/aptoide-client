@@ -12,7 +12,7 @@
         android:text="@string/settings"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
-    <RadioButton
+    <CheckBox
         android:id="@+id/hw_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -355,6 +355,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		public ViewSettings callGetSettings() throws RemoteException {
 			return managerPreferences.getSettings();
 		}
+
+		@Override
+		public void callSetHwFilter(boolean on) throws RemoteException {
+			setHwFilter(on);
+		}
+
+		@Override
+		public void callResetAvailableApps() throws RemoteException {
+			resetAvailableLists();
+		}
 		
 	}; 
 	
@@ -490,7 +500,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			
 			checkForSelfUpdate();
 			
-			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+//			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 			
 			isRunning = true;
 			Log.d("Aptoide ServiceData", "Service started");
@@ -508,19 +518,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		stopSelf();
 		Log.d("Aptoide ServiceData", "Service stopped");
 		super.onDestroy();
-	}
-	
-	public void rejectSelfUpdate(){
-		if(selfUpdateClient != null){
-			try {
-				selfUpdateClient.cancelUpdateActivity();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		selfUpdateClient = null;
-		waitingSelfUpdate = null;
 	}
 
 	
@@ -560,6 +557,24 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	public void rejectSelfUpdate(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				if(selfUpdateClient != null){
+					try {
+						selfUpdateClient.cancelUpdateActivity();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				selfUpdateClient = null;
+				waitingSelfUpdate = null;
+			}
+		});
+	}
+	
 	public void downloadSelfUpdate(final ViewLatestVersionInfo latesVersionInfo){
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
@@ -584,17 +599,37 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void checkIfAnyReposInUse(){
-		if(managerDatabase.anyReposInUse()){
-			resetAvailableLists();
-			return;
-		}else{
-			manageRepos();  				
-		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				if(managerDatabase.anyReposInUse()){
+					resetAvailableLists();
+					return;
+				}else{
+					manageRepos();  				
+				}
+			}
+		});
 	}
 	
-	public void storeScreenDimensions(ViewScreenDimensions screenDimensions){
-		managerPreferences.setScreenDimensions(screenDimensions);
-		AptoideLog.d(AptoideServiceData.this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
+	public void storeScreenDimensions(final ViewScreenDimensions screenDimensions){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerPreferences.setScreenDimensions(screenDimensions);
+				AptoideLog.d(AptoideServiceData.this, "Stored Screen Dimensions: "+managerPreferences.getScreenDimensions());
+			}
+		});
+	}
+	
+	public void setHwFilter(final boolean on){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerPreferences.setHwFilter(on);
+				AptoideLog.d(AptoideServiceData.this, "Setting hw filter: "+on);
+			}
+		});
 	}
 	
 	public void syncInstalledApps(){
@@ -1172,17 +1207,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public ViewDisplayListApps getAvailableApps(int offset, int range){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps");
-		return managerDatabase.getAvailableAppsDisplayInfo(offset, range);
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, managerPreferences.isHwFilterOn());
 	}
 	
 	public ViewDisplayListApps getAvailableApps(int offset, int range, int categoryHashid){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps for category: "+categoryHashid);
-		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, categoryHashid);
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, categoryHashid, managerPreferences.isHwFilterOn());
 	}
 	
 	public ViewDisplayListApps getUpdatableApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Updatable Apps");
-		return managerDatabase.getUpdatableAppsDisplayInfo();
+		return managerDatabase.getUpdatableAppsDisplayInfo(managerPreferences.isHwFilterOn());
 	}
 	
 	public ViewDisplayListApps getAppSearchResults(String searchString){

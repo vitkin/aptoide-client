@@ -56,6 +56,7 @@ import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.model.ViewScreenInfo;
 import cm.aptoide.pt.data.model.ViewStatsInfo;
+import cm.aptoide.pt.data.system.ViewHwFilters;
 import cm.aptoide.pt.data.util.Constants;
 
 /**
@@ -1866,7 +1867,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, int categoryHashid){
+	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, int categoryHashid, boolean filterByHw){
 		
 		final int APP_NAME = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
@@ -1884,10 +1885,21 @@ public class ManagerDatabase {
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
 											+", A."+Constants.KEY_STATS_STARS+", A."+Constants.KEY_STATS_DOWNLOADS
 									+" FROM (SELECT *"
-											+" FROM "+Constants.TABLE_APPLICATION;
+											+" FROM (SELECT * FROM "+Constants.TABLE_APPLICATION;
+			if(filterByHw){
+				ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters();
+				Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo HW filters ON: "+filters);
+				selectAvailableApps	+=				" WHERE "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+									+				" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+									+				" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion()+") ";
+			}else{
+				selectAvailableApps	+=				")";
+			}
+		
 			if(categoryHashid != Constants.TOP_CATEGORY){
 				selectAvailableApps += 			" NATURAL LEFT JOIN "+Constants.TABLE_APP_CATEGORY;
 			}
+			
 				selectAvailableApps +=			" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
 																	+" FROM "+Constants.TABLE_REPOSITORY+")"
 												+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
@@ -1898,6 +1910,7 @@ public class ManagerDatabase {
 			}else{
 				selectAvailableApps += 		") A";
 			}
+			
 				selectAvailableApps +=" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
 									+" ORDER BY "+Constants.KEY_APPLICATION_NAME
 									+" LIMIT ?"
@@ -1951,8 +1964,8 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range){
-		return getAvailableAppsDisplayInfo(offset, range, Constants.TOP_CATEGORY);
+	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, boolean filterByHw){
+		return getAvailableAppsDisplayInfo(offset, range, Constants.TOP_CATEGORY, filterByHw);
 	}
 	
 	
@@ -1968,7 +1981,7 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getUpdatableAppsDisplayInfo(){
+	public ViewDisplayListApps getUpdatableAppsDisplayInfo(boolean filterByHw){
 		final int APP_NAME = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
 		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
@@ -1989,12 +2002,21 @@ public class ManagerDatabase {
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME+", "+Constants.KEY_APPLICATION_FULL_HASHID
 																	+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-															+" FROM (SELECT *"
-																	+" FROM "+Constants.TABLE_APPLICATION
-																	+" WHERE "+Constants.KEY_APPLICATION_REPO_HASHID
-																		+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
-																				+" FROM "+Constants.TABLE_REPOSITORY
-																				+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+"))"	
+															+" FROM ((SELECT *"
+																	+" FROM "+Constants.TABLE_APPLICATION;
+			if(filterByHw){
+				ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
+				Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
+				selectUpdatableApps	+=								" WHERE "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+									+								" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+									+								" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion()+") ";
+			}else{
+				selectUpdatableApps	+=								")";
+			}
+																
+				selectUpdatableApps	+=								" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+																						+" FROM "+Constants.TABLE_REPOSITORY
+																						+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+"))"	
 															+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_STATS_APP_FULL_HASHID+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
 															+" FROM "+Constants.TABLE_STATS_INFO

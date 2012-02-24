@@ -97,5 +97,7 @@ interface AIDLAptoideServiceData {
 	ViewDisplayListRepos callGetWaitingMyappRepos();
 	
 	ViewSettings callGetSettings();
+	void callSetHwFilter(in boolean on);
+	void callResetAvailableApps();
 	
 }
