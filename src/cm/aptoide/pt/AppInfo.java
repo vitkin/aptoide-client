@@ -33,6 +33,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -81,10 +82,10 @@ public class AppInfo extends Activity {
 	private String appDescription;
 	
 	private ViewDisplayAppVersionsInfo appVersions;
+
+	private ViewDisplayAppVersionInfo installedVersion = null;
+	private ViewDisplayAppVersionInfo selectedVersion;
 	
-	private ArrayList<String> versions;
-	
-	Gallery galleryView;
 	CheckBox later;
 	private TextView appNameTextView;
 	private TextView appDownloadsTextView;
@@ -95,6 +96,11 @@ public class AppInfo extends Activity {
 	private TextView appDislikesTextView;
 	private TextView appDescriptionTextView;
 	private Spinner appMultiVersion;
+
+	Gallery galleryView;
+	
+	private Button install;
+	private Button uninstall;
 	
 	private ArrayAdapter<String> multiVersionSpinnerAdapter;
 	
@@ -246,65 +252,127 @@ public class AppInfo extends Activity {
 		searchView.setVisibility(View.GONE);
 		
 		if (!serviceDataIsBound) {
-			bindService(new Intent(this, AptoideServiceData.class),
-					serviceDataConnection, Context.BIND_AUTO_CREATE);
+			bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
 		}
 
-		final Button install = (Button) findViewById(R.id.install);
-		install.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View view) {
-				try {
-					if (later.isChecked()) {
-						serviceDataCaller.callScheduleInstallApp(appHashid);
-						Log.d("Aptoide-AppInfo", "called install app later");
-					} else {
-						serviceDataCaller.callInstallApp(appHashid);
-						Log.d("Aptoide-AppInfo", "called install app");
-					}
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				finish();
-			}
-		});
-
-		final Button uninstall = (Button) findViewById(R.id.uninstall);
-		uninstall.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View view) {
-				Log.d("Aptoide-AppInfo", "called remove app");
-				try {
-					serviceDataCaller.callUninstallApp(appHashid);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				finish();
-			}
-		});
+		install = (Button) findViewById(R.id.install);
+		install.setTextColor(Color.DKGRAY);
+		uninstall = (Button) findViewById(R.id.uninstall);
+		uninstall.setTextColor(Color.DKGRAY);
 
 		galleryView = (Gallery) findViewById(R.id.screens);
 
 		setIcon();
+	}
+	
+	private void activateInstallButton(boolean activate){
+		if(activate){
+			install.setText(getResources().getString(R.string.install));
+			install.setTextColor(Color.BLACK);			
+			install.setOnClickListener(new OnClickListener() {
+	
+				@Override
+				public void onClick(View view) {
+					try {
+						if (later.isChecked()) {
+							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
+							Log.d("Aptoide-AppInfo", "called install app later");
+						} else {
+							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
+							Log.d("Aptoide-AppInfo", "called install app");
+						}
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					finish();
+				}
+			});
+		}else{
+			install.setText(getResources().getString(R.string.install));
+			install.setTextColor(Color.WHITE);
+			install.setOnClickListener(null);
+		}
+	}
+	
+	private void activateUninstallButton(boolean activate){
+		if(activate){
+			uninstall.setText(getResources().getString(R.string.uninstall));
+			uninstall.setTextColor(Color.BLACK);	
+			uninstall.setOnClickListener(new OnClickListener() {
+	
+				@Override
+				public void onClick(View view) {
+					Log.d("Aptoide-AppInfo", "called remove app");
+					try {
+						serviceDataCaller.callUninstallApp(selectedVersion.getAppHashid());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					finish();
+				}
+			});
+		}else{
+			uninstall.setText(getResources().getString(R.string.uninstall));
+			uninstall.setTextColor(Color.WHITE);
+			uninstall.setOnClickListener(null);
+			
+		}
+	}
+	
+	private void activateUpdateButton(boolean activate){
+		if(activate){
+			install.setText(getResources().getString(R.string.update));
+			install.setTextColor(Color.BLACK);			
+			install.setOnClickListener(new OnClickListener() {
 
-		// Handler threadHandler = new Handler();
-		// threadHandler.postDelayed(new Runnable() {
-		// public void run() {
-		// fillRest();
-		// }
-		// }, 2000);
-		// threadHandler.postDelayed(new Runnable() {
-		// public void run() {
-		// fillRest();
-		// }
-		// }, 10000);
+				@Override
+				public void onClick(View view) {
+					try {
+						if (later.isChecked()) {
+							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
+							Log.d("Aptoide-AppInfo", "called install app later");
+						} else {
+							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
+							Log.d("Aptoide-AppInfo", "called install app");
+						}
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					finish();
+				}
+			});
+		}else{
+			install.setText(getResources().getString(R.string.update));
+			install.setTextColor(Color.WHITE);
+			install.setOnClickListener(null);
+		}
+		
+	}
+	
+	private void selectVersion(ViewDisplayAppVersionInfo version){
+		selectedVersion = version;
+		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion);
+		
+		if(installedVersion != null){
+			activateUninstallButton(true);
+			if(selectedVersion.equals(installedVersion)){
+				activateUpdateButton(false);
+			}else if(selectedVersion.getVersionCode() > installedVersion.getVersionCode()){
+				activateUpdateButton(true);
+			}
+		}else{
+			activateUninstallButton(false);
+			activateInstallButton(true);
+		}
+		
+		setVersionDetails();
+		setVersionStats();
 	}
 
-	protected void setIcon() {
+	private void setIcon() {
 		String icon_path = Constants.PATH_CACHE_ICONS + appHashid;
 		ImageView icon = (ImageView) findViewById(R.id.icon);
 		File test_icon = new File(icon_path);
@@ -316,7 +384,7 @@ public class AppInfo extends Activity {
 		}
 	}
 
-	protected void setVersions() {
+	private void setVersions() {
 		try {
 			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
 			Log.d("Aptoide-AppInfo", "Got app versions: " + appVersions);
@@ -326,27 +394,20 @@ public class AppInfo extends Activity {
 			e.printStackTrace();
 		}
 
-//		TextView description = (TextView) findViewById(R.id.description);
-//		description.setText(appVersions.toString());
+		for (ViewDisplayAppVersionInfo versionInfo : appVersions.getVersionsList()) {
+			if(versionInfo.isInstalled()){
+				installedVersion = versionInfo;
+				Log.d("Aptoide-AppInfo", "Installed version: "+installedVersion);
+				break;
+			}
+		}
 		
-		appName = appVersions.getVersionsList().get(0).getAppName();
+		selectVersion(appVersions.getVersionsList().get(0));
+		
+		appName = selectedVersion.getAppName();
 		appNameTextView.setText(appName);
 		
-		if(appVersions.getVersionsList().get(0).getSize() != Constants.EMPTY_INT){
-			appSize = Integer.toString(appVersions.getVersionsList().get(0).getSize());
-			appSizeTextView.setText("Size: "+appSize+"KB");
-		}else{
-			appSizeTextView.setText("Size: ");
-		}
-		if(appVersions.getVersionsList().get(0).getRepoUri() != null){
-			repoUri = appVersions.getVersionsList().get(0).getRepoUri();
-			repoUriTextView.setText("Store: "+repoUri);
-		}else{
-			repoUriTextView.setText("Store: Local");
-		}
-		
-
-		versions = new ArrayList<String>();
+		ArrayList<String> versions = new ArrayList<String>();
 		for (ViewDisplayAppVersionInfo versionInfo : appVersions.getVersionsList()) {
 			versions.add(versionInfo.getVersionName());				
 		}
@@ -358,7 +419,7 @@ public class AppInfo extends Activity {
 		appMultiVersion.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				setVersionDescription(appMultiVersion.getSelectedItemPosition());
+				selectVersion(appVersions.getVersionsList().get(appMultiVersion.getSelectedItemPosition()));
 			}
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
@@ -366,34 +427,51 @@ public class AppInfo extends Activity {
 			}
 		});
 		
-		setVersionDescription(0);
+		setVersionDescription();
 		
-		if(appVersions.getVersionsList().get(0).isExtrasAvailable()){
+	}
+	
+	private void setVersionDescription() {
+		if(selectedVersion.isExtrasAvailable()){
 			//			appDescription = appVersions.toString();
-			appDescription = appVersions.getVersionsList().get(0).getExtras().getDescription();
+			appDescription = selectedVersion.getExtras().getDescription();
 			appDescriptionTextView.setText(""+appDescription);
 		}
 	}
 	
-	protected void setVersionDescription(int versionListPosition) {
-			
-			if(appVersions.getVersionsList().get(versionListPosition).isStatsAvailable()){
-				appDownloads = appVersions.getVersionsList().get(versionListPosition).getStats().getDownloads();
-				appDownloadsTextView.setText("Downloads: "+appDownloads);
+	private void setVersionDetails(){
+		if(selectedVersion.getSize() != Constants.EMPTY_INT){
+			appSize = Integer.toString(selectedVersion.getSize());
+			appSizeTextView.setText("Size: "+appSize+"KB");
+		}else{
+			appSizeTextView.setText("Size: ");
+		}
+		
+		if(selectedVersion.getRepoUri() != null){
+			repoUri = selectedVersion.getRepoUri();
+			repoUriTextView.setText("Store: "+repoUri);
+		}else{
+			repoUriTextView.setText("Store: Local");
+		}
+	}
+	
+	private void setVersionStats(){
+		if(selectedVersion.isStatsAvailable()){
+			appDownloads = selectedVersion.getStats().getDownloads();
+			appDownloadsTextView.setText("Downloads: "+appDownloads);
 
-				appStars = appVersions.getVersionsList().get(versionListPosition).getStats().getStars();
-				appStarsRating.setRating(new Float(appStars));
+			appStars = selectedVersion.getStats().getStars();
+			appStarsRating.setRating(new Float(appStars));
 
-				appLikes = appVersions.getVersionsList().get(versionListPosition).getStats().getLikes();
-				appLikesTextView.setText("Likes: "+appLikes);
+			appLikes = selectedVersion.getStats().getLikes();
+			appLikesTextView.setText("Likes: "+appLikes);
 
-				appDislikes = appVersions.getVersionsList().get(versionListPosition).getStats().getDislikes();
-				appDislikesTextView.setText("Don't likes: "+appDislikes);
-			}
-
+			appDislikes = selectedVersion.getStats().getDislikes();
+			appDislikesTextView.setText("Don't likes: "+appDislikes);
+		}
 	}
 
-	protected void setScreens() {
+	private void setScreens() {
 		ArrayList<Drawable> screensDrawables = new ArrayList<Drawable>();
 		int orderNumber = 0;
 		String screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
