@@ -2453,27 +2453,29 @@ public class ManagerDatabase {
 	public ViewDisplayAppVersionsInfo getAppDisplayInfo(int appHashid){
 		
 		final int APP_FULL_HASHID = Constants.COLUMN_FIRST;
-		final int VERSION_CODE = Constants.COLUMN_SECOND;
-		final int VERSION_NAME = Constants.COLUMN_THIRD;
-		final int APP_NAME = Constants.COLUMN_FOURTH;
-		final int LIKES = Constants.COLUMN_FIFTH;
-		final int DISLIKES = Constants.COLUMN_SIXTH;
-		final int STARS = Constants.COLUMN_SEVENTH;
-		final int DOWNLOADS = Constants.COLUMN_EIGTH;
-		final int DESCRIPTION = Constants.COLUMN_NINTH;
-		final int SIZE = Constants.COLUMN_TENTH;
-		final int REPO_URI = Constants.COLUMN_ELEVENTH;
+		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int VERSION_CODE = Constants.COLUMN_THIRD;
+		final int VERSION_NAME = Constants.COLUMN_FOURTH;
+		final int APP_NAME = Constants.COLUMN_FIFTH;
+		final int LIKES = Constants.COLUMN_SIXTH;
+		final int DISLIKES = Constants.COLUMN_SEVENTH;
+		final int STARS = Constants.COLUMN_EIGTH;
+		final int DOWNLOADS = Constants.COLUMN_NINTH;
+		final int DESCRIPTION = Constants.COLUMN_TENTH;
+		final int SIZE = Constants.COLUMN_ELEVENTH;
+		final int REPO_URI = Constants.COLUMN_TWELVETH;
 		
-		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FIRST;
-		final int INSTALLED_VERSION_NAME = Constants.COLUMN_SECOND;
-		final int INSTALLED_NAME = Constants.COLUMN_THIRD;
+		final int INSTALLED_HASHID = Constants.COLUMN_FIRST;
+		final int INSTALLED_VERSION_CODE = Constants.COLUMN_SECOND;
+		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
+		final int INSTALLED_NAME = Constants.COLUMN_FOURTH;
 		
 		int installedVersionCode = Constants.EMPTY_INT;
 		
 		ViewDisplayAppVersionsInfo appVersions = new ViewDisplayAppVersionsInfo();
 		ViewDisplayAppVersionInfo appVersion;
 		
-		String selectAppVersions = "SELECT A."+Constants.KEY_APPLICATION_FULL_HASHID+", A."+Constants.KEY_APPLICATION_VERSION_CODE
+		String selectAppVersions = "SELECT A."+Constants.KEY_APPLICATION_FULL_HASHID+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_VERSION_CODE
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
 											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
 											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
@@ -2498,8 +2500,8 @@ public class ManagerDatabase {
 //															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
 									+" ORDER BY A."+Constants.KEY_APPLICATION_VERSION_CODE+" DESC;";
 		
-		String selectInstalledAppVersion = " SELECT "+Constants.KEY_APP_INSTALLED_VERSION_CODE+", "+Constants.KEY_APP_INSTALLED_VERSION_NAME
-													+", "+Constants.KEY_APP_INSTALLED_NAME
+		String selectInstalledAppVersion = " SELECT "+Constants.KEY_APP_INSTALLED_HASHID+", "+Constants.KEY_APP_INSTALLED_VERSION_CODE
+													+", "+Constants.KEY_APP_INSTALLED_VERSION_NAME+", "+Constants.KEY_APP_INSTALLED_NAME
 											+" FROM "+Constants.TABLE_APP_INSTALLED
 											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
 													+" (SELECT DISTINCT "+Constants.KEY_APPLICATION_PACKAGE_NAME
@@ -2528,7 +2530,7 @@ public class ManagerDatabase {
 					//TODO throw exception (Unrecognized appHashid)
 				}else{
 					appVersion = new ViewDisplayAppVersionInfo(installedVersionCursor.getString(INSTALLED_NAME), installedVersionCursor.getString(INSTALLED_VERSION_NAME)
-																, installedVersionCode, Constants.EMPTY_INT, true);
+																, installedVersionCode, Constants.EMPTY_INT, installedVersionCursor.getInt(INSTALLED_HASHID), true);
 					appVersions.addAppVersionInfo(appVersion);
 				}
 				installedVersionCursor.close();
@@ -2539,6 +2541,7 @@ public class ManagerDatabase {
 				do{
 					appVersion = new ViewDisplayAppVersionInfo(appVersionsCursor.getString(APP_NAME), appVersionsCursor.getString(VERSION_NAME)
 																, appVersionsCursor.getInt(VERSION_CODE), appVersionsCursor.getInt(APP_FULL_HASHID)
+																, appVersionsCursor.getInt(APP_HASHID)
 																, (appVersionsCursor.getInt(VERSION_CODE)==installedVersionCode?true:false));
 					if(!appVersionsCursor.isNull(SIZE)){
 						appVersion.setSize(appVersionsCursor.getInt(SIZE));

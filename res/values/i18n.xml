@@ -70,6 +70,7 @@
     <string name="add">Add</string>
     <string name="remove">Remove</string>
     <string name="install">Install</string>
+    <string name="update">Update</string>
     <string name="uninstall">Uninstall</string>
     <string name="done">Done</string>   
     <string name="cancel">Cancel</string>

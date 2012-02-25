@@ -41,6 +41,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	private String versionName;
 	private int versionCode;
 	private int appFullHashid;
+	private int appHashid;
 	private int size = Constants.EMPTY_INT;
 	
 	private String repoUri = null;
@@ -63,13 +64,15 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	 * @param String versionName
 	 * @param int versionCode
 	 * @param int appFullHashid
+	 * @param int appHashid
 	 * @param boolean isInstalled
 	 */
-	public ViewDisplayAppVersionInfo(String appName, String versionName, int versionCode, int appFullHashid, boolean isInstalled){
+	public ViewDisplayAppVersionInfo(String appName, String versionName, int versionCode, int appFullHashid, int appHashid, boolean isInstalled){
 		this.appName = appName;
 		this.versionName = versionName;
 		this.versionCode = versionCode;
 		this.appFullHashid = appFullHashid;
+		this.appHashid = appHashid;
 		
 		this.isInstalled = isInstalled;
 		
@@ -93,6 +96,10 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 
 	public int getAppFullHashid() {
 		return appFullHashid;
+	}
+
+	public int getAppHashid() {
+		return appHashid;
 	}
 	
 	public void setSize(int size) {
@@ -157,6 +164,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.versionName = null;
 		this.versionCode = Constants.EMPTY_INT;
 		this.appFullHashid = Constants.EMPTY_INT;
+		this.appHashid = Constants.EMPTY_INT;
 		this.size = Constants.EMPTY_INT;
 		this.repoUri = null;
 		
@@ -175,13 +183,15 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	 * @param String versionName
 	 * @param int versionCode
 	 * @param int appFullHashid
+	 * @param int appHashid
 	 * @param boolean isInstalled
 	 */
-	public void reuse(String appName, String versionName, int versionCode, int appFullHashid, boolean isInstalled){
+	public void reuse(String appName, String versionName, int versionCode, int appFullHashid, int appHashid, boolean isInstalled){
 		this.appName = appName;
 		this.versionName = versionName;
 		this.versionCode = versionCode;
 		this.appFullHashid = appFullHashid;
+		this.appHashid = appHashid;
 		
 		this.isInstalled = isInstalled;
 		
@@ -192,7 +202,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 
 	@Override
 	public int hashCode() {
-		return this.appFullHashid;
+		return this.appHashid;
 	}
 
 
@@ -210,7 +220,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 
 	@Override
 	public String toString() {
-		StringBuilder string = new StringBuilder(" Name: "+appName+" Version: "+versionName+" VersionCode: "+versionCode+" AppFullHashid: "+appFullHashid
+		StringBuilder string = new StringBuilder(" Name: "+appName+" Version: "+versionName+" VersionCode: "+versionCode+" AppFullHashid: "+appFullHashid+" AppHashid: "+appHashid
 												+" Size: "+size+" RepoUri: "+repoUri+" isInstalled: "+isInstalled);//+" localIconPath: "+localIconPath
 		if(statsAvailable){
 			string.append("\n\n"+stats.toString());
@@ -257,6 +267,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			out.writeString(versionName);
 			out.writeInt(versionCode);
 			out.writeInt(appFullHashid);
+			out.writeInt(appHashid);
 			out.writeInt(size);
 			out.writeString(repoUri);
 			
@@ -280,6 +291,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			versionName = in.readString();
 			versionCode = in.readInt();
 			appFullHashid = in.readInt();
+			appHashid = in.readInt();
 			size = in.readInt();
 			repoUri = in.readString();
 			
