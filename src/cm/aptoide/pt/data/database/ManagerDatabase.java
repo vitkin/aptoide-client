@@ -1886,16 +1886,24 @@ public class ManagerDatabase {
 											+", A."+Constants.KEY_STATS_STARS+", A."+Constants.KEY_STATS_DOWNLOADS
 									+" FROM (SELECT *"
 											+" FROM (SELECT * FROM "+Constants.TABLE_APPLICATION;
+			// Filter by hardware?
 			if(filterByHw){
 				ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters();
 				Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo HW filters ON: "+filters);
-				selectAvailableApps	+=				" WHERE "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
-									+				" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
-									+				" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion()+") ";
+				
+				selectAvailableApps	+=					" WHERE "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+									+					" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+									+					" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion()
+									+					" AND ";
 			}else{
-				selectAvailableApps	+=				")";
+				selectAvailableApps	+=					" WHERE ";
 			}
-		
+			// Exclude Installed apps
+				selectAvailableApps	+=					" NOT EXISTS (SELECT "+Constants.KEY_APP_INSTALLED_HASHID
+																		+" FROM "+Constants.TABLE_APP_INSTALLED
+																		+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID
+																			+"="+Constants.TABLE_APPLICATION+"."+Constants.KEY_APPLICATION_HASHID+"))";
+			// Filter by category?
 			if(categoryHashid != Constants.TOP_CATEGORY){
 				selectAvailableApps += 			" NATURAL LEFT JOIN "+Constants.TABLE_APP_CATEGORY;
 			}
@@ -1912,6 +1920,7 @@ public class ManagerDatabase {
 			}
 			
 				selectAvailableApps +=" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME
+			// Sort by:
 									+" ORDER BY "+Constants.KEY_APPLICATION_NAME
 									+" LIMIT ?"
 									+" OFFSET ?;";
