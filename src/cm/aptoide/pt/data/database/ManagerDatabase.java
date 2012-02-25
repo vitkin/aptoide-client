@@ -2497,7 +2497,8 @@ public class ManagerDatabase {
 												+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
 											+" UNION SELECT DISTINCT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
 												+" FROM "+Constants.TABLE_APP_INSTALLED
-												+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")) A"
+												+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")"
+											+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_STATS_INFO+") S"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_EXTRA_INFO+") E"
 									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+", "+Constants.KEY_DOWNLOAD_SIZE
