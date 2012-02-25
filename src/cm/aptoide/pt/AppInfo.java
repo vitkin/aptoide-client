@@ -55,6 +55,7 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
@@ -276,9 +277,13 @@ public class AppInfo extends Activity {
 					try {
 						if (later.isChecked()) {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.install).toString()+" "
+														+getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called install app later");
 						} else {
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
+														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called install app");
 						}
 					} catch (RemoteException e) {
@@ -332,9 +337,13 @@ public class AppInfo extends Activity {
 					try {
 						if (later.isChecked()) {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.update).toString()+" "
+														+getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called install app later");
 						} else {
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
+														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called install app");
 						}
 					} catch (RemoteException e) {
@@ -352,6 +361,41 @@ public class AppInfo extends Activity {
 		
 	}
 	
+	private void activateDowngradeButton(boolean activate){
+		if(activate){
+			install.setText(getResources().getString(R.string.downgrade));
+			install.setTextColor(Color.BLACK);			
+			install.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View view) {
+					try {
+						if (later.isChecked()) {
+							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.downgrade).toString()+" "
+														+getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
+							Log.d("Aptoide-AppInfo", "called install app later");
+						} else {
+							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
+														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
+							Log.d("Aptoide-AppInfo", "called install app");
+						}
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					finish();
+				}
+			});
+		}else{
+			install.setText(getResources().getString(R.string.downgrade));
+			install.setTextColor(Color.WHITE);
+			install.setOnClickListener(null);
+		}
+		
+	}
+	
 	private void selectVersion(ViewDisplayAppVersionInfo version){
 		selectedVersion = version;
 		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion);
@@ -359,9 +403,11 @@ public class AppInfo extends Activity {
 		if(installedVersion != null){
 			activateUninstallButton(true);
 			if(selectedVersion.equals(installedVersion)){
-				activateUpdateButton(false);
+				activateInstallButton(false);
 			}else if(selectedVersion.getVersionCode() > installedVersion.getVersionCode()){
 				activateUpdateButton(true);
+			}else if(selectedVersion.getVersionCode() < installedVersion.getVersionCode()){
+				activateDowngradeButton(true);
 			}
 		}else{
 			activateUninstallButton(false);

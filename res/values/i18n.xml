@@ -45,10 +45,10 @@
     <string name="by_category">Category </string>
     <string name="by_all">All applications </string>  
     <string name="order_applications_by">Order applications by: </string>
-    <string name="order_most_recent">Freshness</string>
-    <string name="order_alphabetic">Alphabetic</string>
-    <string name="order_rating">Rating</string>
-    <string name="order_downloads">Downloads</string>    
+    <string name="most_recent">Freshness</string>
+    <string name="alphabetic">Alphabetic</string>
+    <string name="rating">Rating</string>
+    <string name="downloads">Downloads</string>    
     
     <string name="available">Available</string>
     <string name="installed">Installed</string>
@@ -63,6 +63,7 @@
     <string name="select_version">Select version</string>
     <string name="scheduled_downloads">Scheduled Downloads</string>
     <string name="schedule">Schedule</string>
+    <string name="scheduled">Scheduled</string>
     <string name="name_of_application">Name of the application</string>
     
     <string name="options">Options</string>
@@ -71,9 +72,12 @@
     <string name="remove">Remove</string>
     <string name="install">Install</string>
     <string name="update">Update</string>
+    <string name="downgrade">Downgrade</string>
     <string name="uninstall">Uninstall</string>
     <string name="done">Done</string>   
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
-    <string name="no">No</string> 
+    <string name="no">No</string>
+    <string name="starting">Starting</string>
+    <string name="download">download</string>
 </resources>
