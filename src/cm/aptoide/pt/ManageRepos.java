@@ -440,9 +440,9 @@ public class ManageRepos extends ListActivity{
 	private void askAddDefaultRepo(){
 		final String uri = Constants.APPS_REPO;
 		AlertDialog alrt = new AlertDialog.Builder(this).create();
-		alrt.setTitle(getString(R.string.repos));
+		alrt.setTitle(getString(R.string.attention));
 		alrt.setIcon(android.R.drawable.ic_dialog_alert);
-		alrt.setMessage(getString(R.string.add_apps_repo_confirm) + uri);
+		alrt.setMessage(getString(R.string.add_default_repo_confirm) + uri);
 		alrt.setButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		    	  addDisplayRepo(new ViewRepository(uri));
@@ -958,7 +958,7 @@ public class ManageRepos extends ListActivity{
 
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(Menu.NONE, EnumOptionsMenu.ADD_REPO.ordinal(),1,R.string.new_repo)
+		menu.add(Menu.NONE, EnumOptionsMenu.ADD_REPO.ordinal(),1,R.string.add_repo)
 			.setIcon(android.R.drawable.ic_menu_add);
 		menu.add(Menu.NONE, EnumOptionsMenu.EDIT_REPO.ordinal(), 2, R.string.edit_repo)
 			.setIcon(android.R.drawable.ic_menu_edit);

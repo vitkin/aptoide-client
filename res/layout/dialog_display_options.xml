@@ -18,10 +18,10 @@
                android:text="@string/show_applications_by" 
                android:textStyle="bold" />
           <RadioButton android:checked="false"
-               android:text="@string/by_category" 
+               android:text="@string/category" 
                android:id="@+id/shw_ct" />
           <RadioButton android:checked="true"
-               android:text="@string/by_all" 
+               android:text="@string/all_applications" 
                android:id="@+id/shw_all" />
      </RadioGroup>  
 
