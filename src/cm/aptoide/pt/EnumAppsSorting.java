@@ -1,5 +1,5 @@
 /**
- * EnumPreferences,	auxilliary class to Aptoide's ServiceData
+ * EnumAppsSorting,		part of aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,26 +18,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.preferences;
+package cm.aptoide.pt;
 
 /**
- * EnumPreferences, typeSafes Preferences
+ * EnumAppsSorting, typeSafes Aptoide's apps lists sorting
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumPreferences {
-	APTOIDE_CLIENT_UUID,
-	SCREEN_WIDTH,
-	SCREEN_HEIGHT,
-	SCREEN_DENSITY,
-	AUTHORIZED_DOWNLOAD_CONNECTIONS,
-	SHOW_APPLICATIONS_BY_CATEGORY,
-	SORT_APPLICATIONS_BY,
-	IS_HW_FILTER_ON;
+public enum EnumAppsSorting {
+	Alphabetic,
+	Freshness,
+	Rating,
+	Downloads;
 	
-	public static EnumPreferences reverseOrdinal(int ordinal){
+	public static EnumAppsSorting reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

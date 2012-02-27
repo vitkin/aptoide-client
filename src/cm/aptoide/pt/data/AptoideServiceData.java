@@ -41,6 +41,7 @@ import cm.aptoide.pt.AIDLAptoideInterface;
 import cm.aptoide.pt.AIDLReposInfo;
 import cm.aptoide.pt.AIDLSelfUpdate;
 import cm.aptoide.pt.Aptoide;
+import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.ManageRepos;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.SelfUpdate;
@@ -253,6 +254,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		@Override
 		public ViewDisplayCategory callGetCategories() throws RemoteException {
 			return getCategories();
+		}
+
+		@Override
+		public int callGetAppsSortingPolicy() throws RemoteException {
+			return getAppsSortingPolicy();
+		}
+
+		@Override
+		public void callSetAppsSortingPolicy(int sortingPolicy) throws RemoteException {
+			setAppsSortingPolicy(sortingPolicy);
 		}
 
 		@Override
@@ -1190,13 +1201,32 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerPreferences.getShowApplicationsByCategory();
 	}
 	
-	public void setShowApplicationsByCategory(boolean byCategory){
-		managerPreferences.setShowApplicationsByCategory(byCategory);
+	public void setShowApplicationsByCategory(final boolean byCategory){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerPreferences.setShowApplicationsByCategory(byCategory);
+			}
+		});
 	}
 	
 	public ViewDisplayCategory getCategories(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Categories");
 		return managerDatabase.getCategoriesDisplayInfo();
+	}
+	
+	public int getAppsSortingPolicy(){
+		return managerPreferences.getAppsSortingPolicy();
+	}
+	
+	public void setAppsSortingPolicy(final int sortingPolicy){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerPreferences.setAppsSortingPolicy(sortingPolicy);
+				resetAvailableLists();
+			}
+		});
 	}
 	
 	
@@ -1207,22 +1237,22 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public ViewDisplayListApps getAvailableApps(int offset, int range){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps");
-		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, managerPreferences.isHwFilterOn());
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, managerPreferences.isHwFilterOn(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	public ViewDisplayListApps getAvailableApps(int offset, int range, int categoryHashid){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps for category: "+categoryHashid);
-		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, categoryHashid, managerPreferences.isHwFilterOn());
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, categoryHashid, managerPreferences.isHwFilterOn(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	public ViewDisplayListApps getUpdatableApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Updatable Apps");
-		return managerDatabase.getUpdatableAppsDisplayInfo(managerPreferences.isHwFilterOn());
+		return managerDatabase.getUpdatableAppsDisplayInfo(managerPreferences.isHwFilterOn(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	public ViewDisplayListApps getAppSearchResults(String searchString){
 		AptoideLog.d(AptoideServiceData.this, "Getting App Search Results: "+searchString);
-		return managerDatabase.getAppSearchResultsDisplayInfo(searchString);
+		return managerDatabase.getAppSearchResultsDisplayInfo(searchString, EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	

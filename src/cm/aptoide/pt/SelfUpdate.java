@@ -96,7 +96,7 @@ public class SelfUpdate extends Activity {
 	private void handleSelfUpdate(){
 		final ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
     	AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-    	alertBuilder.setCancelable(false)
+    	alertBuilder.setCancelable(true)
     				.setPositiveButton(R.string.yes , new DialogInterface.OnClickListener() {
     					public void onClick(DialogInterface dialog, int id) {
     						dialog.cancel();

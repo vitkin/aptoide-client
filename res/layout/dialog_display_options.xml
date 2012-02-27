@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<ScrollView android:id="@+id/ScrollView01" 
+<ScrollView android:id="@+id/display_options_scroll" 
                 android:layout_width="fill_parent" 
                 android:layout_height="fill_parent" 
                 xmlns:android="http://schemas.android.com/apk/res/android">
@@ -12,43 +12,43 @@
 
       <RadioGroup android:layout_width="fill_parent"
           android:layout_height="wrap_content" android:orientation="vertical"
-          android:id="@+id/groupshow">
+          android:id="@+id/group_show">
           <TextView android:layout_width="fill_parent"
                android:layout_height="wrap_content"
                android:text="@string/show_applications_by" 
                android:textStyle="bold" />
           <RadioButton android:checked="false"
                android:text="@string/category" 
-               android:id="@+id/shw_ct" />
+               android:id="@+id/by_category" />
           <RadioButton android:checked="true"
                android:text="@string/all_applications" 
-               android:id="@+id/shw_all" />
+               android:id="@+id/by_all" />
      </RadioGroup>  
 
-<!--     <View android:layout_width="fill_parent" android:layout_height="1dip" android:background="#FFFFFFFF" -->
-<!--     		android:layout_marginBottom="9sp" android:layout_marginTop="9sp" android:layout_marginLeft="10sp"-->
-<!--     		android:layout_marginRight="10sp"/>-->
-<!--      -->
-<!--    <RadioGroup android:layout_width="fill_parent"-->
-<!--          android:layout_height="wrap_content" android:orientation="vertical"-->
-<!--          android:id="@+id/groupbtn">-->
-<!--          <TextView android:layout_width="fill_parent"-->
-<!--               android:layout_height="wrap_content"-->
-<!--               android:text="@string/order_popup_title1" -->
-<!--               android:textStyle="bold" />-->
-<!--          <RadioButton android:checked="false"-->
-<!--               android:text="@string/order_popup_lst1" -->
-<!--               android:id="@+id/org_rct" />-->
-<!--          <RadioButton android:checked="false"-->
-<!--               android:text="@string/order_popup_lst2" -->
-<!--               android:id="@+id/org_abc" />-->
-<!--          <RadioButton android:checked="false"-->
-<!--               android:text="@string/order_popup_lst3" -->
-<!--               android:id="@+id/org_rat" />-->
-<!--          <RadioButton android:checked="false"-->
-<!--               android:text="@string/order_popup_lst4" -->
-<!--               android:id="@+id/org_dwn" />-->
-<!--     </RadioGroup> -->
+    <View android:layout_width="fill_parent" android:layout_height="1dip" android:background="#FFFFFFFF"
+    		android:layout_marginBottom="9sp" android:layout_marginTop="9sp" android:layout_marginLeft="10sp"
+    		android:layout_marginRight="10sp" android:id="@+id/spacer"/>
+    
+   <RadioGroup android:layout_width="fill_parent"
+         android:layout_height="wrap_content" android:orientation="vertical"
+         android:id="@+id/group_sort">
+         <TextView android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/sort_applications_by"
+              android:textStyle="bold" />
+         <RadioButton android:checked="false"
+              android:text="@string/alphabetic"
+              android:id="@+id/by_alphabetic" />
+         <RadioButton android:checked="false"
+              android:text="@string/freshness"
+              android:id="@+id/by_freshness" />
+         <RadioButton android:checked="false"
+              android:text="@string/rating"
+              android:id="@+id/by_rating" />
+         <RadioButton android:checked="false"
+              android:text="@string/downloads"
+              android:id="@+id/by_downloads" />
+    </RadioGroup>
      
 </LinearLayout>
 

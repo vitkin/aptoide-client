@@ -28,17 +28,24 @@ package cm.aptoide.pt;
 import java.io.File;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -48,6 +55,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
@@ -65,7 +74,8 @@ public class Search extends Activity implements OnItemClickListener{
 	private View bazaarSearchButton = null;
 	
 	private String searchString;
-	private String listOrdering;
+	private EnumAppsSorting appsSortingPolicy = null;
+	private Handler waitHandler = null;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -83,6 +93,14 @@ public class Search extends Activity implements OnItemClickListener{
 			Log.v("Aptoide-Search", "Connected to ServiceData");
 	        			
 			getSearchResults();
+			
+            Log.v("Aptoide-Search", "Called for getting apps sorting policy");
+            try {
+				appsSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceDataCaller.callGetAppsSortingPolicy());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	 
 	        			
 		}
 
@@ -163,6 +181,14 @@ public class Search extends Activity implements OnItemClickListener{
 		
 	}
 	
+	public void resetSearchResults(){
+		waitHandler.postDelayed(new Runnable() {
+            public void run() {
+				getSearchResults();
+            }
+        }, 200);
+	}
+	
 	private void resetBazaarSearchButton(){
 		if(bazaarSearchButton != null)
         	resultsListView.removeFooterView(bazaarSearchButton);
@@ -201,6 +227,8 @@ public class Search extends Activity implements OnItemClickListener{
 		resultsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 		resultsListView.setBackgroundColor(Color.WHITE);
 		resultsListView.setOnItemClickListener(this);
+		
+		waitHandler = new Handler();
 		
 		setContentView(resultsListView);
 				
@@ -256,6 +284,109 @@ public class Search extends Activity implements OnItemClickListener{
 			resetBazaarSearchButton();
 		}
 		
+	}
+	
+	public void setAppsSortingPolicy(EnumAppsSorting sortingPolicy){
+		Log.d("Aptoide-Search", "setAppsSortingPolicy to: "+sortingPolicy);
+		try {
+			serviceDataCaller.callSetAppsSortingPolicy(sortingPolicy.ordinal());
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		
+		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
+		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		switch (menuEntry) {
+			case DISPLAY_OPTIONS:
+				//TODO refactor extract dialog management class
+				LayoutInflater displayOptionsInflater = LayoutInflater.from(this);
+				View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
+				Builder alrt = new AlertDialog.Builder(this).setView(displayOptions);
+				final AlertDialog sortDialog = alrt.create();
+				sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
+				sortDialog.setTitle(getString(R.string.display_options));
+				
+				RadioGroup group_show = (RadioGroup) displayOptions.findViewById(R.id.group_show);
+				group_show.setVisibility(View.GONE);
+				View spacer = displayOptions.findViewById(R.id.spacer);
+				spacer.setVisibility(View.GONE);
+				
+				// ***********************************************************
+				// Sorting
+				final RadioButton byAlphabetic = (RadioButton) displayOptions.findViewById(R.id.by_alphabetic);
+				final RadioButton byFreshness = (RadioButton) displayOptions.findViewById(R.id.by_freshness);
+				final RadioButton byRating = (RadioButton) displayOptions.findViewById(R.id.by_rating);
+				final RadioButton byDownloads = (RadioButton) displayOptions.findViewById(R.id.by_downloads);
+
+				switch (appsSortingPolicy) {
+					case Alphabetic:
+						byAlphabetic.setChecked(true);
+						break;
+						
+					case Freshness:
+						byFreshness.setChecked(true);
+						break;
+						
+					case Rating:
+						byRating.setChecked(true);
+						break;
+						
+					case Downloads:
+						byDownloads.setChecked(true);
+						break;
+	
+					default:
+						break;
+				}
+				
+				
+				// ***********************************************************
+	
+				
+				sortDialog.setButton(getString(R.string.done), new DialogInterface.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						EnumAppsSorting newSortingPolicy = null;
+						
+						if(byAlphabetic.isChecked()){
+							newSortingPolicy = EnumAppsSorting.Alphabetic;
+						}else if(byFreshness.isChecked()){
+							newSortingPolicy = EnumAppsSorting.Freshness;
+						}else if(byRating.isChecked()){
+							newSortingPolicy = EnumAppsSorting.Rating;
+						}else if(byDownloads.isChecked()){
+							newSortingPolicy = EnumAppsSorting.Downloads;
+						}
+						if(newSortingPolicy != appsSortingPolicy){
+							appsSortingPolicy = newSortingPolicy;
+							setAppsSortingPolicy(appsSortingPolicy);
+							
+							resetSearchResults();
+							
+						}
+						sortDialog.dismiss();
+					}
+				});
+				
+			sortDialog.show();
+			return true;
+			
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override

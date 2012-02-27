@@ -439,22 +439,22 @@ public class ManageRepos extends ListActivity{
 	
 	private void askAddDefaultRepo(){
 		final String uri = Constants.APPS_REPO;
-		AlertDialog alrt = new AlertDialog.Builder(this).create();
-		alrt.setTitle(getString(R.string.attention));
-		alrt.setIcon(android.R.drawable.ic_dialog_alert);
-		alrt.setMessage(getString(R.string.add_default_repo_confirm) + uri);
-		alrt.setButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
+		AlertDialog defaultDialog = new AlertDialog.Builder(this).create();
+		defaultDialog.setTitle(getString(R.string.attention));
+		defaultDialog.setIcon(android.R.drawable.ic_dialog_alert);
+		defaultDialog.setMessage(getString(R.string.add_default_repo_confirm) + uri);
+		defaultDialog.setButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		    	  addDisplayRepo(new ViewRepository(uri));
 		    	  initReposList();	
 		    	  return;
 		      } }); 
-		alrt.setButton2(getText(R.string.no), new DialogInterface.OnClickListener() {
+		defaultDialog.setButton2(getText(R.string.no), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		    	  initReposList();		    	  
 		    	  return;
 		      }});
-		alrt.show();
+		defaultDialog.show();
 	}
 	
 	

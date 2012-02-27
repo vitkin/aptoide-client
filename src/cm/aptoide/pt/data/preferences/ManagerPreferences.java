@@ -24,6 +24,7 @@ import java.util.UUID;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
@@ -113,6 +114,15 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 	
 	public void setShowApplicationsByCategory(boolean byCategory){
 		setPreferences.putBoolean(EnumPreferences.SHOW_APPLICATIONS_BY_CATEGORY.name(), byCategory);
+		setPreferences.commit();
+	}
+	
+	public int getAppsSortingPolicy(){
+		return getPreferences.getInt(EnumPreferences.SORT_APPLICATIONS_BY.name(), EnumAppsSorting.Alphabetic.ordinal());
+	}
+	
+	public void setAppsSortingPolicy(int sortingPolicy){
+		setPreferences.putInt(EnumPreferences.SORT_APPLICATIONS_BY.name(), sortingPolicy);
 		setPreferences.commit();
 	}
 	
