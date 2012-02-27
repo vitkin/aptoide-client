@@ -149,6 +149,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private ViewDisplayListApps updatableApps = null;
 	
 	private boolean availableByCategory = true;
+	private EnumAppsSorting appsSortingPolicy = null;
 	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
@@ -228,7 +229,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	        
 	        try {
 	            AptoideLog.v(Aptoide.this, "Called for checking if AvailableApps are by Category");
-	            availableByCategory = serviceDataCaller.callAreListsByCategory();	        	
+	            availableByCategory = serviceDataCaller.callAreListsByCategory();
+	            
+	            AptoideLog.v(Aptoide.this, "Called for getting apps sorting policy");
+	            appsSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceDataCaller.callGetAppsSortingPolicy());	        	
 	        	
 	            AptoideLog.v(Aptoide.this, "Called for registering as AvailableApps Observer");
 	            serviceDataCaller.callRegisterAvailableAppsObserver(serviceDataCallback);
@@ -849,6 +853,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		AptoideLog.d(Aptoide.this, "setAvailableList ByCategory? "+byCategory);
 		try {
 			serviceDataCaller.callSetListsBy(byCategory);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void setAppsSortingPolicy(EnumAppsSorting sortingPolicy){
+		AptoideLog.d(Aptoide.this, "setAppsSortingPolicy to: "+sortingPolicy);
+		try {
+			serviceDataCaller.callSetAppsSortingPolicy(sortingPolicy.ordinal());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1728,17 +1742,17 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		menu.clear();
 		super.onCreateOptionsMenu(menu);
 		switch (currentAppsList) {
-		case Available:
-			menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
-				.setIcon(android.R.drawable.ic_menu_agenda);
-			menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
-				.setIcon(android.R.drawable.ic_menu_sort_by_size);
-//			menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn)
-//				.setIcon(R.drawable.ic_menu_scheduled);
-			break;
-
-		default:
-			break;
+			case Available:
+				menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
+					.setIcon(android.R.drawable.ic_menu_agenda);
+				menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
+					.setIcon(android.R.drawable.ic_menu_sort_by_size);
+	//			menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn)
+	//				.setIcon(R.drawable.ic_menu_scheduled);
+				break;
+	
+			default:
+				break;
 		}
 		
 //		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
@@ -1773,74 +1787,76 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					
 					// ***********************************************************
 					// Categories
-					final RadioButton byCategory = (RadioButton) displayOptions.findViewById(R.id.shw_ct);
-					final RadioButton byAll = (RadioButton) displayOptions.findViewById(R.id.shw_all);
+					final RadioButton byCategory = (RadioButton) displayOptions.findViewById(R.id.by_category);
+					final RadioButton byAll = (RadioButton) displayOptions.findViewById(R.id.by_all);
+					
 					if(availableByCategory){
 						byCategory.setChecked(true);
 					}else{
 						byAll.setChecked(true);
 					}
-					final RadioGroup grp2 = (RadioGroup) displayOptions.findViewById(R.id.groupshow);
-					grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-						public void onCheckedChanged(RadioGroup group, int checkedId) {
-//							if(checkedId == byCategory.getId()){
-//								pop_change = true;
-//								prefEdit.putBoolean("mode", true);
-//							}else{
-//								pop_change = true;
-//								prefEdit.putBoolean("mode", false);
-//							}
-							
-						}
-					});
 
-					// ***********************************************************
 					
 					// ***********************************************************
-					// Order
-//					final RadioButton ord_rct = (RadioButton) view.findViewById(R.id.org_rct);
-//					final RadioButton ord_abc = (RadioButton) view.findViewById(R.id.org_abc);
-//					final RadioButton ord_rat = (RadioButton) view.findViewById(R.id.org_rat);
-//					final RadioButton ord_dwn = (RadioButton) view.findViewById(R.id.org_dwn);
-//					
-//					if(order_lst.equals("abc"))
-//						ord_abc.setChecked(true);
-//					else if(order_lst.equals("rct"))
-//						ord_rct.setChecked(true);
-//					else if(order_lst.equals("rat"))
-//						ord_rat.setChecked(true);
-//					else if(order_lst.equals("dwn"))
-//						ord_dwn.setChecked(true);
-//					
-//					final RadioGroup grp1 = (RadioGroup) view.findViewById(R.id.groupbtn);
-//					grp1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-//						public void onCheckedChanged(RadioGroup group, int checkedId) {
-//							if(checkedId == ord_rct.getId()){
-//								pop_change = true;
-//								order_lst = "rct";
-//							}else if(checkedId == ord_abc.getId()){
-//								pop_change = true;
-//								order_lst = "abc";
-//							}else if(checkedId == ord_rat.getId()){
-//								pop_change = true;
-//								order_lst = "rat";
-//							}else if(checkedId == ord_dwn.getId()){
-//								pop_change = true;
-//								order_lst = "dwn";
-//							}
-//						}
-//					});
+					// Sorting
+					final RadioButton byAlphabetic = (RadioButton) displayOptions.findViewById(R.id.by_alphabetic);
+					final RadioButton byFreshness = (RadioButton) displayOptions.findViewById(R.id.by_freshness);
+					final RadioButton byRating = (RadioButton) displayOptions.findViewById(R.id.by_rating);
+					final RadioButton byDownloads = (RadioButton) displayOptions.findViewById(R.id.by_downloads);
 					
+					switch (appsSortingPolicy) {
+						case Alphabetic:
+							byAlphabetic.setChecked(true);
+							break;
+							
+						case Freshness:
+							byFreshness.setChecked(true);
+							break;
+							
+						case Rating:
+							byRating.setChecked(true);
+							break;
+							
+						case Downloads:
+							byDownloads.setChecked(true);
+							break;
+	
+						default:
+							break;
+					}
+					
+
 					// ***********************************************************
 
 					
 					sortDialog.setButton(getString(R.string.done), new DialogInterface.OnClickListener() {
 						
 						public void onClick(DialogInterface dialog, int which) {
+							boolean byCategoryChanged = false;
+							EnumAppsSorting newSortingPolicy = null;
+							
 							if(byCategory.isChecked() != availableByCategory){
+								byCategoryChanged = true;
 								availableByCategory = byCategory.isChecked();
 								setAvailableListBy(availableByCategory);
-								availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);
+							}
+							
+							if(byAlphabetic.isChecked()){
+								newSortingPolicy = EnumAppsSorting.Alphabetic;
+							}else if(byFreshness.isChecked()){
+								newSortingPolicy = EnumAppsSorting.Freshness;
+							}else if(byRating.isChecked()){
+								newSortingPolicy = EnumAppsSorting.Rating;
+							}else if(byDownloads.isChecked()){
+								newSortingPolicy = EnumAppsSorting.Downloads;
+							}
+							if(newSortingPolicy != appsSortingPolicy){
+								appsSortingPolicy = newSortingPolicy;
+								setAppsSortingPolicy(appsSortingPolicy);
+							}
+							
+							if(byCategoryChanged){
+								availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);								
 							}
 							sortDialog.dismiss();
 						}

@@ -72,6 +72,9 @@ interface AIDLAptoideServiceData {
 	
 	ViewDisplayCategory callGetCategories();
 	
+	int callGetAppsSortingPolicy();
+	void callSetAppsSortingPolicy(in int sortingPolicy);
+	
 	ViewDisplayListApps callGetInstalledApps();
 	ViewDisplayListApps callGetAvailableApps(in int offset, in int range);
 	ViewDisplayListApps callGetAvailableAppsByCategory(in int offset, in int range, in int categoryHashid);
