@@ -1,36 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="about">About</string>
-    <string name="description">Your Android application manager</string>
+    <string name="description">Your Android application manager.\n</string>
     <string name="version">Version</string>
     
     <string name="aptoide_started">Aptoide has started</string>
     <string name="aptoide_stopped">Aptoide has successfully stopped</string>
     
+    <string name="self_update">Self update</string> 
     <string name="update_available">Update available</string>
     <string name="update_confirm">There is a new version of aptoide available,\ndo you wish to update?</string>
-    <string name="self_updating">Please wait while processing update download&#8230;</string>
-    <string name="self_update">Self update</string>   
+    <string name="self_updating">Please wait while processing update download&#8230;</string>  
     
     <string name="manage_repos">Manage Stores</string>
-    <string name="repos">Stores</string>
-    <string name="no_repos">Add a store</string>
-    <string name="new_repo">New Store</string>
     <string name="remove_repo">Remove Store</string>
     <string name="remove_repo_choose">Choose stores to remove</string>
     <string name="remove_repo_confirm">Do you want to remove store? </string>
     <string name="edit_repo">Edit Store</string>
     <string name="edit_repo_choose">Choose store to edit</string>
     <string name="add_repo_choose">Choose stores to add</string>
-	<string name="add_repo">Add new store</string>
-    <string name="add_apps_repo_confirm">It looks like you don\'t have any added store.\nWe suggest you use ours.\nDo you want to add our store?\n(You can search for more stores online)\n\n</string>
     <string name="add_repo_confirm">Do you want to add this store to your list?\n\n</string>
-    <string name="repo_title">URI to store: </string>
-    <string name="private_repo">Private </string>
-    
+	<string name="add_repo">Add new store</string>
+    <string name="add_default_repo_confirm">It looks like you don\'t have any added store.\nWe suggest you use ours.\nDo you want to add our store?\n(You can search for more stores online)\n\n</string>
+    <string name="repo_uri">URI to store: </string>
+	
+    <string name="privt">Private</string>
     <string name="username">Username</string>
     <string name="password">Password</string>   
-	<string name="bad_login">Login is wrong</string>
+	<string name="bad_login">Invalid Login </string>
 	<string name="login_required">Login required</string>
     <string name="cant_connect">Can\'t connect to store</string>
     
@@ -42,10 +39,10 @@
     
     <string name="display_options">Display Options</string>
     <string name="show_applications_by">Show applications by: </string>
-    <string name="by_category">Category </string>
-    <string name="by_all">All applications </string>  
-    <string name="order_applications_by">Order applications by: </string>
-    <string name="most_recent">Freshness</string>
+    <string name="category">Category</string>
+    <string name="all_applications">All applications</string>  
+    <string name="sort_applications_by">Sort applications by: </string>
+    <string name="freshness">Freshness</string>
     <string name="alphabetic">Alphabetic</string>
     <string name="rating">Rating</string>
     <string name="downloads">Downloads</string>    
@@ -74,6 +71,7 @@
     <string name="update">Update</string>
     <string name="downgrade">Downgrade</string>
     <string name="uninstall">Uninstall</string>
+    <string name="attention">Attention</string>
     <string name="done">Done</string>   
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
