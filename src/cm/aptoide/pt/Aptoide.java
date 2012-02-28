@@ -1790,8 +1790,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					//TODO refactor extract dialog management class
 					LayoutInflater displayOptionsInflater = LayoutInflater.from(this);
 					View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
-					Builder alrt = new AlertDialog.Builder(this).setView(displayOptions);
-					final AlertDialog sortDialog = alrt.create();
+					Builder dialogBuilder = new AlertDialog.Builder(this).setView(displayOptions);
+					final AlertDialog sortDialog = dialogBuilder.create();
 					sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
 					sortDialog.setTitle(getString(R.string.display_options));
 					

@@ -66,6 +66,7 @@ import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.preferences.ViewSettings;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
+import cm.aptoide.pt.data.system.ViewHwFilters;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.xml.EnumInfoType;
@@ -369,6 +370,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public ViewHwFilters callGetHwFilters() throws RemoteException {
+			return getHwFilters();
+		}
+
+		@Override
 		public void callSetHwFilter(boolean on) throws RemoteException {
 			setHwFilter(on);
 		}
@@ -643,6 +649,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		ViewSettings settings = managerPreferences.getSettings();
 		AptoideLog.d(AptoideServiceData.this, "Getting settings: "+settings);
 		return settings;
+	}
+	
+	public ViewHwFilters getHwFilters(){
+		ViewHwFilters filters = managerSystemSync.getHwFilters();
+		AptoideLog.d(AptoideServiceData.this, "Getting hw filters: "+filters);
+		return filters;
 	}
 	
 	public void setHwFilter(final boolean on){

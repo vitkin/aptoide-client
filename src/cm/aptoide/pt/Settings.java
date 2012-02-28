@@ -20,8 +20,11 @@
 package cm.aptoide.pt;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -33,10 +36,12 @@ import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.preferences.ViewSettings;
+import cm.aptoide.pt.data.system.ViewHwFilters;
 
 
 /**
@@ -49,6 +54,7 @@ import cm.aptoide.pt.data.preferences.ViewSettings;
 public class Settings extends Activity {
 	
 	ViewSettings storedSettings;
+	ViewHwFilters hwFilters;
 	
 	CheckBox hwFilter;
 	
@@ -69,11 +75,12 @@ public class Settings extends Activity {
 	        
 			try {
 				storedSettings = serviceDataCaller.callGetSettings();
+				hwFilters = serviceDataCaller.callGetHwFilters();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			showSettings();
 			
 		}
@@ -96,7 +103,12 @@ public class Settings extends Activity {
 		iconDownloadPermissions.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//TODO dialog
+				Log.d("Aptoide-Settings", "clicked icon download permissions");
+//				View displayOptions = LinearLayout.inflate(Settings.this, R.layout.dialog_, null);
+//				Builder dialogBuilder = new AlertDialog.Builder(this).setView(displayOptions);
+//				final AlertDialog sortDialog = dialogBuilder.create();
+//				sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
+//				sortDialog.setTitle(getString(R.string.display_options));
 			}
 		});
 		
@@ -104,7 +116,28 @@ public class Settings extends Activity {
 		hwSpecs.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				//TODO show hw specs
+				Log.d("Aptoide-Settings", "clicked hw specs: "+hwFilters);
+				View hwSpecsView = LinearLayout.inflate(Settings.this, R.layout.dialog_hw_specs, null);
+				Builder dialogBuilder = new AlertDialog.Builder(Settings.this).setView(hwSpecsView);
+				final AlertDialog hwSpecsDialog = dialogBuilder.create();
+				hwSpecsDialog.setIcon(android.R.drawable.ic_menu_info_details);
+				hwSpecsDialog.setTitle(getString(R.string.hw_specs));
+				
+				final TextView sdk = (TextView) hwSpecsView.findViewById(R.id.sdk);
+				sdk.setText(Integer.toString(hwFilters.getSdkVersion()));
+				final TextView screen = (TextView) hwSpecsView.findViewById(R.id.screen);
+				screen.setText(Integer.toString(hwFilters.getScreenSize()));
+				final TextView gles = (TextView) hwSpecsView.findViewById(R.id.gles);
+				gles.setText(Float.toString(hwFilters.getGlEsVersion()));
+				
+				hwSpecsDialog.setButton(getString(R.string.back), new DialogInterface.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						hwSpecsDialog.dismiss();
+					}
+				});
+				
+			hwSpecsDialog.show();
 			}
 		});
 		

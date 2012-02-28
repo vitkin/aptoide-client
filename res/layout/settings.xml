@@ -12,29 +12,38 @@
         android:text="@string/settings"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
-    
-	<TextView android:id="@+id/icon_download_permissions"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/download_icons"
-		android:textColor="#05C5CF"
-		android:cursorVisible="true"
-		android:focusable="true"
-		android:focusableInTouchMode="true"/>
+	<TextView
+	    android:id="@+id/icon_download_permissions"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:cursorVisible="true"
+	    android:focusable="true"
+	    android:focusableInTouchMode="true"
+	    android:clickable="true"
+	    android:paddingBottom="10sp"
+	    android:paddingTop="10sp"
+	    android:text="@string/download_icons"
+	    android:textColor="#05C5CF" />
 	
-	<TextView android:id="@+id/hw_specs"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="@string/hw_specs"
-		android:textColor="#05C5CF"
-		android:cursorVisible="true"
-		android:focusable="true"
-		android:focusableInTouchMode="true"/>
+	<TextView
+	    android:id="@+id/hw_specs"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:cursorVisible="true"
+	    android:focusable="true"
+	    android:focusableInTouchMode="true"
+	    android:clickable="true"
+	    android:paddingBottom="10sp"
+	    android:paddingTop="10sp"
+	    android:text="@string/hw_specs"
+	    android:textColor="#05C5CF" />
     
     <CheckBox
         android:id="@+id/hw_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+	    android:paddingBottom="10sp"
+	    android:paddingTop="10sp"
         android:text="@string/hw_filter" />
     
 <!--     <CheckBox -->
