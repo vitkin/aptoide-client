@@ -96,7 +96,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClients;
 	private HashMap<Integer, AIDLAppInfo> appInfoClients;
 	private AIDLReposInfo reposInfoClient = null;
-//	private EnumServiceDataCall latestRequest;
+//	private AIDLSearch searchClient = null;	//TODO implement sort blocking in search when loading repo from bare
 
 	private ManagerPreferences managerPreferences;
 	private ManagerSystemSync managerSystemSync;
@@ -873,6 +873,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		
 	
 	public void addRepoBare(final ViewRepository originalRepository){
+		disallowSortingPolicyChange();
 		reposInserting.add(originalRepository.getHashid());
 		cachedThreadPool.execute(new Runnable() {
 			@Override
@@ -901,6 +902,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoBareFinished(ViewRepository repository){
+		if(reposInserting.size() == 1){	// If contains only the currently being parsed repo
+			allowSortingPolicyChange();
+		}
 		if(reposInserting.contains(repository.getHashid())){
 			if(managerPreferences.getShowApplicationsByCategory() || repository.getSize() < Constants.APPLICATIONS_IN_EACH_INSERT/2){
 				resetAvailableLists();
@@ -1217,6 +1221,36 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public int getAppsSortingPolicy(){
 		return managerPreferences.getAppsSortingPolicy();
+	}
+	
+	public void allowSortingPolicyChange(){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).allowSortingPolicyChange();
+//					searchClients //TODO implement sort blocking in search when loading repo from bare
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void disallowSortingPolicyChange(){
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).disallowSortingPolicyChange();
+//					searchClients //TODO implement sort blocking in search when loading repo from bare
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void setAppsSortingPolicy(final int sortingPolicy){

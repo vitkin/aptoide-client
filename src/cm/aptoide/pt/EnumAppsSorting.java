@@ -28,10 +28,10 @@ package cm.aptoide.pt;
  *
  */
 public enum EnumAppsSorting {
-	Alphabetic,
-	Freshness,
-	Rating,
-	Downloads;
+	ALPHABETIC,
+	FRESHNESS,
+	STARS,
+	DOWNLOADS;
 	
 	public static EnumAppsSorting reverseOrdinal(int ordinal){
 		return values()[ordinal];

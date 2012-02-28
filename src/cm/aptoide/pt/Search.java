@@ -329,23 +329,23 @@ public class Search extends Activity implements OnItemClickListener{
 				// Sorting
 				final RadioButton byAlphabetic = (RadioButton) displayOptions.findViewById(R.id.by_alphabetic);
 				final RadioButton byFreshness = (RadioButton) displayOptions.findViewById(R.id.by_freshness);
-				final RadioButton byRating = (RadioButton) displayOptions.findViewById(R.id.by_rating);
+				final RadioButton byStars = (RadioButton) displayOptions.findViewById(R.id.by_stars);
 				final RadioButton byDownloads = (RadioButton) displayOptions.findViewById(R.id.by_downloads);
 
 				switch (appsSortingPolicy) {
-					case Alphabetic:
+					case ALPHABETIC:
 						byAlphabetic.setChecked(true);
 						break;
 						
-					case Freshness:
+					case FRESHNESS:
 						byFreshness.setChecked(true);
 						break;
 						
-					case Rating:
-						byRating.setChecked(true);
+					case STARS:
+						byStars.setChecked(true);
 						break;
 						
-					case Downloads:
+					case DOWNLOADS:
 						byDownloads.setChecked(true);
 						break;
 	
@@ -363,13 +363,13 @@ public class Search extends Activity implements OnItemClickListener{
 						EnumAppsSorting newSortingPolicy = null;
 						
 						if(byAlphabetic.isChecked()){
-							newSortingPolicy = EnumAppsSorting.Alphabetic;
+							newSortingPolicy = EnumAppsSorting.ALPHABETIC;
 						}else if(byFreshness.isChecked()){
-							newSortingPolicy = EnumAppsSorting.Freshness;
-						}else if(byRating.isChecked()){
-							newSortingPolicy = EnumAppsSorting.Rating;
+							newSortingPolicy = EnumAppsSorting.FRESHNESS;
+						}else if(byStars.isChecked()){
+							newSortingPolicy = EnumAppsSorting.STARS;
 						}else if(byDownloads.isChecked()){
-							newSortingPolicy = EnumAppsSorting.Downloads;
+							newSortingPolicy = EnumAppsSorting.DOWNLOADS;
 						}
 						if(newSortingPolicy != appsSortingPolicy){
 							appsSortingPolicy = newSortingPolicy;

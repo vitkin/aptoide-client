@@ -41,6 +41,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
@@ -443,13 +444,52 @@ public class ManagerDownloads {
 				break;
 		
 			case BARE:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix_timestamp=true&order_by=alphabetic&order_direction=ascending";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix_timestamp=true";
+				EnumAppsSorting bareSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceData.getManagerPreferences().getAppsSortingPolicy());
+				switch (bareSortingPolicy) {
+					case ALPHABETIC:
+						xmlRemotePath += "&order_by=alphabetic&order_direction=ascending";
+						break;
+					case FRESHNESS:
+						xmlRemotePath += "&order_by=freshness&order_direction=descending";
+						break;
+					case STARS:
+						xmlRemotePath += "&order_by=rating&order_direction=descending";
+						break;
+					case DOWNLOADS:
+						xmlRemotePath += "&order_by=downloads&order_direction=descending";
+						break;
+					
+	
+					default:
+						break;
+				}
+				
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
 				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
 				break;
 				
 			case ICON:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=icon&show_apphashid=true&order_by=alphabetic&order_direction=ascending";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=icon&show_apphashid=true";
+				EnumAppsSorting iconSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceData.getManagerPreferences().getAppsSortingPolicy());
+				switch (iconSortingPolicy) {
+					case ALPHABETIC:
+						xmlRemotePath += "&order_by=alphabetic&order_direction=ascending";
+						break;
+					case FRESHNESS:
+						xmlRemotePath += "&order_by=freshness&order_direction=descending";
+						break;
+					case STARS:
+						xmlRemotePath += "&order_by=rating&order_direction=descending";
+						break;
+					case DOWNLOADS:
+						xmlRemotePath += "&order_by=downloads&order_direction=descending";
+						break;
+					
+	
+					default:
+						break;
+				}
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info_icon.xml";
 				cache = managerCache.getNewRepoIconViewCache(repository.getHashid());
 				break;
@@ -461,7 +501,26 @@ public class ManagerDownloads {
 //				break;
 				
 			case STATS:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true&order_by=alphabetic&order_direction=ascending&info=bare";
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true";
+				EnumAppsSorting statsSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceData.getManagerPreferences().getAppsSortingPolicy());
+				switch (statsSortingPolicy) {
+					case ALPHABETIC:
+						xmlRemotePath += "&order_by=alphabetic&order_direction=ascending";
+						break;
+					case FRESHNESS:
+						xmlRemotePath += "&order_by=freshness&order_direction=descending";
+						break;
+					case STARS:
+						xmlRemotePath += "&order_by=rating&order_direction=descending";
+						break;
+					case DOWNLOADS:
+						xmlRemotePath += "&order_by=downloads&order_direction=descending";
+						break;
+					
+	
+					default:
+						break;
+				}
 //				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
 				cache = managerCache.getNewRepoStatsViewCache(repository.getHashid());
 				break;	
@@ -501,19 +560,19 @@ public class ManagerDownloads {
 		
 		switch (infoType) {
 			case DOWNLOAD:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=download&show_apphashid=true&apphashid="+appHashid;
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=download+icon&show_apphashid=true&apphashid="+appHashid;
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info_download.xml";
 				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
 				break;
 				
 			case EXTRAS:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML+"info=bare&show_apphashid=true&apphashid="+appHashid;
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_EXTRAS_XML+"show_apphashid=true&apphashid="+appHashid;
 //				xmlRemotePath = "http://aptoide.com/testing/xml/extras.xml";
 				cache = managerCache.getNewRepoAppExtrasViewCache(repository.getHashid(), appHashid);
 				break;
 			
 			case STATS:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"info=bare&show_apphashid=true&apphashid="+appHashid;
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true&apphashid="+appHashid;
 //				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
 				cache = managerCache.getNewRepoAppStatsViewCache(repository.getHashid(), appHashid);
 				break;

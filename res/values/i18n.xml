@@ -44,7 +44,7 @@
     <string name="sort_applications_by">Sort applications by: </string>
     <string name="freshness">Freshness</string>
     <string name="alphabetic">Alphabetic</string>
-    <string name="rating">Rating</string>
+    <string name="stars">Rating</string>
     <string name="downloads">Downloads</string>    
     
     <string name="available">Available</string>

@@ -1925,16 +1925,16 @@ public class ManagerDatabase {
 				selectAvailableApps +=" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME;
 			// Sort by:
 			switch (sortingPolicy) {
-				case Alphabetic:
+				case ALPHABETIC:
 					selectAvailableApps +=" ORDER BY "+Constants.KEY_APPLICATION_NAME;
 					break;
-				case Freshness:
-					selectAvailableApps +=" ORDER BY "+Constants.KEY_APPLICATION_TIMESTAMP;
+				case FRESHNESS:
+					selectAvailableApps +=" ORDER BY "+Constants.KEY_APPLICATION_TIMESTAMP+" DESC ";
 					break;
-				case Rating:
+				case STARS:
 					selectAvailableApps +=" ORDER BY "+Constants.KEY_STATS_STARS+" DESC ";
 					break;
-				case Downloads:
+				case DOWNLOADS:
 					selectAvailableApps +=" ORDER BY "+Constants.KEY_STATS_DOWNLOADS+" DESC ";
 					break;
 	
@@ -2054,16 +2054,16 @@ public class ManagerDatabase {
 															+" GROUP BY "+Constants.KEY_APPLICATION_FULL_HASHID+") S";
 			// Sort by:
 			switch (sortingPolicy) {
-				case Alphabetic:
+				case ALPHABETIC:
 					selectUpdatableApps +=" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME;
 					break;
-				case Freshness:
-					selectUpdatableApps +=" ORDER BY U."+Constants.KEY_APPLICATION_TIMESTAMP;
+				case FRESHNESS:
+					selectUpdatableApps +=" ORDER BY U."+Constants.KEY_APPLICATION_TIMESTAMP+" DESC ";
 					break;
-				case Rating:
+				case STARS:
 					selectUpdatableApps +=" ORDER BY S."+Constants.KEY_STATS_STARS+" DESC ";
 					break;
-				case Downloads:
+				case DOWNLOADS:
 					selectUpdatableApps +=" ORDER BY S."+Constants.KEY_STATS_DOWNLOADS+" DESC ";
 					break;
 	
@@ -2142,16 +2142,16 @@ public class ManagerDatabase {
 									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME;
 			// Sort by:
 			switch (sortingPolicy) {
-				case Alphabetic:
+				case ALPHABETIC:
 					selectAvailableApps +=" ORDER BY A."+Constants.KEY_APPLICATION_NAME;
 					break;
-				case Freshness:
-					selectAvailableApps +=" ORDER BY A."+Constants.KEY_APPLICATION_TIMESTAMP;
+				case FRESHNESS:
+					selectAvailableApps +=" ORDER BY A."+Constants.KEY_APPLICATION_TIMESTAMP+" DESC ";
 					break;
-				case Rating:
+				case STARS:
 					selectAvailableApps +=" ORDER BY S."+Constants.KEY_STATS_STARS+" DESC ";
 					break;
-				case Downloads:
+				case DOWNLOADS:
 					selectAvailableApps +=" ORDER BY S."+Constants.KEY_STATS_DOWNLOADS+" DESC ";
 					break;
 	

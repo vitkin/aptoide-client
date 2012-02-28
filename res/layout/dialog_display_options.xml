@@ -43,8 +43,8 @@
               android:text="@string/freshness"
               android:id="@+id/by_freshness" />
          <RadioButton android:checked="false"
-              android:text="@string/rating"
-              android:id="@+id/by_rating" />
+              android:text="@string/stars"
+              android:id="@+id/by_stars" />
          <RadioButton android:checked="false"
               android:text="@string/downloads"
               android:id="@+id/by_downloads" />
