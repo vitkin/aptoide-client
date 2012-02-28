@@ -35,7 +35,9 @@
     <string name="screenshots">Screenshots:</string> 
     
     <string name="settings">Settings</string>
+    <string name="hw_specs">Hardware specs</string>
     <string name="hw_filter">Filter apps by hardware</string>
+    <string name="download_icons">Download icons</string>
     
     <string name="display_options">Display Options</string>
     <string name="show_applications_by">Show applications by: </string>

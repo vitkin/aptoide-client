@@ -32,6 +32,7 @@ import cm.aptoide.pt.AIDLReposInfo;
 import cm.aptoide.pt.AIDLSelfUpdate;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.preferences.ViewSettings;
+import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
@@ -101,6 +102,7 @@ interface AIDLAptoideServiceData {
 	
 	ViewSettings callGetSettings();
 	void callSetHwFilter(in boolean on);
+	void callSetIconDownloadPermissions(in ViewIconDownloadPermissions iconDownloadPermissions);
 	void callResetAvailableApps();
 	
 }

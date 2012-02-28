@@ -12,10 +12,35 @@
         android:text="@string/settings"
         android:textAppearance="?android:attr/textAppearanceLarge" />
     
+    
+	<TextView android:id="@+id/icon_download_permissions"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/download_icons"
+		android:textColor="#05C5CF"
+		android:cursorVisible="true"
+		android:focusable="true"
+		android:focusableInTouchMode="true"/>
+	
+	<TextView android:id="@+id/hw_specs"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/hw_specs"
+		android:textColor="#05C5CF"
+		android:cursorVisible="true"
+		android:focusable="true"
+		android:focusableInTouchMode="true"/>
+    
     <CheckBox
         android:id="@+id/hw_filter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/hw_filter" />
+    
+<!--     <CheckBox -->
+<!--         android:id="@+id/automatic_install" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:text="@string/automatic_install" /> -->
 
 </LinearLayout>

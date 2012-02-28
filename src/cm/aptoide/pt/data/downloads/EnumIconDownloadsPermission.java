@@ -1,5 +1,5 @@
 /**
- * EnumPreferences,	auxilliary class to Aptoide's ServiceData
+ * EnumIconDownloadsPermission,		part of aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,28 +18,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.preferences;
+package cm.aptoide.pt.data.downloads;
 
 /**
- * EnumPreferences, typeSafes Preferences
+ * EnumIconDownloadsPermission, typeSafes icons downloads permission levels in Aptoide
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumPreferences {
-	APTOIDE_CLIENT_UUID,
-	SCREEN_WIDTH,
-	SCREEN_HEIGHT,
-	SCREEN_DENSITY,
-	AUTHORIZED_DOWNLOAD_CONNECTIONS,
-	SHOW_APPLICATIONS_BY_CATEGORY,
-	SORT_APPLICATIONS_BY,
-	IS_HW_FILTER_ON,
-	DOWNLOAD_ICONS_,
-	AUTOMATIC_INSTALL;
+public enum EnumIconDownloadsPermission {
+	WiFi,
+	ETHERNET,
+	_4G_,
+	_3G_,
+	_2G_,	
+	NEVER;
 	
-	public static EnumPreferences reverseOrdinal(int ordinal){
+	public static EnumIconDownloadsPermission reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }
