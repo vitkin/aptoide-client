@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt.data.preferences;
 
+import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -31,18 +32,24 @@ import android.os.Parcelable;
  */
 public class ViewSettings implements Parcelable{
 	private boolean isHwFilterOn;
+	private ViewIconDownloadPermissions iconDownloadPermissions;
 	
-	public ViewSettings(boolean isHwFilterOn) {
+	public ViewSettings(boolean isHwFilterOn, ViewIconDownloadPermissions iconDownloadPermissions) {
 		this.isHwFilterOn = isHwFilterOn;
+		this.iconDownloadPermissions = iconDownloadPermissions;
 	}
 
 	public boolean isHwFilterOn() {
 		return isHwFilterOn;
 	}
+	
+	public ViewIconDownloadPermissions getIconDownloadPermissions(){
+		return iconDownloadPermissions;
+	}
 
 	@Override
 	public String toString() {
-		return "isHwFilterOn: "+isHwFilterOn;
+		return "isHwFilterOn: "+isHwFilterOn+iconDownloadPermissions;
 	}
 
 	
@@ -78,10 +85,12 @@ public class ViewSettings implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeValue(isHwFilterOn);
+		out.writeParcelable(iconDownloadPermissions, flags);
 	}
 	
 	public void readFromParcel(Parcel in) {
 		isHwFilterOn = (Boolean) in.readValue(null);
+		iconDownloadPermissions = in.readParcelable(ViewIconDownloadPermissions.class.getClassLoader());
 	}
 	
 }

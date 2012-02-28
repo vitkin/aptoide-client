@@ -28,6 +28,8 @@ import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
+import cm.aptoide.pt.data.downloads.EnumIconDownloadsPermission;
+import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.debug.AptoideLog;
@@ -135,8 +137,27 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		return getPreferences.getBoolean(EnumPreferences.IS_HW_FILTER_ON.name(), false);
 	}
 	
+	public void setIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions){
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WiFi.name(), iconDownloadPermissions.isWiFi());
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), iconDownloadPermissions.isEthernet());
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._4G_.name(), iconDownloadPermissions.is4G());
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._3G_.name(), iconDownloadPermissions.is3G());
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._2G_.name(), iconDownloadPermissions.is2G());
+		setPreferences.commit();		
+	}
+	
+	public ViewIconDownloadPermissions getIconDoanloadPermissions(){
+		ViewIconDownloadPermissions permissions = new ViewIconDownloadPermissions(
+													getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WiFi.name(), true)
+													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), true)
+													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._4G_.name(), true)
+													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._3G_.name(), true)
+													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._2G_.name(), true));
+		return permissions;
+	}
+	
 	public ViewSettings getSettings(){
-		return new ViewSettings(isHwFilterOn());
+		return new ViewSettings(isHwFilterOn(), getIconDoanloadPermissions());
 	}
 	
 }

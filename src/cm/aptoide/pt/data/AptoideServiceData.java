@@ -58,6 +58,7 @@ import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.downloads.ViewDownload;
 import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
+import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewRepository;
@@ -364,12 +365,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 		@Override
 		public ViewSettings callGetSettings() throws RemoteException {
-			return managerPreferences.getSettings();
+			return getSettings();
 		}
 
 		@Override
 		public void callSetHwFilter(boolean on) throws RemoteException {
 			setHwFilter(on);
+		}
+
+		@Override
+		public void callSetIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions) throws RemoteException {
+			setIconDownloadPermissions(iconDownloadPermissions);
 		}
 
 		@Override
@@ -633,12 +639,28 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	public ViewSettings getSettings(){
+		ViewSettings settings = managerPreferences.getSettings();
+		AptoideLog.d(AptoideServiceData.this, "Getting settings: "+settings);
+		return settings;
+	}
+	
 	public void setHwFilter(final boolean on){
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				managerPreferences.setHwFilter(on);
 				AptoideLog.d(AptoideServiceData.this, "Setting hw filter: "+on);
+			}
+		});
+	}
+	
+	public void setIconDownloadPermissions(final ViewIconDownloadPermissions iconDownloadPermissions){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerPreferences.setIconDownloadPermissions(iconDownloadPermissions);
+				AptoideLog.d(AptoideServiceData.this, "Setting icon download permissions: "+iconDownloadPermissions);
 			}
 		});
 	}
@@ -1259,6 +1281,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				managerPreferences.setAppsSortingPolicy(sortingPolicy);
 				resetAvailableLists();
+				AptoideLog.d(AptoideServiceData.this, "setting sorting policy to: "+EnumAppsSorting.reverseOrdinal(sortingPolicy));
 			}
 		});
 	}

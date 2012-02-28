@@ -28,9 +28,12 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.preferences.ViewSettings;
@@ -89,6 +92,22 @@ public class Settings extends Activity {
 	private void showSettings(){
 		setContentView(R.layout.settings);
 		
+		TextView iconDownloadPermissions = (TextView) findViewById(R.id.icon_download_permissions);
+		iconDownloadPermissions.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//TODO dialog
+			}
+		});
+		
+		TextView hwSpecs = (TextView) findViewById(R.id.hw_specs);
+		hwSpecs.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				//TODO show hw specs
+			}
+		});
+		
 		hwFilter = (CheckBox) findViewById(R.id.hw_filter);
 		hwFilter.setChecked(storedSettings.isHwFilterOn());
 		hwFilter.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -105,6 +124,7 @@ public class Settings extends Activity {
 				}
 			}
 		});
+		
 	}
 	
 	
