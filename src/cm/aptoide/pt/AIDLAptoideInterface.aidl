@@ -39,4 +39,7 @@ interface AIDLAptoideInterface{
 	
 	void handleMyapp();
 	
+	void allowSortingPolicyChange();
+	void disallowSortingPolicyChange();
+	
 }

@@ -70,8 +70,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleAdapter.ViewBinder;
@@ -150,6 +148,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	private boolean availableByCategory = true;
 	private EnumAppsSorting appsSortingPolicy = null;
+	private AtomicBoolean allowAppsSortingPolicyChange = null;
 	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
@@ -319,6 +318,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				handlingMyapps.add(myapp);
 			}
 			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.HANDLE_MYAPP.ordinal());
+		}
+
+		@Override
+		public void allowSortingPolicyChange() throws RemoteException {
+			allowAppsSortingPolicyChange.set(true);
+		}
+
+		@Override
+		public void disallowSortingPolicyChange() throws RemoteException {
+			allowAppsSortingPolicyChange.set(false);
 		}
 	};
 	
@@ -709,6 +718,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			scrollListener = new ScrollDetector();
 			
 			synchronizingInstalledApps = new AtomicBoolean(false);
+			allowAppsSortingPolicyChange = new AtomicBoolean(true);
 			
 			makeSureServiceDataIsRunning();
 			
@@ -1796,33 +1806,42 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						byAll.setChecked(true);
 					}
 
+					final View spacer = displayOptions.findViewById(R.id.spacer);
 					
 					// ***********************************************************
-					// Sorting
+					// Sorting				
+					final View group_sort = displayOptions.findViewById(R.id.group_sort);
 					final RadioButton byAlphabetic = (RadioButton) displayOptions.findViewById(R.id.by_alphabetic);
 					final RadioButton byFreshness = (RadioButton) displayOptions.findViewById(R.id.by_freshness);
-					final RadioButton byRating = (RadioButton) displayOptions.findViewById(R.id.by_rating);
+					final RadioButton byStars = (RadioButton) displayOptions.findViewById(R.id.by_stars);
 					final RadioButton byDownloads = (RadioButton) displayOptions.findViewById(R.id.by_downloads);
-					
-					switch (appsSortingPolicy) {
-						case Alphabetic:
-							byAlphabetic.setChecked(true);
-							break;
-							
-						case Freshness:
-							byFreshness.setChecked(true);
-							break;
-							
-						case Rating:
-							byRating.setChecked(true);
-							break;
-							
-						case Downloads:
-							byDownloads.setChecked(true);
-							break;
-	
-						default:
-							break;
+
+					if(allowAppsSortingPolicyChange.get()){
+						spacer.setVisibility(View.VISIBLE);
+						group_sort.setVisibility(View.VISIBLE);
+						switch (appsSortingPolicy) {
+							case ALPHABETIC:
+								byAlphabetic.setChecked(true);
+								break;
+								
+							case FRESHNESS:
+								byFreshness.setChecked(true);
+								break;
+								
+							case STARS:
+								byStars.setChecked(true);
+								break;
+								
+							case DOWNLOADS:
+								byDownloads.setChecked(true);
+								break;
+		
+							default:
+								break;
+						}
+					}else{
+						spacer.setVisibility(View.GONE);
+						group_sort.setVisibility(View.GONE);
 					}
 					
 
@@ -1842,15 +1861,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							}
 							
 							if(byAlphabetic.isChecked()){
-								newSortingPolicy = EnumAppsSorting.Alphabetic;
+								newSortingPolicy = EnumAppsSorting.ALPHABETIC;
 							}else if(byFreshness.isChecked()){
-								newSortingPolicy = EnumAppsSorting.Freshness;
-							}else if(byRating.isChecked()){
-								newSortingPolicy = EnumAppsSorting.Rating;
+								newSortingPolicy = EnumAppsSorting.FRESHNESS;
+							}else if(byStars.isChecked()){
+								newSortingPolicy = EnumAppsSorting.STARS;
 							}else if(byDownloads.isChecked()){
-								newSortingPolicy = EnumAppsSorting.Downloads;
+								newSortingPolicy = EnumAppsSorting.DOWNLOADS;
 							}
-							if(newSortingPolicy != appsSortingPolicy){
+							if(newSortingPolicy != null && newSortingPolicy != appsSortingPolicy){
 								appsSortingPolicy = newSortingPolicy;
 								setAppsSortingPolicy(appsSortingPolicy);
 							}

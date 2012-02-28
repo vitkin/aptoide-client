@@ -118,7 +118,7 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 	}
 	
 	public int getAppsSortingPolicy(){
-		return getPreferences.getInt(EnumPreferences.SORT_APPLICATIONS_BY.name(), EnumAppsSorting.Alphabetic.ordinal());
+		return getPreferences.getInt(EnumPreferences.SORT_APPLICATIONS_BY.name(), EnumAppsSorting.ALPHABETIC.ordinal());
 	}
 	
 	public void setAppsSortingPolicy(int sortingPolicy){
