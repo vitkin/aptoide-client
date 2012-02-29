@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Aptoide</string>
+    
+    <string name="wifi">WiFi</string>
+    <string name="ethernet">Ethernet</string>
+    <string name="_4g_">4G</string>
+    <string name="_3g_">3G</string>
+    <string name="_2g_">2G</string>
 </resources>

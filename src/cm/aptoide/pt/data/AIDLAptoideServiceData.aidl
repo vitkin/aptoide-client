@@ -104,6 +104,7 @@ interface AIDLAptoideServiceData {
 	ViewSettings callGetSettings();
 	ViewHwFilters callGetHwFilters();
 	void callSetHwFilter(in boolean on);
+	ViewIconDownloadPermissions callGetIconDownloadPermissions();
 	void callSetIconDownloadPermissions(in ViewIconDownloadPermissions iconDownloadPermissions);
 	void callResetAvailableApps();
 	

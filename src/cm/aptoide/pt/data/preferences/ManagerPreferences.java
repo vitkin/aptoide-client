@@ -146,7 +146,7 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		setPreferences.commit();		
 	}
 	
-	public ViewIconDownloadPermissions getIconDoanloadPermissions(){
+	public ViewIconDownloadPermissions getIconDownloadPermissions(){
 		ViewIconDownloadPermissions permissions = new ViewIconDownloadPermissions(
 													getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WiFi.name(), true)
 													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), true)
@@ -157,7 +157,7 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 	}
 	
 	public ViewSettings getSettings(){
-		return new ViewSettings(isHwFilterOn(), getIconDoanloadPermissions());
+		return new ViewSettings(isHwFilterOn(), getIconDownloadPermissions());
 	}
 	
 }

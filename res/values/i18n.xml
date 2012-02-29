@@ -41,6 +41,7 @@
     <string name="gles_version">GLES version</string>
     <string name="hw_filter">Filter apps by hardware</string>
     <string name="download_icons">Download icons options</string>
+    <string name="never">Never</string>
     
     <string name="display_options">Display Options</string>
     <string name="show_applications_by">Show applications by: </string>
