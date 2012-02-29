@@ -26,6 +26,19 @@
 	    android:textColor="#05C5CF" />
 	
 	<TextView
+	    android:id="@+id/clear_cache"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:cursorVisible="true"
+	    android:focusable="true"
+	    android:focusableInTouchMode="true"
+	    android:clickable="true"
+	    android:paddingBottom="10sp"
+	    android:paddingTop="10sp"
+	    android:text="@string/clear_cache"
+	    android:textColor="#05C5CF" />
+	
+	<TextView
 	    android:id="@+id/hw_specs"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
@@ -45,6 +58,15 @@
 	    android:paddingBottom="10sp"
 	    android:paddingTop="10sp"
         android:text="@string/hw_filter" />
+    
+    <CheckBox
+        android:id="@+id/automatic_install"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+	    android:paddingBottom="10sp"
+	    android:paddingTop="10sp"
+        android:text="@string/automatic_install" />
+
     
 <!--     <CheckBox -->
 <!--         android:id="@+id/automatic_install" -->

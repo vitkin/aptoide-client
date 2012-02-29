@@ -247,15 +247,40 @@ public class ManagerDownloads {
 	public boolean isConnectionAvailable(){
 		boolean connectionAvailable = false;
 		try {
-			connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+			connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;	
+		} catch (Exception e) { }
+		try {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+		} catch (Exception e) { }
+		try {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
-			
 		} catch (Exception e) { }
 		try {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
-			
 		} catch (Exception e) { }
+		
+		return connectionAvailable;
+	}
+	
+	public boolean isPermittedConnectionAvailable(ViewIconDownloadPermissions permissions){
+		boolean connectionAvailable = false;
+		if(permissions.isWiFi()){
+			try {
+					connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+			} catch (Exception e) { }
+		}else if(permissions.isWiMax()){
+			try {
+					connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+			} catch (Exception e) { }
+		}else if(permissions.isMobile()){
+			try {
+				connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+			} catch (Exception e) { }
+		}else if(permissions.isEthernet()){
+			try {
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+			} catch (Exception e) { }
+		}
 		
 		return connectionAvailable;
 	}

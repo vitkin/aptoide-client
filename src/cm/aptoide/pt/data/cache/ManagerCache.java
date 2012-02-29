@@ -239,7 +239,32 @@ public class ManagerCache {
 		 File file = new File(cache.getLocalPath());
 		 if(file.exists()){
 			 file.delete();
+			Log.d("Aptoide-ManagerCache", "deleted: "+cache.getLocalPath());
 		 }
+	}
+	
+	/**
+	 * clearIconCache, removes all icons from cache
+	 */
+	public void clearIconCache(){
+		File iconsPath = new File(Constants.PATH_CACHE_ICONS);
+		File[] icons = iconsPath.listFiles();
+		for (File icon : icons) {
+			icon.delete();
+		}
+		Log.d("Aptoide-ManagerCache", "icon cache cleared");
+	}
+	
+	/**
+	 * clearApkCache, removes all apks from cache
+	 */
+	public void clearApkCache(){
+		File apksPath = new File(Constants.PATH_CACHE_APKS);
+		File[] apks = apksPath.listFiles();
+		for (File apk : apks) {
+			apk.delete();
+		}
+		Log.d("Aptoide-ManagerCache", "apk cache cleared");
 	}
 	
 	public boolean isIconCached(int appHashid){

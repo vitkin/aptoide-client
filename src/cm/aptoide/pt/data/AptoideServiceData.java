@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
@@ -370,6 +371,26 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public ViewIconDownloadPermissions callGetIconDownloadPermissions() throws RemoteException {
+			return getIconDownloadPermissions();
+		}
+
+		@Override
+		public void callSetIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions) throws RemoteException {
+			setIconDownloadPermissions(iconDownloadPermissions);
+		}
+
+		@Override
+		public void callClearIconCache() throws RemoteException {
+			clearIconCache();
+		}
+
+		@Override
+		public void callClearApkCache() throws RemoteException {
+			clearApkCache();
+		}
+
+		@Override
 		public ViewHwFilters callGetHwFilters() throws RemoteException {
 			return getHwFilters();
 		}
@@ -380,13 +401,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public ViewIconDownloadPermissions callGetIconDownloadPermissions() throws RemoteException {
-			return getIconDownloadPermissions();
-		}
-
-		@Override
-		public void callSetIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions) throws RemoteException {
-			setIconDownloadPermissions(iconDownloadPermissions);
+		public void callSetAutomaticInstall(boolean on) throws RemoteException {
+			setAutomaticInstall(on);
 		}
 
 		@Override
@@ -650,6 +666,28 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	public void clearIconCache(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Clearing icon cache");
+				getManagerCache().clearIconCache();
+//				Toast.makeText(AptoideServiceData.this, getString(R.id.done), Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	
+	public void clearApkCache(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Clearing apk cache");
+				getManagerCache().clearApkCache();
+//				Toast.makeText(AptoideServiceData.this, getString(R.id.done), Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	
 	public ViewSettings getSettings(){
 		ViewSettings settings = managerPreferences.getSettings();
 		AptoideLog.d(AptoideServiceData.this, "Getting settings: "+settings);
@@ -668,6 +706,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				managerPreferences.setHwFilter(on);
 				AptoideLog.d(AptoideServiceData.this, "Setting hw filter: "+on);
+			}
+		});
+	}
+	
+	public void setAutomaticInstall(final boolean on){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				managerPreferences.setAutomaticInstall(on);
+				AptoideLog.d(AptoideServiceData.this, "Setting automatic install: "+on);
 			}
 		});
 	}
@@ -1003,16 +1051,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				@Override
 				public void run() {
 					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-					if(!managerDownloads.isConnectionAvailable()){
+					if(!managerDownloads.isPermittedConnectionAvailable(managerPreferences.getIconDownloadPermissions())){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}else{
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							//TODO raise exception
+							return;
+						}
+	
+						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), displayListsDimensions.getCacheSize()));
+						//TODO find some way to track global parsing completion status, probably in managerXml
 					}
-					if(!getManagerCache().isFreeSpaceInSdcard()){
-						//TODO raise exception
-						return;
-					}
-
-					managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), displayListsDimensions.getCacheSize()));
-					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
 			});
 		}

@@ -35,8 +35,8 @@ public enum EnumPreferences {
 	AUTHORIZED_DOWNLOAD_CONNECTIONS,
 	SHOW_APPLICATIONS_BY_CATEGORY,
 	SORT_APPLICATIONS_BY,
-	IS_HW_FILTER_ON,
 	DOWNLOAD_ICONS_,
+	IS_HW_FILTER_ON,
 	AUTOMATIC_INSTALL;
 	
 	public static EnumPreferences reverseOrdinal(int ordinal){

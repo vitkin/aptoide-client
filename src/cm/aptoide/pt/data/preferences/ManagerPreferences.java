@@ -138,26 +138,34 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 	}
 	
 	public void setIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions){
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WiFi.name(), iconDownloadPermissions.isWiFi());
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIFI.name(), iconDownloadPermissions.isWiFi());
 		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), iconDownloadPermissions.isEthernet());
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._4G_.name(), iconDownloadPermissions.is4G());
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._3G_.name(), iconDownloadPermissions.is3G());
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._2G_.name(), iconDownloadPermissions.is2G());
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIMAX.name(), iconDownloadPermissions.isWiMax());
+		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.MOBILE.name(), iconDownloadPermissions.isMobile());
 		setPreferences.commit();		
 	}
 	
 	public ViewIconDownloadPermissions getIconDownloadPermissions(){
 		ViewIconDownloadPermissions permissions = new ViewIconDownloadPermissions(
-													getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WiFi.name(), true)
+													getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIFI.name(), true)
 													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), true)
-													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._4G_.name(), true)
-													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._3G_.name(), true)
-													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission._2G_.name(), true));
+													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIMAX.name(), true)
+													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.MOBILE.name(), true) );
 		return permissions;
 	}
 	
+	public void setAutomaticInstall(boolean on){
+		setPreferences.putBoolean(EnumPreferences.AUTOMATIC_INSTALL.name(), on);
+		setPreferences.commit();		
+	}
+	
+	public boolean isAutomaticInstallOn(){
+		return getPreferences.getBoolean(EnumPreferences.AUTOMATIC_INSTALL.name(), false);
+	}
+	
+	
 	public ViewSettings getSettings(){
-		return new ViewSettings(isHwFilterOn(), getIconDownloadPermissions());
+		return new ViewSettings(getIconDownloadPermissions(), isHwFilterOn(), isAutomaticInstallOn());
 	}
 	
 }

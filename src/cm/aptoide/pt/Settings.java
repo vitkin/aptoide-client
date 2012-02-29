@@ -31,8 +31,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -80,7 +82,6 @@ public class Settings extends Activity {
 			try {
 				storedSettings = serviceDataCaller.callGetSettings();
 				hwFilters = serviceDataCaller.callGetHwFilters();
-				iconDownloadPermissions = serviceDataCaller.callGetIconDownloadPermissions();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -104,10 +105,16 @@ public class Settings extends Activity {
 	private void showSettings(){
 		setContentView(R.layout.settings);
 		
-		TextView iconDownloadPermissions = (TextView) findViewById(R.id.icon_download_permissions);
-		iconDownloadPermissions.setOnClickListener(new OnClickListener() {
+		TextView iconDownloadTextView = (TextView) findViewById(R.id.icon_download_permissions);
+		iconDownloadTextView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				try {
+					iconDownloadPermissions = serviceDataCaller.callGetIconDownloadPermissions();
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				final ViewIconDownloadPermissions storedPermissions = Settings.this.iconDownloadPermissions;
 				Log.d("Aptoide-Settings", "clicked icon download permissions");
 				View iconDownloadView = LinearLayout.inflate(Settings.this, R.layout.dialog_icon_download_permissions, null);
@@ -117,67 +124,106 @@ public class Settings extends Activity {
 				iconDownloadDialog.setTitle(getString(R.string.download_icons));
 				
 				final RadioButton wifi = (RadioButton) iconDownloadView.findViewById(R.id.wifi);
-				if(storedPermissions.isWiFi()){
-					wifi.setChecked(true);
-				}else{
-					wifi.setChecked(false);
-				}
 				final RadioButton ethernet = (RadioButton) iconDownloadView.findViewById(R.id.ethernet);
-				if(storedPermissions.isEthernet()){
-					ethernet.setChecked(true);
-				}else{
-					ethernet.setChecked(false);
-				}
-				final RadioButton _4g_ = (RadioButton) iconDownloadView.findViewById(R.id._4g_);
-				if(storedPermissions.is4G()){
-					_4g_.setChecked(true);
-				}else{
-					_4g_.setChecked(false);
-				}
-				final RadioButton _3g_ = (RadioButton) iconDownloadView.findViewById(R.id._3g_);
-				if(storedPermissions.is3G()){
-					_3g_.setChecked(true);
-				}else{
-					_3g_.setChecked(false);
-				}
-				final RadioButton _2g_ = (RadioButton) iconDownloadView.findViewById(R.id._2g_);
-				if(storedPermissions.is2G()){
-					_2g_.setChecked(true);
-				}else{
-					_2g_.setChecked(false);
-				}
+				final RadioButton wimax = (RadioButton) iconDownloadView.findViewById(R.id.wimax);
+				final RadioButton mobile = (RadioButton) iconDownloadView.findViewById(R.id.mobile);
 				final RadioButton never = (RadioButton) iconDownloadView.findViewById(R.id.never);
-				if(storedPermissions.isNever()){
-					never.setChecked(true);
-				}else{
-					never.setChecked(false);
-				}
-				never.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-					
+				
+				wifi.setChecked(storedPermissions.isWiFi());
+				ethernet.setChecked(storedPermissions.isEthernet());
+				wimax.setChecked(storedPermissions.isWiMax());
+				mobile.setChecked(storedPermissions.isMobile());
+				never.setChecked(storedPermissions.isNever());
+				
+				
+				wifi.setOnTouchListener(new OnTouchListener() {
 					@Override
-					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-						if(isChecked){
-							wifi.setChecked(false);
-							ethernet.setChecked(false);
-							_4g_.setChecked(false);
-							_3g_.setChecked(false);
-							_2g_.setChecked(false);
+					public boolean onTouch(View v, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_DOWN){
+							if(never.isChecked()){
+								never.setChecked(false);
+							}
+							wifi.setChecked(!wifi.isChecked());
+							return true;
 						}else{
-							wifi.setChecked(true);
-							ethernet.setChecked(true);
-							_4g_.setChecked(true);
-							_3g_.setChecked(true);
-							_2g_.setChecked(true);
+							return false;
 						}
 					}
 				});
+				ethernet.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_DOWN){
+							if(never.isChecked()){
+								never.setChecked(false);
+							}
+							ethernet.setChecked(!ethernet.isChecked());
+							return true;
+						}else{
+							return false;
+						}
+					}
+				});
+				wimax.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_DOWN){
+							if(never.isChecked()){
+								never.setChecked(false);
+							}
+							wimax.setChecked(!wimax.isChecked());
+							return true;
+						}else{
+							return false;
+						}
+					}
+				});
+				mobile.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_DOWN){
+							if(never.isChecked()){
+								never.setChecked(false);
+							}
+							mobile.setChecked(!mobile.isChecked());
+							return true;
+						}else{
+							return false;
+						}
+					}
+				});
+				
+				never.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_DOWN){
+							never.setChecked(!never.isChecked());
+							if(never.isChecked()){
+								wifi.setChecked(false);
+								ethernet.setChecked(false);
+								wimax.setChecked(false);
+								mobile.setChecked(false);
+							}else{
+								wifi.setChecked(true);
+								ethernet.setChecked(true);
+								wimax.setChecked(true);
+								mobile.setChecked(true);
+							}						
+							return true;
+						}else{
+							return false;
+						}
+					}
+				});
+				
+				
 				final Button done = (Button) iconDownloadView.findViewById(R.id.done);
 				done.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
 						ViewIconDownloadPermissions newPermissions 
-							= new ViewIconDownloadPermissions( wifi.isChecked(), ethernet.isChecked(), _4g_.isChecked(), _3g_.isChecked(), _2g_.isChecked() );
+							= new ViewIconDownloadPermissions( wifi.isChecked(), ethernet.isChecked(), wimax.isChecked(), mobile.isChecked() );
 						if(!newPermissions.equals(storedPermissions)){
 							try {
 								serviceDataCaller.callSetIconDownloadPermissions(newPermissions);
@@ -203,6 +249,84 @@ public class Settings extends Activity {
 				
 			}
 		});
+		
+
+		TextView clearCacheTextView = (TextView) findViewById(R.id.clear_cache);
+		clearCacheTextView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Log.d("Aptoide-Settings", "clicked clear cache");
+				View clearCacheView = LinearLayout.inflate(Settings.this, R.layout.dialog_clear_cache, null);
+				Builder dialogBuilder = new AlertDialog.Builder(Settings.this).setView(clearCacheView);
+				final AlertDialog clearCacheDialog = dialogBuilder.create();
+				clearCacheDialog.setIcon(android.R.drawable.ic_menu_delete);
+				clearCacheDialog.setTitle(getString(R.string.clear_cache));
+				
+				final RadioButton icon = (RadioButton) clearCacheView.findViewById(R.id.icon);
+				final RadioButton apk = (RadioButton) clearCacheView.findViewById(R.id.apk);
+				
+				icon.setChecked(false);
+				apk.setChecked(false);
+				
+				icon.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View view, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_DOWN){
+							icon.setChecked(!icon.isChecked());
+							return true;
+						}else{
+							return false;
+						}
+					}
+				});
+				apk.setOnTouchListener(new OnTouchListener() {
+					@Override
+					public boolean onTouch(View v, MotionEvent event) {
+						if(event.getAction() == MotionEvent.ACTION_DOWN){
+							apk.setChecked(!apk.isChecked());
+							return true;
+						}else{
+							return false;
+						}
+					}
+				});
+				
+				
+				final Button done = (Button) clearCacheView.findViewById(R.id.done);
+				done.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						try {
+							if(icon.isChecked()){
+								serviceDataCaller.callClearIconCache();
+							}
+							if(apk.isChecked()){
+								serviceDataCaller.callClearApkCache();
+							}
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						clearCacheDialog.dismiss();
+					}
+				});
+				
+				final Button cancel = (Button) clearCacheView.findViewById(R.id.cancel);
+				cancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						clearCacheDialog.dismiss();
+					}
+				});
+				
+				clearCacheDialog.show();
+				
+			
+			}
+		});
+		
 		
 		TextView hwSpecs = (TextView) findViewById(R.id.hw_specs);
 		hwSpecs.setOnClickListener(new OnClickListener() {
@@ -238,10 +362,27 @@ public class Settings extends Activity {
 		hwFilter.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Log.d("Aptoide-Settings", "checkbox: "+isChecked+" storedValue: "+storedSettings.isHwFilterOn());
+				Log.d("Aptoide-Settings", "hwFilter isChecked: "+isChecked+" storedValue: "+storedSettings.isHwFilterOn());
 				if(isChecked != storedSettings.isHwFilterOn()){
 					try {
 						serviceDataCaller.callSetHwFilter(isChecked);
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+		
+		CheckBox automaticInstall = (CheckBox) findViewById(R.id.hw_filter);
+		automaticInstall.setChecked(storedSettings.isHwFilterOn());
+		automaticInstall.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				Log.d("Aptoide-Settings", "automati install isChecked: "+isChecked+" storedValue: "+storedSettings.isAutomaticInstallOn());
+				if(isChecked != storedSettings.isAutomaticInstallOn()){
+					try {
+						serviceDataCaller.callSetAutomaticInstall(isChecked);
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

@@ -28,11 +28,10 @@ package cm.aptoide.pt.data.downloads;
  *
  */
 public enum EnumIconDownloadsPermission {
-	WiFi,
+	WIFI,
 	ETHERNET,
-	_4G_,
-	_3G_,
-	_2G_,	
+	WIMAX,
+	MOBILE,
 	NEVER;
 	
 	public static EnumIconDownloadsPermission reverseOrdinal(int ordinal){

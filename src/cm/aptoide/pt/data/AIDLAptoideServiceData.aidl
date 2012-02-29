@@ -102,10 +102,13 @@ interface AIDLAptoideServiceData {
 	ViewDisplayListRepos callGetWaitingMyappRepos();
 	
 	ViewSettings callGetSettings();
-	ViewHwFilters callGetHwFilters();
-	void callSetHwFilter(in boolean on);
 	ViewIconDownloadPermissions callGetIconDownloadPermissions();
 	void callSetIconDownloadPermissions(in ViewIconDownloadPermissions iconDownloadPermissions);
+	void callClearIconCache();
+	void callClearApkCache();
+	ViewHwFilters callGetHwFilters();
+	void callSetHwFilter(in boolean on);
+	void callSetAutomaticInstall(in boolean on);
 	void callResetAvailableApps();
 	
 }

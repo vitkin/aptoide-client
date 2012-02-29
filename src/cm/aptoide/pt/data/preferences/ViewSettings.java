@@ -31,25 +31,31 @@ import android.os.Parcelable;
  *
  */
 public class ViewSettings implements Parcelable{
-	private boolean isHwFilterOn;
 	private ViewIconDownloadPermissions iconDownloadPermissions;
+	private boolean isHwFilterOn;
+	private boolean isAutomaticInstallOn;
 	
-	public ViewSettings(boolean isHwFilterOn, ViewIconDownloadPermissions iconDownloadPermissions) {
-		this.isHwFilterOn = isHwFilterOn;
+	public ViewSettings(ViewIconDownloadPermissions iconDownloadPermissions, boolean isHwFilterOn, boolean isAutomaticInstallOn) {
 		this.iconDownloadPermissions = iconDownloadPermissions;
-	}
-
-	public boolean isHwFilterOn() {
-		return isHwFilterOn;
+		this.isHwFilterOn = isHwFilterOn;
+		this.isAutomaticInstallOn = isAutomaticInstallOn;
 	}
 	
 	public ViewIconDownloadPermissions getIconDownloadPermissions(){
 		return iconDownloadPermissions;
 	}
 
+	public boolean isHwFilterOn() {
+		return isHwFilterOn;
+	}
+
+	public boolean isAutomaticInstallOn() {
+		return isAutomaticInstallOn;
+	}
+
 	@Override
 	public String toString() {
-		return "isHwFilterOn: "+isHwFilterOn+iconDownloadPermissions;
+		return iconDownloadPermissions+" isHwFilterOn: "+isHwFilterOn+" isAutomaticInstallOn: "+isAutomaticInstallOn;
 	}
 
 	
@@ -84,13 +90,15 @@ public class ViewSettings implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeValue(isHwFilterOn);
 		out.writeParcelable(iconDownloadPermissions, flags);
+		out.writeValue(isHwFilterOn);
+		out.writeValue(isAutomaticInstallOn);
 	}
 	
 	public void readFromParcel(Parcel in) {
-		isHwFilterOn = (Boolean) in.readValue(null);
 		iconDownloadPermissions = in.readParcelable(ViewIconDownloadPermissions.class.getClassLoader());
+		isHwFilterOn = (Boolean) in.readValue(null);
+		isAutomaticInstallOn = (Boolean) in.readValue(null);
 	}
 	
 }

@@ -23,7 +23,8 @@
 	<string name="add_repo">Add new store</string>
     <string name="add_default_repo_confirm">It looks like you don\'t have any added store.\nWe suggest you use ours.\nDo you want to add our store?\n(You can search for more stores online)\n\n</string>
     <string name="repo_uri">URI to store: </string>
-	
+    
+	<!-- this string name has to be misspelled because private is a reserved word -->
     <string name="privt">Private</string>
     <string name="username">Username</string>
     <string name="password">Password</string>   
@@ -35,13 +36,16 @@
     <string name="screenshots">Screenshots:</string> 
     
     <string name="settings">Settings</string>
+    <string name="download_icons">Download icons permissions</string>
+    <string name="never">Never</string>
+    <string name="clear_cache">Clear cache</string>
+    <string name="icon">Icon</string>
     <string name="hw_specs">Hardware specs</string>
     <string name="sdk_version">SDK version</string>
     <string name="screen_size">Screen size</string>
     <string name="gles_version">GLES version</string>
     <string name="hw_filter">Filter apps by hardware</string>
-    <string name="download_icons">Download icons options</string>
-    <string name="never">Never</string>
+    <string name="automatic_install">Automatic install</string>
     
     <string name="display_options">Display Options</string>
     <string name="show_applications_by">Show applications by: </string>

@@ -4,7 +4,8 @@
     
     <string name="wifi">WiFi</string>
     <string name="ethernet">Ethernet</string>
-    <string name="_4g_">4G</string>
-    <string name="_3g_">3G</string>
-    <string name="_2g_">2G</string>
+    <string name="wimax">WiMax</string>
+    <string name="mobile">Mobile</string>
+    
+    <string name="apk">Apk</string>
 </resources>
