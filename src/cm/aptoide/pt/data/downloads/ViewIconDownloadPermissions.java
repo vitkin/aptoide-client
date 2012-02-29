@@ -32,16 +32,14 @@ import android.os.Parcelable;
 public class ViewIconDownloadPermissions implements Parcelable{
 	private boolean isWiFi;
 	private boolean isEthernet;
-	private boolean is4G;
-	private boolean is3G;
-	private boolean is2G;
+	private boolean isWiMax;
+	private boolean isMobile;
 	
-	public ViewIconDownloadPermissions(boolean isWiFi, boolean isEthernet, boolean is3G, boolean is4G, boolean is2G) {
+	public ViewIconDownloadPermissions(boolean isWiFi, boolean isEthernet, boolean isWiMax, boolean isMobile) {
 		this.isWiFi = isWiFi;
 		this.isEthernet = isEthernet;
-		this.is4G = is4G;
-		this.is3G = is3G;
-		this.is2G = is2G;
+		this.isWiMax = isWiMax;
+		this.isMobile = isMobile;
 	}
 	
 
@@ -53,25 +51,21 @@ public class ViewIconDownloadPermissions implements Parcelable{
 		return isEthernet;
 	}
 
-	public boolean is4G() {
-		return is4G;
+	public boolean isWiMax() {
+		return isWiMax;
 	}
 
-	public boolean is3G() {
-		return is3G;
-	}
-
-	public boolean is2G() {
-		return is2G;
+	public boolean isMobile() {
+		return isMobile;
 	}
 	
 	public boolean isNever() {
-		return (!isWiFi && !isEthernet && !is4G && !is3G && !is2G);
+		return (!isWiFi && !isEthernet && !isWiMax && !isMobile );
 	}
 
 	@Override
 	public String toString() {
-		return " isWiFi: "+isWiFi+" isEthernet: "+isEthernet+" is4G: "+is4G+" is3G: "+is3G+" is2G: "+is2G;
+		return " isWiFi: "+isWiFi+" isEthernet: "+isEthernet+" isWiMax: "+isWiMax+" isMobile: "+isMobile;
 	}
 
 
@@ -130,17 +124,15 @@ public class ViewIconDownloadPermissions implements Parcelable{
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeValue(isWiFi);
 		out.writeValue(isEthernet);
-		out.writeValue(is4G);
-		out.writeValue(is3G);
-		out.writeValue(is2G);
+		out.writeValue(isWiMax);
+		out.writeValue(isMobile);
 	}
 	
 	public void readFromParcel(Parcel in) {
 		isWiFi = (Boolean) in.readValue(null);
 		isEthernet = (Boolean) in.readValue(null);
-		is4G = (Boolean) in.readValue(null);
-		is3G = (Boolean) in.readValue(null);
-		is2G = (Boolean) in.readValue(null);
+		isWiMax = (Boolean) in.readValue(null);
+		isMobile = (Boolean) in.readValue(null);
 	}
 	
 }

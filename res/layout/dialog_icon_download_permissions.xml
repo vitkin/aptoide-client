@@ -23,22 +23,16 @@
             android:text="@string/ethernet" />
 
         <RadioButton
-            android:id="@+id/_4g_"
+            android:id="@+id/wimax"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/_4g_" />
+            android:text="@string/wimax" />
 
         <RadioButton
-            android:id="@+id/_3g_"
+            android:id="@+id/mobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/_3g_" />
-
-        <RadioButton
-            android:id="@+id/_2g_"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/_2g_" />
+            android:text="@string/mobile" />
 
         <RadioButton
             android:id="@+id/never"
