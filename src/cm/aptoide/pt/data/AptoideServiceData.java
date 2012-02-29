@@ -380,6 +380,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public ViewIconDownloadPermissions callGetIconDownloadPermissions() throws RemoteException {
+			return getIconDownloadPermissions();
+		}
+
+		@Override
 		public void callSetIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions) throws RemoteException {
 			setIconDownloadPermissions(iconDownloadPermissions);
 		}
@@ -665,6 +670,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				AptoideLog.d(AptoideServiceData.this, "Setting hw filter: "+on);
 			}
 		});
+	}
+	
+	public ViewIconDownloadPermissions getIconDownloadPermissions(){
+		ViewIconDownloadPermissions permissions = managerPreferences.getIconDownloadPermissions();
+		AptoideLog.d(AptoideServiceData.this, "Getting icon download permissions: "+permissions);
+		return permissions;
 	}
 	
 	public void setIconDownloadPermissions(final ViewIconDownloadPermissions iconDownloadPermissions){

@@ -74,10 +74,32 @@ public class ViewIconDownloadPermissions implements Parcelable{
 		return " isWiFi: "+isWiFi+" isEthernet: "+isEthernet+" is4G: "+is4G+" is3G: "+is3G+" is2G: "+is2G;
 	}
 
+
+	@Override
+	public int hashCode() {
+		return toString().hashCode();
+	}
+	
+	
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof ViewIconDownloadPermissions){
+			ViewIconDownloadPermissions permissions = (ViewIconDownloadPermissions) object;
+			if(permissions.hashCode() == this.hashCode()){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
+
 	
 	// Parcelable stuff //
-	
-	
+
+
+
+
 	public static final Parcelable.Creator<ViewIconDownloadPermissions> CREATOR = new
 			Parcelable.Creator<ViewIconDownloadPermissions>() {
 			        public ViewIconDownloadPermissions createFromParcel(Parcel in) {

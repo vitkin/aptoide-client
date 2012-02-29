@@ -33,13 +33,16 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
+import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 import cm.aptoide.pt.data.preferences.ViewSettings;
 import cm.aptoide.pt.data.system.ViewHwFilters;
 
@@ -55,6 +58,7 @@ public class Settings extends Activity {
 	
 	ViewSettings storedSettings;
 	ViewHwFilters hwFilters;
+	ViewIconDownloadPermissions iconDownloadPermissions;
 	
 	CheckBox hwFilter;
 	
@@ -76,6 +80,7 @@ public class Settings extends Activity {
 			try {
 				storedSettings = serviceDataCaller.callGetSettings();
 				hwFilters = serviceDataCaller.callGetHwFilters();
+				iconDownloadPermissions = serviceDataCaller.callGetIconDownloadPermissions();
 			} catch (RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -103,12 +108,99 @@ public class Settings extends Activity {
 		iconDownloadPermissions.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				final ViewIconDownloadPermissions storedPermissions = Settings.this.iconDownloadPermissions;
 				Log.d("Aptoide-Settings", "clicked icon download permissions");
-//				View displayOptions = LinearLayout.inflate(Settings.this, R.layout.dialog_, null);
-//				Builder dialogBuilder = new AlertDialog.Builder(this).setView(displayOptions);
-//				final AlertDialog sortDialog = dialogBuilder.create();
-//				sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
-//				sortDialog.setTitle(getString(R.string.display_options));
+				View iconDownloadView = LinearLayout.inflate(Settings.this, R.layout.dialog_icon_download_permissions, null);
+				Builder dialogBuilder = new AlertDialog.Builder(Settings.this).setView(iconDownloadView);
+				final AlertDialog iconDownloadDialog = dialogBuilder.create();
+				iconDownloadDialog.setIcon(android.R.drawable.ic_menu_manage);
+				iconDownloadDialog.setTitle(getString(R.string.download_icons));
+				
+				final RadioButton wifi = (RadioButton) iconDownloadView.findViewById(R.id.wifi);
+				if(storedPermissions.isWiFi()){
+					wifi.setChecked(true);
+				}else{
+					wifi.setChecked(false);
+				}
+				final RadioButton ethernet = (RadioButton) iconDownloadView.findViewById(R.id.ethernet);
+				if(storedPermissions.isEthernet()){
+					ethernet.setChecked(true);
+				}else{
+					ethernet.setChecked(false);
+				}
+				final RadioButton _4g_ = (RadioButton) iconDownloadView.findViewById(R.id._4g_);
+				if(storedPermissions.is4G()){
+					_4g_.setChecked(true);
+				}else{
+					_4g_.setChecked(false);
+				}
+				final RadioButton _3g_ = (RadioButton) iconDownloadView.findViewById(R.id._3g_);
+				if(storedPermissions.is3G()){
+					_3g_.setChecked(true);
+				}else{
+					_3g_.setChecked(false);
+				}
+				final RadioButton _2g_ = (RadioButton) iconDownloadView.findViewById(R.id._2g_);
+				if(storedPermissions.is2G()){
+					_2g_.setChecked(true);
+				}else{
+					_2g_.setChecked(false);
+				}
+				final RadioButton never = (RadioButton) iconDownloadView.findViewById(R.id.never);
+				if(storedPermissions.isNever()){
+					never.setChecked(true);
+				}else{
+					never.setChecked(false);
+				}
+				never.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					
+					@Override
+					public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+						if(isChecked){
+							wifi.setChecked(false);
+							ethernet.setChecked(false);
+							_4g_.setChecked(false);
+							_3g_.setChecked(false);
+							_2g_.setChecked(false);
+						}else{
+							wifi.setChecked(true);
+							ethernet.setChecked(true);
+							_4g_.setChecked(true);
+							_3g_.setChecked(true);
+							_2g_.setChecked(true);
+						}
+					}
+				});
+				final Button done = (Button) iconDownloadView.findViewById(R.id.done);
+				done.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						ViewIconDownloadPermissions newPermissions 
+							= new ViewIconDownloadPermissions( wifi.isChecked(), ethernet.isChecked(), _4g_.isChecked(), _3g_.isChecked(), _2g_.isChecked() );
+						if(!newPermissions.equals(storedPermissions)){
+							try {
+								serviceDataCaller.callSetIconDownloadPermissions(newPermissions);
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+						iconDownloadDialog.dismiss();
+					}
+				});
+				
+				final Button cancel = (Button) iconDownloadView.findViewById(R.id.cancel);
+				cancel.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						iconDownloadDialog.dismiss();
+					}
+				});
+				
+				iconDownloadDialog.show();
+				
 			}
 		});
 		
@@ -137,7 +229,7 @@ public class Settings extends Activity {
 					}
 				});
 				
-			hwSpecsDialog.show();
+				hwSpecsDialog.show();
 			}
 		});
 		
