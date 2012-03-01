@@ -416,7 +416,7 @@ public class Aptoide extends Activity {
 			prefEdit.commit();
 		}
 		if(!sPref.contains("app_rating")){
-			prefEdit.putString("app_rating", "All");
+			prefEdit.putString("app_rating", "Mature");
 			prefEdit.commit();
 		}
 		if(!sPref.contains("schDwnBox")){
@@ -427,6 +427,7 @@ public class Aptoide extends Activity {
 			prefEdit.putBoolean("hwspecsChkBox", true);
 			prefEdit.commit();
 		}
+		
 		prefEdit.putBoolean("redrawis", true);
 		prefEdit.commit();
 		

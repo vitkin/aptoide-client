@@ -128,6 +128,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	private boolean changed2 =false;
 	private boolean changed3 =false;
 	private boolean changed4 =false;
+	private CheckBoxPreference matureChkBox;
 	
 	
 	@Override
@@ -171,6 +172,7 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 		chkReposUpdates=(CheckBoxPreference) findPreference("reposIsUpdate");
 		
 		chkReposUpdates.setChecked(sPrefFull.getBoolean("reposIsUpdate", true));
+		matureChkBox = (CheckBoxPreference) findPreference("matureChkBox");
 		
 		
 		
@@ -342,7 +344,14 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 				prefEditFull.putBoolean("schDwnBox", false);
 				
 			}
-		}else if(key.equalsIgnoreCase("app_rating")){
+		}else if(key.equalsIgnoreCase("matureChkBox")){
+			if(matureChkBox.isChecked()){
+				prefEditFull.putString("app_rating", "Teen");
+				
+			}else{
+				prefEditFull.putString("app_rating", "Mature");
+				
+			}
 			changed3=true;
 		}else if(key.equalsIgnoreCase("repoIsUpdate")){
 			changed4=true;
@@ -367,7 +376,6 @@ public class Settings extends PreferenceActivity implements OnSharedPreferenceCh
 	@Override
 	public void finish() {
 		prefEditFull.putString("icdown", sPref.getString("icdown", "error"));
-		prefEditFull.putString("app_rating", sPref.getString("app_rating", "All"));
 		prefEditFull.putBoolean("reposIsUpdate", chkReposUpdates.isChecked());
 		if(changed4&&chkReposUpdates.isChecked()){
 			prefEditFull.putBoolean("repoIsAlwaysUpdate", false);

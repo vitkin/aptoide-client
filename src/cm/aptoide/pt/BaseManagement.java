@@ -432,7 +432,7 @@ public class BaseManagement extends Activity {
 
 	String age_filter;
 	protected void redraw(){
-		age_filter=sPref.getString("app_rating", "All");
+		age_filter=sPref.getString("app_rating", "Mature");
 		if(pd!=null&&pd.isShowing()){
 			pd.dismiss();
 		}
@@ -611,6 +611,7 @@ public class BaseManagement extends Activity {
 		try{
 			result = EnumAges.get(age.trim()).ordinal()>EnumAges.get(age_filter).ordinal();
 		}catch (Exception e) {
+			System.out.println(age + " "+age_filter);
 			e.printStackTrace();
 			return true;
 		}
@@ -761,7 +762,7 @@ public class BaseManagement extends Activity {
 	}
 
 	protected SimpleAdapter getGivenCatg(String ctg, int ord){
-		age_filter=sPref.getString("app_rating", "All");
+		age_filter=sPref.getString("app_rating", "Mature");
 		filteredApps =0;
 		List<Map<String, Object>> availMap = new ArrayList<Map<String, Object>>();
 		Map<String, Object> apk_line;
