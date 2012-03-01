@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ffffff">
+    android:background="#edece9"
+    android:padding="10dp" >
 
-  <ListView android:id="@android:id/list"
-        android:layout_width="fill_parent"
+    <RelativeLayout
+        android:id="@+id/relativeLayout2"
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        />
-  	
-  <TextView
-      android:id="@android:id/empty"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:gravity="center_vertical|center_horizontal"
-      android:text="@string/no_repo"
-      android:textColor="#4f4f4f"
-      android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:background="@drawable/border"
+        android:padding="5dp" >
 
-</LinearLayout>
-<!--
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" 
+            android:cacheColorHint="@android:color/transparent"/>
+
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/no_repo"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#4f4f4f" />
+    </RelativeLayout>
+</RelativeLayout>
+
+        <!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *
@@ -35,5 +45,4 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
--->
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.-->

@@ -26,12 +26,12 @@
  
   </PreferenceCategory>
   <PreferenceCategory
-        android:title="Application Rating">
+        android:title="@string/app_rating_title">
         <ListPreference
-            android:title="Application Rating"
-            android:summary="Show applications rated as:"
+            android:title="@string/app_rating_title"
+            android:summary="@string/app_rating_sum"
             android:key="app_rating"
-            android:defaultValue="All"
+            android:defaultValue="Pre-Teen"
             android:entries="@array/matureentries"
             android:entryValues="@array/maturevalues" />
     </PreferenceCategory>
@@ -69,16 +69,14 @@
       <CheckBoxPreference
      	android:title="@string/setting_schdwninstalltitle"
         android:summary="@string/setting_schdwninstallsum"
-        android:key="schDwnBox" 
-        />
+        android:key="schDwnBox" />
       </PreferenceCategory>
       <PreferenceCategory
-        android:title="Check Stores update">
+        android:title="@string/check_store_title">
       
       <CheckBoxPreference
-     	android:title="Check Stores update completion"
-        android:summary="Show popup at startup when any of your active stores update is not complete"
-        android:key="reposIsUpdate" 
-        />
+     	android:title="@string/check_store_title"
+        android:summary="@string/check_store_sum"
+        android:key="reposIsUpdate" />
       </PreferenceCategory>
 </PreferenceScreen>

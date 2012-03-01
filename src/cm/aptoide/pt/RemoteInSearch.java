@@ -413,7 +413,9 @@ public class RemoteInSearch extends ListActivity{
         baz_search = View.inflate(this, R.layout.bzzsrch, null);
         
         Button search_baz = (Button) baz_search.findViewById(R.id.baz_src);
-        search_baz.setText("Search '" + query + "' on Bazaar");
+//      Search in other Stores
+        search_baz.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
+        
         search_baz.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
