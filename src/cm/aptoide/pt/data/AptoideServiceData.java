@@ -30,6 +30,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Looper;
@@ -112,6 +113,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private ExecutorService scheduledThreadPool;
     
 	private AtomicBoolean syncingInstalledApps;
+	
+	private AtomicBoolean registeredNetworkStateChangeReceiver;
     
 	/**
 	 * When binding to the service, we return an interface to our AIDL stub
@@ -468,7 +471,47 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			}
 		}
 	};
+	
+	private void registerInstalledAppsChangeReceiver(){
+		IntentFilter installedAppsChangeFilter = new IntentFilter();
+		installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+		installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+		installedAppsChangeFilter.addDataScheme(Constants.SCHEME_PACKAGE);
+		registerReceiver(installedAppsChangeListener, installedAppsChangeFilter);
+	}
+	
+	
+	private BroadcastReceiver networkStateChangeListener = new BroadcastReceiver() {
 		
+		@Override
+		public void onReceive(Context receivedContext, Intent receivedIntent) {
+			if(receivedIntent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
+				boolean connectivity = managerDownloads.isPermittedConnectionAvailable(getIconDownloadPermissions());
+				Log.d("Aptoide-ServiceData", "networkStateChangeListener - permitted conectivity changed to: "+connectivity);
+				if(connectivity){
+					//TODO install scheduled
+				}
+			}
+		}
+	};
+	
+	private void registerNetworkStateChangeReceiver(){
+		if(!registeredNetworkStateChangeReceiver.get()){
+			IntentFilter networkStateChangeFilter = new IntentFilter();
+			networkStateChangeFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+			registerReceiver(networkStateChangeListener, networkStateChangeFilter);
+			Log.d("Aptoide-ServiceData", "networkStateChangeListener - registered as receiver");
+			registeredNetworkStateChangeReceiver.set(true);
+		}
+	}
+	
+	private void unregisterNetworkStateChangeReceiver(){
+		if(registeredNetworkStateChangeReceiver.get()){
+			unregisterReceiver(networkStateChangeListener);
+			Log.d("Aptoide-ServiceData", "networkStateChangeListener - unregistered as receiver");
+			registeredNetworkStateChangeReceiver.set(false);
+		}
+	}
 	
 	
 	public ViewDisplayListsDimensions getDisplayListsDimensions(){
@@ -536,11 +579,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			
 			syncingInstalledApps = new AtomicBoolean(false);
 			
-			IntentFilter installedAppsChangeFilter = new IntentFilter();
-			installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-			installedAppsChangeFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-			installedAppsChangeFilter.addDataScheme(Constants.SCHEME_PACKAGE);
-			registerReceiver(installedAppsChangeListener, installedAppsChangeFilter);
+			registerInstalledAppsChangeReceiver();
+			
+			registeredNetworkStateChangeReceiver.set(false);
+			if(managerPreferences.isAutomaticInstallOn()){
+				registerNetworkStateChangeReceiver();
+			}
 			
 			checkForSelfUpdate();
 			
@@ -716,6 +760,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				managerPreferences.setAutomaticInstall(on);
 				AptoideLog.d(AptoideServiceData.this, "Setting automatic install: "+on);
+				if(on){
+					registerNetworkStateChangeReceiver();
+				}else{
+					unregisterNetworkStateChangeReceiver();
+				}
 			}
 		});
 	}
