@@ -83,13 +83,16 @@
 		</activity>
 		
 		<service android:name=".data.AptoideServiceData" android:process=":aptoideData">
-<!-- ###### THIS NEXT INTENT FILTER IS ONLY FOR REFERENCE SINCE IT IS DYNAMICALLY FILTERED ######
+<!-- ###### THESE NEXT INTENT FILTERS ARE ONLY FOR REFERENCE SINCE THEY ARE DYNAMICALLY FILTERED ######
   			<intent-filter>
 				<action android:name="android.intent.action.PACKAGE_ADDED" />
 				<action android:name="android.intent.action.PACKAGE_REMOVED" />
 				<data android:scheme="package" />
 			</intent-filter>
-     ############################################################################################ -->
+  			<intent-filter>
+				<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+			</intent-filter>
+     ################################################################################################## -->
 		</service>
 
     </application>
