@@ -25,16 +25,7 @@
         android:key="clearcache" />
  
   </PreferenceCategory>
-  <PreferenceCategory
-        android:title="@string/app_rating_title">
-        <ListPreference
-            android:title="@string/app_rating_title"
-            android:summary="@string/app_rating_sum"
-            android:key="app_rating"
-            android:defaultValue="Pre-Teen"
-            android:entries="@array/matureentries"
-            android:entryValues="@array/maturevalues" />
-    </PreferenceCategory>
+  
   <PreferenceCategory
         android:title="@string/credentialssettings">
 	
@@ -60,6 +51,11 @@
         android:summary="@string/setting_appfiltersum"
         android:key="hwspecsChkBox"
         android:defaultValue="true" />
+      <CheckBoxPreference
+     	android:title="Mature Filtering"
+        android:summary="Don\'t show Mature content"
+        android:key="matureChkBox" 
+        />
      
   </PreferenceCategory>
   
