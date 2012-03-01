@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ffffffff"
+    android:background="#edece9"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
 
@@ -15,14 +15,6 @@
         android:layout_gravity="top"
         android:background="@drawable/greenbarwithshadow"
         android:orientation="vertical" >
-
-        <LinearLayout
-            android:id="@+id/greenbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal" >
-        </LinearLayout>
 
         <ImageView
             android:id="@+id/aptoideicon"
@@ -51,7 +43,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/actionbar"
-        android:background="#ffffff"
         android:gravity="center_vertical" >
 
         <ImageView
@@ -76,84 +67,98 @@
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#4f4f4f" />
-         
     </RelativeLayout>
-    
-    <RelativeLayout
-        android:id="@+id/root"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/listview_footer"
-        android:layout_below="@+id/apkinfoheader" >
 
-        <ListView
-            android:id="@+id/listComments"
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/advertisement"
+        android:layout_below="@+id/apkinfoheader"
+        android:background="#edece9"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
+
+        <RelativeLayout
+            android:id="@+id/root"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/listview_footer"
-            android:layout_alignParentTop="true"
-            android:cacheColorHint="#ffffff"
-            android:divider="@drawable/list_comments_divider"
-            android:dividerHeight="1px" />
+            android:layout_above="@+id/advertisement"
+            android:layout_below="@+id/apkinfoheader"
+            android:background="@drawable/border"
+            android:paddingBottom="5dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" >
 
-        <LinearLayout
-            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/listview_footer"
-            android:layout_centerHorizontal="true"
-            android:orientation="vertical" >
-
-            <com.google.ads.AdView
-                android:id="@+id/adView"
+            <ListView
+                android:id="@+id/listComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                ads:adSize="BANNER"
-                ads:adUnitId="a14f30ff2e69698"
-                ads:loadAdOnCreate="true"
-                ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
-            </com.google.ads.AdView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/listview_footer"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:orientation="horizontal" >
-
-            <Button
-                android:id="@+id/btinstall"
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:layout_weight=".50"
-                android:text="@string/install"
-                android:textColor="#000000"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btuninstall"
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:layout_weight="1"
-                android:text="@string/uninstall"
-                android:textColor="#000000"
-                android:textSize="12sp" />
-
-            <Button
-                android:id="@+id/btmarket"
-                android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                android:layout_weight=".50"
-                android:singleLine="true"
-                android:text="Search Market"
-                android:textColor="#000000"
-                android:textSize="12sp" />
-        </LinearLayout>
+                android:layout_alignParentTop="true"
+                android:background="#ffffff"
+                android:cacheColorHint="#ffffff"
+                android:divider="@drawable/list_comments_divider"
+                android:dividerHeight="1dp" />
+        </RelativeLayout>
     </RelativeLayout>
 
-    
-    
-    
+    <LinearLayout
+        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/advertisement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/listview_footer"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
+        <com.google.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="a14f30ff2e69698"
+            ads:loadAdOnCreate="true"
+            ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
+        </com.google.ads.AdView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/listview_footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btinstall"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_weight=".50"
+            android:text="@string/install"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btuninstall"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="@string/uninstall"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btmarket"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_weight=".50"
+            android:singleLine="true"
+            android:text="Search Market"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+    </LinearLayout>
+
 </RelativeLayout>

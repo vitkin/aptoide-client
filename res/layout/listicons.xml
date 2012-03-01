@@ -1,112 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/pkg"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal"
-    android:background="#ffffff">
-    
+    android:orientation="vertical" >
 
-    <ImageView android:id="@+id/appicon"
-        android:layout_width="35px"
-        android:layout_height="35px"
-        android:cropToPadding ="true"
-        android:padding="4sp"
-        android:scaleType="fitCenter" 
-        android:layout_gravity="center_vertical|center_horizontal"/>
+    <!-- Green Bar -->
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/icons"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal" >
 
-        <TextView android:id="@+id/name"
-            android:textSize="21sp"
-            android:layout_alignParentTop="true"
-            android:textStyle="bold"
-            android:maxLength="18"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit ="marquee_forever"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-           	android:textColor="#4f4f4f"/>
-            
-		<TextView android:id="@+id/nameup"
-            android:textSize="21sp"
-            android:layout_alignParentTop="true"
-            android:textStyle="bold"
-            android:textColor="#4f4f4f"
-            android:maxLines="1"
-            android:ellipsize="marquee"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"/>
-            
-        <!-- <LinearLayout
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="horizontal">--> 
-		    
-	        <TextView android:id="@+id/isinst"
-	            android:textSize="12sp"
-	            android:layout_below="@id/name" 
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:textColor="#4f4f4f"/>
-	        
-	        <TextView android:id="@+id/isDowngradeAvailable"
-	            android:textSize="12sp"
-	            android:layout_below="@id/name" 
-	            android:layout_toRightOf="@id/isinst"
-	            android:layout_width="wrap_content"
-	            android:textColor="#8B7355"
-	            android:layout_height="wrap_content"/>
-	            
-        <!-- </LinearLayout>-->
-           
-		<TextView
-		    android:id="@+id/isupdt"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:layout_below="@id/name"
-		    android:layout_toRightOf="@id/isinst"
-		    android:textColor="#FFA812"
-		    android:textSize="12sp" />
-            
+        <ImageView
+            android:id="@+id/appicon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="4dp"
+            android:scaleType="fitCenter" />
+
         <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="#4f4f4f"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/nameup"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="#4f4f4f"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+
+            <!--
+             <LinearLayout
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal">
+            -->
+
+            <TextView
+                android:id="@+id/isinst"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/name"
+                android:ellipsize="end"
+            	android:maxLines="1"
+            	android:singleLine="true"
+                android:textColor="#4f4f4f"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/isDowngradeAvailable"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/name"
+                android:layout_toRightOf="@id/isinst"
+                android:ellipsize="end"
+            	android:maxLines="1"
+            	android:singleLine="true"
+                android:textColor="#8B7355"
+                android:textSize="12sp" />
+
+            <!-- </LinearLayout> -->
+
+            <TextView
+                android:id="@+id/isupdt"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+            	android:maxLines="1"
+            	android:singleLine="true"
+                android:layout_below="@id/name"
+                android:layout_toRightOf="@id/isinst"
+                android:textColor="#FFA812"
+                android:textSize="12sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/dwn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:gravity="right"
-            android:orientation="vertical" >
-        	
-        	<TextView
-        	    android:id="@+id/dwn"
-        	    android:layout_width="wrap_content"
-        	    android:layout_height="wrap_content"
-        	    android:layout_alignParentRight="true"
-        	    android:gravity="right"
-        	    android:textSize="12sp" 
-        	    android:textColor="#4f4f4f"/>
-            
-        	<RatingBar
-        	    android:id="@+id/rating"
-        	    style="?android:attr/ratingBarStyleSmall"
-        	    android:layout_width="wrap_content"
-        	    android:layout_height="wrap_content"
-        	    android:layout_alignParentRight="true"
-        	    android:layout_below="@id/dwn"
-        	    android:isIndicator="true"
-        	    android:numStars="5" />
-        		
-	    </RelativeLayout>
-            
-            
-     </RelativeLayout>
-     
- 
-</LinearLayout>
-<!--
+            android:layout_centerVertical="true"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="#b3b3b3"
+            android:textSize="12sp" />
+
+        <RatingBar
+            android:id="@+id/rating"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/downloads"
+            android:isIndicator="true"
+            android:numStars="5" />
+    </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout><!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *

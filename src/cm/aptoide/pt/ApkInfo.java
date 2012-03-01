@@ -530,11 +530,21 @@ public class ApkInfo extends Activity implements OnDismissListener{
 					public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 							VersionApk versionApk = ((VersionApk)spinnerMultiAdapter.getItem(position));
 							apk_ver_str_raw = versionApk.getVersion();
+							int result = versionApk.compareTo(versionInstApk);
+							
 							if(Configs.TASTE_ON){
 								selectTaste(apk_repo_str_raw , apk_id, apk_ver_str_raw, likes, dislikes, like, dislike, userTaste);
 							}
 							if(Configs.COMMENTS_ON && loadOnScrollCommentList!=null){
 								new Thread(newVersionFetchComments).start();
+							}
+							
+							if(result==0){
+								action.setText(R.string.reinstall);
+							}else if(result<0) {
+								action.setText(R.string.downgrade);
+							}else if(result>0) {
+								action.setText(R.string.update);
 							}
 							
 							if(previousGetter!=null){
@@ -591,7 +601,7 @@ public class ApkInfo extends Activity implements OnDismissListener{
 								}
 								
 								if(result==0){
-									action.setText("Reinstall");
+									action.setText(R.string.reinstall);
 								}else if(result<0) {
 									action.setText(R.string.downgrade);
 								}else if(result>0) {
