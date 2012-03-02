@@ -15,15 +15,6 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import cm.aptoide.pt.Configs;
-import cm.aptoide.pt.NetworkApis;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
-import cm.aptoide.pt.utils.Security;
-import cm.aptoide.pt.utils.SetBlankOnFocusChangeListener;
-import cm.aptoide.pt.webservices.ResponseHandler;
-import cm.aptoide.pt.webservices.taste.EnumUserTaste;
-import cm.aptoide.pt.webservices.taste.TasteGetter;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -33,13 +24,25 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.text.method.PasswordTransformationMethod;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
+import cm.aptoide.pt.ApkInfo.WrapperUserTaste;
+import cm.aptoide.pt.Configs;
+import cm.aptoide.pt.NetworkApis;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.utils.Security;
+import cm.aptoide.pt.utils.SetBlankOnFocusChangeListener;
+import cm.aptoide.pt.webservices.ResponseHandler;
+import cm.aptoide.pt.webservices.taste.EnumUserTaste;
+import cm.aptoide.pt.webservices.taste.TasteGetter;
 
 /**
  * @author rafael
@@ -58,6 +61,7 @@ public class LoginDialog extends Dialog{
 	private boolean success;
 	private ImageView like; 
 	private ImageView dontlike;
+	private CheckBox showPass;
 	
 	private String repo; 
 	private String apkid; 
@@ -140,17 +144,30 @@ public class LoginDialog extends Dialog{
 		
 		password.setOnFocusChangeListener(new SetBlankOnFocusChangeListener());
 		
-		((Button)findViewById(R.id.passShowToogle)).setOnClickListener(new View.OnClickListener(){
-			public void onClick(View arg) {
-				if(password.getTransformationMethod()!=null){
-					password.setTransformationMethod(null);
-					((Button)arg).setText(LoginDialog.this.getContext().getString(R.string.hidepass));
-				}else{
-					password.setTransformationMethod(PasswordTransformationMethod.getInstance());
-					((Button)arg).setText(LoginDialog.this.getContext().getString(R.string.showpass));
-				}
-			}
-		});
+		showPass = (CheckBox) findViewById(R.id.showpass);
+
+		showPass.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                    password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                } else {
+                    password.setInputType(129);
+                }
+            }
+        });
+
+		
+//		((Button)findViewById(R.id.passShowToogle)).setOnClickListener(new View.OnClickListener(){
+//			public void onClick(View arg) {
+//				if(password.getTransformationMethod()!=null){
+//					password.setTransformationMethod(null);
+//					((Button)arg).setText(LoginDialog.this.getContext().getString(R.string.hidepass));
+//				}else{
+//					password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+//					((Button)arg).setText(LoginDialog.this.getContext().getString(R.string.showpass));
+//				}
+//			}
+//		});
 		
 		((Button)findViewById(R.id.submitLogin)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {

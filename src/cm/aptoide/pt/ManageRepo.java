@@ -387,7 +387,6 @@ public class ManageRepo extends ListActivity{
 		switch(item.getItemId()){
 		case ADD_REPO:
 			View view = li.inflate(R.layout.addrepo, null);
-			view.setBackgroundColor(Color.WHITE);
 			final TextView sec_msg = (TextView) view.findViewById(R.id.sec_msg);
 			final TextView sec_msg2 = (TextView) view.findViewById(R.id.sec_msg2);
 			

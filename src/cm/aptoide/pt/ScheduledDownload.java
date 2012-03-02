@@ -130,7 +130,7 @@ public class ScheduledDownload extends ListActivity {
         show_out.setViewBinder(new LstBinder());
         setListAdapter(show_out);
         if(sch_list.isEmpty()){
-			Toast.makeText(this, R.string.no_sch_downloads, Toast.LENGTH_LONG).show();
+//			Toast.makeText(this, R.string.no_sch_downloads, Toast.LENGTH_LONG).show();
 //			setContentView(R.layout.sch_downloadempty);
 			installButton.setVisibility(View.GONE);
         }

@@ -2,65 +2,76 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_gravity="center_horizontal"
-    android:gravity="center"
+    android:background="#edece9"
     android:orientation="vertical"
-    android:padding="10dp" 
-    android:background="#ffffff">
-
-    <!-- Remove focus from subject on create -->
-
-    <EditText
-        android:layout_width="fill_parent"
-        android:layout_height="0px" />
-
-    <EditText
-        android:id="@+id/user"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_span="2"
-        android:singleLine="true"
-        android:text="@string/user"
-        android:textColor="#696969"
-        android:textSize="18sp" />
-
-    <EditText
-        android:id="@+id/pass"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_span="2"
-        android:password="true"
-        android:singleLine="true"
-        android:text="@string/pass"
-        android:textColor="#696969"
-        android:textSize="18sp" />
+    android:padding="10dp" >
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        android:orientation="horizontal" 
-        android:background="#ffffff">
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:orientation="vertical"
+        android:padding="10dp" >
 
-        <Button
-            android:id="@+id/submitLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/submit" />
 
-        <Button
-            android:id="@+id/passShowToogle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/showpass" />
+            <!-- Remove focus from subject on create -->
 
-        <Button
-            android:id="@+id/newAccount"
-            android:layout_width="wrap_content"
+            <EditText
+                
+                android:id="@+id/user"
+                android:ems="200"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:hint="@string/user"
+                android:textColor="#696969"
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/pass"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:password="true"
+                android:singleLine="true"
+                android:hint="@string/pass"
+                android:textColor="#696969"
+                android:textSize="18sp" />
+
+        <CheckBox
+            android:id="@+id/showpass"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:text="@string/new_account" />
+            android:text="@string/showpass"
+            android:textColor="#696969" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/submitLogin"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.50"
+                android:text="@string/submit" />
+
+<!--             <Button -->
+<!--             android:id="@+id/passShowToogle" -->
+<!--             android:layout_width="wrap_content" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:text="@string/showpass" /> -->
+
+            <Button
+                android:id="@+id/newAccount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.50"
+                android:text="@string/new_account" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
