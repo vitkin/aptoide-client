@@ -70,7 +70,9 @@
     <string name="select_version">Select version</string>
     <string name="scheduled_downloads">Scheduled Downloads</string>
     <string name="schedule">Schedule</string>
+    <string name="unschedule">Unschedule</string>
     <string name="scheduled">Scheduled</string>
+    <string name="unscheduled">Unscheduled</string>
     <string name="name_of_application">Name of the application</string>
     
     <string name="options">Options</string>

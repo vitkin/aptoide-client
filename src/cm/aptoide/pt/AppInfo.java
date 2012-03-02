@@ -50,6 +50,8 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -87,6 +89,8 @@ public class AppInfo extends Activity {
 	private ViewDisplayAppVersionInfo installedVersion = null;
 	private ViewDisplayAppVersionInfo selectedVersion;
 	
+	private boolean storedForLater = false;
+	
 	CheckBox later;
 	private TextView appNameTextView;
 	private TextView appDownloadsTextView;
@@ -122,10 +126,9 @@ public class AppInfo extends Activity {
 
 			try {
 				if (serviceDataCaller.callIsAppScheduledToInstall(appHashid)) {
-					later.setChecked(true);
-				} else {
-					later.setChecked(false);
-				}
+					storedForLater = true;
+				} 
+				later.setChecked(storedForLater);
 			} catch (RemoteException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -165,6 +168,13 @@ public class AppInfo extends Activity {
 		public void refreshIcon() throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received refreshIcon callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_ICON.ordinal());
+		}
+
+		@Override
+		public void newAppInfoAvailable() throws RemoteException {
+			Log.v("Aptoide-AppInfo",
+					"received newAppInfoAvailable callback");
+			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_INFO.ordinal());
 		}
 
 		@Override
@@ -209,6 +219,10 @@ public class AppInfo extends Activity {
 				setIcon();
 				break;
 
+			case UPDATE_APP_INFO:
+				setVersions();
+				break;
+
 			case UPDATE_APP_DOWNLOAD_INFO:
 				setVersions();
 				break;
@@ -239,6 +253,12 @@ public class AppInfo extends Activity {
 
 		setContentView(R.layout.app_info);
 		later = (CheckBox) findViewById(R.id.later);
+		later.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				selectVersion(selectedVersion);
+			}
+		});
 		appNameTextView = (TextView) findViewById(R.id.app_name);
 		appDownloadsTextView = (TextView) findViewById(R.id.app_downloads);
 		appSizeTextView = (TextView) findViewById(R.id.app_size);
@@ -251,10 +271,6 @@ public class AppInfo extends Activity {
 		
 		ImageView searchView = (ImageView) findViewById(R.id.search_button);
 		searchView.setVisibility(View.GONE);
-		
-		if (!serviceDataIsBound) {
-			bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
-		}
 
 		install = (Button) findViewById(R.id.install);
 		install.setTextColor(Color.DKGRAY);
@@ -264,45 +280,61 @@ public class AppInfo extends Activity {
 		galleryView = (Gallery) findViewById(R.id.screens);
 
 		setIcon();
+		
+		if (!serviceDataIsBound) {
+			bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
+		}
 	}
 	
 	private void activateInstallButton(boolean activate){
+		String label = getResources().getString(R.string.install);
+		if(later.isChecked() && !storedForLater){
+			label = getResources().getString(R.string.schedule);
+		}
 		if(activate){
-			install.setText(getResources().getString(R.string.install));
+			install.setText(label);
 			install.setTextColor(Color.BLACK);			
 			install.setOnClickListener(new OnClickListener() {
 	
 				@Override
 				public void onClick(View view) {
-					try {
-						if (later.isChecked()) {
+					if(later.isChecked()){
+						try {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.install).toString()+" "
-														+getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
-							Log.d("Aptoide-AppInfo", "called install app later");
-						} else {
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
+							Log.d("Aptoide-AppInfo", "called schedule install app");
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}else{
+						try {
+							if(storedForLater){
+								serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
+							}
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
 														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called install app");
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 					finish();
 				}
 			});
 		}else{
-			install.setText(getResources().getString(R.string.install));
+			install.setText(label);
 			install.setTextColor(Color.WHITE);
 			install.setOnClickListener(null);
 		}
 	}
 	
 	private void activateUninstallButton(boolean activate){
+		String label = getResources().getString(R.string.uninstall);
 		if(activate){
-			uninstall.setText(getResources().getString(R.string.uninstall));
+			uninstall.setText(label);
 			uninstall.setTextColor(Color.BLACK);	
 			uninstall.setOnClickListener(new OnClickListener() {
 	
@@ -319,16 +351,39 @@ public class AppInfo extends Activity {
 				}
 			});
 		}else{
-			uninstall.setText(getResources().getString(R.string.uninstall));
-			uninstall.setTextColor(Color.WHITE);
-			uninstall.setOnClickListener(null);
-			
+			if(storedForLater){
+				label = getResources().getString(R.string.unschedule);
+				uninstall.setText(label);
+				uninstall.setTextColor(Color.BLACK);
+				uninstall.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View view) {
+						Log.d("Aptoide-AppInfo", "called unschedule app");
+						try {
+							serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						finish();
+					}
+				});
+			}else{
+				uninstall.setText(label);
+				uninstall.setTextColor(Color.WHITE);
+				uninstall.setOnClickListener(null);
+			}
 		}
 	}
 	
 	private void activateUpdateButton(boolean activate){
+		String label = getResources().getString(R.string.update);
+		if(later.isChecked() && !storedForLater){
+			label = getResources().getString(R.string.schedule);
+		}
 		if(activate){
-			install.setText(getResources().getString(R.string.update));
+			install.setText(label);
 			install.setTextColor(Color.BLACK);			
 			install.setOnClickListener(new OnClickListener() {
 
@@ -337,14 +392,16 @@ public class AppInfo extends Activity {
 					try {
 						if (later.isChecked()) {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.update).toString()+" "
-														+getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
-							Log.d("Aptoide-AppInfo", "called install app later");
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
+							Log.d("Aptoide-AppInfo", "called update app later");
 						} else {
+							if(storedForLater){
+								serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
+							}
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
 														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
-							Log.d("Aptoide-AppInfo", "called install app");
+							Log.d("Aptoide-AppInfo", "called update app");
 						}
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
@@ -354,7 +411,7 @@ public class AppInfo extends Activity {
 				}
 			});
 		}else{
-			install.setText(getResources().getString(R.string.update));
+			install.setText(label);
 			install.setTextColor(Color.WHITE);
 			install.setOnClickListener(null);
 		}
@@ -362,8 +419,12 @@ public class AppInfo extends Activity {
 	}
 	
 	private void activateDowngradeButton(boolean activate){
+		String label = getResources().getString(R.string.downgrade);
+		if(later.isChecked() && !storedForLater){
+			label = getResources().getString(R.string.schedule);
+		}
 		if(activate){
-			install.setText(getResources().getString(R.string.downgrade));
+			install.setText(label);
 			install.setTextColor(Color.BLACK);			
 			install.setOnClickListener(new OnClickListener() {
 
@@ -372,14 +433,16 @@ public class AppInfo extends Activity {
 					try {
 						if (later.isChecked()) {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.downgrade).toString()+" "
-														+getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
-							Log.d("Aptoide-AppInfo", "called install app later");
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
+							Log.d("Aptoide-AppInfo", "called downgrade app later");
 						} else {
+							if(storedForLater){
+								serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
+							}
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
 														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
-							Log.d("Aptoide-AppInfo", "called install app");
+							Log.d("Aptoide-AppInfo", "called downgrade app");
 						}
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
@@ -389,7 +452,7 @@ public class AppInfo extends Activity {
 				}
 			});
 		}else{
-			install.setText(getResources().getString(R.string.downgrade));
+			install.setText(label);
 			install.setTextColor(Color.WHITE);
 			install.setOnClickListener(null);
 		}
@@ -486,14 +549,14 @@ public class AppInfo extends Activity {
 	}
 	
 	private void setVersionDetails(){
-		if(selectedVersion.getSize() != Constants.EMPTY_INT){
+		if(selectedVersion != null && selectedVersion.getSize() != Constants.EMPTY_INT){
 			appSize = Integer.toString(selectedVersion.getSize());
 			appSizeTextView.setText("Size: "+appSize+"KB");
 		}else{
 			appSizeTextView.setText("Size: ");
 		}
 		
-		if(selectedVersion.getRepoUri() != null){
+		if(selectedVersion != null && selectedVersion.getRepoUri() != null){
 			repoUri = selectedVersion.getRepoUri();
 			repoUriTextView.setText("Store: "+repoUri);
 		}else{
@@ -502,7 +565,7 @@ public class AppInfo extends Activity {
 	}
 	
 	private void setVersionStats(){
-		if(selectedVersion.isStatsAvailable()){
+		if(selectedVersion != null && selectedVersion.isStatsAvailable()){
 			appDownloads = selectedVersion.getStats().getDownloads();
 			appDownloadsTextView.setText("Downloads: "+appDownloads);
 

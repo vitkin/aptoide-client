@@ -247,16 +247,20 @@ public class ManagerDownloads {
 	public boolean isConnectionAvailable(){
 		boolean connectionAvailable = false;
 		try {
-			connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;	
+			connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+			Log.d("ManagerDownloads", "isConnectionAvailable mobile: "+connectionAvailable);	
 		} catch (Exception e) { }
 		try {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+			Log.d("ManagerDownloads", "isConnectionAvailable wifi: "+connectionAvailable);
 		} catch (Exception e) { }
 		try {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+			Log.d("ManagerDownloads", "isConnectionAvailable wimax: "+connectionAvailable);
 		} catch (Exception e) { }
 		try {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+			Log.d("ManagerDownloads", "isConnectionAvailable ethernet: "+connectionAvailable);
 		} catch (Exception e) { }
 		
 		return connectionAvailable;
@@ -264,21 +268,29 @@ public class ManagerDownloads {
 	
 	public boolean isPermittedConnectionAvailable(ViewIconDownloadPermissions permissions){
 		boolean connectionAvailable = false;
+		Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
 		if(permissions.isWiFi()){
 			try {
-					connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+connectionAvailable);
 			} catch (Exception e) { }
-		}else if(permissions.isWiMax()){
+		} 
+		if(permissions.isWiMax()){
 			try {
-					connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+connectionAvailable);
 			} catch (Exception e) { }
-		}else if(permissions.isMobile()){
+		} 
+		if(permissions.isMobile()){
 			try {
 				connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+connectionAvailable);
 			} catch (Exception e) { }
-		}else if(permissions.isEthernet()){
+		}
+		if(permissions.isEthernet()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+connectionAvailable);
 			} catch (Exception e) { }
 		}
 		

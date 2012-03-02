@@ -25,14 +25,12 @@
 package cm.aptoide.pt.data.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
 import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
 import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.util.Constants;
@@ -48,12 +46,12 @@ public class RepoDownloadParser extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewXmlParse parseInfo;
-	private ViewAppDownloadInfo downloadInfo;	
+	private ViewAppDownloadInfo downloadInfo;
+	private ViewIconInfo iconInfo;
 	private ArrayList<ViewAppDownloadInfo> downloadsInfo = new ArrayList<ViewAppDownloadInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
 	private ArrayList<ArrayList<ViewAppDownloadInfo>> downloadsInfoInsertStack = new ArrayList<ArrayList<ViewAppDownloadInfo>>(2);
 	
 	private EnumXmlTagsDownload tag = EnumXmlTagsDownload.apklst;
-	private HashMap<String, EnumXmlTagsDownload> tagMap = new HashMap<String, EnumXmlTagsDownload>();
 	
 	private int appHashid = Constants.EMPTY_INT;
 	private int appFullHashid = Constants.EMPTY_INT;
@@ -65,10 +63,6 @@ public class RepoDownloadParser extends DefaultHandler{
 	public RepoDownloadParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
-		
-		for (EnumXmlTagsDownload tag : EnumXmlTagsDownload.values()) {
-			tagMap.put(tag.name(), tag);
-		}
 	}	
 	public RepoDownloadParser(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
 		this(managerXml, parseInfo);
@@ -86,7 +80,7 @@ public class RepoDownloadParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		tag = tagMap.get(localName.trim());
+		tag = EnumXmlTagsDownload.valueOf(localName.trim());
 		
 		switch (tag) {
 			case apphashid:
@@ -105,6 +99,30 @@ public class RepoDownloadParser extends DefaultHandler{
 			case sz:
 				downloadInfo.setSize(Integer.parseInt(tagContentBuilder.toString()));
 				break;
+				
+			case icon:
+				iconInfo = new ViewIconInfo(tagContentBuilder.toString(), appFullHashid);
+				Log.d("Aptoide-RepoDownload+IconParser", "inserting icon");
+				try{
+					new Thread(){
+						public void run(){
+							this.setPriority(Thread.MAX_PRIORITY);
+							final ArrayList<ViewIconInfo> iconsInfoInserting = new ArrayList<ViewIconInfo>();
+							iconsInfoInserting.add(iconInfo);
+							
+							managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);
+							
+							managerXml.serviceData.parsingIconFromDownloadInfoFinished(iconInfo, parseInfo.getRepository());
+						}
+					}.start();
+	
+				} catch(Exception e){
+					/** this should never happen */
+					//TODO handle exception
+					e.printStackTrace();
+				}
+				break;
+				
 				
 			case pkg:
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
