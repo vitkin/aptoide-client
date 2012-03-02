@@ -33,7 +33,8 @@ public enum EnumXmlTagsDownload {
 	apphashid,
 	path,
 	md5h,
-	sz;
+	sz,
+	icon;
 	
 	public static EnumXmlTagsDownload reverseOrdinal(int ordinal){
 		return values()[ordinal];

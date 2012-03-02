@@ -25,7 +25,6 @@
 package cm.aptoide.pt.data.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -51,7 +50,6 @@ public class RepoIconParser extends DefaultHandler{
 	private ArrayList<ArrayList<ViewIconInfo>> iconsInfoInsertStack = new ArrayList<ArrayList<ViewIconInfo>>(2);
 	
 	private EnumXmlTagsIcon tag = EnumXmlTagsIcon.apklst;
-	private HashMap<String, EnumXmlTagsIcon> tagMap = new HashMap<String, EnumXmlTagsIcon>();
 	
 	private int appFullHashid = 0;
 	private int parsedAppsNumber = 0;
@@ -62,10 +60,6 @@ public class RepoIconParser extends DefaultHandler{
 	public RepoIconParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
-		
-		for (EnumXmlTagsIcon tag : EnumXmlTagsIcon.values()) {
-			tagMap.put(tag.name(), tag);
-		}
 	}
 	
 	@Override
@@ -79,7 +73,7 @@ public class RepoIconParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		tag = tagMap.get(localName.trim());
+		tag = EnumXmlTagsIcon.valueOf(localName.trim());
 		
 		switch (tag) {
 			case apphashid:

@@ -25,7 +25,6 @@
 package cm.aptoide.pt.data.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -51,7 +50,6 @@ public class RepoStatsParser extends DefaultHandler{
 	private ArrayList<ArrayList<ViewStatsInfo>> statsListInsertStack = new ArrayList<ArrayList<ViewStatsInfo>>(2);
 	
 	private EnumXmlTagsStats tag = EnumXmlTagsStats.apklst;
-	private HashMap<String, EnumXmlTagsStats> tagMap = new HashMap<String, EnumXmlTagsStats>();
 	
 
 	private int appHashid = Constants.EMPTY_INT;
@@ -65,10 +63,6 @@ public class RepoStatsParser extends DefaultHandler{
 	public RepoStatsParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
-		
-		for (EnumXmlTagsStats tag : EnumXmlTagsStats.values()) {
-			tagMap.put(tag.name(), tag);
-		}
 	}
 	
 	public RepoStatsParser(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
@@ -87,7 +81,7 @@ public class RepoStatsParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		tag = tagMap.get(localName.trim());
+		tag = EnumXmlTagsStats.valueOf(localName.trim());
 		
 		switch (tag) {
 			case apphashid:

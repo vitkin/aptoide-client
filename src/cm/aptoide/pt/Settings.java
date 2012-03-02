@@ -375,7 +375,7 @@ public class Settings extends Activity {
 		});
 		
 		CheckBox automaticInstall = (CheckBox) findViewById(R.id.hw_filter);
-		automaticInstall.setChecked(storedSettings.isHwFilterOn());
+		automaticInstall.setChecked(storedSettings.isAutomaticInstallOn());
 		automaticInstall.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

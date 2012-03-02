@@ -1377,6 +1377,91 @@ public class ManagerDatabase {
 	
 	
 	/**
+	 * isAppDownloadInfoPresent, checks if the DownloadInfo of the Application referenced by this appFullHashid is already present
+	 * 
+	 * @param int appFullHashid
+	 * 
+	 * @return boolean
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public boolean isAppDownloadInfoPresent(int appFullHashid){
+		
+		String selectAppDownloadInfo = "SELECT count(*)"
+									+" FROM "+Constants.TABLE_DOWNLOAD_INFO
+									+" WHERE "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+"='"+appFullHashid+"';";
+		
+		boolean appDownloadInfoIsPresent = false;
+		
+		db.beginTransaction();
+		Cursor cursorAppDownloadInfo = null;
+		try{
+			cursorAppDownloadInfo = aptoideNonAtomicQuery(selectAppDownloadInfo);
+			db.setTransactionSuccessful();
+			db.endTransaction();
+			
+			cursorAppDownloadInfo.moveToFirst();
+			appDownloadInfoIsPresent = (cursorAppDownloadInfo.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
+			cursorAppDownloadInfo.close();
+			return appDownloadInfoIsPresent;
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+			return false;
+			
+		}
+		
+	}
+	
+	
+	
+	/**
+	 * isAppExtraInfoPresent, checks if the ExtraInfo of the Application referenced by this appFullHashid is already present
+	 * 
+	 * @param int appFullHashid
+	 * 
+	 * @return boolean
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public boolean isAppExtraInfoPresent(int appFullHashid){
+		
+		String selectAppExtraInfo = "SELECT count(*)"
+									+" FROM "+Constants.TABLE_EXTRA_INFO
+									+" WHERE "+Constants.KEY_EXTRA_APP_FULL_HASHID+"='"+appFullHashid+"';";
+		
+		boolean appExtraInfoIsPresent = false;
+		
+		db.beginTransaction();
+		Cursor cursorAppExtraInfo = null;
+		try{
+			cursorAppExtraInfo = aptoideNonAtomicQuery(selectAppExtraInfo);
+			db.setTransactionSuccessful();
+			db.endTransaction();
+			
+			cursorAppExtraInfo.moveToFirst();
+			appExtraInfoIsPresent = (cursorAppExtraInfo.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
+			cursorAppExtraInfo.close();
+			return appExtraInfoIsPresent;
+		}catch (Exception e) {
+			db.endTransaction();
+			// TODO: handle exception
+			e.printStackTrace();
+			return false;
+			
+		}
+		
+	}
+	
+	
+	
+	
+	/**
 	 * excludeManagedRepos, excludes from the list of repos, those that are already managed
 	 * 
 	 * @param ViewDisplayListRepos
@@ -1756,6 +1841,38 @@ public class ManagerDatabase {
 		}else{
 			cursorIsAppToInstall.close();
 			return true;
+		}
+	}
+	
+	/**
+	 * getApplicationsScheduledToInstall, gets list of apphashids for every application scheduled to install
+	 *  
+	 * @return ViewListIds
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewListIds getApplicationsScheduledToInstall(){
+		
+		final int HASHID = Constants.COLUMN_FIRST;
+		
+		String selectAppsToInstall = "SELECT * FROM "+Constants.TABLE_APP_TO_INSTALL+";";
+		
+		Cursor cursorAppsToInstall = aptoideAtomicQuery(selectAppsToInstall);
+		
+		if(cursorAppsToInstall.getCount() == Constants.EMPTY_INT){
+			cursorAppsToInstall.close();
+			return null;
+		}else{
+			cursorAppsToInstall.moveToFirst();
+			ViewListIds appsList = new ViewListIds();
+			do{
+				appsList.addId(cursorAppsToInstall.getInt(HASHID));
+			}while(cursorAppsToInstall.moveToNext());
+			
+			cursorAppsToInstall.close();
+			return appsList;
 		}
 	}
 
@@ -2227,10 +2344,8 @@ public class ManagerDatabase {
 		String selectIconDownloadInfo = "SELECT I."+Constants.KEY_ICON_REMOTE_PATH_TAIL+",A."+Constants.KEY_APPLICATION_HASHID
 											+",A."+Constants.KEY_APPLICATION_NAME
 									+" FROM "+Constants.TABLE_ICON_INFO+" I"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID
-																	+","+Constants.KEY_APPLICATION_REPO_HASHID
-																	+","+Constants.KEY_APPLICATION_HASHID
-																	+","+Constants.KEY_APPLICATION_NAME
+										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+","+Constants.KEY_APPLICATION_REPO_HASHID
+																	+","+Constants.KEY_APPLICATION_HASHID+","+Constants.KEY_APPLICATION_NAME
 																	+","+Constants.KEY_APPLICATION_TIMESTAMP
 															 +" FROM "+Constants.TABLE_APPLICATION
 															 +" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
@@ -2328,9 +2443,11 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
-			iconsCursor.moveToFirst();
-			iconInfo = new ViewDownloadInfo(repoIconsPath+iconsCursor.getString(REMOTE_PATH_TAIL), iconsCursor.getString(APP_NAME)
-											, appHashid, EnumDownloadType.ICON);
+			if(iconsCursor.getCount()!= Constants.EMPTY_INT){
+				iconsCursor.moveToFirst();
+				iconInfo = new ViewDownloadInfo(repoIconsPath+iconsCursor.getString(REMOTE_PATH_TAIL), iconsCursor.getString(APP_NAME)
+												, appHashid, EnumDownloadType.ICON);
+			}
 			iconsCursor.close();
 	
 		}catch (Exception e) {
@@ -2384,6 +2501,11 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
+			if(screensCursor.getCount() == Constants.EMPTY_INT){
+				screensCursor.close();				
+				return screensInfo;
+			}
+			
 			screensInfo = new ArrayList<ViewDownloadInfo>(screensCursor.getCount());
 			
 			screensCursor.moveToFirst();
@@ -2422,12 +2544,51 @@ public class ManagerDatabase {
 		String selectAppInRepo = "SELECT count(distinct A."+Constants.KEY_APPLICATION_HASHID+")"
 								+" FROM "
 									+"(SELECT "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
-									+" FROM "+Constants.TABLE_APPLICATION+") A"
+									+" FROM "+Constants.TABLE_APPLICATION
+									+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+") A"
 								+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
 															+" FROM "+Constants.TABLE_REPOSITORY
-															+" GROUP BY "+Constants.KEY_REPO_HASHID+") R"
-								+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE
-									+" AND "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+";";
+															+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid
+															+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE
+															+" GROUP BY "+Constants.KEY_REPO_HASHID+") R;";
+		
+		Cursor appInRepoCursor = aptoideAtomicQuery(selectAppInRepo);
+		appInRepoCursor.moveToFirst();
+		
+		boolean appInRepo = (appInRepoCursor.getInt(COUNT)==Constants.DB_TRUE?true:false);
+		
+		appInRepoCursor.close();
+		Log.d("Aptoide-appInRepo", "appInrepo? "+appInRepo);
+		
+		return appInRepo;
+	}
+	
+	
+	/**
+	 * appAnyVersionInRepo, checks if the app/version referenced by appHashid is present on the repo referenced by the repoHashid
+	 * 
+	 * @param int repoHashid
+	 * @param int appHashid
+	 * 
+	 * @return boolean is app in repo?
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public boolean appAnyVersionInRepo(int repoHashid, String packageName){
+		final int COUNT = Constants.COLUMN_FIRST;
+		
+		String selectAppInRepo = "SELECT count(distinct A."+Constants.KEY_APPLICATION_HASHID+")"
+								+" FROM "
+									+"(SELECT "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
+									+" FROM "+Constants.TABLE_APPLICATION
+									+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"') A"
+								+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
+															+" FROM "+Constants.TABLE_REPOSITORY
+															+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid
+															+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE
+															+" GROUP BY "+Constants.KEY_REPO_HASHID+") R;";
 		
 		Cursor appInRepoCursor = aptoideAtomicQuery(selectAppInRepo);
 		appInRepoCursor.moveToFirst();
@@ -2469,15 +2630,88 @@ public class ManagerDatabase {
 		String selectRepo = "SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI+", "+Constants.KEY_REPO_IN_USE+", "+Constants.KEY_REPO_SIZE
 									+", "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_ICONS_PATH+", "+Constants.KEY_REPO_SCREENS_PATH
 									+", "+Constants.KEY_REPO_DELTA
-							+" FROM "+Constants.TABLE_REPOSITORY;
+							+" FROM (SELECT * FROM "+Constants.TABLE_REPOSITORY;
 		if(appInRepo(Constants.APPS_REPO_HASHID, appHashid)){
-				selectRepo+=" WHERE "+Constants.KEY_REPO_HASHID+"="+Constants.APPS_REPO_HASHID+";";
+				selectRepo+=" WHERE "+Constants.KEY_REPO_HASHID+"="+Constants.APPS_REPO_HASHID+");";
 		}else{
-				selectRepo+=" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_HASHID
+				selectRepo+=" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
+							+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_HASHID
 												+", "+Constants.KEY_APPLICATION_REPO_HASHID
 												+" FROM "+Constants.TABLE_APPLICATION
-												+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") "
-							+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+";";
+												+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
+												+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") ;";
+		}
+		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
+		if(repoCursor.getCount()==Constants.EMPTY_INT){
+			repoCursor.close();
+			return null;		//TODO refactor null object
+		}else{
+			repoCursor.moveToFirst();
+		}
+		
+		String selectLogin = "SELECT *"
+							 +" FROM "+Constants.TABLE_LOGIN
+							 +" WHERE "+Constants.KEY_LOGIN_REPO_HASHID+"="+repoCursor.getInt(REPO_HASHID)+";";
+		Cursor loginCursor = aptoideAtomicQuery(selectLogin);
+		
+		ViewRepository repo = new ViewRepository(repoCursor.getString(URI), repoCursor.getInt(SIZE), repoCursor.getString(BASE_PATH)
+												, repoCursor.getString(ICONS_PATH), repoCursor.getString(SCREENS_PATH), repoCursor.getString(DELTA));
+		
+		if( !(loginCursor.getCount() == Constants.EMPTY_INT) ){
+			loginCursor.moveToFirst();
+			ViewLogin login = new ViewLogin(loginCursor.getString(USERNAME),loginCursor.getString(PASSWORD));
+			repo.setLogin(login);
+		}
+		loginCursor.close();
+		Log.d("Aptoide-getAppRepo", "appRepo: "+repo);
+		
+		repoCursor.close();
+		
+		return repo;
+	}
+	
+	
+	/**
+	 * getAppAnyVersionRepo, get a repo that contains the app represented by the appHashid in any version
+	 * 
+	 * @param int appHashid
+	 * 
+	 * @return ViewRepository the repository
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewRepository getAppAnyVersionRepo(int appHashid){
+		final int REPO_HASHID = Constants.COLUMN_FIRST;
+		final int URI = Constants.COLUMN_SECOND;
+//		final int IN_USE = Constants.COLUMN_THIRD;
+		final int SIZE = Constants.COLUMN_FOURTH;
+		final int BASE_PATH = Constants.COLUMN_FIFTH;
+		final int ICONS_PATH = Constants.COLUMN_SIXTH;
+		final int SCREENS_PATH = Constants.COLUMN_SEVENTH;
+		final int DELTA = Constants.COLUMN_EIGTH;
+		
+//		final int LOGIN_REPO_HASHID = Constants.COLUMN_FIRST;
+		final int USERNAME = Constants.COLUMN_SECOND;
+		final int PASSWORD = Constants.COLUMN_THIRD;
+
+		String packageName = getAppPackageName(appHashid);
+		
+		String selectRepo = "SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI+", "+Constants.KEY_REPO_IN_USE+", "+Constants.KEY_REPO_SIZE
+									+", "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_ICONS_PATH+", "+Constants.KEY_REPO_SCREENS_PATH
+									+", "+Constants.KEY_REPO_DELTA
+							+" FROM (SELECT * FROM "+Constants.TABLE_REPOSITORY;
+		if(appAnyVersionInRepo(Constants.APPS_REPO_HASHID, packageName)){
+				selectRepo+=" WHERE "+Constants.KEY_REPO_HASHID+"="+Constants.APPS_REPO_HASHID+");";
+		}else{
+				selectRepo+=" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
+							+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_HASHID
+												+", "+Constants.KEY_APPLICATION_REPO_HASHID
+												+" FROM "+Constants.TABLE_APPLICATION
+												+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"'"
+												+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") ;";
+							
 		}
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
 		if(repoCursor.getCount()==Constants.EMPTY_INT){
@@ -2725,7 +2959,7 @@ public class ManagerDatabase {
 	
 	
 	/**
-	 * getInstalledAppPackageName, retrieves the packageName for the installed app referenced by the appHashid
+	 * getAppPackageName, retrieves the packageName for the app referenced by the appHashid
 	 * 
 	 * @param int appHashid
 	 * 
@@ -2735,24 +2969,27 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */	
-	public String getInstalledAppPackageName(int appHashid){
+	public String getAppPackageName(int appHashid){
 		final int PACKAGE_NAME = Constants.COLUMN_FIRST;
 		
 		String packageName = null;
 		
-		String selectInstalledApp = "SELECT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
+		String selectApp = "SELECT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
 									+" FROM "+Constants.TABLE_APP_INSTALLED
-									+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+";";
+									+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"='"+appHashid+"'"
+							+"UNION SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
+									+" FROM "+Constants.TABLE_APPLICATION
+									+" WHERE "+Constants.KEY_APPLICATION_HASHID+"='"+appHashid+"';";
 		
-		Cursor installedAppCursor = aptoideAtomicQuery(selectInstalledApp);
+		Cursor cursorApp = aptoideAtomicQuery(selectApp);
 		
-		if(installedAppCursor.getCount() == Constants.EMPTY_INT){
+		if(cursorApp.getCount() == Constants.EMPTY_INT){
 			//TODO raise exception app not installed
 		}
 		
-		installedAppCursor.moveToFirst();
-		packageName = installedAppCursor.getString(PACKAGE_NAME);
-		installedAppCursor.close();
+		cursorApp.moveToFirst();
+		packageName = cursorApp.getString(PACKAGE_NAME);
+		cursorApp.close();
 		
 		return packageName;
 	}

@@ -29,6 +29,7 @@ package cm.aptoide.pt;
  */
 public enum EnumAppInfoTasks {
 	REFRESH_ICON,
+	UPDATE_APP_INFO,
 	UPDATE_APP_DOWNLOAD_INFO,
 	UPDATE_APP_STATS,
 	UPDATE_APP_EXTRAS,

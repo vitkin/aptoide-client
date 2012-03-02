@@ -29,6 +29,7 @@ package cm.aptoide.pt;
 interface AIDLAppInfo{
 	
 	void refreshIcon();
+	void newAppInfoAvailable();
 	void newAppDownloadInfoAvailable();
 	void newStatsInfoAvailable();
 	void newExtrasAvailable();

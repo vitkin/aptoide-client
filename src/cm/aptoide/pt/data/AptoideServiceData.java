@@ -59,10 +59,14 @@ import cm.aptoide.pt.data.display.ViewDisplayListsDimensions;
 import cm.aptoide.pt.data.downloads.EnumDownloadType;
 import cm.aptoide.pt.data.downloads.ManagerDownloads;
 import cm.aptoide.pt.data.downloads.ViewDownload;
+import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
 import cm.aptoide.pt.data.downloads.ViewDownloadStatus;
 import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.model.ViewApplication;
+import cm.aptoide.pt.data.model.ViewIconInfo;
+import cm.aptoide.pt.data.model.ViewListIds;
+import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
@@ -503,6 +507,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			Log.d("Aptoide-ServiceData", "networkStateChangeListener - registered as receiver");
 			registeredNetworkStateChangeReceiver.set(true);
 		}
+		installAllScheduledApps();
 	}
 	
 	private void unregisterNetworkStateChangeReceiver(){
@@ -581,14 +586,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			
 			registerInstalledAppsChangeReceiver();
 			
-			registeredNetworkStateChangeReceiver.set(false);
+			registeredNetworkStateChangeReceiver = new AtomicBoolean(false);
 			if(managerPreferences.isAutomaticInstallOn()){
 				registerNetworkStateChangeReceiver();
 			}
 			
 			checkForSelfUpdate();
 			
-//			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 			
 			isRunning = true;
 			Log.d("Aptoide ServiceData", "Service started");
@@ -1178,16 +1183,20 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void fillAppInfo(final int appHashid){
-		final ViewRepository repository = managerDatabase.getAppRepo(appHashid);
+		final ViewRepository repository = managerDatabase.getAppAnyVersionRepo(appHashid);
 		if(repository == null){
+			updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_INFO);
 			return;
 		}
 		if(!managerDownloads.isIconCached(appHashid)){
 			scheduledThreadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					managerDownloads.getIcon(managerDatabase.getIconDownloadInfo(repository, appHashid), repository.isLoginRequired(), repository.getLogin());
-					updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
+					ViewDownloadInfo downloadInfo = managerDatabase.getIconDownloadInfo(repository, appHashid);
+					if(downloadInfo != null){
+						managerDownloads.getIcon(downloadInfo, repository.isLoginRequired(), repository.getLogin());
+						updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
+					}
 				}
 			});
 		}
@@ -1204,21 +1213,30 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				//TODO check with database if info is present and only if not continue with the download and parse of this info
 				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
+				if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
+					if(!managerDownloads.isConnectionAvailable()){
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.DOWNLOAD);
+					
+					managerXml.repoAppDownloadParse(repository, cache, appHashid);
+					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.DOWNLOAD);
-				
-				managerXml.repoAppDownloadParse(repository, cache, appHashid);
-				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
 					
+	}
+	
+	public void parsingIconFromDownloadInfoFinished(ViewIconInfo iconInfo, ViewRepository repository){
+		if(managerDownloads.isPermittedConnectionAvailable(getIconDownloadPermissions())){
+			ViewDownloadInfo downloadInfo = new ViewDownloadInfo(repository.getIconsPath()+iconInfo.getIconRemotePathTail(), Integer.toString(iconInfo.getAppFullHashid()), iconInfo.getAppFullHashid(), EnumDownloadType.ICON);
+			managerDownloads.getIcon(downloadInfo, repository.isLoginRequired(), repository.getLogin());
+		}
 	}
 	
 	public void parsingRepoAppDownloadInfoFinished(ViewRepository repository, int appHashid){
@@ -1258,18 +1276,23 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				//TODO check with database if info is present and only if not continue with the download and parse of this info
 				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
+				if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
+					if(!managerDownloads.isConnectionAvailable()){
+						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						//TODO raise exception
+					}
+					ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.EXTRAS);
+					
+					managerXml.repoAppExtrasParse(repository, cache, appHashid);
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}else{
+					updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);	
+					updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_SCREENS);				
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.EXTRAS);
-				
-				managerXml.repoAppExtrasParse(repository, cache, appHashid);
-				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
 					
@@ -1310,6 +1333,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			switch (callBack) {
 				case REFRESH_ICON:
 					appInfoClients.get(appHashid).refreshIcon();
+					break;
+					
+				case UPDATE_APP_INFO:
+					appInfoClients.get(appHashid).newAppInfoAvailable();
 					break;
 					
 				case UPDATE_APP_DOWNLOAD_INFO:
@@ -1456,6 +1483,21 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerDatabase.isApplicationScheduledToInstall(appHashid);
 	}
 	
+	public void installAllScheduledApps(){	//TODO could use some optimization throughout
+		scheduledThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				ViewListIds appsList = managerDatabase.getApplicationsScheduledToInstall();
+
+				for (Integer apphashid : appsList.getList()) {
+					unscheduleInstallApp(apphashid);
+					downloadApp(apphashid);
+				}
+			}
+		});
+	}
+	
+	
 	public void receiveMyapp(final String uriString){
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
@@ -1588,7 +1630,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void uninstallApp(int appHashid){
-		Uri uri = Uri.fromParts("package", managerDatabase.getInstalledAppPackageName(appHashid), null);
+		Uri uri = Uri.fromParts("package", managerDatabase.getAppPackageName(appHashid), null);
 		Intent remove = new Intent(Intent.ACTION_DELETE, uri);
 		remove.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		AptoideLog.d(AptoideServiceData.this, "Removing app: "+appHashid);

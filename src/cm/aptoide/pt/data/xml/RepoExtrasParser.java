@@ -25,7 +25,6 @@
 package cm.aptoide.pt.data.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -55,7 +54,6 @@ public class RepoExtrasParser extends DefaultHandler{
 	private ArrayList<ArrayList<ViewScreenInfo>> screensInfoInsertStack = new ArrayList<ArrayList<ViewScreenInfo>>(2);
 	
 	private EnumXmlTagsExtras tag = EnumXmlTagsExtras.apklst;
-	private HashMap<String, EnumXmlTagsExtras> tagMap = new HashMap<String, EnumXmlTagsExtras>();
 	
 	private int appHashid = Constants.EMPTY_INT;
 	private int appFullHashid = Constants.EMPTY_INT;
@@ -69,10 +67,6 @@ public class RepoExtrasParser extends DefaultHandler{
 	public RepoExtrasParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
-		
-		for (EnumXmlTagsExtras tag : EnumXmlTagsExtras.values()) {
-			tagMap.put(tag.name(), tag);
-		}
 	}
 	
 	public RepoExtrasParser(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
@@ -91,7 +85,7 @@ public class RepoExtrasParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		tag = tagMap.get(localName.trim());
+		tag = EnumXmlTagsExtras.valueOf(localName.trim());
 		
 		switch (tag) {
 			case apphashid:

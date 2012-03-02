@@ -49,6 +49,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	private String localIconPath;
 	
 	private boolean isInstalled = false;
+//	private boolean isScheduled = false;
 	
 	private boolean statsAvailable = false;
 	private ViewDisplayAppVersionStats stats;
@@ -66,8 +67,9 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	 * @param int appFullHashid
 	 * @param int appHashid
 	 * @param boolean isInstalled
+	 * @param boolean isScheduled
 	 */
-	public ViewDisplayAppVersionInfo(String appName, String versionName, int versionCode, int appFullHashid, int appHashid, boolean isInstalled){
+	public ViewDisplayAppVersionInfo(String appName, String versionName, int versionCode, int appFullHashid, int appHashid, boolean isInstalled){//, boolean isScheduled){
 		this.appName = appName;
 		this.versionName = versionName;
 		this.versionCode = versionCode;
@@ -75,6 +77,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.appHashid = appHashid;
 		
 		this.isInstalled = isInstalled;
+//		this.isScheduled = isScheduled;
 		
 		this.statsAvailable = false;
 		this.extrasAvailable = false;
@@ -125,6 +128,10 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	public boolean isInstalled(){
 		return isInstalled;
 	}
+	
+//	public boolean isScheduled(){
+//		return isScheduled;
+//	}
 
 	public boolean isStatsAvailable() {
 		return statsAvailable;
@@ -171,6 +178,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.localIconPath = null;
 		
 		this.isInstalled = false;
+//		this.isScheduled = false;
 		
 		this.statsAvailable = false;
 		this.extrasAvailable = false;
@@ -186,7 +194,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	 * @param int appHashid
 	 * @param boolean isInstalled
 	 */
-	public void reuse(String appName, String versionName, int versionCode, int appFullHashid, int appHashid, boolean isInstalled){
+	public void reuse(String appName, String versionName, int versionCode, int appFullHashid, int appHashid, boolean isInstalled){//, boolean isScheduled){
 		this.appName = appName;
 		this.versionName = versionName;
 		this.versionCode = versionCode;
@@ -194,6 +202,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.appHashid = appHashid;
 		
 		this.isInstalled = isInstalled;
+//		this.isScheduled = isScheduled;
 		
 		this.statsAvailable = false;
 		this.extrasAvailable = false;
@@ -221,7 +230,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	@Override
 	public String toString() {
 		StringBuilder string = new StringBuilder(" Name: "+appName+" Version: "+versionName+" VersionCode: "+versionCode+" AppFullHashid: "+appFullHashid+" AppHashid: "+appHashid
-												+" Size: "+size+" RepoUri: "+repoUri+" isInstalled: "+isInstalled);//+" localIconPath: "+localIconPath
+												+" Size: "+size+" RepoUri: "+repoUri+" isInstalled: "+isInstalled);//+" isScheduled: "+isScheduled);//+" localIconPath: "+localIconPath
 		if(statsAvailable){
 			string.append("\n\n"+stats.toString());
 		}
@@ -274,6 +283,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			out.writeString(localIconPath);
 			
 			out.writeByte(isInstalled?(byte)1:(byte)0);
+//			out.writeValue(isScheduled);
 			
 			out.writeByte(statsAvailable?(byte)1:(byte)0);
 			if(statsAvailable){
@@ -298,6 +308,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			localIconPath = in.readString();
 			
 			isInstalled = in.readByte()==1?true:false;
+//			isScheduled = (Boolean) in.readValue(null);
 			
 			statsAvailable = in.readByte()==1?true:false;
 			if(statsAvailable){
