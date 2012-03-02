@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/advertisement"
             android:layout_below="@+id/apkinfoheader"
-            android:background="@drawable/border"
+            android:background="@drawable/homepage_border"
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp" >

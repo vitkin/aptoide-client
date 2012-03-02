@@ -44,7 +44,7 @@
     <string name="commentlabel">Comment app...</string>
     <string name="submit">Submit</string>
     <string name="clear">Clear</string>
-    <string name="body">Body..</string>
+    <string name="body">Body...</string>
     <string name="subject">Subject...</string>
     <string name="user">User name...</string>
     <string name="pass">Password...</string>
@@ -103,6 +103,8 @@
    <string name="setting_schdwninstallsum">Install scheduled downloads automatically when a Wifi connection is present</string>
    <string name="no_updates">All applications are up to date</string>
        
+   <string name="extended_server">Extended Server (Webservices)</string>
+   
    <string name="app_rating_title">Application Rating</string>
    <string name="app_rating_sum">Show applications rated as:</string>
    
