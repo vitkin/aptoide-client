@@ -1186,6 +1186,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		final ViewRepository repository = managerDatabase.getAppAnyVersionRepo(appHashid);
 		if(repository == null){
 			updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_INFO);
+			AptoideLog.d(AptoideServiceData.this, "App not in any repo");
 			return;
 		}
 		if(!managerDownloads.isIconCached(appHashid)){
@@ -1227,6 +1228,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					managerXml.repoAppDownloadParse(repository, cache, appHashid);
 					//TODO find some way to track global parsing completion status, probably in managerXml
 				}
+				AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
 			}
 		});
 					
