@@ -25,7 +25,6 @@
 package cm.aptoide.pt.data.xml;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -55,7 +54,6 @@ public class RepoDeltaParser extends DefaultHandler{
 	private ViewListIds removedApplications = new ViewListIds();
 	
 	private EnumXmlTagsDelta tag = EnumXmlTagsDelta.apklst;
-	private HashMap<String, EnumXmlTagsDelta> tagMap = new HashMap<String, EnumXmlTagsDelta>();
 	
 	private String packageName = "";
 	String path;

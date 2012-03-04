@@ -909,19 +909,19 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
-	public void insertedRepo(final int repoHashid){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					reposInfoClient.insertedRepo(repoHashid);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-			}
-		});
-	}
+//	public void insertedRepo(final int repoHashid){
+//		cachedThreadPool.execute(new Runnable() {
+//			@Override
+//			public void run() {
+//				try {
+//					reposInfoClient.insertedRepo(repoHashid);
+//				} catch (RemoteException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}	
+//			}
+//		});
+//	}
 	
 
 	public ViewDisplayListRepos getRepos(){
@@ -1014,7 +1014,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		if(reposInserting.contains(repository.getHashid())){
 			reposInserting.remove(Integer.valueOf(repository.getHashid()));
 			resetAvailableLists();
-			insertedRepo(repository.getHashid());
+//			insertedRepo(repository.getHashid());
 		}
 	}
 		
@@ -1053,10 +1053,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			allowSortingPolicyChange();
 		}
 		if(reposInserting.contains(repository.getHashid())){
-			if(managerPreferences.getShowApplicationsByCategory() || repository.getSize() < Constants.APPLICATIONS_IN_EACH_INSERT/2){
+			if(managerPreferences.getShowApplicationsByCategory() || repository.getSize() < getDisplayListsDimensions().getFastReset()){
 				resetAvailableLists();
 			}
-			insertedRepo(repository.getHashid());
+//			insertedRepo(repository.getHashid());
 			addRepoIconsInfo(repository);
 		}
 	}
