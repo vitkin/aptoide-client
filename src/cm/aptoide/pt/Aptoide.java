@@ -152,8 +152,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
-	private InstalledAppsManager staticListsManager;
+	private InstalledAppsManager installedAppsManager;
 	private AvailableAppsManager availableAppsManager;
+	private UpdatableAppsManager updatableAppsManager;
 	
 	private SimpleAdapter categoriesAdapter = null;
 	private SimpleAdapter availableAdapter = null;
@@ -264,7 +265,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		public void newInstalledListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received newInstalledListDataAvailable callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SYNCHRONIZED_INSTALLED_LIST.ordinal());
-			staticListsManager.resetInstalledApps();
+			installedAppsManager.resetInstalledApps();
 		}
 		
 		@Override
@@ -447,9 +448,39 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					setFreshInstalledApps(serviceDataCaller.callGetInstalledApps());
 					interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_INSTALLED_LIST_DISPLAY.ordinal());
 					if(!(availableApps.getList().size()==0)){
-						setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-						interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+						updatableAppsManager.resetUpdatableApps();
 					}
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+    		
+    	}
+    }
+    
+    
+    
+    private class UpdatableAppsManager{
+    	private ExecutorService updatableColectorsPool;
+    	
+    	public UpdatableAppsManager(){
+    		updatableColectorsPool = Executors.newSingleThreadExecutor();
+    	}
+    	
+    	public void resetUpdatableApps(){
+        	updatableColectorsPool.execute(new GetUpdatableApps());
+        }
+    	
+    	private class GetUpdatableApps implements Runnable{
+
+			@Override
+			public void run() {
+
+				try {
+					setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
+					interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -547,8 +578,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //									availableAppsManager.request(EnumAvailableRequestType.INCREASE);
 								}
 								
-								setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+								updatableAppsManager.resetUpdatableApps();
 								
 							} catch (RemoteException e) {
 								// TODO Auto-generated catch block
@@ -570,8 +600,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 									
-									setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+									updatableAppsManager.resetUpdatableApps();
 									
 								} catch (RemoteException e) {
 									// TODO Auto-generated catch block
@@ -603,8 +632,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //								availableAppsManager.request(EnumAvailableRequestType.INCREASE);
 //							}
 							
-							setFreshUpdatableApps(serviceDataCaller.callGetUpdatableApps());
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+							updatableAppsManager.resetUpdatableApps();
 							
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
@@ -688,8 +716,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         super.onCreate(savedInstanceState);
         if(!isRunning){
 		       
-			staticListsManager = new InstalledAppsManager();
+			installedAppsManager = new InstalledAppsManager();
 			availableAppsManager = new AvailableAppsManager();
+			updatableAppsManager = new UpdatableAppsManager();
 			
 			
 			installedApps = new ViewDisplayListApps();
