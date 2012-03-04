@@ -58,7 +58,7 @@ public class Constants {
 	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 19;
 	/** increaseLevel+decreaseLevel 	cache pageSize = multiplier*numberOfVisibleListItems->device dependent **/
 	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = (DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL);
-	public static final int DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER = 4;
+	public static final int DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER = 10;
 	/** number of cache pages to keep in memory **/
 	public static final int DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER = 3;
 	
@@ -413,6 +413,7 @@ public class Constants {
 	public static final String FOREIGN_KEY_UPDATE_APPLICATION_APP_FULL_HASHID_STRONG = "foreign_key_update_application_app_full_hashid_strong";
 	public static final String FOREIGN_KEY_DELETE_APPLICATION = "foreign_key_delete_application";
 
+	public static final String INDEX_APPLICATION_PACKAGE_NAME = "index_application_package_name";
 	
 	
 	public static final String CREATE_TABLE_CATEGORY = "CREATE TABLE IF NOT EXISTS " + TABLE_CATEGORY + " ("
@@ -467,6 +468,8 @@ public class Constants {
 //			+ "PRIMARY KEY("+ KEY_APP_INSTALLED_HASHID +") );";	
 
 	public static final String DROP_TABLE_APP_INSTALLED = "DROP TABLE IF EXISTS "+ TABLE_APP_INSTALLED;
+	
+	public static final String INDEX_APP_INSTALLED_PACKAGE_NAME = "index_app_installed_package_name";
 	
 	//TODO table never update pk = fk hashid from installed + triggers
 	
@@ -821,9 +824,8 @@ public class Constants {
 			+ " END;";
 	
 	
-	/**
-	 *  TODO Views and Indexes
-	 * 
-	 */
+	public static final String CREATE_INDEX_APPLICATION_PACKAGE_NAME = "CREATE INDEX "+INDEX_APPLICATION_PACKAGE_NAME+" ON "+TABLE_APPLICATION+" ("+KEY_APPLICATION_PACKAGE_NAME+" ASC);";
 	
+	public static final String CREATE_INDEX_APP_INSTALLED_PACKAGE_NAME = "CREATE INDEX "+INDEX_APP_INSTALLED_PACKAGE_NAME+" ON "+TABLE_APP_INSTALLED+" ("+KEY_APP_INSTALLED_PACKAGE_NAME+" ASC);";
+
 }

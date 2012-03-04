@@ -55,7 +55,6 @@ public class RepoBareParser extends DefaultHandler{
 	private String packageName = "";
 	private int parsedAppsNumber = 0;
 	private boolean firstBucket = true;
-	private boolean secondBucket = false;
 	
 	private StringBuilder tagContentBuilder;
 	
@@ -111,16 +110,12 @@ public class RepoBareParser extends DefaultHandler{
 			case pkg:
 				application.setRepoHashid(parseInfo.getRepository().getHashid());
 				
-				if(((firstBucket || secondBucket)&& parsedAppsNumber >= managerXml.getDisplayListsFastReset()) || parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-					final boolean insertingFirstBucket; 
+				if((firstBucket && parsedAppsNumber >= managerXml.getDisplayListsFastReset()) || parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					final boolean insertingFirstBucket;
 					if(firstBucket){
-						insertingFirstBucket = true;
 						firstBucket = false;
+						insertingFirstBucket = true;
 						Log.d("Aptoide-RepoBareParser", "initial bucket full, inserting apps: "+applications.size());
-					}else if(secondBucket){
-						insertingFirstBucket = false;
-						secondBucket = false;
-						Log.d("Aptoide-RepoBareParser", "second initial bucket full, inserting apps: "+applications.size());
 					}else{
 						insertingFirstBucket = false;
 						Log.d("Aptoide-RepoBareParser", "bucket full, inserting apps: "+applications.size());
@@ -133,11 +128,10 @@ public class RepoBareParser extends DefaultHandler{
 							public void run(){
 								this.setPriority(Thread.MAX_PRIORITY);
 								final ArrayList<ViewApplication> applicationsInserting = applicationsInsertStack.remove(Constants.FIRST_ELEMENT);
-								
+
 								managerXml.getManagerDatabase().insertApplications(applicationsInserting);
-								if(insertingFirstBucket && !managerXml.serviceData.getManagerPreferences().getShowApplicationsByCategory()){
-									managerXml.serviceData.resetAvailableLists();
-								}
+//								if(insertingFirstBucket && !managerXml.serviceData.getManagerPreferences().getShowApplicationsByCategory()){
+//								}
 							}
 						}.start();
 			
