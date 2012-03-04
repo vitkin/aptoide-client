@@ -37,6 +37,7 @@ import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
+import cm.aptoide.pt.data.display.ViewDisplayListsDimensions;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
@@ -323,8 +324,8 @@ public class ManagerXml{
 		serviceData.parsingMyappFinished(viewMyapp, listRepos);
 	}
 	
-	public int getDisplayListsFastReset(){
-		return serviceData.getDisplayListsDimensions().getFastReset();
+	public ViewDisplayListsDimensions getDisplayListsDimensions(){
+		return serviceData.getDisplayListsDimensions();
 	}
 	
 }
