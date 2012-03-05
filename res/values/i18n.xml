@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="about">About</string>
-    <string name="description">Your Android application manager.\n</string>
-    <string name="version">Version</string>
-    
     <string name="aptoide_started">Aptoide has started</string>
     <string name="aptoide_stopped">Aptoide has successfully stopped</string>
     
@@ -32,8 +28,21 @@
 	<string name="login_required">Login required</string>
     <string name="cant_connect">Can\'t connect to store</string>
     
-
+    <string name="about">About</string>
+    <string name="description">Your Android application manager.\n</string>
+    <string name="version">Version</string>
+    
+    <string name="size">Size</string>
+    <string name="store">Store</string>
+    <string name="local">Local</string>
+    <string name="likes">Likes</string>
+    <string name="dislikes">Dislikes</string>
     <string name="screenshots">Screenshots:</string> 
+    
+    <string name="downloading_app">Downloading application</string>
+    <string name="click_to_install_app">Click to install application</string>
+    <string name="bad_checksum">Bad checksum, please try again at a later date</string>
+    <string name="unable_to_connect">Unable to connect to store</string>
     
     <string name="settings">Settings</string>
     <string name="download_icons">Download icons permissions</string>
@@ -64,8 +73,7 @@
     <string name="no_apps">No apps to display!</string>
     <string name="loading_apps">Loading apps...</string>
        
-    <string name="search_market">Search on Market</string>
-    <string name="search_bazaar">Search on Bazaar</string>
+    <string name="search_bazaar">Search %s on Bazaar</string>
     
     <string name="select_version">Select version</string>
     <string name="scheduled_downloads">Scheduled Downloads</string>
