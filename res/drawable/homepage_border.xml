@@ -9,7 +9,7 @@
 	</item>
 
 	<!-- Shadow -->
-	<item android:bottom="2sp" android:left="2sp" android:right="2sp">
+	<item android:bottom="2sp" android:left="1sp" android:right="1sp">
 		<shape android:shape="rectangle">
 			<solid android:color="#FFFFFF" />
 			<corners android:radius="7sp" />

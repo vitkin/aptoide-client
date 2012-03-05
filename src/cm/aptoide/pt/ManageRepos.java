@@ -66,6 +66,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -439,17 +440,18 @@ public class ManageRepos extends ListActivity{
 	
 	private void askAddDefaultRepo(){
 		final String uri = Constants.APPS_REPO;
-		AlertDialog defaultDialog = new AlertDialog.Builder(this).create();
+		ContextThemeWrapper theme = new ContextThemeWrapper(this, R.style.DialogTheme);
+		AlertDialog.Builder defaultDialog = new AlertDialog.Builder(theme);
 		defaultDialog.setTitle(getString(R.string.attention));
 		defaultDialog.setIcon(android.R.drawable.ic_dialog_alert);
 		defaultDialog.setMessage(getString(R.string.add_default_repo_confirm) + uri);
-		defaultDialog.setButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
+		defaultDialog.setPositiveButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		    	  addDisplayRepo(new ViewRepository(uri));
 		    	  initReposList();	
 		    	  return;
 		      } }); 
-		defaultDialog.setButton2(getText(R.string.no), new DialogInterface.OnClickListener() {
+		defaultDialog.setNegativeButton(getText(R.string.no), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
 		    	  initReposList();		    	  
 		    	  return;
