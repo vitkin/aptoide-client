@@ -8,4 +8,6 @@
     <string name="mobile">Mobile</string>
     
     <string name="apk">Apk</string>
+    
+    <string name="kB">kB</string>
 </resources>

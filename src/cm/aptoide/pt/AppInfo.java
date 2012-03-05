@@ -551,32 +551,32 @@ public class AppInfo extends Activity {
 	private void setVersionDetails(){
 		if(selectedVersion != null && selectedVersion.getSize() != Constants.EMPTY_INT){
 			appSize = Integer.toString(selectedVersion.getSize());
-			appSizeTextView.setText("Size: "+appSize+"KB");
+			appSizeTextView.setText(getString(R.string.size)+": "+appSize+getString(R.string.kB));
 		}else{
-			appSizeTextView.setText("Size: ");
+			appSizeTextView.setText(getString(R.string.size)+": ");
 		}
 		
 		if(selectedVersion != null && selectedVersion.getRepoUri() != null){
 			repoUri = selectedVersion.getRepoUri();
-			repoUriTextView.setText("Store: "+repoUri);
+			repoUriTextView.setText(getString(R.string.store)+": "+repoUri);
 		}else{
-			repoUriTextView.setText("Store: Local");
+			repoUriTextView.setText(getString(R.string.store)+": "+getString(R.string.local));
 		}
 	}
 	
 	private void setVersionStats(){
 		if(selectedVersion != null && selectedVersion.isStatsAvailable()){
 			appDownloads = selectedVersion.getStats().getDownloads();
-			appDownloadsTextView.setText("Downloads: "+appDownloads);
+			appDownloadsTextView.setText(getString(R.string.downloads)+": "+appDownloads);
 
 			appStars = selectedVersion.getStats().getStars();
 			appStarsRating.setRating(new Float(appStars));
 
 			appLikes = selectedVersion.getStats().getLikes();
-			appLikesTextView.setText("Likes: "+appLikes);
+			appLikesTextView.setText(getString(R.string.likes)+": "+appLikes);
 
 			appDislikes = selectedVersion.getStats().getDislikes();
-			appDislikesTextView.setText("Don't likes: "+appDislikes);
+			appDislikesTextView.setText(getString(R.string.dislikes)+": "+appDislikes);
 		}
 	}
 

@@ -196,7 +196,7 @@ public class Search extends Activity implements OnItemClickListener{
         bazaarSearchButton = View.inflate(this, R.layout.btn_search_bazaar, null);
         
         Button search_baz = (Button) bazaarSearchButton.findViewById(R.id.bazaar_search);
-        search_baz.setText("Search '" + searchString + "' on Bazaar");
+        search_baz.setText(getString(R.string.search_bazaar, searchString));
         search_baz.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {

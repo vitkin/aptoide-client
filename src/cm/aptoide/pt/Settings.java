@@ -374,7 +374,7 @@ public class Settings extends Activity {
 			}
 		});
 		
-		CheckBox automaticInstall = (CheckBox) findViewById(R.id.hw_filter);
+		CheckBox automaticInstall = (CheckBox) findViewById(R.id.automatic_install);
 		automaticInstall.setChecked(storedSettings.isAutomaticInstallOn());
 		automaticInstall.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
