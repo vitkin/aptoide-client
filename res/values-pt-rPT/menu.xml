@@ -2,28 +2,28 @@
 <resources>
     
     
-    <string name="menu_update_repo">Actualizar Lista</string>
-    <string name="menu_update_all">Actualizar todos</string>
+<!--     <string name="menu_update_repo">Actualizar Lista</string> -->
+<!--     <string name="menu_update_all">Actualizar todos</string> -->
     <string name="menu_manage">Gerir Store</string>
     <string name="menu_display_options">Opções de exibição</string>
-    <string name="menu_order">Alterar ordenação</string>
+<!--     <string name="menu_order">Alterar ordenação</string> -->
     <string name="menu_settings">Definições</string>
     <string name="menu_about">Sobre</string>
-    <string name="menu_search">Pesquisar</string>
+<!--     <string name="menu_search">Pesquisar</string> -->
     
     
     <string name="menu_add_repo">Nova Store</string>
-    <string name="menu_rem_repo">Remover Store</string>
-    <string name="menu_edit_repo">Editar Store</string>
+<!--     <string name="menu_rem_repo">Remover Store</string> -->
+<!--     <string name="menu_edit_repo">Editar Store</string> -->
     
     <string name="btn_yes">Sim</string>
     <string name="btn_no">Não</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Adicionar</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Adicionar</string> -->
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_done">Pronto</string>
     <string name="btn_chlog">Changelog</string>
-    <string name="btn_search_market">Pesquisar Market</string>
+<!--     <string name="btn_search_market">Pesquisar Market</string> -->
     <string name="schDwnBtn">Downloads Agendados</string>
     
     

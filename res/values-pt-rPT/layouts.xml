@@ -13,26 +13,26 @@
     <string name="order_popup_catg1">Por categoria </string>
     <string name="order_popup_catg2">Todas as aplicações </string>
     
-    <string name="order_popup_title">Opções de Exibição </string>
+<!--     <string name="order_popup_title">Opções de Exibição </string> -->
     
-    <string name="settings_title_bar">Definições</string>
+<!--     <string name="settings_title_bar">Definições</string> -->
     
-    <string name="save_btn">Guardar </string>
-    <string name="clear_cache_title">Cache</string>
+<!--     <string name="save_btn">Guardar </string> -->
+<!--     <string name="clear_cache_title">Cache</string> -->
     <string name="clear_cache_btn">Limpar cache </string>
-    <string name="clear_cache_msg">Aviso: remove todos os icons que o Aptoide tem guardados. Não faça isto se estiver com downloads activos.</string>
+<!--     <string name="clear_cache_msg">Aviso: remove todos os icons que o Aptoide tem guardados. Não faça isto se estiver com downloads activos.</string> -->
     
-    <string name="clear_dwn_title">Downloads</string>
+<!--     <string name="clear_dwn_title">Downloads</string> -->
     <string name="clear_dwn_btn">Download de icons</string>
-    <string name="clear_dwn_msg">Regras de Download de icons </string>
+<!--     <string name="clear_dwn_msg">Regras de Download de icons </string> -->
     
-    <string name="auto_updating">Por favor aguarde enquanto de processa o download...</string>
+<!--     <string name="auto_updating">Por favor aguarde enquanto de processa o download...</string> -->
     
-    <string-array name="dwnif">
-        <item>3G e Wifi</item>
-        <item>Wifi apenas</item>
-        <item>Nunca download</item>
-    </string-array>
+<!--     <string-array name="dwnif"> -->
+<!--         <item>3G e Wifi</item> -->
+<!--         <item>Wifi apenas</item> -->
+<!--         <item>Nunca download</item> -->
+<!--     </string-array> -->
     
     
 </resources>
