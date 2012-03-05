@@ -21,7 +21,7 @@
     <string name="add_repo_choose">Choose stores to add</string>
     <string name="add_repo_confirm">Do you want to add this store to your list?\n\n</string>
 	<string name="add_repo">Add new store</string>
-    <string name="add_default_repo_confirm">It looks like you don\'t have any added store.\nWe suggest you use ours.\nDo you want to add our store?\n(You can search for more stores online)\n\n</string>
+    <string name="add_default_repo_confirm">You don\'t have any added store.\nDo you want to add our store?\n(Search for more stores online)\n\n</string>
     <string name="repo_uri">URI to store: </string>
     
 	<!-- this string name has to be misspelled because private is a reserved word -->
