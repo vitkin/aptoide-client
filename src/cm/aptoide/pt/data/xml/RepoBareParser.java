@@ -122,6 +122,7 @@ public class RepoBareParser extends DefaultHandler{
 					}else if(secondBucket){
 						secondBucket = false;
 						insertingFirstBucket = false;
+						Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 						Log.d("Aptoide-RepoBareParser", "second bucket full, inserting apps: "+applications.size());
 					}else{
 						insertingFirstBucket = false;
@@ -133,7 +134,8 @@ public class RepoBareParser extends DefaultHandler{
 					try{
 						new Thread(){
 							public void run(){
-								this.setPriority(Thread.MAX_PRIORITY);
+								this.setPriority(Thread.NORM_PRIORITY);
+								
 								final ArrayList<ViewApplication> applicationsInserting = applicationsInsertStack.remove(Constants.FIRST_ELEMENT);
 
 								managerXml.getManagerDatabase().insertApplications(applicationsInserting);

@@ -106,7 +106,7 @@ public class RepoDownloadParser extends DefaultHandler{
 				try{
 					new Thread(){
 						public void run(){
-							this.setPriority(Thread.MAX_PRIORITY);
+							this.setPriority(Thread.NORM_PRIORITY);
 							final ArrayList<ViewIconInfo> iconsInfoInserting = new ArrayList<ViewIconInfo>();
 							iconsInfoInserting.add(iconInfo);
 							
@@ -133,7 +133,7 @@ public class RepoDownloadParser extends DefaultHandler{
 					try{
 						new Thread(){
 							public void run(){
-								this.setPriority(Thread.MAX_PRIORITY);
+								this.setPriority(Thread.NORM_PRIORITY);
 								final ArrayList<ViewAppDownloadInfo> downloadsInfoInserting = downloadsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
 								
 								managerXml.getManagerDatabase().insertDownloadsInfo(downloadsInfoInserting);

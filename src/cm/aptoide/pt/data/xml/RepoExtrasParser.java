@@ -113,7 +113,7 @@ public class RepoExtrasParser extends DefaultHandler{
 					try{
 						new Thread(){
 							public void run(){
-								this.setPriority(Thread.MAX_PRIORITY);
+								this.setPriority(Thread.NORM_PRIORITY);
 								final ArrayList<ViewExtraInfo> extrasInfoInserting = extrasInsertStack.remove(Constants.FIRST_ELEMENT);
 								
 								managerXml.getManagerDatabase().insertExtras(extrasInfoInserting);
@@ -136,7 +136,7 @@ public class RepoExtrasParser extends DefaultHandler{
 					try{
 						new Thread(){
 							public void run(){
-								this.setPriority(Thread.MAX_PRIORITY);
+								this.setPriority(Thread.NORM_PRIORITY);
 								final ArrayList<ViewScreenInfo> screensInfoInserting = screensInfoInsertStack.remove(Constants.FIRST_ELEMENT);
 								
 								managerXml.getManagerDatabase().insertScreensInfo(screensInfoInserting);
