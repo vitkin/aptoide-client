@@ -93,7 +93,7 @@ public class RepoIconParser extends DefaultHandler{
 					try{
 						new Thread(){
 							public void run(){
-								this.setPriority(Thread.MAX_PRIORITY);
+								this.setPriority(Thread.NORM_PRIORITY);
 								final ArrayList<ViewIconInfo> iconsInfoInserting = iconsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
 								
 								managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);

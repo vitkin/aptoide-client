@@ -110,7 +110,7 @@ public class RepoStatsParser extends DefaultHandler{
 					try{
 						new Thread(){
 							public void run(){
-								this.setPriority(Thread.MAX_PRIORITY);
+								this.setPriority(Thread.NORM_PRIORITY);
 								final ArrayList<ViewStatsInfo> statsInserting = statsListInsertStack.remove(Constants.FIRST_ELEMENT);
 								
 								managerXml.getManagerDatabase().insertOrReplaceStatsInfos(statsInserting);
