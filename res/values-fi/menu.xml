@@ -2,28 +2,28 @@
 <resources>
     
     
-    <string name="menu_update_repo">Varastopäivitys</string>
-    <string name="menu_update_all">Päivitä kaikki</string>
+<!--     <string name="menu_update_repo">Varastopäivitys</string> -->
+<!--     <string name="menu_update_all">Päivitä kaikki</string> -->
     <string name="menu_manage">Varastohallinta</string>
     <string name="menu_display_options">Näyttöasetukset</string>
-    <string name="menu_order">Vaihda järjestys</string>
+<!--     <string name="menu_order">Vaihda järjestys</string> -->
     <string name="menu_settings">Asetukset</string>
     <string name="menu_about">Tietoja</string>
-    <string name="menu_search">Haku</string>
+<!--     <string name="menu_search">Haku</string> -->
     
     
     <string name="menu_add_repo">Uusi varasto</string>
-    <string name="menu_rem_repo">Poista varasto</string>
-    <string name="menu_edit_repo">Muokkaa varastoa</string>
+<!--     <string name="menu_rem_repo">Poista varasto</string> -->
+<!--     <string name="menu_edit_repo">Muokkaa varastoa</string> -->
     
     <string name="btn_yes">Kyllä</string>
     <string name="btn_no">Ei</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Lisää</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Lisää</string> -->
     <string name="btn_cancel">Peruuta</string>
     <string name="btn_done">Valmis</string>
-    <string name="btn_chlog">Muutosloki</string>
-    <string name="btn_search_market">Hae Marketista</string>
+<!--     <string name="btn_chlog">Muutosloki</string> -->
+<!--     <string name="btn_search_market">Hae Marketista</string> -->
     <string name="schDwnBtn">Ajast. lataukset</string>
     
     

@@ -2,28 +2,28 @@
 <resources>
     
     
-    <string name="menu_update_repo">Обновление списка</string>
-    <string name="menu_update_all">Обновить всё</string>
+<!--     <string name="menu_update_repo">Обновление списка</string> -->
+<!--     <string name="menu_update_all">Обновить всё</string> -->
     <string name="menu_manage">Управление магазином</string>
     <string name="menu_display_options">Опции просмотра</string>
-    <string name="menu_order">Изменить порядок</string>
+<!--     <string name="menu_order">Изменить порядок</string> -->
     <string name="menu_settings">Настройки</string>
     <string name="menu_about">О нас</string>
-    <string name="menu_search">Поиск</string>
+<!--     <string name="menu_search">Поиск</string> -->
     
     
     <string name="menu_add_repo">Новый магазин</string>
-    <string name="menu_rem_repo">Удалить магазин</string>
-    <string name="menu_edit_repo">Редактировать магазин</string>
+<!--     <string name="menu_rem_repo">Удалить магазин</string> -->
+<!--     <string name="menu_edit_repo">Редактировать магазин</string> -->
     
     <string name="btn_yes">Да</string>
     <string name="btn_no">Нет</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Добавить</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Добавить</string> -->
     <string name="btn_cancel">Отмена</string>
     <string name="btn_done">Завершено</string>
-    <string name="btn_chlog">Изменения</string>
-    <string name="btn_search_market">Искать в Маркете</string>
+<!--     <string name="btn_chlog">Изменения</string> -->
+<!--     <string name="btn_search_market">Искать в Маркете</string> -->
     <string name="schDwnBtn">Запланированные загрузки.</string>
     
     

@@ -13,26 +13,26 @@
     <string name="order_popup_catg1">Kategoriler ile </string>
     <string name="order_popup_catg2">Tüm uygulamalar </string>
     
-    <string name="order_popup_title">Görünüm Seçenekleri </string>
+<!--     <string name="order_popup_title">Görünüm Seçenekleri </string> -->
     
-    <string name="settings_title_bar">Aptoide ayarları</string>
+<!--     <string name="settings_title_bar">Aptoide ayarları</string> -->
     
-    <string name="save_btn">Kaydet </string>
-    <string name="clear_cache_title">Ara bellek</string>
+<!--     <string name="save_btn">Kaydet </string> -->
+<!--     <string name="clear_cache_title">Ara bellek</string> -->
     <string name="clear_cache_btn">Ara belleği temizle </string>
-    <string name="clear_cache_msg">Uyarı: bu Aptoide\'in ara belleğe aldığı tüm ikonları ve bunun yanı sıra bekleyen kurulmalar ile güncellemeleri siler. Sürmekte olan indirmeleriniz varsa bu işlevi kullanmayınız!</string>
+<!--     <string name="clear_cache_msg">Uyarı: bu Aptoide\'in ara belleğe aldığı tüm ikonları ve bunun yanı sıra bekleyen kurulmalar ile güncellemeleri siler. Sürmekte olan indirmeleriniz varsa bu işlevi kullanmayınız!</string> -->
     
-    <string name="clear_dwn_title">İndirmeler</string>
+<!--     <string name="clear_dwn_title">İndirmeler</string> -->
     <string name="clear_dwn_btn">İkonları indir</string>
-    <string name="clear_dwn_msg">İkon kurallarını indir </string>
+<!--     <string name="clear_dwn_msg">İkon kurallarını indir </string> -->
     
-    <string name="auto_updating">Güncelleme indirmesi işleniyor, lütfen bekleyiniz...</string>
+<!--     <string name="auto_updating">Güncelleme indirmesi işleniyor, lütfen bekleyiniz...</string> -->
     
-    <string-array name="dwnif">
-        <item>3G ve Wifi</item>
-        <item>Sadece Wifi</item>
-        <item>Hiçbir zaman indirme</item>
-    </string-array>
+<!--     <string-array name="dwnif"> -->
+<!--         <item>3G ve Wifi</item> -->
+<!--         <item>Sadece Wifi</item> -->
+<!--         <item>Hiçbir zaman indirme</item> -->
+<!--     </string-array> -->
     
     
 </resources>

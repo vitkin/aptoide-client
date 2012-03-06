@@ -13,7 +13,7 @@
     <string name="order_popup_catg1">按分类 </string>
     <string name="order_popup_catg2">所有程序 </string>
     
-    <string name="save_btn">保存 </string>
+<!--     <string name="save_btn">保存 </string> -->
     <string name="clear_cache_btn">清除缓存 </string>
     
     

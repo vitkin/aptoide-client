@@ -10,21 +10,21 @@
   <string name="order_popup_title2">Montrer les applications:</string>
   <string name="order_popup_catg1">Par catégorie</string>
   <string name="order_popup_catg2">Toutes les applications</string>
-  <string name="order_popup_title">Options d\'affichage</string>
-  <string name="settings_title_bar">Paramètres Aptoide</string>
-  <string name="save_btn">Sauver</string>
-  <string name="clear_cache_title">Cache</string>
+<!--   <string name="order_popup_title">Options d\'affichage</string> -->
+<!--   <string name="settings_title_bar">Paramètres Aptoide</string> -->
+<!--   <string name="save_btn">Sauver</string> -->
+<!--   <string name="clear_cache_title">Cache</string> -->
   <string name="clear_cache_btn">Vider le cache</string>
-  <string name="clear_cache_msg">Attention: effacer toutes les miniatures dans le cache, ainsi que les MàJ et installations en cours. Ne pas faire si téléchargement actif!</string>
-  <string name="clear_dwn_title">Téléchargements</string>
+<!--   <string name="clear_cache_msg">Attention: effacer toutes les miniatures dans le cache, ainsi que les MàJ et installations en cours. Ne pas faire si téléchargement actif!</string> -->
+<!--   <string name="clear_dwn_title">Téléchargements</string> -->
   <string name="clear_dwn_btn">Télécharger les miniatures</string>
-  <string name="clear_dwn_msg">Règles de téléchargemetns des miniatures</string>
-  <string name="auto_updating">Attentre pendant le traitement de la MàJ</string>
-  <string-array name="dwnif">
-    <item>3G et  Wifi</item>
-    <item>Wifi seulement</item>
-    <item>Ne pas télécharger</item>
-  </string-array>
+<!--   <string name="clear_dwn_msg">Règles de téléchargemetns des miniatures</string> -->
+<!--   <string name="auto_updating">Attentre pendant le traitement de la MàJ</string> -->
+<!--   <string-array name="dwnif"> -->
+<!--     <item>3G et  Wifi</item> -->
+<!--     <item>Wifi seulement</item> -->
+<!--     <item>Ne pas télécharger</item> -->
+<!--   </string-array> -->
 </resources>
 <!--
  * Copyright (C) 2009  Roberto Jacinto

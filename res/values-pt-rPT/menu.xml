@@ -22,7 +22,7 @@
 <!--     <string name="btn_add">Adicionar</string> -->
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_done">Pronto</string>
-    <string name="btn_chlog">Changelog</string>
+<!--     <string name="btn_chlog">Changelog</string> -->
 <!--     <string name="btn_search_market">Pesquisar Market</string> -->
     <string name="schDwnBtn">Downloads Agendados</string>
     

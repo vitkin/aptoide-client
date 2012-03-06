@@ -2,28 +2,28 @@
 <resources>
     
     
-    <string name="menu_update_repo">Liste Aktualisieren</string>
-    <string name="menu_update_all">Alle Aktualisieren</string>
+<!--     <string name="menu_update_repo">Liste Aktualisieren</string> -->
+<!--     <string name="menu_update_all">Alle Aktualisieren</string> -->
     <string name="menu_manage">Store verwalten</string>
     <string name="menu_display_options">Display Options</string>
-    <string name="menu_order">Anzeigeoptionen</string>
+<!--     <string name="menu_order">Anzeigeoptionen</string> -->
     <string name="menu_settings">Einstellungen</string>
     <string name="menu_about">Über</string>
-    <string name="menu_search">Suche</string>
+<!--     <string name="menu_search">Suche</string> -->
     
     
     <string name="menu_add_repo">Neuer Store</string>
-    <string name="menu_rem_repo">Store entfernen</string>
-    <string name="menu_edit_repo">Store bearbeiten</string>
+<!--     <string name="menu_rem_repo">Store entfernen</string> -->
+<!--     <string name="menu_edit_repo">Store bearbeiten</string> -->
     
     <string name="btn_yes">Ja</string>
     <string name="btn_no">Nein</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Hinzufügen</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Hinzufügen</string> -->
     <string name="btn_cancel">Abbrechen</string>
     <string name="btn_done">Fertig</string>
-    <string name="btn_chlog">Changelog</string>
-    <string name="btn_search_market">Market durchsuchen</string>
+<!--     <string name="btn_chlog">Changelog</string> -->
+<!--     <string name="btn_search_market">Market durchsuchen</string> -->
     <string name="schDwnBtn">Geplante Dwnl.</string>
     
     

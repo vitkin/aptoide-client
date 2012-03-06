@@ -2,26 +2,26 @@
 <resources>
     
     
-    <string name="menu_update_repo">Actualizar</string>
+<!--     <string name="menu_update_repo">Actualizar</string> -->
     <string name="menu_manage">Administrar Repo</string>
-    <string name="menu_order">Opciones de Pantalla</string>
+<!--     <string name="menu_order">Opciones de Pantalla</string> -->
     <string name="menu_settings">Opciones</string>
     <string name="menu_about">Acerca de</string>
-    <string name="menu_search">Buscar</string>
+<!--     <string name="menu_search">Buscar</string> -->
     
     
     <string name="menu_add_repo">Nuevo Repositorio</string>
-    <string name="menu_rem_repo">Borrar Repositorio</string>
-    <string name="menu_edit_repo">Editar Repositorio</string>
+<!--     <string name="menu_rem_repo">Borrar Repositorio</string> -->
+<!--     <string name="menu_edit_repo">Editar Repositorio</string> -->
     
     <string name="btn_yes">Si</string>
     <string name="btn_no">No</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Agregar</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Agregar</string> -->
     <string name="btn_cancel">Cancelar</string>
     <string name="btn_done">Listo</string>
-    <string name="btn_chlog">Registro</string>
-    <string name="btn_search_market">Buscar en el Market</string>
+<!--     <string name="btn_chlog">Registro</string> -->
+<!--     <string name="btn_search_market">Buscar en el Market</string> -->
     
     
     

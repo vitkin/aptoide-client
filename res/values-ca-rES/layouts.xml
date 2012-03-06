@@ -12,24 +12,24 @@
     <string name="order_popup_catg1">Per categoria </string>
     <string name="order_popup_catg2">Totes les aplicacions </string>
     
-    <string name="order_popup_title">Mostrar Opcions </string>
+<!--     <string name="order_popup_title">Mostrar Opcions </string> -->
     
-    <string name="settings_title_bar">Preferències de l\'Aptoide</string>
+<!--     <string name="settings_title_bar">Preferències de l\'Aptoide</string> -->
     
-    <string name="save_btn">Desra </string>
-    <string name="clear_cache_title">Cache</string>
+<!--     <string name="save_btn">Desra </string> -->
+<!--     <string name="clear_cache_title">Cache</string> -->
     <string name="clear_cache_btn">Buidar cache </string>
-    <string name="clear_cache_msg">PERILL:esborra les icones que Aptoide ha desat </string>
+<!--     <string name="clear_cache_msg">PERILL:esborra les icones que Aptoide ha desat </string> -->
     
-    <string name="clear_dwn_title">Baixades</string>
+<!--     <string name="clear_dwn_title">Baixades</string> -->
     <string name="clear_dwn_btn">Baixar icones</string>
-    <string name="clear_dwn_msg">Normes de baixar icones </string>
+<!--     <string name="clear_dwn_msg">Normes de baixar icones </string> -->
     
-    <string-array name="dwnif">
-        <item>3G i Wifi</item>
-        <item>Només Wifi</item>
-        <item>Mai descarregar</item>
-    </string-array>
+<!--     <string-array name="dwnif"> -->
+<!--         <item>3G i Wifi</item> -->
+<!--         <item>Només Wifi</item> -->
+<!--         <item>Mai descarregar</item> -->
+<!--     </string-array> -->
     
     
 </resources>

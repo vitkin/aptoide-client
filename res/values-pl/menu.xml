@@ -2,26 +2,26 @@
 <resources>
     
     
-    <string name="menu_update_repo">Uaktualnij</string>
+<!--     <string name="menu_update_repo">Uaktualnij</string> -->
     <string name="menu_manage">Obsługa Repo</string>
-    <string name="menu_order">Opcje wyświetlania</string>
+<!--     <string name="menu_order">Opcje wyświetlania</string> -->
     <string name="menu_settings">Ustawienia</string>
     <string name="menu_about">O...</string>
-    <string name="menu_search">Szukaj</string>
+<!--     <string name="menu_search">Szukaj</string> -->
     
     
     <string name="menu_add_repo">Nowe Repozytorium</string>
-    <string name="menu_rem_repo">Usuń Repozytorium</string>
-    <string name="menu_edit_repo">Edytuj Repozytorium</string>
+<!--     <string name="menu_rem_repo">Usuń Repozytorium</string> -->
+<!--     <string name="menu_edit_repo">Edytuj Repozytorium</string> -->
     
     <string name="btn_yes">Tak</string>
     <string name="btn_no">Nie</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Dodaj</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Dodaj</string> -->
     <string name="btn_cancel">Anuluj</string>
     <string name="btn_done">Zrobione</string>
-    <string name="btn_chlog">Changelog</string>
-    <string name="btn_search_market">Przeszukaj Market</string>
+<!--     <string name="btn_chlog">Changelog</string> -->
+<!--     <string name="btn_search_market">Przeszukaj Market</string> -->
     
     
     

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aptoide</string>
+<!--     <string name="app_name">Aptoide</string> -->
    
     <string name="tab_avail">متوفر</string>
     <string name="tab_inst">مثبت</string>
     <string name="tab_updt">التحديثات</string>
     
-    <string name="no_found">البرنامج غير موجود!</string>
-    <string name="no_repo">مخزن البرامج غير موجود!</string>
+<!--     <string name="no_found">البرنامج غير موجود!</string> -->
+<!--     <string name="no_repo">مخزن البرامج غير موجود!</string> -->
  
- 	<string name="not_inst">غير مثبت</string>
-    <string name="installed">الإصدار المثبت.:</string>
-    <string name="installed_update">يمكن تحديث .:</string>
-    <string name="srv_version">الإصدار المتوفر:</string>
+<!--  	<string name="not_inst">غير مثبت</string> -->
+<!--     <string name="installed">الإصدار المثبت.:</string> -->
+<!--     <string name="installed_update">يمكن تحديث .:</string> -->
+<!--     <string name="srv_version">الإصدار المتوفر:</string> -->
     
-    <string name="srch_label">Aptoide</string>
+<!--     <string name="srch_label">Aptoide</string> -->
     <string name="srch_hint">إسم البرنامج</string>
     
     <string name="about_txt1">برنامج لتثبيت البرامج على هاتف اندرويد.\n</string>
 
-    <string name="about_site">الموقع:</string>
+<!--     <string name="about_site">الموقع:</string> -->
     
-    <string name="about_mail">الإتصال:</string>
+<!--     <string name="about_mail">الإتصال:</string> -->
     
-    <string name="about_txt2"> www.aptoide.com</string>
-    <string name="about_txt3"> aptoide@aptoide.com</string>
+<!--     <string name="about_txt2"> www.aptoide.com</string> -->
+<!--     <string name="about_txt3"> aptoide@aptoide.com</string> -->
 </resources>
 
 <!--

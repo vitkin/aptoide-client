@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-	<string name="top_please_wait">Molimo sačekajte</string>
-	<string name="top_error">Greška</string>
+<!-- 	<string name="top_please_wait">Molimo sačekajte</string> -->
+<!-- 	<string name="top_error">Greška</string> -->
 	<string name="top_download">Download</string>
 
 	<string name="fetch_apk">Pokreće aplikaciju</string>
 
-	<string name="aptoide_error">Nemože se spojiti sa serverom</string>
+<!-- 	<string name="aptoide_error">Nemože se spojiti sa serverom</string> -->
 	
-	<string name="manage_repo_add">Dodaj novi repo</string>
-	<string name="manage_repo_answ_wrongl">Login je pogrešan</string>
+<!-- 	<string name="manage_repo_add">Dodaj novi repo</string> -->
+<!-- 	<string name="manage_repo_answ_wrongl">Login je pogrešan</string> -->
 	<string name="manage_repo_answ_cc">Nemože se spojiti sa serverom</string>
-	<string name="manage_repo_answ_lr">Login potreban</string>
+<!-- 	<string name="manage_repo_answ_lr">Login potreban</string> -->
 	
-	<string name="app_pop_up_no_info">Nema informacija dostupnih o serveru. Potraži market pritisnuvši dugme ispod za više informacija.</string>
-	<string name="error_no_market">Nemate Google Market instaliran!</string>
+<!-- 	<string name="app_pop_up_no_info">Nema informacija dostupnih o serveru. Potraži market pritisnuvši dugme ispod za više informacija.</string> -->
+<!-- 	<string name="error_no_market">Nemate Google Market instaliran!</string> -->
 		
-    <string name="settings_cache">Čišćenje cache...</string>
+<!--     <string name="settings_cache">Čišćenje cache...</string> -->
     
     <string name="remote_in_noSD_title">Nema memorije</string>
     <string name="remote_in_noSD">Nemate SDcard, ili neradi pravilno\nMolimo ubacite je, ili je izbacite pa ponovo ubacite i pokušajte ponovo.</string>
     <string name="remote_in_noSDspace">Nemate dovoljno mjesta na SDcard da koristite Aptoide\nMolimo oslobodite malo mjesta i pokušajte ponovo.</string>
     
-    <string name="error_on_update">Proces ažuriranja nije dovršen na sljedećem repo-u\n</string>
+<!--     <string name="error_on_update">Proces ažuriranja nije dovršen na sljedećem repo-u\n</string> -->
     
-    <string name="updating_msg">Ažuriranje liste aplikacija...</string>
-    <string name="update_repos">Ažuriranje repo-a</string>
-    <string name="update_main">Lista repozitorija u upotrebi je promjenjena.\nŽelite li je ažurirati?</string>
+<!--     <string name="updating_msg">Ažuriranje liste aplikacija...</string> -->
+<!--     <string name="update_repos">Ažuriranje repo-a</string> -->
+<!--     <string name="update_main">Lista repozitorija u upotrebi je promjenjena.\nŽelite li je ažurirati?</string> -->
     
-    <string name="updating_3g">Niste spojeni kroy WIFI ili ethernet, preporuceno je da ažurirate preko WIFI ili ethernet konekcije.\nSvejedno ažurirati?</string>
-    <string name="updating_cfrm">Potvrdi Aptoide ažuriranje repozitorija?</string>
-    <string name="updating_norepos">Nema aktiviranih repozitorija u vašoj listi.\nMolimo dodajte repozitorije ili bar aktivirajte već dodane.</string>
+<!--     <string name="updating_3g">Niste spojeni kroy WIFI ili ethernet, preporuceno je da ažurirate preko WIFI ili ethernet konekcije.\nSvejedno ažurirati?</string> -->
+<!--     <string name="updating_cfrm">Potvrdi Aptoide ažuriranje repozitorija?</string> -->
+<!--     <string name="updating_norepos">Nema aktiviranih repozitorija u vašoj listi.\nMolimo dodajte repozitorije ili bar aktivirajte već dodane.</string> -->
     
     <string name="repo_ctx">Opcije</string>
     <string name="repo_ctx_edt">Uredi</string>
@@ -43,11 +43,11 @@
     <string name="repo_edt_msg1">Izaberite repozitorije za urediti</string>
     <string name="repo_edt_msg2">Uredi repozitorij</string>
 
-    <string name="update_done_msg1">Repozitoriji ažurirani uspješno.</string>
-    <string name="update_process">Ažuriranje repozitorija %1$d od %2$d</string>
+<!--     <string name="update_done_msg1">Repozitoriji ažurirani uspješno.</string> -->
+<!--     <string name="update_process">Ažuriranje repozitorija %1$d od %2$d</string> -->
     
-    <string name="dialog_yes">Da</string>
-    <string name="dialog_no">Ne</string>
+<!--     <string name="dialog_yes">Da</string> -->
+<!--     <string name="dialog_no">Ne</string> -->
     
     <string name="update_self_title">Ažuriranje dostupno</string>
     <string name="update_self_msg">Novija verzija Aptoide\'a je dostupna,\nŽelite li je ažurirati?</string>
