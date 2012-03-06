@@ -13,26 +13,26 @@
     <string name="order_popup_catg1">По категориям </string>
     <string name="order_popup_catg2">Все приложения </string>
     
-    <string name="order_popup_title">Опции просмотра </string>
+<!--     <string name="order_popup_title">Опции просмотра </string> -->
     
-    <string name="settings_title_bar">Настройки Aptoide</string>
+<!--     <string name="settings_title_bar">Настройки Aptoide</string> -->
     
-    <string name="save_btn">Сохранить </string>
-    <string name="clear_cache_title">Кэш</string>
+<!--     <string name="save_btn">Сохранить </string> -->
+<!--     <string name="clear_cache_title">Кэш</string> -->
     <string name="clear_cache_btn">Очистить кзш </string>
-    <string name="clear_cache_msg">Предупреждение: удаляет все значки Aptoide в кэше,  а также все ожидающие установки и обновления. Не делайте этого, если у вас есть текущие загрузки!</string>
+<!--     <string name="clear_cache_msg">Предупреждение: удаляет все значки Aptoide в кэше,  а также все ожидающие установки и обновления. Не делайте этого, если у вас есть текущие загрузки!</string> -->
     
-    <string name="clear_dwn_title">Загрузки</string>
+<!--     <string name="clear_dwn_title">Загрузки</string> -->
     <string name="clear_dwn_btn">Загрузить иконки</string>
-    <string name="clear_dwn_msg">Загрузить иконку правила </string>
+<!--     <string name="clear_dwn_msg">Загрузить иконку правила </string> -->
     
-    <string name="auto_updating">Подождите, пока идёт загрузка обновлений...</string>
+<!--     <string name="auto_updating">Подождите, пока идёт загрузка обновлений...</string> -->
     
-    <string-array name="dwnif">
-        <item>3G и Wifi</item>
-        <item>Только Wifi</item>
-        <item>Никогда не загружать</item>
-    </string-array>
+<!--     <string-array name="dwnif"> -->
+<!--         <item>3G и Wifi</item> -->
+<!--         <item>Только Wifi</item> -->
+<!--         <item>Никогда не загружать</item> -->
+<!--     </string-array> -->
     
     
 </resources>

@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="up_server">Palvelimet: </string>
-    <string name="lstver">Palvelinversio: </string>
-    <string name="dwn_n">Latausten määrä: </string>
-    <string name="isinst">Asennettu: </string>
-    <string name="instver">Asennettu versio: </string>
+<!--     <string name="up_server">Palvelimet: </string> -->
+<!--     <string name="lstver">Palvelinversio: </string> -->
+<!--     <string name="dwn_n">Latausten määrä: </string> -->
+<!--     <string name="isinst">Asennettu: </string> -->
+<!--     <string name="instver">Asennettu versio: </string> -->
     <string name="install">Asenna </string>
-    <string name="about_alrt">Tietoja: </string>
+<!--     <string name="about_alrt">Tietoja: </string> -->
     <string name="rem">Poista </string>
     <string name="update">Päivitä</string>
     
-    <string name="update_alrt">Joihinkin asentamiisi sovelluksiin on päivityksiä.\nHaluatko nähdä päivitykset?</string>
-    <string name="repo_alrt">Varastoihin on tullut muutoksia.\nHaluatko päivittää ne?</string>
+<!--     <string name="update_alrt">Joihinkin asentamiisi sovelluksiin on päivityksiä.\nHaluatko nähdä päivitykset?</string> -->
+<!--     <string name="repo_alrt">Varastoihin on tullut muutoksia.\nHaluatko päivittää ne?</string> -->
     
     <string name="title_repo_alrt">Huomio</string>
     <string name="myrepo_alrt">Näyttää siltä, että sinulla ei ole lisättynä yhtään varastoa. Suosittelemme omaamme.\nHaluatko lisätä oman varastomme?\n(Voit etsiä varastoja (repository) internetistä)\n\n</string>
-    <string name="newrepo_alrt">Haluatko lisätä tämän varaston luetteloosi?\n\n</string>
+<!--     <string name="newrepo_alrt">Haluatko lisätä tämän varaston luetteloosi?\n\n</string> -->
     
-    <string name="error_download_alrt">Palvelinyhteyttä ei voitu muodostaa tai apk-tiedosto on vioittunut!</string>
-    <string name="download_alrt">Haetaan sovellusta kohteesta:\n </string>
-    <string name="finished_download_alrt">Valmis asentamaan:\n </string>
+<!--     <string name="error_download_alrt">Palvelinyhteyttä ei voitu muodostaa tai apk-tiedosto on vioittunut!</string> -->
+<!--     <string name="download_alrt">Haetaan sovellusta kohteesta:\n </string> -->
+<!--     <string name="finished_download_alrt">Valmis asentamaan:\n </string> -->
     <string name="finished_download_message">Asenna sovellus napsauttamalla:\n </string>
      
     <string name="md5_error">Ladatun sovelluksen md5-tarkistus epäonnistui!\nPäivitä varastot ja yritä uudelleen.</string>
-    <string name="md5_auto_update_error">Päivityspaketin tarkistus epäonnistui! Säilytetään nykyinen versio.</string>
-    <string name="network_auto_update_error">Päivitysyhteys epäonnistui! Säilytetään nykyinen versio.</string>
-    <string name="network_error">Sovelluksen noudossa tapahtui virhe.\nYritä uudelleen.</string>
+<!--     <string name="md5_auto_update_error">Päivityspaketin tarkistus epäonnistui! Säilytetään nykyinen versio.</string> -->
+<!--     <string name="network_auto_update_error">Päivitysyhteys epäonnistui! Säilytetään nykyinen versio.</string> -->
+<!--     <string name="network_error">Sovelluksen noudossa tapahtui virhe.\nYritä uudelleen.</string> -->
     
-    <string name="failed_update">Sovelluksen päivitys epäonnistui!</string>
-    <string name="failed_install">Sovelluksen asennus epäonnistui!</string>
+<!--     <string name="failed_update">Sovelluksen päivitys epäonnistui!</string> -->
+<!--     <string name="failed_install">Sovelluksen asennus epäonnistui!</string> -->
     <string name="downgrade">Vanha versio</string>
     <string name="uninstall">Poista</string>
     

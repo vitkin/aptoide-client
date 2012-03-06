@@ -13,26 +13,26 @@
     <string name="order_popup_catg1">Po kategoriji </string>
     <string name="order_popup_catg2">Sve aplikacije </string>
     
-    <string name="order_popup_title">Pokaži opcije </string>
+<!--     <string name="order_popup_title">Pokaži opcije </string> -->
     
-    <string name="settings_title_bar">Aptoide opcije</string>
+<!--     <string name="settings_title_bar">Aptoide opcije</string> -->
     
-    <string name="save_btn">Memoriši </string>
-    <string name="clear_cache_title">Cache</string>
+<!--     <string name="save_btn">Memoriši </string> -->
+<!--     <string name="clear_cache_title">Cache</string> -->
     <string name="clear_cache_btn">Očisti cache </string>
-    <string name="clear_cache_msg">Upozorenje: Uklanja sve ikone koje su memorisane, kao i sve instalacije i ažuriranja koja su u toku. Nemojte ovo raditi ako vam se nešto skida u ovom trenutku!</string>
+<!--     <string name="clear_cache_msg">Upozorenje: Uklanja sve ikone koje su memorisane, kao i sve instalacije i ažuriranja koja su u toku. Nemojte ovo raditi ako vam se nešto skida u ovom trenutku!</string> -->
     
-    <string name="clear_dwn_title">Downloadi</string>
+<!--     <string name="clear_dwn_title">Downloadi</string> -->
     <string name="clear_dwn_btn">Download ikone</string>
-    <string name="clear_dwn_msg">Download pravila ikona </string>
+<!--     <string name="clear_dwn_msg">Download pravila ikona </string> -->
     
-    <string name="auto_updating">Molimo sačekajte dok procesira ažuriranja...</string>
+<!--     <string name="auto_updating">Molimo sačekajte dok procesira ažuriranja...</string> -->
     
-    <string-array name="dwnif">
-        <item>3G i Wifi</item>
-        <item>Samo Wifi</item>
-        <item>Nikada download</item>
-    </string-array>
+<!--     <string-array name="dwnif"> -->
+<!--         <item>3G i Wifi</item> -->
+<!--         <item>Samo Wifi</item> -->
+<!--         <item>Nikada download</item> -->
+<!--     </string-array> -->
     
     
 </resources>

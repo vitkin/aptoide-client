@@ -13,7 +13,7 @@
     <string name="order_popup_catg1">حسب الفئة</string>
     <string name="order_popup_catg2">كل التطبيقات</string>
     
-    <string name="save_btn">حفظ </string>
+<!--     <string name="save_btn">حفظ </string> -->
     <string name="clear_cache_btn"> مسح الذاكرة المؤقته</string>
     
     

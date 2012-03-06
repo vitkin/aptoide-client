@@ -2,26 +2,26 @@
 <resources>
     
     
-    <string name="menu_update_repo">تحديث</string>
+<!--     <string name="menu_update_repo">تحديث</string> -->
     <string name="menu_manage">مخازن البرامج</string>
-    <string name="menu_order">خيارات العرض</string>
+<!--     <string name="menu_order">خيارات العرض</string> -->
     <string name="menu_settings">الإعدادات</string>
     <string name="menu_about">حول</string>
-    <string name="menu_search">بحث</string>
+<!--     <string name="menu_search">بحث</string> -->
     
     
     <string name="menu_add_repo">مخزن جديد</string>
-    <string name="menu_rem_repo">حذف المخزن</string>
-    <string name="menu_edit_repo">تعديل المخزن</string>
+<!--     <string name="menu_rem_repo">حذف المخزن</string> -->
+<!--     <string name="menu_edit_repo">تعديل المخزن</string> -->
     
     <string name="btn_yes">نعم</string>
     <string name="btn_no">لا</string>
-    <string name="btn_ok">حسنا</string>
-    <string name="btn_add">أضف</string>
+<!--     <string name="btn_ok">حسنا</string> -->
+<!--     <string name="btn_add">أضف</string> -->
     <string name="btn_cancel">إلغاء</string>
     <string name="btn_done">تم</string>
-    <string name="btn_chlog">التغييرات</string>
-    <string name="btn_search_market">البحث في المتجر</string>
+<!--     <string name="btn_chlog">التغييرات</string> -->
+<!--     <string name="btn_search_market">البحث في المتجر</string> -->
     
     
     

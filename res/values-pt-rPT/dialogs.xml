@@ -7,11 +7,11 @@
 
 	<string name="fetch_apk">Recebendo aplicação</string>
 
-	<string name="aptoide_error">Não é possível conectar ao servidor remoto</string>
+<!-- 	<string name="aptoide_error">Não é possível conectar ao servidor remoto</string> -->
 	
 <!-- 	<string name="manage_repo_add">Adicionar nova store</string> -->
 <!-- 	<string name="manage_repo_answ_wrongl">Login está errado</string> -->
-<!-- 	<string name="manage_repo_answ_cc">Não é possível conectar</string> -->
+	<string name="manage_repo_answ_cc">Não é possível conectar</string>
 <!-- 	<string name="manage_repo_answ_lr">Login necessário</string> -->
 	
 <!-- 	<string name="app_pop_up_no_info">Sem informação no servidor. Procure no market pressionando o botão abaixo para mais informação.</string> -->

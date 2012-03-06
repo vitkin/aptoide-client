@@ -1,44 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aptoide</string>
-    <string name="ver_str">"2.5.1-beta5"</string>
-    <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string>
+<!--     <string name="app_name">Aptoide</string> -->
+<!--     <string name="ver_str">"2.5.1-beta5"</string> -->
+<!--     <string name="change_log_url">http://aptoide.com/changelog_2_5.html</string> -->
     
     <string name="tab_avail">Disponible</string>
     <string name="tab_inst">Instal·lat</string>
     <string name="tab_updt">Actualitzacions</string>
     
-    <string name="repo_app">Aplicacions:</string>
-    <string name="repo_noinfo">Sense informació</string>
+<!--     <string name="repo_app">Aplicacions:</string> -->
+<!--     <string name="repo_noinfo">Sense informació</string> -->
     
-    <string name="no_found">No s\'han trobat l\'aplicació!</string>
-    <string name="no_repo">No hi ha repositoris!</string>
+<!--     <string name="no_found">No s\'han trobat l\'aplicació!</string> -->
+<!--     <string name="no_repo">No hi ha repositoris!</string> -->
  
- 	<string name="not_inst">Not Instal·lat</string>
-    <string name="installed">Instal·lat - Ver.:</string>
-    <string name="installed_update">Actualització possible - Ver.:</string>
-    <string name="srv_version">Versió disponible:</string>
+<!--  	<string name="not_inst">Not Instal·lat</string> -->
+<!--     <string name="installed">Instal·lat - Ver.:</string> -->
+<!--     <string name="installed_update">Actualització possible - Ver.:</string> -->
+<!--     <string name="srv_version">Versió disponible:</string> -->
     
-    <string name="srch_label">Aptoide</string>
+<!--     <string name="srch_label">Aptoide</string> -->
     <string name="srch_hint">Nom de l\'aplicació</string>
     
     <string name="about_txt1">El teu instal·lador de paquets per al telèfon Android.\n</string>
     
-    <string name="about_txt11">Versió: %s\n(alliberat sota llicència GNU GPL v2)\n
-    \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n
-    \t\t\tFrancisco "ppelao3k" - Spanish translation\n
-    \t\t\tManaa Alshihe - Arabic translation\n
-    \t\t\tPavo Baxter - Italian translation\n
-    \t\t\tAlexis Bonvin - French translation\n
-    \t\t\tTheodore Wte - Chinese translation\n
-	\t\t\tMarc Bres - Catalan translation\n</string>
+<!--     <string name="about_txt11">Versió: %s\n(alliberat sota llicència GNU GPL v2)\n -->
+<!--     \nCrédits: Roberto Jacinto &amp; Caixa Mágica\n\n -->
+<!--     \t\t\tFrancisco "ppelao3k" - Spanish translation\n -->
+<!--     \t\t\tManaa Alshihe - Arabic translation\n -->
+<!--     \t\t\tPavo Baxter - Italian translation\n -->
+<!--     \t\t\tAlexis Bonvin - French translation\n -->
+<!--     \t\t\tTheodore Wte - Chinese translation\n -->
+<!-- 	\t\t\tMarc Bres - Catalan translation\n</string> -->
     
-    <string name="about_site">Web: </string>
+<!--     <string name="about_site">Web: </string> -->
     
-    <string name="about_mail">Contacte: </string>
+<!--     <string name="about_mail">Contacte: </string> -->
     
-    <string name="about_txt2"> www.aptoide.com</string>
-    <string name="about_txt3"> aptoide@aptoide.com</string>
+<!--     <string name="about_txt2"> www.aptoide.com</string> -->
+<!--     <string name="about_txt3"> aptoide@aptoide.com</string> -->
 </resources>
 
 <!--

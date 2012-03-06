@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="up_server">Servidores: </string>
-    <string name="lstver">Versão do servidor: </string>
-    <string name="dwn_n">Número de downloads: </string>
-    <string name="isinst">Instalado: </string>
-    <string name="instver">Versão instalada: </string>
+<!--     <string name="up_server">Servidores: </string> -->
+<!--     <string name="lstver">Versão do servidor: </string> -->
+<!--     <string name="dwn_n">Número de downloads: </string> -->
+<!--     <string name="isinst">Instalado: </string> -->
+<!--     <string name="instver">Versão instalada: </string> -->
     <string name="install">Instalar </string>
-    <string name="about_alrt">Sobre: </string>
+<!--     <string name="about_alrt">Sobre: </string> -->
     <string name="rem">Desinstalar </string>
     <string name="update">Atualizar</string>
     
-    <string name="update_alrt">Existem atualizações disponíveis para alguns dos aplicativos instalados.\nGostaria de conferir?</string>
-    <string name="repo_alrt">A lista de lojas em uso foi alterada.\nGostaria de atualizá-la?</string>
+<!--     <string name="update_alrt">Existem atualizações disponíveis para alguns dos aplicativos instalados.\nGostaria de conferir?</string> -->
+<!--     <string name="repo_alrt">A lista de lojas em uso foi alterada.\nGostaria de atualizá-la?</string> -->
     
     <string name="title_repo_alrt">Atenção</string>
     <string name="myrepo_alrt">Parece que você não tem nenhuma loja instalada.\nSugerimos que use a nossa.\nVocê quer adicionar a nossa loja?\n(Você pode buscar por mais lojas online)\n\n</string>
-    <string name="newrepo_alrt">Você quer adicionar esta loja em sua lista?\n\n</string>
+<!--     <string name="newrepo_alrt">Você quer adicionar esta loja em sua lista?\n\n</string> -->
     
-    <string name="error_download_alrt">Não foi possível conectar ao servidor ou o apk está corrompido!</string>
-    <string name="download_alrt">Adquirindo aplicativo:\n </string>
-    <string name="finished_download_alrt">Pronto para instalar:\n </string>
+<!--     <string name="error_download_alrt">Não foi possível conectar ao servidor ou o apk está corrompido!</string> -->
+<!--     <string name="download_alrt">Adquirindo aplicativo:\n </string> -->
+<!--     <string name="finished_download_alrt">Pronto para instalar:\n </string> -->
     <string name="finished_download_message">Clique para instalar aplicativo:\n </string>
      
     <string name="md5_error">A checagem de md5 do aplicativo baixado falhou!\nFavor atualizar suas lojas antes de tentar novamente.</string>
-    <string name="md5_auto_update_error">A verificação de soma do pacote de atualização falhou!  Mantendo a versão atual.</string>
-    <string name="network_auto_update_error">A conexão de atualização falhou! Mantendo a versão atual.</string>
-    <string name="network_error">Ocorreu um erro ao buscar o aplicativo.\nFavor tentar novamente.</string>
+<!--     <string name="md5_auto_update_error">A verificação de soma do pacote de atualização falhou!  Mantendo a versão atual.</string> -->
+<!--     <string name="network_auto_update_error">A conexão de atualização falhou! Mantendo a versão atual.</string> -->
+<!--     <string name="network_error">Ocorreu um erro ao buscar o aplicativo.\nFavor tentar novamente.</string> -->
     
-    <string name="failed_update">A atualização do aplicativo falhou!</string>
-    <string name="failed_install">A instalação do aplicativo falhou!</string>
+<!--     <string name="failed_update">A atualização do aplicativo falhou!</string> -->
+<!--     <string name="failed_install">A instalação do aplicativo falhou!</string> -->
     <string name="downgrade">Downgrade</string>
     <string name="uninstall">Desinstalar</string>
     

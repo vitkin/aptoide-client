@@ -2,28 +2,28 @@
 <resources>
     
     
-    <string name="menu_update_repo">Aggiorna Lista</string>
-    <string name="menu_update_all">Aggiorna tutto</string>
+<!--     <string name="menu_update_repo">Aggiorna Lista</string> -->
+<!--     <string name="menu_update_all">Aggiorna tutto</string> -->
     <string name="menu_manage">Gestisci Repo</string>
     <string name="menu_display_options">Mostra Opzioni</string>
-    <string name="menu_order">Cambia Ordine</string>
+<!--     <string name="menu_order">Cambia Ordine</string> -->
     <string name="menu_settings">Impostazioni</string>
     <string name="menu_about">Info</string>
-    <string name="menu_search">Cerca</string>
+<!--     <string name="menu_search">Cerca</string> -->
     
     
     <string name="menu_add_repo">Nuovo Repo</string>
-    <string name="menu_rem_repo">Rimuovi Repo</string>
-    <string name="menu_edit_repo">Modifica Repo</string>
+<!--     <string name="menu_rem_repo">Rimuovi Repo</string> -->
+<!--     <string name="menu_edit_repo">Modifica Repo</string> -->
     
     <string name="btn_yes">Si</string>
     <string name="btn_no">No</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Aggiungi</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Aggiungi</string> -->
     <string name="btn_cancel">Annulla</string>
     <string name="btn_done">Fatto</string>
-    <string name="btn_chlog">Changelog</string>
-    <string name="btn_search_market">Cerca nel Market</string>
+<!--     <string name="btn_chlog">Changelog</string> -->
+<!--     <string name="btn_search_market">Cerca nel Market</string> -->
     <string name="schDwnBtn">Download Programmato</string>
     
     

@@ -12,24 +12,24 @@
     <string name="order_popup_catg1">Po kategoriji </string>
     <string name="order_popup_catg2">Sve aplikacije</string>
     
-    <string name="order_popup_title">Opcije ekrana </string>
+<!--     <string name="order_popup_title">Opcije ekrana </string> -->
     
-    <string name="settings_title_bar">Aptoide opcije </string>
+<!--     <string name="settings_title_bar">Aptoide opcije </string> -->
     
-    <string name="save_btn">Memorisati </string>
-    <string name="clear_cache_title">Cache</string>
+<!--     <string name="save_btn">Memorisati </string> -->
+<!--     <string name="clear_cache_title">Cache</string> -->
     <string name="clear_cache_btn">Ocistiti cache </string>
-    <string name="clear_cache_msg">OPASNOST: uklanja sve ikone koje je Aptoide memorisao </string>
+<!--     <string name="clear_cache_msg">OPASNOST: uklanja sve ikone koje je Aptoide memorisao </string> -->
     
-    <string name="clear_dwn_title">Preuzimanja</string>
+<!--     <string name="clear_dwn_title">Preuzimanja</string> -->
     <string name="clear_dwn_btn">Preuzimanje ikona</string>
-    <string name="clear_dwn_msg">Preuzimanje ikona za pravila</string>
+<!--     <string name="clear_dwn_msg">Preuzimanje ikona za pravila</string> -->
     
-    <string-array name="dwnif">
-        <item>3G i Wifi</item>
-        <item>Samo Wifi</item>
-        <item>Nikada ne preuzimaj</item>
-    </string-array>
+<!--     <string-array name="dwnif"> -->
+<!--         <item>3G i Wifi</item> -->
+<!--         <item>Samo Wifi</item> -->
+<!--         <item>Nikada ne preuzimaj</item> -->
+<!--     </string-array> -->
     
     
 </resources>

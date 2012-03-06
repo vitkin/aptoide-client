@@ -2,28 +2,28 @@
 <resources>
     
     
-    <string name="menu_update_repo">Ažuriranje liste</string>
-    <string name="menu_update_all">Ažuriranje svega</string>
+<!--     <string name="menu_update_repo">Ažuriranje liste</string> -->
+<!--     <string name="menu_update_all">Ažuriranje svega</string> -->
     <string name="menu_manage">Upravljaj radnjom</string>
     <string name="menu_display_options">Pokaži opcije</string>
-    <string name="menu_order">Promjeni poredak</string>
+<!--     <string name="menu_order">Promjeni poredak</string> -->
     <string name="menu_settings">Opcije</string>
     <string name="menu_about">About</string>
-    <string name="menu_search">Traži</string>
+<!--     <string name="menu_search">Traži</string> -->
     
     
     <string name="menu_add_repo">Nova radnja</string>
-    <string name="menu_rem_repo">Ukloni radnju</string>
-    <string name="menu_edit_repo">Uredi radnju</string>
+<!--     <string name="menu_rem_repo">Ukloni radnju</string> -->
+<!--     <string name="menu_edit_repo">Uredi radnju</string> -->
     
     <string name="btn_yes">Da</string>
     <string name="btn_no">Ne</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Dodaj</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Dodaj</string> -->
     <string name="btn_cancel">Otkaži</string>
     <string name="btn_done">Gotovo</string>
-    <string name="btn_chlog">Changelog</string>
-    <string name="btn_search_market">Pretraži market</string>
+<!--     <string name="btn_chlog">Changelog</string> -->
+<!--     <string name="btn_search_market">Pretraži market</string> -->
     <string name="schDwnBtn">Raspored Dwnl.</string>
     
     

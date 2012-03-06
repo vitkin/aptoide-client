@@ -2,26 +2,26 @@
 <resources>
     
     
-    <string name="menu_update_repo">Actualitzar</string>
+<!--     <string name="menu_update_repo">Actualitzar</string> -->
     <string name="menu_manage">Gestionar Repo</string>
-    <string name="menu_order">Mostrar Opcions</string>
+<!--     <string name="menu_order">Mostrar Opcions</string> -->
     <string name="menu_settings">Preferències</string>
     <string name="menu_about">Sobre</string>
-    <string name="menu_search">Cerca</string>
+<!--     <string name="menu_search">Cerca</string> -->
     
     
     <string name="menu_add_repo">Nou Repositori</string>
-    <string name="menu_rem_repo">Eliminar Repositori</string>
-    <string name="menu_edit_repo">Editar Repositori</string>
+<!--     <string name="menu_rem_repo">Eliminar Repositori</string> -->
+<!--     <string name="menu_edit_repo">Editar Repositori</string> -->
     
     <string name="btn_yes">Si</string>
     <string name="btn_no">No</string>
-    <string name="btn_ok">Ok</string>
-    <string name="btn_add">Afegir</string>
+<!--     <string name="btn_ok">Ok</string> -->
+<!--     <string name="btn_add">Afegir</string> -->
     <string name="btn_cancel">Cancel·lar</string>
     <string name="btn_done">Fet</string>
-    <string name="btn_chlog">Canvis</string>
-    <string name="btn_search_market">Cercar al Market</string>
+<!--     <string name="btn_chlog">Canvis</string> -->
+<!--     <string name="btn_search_market">Cercar al Market</string> -->
     
     
     

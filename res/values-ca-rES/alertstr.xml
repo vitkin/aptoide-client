@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <string name="up_server">Servidors: </string>
-    <string name="lstver">Versió servidor: </string>
-    <string name="dwn_n">No de baixades: </string>
-    <string name="isinst">Instal·lat: </string>
-    <string name="instver">Versió instal·lada: </string>
+<!--     <string name="up_server">Servidors: </string> -->
+<!--     <string name="lstver">Versió servidor: </string> -->
+<!--     <string name="dwn_n">No de baixades: </string> -->
+<!--     <string name="isinst">Instal·lat: </string> -->
+<!--     <string name="instver">Versió instal·lada: </string> -->
     <string name="install">Instal·lar </string>
-    <string name="about_alrt">Sobre: </string>
+<!--     <string name="about_alrt">Sobre: </string> -->
     <string name="rem">Desinstal·lar </string>
     <string name="update">Actualitzar</string>
     
-    <string name="update_alrt">Hi ha actualitzacions disponibles per a algunes aplicacions instal·lades.\nVols veure-les?</string>
-    <string name="repo_alrt">La llista de repositoris en ús ha canviat.\nVols actualitzar-la ara?</string>
+<!--     <string name="update_alrt">Hi ha actualitzacions disponibles per a algunes aplicacions instal·lades.\nVols veure-les?</string> -->
+<!--     <string name="repo_alrt">La llista de repositoris en ús ha canviat.\nVols actualitzar-la ara?</string> -->
     
     <string name="title_repo_alrt">Atenció</string>
     <string name="myrepo_alrt">Sembla que no has afegit cap respositori.\Et suggerim que utilitzis el nostre.\nVols afegir el nostre repositori?\n(Pots cercar més repositoris en línia)\n\n</string>
-    <string name="newrepo_alrt">Vols afegir aquest repositori a la teva llista?\n\n</string>
+<!--     <string name="newrepo_alrt">Vols afegir aquest repositori a la teva llista?\n\n</string> -->
     
-    <string name="error_download_alrt">No es pot connectar al servidor, o el fitxer apk està corromput.</string>
-    <string name="download_alrt">Obtenint aplicació de:\n </string>
+<!--     <string name="error_download_alrt">No es pot connectar al servidor, o el fitxer apk està corromput.</string> -->
+<!--     <string name="download_alrt">Obtenint aplicació de:\n </string> -->
      
     <string name="md5_error">Ha fallat la comprovació md5!\nSi us plau, actualitza la llista d\'aplicacions abans de reintentar.</string>
-    <string name="network_error">S\'ha produït un error al obtenir l\'aplicació.\nIntenta-ho més tard</string>
+<!--     <string name="network_error">S\'ha produït un error al obtenir l\'aplicació.\nIntenta-ho més tard</string> -->
     
 </resources>
 <!--

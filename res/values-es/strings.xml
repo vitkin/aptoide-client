@@ -5,25 +5,25 @@
     <string name="tab_inst">Instalada</string>
     <string name="tab_updt">Actualizaciones</string>
     
-    <string name="no_found">Aplicacion no encontrada!</string>
-    <string name="no_repo">No hay repositorios!</string>
+<!--     <string name="no_found">Aplicacion no encontrada!</string> -->
+<!--     <string name="no_repo">No hay repositorios!</string> -->
  
- 	<string name="not_inst">No instalada</string>
-    <string name="installed">Ver. - Instalada:</string>
-    <string name="installed_update">Posible actualizacion - Ver.:</string>
-    <string name="srv_version">Version disponible:</string>
+<!--  	<string name="not_inst">No instalada</string> -->
+<!--     <string name="installed">Ver. - Instalada:</string> -->
+<!--     <string name="installed_update">Posible actualizacion - Ver.:</string> -->
+<!--     <string name="srv_version">Version disponible:</string> -->
     
-    <string name="srch_label">Aptoide</string>
+<!--     <string name="srch_label">Aptoide</string> -->
     <string name="srch_hint">Nombre de la aplicacion</string>
     
     <string name="about_txt1">Paquete de instalacion para telefono Android.\n</string>
   
-    <string name="about_site">Inicio: </string>
+<!--     <string name="about_site">Inicio: </string> -->
     
-    <string name="about_mail">Contacto: </string>
+<!--     <string name="about_mail">Contacto: </string> -->
     
-    <string name="about_txt2"> www.aptoide.com</string>
-    <string name="about_txt3"> aptoide@aptoide.com</string>
+<!--     <string name="about_txt2"> www.aptoide.com</string> -->
+<!--     <string name="about_txt3"> aptoide@aptoide.com</string> -->
 </resources>
 
 <!--

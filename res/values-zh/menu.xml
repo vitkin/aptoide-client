@@ -2,26 +2,26 @@
 <resources>
     
     
-    <string name="menu_update_repo">更新</string>
+<!--     <string name="menu_update_repo">更新</string> -->
     <string name="menu_manage">管理仓库</string>
-    <string name="menu_order">显示选项</string>
+<!--     <string name="menu_order">显示选项</string> -->
     <string name="menu_settings">设置</string>
     <string name="menu_about">关于</string>
-    <string name="menu_search">搜索</string>
+<!--     <string name="menu_search">搜索</string> -->
     
     
     <string name="menu_add_repo">添加仓库</string>
-    <string name="menu_rem_repo">删除仓库</string>
-    <string name="menu_edit_repo">编辑仓库</string>
+<!--     <string name="menu_rem_repo">删除仓库</string> -->
+<!--     <string name="menu_edit_repo">编辑仓库</string> -->
     
     <string name="btn_yes">是</string>
     <string name="btn_no">否</string>
-    <string name="btn_ok">确定</string>
-    <string name="btn_add">添加</string>
+<!--     <string name="btn_ok">确定</string> -->
+<!--     <string name="btn_add">添加</string> -->
     <string name="btn_cancel">取消</string>
     <string name="btn_done">完成</string>
-    <string name="btn_chlog">更改日志</string>
-    <string name="btn_search_market">搜索市场</string>
+<!--     <string name="btn_chlog">更改日志</string> -->
+<!--     <string name="btn_search_market">搜索市场</string> -->
     
     
     

@@ -13,26 +13,26 @@
     <string name="order_popup_catg1">Nach Kategorie </string>
     <string name="order_popup_catg2">Alle Andwendungen </string>
     
-    <string name="order_popup_title">Anzeigeoptionen </string>
+<!--     <string name="order_popup_title">Anzeigeoptionen </string> -->
     
-    <string name="settings_title_bar">Aptoide Einstellungen</string>
+<!--     <string name="settings_title_bar">Aptoide Einstellungen</string> -->
     
-    <string name="save_btn">Speichern </string>
-    <string name="clear_cache_title">Zwischenspeicher</string>
+<!--     <string name="save_btn">Speichern </string> -->
+<!--     <string name="clear_cache_title">Zwischenspeicher</string> -->
     <string name="clear_cache_btn">Zwischenspeicher löschen </string>
-    <string name="clear_cache_msg">Achtung: Entfernt sowohl zwischengespeicherte Icons als auch ausstehende Installationen und Updates. Bitte beenden Sie zunächst alle laufenden Downloads!</string>
+<!--     <string name="clear_cache_msg">Achtung: Entfernt sowohl zwischengespeicherte Icons als auch ausstehende Installationen und Updates. Bitte beenden Sie zunächst alle laufenden Downloads!</string> -->
     
-    <string name="clear_dwn_title">Downloads</string>
+<!--     <string name="clear_dwn_title">Downloads</string> -->
     <string name="clear_dwn_btn">Download Icons</string>
-    <string name="clear_dwn_msg">Download Icon Richtlinien </string>
+<!--     <string name="clear_dwn_msg">Download Icon Richtlinien </string> -->
     
-    <string name="auto_updating">Bitte warten Sie, während Ihr Download durchgeführt wird...</string>
+<!--     <string name="auto_updating">Bitte warten Sie, während Ihr Download durchgeführt wird...</string> -->
     
-    <string-array name="dwnif">
-        <item>3G und Wifi</item>
-        <item>nur Wifi</item>
-        <item>Nie Herunterladen</item>
-    </string-array>
+<!--     <string-array name="dwnif"> -->
+<!--         <item>3G und Wifi</item> -->
+<!--         <item>nur Wifi</item> -->
+<!--         <item>Nie Herunterladen</item> -->
+<!--     </string-array> -->
     
     
 </resources>

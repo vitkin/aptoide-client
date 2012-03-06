@@ -2,26 +2,26 @@
 <resources>
     
     
-    <string name="menu_update_repo">Azuriraj</string>
+<!--     <string name="menu_update_repo">Azuriraj</string> -->
     <string name="menu_manage">Upravljaj repo</string>
-    <string name="menu_order">Opcije ekrana</string>
+<!--     <string name="menu_order">Opcije ekrana</string> -->
     <string name="menu_settings">Opcije</string>
     <string name="menu_about">O Aplikaciji</string>
-    <string name="menu_search">Trazi</string>
+<!--     <string name="menu_search">Trazi</string> -->
     
     
     <string name="menu_add_repo">Novi repozitorij</string>
-    <string name="menu_rem_repo">Ukloni repozitorij</string>
-    <string name="menu_edit_repo">Uredi repozitorij</string>
+<!--     <string name="menu_rem_repo">Ukloni repozitorij</string> -->
+<!--     <string name="menu_edit_repo">Uredi repozitorij</string> -->
     
     <string name="btn_yes">Da</string>
     <string name="btn_no">Ne</string>
-    <string name="btn_ok">U redu</string>
-    <string name="btn_add">Dodaj</string>
+<!--     <string name="btn_ok">U redu</string> -->
+<!--     <string name="btn_add">Dodaj</string> -->
     <string name="btn_cancel">Ukini</string>
     <string name="btn_done">Zavrseno</string>
-    <string name="btn_chlog">Changelog</string>
-    <string name="btn_search_market">Pretrazi Market</string>
+<!--     <string name="btn_chlog">Changelog</string> -->
+<!--     <string name="btn_search_market">Pretrazi Market</string> -->
     
     
     
