@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+
+<!--     <string name="top_please_wait">Wachten a.u.b.</string> -->
+<!--     <string name="top_error">Fout</string> -->
+    <string name="download">Download</string>
+    <string name="fetching_app">Toepassing wordt opgehaald</string>
+<!--     <string name="aptoide_error">Kan niet verbinden met afgelegen server</string> -->
+<!--     <string name="manage_repo_add">Nieuwe voorraad toevoegen</string> -->
+<!--     <string name="manage_repo_answ_wrongl">Login is fout</string> -->
+    <string name="cant_connect">Kan niet verbinden met server</string>
+<!--     <string name="manage_repo_answ_lr">Login nodig</string> -->
+<!--     <string name="app_pop_up_no_info">Geen informatie beschikbaar op server. Voor meer informatie zoek in Market door op onderstaande knop te drukken.</string> -->
+<!--     <string name="error_no_market">Je hebt Google Market niet geïnstalleerd!</string> -->
+<!--     <string name="settings_cache">Cache leegmaken...</string> -->
+<!--     <string name="remote_in_noSD_title">Geen geheugen</string> -->
+    <string name="no_sdcard">Je hebt geen SD kaart of het werkt niet naar behoren\nA.u.b. erin doen of opnieuw inzetten en proberen.</string>
+    <string name="no_space_left_in_sdcard">Je hebt geen genoeg ruimte op je SD kaart om Aptoide te gebruiken\nRuimte vrijmaken en opnieuw proberen a.u.b.</string>
+<!--     <string name="error_on_update">Update proces kon niet voltooid worden op volgende voorraad:\n</string> -->
+<!--     <string name="updating_msg">Lijst van toepassingen wordt geupdate...</string> -->
+<!--     <string name="update_repos">Update voorraad</string> -->
+<!--     <string name="update_main">De lijst van voorraden is veranderd.\nWil je deze updaten?</string> -->
+<!--     <string name="updating_3g">Je bent niet verbonden met WIFI of ethernet. Het is aangeraden om te updaten met een WiFi of ethernet verbinding.\nToch updaten?</string> -->
+<!--     <string name="updating_cfrm">Aptoide voorraden update bevestigen?</string> -->
+<!--     <string name="updating_norepos">Er zijn geen voorraden in gebruik in je lijst.\nVoeg een voorraad toe of gebruik er een uit je lijst.</string> -->
+    <string name="options">Opties</string>
+    <string name="edit">Bewerken</string>
+    <string name="remove">Verwijderen</string>
+    <string name="remove_repo">Verwijder voorraad</string>
+    <string name="remove_repo_confirm">Wil je voorraad verwijderen?</string>
+    <string name="remove_repo_choose">Kies voorraad om te verwijderen</string>
+    <string name="edit_repo_choose">Kies voorraad om te bewerken</string>
+    <string name="edit_repo">Voorraad bewerken</string>
+<!--     <string name="update_done_msg1">Voorraden updaten gelukt.</string> -->
+<!--     <string name="update_process">Voorraad wordt geupdate %1$d of %2$d</string> -->
+<!--     <string name="dialog_yes">Ja</string> -->
+<!--     <string name="dialog_no">Nee</string> -->
+    <string name="update_available">Update beschikbaar</string>
+    <string name="update_confirm">Er is een nieuwe versie van Aptoide beschikbaar,\nwil je updaten?</string>
+    <string name="install_selected">Geselecteerde installeren</string>
+    <string name="invert_selection">Selectie omkeren</string>
+    <string name="remove_selected">Geselecteerde verwijderen</string>
+    <string name="remove_confirm">Weet je zeker dat je wil verwijderen?</string>
+
+</resources>

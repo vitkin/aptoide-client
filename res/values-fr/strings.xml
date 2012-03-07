@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--   <string name="app_name">Aptoide</string> -->
+  <string name="tab_avail">Disponible</string>
+  <string name="tab_inst">Installé</string>
+  <string name="tab_updt">MàJ</string>
+<!--   <string name="repo_app">Applications:</string> -->
+<!--   <string name="repo_noinfo">Pas d\'information</string> -->
+<!--   <string name="no_found">Aucune application trouvée</string> -->
+<!--   <string name="no_repo">Aucun dépôt</string> -->
+<!--   <string name="not_inst">Non installé</string> -->
+<!--   <string name="installed">Installé - Ver.:</string> -->
+<!--   <string name="installed_update">MàJ possible - Ver.:</string> -->
+<!--   <string name="srv_version">Version disponible:</string> -->
+<!--   <string name="srch_label">Aptoide</string> -->
+  <string name="srch_hint">Nom de l\'application</string>
+  <string name="about_txt1">Votre installeur de package pour Android phone.\n</string>
+<!--   <string name="about_site">Accueil: </string> -->
+<!--   <string name="about_mail">Contact: </string> -->
+<!--   <string name="about_txt2"> www.aptoide.com</string> -->
+<!--   <string name="about_txt3"> aptoide@aptoide.com</string> -->
+<!--   <string name="multi_ver_prompt">Selectionner une version</string> -->
+  <string name="version">Version</string>
+  <string name="size">Taille</string>
+  <string name="comments">Commentaires:</string>
+<!--   <string name="commentsproblem">Comments not available</string> -->
+  <string name="reinstall">Réinstaller</string>
+<!--   <string name="version_inst">Version installée</string> -->
+<!--   <string name="installed_downgrade">Downgrade possible.</string> -->
+  <string name="reply">Répondre</string>
+<!--   <string name="whattodo">Que faire?</string> -->
+  <string name="likes">Aime: </string>
+  <string name="dislikes">Aime pas: </string>
+  <string name="copyclip">Copier vers presse-papiers</string>
+  <string name="commentlabel">Commenter app...</string>
+  <string name="submit">Soumettre</string>
+<!--   <string name="clear">Vider</string> -->
+  <string name="body">Zone texte..</string>
+  <string name="subject">Suject...</string>
+  <string name="user">Nom d\'utilisateur...</string>
+  <string name="pass">Mot de passe...</string>
+  <string name="showpass">Montrer mot de passe</string>
+  <string name="hidepass">Cacher mot de passe</string>
+  <string name="failedcredentials">Echec de login avec ces infos</string>
+  <string name="comments_unavailable">Commentaires indisponibles</string>
+  <string name="credentialssettings">Login Bazaar</string>
+<!--   <string name="clearcredentials">Effacer login</string> -->
+<!--   <string name="clearcredentials_summary">Effacer login actuel</string> -->
+  <string name="setcredentials">Login Bazaar</string>
+  <string name="setcredentials_summary">Entrer nouveau login</string>
+<!--   <string name="credentialscleared">Login effacé</string> -->
+<!--   <string name="credentialscleared_des">Vos informations de login sont effacées.</string> -->
+  <string name="commentadded">Votre commentaire a été soumis</string>
+<!--   <string name="enterbody">Ecrire votre commentaire dans la zone texte</string> -->
+  <string name="inresponseto">\@</string>
+  <string name="usernotdef">Utilisateur non défini</string>
+  <string name="passwordnotdef">Mot de passe non défini</string>
+  <string name="loading_likes">Likes loading...</string>
+  <string name="postingcomment">Envoi du commentaire...</string>
+<!--   <string name="unabletoexecutecheknet">Impossible d\'exécuter. Vérifier connection.</string> -->
+<!--   <string name="opinionsuccess">Votre demande à été envoyée avec succès</string> -->
+<!--   <string name="postingtaste">Votre demande est en cours d\'envoi</string> -->
+<!--   <string name="unabletoexecute">Impossible d\'exécuter</string> -->
+  <string name="loggingin">Logging en cours...</string>
+  <string name="tastenotavailable">Appréciation indisponible</string>
+<!--   <string name="downgrade_available">downgrade disponible</string> -->
+  <string name="loading_comments">Chargement des commentaires...</string>
+<!--   <string name="moving_to">Déplacer vers</string> -->
+<!--   <string name="recognized">Reconnu</string> -->
+<!--   <string name="not_recognized">Non reconnu</string> -->
+  <string name="new_account">Nouveau compte</string>
+  <string name="chkBoxSchDwn">Programmation des téléchargements</string>
+  <string name="no_sch_downloads">Pas de téléchargement prévu!</string>
+  <string name="schDown_wireless_detected">WiFi détecté: Télécharger les applications en attente?</string>
+<!--   <string name="schDown_nodownloads">Pas de téléchargement prévu</string> -->
+  <string name="schDown_nodownloadselect">Pas de téléchargement sélectionné</string>
+<!--   <string name="schDown_downerror">Erreur de chargement. Ajouter %1$s dépôt.</string> -->
+  <string name="addSchDown">Ajouter dans la programmation</string>
+<!--   <string name="ctg_available">disponible</string> -->
+<!--   <string name="ctg_files">fichiers</string> -->
+<!--   <string name="ctg_version">Version:</string> -->
+  <string name="schDown_install">Installer tous les téléchargements programmés?</string>
+  <string name="schDown_installselected">Installer sélectionné</string>
+<!--   <string name="upgrd_available">, MàJ disponible</string> -->
+<!--   <string name="setting_hwfiltertitle">Filtre matériel</string> -->
+  <string name="setting_hwspecstitle">Spécification matérielle</string>
+<!--   <string name="setting_hwspecssum">Vérifier spécification matérielle</string> -->
+  <string name="setting_appfiltertitle">Filtrer applications</string>
+  <string name="setting_appfiltersum">Cacher applications incompatibles avec votre appareil</string>
+<!--   <string name="setting_schdwntitle">Téléchargements programmés</string> -->
+  <string name="setting_schdwninstalltitle">Installer automatiquement</string>
+  <string name="setting_schdwninstallsum">Installer automatiquement téléchargements programmés si WiFi</string>
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

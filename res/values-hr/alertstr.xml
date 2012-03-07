@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+<!--     <string name="up_server">Serveri: </string> -->
+<!--     <string name="lstver">Verzija servera: </string> -->
+<!--     <string name="dwn_n">Broj downloada: </string> -->
+<!--     <string name="isinst">Instalirano: </string> -->
+<!--     <string name="instver">Instalirana veryija: </string> -->
+    <string name="install">Instaliraj </string>
+<!--     <string name="about_alrt">About: </string> -->
+<!--     <string name="rem">Ukloni </string> -->
+    <string name="update">Ažuriraj</string>
+    
+<!--     <string name="update_alrt">Ažuriranja su dostupna za neke od instaliranih aplikacija.\nŽelite li ih vidjeti?</string> -->
+<!--     <string name="repo_alrt">Lista repozitorija u upotrebi je promjenjena.\nŽelite li ih ažurirati?</string> -->
+    
+    <string name="attention">Pažnja</string>
+    <string name="add_default_repo_confirm">Izgleda kao da nemate dodanih repozitorija.\nMi sugestiramo da koristite naše.\nŽelite li dodati naš repozitorij?\n(Možete potražiti još repozitorija online)\n\n</string>
+<!--     <string name="newrepo_alrt">Želite li dodati ovaj repozitorij na vašu listu?\n\n</string> -->
+    
+<!--     <string name="error_download_alrt">Nemože se spojiti sa serverom, ili je apk oštećen!</string> -->
+<!--     <string name="download_alrt">Skidanje aplikacije:\n </string> -->
+<!--     <string name="finished_download_alrt">Spreman za instalaciju:\n </string> -->
+    <string name="click_to_install_app">Pritisnite da instalirate aplikaciju:\n </string>
+     
+    <string name="md5_check_failed">MD5 provjeravanje skinute aplikacije je neuspjesno!\nMolimo ažurirajte repozitorije prije ponovnog pokušaja.</string>
+<!--     <string name="md5_auto_update_error">Provjeravanje ažuriranih paketa nije uspjelo. Ostaje na staroj verziji.</string> -->
+<!--     <string name="network_auto_update_error">Ažuriranje mreže neuspješno! Ostajen a staroj verziji.</string> -->
+<!--     <string name="network_error">Došlo je do greške u pokretanju aplikacije.\nMolimo pokušajte ponovo.</string> -->
+    
+<!--     <string name="failed_update">Ažuriranje aplikacije je neuspješno!</string> -->
+<!--     <string name="failed_install">Instaliranje aplikacije je neuspješno!</string> -->
+    <string name="downgrade">Unazađenje</string>
+    <string name="uninstall">Ukloni</string>
+    
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

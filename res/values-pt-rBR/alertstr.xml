@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+<!--     <string name="up_server">Servidores: </string> -->
+<!--     <string name="lstver">Versão do servidor: </string> -->
+<!--     <string name="dwn_n">Número de downloads: </string> -->
+<!--     <string name="isinst">Instalado: </string> -->
+<!--     <string name="instver">Versão instalada: </string> -->
+    <string name="install">Instalar </string>
+<!--     <string name="about_alrt">Sobre: </string> -->
+<!--     <string name="rem">Desinstalar </string> -->
+    <string name="update">Atualizar</string>
+    
+<!--     <string name="update_alrt">Existem atualizações disponíveis para alguns dos aplicativos instalados.\nGostaria de conferir?</string> -->
+<!--     <string name="repo_alrt">A lista de lojas em uso foi alterada.\nGostaria de atualizá-la?</string> -->
+    
+    <string name="attention">Atenção</string>
+    <string name="add_default_repo_confirm">Parece que você não tem nenhuma loja instalada.\nSugerimos que use a nossa.\nVocê quer adicionar a nossa loja?\n(Você pode buscar por mais lojas online)\n\n</string>
+<!--     <string name="newrepo_alrt">Você quer adicionar esta loja em sua lista?\n\n</string> -->
+    
+<!--     <string name="error_download_alrt">Não foi possível conectar ao servidor ou o apk está corrompido!</string> -->
+<!--     <string name="download_alrt">Adquirindo aplicativo:\n </string> -->
+<!--     <string name="finished_download_alrt">Pronto para instalar:\n </string> -->
+    <string name="click_to_install_app">Clique para instalar aplicativo:\n </string>
+     
+    <string name="md5_check_failed">A checagem de md5 do aplicativo baixado falhou!\nFavor atualizar suas lojas antes de tentar novamente.</string>
+<!--     <string name="md5_auto_update_error">A verificação de soma do pacote de atualização falhou!  Mantendo a versão atual.</string> -->
+<!--     <string name="network_auto_update_error">A conexão de atualização falhou! Mantendo a versão atual.</string> -->
+<!--     <string name="network_error">Ocorreu um erro ao buscar o aplicativo.\nFavor tentar novamente.</string> -->
+    
+<!--     <string name="failed_update">A atualização do aplicativo falhou!</string> -->
+<!--     <string name="failed_install">A instalação do aplicativo falhou!</string> -->
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Desinstalar</string>
+    
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
