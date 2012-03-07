@@ -58,6 +58,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -100,6 +101,8 @@ import cm.aptoide.pt.data.util.Constants;
  *
  */
 public class ManageRepos extends ListActivity{
+	
+	ContextThemeWrapper theme = new ContextThemeWrapper(this, R.style.DialogTheme);
 	
 	private ViewDisplayListRepos repos = null;
 	
@@ -440,7 +443,6 @@ public class ManageRepos extends ListActivity{
 	
 	private void askAddDefaultRepo(){
 		final String uri = Constants.APPS_REPO;
-		ContextThemeWrapper theme = new ContextThemeWrapper(this, R.style.DialogTheme);
 		AlertDialog.Builder defaultDialog = new AlertDialog.Builder(theme);
 		defaultDialog.setTitle(getString(R.string.attention));
 		defaultDialog.setIcon(android.R.drawable.ic_dialog_alert);
@@ -518,7 +520,7 @@ public class ManageRepos extends ListActivity{
 	
 			final ArrayList<String> addList = new ArrayList<String>();
 			
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(theme);
 			builder.setTitle(getString(R.string.add_repo_choose));
 			builder.setIcon(android.R.drawable.ic_menu_add);
 			builder.setMultiChoiceItems(reposArray, null, new DialogInterface.OnMultiChoiceClickListener() {
@@ -696,7 +698,6 @@ public class ManageRepos extends ListActivity{
 		
 		final EditText uri = (EditText) view.findViewById(R.id.edit_uri);
 		
-		
 		final CheckBox sec = (CheckBox) view.findViewById(R.id.secure_chk);
 		sec.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -710,8 +711,7 @@ public class ManageRepos extends ListActivity{
 			}
 		});
 		
-		
-		Builder p = new AlertDialog.Builder(ctx).setView(view);
+		Builder p = new AlertDialog.Builder(theme).setView(view);
 		alrt = p.create();
 		CharSequence actionButtonString;
 		if(editMode){
@@ -997,7 +997,7 @@ public class ManageRepos extends ListActivity{
 			break;
 
 		case REMOVE_REPO:
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			AlertDialog.Builder builder = new AlertDialog.Builder(theme);
 			builder.setTitle(getString(R.string.remove_repo));
 			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 			builder.setMessage(getString(R.string.remove_repo_confirm) + " " + repo_selected + " ?");
@@ -1055,7 +1055,8 @@ public class ManageRepos extends ListActivity{
 				}
 				final Vector<Integer> remList = new Vector<Integer>();
 				
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(theme);
 				builder.setTitle(getString(R.string.remove_repo_choose));
 				builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 				builder.setMultiChoiceItems(reposArray, null, new DialogInterface.OnMultiChoiceClickListener() {
@@ -1092,7 +1093,7 @@ public class ManageRepos extends ListActivity{
 				if(reposArray.length == 0){
 					return true;
 				}		
-				AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+				AlertDialog.Builder builder2 = new AlertDialog.Builder(theme);
 				builder2.setTitle(getString(R.string.edit_repo_choose));
 				builder2.setIcon(android.R.drawable.ic_menu_edit);
 				builder2.setSingleChoiceItems(reposArray, -1, new DialogInterface.OnClickListener() {

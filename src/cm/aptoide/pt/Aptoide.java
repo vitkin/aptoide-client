@@ -53,6 +53,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
+import android.view.ContextThemeWrapper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -98,6 +99,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private final String TAG = "Aptoide";
 	private String versionName;
 	private boolean isRunning = false;
+	
+	ContextThemeWrapper theme;
 	
 	private ScrollDetector scrollListener;
 	private GestureDetector swypeDetector;
@@ -716,6 +719,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         super.onCreate(savedInstanceState);
         if(!isRunning){
 		       
+        	theme = new ContextThemeWrapper(this, R.style.DialogTheme);
+        	
 			installedAppsManager = new InstalledAppsManager();
 			availableAppsManager = new AvailableAppsManager();
 			updatableAppsManager = new UpdatableAppsManager();
@@ -1819,7 +1824,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					//TODO refactor extract dialog management class
 					LayoutInflater displayOptionsInflater = LayoutInflater.from(this);
 					View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
-					Builder dialogBuilder = new AlertDialog.Builder(this).setView(displayOptions);
+					Builder dialogBuilder = new AlertDialog.Builder(theme).setView(displayOptions);
 					final AlertDialog sortDialog = dialogBuilder.create();
 					sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
 					sortDialog.setTitle(getString(R.string.display_options));
@@ -1921,7 +1926,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				View about = aboutInflater.inflate(R.layout.about, null);
 				TextView info = (TextView)about.findViewById(R.id.credits);
 				info.setText(getString(R.string.credits, versionName));
-				Builder aboutCreator = new AlertDialog.Builder(this).setView(about);
+				Builder aboutCreator = new AlertDialog.Builder(theme).setView(about);
 				final AlertDialog aboutDialog = aboutCreator.create();
 				aboutDialog.setIcon(R.drawable.icon);
 				aboutDialog.setTitle(R.string.app_name);

@@ -1,100 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#edece9"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:padding="5dp" >
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border"
-        android:orientation="vertical"
-        android:padding="5dp" >
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:text="@string/repo_uri"
+            android:textSize="16dip" />
+
+        <EditText
+            android:id="@+id/edit_uri"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical" >
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:inputType="textUri"
+            android:maxLines="1"
+            android:singleLine="true" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="20"
-                android:text="@string/repo_uri"
-                android:textColor="#4f4f4f"
-                android:textSize="16dip" />
+        <TextView
+            android:id="@+id/sec_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/cant_connect"
+            android:textColor="#CC1100"
+            android:textSize="16dip"
+            android:visibility="gone" />
 
-            <EditText
-                android:id="@+id/edit_uri"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="20"
-                android:inputType="textUri"
-                android:maxLines="1"
-                android:singleLine="true" />
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_marginBottom="10dip"
+            android:layout_marginLeft="25dip"
+            android:layout_marginRight="25dip"
+            android:layout_marginTop="10dip"
+            android:background="#FFF5F5F5"
+            android:paddingLeft="25dip" />
 
-            <TextView
-                android:id="@+id/sec_msg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/cant_connect"
-                android:textColor="#CC1100"
-                android:textSize="16dip"
-                android:visibility="gone" />
+        <TextView
+            android:id="@+id/sec_msg2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#CC1100"
+            android:textSize="16dip"
+            android:visibility="gone" />
 
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dip"
-                android:layout_marginBottom="10dip"
-                android:layout_marginLeft="25dip"
-                android:layout_marginRight="25dip"
-                android:layout_marginTop="10dip"
-                android:background="#FFF5F5F5"
-                android:paddingLeft="25dip" />
+        <CheckBox
+            android:id="@+id/secure_chk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/privt"/>
 
-            <TextView
-                android:id="@+id/sec_msg2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="#CC1100"
-                android:textSize="16dip"
-                android:visibility="gone" />
+        <EditText
+            android:id="@+id/sec_user"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:enabled="false"
+            android:hint="@string/username"
+            android:maxLines="1"
+            android:singleLine="true" />
 
-            <CheckBox
-                android:id="@+id/secure_chk"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/privt"
-                android:textColor="#4f4f4f" />
+        <EditText
+            android:id="@+id/sec_pwd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:enabled="false"
+            android:hint="@string/password"
+            android:maxLines="1"
+            android:password="true"
+            android:singleLine="true" />
+    </LinearLayout>
 
-            <EditText
-                android:id="@+id/sec_user"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="20"
-                android:enabled="false"
-                android:hint="@string/username"
-                android:maxLines="1"
-                android:singleLine="true" />
-
-            <EditText
-                android:id="@+id/sec_pwd"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:ems="20"
-                android:enabled="false"
-                android:hint="@string/password"
-                android:maxLines="1"
-                android:password="true"
-                android:singleLine="true" />
-        </LinearLayout>
-    </ScrollView>
-
-</LinearLayout><!--
+</ScrollView><!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *
