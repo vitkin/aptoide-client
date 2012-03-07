@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+<!--     <string name="up_server">Server: </string> -->
+<!--     <string name="lstver">Server Version: </string> -->
+<!--     <string name="dwn_n">Anzahl der Downloads: </string> -->
+<!--     <string name="isinst">Installiert: </string> -->
+<!--     <string name="instver">Installierte Version: </string> -->
+    <string name="install">Installieren </string>
+<!--     <string name="about_alrt">Über: </string> -->
+<!--     <string name="rem">Deinstallieren </string> -->
+    <string name="update">Update</string>
+    
+<!--     <string name="update_alrt">Es sind Updates für installierte Anwendungen verfügbar.\nMöchten Sie sie sehen?</string> -->
+<!--     <string name="repo_alrt">Die Liste der verfügbaren Stores hat sich geändert.\nMöchten Sie sie aktualieren?</string> -->
+    
+    <string name="attention">Achtung</string>
+	<string name="add_default_repo_confirm">Sie haben der Liste keine Stores hinzugefügt.\nWir empfehlen die Benutzung unseres Stores.\nMöchten Sie unseren Store hinzufügen?\n(Sie können online nach weiteren Stores suchen)\n\n</string>
+<!--     <string name="newrepo_alrt">Möchten Sie diesen Store Ihrer Liste hinzufügen?\n\n</string> -->
+    
+<!--     <string name="error_download_alrt">Keine Verbindung zum Server möglich oder die APK-Datei ist beschädigt!</string> -->
+<!--     <string name="download_alrt">Lade Anwendungen von:\n </string> -->
+<!--     <string name="finished_download_alrt">Bereit zur Installation:\n </string> -->
+    <string name="click_to_install_app">Zur Installation berühren:\n </string>
+     
+	<string name="md5_check_failed">Die MD5 Prüfung der geladenen Anwendung ist fehlgeschlagen!\nBitte aktualisieren Sie Ihre Stores und versuchen Sie es erneut.</string>
+<!--     <string name="md5_auto_update_error">Prüfsummenprüfung des Update-Pakets fehlgeschlagen!  Aktuelle Version wird beibehalten.</string> -->
+<!--     <string name="network_auto_update_error">Update-Verbindung fehlgeschlagen!  Aktuelle Version wird beibehalten.</string> -->
+<!--     <string name="network_error">Fehler beim Abrufen der Anwendung.\nBitte versuchen Sie es erneut.</string> -->
+    
+<!--     <string name="failed_update">Anwedungsaktualisierung fehlgeschlagen!</string> -->
+<!--     <string name="failed_install">Anwendungsinstallation fehlgeschlagen!</string> -->
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Deinstallieren</string>
+    
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * Dieses Programm ist freie Software. Sie können es unter den
+ * Bedingungen der GNU General Public License, wie von der
+ * Free Software Foundation veröffentlicht, weitergeben und/oder
+ * modifizieren, entweder gemäß Version 2 der Lizenz oder
+ * (nach Ihrer Option) jeder späteren Version.
+
+ * Die Veröffentlichung dieses Programms erfolgt in der Hoffnung,
+ * daß es Ihnen von Nutzen sein wird, aber OHNE IRGENDEINE GARANTIE,
+ * sogar ohne die implizite Garantie der MARKTREIFE oder der
+ * VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK. Details finden Sie in
+ * der GNU General Public License.
+
+* Sie sollten ein Exemplar der GNU General Public License zusammen 
+* mit diesem Programm erhalten haben. Falls nicht, siehe  http://www.gnu.org/licenses/.
+-->

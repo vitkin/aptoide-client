@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--     <string name="app_name">Aptoide</string> -->
+    
+    <string name="tab_avail">Dostupno</string>
+    <string name="tab_inst">Instalirano</string>
+    <string name="tab_updt">Ažuriranje</string>
+    
+<!--     <string name="repo_app">Aplikacije:</string> -->
+<!--     <string name="repo_noinfo">Nema informacija</string> -->
+    
+<!--     <string name="no_found">Nema pronađenih informacija</string> -->
+<!--     <string name="no_repo">Nema repozitorija</string> -->
+ 
+<!--  	<string name="not_inst">Nije instalirano</string> -->
+<!--     <string name="installed">Instalirana - Ver.:</string> -->
+<!--     <string name="installed_update">Ažuriranje moguće - Ver.:</string> -->
+<!--     <string name="srv_version">Dostupna verzija:</string> -->
+    
+<!--     <string name="srch_label">Aptoide</string> -->
+    <string name="srch_hint">Ime aplikacije</string>
+    
+    <string name="about_txt1">Vaš paket za instaliranje na android\n</string>
+        
+<!--     <string name="about_site">Home: </string> -->
+    
+<!--     <string name="about_mail">Contact: </string> -->
+    
+<!--     <string name="about_txt2"> www.aptoide.com</string> -->
+<!--     <string name="about_txt3"> aptoide@aptoide.com</string> -->
+<!--     <string name="multi_ver_prompt">Iyaberite verziju aplikacije</string> -->
+    <string name="version">Verzija</string>
+    <string name="size">Veličina</string>
+    <string name="comments">Komentari:</string>
+<!--     <string name="commentsproblem">Komentari nisu dostupni</string> -->
+    <string name="reinstall">Ponovo instaliraj</string>
+<!--     <string name="version_inst">Verzija instalirana</string> -->
+<!--     <string name="installed_downgrade">Unazađenje moguće</string> -->
+    <string name="reply">Odgovori</string>
+    <string name="whattodo">Šta uraditi?</string>
+    <string name="likes">Lajkovi: </string>
+    <string name="dislikes">Dislajkovi: </string>
+    <string name="copyclip">Kopiraj</string>
+    <string name="commentlabel">Komentiraj app...</string>
+    <string name="submit">Dodaj</string>
+<!--     <string name="clear">Očisti</string> -->
+    <string name="body">Tijelo..</string>
+    <string name="subject">Predmet...</string>
+    <string name="user">Korisničko ime...</string>
+    <string name="pass">Pasvord...</string>
+    <string name="showpass">Pokaži pasvord</string>
+    <string name="hidepass">Sakrij pasvord</string>
+    <string name="failedcredentials">Neuspješna prijava sa datim informacijama</string>
+    <string name="comments_unavailable">Komentari nedostupni</string>
+    <string name="credentialssettings">Bazaar login</string>
+<!--     <string name="clearcredentials">Očisti login</string> -->
+<!--     <string name="clearcredentials_summary">Poništi trenutni login</string> -->
+    <string name="setcredentials">Bazaar Login</string>
+    <string name="setcredentials_summary">Stavi novi login</string>
+<!--     <string name="credentialscleared">Login očišćen</string> -->
+<!--     <string name="credentialscleared_des">Vaše informacije su očišćene</string> -->
+    <string name="commentadded">Vaš komentar je uspješno objavljen</string>
+<!--     <string name="enterbody">Ostavite svoj dojam ove sekcije</string> -->
+    <string name="inresponseto">\@</string>
+    <string name="usernotdef">Korisnik nije definisan</string>
+    <string name="passwordnotdef">Pasvord nije definisan</string>
+    <string name="loading_likes">Otvaranje lajkova...</string>
+    <string name="postingcomment">Objavljivanje vašeg komentara...</string>
+<!--     <string name="unabletoexecutecheknet">Nije u mogućnosti pokrenuti. Provjerite internet status</string> -->
+<!--     <string name="opinionsuccess">Vaš zahtjev je primljen</string> -->
+<!--     <string name="postingtaste">Vaš zahtjev se prima</string> -->
+<!--     <string name="unabletoexecute">Nije u mogućnosti da se pokrene</string> -->
+    <string name="loggingin">Logging in...</string>
+    <string name="tastenotavailable">Lijkoci nedostupni</string>
+<!--     <string name="downgrade_available">Unazađenje dostupno</string> -->
+    <string name="loading_comments">Otvara komentare...</string>
+<!--     <string name="moving_to">Pomjeriti</string> -->
+<!--     <string name="recognized">Prepoznato</string> -->
+<!--    <string name="not_recognized">Nije prepoznato</string> -->
+   <string name="new_account">Novi korisnik</string>
+   
+   <string name="chkBoxSchDwn">Download roasporeda</string>
+   <string name="no_sch_downloads">Nema rasporeda za skinuti !</string>
+   <string name="schDown_wireless_detected">Wireless detektovan: Skinuti sve aplikacije na rasporedu za skidanje ?</string>
+<!--    <string name="schDown_nodownloads">Nema  Download-a na rasporedu</string> -->
+   <string name="schDown_nodownloadselect">Nema selektovanih download-a</string>
+<!--    <string name="schDown_downerror">Download greška. Dodaj %1$s Repo.</string> -->
+   <string name="addSchDown">Dodani download-i na raspored</string>
+<!--    <string name="ctg_available">Dostupno</string> -->
+<!--    <string name="ctg_files">podaci</string> -->
+<!--    <string name="ctg_version">Verzija:</string> -->
+   <string name="schDown_install">Želite li instalirati sve download\'e na rasporedu?</string>
+   <string name="schDown_installselected">Instalirati odabrano</string>
+   
+<!--        <string name="upgrd_available">, nadogradi dostupno</string> -->
+<!--        <string name="setting_hwfiltertitle">Hardware Filteri</string> -->
+       <string name="setting_hwspecstitle">Hardware Specifikacije</string>
+<!--        <string name="setting_hwspecssum">Pogledajte vaše hardware specifikacije</string> -->
+       <string name="setting_appfiltertitle">Filtriraj aplikacije</string>
+       <string name="setting_appfiltersum">Nemoj pokazivati da aplikacije nisu kompatibilne sa uređajem.</string>
+<!--        <string name="setting_schdwntitle">Pripremljeni download-i</string> -->
+       <string name="setting_schdwninstalltitle">Automatska instalacija</string>
+       <string name="setting_schdwninstallsum">Instaliraj pripremljene download-e automatski kada wifi bude dostupan.</string>
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

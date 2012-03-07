@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!--     <string name="app_name">Aptoide</string> -->
+    
+    <string name="tab_avail">Disponibile</string>
+    <string name="tab_inst">Installata</string>
+    <string name="tab_updt">Aggiornamenti</string>
+    
+<!--     <string name="repo_app">Applicazioni:</string> -->
+<!--     <string name="repo_noinfo">Nessuna informazione</string> -->
+    
+<!--     <string name="no_found">Nessuna applicazione trovata!</string> -->
+<!--     <string name="no_repo">Nessun repository!</string> -->
+ 
+<!--  	<string name="not_inst">Non Installata</string> -->
+<!--     <string name="installed">Installata - Ver.:</string> -->
+<!--     <string name="installed_update">Aggiornamento possibile - Vers.:</string> -->
+<!--     <string name="srv_version">Versione disponibile:</string> -->
+    
+<!--     <string name="srch_label">Aptoide</string> -->
+    <string name="srch_hint">Nome dell\'applicazione</string>
+    
+    <string name="about_txt1">Il tuo app installer di Android.\n</string>
+        
+<!--     <string name="about_site">Home: </string> -->
+    
+<!--     <string name="about_mail">Contatti: </string> -->
+    
+<!--     <string name="about_txt2"> www.aptoide.com</string> -->
+<!--     <string name="about_txt3"> aptoide@aptoide.com</string> -->
+<!--     <string name="multi_ver_prompt">Seleziona una versione dell\'applicazione</string> -->
+    <string name="version">Versione</string>
+    <string name="size">Peso</string>
+    <string name="comments">Commenti:</string>
+<!--     <string name="commentsproblem">Commenti non disponibili</string> -->
+    <string name="reinstall">Reinstalla</string>
+<!--     <string name="version_inst">Versione installata</string> -->
+<!--     <string name="installed_downgrade">Downgrade possibile</string> -->
+    <string name="reply">Rispondi</string>
+<!--     <string name="whattodo">Cosa fare?</string> -->
+    <string name="likes">Likes: </string>
+    <string name="dislikes">Don\'t likes: </string>
+    <string name="copyclip">Copia nella clipboard</string>
+    <string name="commentlabel">Commenta app...</string>
+    <string name="submit">Invia</string>
+<!--     <string name="clear">Cancella</string> -->
+    <string name="body">Corpo del messaggio..</string>
+    <string name="subject">Oggetto...</string>
+    <string name="user">Nome utente...</string>
+    <string name="pass">Password...</string>
+    <string name="showpass">Mostra password</string>
+    <string name="hidepass">Nascondi password</string>
+    <string name="failedcredentials">Il login con questi nome utente e password è fallito</string>
+    <string name="comments_unavailable">Commenti non disponibili</string>
+    <string name="credentialssettings">Bazaar login</string>
+<!--     <string name="clearcredentials">Cancella login</string> -->
+<!--     <string name="clearcredentials_summary">Disattiva il login corrente</string> -->
+    <string name="setcredentials">Bazaar Login</string>
+    <string name="setcredentials_summary">Attiva nuovo login</string>
+<!--     <string name="credentialscleared">Login cancellato</string> -->
+<!--     <string name="credentialscleared_des">Le tue credenziali sono disattivate</string> -->
+    <string name="commentadded">Il tuo commento è stato inviato</string>
+<!--     <string name="enterbody">Scrivi la recensione nel corpo del messaggio</string> -->
+    <string name="inresponseto">\@</string>
+    <string name="usernotdef">Utente non definito</string>
+    <string name="passwordnotdef">Password non definita</string>
+    <string name="loading_likes">Carico i Like...</string>
+    <string name="postingcomment">Aggiungo commento...</string>
+<!--     <string name="unabletoexecutecheknet">Impossibile eseguire.Controlla lo stato di internet.</string> -->
+<!--     <string name="opinionsuccess">La richiesta è stata inviata</string> -->
+<!--     <string name="postingtaste">Stiamo inviando la tua richiesta</string> -->
+<!--     <string name="unabletoexecute">Impossibile eseguire</string> -->
+    <string name="loggingin">Logging in...</string>
+    <string name="tastenotavailable">Like non disponibili</string>
+<!--     <string name="downgrade_available">downgrade disponibile</string> -->
+    <string name="loading_comments">Carico commenti...</string>
+<!--     <string name="moving_to">Vado a</string> -->
+<!--     <string name="recognized">Riconosciuto</string> -->
+<!--    <string name="not_recognized">Non riconosciuto</string> -->
+   <string name="new_account">Nuovo account</string>
+   
+   <string name="chkBoxSchDwn">Programma Download</string>
+   <string name="no_sch_downloads">Nessun download programmato!</string>
+   <string name="schDown_wireless_detected">Rilevato Wireless: Scaricare tutte le applicazioni nei Download Programmati?</string>
+<!--    <string name="schDown_nodownloads">Nessun Download Programmato</string> -->
+   <string name="schDown_nodownloadselect">Nessun Download Selezionato</string>
+<!--    <string name="schDown_downerror">Errore di download. Aggiungi %1$s Repository.</string> -->
+   <string name="addSchDown">Aggiunto ai download programmati</string>
+<!--    <string name="ctg_available">disponibile</string> -->
+<!--    <string name="ctg_files">file</string> -->
+<!--    <string name="ctg_version">Versione:</string> -->
+   <string name="schDown_install">Vuoi installare tutti i download selezionati?</string>
+   <string name="schDown_installselected">Installa Selezionati</string>
+   
+<!--    <string name="upgrd_available">Aggiornamento disponibile</string> -->
+<!--        <string name="setting_hwfiltertitle">Filtra Hardware</string> -->
+       <string name="setting_hwspecstitle">Specifiche Hardware</string>
+<!--        <string name="setting_hwspecssum">Controlla le tue specifiche hardware</string> -->
+       <string name="setting_appfiltertitle">Filtra Applicazioni</string>
+       <string name="setting_appfiltersum">Non mostrare le applicazioni non compatibili col tuo device.</string>
+<!--        <string name="setting_schdwntitle">Download Programmati</string> -->
+       <string name="setting_schdwninstalltitle">Installazione Automatica</string>
+       <string name="setting_schdwninstallsum">Installazione automatica dei download programmati quando è disponibile un connessione Wifi</string>
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

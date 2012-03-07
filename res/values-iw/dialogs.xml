@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resources>
+
+<!--     <string name="top_please_wait">אנא המתן</string> -->
+<!--     <string name="top_error">שגיאה</string> -->
+    <string name="download">הורדה</string>
+    <string name="fetching_app">קורא יישום</string>
+<!--     <string name="aptoide_error">לא ניתן להתחבר לשרת</string> -->
+<!--     <string name="manage_repo_add">הוסף חנות חדשה</string> -->
+<!--     <string name="manage_repo_answ_wrongl">פרטים שגויים</string> -->
+    <string name="cant_connect">לא ניתן להתחבר לשרת</string>
+<!--     <string name="manage_repo_answ_lr">עליך להתחבר תחילה</string> -->
+<!--     <string name="app_pop_up_no_info">אין מידע זמין בשרת. חפש במרקט על ידי לחיצה על הכפתור למטה.</string> -->
+<!--     <string name="error_no_market">אין ברשותך מרקט מותקן</string> -->
+<!--     <string name="settings_cache">מנקה מטמון...</string> -->
+<!--     <string name="remote_in_noSD_title">אין זיכרון</string> -->
+    <string name="no_sdcard">אין ברשותך כרטיס זיכרון, או שהוא אינו עובד כראוי.\nאנא הכנס כרטיס או הכנס כרטיס מחדש, ולאחר מכן נסה שנית.</string>
+    <string name="no_space_left_in_sdcard">אין בכרטיס הזיכרון שברשותך מספיק מקום על מנת להשתמש באפטויד.\nאנא פנה מעט מקום ולאחר מכן נסה שנית.</string>
+<!--     <string name="error_on_update">תהליך העדכון נכשל עבור החנות הבאה:\n</string> -->
+<!--     <string name="updating_msg">מעדכן רשימת יישומים...</string> -->
+<!--     <string name="update_repos">עדכן חנות</string> -->
+<!--     <string name="update_main">רשימת החנויות שונתה.\nהאם ברצונך לעדכן אותם?</string> -->
+<!--     <string name="updating_3g">אינך מחובר באמצעות רשת אלחוטית או כבל רשת. מומלץ לעדכן באמצעות אחד מהחיבורים האלו.\nלעדכן בכל זאת?</string> -->
+<!--     <string name="updating_cfrm">האם לעדכן את החנויות?</string> -->
+<!--     <string name="updating_norepos">אין חנויות פעילות ברשימת החנויות שלך.\nאנא הוסף חנות, או אפשר לפחות אחת מהחנויות הקיימות.</string> -->
+    <string name="options">אפשרויות</string>
+    <string name="edit">עריכה</string>
+    <string name="remove">הסרה</string>
+    <string name="remove_repo">הסר חנות</string>
+    <string name="remove_repo_confirm">האם ברצונך להסיר את החנות?</string>
+    <string name="remove_repo_choose">בחר את החנות שברצונך להסיר</string>
+    <string name="edit_repo_choose">בחר את החנות שברצונך לערוך</string>
+    <string name="edit_repo">ערוך חנות</string>
+<!--     <string name="update_done_msg1">החנויות עודכנו בהצלחה.</string> -->
+<!--     <string name="update_process">מעדכן חנות %1$d of %2$d</string> -->
+<!--     <string name="dialog_yes">כן</string> -->
+<!--     <string name="dialog_no">לא</string> -->
+    <string name="update_available">עדכון זמין</string>
+    <string name="update_confirm">קיימת גרסה חדשה יותר של אפטויד.\nהאם ברצונך לעדכן?</string>
+    <string name="install_selected">התקן נבחרים</string>
+    <string name="invert_selection">הפוך בחירה</string>
+    <string name="remove_selected">הסר נבחרים</string>
+    <string name="remove_confirm">האם אתה בטוח שברצונך להסיר?</string>
+
+</resources>
