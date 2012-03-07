@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Instaluj </string>
+    <string name="update">Uaktualnij</string>
+    <string name="attention">Uwaga</string>
+    
+    <string name="add_default_repo_confirm">Wydaje się, że nie masz na swojej liście żadnego repozytorium.\nZalecamy użycie naszego.\nCzy chcesz dodać nasze repozytorium?\n(Możesz wyszukać więcej repozytoriów online)\n\n</string>
+    <string name="md5_check_failed">Nie powiodła się kontrola md5 pobieranej aplikacji!\nUaktualnij swój system aplikacji przed ponowna próbą.</string>
+    
+    
+    
+    
+    
+	<string name="download">Pobieranie</string>
+	<string name="fetching_app">Pobieranie aplikacji</string>
+	<string name="cant_connect">Brak połączenia z serwerem</string>
+
+	<string name="no_sdcard">Nie masz karty SD.\nWłóż kartę i spróbuj jeszcze raz.</string>
+    <string name="no_space_left_in_sdcard">Masz zbyt mało miejsca na swojej karcie SD aby użyć Aptoide\nZwolnij trochę miejsca i spróbuj jeszcze raz.</string>
+    
+    <string name="options">Opcje</string>
+    <string name="edit">Edytuj</string>
+    <string name="remove">Usuń</string>
+    
+    <string name="remove_repo">Usuń Repozytorium</string>
+    <string name="remove_repo_confirm">Usunąć repozytorium? </string>
+    <string name="remove_repo_choose">Wybierz repozytorium do usunięcia</string>
+    <string name="edit_repo_choose">Wybierz repozytorium do edycji</string>
+    <string name="edit_repo">Edytuj repozytorium</string>
+
+    
+    
+    
+    <string name="repo_uri">URI dla repozytorium: </string>
+    <string name="privt">Osobiste </string>
+    
+    <string name="freshness">Ostatnie najpierw </string>
+    <string name="alphabetic">Alfabetycznie </string>
+    <string name="stars">Ocena </string>
+    <string name="downloads">Numer pobrania </string>
+
+    <string name="show_applications_by">Pokaż aplikacje: </string>
+    <string name="category">Według kategorii </string>
+    <string name="all_applications">Wszystkie aplikacje </string>
+    
+    <string name="clear_cache">Wyczyść cache </string>
+    <string name="download_icons">Pobierz ikony</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Obsługa Repo</string>
+    <string name="settings">Ustawienia</string>
+    <string name="about">O...</string>
+    <string name="add_repo">Nowe Repozytorium</string>
+    
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="cancel">Anuluj</string>
+    <string name="done">Zrobione</string>
+    
+    
+    
+    
+    <string name="available">Dostępne</string>
+    <string name="installed">Zainstalowane</string>
+    <string name="updates">Uaktualnienia</string>
+    
+    <string name="name_of_application">Nazwa aplikacji</string>
+    <string name="description">Twój instalator aplikacji do telefonu Android.\n</string>
+    
+    
+</resources>   

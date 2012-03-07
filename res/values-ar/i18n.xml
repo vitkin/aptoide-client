@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">تثبيت </string>
+    <string name="update">تحديث</string>
+    <string name="attention">تنبيه!</string>
+    
+    <string name="add_default_repo_confirm">يبدو أنه لم يتم إضافة أية مخازن للبرامج.\nنقترح عليك إضافة مخزننا الخاص.\n هل ترغب بإضافته؟(يمكنك البحث عن المزيد من البرامج عبر الشبكة)\n\n</string>
+    <string name="md5_check_failed">فشل تدقيق الMD5 للملف الذي تم تنزيله!\nرجاءا قم بتحديث نظام البرامج قبل إعادة المحاولة.</string>
+    
+    
+    
+    
+    <string name="download">تنزيل</string>
+	<string name="fetching_app">تنزل البرنامج</string>
+    <string name="cant_connect">تعذر الإتصال بالموقع</string>
+	
+    <string name="no_sdcard">لا توجد بطاقة ذاكرة.\nأدخل البطاقة وحاول مرة أخرى.</string>
+    <string name="no_space_left_in_sdcard">لا توجد لديك مساحة ذاكرة كافية لإستخدام البرنامج\nرجاءا حرر بعضا من مساحة الذاكرة وحاول مرة اخرى</string>
+    
+    
+    
+    
+    <string name="repo_uri">عنوان المخزن:</string>
+    <string name="privt">تسجيل دخول </string>
+    
+    <string name="sort_applications_by">فرز قائمة البرامج: </string>
+    <string name="freshness">الأحدث أولا</string>
+    <string name="alphabetic">أبجديا</string>
+    <string name="stars">التقييم </string>
+    <string name="downloads">مرات التنزيل</string>
+
+    <string name="show_applications_by">عرض التطبيقات: </string>
+    <string name="category">حسب الفئة</string>
+    <string name="all_applications">كل التطبيقات</string>
+    
+    <string name="clear_cache"> مسح الذاكرة المؤقته</string>
+    
+    
+    
+    
+    <string name="manage_repos">مخازن البرامج</string>
+    <string name="settings">الإعدادات</string>
+    <string name="about">حول</string>
+	<string name="add_repo">مخزن جديد</string>
+    
+	<string name="yes">نعم</string>
+    <string name="no">لا</string>
+	<string name="cancel">إلغاء</string>
+    <string name="done">تم</string>
+    
+    
+    
+    
+    <string name="available">متوفر</string>
+    <string name="installed">مثبت</string>
+    <string name="updates">التحديثات</string>
+    
+    <string name="name_of_application">إسم البرنامج</string>
+    <string name="aptoide_description">برنامج لتثبيت البرامج على هاتف اندرويد.\n</string>
+    
+</resources>   

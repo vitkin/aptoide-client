@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Instalirati </string>
+    <string name="update">Azuriranje</string>
+    <string name="attention">Upozorenje</string>
+ 
+    <string name="add_default_repo_confirm">Izgleda kao da nemate dodanih repozitorija.\nPredlazemo vam da koristite nasu.\nZelite li dodati nas repozitorij?\n(Mozete potraziti jos repozitorija na internetu)\n\n</string>
+    <string name="md5_check_failed">MD5 provjeravanje skinute aplikacije nije uspjelo!\nMolimo vas da azurirate sistem, prije nego pokusate ponovo.</string>
+    
+    
+    
+    
+    
+	<string name="download">Skidanje</string>
+	<string name="fetching_app">Dobivanje aplikacije</string>
+	<string name="cant_connect">Nemoze se spojiti sa serverom</string>
+
+	<string name="no_sdcard">Nemate SDkarticu.\nUbacite jednu, i pokusajte ponovo..</string>
+    <string name="no_space_left_in_sdcard">Nemate dovoljno mjesta na SDkartici za Aptoide\nOslobodite mjesta, i pokusajte ponovo.</string>
+    
+    <string name="options">Opcije</string>
+    <string name="edit">Uredi</string>
+    <string name="remove">Ukloni</string>
+    
+    <string name="remove_repo">Ukloni repozitorij</string>
+    <string name="remove_repo_confirm">Zelite li ukloniti repozitorij </string>
+    <string name="remove_repo_choose">Izaberite repozitorij za ukloniti</string>
+    <string name="edit_repo_choose">Izaberite repozitorij za urediti</string>
+    <string name="edit_repo">Uredi repozitorij</string>
+    
+    
+    
+    
+    <string name="repo_uri">URL do repozitorija: </string>
+    <string name="privt">Privatno </string>
+    
+    <string name="freshness">Najnovije prvo </string>
+    <string name="alphabetic">Po abecedi </string>
+    <string name="stars">Ocjena </string>
+    <string name="downloads">Broj preuzimanja </string>
+
+    <string name="show_applications_by">Pokazi aplikacije: </string>
+    <string name="category">Po kategoriji </string>
+    <string name="all_applications">Sve aplikacije</string>
+    
+    <string name="clear_cache">Ocistiti cache </string>
+    <string name="download_icons">Preuzimanje ikona</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Upravljaj repo</string>
+    <string name="settings">Opcije</string>
+    <string name="about">O Aplikaciji</string>
+    <string name="add_repo">Novi repozitorij</string>
+    
+    <string name="yes">Da</string>
+    <string name="no">Ne</string>
+    <string name="cancel">Ukini</string>
+    <string name="done">Zavrseno</string>
+    
+    
+    
+    
+    
+    <string name="available">Dostupno</string>
+    <string name="installed">Instalirano</string>
+    <string name="updates">Azuriranja</string>
+    
+    <string name="name_of_application">Ime aplikacije</string>
+    <string name="description">Vas paket za instaliranje na vas uredjaj.\n</string>
+    
+</resources>   

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+  <string name="install">Installer </string>
+  <string name="update">Mise à jour</string>
+  <string name="attention">Attention</string>
+  
+  <string name="add_default_repo_confirm">Il semble que vous n\’avez pas de dépôt.\nNous vous proposons le nôtre.\nL\’ajouter?\n(Vous pouvez chercher des dépôts sur internet)\n\n</string>
+  <string name="click_to_install_app">Cliquer pour installer l\’application:\n</string>
+  <string name="md5_check_failed">Echec du contrôle md5 sur application téléchargée!\n Mettez à jour vos dépôts avant un nouvel essai.</string>
+
+  <string name="downgrade">Rétrograder</string>
+  <string name="uninstall">Désinstaller</string>
+  
+  
+  
+  
+  
+  <string name="download">Téléchargement</string>
+  <string name="fetching_app">Application en cours de chargement</string>
+  <string name="cant_connect">Impossible de se connecter au serveur</string>
+  <string name="no_sdcard">Carte SD absente ou défectueuse\nInsérez une nouvelle ou réintroduisez l\'ancienne.</string>
+  <string name="no_space_left_in_sdcard">Pas assez de mémoire sur SD pour installer Aptoide\nLibérez de l\'espace et réessayez!</string>
+  <string name="options">Options</string>
+  <string name="edit">Editer</string>
+  <string name="remove">Enlever</string>
+  <string name="remove_repo">Enlever dépôts</string>
+  <string name="remove_repo_confirm">Voulez-vous enlver des dépôts? </string>
+  <string name="remove_repo_choose">Choisir dépôt à enlever</string>
+  <string name="edit_repo_choose">Choisir dépôt à éditer</string>
+  <string name="edit_repo">Editer dépôt</string>
+  
+  <string name="update_available">MàJ disponible</string>
+  <string name="update_confirm">Nouvelle version d\'Aptoide.\nVoulez-vous mettre à jour?</string>
+  <string name="install_selected">Installer sélectionné</string>
+  <string name="invert_selection">Inverser sélection</string>
+  <string name="remove_selected">Retirer sélectionné</string>
+  <string name="remove_confirm">Etes-vous sûr de retirer?</string>
+  
+  
+  
+  
+  <string name="repo_uri">URI du dépôt</string>
+  <string name="privt">Privé</string>
+  <string name="sort_applications_by">Trier les applications par:</string>
+  <string name="freshness">Plus récent en premier</string>
+  <string name="alphabetic">Alphabétiquement</string>
+  <string name="stars">Evaluation</string>
+  <string name="downloads">Nombre de téléchargement</string>
+  <string name="show_applications_by">Montrer les applications:</string>
+  <string name="category">Par catégorie</string>
+  <string name="all_applications">Toutes les applications</string>
+  
+  <string name="clear_cache">Vider le cache</string>
+  <string name="download_icons">Télécharger les miniatures</string>
+  
+  
+  
+  
+  
+  <string name="manage_repos">Gérer les dépôts</string>
+  <string name="display_options">Option d\'afficahge</string>
+  <string name="settings">Paramètres</string>
+  <string name="about">A propos</string>
+  <string name="add_repo">Nouveau dépôt</string>
+
+  <string name="yes">Oui</string>
+  <string name="no">Non</string>
+  <string name="cancel">Annuler</string>
+  <string name="done">Fait</string>
+
+  <string name="scheduled_downloads">Téléchargement programmé</string>
+  
+  
+  
+  
+  <string name="available">Disponible</string>
+  <string name="installed">Installé</string>
+  <string name="updates">MàJ</string>
+
+  <string name="name_of_application">Nom de l\'application</string>
+  <string name="aptoide_description">Votre installeur de package pour Android phone.\n</string>
+
+  <string name="version">Version</string>
+  <string name="size">Taille</string>
+  <string name="comments">Commentaires:</string>
+  <string name="reinstall">Réinstaller</string>
+  <string name="reply">Répondre</string>
+  <string name="likes">Aime: </string>
+  <string name="dislikes">Aime pas: </string>
+  <string name="copy_to_clipboard">Copier vers presse-papiers</string>
+  <string name="comment_on_app">Commenter app...</string>
+  <string name="submit">Soumettre</string>
+  <string name="body">Zone texte..</string>
+  <string name="subject">Suject...</string>
+  <string name="username">Nom d\'utilisateur...</string>
+  <string name="password">Mot de passe...</string>
+  <string name="show_password">Montrer mot de passe</string>
+  <string name="hide_password">Cacher mot de passe</string>
+  <string name="bad_login">Echec de login avec ces infos</string>
+  <string name="comments_unavailable">Commentaires indisponibles</string>
+
+  <string name="bazaar_login">Login Bazaar</string>
+  <string name="set_new_login">Entrer nouveau login</string>
+  <string name="comment_added">Votre commentaire a été soumis</string>
+  <string name="comment_response_indicator">\@</string>
+  <string name="missing_user">Utilisateur non défini</string>
+  <string name="missing_password">Mot de passe non défini</string>
+  <string name="loading_likes">Likes loading...</string>
+
+  <string name="logging_in">Logging en cours...</string>
+  <string name="liking_unavailable">Appréciation indisponible</string>
+  <string name="loading_comments">Chargement des commentaires...</string>
+
+  <string name="new_account">Nouveau compte</string>
+  <string name="schedule_download">Programmation des téléchargements</string>
+  <string name="no_downloads_scheduled">Pas de téléchargement prévu!</string>
+  <string name="install_scheduled_confirm">WiFi détecté: Télécharger les applications en attente?</string>
+  <string name="no_selected_downloads">Pas de téléchargement sélectionné</string>
+  <string name="scheduled">Ajouter dans la programmation</string>
+  <string name="install_all_scheduled">Installer tous les téléchargements programmés?</string>
+  <string name="hw_specs">Spécification matérielle</string>
+  <string name="filter_apps">Filtrer applications</string>
+  <string name="filter_apps_description">Cacher applications incompatibles avec votre appareil</string>
+  <string name="automatic_install">Installer automatiquement</string>
+  <string name="automatic_install_description">Installer automatiquement téléchargements programmés si WiFi</string>
+  
+</resources>   

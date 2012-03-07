@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Instal·lar </string>
+    <string name="update">Actualitzar</string>
+    <string name="attention">Atenció</string>
+    
+    <string name="add_default_repo_confirm">Sembla que no has afegit cap respositori.\Et suggerim que utilitzis el nostre.\nVols afegir el nostre repositori?\n(Pots cercar més repositoris en línia)\n\n</string>   
+    <string name="md5_check_failed">Ha fallat la comprovació md5!\nSi us plau, actualitza la llista d\'aplicacions abans de reintentar.</string>
+    
+    
+    
+    
+    
+	<string name="download">Baixar</string>
+	<string name="fetching_app">Obtenint aplicació</string>
+	<string name="cant_connect">No s\'ha pogut connectar</string>
+	
+    <string name="no_sdcard">No tens targeta SD.\nSi us plau, inserta\'n una i reintenta.</string>
+    <string name="no_space_left_in_sdcard">No tens prou espai a la targeta SD\nAllibera una mica d\'espai i prova-ho un altre cop.</string>
+	
+    <string name="options">Opcions</string>
+    <string name="edit">Editar</string>
+    <string name="remove">Eliminar</string>
+    
+    <string name="remove_repo">Eliminar repositori</string>
+    <string name="remove_repo_confirm">Vols eliminar el repositori </string>
+    <string name="remove_repo_choose">Tria el repositori a eliminar</string>
+    <string name="edit_repo_choose">Tria el repositori a editar</string>
+    <string name="edit_repo">Editar repositori</string>
+    
+    
+    
+    
+    
+    <string name="repo_uri">URI del repositori: </string>
+    <string name="privt">Privat </string>
+    
+    <string name="freshness">Els més recents primer</string>
+    <string name="alphabetic">Alfabèticament </string>
+    <string name="stars">Valoració </string>
+    <string name="downloads">Nombre de descàrregues </string>
+
+    <string name="show_applications_by">Mostrar aplicacions: </string>
+    <string name="category">Per categoria </string>
+    <string name="all_applications">Totes les aplicacions </string>
+    
+    <string name="clear_cache">Buidar cache </string>
+    <string name="download_icons">Baixar icones</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Gestionar Repo</string>
+    <string name="settings">Preferències</string>
+    <string name="about">Sobre</string>
+    <string name="add_repo">Nou Repositori</string>
+    
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancel·lar</string>
+    <string name="done">Fet</string>
+    
+    
+    
+    
+    
+    <string name="available">Disponible</string>
+    <string name="installed">Instal·lat</string>
+    <string name="updates">Actualitzacions</string>
+    
+    <string name="name_of_application">Nom de l\'aplicació</string>    
+    <string name="aptoide_description">El teu instal·lador de paquets per al telèfon Android.\n</string>
+       
+</resources>   

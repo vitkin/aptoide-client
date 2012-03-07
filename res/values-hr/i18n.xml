@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Instaliraj </string>
+    <string name="update">Ažuriraj</string>
+    
+    <string name="attention">Pažnja</string>
+    <string name="add_default_repo_confirm">Izgleda kao da nemate dodanih repozitorija.\nMi sugestiramo da koristite naše.\nŽelite li dodati naš repozitorij?\n(Možete potražiti još repozitorija online)\n\n</string>
+    <string name="click_to_install_app">Pritisnite da instalirate aplikaciju:\n </string>
+    <string name="md5_check_failed">MD5 provjeravanje skinute aplikacije je neuspjesno!\nMolimo ažurirajte repozitorije prije ponovnog pokušaja.</string>
+
+    <string name="downgrade">Unazađenje</string>
+    <string name="uninstall">Ukloni</string>
+    
+    
+    
+    
+	<string name="download">Download</string>
+	<string name="fetching_app">Pokreće aplikaciju</string>
+	<string name="cant_connect">Nemože se spojiti sa serverom</string>
+
+	<string name="no_sdcard">Nemate SDcard, ili neradi pravilno\nMolimo ubacite je, ili je izbacite pa ponovo ubacite i pokušajte ponovo.</string>
+    <string name="no_space_left_in_sdcard">Nemate dovoljno mjesta na SDcard da koristite Aptoide\nMolimo oslobodite malo mjesta i pokušajte ponovo.</string>
+    
+    <string name="options">Opcije</string>
+    <string name="edit">Uredi</string>
+    <string name="remove">Ukloni</string>
+    
+    <string name="remove_repo">Ukloni repozitorij</string>
+    <string name="remove_repo_confirm">Želite li ukloniti repozitorij? </string>
+    <string name="remove_repo_choose">Izaberite repozitorije za ukloniti</string>
+    <string name="edit_repo_choose">Izaberite repozitorije za urediti</string>
+    <string name="edit_repo">Uredi repozitorij</string>
+    
+    <string name="update_available">Ažuriranje dostupno</string>
+    <string name="update_confirm">Novija verzija Aptoide\'a je dostupna,\nŽelite li je ažurirati?</string>
+    
+    <string name="install_selected">Instaliraj odabrano</string>
+    <string name="invert_selection">Obrni selekciju</string>
+    <string name="remove_selected">Ukloni odabrano</string>
+    <string name="remove_confirm">Jeste li sigurni da želite ukloniti?</string>
+    
+    
+    
+    
+    
+    <string name="repo_uri">URI do repo-a: </string>
+    <string name="privt">Privatno </string>
+    
+    <string name="sort_applications_by">Poredaj aplikacije po: </string>
+    <string name="freshness">Zadnji podaci </string>
+    <string name="alphabetic">Abecedom </string>
+    <string name="stars">Ocjena </string>
+    <string name="downloads">Download broj </string>
+
+    <string name="show_applications_by">Pokaži aplikacije: </string>
+    <string name="category">Po kategoriji </string>
+    <string name="all_applications">Sve aplikacije </string>
+    
+    <string name="clear_cache">Očisti cache </string>
+    <string name="download_icons">Download ikone</string>
+    
+    
+    
+    
+    <string name="manage_repos">Upravljaj radnjom</string>
+    <string name="display_options">Pokaži opcije</string>
+    <string name="settings">Opcije</string>
+    <string name="about">About</string>
+    <string name="add_repo">Nova radnja</string>
+
+    <string name="yes">Da</string>
+    <string name="no">Ne</string>
+    <string name="cancel">Otkaži</string>
+    <string name="done">Gotovo</string>
+
+    <string name="scheduled_downloads">Raspored Dwnl.</string>
+    
+    
+    
+    
+    <string name="available">Dostupno</string>
+    <string name="installed">Instalirano</string>
+    <string name="updates">Ažuriranje</string>
+    
+    <string name="name_of_application">Ime aplikacije</string>
+    <string name="aptoide_description">Vaš paket za instaliranje na android\n</string>
+        
+    <string name="version">Verzija</string>
+    <string name="size">Veličina</string>
+    <string name="comments">Komentari:</string>
+    <string name="reinstall">Ponovo instaliraj</string>
+    <string name="reply">Odgovori</string>
+    <string name="whattodo">Šta uraditi?</string>
+    <string name="likes">Lajkovi: </string>
+    <string name="dislikes">Dislajkovi: </string>
+    <string name="copy_to_clipboard">Kopiraj</string>
+    <string name="comment_on_app">Komentiraj app...</string>
+    <string name="submit">Dodaj</string>
+    <string name="body">Tijelo..</string>
+    <string name="subject">Predmet...</string>
+    <string name="username">Korisničko ime...</string>
+    <string name="password">Pasvord...</string>
+    <string name="show_password">Pokaži pasvord</string>
+    <string name="hide_password">Sakrij pasvord</string>
+    <string name="bad_login">Neuspješna prijava sa datim informacijama</string>
+    <string name="comments_unavailable">Komentari nedostupni</string>
+
+    <string name="bazaar_login">Bazaar Login</string>
+    <string name="set_new_login">Stavi novi login</string>
+
+    <string name="comment_added">Vaš komentar je uspješno objavljen</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">Korisnik nije definisan</string>
+    <string name="missing_password">Pasvord nije definisan</string>
+    <string name="loading_likes">Otvaranje lajkova...</string>
+    <string name="submitting">Objavljivanje vašeg komentara...</string>
+    <string name="logging_in">Logging in...</string>
+    <string name="liking_unavailable">Lijkoci nedostupni</string>
+    <string name="loading_comments">Otvara komentare...</string>
+    
+    <string name="new_account">Novi korisnik</string>
+    <string name="schedule">Download roasporeda</string>
+    <string name="no_downloads_scheduled">Nema rasporeda za skinuti !</string>
+    <string name="install_scheduled_confirm">Wireless detektovan: Skinuti sve aplikacije na rasporedu za skidanje ?</string>
+    <string name="no_selected_downloads">Nema selektovanih download-a</string>
+    <string name="scheduled">Dodani download-i na raspored</string>
+    <string name="install_all_scheduled">Želite li instalirati sve download\'e na rasporedu?</string>
+    <string name="hw_specs">Hardware Specifikacije</string>
+    <string name="filter_apps">Filtriraj aplikacije</string>
+    <string name="filter_apps_description">Nemoj pokazivati da aplikacije nisu kompatibilne sa uređajem.</string>
+    <string name="automatic_install">Automatska instalacija</string>
+    <string name="automatic_install_decription">Instaliraj pripremljene download-e automatski kada wifi bude dostupan.</string>
+    
+</resources>   

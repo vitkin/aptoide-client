@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Kur </string>
+    <string name="update">Güncelle</string>
+    <string name="attention">Dikkatinize</string>
+ 
+    <string name="add_default_repo_confirm">Hiçbir depo eklememişsiniz gibi görünüyor.\nBizim depomuzu eklemenizi öneririz.\nBizim depomuzu eklemek ister misiniz?\n(Çevrimiçinde ilâve depolar arayabilirsiniz)\n\n</string>
+    <string name="click_to_install_app">Uygulamayı yüklemek için dokununuz:\n </string>
+    <string name="md5_check_failed">İndirilen uygulamanın md5 karma değeri doğrulanamadı!\nDepolarınızı güncelleyip yeniden deneyiniz.</string>
+
+    <string name="downgrade">Eski sürüme dön</string>
+    <string name="uninstall">Kaldır</string>
+    
+    
+    
+    
+	<string name="download">İndir</string>
+	<string name="fetching_app">Uygulama indiriliyor</string>
+	<string name="cant_connect">Sunucuya bağlanılamadı</string>
+
+	<string name="no_sdcard">SD kartınız yok ya da gerektiği gibi çalışmıyor.\nBir kart takıp tekrar deneyiniz.</string>
+    <string name="no_space_left_in_sdcard">SD kartınızda Aptoide\'i kullanmak için yeterli alan yok\nYeterli boş alan yaratıp tekrar deneyiniz.</string>
+    
+    <string name="options">Seçenekler</string>
+    <string name="edit">Düzenle</string>
+    <string name="remove">Kaldır</string>
+    
+    <string name="remove_repo">Depoyu kaldır</string>
+    <string name="remove_repo_confirm">Depoyu kaldırmak istediğinizden emin misiniz? </string>
+    <string name="remove_repo_choose">Kaldırılacak depoyu seç</string>
+    <string name="edit_repo_choose">Düzenlenecek depoyu seç</string>
+    <string name="edit_repo">Depoyu düzenle</string>
+
+    <string name="update_available">Güncelleme mevcut</string>
+    <string name="update_confirm">Yeni bir aptoide sürümü mevcuttur,\ngüncellemek ister misiniz?</string>
+    
+    <string name="install_selected">Seçilenleri Kur</string>
+    <string name="invert_selection">Seçimleri tersine çevir</string>
+    <string name="remove_selected">Seçilenleri Kaldır</string>
+    <string name="remove_confirm">Kaldırmak istediğinizden emin misiniz?</string>
+    
+    
+    
+    
+    <string name="repo_uri">Depo adresi: </string>
+    <string name="privt">Özel </string>
+    
+    <string name="sort_applications_by">Uygulamaları şu şekilde sırala: </string>
+    <string name="freshness">Önce en yenileri </string>
+    <string name="alphabetic">Alfabetik olarak </string>
+    <string name="stars">Reytinge dayalı </string>
+    <string name="downloads">İndirme sayısına dayalı </string>
+
+    <string name="show_applications_by">Uygulamaların gösterimi: </string>
+    <string name="category">Kategoriler ile </string>
+    <string name="all_applications">Tüm uygulamalar </string>
+    
+    <string name="clear_cache">Ara belleği temizle </string>
+    <string name="download_icons">İkonları indir</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Depoyu Yönet</string>
+    <string name="display_options">Görünüm Ayarları</string>
+    <string name="settings">Ayarlar</string>
+    <string name="about">Hakkında</string>
+    <string name="add_repo">Yeni Depo</string>
+    
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="cancel">Vazgeç</string>
+    <string name="done">Tamamlandı</string>
+
+    <string name="scheduled_downloads">Programlanmış İnd.</string>
+    
+    
+    
+    
+    
+    <string name="available">Mevcut</string>
+    <string name="installed">Kurulu</string>
+    <string name="updates">Güncellemeler</string>
+    
+    <string name="name_of_application">Uygulamanın adı</string>
+    <string name="description">Android cihazınıza paket yükleyicisi.\n</string>
+        
+    <string name="version">Sürüm</string>
+    <string name="size">Boyut</string>
+    <string name="comments">Yorumlar:</string>
+    <string name="reinstall">Yeniden kur</string>
+    <string name="reply">Cevap</string>
+    <string name="likes">Beğeniler: </string>
+    <string name="dislikes">Beğenmemeler: </string>
+    <string name="copy_to_clipboard">Panoya kopyala</string>
+    <string name="comment_on_app">Uygulamayı yorumla...</string>
+    <string name="submit">Gönder</string>
+    <string name="body">Gövde..</string>
+    <string name="subject">Mevzu...</string>
+    <string name="username">Kullanıcı adı...</string>
+    <string name="password">Parola...</string>
+    <string name="show_password">Parolayı göster</string>
+    <string name="hide_password">Parolayı sakla</string>
+    <string name="bad_login">Girilen verilerle oturum açılamadı</string>
+    <string name="comments_unavailable">Yorumlar yüklenemedi</string>
+
+    <string name="bazaar_login">Bazaar Oturumu</string>
+    <string name="set_new_login">Yeni oturum yapılandır</string>
+    <string name="comment_added">Yorumunuz başarılı bir şekilde yollandı</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">Kullanıcı tanımlanmamıştır</string>
+    <string name="missing_password">Parola tanımlanmamıştır</string>
+    <string name="loading_likes">Beğeniler yükleniyor...</string>
+
+    <string name="logging_in">Oturum açılıyor...</string>
+    <string name="liking_unavailable">Beğeniler yüklenemedi</string>
+    <string name="loading_comments">Yorumlar yükleniyor...</string>
+
+    <string name="new_account">Yeni hesap</string>
+    <string name="schedule">İndirme Programla</string>
+    <string name="no_downloads_scheduled">Programlanmış hiçbir indirme yok!</string>
+    <string name="install_scheduled_confirm">Telsiz bağlantı tespit edildi: programlanmış tüm indirmeler indirilsin mi?</string>
+    <string name="no_selected_downloads">Hiçbir indirme seçilmedi</string>
+    <string name="scheduled">Programlanmış indirmelere eklendi</string>
+    <string name="install_all_scheduled">Tüm programlanmış indirmeleri kurmak istiyor musunuz?</string>
+    <string name="hw_specs">Donanım Özellikleri</string>
+    <string name="filter_apps">Uygulamaları Filtrele</string>
+    <string name="filter_apps_description">Cihazla uyumsuz uygulamaları gösterme.</string>
+    <string name="automatic_install">Otomatik Yükleme</string>
+    <string name="automatic_install_decription">Programlanmış indirmeleri bir WiFi bağlantısı bulunduğunda otomatik olarak yükle</string>
+    
+</resources>   

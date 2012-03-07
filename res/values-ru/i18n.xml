@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Установить </string>
+    <string name="update">Обновить</string>
+    <string name="attention">Внимание</string>
+
+    <string name="add_default_repo_confirm">Похоже у вас нет никакого дополнительного магазина.\nМы предлагаем вам использовать наш.\nВы хотите добавить наш магазин?\n(Вы можете найти более хранилищ, онлайн)\n\n</string>
+    <string name="click_to_install_app">Нажмите для установки приложений:\n </string>
+    <string name="md5_check_failed">Загруженное приложение md5 проверить не удалось!\nПожалуйста обновите приложение системы, прежде чем повторить попытку.</string>
+
+    <string name="downgrade">Понижение</string>
+    <string name="uninstall">Удалить</string>
+    
+    
+    
+    
+    <string name="download">Загрузка</string>
+    <string name="fetching_app">Получение приложения</string>
+    <string name="cant_connect">Не удается подключиться к серверу</string>
+
+    <string name="no_sdcard">SD карта не установлена, или она не работает должным образом\nПожалуйста вставьте одну, или повторно вставьте её и попробуйте ещё раз.</string>
+    <string name="no_space_left_in_sdcard">У вас недостаточно свободного места на SD карте чтобы использовать Aptoide\nПожалуйста освободите место и повторите попытку.</string>
+    
+    <string name="options">Опции</string>
+    <string name="edit">Редактировать</string>
+    <string name="remove">Удалить</string>
+    
+    <string name="remove_repo">Удалить магазин</string>
+    <string name="remove_repo_confirm">Вы хотите удалить магазин?</string>
+    <string name="remove_repo_choose">Выберите магазин чтобы удалить</string>
+    <string name="edit_repo_choose">Выберите магазин чтобы редактировать</string>
+    <string name="edit_repo">Редактировать магазин</string>
+    
+    <string name="update_available">Обновление доступно</string>
+    <string name="update_confirm">Новая версия Aptoide доступна,\nВы хотите обновить?</string>
+    
+    <string name="install_selected">Установить выбранное</string>
+    <string name="invert_selection">Убрать отметки</string>
+    <string name="remove_selected">Удалить выбранное</string>
+    <string name="remove_confirm">Вы действительно хотите удалить?</string>
+    
+    
+    
+    
+    
+    <string name="repo_uri">URI в магазин: </string>
+    <string name="privt">Частный </string>
+    
+    <string name="sort_applications_by">Порядок приложений по: </string>
+    <string name="freshness">Недавние </string>
+    <string name="alphabetic">По алфавиту </string>
+    <string name="stars">По рейтингу </string>
+    <string name="downloads">По количеству загрузок </string>
+
+    <string name="show_applications_by">Показать приложения: </string>
+    <string name="category">По категориям </string>
+    <string name="all_applications">Все приложения </string>
+    
+    <string name="clear_cache">Очистить кзш </string>
+    <string name="download_icons">Загрузить иконки</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Управление магазином</string>
+    <string name="display_options">Опции просмотра</string>
+    <string name="settings">Настройки</string>
+    <string name="about">О нас</string>
+    <string name="add_repo">Новый магазин</string>
+    
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="cancel">Отмена</string>
+    <string name="done">Завершено</string>
+
+    <string name="scheduled_downloads">Запланированные загрузки.</string>
+    
+    
+    
+    
+    <string name="available">Доступно</string>
+    <string name="installed">Установлено</string>
+    <string name="updates">Обновления</string>
+    
+    <string name="name_of_application">Имя приложения</string>
+    <string name="description">Ваш пакет установки для телефона Андроид.\n</string>
+        
+    <string name="version">Версия</string>
+    <string name="size">Размер</string>
+    <string name="comments">Комментарии:</string>
+    <string name="reinstall">Переустановите</string>
+    <string name="reply">Повторить</string>
+    <string name="likes">Нравится: </string>
+    <string name="dislikes">Не нравится: </string>
+    <string name="copy_to_clipboard">Копировать в буфер обмена</string>
+    <string name="comment_on_app">Комментарий приложения...</string>
+    <string name="submit">Принять</string>
+    <string name="body">Текст..</string>
+    <string name="subject">Тема...</string>
+    <string name="username">Имя пользователя...</string>
+    <string name="password">Пароль...</string>
+    <string name="show_password">Показать пароль</string>
+    <string name="hide_password">Скрыть пароль</string>
+    <string name="bad_login">Ошибка входа</string>
+    <string name="comments_unavailable">Комментарии недоступны</string>
+
+    <string name="bazaar_login">Bazaar логин</string>
+    <string name="set_new_login">Установить новый логин</string>
+    <string name="comment_added">Ваш комментарий успешно принят</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">Пользователь не определен</string>
+    <string name="missing_password">Пароль не определен</string>
+    <string name="loading_likes">Нравится загрузка...</string>
+
+    <string name="logging_in">Вход в систему...</string>
+    <string name="liking_unavailable">Нравится не доступно</string>
+    <string name="loading_comments">Загрузка комментариев...</string>
+
+    <string name="new_account">Новый аккаунт</string>
+    <string name="schedule">Запланированные загрузки</string>
+    <string name="no_downloads_scheduled">Нет запланированных загрузок!</string>
+    <string name="install_scheduled_confirm">Беспроводной обнаружен: Скачать все приложения на запланированные загрузки?</string>
+    <string name="no_selected_downloads">Нет выбранных загрузок</string>
+    <string name="scheduled">Добавленно в Запланированные Загрузки</string>
+    <string name="install_all_scheduled">Вы хотите, установить все запланированные загрузки?</string>
+    <string name="hw_specs">Аппаратные характеристики</string>
+    <string name="filter_apps">Фильтры приложений</string>
+    <string name="filter_apps_description">Не показывать приложений, не совместимых с устройством.</string>
+    <string name="automatic_install">Автоматическая установка</string>
+    <string name="automatic_install_decription">Устанавливать запланированные загрузки автоматически когда соединение по Wifi присутствует</string>
+    
+</resources>   

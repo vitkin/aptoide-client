@@ -1,5 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <string name="install">Instalar </string>
+    <string name="update">Actualizar</string>
+    <string name="attention">Atenção</string>
+
+    <string name="add_default_repo_confirm">Não tem nenhuma store adicionada.\nSugerimos que use a nossa.\nDeseja adicionar a nossa store?\n(Pode procurar por mais stores online)\n\n</string>
+    <string name="click_to_install_app">Click to install application:\n </string>
+    <string name="md5_check_failed">Ocorreu um erro no download (MD5 Check failed)!\nPor favor actualize as suas stores e tente novamente.</string>
+
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Desinstalar</string>
+    
+   
+    
+    
+ 	<string name="download">Download</string>
+    <string name="fetching_app">Recebendo aplicação</string>
+ 	<string name="cant_connect">Não é possível conectar</string>
+ 	
+    <string name="no_sdcard">Não foi detectado nenhum SDCard.\nPor favor insira um SDCard e tente novamente.</string>
+ 	<string name="no_space_left_in_sdcard">Não tem espaço suficiente no SDCard para executar o Aptoide\nPor favor liberte algum espaço e tente novamente.</string>
+    
+ 	<string name="options">Opções</string>
+ 	<string name="edit">Editar</string>
+ 	<string name="remove">Remover</string>
+ 	
+ 	<string name="remove_repo">Remover Store</string>
+ 	<string name="remove_repo_confirm">Deseja remover a store? </string>
+ 	<string name="remove_repo_choose">Escolha a store a remover</string>
+ 	<string name="edit_repo_choose">Escolha a store a editar</string>
+ 	<string name="edit_repo">Editar store</string>
+ 	
+ 	<string name="update_available">Actualização disponível</string>
+ 	<string name="update_confirm">Existe uma actualização do Aptoide,\ndeseja actualizar?</string>
+ 	
+ 	<string name="install_selected">Instalar Seleccionados</string>
+    <string name="invert_selection">Inverter Selecção</string>
+    <string name="remove_selected">Remover Seleccionados</string>
+    <string name="remove_confirm">Tem a certeza que deseja remover?</string>
+ 	
+    
+    
+    
+    <string name="repo_uri">URI da store: </string>
+    <string name="privt">Privado </string>
+    
+    <string name="sort_applications_by">Ordenar aplicações por: </string>
+    <string name="freshness">Recentes </string>
+    <string name="alphabetic">Alfabeticamente </string>
+    <string name="stars">Rating </string>
+    <string name="downloads">Número Downloads </string>
+
+    <string name="show_applications_by">Mostrar Aplicações: </string>
+    <string name="category">Por categoria </string>
+    <string name="all_applications">Todas as aplicações </string>
+    
+    <string name="clear_cache">Limpar cache </string>
+    <string name="download_icons">Download de icons</string>
+    
+    
+    
+    
+    <string name="manage_repos">Gerir Store</string>
+    <string name="display_options">Opções de exibição</string>
+    <string name="settings">Definições</string>
+    <string name="about">Sobre</string>
+    <string name="add_repo">Nova Store</string>
+    
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <string name="cancel">Cancelar</string>
+    <string name="done">Pronto</string>
+    
+    <string name="scheduled_downloads">Downloads Agendados</string>
+    
+    
+    
+    
+    <string name="available">Disponíveis</string>
+    <string name="installed">Instalados</string>
+    <string name="updates">Actualizações</string>
+    
+    <string name="name_of_application">Nome da aplicação</string>
+    <string name="aptoide_description">Your package installer to Android phone.\n</string>
+    
+    <string name="version">Versão</string>
+    <string name="size">Tamanho</string>
+    <string name="comments">Comentários:</string>
+    <string name="reinstall">Reinstalar</string>
+    <string name="reply">Responder</string>
+    <string name="likes">Likes: </string>
+    <string name="dislikes">Don\'t likes: </string>
+    <string name="copy_to_clipboard">Copiar para a clipboard</string>
+    <string name="comment_on_app">Comentar aplicação...</string>
+    <string name="submit">Submeter</string>
+    
+    <string name="body">Corpo..</string>
+    <string name="subject">Assunto...</string>
+    <string name="username">User name...</string>
+    <string name="password">Password...</string>
+    <string name="show_password">Mostrar password</string>
+    <string name="hide_password">Esconder password</string>
+    <string name="bad_login">Login inválido</string>
+    <string name="comments_unavailable">Comnetários não disponíveis</string>
+    <string name="bazaar_login">Bazaar Login</string>
+    <string name="set_new_login">Definir novo login</string>
+    <string name="comment_added">Comentário submetido com sucesso</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">Uilizador não definido</string>
+    <string name="missing_password">Password não definida</string>
+    <string name="loading_likes">A carregar likes...</string>
+    <string name="submitting">A submeter...</string>
+    
+    <string name="logging_in">Logging in...</string>
+    <string name="liking_unavailable">Likes não disponíveis</string>
+    <string name="loading_comments">A carregar comentários...</string>
+    
+    <string name="new_account">Nova conta</string>
+	<string name="schedule">Agendar download</string>
+	<string name="no_downloads_scheduled">Sem downloads agendados!</string>
+	<string name="install_scheduled_confirm">Wireless detectado: Fazer download de todas as aplicações nos down. agendados?</string>
+	<string name="no_selected_downloads">Sem downloads seleccionados</string>
+	<string name="scheduled">Download agendado</string>
+	<string name="install_all_scheduled">Instalar todos os downloads agendados?</string>
+	<string name="hw_specs">Especificações Hardware</string>
+	<string name="filter_apps">Filtrar Aplicações</string>
+	<string name="filter_apps_description">Não mostrar aplicações não compatíveis com este dispositivo</string>
+	<string name="automatic_install">Instalação automática</string>
+	<string name="automatic_install_description">Instalar downloads agendados automaticamente quando uma ligação Wifi está presente.</string>
     
 </resources>
