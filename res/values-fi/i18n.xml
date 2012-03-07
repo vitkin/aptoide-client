@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Asenna </string>
+    <string name="update">Päivitä</string>
+    <string name="attention">Huomio</string>
+
+    <string name="add_default_repo_confirm">Näyttää siltä, että sinulla ei ole lisättynä yhtään varastoa. Suosittelemme omaamme.\nHaluatko lisätä oman varastomme?\n(Voit etsiä varastoja (repository) internetistä)\n\n</string>
+    <string name="click_to_install_app">Asenna sovellus napsauttamalla:\n </string>
+    <string name="md5_check_failed">Ladatun sovelluksen md5-tarkistus epäonnistui!\nPäivitä varastot ja yritä uudelleen.</string>
+
+    <string name="downgrade">Vanha versio</string>
+    <string name="uninstall">Poista</string>
+    
+    
+    
+    
+    <string name="download">Lataa</string>
+	<string name="fetching_app">Noudetaan sovellusta</string>
+	<string name="cant_connect">Palvelinyhteys epäonnistui</string>
+
+	<string name="no_sdcard">Sinulla ei ole SD-muistikorttia tai se ei toimi oikein.\nAseta muistikortti ja yritä uudelleen.</string>
+    <string name="no_space_left_in_sdcard">SD-muistikortillasi ei ole tarpeeksi tilaa käyttääksesi Aptoidea.\nVapauta tilaa ja yritä uudelleen.</string>
+    
+    <string name="options">Asetukset</string>
+    <string name="edit">Muokkaa</string>
+    <string name="remove">Poista</string>
+    
+    <string name="remove_repo">Poista varasto</string>
+    <string name="remove_repo_confirm">Haluatko poistaa varaston? </string>
+    <string name="remove_repo_choose">Valitse poistettava varasto</string>
+    <string name="edit_repo_choose">Valitse muokattava varasto</string>
+    <string name="edit_repo">Muokkaa varastoa</string>
+    
+    <string name="update_available">Päivitys saatavilla</string>
+    <string name="update_confirm">Aptoiden uudempi versio on saatavilla,\nhaluatko päivittää?</string>
+    
+    <string name="install_selected">Asenna valitut</string>
+    <string name="invert_selection">Päinvastainen valinta</string>
+    <string name="remove_selected">Poista valitut</string>
+    <string name="remove_confirm">Haluatko varmasti poistaa?</string>
+    
+    
+    
+    
+    
+    <string name="repo_uri">Varaston URL: </string>
+    <string name="privt">Yksityinen </string>
+    
+    <string name="sort_applications_by">Järjestä sovellukset: </string>
+    <string name="freshness">Viimeisin ensin </string>
+    <string name="alphabetic">Aakkosjärjestys </string>
+    <string name="stars">Luokitus </string>
+    <string name="downloads">Latausmäärä </string>
+
+    <string name="show_applications_by">Näytä sovellukset: </string>
+    <string name="category">Kategorioittain </string>
+    <string name="all_applications">Kaikki sovellukset </string>
+    
+    <string name="clear_cache">Tyhjennä välimuisti </string>
+    <string name="download_icons">Lataa kuvakkeet</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Varastohallinta</string>
+    <string name="display_options">Näyttöasetukset</string>
+    <string name="settings">Asetukset</string>
+    <string name="about">Tietoja</string>
+    <string name="add_repo">Uusi varasto</string>
+    
+    <string name="yes">Kyllä</string>
+    <string name="no">Ei</string>
+    <string name="cancel">Peruuta</string>
+    <string name="done">Valmis</string>
+    
+    <string name="scheduled_downloads">Ajast. lataukset</string>
+    
+    
+    
+    
+      
+    <string name="available">Saatavilla</string>
+    <string name="installed">Asennettu</string>
+    <string name="updates">Päivitykset</string>
+    
+    
+    <string name="name_of_application">Sovelluksen nimi</string>
+    <string name="aptoide_description">Asennusohjelma Android-puhelimeesi.\n</string>
+    
+    <string name="version">Versio</string>
+    <string name="size">Koko</string>
+    <string name="comments">Kommentit:</string>
+    <string name="reinstall">Asenna uudelleen</string>
+    <string name="reply">Vastaa</string>
+    <string name="likes">Tykkää: </string>
+    <string name="dislikes">Ei tykkää: </string>
+    <string name="copy_to_clipboard">Kopioi leikepöydälle</string>
+    <string name="comment_on_app">Kommentointi...</string>
+    <string name="submit">Lähetä</string>
+    <string name="body">Runko...</string>
+    <string name="subject">Aihe...</string>
+    <string name="username">Käyttäjänimi...</string>
+    <string name="password">Salasana...</string>
+    <string name="show_password">Näytä salasana</string>
+    <string name="hide_password">Piilota salasana</string>
+    <string name="bad_login">Kirjautuminen näillä tunnuksilla epäonnistui</string>
+    <string name="comments_unavailable">Ei kommentteja</string>
+    <string name="bazaar_login">Bazaar-kirjautuminen</string>
+    <string name="set_new_login">Aseta uusi kirjautuminen</string>
+    <string name="comment_added">Kommenttisi on lähetetty onnistuneesti</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">Käyttäjää ei määritelty</string>
+    <string name="missing_password">Salasanaa ei määritelty</string>
+    <string name="loading_likes">Ladataan tykkäämisiä...</string>
+    
+    
+    <string name="logging_in">Kirjautuu...</string>
+    <string name="liking_unavailable">Tykkäämisiä ei saatavilla</string>
+    <string name="loading_comments">Ladataan kommentteja...</string>
+
+    <string name="new_account">Uusi tili</string><string name="schedule">Ajastettu lataus</string>
+    <string name="no_downloads_scheduled">Ei ajastettuja latauksia!</string>
+    <string name="install_scheduled_confirm">WLAN havaittu: Lataa kaikki ajastetut sovellukset?</string>
+    <string name="no_selected_downloads">Ei latauksia valittuna</string>
+    <string name="scheduled">Lisätty ajastettuihin latauksiin</string>
+    <string name="install_all_scheduled">Haluatko asentaa kaikki ajastetut lataukset?</string>
+    <string name="hw_specs">Laitteistotiedot</string>
+    <string name="filter_apps">Suodata sovelluksia</string>
+    <string name="filter_apps_description">Älä näytä sovelluksia, jotka eivät ole laitteesi kanssa yhteensopivia.</string>
+    <string name="automatic_install">Automaattinen asennus</string>
+    <string name="automatic_install_decription">Asenna ajastetut lataukset automaattisesti, kun WLAN-yhteys on käytettävissä</string>
+    
+</resources>   

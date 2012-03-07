@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Installieren </string>
+    <string name="update">Update</string>
+    <string name="attention">Achtung</string>
+    
+	<string name="add_default_repo_confirm">Sie haben der Liste keine Stores hinzugefügt.\nWir empfehlen die Benutzung unseres Stores.\nMöchten Sie unseren Store hinzufügen?\n(Sie können online nach weiteren Stores suchen)\n\n</string>
+    <string name="click_to_install_app">Zur Installation berühren:\n </string>
+	<string name="md5_check_failed">Die MD5 Prüfung der geladenen Anwendung ist fehlgeschlagen!\nBitte aktualisieren Sie Ihre Stores und versuchen Sie es erneut.</string>
+	
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Deinstallieren</string>
+    
+    
+    
+    
+    
+	<string name="download">Download</string>
+	<string name="fetching_app">Rufe Anwendungen ab</string>
+	<string name="cant_connect">Keine Verbindung zum Server</string>
+	
+    <string name="no_sdcard">Sie haben keine SD-Karte.\nBitte legen Sie eine ein und versuchen es erneut.</string>
+    <string name="no_space_left_in_sdcard">Nicht genug freier Speicher auf SD-Karte für Aptoide verfügbar.\nBitte geben Sie etwas Speicher frei und versuchen es erneut.</string>
+      
+    <string name="options">Optionen</string>
+    <string name="edit">Bearbeiten</string>
+    <string name="remove">Entfernen</string>
+    
+    <string name="remove_repo">Store entfernen</string>
+    <string name="remove_repo_confirm">Möchten Sie den Store entfernen?</string>
+    <string name="remove_repo_choose">Wählen Sie einen Store zum entfernen</string>
+    <string name="edit_repo_choose">Wählen Sie einen Store zum bearbeiten</string>
+    <string name="edit_repo">Store bearbeiten</string>
+       
+    <string name="update_available">Aktualisierung verfügbar</string>
+    <string name="update_confirm">Eine neue Version von Aptoide ist verfügbar,\nmöchten Sie Aktualisieren?</string>
+    
+    <string name="install_selected">Auswahl Installieren</string>
+    <string name="invert_selection">Auswahl umkehren</string>
+    <string name="remove_selected">Auswahl entfernen</string>
+    <string name="remove_confirm">Sind Sie sicher, dass Sie die ausgewählten Objekte entfernen möchten?</string>
+   
+    
+    
+    
+    
+    <string name="repo_uri">Store-URI: </string>
+    <string name="privt">Privat </string>
+    
+    <string name="sort_applications_by">Sortieren nach: </string>
+    <string name="freshness">Aktuellste zuerst </string>
+    <string name="alphabetic">Alphabetisch </string>
+    <string name="stars">Bewertung </string>
+    <string name="downloads">Downloadanzahl </string>
+
+    <string name="show_applications_by">Zeige Anwendungen: </string>
+    <string name="category">Nach Kategorie </string>
+    <string name="all_applications">Alle Andwendungen </string>
+ 
+    <string name="clear_cache">Zwischenspeicher löschen </string>
+    <string name="download_icons">Download Icons</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Store verwalten</string>
+    <string name="display_options">Display Options</string>
+    <string name="settings">Einstellungen</string>
+    <string name="about">Über</string>
+    <string name="add_repo">Neuer Store</string>
+    
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="done">Fertig</string>
+    
+    <string name="scheduled_downloads">Geplante Dwnl.</string>
+    
+    
+    
+    
+    <string name="available">Verfügbar</string>
+    <string name="installed">Installiert</string>
+    <string name="updates">Updates</string>
+    
+    <string name="name_of_application">Name der Anwendung</string>
+    <string name="aptoide_description">Ihr Package Installer für Android Geräte.\n</string>
+    
+    <string name="version">Version</string>
+    <string name="size">Größe</string>
+    <string name="comments">Kommentare:</string>
+    <string name="reinstall">Erneut Installieren</string>
+    <string name="reply">Antworten</string>
+    <string name="likes">Likes: </string>
+    <string name="dislikes">Dislikes: </string>
+    <string name="copy_to_clipboard">In Zwischenablage kopieren</string>
+    <string name="comment_on_app">App Kommentieren...</string>
+    <string name="submit">Senden</string>
+    
+    <string name="body">Body..</string>
+    <string name="subject">Betreff...</string>
+    <string name="username">Benutzername...</string>
+    <string name="password">Passwort...</string>
+    <string name="show_password">Passwort anzeigen</string>
+    <string name="hide_password">Passwort ausblenden</string>
+    <string name="bad_login">Login mit den angegebenen Daten fehlgeschlagen</string>
+    <string name="comments_unavailable">Kommentare nicht verfügbar</string>
+	<string name="bazaar_login">Bazaar Login</string>
+    <string name="set_new_login">Neuen Login erstellen</string>
+	<string name="comment_added">Ihr Kommentar wurde übermittelt</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">Kein Benutzer definiert</string>
+    <string name="missing_password">Passwort nicht definiert</string>
+    <string name="loading_likes">Lade Likes...</string>
+    <string name="submitting">Kommentar wird gepostet...</string>
+	
+	<string name="logging_in">Anmelden...</string>
+    <string name="liking_unavailable">Likes nicht verfügbar</string>
+    <string name="loading_comments">Lade Kommentare...</string>
+	<string name="new_account">Neuer Account</string>
+    <string name="schedule">Geplanter Download</string>
+    <string name="no_downloads_scheduled">Keine geplanten Downloads!</string>
+    <string name="install_scheduled_confirm">Wireless erkannt: Alle Downloads zum Download einplanen?</string>
+    <string name="no_selected_downloads">Keine Downloads ausgewählt</string>
+    <string name="scheduled">Download geplant</string>
+    <string name="install_all_scheduled">Alle geplanten Downloads installieren?</string>
+    <string name="hw_specs">Technische Daten</string>
+    <string name="filter_apps">App Filter</string>
+    <string name="filter_apps_description">Apps ausblenden, die nicht mit Ihrem Gerät kompatibel sind.</string>
+    <string name="automatic_install">Automatische Installation</string>
+    <string name="automatic_install_decription">Geplante Downloads automatisch installieren, wenn eine WiFi-Verbindung besteht</string>
+</resources>   

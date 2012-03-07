@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Installeren</string>
+    <string name="update">Update</string>
+    <string name="attention">Attentie</string>
+    
+    <string name="add_default_repo_confirm">Het lijkt erop dat je geen voorraden hebt toegevoegd.\nWe raden aan om onze te gebruiken.\nWil je onze voorraden toevoegen?\n(Je kan online voor meer voorraden zoeken)\n\n</string>
+    <string name="click_to_install_app">Klik om toepassing te installeren:\n</string>
+    <string name="md5_check_failed">Md5 controle van gedownloade toepassing is mislukt!\nVernieuw de voorraden voor opnieuw proberen.</string>
+
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Uninstall</string>
+    
+    
+    
+    
+    <string name="download">Download</string>
+    <string name="fetching_app">Toepassing wordt opgehaald</string>
+    <string name="cant_connect">Kan niet verbinden met server</string>
+
+    <string name="no_sdcard">Je hebt geen SD kaart of het werkt niet naar behoren\nA.u.b. erin doen of opnieuw inzetten en proberen.</string>
+    <string name="no_space_left_in_sdcard">Je hebt geen genoeg ruimte op je SD kaart om Aptoide te gebruiken\nRuimte vrijmaken en opnieuw proberen a.u.b.</string>
+
+    <string name="options">Opties</string>
+    <string name="edit">Bewerken</string>
+    <string name="remove">Verwijderen</string>
+    <string name="remove_repo">Verwijder voorraad</string>
+    <string name="remove_repo_confirm">Wil je voorraad verwijderen?</string>
+    <string name="remove_repo_choose">Kies voorraad om te verwijderen</string>
+    <string name="edit_repo_choose">Kies voorraad om te bewerken</string>
+    <string name="edit_repo">Voorraad bewerken</string>
+
+    <string name="update_available">Update beschikbaar</string>
+    <string name="update_confirm">Er is een nieuwe versie van Aptoide beschikbaar,\nwil je updaten?</string>
+    <string name="install_selected">Geselecteerde installeren</string>
+    <string name="invert_selection">Selectie omkeren</string>
+    <string name="remove_selected">Geselecteerde verwijderen</string>
+    <string name="remove_confirm">Weet je zeker dat je wil verwijderen?</string>
+    
+    
+    
+    
+    <string name="repo_uri">URI naar voorraad:</string>
+    <string name="privt">Prive</string>
+    <string name="sort_applications_by">Sorteer toepassingen op:</string>
+    <string name="freshness">Meest nieuwe eerst</string>
+    <string name="alphabetic">Alfabetisch</string>
+    <string name="stars">Waardebepaling</string>
+    <string name="downloads">Aantal downloads</string>
+    <string name="show_applications_by">Toepassingen laten zien:</string>
+    <string name="category">Op categorie</string>
+    <string name="all_applications">Alle toepassingen</string>
+
+    <string name="clear_cache">Cache leegmaken</string>
+    <string name="download_icons">Download iconen</string>
+    
+    
+    
+    
+    <string name="manage_repos">Voorraad beheren</string>
+    <string name="display_options">Display Opties</string>
+    <string name="settings">Instellingen</string>
+    <string name="about">Over</string>
+    <string name="add_repo">Nieuwe Voorraad</string>
+
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <string name="cancel">Annuleren</string>
+    <string name="done">Klaar</string>
+
+    <string name="scheduled_downloads">Geplande Dwnl.</string>
+    
+    
+    
+    
+    
+    <string name="available">Beschikbaar</string>
+    <string name="installed">Geïnstalleerd</string>
+    <string name="updates">Updates</string>
+
+    <string name="name_of_application">Naam van toepassing</string>
+    <string name="aptoide_description">Je pakketten installatie gereedschap voor je Android toestel.\n</string>
+
+    <string name="version">Versie</string>
+    <string name="size">Grootte</string>
+    <string name="comments">Commentaren:</string>
+    <string name="reinstall">Opnieuw installeren</string>
+    <string name="reply">Beantwoorden</string>
+    <string name="likes">Leuks:</string>
+    <string name="dislikes">Niet  leuks:</string>
+    <string name="copy_to_clipboard">Kopieer naar klembord</string>
+    <string name="comment_on_app">Geef commentaar...</string>
+    <string name="submit">Sturen</string>
+    <string name="body">Boodschap..</string>
+    <string name="subject">Onderwerp...</string>
+    <string name="username">Gebruikersnaam...</string>
+    <string name="password">Wachtwoord...</string>
+    <string name="show_password">Laat wachtwoord zien</string>
+    <string name="hide_password">Verberg wachtwoord</string>
+    <string name="bad_login">Inloggen niet gelukt met de ingevoerde gegevens</string>
+    <string name="comments_unavailable">Commentaren niet beschikbaar</string>
+
+    <string name="bazaar_login">Bazaar Login</string>
+    <string name="set_new_login">Nieuwe login maken</string>
+    <string name="comment_added">Je commentaar is met succes geplaatst</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">Gebruiker niet bekend</string>
+    <string name="missing_password">Wachtwoord niet bekend</string>
+    <string name="loading_likes">Leuks wordt geladen...</string>
+    <string name="submitting">Je commentaar wordt gepost...</string>
+
+    <string name="logging_in">Je wordt ingelogd...</string>
+    <string name="liking_unavailable">Leuks niet beschikbaar</string>
+    <string name="loading_comments">Commentaren worden geladen...</string>
+
+    <string name="new_account">Nieuwe account</string>
+    <string name="schedule">Download plannen</string>
+    <string name="no_downloads_scheduled">Geen geplande downloads!</string>
+    <string name="install_scheduled_confirm">Wifi gevonden: Alle geplande toepassingen downloaden?</string>
+    <string name="no_selected_downloads">Geen downloads geselecteerd</string>
+    <string name="scheduled">Toegevoegd aan geplande downloads</string>
+    <string name="install_all_scheduled">Wil je alle geplande downloads installeren?</string>
+    
+</resources>   

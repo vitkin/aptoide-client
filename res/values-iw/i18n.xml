@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">התקנה</string>
+    <string name="update">עדכון</string>
+    <string name="attention">שים לב</string>
+    
+    <string name="add_default_repo_confirm">נראה כי רשימת החנויות שלך ריקה.\nאנו ממליצים לך להשתמש בשלנו.\nהאם ברצונך להוסיף את החנות שלנו?\n(באפשרותך לחפש אחר חנויות נוספות ברשת)\n\n</string>
+    <string name="click_to_install_app">לחץ להתקנת היישום:\n</string>
+    <string name="md5_check_failed">בדיקת md5 של היישום נכשלה!\nאנא עדכן את רשימת החנויות שלך, ולאחר מכן נסה שנית.</string>
+
+    <string name="downgrade">שנמוך</string>
+    <string name="uninstall">הסרה</string>
+    
+    
+    
+    
+    <string name="download">הורדה</string>
+    <string name="fetching_app">קורא יישום</string>
+    <string name="cant_connect">לא ניתן להתחבר לשרת</string>
+
+    <string name="no_sdcard">אין ברשותך כרטיס זיכרון, או שהוא אינו עובד כראוי.\nאנא הכנס כרטיס או הכנס כרטיס מחדש, ולאחר מכן נסה שנית.</string>
+    <string name="no_space_left_in_sdcard">אין בכרטיס הזיכרון שברשותך מספיק מקום על מנת להשתמש באפטויד.\nאנא פנה מעט מקום ולאחר מכן נסה שנית.</string>
+
+    <string name="options">אפשרויות</string>
+    <string name="edit">עריכה</string>
+    <string name="remove">הסרה</string>
+    <string name="remove_repo">הסר חנות</string>
+    <string name="remove_repo_confirm">האם ברצונך להסיר את החנות?</string>
+    <string name="remove_repo_choose">בחר את החנות שברצונך להסיר</string>
+    <string name="edit_repo_choose">בחר את החנות שברצונך לערוך</string>
+    <string name="edit_repo">ערוך חנות</string>
+
+    <string name="update_available">עדכון זמין</string>
+    <string name="update_confirm">קיימת גרסה חדשה יותר של אפטויד.\nהאם ברצונך לעדכן?</string>
+    <string name="install_selected">התקן נבחרים</string>
+    <string name="invert_selection">הפוך בחירה</string>
+    <string name="remove_selected">הסר נבחרים</string>
+    <string name="remove_confirm">האם אתה בטוח שברצונך להסיר?</string>
+    
+    
+    
+    
+    <string name="repo_uri">URI לשמירה:</string>
+    <string name="privt">פרטי</string>
+    <string name="sort_applications_by">מיין יישומים על פי:</string>
+    <string name="freshness">עודכן לאחרונה</string>
+    <string name="alphabetic">סדר אלפביתי</string>
+    <string name="stars">דירוג</string>
+    <string name="downloads">מספר הורדה</string>
+    <string name="show_applications_by">הצג יישומים:</string>
+    <string name="category">על פי קטגוריה</string>
+    <string name="all_applications">כל היישומים</string>
+
+    <string name="clear_cache">נקה מטמון</string>
+    <string name="download_icons">הורד סמלים</string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">נהל חנות</string>
+    <string name="display_options">אפשרויות תצוגה</string>
+    <string name="settings">הגדרות</string>
+    <string name="about">אודות</string>
+    <string name="add_repo">חנות חדשה</string>
+
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
+    <string name="cancel">ביטול</string>
+    <string name="done">סיום</string>
+
+    <string name="scheduled_downloads">הורדות ממתינות</string>
+    
+    
+    
+    
+    <string name="available">זמין</string>
+    <string name="installed">מותקן</string>
+    <string name="updates">עדכונים</string>
+
+    <string name="name_of_application">שם היישום</string>
+    <string name="aptoide_description">מתקין החבילות שלך למכשיר האנדרואיד\n</string>
+
+    <string name="version">גרסה</string>
+    <string name="size">גודל</string>
+    <string name="comments">תגובות:</string>
+    <string name="reinstall">התקן מחדש</string>
+    <string name="reply">הגב</string>
+    <string name="likes">אוהבים:</string>
+    <string name="dislikes">לא אוהבים:</string>
+    <string name="copy_to_clipboard">העתק ללוח</string>
+    <string name="comment_on_app">הגב על היישום...</string>
+    <string name="submit">שלח</string>
+    <string name="body">גוף ההודעה...</string>
+    <string name="subject">נושא...</string>
+    <string name="username">שם משתמש...</string>
+    <string name="password">סיסמא...</string>
+    <string name="show_password">הצג סיסמא</string>
+    <string name="hide_password">הסתר סיסמא</string>
+    <string name="bad_login">אחד או יותר מהנתונים שהזנת שגוי.</string>
+    <string name="comments_unavailable">תגובות זמינות</string>
+
+    <string name="bazaar_login">התחברות לבזאר</string>
+    <string name="set_new_login">הגדר התחברות חדשה</string>
+    <string name="comment_added">תגובתך פורסמה בהצלחה</string>
+    <string name="comment_response_indicator">\@</string>
+    <string name="missing_user">משתמש לא מוגדר</string>
+    <string name="missing_password">סיסמא לא מוגדרת</string>
+    <string name="loading_likes">טוען רשימת אוהבים...</string>
+    <string name="submitting">מפרסם תגובה...</string>
+
+    <string name="logging_in">מתחבר...</string>
+    <string name="liking_unavailable">רשימת אוהבים לא זמינה</string>
+    <string name="loading_comments">טוען תגובות...</string>
+
+    <string name="new_account">משתמש חדש</string>
+    <string name="schedule">הוסף להמתנה</string>
+    <string name="no_downloads_scheduled">אין הורדות ממתינות!</string>
+    <string name="install_scheduled_confirm">רשת אלחוטית זמינה! להתחיל בביצוע ההורדות הממתינות?</string>
+    <string name="no_selected_downloads">לא נבחרו הורדות</string>
+    <string name="scheduled">נוסף לרשימת ההמתנה</string>
+    <string name="install_all_scheduled">האם ברצונך להתקין את כל ההורדות הממתינות?</string>
+    <string name="hw_specs">מאפייני חומרה</string>
+    <string name="filter_apps">סינון יישומים</string>
+    <string name="filter_apps_description">אל תציג יישומים שאינם תואמים את חומרת המכשיר שלי.</string>
+    <string name="automatic_install">התקנה אוטומטית</string>
+    <string name="automatic_install_decription">התקן אוטומטית הורדות ממתינות כאשר ישנה רשת אלחוטית זמינה</string>
+    
+</resources>   

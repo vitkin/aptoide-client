@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     
+    <string name="install">Instalar </string>
+    <string name="update">Actualizar </string>
+    <string name="attention">Atencion </string>
+    
+    <string name="add_default_repo_confirm">Parece que no tienes agregado ningun repositorio.\nTe sugerimos usar los nuestros.\nDeseas agregar nuestro repositorio?\n(Puedes buscar mas repositorios en linea)\n\n</string>
+    <string name="md5_check_failed">El chequeo md5 ha fallado!\nPor favor actualiza tu aplicacion antes de continuar.</string>
+    
+    
+    
+    
+    
+	<string name="download">Descarga</string>
+	<string name="fetching_app">Obteniendo aplicacion</string>
+	<string name="cant_connect">No conecta el servidor</string>
+    <string name="no_sdcard">No tienes una SDcard.\nPor favor inserta una e intenta nuevamente.</string>
+    <string name="no_space_left_in_sdcard">No tienes espacio suficiente en tu SDcard para utilizar Aptoide\nPor favor libera algo de espacio e intenta nuevamente.</string>
+ 
+    
+    
+    
+    
+    <string name="repo_uri">URI al repositorio: </string>
+    <string name="privt">Privado </string>
+    
+    <string name="sort_applications_by">Ordenar aplicaciones por: </string>
+    <string name="freshness">Mas reciente primero </string>
+    <string name="alphabetic">Alfabeticamente </string>
+    <string name="stars">Ranking </string>
+    <string name="downloads">Numero de descarga </string>
+
+    <string name="show_applications_by">Mostrar aplicaciones: </string>
+    <string name="category">Por categoria </string>
+    <string name="all_applications">Todas las aplicaciones </string>
+    
+    <string name="clear_cache">Limpiar Cache </string>
+    
+    
+    
+    
+    
+    <string name="manage_repos">Administrar Repo</string>
+    <string name="settings">Opciones</string>
+    <string name="about">Acerca de</string>
+    <string name="add_repo">Nuevo Repositorio</string>
+    <string name="yes">Si</string>
+    <string name="no">No</string>
+    <string name="cancel">Cancelar</string>
+    <string name="done">Listo</string>
+    
+    
+    
+    
+      
+    <string name="available">Disponible</string>
+    <string name="installed">Instalada</string>
+    <string name="updates">Actualizaciones</string>
+    <string name="name_of_application">Nombre de la aplicacion</string>
+    <string name="aptoide_description">Paquete de instalacion para telefono Android.\n</string>
+  
+</resources>   
