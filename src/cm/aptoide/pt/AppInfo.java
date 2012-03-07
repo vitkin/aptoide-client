@@ -573,10 +573,10 @@ public class AppInfo extends Activity {
 			appStarsRating.setRating(new Float(appStars));
 
 			appLikes = selectedVersion.getStats().getLikes();
-			appLikesTextView.setText(getString(R.string.likes)+": "+appLikes);
+			appLikesTextView.setText(""+appLikes);
 
 			appDislikes = selectedVersion.getStats().getDislikes();
-			appDislikesTextView.setText(getString(R.string.dislikes)+": "+appDislikes);
+			appDislikesTextView.setText(""+appDislikes);
 		}
 	}
 
