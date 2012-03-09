@@ -561,7 +561,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	@Override
 	public void onCreate() {
 	    if(!isRunning){
+
 	    	splash();
+	    	
+	    	managerDatabase = new ManagerDatabase(this);
+			managerPreferences = new ManagerPreferences(this);
+			managerSystemSync = new ManagerSystemSync(this);
+			managerNotifications = new ManagerNotifications(this);
+			managerDownloads = new ManagerDownloads(this);
+			managerXml = new ManagerXml(this);
+			
 	    	
 	    	reposInserting = new ArrayList<Integer>();
 			
@@ -574,13 +583,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	    	
 			aptoideClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
 			appInfoClients = new HashMap<Integer, AIDLAppInfo>();
-			
-			managerPreferences = new ManagerPreferences(this);
-			managerSystemSync = new ManagerSystemSync(this);
-			managerDatabase = new ManagerDatabase(this);
-			managerNotifications = new ManagerNotifications(this);
-			managerDownloads = new ManagerDownloads(this);
-			managerXml = new ManagerXml(this);
+
 			
 			syncingInstalledApps = new AtomicBoolean(false);
 			
@@ -593,7 +596,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			
 			checkForSelfUpdate();
 			
-			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+//			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 			
 			isRunning = true;
 			Log.d("Aptoide ServiceData", "Service started");
@@ -618,7 +621,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+//				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 				if(!managerDownloads.isConnectionAvailable()){
 					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 				}
@@ -637,7 +640,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+//				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 				int currentVersion = managerSystemSync.getAptoideVersionInUse();
 				if( currentVersion < latestVersionInfo.getVersionCode()){
 					Log.d("Aptoide-ServiceData", "Using version "+currentVersion+", suggest update to "+latestVersionInfo.getVersionCode()+"!");
@@ -795,7 +798,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+//				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 				managerDatabase.insertInstalledApplications(managerSystemSync.getInstalledApps());
 				AptoideLog.d(AptoideServiceData.this, "Sync'ed Installed Apps");
 				
@@ -1027,7 +1030,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				ViewRepository repository = originalRepository;
-				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+//				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 				if(!managerDownloads.isConnectionAvailable()){
 					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 				}
@@ -1086,6 +1089,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
+		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 		if(reposInserting.contains(repository.getHashid())){
 			getRepoIcons(new ViewDownloadStatus(repository, Constants.FIRST_ELEMENT, EnumDownloadType.ICON));
 			addRepoStats(repository);
@@ -1105,7 +1109,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			scheduledThreadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+//					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 					if(!managerDownloads.isPermittedConnectionAvailable(managerPreferences.getIconDownloadPermissions())){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}else{
@@ -1215,7 +1219,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+//				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 				int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
 				if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
 					if(!managerDownloads.isConnectionAvailable()){
@@ -1252,7 +1256,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+//				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 				if(!managerDownloads.isConnectionAvailable()){
 					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 				}
@@ -1279,7 +1283,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+//				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 				int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
 				if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
 					if(!managerDownloads.isConnectionAvailable()){

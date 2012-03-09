@@ -774,10 +774,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
 			previousListTitle.setVisibility(View.GONE);
 			currentListTitle = (TextView) findViewById(R.id.current_title);
-			currentListTitle.setText(EnumAppsLists.Available.toString());
+			currentListTitle.setText(getString(R.string.available));
 			currentListTitle.setClickable(false);
 			nextListTitle = (TextView) findViewById(R.id.next_title);
-			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
+			nextListTitle.setText(getString(R.string.installed));
 			nextListTitle.setOnClickListener(new OnNextClickedListener());
 
 			nextViewArrow = (ImageView) findViewById(R.id.next);
@@ -1006,7 +1006,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			showAvailableList();			
 		}
 		
-    	AptoideLog.d(Aptoide.this, "new AvailableList: "+freshAvailableApps);
+    	AptoideLog.d(Aptoide.this, "new AvailableList: "+freshAvailableApps.getList().size());
     	originalScrollPostition.set(availableAppsListView.getFirstVisiblePosition());
 		originalPartialScrollPostition.set(availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
 		boolean newList = this.availableApps.getList().isEmpty();
@@ -1019,7 +1019,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void appendAndUpdateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
-    	AptoideLog.d(Aptoide.this, "appending freshAvailableList: "+freshAvailableApps+" size: "+freshAvailableApps.getList().size());
+    	AptoideLog.d(Aptoide.this, "appending freshAvailableList: "+freshAvailableApps.getList().size());
 		boolean newList = this.availableApps.getList().isEmpty();
     	if(newList){
     		this.availableApps = freshAvailableApps;
@@ -1038,7 +1038,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void prependAndUpdateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
-    	AptoideLog.d(Aptoide.this, "prepending freshAvailableList: "+freshAvailableApps);
+    	AptoideLog.d(Aptoide.this, "prepending freshAvailableList: "+freshAvailableApps.getList().size());
     	int adjustAmount = freshAvailableApps.getList().size();
     	boolean newList = this.availableApps.getList().isEmpty();
     	if(newList){
@@ -1090,7 +1090,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			showInstalledList();
 		}
 
-		AptoideLog.d(Aptoide.this, "new InstalledList: "+freshInstalledApps);
+		AptoideLog.d(Aptoide.this, "new InstalledList: "+freshInstalledApps.getList().size());
 		boolean newList = this.installedApps.getList().isEmpty();
     	this.installedApps = freshInstalledApps;
     	initDisplayInstalled();
@@ -1143,7 +1143,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			showUpdatableList();			
 		}
 
-		AptoideLog.d(Aptoide.this, "new UpdatesList: "+freshUpdatableApps);
+		AptoideLog.d(Aptoide.this, "new UpdatesList: "+freshUpdatableApps.getList().size());
 		boolean newList = this.updatableApps.getList().isEmpty();
     	this.updatableApps = freshUpdatableApps;
     	initDisplayUpdates();
@@ -1454,26 +1454,26 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		switch (currentAppList) {
 		case Available:
 			nextViewArrow.setVisibility(View.VISIBLE);
-			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
+			nextListTitle.setText(getString(R.string.installed));
 			previousViewArrow.setVisibility(View.GONE);
 			previousListTitle.setVisibility(View.GONE);
-			currentListTitle.setText(EnumAppsLists.Available.toString());
+			currentListTitle.setText(getString(R.string.available));
 			break;
 		case Installed:
 			nextViewArrow.setVisibility(View.VISIBLE);
 			previousViewArrow.setVisibility(View.VISIBLE);
-			currentListTitle.setText(EnumAppsLists.Installed.toString());
+			currentListTitle.setText(getString(R.string.installed));
 			nextListTitle.setVisibility(View.VISIBLE);
-			nextListTitle.setText(EnumAppsLists.getNext(currentAppsList).toString());
+			nextListTitle.setText(getString(R.string.updates));
 			previousListTitle.setVisibility(View.VISIBLE);
-			previousListTitle.setText(EnumAppsLists.getPrevious(currentAppList).toString());
+			previousListTitle.setText(getString(R.string.available));
 			break;
 		case Updates:
 			nextViewArrow.setVisibility(View.GONE);
 			previousViewArrow.setVisibility(View.VISIBLE);
-			currentListTitle.setText(EnumAppsLists.Updates.toString());
+			currentListTitle.setText(getString(R.string.updates));
 			nextListTitle.setVisibility(View.INVISIBLE);
-			previousListTitle.setText(EnumAppsLists.getPrevious(currentAppList).toString());
+			previousListTitle.setText(getString(R.string.installed));
 			break;
 		}
 
