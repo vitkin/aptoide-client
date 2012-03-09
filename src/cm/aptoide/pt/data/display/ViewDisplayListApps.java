@@ -140,8 +140,7 @@ public class ViewDisplayListApps implements Parcelable{
 	// Parcelable stuff //
 	
 	
-	public static final Parcelable.Creator<ViewDisplayListApps> CREATOR = new
-			Parcelable.Creator<ViewDisplayListApps>() {
+	public static final Parcelable.Creator<ViewDisplayListApps> CREATOR = new Parcelable.Creator<ViewDisplayListApps>() {
 		public ViewDisplayListApps createFromParcel(Parcel in) {
 			return new ViewDisplayListApps(in);
 		}
@@ -163,17 +162,20 @@ public class ViewDisplayListApps implements Parcelable{
 	}
 
 	private ViewDisplayListApps(Parcel in){
+		this();
 		readFromParcel(in);
 	}
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeSerializable(appsList);	//TODO use list or parcelable instead of serializable
+//		out.writeList(appsList);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void readFromParcel(Parcel in) {
 		appsList = (LinkedList<Map<String, Object>>) in.readSerializable();	
+//		in.readArrayList(null);
 	}
 	
 }
