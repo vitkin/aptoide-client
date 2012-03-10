@@ -92,7 +92,8 @@ public class Constants {
 	public static final String FILE_LATEST_VERSION_INFO = PATH_CACHE + "latestVersionInfo.xml";
 	public static final String FILE_SELF_UPDATE = PATH_CACHE + "latestSelfUpdate.apk";	//TODO possibly change apk name to reflect version code
 	public static final String FILE_PREFERENCES = "aptoide_preferences";
-	
+
+	public static final String APTOIDE_PACKAGE_NAME = "cm.aptoide.pt";
 	public static final String SERVICE_DATA_CLASS_NAME = "cm.aptoide.pt.data.ServiceData";
 	
 	public static final String MIMETYPE_MYAPP = "application/vnd.cm.aptoide.pt";

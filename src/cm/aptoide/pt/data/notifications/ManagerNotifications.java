@@ -34,10 +34,12 @@ import android.content.res.Resources.NotFoundException;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
+import android.widget.RemoteViews;
 import cm.aptoide.pt.Aptoide;
 import cm.aptoide.pt.Notifier;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AptoideServiceData;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * ManagerNotifications, centralizes all notifications' updates
@@ -56,7 +58,7 @@ public class ManagerNotifications {
 	/** Ongoing */
 	private ViewNotification globalNotification;
 	private ViewNotification packageManagerSync;
-	private ViewNotification repoUpdate;
+	private ArrayList<ViewNotification> repoUpdates;
 	private ArrayList<ViewNotification> repoAppUpdates;
 	private ViewNotification gettingIcons;
 	private ViewNotification gettingExtras;
@@ -127,25 +129,31 @@ public class ManagerNotifications {
 	public synchronized ViewNotification getNewViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget){
 		ViewNotification notification;
 		if(notificationPool.isEmpty()){
-			notification = new ViewNotification(notificationType, actionsTargetName, targetsHashid, progressCompletionTarget);
+			notification = new ViewNotification(this, notificationType, actionsTargetName, targetsHashid, progressCompletionTarget);
 		}else{
 			ViewNotification viewNotification = notificationPool.remove(0);
-			viewNotification.reuse(notificationType, actionsTargetName, targetsHashid, progressCompletionTarget);
+			viewNotification.reuse(this, notificationType, actionsTargetName, targetsHashid, progressCompletionTarget);
 			notification = viewNotification;
 		}
 		
 		switch (notificationType) {
 			case REPO_UPDATE:
-				repoUpdate = notification;
+				repoUpdates.add(notification);
 				break;
 				
 			case REPO_APP_UPDATE:
-				repoAppUpdates.add(notification);
+//				repoAppUpdates.add(notification);
+				break;
+				
+			case GET_APP:
+				gettingApps.add(notification);
 				break;
 	
 			default:
 				break;
 		}
+		
+		
 		
 		return notification;
 	}
@@ -161,49 +169,64 @@ public class ManagerNotifications {
 
 //TODO refactor
 	
-//	private void setNotification(int uniqueId, int progress) {
-//
-//		String appName = notifications.get(uniqueId).get("appName");
-//		int size = Integer.parseInt(notifications.get(uniqueId).get("intSize"));
-//		String version = notifications.get(uniqueId).get("version");
-//		
-//		RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.download_notification);
-//		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
-//		StringBuilder textApp = new StringBuilder(getString(R.string.download_alrt)+" "+appName);
-//		if(version!=null){
+	protected void setNotification(ViewNotification viewNotification) {
+		if(!viewNotification.getNotificationType().equals(EnumNotificationTypes.GET_APP)){ //TODO remove this
+			return;
+		}
+		
+		String notificationLabel = viewNotification.getActionsTargetName();
+		int size = viewNotification.getProgressCompletionTarget();
+		
+		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.notification_progress_bar);
+		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
+		StringBuilder textApp = new StringBuilder();
+		switch (viewNotification.getNotificationType()) {
+			case GET_APP:
+				textApp.append(serviceData.getString(R.string.downloading_app)+":\n "+notificationLabel);			
+				break;
+	
+			default:
+				break;
+		}
+//		if(version == 0){
 //			Log.d("Aptoide", "External download taking place. Unable to retrive version.");
+//		}else{
 //			textApp.append(" v."+version);
 //		}
-//		contentView.setTextViewText(R.id.download_notification_name, textApp.toString());
-//		
-//		contentView.setProgressBar(R.id.download_notification_progress_bar, size*KBYTES_TO_BYTES, progress, false);	
-//		
-//    	Intent onClick = new Intent();
-//		onClick.setClassName("cm.aptoide.pt", "cm.aptoide.pt");
-//		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
-//		onClick.setAction("cm.aptoide.pt.FROM_NOTIFICATION");
-//    	
-//    	// The PendingIntent to launch our activity if the user selects this notification
-//    	PendingIntent onClickAction = PendingIntent.getActivity(context, 0, onClick, 0);
-//
-//    	Notification notification = new Notification(R.drawable.ic_notification, getString(R.string.download_alrt)+" "+appName, System.currentTimeMillis());
-//    	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
-//		notification.contentView = contentView;
-//
-//
-//		// Set the info for the notification panel.
-//    	notification.contentIntent = onClickAction;
-////    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
-//
-//
-//		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-//    	// Send the notification.
-//    	// We use the position because it is a unique number.  We use it later to cancel.
-//    	notificationManager.notify(uniqueId, notification); 
-//    	
-////		Log.d("Aptoide-DownloadQueueService", "Notification Set");
-//    }
-//
+		contentView.setTextViewText(R.id.download_notification_name, textApp.toString());
+		
+		contentView.setProgressBar(R.id.download_notification_progress_bar, viewNotification.getProgressCompletionTarget(), viewNotification.getCurrentProgress(), false);	
+		
+    	Intent onClick = new Intent();
+		onClick.setClassName("cm.aptoide.pt", "cm.aptoide.pt");
+		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+		onClick.setAction("cm.aptoide.pt.FROM_NOTIFICATION");
+    	
+    	// The PendingIntent to launch our activity if the user selects this notification
+    	PendingIntent onClickAction = PendingIntent.getActivity(serviceData, 0, onClick, 0);
+
+    	Notification notification = new Notification(R.drawable.ic_notification, serviceData.getString(R.string.downloading_app)+" "+notificationLabel, System.currentTimeMillis());
+    	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+		notification.contentView = contentView;
+
+
+		// Set the info for the notification panel.
+    	notification.contentIntent = onClickAction;
+//    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
+
+
+		notificationManager = (NotificationManager)serviceData.getSystemService(AptoideServiceData.NOTIFICATION_SERVICE);
+    	// Send the notification.
+    	// We use the position because it is a unique number.  We use it later to cancel.
+    	notificationManager.notify(viewNotification.getTargetsHashid(), notification); 
+    	
+//		Log.d("Aptoide-DownloadQueueService", "Notification Set");
+    }
+	
+	protected void dismissNotification(int targetsHashid){
+		notificationManager.cancel(targetsHashid);
+	}
+
 //	private void setFinishedNotification(int apkidHash, String localPath) {
 //		
 //		String packageName = notifications.get(apkidHash).get("packageName");
