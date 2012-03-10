@@ -23,6 +23,8 @@ package cm.aptoide.pt.data.notifications;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.util.Log;
+
  /**
  * ViewNotification, models a notification
  * 
@@ -32,6 +34,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ViewNotification {
 
+	private ManagerNotifications managerNotifications;
+	
 	private EnumNotificationTypes notificationType;
 	/** Name and version if it's relevant */
 	private String actionsTargetName;
@@ -39,17 +43,21 @@ public class ViewNotification {
 	/** Combined from target's unique id and the action ongoing */
 	private int notificationHashid; 	
 	private AtomicInteger currentProgress;
+	private AtomicInteger notificationUpdateProgress;
 	private int progressCompletionTarget;
 	private boolean completed;
 	
 	private ViewNotification parentNotification;
 	private ArrayList<ViewNotification> subNotifications;
 
-	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget) {
+	public ViewNotification(ManagerNotifications managerNotifications, EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget) {
+		this.managerNotifications = managerNotifications;
+		
 		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
 		this.targetsHashid = targetsHashid;
 		this.notificationHashid = (targetsHashid+"|"+notificationType).hashCode();
+		this.notificationUpdateProgress = new AtomicInteger(0);
 		this.currentProgress = new AtomicInteger(0);
 		this.progressCompletionTarget = progressCompletionTarget;
 		this.completed = false;
@@ -58,19 +66,24 @@ public class ViewNotification {
 		this.subNotifications = new ArrayList<ViewNotification>();
 	}
 	
-	public ViewNotification(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid) {
-		this(notificationType, actionsTargetName, targetsHashid, 1);
+	public ViewNotification(ManagerNotifications managerNotifications, EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid) {
+		this(managerNotifications, notificationType, actionsTargetName, targetsHashid, 1);
 	}
 	
 	
 	public void setProgressCompletionTarget(int target){
 		this.progressCompletionTarget = target;
+		managerNotifications.setNotification(this);
 	}
 
 	public void progressSetCurrent(int currentProgress) {
 //		if(currentProgress > this.currentProgress.get()){
 //			//TODO raise exception
 //		}
+		if((this.progressCompletionTarget/20) > 0 && ((currentProgress-this.notificationUpdateProgress.get())/(this.progressCompletionTarget/20)) >= 1){
+			this.notificationUpdateProgress.set(currentProgress);
+			managerNotifications.setNotification(this);
+		}
 		this.currentProgress.set(currentProgress);
 	}
 
@@ -81,6 +94,8 @@ public class ViewNotification {
 	public void setCompleted(boolean completed) {
 		if(completed){
 			this.currentProgress.set(this.progressCompletionTarget);
+			dissociateFromParent();
+			managerNotifications.dismissNotification(targetsHashid);
 		}
 		this.completed = completed;
 	}
@@ -90,7 +105,9 @@ public class ViewNotification {
 	}
 	
 	public void dissociateFromParent(){
-		this.parentNotification.removeSubNotification(this);
+		if(this.parentNotification != null){
+			this.parentNotification.removeSubNotification(this);
+		}
 	}
 
 	public ArrayList<ViewNotification> getSubNotifications() {
@@ -145,8 +162,18 @@ public class ViewNotification {
 	public int incrementProgress(int increment){
 		if(subNotifications.isEmpty()){
 			if(!isCompleted()){
-				this.currentProgress.addAndGet(increment);
+//				Log.d("Aptoide-ViewNotification", "current progress: "+this.currentProgress.get()+" increment: "+increment+" notificationprogress: "+this.notificationUpdateProgress.get()+" progressUpdateTrigger: "+(this.progressCompletionTarget/20)+" progressCompletionTarget: "+this.progressCompletionTarget);
+				if((this.progressCompletionTarget/20) > 0 && (((this.currentProgress.get()+increment)-this.notificationUpdateProgress.get())/(this.progressCompletionTarget/20) >= 1)){
+//					Log.d("Aptoide-ViewNotification", "updating notification");
+					this.currentProgress.addAndGet(increment);
+					this.notificationUpdateProgress.set(this.currentProgress.get());
+					managerNotifications.setNotification(this);
+				}else{
+//					Log.d("Aptoide-ViewNotification", "not updating notification");
+					this.currentProgress.addAndGet(increment);
+				}
 				if(this.currentProgress.get() >= this.progressCompletionTarget){
+					Log.d("Aptoide-ViewNotification", "Download target size: "+progressCompletionTarget+" current progress: "+currentProgress);
 					setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
 				}
 			}
@@ -155,7 +182,7 @@ public class ViewNotification {
 			return -1;	//TODO raise exception
 		}
 	}
-
+	
 	public int getCurrentProgress(){
 		if(!subNotifications.isEmpty()){
 				this.progressCompletionTarget = 0;
@@ -173,10 +200,12 @@ public class ViewNotification {
 	
 	
 	public void clean(){
+		this.managerNotifications = null;
 		this.notificationType = null;
 		this.actionsTargetName = null;
 		this.targetsHashid = 0;
 		this.notificationHashid = 0;
+		this.notificationUpdateProgress = null;
 		this.currentProgress = null;
 		this.progressCompletionTarget = 0;
 		this.completed = false;
@@ -186,7 +215,8 @@ public class ViewNotification {
 		this.subNotifications = null;
 	}
 	
-	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget) {
+	public void reuse(ManagerNotifications managerNotifications, EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid, int progressCompletionTarget) {
+		this.managerNotifications = managerNotifications;
 		this.notificationType = notificationType;
 		this.actionsTargetName = actionsTargetName;
 		this.targetsHashid = targetsHashid;
@@ -198,8 +228,8 @@ public class ViewNotification {
 		this.subNotifications = new ArrayList<ViewNotification>();
 	}
 	
-	public void reuse(EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid){
-		reuse(notificationType, actionsTargetName, targetsHashid, 1);
+	public void reuse(ManagerNotifications managerNotifications, EnumNotificationTypes notificationType, String actionsTargetName, int targetsHashid){
+		reuse(managerNotifications, notificationType, actionsTargetName, targetsHashid, 1);
 	}
 		
 }

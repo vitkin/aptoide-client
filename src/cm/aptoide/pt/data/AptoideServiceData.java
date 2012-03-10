@@ -610,7 +610,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	public void onDestroy() {	//TODO make sure to close all child threads
 		managerNotifications.destroy();
 		unregisterReceiver(installedAppsChangeListener);
-		Toast.makeText(this, R.string.aptoide_stopped, Toast.LENGTH_LONG).show();
+//		Toast.makeText(this, R.string.aptoide_stopped, Toast.LENGTH_LONG).show();
 		stopSelf();
 		Log.d("Aptoide ServiceData", "Service stopped");
 		super.onDestroy();

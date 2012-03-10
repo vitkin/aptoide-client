@@ -2876,6 +2876,7 @@ public class ManagerDatabase {
 		final int REMOTE_PATH_BASE = Constants.COLUMN_FOURTH;
 		final int APP_NAME = Constants.COLUMN_FIFTH;
 		final int REPO_HASHID = Constants.COLUMN_SIXTH;
+		final int VERSION_NAME = Constants.COLUMN_SEVENTH;
 		
 		final int USERNAME = Constants.COLUMN_FIRST;
 		final int PASSWORD = Constants.COLUMN_SECOND;
@@ -2884,7 +2885,9 @@ public class ManagerDatabase {
 		
 		String selectAppDownloadInfo = "SELECT D."+Constants.KEY_DOWNLOAD_REMOTE_PATH_TAIL+", D."+Constants.KEY_DOWNLOAD_SIZE+", D."+Constants.KEY_DOWNLOAD_MD5HASH
 											+", R."+Constants.KEY_REPO_BASE_PATH+", A."+Constants.KEY_APPLICATION_NAME+", R."+Constants.KEY_REPO_HASHID
-									+" FROM (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID+", "+Constants.KEY_APPLICATION_NAME
+											+", A."+Constants.KEY_APPLICATION_VERSION_NAME
+									+" FROM (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
+													+", "+Constants.KEY_APPLICATION_NAME+", "+Constants.KEY_APPLICATION_VERSION_NAME
 											+" FROM "+Constants.TABLE_APPLICATION
 											+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid;
 		if(appInRepo(Constants.APPS_REPO_HASHID, appHashid)){
@@ -2892,11 +2895,11 @@ public class ManagerDatabase {
 		}else{
 			selectAppDownloadInfo +=			") A";
 		}
-			selectAppDownloadInfo += " NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
-									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_HASHID
+			selectAppDownloadInfo += " NATURAL INNER JOIN (SELECT * FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
+									+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_HASHID
 														+" FROM "+Constants.TABLE_REPOSITORY+") R;";
 		
-//		Log.d("Aptoide-ManagerDatabase", "download: "+selectAppDownloadInfo);
+		Log.d("Aptoide-ManagerDatabase", "download: "+selectAppDownloadInfo);
 		
 		try{
 			db.beginTransaction();
@@ -2917,15 +2920,17 @@ public class ManagerDatabase {
 			db.endTransaction();
 
 			if(loginCursor.getCount() == Constants.EMPTY_INT){
-				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid, appDownloadInfoCursor.getString(APP_NAME)
+				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid
+									, appDownloadInfoCursor.getString(APP_NAME)+"   v."+appDownloadInfoCursor.getString(VERSION_NAME)
 									, appDownloadInfoCursor.getString(REMOTE_PATH_BASE)+appDownloadInfoCursor.getString(REMOTE_PATH_TAIL)
-									, appDownloadInfoCursor.getInt(SIZE), appDownloadInfoCursor.getString(MD5HASH));
+									, appDownloadInfoCursor.getInt(SIZE)*Constants.KBYTES_TO_BYTES, appDownloadInfoCursor.getString(MD5HASH));
 			}else{
 				ViewLogin login = new ViewLogin(loginCursor.getString(USERNAME), loginCursor.getString(PASSWORD));
 				
-				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid, appDownloadInfoCursor.getString(APP_NAME)
+				appDownload = serviceData.getManagerDownloads().prepareApkDownload(appHashid
+						, appDownloadInfoCursor.getString(APP_NAME)+"   v."+appDownloadInfoCursor.getString(VERSION_NAME)
 						, appDownloadInfoCursor.getString(REMOTE_PATH_BASE)+appDownloadInfoCursor.getString(REMOTE_PATH_TAIL), login
-						, appDownloadInfoCursor.getInt(SIZE), appDownloadInfoCursor.getString(MD5HASH));
+						, appDownloadInfoCursor.getInt(SIZE)*Constants.KBYTES_TO_BYTES, appDownloadInfoCursor.getString(MD5HASH));
 			}
 			loginCursor.close();
 			appDownloadInfoCursor.close();

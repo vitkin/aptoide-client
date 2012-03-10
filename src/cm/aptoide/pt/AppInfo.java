@@ -313,8 +313,8 @@ public class AppInfo extends Activity {
 								serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
 							}
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
-														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
+//							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
+//														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called install app");
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block

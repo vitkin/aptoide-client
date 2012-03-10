@@ -751,6 +751,8 @@ public class ManagerDownloads {
 					targetBytes = httpResponse.getAllHeaders().length;
 					notification.setProgressCompletionTarget(targetBytes);
 				}
+				
+				Log.d("Aptoide-ManagerDownloads", "Download target size: "+notification.getProgressCompletionTarget());
 
 				InputStream inputStream= null;
 				
