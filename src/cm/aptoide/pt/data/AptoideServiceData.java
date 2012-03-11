@@ -304,7 +304,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		@Override
 		public void CallFillAppInfo(int appHashid) throws RemoteException {
 			fillAppInfo(appHashid);
-			
+		}
+
+		@Override
+		public void callAddVersionInfo(int appHashid) throws RemoteException {
+			addAppVersionInfo(appHashid);
 		}
 
 		@Override
@@ -1188,29 +1192,41 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void fillAppInfo(final int appHashid){
-		final ViewRepository repository = managerDatabase.getAppAnyVersionRepo(appHashid);
-		if(repository == null){
+		final ViewAppVersionRepository anyVersion = managerDatabase.getAppAnyVersionRepo(appHashid);
+		if(anyVersion == null){
 			updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_INFO);
 			AptoideLog.d(AptoideServiceData.this, "App not in any repo");
 			return;
 		}
+		final ViewRepository repository = managerDatabase.getAppRepo(appHashid);
+		
 		if(!managerDownloads.isIconCached(appHashid)){
 			scheduledThreadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					ViewDownloadInfo downloadInfo = managerDatabase.getIconDownloadInfo(repository, appHashid);
+					ViewDownloadInfo downloadInfo = managerDatabase.getIconDownloadInfo(anyVersion.getRepository(), anyVersion.getAppHashid());
 					if(downloadInfo != null){
-						managerDownloads.getIcon(downloadInfo, repository.isLoginRequired(), repository.getLogin());
+						managerDownloads.getIcon(downloadInfo, anyVersion.getRepository().isLoginRequired(), anyVersion.getRepository().getLogin());
 						updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
 					}
 				}
 			});
 		}
+		if(repository != null){
+			addAppVersionInfo(repository, appHashid);
+		}
+		addRepoAppExtras(anyVersion.getRepository(), anyVersion.getAppHashid());
+	}
+	
+	
+	public void addAppVersionInfo(ViewRepository repository, int appHashid){
 		addRepoAppDownloadInfo(repository, appHashid);
-		addRepoAppExtras(repository, appHashid);
-		
-		addRepoAppStats(repository, appHashid);
+		addRepoAppStats(repository, appHashid);		
 		//TODO parallel get Comments
+	}
+	
+	public void addAppVersionInfo(int appHashid){
+		addAppVersionInfo(managerDatabase.getAppRepo(appHashid), appHashid);
 	}
 	
 	

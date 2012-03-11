@@ -85,6 +85,7 @@ public class ManagerNotifications {
 		notificationPool = new ArrayList<ViewNotification>(15);
 		gettingApps = new ArrayList<ViewNotification>(5);
 		gettingUpdates = new ArrayList<ViewNotification>(5);
+		repoUpdates = new ArrayList<ViewNotification>(5);
 		repoAppUpdates = new ArrayList<ViewNotification>(5);
 		
 		/************ Compatibility with API level 4, ignore following lines (must be at bottom of constructor) *************/

@@ -87,7 +87,7 @@ public class AppInfo extends Activity {
 	private ViewDisplayAppVersionsInfo appVersions;
 
 	private ViewDisplayAppVersionInfo installedVersion = null;
-	private ViewDisplayAppVersionInfo selectedVersion;
+	private ViewDisplayAppVersionInfo selectedVersion = null;
 	
 	private boolean storedForLater = false;
 	
@@ -125,16 +125,6 @@ public class AppInfo extends Activity {
 			Log.v("Aptoide-AppInfo", "Connected to ServiceData");
 
 			try {
-				if (serviceDataCaller.callIsAppScheduledToInstall(appHashid)) {
-					storedForLater = true;
-				} 
-				later.setChecked(storedForLater);
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			try {
 				Log.v("Aptoide-AppInfo",
 						"Called for registering as AppInfo Observer");
 				serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
@@ -150,6 +140,18 @@ public class AppInfo extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
+			try {
+				if (serviceDataCaller.callIsAppScheduledToInstall(appHashid)) {
+					storedForLater = true;
+				} 
+				later.setChecked(storedForLater);
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			setVersions();
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -172,15 +174,13 @@ public class AppInfo extends Activity {
 
 		@Override
 		public void newAppInfoAvailable() throws RemoteException {
-			Log.v("Aptoide-AppInfo",
-					"received newAppInfoAvailable callback");
+			Log.v("Aptoide-AppInfo", "received newAppInfoAvailable callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_INFO.ordinal());
 		}
 
 		@Override
 		public void newAppDownloadInfoAvailable() throws RemoteException {
-			Log.v("Aptoide-AppInfo",
-					"received newAppDownloadInfoAvailable callback");
+			Log.v("Aptoide-AppInfo", "received newAppDownloadInfoAvailable callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_DOWNLOAD_INFO.ordinal());
 		}
 
@@ -252,6 +252,15 @@ public class AppInfo extends Activity {
 		appHashid = getIntent().getIntExtra("appHashid", 0);
 
 		setContentView(R.layout.app_info);
+	
+
+		setIcon();
+		
+		if (!serviceDataIsBound) {
+			bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
+		}
+		
+		
 		later = (CheckBox) findViewById(R.id.later);
 		later.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
@@ -279,11 +288,6 @@ public class AppInfo extends Activity {
 
 		galleryView = (Gallery) findViewById(R.id.screens);
 
-		setIcon();
-		
-		if (!serviceDataIsBound) {
-			bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
-		}
 	}
 	
 	private void activateInstallButton(boolean activate){
@@ -461,7 +465,7 @@ public class AppInfo extends Activity {
 	
 	private void selectVersion(ViewDisplayAppVersionInfo version){
 		selectedVersion = version;
-		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion);
+		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion.getVersionName());
 		
 		if(installedVersion != null){
 			activateUninstallButton(true);
@@ -473,6 +477,15 @@ public class AppInfo extends Activity {
 				activateDowngradeButton(true);
 			}
 		}else{
+			if(version.getSize() == Constants.EMPTY_INT){
+				try {
+					serviceDataCaller.callAddVersionInfo(appHashid);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			//TODO check for scheduled 
 			activateUninstallButton(false);
 			activateInstallButton(true);
 		}
@@ -494,9 +507,12 @@ public class AppInfo extends Activity {
 	}
 
 	private void setVersions() {
+		int selectedVersionHashid = 0;
+		if(selectedVersion != null){
+			selectedVersionHashid = selectedVersion.getAppHashid(); 
+		}
 		try {
 			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
-			Log.d("Aptoide-AppInfo", "Got app versions: " + appVersions);
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -504,14 +520,19 @@ public class AppInfo extends Activity {
 		}
 
 		for (ViewDisplayAppVersionInfo versionInfo : appVersions.getVersionsList()) {
+			if(selectedVersionHashid == versionInfo.getAppHashid()){
+				selectedVersion = versionInfo;
+			}
 			if(versionInfo.isInstalled()){
 				installedVersion = versionInfo;
-				Log.d("Aptoide-AppInfo", "Installed version: "+installedVersion);
-				break;
+				Log.d("Aptoide-AppInfo", "Installed version: "+installedVersion.getVersionName());
+			}else{
+				Log.d("Aptoide-AppInfo", "Got available version: "+versionInfo.getVersionName());				
 			}
 		}
-		
-		selectVersion(appVersions.getVersionsList().get(0));
+		if(selectedVersion == null){
+			selectVersion(appVersions.getVersionsList().get(0));
+		}
 		
 		appName = selectedVersion.getAppName();
 		appNameTextView.setText(appName);
