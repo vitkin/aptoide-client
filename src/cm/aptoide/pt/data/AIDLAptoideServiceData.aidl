@@ -86,6 +86,7 @@ interface AIDLAptoideServiceData {
 	
 	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
 	void CallFillAppInfo(in int appHashid);
+	void callAddVersionInfo(in int appHashid);
 	ViewDisplayAppVersionsInfo callGetAppInfo(in int appHashid);
 	
 	void callInstallApp(in int appHashid);

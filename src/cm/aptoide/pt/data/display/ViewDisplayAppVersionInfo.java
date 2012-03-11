@@ -49,7 +49,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	private String localIconPath;
 	
 	private boolean isInstalled = false;
-//	private boolean isScheduled = false;
+	private boolean isScheduled = false;	//TODO
 	
 	private boolean statsAvailable = false;
 	private ViewDisplayAppVersionStats stats;
