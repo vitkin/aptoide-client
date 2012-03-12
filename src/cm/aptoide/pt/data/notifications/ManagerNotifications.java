@@ -30,7 +30,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources.NotFoundException;
+import android.net.Uri;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
@@ -59,6 +59,7 @@ public class ManagerNotifications {
 	private ViewNotification globalNotification;
 	private ViewNotification packageManagerSync;
 	private ArrayList<ViewNotification> repoUpdates;
+	private ArrayList<ViewNotification> repoBareDownloads;
 	private ArrayList<ViewNotification> repoAppUpdates;
 	private ViewNotification gettingIcons;
 	private ViewNotification gettingExtras;
@@ -86,6 +87,7 @@ public class ManagerNotifications {
 		gettingApps = new ArrayList<ViewNotification>(5);
 		gettingUpdates = new ArrayList<ViewNotification>(5);
 		repoUpdates = new ArrayList<ViewNotification>(5);
+		repoBareDownloads = new ArrayList<ViewNotification>(5);
 		repoAppUpdates = new ArrayList<ViewNotification>(5);
 		
 		/************ Compatibility with API level 4, ignore following lines (must be at bottom of constructor) *************/
@@ -142,6 +144,10 @@ public class ManagerNotifications {
 				repoUpdates.add(notification);
 				break;
 				
+			case REPO_BARE_DOWNLOAD:
+				repoBareDownloads.add(notification);
+				break;
+				
 			case REPO_APP_UPDATE:
 //				repoAppUpdates.add(notification);
 				break;
@@ -168,27 +174,36 @@ public class ManagerNotifications {
 		notificationPool.add(notification);
 	}
 
-//TODO refactor
-	
+
 	protected void setNotification(ViewNotification viewNotification) {
-		if(!viewNotification.getNotificationType().equals(EnumNotificationTypes.GET_APP)){ //TODO remove this
-			return;
-		}
 		
 		String notificationLabel = viewNotification.getActionsTargetName();
 		int size = viewNotification.getProgressCompletionTarget();
+		Log.d("Aptoide-ViewNotification", "target size: "+size+" current progress: "+viewNotification.getCurrentProgress());
 		
 		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.notification_progress_bar);
-		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
 		StringBuilder textApp = new StringBuilder();
 		switch (viewNotification.getNotificationType()) {
 			case GET_APP:
-				textApp.append(serviceData.getString(R.string.downloading_app)+":\n "+notificationLabel);			
+				textApp.append(serviceData.getString(R.string.downloading_app)+":\n "+notificationLabel);
+//				if(serviceData.getManagerCache().isIconCached(viewNotification.getTargetsHashid())){
+//					contentView.setImageViewUri(R.id.download_notification_icon, Uri.parse(Constants.PATH_CACHE_ICONS+viewNotification.getTargetsHashid()));	
+//				}else{
+//					contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);		
+//				}
+				break;
+				
+			case REPO_BARE_DOWNLOAD:
+				textApp.append(serviceData.getString(R.string.downloading_repo)+":\n "+notificationLabel);
+//				contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);		
 				break;
 	
 			default:
-				break;
+				return;
+//				break;
 		}
+				
+		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
 //		if(version == 0){
 //			Log.d("Aptoide", "External download taking place. Unable to retrive version.");
 //		}else{
@@ -222,6 +237,38 @@ public class ManagerNotifications {
     	notificationManager.notify(viewNotification.getTargetsHashid(), notification); 
     	
 //		Log.d("Aptoide-DownloadQueueService", "Notification Set");
+	}
+	
+	protected void startDisplay(ViewNotification viewNotification) {
+		switch (viewNotification.getNotificationType()) {
+			case GET_APP:
+				setNotification(viewNotification);
+				break;
+				
+			case REPO_BARE_DOWNLOAD:
+				serviceData.loadingAvailableProgressSetCompletionTarget(viewNotification.getProgressCompletionTarget());
+				setNotification(viewNotification);
+				break;
+				
+			default:
+				break;
+		}
+	}
+	
+	protected void updateDisplay(ViewNotification viewNotification) {
+		switch (viewNotification.getNotificationType()) {
+			case GET_APP:
+				setNotification(viewNotification);
+				break;
+			
+			case REPO_BARE_DOWNLOAD:
+				serviceData.loadingAvailableProgressUpdate(viewNotification.getCurrentProgress());
+				setNotification(viewNotification);
+				break;
+				
+			default:
+				break;
+		}
     }
 	
 	protected void dismissNotification(int targetsHashid){

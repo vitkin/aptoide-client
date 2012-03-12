@@ -35,6 +35,9 @@ interface AIDLAptoideInterface{
 	
 	void noAvailableListDataAvailable();
 	void loadingAvailableListDataAvailable();
+	void loadingAvailableListProgressSetCompletionTarget(in int progressCompletionTarget);
+	void loadingAvailableListProgressUpdate(in int currentProgress);
+	void loadingAvailableListProgressIndeterminate();
 	void loadingInstalledListDataAvailable();
 	
 	void handleMyapp();

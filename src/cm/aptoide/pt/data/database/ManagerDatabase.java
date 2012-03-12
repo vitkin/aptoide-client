@@ -651,6 +651,7 @@ public class ManagerDatabase {
 				}
 				appCategoryRelation = new ContentValues(Constants.NUMBER_OF_COLUMNS_APP_CATEGORY);
 				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_APP_FULL_HASHID, application.getFullHashid());
+//				Log.d("##nullcategoryException##", "application: "+application);
 				appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
 										, (categories_hashids.contains(application.getCategoryHashid())?application.getCategoryHashid():Constants.CATEGORY_HASHID_OTHERS));
 				appCategoriesRelations.add(appCategoryRelation);

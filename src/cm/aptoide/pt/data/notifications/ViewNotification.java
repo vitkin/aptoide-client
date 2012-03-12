@@ -73,7 +73,8 @@ public class ViewNotification {
 	
 	public void setProgressCompletionTarget(int target){
 		this.progressCompletionTarget = target;
-		managerNotifications.setNotification(this);
+		managerNotifications.startDisplay(this);
+//		managerNotifications.updateDisplay(this);
 	}
 
 	public void progressSetCurrent(int currentProgress) {
@@ -82,7 +83,7 @@ public class ViewNotification {
 //		}
 		if((this.progressCompletionTarget/20) > 0 && ((currentProgress-this.notificationUpdateProgress.get())/(this.progressCompletionTarget/20)) >= 1){
 			this.notificationUpdateProgress.set(currentProgress);
-			managerNotifications.setNotification(this);
+			managerNotifications.updateDisplay(this);
 		}
 		this.currentProgress.set(currentProgress);
 	}
@@ -167,13 +168,14 @@ public class ViewNotification {
 //					Log.d("Aptoide-ViewNotification", "updating notification");
 					this.currentProgress.addAndGet(increment);
 					this.notificationUpdateProgress.set(this.currentProgress.get());
-					managerNotifications.setNotification(this);
+					managerNotifications.updateDisplay(this);
+//					Log.d("Aptoide-ViewNotification", "target size: "+progressCompletionTarget+" current progress: "+currentProgress);
 				}else{
 //					Log.d("Aptoide-ViewNotification", "not updating notification");
 					this.currentProgress.addAndGet(increment);
 				}
 				if(this.currentProgress.get() >= this.progressCompletionTarget){
-					Log.d("Aptoide-ViewNotification", "Download target size: "+progressCompletionTarget+" current progress: "+currentProgress);
+//					Log.d("Aptoide-ViewNotification", "target size: "+progressCompletionTarget+" current progress: "+currentProgress);
 					setCompleted(true);	//TODO send Message to listening clients in Managing class if iscompleted after this invocation
 				}
 			}

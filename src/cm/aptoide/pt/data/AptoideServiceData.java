@@ -902,6 +902,51 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	public void loadingAvailableProgressSetCompletionTarget(final int progressCompletionTarget){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Loading available apps progress completion target: "+progressCompletionTarget);
+				try {
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListProgressSetCompletionTarget(progressCompletionTarget);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		});
+	}
+	
+	public void loadingAvailableProgressUpdate(final int currentProgress){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+//				AptoideLog.d(AptoideServiceData.this, "Loading available apps progress update: "+currentProgress);
+				try {
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListProgressUpdate(currentProgress);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		});
+	}
+	
+	public void loadingAvailableProgressIndeterminate(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				AptoideLog.d(AptoideServiceData.this, "Loading available apps progress indeterminate");
+				try {
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListProgressIndeterminate();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}	
+			}
+		});
+	}
+	
 	public void updateReposLists(){
 		cachedThreadPool.execute(new Runnable() {
 			@Override
@@ -1044,6 +1089,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				ViewCache cache = null;
 				if(reposInserting.contains(repository.getHashid())){
 					cache = managerDownloads.startRepoBareDownload(repository);
+					loadingAvailableProgressIndeterminate();
 				}
 //				Looper.prepare();
 //				Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
