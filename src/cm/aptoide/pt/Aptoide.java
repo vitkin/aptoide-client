@@ -718,7 +718,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(!isRunning){
-		       
+
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+			
         	theme = new ContextThemeWrapper(this, R.style.DialogTheme);
         	
 			installedAppsManager = new InstalledAppsManager();
