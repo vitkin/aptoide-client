@@ -30,6 +30,7 @@ package cm.aptoide.pt.data.notifications;
 public enum EnumNotificationTypes {
 	GLOBAL,
 	PM_SYNC,
+	REPO_BARE_DOWNLOAD,
 	REPO_UPDATE,
 	REPO_APP_UPDATE,
 	GET_ICONS,

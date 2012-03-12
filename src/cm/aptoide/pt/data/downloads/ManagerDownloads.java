@@ -468,7 +468,7 @@ public class ManagerDownloads {
 	
 	public ViewCache startRepoDownload(ViewRepository repository, EnumInfoType infoType){
 		ViewCache cache = null;
-		ViewNotification notification;
+		ViewNotification notification = null;
 		ViewDownload download;
 		
 		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
@@ -501,9 +501,10 @@ public class ManagerDownloads {
 					default:
 						break;
 				}
-				
+//				xmlRemotePath = "http://aptoide.com/teste/apps.xml";
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
 				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
+				notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_BARE_DOWNLOAD, repoName, repository.getHashid());
 				break;
 				
 			case ICON:
@@ -571,7 +572,9 @@ public class ManagerDownloads {
 			default:
 				break;
 		}
-		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_UPDATE, repoName, repository.getHashid());
+		if(!infoType.equals(EnumInfoType.BARE)){
+			notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_UPDATE, repoName, repository.getHashid());
+		}
 		if(repository.isLoginRequired()){
 			xmlRemotePath += "&username="+repository.getLogin().getUsername()+"&password="+repository.getLogin().getPassword();
 		}
@@ -745,12 +748,16 @@ public class ManagerDownloads {
 				managerCache.clearCache(download.getCache());
 				throw new Exception();	//TODO not found exception
 			}else{
-				if(download.isSizeKnown()){
-					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;	//TODO check if server sends kbytes or bytes
-				}else{
-					targetBytes = httpResponse.getAllHeaders().length;
+//				if(download.isSizeKnown()){
+//					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;	//TODO check if server sends kbytes or bytes
+//					notification.setProgressCompletionTarget(targetBytes);
+//				}else{
+				if(httpResponse.containsHeader("Content-Length")){
+					targetBytes = Integer.parseInt(httpResponse.getFirstHeader("Content-Length").getValue());
+					Log.d("Aptoide-ManagerDownloads","targetBytes: "+targetBytes);
 					notification.setProgressCompletionTarget(targetBytes);
 				}
+//				}
 				
 				Log.d("Aptoide-ManagerDownloads", "Download target size: "+notification.getProgressCompletionTarget());
 

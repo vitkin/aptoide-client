@@ -70,6 +70,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.SimpleAdapter;
@@ -120,6 +121,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private View emptyInstalledAppsList;
 	private View emptyUpdatableAppsList;
 	private View loadingAvailableAppsList;
+	private ProgressBar loadingAvailableAppsProgress;
+	private AtomicInteger loadingAvailableAppsProgressCompletionTarget;
+	private AtomicInteger loadingAvailableAppsProgressCurrent;
 	private View loadingInstalledAppsList;
 	private View loadingUpdatableAppsList;
 	private ListView availableAppsListView = null;
@@ -303,6 +307,26 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 
 		@Override
+		public void loadingAvailableListProgressSetCompletionTarget(int progressCompletionTarget) throws RemoteException {
+			AptoideLog.v(Aptoide.this, "received loadingAvailableApps callback, progress completion target: "+progressCompletionTarget);
+			loadingAvailableAppsProgressCompletionTarget.set(progressCompletionTarget);
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.AVAILABLE_PROGRESS_SET_COMPLETION_TARGET.ordinal());
+		}
+
+		@Override
+		public void loadingAvailableListProgressUpdate(int currentProgress) throws RemoteException {
+			loadingAvailableAppsProgressCurrent.set(currentProgress);
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.AVAILABLE_PROGRESS_UPDATE.ordinal());
+		}
+
+		@Override
+		public void loadingAvailableListProgressIndeterminate() throws RemoteException {
+			loadingAvailableAppsProgressCompletionTarget.set(0);
+			loadingAvailableAppsProgressCurrent.set(0);
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.AVAILABLE_PROGRESS_INDETERMINATE.ordinal());
+		}
+
+		@Override
 		public void loadingInstalledListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received loadingInstalledApps callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
@@ -399,6 +423,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					switchAvailableToProgressBar();
 					break;
 					
+				case AVAILABLE_PROGRESS_SET_COMPLETION_TARGET:
+					availableProgressSetCompletionTarget();
+					break;
+					
+				case AVAILABLE_PROGRESS_UPDATE:
+					availableProgressUpdate();
+					break;
+					
+				case AVAILABLE_PROGRESS_INDETERMINATE:
+					availableProgressIndeterminate();
+					break;
+					
 				case SWITCH_INSTALLED_TO_PROGRESSBAR:
 		    		switchInstalledToProgressBar();					
 					break;
@@ -450,9 +486,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				try {
 					setFreshInstalledApps(serviceDataCaller.callGetInstalledApps());
 					interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_INSTALLED_LIST_DISPLAY.ordinal());
-					if(!(availableApps.getList().size()==0)){
-						updatableAppsManager.resetUpdatableApps();
-					}
+//					if(!(availableApps.getList().size()==0)){
+//						updatableAppsManager.resetUpdatableApps();
+//					}
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -581,7 +617,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //									availableAppsManager.request(EnumAvailableRequestType.INCREASE);
 								}
 								
-								updatableAppsManager.resetUpdatableApps();
+//								updatableAppsManager.resetUpdatableApps();
 								
 							} catch (RemoteException e) {
 								// TODO Auto-generated catch block
@@ -603,7 +639,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
 									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
 									
-									updatableAppsManager.resetUpdatableApps();
+//									updatableAppsManager.resetUpdatableApps();
 									
 								} catch (RemoteException e) {
 									// TODO Auto-generated catch block
@@ -635,7 +671,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //								availableAppsManager.request(EnumAvailableRequestType.INCREASE);
 //							}
 							
-							updatableAppsManager.resetUpdatableApps();
+//							updatableAppsManager.resetUpdatableApps();
 							
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
@@ -795,6 +831,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			loadingAvailableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
 			loadingAvailableAppsList.setTag(EnumFlipperChildType.LOADING);
+			loadingAvailableAppsProgress = (ProgressBar) loadingAvailableAppsList.findViewById(R.id.progress);
+			loadingAvailableAppsProgressCompletionTarget = new AtomicInteger(0);
+			loadingAvailableAppsProgressCurrent = new AtomicInteger(0);
 			loadingInstalledAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
 			loadingInstalledAppsList.setTag(EnumFlipperChildType.LOADING);
 			loadingUpdatableAppsList = LinearLayout.inflate(this, R.layout.list_loading, appsListFlipper);
@@ -1018,6 +1057,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		refreshAvailableDisplay();
     	}
     	availableAppsListView.setSelectionFromTop((originalScrollPostition.get()+adjustAvailableDisplayOffset.get()), originalPartialScrollPostition.get());
+    	updatableAppsManager.resetUpdatableApps();
 	}
 	
 	public void appendAndUpdateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
@@ -1099,6 +1139,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	if(!newList){
     		installedAdapter.notifyDataSetChanged();
     	}
+    	
+    	if(!(availableApps.getList().size()==0)){
+			updatableAppsManager.resetUpdatableApps();
+		}
 //    	if(bootingUp && availableApps.getList().size()==0){
 //			switchAvailableToProgressBar();
 //			showAvailableList();
@@ -1135,7 +1179,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void resetDisplayUpdates(){
-		if(freshUpdatableApps.getList().size()==0){
+		if(freshUpdatableApps == null){
+			updatableAppsManager.resetUpdatableApps();
+			return;
+		}
+		if( freshUpdatableApps.getList().size()==0){
 			switchUpdatableToEmpty();
 		}else{
 			switchUpdatableToList();
@@ -1285,6 +1333,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private void switchAvailableToProgressBar(){
 		AptoideLog.d(Aptoide.this, "switching available to progressBar");
 		
+		loadingAvailableAppsProgress.setIndeterminate(true);
+		
         appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
         appsListFlipper.addView(loadingAvailableAppsList, EnumAppsLists.Available.ordinal());
@@ -1294,6 +1344,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         }
         
         switchUpdatableToProgressBar();
+	}
+	
+	private void availableProgressSetCompletionTarget(){
+		loadingAvailableAppsProgress.setIndeterminate(false);
+		loadingAvailableAppsProgress.setMax(loadingAvailableAppsProgressCompletionTarget.get());
+	}
+	
+	private void availableProgressUpdate(){
+		loadingAvailableAppsProgress.setProgress(loadingAvailableAppsProgressCurrent.get());
+	}
+	
+	private void availableProgressIndeterminate(){
+		loadingAvailableAppsProgress.setIndeterminate(true);
 	}
 
 	private void switchAvailableToList(){
