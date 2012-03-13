@@ -1960,7 +1960,7 @@ public class ManagerDatabase {
 												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
 												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) <= 0?false:(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE)))
 												 , appsCursor.getString(DOWNGRADE_VERSION_NAME));
-				installedApps.addApp(app);
+				installedApps.add(app);
 
 			}while(appsCursor.moveToNext());
 			appsCursor.close();
@@ -2080,7 +2080,7 @@ public class ManagerDatabase {
 			do{																			
 				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
 												, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
-				availableApps.addApp(app);
+				availableApps.add(app);
 
 			}while(appsCursor.moveToNext());
 			appsCursor.close();
@@ -2204,7 +2204,7 @@ public class ManagerDatabase {
 				if( (appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE))) ){
 					app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
 							 , appsCursor.getString(UP_TO_DATE_VERSION_NAME), appsCursor.getFloat(UPDATE_STARS), appsCursor.getInt(UPDATE_DOWNLOADS));
-					updatableApps.addApp(app);
+					updatableApps.add(app);
 				}
 
 			}while(appsCursor.moveToNext());
@@ -2302,7 +2302,7 @@ public class ManagerDatabase {
 			do{																			
 				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
 												, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
-				availableApps.addApp(app);
+				availableApps.add(app);
 
 			}while(appsCursor.moveToNext());
 			appsCursor.close();

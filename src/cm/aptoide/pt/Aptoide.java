@@ -26,6 +26,7 @@ package cm.aptoide.pt;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,6 +68,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -79,6 +81,7 @@ import android.widget.TextView;
 import android.widget.ViewFlipper;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
+import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListsDimensions;
@@ -87,6 +90,8 @@ import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
+import cm.aptoide.pt.ifaceutil.DynamicAppsListAdapter;
+import cm.aptoide.pt.ifaceutil.StaticAppsListAdapter;
 
 /**
  * Aptoide, the main interface class
@@ -163,10 +168,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private AvailableAppsManager availableAppsManager;
 	private UpdatableAppsManager updatableAppsManager;
 	
-	private SimpleAdapter categoriesAdapter = null;
-	private SimpleAdapter availableAdapter = null;
-	private SimpleAdapter installedAdapter = null;
-	private SimpleAdapter updatableAdapter = null;
+	private StaticAppsListAdapter categoriesAdapter = null;
+	private DynamicAppsListAdapter availableAdapter = null;
+	private StaticAppsListAdapter installedAdapter = null;
+	private StaticAppsListAdapter updatableAdapter = null;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -709,7 +714,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 								setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
 							}
 							
-							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
+							if(availableApps.size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;
 								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 							}else{
@@ -730,7 +735,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 								setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
 							}
 	
-							if(availableApps.getList().size() >= (displayListsDimensions.getCacheSize())){
+							if(availableApps.size() >= (displayListsDimensions.getCacheSize())){
 								availableAppsTrimAmount = range;
 								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
 							}else{
@@ -871,6 +876,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			appsListFlipper.addView(emptyInstalledAppsList);
 			appsListFlipper.addView(emptyUpdatableAppsList);
 			
+			availableAdapter = new DynamicAppsListAdapter(this, R.layout.row_app, availableApps);
+			installedAdapter = new StaticAppsListAdapter(this, R.layout.row_app, installedApps);
+			updatableAdapter = new StaticAppsListAdapter(this, R.layout.row_app, updatableApps);
         }
     }
 
@@ -955,13 +963,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void initDisplayCategories(){
-		categoriesAdapter = new SimpleAdapter(Aptoide.this, category.getDisplayList(), R.layout.row_category 
-         		, new String[] {Constants.KEY_CATEGORY_HASHID, Constants.KEY_CATEGORY_NAME, Constants.DISPLAY_CATEGORY_APPS}
-				, new int[] {R.id.category_hashid, R.id.category_name, R.id.category_apps});
-		
-		categoriesAdapter.setViewBinder(new CategoryListBinder());
-		availableAppsListView.setOnScrollListener(null);
-		availableAppsListView.setAdapter(categoriesAdapter);
+//		categoriesAdapter = new SimpleAdapter(Aptoide.this, category.getDisplayList(), R.layout.row_category 
+//         		, new String[] {Constants.KEY_CATEGORY_HASHID, Constants.KEY_CATEGORY_NAME, Constants.DISPLAY_CATEGORY_APPS}
+//				, new int[] {R.id.category_hashid, R.id.category_name, R.id.category_apps});
+//		
+//		categoriesAdapter.setViewBinder(new CategoryListBinder());
+//		availableAppsListView.setOnScrollListener(null);
+//		availableAppsListView.setAdapter(categoriesAdapter);
 	}
 	
 	public synchronized void setFreshCategories(ViewDisplayCategory freshCategory){
@@ -996,13 +1004,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
 
 	public void initDisplayAvailable(){
-		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.row_app, 
-				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
-				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
-		
-		availableAdapter.setViewBinder(new AvailableAppsListBinder());
-		availableAppsListView.setOnScrollListener(scrollListener);
-		availableAppsListView.setAdapter(availableAdapter);
+//		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.row_app, 
+//				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
+//				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
+//		
+//		availableAdapter.setViewBinder(new AvailableAppsListBinder());
+//		availableAppsListView.setOnScrollListener(scrollListener);
+//		availableAppsListView.setAdapter(availableAdapter);
     }
 	
 	public synchronized void setFreshAvailableApps(ViewDisplayListApps freshAvailableApps){
@@ -1015,28 +1023,28 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		AptoideLog.d(Aptoide.this, "trimBeginningAvailableList: "+trimAmount);
 		originalScrollPostition.set(availableAppsListView.getFirstVisiblePosition());
 		originalPartialScrollPostition.set(availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
-		AptoideLog.d(this, "list size before: "+availableApps.getList().size()+"   original scroll position: "+originalScrollPostition.get());
+		AptoideLog.d(this, "list size before: "+availableApps.size()+"   original scroll position: "+originalScrollPostition.get());
 		availableDisplayOffsetAdjustments.decrementAndGet();
 		do{
-			this.availableApps.getList().removeFirst();
+			this.availableApps.removeFirst();
 			trimAmount--;
 		}while(trimAmount>0);
 		adjustAvailableDisplayOffset.set(adjustAmount);
-		AptoideLog.d(this, "list size after: "+availableApps.getList().size());
+		AptoideLog.d(this, "list size after: "+availableApps.size());
 	}
 	
 	public synchronized void trimEndAvailableAppsList(int trimAmount){
 		AptoideLog.d(Aptoide.this, "trimEndAvailableList: "+trimAmount);
 		availableDisplayOffsetAdjustments.incrementAndGet();
 		do{
-			this.availableApps.getList().removeLast();
+			this.availableApps.removeLast();
 			trimAmount--;
 		}while(trimAmount>0);
-		AptoideLog.d(this, "list size after: "+availableApps.getList().size());
+		AptoideLog.d(this, "list size after: "+availableApps.size());
 	}
 	
 	public void resetDisplayAvailable(){
-		if(freshAvailableApps.getList().size()==0){
+		if(freshAvailableApps.size()==0){
 			switchAvailableToEmpty();
 		}else{
 			switchAvailableToList();
@@ -1047,10 +1055,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			showAvailableList();			
 		}
 		
-    	AptoideLog.d(Aptoide.this, "new AvailableList: "+freshAvailableApps.getList().size());
+    	AptoideLog.d(Aptoide.this, "new AvailableList: "+freshAvailableApps.size());
     	originalScrollPostition.set(availableAppsListView.getFirstVisiblePosition());
 		originalPartialScrollPostition.set(availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
-		boolean newList = this.availableApps.getList().isEmpty();
+		boolean newList = this.availableApps.isEmpty();
     	this.availableApps = freshAvailableApps;
     	initDisplayAvailable();
     	if(!newList){
@@ -1061,15 +1069,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void appendAndUpdateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
-    	AptoideLog.d(Aptoide.this, "appending freshAvailableList: "+freshAvailableApps.getList().size());
-		boolean newList = this.availableApps.getList().isEmpty();
+    	AptoideLog.d(Aptoide.this, "appending freshAvailableList: "+freshAvailableApps.size());
+		boolean newList = this.availableApps.isEmpty();
     	if(newList){
     		this.availableApps = freshAvailableApps;
     		initDisplayAvailable();
     	}else{	
     		AptoideLog.d(this, "available list not empty");
-    		this.availableApps.getList().addAll(freshAvailableApps.getList());
-    		AptoideLog.d(Aptoide.this, "new displayList size: "+this.availableApps.getList().size());
+    		this.availableApps.addAll(freshAvailableApps);
+    		AptoideLog.d(Aptoide.this, "new displayList size: "+this.availableApps.size());
     		refreshAvailableDisplay();
     	}
     	//After trimming the top, adjust the display offset
@@ -1080,9 +1088,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void prependAndUpdateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
-    	AptoideLog.d(Aptoide.this, "prepending freshAvailableList: "+freshAvailableApps.getList().size());
-    	int adjustAmount = freshAvailableApps.getList().size();
-    	boolean newList = this.availableApps.getList().isEmpty();
+    	AptoideLog.d(Aptoide.this, "prepending freshAvailableList: "+freshAvailableApps.size());
+    	int adjustAmount = freshAvailableApps.size();
+    	boolean newList = this.availableApps.isEmpty();
     	if(newList){
     		this.availableApps = freshAvailableApps;
     		initDisplayAvailable();
@@ -1090,15 +1098,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     		int scrollRestorePosition = availableAppsListView.getFirstVisiblePosition();
     		int partialScrollRestorePosition = (availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
     		AptoideLog.d(this, "available list not empty");
-    		this.availableApps.getList().addAll(0,freshAvailableApps.getList());
-    		AptoideLog.d(Aptoide.this, "new displayList size: "+this.availableApps.getList().size());
+    		this.availableApps.addAll(0,freshAvailableApps);
+    		AptoideLog.d(Aptoide.this, "new displayList size: "+this.availableApps.size());
     		refreshAvailableDisplay();
 
     		adjustAvailableDisplayOffset.set(-adjustAmount);
 //    		if(availableDisplayOffsetAdjustments.get()!=0){
 //    			availableDisplayOffsetAdjustments.incrementAndGet();
 //    		}
-        	availableAppsListView.setSelectionFromTop(scrollRestorePosition+freshAvailableApps.getList().size(), partialScrollRestorePosition);
+        	availableAppsListView.setSelectionFromTop(scrollRestorePosition+freshAvailableApps.size(), partialScrollRestorePosition);
     	}
 	}
 	
@@ -1108,13 +1116,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     
     public void initDisplayInstalled(){
-    	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.row_app, 
-				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-    						, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
-				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
-		
-		installedAdapter.setViewBinder(new InstalledAppsListBinder());
-		installedAppsListView.setAdapter(installedAdapter);
+//    	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.row_app, 
+//				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+//    						, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
+//				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
+//		
+//		installedAdapter.setViewBinder(new InstalledAppsListBinder());
+//		installedAppsListView.setAdapter(installedAdapter);
     }
 	
 	public synchronized void setFreshInstalledApps(ViewDisplayListApps freshInstalledApps){
@@ -1122,7 +1130,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	public void resetDisplayInstalled(){
-		if(freshInstalledApps.getList().size()==0){
+		if(freshInstalledApps.size()==0){
 			switchInstalledToEmpty();
 		}else{
 			switchInstalledToList();
@@ -1132,15 +1140,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			showInstalledList();
 		}
 
-		AptoideLog.d(Aptoide.this, "new InstalledList: "+freshInstalledApps.getList().size());
-		boolean newList = this.installedApps.getList().isEmpty();
+		AptoideLog.d(Aptoide.this, "new InstalledList: "+freshInstalledApps.size());
+		boolean newList = this.installedApps.isEmpty();
     	this.installedApps = freshInstalledApps;
     	initDisplayInstalled();
     	if(!newList){
     		installedAdapter.notifyDataSetChanged();
     	}
     	
-    	if(!(availableApps.getList().size()==0)){
+    	if(!(availableApps.size()==0)){
 			updatableAppsManager.resetUpdatableApps();
 		}
 //    	if(bootingUp && availableApps.getList().size()==0){
@@ -1165,13 +1173,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     
     public void initDisplayUpdates(){
-    	updatableAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.row_app, 
-    			new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-    						, Constants.KEY_STATS_DOWNLOADS, Constants.KEY_STATS_STARS, Constants.DISPLAY_APP_ICON_CACHE_PATH},
-    		new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
-
-    	updatableAdapter.setViewBinder(new UpdatableAppsListBinder());
-    	updatableAppsListView.setAdapter(updatableAdapter);
+//    	updatableAdapter = new SimpleAdapter(Aptoide.this, updatableApps.getList(), R.layout.row_app, 
+//    			new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+//    						, Constants.KEY_STATS_DOWNLOADS, Constants.KEY_STATS_STARS, Constants.DISPLAY_APP_ICON_CACHE_PATH},
+//    		new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
+//
+//    	updatableAdapter.setViewBinder(new UpdatableAppsListBinder());
+//    	updatableAppsListView.setAdapter(updatableAdapter);
     }
 	
 	public synchronized void setFreshUpdatableApps(ViewDisplayListApps freshUpdatableApps){
@@ -1183,7 +1191,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			updatableAppsManager.resetUpdatableApps();
 			return;
 		}
-		if( freshUpdatableApps.getList().size()==0){
+		if( freshUpdatableApps.size()==0){
 			switchUpdatableToEmpty();
 		}else{
 			switchUpdatableToList();
@@ -1193,8 +1201,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			showUpdatableList();			
 		}
 
-		AptoideLog.d(Aptoide.this, "new UpdatesList: "+freshUpdatableApps.getList().size());
-		boolean newList = this.updatableApps.getList().isEmpty();
+		AptoideLog.d(Aptoide.this, "new UpdatesList: "+freshUpdatableApps.size());
+		boolean newList = this.updatableApps.isEmpty();
     	this.updatableApps = freshUpdatableApps;
     	initDisplayUpdates();
     	if(!newList){
@@ -1364,7 +1372,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
         appsListFlipper.addView(availableAppsListView, EnumAppsLists.Available.ordinal());
         
-        if(updatableApps.getList().isEmpty()){
+        if(updatableApps.isEmpty()){
         	switchUpdatableToEmpty();
         }else{
         	switchUpdatableToList();
@@ -1396,7 +1404,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
         appsListFlipper.addView(installedAppsListView, EnumAppsLists.Installed.ordinal());
         
-        if(updatableApps.getList().isEmpty()){
+        if(updatableApps.isEmpty()){
         	switchUpdatableToEmpty();
         }else{
         	switchUpdatableToList();
@@ -1626,6 +1634,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 
 	};
+	
 
     class ScrollDetector implements OnScrollListener{
 
