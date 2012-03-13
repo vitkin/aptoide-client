@@ -20,9 +20,8 @@
 
 package cm.aptoide.pt.data.display;
 
-import java.util.HashMap;
-
-import cm.aptoide.pt.data.model.ViewApplication;
+import android.os.Parcel;
+import android.os.Parcelable;
 import cm.aptoide.pt.data.util.Constants;
 
  /**
@@ -32,9 +31,20 @@ import cm.aptoide.pt.data.util.Constants;
  * @since 3.0
  *
  */
-public class ViewDisplayApplication {
+public class ViewDisplayApplication implements Parcelable{
 
-	private HashMap<String, Object> map;
+	private int appHashid;
+	private String appName;
+	private boolean isInstalled;
+	private String installedVersionName;
+	private boolean isUpdatable;
+	private String upToDateVersionName;
+	private boolean isDowngradable;
+	private String downgradeVersionName;
+	
+	private String iconCachePath;
+	private float stars;
+	private int downloads;
 	
 	
 
@@ -48,12 +58,17 @@ public class ViewDisplayApplication {
 	 * @param upToDateVersionName
 	 */
 	public ViewDisplayApplication(int appHashid, String appName, float stars, int downloads, String upToDateVersionName) {
-		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_AVAILABLE);
-		setAppHashid(appHashid);
-		setAppName(appName);
-		setStars(stars);
-		setDownloads(downloads);
-		setUpTodateVersionName(upToDateVersionName);
+		this.appHashid = appHashid;
+		this.iconCachePath = Constants.PATH_CACHE_ICONS+appHashid;
+		
+		this.appName = appName;
+		this.stars = stars;
+		this.downloads = downloads;
+		this.upToDateVersionName = upToDateVersionName;
+				
+		this.isInstalled = false;
+		this.isUpdatable = false;
+		this.isDowngradable = false;
 	}
 	
 	/**
@@ -68,19 +83,21 @@ public class ViewDisplayApplication {
 	 * @param DowngradeVersionName
 	 */
 	public ViewDisplayApplication(int appHashid, String appName, String installedVersionName, boolean isUpdatable, String upToDateVersionName, boolean isDowngradable, String downgradeVersionName) {
-		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_INSTALLED);
-		setAppHashid(appHashid);
-		setAppName(appName);
-		setInstalledVersionName(installedVersionName);
-//		setIsUpdatable(isUpdatable);
-		if(isUpdatable){
-			setUpTodateVersionName(upToDateVersionName);
+		this.appHashid = appHashid;
+		this.iconCachePath = Constants.PATH_CACHE_ICONS+appHashid;
+		
+		this.appName = appName;
+		this.isInstalled = true;
+		this.installedVersionName = installedVersionName;
+		if( (this.isUpdatable = isUpdatable) ){
+			this.upToDateVersionName = upToDateVersionName;
 		}
-//		setIsDowngradable(isDowngradable);
-		if(isDowngradable){
-			setIsDowngradable(isDowngradable);
-//			setDowngradeVersionName(downgradeVersionName);
+		if( (this.isDowngradable = isDowngradable) ){
+			this.downgradeVersionName = downgradeVersionName;
 		}
+				
+		this.stars = Constants.EMPTY_INT;
+		this.downloads = Constants.EMPTY_INT;
 	}
 
 	/**
@@ -92,98 +109,64 @@ public class ViewDisplayApplication {
 	 * @param upToDateVersionName
 	 */
 	public ViewDisplayApplication(int appHashid, String appName, String installedVersionName, String upToDateVersionName, float updatestars, int updateDownloads) {
-		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_UPDATE);
-		setAppHashid(appHashid);
-		setAppName(appName);
-		setInstalledVersionName(installedVersionName);
-		setUpTodateVersionName(upToDateVersionName);
-		setStars(updatestars);
-		setDownloads(updateDownloads);
-	}
-	
-	
-	private void setAppHashid(int appHashid){
-		this.map.put(Constants.KEY_APPLICATION_HASHID, appHashid);
-		this.map.put(Constants.DISPLAY_APP_ICON_CACHE_PATH, Constants.PATH_CACHE_ICONS+appHashid);
+		this.appHashid = appHashid;
+		this.iconCachePath = Constants.PATH_CACHE_ICONS+appHashid;
+		
+		this.appName = appName;
+		this.isInstalled = true;
+		this.installedVersionName = installedVersionName;
+		this.isUpdatable = true;
+		this.upToDateVersionName = upToDateVersionName;
+		this.stars = updatestars;
+		this.downloads = updateDownloads;
+		
+		this.isDowngradable = false;
 	}
 	
 	public int getAppHashid() {
-		return (Integer)this.map.get(Constants.KEY_APPLICATION_HASHID);
+		return this.appHashid;
 	}
 
 	public String getIconCachePath() {
-		return (String)this.map.get(Constants.DISPLAY_APP_ICON_CACHE_PATH);
-	}
-	
-	private void setAppName(String appName){
-		this.map.put(Constants.KEY_APPLICATION_NAME, appName);
+		return this.iconCachePath;
 	}
 
 	public String getAppName() {
-		return (String)this.map.get(Constants.KEY_APPLICATION_NAME);
-	}
-	
-	private void setStars(float stars){
-		this.map.put(Constants.KEY_STATS_STARS, stars);
+		return this.appName;
 	}
 
 	public float getStars() {
-		return (Float)this.map.get(Constants.KEY_STATS_STARS);
-	}
-	
-	private void setDownloads(int downloads){
-		this.map.put(Constants.KEY_STATS_DOWNLOADS, downloads);
+		return this.stars;
 	}
 
 	public int getDownloads() {
-		return (Integer)this.map.get(Constants.KEY_STATS_DOWNLOADS);
+		return this.downloads;
 	}
 	
-	private void setInstalledVersionName(String installedVersionName){
-		this.map.put(Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, installedVersionName);
+	public boolean isInstalled(){
+		return this.isInstalled;
 	}
 
 	public String getInstalledVersionName() {
-		return (String)this.map.get(Constants.DISPLAY_APP_INSTALLED_VERSION_NAME);
-	}
-	
-	private void setIsUpdatable(boolean isUpdatable){
-		this.map.put(Constants.DISPLAY_APP_IS_UPDATABLE, isUpdatable);
+		return this.installedVersionName;
 	}
 
 	public boolean isUpdatable() {
-		return (Boolean)this.map.get(Constants.DISPLAY_APP_IS_UPDATABLE);
-	}
-	
-	private void setUpTodateVersionName(String upToDateVersionName){
-		this.map.put(Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, upToDateVersionName);
+		return this.isUpdatable;
 	}
 
 	public String getUpTodateVersionName() {
-		return (String)this.map.get(Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME);
-	}
-	
-	private void setIsDowngradable(boolean isDowngradable){
-		this.map.put(Constants.DISPLAY_APP_IS_DOWNGRADABLE, isDowngradable);
+		return this.upToDateVersionName;
 	}
 
 	public boolean isDowngradeable() {
-		return (Boolean)this.map.get(Constants.DISPLAY_APP_IS_DOWNGRADABLE);
-	}
-	
-	private void setDowngradeVersionName(String downgradeVersionName){
-		this.map.put(Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME, downgradeVersionName);
+		return this.isDowngradable;
 	}
 
 	public String getDowngradeVersionName() {
-		return (String)this.map.get(Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME);
+		return this.downgradeVersionName;
 	}
 	
-	
-	
-	public HashMap<String, Object> getDiplayMap(){
-		return this.map;
-	}
 	
 
 	/**
@@ -192,7 +175,18 @@ public class ViewDisplayApplication {
 	 * @param String uri
 	 */
 	public void clean(){
-		this.map = null;
+		this.appHashid = Constants.EMPTY_INT;
+		this.appName = null;
+		this.isInstalled = false;
+		this.installedVersionName = null;
+		this.isUpdatable = false;
+		this.upToDateVersionName = null;
+		this.isDowngradable = false;
+		this.downgradeVersionName = null;
+		
+		this.iconCachePath = null;
+		this.stars = Constants.EMPTY_INT;
+		this.downloads = Constants.EMPTY_INT;
 	}
 	/**
 	 * ViewDisplayApplication available object reuse reConstructor
@@ -204,12 +198,17 @@ public class ViewDisplayApplication {
 	 * @param upToDateVersionName
 	 */
 	public void reuse(int appHashid, String appName, float stars, int downloads, String upToDateVersionName) {
-		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_AVAILABLE);
-		setAppHashid(appHashid);
-		setAppName(appName);
-		setStars(stars);
-		setDownloads(downloads);
-		setUpTodateVersionName(upToDateVersionName);
+		this.appHashid = appHashid;
+		this.iconCachePath = Constants.PATH_CACHE_ICONS+appHashid;
+		
+		this.appName = appName;
+		this.stars = stars;
+		this.downloads = downloads;
+		this.upToDateVersionName = upToDateVersionName;
+				
+		this.isInstalled = false;
+		this.isUpdatable = false;
+		this.isDowngradable = false;
 	}
 	
 	/**
@@ -224,14 +223,21 @@ public class ViewDisplayApplication {
 	 * @param downgradeVersionName
 	 */
 	public void reuse(int appHashid, String appName, String installedVersionName, boolean isUpdatable, String upToDateVersionName, boolean isDowngradable, String downgradeVersionName) {
-		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_INSTALLED);
-		setAppHashid(appHashid);
-		setAppName(appName);
-		setInstalledVersionName(installedVersionName);
-		setIsUpdatable(isUpdatable);
-		setUpTodateVersionName(upToDateVersionName);
-		setIsDowngradable(isDowngradable);
-		setDowngradeVersionName(downgradeVersionName);
+		this.appHashid = appHashid;
+		this.iconCachePath = Constants.PATH_CACHE_ICONS+appHashid;
+		
+		this.appName = appName;
+		this.isInstalled = true;
+		this.installedVersionName = installedVersionName;
+		if( (this.isUpdatable = isUpdatable) ){
+			this.upToDateVersionName = upToDateVersionName;
+		}
+		if( (this.isDowngradable = isDowngradable) ){
+			this.downgradeVersionName = downgradeVersionName;
+		}
+				
+		this.stars = Constants.EMPTY_INT;
+		this.downloads = Constants.EMPTY_INT;
 	}
 
 	/**
@@ -243,26 +249,31 @@ public class ViewDisplayApplication {
 	 * @param upToDateVersionName
 	 */
 	public void reuse(int appHashid, String appName, String installedVersionName, String upToDateVersionName, float updatestars, int updateDownloads) {
-		this.map = new HashMap<String, Object>(Constants.NUMBER_OF_DISPLAY_FIELDS_APP_UPDATE);
-		setAppHashid(appHashid);
-		setAppName(appName);
-		setInstalledVersionName(installedVersionName);
-		setUpTodateVersionName(upToDateVersionName);
-		setStars(updatestars);
-		setDownloads(updateDownloads);
+		this.appHashid = appHashid;
+		this.iconCachePath = Constants.PATH_CACHE_ICONS+appHashid;
+		
+		this.appName = appName;
+		this.isInstalled = true;
+		this.installedVersionName = installedVersionName;
+		this.isUpdatable = true;
+		this.upToDateVersionName = upToDateVersionName;
+		this.stars = updatestars;
+		this.downloads = updateDownloads;
+		
+		this.isDowngradable = false;
 	}
 
 
 	@Override
 	public int hashCode() {
-		return this.getAppHashid();
+		return this.appHashid;
 	}
 
 
 	@Override
 	public boolean equals(Object object) {
-		if(object instanceof ViewApplication){
-			ViewApplication app = (ViewApplication) object;
+		if(object instanceof ViewDisplayApplication){
+			ViewDisplayApplication app = (ViewDisplayApplication) object;
 			if(app.hashCode() == this.hashCode()){
 				return true;
 			}
@@ -273,7 +284,79 @@ public class ViewDisplayApplication {
 
 	@Override
 	public String toString() {
-		return "AppHashid: "+getAppHashid()+" Name: "+getAppName()+" InstalledVersion: "+getInstalledVersionName()+" isDowngradable: "+isDowngradeable()+" DowngradeVersion: "+getDowngradeVersionName()+" isUpdatable: "+isUpdatable()+" UpToDateVersion: "+getUpTodateVersionName()+" Downloads: "+getDownloads()+" Stars: "+getStars() ;
-	}
+		StringBuilder description = new StringBuilder("AppHashid: "+appHashid+" Name: "+appName);
+		if(isInstalled){
+			description.append(" InstalledVersion: "+installedVersionName);
+		}else{
+			description.append(" Downloads: "+downloads+" Stars: "+stars);
+		}
+		if(isUpdatable){
+			description.append(" UpToDateVersion: "+upToDateVersionName);
+		}
+		if(isDowngradable){
+			description.append(" DowngradeVersion: "+downgradeVersionName);
+		}
 		
+		return description.toString();
+	}
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewDisplayApplication> CREATOR = new Parcelable.Creator<ViewDisplayApplication>() {
+		public ViewDisplayApplication createFromParcel(Parcel in) {
+			return new ViewDisplayApplication(in);
+		}
+
+		public ViewDisplayApplication[] newArray(int size) {
+			return new ViewDisplayApplication[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	private ViewDisplayApplication(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeInt(appHashid);
+		out.writeString(appName);
+		out.writeValue(isInstalled);
+		out.writeString(installedVersionName);
+		out.writeValue(isUpdatable);
+		out.writeString(upToDateVersionName);
+		out.writeValue(isDowngradable);
+		out.writeString(downgradeVersionName);
+		out.writeString(iconCachePath);
+		out.writeFloat(stars);
+		out.writeInt(downloads);
+	}
+
+	public void readFromParcel(Parcel in) {
+		appHashid = in.readInt();
+		appName = in.readString();
+		isInstalled = (Boolean) in.readValue(null);
+		installedVersionName = in.readString();
+		isUpdatable = (Boolean) in.readValue(null);
+		upToDateVersionName = in.readString();
+		isDowngradable = (Boolean) in.readValue(null);
+		downgradeVersionName = in.readString();
+		iconCachePath = in.readString();
+		stars = in.readFloat();
+		downloads = in.readInt();
+	}
+
 }

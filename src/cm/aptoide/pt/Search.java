@@ -211,12 +211,12 @@ public class Search extends Activity implements OnItemClickListener{
 	}
 	
 	public void resetResultsList(){		
-		resultsAdapter = new SimpleAdapter(Search.this, searchResults.getList(), R.layout.row_app, 
-				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
-				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
-		
-		resultsAdapter.setViewBinder(new ResultsListBinder());
-		resultsListView.setAdapter(resultsAdapter);
+//		resultsAdapter = new SimpleAdapter(Search.this, searchResults.getList(), R.layout.row_app, 
+//				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
+//				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
+//		
+//		resultsAdapter.setViewBinder(new ResultsListBinder());
+//		resultsListView.setAdapter(resultsAdapter);
 	}
 	
 	@Override
