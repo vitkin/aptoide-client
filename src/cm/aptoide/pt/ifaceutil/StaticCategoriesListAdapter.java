@@ -38,6 +38,17 @@ import cm.aptoide.pt.data.display.ViewDisplayApplication;
  */
 public class StaticCategoriesListAdapter extends ArrayAdapter<ViewDisplayApplication>{
 
+	if(availableByCategory){
+		if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
+			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
+			try {
+				if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
+					// RESET CATEGORIES TO ZERO
+					Log.d("Aptoide","resetting categories list.");
+					setFreshCategories(serviceDataCaller.callGetCategories());
+					interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_CATEGORIES.ordinal());
+	
+	
 	/**
 	 * DynamicAppsListAdapter Constructor
 	 *
