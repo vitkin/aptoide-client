@@ -67,9 +67,7 @@ public class DynamicAppsListAdapter extends ArrayAdapter<ViewDisplayApplication>
 			serviceDataIsBound = true;
 			
 			Log.v("Aptoide-DynamicAppsListAdapter", "Connected to ServiceData");
-
-			
-	        
+     
 	        try {
 	        	Log.v("Aptoide-DynamicAppsListAdapter", "Called for getting apps sorting policy");
 	            appsSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceDataCaller.callGetAppsSortingPolicy());	        	
