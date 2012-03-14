@@ -92,6 +92,7 @@ import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 import cm.aptoide.pt.ifaceutil.DynamicAppsListAdapter;
 import cm.aptoide.pt.ifaceutil.StaticAppsListAdapter;
+import cm.aptoide.pt.ifaceutil.StaticCategoriesListAdapter;
 
 /**
  * Aptoide, the main interface class
@@ -168,7 +169,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private AvailableAppsManager availableAppsManager;
 	private UpdatableAppsManager updatableAppsManager;
 	
-	private StaticAppsListAdapter categoriesAdapter = null;
+	private StaticCategoriesListAdapter categoriesAdapter = null;
 	private DynamicAppsListAdapter availableAdapter = null;
 	private StaticAppsListAdapter installedAdapter = null;
 	private StaticAppsListAdapter updatableAdapter = null;
