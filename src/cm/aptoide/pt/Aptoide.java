@@ -109,7 +109,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	ContextThemeWrapper theme;
 	
-	private ScrollDetector scrollListener;
 	private GestureDetector swypeDetector;
 	private View.OnTouchListener swypeListener;
 	private AtomicBoolean swyping = null;
@@ -142,31 +141,23 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	private enum EnumFlipperChildType{ EMPTY, LOADING, LIST };
 	
-	private ViewDisplayListApps freshAvailableApps = null;
-	private int availableAppsTrimAmount = 0;	//TODO refactor as atomic, maybe try to integrate with adjustAvailableDisplayOffset
-	private AtomicInteger originalScrollPostition;
-	private AtomicInteger originalPartialScrollPostition;	
-	private AtomicInteger adjustAvailableDisplayOffset;
-	private AtomicInteger availableDisplayOffsetAdjustments;
 	
-	private ViewDisplayListsDimensions displayListsDimensions;
+	
+	private boolean availableByCategory = true;
+	private EnumAppsSorting appsSortingPolicy = null;
+	private AtomicBoolean allowAppsDisplayOptionsChange = null;
 	
 	private ViewDisplayCategory category = null;
 	private ViewDisplayCategory freshCategory = null;
-	private ViewDisplayListApps availableApps = null;
+	
 	private ViewDisplayListApps freshInstalledApps = null;
 	private ViewDisplayListApps installedApps = null;
 	private ViewDisplayListApps freshUpdatableApps = null;
 	private ViewDisplayListApps updatableApps = null;
 	
-	private boolean availableByCategory = true;
-	private EnumAppsSorting appsSortingPolicy = null;
-	private AtomicBoolean allowAppsSortingPolicyChange = null;
-	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
 	private InstalledAppsManager installedAppsManager;
-	private AvailableAppsManager availableAppsManager;
 	private UpdatableAppsManager updatableAppsManager;
 	
 	private StaticCategoriesListAdapter categoriesAdapter = null;
@@ -234,7 +225,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	        try {
 	            AptoideLog.v(Aptoide.this, "Called for screenDimensions storage");
 	            serviceDataCaller.callStoreScreenDimensions(screenDimensions);
-	            displayListsDimensions = serviceDataCaller.callGetDisplayListsDimensions();
 	        } catch (RemoteException e) {
 				// TODO Auto-generated catch block
 	            e.printStackTrace();
@@ -247,6 +237,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	            AptoideLog.v(Aptoide.this, "Called for getting apps sorting policy");
 	            appsSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceDataCaller.callGetAppsSortingPolicy());	        	
 	        	
+	            
 	            AptoideLog.v(Aptoide.this, "Called for registering as AvailableApps Observer");
 	            serviceDataCaller.callRegisterAvailableAppsObserver(serviceDataCallback);
 
@@ -289,8 +280,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 		@Override
 		public void resetAvailableListData() throws RemoteException {
-			AptoideLog.v(Aptoide.this, "received resetAvailableListData callback");
-			availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);			
+			AptoideLog.v(Aptoide.this, "received resetAvailableListData callback");	
+//			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
+//			if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() )	
+			availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);	
 		}
 
 		@Override
@@ -356,12 +349,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 		@Override
 		public void allowSortingPolicyChange() throws RemoteException {
-			allowAppsSortingPolicyChange.set(true);
+			allowAppsDisplayOptionsChange.set(true);
 		}
 
 		@Override
 		public void disallowSortingPolicyChange() throws RemoteException {
-			allowAppsSortingPolicyChange.set(false);
+			allowAppsDisplayOptionsChange.set(false);
 		}
 	};
 	
@@ -390,7 +383,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	        		break;
 				
 				case RESET_AVAILABLE_LIST_DISPLAY:
-					resetDisplayAvailable();
+					resetDisplayAvailable(); 
 					break;
 					
 				case TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY:
@@ -536,225 +529,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	}
     }
     
-    
-    private enum EnumAvailableRequestType { INCREASE, DECREASE, RESET, RESET_TO_ZERO };
-    
-    private class AvailableAppsManager{
-    	
-    	private LinkedList<EnumAvailableRequestType> requestFifo;
-    	private AtomicInteger cacheListOffset;
-    	private ExecutorService dataColectorsPool;
-
-		
-		private synchronized LinkedList<EnumAvailableRequestType> getRequestFifo(){
-			return requestFifo;
-		}
-		
-		//TODO lock access to requestFifo while suming
-		public synchronized int getRequestsSum(){
-			Log.d("Aptoide", "requestFifo: "+requestFifo);
-			int requestsSum = 0;
-			while( !getRequestFifo().isEmpty() ) {
-				switch (getRequestFifo().removeFirst()) {
-					case INCREASE:
-						requestsSum++;
-						break;
-						
-					case DECREASE:
-						requestsSum--;
-						break;
-						
-					case RESET:
-						break;
-	
-					default:
-						break;
-				}
-			}
-			return requestsSum;
-		}
-
-		
-		public AvailableAppsManager() {
-    		requestFifo = new LinkedList<Aptoide.EnumAvailableRequestType>();
-    		cacheListOffset = new AtomicInteger(0);
-    		dataColectorsPool = Executors.newSingleThreadExecutor();
-    	}
-		
-		public int getCacheOffset(){
-			return this.cacheListOffset.get();
-		}
-		
-		public void request(EnumAvailableRequestType requestType){
-			getRequestFifo().addLast(requestType);
-			dataColectorsPool.execute(new AvailableDataCollector());
-		}
-    	
-		
-        private class AvailableDataCollector implements Runnable {
-
-			@Override
-			public void run() {
-				int offset;
-				int range;
-				
-				if(!getRequestFifo().isEmpty() && (getRequestFifo().getFirst().equals(EnumAvailableRequestType.RESET)
-													|| getRequestFifo().getFirst().equals(EnumAvailableRequestType.RESET_TO_ZERO))){
-					
-					EnumAvailableRequestType request = getRequestFifo().removeFirst();
-					if(availableByCategory){
-						if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
-							try {
-								if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
-									// RESET CATEGORIES TO ZERO
-									Log.d("Aptoide","resetting categories list.");
-									setFreshCategories(serviceDataCaller.callGetCategories());
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_CATEGORIES.ordinal());
-								}else{
-									// RESET AVAILABLE APPS BY CATEGORY TO ZERO
-									cacheListOffset.set(-1);
-									offset = 0;
-									range = displayListsDimensions.getFastReset();
-									
-									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+range+" "+category);
-									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
-//									availableAppsManager.request(EnumAvailableRequestType.INCREASE);
-								}
-								
-//								updatableAppsManager.resetUpdatableApps();
-								
-							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}else{
-							if(category != null && !category.hasChildren()){
-								// RESET AVAILABLE APPS BY CATEGORY
-								if(cacheListOffset.get() == -1){
-									offset = 0;
-									range = displayListsDimensions.getFastReset();
-								}else{
-									offset = cacheListOffset.get()*displayListsDimensions.getPageSize();
-									range = displayListsDimensions.getPageSize();
-								}
-								
-								try {
-									Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+range);
-									setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
-									interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
-									
-//									updatableAppsManager.resetUpdatableApps();
-									
-								} catch (RemoteException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
-							}
-						}
-					}else{
-						if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
-							//RESET AVAILABE APPS TO ZERO
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
-							cacheListOffset.set(-1);
-							offset = 0;
-							range = displayListsDimensions.getFastReset();
-						}else{
-							if(cacheListOffset.get() == -1){
-								offset = 0;
-								range = displayListsDimensions.getFastReset();
-							}else{
-								offset = cacheListOffset.get()*displayListsDimensions.getPageSize();
-								range = displayListsDimensions.getPageSize();
-							}
-						}
-						try {
-							Log.d("Aptoide","resetting available list.  offset: "+offset+" range: "+range);
-							setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
-							interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_AVAILABLE_LIST_DISPLAY.ordinal());
-//							if(request.equals(EnumAvailableRequestType.RESET_TO_ZERO)){
-//								availableAppsManager.request(EnumAvailableRequestType.INCREASE);
-//							}
-							
-//							updatableAppsManager.resetUpdatableApps();
-							
-						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					
-				}else{
-					
-					int requestsSum = getRequestsSum();
-					if(requestsSum==0){
-						return;
-					}
-					int previousCacheOffset = cacheListOffset.getAndAdd(requestsSum);
-					int currentCacheOffset = cacheListOffset.get();
-					
-					try {
-						if(requestsSum>0){
-							// MOVE FORWARD IN AVAILABLE APPS LIST
-							if(previousCacheOffset == -1){
-//								offset = displayListsDimensions.getFastReset();
-//								range = displayListsDimensions.getPageSize()-offset;
-								previousCacheOffset = cacheListOffset.getAndIncrement();
-								offset = displayListsDimensions.getFastReset();
-								range = (displayListsDimensions.getPageSize()-offset)+displayListsDimensions.getPageSize();
-							}else{
-								offset = (previousCacheOffset+1)*displayListsDimensions.getPageSize();
-								range = requestsSum*displayListsDimensions.getPageSize();
-							}							
-							if(availableByCategory && category != null && !category.hasChildren()){
-								Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range+" category: "+category);
-								setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
-							}else{
-								Log.d("Aptoide","advancing available list forward.  offset: "+offset+" range: "+range);
-								setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
-							}
-							
-							if(availableApps.size() >= (displayListsDimensions.getCacheSize())){
-								availableAppsTrimAmount = range;
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
-							}else{
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
-							}
-							
-							
-						}else{
-							// MOVE BACKWARD IN AVAILABLE APPS LIST
-							offset = (currentCacheOffset+requestsSum-1)*displayListsDimensions.getPageSize();
-							range = Math.abs(requestsSum)*displayListsDimensions.getPageSize();
-							
-							if(availableByCategory && category != null && !category.hasChildren()){
-								Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range+" category: "+category);
-								setFreshAvailableApps(serviceDataCaller.callGetAvailableAppsByCategory(offset, range, category.getCategoryHashid()));
-							}else{
-								Log.d("Aptoide","advancing available list backward.  offset: "+offset+" range: "+range);
-								setFreshAvailableApps(serviceDataCaller.callGetAvailableApps(offset, range));
-							}
-	
-							if(availableApps.size() >= (displayListsDimensions.getCacheSize())){
-								availableAppsTrimAmount = range;
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());
-							}else{
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY.ordinal());							
-							}
-							
-						}
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-        	
-        }
-
-    }
-    
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -766,12 +540,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
         	theme = new ContextThemeWrapper(this, R.style.DialogTheme);
         	
 			installedAppsManager = new InstalledAppsManager();
-			availableAppsManager = new AvailableAppsManager();
 			updatableAppsManager = new UpdatableAppsManager();
 			
 			
 			installedApps = new ViewDisplayListApps();
-			availableApps = new ViewDisplayListApps();
 			updatableApps = new ViewDisplayListApps();
 			
 			currentAppsList = EnumAppsLists.Available;
@@ -788,15 +560,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			swyping = new AtomicBoolean(false);
 			swypeDelayHandler = new Handler();
 			
-			originalScrollPostition = new AtomicInteger(0);
-			originalPartialScrollPostition = new AtomicInteger(0);
-			adjustAvailableDisplayOffset = new AtomicInteger(0);
-			availableDisplayOffsetAdjustments = new AtomicInteger(0);
-	
-			scrollListener = new ScrollDetector();
-			
 			synchronizingInstalledApps = new AtomicBoolean(false);
-			allowAppsSortingPolicyChange = new AtomicBoolean(true);
+			allowAppsDisplayOptionsChange = new AtomicBoolean(true);
 			
 			makeSureServiceDataIsRunning();
 			
@@ -877,7 +642,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			appsListFlipper.addView(emptyInstalledAppsList);
 			appsListFlipper.addView(emptyUpdatableAppsList);
 			
-			availableAdapter = new DynamicAppsListAdapter(this, R.layout.row_app, availableApps);
+			availableAdapter = new DynamicAppsListAdapter(this, R.layout.row_app_available, availableAppsListView);
 			installedAdapter = new StaticAppsListAdapter(this, R.layout.row_app, installedApps);
 			updatableAdapter = new StaticAppsListAdapter(this, R.layout.row_app, updatableApps);
         }
@@ -1003,118 +768,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		categoriesAdapter.notifyDataSetChanged();
 	}
     
-
-	public void initDisplayAvailable(){
-//		availableAdapter = new SimpleAdapter(Aptoide.this, availableApps.getList(), R.layout.row_app, 
-//				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
-//				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
-//		
-//		availableAdapter.setViewBinder(new AvailableAppsListBinder());
-//		availableAppsListView.setOnScrollListener(scrollListener);
-//		availableAppsListView.setAdapter(availableAdapter);
-    }
 	
-	public synchronized void setFreshAvailableApps(ViewDisplayListApps freshAvailableApps){
-		AptoideLog.d(Aptoide.this, "setFreshAvailableList");
-		this.freshAvailableApps = freshAvailableApps;
-	}
 	
-	public synchronized void trimBeginningAvailableAppsList(int trimAmount){
-		int adjustAmount = trimAmount;
-		AptoideLog.d(Aptoide.this, "trimBeginningAvailableList: "+trimAmount);
-		originalScrollPostition.set(availableAppsListView.getFirstVisiblePosition());
-		originalPartialScrollPostition.set(availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
-		AptoideLog.d(this, "list size before: "+availableApps.size()+"   original scroll position: "+originalScrollPostition.get());
-		availableDisplayOffsetAdjustments.decrementAndGet();
-		do{
-			this.availableApps.removeFirst();
-			trimAmount--;
-		}while(trimAmount>0);
-		adjustAvailableDisplayOffset.set(adjustAmount);
-		AptoideLog.d(this, "list size after: "+availableApps.size());
-	}
 	
-	public synchronized void trimEndAvailableAppsList(int trimAmount){
-		AptoideLog.d(Aptoide.this, "trimEndAvailableList: "+trimAmount);
-		availableDisplayOffsetAdjustments.incrementAndGet();
-		do{
-			this.availableApps.removeLast();
-			trimAmount--;
-		}while(trimAmount>0);
-		AptoideLog.d(this, "list size after: "+availableApps.size());
-	}
-	
-	public void resetDisplayAvailable(){
-		if(freshAvailableApps.size()==0){
-			switchAvailableToEmpty();
-		}else{
-			switchAvailableToList();
-		}
-		
-		// fixes viewFlipper non-refresh bug
-		if(currentAppsList.equals(EnumAppsLists.Available)){
-			showAvailableList();			
-		}
-		
-    	AptoideLog.d(Aptoide.this, "new AvailableList: "+freshAvailableApps.size());
-    	originalScrollPostition.set(availableAppsListView.getFirstVisiblePosition());
-		originalPartialScrollPostition.set(availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
-		boolean newList = this.availableApps.isEmpty();
-    	this.availableApps = freshAvailableApps;
-    	initDisplayAvailable();
-    	if(!newList){
-    		refreshAvailableDisplay();
-    	}
-    	availableAppsListView.setSelectionFromTop((originalScrollPostition.get()+adjustAvailableDisplayOffset.get()), originalPartialScrollPostition.get());
-    	updatableAppsManager.resetUpdatableApps();
-	}
-	
-	public void appendAndUpdateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
-    	AptoideLog.d(Aptoide.this, "appending freshAvailableList: "+freshAvailableApps.size());
-		boolean newList = this.availableApps.isEmpty();
-    	if(newList){
-    		this.availableApps = freshAvailableApps;
-    		initDisplayAvailable();
-    	}else{	
-    		AptoideLog.d(this, "available list not empty");
-    		this.availableApps.addAll(freshAvailableApps);
-    		AptoideLog.d(Aptoide.this, "new displayList size: "+this.availableApps.size());
-    		refreshAvailableDisplay();
-    	}
-    	//After trimming the top, adjust the display offset
-    	if(adjustAvailableDisplayOffset.get() != 0){
-			AptoideLog.d(this, "restoring scroll position, currentPosition:"+availableAppsListView.getFirstVisiblePosition()+" firstVisiblePosition: "+(originalScrollPostition.get()+adjustAvailableDisplayOffset.get())+" top: "+originalPartialScrollPostition.get());
-	    	availableAppsListView.setSelectionFromTop((originalScrollPostition.get()-adjustAvailableDisplayOffset.get()), originalPartialScrollPostition.get());
-    	}
-	}
-	
-	public void prependAndUpdateDisplayAvailable(ViewDisplayListApps freshAvailableApps){	
-    	AptoideLog.d(Aptoide.this, "prepending freshAvailableList: "+freshAvailableApps.size());
-    	int adjustAmount = freshAvailableApps.size();
-    	boolean newList = this.availableApps.isEmpty();
-    	if(newList){
-    		this.availableApps = freshAvailableApps;
-    		initDisplayAvailable();
-    	}else{	
-    		int scrollRestorePosition = availableAppsListView.getFirstVisiblePosition();
-    		int partialScrollRestorePosition = (availableAppsListView.getChildAt(0)==null?0:availableAppsListView.getChildAt(0).getTop());
-    		AptoideLog.d(this, "available list not empty");
-    		this.availableApps.addAll(0,freshAvailableApps);
-    		AptoideLog.d(Aptoide.this, "new displayList size: "+this.availableApps.size());
-    		refreshAvailableDisplay();
-
-    		adjustAvailableDisplayOffset.set(-adjustAmount);
-//    		if(availableDisplayOffsetAdjustments.get()!=0){
-//    			availableDisplayOffsetAdjustments.incrementAndGet();
-//    		}
-        	availableAppsListView.setSelectionFromTop(scrollRestorePosition+freshAvailableApps.size(), partialScrollRestorePosition);
-    	}
-	}
-	
-	public void refreshAvailableDisplay(){
-		availableAdapter.notifyDataSetChanged();
-	}
-    
     
     public void initDisplayInstalled(){
 //    	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.row_app, 
@@ -1246,37 +902,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			return true;
 		}
 
-	}
-	
-	
-
-	class AvailableAppsListBinder implements ViewBinder		//TODO needs some improvements
-	{
-		public boolean setViewValue(View view, Object data, String textRepresentation)
-		{
-			if(view.getClass().toString().equalsIgnoreCase("class android.widget.RatingBar")){
-				RatingBar tmpr = (RatingBar)view;
-				tmpr.setRating(new Float(textRepresentation));
-			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
-				TextView tmpr = (TextView)view;
-				tmpr.setText(textRepresentation);
-			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
-				ImageView tmpr = (ImageView)view;	
-				File icn = new File(textRepresentation);
-				if(icn.exists() && icn.length() > 0){
-					new Uri.Builder().build();
-					tmpr.setImageURI(Uri.parse(textRepresentation));
-				}else{
-					tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
-				}
-			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
-				LinearLayout tmpr = (LinearLayout)view;
-				tmpr.setTag(textRepresentation);
-			}else{
-				return false;
-			}
-			return true;
-		}
 	}
 
 
@@ -1636,174 +1261,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 	};
 	
-
-    class ScrollDetector implements OnScrollListener{
-
-    	AtomicInteger initialFirstVisibleItem = new AtomicInteger(0);
-    	AtomicInteger firstVisibleItem = new AtomicInteger(0);
-    	AtomicInteger visibleItemCount = new AtomicInteger(0);
-    	AtomicInteger differential = new AtomicInteger(0);
-    	AtomicInteger displayOffset = new AtomicInteger(0);
-		AtomicInteger scrollRegionOrigin = new AtomicInteger(0);
-		AtomicBoolean readyForIncrease = new AtomicBoolean(false);
-		AtomicBoolean readyForDecrease = new AtomicBoolean(false);
-		AtomicBoolean detectingListChange = new AtomicBoolean(false);
-    	
-    	private void detectAvailableAppsCacheIncrease(int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
-    		Log.d("Aptoide","Scroll "+currentList+" discerning increase, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+displayListsDimensions.getTriggerMargin());
-
-    			// this ensures that the scroll hasn't started on the same cache region that it stopped
-			if( (previousScrollRegion <  (( currentDisplayOffset / displayListsDimensions.getPageSize()) + 1) || readyForIncrease.get())	
-				// these ensure that we're past the trigger and inside the triggerMargin
-				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) < (displayListsDimensions.getTriggerMargin() + displayListsDimensions.getIncreaseTrigger())					
-				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) >  displayListsDimensions.getIncreaseTrigger()){
-				
-				if(!readyForIncrease.get()){
-					scrollRegionOrigin.incrementAndGet();
-				}
-				readyForIncrease.set(false);
-				detectingListChange.set(false);
-				availableAppsManager.request(EnumAvailableRequestType.INCREASE);
-				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
-				
-			}else{
-					// If we're not before the first increase trigger
-				if(!( previousScrollRegion == 0 && (previousScrollRegion == ( currentDisplayOffset / displayListsDimensions.getPageSize())) )
-					// but we're in a higher cache region than were we started the scroll 
-					&& (previousScrollRegion <  (( currentDisplayOffset / displayListsDimensions.getPageSize()) + 1))){
-					scrollRegionOrigin.incrementAndGet();
-					readyForIncrease.set(true);
-				}
-				detectingListChange.set(false);				
-			}
-    	}
-    	
-    	private void detectAvailableAppsCacheDecrease(int currentDisplayOffset, int previousScrollRegion, EnumAppsLists currentList){
-    		Log.d("Aptoide","Scroll "+currentList+" discerning decrease, display offset: "+currentDisplayOffset+" previousScrollRegion: "+previousScrollRegion+" offsetAdjustment: "+availableDisplayOffsetAdjustments.get()+" triggerMargin:  "+displayListsDimensions.getTriggerMargin());
-
-    			// this ensures that we only get new top apps if they're not already cached
-			if( ((previousScrollRegion > 2 ) || previousScrollRegion == 2 && readyForDecrease.get())
-				// this ensures that the scroll hasn't started on the same cache region that it stopped	
-				&& (previousScrollRegion >  (( currentDisplayOffset / displayListsDimensions.getPageSize()) + 1) || readyForDecrease.get())
-				// these ensure that we're past the trigger and inside the triggerMargin
-				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) > (displayListsDimensions.getDecreaseTrigger() - displayListsDimensions.getTriggerMargin())
-				&& (currentDisplayOffset % displayListsDimensions.getPageSize()) <  displayListsDimensions.getDecreaseTrigger()){
-
-				if(!readyForDecrease.get()){
-					scrollRegionOrigin.decrementAndGet();
-				}
-				readyForDecrease.set(false);
-				detectingListChange.set(false);
-				availableAppsManager.request(EnumAvailableRequestType.DECREASE);
-				Log.d("Aptoide","Scroll "+currentList+" cache offset: "+availableAppsManager.getCacheOffset()+" requestFifo size: "+availableAppsManager.getRequestFifo().size());
-				
-			}else{
-					// if we're in a higher cache region than were we started the scroll 
-				if(previousScrollRegion  >  (( currentDisplayOffset / displayListsDimensions.getPageSize()) + 1)){
-					scrollRegionOrigin.decrementAndGet();
-					readyForDecrease.set(true);
-				}
-				detectingListChange.set(false);				
-			}
-    	}
-    	
-		@Override
-		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-			if(!swyping.get()){
-				int offsetAdjustment = adjustAvailableDisplayOffset.getAndSet(0); 
-				if(offsetAdjustment != 0){
-					this.displayOffset.addAndGet(offsetAdjustment);
-				}
-				this.firstVisibleItem.set(firstVisibleItem);
-				this.visibleItemCount.set(visibleItemCount);
-//				Log.d("Aptoide","Scroll currentList: "+currentAppsList+" initialfirstVisibleItem: "+initialFirstVisibleItem+" firstVisibleItem: "+firstVisibleItem);
-				this.differential.set(Math.abs(firstVisibleItem-this.initialFirstVisibleItem.get()));
-				
-				if(this.initialFirstVisibleItem.get()+visibleItemCount < firstVisibleItem){
-					this.initialFirstVisibleItem.set(firstVisibleItem);
-					Log.d("Aptoide","New Scroll down page, offset: "+firstVisibleItem+" range: "+visibleItemCount+" readyForIncrease: "+readyForIncrease.get());
-					switch (currentAppsList) {
-						case Available:
-
-							int currentDisplayOffset = this.displayOffset.addAndGet(this.differential.get());
-							int previousScrollRegion = scrollRegionOrigin.get();
-							if(!detectingListChange.get()){
-								detectingListChange.set(true);
-								detectAvailableAppsCacheIncrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
-							}
-							break;
-		
-						default:
-							break;
-					}
-				}else if(this.initialFirstVisibleItem.get()-visibleItemCount > firstVisibleItem){
-					this.initialFirstVisibleItem.set(firstVisibleItem);
-					Log.d("Aptoide","New Scroll up page, offset: "+firstVisibleItem+" range: "+visibleItemCount+" readyForDecrease: "+readyForDecrease.get());
-					switch (currentAppsList) {
-						case Available:														
-
-							int currentDisplayOffset = this.displayOffset.addAndGet(-this.differential.get());
-							int previousScrollRegion = scrollRegionOrigin.get();
-							if(!detectingListChange.get()){
-								detectingListChange.set(true);
-								detectAvailableAppsCacheDecrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
-							}
-							break;
-		
-						default:
-							break;
-					}
-				}
-			}
-		}
-
-		@Override
-		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			if( !swyping.get() && scrollState == SCROLL_STATE_IDLE){
-//				Log.d("Aptoide","Scroll currentList: "+currentAppsList+" initialFirstVisibleItem: "+initialFirstVisibleItem+" firstVisibleItem: "+firstVisibleItem);
-				this.differential.set(Math.abs(firstVisibleItem.get()-this.initialFirstVisibleItem.get()));
-
-	    		AptoideLog.d(Aptoide.this, "visibleItems: "+visibleItemCount.get());
-				
-				if((firstVisibleItem.get()-initialFirstVisibleItem.get())>0){
-					switch (currentAppsList) {
-						case Available:
-
-							Log.d("Aptoide","Scroll down, offset: "+firstVisibleItem+" range: "+visibleItemCount+" readyForIncrease: "+readyForIncrease.get());
-							int currentDisplayOffset = this.displayOffset.addAndGet(this.differential.get());
-							int previousScrollRegion = scrollRegionOrigin.get();
-							if(!detectingListChange.get()){
-								detectingListChange.set(true);
-								detectAvailableAppsCacheIncrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
-							}
-							break;
-		
-						default:
-							break;
-					}
-				}else{
-					switch (currentAppsList) {
-						case Available:
-
-							Log.d("Aptoide","Scroll up, offset: "+firstVisibleItem+" range: "+visibleItemCount+" readyForDecrease: "+readyForDecrease.get());
-							int currentDisplayOffset = this.displayOffset.addAndGet(-this.differential.get());
-							int previousScrollRegion = scrollRegionOrigin.get();
-							if(!detectingListChange.get()){
-								detectingListChange.set(true);
-								detectAvailableAppsCacheDecrease(currentDisplayOffset, previousScrollRegion, currentAppsList);
-							}
-							break;
-		
-						default:
-							break;
-					}
-				}
-				initialFirstVisibleItem.set(firstVisibleItem.get());
-			}
-		}
-    	
-    }
-	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		return swypeDetector.onTouchEvent(event);
@@ -1925,7 +1382,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					final RadioButton byStars = (RadioButton) displayOptions.findViewById(R.id.by_stars);
 					final RadioButton byDownloads = (RadioButton) displayOptions.findViewById(R.id.by_downloads);
 
-					if(allowAppsSortingPolicyChange.get()){
+					if(allowAppsDisplayOptionsChange.get()){
 						spacer.setVisibility(View.VISIBLE);
 						group_sort.setVisibility(View.VISIBLE);
 						switch (appsSortingPolicy) {

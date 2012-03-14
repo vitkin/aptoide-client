@@ -39,6 +39,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
+import cm.aptoide.pt.data.display.ViewDisplayApplicationAvailable;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
@@ -2000,7 +2001,7 @@ public class ManagerDatabase {
 		final int DOWNLOADS = Constants.COLUMN_SEVENTH;
 		
 		ViewDisplayListApps availableApps = null;
-		ViewDisplayApplication app;							
+		ViewDisplayApplicationAvailable app;							
 		
 		String selectAvailableApps = "SELECT "+Constants.KEY_APPLICATION_NAME+", "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
 											+", MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
@@ -2078,8 +2079,8 @@ public class ManagerDatabase {
 			}
 			
 			do{																			
-				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
-												, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
+				app = new ViewDisplayApplicationAvailable(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
+														, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
 				availableApps.add(app);
 
 			}while(appsCursor.moveToNext());
@@ -2244,7 +2245,7 @@ public class ManagerDatabase {
 		final int DOWNLOADS = Constants.COLUMN_SEVENTH;
 		
 		ViewDisplayListApps availableApps = null;
-		ViewDisplayApplication app;							
+		ViewDisplayApplicationAvailable app;							
 		
 		String selectAvailableApps = "SELECT A."+Constants.KEY_APPLICATION_NAME+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_PACKAGE_NAME
 											+", MAX(A."+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
@@ -2300,8 +2301,8 @@ public class ManagerDatabase {
 			}
 			
 			do{																			
-				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
-												, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
+				app = new ViewDisplayApplicationAvailable(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getFloat(STARS)
+														, appsCursor.getInt(DOWNLOADS), appsCursor.getString(UP_TO_DATE_VERSION_NAME));
 				availableApps.add(app);
 
 			}while(appsCursor.moveToNext());
