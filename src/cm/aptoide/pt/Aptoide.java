@@ -387,12 +387,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					break;
 					
 				case TRIM_PREPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY:
-					trimEndAvailableAppsList(availableAppsTrimAmount);
+					trimBottomAvailableAppsList(availableAppsTrimAmount);
 					prependAndUpdateDisplayAvailable(freshAvailableApps);
 					break;
 					
 				case TRIM_APPEND_AND_UPDATE_AVAILABLE_LIST_DISPLAY:
-					trimBeginningAvailableAppsList(availableAppsTrimAmount);
+					trimTopAvailableAppsList(availableAppsTrimAmount);
 					appendAndUpdateDisplayAvailable(freshAvailableApps);
 					break;
 					
@@ -642,7 +642,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			appsListFlipper.addView(emptyInstalledAppsList);
 			appsListFlipper.addView(emptyUpdatableAppsList);
 			
-			availableAdapter = new DynamicAppsListAdapter(this, R.layout.row_app_available, availableAppsListView);
+			availableAdapter = new DynamicAppsListAdapter(this, availableAppsListView, serviceDataCaller);
 			installedAdapter = new StaticAppsListAdapter(this, R.layout.row_app, installedApps);
 			updatableAdapter = new StaticAppsListAdapter(this, R.layout.row_app, updatableApps);
         }
