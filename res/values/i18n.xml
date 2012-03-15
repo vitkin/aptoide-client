@@ -101,4 +101,10 @@
     <string name="no">No</string>
     <string name="starting">Starting</string>
     <string name="download">download</string>
+    
+    <string name="app_rating_title">Application Rating</string>
+    
+    <string name="login_credential">Bazaar Login</string>
+    
+    <string name="check_store_update">Check Stores Update Completion</string>
 </resources>
