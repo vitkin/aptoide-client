@@ -31,11 +31,10 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/uptodate_versionname"
+            android:id="@+id/installed_versionname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/app_name"
-            android:layout_toRightOf="@id/app_name"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
@@ -49,30 +48,30 @@
         android:layout_weight="2"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/downloads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="#b3b3b3"
-            android:textSize="12sp" />
 
-        <RatingBar
-            android:id="@+id/stars"
-            style="?android:attr/ratingBarStyleSmall"
+        <ImageView
+            android:id="@+id/app_downgradable"
+            android:src="@drawable/downgradable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/app_name"
+            android:visibility="invisible"
+            android:layout_alignParentRight="true" />
+
+        <ImageView
+            android:id="@+id/app_upgradable"
+            android:src="@drawable/upgradable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/app_name"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/downloads"
-            android:isIndicator="true"
-            android:numStars="5" />
+            android:visibility="invisible"
+            android:layout_toRightOf="@id/app_downgradable" />
+        
     </RelativeLayout>
 
-</LinearLayout><!--
+</LinearLayout>
+<!--
  * Since v3.0 Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *

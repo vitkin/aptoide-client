@@ -1,5 +1,5 @@
 /**
- * ViewDisplayApplication,		part of Aptoide's data model
+ * ViewDisplayApplicationAvailable,		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -25,7 +25,7 @@ import android.os.Parcelable;
 import cm.aptoide.pt.data.util.Constants;
 
  /**
- * ViewDisplayApplication, models an Application
+ * ViewDisplayApplicationAvailable, models an Available Application
  * 
  * @author dsilveira
  * @since 3.0
@@ -130,6 +130,7 @@ public class ViewDisplayApplicationAvailable extends ViewDisplayApplication{
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeInt(appHashid);
 		out.writeString(appName);
+		out.writeString(versionName);
 		out.writeString(iconCachePath);
 		out.writeFloat(stars);
 		out.writeInt(downloads);
@@ -139,6 +140,7 @@ public class ViewDisplayApplicationAvailable extends ViewDisplayApplication{
 	public void readFromParcel(Parcel in) {
 		appHashid = in.readInt();
 		appName = in.readString();
+		versionName = in.readString();
 		iconCachePath = in.readString();
 		stars = in.readFloat();
 		downloads = in.readInt();
