@@ -52,9 +52,12 @@
     <string name="category">Op categorie</string>
     <string name="all_applications">Alle toepassingen</string>
 
+    <string name="cache">Cache</string>
     <string name="clear_cache">Cache leegmaken</string>
-    <string name="download_icons">Download iconen</string>
+    <string name="clear_cache_sum">Waarschuwing: verwijdert alle iconen die door Blusens Market zijn opgeslagen, alle in behandeling zijnde installaties en updates. Niet doen als je aan het downloaden bent!</string>
     
+    <string name="download_icons">Download iconen</string>
+    <string name="download_icons_rules">Download icoon regels</string>
     
     
     
@@ -102,6 +105,8 @@
     <string name="comments_unavailable">Commentaren niet beschikbaar</string>
 
     <string name="bazaar_login">Bazaar Login</string>
+    <string name="clear_login">Login verwijderen</string>
+    <string name="clear_login_sum">Je huidige login verwijderen</string>
     <string name="set_new_login">Nieuwe login maken</string>
     <string name="comment_added">Je commentaar is met succes geplaatst</string>
     <string name="comment_response_indicator">\@</string>

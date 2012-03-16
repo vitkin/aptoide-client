@@ -56,10 +56,12 @@
     <string name="category">Por categoria </string>
     <string name="all_applications">Todas as aplicações </string>
     
+    <string name="cache">Cache</string>
     <string name="clear_cache">Limpar cache </string>
+    <string name="clear_cache_sum">Aviso: remove todos os icons que o Blusens Market tem guardados. Não faça isto se estiver com downloads activos.</string>
+    
     <string name="download_icons">Download de icons</string>
-    
-    
+    <string name="download_icons_rules">Regras de Download de icons </string>
     
     
     <string name="manage_repos">Gerir Store</string>
@@ -104,7 +106,10 @@
     <string name="hide_password">Esconder password</string>
     <string name="bad_login">Login inválido</string>
     <string name="comments_unavailable">Comnetários não disponíveis</string>
+    
     <string name="bazaar_login">Bazaar Login</string>
+    <string name="clear_login">Limpar login</string>
+    <string name="clear_login_sum">Limpar login actual</string>
     <string name="set_new_login">Definir novo login</string>
     <string name="comment_added">Comentário submetido com sucesso</string>
     <string name="comment_response_indicator">\@</string>

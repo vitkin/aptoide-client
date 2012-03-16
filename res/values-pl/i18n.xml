@@ -44,8 +44,12 @@
     <string name="category">Według kategorii </string>
     <string name="all_applications">Wszystkie aplikacje </string>
     
+    <string name="cache">Cache</string>
     <string name="clear_cache">Wyczyść cache </string>
+    <string name="clear_cache_sum">UWAGA: zostaną usunięte wszystkie ikony zapamiętane przez Blusens Market </string>
+    
     <string name="download_icons">Pobierz ikony</string>
+    <string name="download_icons_rules">Pobierz zasady ikon </string>
     
     
     

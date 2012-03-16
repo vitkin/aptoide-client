@@ -57,8 +57,12 @@
     <string name="category">Po kategoriji </string>
     <string name="all_applications">Sve aplikacije </string>
     
+    <string name="cache">Cache</string>
     <string name="clear_cache">Očisti cache </string>
+    <string name="clear_cache_sum">Upozorenje: Uklanja sve ikone koje su memorisane, kao i sve instalacije i ažuriranja koja su u toku. Nemojte ovo raditi ako vam se nešto skida u ovom trenutku!</string>
+    
     <string name="download_icons">Download ikone</string>
+    <string name="download_icons_rules">Download pravila ikona </string>
     
     
     
@@ -107,6 +111,9 @@
     <string name="comments_unavailable">Komentari nedostupni</string>
 
     <string name="bazaar_login">Bazaar Login</string>
+    <string name="credentialssettings">Bazaar login</string>
+    <string name="clear_login">Očisti login</string>
+    <string name="clear_login_summary">Poništi trenutni login</string>
     <string name="set_new_login">Stavi novi login</string>
 
     <string name="comment_added">Vaš komentar je uspješno objavljen</string>

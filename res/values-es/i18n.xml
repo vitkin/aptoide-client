@@ -37,9 +37,21 @@
     
     <string name="clear_cache">Limpiar Cache </string>
     
+    <string name="cache">Cache </string>
+    <string name="clear_cache_sum">Aviso: remueve todos los icones que Blusens Market ha guardado, así como todas las instalaciones y actualizaciones pendentes. No lo ejecutes si tienes descargas en proceso!</string>
+    <string name="clear_cache_caution">Limpiar cache?</string>
     
     
+    <string name="download_icons">Descargas</string>
+    <string name="download_icons_rules">Descargas de los Icones </string>
     
+    <string name="bazaar_login">Bazaar login</string>
+    <string name="clear_login">Limpiar login</string>
+    <string name="clear_login_sum">Desestablecer el login actual</string>
+    <string name="set_new_login">Establecer un nuevo login</string>
+    
+   <string name="app_rating">Clasificación de la Aplicación</string>
+   <string name="app_rating_sum">Mostrar las aplicaciones clasificadas como:</string>
     
     <string name="manage_repos">Administrar Repo</string>
     <string name="settings">Opciones</string>

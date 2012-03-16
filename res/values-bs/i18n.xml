@@ -45,9 +45,12 @@
     <string name="category">Po kategoriji </string>
     <string name="all_applications">Sve aplikacije</string>
     
+    <string name="cache">Cache</string>
     <string name="clear_cache">Ocistiti cache </string>
-    <string name="download_icons">Preuzimanje ikona</string>
-    
+    <string name="clear_cache_sum">OPASNOST: uklanja sve ikone koje je Blusens Market memorisao </string>
+  
+    <string name="download_icons">Preuzimanja</string>
+    <string name="download_icons_rules">Preuzimanje ikona za pravila</string>
     
     
     

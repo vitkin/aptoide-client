@@ -24,8 +24,13 @@
     
 	<!-- this string name has to be misspelled because private is a reserved word -->
     <string name="privt">Private</string>
+    <string name="bazaar_login">Bazaar Login</string>
+    <string name="clear_login">Clear login</string>
+    <string name="clear_login_sum">Unset your current login</string>
+    <string name="set_new_login">Set a new login</string>
     <string name="username">Username</string>
-    <string name="password">Password</string>   
+    <string name="password">Password</string>
+    <string name="show_password">Show password</string>   
 	<string name="bad_login">Invalid Login </string>
 	<string name="login_required">Login required</string>
     <string name="cant_connect">Can\'t connect to store</string>
@@ -47,16 +52,24 @@
     <string name="unable_to_connect">Unable to connect to store</string>
     
     <string name="settings">Settings</string>
-    <string name="download_icons">Download icons permissions</string>
-    <string name="never">Never</string>
-    <string name="clear_cache">Clear cache</string>
     <string name="icon">Icon</string>
+    <string name="download_icons_permissions">Download Icons Permissions</string>
+    <string name="download_icons">Download icons</string>
+    <string name="download_icons_rules">Download icon rules </string>
+    <string name="never">Never</string>
+    
+    <string name="cache">Cache</string>
+    <string name="clear_cache">Clear cache</string>
+    <string name="clear_cache_sum">Warning: removes all icons Blusens Market has cached, as well as all pending installs and updates. Don\'t do this if you have ongoing downloads!</string>
+
     <string name="hw_specs">Hardware specs</string>
     <string name="sdk_version">SDK version</string>
     <string name="screen_size">Screen size</string>
     <string name="gles_version">GLES version</string>
-    <string name="hw_filter">Filter apps by hardware</string>
-    <string name="automatic_install">Automatic install</string>
+    
+    <string name="hw_filters">Hardware Filters</string>
+    <string name="hw_filter_apps">Filter apps by hardware</string>
+    <string name="hw_show_apps">Don\'t show applications not compatible with your device.</string>
     
     <string name="display_options">Display Options</string>
     <string name="show_applications_by">Show applications by: </string>
@@ -79,6 +92,8 @@
     
     <string name="select_version">Select version</string>
     <string name="scheduled_downloads">Scheduled Downloads</string>
+    <string name="schedule_downloads_sum">Install scheduled downloads automatically when a Wifi connection is present</string>
+    <string name="automatic_install">Automatic install</string>
     <string name="schedule">Schedule</string>
     <string name="unschedule">Unschedule</string>
     <string name="scheduled">Scheduled</string>
@@ -102,9 +117,27 @@
     <string name="starting">Starting</string>
     <string name="download">download</string>
     
-    <string name="app_rating_title">Application Rating</string>
+    <string name="app_rating">Application Rating</string>
+    <string name="app_rating_sum">Show applications rated as:</string>
+    <string name="all_ages">All ages</string>
+    <string name="pre_teen">Pre-Teen</string>
+    <string name="teen">Teen</string>
+    <string name="mature">Mature</string>
     
-    <string name="login_credential">Bazaar Login</string>
+    <string-array name="permissions_entries">
+        <item>3G and Wifi</item>
+        <item>Wifi only</item>
+        <item>Never download</item>
+    </string-array>
+    
+    <string-array name="age_entries">
+        <item>All ages</item>
+        <item>Pre-Teen</item>
+        <item>Teen</item>
+        <item>Mature</item>
+    </string-array>
     
     <string name="check_store_update">Check Stores Update Completion</string>
+    <string name="check_store_update_sum">Check Stores update</string>
+    
 </resources>
