@@ -141,8 +141,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	private enum EnumFlipperChildType{ EMPTY, LOADING, LIST };
 	
-	
-	
 	private boolean availableByCategory = true;
 	private EnumAppsSorting appsSortingPolicy = null;
 	private AtomicBoolean allowAppsDisplayOptionsChange = null;
@@ -275,7 +273,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		@Override
 		public void newAvailableListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received newAvailableListDataAvailable callback");
-			availableAppsManager.request(EnumAvailableRequestType.RESET);
+			reloadDisplayAvailable();
 		}
 
 		@Override
@@ -283,7 +281,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			AptoideLog.v(Aptoide.this, "received resetAvailableListData callback");	
 //			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 //			if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() )	
-			availableAppsManager.request(EnumAvailableRequestType.RESET_TO_ZERO);	
+			resetDisplayAvailable();
 		}
 
 		@Override
@@ -466,40 +464,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     
     
     
-    private class InstalledAppsManager{
-    	private ExecutorService installedColectorsPool;
-    	
-    	public InstalledAppsManager(){
-    		installedColectorsPool = Executors.newSingleThreadExecutor();
-    	}
-    	
-    	public void resetInstalledApps(){
-        	installedColectorsPool.execute(new GetInstalledApps());
-        }
-    	
-    	private class GetInstalledApps implements Runnable{
-
-			@Override
-			public void run() {
-				interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
-				try {
-					setFreshInstalledApps(serviceDataCaller.callGetInstalledApps());
-					interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_INSTALLED_LIST_DISPLAY.ordinal());
-//					if(!(availableApps.getList().size()==0)){
-//						updatableAppsManager.resetUpdatableApps();
-//					}
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-    		
-    	}
-    }
-    
-    
-    
     private class UpdatableAppsManager{
     	private ExecutorService updatableColectorsPool;
     	
@@ -539,7 +503,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
         	theme = new ContextThemeWrapper(this, R.style.DialogTheme);
         	
-			installedAppsManager = new InstalledAppsManager();
 			updatableAppsManager = new UpdatableAppsManager();
 			
 			
@@ -643,7 +606,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			appsListFlipper.addView(emptyUpdatableAppsList);
 			
 			availableAdapter = new DynamicAppsListAdapter(this, availableAppsListView, serviceDataCaller);
-			installedAdapter = new StaticAppsListAdapter(this, R.layout.row_app, installedApps);
+			installedAdapter = new StaticAppsListAdapter(this, installedAppsListView, serviceDataCaller);
 			updatableAdapter = new StaticAppsListAdapter(this, R.layout.row_app, updatableApps);
         }
     }
@@ -728,6 +691,25 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 	}
 	
+	public void resetDisplayAvailable(){
+		if(availableByCategory){
+			categoriesAdapter.resetDisplay();
+		}else{
+			availableAdapter.resetDisplay(category);	//TODO maybe category should be null
+		}
+	}
+	
+	public void reloadDisplayAvailable(){
+		if(!availableByCategory || category != null && !category.hasChildren()){
+			availableAdapter.reloadDisplay();
+		}
+	}
+	
+	public void resetDisplayInstalled(){
+		interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
+		installedAdapter.resetDisplay();
+	}
+	
 	public void initDisplayCategories(){
 //		categoriesAdapter = new SimpleAdapter(Aptoide.this, category.getDisplayList(), R.layout.row_category 
 //         		, new String[] {Constants.KEY_CATEGORY_HASHID, Constants.KEY_CATEGORY_NAME, Constants.DISPLAY_CATEGORY_APPS}
@@ -767,66 +749,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	public void refreshCategoriesDisplay(){
 		categoriesAdapter.notifyDataSetChanged();
 	}
-    
-	
-	
-	
-    
-    public void initDisplayInstalled(){
-//    	installedAdapter = new SimpleAdapter(Aptoide.this, installedApps.getList(), R.layout.row_app, 
-//				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-//    						, Constants.DISPLAY_APP_INSTALLED_VERSION_NAME, Constants.DISPLAY_APP_IS_DOWNGRADABLE, Constants.DISPLAY_APP_ICON_CACHE_PATH},
-//				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.installed_versionname, R.id.isDowngradeAvailable, R.id.app_icon});
-//		
-//		installedAdapter.setViewBinder(new InstalledAppsListBinder());
-//		installedAppsListView.setAdapter(installedAdapter);
-    }
-	
-	public synchronized void setFreshInstalledApps(ViewDisplayListApps freshInstalledApps){
-		this.freshInstalledApps = freshInstalledApps;
-	}
-	
-	public void resetDisplayInstalled(){
-		if(freshInstalledApps.size()==0){
-			switchInstalledToEmpty();
-		}else{
-			switchInstalledToList();
-		}
-
-		if(currentAppsList.equals(EnumAppsLists.Installed)){
-			showInstalledList();
-		}
-
-		AptoideLog.d(Aptoide.this, "new InstalledList: "+freshInstalledApps.size());
-		boolean newList = this.installedApps.isEmpty();
-    	this.installedApps = freshInstalledApps;
-    	initDisplayInstalled();
-    	if(!newList){
-    		installedAdapter.notifyDataSetChanged();
-    	}
-    	
-    	if(!(availableApps.size()==0)){
-			updatableAppsManager.resetUpdatableApps();
-		}
-//    	if(bootingUp && availableApps.getList().size()==0){
-//			switchAvailableToProgressBar();
-//			showAvailableList();
-//		}
-	}
-	
-//	public void updateDisplayInstalled(ViewDisplayListApps installedApps){
-//    	AptoideLog.d(Aptoide.this, "InstalledList: "+installedApps);
-//		boolean newList = this.installedApps.getList().isEmpty();
-//    	if(newList){
-//    		this.installedApps = installedApps;
-//    		initDisplayInstalled();
-//    	}else{		//TODO append new list elements on the end or the beginning depending on scroll direction, and clear the same number of elements on the other side of the list.
-//    		AptoideLog.d(this, "installed list not empty");
-//    		this.installedApps.getList().addAll(installedApps.getList());
-//    		installedAdapter.notifyDataSetChanged();
-//    	}
-//		
-//	}
     
     
     public void initDisplayUpdates(){

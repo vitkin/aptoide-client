@@ -1,5 +1,5 @@
 /**
- * StaticAppsListAdapter,		part of Aptoide's data model
+ * StaticCategoriesListAdapter,		part of Aptoide's data model
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -29,7 +29,7 @@ import android.widget.ArrayAdapter;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
 
  /**
- * StaticAppsListAdapter, models a static loading apps list adapter
+ * StaticCategoriesListAdapter, models a static loading apps list adapter
  * 							extends arrayAdapter
  * 
  * @author dsilveira

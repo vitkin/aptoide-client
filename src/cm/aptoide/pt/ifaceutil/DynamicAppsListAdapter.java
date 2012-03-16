@@ -314,7 +314,7 @@ public class DynamicAppsListAdapter extends ArrayAdapter<ViewDisplayApplication>
     }
     
     
-	private void detectMoreAppsNeeded(int position){
+	private synchronized void detectMoreAppsNeeded(int position){
 		if((position % displayListsDimensions.getPageSize()) == 0){
 			if((position - scrollDirectionReference.get()) > 0){
 				scrollDirectionReference.set(position);
@@ -417,20 +417,14 @@ public class DynamicAppsListAdapter extends ArrayAdapter<ViewDisplayApplication>
             e.printStackTrace();
         }
         
-        appsManager.reset();
 	} 
 	
 	
 	
-	public void setCategory(ViewDisplayCategory category){
+	public void resetDisplay(ViewDisplayCategory category){
 		this.category = category;
-	}
-	
-	public void noCategory(){
-		this.category = null;
-	}
-
-	
+		appsManager.reset();
+	}	
     
 	public void reloadDisplay(){
 		appsManager.reload();
@@ -465,6 +459,17 @@ public class DynamicAppsListAdapter extends ArrayAdapter<ViewDisplayApplication>
 	
 	private void resetDisplay(){
 		Log.d("Aptoide-DynamicAppsListAdapter", "new AvailableList: "+freshApps.size());
+		
+		if(freshInstalledApps.size()==0){
+			switchInstalledToEmpty();
+		}else{
+			switchInstalledToList();
+		}
+
+		if(currentAppsList.equals(EnumAppsLists.Installed)){
+			showInstalledList();
+		}
+		
 		int scrollRestorePosition = listView.getFirstVisiblePosition();
 		int partialScrollRestorePosition = (listView.getChildAt(0)==null?0:listView.getChildAt(0).getTop());
 		boolean newList = this.apps.isEmpty();
