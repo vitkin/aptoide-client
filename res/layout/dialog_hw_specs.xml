@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:text="@string/sdk_version"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#4f4f4f" />
+        android:textColor="#fff" />
 
     <TextView
         android:id="@+id/sdk"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:text="@string/screen_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#4f4f4f" />
+        android:textColor="#fff" />
 
     <TextView
         android:id="@+id/screen"
@@ -40,7 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/gles_version"
-        android:textColor="#4f4f4f"
+        android:textColor="#fff"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView

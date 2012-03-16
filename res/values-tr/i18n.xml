@@ -56,9 +56,12 @@
     <string name="category">Kategoriler ile </string>
     <string name="all_applications">Tüm uygulamalar </string>
     
+    <string name="cache">Ara bellek</string>
     <string name="clear_cache">Ara belleği temizle </string>
-    <string name="download_icons">İkonları indir</string>
+    <string name="clear_cache_sum">Uyarı: bu Blusens Market\'in ara belleğe aldığı tüm ikonları ve bunun yanı sıra bekleyen kurulmalar ile güncellemeleri siler. Sürmekte olan indirmeleriniz varsa bu işlevi kullanmayınız!</string>
     
+    <string name="download_icons">İkonları indir</string>
+    <string name="download_icons_rules">İkon kurallarını indir </string>
     
     
     
@@ -107,6 +110,8 @@
     <string name="comments_unavailable">Yorumlar yüklenemedi</string>
 
     <string name="bazaar_login">Bazaar Oturumu</string>
+    <string name="clear_login">Oturumu temizle</string>
+    <string name="clear_login_sum">Şimdiki oturum verilerini kaldır</string>
     <string name="set_new_login">Yeni oturum yapılandır</string>
     <string name="comment_added">Yorumunuz başarılı bir şekilde yollandı</string>
     <string name="comment_response_indicator">\@</string>

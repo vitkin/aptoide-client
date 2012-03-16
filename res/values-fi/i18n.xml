@@ -57,9 +57,12 @@
     <string name="category">Kategorioittain </string>
     <string name="all_applications">Kaikki sovellukset </string>
     
+    <string name="cache">Välimuisti</string>
     <string name="clear_cache">Tyhjennä välimuisti </string>
-    <string name="download_icons">Lataa kuvakkeet</string>
+    <string name="clear_cache_sum">Varoitus: poistaa kaikki kuvakkeet, odottavat asennukset ja päivitykset Blusens Market välimuistista. Älä tee tätä, jos sinulla on latauksia kesken!</string>
     
+    <string name="download_icons">Lataa kuvakkeet</string>
+    <string name="download_icons_rules">Kuvakkeiden lataussäännöt </string>
     
     
     
@@ -108,7 +111,10 @@
     <string name="bad_login">Kirjautuminen näillä tunnuksilla epäonnistui</string>
     <string name="comments_unavailable">Ei kommentteja</string>
     <string name="bazaar_login">Bazaar-kirjautuminen</string>
+    <string name="clear_login">Tyhjennä kirjautuminen</string>
+    <string name="clear_login_sum">Poista nykyinen kirjautuminen käytöstä</string>
     <string name="set_new_login">Aseta uusi kirjautuminen</string>
+    
     <string name="comment_added">Kommenttisi on lähetetty onnistuneesti</string>
     <string name="comment_response_indicator">\@</string>
     <string name="missing_user">Käyttäjää ei määritelty</string>

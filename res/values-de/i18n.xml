@@ -58,12 +58,13 @@
     <string name="category">Nach Kategorie </string>
     <string name="all_applications">Alle Andwendungen </string>
  
+    <string name="cache">Zwischenspeicher</string>
     <string name="clear_cache">Zwischenspeicher löschen </string>
+    <string name="clear_cache_sum">Achtung: Entfernt sowohl zwischengespeicherte Icons als auch ausstehende Installationen und Updates. Bitte beenden Sie zunächst alle laufenden Downloads!</string>
+    
+    
     <string name="download_icons">Download Icons</string>
-    
-    
-    
-    
+    <string name="download_icons_rules">Download Icon Richtlinien </string>
     
     <string name="manage_repos">Store verwalten</string>
     <string name="display_options">Display Options</string>
@@ -108,7 +109,10 @@
     <string name="bad_login">Login mit den angegebenen Daten fehlgeschlagen</string>
     <string name="comments_unavailable">Kommentare nicht verfügbar</string>
 	<string name="bazaar_login">Bazaar Login</string>
+	<string name="clear_login">Login löschen</string>
+    <string name="clear_login_sum">Aktuellen Login zurücksetzen</string>
     <string name="set_new_login">Neuen Login erstellen</string>
+    
 	<string name="comment_added">Ihr Kommentar wurde übermittelt</string>
     <string name="comment_response_indicator">\@</string>
     <string name="missing_user">Kein Benutzer definiert</string>

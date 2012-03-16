@@ -39,15 +39,20 @@
     <string name="freshness">Els més recents primer</string>
     <string name="alphabetic">Alfabèticament </string>
     <string name="stars">Valoració </string>
+    
     <string name="downloads">Nombre de descàrregues </string>
 
+    
     <string name="show_applications_by">Mostrar aplicacions: </string>
     <string name="category">Per categoria </string>
     <string name="all_applications">Totes les aplicacions </string>
     
+    <string name="cache">Cache</string>
     <string name="clear_cache">Buidar cache </string>
-    <string name="download_icons">Baixar icones</string>
+    <string name="clear_cache_sum">PERILL:esborra les icones que Blusens Market ha desat </string>
     
+    <string name="download_icons">Baixar icones</string>
+    <string name="download_icons_rules">Normes de baixar icones </string>
     
     
     

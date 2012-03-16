@@ -57,10 +57,12 @@
     <string name="category">Per categoria </string>
     <string name="all_applications">Tutte </string>
     
+    <string name="cache">Cache</string>
     <string name="clear_cache">Pulisci cache </string>
+    <string name="clear_cache_sum">Attenzione: rimuovi tutte le icone che Blusens Market ha in cache, come tutte quelle installate e aggiornate. Non farlo se hai download in corso!</string>
+    
     <string name="download_icons">Scarica icone</string>
-    
-    
+    <string name="download_icons_rules">Scarica le regole delle icone </string>
     
     
     <string name="manage_repos">Gestisci Repo</string>
@@ -106,6 +108,8 @@
     <string name="comments_unavailable">Commenti non disponibili</string>
 
     <string name="bazaar_login">Bazaar Login</string>
+    <string name="clear_login">Cancella login</string>
+    <string name="clear_login_sum">Disattiva il login corrente</string>
     <string name="set_new_login">Attiva nuovo login</string>
 
     <string name="comment_added">Il tuo commento è stato inviato</string>

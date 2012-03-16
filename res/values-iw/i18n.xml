@@ -52,10 +52,12 @@
     <string name="category">על פי קטגוריה</string>
     <string name="all_applications">כל היישומים</string>
 
+    <string name="cache">מטמון</string>
     <string name="clear_cache">נקה מטמון</string>
+    <string name="clear_cache_sum">אזהרה: פעולה זו תסיר את כל הסמלים השמורים בזיכרון המטמון, וכמו כן את רשימת ההורדות הממתינות. אל תבצע פעולה זו במידה וישנה הורדה פעילה!</string>
+    
     <string name="download_icons">הורד סמלים</string>
-    
-    
+    <string name="download_icons_rules">הגדרות הורדת סמלים</string>
     
     
     
@@ -102,6 +104,8 @@
     <string name="comments_unavailable">תגובות זמינות</string>
 
     <string name="bazaar_login">התחברות לבזאר</string>
+    <string name="clear_login">נקה התחברות</string>
+    <string name="clear_login_sum">בטל התחברות</string>
     <string name="set_new_login">הגדר התחברות חדשה</string>
     <string name="comment_added">תגובתך פורסמה בהצלחה</string>
     <string name="comment_response_indicator">\@</string>

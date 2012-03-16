@@ -51,9 +51,12 @@
   <string name="category">Par catégorie</string>
   <string name="all_applications">Toutes les applications</string>
   
+  <string name="cache">Cache</string>
   <string name="clear_cache">Vider le cache</string>
-  <string name="download_icons">Télécharger les miniatures</string>
+  <string name="clear_cache_sum">Attention: effacer toutes les miniatures dans le cache, ainsi que les MàJ et installations en cours. Ne pas faire si téléchargement actif!</string>
   
+  <string name="download_icons">Télécharger les miniatures</string>
+  <string name="download_icons_rules">Règles de téléchargemetns des miniatures</string>
   
   
   
@@ -101,6 +104,8 @@
   <string name="comments_unavailable">Commentaires indisponibles</string>
 
   <string name="bazaar_login">Login Bazaar</string>
+  <string name="clear_login">Effacer login</string>
+  <string name="clear_login_sum">Effacer login actuel</string>
   <string name="set_new_login">Entrer nouveau login</string>
   <string name="comment_added">Votre commentaire a été soumis</string>
   <string name="comment_response_indicator">\@</string>

@@ -57,8 +57,12 @@
     <string name="category">По категориям </string>
     <string name="all_applications">Все приложения </string>
     
+    <string name="cache">Кэш</string>
     <string name="clear_cache">Очистить кзш </string>
+    <string name="clear_cache_sum">Предупреждение: удаляет все значки Blusens Market в кэше,  а также все ожидающие установки и обновления. Не делайте этого, если у вас есть текущие загрузки!</string>
+    
     <string name="download_icons">Загрузить иконки</string>
+      <string name="download_icons_rules">Загрузить иконку правила </string>
     
     
     
@@ -107,6 +111,8 @@
     <string name="comments_unavailable">Комментарии недоступны</string>
 
     <string name="bazaar_login">Bazaar логин</string>
+    <string name="clear_login">Очистка логин</string>
+ 	<string name="clear_login_sum">Отключение текущего логина</string>
     <string name="set_new_login">Установить новый логин</string>
     <string name="comment_added">Ваш комментарий успешно принят</string>
     <string name="comment_response_indicator">\@</string>
