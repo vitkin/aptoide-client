@@ -42,7 +42,6 @@ import cm.aptoide.pt.EnumAptoideInterfaceTasks;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayApplication;
-import cm.aptoide.pt.data.display.ViewDisplayApplicationInstalled;
 import cm.aptoide.pt.data.display.ViewDisplayApplicationUpdatable;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 
@@ -137,7 +136,7 @@ public class StaticUpdatableAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 		UpdatableRowViewHolder rowViewHolder;
 		
 		if(convertView == null){
-			convertView = layoutInflater.inflate(R.layout.row_app_installed, null);
+			convertView = layoutInflater.inflate(R.layout.row_app_updatable, null);
 			
 			rowViewHolder = new UpdatableRowViewHolder();
 			rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.app_icon);
@@ -162,9 +161,9 @@ public class StaticUpdatableAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 		}
 		
 		rowViewHolder.app_name.setText(apps.get(position).getAppName());
-		rowViewHolder.installed_versionname.setText(apps.get(position).getVersionName());
+		rowViewHolder.uptodate_versionname.setText(apps.get(position).getVersionName());
 		
-		rowViewHolder.uptodate_versionname.setText(((ViewDisplayApplicationUpdatable) apps.get(position)).getUptodateVersionName());
+		rowViewHolder.installed_versionname.setText(((ViewDisplayApplicationUpdatable) apps.get(position)).getInstalledVersionName());
 				
 		rowViewHolder.downloads.setText(((ViewDisplayApplicationUpdatable) apps.get(position)).getDownloads());
 		rowViewHolder.stars.setRating(((ViewDisplayApplicationUpdatable) apps.get(position)).getStars());

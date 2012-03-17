@@ -38,8 +38,9 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
-import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayApplicationAvailable;
+import cm.aptoide.pt.data.display.ViewDisplayApplicationInstalled;
+import cm.aptoide.pt.data.display.ViewDisplayApplicationUpdatable;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
@@ -1918,27 +1919,27 @@ public class ManagerDatabase {
 		final int APP_HASHID = Constants.COLUMN_SECOND;
 		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FOURTH;
-		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
-		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_SIXTH;
-		final int DOWNGRADE_VERSION_NAME = Constants.COLUMN_SEVENTH;
-		final int DOWNGRADE_VERSION_CODE = Constants.COLUMN_EIGTH;
+//		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
+		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_FIFTH;
+//		final int DOWNGRADE_VERSION_NAME = Constants.COLUMN_SEVENTH;
+		final int DOWNGRADE_VERSION_CODE = Constants.COLUMN_SIXTH;
 		
 		ViewDisplayListApps installedApps = null;
-		ViewDisplayApplication app;							
+		ViewDisplayApplicationInstalled app;							
 		
 		String selectInstalledApps = "SELECT I."+Constants.KEY_APP_INSTALLED_NAME+",I."+Constants.KEY_APP_INSTALLED_HASHID
 											+",I."+Constants.KEY_APP_INSTALLED_VERSION_NAME+",I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
-											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-											+",D."+Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME+",D."+Constants.DISPLAY_APP_DOWNGRADE_VERSION_CODE
+											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+",D."+Constants.DISPLAY_APP_DOWNGRADE_VERSION_CODE
+//											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+",D."+Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME
 									+" FROM "+Constants.TABLE_APP_INSTALLED+" I"
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
 																	+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+//																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
 															 +" FROM "+Constants.TABLE_APPLICATION
 															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
 										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
 																	+",MIN("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_DOWNGRADE_VERSION_CODE
-																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME
+//																	+","+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_DOWNGRADE_VERSION_NAME
 															 +" FROM "+Constants.TABLE_APPLICATION
 															 +" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") D"
 									+" ORDER BY I."+Constants.KEY_APP_INSTALLED_NAME+";";
@@ -1956,11 +1957,12 @@ public class ManagerDatabase {
 			
 			appsCursor.moveToFirst();
 			do{
-				app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
+				app = new ViewDisplayApplicationInstalled(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
 												 ,(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE)))
-												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
+//												 , appsCursor.getString(UP_TO_DATE_VERSION_NAME)
 												 ,(appsCursor.getInt(DOWNGRADE_VERSION_CODE) <= 0?false:(appsCursor.getInt(DOWNGRADE_VERSION_CODE) < appsCursor.getInt(INSTALLED_VERSION_CODE)))
-												 , appsCursor.getString(DOWNGRADE_VERSION_NAME));
+//												 , appsCursor.getString(DOWNGRADE_VERSION_NAME)
+												 );
 				installedApps.add(app);
 
 			}while(appsCursor.moveToNext());
@@ -1991,9 +1993,9 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, int categoryHashid, boolean filterByHw, EnumAppsSorting sortingPolicy){
-		
-		final int APP_NAME = Constants.COLUMN_FIRST;
-		final int APP_HASHID = Constants.COLUMN_SECOND;
+
+		final int APP_HASHID = Constants.COLUMN_FIRST;
+		final int APP_NAME = Constants.COLUMN_SECOND;
 //		final int PACKAGE_NAME = Constants.COLUMN_THIRD;
 //		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_FOURTH;
 		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
@@ -2003,7 +2005,7 @@ public class ManagerDatabase {
 		ViewDisplayListApps availableApps = null;
 		ViewDisplayApplicationAvailable app;							
 		
-		String selectAvailableApps = "SELECT "+Constants.KEY_APPLICATION_NAME+", "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
+		String selectAvailableApps = "SELECT "+Constants.KEY_APPLICATION_HASHID+", "+Constants.KEY_APPLICATION_NAME+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
 											+", MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 											+", "+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
 											+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
@@ -2020,9 +2022,9 @@ public class ManagerDatabase {
 				ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters();
 				Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo HW filters ON: "+filters);
 				
-				selectAvailableApps	+=								" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
-																	+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
-																	+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
+				selectAvailableApps	+=							" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+																+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+																+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 			}
 				selectAvailableApps	+=					" )";
 			
@@ -2129,8 +2131,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public ViewDisplayListApps getUpdatableAppsDisplayInfo(boolean filterByHw, EnumAppsSorting sortingPolicy){
-		final int APP_NAME = Constants.COLUMN_FIRST;
-		final int APP_HASHID = Constants.COLUMN_SECOND;
+		final int APP_HASHID = Constants.COLUMN_FIRST;
+		final int APP_NAME = Constants.COLUMN_SECOND;
 		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FOURTH;
 		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_FIFTH;
@@ -2139,9 +2141,9 @@ public class ManagerDatabase {
 		final int UPDATE_DOWNLOADS = Constants.COLUMN_EIGTH;
 		
 		ViewDisplayListApps updatableApps = null;
-		ViewDisplayApplication app;	
+		ViewDisplayApplicationUpdatable app;	
 		
-		String selectUpdatableApps = "SELECT "+Constants.KEY_APP_INSTALLED_NAME+","+Constants.KEY_APP_INSTALLED_HASHID
+		String selectUpdatableApps = "SELECT "+Constants.KEY_APP_INSTALLED_HASHID+","+Constants.KEY_APP_INSTALLED_NAME
 											+","+Constants.KEY_APP_INSTALLED_VERSION_NAME+","+Constants.KEY_APP_INSTALLED_VERSION_CODE
 											+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 											+","+Constants.KEY_STATS_STARS+","+Constants.KEY_STATS_DOWNLOADS
@@ -2159,9 +2161,9 @@ public class ManagerDatabase {
 			if(filterByHw){
 				ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
 				Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
-		selectUpdatableApps	+=								" WHERE "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
-							+									" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
-							+									" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
+				selectUpdatableApps	+=						" WHERE "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+							+								" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+							+								" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 			}
 
 				selectUpdatableApps	+=						" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
@@ -2203,7 +2205,7 @@ public class ManagerDatabase {
 			appsCursor.moveToFirst();
 			do{
 				if( (appsCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appsCursor.getInt(UP_TO_DATE_VERSION_CODE) > appsCursor.getInt(INSTALLED_VERSION_CODE))) ){
-					app = new ViewDisplayApplication(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
+					app = new ViewDisplayApplicationUpdatable(appsCursor.getInt(APP_HASHID), appsCursor.getString(APP_NAME), appsCursor.getString(INSTALLED_VERSION_NAME)
 							 , appsCursor.getString(UP_TO_DATE_VERSION_NAME), appsCursor.getFloat(UPDATE_STARS), appsCursor.getInt(UPDATE_DOWNLOADS));
 					updatableApps.add(app);
 				}
