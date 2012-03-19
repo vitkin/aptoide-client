@@ -14,6 +14,7 @@
             android:layout_height="fill_parent"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/description"
+            android:textColor="#4f4f4f"
             android:textSize="16px" />
 
         <TextView
@@ -21,6 +22,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:text="@string/credits"
+            android:textColor="#4f4f4f"
             android:textSize="16px" />
 
         <LinearLayout
@@ -34,6 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/home"
+                android:textColor="#4f4f4f"
                 android:textSize="16px" />
 
             <TextView
@@ -48,6 +51,7 @@
                 android:layout_height="fill_parent"
                 android:autoLink="web"
                 android:text="@string/aptoide_url"
+                android:textColor="#4f4f4f"
                 android:textSize="16px" />
         </LinearLayout>
 
@@ -68,6 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/contact"
+                android:textColor="#4f4f4f"
                 android:textSize="16px" />
 
             <TextView
@@ -82,6 +87,7 @@
                 android:layout_height="wrap_content"
                 android:autoLink="email"
                 android:text="@string/aptoide_email"
+                android:textColor="#4f4f4f"
                 android:textSize="16px" />
         </LinearLayout>
 

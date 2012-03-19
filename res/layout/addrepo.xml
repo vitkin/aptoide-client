@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:ems="20"
             android:text="@string/repo_uri"
+            android:textColor="#4f4f4f"
             android:textSize="16dip" />
 
         <EditText
@@ -32,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="@string/cant_connect"
-            android:textColor="#CC1100"
+            android:textColor="#4f4f4f"
             android:textSize="16dip"
             android:visibility="gone" />
 
@@ -59,7 +60,8 @@
             android:id="@+id/secure_chk"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/privt"/>
+            android:text="@string/privt"
+            android:textColor="#4f4f4f"/>
 
         <EditText
             android:id="@+id/sec_user"
