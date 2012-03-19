@@ -41,9 +41,7 @@
     <string name="remove_confirm">Haluatko varmasti poistaa?</string>
     
     
-    
-    
-    
+
     <string name="repo_uri">Varaston URL: </string>
     <string name="privt">Yksityinen </string>
     
@@ -64,6 +62,8 @@
     <string name="download_icons">Lataa kuvakkeet</string>
     <string name="download_icons_rules">Kuvakkeiden lataussäännöt </string>
     
+    <string name="app_filter">Suodata sovelluksia</string>
+    <string name="app_filter_sum">Älä näytä sovelluksia, jotka eivät ole laitteesi kanssa yhteensopivia.</string>
     
     
     
@@ -79,7 +79,7 @@
     <string name="done">Valmis</string>
     
     <string name="scheduled_downloads">Ajast. lataukset</string>
-    
+    <string name="schedule_downloads_sum">Asenna ajastetut lataukset automaattisesti, kun WLAN-yhteys on käytettävissä</string>
     
     
     

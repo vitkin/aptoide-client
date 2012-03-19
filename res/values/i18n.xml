@@ -70,6 +70,10 @@
     <string name="hw_filters">Hardware Filters</string>
     <string name="hw_filter_apps">Filter apps by hardware</string>
     <string name="hw_show_apps">Don\'t show applications not compatible with your device.</string>
+    <string name="app_filter">Filter Applications</string>
+    <string name="app_filter_sum">Don\'t show applications not compatible with your device.</string>
+    <string name="mature_filter">Mature Filtering</string>
+   <string name="dont_show_mature_content">Don\'t show Mature content</string>
     
     <string name="display_options">Display Options</string>
     <string name="show_applications_by">Show applications by: </string>

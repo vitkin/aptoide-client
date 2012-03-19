@@ -78,9 +78,10 @@
     <string name="done">Tamamlandı</string>
 
     <string name="scheduled_downloads">Programlanmış İnd.</string>
+    <string name="schedule_downloads_sum">Programlanmış indirmeleri bir WiFi bağlantısı bulunduğunda otomatik olarak yükle</string>
     
-    
-    
+    <string name="app_filter">Uygulamaları Filtrele</string>
+    <string name="app_filter_sum">Cihazla uyumsuz uygulamaları gösterme.</string>
     
     
     <string name="available">Mevcut</string>

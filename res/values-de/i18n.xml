@@ -78,9 +78,10 @@
     <string name="done">Fertig</string>
     
     <string name="scheduled_downloads">Geplante Dwnl.</string>
+    <string name="schedule_downloads_sum">Geplante Downloads automatisch installieren, wenn eine WiFi-Verbindung besteht</string>
     
-    
-    
+    <string name="app_filter">App Filter</string>
+    <string name="app_filter_sum">Apps ausblenden, die nicht mit Ihrem Gerät kompatibel sind.</string>
     
     <string name="available">Verfügbar</string>
     <string name="installed">Installiert</string>

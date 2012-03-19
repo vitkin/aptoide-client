@@ -77,8 +77,10 @@
     <string name="done">Concluído</string>
 
     <string name="scheduled_downloads">Dwnl. Agendado</string>
+    <string name="schedule_downloads_sum">Instalar downloads agendados automaticamente quando uma ligação Wifi está presente.</string>
     
-    
+    <string name="app_filter">Filtrar Aplicações</string>
+    <string name="app_filter_sum">Não mostrar aplicações não compatíveis com este dispositivo</string>
     
     
     <string name="available">Disponível</string>

@@ -47,10 +47,16 @@
             android:title="@string/hw_specs" />
 
         <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="check_hw_specs"
-            android:summary="@string/hw_show_apps"
-            android:title="@string/hw_filter_apps" />
+     		android:title="@string/app_filter"
+        	android:summary="@string/app_filter_sum"
+        	android:key="check_hwspecs"
+        	android:defaultValue="true" />
+      	
+      	<CheckBoxPreference
+	     	android:title="@string/mature_filter"
+	        android:summary="@string/dont_show_mature_content"
+	        android:key="check_mature" />
+	        
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/scheduled_downloads" >

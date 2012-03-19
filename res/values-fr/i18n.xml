@@ -59,8 +59,6 @@
   <string name="download_icons_rules">Règles de téléchargemetns des miniatures</string>
   
   
-  
-  
   <string name="manage_repos">Gérer les dépôts</string>
   <string name="display_options">Option d\'afficahge</string>
   <string name="settings">Paramètres</string>
@@ -73,9 +71,10 @@
   <string name="done">Fait</string>
 
   <string name="scheduled_downloads">Téléchargement programmé</string>
+  <string name="schedule_downloads_sum">Installer automatiquement téléchargements programmés si WiFi</string>
   
-  
-  
+  <string name="app_filter">Filtrer applications</string>
+  <string name="app_filter_sum">Cacher applications incompatibles avec votre appareil</string>
   
   <string name="available">Disponible</string>
   <string name="installed">Installé</string>
