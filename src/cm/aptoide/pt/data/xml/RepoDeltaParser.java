@@ -66,10 +66,6 @@ public class RepoDeltaParser extends DefaultHandler{
 	public RepoDeltaParser(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
-		
-//		for (EnumXmlTagsDelta tag : EnumXmlTagsDelta.values()) {
-//			tagMap.put(tag.name(), tag);
-//		}
 	}
 	
 	@Override
@@ -82,7 +78,7 @@ public class RepoDeltaParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-//		tag = tagMap.get(localName.trim());
+
 		try {
 			tag = EnumXmlTagsDelta.valueOf(localName.trim());
 		} catch (Exception e) {

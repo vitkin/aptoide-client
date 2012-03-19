@@ -80,7 +80,12 @@ public class RepoDownloadParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		tag = EnumXmlTagsDownload.valueOf(localName.trim());
+		try {
+			tag = EnumXmlTagsDownload.valueOf(localName.trim());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		switch (tag) {
 			case apphashid:

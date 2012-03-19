@@ -53,14 +53,18 @@ public class Constants {
 	/** Number of icons to cache between list refreshes **/
 	public static final int ICONS_REFRESH_INTERVAL = 10;
 	/**	Increase trigger level from beginning of cache page, in proportion (x/(x+decreaseTriggerLevel)) of page size **/
-	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 1;
+//	public static final int DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 1;
 	/**	Decrease trigger level from beginning of cache page, in proportion (x/x+increaseTriggerLevel) of page size **/
-	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 19;
+//	public static final int DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL = 19;
 	/** increaseLevel+decreaseLevel 	cache pageSize = multiplier*numberOfVisibleListItems->device dependent **/
-	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = (DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL);
-	public static final int DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER = 8;
+//	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = (DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL+DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL);
+
+	public static final int DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER = 4;
+	public static final int DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER = 3;
 	/** number of cache pages to keep in memory **/
-	public static final int DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER = 3;
+	public static final int DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER = 30;
+	public static final int DISPLAY_LISTS_PAGE_INCREASE_TRIGGER_MULTIPLIER = DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER/2;
+	public static final int DISPLAY_LISTS_PAGE_DECREASE_TRIGGER_MULTIPLIER = DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER;
 	
 	public static final int APPLICATIONS_IN_EACH_INSERT = 500;
 	public static final int MAX_PARALLEL_DOWNLOADS = 1;

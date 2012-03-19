@@ -32,11 +32,13 @@ import android.os.Parcelable;
  *
  */
 public class ViewDisplayListsDimensions implements Parcelable{
-	private int increaseTrigger;
-	private int decreaseTrigger;
-	private int triggerMargin;
 	private int pageSize;
 	private int cacheSize;
+	private int increaseTrigger;
+	private int decreaseTrigger;
+	private int fastReset;
+//	private int triggerMargin;
+//	private int trigger;
 	
 	
 	public ViewDisplayListsDimensions(ViewScreenDimensions screenDimensions) {
@@ -44,13 +46,21 @@ public class ViewDisplayListsDimensions implements Parcelable{
 					/Math.round(Constants.DISPLAY_SIZE_COMPARATOR*screenDimensions.getDensity()))
 					*Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
 		
-		increaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
-		
-		decreaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
-		
-		triggerMargin = decreaseTrigger - increaseTrigger;
+//		increaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_INCREASE_OFFSET_TRIGGER_PROPORTION_LEVEL/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
+//		
+//		decreaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_DECREASE_OFFSET_TRIGGER_PROPORTION_LEVEL/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER;
+//		
+//		triggerMargin = decreaseTrigger - increaseTrigger;
 		
 		cacheSize = pageSize*Constants.DISPLAY_LISTS_CACHE_SIZE_PAGES_MULTIPLIER;
+		
+//		trigger = cacheSize*2;
+		
+		increaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_INCREASE_TRIGGER_MULTIPLIER;
+		
+		decreaseTrigger = pageSize*Constants.DISPLAY_LISTS_PAGE_DECREASE_TRIGGER_MULTIPLIER;
+		
+		fastReset = pageSize*Constants.DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER;
 	}
 	
 	
@@ -61,10 +71,14 @@ public class ViewDisplayListsDimensions implements Parcelable{
 	public int getDecreaseTrigger() {
 		return decreaseTrigger;
 	}
-	
-	public int getTriggerMargin() {
-		return triggerMargin;
-	}
+//	
+//	public int getTriggerMargin() {
+//		return triggerMargin;
+//	}
+//	
+//	public int getTrigger() {
+//		return trigger;
+//	}
 
 	public int getPageSize() {
 		return pageSize;
@@ -75,22 +89,23 @@ public class ViewDisplayListsDimensions implements Parcelable{
 	}
 	
 	public int getFastReset(){
-		return increaseTrigger*Constants.DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER;
+//		return increaseTrigger*Constants.DISPLAY_LISTS_FAST_RESET_INCREASE_TRIGGER_MULTIPLIER;
+		return fastReset;
 	}
 
 
 
 	@Override
 	public String toString() {
-		return "pageSize: "+pageSize+" increaseTrigger: "+increaseTrigger+" decreaseTrigger: "+decreaseTrigger+" cacheSize: "+cacheSize+" triggerMargin: "+triggerMargin;
+		return "pageSize: "+pageSize+" cacheSize: "+cacheSize+" increaseTrigger: "+increaseTrigger+" decreaseTrigger: "+decreaseTrigger+" fastReset: "+fastReset;//+" triggerMargin: "+triggerMargin;
+//		return "pageSize: "+pageSize+" cacheSize: "+cacheSize+" trigger: "+trigger;
 	}
 
 	
 	// Parcelable stuff //
 	
 	
-	public static final Parcelable.Creator<ViewDisplayListsDimensions> CREATOR = new
-			Parcelable.Creator<ViewDisplayListsDimensions>() {
+	public static final Parcelable.Creator<ViewDisplayListsDimensions> CREATOR = new Parcelable.Creator<ViewDisplayListsDimensions>() {
 			        public ViewDisplayListsDimensions createFromParcel(Parcel in) {
 			            return new ViewDisplayListsDimensions(in);
 			        }
@@ -117,19 +132,23 @@ public class ViewDisplayListsDimensions implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(increaseTrigger);
-		out.writeInt(decreaseTrigger);
-		out.writeInt(triggerMargin);
 		out.writeInt(pageSize);
 		out.writeInt(cacheSize);
+		out.writeInt(increaseTrigger);
+		out.writeInt(decreaseTrigger);
+		out.writeInt(fastReset);
+//		out.writeInt(trigger);
+//		out.writeInt(triggerMargin);
 	}
 	
 	public void readFromParcel(Parcel in) {
-		increaseTrigger = in.readInt();
-		decreaseTrigger = in.readInt();
-		triggerMargin = in.readInt();
 		pageSize = in.readInt();
 		cacheSize = in.readInt();
+		increaseTrigger = in.readInt();
+		decreaseTrigger = in.readInt();
+		fastReset = in.readInt();
+//		trigger = in.readInt();
+//		triggerMargin = in.readInt();
 	}
 	
 }

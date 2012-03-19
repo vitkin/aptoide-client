@@ -1978,6 +1978,107 @@ public class ManagerDatabase {
 	
 	
 	/**
+	 * getTotalAvailableApps, retrieves how many available apps are visible
+	 * 						  in this category
+	 * 
+	 * @param int categoryHashid, hashid of category
+	 * @param boolean filterByHw
+	 * 
+	 * @return int total available apps
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public int getTotalAvailableApps(int categoryHashid, boolean filterByHw){
+
+		final int TOTAL = Constants.COLUMN_FIRST;
+		
+		int totalApps = Constants.EMPTY_INT;
+		
+		String selectAvailableApps = "SELECT COUNT("+Constants.KEY_APPLICATION_HASHID+")"
+									+" FROM (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
+											+" FROM "+Constants.TABLE_REPOSITORY
+											+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
+									+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+" ,"+Constants.KEY_APPLICATION_REPO_HASHID
+																	+" ,"+Constants.KEY_APPLICATION_HASHID+" ,"+Constants.KEY_APPLICATION_PACKAGE_NAME;
+			if(filterByHw){
+				selectAvailableApps	+=								" ,"+Constants.KEY_APPLICATION_MIN_SDK+" ,"+Constants.KEY_APPLICATION_MIN_SCREEN
+																	+" ,"+Constants.KEY_APPLICATION_MIN_GLES;
+			}
+				selectAvailableApps	+=							" FROM "+Constants.TABLE_APPLICATION
+			/* Exclude Installed apps */						+" WHERE NOT EXISTS (SELECT "+Constants.KEY_APP_INSTALLED_HASHID
+																					+" FROM "+Constants.TABLE_APP_INSTALLED
+																					+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID
+																						+"="+Constants.TABLE_APPLICATION+"."+Constants.KEY_APPLICATION_HASHID+")";
+			/* Filter by hardware? */
+			if(filterByHw){
+				ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters();
+				Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo HW filters ON: "+filters);
+				
+				selectAvailableApps	+=							" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+																+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+																+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
+			}
+				selectAvailableApps	+=					" )";
+			
+			/* Filter by category? */
+			if(categoryHashid != Constants.TOP_CATEGORY){
+				selectAvailableApps +=" NATURAL INNER JOIN (SELECT * FROM "+Constants.TABLE_APP_CATEGORY
+																+" WHERE "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+"="+categoryHashid+")";
+			}			
+				selectAvailableApps +=" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+" ;";
+				
+		Log.d("Aptoide-ManagerDatabase", "available apps: "+selectAvailableApps);
+		
+		try{
+			db.beginTransaction();
+			
+			Cursor appsCursor = aptoideNonAtomicQuery(selectAvailableApps);
+
+			db.setTransactionSuccessful();
+			db.endTransaction();
+
+			appsCursor.moveToFirst();
+			
+			if(appsCursor.getCount() == 0){
+				appsCursor.close();
+				return Constants.EMPTY_INT;
+			}
+			
+			totalApps = appsCursor.getInt(TOTAL);
+			appsCursor.close();
+			
+			Log.d("Aptoide-ManagerDatabase", "total available apps: "+totalApps);
+	
+		}catch (Exception e) {
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		return totalApps;
+	}
+	
+	
+	/**
+	 * getTotalAvailableApps, retrieves how many available apps are visible
+	 * 
+	 * @param boolean filterByHw
+	 * 
+	 * @return int total available apps
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public int getTotalAvailableApps(boolean filterByHw){
+		return getTotalAvailableApps(Constants.TOP_CATEGORY, filterByHw);
+	}
+	
+	
+	/**
 	 * getAvailableAppsDisplayInfo, retrieves a list of all available apps by category
 	 * 
 	 * @param int offset, number of row to start from

@@ -126,7 +126,7 @@ public class ViewDisplayApplication implements Parcelable{
 
 	@Override
 	public String toString() {
-		return " AppHashid: "+appHashid+" Name: "+appName+" VersionName: ";
+		return " AppHashid: "+appHashid+" Name: "+appName+"  VersionName: "+versionName;
 	}
 	
 	

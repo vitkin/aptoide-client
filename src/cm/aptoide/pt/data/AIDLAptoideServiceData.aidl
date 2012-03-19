@@ -72,6 +72,9 @@ interface AIDLAptoideServiceData {
 	boolean callAreListsByCategory();
 	void callSetListsBy(in boolean byCategory);
 	
+	int callGetTotalAvailableApps();
+	int callGetTotalAvailableAppsInCategory(in int categoryHashid);
+	
 	ViewDisplayCategory callGetCategories();
 	
 	int callGetAppsSortingPolicy();

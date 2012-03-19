@@ -33,7 +33,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,13 +46,13 @@ import cm.aptoide.pt.data.display.ViewDisplayListApps;
 
  /**
  * StaticInstalledAppsListAdapter, models a static loading, installed apps list adapter
- * 									extends arrayAdapter
+ * 									extends baseAdapter
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class StaticInstalledAppsListAdapter extends ArrayAdapter<ViewDisplayApplication>{
+public class StaticInstalledAppsListAdapter extends BaseAdapter{
 
 	private ListView listView;
 	private LayoutInflater layoutInflater;
@@ -131,7 +131,7 @@ public class StaticInstalledAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		
+
 		InstalledRowViewHolder rowViewHolder;
 		
 		if(convertView == null){
@@ -177,7 +177,20 @@ public class StaticInstalledAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 		return convertView;
 	}
 	
-	
+	@Override
+	public int getCount() {
+		return apps.size();
+	}
+
+	@Override
+	public ViewDisplayApplication getItem(int position) {
+		return apps.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return apps.get(position).getAppHashid();
+	}
 	
 	
 	/**
@@ -187,7 +200,6 @@ public class StaticInstalledAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 	 * @param textViewResourceId
 	 */
 	public StaticInstalledAppsListAdapter(Context context, ListView listView, AIDLAptoideServiceData serviceDataCaller, Handler aptoideTasksHandler) {
-		super(context, R.layout.row_app_installed);
 		
 		this.serviceDataCaller = serviceDataCaller;
 		this.aptoideTasksHandler = aptoideTasksHandler;
@@ -228,8 +240,8 @@ public class StaticInstalledAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_LIST.ordinal());
 		}
 
-		Log.d("Aptoide-StaticInstalledAppsListAdapter", "new InstalledList: "+freshApps.size());
     	this.apps = freshApps;
+		Log.d("Aptoide-StaticInstalledAppsListAdapter", "new InstalledList: "+getCount());
    		initDisplay();
     	refreshDisplayInstalled();
     	
