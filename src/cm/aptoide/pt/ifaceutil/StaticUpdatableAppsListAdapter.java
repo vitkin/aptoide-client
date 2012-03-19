@@ -33,7 +33,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RatingBar;
@@ -47,13 +47,13 @@ import cm.aptoide.pt.data.display.ViewDisplayListApps;
 
  /**
  * StaticUpdatableAppsListAdapter, models a static loading, Updatable apps list adapter
- * 									extends arrayAdapter
+ * 									extends baseAdapter
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class StaticUpdatableAppsListAdapter extends ArrayAdapter<ViewDisplayApplication>{
+public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 
 	private ListView listView;
 	private LayoutInflater layoutInflater;
@@ -165,10 +165,25 @@ public class StaticUpdatableAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 		
 		rowViewHolder.installed_versionname.setText(((ViewDisplayApplicationUpdatable) apps.get(position)).getInstalledVersionName());
 				
-		rowViewHolder.downloads.setText(((ViewDisplayApplicationUpdatable) apps.get(position)).getDownloads());
+		rowViewHolder.downloads.setText(Integer.toString(((ViewDisplayApplicationUpdatable) apps.get(position)).getDownloads()));
 		rowViewHolder.stars.setRating(((ViewDisplayApplicationUpdatable) apps.get(position)).getStars());
 		
 		return convertView;
+	}
+	
+	@Override
+	public int getCount() {
+		return apps.size();
+	}
+
+	@Override
+	public ViewDisplayApplication getItem(int position) {
+		return apps.get(position);
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return apps.get(position).getAppHashid();
 	}
 	
 	
@@ -181,7 +196,6 @@ public class StaticUpdatableAppsListAdapter extends ArrayAdapter<ViewDisplayAppl
 	 * @param textViewResourceId
 	 */
 	public StaticUpdatableAppsListAdapter(Context context, ListView listView, AIDLAptoideServiceData serviceDataCaller, Handler aptoideTasksHandler) {
-		super(context, R.layout.row_app_updatable);
 		
 		this.serviceDataCaller = serviceDataCaller;
 		this.aptoideTasksHandler = aptoideTasksHandler;

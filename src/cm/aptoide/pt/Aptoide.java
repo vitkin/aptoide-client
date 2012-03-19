@@ -93,6 +93,7 @@ import cm.aptoide.pt.debug.InterfaceAptoideLog;
 import cm.aptoide.pt.ifaceutil.DynamicAvailableAppsListAdapter;
 import cm.aptoide.pt.ifaceutil.StaticInstalledAppsListAdapter;
 import cm.aptoide.pt.ifaceutil.StaticCategoriesListAdapter;
+import cm.aptoide.pt.ifaceutil.StaticUpdatableAppsListAdapter;
 
 /**
  * Aptoide, the main interface class
@@ -145,15 +146,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private EnumAppsSorting appsSortingPolicy = null;
 	private AtomicBoolean allowAppsDisplayOptionsChange = null;
 	
-	private ViewDisplayCategory category = null;
-	private ViewDisplayCategory freshCategory = null;
-	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
 	private StaticCategoriesListAdapter categoriesAdapter = null;
 	private DynamicAvailableAppsListAdapter availableAdapter = null;
 	private StaticInstalledAppsListAdapter installedAdapter = null;
-	private StaticInstalledAppsListAdapter updatableAdapter = null;
+	private StaticUpdatableAppsListAdapter updatableAdapter = null;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -171,7 +169,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			serviceDataIsBound = true;
 			
 			AptoideLog.v(Aptoide.this, "Connected to ServiceData");
-
+			
 			if(!serviceDataSeenRunning){
 				synchronizingInstalledApps.set(true);
 				try {
@@ -219,6 +217,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				// TODO Auto-generated catch block
 	            e.printStackTrace();
 	        }
+
+			initListsAdapters();
 	        
 	        try {
 	            AptoideLog.v(Aptoide.this, "Called for checking if AvailableApps are by Category");
@@ -260,6 +260,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			AptoideLog.v(Aptoide.this, "received newInstalledListDataAvailable callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SYNCHRONIZED_INSTALLED_LIST.ordinal());
 			installedAdapter.resetDisplayInstalled();
+    		installedAppsListView.setAdapter(installedAdapter);
 		}
 		
 		@Override
@@ -369,7 +370,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					break;
 					
 	        	case RESET_CATEGORIES:
-	        		resetDisplayCategories();
+//TODO	        		resetDisplayCategories();
 	        		break;
 				
 				case RESET_AVAILABLE_LIST_DISPLAY:
@@ -377,9 +378,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					break;
 					
 				case REFRESH_AVAILABLE_DISPLAY:
-					if(!availableByCategory || !category.hasChildren()){
+//					if(!availableByCategory || !category.hasChildren()){
 						availableAdapter.refreshDisplayAvailable();
-					}
+//					}
 					break;
 				
 				case RESET_UPDATABLE_LIST_DISPLAY:
@@ -448,6 +449,30 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		    		if(currentAppsList.equals(EnumAppsLists.Available)){
 						showAvailableList();
 					}
+					break;
+					
+				case SWITCH_UPDATABLE_TO_PROGRESSBAR:
+		    		switchUpdatableToProgressBar();	
+		    		
+		    		if(currentAppsList.equals(EnumAppsLists.Updates)){
+						showUpdatableList();
+					}					
+					break;
+					
+				case SWITCH_UPDATABLE_TO_NO_APPS:
+		    		switchUpdatableToEmpty();	
+
+		    		if(currentAppsList.equals(EnumAppsLists.Updates)){
+						showUpdatableList();
+					}					
+					break;
+					
+				case SWITCH_UPDATABLE_TO_LIST:
+		    		switchUpdatableToList();	
+
+		    		if(currentAppsList.equals(EnumAppsLists.Updates)){
+						showUpdatableList();
+					}				
 					break;
 					
 				case HANDLE_MYAPP:
@@ -562,13 +587,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
 	
-			appsListFlipper.addView(emptyAvailableAppsList);
-			appsListFlipper.addView(emptyInstalledAppsList);
-			appsListFlipper.addView(emptyUpdatableAppsList);
-			
-			availableAdapter = new DynamicAvailableAppsListAdapter(this, availableAppsListView, serviceDataCaller, interfaceTasksHandler);
-			installedAdapter = new StaticInstalledAppsListAdapter(this, installedAppsListView, serviceDataCaller, interfaceTasksHandler);
-			updatableAdapter = new StaticInstalledAppsListAdapter(this, updatableAppsListView, serviceDataCaller, interfaceTasksHandler);
+			appsListFlipper.addView(loadingAvailableAppsList);
+			appsListFlipper.addView(loadingInstalledAppsList);
+			appsListFlipper.addView(loadingUpdatableAppsList);
         }
     }
 
@@ -652,58 +673,26 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 	}
 	
+	private void initListsAdapters(){
+		categoriesAdapter = new StaticCategoriesListAdapter(this, availableAppsListView, serviceDataCaller, interfaceTasksHandler);
+		availableAdapter = new DynamicAvailableAppsListAdapter(this, availableAppsListView, serviceDataCaller, interfaceTasksHandler);
+		installedAdapter = new StaticInstalledAppsListAdapter(this, installedAppsListView, serviceDataCaller, interfaceTasksHandler);
+		updatableAdapter = new StaticUpdatableAppsListAdapter(this, updatableAppsListView, serviceDataCaller, interfaceTasksHandler);
+	}
+	
 	public void resetDisplayAvailable(){
-		if(availableByCategory){
-			categoriesAdapter.resetDisplay();
-		}else{
-			availableAdapter.resetDisplay(category);	//TODO maybe category should be null
-		}
+//		if(availableByCategory){
+//			categoriesAdapter.resetDisplay();
+//		}else{
+//			availableAdapter.resetDisplay(category);	//TODO maybe category should be null
+			availableAdapter.resetDisplay(null);
+//		}
 	}
 	
 	public void reloadDisplayAvailable(){
-		if(!availableByCategory || category != null && !category.hasChildren()){
+//		if(!availableByCategory || category != null && !category.hasChildren()){
 			availableAdapter.reloadDisplay();
-		}
-	}
-	
-	public void initDisplayCategories(){
-//		categoriesAdapter = new SimpleAdapter(Aptoide.this, category.getDisplayList(), R.layout.row_category 
-//         		, new String[] {Constants.KEY_CATEGORY_HASHID, Constants.KEY_CATEGORY_NAME, Constants.DISPLAY_CATEGORY_APPS}
-//				, new int[] {R.id.category_hashid, R.id.category_name, R.id.category_apps});
-//		
-//		categoriesAdapter.setViewBinder(new CategoryListBinder());
-//		availableAppsListView.setOnScrollListener(null);
-//		availableAppsListView.setAdapter(categoriesAdapter);
-	}
-	
-	public synchronized void setFreshCategories(ViewDisplayCategory freshCategory){
-		AptoideLog.d(Aptoide.this, "setFreshCategories");
-		this.freshCategory = freshCategory;
-		this.freshCategory.generateDisplayLists();
-	}
-	
-	public void resetDisplayCategories(){
-		if(freshCategory == null || (freshCategory.getCategoryHashid() == Constants.TOP_CATEGORY && !freshCategory.hasChildren())){
-			switchAvailableToEmpty();
-		}else{
-			switchAvailableToList();
-		}
-		
-		if(currentAppsList.equals(EnumAppsLists.Available)){
-			showAvailableList();			
-		}
-		
-    	AptoideLog.d(Aptoide.this, "new CategoriesList: "+freshCategory);
-		boolean newList = this.category == null;
-    	this.category = freshCategory;
-    	initDisplayCategories();
-    	if(!newList){
-    		refreshCategoriesDisplay();
-    	}
-	}
-	
-	public void refreshCategoriesDisplay(){
-		categoriesAdapter.notifyDataSetChanged();
+//		}
 	}
 	
 
@@ -755,6 +744,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 
 	private void switchInstalledToList(){
+		AptoideLog.d(Aptoide.this, "switching installed to list");
         appsListFlipper.invalidate();
         appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
         appsListFlipper.addView(installedAppsListView, EnumAppsLists.Installed.ordinal());
@@ -991,23 +981,23 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
     	if(!swyping.get()){
     		if(availableByCategory){
-    			if(category.hasChildren()){
-    				final int categoryHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
-    				category = category.getSubCategory(categoryHashid);
-    				AptoideLog.d(this, "Onclick position: "+position+" categoryHashid: "+categoryHashid+" category: "+category);
-    				if(category.hasChildren()){
-    					initDisplayCategories();
-    				}else{
-    					availableAdapter.resetDisplay(category);
-    				}
-    			}else{
+//TODO    			if(category.hasChildren()){
+//    				final int categoryHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
+//    				category = category.getSubCategory(categoryHashid);
+//    				AptoideLog.d(this, "Onclick position: "+position+" categoryHashid: "+categoryHashid+" category: "+category);
+//    				if(category.hasChildren()){
+//    					initDisplayCategories();
+//    				}else{
+//    					availableAdapter.resetDisplay(category);
+//    				}
+//    			}else{
     	    		AptoideLog.d(this, "row height: "+view.getHeight());
     				final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
     	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
     	    		Intent appInfo = new Intent(this,AppInfo.class);
     	    		appInfo.putExtra("appHashid", appHashid);
     	    		startActivity(appInfo);
-    			}
+//    			}
     		}else{
 	    		final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
 	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
@@ -1022,12 +1012,12 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && currentAppsList.equals(EnumAppsLists.Available) && availableByCategory && category != null && category.getCategoryHashid() != Constants.TOP_CATEGORY) {
-			AptoideLog.d(this, "click back, new category: "+category.getParentCategory().getCategoryHashid());
-			category = category.getParentCategory();
-			initDisplayCategories();
-			return true;
-		}
+//TODO		if (keyCode == KeyEvent.KEYCODE_BACK && currentAppsList.equals(EnumAppsLists.Available) && availableByCategory && category != null && category.getCategoryHashid() != Constants.TOP_CATEGORY) {
+//			AptoideLog.d(this, "click back, new category: "+category.getParentCategory().getCategoryHashid());
+//			category = category.getParentCategory();
+//			initDisplayCategories();
+//			return true;
+//		}
 		return super.onKeyDown(keyCode, event);
 	}
     
@@ -1157,7 +1147,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 							}
 							
 							if(byCategoryChanged){
-								availableAdapter.resetDisplay(category);								
+//TODO								availableAdapter.resetDisplay(category);								
 							}
 							sortDialog.dismiss();
 						}

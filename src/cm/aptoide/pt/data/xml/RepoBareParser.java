@@ -75,7 +75,13 @@ public class RepoBareParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		tag = EnumXmlTagsBare.valueOf(localName.trim());
+		
+		try {
+			tag = EnumXmlTagsBare.valueOf(localName.trim());
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		switch (tag) {
 			case apkid:
@@ -118,11 +124,12 @@ public class RepoBareParser extends DefaultHandler{
 					if(firstBucket){
 						firstBucket = false;
 						insertingFirstBucket = true;
+						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 						Log.d("Aptoide-RepoBareParser", "initial bucket full, inserting apps: "+applications.size());
 					}else if(secondBucket){
 						secondBucket = false;
 						insertingFirstBucket = false;
-						Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+//						Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 						Log.d("Aptoide-RepoBareParser", "second bucket full, inserting apps: "+applications.size());
 					}else{
 						insertingFirstBucket = false;
@@ -134,7 +141,7 @@ public class RepoBareParser extends DefaultHandler{
 					try{
 						new Thread(){
 							public void run(){
-								this.setPriority(Thread.NORM_PRIORITY);
+								this.setPriority(Thread.MIN_PRIORITY);
 								
 								final ArrayList<ViewApplication> applicationsInserting = applicationsInsertStack.remove(Constants.FIRST_ELEMENT);
 

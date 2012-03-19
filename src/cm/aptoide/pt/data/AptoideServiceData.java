@@ -277,6 +277,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public int callGetTotalAvailableApps() throws RemoteException {
+			return getTotalAvailableApps();
+		}
+
+		@Override
+		public int callGetTotalAvailableAppsInCategory(int categoryHashid) throws RemoteException {
+			return getTotalAvailableAppsInCategory(categoryHashid);
+		}
+
+		@Override
 		public ViewDisplayListApps callGetAvailableAppsByCategory(int offset, int range, int categoryHashid) throws RemoteException {
 			return getAvailableApps(offset, range, categoryHashid);
 		}
@@ -1107,7 +1117,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			allowSortingPolicyChange();
 		}
 		if(reposInserting.contains(repository.getHashid())){
-			if(managerPreferences.getShowApplicationsByCategory() || repository.getSize() < getDisplayListsDimensions().getFastReset()){
+			if(managerPreferences.getShowApplicationsByCategory() ){//)|| repository.getSize() < getDisplayListsDimensions().getFastReset()){
 				resetAvailableLists();
 			}
 //			insertedRepo(repository.getHashid());
@@ -1451,6 +1461,16 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				managerPreferences.setShowApplicationsByCategory(byCategory);
 			}
 		});
+	}
+	
+	public int getTotalAvailableApps(){
+		AptoideLog.d(AptoideServiceData.this, "Getting Total Available Apps");
+		return managerDatabase.getTotalAvailableApps(managerPreferences.isHwFilterOn());
+	}
+	
+	public int getTotalAvailableAppsInCategory(int categoryHashid){
+		AptoideLog.d(AptoideServiceData.this, "Getting Total Available Apps in category"+categoryHashid);
+		return managerDatabase.getTotalAvailableApps(categoryHashid, managerPreferences.isHwFilterOn());
 	}
 	
 	public ViewDisplayCategory getCategories(){
