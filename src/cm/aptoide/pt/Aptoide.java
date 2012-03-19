@@ -530,7 +530,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			previousListTitle = (TextView) findViewById(R.id.previous_title);
 			previousListTitle.setOnClickListener(new OnPreviousClickedListener());
-			previousListTitle.setVisibility(View.GONE);
+			previousListTitle.setVisibility(View.INVISIBLE);
 			currentListTitle = (TextView) findViewById(R.id.current_title);
 			currentListTitle.setText(getString(R.string.available));
 			currentListTitle.setClickable(false);
@@ -863,8 +863,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		case Available:
 			nextViewArrow.setVisibility(View.VISIBLE);
 			nextListTitle.setText(getString(R.string.installed));
-			previousViewArrow.setVisibility(View.GONE);
-			previousListTitle.setVisibility(View.GONE);
+			previousViewArrow.setVisibility(View.INVISIBLE);
+			previousListTitle.setVisibility(View.INVISIBLE);
 			currentListTitle.setText(getString(R.string.available));
 			break;
 		case Installed:
@@ -877,7 +877,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			previousListTitle.setText(getString(R.string.available));
 			break;
 		case Updates:
-			nextViewArrow.setVisibility(View.GONE);
+			nextViewArrow.setVisibility(View.INVISIBLE);
 			previousViewArrow.setVisibility(View.VISIBLE);
 			currentListTitle.setText(getString(R.string.updates));
 			nextListTitle.setVisibility(View.INVISIBLE);
