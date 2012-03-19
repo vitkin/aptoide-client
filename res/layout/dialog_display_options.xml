@@ -1,59 +1,91 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<ScrollView android:id="@+id/display_options_scroll" 
-                android:layout_width="fill_parent" 
-                android:layout_height="fill_parent" 
-                xmlns:android="http://schemas.android.com/apk/res/android">
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/display_options_scroll"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="fill_parent" >
 
-      <RadioGroup android:layout_width="fill_parent"
-          android:layout_height="wrap_content" android:orientation="vertical"
-          android:id="@+id/group_show">
-          <TextView android:layout_width="fill_parent"
-               android:layout_height="wrap_content"
-               android:text="@string/show_applications_by" 
-               android:textStyle="bold" />
-          <RadioButton android:checked="false"
-               android:text="@string/category" 
-               android:id="@+id/by_category" />
-          <RadioButton android:checked="true"
-               android:text="@string/all_applications" 
-               android:id="@+id/by_all" />
-     </RadioGroup>  
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
 
-    <View android:layout_width="fill_parent" android:layout_height="1dip" android:background="#FFFFFFFF"
-    		android:layout_marginBottom="9sp" android:layout_marginTop="9sp" android:layout_marginLeft="10sp"
-    		android:layout_marginRight="10sp" android:id="@+id/spacer"/>
-    
-   <RadioGroup android:layout_width="fill_parent"
-         android:layout_height="wrap_content" android:orientation="vertical"
-         android:id="@+id/group_sort">
-         <TextView android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:text="@string/sort_applications_by"
-              android:textStyle="bold" />
-         <RadioButton android:checked="false"
-              android:text="@string/alphabetic"
-              android:id="@+id/by_alphabetic" />
-         <RadioButton android:checked="false"
-              android:text="@string/freshness"
-              android:id="@+id/by_freshness" />
-         <RadioButton android:checked="false"
-              android:text="@string/stars"
-              android:id="@+id/by_stars" />
-         <RadioButton android:checked="false"
-              android:text="@string/downloads"
-              android:id="@+id/by_downloads" />
-    </RadioGroup>
-     
-</LinearLayout>
+        <RadioGroup
+            android:id="@+id/group_show"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-</ScrollView>
-<!--
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/show_applications_by"
+                android:textColor="#4f4f4f"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/by_category"
+                android:checked="false"
+                android:text="@string/category"
+                android:textColor="#4f4f4f" />
+
+            <RadioButton
+                android:id="@+id/by_all"
+                android:checked="true"
+                android:text="@string/all_applications"
+                android:textColor="#4f4f4f" />
+        </RadioGroup>
+
+        <View
+            android:id="@+id/spacer"
+            android:layout_width="fill_parent"
+            android:layout_height="1dip"
+            android:layout_marginBottom="9sp"
+            android:layout_marginLeft="10sp"
+            android:layout_marginRight="10sp"
+            android:layout_marginTop="9sp"
+            android:background="#000" />
+
+        <RadioGroup
+            android:id="@+id/group_sort"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sort_applications_by"
+                android:textColor="#4f4f4f" 
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/by_alphabetic"
+                android:checked="false"
+                android:text="@string/alphabetic"
+                android:textColor="#4f4f4f"  />
+
+            <RadioButton
+                android:id="@+id/by_freshness"
+                android:checked="false"
+                android:text="@string/freshness"
+                android:textColor="#4f4f4f"  />
+
+            <RadioButton
+                android:id="@+id/by_stars"
+                android:checked="false"
+                android:text="@string/stars" 
+                android:textColor="#4f4f4f" />
+
+            <RadioButton
+                android:id="@+id/by_downloads"
+                android:checked="false"
+                android:text="@string/downloads"
+                android:textColor="#4f4f4f"  />
+        </RadioGroup>
+    </LinearLayout>
+
+</ScrollView><!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *
