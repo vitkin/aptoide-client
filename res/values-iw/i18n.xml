@@ -73,8 +73,10 @@
     <string name="done">סיום</string>
 
     <string name="scheduled_downloads">הורדות ממתינות</string>
+    <string name="schedule_downloads_sum">התקן אוטומטית הורדות ממתינות כאשר ישנה רשת אלחוטית זמינה</string>
     
-    
+    <string name="app_filter">סינון יישומים</string>
+    <string name="app_filter_sum">אל תציג יישומים שאינם תואמים את חומרת המכשיר שלי.</string>
     
     
     <string name="available">זמין</string>

@@ -77,8 +77,10 @@
     <string name="done">Fatto</string>
 
     <string name="scheduled_downloads">Download Programmato</string>
+    <string name="schedule_downloads_sum">Installazione automatica dei download programmati quando è disponibile un connessione Wifi</string>
     
-    
+    <string name="app_filter">Filtra Applicazioni</string>
+    <string name="app_filter_sum">Non mostrare le applicazioni non compatibili col tuo device.</string>
     
     
     <string name="available">Disponibile</string>

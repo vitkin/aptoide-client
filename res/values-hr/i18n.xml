@@ -41,9 +41,7 @@
     <string name="remove_confirm">Jeste li sigurni da želite ukloniti?</string>
     
     
-    
-    
-    
+
     <string name="repo_uri">URI do repo-a: </string>
     <string name="privt">Privatno </string>
     
@@ -79,6 +77,10 @@
     <string name="done">Gotovo</string>
 
     <string name="scheduled_downloads">Raspored Dwnl.</string>
+    <string name="schedule_downloads_sum">Instaliraj pripremljene download-e automatski kada wifi bude dostupan.</string>
+    
+    <string name="app_filter">Filtriraj aplikacije</string>
+    <string name="app_filter_sum">Nemoj pokazivati da aplikacije nisu kompatibilne sa uređajem.</string>
     
     
     

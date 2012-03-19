@@ -48,27 +48,23 @@
         android:layout_weight="2"
         android:orientation="vertical" >
 
-
         <ImageView
             android:id="@+id/app_downgradable"
-            android:src="@drawable/downgradable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/app_name"
-            android:visibility="invisible"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true" />
+            android:layout_centerVertical="true"
+            android:src="@drawable/downgradable"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/app_upgradable"
-            android:src="@drawable/upgradable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/app_name"
             android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:visibility="invisible"
-            android:layout_toRightOf="@id/app_downgradable" />
+            android:layout_centerVertical="true"
+            android:src="@drawable/upgradable"
+            android:visibility="invisible" />
         
     </RelativeLayout>
 

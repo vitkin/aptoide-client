@@ -80,8 +80,10 @@
     <string name="done">Завершено</string>
 
     <string name="scheduled_downloads">Запланированные загрузки.</string>
+    <string name="schedule_downloads_sum">Устанавливать запланированные загрузки автоматически когда соединение по Wifi присутствует</string>
     
-    
+    <string name="app_filter">Фильтры приложений</string>
+	<string name="app_filter_sum">Не показывать приложений, не совместимых с устройством.</string>
     
     
     <string name="available">Доступно</string>
