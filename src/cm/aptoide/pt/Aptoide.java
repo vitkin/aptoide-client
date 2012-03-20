@@ -259,8 +259,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		public void newInstalledListDataAvailable() throws RemoteException {
 			AptoideLog.v(Aptoide.this, "received newInstalledListDataAvailable callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SYNCHRONIZED_INSTALLED_LIST.ordinal());
-			installedAdapter.resetDisplayInstalled();
-    		installedAppsListView.setAdapter(installedAdapter);
 		}
 		
 		@Override
@@ -363,6 +361,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	    					blockedSearchQuery = "";
 	    				}        		
 	    			}	
+	    			installedAdapter.resetDisplayInstalled();
+	        		installedAppsListView.setAdapter(installedAdapter);
         			break;
         	
 	        	case RESET_INSTALLED_LIST_DISPLAY:
@@ -991,20 +991,20 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 //    					availableAdapter.resetDisplay(category);
 //    				}
 //    			}else{
-    	    		AptoideLog.d(this, "row height: "+view.getHeight());
-    				final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
-    	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
-    	    		Intent appInfo = new Intent(this,AppInfo.class);
-    	    		appInfo.putExtra("appHashid", appHashid);
-    	    		startActivity(appInfo);
+//    	    		AptoideLog.d(this, "row height: "+view.getHeight());
+//    				final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
+//    	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
+//    	    		Intent appInfo = new Intent(this,AppInfo.class);
+//    	    		appInfo.putExtra("appHashid", appHashid);
+//    	    		startActivity(appInfo);
 //    			}
-    		}else{
-	    		final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
-	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
-	    		Intent appInfo = new Intent(this,AppInfo.class);
-	    		appInfo.putExtra("appHashid", appHashid);
-	    		startActivity(appInfo);
-	    		//TODO click change color effect
+//    		}else{
+//	    		final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
+//	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
+//	    		Intent appInfo = new Intent(this,AppInfo.class);
+//	    		appInfo.putExtra("appHashid", appHashid);
+//	    		startActivity(appInfo);
+//	    		//TODO click change color effect
     		}
     	}
 	}

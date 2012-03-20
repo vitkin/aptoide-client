@@ -1127,7 +1127,7 @@ public class ManagerDatabase {
 			insertInstalledApplication.close();
 			
 			db.setTransactionSuccessful();
-			serviceData.updateInstalledLists();
+			serviceData.resetInstalledLists();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 			e.printStackTrace();
@@ -1154,7 +1154,7 @@ public class ManagerDatabase {
 			}
 			
 			db.setTransactionSuccessful();
-			serviceData.updateInstalledLists();
+			serviceData.resetInstalledLists();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
@@ -1179,7 +1179,7 @@ public class ManagerDatabase {
 			}
 			
 			db.setTransactionSuccessful();
-			serviceData.updateInstalledLists();
+			serviceData.resetInstalledLists();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
@@ -1204,7 +1204,7 @@ public class ManagerDatabase {
 			}
 			
 			db.setTransactionSuccessful();
-			serviceData.updateInstalledLists();
+			serviceData.resetInstalledLists();
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{

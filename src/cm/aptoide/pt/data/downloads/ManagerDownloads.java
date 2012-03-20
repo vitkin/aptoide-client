@@ -268,7 +268,6 @@ public class ManagerDownloads {
 	
 	public boolean isPermittedConnectionAvailable(ViewIconDownloadPermissions permissions){
 		boolean connectionAvailable = false;
-		Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
 		if(permissions.isWiFi()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
@@ -283,7 +282,7 @@ public class ManagerDownloads {
 		} 
 		if(permissions.isMobile()){
 			try {
-				connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
 				Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+connectionAvailable);
 			} catch (Exception e) { }
 		}
@@ -293,7 +292,8 @@ public class ManagerDownloads {
 				Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+connectionAvailable);
 			} catch (Exception e) { }
 		}
-		
+
+		Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
 		return connectionAvailable;
 	}
 	
@@ -331,6 +331,7 @@ public class ManagerDownloads {
 	
 
 	public void getRepoIcons(ViewDownloadStatus downloadStatus, ArrayList<ViewDownloadInfo> iconsInfo){
+		Log.d("Aptoide-ManagerDownloads", "getRepoIcons ");
 		
 		for (ViewDownloadInfo iconInfo : iconsInfo) {
 			if(isIconCached(iconInfo.getAppHashid())){

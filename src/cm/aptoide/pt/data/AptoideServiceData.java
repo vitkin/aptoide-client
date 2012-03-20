@@ -823,7 +823,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}	
 	
 	
-	public void updateInstalledLists(){
+	public void resetInstalledLists(){
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -1123,6 +1123,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 //			insertedRepo(repository.getHashid());
 			addRepoIconsInfo(repository);
 		}
+		resetInstalledLists();
 	}
 	
 	public void addRepoIconsInfo(final ViewRepository repository){
@@ -1177,6 +1178,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 							//TODO raise exception
 							return;
 						}
+						AptoideLog.d(AptoideServiceData.this, "getting repo icons");
 	
 						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), displayListsDimensions.getCacheSize()));
 						//TODO find some way to track global parsing completion status, probably in managerXml
