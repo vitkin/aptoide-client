@@ -87,6 +87,8 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	private AtomicBoolean directionDown;
 	private AtomicBoolean changingList;
 	
+	private AtomicBoolean sleep;
+	
 	private AtomicInteger reloadListScrollPosition;
 
 	private AvailableAppsManager appsManager;
@@ -416,8 +418,6 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	
 	
 	public static class AvailableRowViewHolder{
-		int appHashid;
-		
 		ImageView app_icon;
 		
 		TextView app_name;
@@ -447,8 +447,6 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		}else{
 			rowViewHolder = (AvailableRowViewHolder) convertView.getTag();
 		}
-		
-		rowViewHolder.appHashid = apps.get(position).getAppHashid();
 		
 		File iconCache = new File(apps.get(position).getIconCachePath());
 		if(iconCache.exists() && iconCache.length() > 0){
@@ -528,6 +526,8 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		directionDown = new AtomicBoolean(true);
 		changingList = new AtomicBoolean(false);
 		
+		sleep = new AtomicBoolean(true);
+		
 		reloadListScrollPosition = new AtomicInteger(0);
 
         try {
@@ -544,6 +544,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	
 	public void resetDisplay(ViewDisplayCategory category){
 		aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
+		sleep.set(false);
 		this.category = category;
 		this.apps.clear();
 //		try {
@@ -563,11 +564,16 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 //		aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 //		apps.clear();
 //		appsManager.reload();
+//		listView.destroyDrawingCache();
 		resetDisplay(this.category);
 	}
 	
 	public void refreshDisplayAvailable(){
 		notifyDataSetChanged();
+	}
+	
+	public void sleep(){
+		sleep.set(true);
 	}
 	
 	
@@ -614,7 +620,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 			listView.setSelection(reloadListScrollPosition.get());
 			reloadListScrollPosition.set(0);
 		}
-		if( directionDown.get() && !freshApps.isEmpty() && (getCount()-globalPosition.get()) < displayListsDimensions.getCacheSize()){
+		if( !sleep.get() && directionDown.get() && !freshApps.isEmpty() && (getCount()-globalPosition.get()) < displayListsDimensions.getCacheSize()){
 			appsManager.scrollDown();
 		}else {
 			setLoadingFooter(false);
@@ -680,7 +686,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
         	listView.setSelectionFromTop(scrollRestorePosition+adjustAmount, partialScrollRestorePosition);
         	scrollDirectionOrigin.set(globalPosition.get()+adjustAmount);
     	}
-		if(!directionDown.get() && cacheAppsTrimmed.get() > 0 && globalPosition.get() < displayListsDimensions.getCacheSize()){
+		if(!sleep.get() && !directionDown.get() && cacheAppsTrimmed.get() > 0 && globalPosition.get() < displayListsDimensions.getCacheSize()){
 			appsManager.scrollUp();
 			if((getCount()-globalPosition.get()) > displayListsDimensions.getDecreaseTrigger()){
 				trimBottomAppsList(displayListsDimensions.getIncreaseTrigger());
@@ -711,7 +717,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
     		refreshDisplayAvailable();
     		
     	}
-		if( directionDown.get() && !freshAvailableApps.isEmpty() && (getCount()-globalPosition.get()) < displayListsDimensions.getCacheSize()){
+		if( !sleep.get() && directionDown.get() && !freshAvailableApps.isEmpty() && (getCount()-globalPosition.get()) < displayListsDimensions.getCacheSize()){
 			appsManager.scrollDown();
 			if(globalPosition.get() > displayListsDimensions.getDecreaseTrigger()){
 				trimTopAppsList(displayListsDimensions.getIncreaseTrigger());

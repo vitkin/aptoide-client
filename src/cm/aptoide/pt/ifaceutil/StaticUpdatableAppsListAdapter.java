@@ -117,8 +117,6 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 	
 	
 	public static class UpdatableRowViewHolder{
-		int appHashid;
-		
 		ImageView app_icon;
 		
 		TextView app_name;
@@ -150,8 +148,6 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 		}else{
 			rowViewHolder = (UpdatableRowViewHolder) convertView.getTag();
 		}
-
-		rowViewHolder.appHashid = apps.get(position).getAppHashid();
 		
 		File iconCache = new File(apps.get(position).getIconCachePath());
 		if(iconCache.exists() && iconCache.length() > 0){
@@ -230,17 +226,17 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 	}
 	
 	private void resetDisplay(){
-		if(freshApps.isEmpty()){
+		if(freshApps == null || freshApps.isEmpty()){
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_NO_APPS.ordinal());
 		}else{
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_LIST.ordinal());
-		}
 
-		Log.d("Aptoide-StaticUpdatableAppsListAdapter", "new UpdatableList: "+freshApps.size());
-    	this.apps = freshApps;
-   		initDisplay();
-    	refreshDisplayUpdatable();
-    	
+			Log.d("Aptoide-StaticUpdatableAppsListAdapter", "new UpdatableList: "+freshApps.size());
+	    	this.apps = freshApps;
+	   		initDisplay();
+	    	refreshDisplayUpdatable();
+
+		}
 	}
 	
 }

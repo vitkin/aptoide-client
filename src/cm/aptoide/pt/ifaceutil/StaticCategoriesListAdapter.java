@@ -37,10 +37,7 @@ import android.widget.TextView;
 import cm.aptoide.pt.EnumAptoideInterfaceTasks;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
-import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
-import cm.aptoide.pt.data.display.ViewDisplayListApps;
-import cm.aptoide.pt.data.model.ViewCategory;
 import cm.aptoide.pt.data.util.Constants;
 
  /**
@@ -59,7 +56,7 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
 	private ViewDisplayCategory category = null;
 	private ViewDisplayCategory freshCategory = null;
 
-	private CategoriesManager appsManager;
+	private CategoriesManager categoriesManager;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 	
@@ -72,7 +69,7 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
         	EnumAptoideInterfaceTasks task = EnumAptoideInterfaceTasks.reverseOrdinal(msg.what);
         	switch (task) {
 				
-				case RESET_INSTALLED_LIST_DISPLAY:
+				case RESET_CATEGORIES:
 					resetDisplay();
 					break;
 	
@@ -85,39 +82,28 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
     
 
     private class CategoriesManager{
-    	private ExecutorService installedColectorsPool;
+    	private ExecutorService categoriesColectorsPool;
     	
     	public CategoriesManager(){
-    		installedColectorsPool = Executors.newSingleThreadExecutor();
+    		categoriesColectorsPool = Executors.newSingleThreadExecutor();
     	}
     	
     	public void reset(){
-        	installedColectorsPool.execute(new GetInstalledApps());
+        	categoriesColectorsPool.execute(new GetCategories());
         }
     	
-    	private class GetInstalledApps implements Runnable{
+    	private class GetCategories implements Runnable{
 
 			@Override
 			public void run() {
-				
 
-						interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
-						try {
-							if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
-								// RESET CATEGORIES TO ZERO
-								Log.d("Aptoide","resetting categories list.");
-								setFreshCategories(serviceDataCaller.callGetCategories());
-								interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_CATEGORIES.ordinal());
-							}
-						} catch (RemoteException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-				
-				aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR.ordinal());
+				aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 				try {
-					setFreshInstalledApps(serviceDataCaller.callGetInstalledApps());
-					interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_INSTALLED_LIST_DISPLAY.ordinal());
+					if( category == null || category.getCategoryHashid() == Constants.TOP_CATEGORY || category.hasChildren() ){
+						Log.d("Aptoide","resetting categories list.");
+						setFreshCategories(serviceDataCaller.callGetCategories());
+						interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_CATEGORIES.ordinal());
+					}
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -130,9 +116,7 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
 	
 	
 	
-	public static class CategoryRowViewHolder{
-		int categoryHashid;
-		
+	public static class CategoryRowViewHolder{		
 		TextView category_name;
 		TextView category_apps;
 	}
@@ -155,30 +139,25 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
 			rowViewHolder = (CategoryRowViewHolder) convertView.getTag();
 		}
 
-//		rowViewHolder.categoryHashid = category.get(position).getHashid();
-//		
-//		rowViewHolder.category_name.setText(category.get(position).getName());
-//		rowViewHolder.category_apps.setText(category.get(position).getVersionName());
+		rowViewHolder.category_name.setText(category.getSubCategories().get(position).getCategoryName());
+		rowViewHolder.category_apps.setText(Integer.toString(category.getSubCategories().get(position).getAvailableApps()));
 		
 		return convertView;
 	}
 	
 	@Override
 	public int getCount() {
-//		return category.size();
-		return 0;
+		return category.getSubCategories().size();
 	}
 
 	@Override
-	public ViewCategory getItem(int position) {
-//		return apps.get(position);
-		return null;
+	public ViewDisplayCategory getItem(int position) {
+		return category.getSubCategories().get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-//		return apps.get(position).getAppHashid();
-		return 0;
+		return category.getSubCategories().get(position).getCategoryHashid();
 	}
 	
 	
@@ -195,92 +174,67 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
 		this.serviceDataCaller = serviceDataCaller;
 		this.aptoideTasksHandler = aptoideTasksHandler;
 		
-		appsManager = new CategoriesManager();
+		categoriesManager = new CategoriesManager();
 
 
 		this.listView = listView;
 		layoutInflater = LayoutInflater.from(context);
 	} 
 	
-	
-	
-	public void resetDisplayInstalled(){
-		appsManager.reset();
+	public ViewDisplayCategory getCategory(){
+		return category;
 	}
 	
-	public void refreshDisplayInstalled(){
-		notifyDataSetChanged();
+	public void resetDisplayCategories(){
+		categoriesManager.reset();
 	}
 	
+	public void gotoSubCategory(int categoryHashid){
+		category = category.getSubCategory(categoryHashid);
+		if(category.hasChildren()){
+			refreshDisplayCategories();			
+		}else{
+			listView.setAdapter(null);
+		}
+	}
 	
+	public void gotoParentCategory(){
+		if(!category.hasChildren()){
+			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_CATEGORIES.ordinal());
+		}
+		category = category.getParentCategory();
+		initDisplay();
+		refreshDisplayCategories();
+	}
 	
     private void initDisplay(){
 		listView.setAdapter(this);    	
     }
 	
-	private synchronized void setFreshInstalledApps(ViewDisplayListApps freshInstalledApps){
-//		this.freshApps = freshInstalledApps;
+	public void refreshDisplayCategories(){
+		notifyDataSetChanged();
+	}
+	
+	private synchronized void setFreshCategories(ViewDisplayCategory freshCategory){
+		Log.d("Aptoide-StaticCategoriesListAdapter", "setFreshCategories");
+		this.freshCategory = freshCategory;
+		refreshDisplayCategories();
 	}
 	
 	private void resetDisplay(){
-//		if(freshApps.isEmpty()){
-//			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_NO_APPS.ordinal());
-//		}else{
-//			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_LIST.ordinal());
-//		}
-//
-//		Log.d("Aptoide-StaticInstalledAppsListAdapter", "new InstalledList: "+freshApps.size());
-//    	this.apps = freshApps;
-//   		initDisplay();
-//    	refreshDisplayInstalled();
-//    	
-//    	aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
-    	
-	}
-	
-	
-	
-	
+		if(freshCategory == null || (freshCategory.getCategoryHashid() == Constants.TOP_CATEGORY && !freshCategory.hasChildren())){
+			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_NO_APPS.ordinal());
+		}else{
+			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_CATEGORIES.ordinal());
+		}
 
-	
-	public void initDisplayCategories(){
-//		categoriesAdapter = new SimpleAdapter(Aptoide.this, category.getDisplayList(), R.layout.row_category 
-//         		, new String[] {Constants.KEY_CATEGORY_HASHID, Constants.KEY_CATEGORY_NAME, Constants.DISPLAY_CATEGORY_APPS}
-//				, new int[] {R.id.category_hashid, R.id.category_name, R.id.category_apps});
-//		
-//		categoriesAdapter.setViewBinder(new CategoryListBinder());
-//		availableAppsListView.setOnScrollListener(null);
-//		availableAppsListView.setAdapter(categoriesAdapter);
-	}
-	
-	public synchronized void setFreshCategories(ViewDisplayCategory freshCategory){
-//		AptoideLog.d(Aptoide.this, "setFreshCategories");
-		this.freshCategory = freshCategory;
-		this.freshCategory.generateDisplayLists();
-	}
-	
-	public void resetDisplayCategories(){
-//		if(freshCategory == null || (freshCategory.getCategoryHashid() == Constants.TOP_CATEGORY && !freshCategory.hasChildren())){
-//			switchAvailableToEmpty();
-//		}else{
-//			switchAvailableToList();
-//		}
-//		
-//		if(currentAppsList.equals(EnumAppsLists.Available)){
-//			showAvailableList();			
-//		}
-//		
-//    	AptoideLog.d(Aptoide.this, "new CategoriesList: "+freshCategory);
-//		boolean newList = this.category == null;
-//    	this.category = freshCategory;
-//    	initDisplayCategories();
-//    	if(!newList){
-//    		refreshCategoriesDisplay();
-//    	}
-	}
-	
-	public void refreshCategoriesDisplay(){
-//		categoriesAdapter.notifyDataSetChanged();
+		Log.d("Aptoide-StaticCategoriesListAdapter", "new category: "+freshCategory);
+		this.category = freshCategory;
+   		initDisplay();
+		refreshDisplayCategories();
+    	
+    	aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
+    	
 	}
 	
 }

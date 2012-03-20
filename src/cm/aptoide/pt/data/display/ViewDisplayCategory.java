@@ -21,10 +21,7 @@
 package cm.aptoide.pt.data.display;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -41,8 +38,7 @@ import cm.aptoide.pt.data.util.Constants;
 public class ViewDisplayCategory implements Parcelable, Serializable{ 
 
 	private static final long serialVersionUID = 1412655092087101812L;
-	private LinkedList<Map<String, Object>> subCategoriesDisplayList;
-	private LinkedHashMap<Integer, ViewDisplayCategory> subCategories;
+	private LinkedList<ViewDisplayCategory> subCategories;
 	private ViewDisplayCategory parentCategory;
 	
 	private String categoryName;
@@ -53,8 +49,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	 * ViewDisplayCategory Constructor
 	 */
 	public ViewDisplayCategory(String categoryName, int categoryHashid, int availableApps) {
-		this.subCategoriesDisplayList = new LinkedList<Map<String, Object>>();
-		this.subCategories = new LinkedHashMap<Integer, ViewDisplayCategory>();
+		this.subCategories = new LinkedList<ViewDisplayCategory>();
 		this.parentCategory = null;
 		this.categoryName = categoryName;
 		this.categoryHashid = categoryHashid;
@@ -71,15 +66,19 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	
 	public void addSubCategory(ViewDisplayCategory subCategory){
 		subCategory.setParentCategory(this);
-		this.subCategories.put(subCategory.getCategoryHashid(), subCategory);		
+		this.availableApps += subCategory.availableApps;
+		this.subCategories.add(subCategory);		
 	}
 	
 	public ViewDisplayCategory getSubCategory(int categoryHashid){
-		if(subCategories.containsKey(categoryHashid)){
-			return subCategories.get(categoryHashid);
-		}else{
-			return null;	//TODO refactor null object
+		ViewDisplayCategory category = null;
+		for (ViewDisplayCategory subcategory : subCategories) {
+			if(subcategory.getCategoryHashid() == categoryHashid){
+				category = subcategory;
+				break;
+			}
 		}
+		return category;
 	}	
 	
 	public String getCategoryName() {
@@ -98,54 +97,16 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 		return (subCategories.size() > 0);
 	}
 
-	public void generateDisplayLists(){
-		if(hasChildren()){
-			Map<String, Object> childMap;
-			for (ViewDisplayCategory subCategory: subCategories.values()) {
-				subCategory.generateDisplayLists();
-				childMap = new HashMap<String, Object>();
-				childMap.put(Constants.KEY_CATEGORY_HASHID, subCategory.getCategoryHashid());
-				childMap.put(Constants.KEY_CATEGORY_NAME, subCategory.getCategoryName());
-				childMap.put(Constants.DISPLAY_CATEGORY_APPS, subCategory.getAvailableApps());
-				availableApps += subCategory.getAvailableApps();
-				subCategoriesDisplayList.add(childMap);
-			}
-		}
-		
-	}
 	
-	public void regenerateDisplayList(){
-		if(hasChildren()){
-			Map<String, Object> childMap;
-			for (ViewDisplayCategory subCategory: subCategories.values()) {
-				childMap = new HashMap<String, Object>();
-				childMap.put(Constants.KEY_CATEGORY_HASHID, subCategory.getCategoryHashid());
-				childMap.put(Constants.KEY_CATEGORY_NAME, subCategory.getCategoryName());
-				childMap.put(Constants.DISPLAY_CATEGORY_APPS, subCategory.getAvailableApps());
-				subCategoriesDisplayList.add(childMap);
-			}
-		}
+	public LinkedList<ViewDisplayCategory> getSubCategories(){
+		return subCategories;
 	}
-
-	/**
-	 * getDisplayList, retrieves subCategories Maps list
-	 * 
-	 * @return ArrayList<Map<String, Object>> categoriesList
-	 */
-	public LinkedList<Map<String, Object>> getDisplayList(){
-		if(subCategoriesDisplayList == null || subCategoriesDisplayList.isEmpty()){
-			regenerateDisplayList();
-		}
-		return this.subCategoriesDisplayList;
-	}
-
 	
 
 	/**
 	 * ViewDisplayListApps object reuse, clean references
 	 */
 	public void clean(){
-		this.subCategoriesDisplayList = null;
 		this.subCategories = null;
 		this.parentCategory = null;
 		this.categoryName = null;
@@ -159,8 +120,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	 * @param int size
 	 */
 	public void reuse(String categoryName, int categoryHashid, int availableApps) {
-		this.subCategoriesDisplayList = new LinkedList<Map<String, Object>>();
-		this.subCategories = new LinkedHashMap<Integer, ViewDisplayCategory>();
+		this.subCategories = new LinkedList<ViewDisplayCategory>();
 		this.parentCategory = null;
 		this.categoryName = categoryName;
 		this.categoryHashid = categoryHashid;
@@ -171,7 +131,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	@Override
 	public String toString() {
 		StringBuilder listApps = new StringBuilder("Category: "+categoryName+" subCategories: ");
-		for (ViewDisplayCategory subCategory : subCategories.values()) {
+		for (ViewDisplayCategory subCategory : subCategories) {
 			listApps.append(subCategory.getCategoryHashid()+" - "+subCategory.getCategoryName()+" ");
 		}
 		return listApps.toString();
@@ -203,8 +163,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	
 
 
-	public static final Parcelable.Creator<ViewDisplayCategory> CREATOR = new
-			Parcelable.Creator<ViewDisplayCategory>() {
+	public static final Parcelable.Creator<ViewDisplayCategory> CREATOR = new Parcelable.Creator<ViewDisplayCategory>() {
 		public ViewDisplayCategory createFromParcel(Parcel in) {
 			return new ViewDisplayCategory(in);
 		}
@@ -230,8 +189,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {
-		out.writeSerializable(subCategoriesDisplayList);	//TODO use list or parcelable instead of serializable
+	public void writeToParcel(Parcel out, int flags) {	//TODO use list or parcelable instead of serializable
 		out.writeSerializable(subCategories);
 		out.writeParcelable(parentCategory, flags);
 		out.writeString(categoryName);
@@ -241,8 +199,7 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 
 	@SuppressWarnings("unchecked")
 	public void readFromParcel(Parcel in) {
-		subCategoriesDisplayList = (LinkedList<Map<String, Object>>) in.readSerializable();
-		subCategories = (LinkedHashMap<Integer, ViewDisplayCategory>) in.readSerializable();
+		subCategories = (LinkedList<ViewDisplayCategory>) in.readSerializable();
 		parentCategory = in.readParcelable(getClass().getClassLoader());
 		categoryName = in.readString();
 		categoryHashid = in.readInt();
