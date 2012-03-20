@@ -1,64 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#edece9"
+    android:orientation="horizontal"
+    android:padding="10dp" >
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent">
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:padding="5dp" >
 
-	<LinearLayout 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical" >
-	
-        <RadioButton
-            android:id="@+id/wifi"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/wifi" />
+            android:orientation="vertical" >
 
-        <RadioButton
-            android:id="@+id/ethernet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/ethernet" />
+            <RadioButton
+                android:id="@+id/wifi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/wifi"
+                android:textColor="#4f4f4f" />
 
-        <RadioButton
-            android:id="@+id/wimax"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/wimax" />
+            <RadioButton
+                android:id="@+id/ethernet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ethernet"
+                android:textColor="#4f4f4f" />
 
-        <RadioButton
-            android:id="@+id/mobile"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/mobile" />
+            <RadioButton
+                android:id="@+id/wimax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/wimax"
+                android:textColor="#4f4f4f" />
 
-        <RadioButton
-            android:id="@+id/never"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/never" />
-	
-	    <LinearLayout
-	        android:id="@+id/buttons"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content" >
+            <RadioButton
+                android:id="@+id/mobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mobile"
+                android:textColor="#4f4f4f" />
 
-	        <Button
-	            android:id="@+id/done"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"
-	            android:text="@string/done" />
+            <RadioButton
+                android:id="@+id/never"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/never"
+                android:textColor="#4f4f4f" />
 
-	        <Button
-	            android:id="@+id/cancel"
-	            android:layout_width="0dp"
-	            android:layout_height="wrap_content"
-	            android:layout_weight="1"
-	            android:text="@string/cancel" />
-	    </LinearLayout>
-	
-	</LinearLayout>
-</ScrollView>
+            <LinearLayout
+                android:id="@+id/buttons"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:id="@+id/done"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/done"
+                    android:textColor="#4f4f4f" />
+
+                <Button
+                    android:id="@+id/cancel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/cancel"
+                    android:textColor="#4f4f4f" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

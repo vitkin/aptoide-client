@@ -1,41 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
-
-       <RadioButton
-           android:id="@+id/icon"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:checked="true"
-           android:text="@string/icon" />
-
-       <RadioButton
-           android:id="@+id/apk"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:text="@string/apk" />
+    android:layout_height="fill_parent"
+    android:background="#edece9"
+    android:orientation="horizontal"
+    android:padding="10dp" >
 
     <LinearLayout
-        android:id="@+id/buttons"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:orientation="vertical"
+        android:padding="5dp" >
 
-        <Button
-            android:id="@+id/done"
-            android:layout_width="0dp"
+        <RadioButton
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/done" />
+            android:checked="true"
+            android:text="@string/icon"
+            android:textColor="#4f4f4f" />
 
-        <Button
-            android:id="@+id/cancel"
-            android:layout_width="0dp"
+        <RadioButton
+            android:id="@+id/apk"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/cancel" />
+            android:text="@string/apk"
+            android:textColor="#4f4f4f" />
+
+        <LinearLayout
+            android:id="@+id/buttons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <Button
+                android:id="@+id/done"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/done"
+                android:textColor="#4f4f4f" />
+
+            <Button
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textColor="#4f4f4f" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
