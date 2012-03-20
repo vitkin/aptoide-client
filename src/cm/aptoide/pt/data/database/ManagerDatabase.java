@@ -1736,13 +1736,7 @@ public class ManagerDatabase {
 			
 			db.setTransactionSuccessful();
 			db.endTransaction();
-
-			if(cursorOthersApplications.getCount() != Constants.EMPTY_INT){
-				cursorOthersApplications.moveToFirst();
-				topCategory.addSubCategory(new ViewDisplayCategory(Constants.CATEGORY_OTHERS, Constants.CATEGORY_HASHID_OTHERS
-																, cursorOthersApplications.getInt(OTHERS_APPS)));
-			}
-			cursorOthersApplications.close();
+			
 			
 			ViewDisplayCategory category;
 
@@ -1775,6 +1769,14 @@ public class ManagerDatabase {
 			if(games.hasChildren()){
 				topCategory.addSubCategory(games);
 			}
+
+			
+			if(cursorOthersApplications.getCount() != Constants.EMPTY_INT){
+				cursorOthersApplications.moveToFirst();
+				topCategory.addSubCategory(new ViewDisplayCategory(Constants.CATEGORY_OTHERS, Constants.CATEGORY_HASHID_OTHERS
+																, cursorOthersApplications.getInt(OTHERS_APPS)));
+			}
+			cursorOthersApplications.close();
 			
 		}catch (Exception e) {
 			if(db.inTransaction()){
