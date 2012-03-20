@@ -65,12 +65,16 @@ import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.util.Constants;
+import cm.aptoide.pt.ifaceutil.StaticSearchAppResultsListAdapter;
 
 public class Search extends Activity implements OnItemClickListener{
 	
-	private SimpleAdapter resultsAdapter;
+//	private SimpleAdapter resultsAdapter;
 	private ListView resultsListView = null;
 	private ViewDisplayListApps searchResults;
+	
+	private StaticSearchAppResultsListAdapter resultsAdapter;
+	
 	private View bazaarSearchButton = null;
 	
 	private String searchString;
@@ -211,12 +215,14 @@ public class Search extends Activity implements OnItemClickListener{
 	}
 	
 	public void resetResultsList(){		
-//		resultsAdapter = new SimpleAdapter(Search.this, searchResults.getList(), R.layout.row_app, 
+//		resultsAdapter = new SimpleAdapter(Search.this, searchResults.getList(), R.layout.row_app_available, 
 //				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
 //				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
 //		
 //		resultsAdapter.setViewBinder(new ResultsListBinder());
-//		resultsListView.setAdapter(resultsAdapter);
+
+		resultsAdapter = new StaticSearchAppResultsListAdapter(this, searchResults);
+		resultsListView.setAdapter(resultsAdapter);
 	}
 	
 	@Override
@@ -264,7 +270,7 @@ public class Search extends Activity implements OnItemClickListener{
 	@Override
 	public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
 
-		final int appHashid = Integer.parseInt(((LinearLayout)view).getTag().toString());
+		final int appHashid = searchResults.get(position).getAppHashid();
 		Log.d("Aptoide-Search", "Onclick position: "+position+" appHashid: "+appHashid);
 		Intent appInfo = new Intent(this,AppInfo.class);
 		appInfo.putExtra("appHashid", appHashid);

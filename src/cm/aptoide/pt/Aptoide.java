@@ -1011,6 +1011,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     					availableAdapter.resetDisplay(category);
     				}
     			}else{
+    				availableAdapter.sleep();
     				final int appHashid = availableAdapter.getItem(position).getAppHashid();
     	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
     	    		Intent appInfo = new Intent(this,AppInfo.class);
@@ -1018,6 +1019,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     	    		startActivity(appInfo);
     			}
     		}else{
+				availableAdapter.sleep();
 				final int appHashid = availableAdapter.getItem(position).getAppHashid();
 	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
 	    		Intent appInfo = new Intent(this,AppInfo.class);
