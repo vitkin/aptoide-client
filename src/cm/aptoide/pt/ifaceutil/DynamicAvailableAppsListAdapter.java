@@ -364,6 +364,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 //				+" intrigger: "+displayListsDimensions.getIncreaseTrigger()+" detrigger: "+displayListsDimensions.getDecreaseTrigger());
 		
 		if( directionDown.get() /*&& (cacheAppsTrimmed.get()+getCount()) != totalAvailableApps*/ && (getCount()-position) < displayListsDimensions.getIncreaseTrigger() ){
+			sleep.set(false);
 			setLoadingFooter(true);
 			if(!changingList.get()){
 				scrollDirectionOrigin.set(position);
@@ -377,7 +378,8 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 				scrollDirectionOrigin.set(position);
 			}
 		}else if( !directionDown.get() && cacheAppsTrimmed.get() > 0/* (cacheAppsTrimmed.get()+getCount()) > displayListsDimensions.getCacheSize()*/ && position < displayListsDimensions.getIncreaseTrigger() ){
-			Log.d("Aptoide-DynamicAvailableAppsListAdapter", "sroll up, possible: "+position);
+//			Log.d("Aptoide-DynamicAvailableAppsListAdapter", "sroll up, possible: "+position);
+			sleep.set(false);
 			setLoadingHeader(true);
 			if(!changingList.get()){
 				scrollDirectionOrigin.set(position);
