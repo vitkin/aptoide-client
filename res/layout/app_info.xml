@@ -28,18 +28,33 @@
             android:layout_marginRight="24sp"
             android:src="@drawable/icon" />
 
-        <TextView
-            android:id="@+id/app_name"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10sp"
             android:layout_toLeftOf="@+id/icon"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#4f4f4f" />
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/app_name"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="10sp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#4f4f4f" />
+
+            <RatingBar
+                android:id="@+id/app_rating"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10sp"
+                android:layout_weight="1"
+                android:numStars="5" />
+        </LinearLayout>
     </RelativeLayout>
 
     <LinearLayout
@@ -84,7 +99,8 @@
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:textColor="#4f4f4f" />
+                            android:textColor="#4f4f4f"
+                            android:textSize="12sp"  />
 
                         <TextView
                             android:id="@+id/app_downloads"
@@ -95,7 +111,8 @@
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:textColor="#4f4f4f" />
+                            android:textColor="#4f4f4f"
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/app_store"
@@ -107,16 +124,8 @@
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:singleLine="true"
-                            android:textColor="#4f4f4f" />
-
-                        <RatingBar
-                            android:id="@+id/app_rating"
-                            style="?android:attr/ratingBarStyleSmall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentTop="true"
-                            android:numStars="5" />
+                            android:textColor="#4f4f4f"
+                            android:textSize="12sp"  />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -162,7 +171,6 @@
                         android:layout_height="fill_parent"
                         android:src="@drawable/dontlike"
                         android:visibility="visible" />
-
                 </LinearLayout>
 
                 <Spinner
@@ -220,7 +228,6 @@
                     android:layout_height="182dp"
                     android:layout_weight="1" />
             </LinearLayout>
-
         </ScrollView>
     </LinearLayout>
 
