@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="#ffffff"
-    android:paddingTop="5sp"
-    android:paddingLeft="5sp"
-    android:paddingRight="5sp">
-    
-	<TextView android:id="@+id/loading"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:textAppearance="?android:attr/textAppearanceLarge"
-		android:textColor="#4f4f4f"
-		android:text="@string/loading_apps" />
-	<ProgressBar
-		android:id="@+id/progress"
-	 	android:layout_width="fill_parent"
-	 	android:layout_height="wrap_content"
-	 	android:orientation="horizontal"
-	 	android:visibility="visible"
-	 	style="?android:attr/progressBarStyleHorizontal" 
-	 	android:indeterminate="true"/>	
-</LinearLayout>
-<!--
+    android:orientation="horizontal"
+    android:padding="10dp" >
+
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_margin="10dp"
+        android:layout_toLeftOf="@+id/loading" />
+
+    <TextView
+        android:id="@+id/loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="10dp"
+        android:text="@string/loading_apps"
+        android:textColor="#4f4f4f"
+        android:textSize="16sp" />
+
+</RelativeLayout><!--
  * Copyright (C) 2012  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
