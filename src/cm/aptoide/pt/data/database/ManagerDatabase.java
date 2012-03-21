@@ -2251,7 +2251,7 @@ public class ManagerDatabase {
 											+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 											+","+Constants.KEY_STATS_STARS+","+Constants.KEY_STATS_DOWNLOADS
 										+" FROM "+Constants.TABLE_APP_INSTALLED+" I"
-										+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID
+										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID
 															+" FROM "+Constants.TABLE_REPOSITORY
 															+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
 										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID

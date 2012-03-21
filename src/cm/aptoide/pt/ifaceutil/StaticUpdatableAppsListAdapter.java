@@ -130,8 +130,10 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
+
+//		Log.d("Aptoide-StaticUpdatableAppsListAdapter", "getView, position: "+position+" item: "+getItem(position));
 		
-		UpdatableRowViewHolder rowViewHolder;
+		UpdatableRowViewHolder rowViewHolder; 
 		
 		if(convertView == null){
 			convertView = layoutInflater.inflate(R.layout.row_app_updatable, null);
