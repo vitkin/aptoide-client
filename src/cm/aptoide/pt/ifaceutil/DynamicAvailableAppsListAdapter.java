@@ -460,7 +460,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		rowViewHolder.app_name.setText(apps.get(position).getAppName());
 		rowViewHolder.uptodate_versionname.setText(apps.get(position).getVersionName());
 		
-		rowViewHolder.downloads.setText(Integer.toString(((ViewDisplayApplicationAvailable) apps.get(position)).getDownloads()));
+		rowViewHolder.downloads.setText(((ViewDisplayApplicationAvailable) apps.get(position)).getFormatedDownloadNumber());
 		rowViewHolder.stars.setRating(((ViewDisplayApplicationAvailable) apps.get(position)).getStars());
 		
 		
