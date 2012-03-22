@@ -32,7 +32,18 @@ public enum EnumXmlTagsExtras {
 	pkg,
 	apphashid,
 	cmt,
-	screen;
+	screen,
+	unrecognized;
+	
+	public static EnumXmlTagsExtras safeValueOf(String name){
+		EnumXmlTagsExtras tag;
+		try {
+			tag = EnumXmlTagsExtras.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsExtras.unrecognized;
+		}
+		return tag;
+	}
 	
 	public static EnumXmlTagsExtras reverseOrdinal(int ordinal){
 		return values()[ordinal];

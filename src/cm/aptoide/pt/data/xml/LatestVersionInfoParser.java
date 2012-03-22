@@ -64,7 +64,8 @@ public class LatestVersionInfoParser extends DefaultHandler{
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		tag = EnumXmlTagsLatestVersionInfo.valueOf(localName.trim());		
+		
+		tag = EnumXmlTagsLatestVersionInfo.safeValueOf(localName.trim());		
 		
 		switch (tag) {
 			case versionCode:

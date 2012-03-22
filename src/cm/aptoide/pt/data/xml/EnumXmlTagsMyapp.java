@@ -36,7 +36,18 @@ public enum EnumXmlTagsMyapp {
 	pname,
 	get,
 	newserver,
-	server;
+	server,
+	unrecognized;
+	
+	public static EnumXmlTagsMyapp safeValueOf(String name){
+		EnumXmlTagsMyapp tag;
+		try {
+			tag = EnumXmlTagsMyapp.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsMyapp.unrecognized;
+		}
+		return tag;
+	}
 	
 	public static EnumXmlTagsMyapp reverseOrdinal(int ordinal){
 		return values()[ordinal];

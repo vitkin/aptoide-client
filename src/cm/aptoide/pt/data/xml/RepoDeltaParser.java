@@ -79,12 +79,7 @@ public class RepoDeltaParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 
-		try {
-			tag = EnumXmlTagsDelta.valueOf(localName.trim());
-		} catch (Exception e) {
-			tag = null;
-			e.printStackTrace();
-		}
+		tag = EnumXmlTagsDelta.safeValueOf(localName.trim());
 		
 		if(tag != null){
 			switch (tag) {

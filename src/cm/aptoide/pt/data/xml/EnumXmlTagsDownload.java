@@ -34,7 +34,18 @@ public enum EnumXmlTagsDownload {
 	path,
 	md5h,
 	sz,
-	icon;
+	icon,
+	unrecognized;
+	
+	public static EnumXmlTagsDownload safeValueOf(String name){
+		EnumXmlTagsDownload tag;
+		try {
+			tag = EnumXmlTagsDownload.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsDownload.unrecognized;
+		}
+		return tag;
+	}
 	
 	public static EnumXmlTagsDownload reverseOrdinal(int ordinal){
 		return values()[ordinal];

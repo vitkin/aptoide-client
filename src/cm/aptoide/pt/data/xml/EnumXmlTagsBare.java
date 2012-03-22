@@ -44,7 +44,18 @@ public enum EnumXmlTagsBare {
 	timestamp,
 	minSdk,
 	minScreen,
-	minGles;
+	minGles,
+	unrecognized;
+	
+	public static EnumXmlTagsBare safeValueOf(String name){
+		EnumXmlTagsBare tag;
+		try {
+			tag = EnumXmlTagsBare.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsBare.unrecognized;
+		}
+		return tag;
+	}
 	
 	public static EnumXmlTagsBare reverseOrdinal(int ordinal){
 		return values()[ordinal];
