@@ -159,14 +159,12 @@ public class StaticInstalledAppsListAdapter extends BaseAdapter{
 		
 		if(((ViewDisplayApplicationInstalled) apps.get(position)).isDowngradable()){
 			rowViewHolder.app_downgradable.setVisibility(View.VISIBLE);
-			rowViewHolder.app_upgradable.setVisibility(View.INVISIBLE);
 		}else{
 			rowViewHolder.app_downgradable.setVisibility(View.INVISIBLE);
 		}
 
 		if(((ViewDisplayApplicationInstalled) apps.get(position)).isUpdatable()){
 			rowViewHolder.app_upgradable.setVisibility(View.VISIBLE);
-			rowViewHolder.app_downgradable.setVisibility(View.INVISIBLE);
 		}else{
 			rowViewHolder.app_upgradable.setVisibility(View.INVISIBLE);
 		}
