@@ -1090,6 +1090,30 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 
 	
+	private void viewApp(int position){
+		int appHashid = 0;
+		switch (currentAppsList) {
+			case Available:
+				appHashid = availableAdapter.getItem(position).getAppHashid();
+				break;
+				
+			case Installed:
+				appHashid = installedAdapter.getItem(position).getAppHashid();
+				break;
+				
+			case Updates:
+				appHashid = updatableAdapter.getItem(position).getAppHashid();
+				break;
+	
+			default:
+				break;
+		}
+		availableAdapter.sleep();
+		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
+		Intent appInfo = new Intent(this,AppInfo.class);
+		appInfo.putExtra("appHashid", appHashid);
+		startActivity(appInfo);
+	}
 	
     @Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
@@ -1104,20 +1128,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
     					availableAdapter.resetDisplay(category);
     				}
     			}else{
-    				availableAdapter.sleep();
-    				final int appHashid = availableAdapter.getItem(position).getAppHashid();
-    	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
-    	    		Intent appInfo = new Intent(this,AppInfo.class);
-    	    		appInfo.putExtra("appHashid", appHashid);
-    	    		startActivity(appInfo);
+    				viewApp(position);
     			}
     		}else{
-				availableAdapter.sleep();
-				final int appHashid = availableAdapter.getItem(position).getAppHashid();
-	    		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
-	    		Intent appInfo = new Intent(this,AppInfo.class);
-	    		appInfo.putExtra("appHashid", appHashid);
-	    		startActivity(appInfo);
+    			viewApp(position);
     		}
     	}
 	}

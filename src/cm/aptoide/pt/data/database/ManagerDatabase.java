@@ -2248,7 +2248,7 @@ public class ManagerDatabase {
 		
 		String selectUpdatableApps = "SELECT "+Constants.KEY_APP_INSTALLED_HASHID+","+Constants.KEY_APP_INSTALLED_NAME
 											+","+Constants.KEY_APP_INSTALLED_VERSION_NAME+","+Constants.KEY_APP_INSTALLED_VERSION_CODE
-											+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 											+","+Constants.KEY_STATS_STARS+","+Constants.KEY_STATS_DOWNLOADS
 										+" FROM "+Constants.TABLE_APP_INSTALLED+" I"
 										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID
@@ -2256,15 +2256,20 @@ public class ManagerDatabase {
 															+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
 										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
 																	+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
-																	+",MAX("+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+																	+", "+Constants.KEY_APPLICATION_VERSION_CODE+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
 																	+", "+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
 																	+", "+Constants.KEY_APPLICATION_TIMESTAMP
-															+" FROM "+Constants.TABLE_APPLICATION;
+															+" FROM "+Constants.TABLE_APPLICATION+" A"
+															+" WHERE "+Constants.KEY_APPLICATION_VERSION_CODE
+																	+"="+"(SELECT MAX("+Constants.KEY_APPLICATION_VERSION_CODE+")"
+																		+" FROM "+Constants.TABLE_APPLICATION
+																		+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME
+																				+"= A."+Constants.KEY_APPLICATION_PACKAGE_NAME+")";
 			// Filter by hardware?
 			if(filterByHw){
 				ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
 				Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
-				selectUpdatableApps	+=						" WHERE "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+				selectUpdatableApps	+=						" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
 							+								" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
 							+								" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 			}
@@ -2293,7 +2298,7 @@ public class ManagerDatabase {
 			}
 			Log.d("Aptoide-ManagerDatabase", "sorting by: "+sortingPolicy);
 			selectUpdatableApps +=	";";	
-//			Log.d("Aptoide-ManagerDatabase", "updatable apps: "+selectUpdatableApps);
+			Log.d("Aptoide-ManagerDatabase", "updatable apps: "+selectUpdatableApps);
 		
 		try{
 			db.beginTransaction();
