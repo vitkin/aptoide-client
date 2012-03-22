@@ -22,6 +22,7 @@ package cm.aptoide.pt.data.display;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.util.Constants;
 
  /**
@@ -62,6 +63,18 @@ public class ViewDisplayApplicationAvailable extends ViewDisplayApplication{
 		return this.downloads;
 	}
 	
+	public String getFormatedDownloadNumber() {
+
+		String formatedDownloadNumber = Integer.toString(downloads);
+
+		if (downloads > 1000000) {
+			return formatedDownloadNumber.substring(0, formatedDownloadNumber.length() - 6)	+ ","+ formatedDownloadNumber.substring(formatedDownloadNumber.length() - 6, formatedDownloadNumber.length() - 5) + "M";
+		} else if (downloads > 1000) {
+			return formatedDownloadNumber.substring(0, formatedDownloadNumber.length() - 3)	+ ","+ formatedDownloadNumber.substring(formatedDownloadNumber.length() - 3, formatedDownloadNumber.length() - 2) + "K";
+		}
+
+		return Integer.toString(downloads);
+	}
 
 	/**
 	 * ViewDisplayApplicationAvailable object reuse clean references
