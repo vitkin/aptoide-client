@@ -1117,6 +1117,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
     @Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
+    	//remove header (loading) influence
+    	position--;
+    	
     	if(!swyping.get()){
     		if(availableByCategory){
     			if(categoriesAdapter.getCategory().hasChildren()){
