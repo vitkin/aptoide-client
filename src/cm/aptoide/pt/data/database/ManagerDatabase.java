@@ -2298,7 +2298,7 @@ public class ManagerDatabase {
 			}
 			Log.d("Aptoide-ManagerDatabase", "sorting by: "+sortingPolicy);
 			selectUpdatableApps +=	";";	
-			Log.d("Aptoide-ManagerDatabase", "updatable apps: "+selectUpdatableApps);
+//			Log.d("Aptoide-ManagerDatabase", "updatable apps: "+selectUpdatableApps);
 		
 		try{
 			db.beginTransaction();

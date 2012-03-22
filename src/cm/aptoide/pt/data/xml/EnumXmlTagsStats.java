@@ -33,7 +33,18 @@ public enum EnumXmlTagsStats {
 	apphashid,
 	dwn,
 	likes,
-	dislikes;
+	dislikes,
+	unrecognized;
+	
+	public static EnumXmlTagsStats safeValueOf(String name){
+		EnumXmlTagsStats tag;
+		try {
+			tag = EnumXmlTagsStats.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsStats.unrecognized;
+		}
+		return tag;
+	}
 	
 	public static EnumXmlTagsStats reverseOrdinal(int ordinal){
 		return values()[ordinal];

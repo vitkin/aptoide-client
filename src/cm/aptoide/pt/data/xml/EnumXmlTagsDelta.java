@@ -47,7 +47,18 @@ public enum EnumXmlTagsDelta {
 	minGles,
 	icon,
 	del,
-	apphashid;
+	apphashid,
+	unrecognized;
+	
+	public static EnumXmlTagsDelta safeValueOf(String name){
+		EnumXmlTagsDelta tag;
+		try {
+			tag = EnumXmlTagsDelta.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsDelta.unrecognized;
+		}
+		return tag;
+	};
 	
 	public static EnumXmlTagsDelta reverseOrdinal(int ordinal){
 		return values()[ordinal];

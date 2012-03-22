@@ -31,7 +31,18 @@ public enum EnumXmlTagsIcon {
 	apklst,
 	pkg,
 	apphashid,
-	icon;
+	icon,
+	unrecognized;
+	
+	public static EnumXmlTagsIcon safeValueOf(String name){
+		EnumXmlTagsIcon tag;
+		try {
+			tag = EnumXmlTagsIcon.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsIcon.unrecognized;
+		}
+		return tag;
+	}
 	
 	public static EnumXmlTagsIcon reverseOrdinal(int ordinal){
 		return values()[ordinal];

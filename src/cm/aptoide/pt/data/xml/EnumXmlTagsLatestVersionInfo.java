@@ -31,7 +31,18 @@ public enum EnumXmlTagsLatestVersionInfo {
 	aptoide,
 	versionCode,
 	uri,
-	md5;
+	md5,
+	unrecognized;
+	
+	public static EnumXmlTagsLatestVersionInfo safeValueOf(String name){
+		EnumXmlTagsLatestVersionInfo tag;
+		try {
+			tag = EnumXmlTagsLatestVersionInfo.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsLatestVersionInfo.unrecognized;
+		}
+		return tag;
+	}
 	
 	public static EnumXmlTagsLatestVersionInfo reverseOrdinal(int ordinal){
 		return values()[ordinal];

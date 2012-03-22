@@ -85,12 +85,7 @@ public class RepoExtrasParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		try {
-			tag = EnumXmlTagsExtras.valueOf(localName.trim());
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		tag = EnumXmlTagsExtras.safeValueOf(localName.trim());
 		
 		switch (tag) {
 			case apphashid:
