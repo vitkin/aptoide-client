@@ -9,20 +9,10 @@
         android:id="@+id/aptoide_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:layout_margin="3dp"
-        android:src="@drawable/icon" />
-
-    <ImageView
-        android:id="@+id/aptoide_brand"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/aptoide_icon"
-        android:padding="5dp"
-        android:scaleType="fitStart"
-        android:src="@drawable/aptoidebrand" />
+        android:layout_margin="9dp"
+        android:src="@drawable/aptoideicon" />
 
     <ImageView
         android:id="@+id/search_button"
