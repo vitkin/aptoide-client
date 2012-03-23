@@ -199,9 +199,6 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
 	}
 	
 	public void gotoParentCategory(){
-		if(!category.hasChildren()){
-			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_CATEGORIES.ordinal());
-		}
 		category = category.getParentCategory();
 		initDisplay();
 		refreshDisplayCategories();

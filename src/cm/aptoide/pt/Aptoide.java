@@ -1091,9 +1091,13 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 	
 	private void viewApp(int position){
+		availableAdapter.sleep();
 		int appHashid = 0;
 		switch (currentAppsList) {
 			case Available:
+	    		//remove header (loading) influence
+				position--;
+				
 				appHashid = availableAdapter.getItem(position).getAppHashid();
 				break;
 				
@@ -1108,7 +1112,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			default:
 				break;
 		}
-		availableAdapter.sleep();
 		AptoideLog.d(this, "Onclick position: "+position+" appHashid: "+appHashid);
 		Intent appInfo = new Intent(this,AppInfo.class);
 		appInfo.putExtra("appHashid", appHashid);
@@ -1117,11 +1120,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
     @Override
 	public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
-    	if(currentAppsList.equals(EnumAppsLists.Available)){
-    		//remove header (loading) influence
-    		position--;
-    	}
-    	
     	if(!swyping.get()){
     		if(availableByCategory){
     			if(categoriesAdapter.getCategory().hasChildren()){
@@ -1146,6 +1144,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && currentAppsList.equals(EnumAppsLists.Available) && availableByCategory && categoriesAdapter.getCategory() != null && categoriesAdapter.getCategory().getCategoryHashid() != Constants.TOP_CATEGORY) {
 			AptoideLog.d(this, "click back, new category: "+categoriesAdapter.getCategory().getParentCategory());
+			if(!categoriesAdapter.getCategory().hasChildren()){
+				availableAdapter.sleep();
+				interfaceTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_CATEGORIES.ordinal());
+			}
 			categoriesAdapter.gotoParentCategory();
 			return true;
 		}
@@ -1273,6 +1275,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 								newSortingPolicy = EnumAppsSorting.DOWNLOADS;
 							}
 							if(newSortingPolicy != null && newSortingPolicy != appsSortingPolicy){
+								availableAdapter.sleep();
 								appsSortingPolicy = newSortingPolicy;
 								setAppsSortingPolicy(appsSortingPolicy);
 							}

@@ -265,7 +265,7 @@ public class AppInfo extends Activity {
 		later.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				selectVersion(selectedVersion);
+				selectVersion(selectedVersion);	//TODO wrong method call 
 			}
 		});
 		appNameTextView = (TextView) findViewById(R.id.app_name);
