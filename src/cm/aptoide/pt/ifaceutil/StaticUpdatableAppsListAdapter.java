@@ -120,9 +120,9 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 		ImageView app_icon;
 		
 		TextView app_name;
-		TextView installed_versionname;
 		TextView uptodate_versionname;
 		
+		ImageView app_upgradable;
 		TextView downloads;
 		RatingBar stars;
 	}
@@ -141,10 +141,10 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 			rowViewHolder = new UpdatableRowViewHolder();
 			rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.app_icon);
 			rowViewHolder.app_name = (TextView) convertView.findViewById(R.id.app_name);
-			rowViewHolder.installed_versionname = (TextView) convertView.findViewById(R.id.installed_versionname);
 			rowViewHolder.uptodate_versionname = (TextView) convertView.findViewById(R.id.uptodate_versionname);
 			rowViewHolder.downloads = (TextView) convertView.findViewById(R.id.downloads);
 			rowViewHolder.stars = (RatingBar) convertView.findViewById(R.id.stars);
+			rowViewHolder.app_upgradable = (ImageView) convertView.findViewById(R.id.app_upgradable);
 			
 			convertView.setTag(rowViewHolder);
 		}else{
@@ -159,12 +159,11 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 		}
 		
 		rowViewHolder.app_name.setText(apps.get(position).getAppName());
-		rowViewHolder.uptodate_versionname.setText(apps.get(position).getVersionName());
+		rowViewHolder.uptodate_versionname.setText(" "+apps.get(position).getVersionName());
 		
-		rowViewHolder.installed_versionname.setText(((ViewDisplayApplicationUpdatable) apps.get(position)).getInstalledVersionName());
-				
 		rowViewHolder.downloads.setText(Integer.toString(((ViewDisplayApplicationUpdatable) apps.get(position)).getDownloads()));
 		rowViewHolder.stars.setRating(((ViewDisplayApplicationUpdatable) apps.get(position)).getStars());
+		rowViewHolder.app_upgradable.setVisibility(View.VISIBLE);
 		
 		return convertView;
 	}
