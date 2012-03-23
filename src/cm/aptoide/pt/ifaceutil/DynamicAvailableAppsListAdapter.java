@@ -35,8 +35,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -509,8 +511,9 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		this.listView = listView;
 		layoutInflater = LayoutInflater.from(context);
 		
-		this.topProgressBar = new ProgressBar(context);
-		this.bottomProgressBar = new ProgressBar(context);
+		LayoutInflater progressBarLayoutInflater = LayoutInflater.from(context);
+		bottomProgressBar=progressBarLayoutInflater.inflate(R.layout.progress_bar, null); 
+		topProgressBar=progressBarLayoutInflater.inflate(R.layout.progress_bar, null);
 		
 		listView.addFooterView(bottomProgressBar);
 		listView.addHeaderView(topProgressBar);

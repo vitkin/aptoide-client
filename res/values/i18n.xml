@@ -91,7 +91,8 @@
     
     <string name="no_apps">No apps to display!</string>
     <string name="loading_apps">Loading apps...</string>
-       
+    <string name="loading_more_apps">Loading more apps...</string>
+    
     <string name="search_bazaar">Search %s on Bazaar</string>
     
     <string name="select_version">Select version</string>
