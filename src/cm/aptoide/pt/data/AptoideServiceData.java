@@ -1269,7 +1269,15 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					}
 				}
 			});
+		}else{
+			scheduledThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
+				}
+			});
 		}
+		
 		if(repository != null){
 			addAppVersionInfo(repository, appHashid);
 		}

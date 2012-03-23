@@ -46,8 +46,6 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	
 	private String repoUri = null;
 	
-	private String localIconPath;
-	
 	private boolean isInstalled = false;
 	private boolean isScheduled = false;	//TODO
 	
@@ -121,10 +119,6 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		return repoUri;
 	}
 
-	public String getLocalIconPath() {
-		return localIconPath;
-	}
-	
 	public boolean isInstalled(){
 		return isInstalled;
 	}
@@ -174,8 +168,6 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.appHashid = Constants.EMPTY_INT;
 		this.size = Constants.EMPTY_INT;
 		this.repoUri = null;
-		
-		this.localIconPath = null;
 		
 		this.isInstalled = false;
 //		this.isScheduled = false;
@@ -280,8 +272,6 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			out.writeInt(size);
 			out.writeString(repoUri);
 			
-			out.writeString(localIconPath);
-			
 			out.writeByte(isInstalled?(byte)1:(byte)0);
 //			out.writeValue(isScheduled);
 			
@@ -304,8 +294,6 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			appHashid = in.readInt();
 			size = in.readInt();
 			repoUri = in.readString();
-			
-			localIconPath = in.readString();
 			
 			isInstalled = in.readByte()==1?true:false;
 //			isScheduled = (Boolean) in.readValue(null);
