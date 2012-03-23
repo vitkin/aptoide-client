@@ -75,7 +75,7 @@ public class Search extends Activity implements OnItemClickListener{
 	
 	private StaticSearchAppResultsListAdapter resultsAdapter;
 	
-	private View bazaarSearchButton = null;
+	private View bazaarSearchView = null;
 	
 	private String searchString;
 	private EnumAppsSorting appsSortingPolicy = null;
@@ -194,14 +194,14 @@ public class Search extends Activity implements OnItemClickListener{
 	}
 	
 	private void resetBazaarSearchButton(){
-		if(bazaarSearchButton != null)
-        	resultsListView.removeFooterView(bazaarSearchButton);
+		if(bazaarSearchView != null)
+        	resultsListView.removeFooterView(bazaarSearchView);
         
-        bazaarSearchButton = View.inflate(this, R.layout.btn_search_bazaar, null);
+        bazaarSearchView = View.inflate(this, R.layout.btn_search_bazaar, null);
         
-        Button search_baz = (Button) bazaarSearchButton.findViewById(R.id.bazaar_search);
-        search_baz.setText(getString(R.string.search_bazaar, searchString));
-        search_baz.setOnClickListener(new OnClickListener() {
+        Button searchBazaarButton = (Button) bazaarSearchView.findViewById(R.id.bazaar_search);
+        searchBazaarButton.setText(getString(R.string.search_bazaar, searchString));
+        searchBazaarButton.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
 				String url = Constants.URI_SEARCH_BAZAAR+searchString;
@@ -211,7 +211,7 @@ public class Search extends Activity implements OnItemClickListener{
 			}
 		});
         
-        resultsListView.addFooterView(bazaarSearchButton);
+        resultsListView.addFooterView(bazaarSearchView);
 	}
 	
 	public void resetResultsList(){		
@@ -232,6 +232,7 @@ public class Search extends Activity implements OnItemClickListener{
 		resultsListView = new ListView(this);
 		resultsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 		resultsListView.setBackgroundColor(Color.WHITE);
+		resultsListView.setCacheColorHint(Color.TRANSPARENT);
 		resultsListView.setOnItemClickListener(this);
 		
 		waitHandler = new Handler();

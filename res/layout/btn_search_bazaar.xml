@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:orientation="vertical"
-  android:tag="bazaar"
-  android:background="#ffffff">
-  
-  <ImageView android:id="@+id/bazaar"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#edece9"
+    android:orientation="vertical"
+    android:tag="bazaar" >
+
+    <ImageView
+        android:id="@+id/bazaar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:cropToPadding ="true"
+        android:cropToPadding="true"
         android:src="@drawable/bazaar" />
-        
-  <Button
-  		android:id="@+id/bazaar_search"
-  		android:layout_width="fill_parent"
+
+    <Button
+        android:id="@+id/bazaar_search"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20sp"
         android:layout_marginRight="20sp"
         android:gravity="center"
-        android:text="@string/search_bazaar"/>
-  
-  
-</LinearLayout>
-<!--
+        android:text="@string/search_bazaar" />
+
+</LinearLayout><!--
  * Copyright (C) 2011  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *
