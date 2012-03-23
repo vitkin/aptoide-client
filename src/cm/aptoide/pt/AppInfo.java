@@ -125,8 +125,7 @@ public class AppInfo extends Activity {
 			Log.v("Aptoide-AppInfo", "Connected to ServiceData");
 
 			try {
-				Log.v("Aptoide-AppInfo",
-						"Called for registering as AppInfo Observer");
+				Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
 				serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
 
 			} catch (RemoteException e) {

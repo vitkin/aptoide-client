@@ -258,8 +258,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertCategories(ArrayList<ViewCategory> categories){
-		db.beginTransaction();
 		try{			
+			db.beginTransaction();
 			InsertHelper insertCategory = new InsertHelper(db, Constants.TABLE_CATEGORY);
 			ArrayList<ContentValues> subCategoriesRelations = new ArrayList<ContentValues>(categories.size());
 			ContentValues subCategoryRelation;
@@ -309,8 +309,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertCategory(ViewCategory category){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			ContentValues parentCategoryRelation;
 			
 			if(db.insert(Constants.TABLE_CATEGORY, null, category.getValues()) == Constants.DB_ERROR){
@@ -345,8 +345,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertRepositories(ArrayList<ViewRepository> repositories){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			InsertHelper insertRepository = new InsertHelper(db, Constants.TABLE_REPOSITORY);
 			ArrayList<ContentValues> loginsValues = new ArrayList<ContentValues>(repositories.size());
 			
@@ -388,8 +388,8 @@ public class ManagerDatabase {
 	 */
 	public void insertRepository(ViewRepository repository){
 		repository.setLastSynchroTime(Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis());
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.replace(Constants.TABLE_REPOSITORY, null, repository.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -419,8 +419,8 @@ public class ManagerDatabase {
 	 */
 	public void updateRepository(ViewRepository repository){
 		repository.setLastSynchroTime(Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis());
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.update(Constants.TABLE_REPOSITORY, repository.getValues(), Constants.KEY_REPO_HASHID+"=?", new String[]{Integer.toString(repository.getHashid())}) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -444,8 +444,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void removeLogin(int repoHashid){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.delete(Constants.TABLE_LOGIN, Constants.KEY_LOGIN_REPO_HASHID+"=?", new String[]{Integer.toString(repoHashid)}) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -468,8 +468,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void updateLogin(ViewRepository repository){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.update(Constants.TABLE_LOGIN, repository.getLogin().getValues(), Constants.KEY_LOGIN_REPO_HASHID+"=?", new String[]{Integer.toString(repository.getHashid())}) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -493,8 +493,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void removeRepositories(ViewListIds repoHashids){	//TODO manually cascade triggers, because they don't automatically do it
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			StringBuilder deleteWhere = new StringBuilder();
 			boolean firstWhere = true;
 			
@@ -534,8 +534,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void removeRepository(int repoHashid){	//TODO manually cascade triggers, because they don't automatically do it
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			String deleteWhere = Constants.KEY_REPO_HASHID+"=?";
 			
 			if(db.delete(Constants.TABLE_REPOSITORY, deleteWhere, new String[]{Integer.toString(repoHashid)}) == Constants.DB_NO_CHANGES_MADE){
@@ -560,8 +560,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void toggleRepositoriesInUse(ViewListIds repoHashids, boolean setInUse){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			ContentValues setTrue = new ContentValues();
 			setTrue.put(Constants.KEY_REPO_IN_USE, (setInUse?Constants.DB_TRUE:Constants.DB_FALSE) );
 			
@@ -607,8 +607,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void toggleRepositoryInUse(int repoHashid, boolean setInUse){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			ContentValues setTrue = new ContentValues();
 			setTrue.put(Constants.KEY_REPO_IN_USE, (setInUse?Constants.DB_TRUE:Constants.DB_FALSE) );
 			
@@ -661,19 +661,7 @@ public class ManagerDatabase {
 			}
 			insertApplication.close();
 			
-			db.setTransactionSuccessful();
-			
-		}catch (Exception e) {
-			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
-			e.printStackTrace();
-		}finally{
-			if(db.inTransaction()){
-				db.endTransaction();
-			}
-		}
-		
-		try{
-			db.beginTransaction();
+
 			
 			InsertHelper insertAppCategoryRelation = new InsertHelper(db, Constants.TABLE_APP_CATEGORY);
 			for (ContentValues appCategoryRelationValues : appCategoriesRelations) {
@@ -707,8 +695,8 @@ public class ManagerDatabase {
 	public void insertApplication(ViewApplication application){
 		ContentValues appCategoryRelation = null;
 
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.insert(Constants.TABLE_APPLICATION ,null, application.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -717,15 +705,7 @@ public class ManagerDatabase {
 			appCategoryRelation.put(Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
 									, (categories_hashids.contains(application.getCategoryHashid())?application.getCategoryHashid():Constants.CATEGORY_HASHID_OTHERS));
 			
-			db.setTransactionSuccessful();
-		}catch (Exception e) {
-			// TODO: send to errorHandler the exception
-		}finally{
-			db.endTransaction();
-		}
-		
-		db.beginTransaction();
-		try{
+			
 
 			if(db.insert(Constants.TABLE_APP_CATEGORY ,null, appCategoryRelation) == Constants.DB_ERROR){
 				//TODO throw exception;
@@ -752,8 +732,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void removeApplications(ViewListIds appsFullHashid){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			StringBuilder deleteWhere = new StringBuilder();
 			boolean firstWhere = true;
 			
@@ -790,8 +770,8 @@ public class ManagerDatabase {
 	 * @param ArrayList<IconInfo> iconsInfo
 	 */
 	public void insertIconsInfo(ArrayList<ViewIconInfo> iconsInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			InsertHelper insertIconInfo = new InsertHelper(db, Constants.TABLE_ICON_INFO);
 			
 			for (ViewIconInfo iconInfo : iconsInfo) {
@@ -815,8 +795,8 @@ public class ManagerDatabase {
 	 * @param ViewIconInfo iconInfo
 	 */
 	public void insertIconInfo(ViewIconInfo iconInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.insert(Constants.TABLE_ICON_INFO, null, iconInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -837,8 +817,8 @@ public class ManagerDatabase {
 	 * @param ArrayList<ScreenInfo> screensInfo
 	 */
 	public void insertScreensInfo(ArrayList<ViewScreenInfo> screensInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			InsertHelper insertScreenInfo = new InsertHelper(db, Constants.TABLE_SCREEN_INFO);
 			
 			for (ViewScreenInfo screenInfo : screensInfo) {
@@ -862,8 +842,8 @@ public class ManagerDatabase {
 	 * @param ViewScreenInfo screenInfo
 	 */
 	public void insertScreenInfo(ViewScreenInfo screenInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.insert(Constants.TABLE_SCREEN_INFO, null, screenInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -882,8 +862,8 @@ public class ManagerDatabase {
 	 * @param ArrayList<DownloadInfo> downloadsInfo
 	 */
 	public void insertDownloadsInfo(ArrayList<ViewAppDownloadInfo> downloadsInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			InsertHelper insertDownloadInfo = new InsertHelper(db, Constants.TABLE_DOWNLOAD_INFO);
 			
 			for (ViewAppDownloadInfo downloadInfo : downloadsInfo) {
@@ -907,8 +887,8 @@ public class ManagerDatabase {
 	 * @param ViewAppDownloadInfo downloadInfo
 	 */
 	public void insertDownloadInfo(ViewAppDownloadInfo downloadInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.insert(Constants.TABLE_DOWNLOAD_INFO, null, downloadInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -927,8 +907,8 @@ public class ManagerDatabase {
 	 * @param ArrayList<ViewExtraInfo> extraInfos
 	 */
 	public void insertExtras(ArrayList<ViewExtraInfo> extraInfos){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			InsertHelper insertExtraInfo = new InsertHelper(db, Constants.TABLE_EXTRA_INFO);
 			
 			for (ViewExtraInfo extraInfo : extraInfos) {
@@ -952,8 +932,8 @@ public class ManagerDatabase {
 	 * @param ViewExtraInfo extraInfo
 	 */
 	public void insertExtra(ViewExtraInfo extraInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.insert(Constants.TABLE_EXTRA_INFO, null, extraInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -975,8 +955,8 @@ public class ManagerDatabase {
 	 * @param ArrayList<AppComment> appComment
 	 */
 	public void insertAppComments(ArrayList<ViewAppComment> appComments){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			InsertHelper insertAppComments = new InsertHelper(db, Constants.TABLE_APP_COMMENTS);
 			
 			for (ViewAppComment appComment : appComments) {
@@ -1004,8 +984,8 @@ public class ManagerDatabase {
 	 * @param ArrayList<StatsInfo> statsInfos
 	 */
 	public void insertOrReplaceStatsInfos(ArrayList<ViewStatsInfo> statsInfos){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			InsertHelper insertStatsInfo = new InsertHelper(db, Constants.TABLE_STATS_INFO);
 			
 			for (ViewStatsInfo statsInfo : statsInfos) {
@@ -1030,8 +1010,8 @@ public class ManagerDatabase {
 	 * @param ViewStatsInfo statsInfo
 	 */
 	public void insertOrReplaceStatsInfo(ViewStatsInfo statsInfo){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.replace(Constants.TABLE_STATS_INFO, null, statsInfo.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -1060,8 +1040,8 @@ public class ManagerDatabase {
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(Constants.KEY_APP_TO_INSTALL_HASHID, appHashid);
 		
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.insert(Constants.TABLE_APP_TO_INSTALL ,null, contentValues) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -1085,8 +1065,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void removeApplicationToInstall(int appHashid){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.delete(Constants.TABLE_APP_TO_INSTALL ,Constants.KEY_APP_TO_INSTALL_HASHID+"=?", new String[]{Integer.toString(appHashid)}) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -1113,8 +1093,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertInstalledApplications(ArrayList<ViewApplication> installedApplications){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			db.execSQL(Constants.DROP_TABLE_APP_INSTALLED);
 			db.execSQL(Constants.CREATE_TABLE_APP_INSTALLED);
 			
@@ -1147,8 +1127,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void insertInstalledApplication(ViewApplication installedApplication){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.insert(Constants.TABLE_APP_INSTALLED ,null, installedApplication.getValues()) == Constants.DB_ERROR){
 				//TODO throw exception;
 			}
@@ -1172,8 +1152,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void removeInstalledApplication(int appHashid){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.delete(Constants.TABLE_APP_INSTALLED, Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid, null) == Constants.DB_NO_CHANGES_MADE){
 				//TODO throw exception;
 			}
@@ -1197,8 +1177,8 @@ public class ManagerDatabase {
 	 * 
 	 */
 	public void removeInstalledApplication(String packageName){
-		db.beginTransaction();
 		try{
+			db.beginTransaction();
 			if(db.delete(Constants.TABLE_APP_INSTALLED, Constants.KEY_APP_INSTALLED_PACKAGE_NAME+"=?",new String[]{packageName}) == Constants.DB_NO_CHANGES_MADE){
 				//TODO throw exception;
 			}
@@ -1261,9 +1241,14 @@ public class ManagerDatabase {
 			
 			db.setTransactionSuccessful();
 		}catch (Exception e) {
+			if(resultsCursor != null && !resultsCursor.isClosed()){
+				resultsCursor.close();
+			}
 			// TODO: handle exception
 		}finally{
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 		}
 		
 		return resultsCursor;
@@ -1322,6 +1307,10 @@ public class ManagerDatabase {
 		
 		Cursor reposInUseCursor = aptoideAtomicQuery(selectReposInUse);
 		
+		if(reposInUseCursor == null || reposInUseCursor.isClosed()){
+			return anyReposInUse;
+		}
+		
 		reposInUseCursor.moveToFirst();
 		anyReposInUse = (reposInUseCursor.getInt(Constants.COLUMN_FIRST) > 0?true:false);
 		reposInUseCursor.close();
@@ -1352,6 +1341,10 @@ public class ManagerDatabase {
 		boolean repoIsManaged = false;
 		
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
+
+		if(repoCursor == null || repoCursor.isClosed()){
+			return repoIsManaged;
+		}
 		
 		repoCursor.moveToFirst();
 		repoIsManaged = (repoCursor.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
@@ -1383,6 +1376,10 @@ public class ManagerDatabase {
 		boolean appDownloadInfoIsPresent = false;
 	
 		Cursor cursorAppDownloadInfo = aptoideAtomicQuery(selectAppDownloadInfo);
+
+		if(cursorAppDownloadInfo == null || cursorAppDownloadInfo.isClosed()){
+			return appDownloadInfoIsPresent;
+		}
 		
 		cursorAppDownloadInfo.moveToFirst();
 		appDownloadInfoIsPresent = (cursorAppDownloadInfo.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
@@ -1414,7 +1411,11 @@ public class ManagerDatabase {
 		boolean appExtraInfoIsPresent = false;
 		
 		Cursor cursorAppExtraInfo = aptoideAtomicQuery(selectAppExtraInfo);
-		
+
+		if(cursorAppExtraInfo == null || cursorAppExtraInfo.isClosed()){
+			return appExtraInfoIsPresent;
+		}
+				
 		cursorAppExtraInfo.moveToFirst();
 		appExtraInfoIsPresent = (cursorAppExtraInfo.getInt(Constants.COLUMN_FIRST) == Constants.DB_TRUE?true:false);
 		cursorAppExtraInfo.close();
@@ -1455,6 +1456,11 @@ public class ManagerDatabase {
 //		Log.d("Aptoide-ManagerDatabase", "exclude managed repos: "+selectRepos);
 		
 		Cursor reposCursor = aptoideAtomicQuery(selectRepos);
+
+		if(reposCursor == null || reposCursor.isClosed()){
+			return repos;
+		}
+		
 		if(reposCursor.getCount() != Constants.EMPTY_INT){
 			reposCursor.moveToFirst();
 			do{
@@ -1542,7 +1548,9 @@ public class ManagerDatabase {
 
 		}catch (Exception e) {
 			Log.d("Aptoide-ManagerDatabase", "get repos display info, exception! "+listRepos);
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 			// TODO: handle exception
 		}
 		return listRepos;		
@@ -1609,6 +1617,9 @@ public class ManagerDatabase {
 				cursorRepoNeedingUpdate.close();		
 			}
 		} catch (Exception e) {
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -1644,6 +1655,10 @@ public class ManagerDatabase {
 		
 		Cursor cursorReposNeedingUpdate = aptoideAtomicQuery(selectReposNeedingUpdate);
 //		Log.d("Aptoide-ManagerDatabase", "repos needing update: "+selectReposNeedingUpdate);
+
+		if(cursorReposNeedingUpdate == null || cursorReposNeedingUpdate.isClosed()){
+			return reposNeedingUpdate;
+		}
 		
 		if(!(cursorReposNeedingUpdate.getCount() == Constants.EMPTY_INT)){
 			cursorReposNeedingUpdate.moveToFirst();
@@ -1804,6 +1819,10 @@ public class ManagerDatabase {
 
 		Cursor cursorIsAppToInstall = aptoideAtomicQuery(selectIsAppToInstall);
 //		Log.d("Aptoide-ManagerDatabase", "is scheduled: "+selectIsAppToInstall);
+
+		if(cursorIsAppToInstall == null || cursorIsAppToInstall.isClosed()){
+			return false;
+		}
 		
 		if(cursorIsAppToInstall.getCount() == Constants.EMPTY_INT){
 			cursorIsAppToInstall.close();
@@ -1832,6 +1851,10 @@ public class ManagerDatabase {
 		String selectAppsToInstall = "SELECT * FROM "+Constants.TABLE_APP_TO_INSTALL+";";
 
 		Cursor cursorAppsToInstall = aptoideAtomicQuery(selectAppsToInstall);
+
+		if(cursorAppsToInstall == null || cursorAppsToInstall.isClosed()){
+			return appsList;
+		}
 		
 		if(cursorAppsToInstall.getCount() == Constants.EMPTY_INT){
 			cursorAppsToInstall.close();
@@ -1866,6 +1889,10 @@ public class ManagerDatabase {
 
 		Cursor cursorIsAppInstalled = aptoideAtomicQuery(selectIsAppInstalled);
 //		Log.d("Aptoide-ManagerDatabase", "is installed: "+selectIsAppInstalled);
+
+		if(cursorIsAppInstalled == null || cursorIsAppInstalled.isClosed()){
+			return false;
+		}
 		
 		if(cursorIsAppInstalled.getCount() == Constants.EMPTY_INT){
 			cursorIsAppInstalled.close();
@@ -1895,6 +1922,10 @@ public class ManagerDatabase {
 
 		Cursor cursorIsAppInstalled = aptoideAtomicQuery(selectIsAppInstalled);
 //		Log.d("Aptoide-ManagerDatabase", "is installed: "+selectIsAppInstalled);
+
+		if(cursorIsAppInstalled == null || cursorIsAppInstalled.isClosed()){
+			return false;
+		}
 		
 		if(cursorIsAppInstalled.getCount() == Constants.EMPTY_INT){
 			cursorIsAppInstalled.close();
@@ -1971,7 +2002,9 @@ public class ManagerDatabase {
 			appsCursor.close();
 	
 		}catch (Exception e) {
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -2500,7 +2533,9 @@ public class ManagerDatabase {
 			iconsCursor.close();
 	
 		}catch (Exception e) {
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -2570,7 +2605,9 @@ public class ManagerDatabase {
 			iconsCursor.close();
 	
 		}catch (Exception e) {
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -2639,7 +2676,9 @@ public class ManagerDatabase {
 			screensCursor.close();
 	
 		}catch (Exception e) {
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 			// TODO: handle exception
 			e.printStackTrace();
 		}
@@ -2675,6 +2714,10 @@ public class ManagerDatabase {
 										+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid+") A;";
 
 		Cursor appInRepoCursor = aptoideAtomicQuery(selectAppInRepo);
+
+		if(appInRepoCursor == null || appInRepoCursor.isClosed()){
+			return appInRepo;
+		}
 		
 		appInRepoCursor.moveToFirst();
 		
@@ -2715,6 +2758,10 @@ public class ManagerDatabase {
 										+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"') A;";
 
 		Cursor appInRepoCursor = aptoideAtomicQuery(selectAppInRepo);
+
+		if(appInRepoCursor == null || appInRepoCursor.isClosed()){
+			return appInRepo;
+		}
 		
 		appInRepoCursor.moveToFirst();
 		
@@ -2767,8 +2814,11 @@ public class ManagerDatabase {
 												+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") ;";
 		}
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
-		if(repoCursor.getCount()==Constants.EMPTY_INT){
-			repoCursor.close();
+		
+		if(repoCursor == null || repoCursor.isClosed() || repoCursor.getCount()==Constants.EMPTY_INT){
+			if(!repoCursor.isClosed()){
+				repoCursor.close();
+			}
 			return null;		//TODO refactor null object
 		}else{
 			repoCursor.moveToFirst();
@@ -2843,9 +2893,13 @@ public class ManagerDatabase {
 												+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") A;";
 							
 		}
+		
+		
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
-		if(repoCursor.getCount()==Constants.EMPTY_INT){
-			repoCursor.close();
+		if(repoCursor == null || repoCursor.isClosed() || repoCursor.getCount()==Constants.EMPTY_INT){
+			if(!repoCursor.isClosed()){
+				repoCursor.close();
+			}
 			return null;		//TODO refactor null object
 		}else{
 			repoCursor.moveToFirst();
@@ -3124,6 +3178,10 @@ public class ManagerDatabase {
 									+" WHERE "+Constants.KEY_APPLICATION_HASHID+"='"+appHashid+"';";
 		
 		Cursor cursorApp = aptoideAtomicQuery(selectApp);Log.d("Aptoide-ManagerDatabase", "package: "+selectApp);
+
+		if(cursorApp == null || cursorApp.isClosed()){
+			return packageName;
+		}
 		
 		if(cursorApp.getCount() == Constants.EMPTY_INT){
 			//TODO raise exception app not installed
