@@ -578,7 +578,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			availableAppsListView = new ListView(this);
 			availableAppsListView.setCacheColorHint(Color.TRANSPARENT);
-			availableAppsListView.setFastScrollEnabled(true);
 			availableAppsListView.setOnTouchListener(swypeListener);
 			availableAppsListView.setOnItemClickListener(this);
 			availableAppsListView.setTag(EnumAppsLists.Available);

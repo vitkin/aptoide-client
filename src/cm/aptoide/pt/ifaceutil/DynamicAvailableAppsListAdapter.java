@@ -330,10 +330,10 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 
 			@Override
 			public void run() {
-				changingList.set(false);
 				scrollDirectionOrigin.set(0);
 				globalPosition.set(0);
 				cacheListOffset.set(0);
+				cacheAppsTrimmed.set(0);
 				int offset = 0;
 				int range = displayListsDimensions.getPageSize();
 				try {
@@ -549,7 +549,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	
 	public void resetDisplay(ViewDisplayCategory category){
 		aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
-		sleep.set(false);
+//		sleep.set(false);
 		this.category = category;
 		this.apps.clear();
 //		try {
@@ -566,6 +566,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	}	
     
 	public void reloadDisplay(){
+		sleep.set(true);
 //		aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 //		apps.clear();
 //		appsManager.reload();
@@ -613,7 +614,8 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_LIST.ordinal());
 		}
 
-		
+		sleep.set(false);
+		changingList.set(false);
 //		int scrollRestorePosition = listView.getFirstVisiblePosition();
 //		int partialScrollRestorePosition = (listView.getChildAt(0)==null?0:listView.getChildAt(0).getTop());
     	this.apps = freshApps;
