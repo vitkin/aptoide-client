@@ -135,6 +135,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private EnumAppsSorting appsSortingPolicy = null;
 	private AtomicBoolean allowAppsDisplayOptionsChange = null;
 	private AtomicBoolean resettingFlipper = null;
+	private AtomicBoolean highPriority = null;
 	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
@@ -509,7 +510,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			synchronizingInstalledApps = new AtomicBoolean(false);
 			allowAppsDisplayOptionsChange = new AtomicBoolean(true);
-			resettingFlipper =new AtomicBoolean(false);
+			resettingFlipper = new AtomicBoolean(false);
+			highPriority = new AtomicBoolean(true);
 			
 			makeSureServiceDataIsRunning();
 			
@@ -1091,7 +1093,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		setHighPriority(true);
 		return swypeDetector.onTouchEvent(event);
+	}
+	
+	private void setHighPriority( boolean high){
+		if(high && !highPriority.get()){
+			highPriority.set(true);
+			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+		}else if(!high && highPriority.get()){
+			highPriority.set(false);
+			Thread.currentThread().setPriority(Thread.NORM_PRIORITY);			
+		}
 	}
 
 	
@@ -1121,6 +1134,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		Intent appInfo = new Intent(this,AppInfo.class);
 		appInfo.putExtra("appHashid", appHashid);
 		startActivity(appInfo);
+		setHighPriority(false);
 	}
 	
     @Override

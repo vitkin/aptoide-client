@@ -371,6 +371,8 @@ public class AppInfo extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+		
 		appHashid = getIntent().getIntExtra("appHashid", 0);
 
 		setContentView(R.layout.app_info);
