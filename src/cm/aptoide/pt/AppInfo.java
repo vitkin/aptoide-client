@@ -26,6 +26,8 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -89,8 +91,6 @@ public class AppInfo extends Activity {
 	private ViewDisplayAppVersionInfo installedVersion = null;
 	private ViewDisplayAppVersionInfo selectedVersion = null;
 	
-	private boolean storedForLater = false;
-	
 	CheckBox later;
 	private TextView appNameTextView;
 	private TextView appDownloadsTextView;
@@ -109,6 +109,8 @@ public class AppInfo extends Activity {
 	
 	private ArrayAdapter<String> multiVersionSpinnerAdapter;
 	
+	private VersionInfoManager versionInfoManager;
+	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
 	private boolean serviceDataIsBound = false;
@@ -123,7 +125,8 @@ public class AppInfo extends Activity {
 			serviceDataIsBound = true;
 
 			Log.v("Aptoide-AppInfo", "Connected to ServiceData");
-
+	
+			
 			try {
 				Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
 				serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
@@ -133,24 +136,25 @@ public class AppInfo extends Activity {
 				e.printStackTrace();
 			}
 
-			try {
-				serviceDataCaller.CallFillAppInfo(appHashid);
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			try {
-				if (serviceDataCaller.callIsAppScheduledToInstall(appHashid)) {
-					storedForLater = true;
-				} 
-				later.setChecked(storedForLater);
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			setVersions();		
 			
-			setVersions();
+//			try {
+//				serviceDataCaller.CallFillAppInfo(appHashid);
+//			} catch (RemoteException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+
+//			try {
+//				if (serviceDataCaller.callIsAppScheduledToInstall(appHashid)) {
+//					storedForLater = true;
+//				} 
+//				later.setChecked(storedForLater);
+//			} catch (RemoteException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
+			
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -172,27 +176,42 @@ public class AppInfo extends Activity {
 		}
 
 		@Override
-		public void newAppInfoAvailable() throws RemoteException {
-			Log.v("Aptoide-AppInfo", "received newAppInfoAvailable callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_INFO.ordinal());
+		public void newAppInfoAvailable(int appFullHashid) throws RemoteException {
+//			Log.v("Aptoide-AppInfo", "received newAppInfoAvailable callback");
+//			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_INFO.ordinal());
 		}
 
 		@Override
-		public void newAppDownloadInfoAvailable() throws RemoteException {
+		public void newAppDownloadInfoAvailable(int appFullHashid) throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newAppDownloadInfoAvailable callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_DOWNLOAD_INFO.ordinal());
+			for (int position=0; position < appVersions.size(); position++) {
+				if(appVersions.get(position).getAppFullHashid() == appFullHashid){
+					versionInfoManager.updateAppSize(appFullHashid, position);
+					break;
+				}
+			}
 		}
 
 		@Override
-		public void newStatsInfoAvailable() throws RemoteException {
+		public void newStatsInfoAvailable(int appFullHashid) throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newStatsInfoAvailable callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_STATS.ordinal());
+			for (int position=0; position < appVersions.size(); position++) {
+				if(appVersions.get(position).getAppFullHashid() == appFullHashid){
+					versionInfoManager.updateAppStats(appFullHashid, position);
+					break;
+				}
+			}
 		}
 
 		@Override
-		public void newExtrasAvailable() throws RemoteException {
+		public void newExtrasAvailable(int appFullHashid) throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newExtrasAvailable callback");
-			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_EXTRAS.ordinal());
+			for (int position=0; position < appVersions.size(); position++) {
+				if(appVersions.get(position).getAppFullHashid() == appFullHashid){
+					versionInfoManager.updateAppDescription(appFullHashid, position);
+					break;
+				}
+			}
 		}
 
 		@Override
@@ -202,7 +221,7 @@ public class AppInfo extends Activity {
 		}
 
 		@Override
-		public void newCommentsAvailable() throws RemoteException {
+		public void newCommentsAvailable(int appFullHashid) throws RemoteException {
 			// TODO Auto-generated method stub
 
 		}
@@ -218,20 +237,20 @@ public class AppInfo extends Activity {
 				setIcon();
 				break;
 
-			case UPDATE_APP_INFO:
-				setVersions();
-				break;
+//			case UPDATE_APP_INFO:
+//				setVersions();
+//				break;
 
-			case UPDATE_APP_DOWNLOAD_INFO:
-				setVersions();
+			case UPDATE_APP_SIZE:
+				setVersionSize();
 				break;
 
 			case UPDATE_APP_STATS:
-				setVersions();
+				setVersionStats();
 				break;
 
-			case UPDATE_APP_EXTRAS:
-				setVersions();
+			case UPDATE_APP_DESCRIPTION:
+				setVersionDescription();
 				break;
 
 			case REFRESH_SCREENS:
@@ -243,6 +262,110 @@ public class AppInfo extends Activity {
 			}
 		}
 	};
+	
+
+    private class VersionInfoManager{
+    	private ExecutorService versionInfoColectorsPool;
+    	
+    	public VersionInfoManager(){
+    		versionInfoColectorsPool = Executors.newCachedThreadPool();
+    	}
+    	
+    	public void updateAppSize(int appFullHashid, int position){
+        	versionInfoColectorsPool.execute(new GetAppSize(appFullHashid, position));
+        }
+    	
+    	public void updateAppStats(int appFullHashid, int position){
+        	versionInfoColectorsPool.execute(new GetAppStats(appFullHashid, position));
+        }
+    	
+    	public void updateAppDescription(int appFullHashid, int position){
+        	versionInfoColectorsPool.execute(new GetAppDescription(appFullHashid, position));
+        }
+    	
+    	private class GetAppSize implements Runnable{
+    		int appFullHashid = Constants.EMPTY_INT;
+    		int position = Constants.EMPTY_INT;
+    		
+
+			public GetAppSize(int appFullHashid, int position) {
+				this.appFullHashid = appFullHashid;
+				this.position = position;
+			}
+
+
+			@Override
+			public void run() {
+				try {
+					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+					appVersions.get(position).setSize(serviceDataCaller.callGetAppVersionDownloadSize(appFullHashid));
+					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_SIZE.ordinal());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+    		
+    	}
+    	
+    	private class GetAppStats implements Runnable{
+    		int appFullHashid = Constants.EMPTY_INT;
+    		int position = Constants.EMPTY_INT;
+    		
+
+			public GetAppStats(int appFullHashid, int position) {
+				this.appFullHashid = appFullHashid;
+				this.position = position;
+			}
+
+
+			@Override
+			public void run() {
+				try {
+					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+					appVersions.get(position).setStats(serviceDataCaller.callGetAppStats(appFullHashid));
+					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_STATS.ordinal());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+    		
+    	}
+    	
+    	private class GetAppDescription implements Runnable{
+    		int appFullHashid = Constants.EMPTY_INT;
+    		int position = Constants.EMPTY_INT;
+    		
+
+			public GetAppDescription(int appFullHashid, int position) {
+				this.appFullHashid = appFullHashid;
+				this.position = position;
+			}
+
+
+			@Override
+			public void run() {
+				try {
+					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+					appVersions.get(position).setExtras(serviceDataCaller.callGetAppExtras(appFullHashid));
+					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_DESCRIPTION.ordinal());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+    		
+    	}
+    }
+    
+    
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -264,7 +387,7 @@ public class AppInfo extends Activity {
 		later.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				selectVersion(selectedVersion);	//TODO wrong method call 
+				toggleVersionDownloadScheduleStatus(selectedVersion); 
 			}
 		});
 		appNameTextView = (TextView) findViewById(R.id.app_name);
@@ -286,12 +409,30 @@ public class AppInfo extends Activity {
 		uninstall.setTextColor(Color.DKGRAY);
 
 		galleryView = (Gallery) findViewById(R.id.screens);
+		
+		versionInfoManager = new VersionInfoManager();
 
+	}
+	
+	
+	
+	private void toggleVersionDownloadScheduleStatus(ViewDisplayAppVersionInfo appVersion){
+		try {
+			if(appVersion.isScheduled()){
+				serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
+			}else{
+				serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
+			}
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		appVersion.setIsScheduled(!appVersion.isScheduled());
 	}
 	
 	private void activateInstallButton(boolean activate){
 		String label = getResources().getString(R.string.install);
-		if(later.isChecked() && !storedForLater){
+		if(later.isChecked() && !selectedVersion.isScheduled()){
 			label = getResources().getString(R.string.schedule);
 		}
 		if(activate){
@@ -312,7 +453,7 @@ public class AppInfo extends Activity {
 						}
 					}else{
 						try {
-							if(storedForLater){
+							if(selectedVersion.isScheduled()){
 								serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
 							}
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
@@ -354,7 +495,7 @@ public class AppInfo extends Activity {
 				}
 			});
 		}else{
-			if(storedForLater){
+			if(selectedVersion.isScheduled()){
 				label = getResources().getString(R.string.unschedule);
 				uninstall.setText(label);
 				uninstall.setTextColor(Color.BLACK);
@@ -382,7 +523,7 @@ public class AppInfo extends Activity {
 	
 	private void activateUpdateButton(boolean activate){
 		String label = getResources().getString(R.string.update);
-		if(later.isChecked() && !storedForLater){
+		if(later.isChecked() && !selectedVersion.isScheduled()){
 			label = getResources().getString(R.string.schedule);
 		}
 		if(activate){
@@ -398,12 +539,12 @@ public class AppInfo extends Activity {
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called update app later");
 						} else {
-							if(storedForLater){
+							if(selectedVersion.isScheduled()){
 								serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
 							}
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
-														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
+//							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
+//														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called update app");
 						}
 					} catch (RemoteException e) {
@@ -423,7 +564,7 @@ public class AppInfo extends Activity {
 	
 	private void activateDowngradeButton(boolean activate){
 		String label = getResources().getString(R.string.downgrade);
-		if(later.isChecked() && !storedForLater){
+		if(later.isChecked() && !selectedVersion.isScheduled()){
 			label = getResources().getString(R.string.schedule);
 		}
 		if(activate){
@@ -439,12 +580,12 @@ public class AppInfo extends Activity {
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called downgrade app later");
 						} else {
-							if(storedForLater){
+							if(selectedVersion.isScheduled()){
 								serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
 							}
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
-														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
+//							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
+//														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called downgrade app");
 						}
 					} catch (RemoteException e) {
@@ -467,29 +608,53 @@ public class AppInfo extends Activity {
 		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion.getVersionName());
 		
 		if(installedVersion != null){
-			activateUninstallButton(true);
-			if(selectedVersion.equals(installedVersion)){
+			if(selectedVersion.isInstalled()){
+				activateUninstallButton(true);
+				later.setVisibility(View.INVISIBLE);
+				
 				activateInstallButton(false);
-			}else if(selectedVersion.getVersionCode() > installedVersion.getVersionCode()){
-				activateUpdateButton(true);
-			}else if(selectedVersion.getVersionCode() < installedVersion.getVersionCode()){
-				activateDowngradeButton(true);
-			}
-		}else{
-			if(version.getSize() == Constants.EMPTY_INT){
-				try {
-					serviceDataCaller.callAddVersionInfo(appHashid);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			}else{ 
+				activateUninstallButton(false);
+				later.setVisibility(View.VISIBLE);
+				
+				if(selectedVersion.getVersionCode() > installedVersion.getVersionCode()){
+					activateUpdateButton(true);
+				}else if(selectedVersion.getVersionCode() < installedVersion.getVersionCode()){
+					activateDowngradeButton(true);
 				}
 			}
-			//TODO check for scheduled 
+		
+		
+		}else{
 			activateUninstallButton(false);
 			activateInstallButton(true);
 		}
 		
-		setVersionDetails();
+		try {
+
+			Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+			serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+			
+			if(version.getSize() == Constants.EMPTY_INT){
+				serviceDataCaller.callAddVersionDownloadInfo(version.getAppHashid(), version.getRepoHashid());
+				Log.d("Aptoide-AppInfo", "called addVersionDownloadInfo");
+			}
+			if(!version.isExtrasAvailable()){
+				serviceDataCaller.callAddVersionExtraInfo(version.getAppHashid(), version.getRepoHashid());
+				Log.d("Aptoide-AppInfo", "called AddVersionExtraInfo");
+			}
+			if(!version.isStatsAvailable()){
+				serviceDataCaller.callAddVersionStatsInfo(version.getAppHashid(), version.getRepoHashid());
+				Log.d("Aptoide-AppInfo", "called AddVersionStatsInfo");
+			}
+			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		setVersionRepo();
+		setVersionSize();
 		setVersionStats();
 	}
 
@@ -506,10 +671,10 @@ public class AppInfo extends Activity {
 	}
 
 	private void setVersions() {
-		int selectedVersionHashid = 0;
-		if(selectedVersion != null){
-			selectedVersionHashid = selectedVersion.getAppHashid(); 
-		}
+//		int selectedVersionHashid = 0;
+//		if(selectedVersion != null){
+//			selectedVersionHashid = selectedVersion.getAppHashid(); 
+//		}
 		try {
 			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
 
@@ -517,29 +682,28 @@ public class AppInfo extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Log.d("Aptoide-AppInfo", "appVersions: "+appVersions);
 
-		for (ViewDisplayAppVersionInfo versionInfo : appVersions.getVersionsList()) {
-			if(selectedVersionHashid == versionInfo.getAppHashid()){
-				selectedVersion = versionInfo;
-			}
+		ArrayList<String> versions = new ArrayList<String>();
+		for (ViewDisplayAppVersionInfo versionInfo : appVersions) {
+			versions.add(versionInfo.getVersionName());	
+//			if(selectedVersionHashid == versionInfo.getAppHashid()){
+//				selectedVersion = versionInfo;
+//			}
 			if(versionInfo.isInstalled()){
 				installedVersion = versionInfo;
-				Log.d("Aptoide-AppInfo", "Installed version: "+installedVersion.getVersionName());
-			}else{
-				Log.d("Aptoide-AppInfo", "Got available version: "+versionInfo.getVersionName());				
+//				Log.d("Aptoide-AppInfo", "Installed version: "+installedVersion.getVersionName());
 			}
+//			else{
+//				Log.d("Aptoide-AppInfo", "available version: "+versionInfo.getVersionName());				
+//			}
 		}
-		if(selectedVersion == null){
-			selectVersion(appVersions.getVersionsList().get(0));
-		}
+//		if(selectedVersion == null){
+//		}
 		
-		appName = selectedVersion.getAppName();
-		appNameTextView.setText(appName);
+//		selectVersion(appVersions.get(0));
+		selectedVersion = appVersions.get(0);
 		
-		ArrayList<String> versions = new ArrayList<String>();
-		for (ViewDisplayAppVersionInfo versionInfo : appVersions.getVersionsList()) {
-			versions.add(versionInfo.getVersionName());				
-		}
 
 		multiVersionSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, versions);
 		multiVersionSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -548,7 +712,7 @@ public class AppInfo extends Activity {
 		appMultiVersion.setOnItemSelectedListener(new OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				selectVersion(appVersions.getVersionsList().get(appMultiVersion.getSelectedItemPosition()));
+				selectVersion(appVersions.get(appMultiVersion.getSelectedItemPosition()));
 			}
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
@@ -556,7 +720,11 @@ public class AppInfo extends Activity {
 			}
 		});
 		
+		appName = selectedVersion.getAppName();
+		appNameTextView.setText(appName);
+		
 		setVersionDescription();
+		setScreens();
 		
 	}
 	
@@ -568,14 +736,16 @@ public class AppInfo extends Activity {
 		}
 	}
 	
-	private void setVersionDetails(){
+	private void setVersionSize(){
 		if(selectedVersion != null && selectedVersion.getSize() != Constants.EMPTY_INT){
 			appSize = Integer.toString(selectedVersion.getSize());
 			appSizeTextView.setText(getString(R.string.size)+": "+appSize+getString(R.string.kB));
 		}else{
 			appSizeTextView.setText(getString(R.string.size)+": ");
 		}
-		
+	}
+	
+	private void setVersionRepo(){
 		if(selectedVersion != null && selectedVersion.getRepoUri() != null){
 			repoUri = selectedVersion.getRepoUri();
 			repoUriTextView.setText(getString(R.string.store)+": "+repoUri);

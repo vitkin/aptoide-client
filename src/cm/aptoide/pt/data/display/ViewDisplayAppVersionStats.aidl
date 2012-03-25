@@ -1,5 +1,5 @@
 /**
- * AIDLAppInfo,		part of Aptoide
+ * ViewDisplayAppVersionStats,	part of Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -17,23 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt;
+package cm.aptoide.pt.data.display;
 
 /**
- * AIDLAppInfo, models AppInfo's AIDL IPC
+ * ViewDisplayAppVersionStats, models ViewDisplayAppVersionStats's AIDL IPC
  *
  * @author dsilveira
  * @since 3.0
  *
  */
-interface AIDLAppInfo{
-	
-	void refreshIcon();
-	void newAppInfoAvailable(in int appFullHashid);
-	void newAppDownloadInfoAvailable(in int appFullHashid);
-	void newStatsInfoAvailable(in int appFullHashid);
-	void newExtrasAvailable(in int appFullHashid);
-	void refreshScreens();
-	void newCommentsAvailable(in int appFullHashid);
-	
-}
+parcelable ViewDisplayAppVersionStats;

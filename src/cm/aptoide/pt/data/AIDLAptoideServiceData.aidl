@@ -26,6 +26,8 @@ import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLReposInfo;
@@ -89,8 +91,13 @@ interface AIDLAptoideServiceData {
 	
 	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
 	void CallFillAppInfo(in int appHashid);
-	void callAddVersionInfo(in int appHashid);
+	void callAddVersionDownloadInfo(in int appHashid, in int repoHashid);
+	void callAddVersionStatsInfo(in int appHashid, in int repoHashid);
+	void callAddVersionExtraInfo(in int appHashid, in int repoHashid);
 	ViewDisplayAppVersionsInfo callGetAppInfo(in int appHashid);
+	int callGetAppVersionDownloadSize(in int appFullHashid);
+	ViewDisplayAppVersionStats callGetAppStats(in int appFullHashid);
+	ViewDisplayAppVersionExtras callGetAppExtras(in int appFullHashid);
 	
 	void callInstallApp(in int appHashid);
 	void callUninstallApp(in int appHashid);

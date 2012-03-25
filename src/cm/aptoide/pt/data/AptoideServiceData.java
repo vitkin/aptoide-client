@@ -51,6 +51,8 @@ import cm.aptoide.pt.Splash;
 import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.database.ManagerDatabase;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
+import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
@@ -317,13 +319,38 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public void callAddVersionInfo(int appHashid) throws RemoteException {
-			addAppVersionInfo(appHashid);
+		public void callAddVersionDownloadInfo(int appHashid, int repoHashid) throws RemoteException {
+			addRepoAppDownloadInfo(appHashid, repoHashid);
+		}
+
+		@Override
+		public void callAddVersionStatsInfo(int appHashid, int repoHashid) throws RemoteException {
+			addRepoAppStats(appHashid, repoHashid);
+		}
+
+		@Override
+		public void callAddVersionExtraInfo(int appHashid, int repoHashid) throws RemoteException {
+			addRepoAppExtras(appHashid, repoHashid);
 		}
 
 		@Override
 		public ViewDisplayAppVersionsInfo callGetAppInfo(int appHashid) throws RemoteException {
 			return getAppInfo(appHashid);
+		}
+
+		@Override
+		public int callGetAppVersionDownloadSize(int appFullHashid) throws RemoteException {
+			return getAppVersionDownloadSize(appFullHashid);
+		}
+
+		@Override
+		public ViewDisplayAppVersionStats callGetAppStats(int appFullHashid) throws RemoteException {
+			return getAppStats(appFullHashid);
+		}
+
+		@Override
+		public ViewDisplayAppVersionExtras callGetAppExtras(int appFullHashid) throws RemoteException {
+			return getAppExtras(appFullHashid);
 		}
 
 		@Override
@@ -1250,60 +1277,69 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void fillAppInfo(final int appHashid){
-		final ViewAppVersionRepository anyVersion = managerDatabase.getAppAnyVersionRepo(appHashid);
-		if(anyVersion == null){
-			updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_INFO);
-			AptoideLog.d(AptoideServiceData.this, "App not in any repo");
-			return;
-		}
-		final ViewRepository repository = managerDatabase.getAppRepo(appHashid);
-		
-		if(!managerDownloads.isIconCached(appHashid)){
-			scheduledThreadPool.execute(new Runnable() {
-				@Override
-				public void run() {
-					ViewDownloadInfo downloadInfo = managerDatabase.getIconDownloadInfo(anyVersion.getRepository(), anyVersion.getAppHashid());
-					if(downloadInfo != null){
-						managerDownloads.getIcon(downloadInfo, anyVersion.getRepository().isLoginRequired(), anyVersion.getRepository().getLogin());
-						updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
-					}
-				}
-			});
-		}else{
-			scheduledThreadPool.execute(new Runnable() {
-				@Override
-				public void run() {
-					updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
-				}
-			});
-		}
-		
-		if(repository != null){
-			addAppVersionInfo(repository, appHashid);
-		}
-		addRepoAppExtras(anyVersion.getRepository(), anyVersion.getAppHashid());
+//		final ViewAppVersionRepository anyVersion = managerDatabase.getAppAnyVersionRepo(appHashid);
+//		if(anyVersion == null){
+//			updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_INFO);
+//			AptoideLog.d(AptoideServiceData.this, "App not in any repo");
+//			return;
+//		}
+//		final ViewRepository repository = managerDatabase.getAppRepo(appHashid);
+//		
+//		if(!managerDownloads.isIconCached(appHashid)){
+//			scheduledThreadPool.execute(new Runnable() {
+//				@Override
+//				public void run() {
+//					ViewDownloadInfo downloadInfo = managerDatabase.getIconDownloadInfo(anyVersion.getRepository(), anyVersion.getAppHashid());
+//					if(downloadInfo != null){
+//						managerDownloads.getIcon(downloadInfo, anyVersion.getRepository().isLoginRequired(), anyVersion.getRepository().getLogin());
+//						updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
+//					}
+//				}
+//			});
+//		}else{
+//			scheduledThreadPool.execute(new Runnable() {
+//				@Override
+//				public void run() {
+//					updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_ICON);
+//				}
+//			});
+//		}
+//		
+//		if(repository != null){
+//			addAppVersionInfo(repository, appHashid);
+//		}
+//		addRepoAppExtras(anyVersion.getRepository(), anyVersion.getAppHashid());
 	}
 	
 	
-	public void addAppVersionInfo(ViewRepository repository, int appHashid){
-		addRepoAppDownloadInfo(repository, appHashid);
-		addRepoAppStats(repository, appHashid);		
+//	public void addAppVersionInfo(ViewRepository repository, int appHashid){
+//		addRepoAppDownloadInfo(repository, appHashid);
+//		addRepoAppStats(repository, appHashid);		
+//		//TODO parallel get Comments
+//	}
+//	
+//	public void addAppVersionInfo(int appHashid){
+//		addAppVersionInfo(managerDatabase.getAppRepo(appHashid), appHashid);
+//	}
+	
+	public void addAppVersionInfo(final int appHashid,final int repoHashid){
+//		ViewRepository repository = managerDatabase.getRepository(repoHashid);
+//		addRepoAppDownloadInfo(repository, appHashid);
+//		addRepoAppStats(repository, appHashid);
+//		addRepoAppExtras(repository, appHashid);
 		//TODO parallel get Comments
 	}
 	
-	public void addAppVersionInfo(int appHashid){
-		addAppVersionInfo(managerDatabase.getAppRepo(appHashid), appHashid);
-	}
 	
-	
-	public void addRepoAppDownloadInfo(final ViewRepository repository, final int appHashid){
+	public void addRepoAppDownloadInfo(final int appHashid, final int repoHashid){
 	
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
-				if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
+//				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+//				if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
+					ViewRepository repository = managerDatabase.getRepository(repoHashid);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}
@@ -1314,8 +1350,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					
 					managerXml.repoAppDownloadParse(repository, cache, appHashid);
 					//TODO find some way to track global parsing completion status, probably in managerXml
-				}
-				AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
+//				}else{
+//					AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
+//				}
 			}
 		});
 					
@@ -1329,16 +1366,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoAppDownloadInfoFinished(ViewRepository repository, int appHashid){
-		updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);
+		int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
+		updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);
 	}
 	
 	
-	public void addRepoAppStats(final ViewRepository repository, final int appHashid){
+	public void addRepoAppStats(final int appHashid, final int repoHashid){
 
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+				ViewRepository repository = managerDatabase.getRepository(repoHashid);
 				if(!managerDownloads.isConnectionAvailable()){
 					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 				}
@@ -1355,19 +1394,21 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoAppStatsFinished(ViewRepository repository, int appHashid){
-		updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_STATS);
+		int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
+		updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_STATS);
 	}
 	
 	
 	
-	public void addRepoAppExtras(final ViewRepository repository, final int appHashid){
+	public void addRepoAppExtras(final int appHashid, final int repoHashid){
 		
 		scheduledThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
-				if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
+//				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+//				if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
+					ViewRepository repository = managerDatabase.getRepository(repoHashid);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}
@@ -1378,17 +1419,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					
 					managerXml.repoAppExtrasParse(repository, cache, appHashid);
 					//TODO find some way to track global parsing completion status, probably in managerXml
-				}else{
-					updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);	
-					updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_SCREENS);				
-				}
+//				}else{
+//					AptoideLog.d(AptoideServiceData.this, "App extra Info present for:"+appFullHashid);
+//				}
 			}
 		});
 					
 	}
 	
 	public void parsingRepoAppExtrasFinished(ViewRepository repository, int appHashid){
-		updateAppInfo(appHashid, EnumServiceDataCallback.UPDATE_APP_EXTRAS);
+		int appFullHashid = (appHashid+"|"+repository.getHashid()).hashCode();
+		updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_EXTRAS);
 		getAppScreens(repository, appHashid);
 	}
 	
@@ -1414,30 +1455,31 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void gettingAppScreensFinished(int appHashid){
 		AptoideLog.d(AptoideServiceData.this, "Finished getting screens - appHashid: "+appHashid);
-		updateAppInfo(appHashid, EnumServiceDataCallback.REFRESH_SCREENS);
+		updateAppInfo(appHashid, Constants.EMPTY_INT, EnumServiceDataCallback.REFRESH_SCREENS);
 	}
 	
-	public void updateAppInfo(int appHashid, EnumServiceDataCallback callBack){
+	public void updateAppInfo(int appHashid, int appFullHashid, EnumServiceDataCallback callBack){
+		AptoideLog.d(AptoideServiceData.this, "appInfo AIDL : "+appInfoClients.get(appHashid));
 		try {
 			switch (callBack) {
 				case REFRESH_ICON:
 					appInfoClients.get(appHashid).refreshIcon();
 					break;
 					
-				case UPDATE_APP_INFO:
-					appInfoClients.get(appHashid).newAppInfoAvailable();
-					break;
+//				case UPDATE_APP_INFO:
+//					appInfoClients.get(appHashid).newAppInfoAvailable(appFullHashid);
+//					break;
 					
 				case UPDATE_APP_DOWNLOAD_INFO:
-					appInfoClients.get(appHashid).newAppDownloadInfoAvailable();
+					appInfoClients.get(appHashid).newAppDownloadInfoAvailable(appFullHashid);
 					break;
 					
 				case UPDATE_APP_STATS:
-					appInfoClients.get(appHashid).newStatsInfoAvailable();
+					appInfoClients.get(appHashid).newStatsInfoAvailable(appFullHashid);
 					break;
 					
 				case UPDATE_APP_EXTRAS:
-					appInfoClients.get(appHashid).newExtrasAvailable();
+					appInfoClients.get(appHashid).newExtrasAvailable(appFullHashid);
 					break;
 					
 				case REFRESH_SCREENS:
@@ -1459,6 +1501,20 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		AptoideLog.d(AptoideServiceData.this, "Getting App Versions Info: "+appHashid);
 		return managerDatabase.getAppDisplayInfo(appHashid);
 	}
+	
+	public int getAppVersionDownloadSize(int appFullHashid){
+		return managerDatabase.getAppVersionDownloadSize(appFullHashid);
+	}
+	
+	public ViewDisplayAppVersionStats getAppStats(int appFullHashid){
+		return managerDatabase.getAppVersionStats(appFullHashid);
+	}
+	
+	public ViewDisplayAppVersionExtras getAppExtras(int appFullHashid){
+		return managerDatabase.getAppVersionExtras(appFullHashid);
+	}
+	
+	
 	
 	public boolean getShowApplicationsByCategory(){
 		return managerPreferences.getShowApplicationsByCategory();

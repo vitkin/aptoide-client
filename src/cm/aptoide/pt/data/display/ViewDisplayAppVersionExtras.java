@@ -39,8 +39,8 @@ public class ViewDisplayAppVersionExtras implements Parcelable, Serializable{
 	private static final long serialVersionUID = -3516586429861083636L;
 	private int appFullHashid;
 	private String description;
-	private boolean screensAvailable = false;
-	private ArrayList<String> localScreensPath;
+//	private boolean screensAvailable = false;
+//	private ArrayList<String> localScreensPath;
 	
 	
 	/**
@@ -50,7 +50,7 @@ public class ViewDisplayAppVersionExtras implements Parcelable, Serializable{
 	 * @param description
 	 */
 	public ViewDisplayAppVersionExtras(int appFullHashid, String description){
-		this.localScreensPath = new ArrayList<String>();
+//		this.localScreensPath = new ArrayList<String>();
 		this.appFullHashid = appFullHashid;
 		this.description = description;
 	}
@@ -64,20 +64,20 @@ public class ViewDisplayAppVersionExtras implements Parcelable, Serializable{
 		return description;
 	}
 
-	public boolean isScreensAvailable() {
-		return screensAvailable;
-	}
+//	public boolean isScreensAvailable() {
+//		return screensAvailable;
+//	}
 
-	public void addLocalScreenPath(String localScreenPath){
-		if(!screensAvailable){
-			screensAvailable = true;
-		}
-		localScreensPath.add(localScreenPath);
-	}
-	
-	public ArrayList<String> getLocalScreensPath() {
-		return localScreensPath;
-	}
+//	public void addLocalScreenPath(String localScreenPath){
+//		if(!screensAvailable){
+//			screensAvailable = true;
+//		}
+//		localScreensPath.add(localScreenPath);
+//	}
+//	
+//	public ArrayList<String> getLocalScreensPath() {
+//		return localScreensPath;
+//	}
 
 
 
@@ -89,8 +89,8 @@ public class ViewDisplayAppVersionExtras implements Parcelable, Serializable{
 	public void clean(){
 		this.appFullHashid = Constants.EMPTY_INT;
 		this.description = null;
-		this.screensAvailable = false;
-		this.localScreensPath = null;
+//		this.screensAvailable = false;
+//		this.localScreensPath = null;
 	}
 	
 	/**
@@ -100,8 +100,8 @@ public class ViewDisplayAppVersionExtras implements Parcelable, Serializable{
 	 * @param description
 	 */
 	public void reuse(int appFullHashid, String description){
-		this.screensAvailable = false;
-		this.localScreensPath = new ArrayList<String>();
+//		this.screensAvailable = false;
+//		this.localScreensPath = new ArrayList<String>();
 		this.appFullHashid = appFullHashid;
 		this.description = description;
 	}
@@ -129,11 +129,11 @@ public class ViewDisplayAppVersionExtras implements Parcelable, Serializable{
 	public String toString() {
 		StringBuilder string = new StringBuilder(" AppFullHashid: "+appFullHashid+" Description: "+description);
 
-		if(screensAvailable){
-			for (String localScreenPath : localScreensPath) {
-				string.append(" Screen: "+localScreenPath);
-			}
-		}
+//		if(screensAvailable){
+//			for (String localScreenPath : localScreensPath) {
+//				string.append(" Screen: "+localScreenPath);
+//			}
+//		}
 		
 		return string.toString();
 	}
@@ -173,20 +173,20 @@ public class ViewDisplayAppVersionExtras implements Parcelable, Serializable{
 			out.writeInt(appFullHashid);
 			out.writeString(description);
 			
-			out.writeByte(screensAvailable?(byte)1:(byte)0);
-			if(screensAvailable){
-				out.writeStringList(localScreensPath);
-			}
+//			out.writeByte(screensAvailable?(byte)1:(byte)0);
+//			if(screensAvailable){
+//				out.writeStringList(localScreensPath);
+//			}
 		}
 
 		public void readFromParcel(Parcel in) {
 			appFullHashid = in.readInt();
 			description = in.readString();
 			
-			screensAvailable = in.readByte()==1?true:false;
-			if(screensAvailable){
-				in.readStringList(localScreensPath);
-			}
+//			screensAvailable = in.readByte()==1?true:false;
+//			if(screensAvailable){
+//				in.readStringList(localScreensPath);
+//			}
 		}
 		
 }

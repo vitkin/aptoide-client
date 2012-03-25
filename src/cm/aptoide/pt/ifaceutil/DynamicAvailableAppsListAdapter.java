@@ -365,7 +365,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 //				+" down: "+directionDown+" endBuffer: "+(getCount()-position)+" trim: "+cacheAppsTrimmed.get()+" trim+count: "+(cacheAppsTrimmed.get()+getCount())
 //				+" intrigger: "+displayListsDimensions.getIncreaseTrigger()+" detrigger: "+displayListsDimensions.getDecreaseTrigger());
 		
-		if( directionDown.get() /*&& (cacheAppsTrimmed.get()+getCount()) != totalAvailableApps*/ && (getCount()-position) < displayListsDimensions.getIncreaseTrigger() ){
+		if( directionDown.get() && (position-scrollDirectionOrigin.get()) > displayListsDimensions.getPageSize() /*&& (cacheAppsTrimmed.get()+getCount()) != totalAvailableApps*/ && (getCount()-position) < displayListsDimensions.getIncreaseTrigger() ){
 			sleep.set(false);
 			setLoadingFooter(true);
 			if(!changingList.get()){
@@ -379,7 +379,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 			}else if( (getCount()-position) < (displayListsDimensions.getPageSize()/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER) ){
 				scrollDirectionOrigin.set(position);
 			}
-		}else if( !directionDown.get() && cacheAppsTrimmed.get() > 0/* (cacheAppsTrimmed.get()+getCount()) > displayListsDimensions.getCacheSize()*/ && position < displayListsDimensions.getIncreaseTrigger() ){
+		}else if( !directionDown.get() && (scrollDirectionOrigin.get()-position) > displayListsDimensions.getPageSize() && cacheAppsTrimmed.get() > 0/* (cacheAppsTrimmed.get()+getCount()) > displayListsDimensions.getCacheSize()*/ && position < displayListsDimensions.getIncreaseTrigger() ){
 //			Log.d("Aptoide-DynamicAvailableAppsListAdapter", "sroll up, possible: "+position);
 			sleep.set(false);
 			setLoadingHeader(true);
@@ -549,7 +549,8 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	
 	public void resetDisplay(ViewDisplayCategory category){
 		aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
-//		sleep.set(false);
+		sleep.set(true);
+		Log.d("Aptoide-DynamicAvailableAppsListAdapter", "external reset, sleep: "+sleep.get());
 		this.category = category;
 		this.apps.clear();
 //		try {
@@ -567,6 +568,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
     
 	public void reloadDisplay(){
 		sleep.set(true);
+		Log.d("Aptoide-DynamicAvailableAppsListAdapter", "external reload, sleep: "+sleep.get());
 //		aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR.ordinal());
 //		apps.clear();
 //		appsManager.reload();
@@ -580,6 +582,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	
 	public void sleep(){
 		sleep.set(true);
+		Log.d("Aptoide-DynamicAvailableAppsListAdapter", "external sleep, sleep: "+sleep.get());
 	}
 	
 	

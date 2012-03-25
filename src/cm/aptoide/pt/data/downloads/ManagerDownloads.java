@@ -601,7 +601,11 @@ public class ManagerDownloads {
 		
 		switch (infoType) {
 			case DOWNLOAD:
-				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=download+icon&show_apphashid=true&apphashid="+appHashid;
+				String infoRequest = "info=download";
+				if(!isIconCached(appHashid)){
+					infoRequest += "+icon";
+				}
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+infoRequest+"&show_apphashid=true&apphashid="+appHashid;
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info_download.xml";
 				cache = managerCache.getNewRepoAppDownloadViewCache(repository.getHashid(), appHashid);
 				break;
