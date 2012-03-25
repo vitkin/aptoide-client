@@ -1287,6 +1287,56 @@ public class ManagerDatabase {
 	}
 	
 	
+	/**
+	 * getRepository, retrieves a Repository
+	 * 
+	 * @param int repoHashid
+	 * 
+	 * @return ViewRepository, repository
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */	
+	public ViewRepository getRepository(int repoHashid){
+
+//		final int REPO_HASHID = Constants.COLUMN_FIRST;
+		final int URI = Constants.COLUMN_SECOND;
+//		final int IN_USE = Constants.COLUMN_THIRD;
+		final int SIZE = Constants.COLUMN_FOURTH;
+		final int BASE_PATH = Constants.COLUMN_FIFTH;
+		final int ICONS_PATH = Constants.COLUMN_SIXTH;
+		final int SCREENS_PATH = Constants.COLUMN_SEVENTH;
+		final int DELTA = Constants.COLUMN_EIGTH;
+		final int USERNAME = Constants.COLUMN_NINTH;
+		final int PASSWORD = Constants.COLUMN_TENTH;
+
+		String selectRepo = "SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI+", "+Constants.KEY_REPO_IN_USE+", "+Constants.KEY_REPO_SIZE
+									+", "+Constants.KEY_REPO_BASE_PATH+", "+Constants.KEY_REPO_ICONS_PATH+", "+Constants.KEY_REPO_SCREENS_PATH
+									+", "+Constants.KEY_REPO_DELTA+", "+Constants.KEY_LOGIN_USERNAME+", "+Constants.KEY_LOGIN_PASSWORD
+							+" FROM "+Constants.TABLE_REPOSITORY
+							+" NATURAL LEFT JOIN "+Constants.TABLE_LOGIN
+							+" WHERE "+Constants.KEY_REPO_HASHID+"="+repoHashid;
+		
+
+		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
+		repoCursor.moveToFirst();
+
+		ViewRepository repo = new ViewRepository(repoCursor.getString(URI), repoCursor.getInt(SIZE), repoCursor.getString(BASE_PATH)
+				, repoCursor.getString(ICONS_PATH), repoCursor.getString(SCREENS_PATH), repoCursor.getString(DELTA));
+
+		if( !(repoCursor.isNull(USERNAME)) ){
+			ViewLogin login = new ViewLogin(repoCursor.getString(USERNAME),repoCursor.getString(PASSWORD));
+			repo.setLogin(login);
+		}
+		repoCursor.close();
+		//		Log.d("Aptoide-getAppRepo", "appRepo: "+repo+" "+selectRepo);
+
+		
+		return repo;
+	}
+	
+	
 	
 	/**
 	 * anyReposInUse, checks if there are any managed repos in use
@@ -2943,13 +2993,15 @@ public class ManagerDatabase {
 		final int VERSION_CODE = Constants.COLUMN_THIRD;
 		final int VERSION_NAME = Constants.COLUMN_FOURTH;
 		final int APP_NAME = Constants.COLUMN_FIFTH;
-		final int LIKES = Constants.COLUMN_SIXTH;
-		final int DISLIKES = Constants.COLUMN_SEVENTH;
-		final int STARS = Constants.COLUMN_EIGTH;
-		final int DOWNLOADS = Constants.COLUMN_NINTH;
-		final int DESCRIPTION = Constants.COLUMN_TENTH;
-		final int SIZE = Constants.COLUMN_ELEVENTH;
-		final int REPO_URI = Constants.COLUMN_TWELVETH;
+		final int SCHEDULED = Constants.COLUMN_SIXTH;
+		final int REPO_URI = Constants.COLUMN_SEVENTH;
+		final int REPO_HASHID = Constants.COLUMN_EIGTH;
+		final int LIKES = Constants.COLUMN_NINTH;
+		final int DISLIKES = Constants.COLUMN_TENTH;
+		final int STARS = Constants.COLUMN_ELEVENTH;
+		final int DOWNLOADS = Constants.COLUMN_TWELVETH;
+		final int DESCRIPTION = Constants.COLUMN_THERTEENTH;
+		final int SIZE = Constants.COLUMN_FOURTEENTH;
 		
 		final int INSTALLED_HASHID = Constants.COLUMN_FIRST;
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_SECOND;
@@ -2958,46 +3010,46 @@ public class ManagerDatabase {
 		
 		int installedVersionCode = Constants.EMPTY_INT;
 		
+		boolean installedAlsoAvailable = false;
+		
+		String packageName = getAppPackageName(appHashid);
+		if(packageName == null){
+			//TODO throw exception (Unrecognized appHashid)
+			return null;
+		}
+		
 		ViewDisplayAppVersionsInfo appVersions = new ViewDisplayAppVersionsInfo();
-		ViewDisplayAppVersionInfo appVersion;
+		ViewDisplayAppVersionInfo installedVersion = null;
+		ViewDisplayAppVersionInfo appVersion = null;
 		
 		String selectAppVersions = "SELECT A."+Constants.KEY_APPLICATION_FULL_HASHID+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_VERSION_CODE
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
+											+", T.scheduled"+", R."+Constants.KEY_REPO_URI+", R."+Constants.KEY_REPO_HASHID
 											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
 											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
-											+", D."+Constants.KEY_DOWNLOAD_SIZE+", R."+Constants.KEY_REPO_URI
-									+" FROM (SELECT * " 
-											+" FROM "+Constants.TABLE_APPLICATION
-											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
-											+" (SELECT DISTINCT "+Constants.KEY_APPLICATION_PACKAGE_NAME
-												+" FROM "+Constants.TABLE_APPLICATION
-												+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
-											+" UNION SELECT DISTINCT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
-												+" FROM "+Constants.TABLE_APP_INSTALLED
-												+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")"
-											+" GROUP BY "+Constants.KEY_APPLICATION_HASHID+") A"
+											+", D."+Constants.KEY_DOWNLOAD_SIZE
+									+" FROM (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI
+											+" FROM "+Constants.TABLE_REPOSITORY
+											+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+") R"
+									+" NATURAL INNER JOIN (SELECT * " 
+														+" FROM "+Constants.TABLE_APPLICATION
+														+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"') A"
+									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APP_TO_INSTALL_HASHID+", "+Constants.KEY_APP_TO_INSTALL_HASHID+" AS scheduled"
+														+" FROM "+Constants.TABLE_APP_TO_INSTALL+") T"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_STATS_INFO+") S"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_EXTRA_INFO+") E"
 									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+", "+Constants.KEY_DOWNLOAD_SIZE
 														+" FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
-									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI
-														+" FROM "+Constants.TABLE_REPOSITORY+") R"
 //									+" NATURAL LEFT JOIN (SELECT "
 //															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
 //															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
-									+" ORDER BY A."+Constants.KEY_APPLICATION_VERSION_CODE+" DESC";
+//									+" GROUP BY "+Constants.KEY_APPLICATION_VERSION_CODE	// Show only one version even if it's present in multiple repos
+									+" ORDER BY "+Constants.KEY_APPLICATION_VERSION_CODE+" DESC";
 		
 		String selectInstalledAppVersion = " SELECT "+Constants.KEY_APP_INSTALLED_HASHID+", "+Constants.KEY_APP_INSTALLED_VERSION_CODE
 													+", "+Constants.KEY_APP_INSTALLED_VERSION_NAME+", "+Constants.KEY_APP_INSTALLED_NAME
 											+" FROM "+Constants.TABLE_APP_INSTALLED
-											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"="
-													+" (SELECT DISTINCT "+Constants.KEY_APPLICATION_PACKAGE_NAME
-														+" FROM "+Constants.TABLE_APPLICATION
-														+" WHERE "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
-												+" UNION "
-													+"SELECT DISTINCT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
-														+" FROM "+Constants.TABLE_APP_INSTALLED
-														+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"="+appHashid+")";
+											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"'";
 		
 //		Log.d("Aptoide-ManagerDatabase", "app info: "+selectAppVersions+ " installed : "+selectInstalledAppVersion);
 		
@@ -3013,40 +3065,54 @@ public class ManagerDatabase {
 			if(installedVersionCursor.getCount() != Constants.EMPTY_INT){
 				installedVersionCursor.moveToFirst();
 				installedVersionCode = installedVersionCursor.getInt(INSTALLED_VERSION_CODE);
+			
+				installedVersion = new ViewDisplayAppVersionInfo(installedVersionCursor.getString(INSTALLED_NAME), installedVersionCursor.getString(INSTALLED_VERSION_NAME)
+														, installedVersionCode, Constants.EMPTY_INT, installedVersionCursor.getInt(INSTALLED_HASHID), true, false);
 			}
+			installedVersionCursor.close();
 			
 			if(appVersionsCursor.getCount() == Constants.EMPTY_INT){
-				if(installedVersionCode == Constants.EMPTY_INT){
-					//TODO throw exception (Unrecognized appHashid)
-				}else{
-					appVersion = new ViewDisplayAppVersionInfo(installedVersionCursor.getString(INSTALLED_NAME), installedVersionCursor.getString(INSTALLED_VERSION_NAME)
-																, installedVersionCode, Constants.EMPTY_INT, installedVersionCursor.getInt(INSTALLED_HASHID), true);
-					appVersions.addAppVersionInfo(appVersion);
+				if(installedVersion != null){
+					appVersions.add(installedVersion);
 				}
-				installedVersionCursor.close();
 			}else{
-				installedVersionCursor.close();
 				appVersionsCursor.moveToFirst();
 				
 				do{
+					int appVersionCode = appVersionsCursor.getInt(VERSION_CODE);
+					boolean appVersionIsInstalled = (appVersionsCursor.getInt(VERSION_CODE)==installedVersionCode?true:false);
+					installedAlsoAvailable = (installedAlsoAvailable?true:appVersionIsInstalled);
+					
 					appVersion = new ViewDisplayAppVersionInfo(appVersionsCursor.getString(APP_NAME), appVersionsCursor.getString(VERSION_NAME)
-																, appVersionsCursor.getInt(VERSION_CODE), appVersionsCursor.getInt(APP_FULL_HASHID)
-																, appVersionsCursor.getInt(APP_HASHID)
-																, (appVersionsCursor.getInt(VERSION_CODE)==installedVersionCode?true:false));
+							, appVersionCode, appVersionsCursor.getInt(APP_FULL_HASHID)
+							, appVersionsCursor.getInt(APP_HASHID)
+							, appVersionIsInstalled, (appVersionsCursor.isNull(SCHEDULED)?false:true));
+					
+					
+					if(!installedAlsoAvailable && appVersionCode < installedVersionCode){
+						appVersions.add(installedVersion);						
+					}
+					if(!appVersionsCursor.isNull(REPO_URI)){
+						appVersion.setRepoInfo(appVersionsCursor.getInt(REPO_HASHID), appVersionsCursor.getString(REPO_URI));
+					}
+					
 					if(!appVersionsCursor.isNull(SIZE)){
 						appVersion.setSize(appVersionsCursor.getInt(SIZE));
 					}
-					if(!appVersionsCursor.isNull(REPO_URI)){
-						appVersion.setRepoUri(appVersionsCursor.getString(REPO_URI));
-					}
-					appVersion.setStats(new ViewDisplayAppVersionStats(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getInt(LIKES)
+
+					if(!appVersionsCursor.isNull(DOWNLOADS)){
+						appVersion.setStats(new ViewDisplayAppVersionStats(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getInt(LIKES)
 																		, appVersionsCursor.getInt(DISLIKES), appVersionsCursor.getFloat(STARS)
 																		, appVersionsCursor.getInt(DOWNLOADS)));
+					}
 					if(!appVersionsCursor.isNull(DESCRIPTION)){
-						ViewDisplayAppVersionExtras extras = new ViewDisplayAppVersionExtras(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getString(DESCRIPTION));
+						ViewDisplayAppVersionExtras extras = new ViewDisplayAppVersionExtras(appVersionsCursor.getInt(APP_FULL_HASHID)
+																							, appVersionsCursor.getString(DESCRIPTION));
 						appVersion.setExtras(extras);
 					}
-					appVersions.addAppVersionInfo(appVersion);
+					
+					appVersions.add(appVersion);
+					
 				}while(appVersionsCursor.moveToNext());
 			}
 			appVersionsCursor.close();
@@ -3149,6 +3215,122 @@ public class ManagerDatabase {
 		}
 		
 		return appDownload;
+	}
+	
+	/**
+	 * getAppVersionDownloadSize, retrieves the download size for the app version referenced by the appFullHashid
+	 * 
+	 * @param int appFullHashid
+	 * 
+	 * @return int size
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public int getAppVersionDownloadSize(int appFullHashid){
+		
+		final int SIZE = Constants.COLUMN_FIRST;
+		
+		int size = Constants.EMPTY_INT;
+		
+		String selectAppVersionDownloadSize = "SELECT "+Constants.KEY_DOWNLOAD_SIZE
+											+" FROM "+Constants.TABLE_DOWNLOAD_INFO
+											+" WHERE "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+"="+appFullHashid;
+		
+//		Log.d("Aptoide-ManagerDatabase", "download: "+selectAppDownloadInfo);
+		
+			Cursor cursorAppVersionDownloadSize = aptoideAtomicQuery(selectAppVersionDownloadSize);
+						
+			if(cursorAppVersionDownloadSize.getCount() == Constants.EMPTY_INT){
+					//TODO throw exception (Unrecognized appHashid)
+			}
+			cursorAppVersionDownloadSize.moveToFirst();
+			
+			size = cursorAppVersionDownloadSize.getInt(SIZE);
+			
+			cursorAppVersionDownloadSize.close();
+		
+		return size;
+	}
+	
+	
+	/**
+	 * getAppVersionStats, retrieves the stats for the app version referenced by the appFullHashid
+	 * 
+	 * @param int appFullHashid
+	 * 
+	 * @return ViewDisplayAppVersionStats, stats
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	
+	public ViewDisplayAppVersionStats getAppVersionStats(int appFullHashid){
+		
+		final int LIKES = Constants.COLUMN_FIRST;
+		final int DISLIKES = Constants.COLUMN_SECOND;
+		final int STARS = Constants.COLUMN_THIRD;
+		final int DOWNLOADS = Constants.COLUMN_FOURTH;
+		
+		ViewDisplayAppVersionStats stats = null;
+		
+		String selectAppVersionStats = "SELECT "+Constants.KEY_STATS_LIKES+", "+Constants.KEY_STATS_DISLIKES
+										+", "+Constants.KEY_STATS_STARS+", "+Constants.KEY_STATS_DOWNLOADS
+									+" FROM "+Constants.TABLE_STATS_INFO
+									+" WHERE "+Constants.KEY_STATS_APP_FULL_HASHID+"="+appFullHashid;
+		
+		Cursor cursorAppVersionStats = aptoideAtomicQuery(selectAppVersionStats);
+					
+		if(cursorAppVersionStats.getCount() == Constants.EMPTY_INT){
+				//TODO throw exception (Unrecognized appHashid)
+		}
+		cursorAppVersionStats.moveToFirst();
+		
+		stats = new ViewDisplayAppVersionStats(appFullHashid, cursorAppVersionStats.getInt(LIKES)
+				, cursorAppVersionStats.getInt(DISLIKES), cursorAppVersionStats.getFloat(STARS)
+				, cursorAppVersionStats.getInt(DOWNLOADS));
+		
+		cursorAppVersionStats.close();
+	
+	return stats;
+	}
+	
+	
+	/**
+	 * getAppVersionExtras, retrieves the extras for the app version referenced by the appFullHashid
+	 * 
+	 * @param int appFullHashid
+	 * 
+	 * @return ViewDisplayAppVersionExtras, extras
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	
+	public ViewDisplayAppVersionExtras getAppVersionExtras(int appFullHashid){
+
+		final int DESCRIPTION = Constants.COLUMN_FIRST;
+		
+		ViewDisplayAppVersionExtras extras = null;
+		
+		String selectAppVersionExtras = "SELECT "+Constants.KEY_EXTRA_DESCRIPTION
+									+" FROM "+Constants.TABLE_EXTRA_INFO
+									+" WHERE "+Constants.KEY_EXTRA_APP_FULL_HASHID+"="+appFullHashid;
+		
+		Cursor cursorAppVersionExtras = aptoideAtomicQuery(selectAppVersionExtras);
+					
+		if(cursorAppVersionExtras.getCount() == Constants.EMPTY_INT){
+				//TODO throw exception (Unrecognized appHashid)
+		}
+		cursorAppVersionExtras.moveToFirst();
+		extras = new ViewDisplayAppVersionExtras(appFullHashid, cursorAppVersionExtras.getString(DESCRIPTION));
+		
+		cursorAppVersionExtras.close();
+	
+	return extras;
 	}
 	
 	

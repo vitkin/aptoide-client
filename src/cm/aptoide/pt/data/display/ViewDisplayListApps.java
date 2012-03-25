@@ -20,7 +20,6 @@
 
 package cm.aptoide.pt.data.display;
 
-import java.util.Collection;
 import java.util.LinkedList;
 
 import android.os.Parcel;
@@ -28,7 +27,7 @@ import android.os.Parcelable;
 
  /**
  * ViewDisplayListApps, models a list of Apps,
- * 			 maintains insertion order
+ * 			 			maintains insertion order
  * 
  * @author dsilveira
  * @since 3.0
@@ -43,11 +42,6 @@ public class ViewDisplayListApps extends LinkedList<ViewDisplayApplication> impl
 		super();
 	}
 
-	public ViewDisplayListApps(Collection<? extends ViewDisplayApplication> collection) {
-		super(collection);
-	}
-
-	
 	@Override
 	public String toString() {
 		StringBuilder listApps = new StringBuilder("Apps: ");

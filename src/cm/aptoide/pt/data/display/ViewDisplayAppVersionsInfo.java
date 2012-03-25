@@ -32,76 +32,21 @@ import android.os.Parcelable;
  * @since 3.0
  *
  */
-public class ViewDisplayAppVersionsInfo implements Parcelable{
+public class ViewDisplayAppVersionsInfo extends ArrayList<ViewDisplayAppVersionInfo> implements Parcelable{
 
-	private ArrayList<ViewDisplayAppVersionInfo> versionsList;
-	
-	
-	/**
-	 * ViewDisplayAppVersions Constructor
-	 *
-	 */
-	public ViewDisplayAppVersionsInfo() {
-		this.versionsList = new ArrayList<ViewDisplayAppVersionInfo>();
-	}
-	
-	/**
-	 * ViewDisplayAppVersions Constructor
-	 *
-	 * @param appVersionInfo
-	 */
-	public ViewDisplayAppVersionsInfo(ViewDisplayAppVersionInfo appVersionInfo) {
-		this();
-		addAppVersionInfo(appVersionInfo);
-	}
-	
-	public void addAppVersionInfo(ViewDisplayAppVersionInfo appVersionInfo){
-		this.versionsList.add(appVersionInfo);
-	}
-	
-	public ArrayList<ViewDisplayAppVersionInfo> getVersionsList(){
-		return this.versionsList;
-	}
-	
+	private static final long serialVersionUID = 7431900604364887894L;
 
-	/**
-	 * ViewDisplayApplication object reuse clean references
-	 *
-	 * @param String uri
-	 */
-	public void clean(){
-		this.versionsList = null;
+	public ViewDisplayAppVersionsInfo(){
+		super();
 	}
 	
-	/**
-	 * ViewDisplayApplication available object reuse reConstructor
-	 *
-	 * @param appVersionInfo
-	 */
-	public void reuse() {
-		this.versionsList = new ArrayList<ViewDisplayAppVersionInfo>();
-	}
-	
-	/**
-	 * ViewDisplayApplication available object reuse reConstructor
-	 *
-	 * @param appVersionInfo
-	 */
-	public void reuse(ViewDisplayAppVersionInfo appVersionInfo) {
-		reuse();
-		addAppVersionInfo(appVersionInfo);
-	}
-
-
 	@Override
 	public String toString() {
-		StringBuilder string = new StringBuilder();
-		
-		for (ViewDisplayAppVersionInfo appVersion : versionsList) {
-			string.append(appVersion.toString()+"\n\n\n\n");
+		StringBuilder listApps = new StringBuilder("Versions:   ");
+		for (int i=0; i<size(); i++) {
+			listApps.append(get(i));
 		}
-		
-		return string.toString(); 
+		return listApps.toString();
 	}
 	
 	
@@ -135,15 +80,24 @@ public class ViewDisplayAppVersionsInfo implements Parcelable{
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {		//TODO deprecate serializables in favor of parcels which are supposed to be faster
-//		out.writeList(versionsList);	
-		out.writeSerializable(versionsList);
+	public void writeToParcel(Parcel out, int flags) {
+		int size = this.size();
+		
+		out.writeInt(size);
+		
+		for(int i=0; i<size; i++){
+			out.writeParcelable(this.get(i),flags);
+		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public void readFromParcel(Parcel in) {
-//		in.readList(versionsList, cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo.class.getClassLoader());
-		versionsList = (ArrayList<ViewDisplayAppVersionInfo>) in.readSerializable();
+		this.clear();
+		
+		int size = in.readInt();
+		
+		for(int i=0; i<size; i++){
+			this.add((ViewDisplayAppVersionInfo) in.readParcelable(ViewDisplayAppVersionInfo.class.getClassLoader()));
+		}
 	}
 		
 }

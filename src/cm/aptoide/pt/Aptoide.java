@@ -134,6 +134,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private boolean availableByCategory = true;
 	private EnumAppsSorting appsSortingPolicy = null;
 	private AtomicBoolean allowAppsDisplayOptionsChange = null;
+	private AtomicBoolean resettingFlipper = null;
 	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
@@ -508,6 +509,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			synchronizingInstalledApps = new AtomicBoolean(false);
 			allowAppsDisplayOptionsChange = new AtomicBoolean(true);
+			resettingFlipper =new AtomicBoolean(false);
 			
 			makeSureServiceDataIsRunning();
 			
@@ -701,11 +703,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	
 	private synchronized void switchFlipperElements(EnumAptoideInterfaceTasks switchAction){
+		resettingFlipper.set(true);
 		View available = appsListFlipper.findViewWithTag(EnumAppsLists.Available);
 		View installed = appsListFlipper.findViewWithTag(EnumAppsLists.Installed);
 		View updates = appsListFlipper.findViewWithTag(EnumAppsLists.Updates);
-		appsListFlipper.invalidate();
-		appsListFlipper.removeAllViews();
+		
 		switch (switchAction) {
 			case SWITCH_AVAILABLE_TO_PROGRESSBAR:
 				available = loadingAvailableAppsList;
@@ -755,6 +757,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				break;
 		}
 
+		appsListFlipper.invalidate();
+		appsListFlipper.removeAllViews();
 		
 		appsListFlipper.addView(available, EnumAppsLists.Available.ordinal());
 		appsListFlipper.addView(installed, EnumAppsLists.Installed.ordinal());
@@ -779,6 +783,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				break;
 		}
 		
+		resettingFlipper.set(false);
 	}
 	
 	private void switchAvailableToProgressBar(){
@@ -878,6 +883,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	
 	private void showAvailableList(){
+		if(resettingFlipper.get()){
+			return;
+		}
 		switch (currentAppsList) {
 			case Available:
 //				appsListFlipper.clearAnimation();
@@ -900,6 +908,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	private void showInstalledList(){
+		if(resettingFlipper.get()){
+			return;
+		}
 		switch (currentAppsList) {
 			case Available:
 				showNextList();
@@ -921,6 +932,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 	
 	private void showUpdatableList(){
+		if(resettingFlipper.get()){
+			return;
+		}
 		switch (currentAppsList) {
 			case Available:
 				showNextList();
@@ -944,19 +958,23 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
     
 	private void showNextList(){
-		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_next));
-		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
-		appsListFlipper.showNext();
-		currentAppsList = EnumAppsLists.getNext(currentAppsList);
-		putElementsIntoTitleBar(currentAppsList);
+		if(!resettingFlipper.get()){
+			appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_next));
+			appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
+			appsListFlipper.showNext();
+			currentAppsList = EnumAppsLists.getNext(currentAppsList);
+			putElementsIntoTitleBar(currentAppsList);
+		}
 	}
 	
 	private void showPreviousList(){
-		appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_previous));
-		appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
-		appsListFlipper.showPrevious();
-		currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
-		putElementsIntoTitleBar(currentAppsList);
+		if(!resettingFlipper.get()){
+			appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_previous));
+			appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
+			appsListFlipper.showPrevious();
+			currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
+			putElementsIntoTitleBar(currentAppsList);
+		}
 	}
     
 	public void putElementsIntoTitleBar(EnumAppsLists currentAppList) {
