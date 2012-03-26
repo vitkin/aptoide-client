@@ -100,7 +100,7 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="#4f4f4f"
-                            android:textSize="12sp"  />
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/app_downloads"
@@ -125,7 +125,7 @@
                             android:maxLines="1"
                             android:singleLine="true"
                             android:textColor="#4f4f4f"
-                            android:textSize="12sp"  />
+                            android:textSize="12sp" />
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -174,7 +174,7 @@
                 </LinearLayout>
 
                 <Spinner
-                    android:id="@+id/spinnerMultiVersion"
+                    android:id="@+id/spinner_multi_version"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
@@ -227,6 +227,22 @@
                     android:layout_width="fill_parent"
                     android:layout_height="182dp"
                     android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/comment_on_app"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/comment_on_app"
+                    android:textColor="#3f3f3f"
+                    android:textSize="18.0sp" />
+
+                <ListView
+                    android:id="@+id/list_comments"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" >
+                </ListView>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -56,6 +56,7 @@ import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -86,6 +87,7 @@ public class AppInfo extends Activity {
 	private int appDislikes;
 	private String appDescription;
 	
+	
 	private ViewDisplayAppVersionsInfo appVersions;
 
 	private ViewDisplayAppVersionInfo installedVersion = null;
@@ -103,6 +105,9 @@ public class AppInfo extends Activity {
 	private Spinner appMultiVersion;
 
 	Gallery galleryView;
+	
+	private TextView commentOnApp;
+	ListView comments;
 	
 	private Button install;
 	private Button uninstall;
@@ -400,7 +405,7 @@ public class AppInfo extends Activity {
 		appLikesTextView = (TextView) findViewById(R.id.app_likes);
 		appDislikesTextView = (TextView) findViewById(R.id.app_dislikes);
 		appDescriptionTextView = (TextView) findViewById(R.id.app_description);
-		appMultiVersion = ((Spinner) findViewById(R.id.spinnerMultiVersion));
+		appMultiVersion = ((Spinner) findViewById(R.id.spinner_multi_version));
 		
 		ImageView searchView = (ImageView) findViewById(R.id.search_button);
 		searchView.setVisibility(View.GONE);
@@ -412,6 +417,9 @@ public class AppInfo extends Activity {
 
 		galleryView = (Gallery) findViewById(R.id.screens);
 		
+		commentOnApp = (TextView) findViewById(R.id.comment_on_app);
+		comments = (ListView) findViewById(R.id.list_comments);
+				
 		versionInfoManager = new VersionInfoManager();
 
 	}
