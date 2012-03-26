@@ -1,19 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
-    android:padding="15dp">
-
-    <TextView
-        android:id="@+id/loading_more_apps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_vertical"
-        android:text="@string/loading_more_apps"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginLeft="5dp"
-        android:textColor="#4f4f4f"
-        android:textSize="12sp" />
+    android:padding="10dp">
 
     <ProgressBar
         android:id="@+id/lists_progress_bar"
@@ -21,6 +9,6 @@
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@+id/loading_more_apps" />
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
