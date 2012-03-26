@@ -32,7 +32,9 @@ public enum EnumOptionsMenu {
 	ABOUT,
 	ADD_REPO,
 	EDIT_REPO,
-	REMOVE_REPO;
+	REMOVE_REPO,
+	INVERT_SELECTION,
+	REMOVE_SELECTED;
 	
 	public static EnumOptionsMenu reverseOrdinal(int ordinal){
 		return values()[ordinal];

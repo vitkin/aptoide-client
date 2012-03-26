@@ -369,6 +369,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public ViewDisplayListApps callGetScheduledApps() throws RemoteException {
+			return getScheduledApps();
+		}
+
+		@Override
 		public void callInstallApp(int appHashid) throws RemoteException {
 			downloadApp(appHashid);
 		}
@@ -1636,6 +1641,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public boolean isAppScheduledToInstall(final int appHashid){
 		return managerDatabase.isApplicationScheduledToInstall(appHashid);
+	}
+	
+	public ViewDisplayListApps getScheduledApps(){
+		return managerDatabase.getScheduledAppsInfo();
 	}
 	
 	public void installAllScheduledApps(){	//TODO could use some optimization throughout

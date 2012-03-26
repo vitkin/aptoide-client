@@ -69,6 +69,10 @@
 		    	  android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
 		</activity>
 		
+		<activity android:name=".ManageScheduled" android:process=":aptoideInterface" android:launchMode="singleTask" 
+		    	  android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
+		</activity>
+		
 		<activity android:name=".AppInfo" android:process=":aptoideInterface" android:launchMode="singleTask" 
 		    	  android:configChanges="keyboardHidden|orientation" android:theme="@android:style/Theme.NoTitleBar">
 		</activity>
