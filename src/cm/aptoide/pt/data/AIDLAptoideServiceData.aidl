@@ -105,6 +105,8 @@ interface AIDLAptoideServiceData {
 	void callUnscheduleInstallApp(in int appHashid);
 	boolean callIsAppScheduledToInstall(in int appHashid);
 	
+	ViewDisplayListApps callGetScheduledApps();
+	
 	void callRegisterMyappReceiver(in AIDLAptoideInterface myappObserver);
 	void callReceiveMyapp(in String uriString);
 	ViewMyapp callGetWaitingMyapp();

@@ -1,5 +1,5 @@
 /**
- * ManageRepos,		part of Aptoide
+ * Search,		part of Aptoide
  * 
  * from v3.0 Copyright (C) 2012  Duarte Silveira
  * duarte.silveira@caixamagica.pt
@@ -142,36 +142,36 @@ public class Search extends Activity implements OnItemClickListener{
 //        }
 //	};
 	
-	class ResultsListBinder implements ViewBinder
-	{
-
-		public boolean setViewValue(View view, Object data, String textRepresentation)
-		{
-			if(view.getClass().toString().equalsIgnoreCase("class android.widget.RatingBar")){
-				RatingBar tmpr = (RatingBar)view;
-				tmpr.setRating(new Float(textRepresentation));
-			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
-				TextView tmpr = (TextView)view;
-				tmpr.setText(textRepresentation);
-			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
-				ImageView tmpr = (ImageView)view;	
-				File icn = new File(textRepresentation);
-             	if(icn.exists() && icn.length() > 0){
-             		new Uri.Builder().build();
-    				tmpr.setImageURI(Uri.parse(textRepresentation));
-             	}else{
-             		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
-             	}
-			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
-				LinearLayout tmpr = (LinearLayout)view;
-				tmpr.setTag(textRepresentation);
-			}else{
-				return false;
-			}
-
-			return true;
-		}
-	}
+//	class ResultsListBinder implements ViewBinder
+//	{
+//
+//		public boolean setViewValue(View view, Object data, String textRepresentation)
+//		{
+//			if(view.getClass().toString().equalsIgnoreCase("class android.widget.RatingBar")){
+//				RatingBar tmpr = (RatingBar)view;
+//				tmpr.setRating(new Float(textRepresentation));
+//			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
+//				TextView tmpr = (TextView)view;
+//				tmpr.setText(textRepresentation);
+//			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
+//				ImageView tmpr = (ImageView)view;	
+//				File icn = new File(textRepresentation);
+//             	if(icn.exists() && icn.length() > 0){
+//             		new Uri.Builder().build();
+//    				tmpr.setImageURI(Uri.parse(textRepresentation));
+//             	}else{
+//             		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
+//             	}
+//			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
+//				LinearLayout tmpr = (LinearLayout)view;
+//				tmpr.setTag(textRepresentation);
+//			}else{
+//				return false;
+//			}
+//
+//			return true;
+//		}
+//	}
 	
 	public void getSearchResults(){
 		try {

@@ -137,6 +137,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private AtomicBoolean resettingFlipper = null;
 	private AtomicBoolean highPriority = null;
 	
+	private ArrayList<EnumAptoideInterfaceTasks> queuedFlipperChanges;
+	
+	
 	private ArrayList<ViewMyapp> handlingMyapps;
 	
 	private StaticCategoriesListAdapter categoriesAdapter = null;
@@ -498,6 +501,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 			handlingMyapps = new ArrayList<ViewMyapp>();
 			
+			queuedFlipperChanges = new ArrayList<EnumAptoideInterfaceTasks>();
+			
 			swypeDetector = new GestureDetector(new SwypeDetector());
 			swypeListener = new View.OnTouchListener() {
 									@Override
@@ -704,101 +709,108 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	
 	
-	private synchronized void switchFlipperElements(EnumAptoideInterfaceTasks switchAction){
-		resettingFlipper.set(true);
-		View available = appsListFlipper.findViewWithTag(EnumAppsLists.Available);
-		View installed = appsListFlipper.findViewWithTag(EnumAppsLists.Installed);
-		View updates = appsListFlipper.findViewWithTag(EnumAppsLists.Updates);
-		
-		switch (switchAction) {
-			case SWITCH_AVAILABLE_TO_PROGRESSBAR:
-				available = loadingAvailableAppsList;
-				updates = loadingUpdatableAppsList;				
-				break;
-				
-			case SWITCH_AVAILABLE_TO_CATEGORIES:
-				available = categoriesListView;
-				break;
-				
-			case SWITCH_AVAILABLE_TO_LIST:
-				available = availableAppsListView;
-				break;
-				
-			case SWITCH_AVAILABLE_TO_NO_APPS:
-				available = emptyAvailableAppsList;
-				updates = emptyUpdatableAppsList;
-				break;
-				
-			case SWITCH_INSTALLED_TO_PROGRESSBAR:
-				installed = loadingInstalledAppsList;
-				updates = loadingUpdatableAppsList;
-				break;
-				
-			case SWITCH_INSTALLED_TO_LIST:
-				installed = installedAppsListView;
-				break;
-				
-			case SWITCH_INSTALLED_TO_NO_APPS:
-				installed = emptyInstalledAppsList;
-				updates = emptyUpdatableAppsList;
-				break;
-				
-			case SWITCH_UPDATABLE_TO_PROGRESSBAR:
-				updates = loadingUpdatableAppsList;
-				break;
-				
-			case SWITCH_UPDATABLE_TO_LIST:
-				updates = updatableAppsListView;
-				break;
-				
-			case SWITCH_UPDATABLE_TO_NO_APPS:
-				updates = emptyUpdatableAppsList;
-				break;
-				
-			default:
-				break;
-		}
-
-		appsListFlipper.invalidate();
-		appsListFlipper.removeAllViews();
-		
-		appsListFlipper.addView(available, EnumAppsLists.Available.ordinal());
-		appsListFlipper.addView(installed, EnumAppsLists.Installed.ordinal());
-		appsListFlipper.addView(updates, EnumAppsLists.Updates.ordinal());
-
-		appsListFlipper.clearAnimation();
-		
-		switch (currentAppsList) {
-			case Available:
-				break;
-		
-			case Installed:
-				appsListFlipper.showNext();
-				break;
-			
-			case Updates:
-				appsListFlipper.showNext();
-				appsListFlipper.showNext();
-				break;
-	
-			default:
-				break;
-		}
-		
-		resettingFlipper.set(false);
-	}
+//	private synchronized void switchFlipperElements(EnumAptoideInterfaceTasks switchAction){
+//		if(!swyping.get()){
+//			resettingFlipper.set(true);
+//			View available = appsListFlipper.findViewWithTag(EnumAppsLists.Available);
+//			View installed = appsListFlipper.findViewWithTag(EnumAppsLists.Installed);
+//			View updates = appsListFlipper.findViewWithTag(EnumAppsLists.Updates);
+//			
+//			switch (switchAction) {
+//				case SWITCH_AVAILABLE_TO_PROGRESSBAR:
+//					available = loadingAvailableAppsList;
+//					updates = loadingUpdatableAppsList;				
+//					break;
+//					
+//				case SWITCH_AVAILABLE_TO_CATEGORIES:
+//					available = categoriesListView;
+//					break;
+//					
+//				case SWITCH_AVAILABLE_TO_LIST:
+//					available = availableAppsListView;
+//					break;
+//					
+//				case SWITCH_AVAILABLE_TO_NO_APPS:
+//					available = emptyAvailableAppsList;
+//					updates = emptyUpdatableAppsList;
+//					break;
+//					
+//				case SWITCH_INSTALLED_TO_PROGRESSBAR:
+//					installed = loadingInstalledAppsList;
+//					updates = loadingUpdatableAppsList;
+//					break;
+//					
+//				case SWITCH_INSTALLED_TO_LIST:
+//					installed = installedAppsListView;
+//					break;
+//					
+//				case SWITCH_INSTALLED_TO_NO_APPS:
+//					installed = emptyInstalledAppsList;
+//					updates = emptyUpdatableAppsList;
+//					break;
+//					
+//				case SWITCH_UPDATABLE_TO_PROGRESSBAR:
+//					updates = loadingUpdatableAppsList;
+//					break;
+//					
+//				case SWITCH_UPDATABLE_TO_LIST:
+//					updates = updatableAppsListView;
+//					break;
+//					
+//				case SWITCH_UPDATABLE_TO_NO_APPS:
+//					updates = emptyUpdatableAppsList;
+//					break;
+//					
+//				default:
+//					break;
+//			}
+//	
+//			appsListFlipper.invalidate();
+//			appsListFlipper.removeAllViews();
+//			
+//			appsListFlipper.addView(available, EnumAppsLists.Available.ordinal());
+//			appsListFlipper.addView(installed, EnumAppsLists.Installed.ordinal());
+//			appsListFlipper.addView(updates, EnumAppsLists.Updates.ordinal());
+//	
+//			appsListFlipper.clearAnimation();
+//			
+//			switch (currentAppsList) {
+//				case Available:
+//					break;
+//			
+//				case Installed:
+//					appsListFlipper.showNext();
+//					break;
+//				
+//				case Updates:
+//					appsListFlipper.showNext();
+//					appsListFlipper.showNext();
+//					break;
+//		
+//				default:
+//					break;
+//			}
+//			
+//			if(!queuedFlipperChanges.isEmpty()){
+//				switchFlipperElements(queuedFlipperChanges.remove(0));
+//			}
+//			resettingFlipper.set(false);
+//		}else{
+//			queuedFlipperChanges.add(switchAction);
+//		}
+//	}
 	
 	private void switchAvailableToProgressBar(){
 		AptoideLog.d(Aptoide.this, "switching available to progressBar");
 		
 		loadingAvailableAppsProgress.setIndeterminate(true);
 		
-//        appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
-//        appsListFlipper.addView(loadingAvailableAppsList, EnumAppsLists.Available.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR);
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
+        appsListFlipper.addView(loadingAvailableAppsList, EnumAppsLists.Available.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_PROGRESSBAR);
         
-//        switchUpdatableToProgressBar();
+        switchUpdatableToProgressBar();
 	}
 	
 	private void availableProgressSetCompletionTarget(){
@@ -815,168 +827,168 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	}
 
 	private void switchAvailableToList(){
-//        appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
-//        appsListFlipper.addView(availableAppsListView, EnumAppsLists.Available.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_LIST);
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
+        appsListFlipper.addView(availableAppsListView, EnumAppsLists.Available.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_LIST);
 	}
 	
 	private void switchAvailableToCategory(){
-//		appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
-//        appsListFlipper.addView(categoriesListView, EnumAppsLists.Available.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_CATEGORIES);
+		appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
+        appsListFlipper.addView(categoriesListView, EnumAppsLists.Available.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_CATEGORIES);
 	}
 	
 	private void switchAvailableToEmpty(){
-//		appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
-//        appsListFlipper.addView(emptyAvailableAppsList, EnumAppsLists.Available.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_NO_APPS);
+		appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Available.ordinal());
+        appsListFlipper.addView(emptyAvailableAppsList, EnumAppsLists.Available.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_NO_APPS);
         
-//        switchUpdatableToEmpty();
+        switchUpdatableToEmpty();
 	}
 
 	private void switchInstalledToProgressBar(){
-//        appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
-//        appsListFlipper.addView(loadingInstalledAppsList, EnumAppsLists.Installed.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR);
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
+        appsListFlipper.addView(loadingInstalledAppsList, EnumAppsLists.Installed.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR);
         
-//        switchUpdatableToProgressBar();
+        switchUpdatableToProgressBar();
 	}
 
 	private void switchInstalledToList(){
 		AptoideLog.d(Aptoide.this, "switching installed to list");
-//        appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
-//        appsListFlipper.addView(installedAppsListView, EnumAppsLists.Installed.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_LIST);
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
+        appsListFlipper.addView(installedAppsListView, EnumAppsLists.Installed.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_LIST);
 	}
 	
 	private void switchInstalledToEmpty(){
-//		appsListFlipper.invalidate();
-//		appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
-//        appsListFlipper.addView(emptyInstalledAppsList, EnumAppsLists.Installed.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_NO_APPS);
+		appsListFlipper.invalidate();
+		appsListFlipper.removeViewAt(EnumAppsLists.Installed.ordinal());
+        appsListFlipper.addView(emptyInstalledAppsList, EnumAppsLists.Installed.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_NO_APPS);
 	}
 
 	private void switchUpdatableToProgressBar(){
-//        appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
-//        appsListFlipper.addView(loadingUpdatableAppsList, EnumAppsLists.Updates.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_PROGRESSBAR);
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
+        appsListFlipper.addView(loadingUpdatableAppsList, EnumAppsLists.Updates.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_PROGRESSBAR);
 	}
 
 	private void switchUpdatableToList(){
-//        appsListFlipper.invalidate();
-//        appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
-//        appsListFlipper.addView(updatableAppsListView, EnumAppsLists.Updates.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_LIST);
+        appsListFlipper.invalidate();
+        appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
+        appsListFlipper.addView(updatableAppsListView, EnumAppsLists.Updates.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_LIST);
 	}
 	
 	private void switchUpdatableToEmpty(){
-//		appsListFlipper.invalidate();
-//		appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
-//        appsListFlipper.addView(emptyUpdatableAppsList, EnumAppsLists.Updates.ordinal());
-		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_NO_APPS);
+		appsListFlipper.invalidate();
+		appsListFlipper.removeViewAt(EnumAppsLists.Updates.ordinal());
+        appsListFlipper.addView(emptyUpdatableAppsList, EnumAppsLists.Updates.ordinal());
+//		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_NO_APPS);
 	}
 	
 	
 	
 	private void showAvailableList(){
-		if(resettingFlipper.get()){
-			return;
-		}
-		switch (currentAppsList) {
-			case Available:
-//				appsListFlipper.clearAnimation();
-//				appsListFlipper.showNext();
-//				appsListFlipper.showPrevious();
-				break;
+//		if(!resettingFlipper.get()){
 		
-			case Installed:
-				showPreviousList();
-				break;
+			switch (currentAppsList) {
+				case Available:
+					appsListFlipper.clearAnimation();
+					appsListFlipper.showNext();
+					appsListFlipper.showPrevious();
+					break;
 			
-			case Updates:
-				showPreviousList();
-				showPreviousList();
-				break;
-	
-			default:
-				break;
-		}
+				case Installed:
+					showPreviousList();
+					break;
+				
+				case Updates:
+					showPreviousList();
+					showPreviousList();
+					break;
+		
+				default:
+					break;
+			}
+//		}
 	}
 	
 	private void showInstalledList(){
-		if(resettingFlipper.get()){
-			return;
-		}
-		switch (currentAppsList) {
-			case Available:
-				showNextList();
-				break;
-			
-			case Updates:
-				showPreviousList();
-				break;
-	
-			case Installed:
-//				appsListFlipper.clearAnimation();
-//				appsListFlipper.showNext();
-//				appsListFlipper.showPrevious();
-				break;
+//		if(!resettingFlipper.get()){
+		
+			switch (currentAppsList) {
+				case Available:
+					showNextList();
+					break;
 				
-			default:
-				break;
-		}
+				case Updates:
+					showPreviousList();
+					break;
+		
+				case Installed:
+					appsListFlipper.clearAnimation();
+					appsListFlipper.showNext();
+					appsListFlipper.showPrevious();
+					break;
+					
+				default:
+					break;
+			}
+//		}
 	}
 	
 	private void showUpdatableList(){
-		if(resettingFlipper.get()){
-			return;
-		}
-		switch (currentAppsList) {
-			case Available:
-				showNextList();
-				showNextList();
-				break;
-			
-			case Installed:
-				showNextList();
-				break;
-			
-			case Updates:
-//				appsListFlipper.clearAnimation();
-//				appsListFlipper.showPrevious();
-//				appsListFlipper.showNext();
-				break;
-	
-			default:
-				break;
-		}
+//		if(!resettingFlipper.get()){
+		
+			switch (currentAppsList) {
+				case Available:
+					showNextList();
+					showNextList();
+					break;
+				
+				case Installed:
+					showNextList();
+					break;
+				
+				case Updates:
+					appsListFlipper.clearAnimation();
+					appsListFlipper.showPrevious();
+					appsListFlipper.showNext();
+					break;
+		
+				default:
+					break;
+			}
+//		}
 	}
 	
     
 	private void showNextList(){
-		if(!resettingFlipper.get()){
+//		if(!resettingFlipper.get()){
 			appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_next));
 			appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_next));
 			appsListFlipper.showNext();
 			currentAppsList = EnumAppsLists.getNext(currentAppsList);
 			putElementsIntoTitleBar(currentAppsList);
-		}
+//		}
 	}
 	
 	private void showPreviousList(){
-		if(!resettingFlipper.get()){
+//		if(!resettingFlipper.get()){
 			appsListFlipper.setOutAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_out_previous));
 			appsListFlipper.setInAnimation(AnimationUtils.loadAnimation(Aptoide.this, R.anim.flip_in_previous));
 			appsListFlipper.showPrevious();
 			currentAppsList = EnumAppsLists.getPrevious(currentAppsList);
 			putElementsIntoTitleBar(currentAppsList);
-		}
+//		}
 	}
     
 	public void putElementsIntoTitleBar(EnumAppsLists currentAppList) {
@@ -1064,6 +1076,10 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				swypeDelayHandler.postDelayed(new Runnable() {
 	                public void run() {
 	                	swyping.set(false);
+
+//	        			if(!queuedFlipperChanges.isEmpty()){
+//	        				switchFlipperElements(queuedFlipperChanges.remove(0));
+//	        			}
 	                }
 	            }, 500);
 			}
@@ -1093,19 +1109,19 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		setHighPriority(true);
+//		setHighPriority(true);
 		return swypeDetector.onTouchEvent(event);
 	}
 	
-	private void setHighPriority( boolean high){
-		if(high && !highPriority.get()){
-			highPriority.set(true);
-			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-		}else if(!high && highPriority.get()){
-			highPriority.set(false);
-			Thread.currentThread().setPriority(Thread.NORM_PRIORITY);			
-		}
-	}
+//	private void setHighPriority( boolean high){
+//		if(high && !highPriority.get()){
+//			highPriority.set(true);
+//			Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+//		}else if(!high && highPriority.get()){
+//			highPriority.set(false);
+//			Thread.currentThread().setPriority(Thread.MIN_PRIORITY);			
+//		}
+//	}
 
 	
 	private void viewApp(int position){
@@ -1134,7 +1150,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		Intent appInfo = new Intent(this,AppInfo.class);
 		appInfo.putExtra("appHashid", appHashid);
 		startActivity(appInfo);
-		setHighPriority(false);
+//		setHighPriority(false);
 	}
 	
     @Override
@@ -1186,8 +1202,8 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
 						.setIcon(android.R.drawable.ic_menu_sort_by_size);
 				}
-	//			menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.schDwnBtn)
-	//				.setIcon(R.drawable.ic_menu_scheduled);
+				menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.scheduled_downloads)
+					.setIcon(R.drawable.ic_menu_scheduled);
 				break;
 	
 			default:
@@ -1212,6 +1228,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		Log.d("Aptoide-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
 		switch (menuEntry) {
 			case MANAGE_REPO:
+				availableAdapter.sleep();
 				Intent manageRepo = new Intent(this, ManageRepos.class);
 				startActivity(manageRepo);
 				return true;
@@ -1335,13 +1352,15 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				aboutDialog.show();
 				return true;
 			case SETTINGS:
+				availableAdapter.sleep();
 				Intent settings = new Intent(this, Settings.class);
 				startActivity(settings);
 				return true;	
-//			case SCHEDULED_DOWNLOADS:
-//				Intent sch_download = new Intent(RemoteInTab.this,ScheduledDownload.class);
-//				startActivity(sch_download);
-//				return true;
+			case SCHEDULED_DOWNLOADS:
+				availableAdapter.sleep();
+				Intent manageScheduled = new Intent(this, ManageScheduled.class);
+				startActivity(manageScheduled);
+				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}

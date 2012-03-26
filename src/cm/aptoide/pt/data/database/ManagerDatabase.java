@@ -38,6 +38,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
+import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayApplicationAvailable;
 import cm.aptoide.pt.data.display.ViewDisplayApplicationInstalled;
 import cm.aptoide.pt.data.display.ViewDisplayApplicationUpdatable;
@@ -1919,6 +1920,50 @@ public class ManagerDatabase {
 		}
 		return appsList;
 	}
+	
+	/**
+	 * getScheduledAppsInfo, gets list of applications scheduled to install
+	 *  
+	 * @return ViewDisplayListApps scheduled apps
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewDisplayListApps getScheduledAppsInfo(){
+		
+		final int HASHID = Constants.COLUMN_FIRST;
+		final int NAME = Constants.COLUMN_SECOND;
+		final int VERSION = Constants.COLUMN_THIRD;
+		
+		
+		ViewDisplayListApps appsList = null;
+				
+		String selectAppsToInstall = "SELECT "+Constants.KEY_APPLICATION_HASHID+" ,"+Constants.KEY_APPLICATION_NAME+" ,"+Constants.KEY_APPLICATION_VERSION_NAME
+									+" FROM "+Constants.TABLE_APP_TO_INSTALL
+									+" NATURAL INNER JOIN "+Constants.TABLE_APPLICATION
+									+" GROUP BY "+Constants.KEY_APPLICATION_HASHID
+									+" ORDER BY "+Constants.KEY_APPLICATION_NAME;
+
+		Cursor cursorAppsToInstall = aptoideAtomicQuery(selectAppsToInstall);
+
+		if(cursorAppsToInstall == null || cursorAppsToInstall.isClosed()){
+			return appsList;
+		}
+		
+		if(cursorAppsToInstall.getCount() == Constants.EMPTY_INT){
+			cursorAppsToInstall.close();
+		}else{
+			cursorAppsToInstall.moveToFirst();
+			appsList = new ViewDisplayListApps();
+			do{
+				appsList.add(new ViewDisplayApplication(cursorAppsToInstall.getInt(HASHID), cursorAppsToInstall.getString(NAME), cursorAppsToInstall.getString(VERSION)));
+			}while(cursorAppsToInstall.moveToNext());
+			
+			cursorAppsToInstall.close();
+		}
+		return appsList;
+	}
 
 	
 	/**
@@ -3011,6 +3056,7 @@ public class ManagerDatabase {
 		int installedVersionCode = Constants.EMPTY_INT;
 		
 		boolean installedAlsoAvailable = false;
+		boolean installedAdded = false;
 		
 		String packageName = getAppPackageName(appHashid);
 		if(packageName == null){
@@ -3080,7 +3126,7 @@ public class ManagerDatabase {
 				
 				do{
 					int appVersionCode = appVersionsCursor.getInt(VERSION_CODE);
-					boolean appVersionIsInstalled = (appVersionsCursor.getInt(VERSION_CODE)==installedVersionCode?true:false);
+					boolean appVersionIsInstalled = (appVersionsCursor.getInt(VERSION_CODE)==installedVersionCode);
 					installedAlsoAvailable = (installedAlsoAvailable?true:appVersionIsInstalled);
 					
 					appVersion = new ViewDisplayAppVersionInfo(appVersionsCursor.getString(APP_NAME), appVersionsCursor.getString(VERSION_NAME)
@@ -3090,7 +3136,8 @@ public class ManagerDatabase {
 					
 					
 					if(!installedAlsoAvailable && appVersionCode < installedVersionCode){
-						appVersions.add(installedVersion);						
+						appVersions.add(installedVersion);
+						installedAdded = true;
 					}
 					if(!appVersionsCursor.isNull(REPO_URI)){
 						appVersion.setRepoInfo(appVersionsCursor.getInt(REPO_HASHID), appVersionsCursor.getString(REPO_URI));
@@ -3114,6 +3161,10 @@ public class ManagerDatabase {
 					appVersions.add(appVersion);
 					
 				}while(appVersionsCursor.moveToNext());
+
+				if(installedVersionCode != Constants.EMPTY_INT && !installedAlsoAvailable && !installedAdded){
+					appVersions.add(installedVersion);						
+				}
 			}
 			appVersionsCursor.close();
 			
@@ -3353,7 +3404,7 @@ public class ManagerDatabase {
 		String selectApp = "SELECT "+Constants.KEY_APP_INSTALLED_PACKAGE_NAME
 									+" FROM "+Constants.TABLE_APP_INSTALLED
 									+" WHERE "+Constants.KEY_APP_INSTALLED_HASHID+"='"+appHashid+"'"
-							+"UNION SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
+							+" UNION SELECT "+Constants.KEY_APPLICATION_PACKAGE_NAME
 									+" FROM "+Constants.TABLE_APPLICATION
 									+" WHERE "+Constants.KEY_APPLICATION_HASHID+"='"+appHashid+"'";
 		

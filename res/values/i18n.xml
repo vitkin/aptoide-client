@@ -45,6 +45,9 @@
     <string name="likes">Likes</string>
     <string name="dislikes">Dislikes</string>
     <string name="screenshots">Screenshots:</string> 
+    <string name="comments">Comments:</string>
+    <string name="comment_on_app">Comment on application</string>
+    <string name="comments_unavailable">Comments unavailable</string>
     
     <string name="downloading_app">Downloading application</string>
     <string name="click_to_install_app">Click to install application</string>
@@ -97,6 +100,9 @@
     
     <string name="select_version">Select version</string>
     <string name="scheduled_downloads">Scheduled Downloads</string>
+   <string name="no_scheduled_downloads">No scheduled downloads!</string>
+   <string name="invert_selection">Invert Selection</string>
+   <string name="remove_selected">Remove Selected</string>
     <string name="schedule_downloads_sum">Install scheduled downloads automatically when a Wifi connection is present</string>
     <string name="automatic_install">Automatic install</string>
     <string name="schedule">Schedule</string>
@@ -110,6 +116,7 @@
     <string name="add">Add</string>
     <string name="remove">Remove</string>
     <string name="install">Install</string>
+    <string name="install_selected">Install Selected</string>
     <string name="update">Update</string>
      <string name="update_to">Update to:</string>
     <string name="downgrade">Downgrade</string>
@@ -122,6 +129,7 @@
     <string name="no">No</string>
     <string name="starting">Starting</string>
     <string name="download">download</string>
+    <string name="confirm_remove">Confirm Removal?</string>
     
     <string name="app_rating">Application Rating</string>
     <string name="app_rating_sum">Show applications rated as:</string>

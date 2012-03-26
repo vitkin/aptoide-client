@@ -26,6 +26,7 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -44,8 +45,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -93,6 +96,8 @@ public class AppInfo extends Activity {
 	private ViewDisplayAppVersionInfo installedVersion = null;
 	private ViewDisplayAppVersionInfo selectedVersion = null;
 	
+	private int scheduledVersion = Constants.EMPTY_INT;
+	
 	CheckBox later;
 	private TextView appNameTextView;
 	private TextView appDownloadsTextView;
@@ -132,14 +137,14 @@ public class AppInfo extends Activity {
 			Log.v("Aptoide-AppInfo", "Connected to ServiceData");
 	
 			
-			try {
-				Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
-				serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
-
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//			try {
+//				Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+//				serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+//
+//			} catch (RemoteException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 
 			setVersions();		
 			
@@ -302,8 +307,8 @@ public class AppInfo extends Activity {
 			@Override
 			public void run() {
 				try {
-					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
-					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+//					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+//					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
 					appVersions.get(position).setSize(serviceDataCaller.callGetAppVersionDownloadSize(appFullHashid));
 					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_SIZE.ordinal());
 				} catch (RemoteException e) {
@@ -329,8 +334,8 @@ public class AppInfo extends Activity {
 			@Override
 			public void run() {
 				try {
-					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
-					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+//					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+//					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
 					appVersions.get(position).setStats(serviceDataCaller.callGetAppStats(appFullHashid));
 					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_STATS.ordinal());
 				} catch (RemoteException e) {
@@ -356,8 +361,8 @@ public class AppInfo extends Activity {
 			@Override
 			public void run() {
 				try {
-					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
-					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+//					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+//					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
 					appVersions.get(position).setExtras(serviceDataCaller.callGetAppExtras(appFullHashid));
 					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_DESCRIPTION.ordinal());
 				} catch (RemoteException e) {
@@ -391,12 +396,19 @@ public class AppInfo extends Activity {
 		
 		
 		later = (CheckBox) findViewById(R.id.later);
-		later.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		later.setOnClickListener(new OnClickListener() {
+			
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onClick(View v) {
 				toggleVersionDownloadScheduleStatus(selectedVersion); 
 			}
 		});
+//		later.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+//			@Override
+//			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//				toggleVersionDownloadScheduleStatus(selectedVersion); 
+//			}
+//		});
 		appNameTextView = (TextView) findViewById(R.id.app_name);
 		appDownloadsTextView = (TextView) findViewById(R.id.app_downloads);
 		appSizeTextView = (TextView) findViewById(R.id.app_size);
@@ -427,22 +439,28 @@ public class AppInfo extends Activity {
 	
 	
 	private void toggleVersionDownloadScheduleStatus(ViewDisplayAppVersionInfo appVersion){
-		try {
-			if(appVersion.isScheduled()){
-				serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
-			}else{
-				serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
-			}
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//		try {
+//			if(appVersion.isScheduled()){
+//				serviceDataCaller.callUnscheduleInstallApp(selectedVersion.getAppHashid());
+//			}else{
+//				serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
+//			}
+//		} catch (RemoteException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		appVersion.setIsScheduled(!appVersion.isScheduled());
+		if(appVersion.getAppHashid() == scheduledVersion){
+			scheduledVersion = Constants.EMPTY_INT;
+		}else{
+			scheduledVersion = appVersion.getAppHashid();
 		}
-		appVersion.setIsScheduled(!appVersion.isScheduled());
+		selectVersion(appVersion);
 	}
 	
 	private void activateInstallButton(boolean activate){
 		String label = getResources().getString(R.string.install);
-		if(later.isChecked() && !selectedVersion.isScheduled()){
+		if(scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()){
 			label = getResources().getString(R.string.schedule);
 		}
 		if(activate){
@@ -452,7 +470,7 @@ public class AppInfo extends Activity {
 	
 				@Override
 				public void onClick(View view) {
-					if(later.isChecked()){
+					if(scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()){
 						try {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
@@ -505,7 +523,7 @@ public class AppInfo extends Activity {
 				}
 			});
 		}else{
-			if(selectedVersion.isScheduled()){
+			if( selectedVersion.isScheduled()){
 				label = getResources().getString(R.string.unschedule);
 				uninstall.setText(label);
 				uninstall.setTextColor(Color.BLACK);
@@ -533,7 +551,7 @@ public class AppInfo extends Activity {
 	
 	private void activateUpdateButton(boolean activate){
 		String label = getResources().getString(R.string.update);
-		if(later.isChecked() && !selectedVersion.isScheduled()){
+		if(scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()){
 			label = getResources().getString(R.string.schedule);
 		}
 		if(activate){
@@ -544,7 +562,7 @@ public class AppInfo extends Activity {
 				@Override
 				public void onClick(View view) {
 					try {
-						if (later.isChecked()) {
+						if (scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()) {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called update app later");
@@ -574,7 +592,7 @@ public class AppInfo extends Activity {
 	
 	private void activateDowngradeButton(boolean activate){
 		String label = getResources().getString(R.string.downgrade);
-		if(later.isChecked() && !selectedVersion.isScheduled()){
+		if(scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()){
 			label = getResources().getString(R.string.schedule);
 		}
 		if(activate){
@@ -585,7 +603,7 @@ public class AppInfo extends Activity {
 				@Override
 				public void onClick(View view) {
 					try {
-						if (later.isChecked()) {
+						if (scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()) {
 							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
 							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
 							Log.d("Aptoide-AppInfo", "called downgrade app later");
@@ -617,6 +635,13 @@ public class AppInfo extends Activity {
 		selectedVersion = version;
 		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion.getVersionName());
 		
+		if(scheduledVersion == selectedVersion.getAppHashid() || (scheduledVersion == Constants.EMPTY_INT && version.isScheduled())){
+			later.setChecked(true);
+		}else{
+			later.setChecked(false);
+		}
+		Log.d("Aptoide-AppInfo", "isScheduled: "+selectedVersion.isScheduled()+" later checked: "+later.isChecked());
+		
 		if(installedVersion != null){
 			if(selectedVersion.isInstalled()){
 				activateUninstallButton(true);
@@ -643,7 +668,7 @@ public class AppInfo extends Activity {
 		try {
 
 			Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
-			serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+			serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, version.getAppHashid());
 			
 			if(version.getSize() == Constants.EMPTY_INT){
 				serviceDataCaller.callAddVersionDownloadInfo(version.getAppHashid(), version.getRepoHashid());
@@ -822,6 +847,7 @@ public class AppInfo extends Activity {
 
 	@Override
 	public void finish() {
+		versionInfoManager.versionInfoColectorsPool.shutdownNow();
 		if (serviceDataIsBound) {
 			unbindService(serviceDataConnection);
 		}
