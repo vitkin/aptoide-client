@@ -28,10 +28,10 @@ import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
-import cm.aptoide.pt.data.downloads.EnumIconDownloadsPermission;
-import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
+import cm.aptoide.pt.data.webservices.EnumIconDownloadsPermission;
+import cm.aptoide.pt.data.webservices.ViewIconDownloadPermissions;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
 

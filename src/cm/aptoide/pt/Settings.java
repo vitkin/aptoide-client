@@ -44,9 +44,9 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
 import cm.aptoide.pt.data.preferences.ViewSettings;
 import cm.aptoide.pt.data.system.ViewHwFilters;
+import cm.aptoide.pt.data.webservices.ViewIconDownloadPermissions;
 
 
 /**

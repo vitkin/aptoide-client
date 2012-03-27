@@ -47,9 +47,6 @@ import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayLogin;
 import cm.aptoide.pt.data.display.ViewDisplayRepo;
-import cm.aptoide.pt.data.downloads.EnumDownloadType;
-import cm.aptoide.pt.data.downloads.ViewDownload;
-import cm.aptoide.pt.data.downloads.ViewDownloadInfo;
 import cm.aptoide.pt.data.model.ViewAppComment;
 import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
 import cm.aptoide.pt.data.model.ViewApplication;
@@ -63,6 +60,9 @@ import cm.aptoide.pt.data.model.ViewScreenInfo;
 import cm.aptoide.pt.data.model.ViewStatsInfo;
 import cm.aptoide.pt.data.system.ViewHwFilters;
 import cm.aptoide.pt.data.util.Constants;
+import cm.aptoide.pt.data.webservices.EnumDownloadType;
+import cm.aptoide.pt.data.webservices.ViewDownload;
+import cm.aptoide.pt.data.webservices.ViewDownloadInfo;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -3038,15 +3038,15 @@ public class ManagerDatabase {
 		final int VERSION_CODE = Constants.COLUMN_THIRD;
 		final int VERSION_NAME = Constants.COLUMN_FOURTH;
 		final int APP_NAME = Constants.COLUMN_FIFTH;
-		final int SCHEDULED = Constants.COLUMN_SIXTH;
-		final int REPO_URI = Constants.COLUMN_SEVENTH;
-		final int REPO_HASHID = Constants.COLUMN_EIGTH;
-		final int LIKES = Constants.COLUMN_NINTH;
-		final int DISLIKES = Constants.COLUMN_TENTH;
-		final int STARS = Constants.COLUMN_ELEVENTH;
-		final int DOWNLOADS = Constants.COLUMN_TWELVETH;
-		final int DESCRIPTION = Constants.COLUMN_THERTEENTH;
-		final int SIZE = Constants.COLUMN_FOURTEENTH;
+		final int REPO_URI = Constants.COLUMN_SIXTH;
+		final int REPO_HASHID = Constants.COLUMN_SEVENTH;
+		final int LIKES = Constants.COLUMN_EIGTH;
+		final int DISLIKES = Constants.COLUMN_NINTH;
+		final int STARS = Constants.COLUMN_TENTH;
+		final int DOWNLOADS = Constants.COLUMN_ELEVENTH;
+		final int DESCRIPTION = Constants.COLUMN_TWELVETH;
+		final int SIZE = Constants.COLUMN_THERTEENTH;
+		final int SCHEDULED = Constants.COLUMN_FOURTEENTH;
 		
 		final int INSTALLED_HASHID = Constants.COLUMN_FIRST;
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_SECOND;
@@ -3070,22 +3070,22 @@ public class ManagerDatabase {
 		
 		String selectAppVersions = "SELECT A."+Constants.KEY_APPLICATION_FULL_HASHID+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_VERSION_CODE
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
-											+", T.scheduled"+", R."+Constants.KEY_REPO_URI+", R."+Constants.KEY_REPO_HASHID
+											+", R."+Constants.KEY_REPO_URI+", R."+Constants.KEY_REPO_HASHID
 											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
 											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
-											+", D."+Constants.KEY_DOWNLOAD_SIZE
+											+", D."+Constants.KEY_DOWNLOAD_SIZE+", T.scheduled"
 									+" FROM (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI
 											+" FROM "+Constants.TABLE_REPOSITORY
 											+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+") R"
 									+" NATURAL INNER JOIN (SELECT * " 
 														+" FROM "+Constants.TABLE_APPLICATION
 														+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"') A"
-									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APP_TO_INSTALL_HASHID+", "+Constants.KEY_APP_TO_INSTALL_HASHID+" AS scheduled"
-														+" FROM "+Constants.TABLE_APP_TO_INSTALL+") T"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_STATS_INFO+") S"
 									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_EXTRA_INFO+") E"
 									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+", "+Constants.KEY_DOWNLOAD_SIZE
 														+" FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
+									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APP_TO_INSTALL_HASHID+", "+Constants.KEY_APP_TO_INSTALL_HASHID+" AS scheduled"
+														+" FROM "+Constants.TABLE_APP_TO_INSTALL+") T"
 //									+" NATURAL LEFT JOIN (SELECT "
 //															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
 //															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
@@ -3097,7 +3097,7 @@ public class ManagerDatabase {
 											+" FROM "+Constants.TABLE_APP_INSTALLED
 											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"'";
 		
-//		Log.d("Aptoide-ManagerDatabase", "app info: "+selectAppVersions+ " installed : "+selectInstalledAppVersion);
+		Log.d("Aptoide-ManagerDatabase", "app info: "+selectAppVersions+ " installed : "+selectInstalledAppVersion);
 		
 		try{
 			db.beginTransaction();

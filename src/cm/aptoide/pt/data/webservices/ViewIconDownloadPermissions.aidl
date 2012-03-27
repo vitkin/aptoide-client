@@ -1,6 +1,6 @@
 /**
- * EnumIconDownloadsPermission,		part of aptoide
- * Copyright (C) 2011  Duarte Silveira
+ * ViewSettings,		part of Aptoide's ServiceData
+ * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,24 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-
-package cm.aptoide.pt.data.downloads;
+package cm.aptoide.pt.data.webservices;
 
 /**
- * EnumIconDownloadsPermission, typeSafes icons downloads permission levels in Aptoide
- * 
+ * ViewSettings, models Settings for AIDL IPC
+ *
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumIconDownloadsPermission {
-	WIFI,
-	ETHERNET,
-	WIMAX,
-	MOBILE,
-	NEVER;
-	
-	public static EnumIconDownloadsPermission reverseOrdinal(int ordinal){
-		return values()[ordinal];
-	}
-}
+parcelable ViewIconDownloadPermissions;

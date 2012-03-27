@@ -19,7 +19,7 @@
 */
 
 
-package cm.aptoide.pt.data.downloads;
+package cm.aptoide.pt.data.webservices;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;

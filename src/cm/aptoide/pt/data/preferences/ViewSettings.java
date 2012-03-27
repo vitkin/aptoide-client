@@ -19,7 +19,7 @@
 */
 package cm.aptoide.pt.data.preferences;
 
-import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
+import cm.aptoide.pt.data.webservices.ViewIconDownloadPermissions;
 import android.os.Parcel;
 import android.os.Parcelable;
 

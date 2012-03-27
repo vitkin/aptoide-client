@@ -97,6 +97,7 @@ public class AppInfo extends Activity {
 	private ViewDisplayAppVersionInfo selectedVersion = null;
 	
 	private int scheduledVersion = Constants.EMPTY_INT;
+	private int unscheduleVersion = Constants.EMPTY_INT;
 	
 	CheckBox later;
 	private TextView appNameTextView;
@@ -433,6 +434,68 @@ public class AppInfo extends Activity {
 		comments = (ListView) findViewById(R.id.list_comments);
 				
 		versionInfoManager = new VersionInfoManager();
+		
+		
+//		this.like = ((ImageView)linearLayout.findViewById(R.id.likesImage));
+//		like.setOnTouchListener(new OnTouchListener(){
+//		      public boolean onTouch(View view, MotionEvent e) {
+//		          switch(e.getAction())
+//		          {
+//		             case MotionEvent.ACTION_DOWN:
+//		            	 
+//		            	 if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(Configs.LOGIN_PASSWORD, null)==null){				
+//		            		LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, 
+//		            										dislike, apk_repo_str_raw , 
+//		            										apk_id, apk_ver_str_raw, EnumUserTaste.LIKE, userTaste);
+//							loginComments.setOnDismissListener(ApkInfo.this);
+//							loginComments.show();
+//						 }else{
+//							
+//							 new AddTaste(
+//					 				ApkInfo.this, 
+//					 				apk_repo_str_raw,
+//					 				apk_id, 
+//					 				apk_ver_str_raw, 
+//					 				sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+//					 				sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+//					 				EnumUserTaste.LIKE, likes, dislikes, like, dislike, userTaste).submit();
+//							
+//						 } 
+//		            	 break;
+//		          }
+//		          return false;  //means that the listener dosen't consume the event
+//		      }
+//		});
+//		
+//		this.dislike = ((ImageView)linearLayout.findViewById(R.id.dislikesImage));
+//		dislike.setOnTouchListener(new OnTouchListener(){
+//		      public boolean onTouch(View view, MotionEvent e) {
+//		          switch(e.getAction())
+//		          {
+//		             case MotionEvent.ACTION_DOWN:
+//		            	 
+//		            	  if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(Configs.LOGIN_PASSWORD, null)==null){				
+//		            		  	LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
+//		            		  									apk_repo_str_raw, apk_id, apk_ver_str_raw, EnumUserTaste.DONTLIKE, userTaste);
+//		            		  	loginComments.setOnDismissListener(ApkInfo.this);
+//								loginComments.show();
+//		            	  }else{
+//		            		  
+//		            		  new AddTaste(
+//							 		ApkInfo.this, 
+//							 		apk_repo_str_raw,
+//							 		apk_id, 
+//							 		apk_ver_str_raw, 
+//							 		sharedPreferences.getString(Configs.LOGIN_USER_NAME, null), 
+//							 		sharedPreferences.getString(Configs.LOGIN_PASSWORD, null), 
+//							 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste).submit();
+//							 
+//		            	  }
+//		                  break;
+//		          }
+//		          return false;  //means that the listener dosen't consume the event
+//		      }
+//		});
 
 	}
 	
@@ -451,6 +514,7 @@ public class AppInfo extends Activity {
 //		}
 //		appVersion.setIsScheduled(!appVersion.isScheduled());
 		if(appVersion.getAppHashid() == scheduledVersion){
+			unscheduleVersion = scheduledVersion;
 			scheduledVersion = Constants.EMPTY_INT;
 		}else{
 			scheduledVersion = appVersion.getAppHashid();
@@ -472,8 +536,11 @@ public class AppInfo extends Activity {
 				public void onClick(View view) {
 					if(scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()){
 						try {
-							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
+							if(unscheduleVersion != Constants.EMPTY_INT){
+								serviceDataCaller.callUnscheduleInstallApp(unscheduleVersion);
+							}
+							serviceDataCaller.callScheduleInstallApp(scheduledVersion);
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_SHORT).show();
 							Log.d("Aptoide-AppInfo", "called schedule install app");
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
@@ -563,8 +630,11 @@ public class AppInfo extends Activity {
 				public void onClick(View view) {
 					try {
 						if (scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()) {
-							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
+							if(unscheduleVersion != Constants.EMPTY_INT){
+								serviceDataCaller.callUnscheduleInstallApp(unscheduleVersion);
+							}
+							serviceDataCaller.callScheduleInstallApp(scheduledVersion);
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_SHORT).show();
 							Log.d("Aptoide-AppInfo", "called update app later");
 						} else {
 							if(selectedVersion.isScheduled()){
@@ -604,8 +674,11 @@ public class AppInfo extends Activity {
 				public void onClick(View view) {
 					try {
 						if (scheduledVersion == selectedVersion.getAppHashid() && !selectedVersion.isScheduled()) {
-							serviceDataCaller.callScheduleInstallApp(selectedVersion.getAppHashid());
-							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_LONG).show();
+							if(unscheduleVersion != Constants.EMPTY_INT){
+								serviceDataCaller.callUnscheduleInstallApp(unscheduleVersion);
+							}
+							serviceDataCaller.callScheduleInstallApp(scheduledVersion);
+							Toast.makeText(AppInfo.this, getResources().getText(R.string.scheduled).toString(), Toast.LENGTH_SHORT).show();
 							Log.d("Aptoide-AppInfo", "called downgrade app later");
 						} else {
 							if(selectedVersion.isScheduled()){
@@ -712,12 +785,19 @@ public class AppInfo extends Activity {
 //		}
 		try {
 			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
+			if(appVersions == null){
+				appVersions = serviceDataCaller.callGetAppInfo(appHashid);	
+			}
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		Log.d("Aptoide-AppInfo", "appVersions: "+appVersions);
+		if(appVersions == null){
+			finish();
+			return;
+		}
 
 		ArrayList<String> versions = new ArrayList<String>();
 		for (ViewDisplayAppVersionInfo versionInfo : appVersions) {
