@@ -24,16 +24,21 @@
     
 	<!-- this string name has to be misspelled because private is a reserved word -->
     <string name="privt">Private</string>
-    <string name="bazaar_login">Bazaar Login</string>
+    <string name="bazaar_login">Bazaar login</string>
+    <string name="logging_in">Logging in</string>
+    <string name="please_wait">Please wait</string>
     <string name="clear_login">Clear login</string>
     <string name="clear_login_sum">Unset your current login</string>
     <string name="set_new_login">Set a new login</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="show_password">Show password</string>   
+    <string name="show_password">Show password</string>  
+    <string name="no_username">No Username</string>
+    <string name="no_password">No Password</string> 
 	<string name="bad_login">Invalid Login </string>
 	<string name="login_required">Login required</string>
     <string name="cant_connect">Can\'t connect to store</string>
+    <string name="service_unavailable">Service unavailable</string>
     
     <string name="about">About</string>
     <string name="description">Your Android application manager.\n</string>

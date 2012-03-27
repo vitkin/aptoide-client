@@ -35,7 +35,7 @@ import cm.aptoide.pt.AIDLSelfUpdate;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.preferences.ViewSettings;
 import cm.aptoide.pt.data.system.ViewHwFilters;
-import cm.aptoide.pt.data.downloads.ViewIconDownloadPermissions;
+import cm.aptoide.pt.data.webservices.ViewIconDownloadPermissions;
 
 /**
  * AIDLAptoideServiceData, IPC Interface definition for Aptoide's ServiceData
