@@ -1,5 +1,5 @@
 /**
- * EnumPreferences,	auxilliary class to Aptoide's ServiceData
+ * EnumXmlTagsServerLogin,	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,31 +18,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.preferences;
+package cm.aptoide.pt.data.xml;
 
 /**
- * EnumPreferences, typeSafes Preferences
+ * EnumXmlTagsServerLogin, typeSafes ServerLogin's XML tags
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumPreferences {
-	APTOIDE_CLIENT_UUID,
-	SCREEN_WIDTH,
-	SCREEN_HEIGHT,
-	SCREEN_DENSITY,
-	AUTHORIZED_DOWNLOAD_CONNECTIONS,
-	SHOW_APPLICATIONS_BY_CATEGORY,
-	SORT_APPLICATIONS_BY,
-	DOWNLOAD_ICONS_,
-	IS_HW_FILTER_ON,
-	AUTOMATIC_INSTALL,
-	SERVER_USERNAME,	//TODO move these next 3 values to database to support multiple servers
-	SERVER_PASSHASH,
-	SERVER_TOKEN;
+public enum EnumXmlTagsServerLogin {
+	response,
+	status,
+	token,
+	errors,
+	unrecognized;
 	
-	public static EnumPreferences reverseOrdinal(int ordinal){
+	public static EnumXmlTagsServerLogin safeValueOf(String name){
+		EnumXmlTagsServerLogin tag;
+		try {
+			tag = EnumXmlTagsServerLogin.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsServerLogin.unrecognized;
+		}
+		return tag;
+	}
+	
+	public static EnumXmlTagsServerLogin reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

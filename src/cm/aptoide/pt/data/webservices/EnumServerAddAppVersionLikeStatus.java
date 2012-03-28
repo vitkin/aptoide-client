@@ -1,5 +1,5 @@
 /**
- * EnumPreferences,	auxilliary class to Aptoide's ServiceData
+ * EnumServerAddAppVersionLikeStatus,		part of aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -18,31 +18,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-package cm.aptoide.pt.data.preferences;
+package cm.aptoide.pt.data.webservices;
 
 /**
- * EnumPreferences, typeSafes Preferences
+ * EnumServerAddAppVersionLikeStatus, typeSafes Server AddAppVersionLike's Status in Aptoide
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumPreferences {
-	APTOIDE_CLIENT_UUID,
-	SCREEN_WIDTH,
-	SCREEN_HEIGHT,
-	SCREEN_DENSITY,
-	AUTHORIZED_DOWNLOAD_CONNECTIONS,
-	SHOW_APPLICATIONS_BY_CATEGORY,
-	SORT_APPLICATIONS_BY,
-	DOWNLOAD_ICONS_,
-	IS_HW_FILTER_ON,
-	AUTOMATIC_INSTALL,
-	SERVER_USERNAME,	//TODO move these next 3 values to database to support multiple servers
-	SERVER_PASSHASH,
-	SERVER_TOKEN;
+public enum EnumServerAddAppVersionLikeStatus {
+	SUCCESS,
+	MISSING_PARAMETER,
+	BAD_TOKEN,
+	BAD_REPO,
+	BAD_APP_HASHID,
+	SERVICE_UNAVAILABLE;
 	
-	public static EnumPreferences reverseOrdinal(int ordinal){
+	public static EnumServerAddAppVersionLikeStatus reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }
