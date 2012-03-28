@@ -28,6 +28,7 @@ import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.data.EnumConnectionLevels;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
+import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.webservices.EnumIconDownloadsPermission;
@@ -166,6 +167,32 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 	
 	public ViewSettings getSettings(){
 		return new ViewSettings(getIconDownloadPermissions(), isHwFilterOn(), isAutomaticInstallOn());
+	}
+	
+	//TODO move these next 3 values to database to support multiple servers
+	
+	public void setServerLogin(ViewLogin login){
+		setPreferences.putString(EnumPreferences.SERVER_USERNAME.name(), login.getUsername());
+		setPreferences.putString(EnumPreferences.SERVER_PASSHASH.name(), login.getPassword());
+		setPreferences.commit();				
+	}
+	
+	public ViewLogin getServerLogin(){
+		if(getPreferences.getString(EnumPreferences.SERVER_USERNAME.name(), null) != null && getPreferences.getString(EnumPreferences.SERVER_PASSHASH.name(), null) != null){
+			return null; //TODO null object
+		}else{
+			return new ViewLogin( getPreferences.getString(EnumPreferences.SERVER_USERNAME.name(), "")
+								, getPreferences.getString(EnumPreferences.SERVER_PASSHASH.name(), "") );
+		}
+	}
+	
+	public void setServerToken(String token){
+		setPreferences.putString(EnumPreferences.SERVER_TOKEN.name(), token);
+		setPreferences.commit();		
+	}
+	
+	public String getToken(){
+		return getPreferences.getString(EnumPreferences.SERVER_TOKEN.name(), null);
 	}
 	
 }

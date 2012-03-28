@@ -1,4 +1,4 @@
-package cm.aptoide.pt.data.webservices;
+package cm.aptoide.pt;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +29,7 @@ import cm.aptoide.pt.data.AIDLAptoideServiceData;
  * 
  * Implementation of the login interface.
  */
-public class LoginDialog extends Dialog{
+public class DialogLogin extends Dialog{
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 	
@@ -52,7 +52,7 @@ public class LoginDialog extends Dialog{
 	}
 	
 	
-	public LoginDialog(Context context, AIDLAptoideServiceData serviceDataCaller, InvoqueNature nature) {
+	public DialogLogin(Context context, AIDLAptoideServiceData serviceDataCaller, InvoqueNature nature) {
 		super(context);
 		this.serviceDataCaller = serviceDataCaller;
 //		isLoginSubmited = false;
@@ -101,10 +101,10 @@ public class LoginDialog extends Dialog{
 				success = false;
 				if(username.getText().toString().trim().equals("")){
 //				if(!((SetBlankOnFocusChangeListener)username.getOnFocusChangeListener()).getAlreadySetted()){
-					Toast.makeText(LoginDialog.this.getContext(), LoginDialog.this.getContext().getString(R.string.no_username), Toast.LENGTH_LONG).show();
+					Toast.makeText(DialogLogin.this.getContext(), DialogLogin.this.getContext().getString(R.string.no_username), Toast.LENGTH_LONG).show();
 				}else if(password.getText().toString().trim().equals("")){
 //				}else if(!((SetBlankOnFocusChangeListener)password.getOnFocusChangeListener()).getAlreadySetted()){
-					Toast.makeText(LoginDialog.this.getContext(), LoginDialog.this.getContext().getString(R.string.no_password), Toast.LENGTH_LONG).show();
+					Toast.makeText(DialogLogin.this.getContext(), DialogLogin.this.getContext().getString(R.string.no_password), Toast.LENGTH_LONG).show();
 				}else{
 					try {
 						final MessageDigest md = MessageDigest.getInstance("SHA");
@@ -121,7 +121,7 @@ public class LoginDialog extends Dialog{
 									
 									if(success){
 //										isLoginSubmited = true;
-										LoginDialog.this.dismiss();
+										DialogLogin.this.dismiss();
 										
 										Log.d("Aptoide", "Logged in");
 //										Intent loginAction = new Intent();
@@ -131,7 +131,7 @@ public class LoginDialog extends Dialog{
 									}else{
 //										switch (Response) {
 //										case bad_login:
-											Toast.makeText(getContext(), LoginDialog.this.getContext().getString(R.string.bad_login), Toast.LENGTH_LONG).show();
+											Toast.makeText(getContext(), DialogLogin.this.getContext().getString(R.string.bad_login), Toast.LENGTH_LONG).show();
 //											break;
 //
 //										default:
@@ -152,7 +152,7 @@ public class LoginDialog extends Dialog{
 						
 					} catch (NoSuchAlgorithmException e) {
 						//Toast.makeText(getContext(),  Login.this.getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
-						Toast.makeText(getContext(),  LoginDialog.this.getContext().getString(R.string.service_unavailable), Toast.LENGTH_LONG).show();
+						Toast.makeText(getContext(),  DialogLogin.this.getContext().getString(R.string.service_unavailable), Toast.LENGTH_LONG).show();
 					}
 					
 				}

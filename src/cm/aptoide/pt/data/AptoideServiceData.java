@@ -73,6 +73,7 @@ import cm.aptoide.pt.data.system.ViewScreenDimensions;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.webservices.EnumDownloadType;
 import cm.aptoide.pt.data.webservices.ManagerDownloads;
+import cm.aptoide.pt.data.webservices.ManagerUploads;
 import cm.aptoide.pt.data.webservices.ViewDownload;
 import cm.aptoide.pt.data.webservices.ViewDownloadInfo;
 import cm.aptoide.pt.data.webservices.ViewDownloadStatus;
@@ -112,6 +113,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private ManagerSystemSync managerSystemSync;
 	private ManagerDatabase managerDatabase;
 	private ManagerDownloads managerDownloads;
+	private ManagerUploads managerUploads;
 	private ManagerNotifications managerNotifications;
 	private ManagerXml managerXml;
 	
@@ -588,6 +590,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public ManagerDownloads getManagerDownloads() {
 		return managerDownloads;
+	}	
+	
+	public ManagerUploads getManagerUploads() {
+		return managerUploads;
 	}
 	
 	public ManagerCache getManagerCache() {
@@ -615,6 +621,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			managerSystemSync = new ManagerSystemSync(this);
 			managerNotifications = new ManagerNotifications(this);
 			managerDownloads = new ManagerDownloads(this);
+			managerUploads = new ManagerUploads(this);
 			managerXml = new ManagerXml(this);
 			
 	    	
