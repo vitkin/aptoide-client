@@ -24,6 +24,7 @@ package cm.aptoide.pt.data.webservices;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -454,6 +455,10 @@ public class ManagerDownloads {
 		return startRepoDownload(repository, EnumInfoType.BARE);
 	}
 	
+	public ViewCache startRepoDownloadDownload(ViewRepository repository){
+		return startRepoDownload(repository, EnumInfoType.DOWNLOAD);
+	}
+	
 	public ViewCache startRepoIconDownload(ViewRepository repository){
 		return startRepoDownload(repository, EnumInfoType.ICON);
 	}
@@ -483,52 +488,20 @@ public class ManagerDownloads {
 		
 			case BARE:
 				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=bare&unix_timestamp=true";
-				EnumAppsSorting bareSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceData.getManagerPreferences().getAppsSortingPolicy());
-				switch (bareSortingPolicy) {
-					case ALPHABETIC:
-						xmlRemotePath += "&order_by=alphabetic&order_direction=ascending";
-						break;
-					case FRESHNESS:
-						xmlRemotePath += "&order_by=freshness&order_direction=descending";
-						break;
-					case STARS:
-						xmlRemotePath += "&order_by=rating&order_direction=descending";
-						break;
-					case DOWNLOADS:
-						xmlRemotePath += "&order_by=downloads&order_direction=descending";
-						break;
-					
-	
-					default:
-						break;
-				}
 //				xmlRemotePath = "http://aptoide.com/teste/apps.xml";
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info.xml";
 				cache = managerCache.getNewRepoBareViewCache(repository.getHashid());
 				notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_BARE_DOWNLOAD, repoName, repository.getHashid());
 				break;
+		
+			case DOWNLOAD:
+				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=download&show_apphashid=true";
+				cache = managerCache.getNewRepoDownloadViewCache(repository.getHashid());
+				notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_UPDATE, repoName, repository.getHashid());
+				break;
 				
 			case ICON:
 				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=icon&show_apphashid=true";
-				EnumAppsSorting iconSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceData.getManagerPreferences().getAppsSortingPolicy());
-				switch (iconSortingPolicy) {
-					case ALPHABETIC:
-						xmlRemotePath += "&order_by=alphabetic&order_direction=ascending";
-						break;
-					case FRESHNESS:
-						xmlRemotePath += "&order_by=freshness&order_direction=descending";
-						break;
-					case STARS:
-						xmlRemotePath += "&order_by=rating&order_direction=descending";
-						break;
-					case DOWNLOADS:
-						xmlRemotePath += "&order_by=downloads&order_direction=descending";
-						break;
-					
-	
-					default:
-						break;
-				}
 //				xmlRemotePath = "http://aptoide.com/testing/xml/info_icon.xml";
 				cache = managerCache.getNewRepoIconViewCache(repository.getHashid());
 				break;
@@ -541,25 +514,6 @@ public class ManagerDownloads {
 				
 			case STATS:
 				xmlRemotePath = repository.getUri()+Constants.PATH_REPO_STATS_XML+"show_apphashid=true";
-				EnumAppsSorting statsSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceData.getManagerPreferences().getAppsSortingPolicy());
-				switch (statsSortingPolicy) {
-					case ALPHABETIC:
-						xmlRemotePath += "&order_by=alphabetic&order_direction=ascending";
-						break;
-					case FRESHNESS:
-						xmlRemotePath += "&order_by=freshness&order_direction=descending";
-						break;
-					case STARS:
-						xmlRemotePath += "&order_by=rating&order_direction=descending";
-						break;
-					case DOWNLOADS:
-						xmlRemotePath += "&order_by=downloads&order_direction=descending";
-						break;
-					
-	
-					default:
-						break;
-				}
 //				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
 				cache = managerCache.getNewRepoStatsViewCache(repository.getHashid());
 				break;	
@@ -575,6 +529,27 @@ public class ManagerDownloads {
 		}
 		if(!infoType.equals(EnumInfoType.BARE)){
 			notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_UPDATE, repoName, repository.getHashid());
+		}
+		if(!infoType.equals(EnumInfoType.DELTA)){
+			EnumAppsSorting bareSortingPolicy = EnumAppsSorting.reverseOrdinal(serviceData.getManagerPreferences().getAppsSortingPolicy());
+			switch (bareSortingPolicy) {
+				case ALPHABETIC:
+					xmlRemotePath += "&order_by=alphabetic&order_direction=ascending";
+					break;
+				case FRESHNESS:
+					xmlRemotePath += "&order_by=freshness&order_direction=descending";
+					break;
+				case STARS:
+					xmlRemotePath += "&order_by=rating&order_direction=descending";
+					break;
+				case DOWNLOADS:
+					xmlRemotePath += "&order_by=downloads&order_direction=descending";
+					break;
+				
+
+				default:
+					break;
+			}
 		}
 		if(repository.isLoginRequired()){
 			xmlRemotePath += "&username="+repository.getLogin().getUsername()+"&password="+repository.getLogin().getPassword();
@@ -621,6 +596,11 @@ public class ManagerDownloads {
 //				xmlRemotePath = "http://aptoide.com/testing/xml/stats.xml";
 				cache = managerCache.getNewRepoAppStatsViewCache(repository.getHashid(), appHashid);
 				break;
+				
+			case COMMENTS:
+				xmlRemotePath = String.format(Constants.URI_FORMAT_COMMENTS_WS, URLEncoder.encode(repository.getUri()), URLEncoder.encode(Integer.toString(appHashid)));
+				cache = managerCache.getNewRepoAppCommentsViewCache(repository.getHashid(), appHashid);
+				break;
 	
 			default:
 				break;
@@ -628,7 +608,7 @@ public class ManagerDownloads {
 
 		
 		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_APP_UPDATE, repoName, appHashid);
-		if(repository.isLoginRequired()){
+		if(repository.isLoginRequired() && !infoType.equals(EnumInfoType.COMMENTS)){
 			xmlRemotePath += "&username="+repository.getLogin().getUsername()+"&password="+repository.getLogin().getPassword();
 		}
 //			download = getNewViewDownload(xmlRemotePath, repository.getLogin(), cache, notification);

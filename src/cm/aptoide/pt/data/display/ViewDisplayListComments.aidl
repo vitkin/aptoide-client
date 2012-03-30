@@ -1,6 +1,6 @@
 /**
- * EnumInfoType,		part of aptoide
- * Copyright (C) 2011  Duarte Silveira
+ * ViewDisplayListComments,		part of Aptoide's ServiceData
+ * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,26 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-
-package cm.aptoide.pt.data.xml;
+package cm.aptoide.pt.data.display;
 
 /**
- * EnumInfoType, typeSafes xml info types in Aptoide
- * 
+ * ViewDisplayListComments, models ViewDisplayListComments's AIDL IPC
+ *
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumInfoType {
-	BARE,
-	ICON,
-	DOWNLOAD,
-	EXTRAS,
-	STATS,
-	DELTA,
-	COMMENTS;
-	
-	public static EnumInfoType reverseOrdinal(int ordinal){
-		return values()[ordinal];
-	}
-}
+parcelable ViewDisplayListComments;

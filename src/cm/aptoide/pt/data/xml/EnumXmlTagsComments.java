@@ -1,5 +1,5 @@
 /**
- * EnumInfoType,		part of aptoide
+ * EnumXmlTagsComments,	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -21,22 +21,39 @@
 package cm.aptoide.pt.data.xml;
 
 /**
- * EnumInfoType, typeSafes xml info types in Aptoide
+ * EnumXmlTagsComments, typeSafes Comments listing XML tags
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumInfoType {
-	BARE,
-	ICON,
-	DOWNLOAD,
-	EXTRAS,
-	STATS,
-	DELTA,
-	COMMENTS;
+public enum EnumXmlTagsComments {
+	response,
+	status,
+	errors,
+	listing,
+	entry,
+	id,
+	useridhash,
+	username,
+	answerto,
+	subject,
+	text,
+	timestamp,
+	lang,
+	unrecognized;
 	
-	public static EnumInfoType reverseOrdinal(int ordinal){
+	public static EnumXmlTagsComments safeValueOf(String name){
+		EnumXmlTagsComments tag;
+		try {
+			tag = EnumXmlTagsComments.valueOf(name);
+		} catch (Exception e1) {
+			tag = EnumXmlTagsComments.unrecognized;
+		}
+		return tag;
+	}
+	
+	public static EnumXmlTagsComments reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }

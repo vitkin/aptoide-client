@@ -98,31 +98,11 @@ public class RepoDownloadParser extends DefaultHandler{
 				
 			case sz:
 				downloadInfo.setSize(Integer.parseInt(tagContentBuilder.toString()));
-				break;
-				
-			case icon:
-				iconInfo = new ViewIconInfo(tagContentBuilder.toString(), appFullHashid);
-				Log.d("Aptoide-RepoDownload+IconParser", "inserting icon");
-				try{
-					new Thread(){
-						public void run(){
-							this.setPriority(Thread.NORM_PRIORITY);
-							final ArrayList<ViewIconInfo> iconsInfoInserting = new ArrayList<ViewIconInfo>();
-							iconsInfoInserting.add(iconInfo);
-							
-							managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);
-							
-							managerXml.serviceData.parsingIconFromDownloadInfoFinished(iconInfo, parseInfo.getRepository());
-						}
-					}.start();
-	
-				} catch(Exception e){
-					/** this should never happen */
-					//TODO handle exception
-					e.printStackTrace();
+				if(downloadInfo.getSize()==0){	//TODO complete this hack with a flag <1KB
+					downloadInfo.setSize(1);
 				}
 				break;
-				
+
 				
 			case pkg:
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
@@ -152,6 +132,30 @@ public class RepoDownloadParser extends DefaultHandler{
 				parseInfo.getNotification().incrementProgress(1);
 				
 				downloadsInfo.add(downloadInfo);
+				break;
+				
+				
+			case icon:
+				iconInfo = new ViewIconInfo(tagContentBuilder.toString(), appFullHashid);
+				Log.d("Aptoide-RepoDownload+IconParser", "inserting icon");
+				try{
+					new Thread(){
+						public void run(){
+							this.setPriority(Thread.NORM_PRIORITY);
+							final ArrayList<ViewIconInfo> iconsInfoInserting = new ArrayList<ViewIconInfo>();
+							iconsInfoInserting.add(iconInfo);
+							
+							managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);
+							
+							managerXml.serviceData.parsingIconFromDownloadInfoFinished(iconInfo, parseInfo.getRepository());
+						}
+					}.start();
+	
+				} catch(Exception e){
+					/** this should never happen */
+					//TODO handle exception
+					e.printStackTrace();
+				}
 				break;
 				
 			default:
