@@ -56,6 +56,7 @@ import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.display.ViewDisplayListComments;
 import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayListsDimensions;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
@@ -106,6 +107,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private AIDLSelfUpdate selfUpdateClient = null;
 	private HashMap<EnumServiceDataCallback, AIDLAptoideInterface> aptoideClients;
 	private HashMap<Integer, AIDLAppInfo> appInfoClients;
+	private HashMap<Integer, ViewDisplayListComments> appInfoComments;
 	private AIDLReposInfo reposInfoClient = null;
 //	private AIDLSearch searchClient = null;	//TODO implement sort blocking in search when loading repo from bare
 
@@ -118,7 +120,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	private ManagerXml managerXml;
 	
 	private ExecutorService cachedThreadPool;		//TODO in the future turn this into a priorityThreadPool, with a highest priority thread able to pause execution of other threads
-	private ExecutorService scheduledThreadPool;
+//	private ExecutorService scheduledThreadPool;
     
 	private AtomicBoolean syncingInstalledApps;
 	
@@ -306,6 +308,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public void callUpdateAll() throws RemoteException {
+			updateAll();
+		}
+
+		@Override
 		public ViewDisplayListApps callGetAppSearchResults(String searchString) throws RemoteException {
 			return getAppSearchResults(searchString);
 		}
@@ -336,6 +343,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public void callRetrieveVersionComments(int appHashid, int repoHashid) throws RemoteException {
+			retrieveRepoAppComments(appHashid, repoHashid);
+		}
+
+		@Override
 		public ViewDisplayAppVersionsInfo callGetAppInfo(int appHashid) throws RemoteException {
 			return getAppInfo(appHashid);
 		}
@@ -353,6 +365,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		@Override
 		public ViewDisplayAppVersionExtras callGetAppExtras(int appFullHashid) throws RemoteException {
 			return getAppExtras(appFullHashid);
+		}
+
+		@Override
+		public ViewDisplayListComments callGetVersionComments(int appHashid) throws RemoteException {
+			return getAppComments(appHashid);
 		}
 
 		@Override
@@ -632,7 +649,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			waitingSelfUpdate = null;
 	    	
 	    	cachedThreadPool = Executors.newCachedThreadPool();
-	    	scheduledThreadPool = Executors.newScheduledThreadPool(Constants.MAX_PARALLEL_SERVICE_REQUESTS);
+//	    	scheduledThreadPool = Executors.newScheduledThreadPool(Constants.MAX_PARALLEL_SERVICE_REQUESTS);
 	    	
 			aptoideClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
 			appInfoClients = new HashMap<Integer, AIDLAppInfo>();
@@ -725,7 +742,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void downloadSelfUpdate(final ViewLatestVersionInfo latesVersionInfo){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				if(!managerDownloads.isConnectionAvailable()){
@@ -1123,6 +1140,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void addRepoBare(final ViewRepository originalRepository){
 		disallowSortingPolicyChange();
+		disallowUpdateAll();
 		reposInserting.add(originalRepository.getHashid());
 		cachedThreadPool.execute(new Runnable() {
 			@Override
@@ -1160,10 +1178,80 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				resetAvailableLists();
 			}
 //			insertedRepo(repository.getHashid());
-			addRepoIconsInfo(repository);
+			addRepoStats(repository);
 		}
 		resetInstalledLists();
 	}
+	
+	public void addRepoStats(final ViewRepository repository){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				ViewCache cache = null;
+				if(reposInserting.contains(repository.getHashid())){
+					cache = managerDownloads.startRepoDownload(repository, EnumInfoType.STATS);
+				}
+				if(reposInserting.contains(repository.getHashid())){	
+					managerXml.repoStatsParse(repository, cache);
+					//TODO find some way to track global parsing completion status, probably in managerXml
+				}
+			}
+		});
+	}
+	
+	public void parsingRepoStatsFinished(ViewRepository repository){
+		if(reposInserting.contains(repository.getHashid())){
+			updateAvailableLists();
+			addRepoIconsInfo(repository);
+//			addRepoDownload(repository);
+//			Toast.makeText(AptoideServiceData.this, "app stats available", Toast.LENGTH_LONG).show();
+		}
+	}
+	
+	
+	public void addRepoDownload(final ViewRepository repository){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				ViewCache cache = null;
+				if(reposInserting.contains(repository.getHashid())){
+					cache = managerDownloads.startRepoDownloadDownload(repository);
+				}
+	//			Looper.prepare();
+	//			Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
+				if(reposInserting.contains(repository.getHashid())){
+					managerXml.repoDownloadParse(repository, cache);
+				}
+				//TODO find some way to track global parsing completion status, probably in managerXml
+			}
+		});
+		
+	}
+	
+	public void parsingRepoDownloadInfoFinished(ViewRepository repository){
+		if(reposInserting.size() == 1){	// If contains only the currently being parsed repo
+			allowUpdateAll();
+		}
+		if(reposInserting.contains(repository.getHashid())){
+			reposInserting.remove(Integer.valueOf(repository.getHashid()));
+//			addRepoIconsInfo(repository);
+		}
+	}
+	
 	
 	public void addRepoIconsInfo(final ViewRepository repository){
 		cachedThreadPool.execute(new Runnable() {
@@ -1189,10 +1277,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
-		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+//		Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
 		if(reposInserting.contains(repository.getHashid())){
 			getRepoIcons(new ViewDownloadStatus(repository, Constants.FIRST_ELEMENT, EnumDownloadType.ICON));
-			addRepoStats(repository);
 		}
 	}
 	
@@ -1206,7 +1293,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 //				refreshAvailableDisplay();
 //			}
 			
-			scheduledThreadPool.execute(new Runnable() {
+			cachedThreadPool.execute(new Runnable() {
 				@Override
 				public void run() {
 //					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -1226,37 +1313,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			});
 		}
 		
-	}
-	
-	public void addRepoStats(final ViewRepository repository){
-		scheduledThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = null;
-				if(reposInserting.contains(repository.getHashid())){
-					cache = managerDownloads.startRepoDownload(repository, EnumInfoType.STATS);
-				}
-				if(reposInserting.contains(repository.getHashid())){	
-					managerXml.repoStatsParse(repository, cache);
-					//TODO find some way to track global parsing completion status, probably in managerXml
-				}
-			}
-		});
-	}
-	
-	public void parsingRepoStatsFinished(ViewRepository repository){
-		if(reposInserting.contains(repository.getHashid())){
-			reposInserting.remove(Integer.valueOf(repository.getHashid()));
-			updateAvailableLists();
-//			Toast.makeText(AptoideServiceData.this, "app stats available", Toast.LENGTH_LONG).show();
-		}
 	}
 	
 	
@@ -1345,12 +1401,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void addRepoAppDownloadInfo(final int appHashid, final int repoHashid){
 	
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-//				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
-//				if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
+				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+				if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
 					ViewRepository repository = managerDatabase.getRepository(repoHashid);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
@@ -1362,9 +1418,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					
 					managerXml.repoAppDownloadParse(repository, cache, appHashid);
 					//TODO find some way to track global parsing completion status, probably in managerXml
-//				}else{
-//					AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
-//				}
+				}else{
+					updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);
+					AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
+				}
 			}
 		});
 					
@@ -1374,6 +1431,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		if(managerDownloads.isPermittedConnectionAvailable(getIconDownloadPermissions())){
 			ViewDownloadInfo downloadInfo = new ViewDownloadInfo(repository.getIconsPath()+iconInfo.getIconRemotePathTail(), Integer.toString(iconInfo.getAppFullHashid()), iconInfo.getAppFullHashid(), EnumDownloadType.ICON);
 			managerDownloads.getIcon(downloadInfo, repository.isLoginRequired(), repository.getLogin());
+//			updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.REFRESH_ICON);
 		}
 	}
 	
@@ -1385,7 +1443,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void addRepoAppStats(final int appHashid, final int repoHashid){
 
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
@@ -1414,12 +1472,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public void addRepoAppExtras(final int appHashid, final int repoHashid){
 		
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-//				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
-//				if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
+				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+				if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
 					ViewRepository repository = managerDatabase.getRepository(repoHashid);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
@@ -1431,9 +1489,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					
 					managerXml.repoAppExtrasParse(repository, cache, appHashid);
 					//TODO find some way to track global parsing completion status, probably in managerXml
-//				}else{
-//					AptoideLog.d(AptoideServiceData.this, "App extra Info present for:"+appFullHashid);
-//				}
+				}else{
+					updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_EXTRAS);
+					updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.REFRESH_SCREENS);
+					AptoideLog.d(AptoideServiceData.this, "App extra Info present for:"+appFullHashid);
+				}
 			}
 		});
 					
@@ -1445,12 +1505,12 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		getAppScreens(repository, appHashid);
 	}
 	
-	public void getAppScreens(final ViewRepository repository,final int appHashid){
+	public void getAppScreens(final ViewRepository repository, final int appHashid){
 		
-			scheduledThreadPool.execute(new Runnable() {
+			cachedThreadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+//					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 					if(!managerDownloads.isConnectionAvailable()){
 						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
 					}
@@ -1469,6 +1529,38 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		AptoideLog.d(AptoideServiceData.this, "Finished getting screens - appHashid: "+appHashid);
 		updateAppInfo(appHashid, Constants.EMPTY_INT, EnumServiceDataCallback.REFRESH_SCREENS);
 	}
+	
+	
+	public void retrieveRepoAppComments(final int appHashid, final int repoHashid){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+//				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
+				ViewRepository repository = managerDatabase.getRepository(repoHashid);
+				if(!managerDownloads.isConnectionAvailable()){
+					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				}
+				if(!getManagerCache().isFreeSpaceInSdcard()){
+					//TODO raise exception
+				}
+				ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.COMMENTS);
+				
+				managerXml.repoAppCommentsParse(repository, cache, appHashid);
+				//TODO find some way to track global parsing completion status, probably in managerXml
+			}
+		});
+	}
+	
+	public void parsingRepoAppCommentsFinished(int repoHashid, int appHashid, ViewDisplayListComments comments){
+		int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+		appInfoComments.put(appFullHashid, comments);
+		updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_COMMENTS);
+	}
+	
+	public void parsingRepoAppCommentsError(int repoHashid, int appHashid, String Error){
+//		updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_NO_COMMENTS);
+	}
+	
 	
 	public void updateAppInfo(int appHashid, int appFullHashid, EnumServiceDataCallback callBack){
 		AptoideLog.d(AptoideServiceData.this, "appInfo AIDL : "+appInfoClients.get(appHashid));
@@ -1526,6 +1618,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerDatabase.getAppVersionExtras(appFullHashid);
 	}
 	
+	public ViewDisplayListComments getAppComments(int appFullHashid){
+		return appInfoComments.remove(Integer.valueOf(appFullHashid));
+	}
+	
 	
 	
 	public boolean getShowApplicationsByCategory(){
@@ -1533,7 +1629,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void setShowApplicationsByCategory(final boolean byCategory){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				managerPreferences.setShowApplicationsByCategory(byCategory);
@@ -1561,7 +1657,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void allowSortingPolicyChange(){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -1576,7 +1672,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void disallowSortingPolicyChange(){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -1590,11 +1686,42 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	public void allowUpdateAll(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).allowUpdateAll();
+//					searchClients //TODO implement sort blocking in search when loading repo from bare
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	public void disallowUpdateAll(){
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).disallowUpdateAll();
+//					searchClients //TODO implement sort blocking in search when loading repo from bare
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	public void setAppsSortingPolicy(final int sortingPolicy){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				managerPreferences.setAppsSortingPolicy(sortingPolicy);
+				resetInstalledLists();
 				resetAvailableLists();
 				AptoideLog.d(AptoideServiceData.this, "setting sorting policy to: "+EnumAppsSorting.reverseOrdinal(sortingPolicy));
 			}
@@ -1622,6 +1749,14 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerDatabase.getUpdatableAppsDisplayInfo(managerPreferences.isHwFilterOn(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
+	
+	public void updateAll(){
+		//TODO get list of updatable apps missing downloadInfo
+		// get list of available downloadInfo
+		// download missing info while installing available 
+	}
+	
+	
 	public ViewDisplayListApps getAppSearchResults(String searchString){
 		AptoideLog.d(AptoideServiceData.this, "Getting App Search Results: "+searchString);
 		return managerDatabase.getAppSearchResultsDisplayInfo(searchString, EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
@@ -1629,7 +1764,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void scheduleInstallApp(final int appHashid){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				managerDatabase.insertApplicationToInstall(appHashid);
@@ -1638,7 +1773,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void unscheduleInstallApp(final int appHashid){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				managerDatabase.removeApplicationToInstall(appHashid);
@@ -1655,7 +1790,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void installAllScheduledApps(){	//TODO could use some optimization throughout
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				ViewListIds appsList = managerDatabase.getApplicationsScheduledToInstall();
@@ -1670,7 +1805,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void receiveMyapp(final String uriString){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				AptoideLog.d(AptoideServiceData.this, "Receiving Myapp file: "+uriString);
@@ -1706,7 +1841,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		if(myapp != null){
 			if(!managerDatabase.isApplicationInstalled(myapp.getPackageName())){
 				waitingMyapps.add(myapp);
-				scheduledThreadPool.execute(new Runnable() {
+				cachedThreadPool.execute(new Runnable() {
 					@Override
 					public void run() {
 						try {
@@ -1725,7 +1860,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void downloadMyapp(final ViewMyapp myapp){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				if(!managerDownloads.isConnectionAvailable()){
@@ -1751,7 +1886,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 
 	
 	public void downloadApp(final int appHashid){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				if(!managerDownloads.isConnectionAvailable()){
@@ -1769,7 +1904,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void addInstalledApp(final String packageName){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				ViewApplication installedApp = managerSystemSync.getInstalledApp(packageName);
@@ -1781,7 +1916,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void removeInstalledApp(final String packageName){
-		scheduledThreadPool.execute(new Runnable() {
+		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
 				managerDatabase.removeInstalledApplication(packageName);

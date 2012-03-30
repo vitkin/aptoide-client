@@ -93,7 +93,7 @@ public class Constants {
 	public static final String URI_FORMAT_LOGIN_WS = "http://www.bazaarandroid.com/webservices/checkUserCredentials/%1$s/%2$s/xml";		//TODO adapt to multiple servers
 	public static final String URI_FORMAT_ADD_LIKE_WS = "http://www.bazaarandroid.com/webservices/addApkLike/%1$s/%2$s/apphashid/%3$s/like/xml";
 	public static final String URI_FORMAT_ADD_DISLIKE_WS = "http://www.bazaarandroid.com/webservices/addApkLike/%1$s/%2$s/apphashid/%3$s/dontlike/xml";
-	public static final String URI_FORMAT_COMMENTS_WS = "http://www.bazaarandroid.com/webservices/listApkComments/%1$s/%2$s/%3$s/xml";
+	public static final String URI_FORMAT_COMMENTS_WS = "http://www.bazaarandroid.com/webservices/listApkComments/%1$s/apphashid/%2$s/xml";
 	public static final String URI_ADD_COMMENT_POST_WS = "http://www.bazaarandroid.com/webservices/addApkComment/";
 	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/apks/dev/latest_version.xml";
@@ -510,7 +510,7 @@ public class Constants {
 			+ KEY_DOWNLOAD_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
 			+ KEY_DOWNLOAD_REMOTE_PATH_TAIL + " TEXT NOT NULL, "
 			+ KEY_DOWNLOAD_MD5HASH + " TEXT NOT NULL, "
-			+ KEY_DOWNLOAD_SIZE + " INTEGER NOT NULL CHECK ("+KEY_DOWNLOAD_SIZE+">0), "
+			+ KEY_DOWNLOAD_SIZE + " INTEGER NOT NULL ," //TODO server send 1 if 0 CHECK ("+KEY_DOWNLOAD_SIZE+">0), "
 			+ "FOREIGN KEY("+ KEY_DOWNLOAD_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
 //			+ "PRIMARY KEY("+ KEY_DOWNLOAD_APP_FULL_HASHID +") );";
 	

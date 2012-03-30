@@ -1321,6 +1321,10 @@ public class ManagerDatabase {
 		
 
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
+		if(repoCursor.getCount() < 1){
+			return null;
+		}
+		
 		repoCursor.moveToFirst();
 
 		ViewRepository repo = new ViewRepository(repoCursor.getString(URI), repoCursor.getInt(SIZE), repoCursor.getString(BASE_PATH)
@@ -3071,21 +3075,23 @@ public class ManagerDatabase {
 		String selectAppVersions = "SELECT A."+Constants.KEY_APPLICATION_FULL_HASHID+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_VERSION_CODE
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
 											+", R."+Constants.KEY_REPO_URI+", R."+Constants.KEY_REPO_HASHID
-											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
-											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
-											+", D."+Constants.KEY_DOWNLOAD_SIZE+", T.scheduled"
+//											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
+//											+", S."+Constants.KEY_STATS_DOWNLOADS+", E."+Constants.KEY_EXTRA_DESCRIPTION
+//											+", D."+Constants.KEY_DOWNLOAD_SIZE
+											+", T.scheduled"
 									+" FROM (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI
 											+" FROM "+Constants.TABLE_REPOSITORY
 											+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+") R"
 									+" NATURAL INNER JOIN (SELECT * " 
 														+" FROM "+Constants.TABLE_APPLICATION
 														+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"') A"
-									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_STATS_INFO+") S"
-									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_EXTRA_INFO+") E"
-									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+", "+Constants.KEY_DOWNLOAD_SIZE
-														+" FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
+//									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_STATS_INFO+") S"
+//									+" NATURAL LEFT JOIN (SELECT * FROM "+Constants.TABLE_EXTRA_INFO+") E"
+//									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_DOWNLOAD_APP_FULL_HASHID+", "+Constants.KEY_DOWNLOAD_SIZE
+//														+" FROM "+Constants.TABLE_DOWNLOAD_INFO+") D"
 									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APP_TO_INSTALL_HASHID+", "+Constants.KEY_APP_TO_INSTALL_HASHID+" AS scheduled"
 														+" FROM "+Constants.TABLE_APP_TO_INSTALL+") T"
+														
 //									+" NATURAL LEFT JOIN (SELECT "
 //															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
 //															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
@@ -3097,7 +3103,7 @@ public class ManagerDatabase {
 											+" FROM "+Constants.TABLE_APP_INSTALLED
 											+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"'";
 		
-		Log.d("Aptoide-ManagerDatabase", "app info: "+selectAppVersions+ " installed : "+selectInstalledAppVersion);
+		Log.d("Aptoide-ManagerDatabase", "app info: "+selectAppVersions);//+ " installed : "+selectInstalledAppVersion);
 		
 		try{
 			db.beginTransaction();
@@ -3135,7 +3141,7 @@ public class ManagerDatabase {
 							, appVersionIsInstalled, (appVersionsCursor.isNull(SCHEDULED)?false:true));
 					
 					
-					if(!installedAlsoAvailable && appVersionCode < installedVersionCode){
+					if(!installedAlsoAvailable && appVersionCode < installedVersionCode && !installedAdded){
 						appVersions.add(installedVersion);
 						installedAdded = true;
 					}
@@ -3375,6 +3381,7 @@ public class ManagerDatabase {
 					
 		if(cursorAppVersionExtras.getCount() == Constants.EMPTY_INT){
 				//TODO throw exception (Unrecognized appHashid)
+			return null;
 		}
 		cursorAppVersionExtras.moveToFirst();
 		extras = new ViewDisplayAppVersionExtras(appFullHashid, cursorAppVersionExtras.getString(DESCRIPTION));

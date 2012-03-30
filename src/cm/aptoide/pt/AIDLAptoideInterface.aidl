@@ -45,4 +45,7 @@ interface AIDLAptoideInterface{
 	void allowSortingPolicyChange();
 	void disallowSortingPolicyChange();
 	
+	void allowUpdateAll();
+	void disallowUpdateAll();
+	
 }

@@ -137,10 +137,10 @@ public class ManagerXml{
 					repoParser = new RepoIconParser(this, parseInfo);
 					break;	
 					
-//				case DOWNLOAD:
-//					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-//					repoParser = new RepoDownloadParser(this, parseInfo);
-//					break;
+				case DOWNLOAD:
+					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+					repoParser = new RepoDownloadParser(this, parseInfo);
+					break;
 				
 				case STATS:
 					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
@@ -189,6 +189,16 @@ public class ManagerXml{
 	public void parsingRepoBareFinished(ViewRepository repository){
 		serviceData.parsingRepoBareFinished(repository);
 	}
+
+	public void repoDownloadParse(ViewRepository repository, ViewCache cache){
+		if(cache != null){
+			repoParse(repository, cache, EnumInfoType.DOWNLOAD);
+		}
+	}
+	
+	public void parsingRepoDownloadFinished(ViewRepository repository){
+		serviceData.parsingRepoDownloadInfoFinished(repository);
+	}
 	
 	public void addRepoIconsInfo(ViewRepository repository){
 		serviceData.addRepoIconsInfo(repository);
@@ -202,14 +212,6 @@ public class ManagerXml{
 	
 	public void parsingRepoIconsFinished(ViewRepository repository){
 		serviceData.parsingRepoIconsFinished(repository);
-	}
-	
-//	public void repoDownloadParse(ViewRepository repository, ViewCache cache){
-//		repoAppParse(repository, cache, EnumInfoType.DOWNLOAD);
-//	}
-	
-	public void parsingRepoDownloadFinished(ViewRepository repository){
-//		serviceData.parsingRepoDownloadInfoFinished(repository);
 	}
 	
 	public void repoStatsParse(ViewRepository repository, ViewCache cache){
@@ -247,18 +249,22 @@ public class ManagerXml{
 //					break;	
 					
 				case DOWNLOAD:
-					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+//					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
 					repoParser = new RepoDownloadParser(this, parseInfo, appHashid);
 					break;
 				
 				case STATS:
-					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+//					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
 					repoParser = new RepoStatsParser(this, parseInfo, appHashid);
 					break;
 					
 				case EXTRAS:
-					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
+//					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
 					repoParser = new RepoExtrasParser(this, parseInfo, appHashid);
+					break;
+					
+				case COMMENTS:
+					repoParser = new ParserComments(this, parseInfo, appHashid);
 					break;
 	
 				default:
@@ -287,6 +293,10 @@ public class ManagerXml{
 	
 	public void repoAppStatsParse(ViewRepository repository, ViewCache cache, int appHashid){
 		repoAppParse(repository, cache, appHashid, EnumInfoType.STATS);
+	}
+	
+	public void repoAppCommentsParse(ViewRepository repository, ViewCache cache, int appHashid){
+		repoAppParse(repository, cache, appHashid, EnumInfoType.COMMENTS);
 	}
 	
 	public void parsingRepoAppStatsFinished(ViewRepository repository, int appHashid){

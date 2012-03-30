@@ -742,18 +742,19 @@ public class AppInfo extends Activity {
 
 			Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
 			serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, version.getAppHashid());
-			
-			if(version.getSize() == Constants.EMPTY_INT){
-				serviceDataCaller.callAddVersionDownloadInfo(version.getAppHashid(), version.getRepoHashid());
-				Log.d("Aptoide-AppInfo", "called addVersionDownloadInfo");
-			}
-			if(!version.isExtrasAvailable()){
-				serviceDataCaller.callAddVersionExtraInfo(version.getAppHashid(), version.getRepoHashid());
-				Log.d("Aptoide-AppInfo", "called AddVersionExtraInfo");
-			}
-			if(!version.isStatsAvailable()){
-				serviceDataCaller.callAddVersionStatsInfo(version.getAppHashid(), version.getRepoHashid());
-				Log.d("Aptoide-AppInfo", "called AddVersionStatsInfo");
+			if(version.getRepoHashid() != Constants.EMPTY_INT){
+				if(version.getSize() == Constants.EMPTY_INT){
+					serviceDataCaller.callAddVersionDownloadInfo(version.getAppHashid(), version.getRepoHashid());
+					Log.d("Aptoide-AppInfo", "called addVersionDownloadInfo");
+				}
+				if(!version.isExtrasAvailable() || version.getExtras() != null){
+					serviceDataCaller.callAddVersionExtraInfo(version.getAppHashid(), version.getRepoHashid());
+					Log.d("Aptoide-AppInfo", "called AddVersionExtraInfo");
+				}
+				if(!version.isStatsAvailable() || version.getStats() != null){
+					serviceDataCaller.callAddVersionStatsInfo(version.getAppHashid(), version.getRepoHashid());
+					Log.d("Aptoide-AppInfo", "called AddVersionStatsInfo");
+				}
 			}
 			
 		} catch (RemoteException e) {
@@ -844,7 +845,7 @@ public class AppInfo extends Activity {
 	}
 	
 	private void setVersionDescription() {
-		if(selectedVersion.isExtrasAvailable()){
+		if(selectedVersion.isExtrasAvailable() && selectedVersion.getExtras()!=null){
 			//			appDescription = appVersions.toString();
 			appDescription = selectedVersion.getExtras().getDescription();
 			appDescriptionTextView.setText(""+appDescription);

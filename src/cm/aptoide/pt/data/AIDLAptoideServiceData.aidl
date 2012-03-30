@@ -28,6 +28,7 @@ import cm.aptoide.pt.data.display.ViewDisplayListRepos;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionStats;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras;
+import cm.aptoide.pt.data.display.ViewDisplayListComments;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.AIDLAppInfo;
 import cm.aptoide.pt.AIDLReposInfo;
@@ -87,6 +88,8 @@ interface AIDLAptoideServiceData {
 	ViewDisplayListApps callGetAvailableAppsByCategory(in int offset, in int range, in int categoryHashid);
 	ViewDisplayListApps callGetUpdatableApps();
 	
+	void callUpdateAll();
+	
 	ViewDisplayListApps callGetAppSearchResults(in String searchString);
 	
 	void callRegisterAppInfoObserver(in AIDLAppInfo appInfoObserver, in int appHashid);
@@ -94,10 +97,12 @@ interface AIDLAptoideServiceData {
 	void callAddVersionDownloadInfo(in int appHashid, in int repoHashid);
 	void callAddVersionStatsInfo(in int appHashid, in int repoHashid);
 	void callAddVersionExtraInfo(in int appHashid, in int repoHashid);
+	void callRetrieveVersionComments(in int appHashid, in int repoHashid);
 	ViewDisplayAppVersionsInfo callGetAppInfo(in int appHashid);
 	int callGetAppVersionDownloadSize(in int appFullHashid);
 	ViewDisplayAppVersionStats callGetAppStats(in int appFullHashid);
 	ViewDisplayAppVersionExtras callGetAppExtras(in int appFullHashid);
+	ViewDisplayListComments callGetVersionComments(in int appHashid);
 	
 	void callInstallApp(in int appHashid);
 	void callUninstallApp(in int appHashid);

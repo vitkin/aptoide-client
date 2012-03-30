@@ -292,10 +292,10 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 							}
 						}
 						for(int i=removalIds.size()-1; i >= 0; i--){
-							scheduledApps.remove(removalIds.get(i));
-							selected.remove(removalIds.get(i));
+							selected.remove(removalIds.get(i).intValue());
+							scheduledApps.remove(removalIds.get(i).intValue());
 						}
-						setScheduledList();
+						resetScheduledList();
 						return;
 					} }); 
 				confirmRemove.setButton2(getText(R.string.no), new DialogInterface.OnClickListener() {

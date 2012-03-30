@@ -69,9 +69,11 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
+import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
@@ -134,6 +136,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	private boolean availableByCategory = true;
 	private EnumAppsSorting appsSortingPolicy = null;
 	private AtomicBoolean allowAppsDisplayOptionsChange = null;
+	private AtomicBoolean allowUpdateAll = null;
 	private AtomicBoolean resettingFlipper = null;
 	private AtomicBoolean highPriority = null;
 	
@@ -339,6 +342,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		public void disallowSortingPolicyChange() throws RemoteException {
 			allowAppsDisplayOptionsChange.set(false);
 		}
+
+		@Override
+		public void allowUpdateAll() throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void disallowUpdateAll() throws RemoteException {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 	
     
@@ -515,6 +530,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			synchronizingInstalledApps = new AtomicBoolean(false);
 			allowAppsDisplayOptionsChange = new AtomicBoolean(true);
+			allowUpdateAll = new AtomicBoolean(true);
 			resettingFlipper = new AtomicBoolean(false);
 			highPriority = new AtomicBoolean(true);
 			
@@ -1195,21 +1211,21 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		menu.clear();
 		super.onCreateOptionsMenu(menu);
 		switch (currentAppsList) {
-			case Available:
-				menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
-					.setIcon(android.R.drawable.ic_menu_agenda);
-				if(allowAppsDisplayOptionsChange.get()){
-					menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
-						.setIcon(android.R.drawable.ic_menu_sort_by_size);
-				}
-				menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.scheduled_downloads)
-					.setIcon(R.drawable.ic_menu_scheduled);
+			case Updates:
+				menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.manage_repos)
+					.setIcon(R.drawable.ic_menu_refresh);
 				break;
-	
+				
 			default:
 				break;
 		}
-		
+
+		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
+			.setIcon(android.R.drawable.ic_menu_agenda);
+		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
+			.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.scheduled_downloads)
+			.setIcon(R.drawable.ic_menu_scheduled);
 //		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
 //			.setIcon(android.R.drawable.ic_menu_search);
 		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.settings)
@@ -1232,7 +1248,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				Intent manageRepo = new Intent(this, ManageRepos.class);
 				startActivity(manageRepo);
 				return true;
+				
 			case DISPLAY_OPTIONS:
+				if(allowAppsDisplayOptionsChange.get()){
 					//TODO refactor extract dialog management class
 					LayoutInflater displayOptionsInflater = LayoutInflater.from(this);
 					View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
@@ -1328,12 +1346,16 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						}
 					});
 					
-				sortDialog.show();
+					sortDialog.show();
+				}else{
+					Toast.makeText(Aptoide.this, "Option not available while updating stores!", Toast.LENGTH_SHORT);					
+				}
 				return true;
 				
 //			case SEARCH_MENU:
 //				onSearchRequested();
 //				return true;
+				
 			case ABOUT:
 				LayoutInflater aboutInflater = LayoutInflater.from(this);
 				View about = aboutInflater.inflate(R.layout.about, null);
@@ -1351,18 +1373,36 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				});
 				aboutDialog.show();
 				return true;
+				
 			case SETTINGS:
 				availableAdapter.sleep();
 				Intent settings = new Intent(this, Settings.class);
 				startActivity(settings);
 				return true;	
+				
 			case SCHEDULED_DOWNLOADS:
 				availableAdapter.sleep();
 				Intent manageScheduled = new Intent(this, ManageScheduled.class);
 				startActivity(manageScheduled);
 				return true;
+				
+			case UPDATE_ALL:
+				if(allowUpdateAll.get()){
+					AptoideLog.d(this, "Update all");
+					try {
+						serviceDataCaller.callUpdateAll();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}else{
+					Toast.makeText(Aptoide.this, "Option not available while updating stores!", Toast.LENGTH_SHORT);
+				}
+				return true;
+				
+			default:
+				return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
 	}
 	
 	public void handleMyapp(){	//TODO refactor hardcoded strings
