@@ -189,9 +189,16 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 	}
 
 	@Override
-	public void writeToParcel(Parcel out, int flags) {	//TODO use list or parcelable instead of serializable
-		out.writeSerializable(subCategories);
+	public void writeToParcel(Parcel out, int flags) {
 		out.writeParcelable(parentCategory, flags);
+		
+//		int size = this.subCategories.size();
+//		out.writeInt(size);
+//		for(int i=0; i<size; i++){
+//			out.writeParcelable(this.subCategories.get(i),flags);
+//		}
+		out.writeSerializable(subCategories);
+		
 		out.writeString(categoryName);
 		out.writeInt(categoryHashid);
 		out.writeInt(availableApps);
@@ -199,8 +206,15 @@ public class ViewDisplayCategory implements Parcelable, Serializable{
 
 	@SuppressWarnings("unchecked")
 	public void readFromParcel(Parcel in) {
-		subCategories = (LinkedList<ViewDisplayCategory>) in.readSerializable();
 		parentCategory = in.readParcelable(getClass().getClassLoader());
+		
+//		subCategories.clear();
+//		int size = in.readInt();
+//		for(int i=0; i<size; i++){
+//			this.subCategories.add((ViewDisplayCategory) in.readParcelable(ViewDisplayCategory.class.getClassLoader()));
+//		}
+		subCategories = (LinkedList<ViewDisplayCategory>) in.readSerializable();
+		
 		categoryName = in.readString();
 		categoryHashid = in.readInt();
 		availableApps = in.readInt();
