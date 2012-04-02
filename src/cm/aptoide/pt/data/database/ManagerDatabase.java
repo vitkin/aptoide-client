@@ -1751,52 +1751,47 @@ public class ManagerDatabase {
 		
 		final int OTHERS_APPS = Constants.COLUMN_SECOND;
 		
-		String selectApplicationsSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", COUNT(A."+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
-												+" FROM (SELECT * FROM "+Constants.TABLE_CATEGORY+" G"
-														+" INNER JOIN "+Constants.TABLE_SUB_CATEGORY+" S ON G."+Constants.KEY_CATEGORY_HASHID+"=S."+Constants.KEY_SUB_CATEGORY_CHILD
-														+" WHERE "+Constants.KEY_SUB_CATEGORY_PARENT+"="+Constants.CATEGORY_HASHID_APPLICATIONS+") C"
-												+" NATURAL INNER JOIN (SELECT P."+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+", P."+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
-																		+" FROM (SELECT * FROM "+Constants.TABLE_APP_CATEGORY+") P"
-																		+" NATURAL INNER JOIN (SELECT F."+Constants.KEY_APPLICATION_FULL_HASHID
-																							+" FROM (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
-																									+" FROM "+Constants.TABLE_APPLICATION+") F"
-																							+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
-																												+" FROM "+Constants.TABLE_REPOSITORY
-																												+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+"))) A "
-												+" GROUP BY C."+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
-												+" ORDER BY C."+Constants.KEY_CATEGORY_NAME;
+		String selectApplicationsSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", COUNT("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
+													+" FROM (SELECT * FROM "+Constants.TABLE_CATEGORY+" G"
+															+" INNER JOIN "+Constants.TABLE_SUB_CATEGORY+" S ON G."+Constants.KEY_CATEGORY_HASHID+"=S."+Constants.KEY_SUB_CATEGORY_CHILD
+													+" WHERE "+Constants.KEY_SUB_CATEGORY_PARENT+"="+Constants.CATEGORY_HASHID_APPLICATIONS+") C"
+												+" NATURAL INNER JOIN (SELECT * FROM "+Constants.TABLE_APP_CATEGORY+")"
+												+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
+																			+" FROM "+Constants.TABLE_APPLICATION+")"
+												+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
+																			+" FROM "+Constants.TABLE_REPOSITORY
+																			+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
+												+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+												+" ORDER BY "+Constants.KEY_CATEGORY_NAME;
 		
-		String selectGamesSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", COUNT(A."+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
-										+" FROM (SELECT * FROM "+Constants.TABLE_CATEGORY+" G"
-												+" INNER JOIN "+Constants.TABLE_SUB_CATEGORY+" S ON G."+Constants.KEY_CATEGORY_HASHID+"=S."+Constants.KEY_SUB_CATEGORY_CHILD
-												+" WHERE "+Constants.KEY_SUB_CATEGORY_PARENT+"="+Constants.CATEGORY_HASHID_GAMES+") C"
-										+" NATURAL INNER JOIN (SELECT P."+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+", P."+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
-															+" FROM (SELECT * FROM "+Constants.TABLE_APP_CATEGORY+") P"
-															+" NATURAL INNER JOIN (SELECT F."+Constants.KEY_APPLICATION_FULL_HASHID
-																				+" FROM (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
-																						+" FROM "+Constants.TABLE_APPLICATION+") F"
-																				+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
-																									+" FROM "+Constants.TABLE_REPOSITORY
-																									+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+"))) A "
-										+" GROUP BY C."+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
-										+" ORDER BY C."+Constants.KEY_CATEGORY_NAME;
+		String selectGamesSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", COUNT("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
+											+" FROM (SELECT * FROM "+Constants.TABLE_CATEGORY+" G"
+													+" INNER JOIN "+Constants.TABLE_SUB_CATEGORY+" S ON G."+Constants.KEY_CATEGORY_HASHID+"=S."+Constants.KEY_SUB_CATEGORY_CHILD
+											+" WHERE "+Constants.KEY_SUB_CATEGORY_PARENT+"="+Constants.CATEGORY_HASHID_GAMES+") C"
+										+" NATURAL INNER JOIN (SELECT * FROM "+Constants.TABLE_APP_CATEGORY+")"
+										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
+																+" FROM "+Constants.TABLE_APPLICATION+")"
+										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
+																	+" FROM "+Constants.TABLE_REPOSITORY
+																	+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
+										+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+										+" ORDER BY "+Constants.KEY_CATEGORY_NAME;
 
-		String selectOthersApplications =  "SELECT A."+Constants.KEY_CATEGORY_HASHID+", COUNT(A."+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
-										+" FROM (SELECT P."+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+", P."+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID
-												+" FROM (SELECT * FROM "+Constants.TABLE_APP_CATEGORY
-														+" WHERE "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+"="+Constants.CATEGORY_HASHID_OTHERS+") P"
-												+" NATURAL INNER JOIN (SELECT F."+Constants.KEY_APPLICATION_FULL_HASHID
-																	+" FROM (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
-																			+" FROM "+Constants.TABLE_APPLICATION+") F"
-																	+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
-																						+" FROM "+Constants.TABLE_REPOSITORY
-																						+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+"))) A "
-										+" GROUP BY A."+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID;
+		String selectOthersApplications =  "SELECT "+Constants.KEY_CATEGORY_HASHID+", COUNT("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
+											+" FROM (SELECT * FROM "+Constants.TABLE_APP_CATEGORY
+														+" WHERE "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID+"="+Constants.CATEGORY_HASHID_OTHERS+")"
+										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
+																	+" FROM "+Constants.TABLE_APPLICATION+")"
+										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
+																	+" FROM "+Constants.TABLE_REPOSITORY
+																	+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
+										+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID;
 				
 		
 		ViewDisplayCategory topCategory = new ViewDisplayCategory("TOP", Constants.TOP_CATEGORY, 0);
 		
-//		Log.d("Aptoide-ManagerDatabase", "categories: "+selectApplicationsSubCategories);
+//		Log.d("Aptoide-ManagerDatabase", "applicationCategories: "+selectApplicationsSubCategories);
+//		Log.d("Aptoide-ManagerDatabase", "gamesCategories: "+selectGamesSubCategories);
 		try{
 			db.beginTransaction();
 			
@@ -2439,6 +2434,10 @@ public class ManagerDatabase {
 			db.setTransactionSuccessful();
 			db.endTransaction();
 
+			if(appsCursor.getCount() == Constants.EMPTY_INT){
+				return null;
+			}
+			
 			updatableApps = new ViewDisplayListApps();
 			
 			appsCursor.moveToFirst();

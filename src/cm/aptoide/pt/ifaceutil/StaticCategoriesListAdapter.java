@@ -215,7 +215,7 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
 	private synchronized void setFreshCategories(ViewDisplayCategory freshCategory){
 		Log.d("Aptoide-StaticCategoriesListAdapter", "setFreshCategories");
 		this.freshCategory = freshCategory;
-		refreshDisplayCategories();
+//		refreshDisplayCategories();
 	}
 	
 	private void resetDisplay(){
@@ -229,6 +229,7 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
 		this.category = freshCategory;
    		initDisplay();
 		refreshDisplayCategories();
+		listView.setSelection(1);
     	
     	aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
     	

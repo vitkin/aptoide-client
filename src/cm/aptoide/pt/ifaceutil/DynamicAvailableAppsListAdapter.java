@@ -42,6 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cm.aptoide.pt.EnumAptoideInterfaceTasks;
 import cm.aptoide.pt.R;
@@ -398,7 +399,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	}
 	
 	
-	private void setLoadingHeader(boolean on){
+	public void setLoadingHeader(boolean on){
 		if(on){//&& globalPosition.get() < (displayListsDimensions.getPageSize()/Constants.DISPLAY_LISTS_PAGE_SIZE_MULTIPLIER )){
 			int scrollRestorePosition = listView.getFirstVisiblePosition();
 			int partialScrollRestorePosition = (listView.getChildAt(0)==null?0:listView.getChildAt(0).getTop());
@@ -411,7 +412,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		}
 	}
 	
-	private void setLoadingFooter(boolean on){
+	public void setLoadingFooter(boolean on){
 		if(on){
 			bottomProgressBar.setVisibility(View.VISIBLE);
 		}else{
@@ -519,6 +520,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		listView.addHeaderView(topProgressBar);
 		
 		setLoadingHeader(false);
+		setLoadingFooter(false);
 		
 		
 		cacheListOffset = new AtomicInteger(0);
@@ -631,6 +633,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 			reloadListScrollPosition.set(0);
 		}
 		if( !sleep.get() && directionDown.get() && !freshApps.isEmpty() && (getCount()-globalPosition.get()) < displayListsDimensions.getCacheSize()){
+			setLoadingFooter(true);
 			appsManager.scrollDown();
 		}else {
 			setLoadingFooter(false);
@@ -697,6 +700,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
         	scrollDirectionOrigin.set(globalPosition.get()+adjustAmount);
     	}
 		if(!sleep.get() && !directionDown.get() && cacheAppsTrimmed.get() > 0 && globalPosition.get() < displayListsDimensions.getCacheSize()){
+			setLoadingHeader(true);
 			appsManager.scrollUp();
 			if((getCount()-globalPosition.get()) > displayListsDimensions.getDecreaseTrigger()){
 				trimBottomAppsList(displayListsDimensions.getIncreaseTrigger());
@@ -728,6 +732,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
     		
     	}
 		if( !sleep.get() && directionDown.get() && !freshAvailableApps.isEmpty() && (getCount()-globalPosition.get()) < displayListsDimensions.getCacheSize()){
+			setLoadingFooter(true);
 			appsManager.scrollDown();
 			if(globalPosition.get() > displayListsDimensions.getDecreaseTrigger()){
 				trimTopAppsList(displayListsDimensions.getIncreaseTrigger());
