@@ -19,7 +19,6 @@
 */
 package cm.aptoide.pt;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.ComponentName;
@@ -30,18 +29,21 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.preference.CheckBoxPreference;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
+import android.preference.PreferenceActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.preferences.ViewSettings;
@@ -56,13 +58,13 @@ import cm.aptoide.pt.data.webservices.ViewIconDownloadPermissions;
  * @since 3.0
  *
  */
-public class Settings extends Activity {
+public class Settings extends PreferenceActivity {
 	
 	ViewSettings storedSettings;
 	ViewHwFilters hwFilters;
 	ViewIconDownloadPermissions iconDownloadPermissions;
 	
-	CheckBox hwFilter;
+	CheckBoxPreference hwFilter;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -103,12 +105,13 @@ public class Settings extends Activity {
 	
 	
 	private void showSettings(){
-		setContentView(R.layout.settings);
+		addPreferencesFromResource(R.xml.settings);
+//		setContentView(R.layout.settings);
 		
-		TextView iconDownloadTextView = (TextView) findViewById(R.id.icon_download_permissions);
-		iconDownloadTextView.setOnClickListener(new OnClickListener() {
+		Preference iconDownloadTextView = (Preference) findPreference("icon_download_permissions");
+		iconDownloadTextView.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
-			public void onClick(View v) {
+			public boolean onPreferenceClick(Preference preference) {
 				try {
 					iconDownloadPermissions = serviceDataCaller.callGetIconDownloadPermissions();
 				} catch (RemoteException e1) {
@@ -246,15 +249,15 @@ public class Settings extends Activity {
 				});
 				
 				iconDownloadDialog.show();
-				
+				return true;
 			}
 		});
 		
 
-		TextView clearCacheTextView = (TextView) findViewById(R.id.clear_cache);
-		clearCacheTextView.setOnClickListener(new OnClickListener() {
+		Preference clearCacheTextView = (Preference) findPreference("clear_cache");
+		clearCacheTextView.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
-			public void onClick(View view) {
+			public boolean onPreferenceClick(Preference preference) {
 				Log.d("Aptoide-Settings", "clicked clear cache");
 				View clearCacheView = LinearLayout.inflate(Settings.this, R.layout.dialog_clear_cache, null);
 				Builder dialogBuilder = new AlertDialog.Builder(Settings.this).setView(clearCacheView);
@@ -300,9 +303,11 @@ public class Settings extends Activity {
 						try {
 							if(icon.isChecked()){
 								serviceDataCaller.callClearIconCache();
+								Toast.makeText(Settings.this, "Icon cache cleared", Toast.LENGTH_SHORT).show();
 							}
 							if(apk.isChecked()){
 								serviceDataCaller.callClearApkCache();
+								Toast.makeText(Settings.this, "Apk cache cleared", Toast.LENGTH_SHORT).show();
 							}
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
@@ -322,16 +327,63 @@ public class Settings extends Activity {
 				});
 				
 				clearCacheDialog.show();
-				
+				return true;
 			
 			}
 		});
 		
 		
-		TextView hwSpecs = (TextView) findViewById(R.id.hw_specs);
-		hwSpecs.setOnClickListener(new OnClickListener() {
+		Preference clearServerLogin = (Preference) findPreference("clear_server_login");
+		clearServerLogin.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			@Override
-			public void onClick(View v) {
+			public boolean onPreferenceClick(Preference preference) {
+				Log.d("Aptoide-Settings", "clicked clear server login");
+				try {
+					serviceDataCaller.callClearServerLogin();
+					Toast.makeText(Settings.this, "Login cleared", Toast.LENGTH_SHORT).show();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return true;
+			}
+		});
+		
+		
+		Preference setServerLogin = (Preference) findPreference("set_server_login");
+		setServerLogin.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				Log.d("Aptoide-Settings", "clicked set server login");
+				String token = null;
+				try {
+					token = serviceDataCaller.callGetServerToken();
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(token == null){
+					Log.d("Aptoide-AppInfo", "No login set");
+					DialogLogin loginComments = new DialogLogin(Settings.this, serviceDataCaller, DialogLogin.InvoqueNature.NO_CREDENTIALS_SET);
+//					loginComments.setOnDismissListener(new OnDismissListener() {
+//						@Override
+//						public void onDismiss(DialogInterface dialog) {
+//							addAppVersionComment();
+//						}
+//					});
+					loginComments.show();
+				}else{
+					Toast.makeText(Settings.this, "Login already set", Toast.LENGTH_SHORT).show();
+				}
+				return true;
+			}
+		});
+		
+		
+		Preference hwSpecs = (Preference) findPreference("hw_specs");
+		hwSpecs.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
 				Log.d("Aptoide-Settings", "clicked hw specs: "+hwFilters);
 				View hwSpecsView = LinearLayout.inflate(Settings.this, R.layout.dialog_hw_specs, null);
 				Builder dialogBuilder = new AlertDialog.Builder(Settings.this).setView(hwSpecsView);
@@ -354,54 +406,59 @@ public class Settings extends Activity {
 				});
 				
 				hwSpecsDialog.show();
+				return true;
 			}
 		});
+
 		
-		hwFilter = (CheckBox) findViewById(R.id.hw_filter);
+		hwFilter = (CheckBoxPreference) findPreference("check_hw_specs");
 		hwFilter.setChecked(storedSettings.isHwFilterOn());
-		hwFilter.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		hwFilter.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Log.d("Aptoide-Settings", "hwFilter isChecked: "+isChecked+" storedValue: "+storedSettings.isHwFilterOn());
-				if(isChecked != storedSettings.isHwFilterOn()){
+			public boolean onPreferenceChange(Preference preference, Object newValue) {	//isChecked on preferences returns oposite value
+				Log.d("Aptoide-Settings", "hwFilter isChecked: "+!hwFilter.isChecked()+" storedValue: "+storedSettings.isHwFilterOn());
+				if(!hwFilter.isChecked() != storedSettings.isHwFilterOn()){
 					try {
-						serviceDataCaller.callSetHwFilter(isChecked);
+						serviceDataCaller.callSetHwFilter(!hwFilter.isChecked());
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
+				return true;
 			}
 		});
 		
-		CheckBox automaticInstall = (CheckBox) findViewById(R.id.automatic_install);
+		final CheckBoxPreference automaticInstall = (CheckBoxPreference) findPreference("automatic_install");
 		automaticInstall.setChecked(storedSettings.isAutomaticInstallOn());
-		automaticInstall.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		automaticInstall.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Log.d("Aptoide-Settings", "automati install isChecked: "+isChecked+" storedValue: "+storedSettings.isAutomaticInstallOn());
-				if(isChecked != storedSettings.isAutomaticInstallOn()){
+			public boolean onPreferenceChange(Preference preference, Object newValue) { //isChecked on preferences returns oposite value
+				Log.d("Aptoide-Settings", "automati install isChecked: "+!automaticInstall.isChecked()+" storedValue: "+storedSettings.isAutomaticInstallOn());
+				if(!automaticInstall.isChecked() != storedSettings.isAutomaticInstallOn()){
 					try {
-						serviceDataCaller.callSetAutomaticInstall(isChecked);
+						serviceDataCaller.callSetAutomaticInstall(!automaticInstall.isChecked());
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
+				return true;
 			}
 		});
+		
 		
 	}
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-    	
+		super.onCreate(savedInstanceState);
+
 		if(!serviceDataIsBound){
     		bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
     	}
 		
-		super.onCreate(savedInstanceState);
 	}
 
 	

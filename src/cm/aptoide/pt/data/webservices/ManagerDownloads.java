@@ -365,7 +365,7 @@ public class ManagerDownloads {
 	}
 	
 	public void getAppScreens(ViewRepository repository, ArrayList<ViewDownloadInfo> screensInfo){
-		if(!(screensInfo.size()>0)){
+		if(screensInfo == null || !(screensInfo.size()>0)){
 			return;
 		}
 		int orderNumber = 1;
@@ -477,7 +477,7 @@ public class ManagerDownloads {
 		ViewNotification notification = null;
 		ViewDownload download;
 		
-		String repoName = repository.getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+		String repoName = repository.getRepoName();
 		String xmlRemotePath = null;
 		
 		switch (infoType) {
@@ -598,14 +598,14 @@ public class ManagerDownloads {
 				break;
 				
 			case COMMENTS:
-				xmlRemotePath = String.format(Constants.URI_FORMAT_COMMENTS_WS, URLEncoder.encode(repository.getUri()), URLEncoder.encode(Integer.toString(appHashid)));
+				xmlRemotePath = String.format(Constants.URI_FORMAT_COMMENTS_WS, URLEncoder.encode(repository.getRepoName()), URLEncoder.encode(Integer.toString(appHashid)));
 				cache = managerCache.getNewRepoAppCommentsViewCache(repository.getHashid(), appHashid);
 				break;
 	
 			default:
 				break;
 		}
-
+Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 		
 		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_APP_UPDATE, repoName, appHashid);
 		if(repository.isLoginRequired() && !infoType.equals(EnumInfoType.COMMENTS)){

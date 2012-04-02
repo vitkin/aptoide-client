@@ -149,6 +149,11 @@ public class ViewRepository implements Parcelable{
 		return login;			//TODO test isrequired and return nullobject pattern if not
 	}
 	
+	
+	public String getRepoName(){
+		return getUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+	}
+	
 
 	/**
 	 * ViewRepository object reuse clean references

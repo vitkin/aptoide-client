@@ -245,9 +245,11 @@ public class ManagerUploads {
 	
 	
 	
-	public EnumServerLoginStatus login(ViewLogin login){	//TODO receive repo to support multiple servers
-		EnumServerLoginStatus status = EnumServerLoginStatus.SERVICE_UNAVAILABLE;
+	public EnumServerStatus login(ViewLogin login){	//TODO receive repo to support multiple servers
+		EnumServerStatus status = EnumServerStatus.SERVICE_UNAVAILABLE;
 		String endpointString = String.format(Constants.URI_FORMAT_LOGIN_WS, URLEncoder.encode(login.getUsername()), URLEncoder.encode(login.getPassword()));
+
+//    	Log.d("Aptoide-ManagerUploads login", endpointString);
 
 		try {
 			URL endpoint = new URL(endpointString);
@@ -276,23 +278,23 @@ public class ManagerUploads {
 	        	Log.d("Aptoide-ManagerUploads login", receivedStatus.getNodeName());
 	        	Log.d("Aptoide-ManagerUploads login", receivedStatus.getFirstChild().getNodeValue().trim());
 	        	if(receivedStatus.getFirstChild().getNodeValue().trim().equals("OK")){
-	        		status = EnumServerLoginStatus.SUCCESS;
+	        		status = EnumServerStatus.SUCCESS;
 	        	}else{
-	        		NodeList receivedErrorsList = dom.getElementsByTagName(EnumXmlTagsServerLogin.errors.toString());
+	        		NodeList receivedErrorsList = dom.getElementsByTagName(EnumXmlTagsServerLogin.entry.toString());
 	    	        if(receivedErrorsList.getLength()>0){
 	    	        	Node receivedErrors = receivedErrorsList.item(0);
 	    	        	String error = receivedErrors.getFirstChild().getNodeValue();
 	    	        	Log.d("Aptoide-ManagerUploads login", receivedErrors.getNodeName());
 	    	        	Log.d("Aptoide-ManagerUploads login", receivedErrors.getFirstChild().getNodeValue().trim());
 	    	        	if(error.equals("Missing authentication parameter(s): user and/or passhash")){
-	    	        		status = EnumServerLoginStatus.MISSING_PARAMETER;
+	    	        		status = EnumServerStatus.MISSING_PARAMETER;
 	    	        	}else if(error.equals("Invalid login credentials")){
-	    	        		status = EnumServerLoginStatus.BAD_LOGIN;
+	    	        		status = EnumServerStatus.BAD_LOGIN;
 	    	        	}
 	    	        }
 	        	}
 	        }
-	        if(status.equals(EnumServerLoginStatus.SUCCESS)){
+	        if(status.equals(EnumServerStatus.SUCCESS)){
 	        	String token = null;
 	        	NodeList receivedTokenList = dom.getElementsByTagName(EnumXmlTagsServerLogin.token.toString());
 		        if(receivedTokenList.getLength()>0){
@@ -320,15 +322,18 @@ public class ManagerUploads {
         return status;
 	}
 	
-	public EnumServerAddAppVersionLikeStatus addAppVersionLike(String repo, int appHashid, boolean like){	//TODO create ViewLike from args
+	public EnumServerAddAppVersionLikeStatus addAppVersionLike(String repoName, int appHashid, boolean like){	//TODO create ViewLike from args
 		EnumServerAddAppVersionLikeStatus status = EnumServerAddAppVersionLikeStatus.SERVICE_UNAVAILABLE;
 		String token = serviceData.getManagerPreferences().getToken();	//TODO add support for multiple servers
 		String endpointString;
+		
 		if(like){
-			endpointString = String.format(Constants.URI_FORMAT_ADD_LIKE_WS, URLEncoder.encode(token), URLEncoder.encode(repo), URLEncoder.encode(Integer.toString(appHashid)));
+			endpointString = String.format(Constants.URI_FORMAT_ADD_LIKE_WS, URLEncoder.encode(token), URLEncoder.encode(repoName), URLEncoder.encode(Integer.toString(appHashid)));
 		}else{
-			endpointString = String.format(Constants.URI_FORMAT_ADD_DISLIKE_WS, URLEncoder.encode(token), URLEncoder.encode(repo), URLEncoder.encode(Integer.toString(appHashid)));
+			endpointString = String.format(Constants.URI_FORMAT_ADD_DISLIKE_WS, URLEncoder.encode(token), URLEncoder.encode(repoName), URLEncoder.encode(Integer.toString(appHashid)));
 		}
+		
+    	Log.d("Aptoide-ManagerUploads addLike: ", endpointString);
 
 		try {
 			URL endpoint = new URL(endpointString);
@@ -354,17 +359,17 @@ public class ManagerUploads {
 	        NodeList receivedStatusList = dom.getElementsByTagName(EnumXmlTagsServerLogin.status.toString());
 	        if(receivedStatusList.getLength()>0){
 	        	Node receivedStatus = receivedStatusList.item(0);
-	        	Log.d("Aptoide-ManagerUploads login", receivedStatus.getNodeName());
-	        	Log.d("Aptoide-ManagerUploads login", receivedStatus.getFirstChild().getNodeValue().trim());
+	        	Log.d("Aptoide-ManagerUploads addLike", receivedStatus.getNodeName());
+	        	Log.d("Aptoide-ManagerUploads addLike", receivedStatus.getFirstChild().getNodeValue().trim());
 	        	if(receivedStatus.getFirstChild().getNodeValue().trim().equals("OK")){
 	        		status = EnumServerAddAppVersionLikeStatus.SUCCESS;
 	        	}else{
-	        		NodeList receivedErrorsList = dom.getElementsByTagName(EnumXmlTagsServerLogin.errors.toString());
+	        		NodeList receivedErrorsList = dom.getElementsByTagName(EnumXmlTagsServerLogin.entry.toString());
 	    	        if(receivedErrorsList.getLength()>0){
 	    	        	Node receivedErrors = receivedErrorsList.item(0);
 	    	        	String error = receivedErrors.getFirstChild().getNodeValue();
-	    	        	Log.d("Aptoide-ManagerUploads login", receivedErrors.getNodeName());
-	    	        	Log.d("Aptoide-ManagerUploads login", receivedErrors.getFirstChild().getNodeValue().trim());
+	    	        	Log.d("Aptoide-ManagerUploads addLike", receivedErrors.getNodeName());
+	    	        	Log.d("Aptoide-ManagerUploads addLike", receivedErrors.getFirstChild().getNodeValue().trim());
 	    	        	if(error.equals("Missing authentication parameter(s): token or user&passhash")
 	    	        		|| error.equals("Missing repo parameter")
 	    	        		|| error.equals("Missing apkid parameter")
@@ -399,13 +404,13 @@ public class ManagerUploads {
         return status;
 	}
 	
-	public EnumServerAddAppVersionCommentStatus addAppVersionComment(String repo, int appHashid, String commentBody, String subject, long answerTo){	//TODO create ViewComment from args
+	public EnumServerAddAppVersionCommentStatus addAppVersionComment(String repoName, int appHashid, String commentBody, String subject, long answerTo){	//TODO create ViewComment from args
 		EnumServerAddAppVersionCommentStatus status = EnumServerAddAppVersionCommentStatus.SERVICE_UNAVAILABLE;
 		String token = serviceData.getManagerPreferences().getToken();	//TODO add support for multiple servers
 
 		try {
 			URL endpoint = new URL(Constants.URI_ADD_COMMENT_POST_WS);
-
+			
 			HttpURLConnection connection = (HttpURLConnection) endpoint.openConnection();//Careful with UnknownHostException 
 
 			connection.setRequestMethod("POST");
@@ -420,7 +425,7 @@ public class ManagerUploads {
 			//Variable definition
 			StringBuilder postArguments = new StringBuilder();
 			postArguments.append(URLEncoder.encode("token", "UTF-8") + "=" + URLEncoder.encode(token, "UTF-8"));
-			postArguments.append("&"+URLEncoder.encode("repo", "UTF-8") + "=" + URLEncoder.encode(repo, "UTF-8"));
+			postArguments.append("&"+URLEncoder.encode("repo", "UTF-8") + "=" + URLEncoder.encode(repoName, "UTF-8"));
 			postArguments.append("&"+URLEncoder.encode("apkid", "UTF-8") + "=" + URLEncoder.encode("apphashid", "UTF-8"));
 			postArguments.append("&"+URLEncoder.encode("apkversion", "UTF-8") + "=" + URLEncoder.encode(Integer.toString(appHashid), "UTF-8"));
 			postArguments.append("&"+URLEncoder.encode("text", "UTF-8") + "=" + URLEncoder.encode(commentBody, "UTF-8"));
@@ -435,7 +440,7 @@ public class ManagerUploads {
 			if(subject!=null && subject.length()!=0){
 				postArguments.append("&"+URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(subject, "UTF-8"));
 			}
-			postArguments.append("&"+URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode("xml", "UTF-8"));
+//			postArguments.append("&"+URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode("xml", "UTF-8"));
 
 
 			connection.setDoOutput(true);
@@ -456,17 +461,17 @@ public class ManagerUploads {
 	        NodeList receivedStatusList = dom.getElementsByTagName(EnumXmlTagsServerLogin.status.toString());
 	        if(receivedStatusList.getLength()>0){
 	        	Node receivedStatus = receivedStatusList.item(0);
-	        	Log.d("Aptoide-ManagerUploads login", receivedStatus.getNodeName());
-	        	Log.d("Aptoide-ManagerUploads login", receivedStatus.getFirstChild().getNodeValue().trim());
+	        	Log.d("Aptoide-ManagerUploads addComment", receivedStatus.getNodeName());
+	        	Log.d("Aptoide-ManagerUploads addComment", receivedStatus.getFirstChild().getNodeValue().trim());
 	        	if(receivedStatus.getFirstChild().getNodeValue().trim().equals("OK")){
 	        		status = EnumServerAddAppVersionCommentStatus.SUCCESS;
 	        	}else{
-	        		NodeList receivedErrorsList = dom.getElementsByTagName(EnumXmlTagsServerLogin.errors.toString());
+	        		NodeList receivedErrorsList = dom.getElementsByTagName(EnumXmlTagsServerLogin.entry.toString());
 	    	        if(receivedErrorsList.getLength()>0){
 	    	        	Node receivedErrors = receivedErrorsList.item(0);
 	    	        	String error = receivedErrors.getFirstChild().getNodeValue();
-	    	        	Log.d("Aptoide-ManagerUploads login", receivedErrors.getNodeName());
-	    	        	Log.d("Aptoide-ManagerUploads login", receivedErrors.getFirstChild().getNodeValue().trim());
+	    	        	Log.d("Aptoide-ManagerUploads addComment", receivedErrors.getNodeName());
+	    	        	Log.d("Aptoide-ManagerUploads addComment", receivedErrors.getFirstChild().getNodeValue().trim());
 	    	        	if(error.equals("Missing authentication parameter(s): token or user&passhash")
 	    	        		|| error.equals("Missing repo parameter")
 	    	        		|| error.equals("Missing apkid parameter")

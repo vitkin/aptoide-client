@@ -141,6 +141,10 @@
                         android:id="@+id/likesImage"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
+	                    android:clickable="true"
+	                    android:cursorVisible="true"
+	                    android:focusable="true"
+	                    android:focusableInTouchMode="true"
                         android:src="@drawable/like"
                         android:visibility="visible" />
 
@@ -169,6 +173,10 @@
                         android:id="@+id/dislikesImage"
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
+	                    android:clickable="true"
+	                    android:cursorVisible="true"
+	                    android:focusable="true"
+	                    android:focusableInTouchMode="true"
                         android:src="@drawable/dontlike"
                         android:visibility="visible" />
                 </LinearLayout>
@@ -232,17 +240,41 @@
                     android:id="@+id/comment_on_app"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
+                    android:paddingTop="6sp"
+                    android:paddingBottom="6sp"
                     android:layout_weight="1"
+                    android:clickable="true"
+                    android:cursorVisible="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:text="@string/comment_on_app"
                     android:textColor="#3f3f3f"
                     android:textSize="18.0sp" />
-
-                <ListView
-                    android:id="@+id/list_comments"
-                    android:layout_width="fill_parent"
+                
+				<ListView
+	                android:id="@android:id/list"
+	                android:layout_width="fill_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" >
-                </ListView>
+                    android:layout_weight="1"
+	                android:cacheColorHint="@android:color/transparent" >
+	            </ListView>
+	
+	            <TextView
+	                android:id="@android:id/empty"
+	                android:layout_width="fill_parent"
+	                android:layout_height="fill_parent"
+	                android:layout_alignTop="@android:id/list"
+	                android:gravity="center_vertical|center_horizontal"
+	                android:text="@string/comments_unavailable"
+	                android:textAppearance="?android:attr/textAppearanceLarge"
+	                android:textColor="#4f4f4f" />
+	            
+<!--                 <ListView -->
+<!--                     android:id="@+id/list_comments" -->
+<!--                     android:layout_width="fill_parent" -->
+<!--                     android:layout_height="0dp" -->
+<!--                     android:layout_weight="1" > -->
+<!--                 </ListView> -->
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/settings" >
+
+    <PreferenceCategory android:title="@string/download_icons" >
+        <Preference
+            android:key="icon_download_permissions"
+            android:summary="@string/download_icons_permissions"
+            android:title="@string/download_icons" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/cache" >
+        <Preference
+            android:key="clear_cache"
+            android:summary="@string/clear_cache_description"
+            android:title="@string/clear_cache" />
+    </PreferenceCategory>
+    
+<!--     <PreferenceCategory android:title="@string/app_rating" > -->
+<!--         <ListPreference -->
+<!--             android:defaultValue="Pre-Teen" -->
+<!--             android:entries="@array/age_entries" -->
+<!--             android:entryValues="@array/age_entries" -->
+<!--             android:key="app_rating" -->
+<!--             android:summary="@string/app_rating_description" -->
+<!--             android:title="@string/app_rating" /> -->
+<!--     </PreferenceCategory> -->
+    
+    <PreferenceCategory android:title="@string/bazaar_login" >
+        <Preference
+            android:key="clear_server_login"
+            android:summary="@string/clear_login_sum"
+            android:title="@string/clear_login" />
+        <Preference
+            android:key="set_server_login"
+            android:summary="@string/set_new_login"
+            android:title="@string/bazaar_login" />
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/hw_filters" >
+        <Preference
+            android:key="hw_specs"
+            android:summary="@string/hw_specs"
+            android:title="@string/hw_specs" />
+
+        <CheckBoxPreference
+     		android:title="@string/hw_filters"
+        	android:summary="@string/hw_filter_apps"
+        	android:key="check_hw_specs"
+        	android:defaultValue="true" />
+      	
+<!--       	<CheckBoxPreference -->
+<!-- 	     	android:title="@string/mature_filter" -->
+<!-- 	        android:summary="@string/dont_show_mature_content" -->
+<!-- 	        android:key="check_mature" /> -->
+	        
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/scheduled_downloads" >
+        <CheckBoxPreference
+            android:key="automatic_install"
+            android:summary="@string/schedule_downloads_sum"
+            android:title="@string/automatic_install" />
+    </PreferenceCategory>
+    
+</PreferenceScreen>

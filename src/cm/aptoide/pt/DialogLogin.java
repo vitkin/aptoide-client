@@ -10,7 +10,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +24,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
+import cm.aptoide.pt.data.util.Security;
+import cm.aptoide.pt.data.webservices.EnumServerStatus;
 
 /**
  * @author rafael
@@ -90,8 +94,8 @@ public class DialogLogin extends Dialog{
                 if(isChecked) {
                     password.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
                 } else {
-//                    password.setInputType(129);
-                    password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD );
+                    password.setInputType(129);
+//                    password.setInputType(InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD );
                 }
             }
         });
@@ -101,59 +105,49 @@ public class DialogLogin extends Dialog{
 				success = false;
 				if(username.getText().toString().trim().equals("")){
 //				if(!((SetBlankOnFocusChangeListener)username.getOnFocusChangeListener()).getAlreadySetted()){
-					Toast.makeText(DialogLogin.this.getContext(), DialogLogin.this.getContext().getString(R.string.no_username), Toast.LENGTH_LONG).show();
+					Toast.makeText(DialogLogin.this.getContext(), DialogLogin.this.getContext().getString(R.string.no_username), Toast.LENGTH_SHORT).show();
 				}else if(password.getText().toString().trim().equals("")){
 //				}else if(!((SetBlankOnFocusChangeListener)password.getOnFocusChangeListener()).getAlreadySetted()){
-					Toast.makeText(DialogLogin.this.getContext(), DialogLogin.this.getContext().getString(R.string.no_password), Toast.LENGTH_LONG).show();
+					Toast.makeText(DialogLogin.this.getContext(), DialogLogin.this.getContext().getString(R.string.no_password), Toast.LENGTH_SHORT).show();
 				}else{
-					try {
-						final MessageDigest md = MessageDigest.getInstance("SHA");
-						md.update(password.getText().toString().getBytes());
 						
-						ProgressDialog dialogProgress = ProgressDialog.show(getContext(), getContext().getString(R.string.logging_in), getContext().getString(R.string.please_wait),true);
-						dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
-						
+					ProgressDialog dialogProgress = ProgressDialog.show(getContext(), getContext().getString(R.string.logging_in), getContext().getString(R.string.please_wait),true);
+					dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+					
 //						final AtomicBoolean successLogin = new AtomicBoolean(true);
-						
-						dialogProgress.setOnDismissListener(new OnDismissListener(){
-							public void onDismiss(DialogInterface arg0) {
+					
+					dialogProgress.setOnDismissListener(new OnDismissListener(){
+						public void onDismiss(DialogInterface arg0) {
 //								if(successLogin.get()){
-									
-									if(success){
+								
+								if(success){
 //										isLoginSubmited = true;
-										DialogLogin.this.dismiss();
-										
-										Log.d("Aptoide", "Logged in");
+									dismiss();
+									
+									Log.d("Aptoide", "Logged in");
 //										Intent loginAction = new Intent();
 //										loginAction.setAction("pt.caixamagica.aptoide.LOGIN_ACTION");
 //										LoginDialog.this.getContext().sendBroadcast(loginAction);
-										
-									}else{
+									
+								}else{
 //										switch (Response) {
 //										case bad_login:
-											Toast.makeText(getContext(), DialogLogin.this.getContext().getString(R.string.bad_login), Toast.LENGTH_LONG).show();
+//										Toast.makeText(getContext(), DialogLogin.this.getContext().getString(R.string.bad_login), Toast.LENGTH_LONG).show();
 //											break;
 //
 //										default:
 //											break;
 //										}
-										
-									}
 									
+								}
+								
 //								}else{
 //									Toast.makeText(getContext(), LoginDialog.this.getContext().getString(R.string.unabletoexecute), Toast.LENGTH_LONG).show();
 //								}
-							}
-						});
-						
-						
-//						new LoginConfirmation(LoginDialog.this.getContext(), username.getText().toString(), Security.byteArrayToHexString(md.digest()), dialogProgress).execute();
-						
-						
-					} catch (NoSuchAlgorithmException e) {
-						//Toast.makeText(getContext(),  Login.this.getContext().getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
-						Toast.makeText(getContext(),  DialogLogin.this.getContext().getString(R.string.service_unavailable), Toast.LENGTH_LONG).show();
-					}
+						}
+					});
+					
+						new Login(getContext(), dialogProgress, username.getText().toString(), password.getText().toString()).execute();
 					
 				}
 			}
@@ -165,99 +159,60 @@ public class DialogLogin extends Dialog{
 //		return isLoginSubmited;
 //	}
 	
-	/**
-	 * @author rafael
-	 * @since summerinternship2011
-	 * 
-	 */
-//	public class LoginConfirmation extends AsyncTask<Void, Void, ResponseHandler>{
-//		
-//		private Context context;
-//		private String user;
-//		private String password;
-//		private ProgressDialog progress;
-//		private String useridLogin;
-//		private TasteGetter tasteGetter;
-//		
-//		public LoginConfirmation(Context context, String user, String password, ProgressDialog progress) throws NoSuchAlgorithmException {
-//			this.context = context;
-//			this.user = user.toLowerCase();
-//			this.password = password;
-//			this.progress = progress;
-//			MessageDigest md = MessageDigest.getInstance("SHA");
-//			md.update(this.user.getBytes());
-//			
-//			useridLogin = Security.byteArrayToHexString(md.digest());
-//			tasteGetter = null;
-//		}
-//		
-//		@Override
-//		protected ResponseHandler doInBackground(Void... args) {
-//			
-//			try {
-//				
-//				ResponseHandler response = checkCredentials(context, user, password);
-//				
-//				if(response.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK) && repo!=null && apkid!=null && apkversion!=null){
-//						
-//						tasteGetter = new  TasteGetter( repo, apkid, apkversion);
-//						tasteGetter.parse(context, useridLogin, this);
-//						
-//				}
-//				
-//				return response;
-//			} 
-////			catch (IOException e) 					{}
-////			catch (ParserConfigurationException e) 	{}
-////			catch (SAXException e) 					{}
-//			catch(Exception e)						{}
-//			
-//			return null;
-//		}
-//		
-//		protected void onPostExecute(ResponseHandler result) {
-//			if(result!=null){
-//				
-//				if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
-//					
-//					
-//					prefEdit.putString(Configs.LOGIN_PASSWORD, password);
-//					prefEdit.putString(Configs.LOGIN_USER_NAME, user);
-//					prefEdit.putString(Configs.LOGIN_USER_ID, useridLogin);
-//					
-//					prefEdit.commit();
-//					success = true;
-//					
-//					if(tasteGetter!=null){
-//						if(tasteGetter.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.OK)){
-//							switch(tasteGetter.getUserTaste()){
-//								case LIKE: 
-//									like.setImageResource(R.drawable.likehover);
-//									break;
-//								case DONTLIKE: 
-//									dontlike.setImageResource(R.drawable.dontlikehover);
-//									break;
-//								default: break;
-//							}
-//						}
-//						synchronized(userTasteGetted){
-//							userTasteGetted.setValue(tasteGetter.getUserTaste());
-//						}
-//					}
-//					
-//				}else{
-//					Toast.makeText(context, context.getString(R.string.failedcredentials), Toast.LENGTH_LONG).show();
-//				}
-//				
-//			}else{
-//				Toast.makeText(context, context.getString(R.string.unabletoexecutecheknet), Toast.LENGTH_LONG).show();
-//			}
-//			
-//			progress.dismiss();
-//			
-//	    }
-//		
-//	}
+	public class Login extends AsyncTask<Void, Void, EnumServerStatus>{
+		
+		private Context context;
+		private ProgressDialog dialogProgress;
+		private String username;
+		private String password = null;
+		
+		public Login(Context context, ProgressDialog dialogProgress, String username, String password) {
+			this.context = context;
+			this.dialogProgress = dialogProgress;
+			this.username = username.toLowerCase();
+			MessageDigest md;
+			try {
+				md = MessageDigest.getInstance("SHA");
+				md.update(password.getBytes());
+				this.password = Security.byteArrayToHexString(md.digest());
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		@Override
+		protected EnumServerStatus doInBackground(Void... args) {
+			
+			if(password == null){
+				return null;
+			}else{
+				try {
+					return EnumServerStatus.reverseOrdinal(serviceDataCaller.callServerLogin(this.username, this.password));
+				} catch (RemoteException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+		}
+		
+		protected void onPostExecute(EnumServerStatus status) {
+			if(status!=null){
+
+				if(status.equals(EnumServerStatus.SUCCESS)){
+					success = true;
+				}else{
+					success = false;
+					Toast.makeText(getContext(), status.toString(), Toast.LENGTH_SHORT).show();
+				}
+				
+			}else{
+				Toast.makeText(getContext(), context.getString(R.string.service_unavailable), Toast.LENGTH_SHORT).show();
+			}
+			dialogProgress.dismiss();
+	    }
+		
+	}
 //	
 //	
 //	

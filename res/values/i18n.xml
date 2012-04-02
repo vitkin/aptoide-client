@@ -53,6 +53,10 @@
     <string name="comments">Comments:</string>
     <string name="comment_on_app">Comment on application</string>
     <string name="comments_unavailable">Comments unavailable</string>
+    <string name="in_response_to">In response to</string>
+    <string name="comment_subject">Comment Subject</string>
+    <string name="comment_body">Comment Body</string>
+    <string name="no_body">No body</string>
     
     <string name="downloading_app">Downloading application</string>
     <string name="click_to_install_app">Click to install application</string>
@@ -63,12 +67,12 @@
     <string name="icon">Icon</string>
     <string name="download_icons_permissions">Download Icons Permissions</string>
     <string name="download_icons">Download icons</string>
-    <string name="download_icons_rules">Download icon rules </string>
+<!--     <string name="download_icons_rules">Download icon rules </string> -->
     <string name="never">Never</string>
     
     <string name="cache">Cache</string>
     <string name="clear_cache">Clear cache</string>
-    <string name="clear_cache_sum">Warning: removes all icons Blusens Market has cached, as well as all pending installs and updates. Don\'t do this if you have ongoing downloads!</string>
+    <string name="clear_cache_description">Warning: removes all icons Aptoide has cached, as well as all pending installs and updates. Don\'t do this if you have ongoing downloads!</string>
 
     <string name="hw_specs">Hardware specs</string>
     <string name="sdk_version">SDK version</string>
@@ -78,8 +82,8 @@
     <string name="hw_filters">Hardware Filters</string>
     <string name="hw_filter_apps">Filter apps by hardware</string>
     <string name="hw_show_apps">Don\'t show applications not compatible with your device.</string>
-    <string name="app_filter">Filter Applications</string>
-    <string name="app_filter_sum">Don\'t show applications not compatible with your device.</string>
+<!--     <string name="app_filter">Filter Applications</string> -->
+<!--     <string name="app_filter_sum">Don\'t show applications not compatible with your device.</string> -->
     <string name="mature_filter">Mature Filtering</string>
    <string name="dont_show_mature_content">Don\'t show Mature content</string>
     
@@ -96,6 +100,8 @@
     <string name="available">Available</string>
     <string name="installed">Installed</string>
     <string name="updates">Updates</string>
+    
+    <string name="update_all">Update all</string>
     
     <string name="no_apps">No apps to display!</string>
     <string name="loading_apps">Loading apps...</string>
@@ -135,25 +141,29 @@
     <string name="starting">Starting</string>
     <string name="download">download</string>
     <string name="confirm_remove">Confirm Removal?</string>
+    <string name="submit">Submit</string>
+    <string name="submitting">Submitting</string>
+    <string name="submitted">Submitted</string>    
+    <string name="new_account">New Account</string>
     
     <string name="app_rating">Application Rating</string>
-    <string name="app_rating_sum">Show applications rated as:</string>
-    <string name="all_ages">All ages</string>
-    <string name="pre_teen">Pre-Teen</string>
-    <string name="teen">Teen</string>
+    <string name="app_rating_description">Filter apps rated above</string>
     <string name="mature">Mature</string>
+    <string name="teen">Teen</string>
+    <string name="pre_teen">Pre-Teen</string>
+    <string name="all_ages">All ages</string>
     
-    <string-array name="permissions_entries">
-        <item>3G and Wifi</item>
-        <item>Wifi only</item>
-        <item>Never download</item>
-    </string-array>
+<!--     <string-array name="permissions_entries"> -->
+<!--         <item>3G and Wifi</item> -->
+<!--         <item>Wifi only</item> -->
+<!--         <item>Never download</item> -->
+<!--     </string-array> -->
     
     <string-array name="age_entries">
-        <item>All ages</item>
-        <item>Pre-Teen</item>
-        <item>Teen</item>
-        <item>Mature</item>
+        <item>@string/mature</item>
+        <item>@string/teen</item>
+        <item>@string/pre_teen</item>
+        <item>@string/all_ages</item>
     </string-array>
     
     <string name="check_store_update">Check Stores Update Completion</string>

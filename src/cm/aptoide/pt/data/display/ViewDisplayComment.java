@@ -20,10 +20,6 @@
 
 package cm.aptoide.pt.data.display;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -46,6 +42,7 @@ public class ViewDisplayComment implements Parcelable{
 	protected String language;
 	
 	
+	@SuppressWarnings("unused")
 	private ViewDisplayComment(){
 	}
 
@@ -112,12 +109,8 @@ public class ViewDisplayComment implements Parcelable{
 		return body;
 	}
 	
-	public String getTimestampString(){
+	public String getTimestamp(){
 		return timestamp;
-	}
-
-	public Date getTimestamp() throws ParseException {
-		return (new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(timestamp));
 	}
 
 	public String getLanguage() {

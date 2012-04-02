@@ -24,7 +24,8 @@
 
 package cm.aptoide.pt.data.xml;
 
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -33,8 +34,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.util.Log;
 import cm.aptoide.pt.data.display.ViewDisplayComment;
 import cm.aptoide.pt.data.display.ViewDisplayListComments;
-import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
-import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.util.Constants;
 
 /**
@@ -63,6 +62,7 @@ public class ParserComments extends DefaultHandler{
 	public ParserComments(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
+		this.appHashid = appHashid;
 	}	
 	
 	@Override
@@ -113,8 +113,13 @@ public class ParserComments extends DefaultHandler{
 				break;
 				
 			case timestamp:
-				comment.setTimestamp(tagContentBuilder.toString());
-				break;
+				try {
+					comment.setTimestamp((new SimpleDateFormat("yyyy-MM-dd HH:mm").format(new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(tagContentBuilder.toString()))));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+					break;
 				
 			case lang:
 				comment.setLanguage(tagContentBuilder.toString());

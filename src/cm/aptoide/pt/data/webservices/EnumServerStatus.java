@@ -27,13 +27,13 @@ package cm.aptoide.pt.data.webservices;
  * @since 3.0
  *
  */
-public enum EnumServerLoginStatus {
+public enum EnumServerStatus {
 	SUCCESS,
 	MISSING_PARAMETER,
 	BAD_LOGIN,
 	SERVICE_UNAVAILABLE;
 	
-	public static EnumServerLoginStatus reverseOrdinal(int ordinal){
+	public static EnumServerStatus reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }
