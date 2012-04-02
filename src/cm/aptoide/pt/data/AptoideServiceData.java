@@ -368,8 +368,33 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
-		public ViewDisplayListComments callGetVersionComments(int appHashid) throws RemoteException {
-			return getAppComments(appHashid);
+		public ViewDisplayListComments callGetVersionComments(int appFullHashid) throws RemoteException {
+			return getAppComments(appFullHashid);
+		}
+
+		@Override
+		public String callGetServerToken() throws RemoteException {
+			return getServerToken();
+		}
+
+		@Override
+		public int callServerLogin(String username, String password) throws RemoteException {
+			return serverLogin(username, password);
+		}
+
+		@Override
+		public void callClearServerLogin() throws RemoteException {
+			clearServerLogin();
+		}
+
+		@Override
+		public int callAddAppVersionLike(String repoName, int appHashid, boolean like) throws RemoteException {
+			return addAppVersionLike(repoName, appHashid, like);
+		}
+
+		@Override
+		public int callAddAppVersionComment(String repoName, int appHashid, String commentBody, String subject, long answerTo) throws RemoteException {
+			return addAppVersionComment(repoName, appHashid, commentBody, subject, answerTo);
 		}
 
 		@Override
@@ -653,6 +678,8 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	    	
 			aptoideClients = new HashMap<EnumServiceDataCallback, AIDLAptoideInterface>();
 			appInfoClients = new HashMap<Integer, AIDLAppInfo>();
+			
+			appInfoComments = new HashMap<Integer, ViewDisplayListComments>();
 
 			
 			syncingInstalledApps = new AtomicBoolean(false);
@@ -1532,6 +1559,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void retrieveRepoAppComments(final int appHashid, final int repoHashid){
+		int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+		if(appInfoComments.containsKey(appFullHashid)){
+			if(appInfoComments.get(appFullHashid) != null && !(appInfoComments.get(appFullHashid).size()>0)){
+				updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_COMMENTS);
+			}
+			return;
+		}
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
@@ -1586,6 +1620,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					appInfoClients.get(appHashid).newExtrasAvailable(appFullHashid);
 					break;
 					
+				case UPDATE_APP_COMMENTS:
+					appInfoClients.get(appHashid).newCommentsAvailable(appFullHashid);
+					break;
+					
 				case REFRESH_SCREENS:
 					appInfoClients.get(appHashid).refreshScreens();
 					break;
@@ -1620,6 +1658,27 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public ViewDisplayListComments getAppComments(int appFullHashid){
 		return appInfoComments.remove(Integer.valueOf(appFullHashid));
+	}
+	
+
+	public String getServerToken() {
+		return getManagerPreferences().getToken();	
+	}
+
+	public int serverLogin(String username, String password) {
+		return getManagerUploads().login(new ViewLogin(username, password)).ordinal();
+	}
+	
+	public void clearServerLogin(){
+		getManagerPreferences().clearServerLogin();
+	}
+
+	public int addAppVersionLike(String repoName, int appHashid, boolean like) {
+		return getManagerUploads().addAppVersionLike(repoName, appHashid, like).ordinal();
+	}
+
+	public int addAppVersionComment(String repoName, int appHashid, String commentBody, String subject, long answerTo) {
+		return getManagerUploads().addAppVersionComment(repoName, appHashid, commentBody, subject, answerTo).ordinal();
 	}
 	
 	
@@ -1795,9 +1854,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				ViewListIds appsList = managerDatabase.getApplicationsScheduledToInstall();
 
-				for (Integer apphashid : appsList.getList()) {
-					unscheduleInstallApp(apphashid);
-					downloadApp(apphashid);
+				if(appsList != null){
+					for (Integer apphashid : appsList.getList()) {
+						unscheduleInstallApp(apphashid);
+						downloadApp(apphashid);
+					}
 				}
 			}
 		});

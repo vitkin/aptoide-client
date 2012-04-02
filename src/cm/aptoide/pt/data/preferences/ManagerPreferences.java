@@ -177,6 +177,13 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 		setPreferences.commit();				
 	}
 	
+	public void clearServerLogin(){
+		setPreferences.remove(EnumPreferences.SERVER_USERNAME.name());
+		setPreferences.remove(EnumPreferences.SERVER_PASSHASH.name());
+		setPreferences.remove(EnumPreferences.SERVER_TOKEN.name());
+		setPreferences.commit();
+	}
+	
 	public ViewLogin getServerLogin(){
 		if(getPreferences.getString(EnumPreferences.SERVER_USERNAME.name(), null) != null && getPreferences.getString(EnumPreferences.SERVER_PASSHASH.name(), null) != null){
 			return null; //TODO null object

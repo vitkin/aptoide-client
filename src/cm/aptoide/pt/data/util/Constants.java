@@ -94,7 +94,7 @@ public class Constants {
 	public static final String URI_FORMAT_ADD_LIKE_WS = "http://www.bazaarandroid.com/webservices/addApkLike/%1$s/%2$s/apphashid/%3$s/like/xml";
 	public static final String URI_FORMAT_ADD_DISLIKE_WS = "http://www.bazaarandroid.com/webservices/addApkLike/%1$s/%2$s/apphashid/%3$s/dontlike/xml";
 	public static final String URI_FORMAT_COMMENTS_WS = "http://www.bazaarandroid.com/webservices/listApkComments/%1$s/apphashid/%2$s/xml";
-	public static final String URI_ADD_COMMENT_POST_WS = "http://www.bazaarandroid.com/webservices/addApkComment/";
+	public static final String URI_ADD_COMMENT_POST_WS = "http://www.bazaarandroid.com/webservices/addApkComment";
 	
 	public static final String URI_LATEST_VERSION_XML = "http://aptoide.com/apks/dev/latest_version.xml";
 	public static final String FILE_LATEST_VERSION_INFO = PATH_CACHE + "latestVersionInfo.xml";

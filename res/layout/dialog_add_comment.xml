@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="250dip"
+    android:layout_height="fill_parent"
+    android:layout_gravity="center_horizontal"
+    android:background="#edece9"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:padding="10dp" >
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="0px" />
+
+        <TextView
+            android:id="@+id/answer_to"
+            android:layout_width="fill_parent"
+            android:layout_height="0px"
+            android:text="@string/in_response_to"
+            android:textColor="#4f4f4f"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/subject"
+            android:layout_below="@+id/answer_to"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:hint="@string/comment_subject"
+            android:textColor="#696969"
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/body"
+            android:layout_below="@+id/subject"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:singleLine="true"
+            android:hint="@string/comment_body"
+            android:textColor="#696969"
+            android:textSize="18sp" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/submit" />
+
+</LinearLayout>

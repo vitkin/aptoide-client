@@ -26,37 +26,38 @@ package cm.aptoide.pt;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import android.app.Activity;
 import android.app.Dialog;
+import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -66,10 +67,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
+import cm.aptoide.pt.data.cache.ViewCache;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionInfo;
 import cm.aptoide.pt.data.display.ViewDisplayAppVersionsInfo;
+import cm.aptoide.pt.data.display.ViewDisplayComment;
 import cm.aptoide.pt.data.util.Constants;
+import cm.aptoide.pt.data.webservices.EnumServerStatus;
 import cm.aptoide.pt.ifaceutil.ImageAdapter;
+import cm.aptoide.pt.ifaceutil.StaticCommentsListAdapter;
 
 /**
  * AppInfo, interface class to display the details of a specific application
@@ -78,7 +83,7 @@ import cm.aptoide.pt.ifaceutil.ImageAdapter;
  * @since 3.0
  * 
  */
-public class AppInfo extends Activity {
+public class AppInfo extends ListActivity {
 
 	private int appHashid;
 	private String appName;
@@ -89,7 +94,8 @@ public class AppInfo extends Activity {
 	private int appLikes;
 	private int appDislikes;
 	private String appDescription;
-	
+
+	private StaticCommentsListAdapter commentsAdapter;
 	
 	private ViewDisplayAppVersionsInfo appVersions;
 
@@ -106,17 +112,21 @@ public class AppInfo extends Activity {
 	private RatingBar appStarsRating;
 	private TextView repoUriTextView;
 	private TextView appLikesTextView;
+	private ImageView appLikesImageView;
 	private TextView appDislikesTextView;
+	private ImageView appDislikesImageView;
 	private TextView appDescriptionTextView;
 	private Spinner appMultiVersion;
 
 	Gallery galleryView;
 	
 	private TextView commentOnApp;
-	ListView comments;
+//	ListView comments;
 	
 	private Button install;
 	private Button uninstall;
+	
+	private String token = null;
 	
 	private ArrayAdapter<String> multiVersionSpinnerAdapter;
 	
@@ -195,46 +205,31 @@ public class AppInfo extends Activity {
 		@Override
 		public void newAppDownloadInfoAvailable(int appFullHashid) throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newAppDownloadInfoAvailable callback");
-			for (int position=0; position < appVersions.size(); position++) {
-				if(appVersions.get(position).getAppFullHashid() == appFullHashid){
-					versionInfoManager.updateAppSize(appFullHashid, position);
-					break;
-				}
-			}
+			versionInfoManager.updateAppSize(appFullHashid);
 		}
 
 		@Override
 		public void newStatsInfoAvailable(int appFullHashid) throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newStatsInfoAvailable callback");
-			for (int position=0; position < appVersions.size(); position++) {
-				if(appVersions.get(position).getAppFullHashid() == appFullHashid){
-					versionInfoManager.updateAppStats(appFullHashid, position);
-					break;
-				}
-			}
+			versionInfoManager.updateAppStats(appFullHashid);
 		}
 
 		@Override
 		public void newExtrasAvailable(int appFullHashid) throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received newExtrasAvailable callback");
-			for (int position=0; position < appVersions.size(); position++) {
-				if(appVersions.get(position).getAppFullHashid() == appFullHashid){
-					versionInfoManager.updateAppDescription(appFullHashid, position);
-					break;
-				}
-			}
+			versionInfoManager.updateAppDescription(appFullHashid);
+		}
+
+		@Override
+		public void newCommentsAvailable(int appFullHashid) throws RemoteException {
+			Log.v("Aptoide-AppInfo", "received newCommentsAvailable callback");
+			versionInfoManager.updateAppComments(appFullHashid);
 		}
 
 		@Override
 		public void refreshScreens() throws RemoteException {
 			Log.v("Aptoide-AppInfo", "received refreshScreens callback");
 			interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.REFRESH_SCREENS.ordinal());
-		}
-
-		@Override
-		public void newCommentsAvailable(int appFullHashid) throws RemoteException {
-			// TODO Auto-generated method stub
-
 		}
 	};
 
@@ -263,6 +258,10 @@ public class AppInfo extends Activity {
 			case UPDATE_APP_DESCRIPTION:
 				setVersionDescription();
 				break;
+				
+			case UPDATE_APP_COMMENTS:
+				setVersionComments();
+				break;
 
 			case REFRESH_SCREENS:
 				setScreens();
@@ -282,16 +281,29 @@ public class AppInfo extends Activity {
     		versionInfoColectorsPool = Executors.newCachedThreadPool();
     	}
     	
-    	public void updateAppSize(int appFullHashid, int position){
-        	versionInfoColectorsPool.execute(new GetAppSize(appFullHashid, position));
+    	private int getPosition(int appFullHashid){
+			for (int position=0; position < appVersions.size(); position++) {
+				if(appVersions.get(position).getAppFullHashid() == appFullHashid){
+					return position;
+				}
+			}
+			return 0;
+    	}
+    	
+    	public void updateAppSize(int appFullHashid){
+        	versionInfoColectorsPool.execute(new GetAppSize(appFullHashid, getPosition(appFullHashid)));
         }
     	
-    	public void updateAppStats(int appFullHashid, int position){
-        	versionInfoColectorsPool.execute(new GetAppStats(appFullHashid, position));
+    	public void updateAppStats(int appFullHashid){
+        	versionInfoColectorsPool.execute(new GetAppStats(appFullHashid, getPosition(appFullHashid)));
         }
     	
-    	public void updateAppDescription(int appFullHashid, int position){
-        	versionInfoColectorsPool.execute(new GetAppDescription(appFullHashid, position));
+    	public void updateAppDescription(int appFullHashid){
+        	versionInfoColectorsPool.execute(new GetAppDescription(appFullHashid, getPosition(appFullHashid)));
+        }
+    	
+    	public void updateAppComments(int appFullHashid){
+        	versionInfoColectorsPool.execute(new GetAppComments(appFullHashid, getPosition(appFullHashid)));
         }
     	
     	private class GetAppSize implements Runnable{
@@ -374,6 +386,34 @@ public class AppInfo extends Activity {
 			}
     		
     	}
+    	
+    	private class GetAppComments implements Runnable{
+    		int appFullHashid = Constants.EMPTY_INT;
+    		int position = Constants.EMPTY_INT;
+    		
+
+			public GetAppComments(int appFullHashid, int position) {
+				this.appFullHashid = appFullHashid;
+				this.position = position;
+			}
+
+
+			@Override
+			public void run() {
+				try {
+					
+//					Log.d("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+//					serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, appHashid);
+					appVersions.get(position).setComments(serviceDataCaller.callGetVersionComments(appFullHashid));
+					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_COMMENTS.ordinal());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+    		
+    	}
     }
     
     
@@ -431,12 +471,108 @@ public class AppInfo extends Activity {
 		galleryView = (Gallery) findViewById(R.id.screens);
 		
 		commentOnApp = (TextView) findViewById(R.id.comment_on_app);
-		comments = (ListView) findViewById(R.id.list_comments);
+		commentOnApp.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d("Aptoide-AppInfo", "Clicked on comment");
+
+				if(selectedVersion.getRepoUri() != null){
+					if(token == null){
+						try {
+							token = serviceDataCaller.callGetServerToken();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if(token == null){
+						Log.d("Aptoide-AppInfo", "No login set");
+						DialogLogin loginComments = new DialogLogin(AppInfo.this, serviceDataCaller, DialogLogin.InvoqueNature.NO_CREDENTIALS_SET);
+						loginComments.setOnDismissListener(new OnDismissListener() {
+							@Override
+							public void onDismiss(DialogInterface dialog) {
+								addAppVersionComment();
+							}
+						});
+						loginComments.show();
+					}else{
+						addAppVersionComment();						
+					}
+				}
+			}
+		});
+		
+//		comments = (ListView) findViewById(R.id.list_comments);
 				
+//		commentsAdapter = new StaticCommentsListAdapter(this, comments, serviceDataCaller);
+		
 		versionInfoManager = new VersionInfoManager();
 		
 		
-//		this.like = ((ImageView)linearLayout.findViewById(R.id.likesImage));
+		appLikesImageView = ((ImageView) findViewById(R.id.likesImage));
+		appLikesImageView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d("Aptoide-AppInfo", "Clicked on like");
+
+				if(selectedVersion.getRepoUri() != null){
+					if(token == null){
+						try {
+							token = serviceDataCaller.callGetServerToken();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if(token == null){
+						Log.d("Aptoide-AppInfo", "No login set");
+						DialogLogin loginLikes = new DialogLogin(AppInfo.this, serviceDataCaller, DialogLogin.InvoqueNature.NO_CREDENTIALS_SET);
+						loginLikes.setOnDismissListener(new OnDismissListener() {
+							@Override
+							public void onDismiss(DialogInterface dialog) {
+								addAppVersionLike(true);
+							}
+						});
+						loginLikes.show();
+					}else{
+						addAppVersionLike(true);
+					}
+				}
+			}
+		});
+		
+		appDislikesImageView = ((ImageView) findViewById(R.id.dislikesImage));
+		appDislikesImageView.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.d("Aptoide-AppInfo", "Clicked on dislike");
+
+				if(selectedVersion.getRepoUri() != null){
+					if(token == null){
+						try {
+							token = serviceDataCaller.callGetServerToken();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if(token == null){
+						Log.d("Aptoide-AppInfo", "No login set");
+						DialogLogin loginLikes = new DialogLogin(AppInfo.this, serviceDataCaller, DialogLogin.InvoqueNature.NO_CREDENTIALS_SET);
+						loginLikes.setOnDismissListener(new OnDismissListener() {
+							@Override
+							public void onDismiss(DialogInterface dialog) {
+								addAppVersionLike(false);
+							}
+						});
+						loginLikes.show();
+					}else{
+						addAppVersionLike(false);						
+					}
+				}
+			}
+		});
+		
 //		like.setOnTouchListener(new OnTouchListener(){
 //		      public boolean onTouch(View view, MotionEvent e) {
 //		          switch(e.getAction())
@@ -755,6 +891,8 @@ public class AppInfo extends Activity {
 					serviceDataCaller.callAddVersionStatsInfo(version.getAppHashid(), version.getRepoHashid());
 					Log.d("Aptoide-AppInfo", "called AddVersionStatsInfo");
 				}
+				serviceDataCaller.callRetrieveVersionComments(version.getAppHashid(), version.getRepoHashid());
+				Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
 			}
 			
 		} catch (RemoteException e) {
@@ -765,6 +903,7 @@ public class AppInfo extends Activity {
 		setVersionRepo();
 		setVersionSize();
 		setVersionStats();
+		setListAdapter(null);
 	}
 
 	private void setIcon() {
@@ -844,14 +983,6 @@ public class AppInfo extends Activity {
 		
 	}
 	
-	private void setVersionDescription() {
-		if(selectedVersion.isExtrasAvailable() && selectedVersion.getExtras()!=null){
-			//			appDescription = appVersions.toString();
-			appDescription = selectedVersion.getExtras().getDescription();
-			appDescriptionTextView.setText(""+appDescription);
-		}
-	}
-	
 	private void setVersionSize(){
 		if(selectedVersion != null && selectedVersion.getSize() != Constants.EMPTY_INT){
 			appSize = Integer.toString(selectedVersion.getSize());
@@ -883,6 +1014,132 @@ public class AppInfo extends Activity {
 
 			appDislikes = selectedVersion.getStats().getDislikes();
 			appDislikesTextView.setText(""+appDislikes);
+		}
+	}
+	
+	private void setVersionDescription() {
+		if(selectedVersion.isExtrasAvailable() && selectedVersion.getExtras()!=null){
+			//			appDescription = appVersions.toString();
+			appDescription = selectedVersion.getExtras().getDescription();
+			appDescriptionTextView.setText(""+appDescription);
+		}
+	}
+	
+	private void setVersionComments(){
+		if(selectedVersion.isCommentsAvailable() && selectedVersion.getComments() != null)
+//		commentsAdapter.resetDisplayComments(selectedVersion.getAppFullHashid());
+//		commentsAdapter.resetDisplayComments(selectedVersion.getComments());
+		commentsAdapter = new StaticCommentsListAdapter(this, selectedVersion.getComments());
+		setListAdapter(commentsAdapter);
+	}
+	
+	
+	
+	@Override
+	protected void onListItemClick(ListView list, View view, int position, long id) {
+		final int commentPosition = position;
+//		Log.d("Aptoide-AppInfo", "click on comment, position: "+commentPosition+" comments: "+selectedVersion.getComments());
+		if(token == null){
+			try {
+				token = serviceDataCaller.callGetServerToken();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(token == null){
+			Log.d("Aptoide-AppInfo", "No login set");
+			DialogLogin loginComments = new DialogLogin(AppInfo.this, serviceDataCaller, DialogLogin.InvoqueNature.NO_CREDENTIALS_SET);
+			loginComments.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+					DialogAddComment addComment = new DialogAddComment(AppInfo.this, repoName, selectedVersion.getAppHashid(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getCommentId(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getUserName());
+					addComment.setOnDismissListener(new OnDismissListener() {
+						@Override
+						public void onDismiss(DialogInterface dialog) {
+//							setListAdapter(null);
+							try {
+								serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
+//							versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
+						}
+					});
+					addComment.show();
+				}
+			});
+			loginComments.show();
+		}else{
+			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+			DialogAddComment addComment = new DialogAddComment(this, repoName, selectedVersion.getAppHashid(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getCommentId(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getUserName());
+			addComment.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+//					setListAdapter(null);
+					try {
+						serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
+//					versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
+				}
+			});
+			addComment.show();
+		}		
+		
+		super.onListItemClick(list, view, position, id);
+	}
+
+
+
+	private void addAppVersionComment(){
+		if(token == null){
+			try {
+				token = serviceDataCaller.callGetServerToken();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(token != null){
+			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+			DialogAddComment addComment = new DialogAddComment(this, repoName, selectedVersion.getAppHashid(), Constants.EMPTY_INT, null);
+			addComment.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+//					setListAdapter(null);
+					try {
+						serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
+//					versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
+				}
+			});
+			addComment.show();
+		}
+	}
+	
+	private void addAppVersionLike(boolean like){
+		if(token == null){
+			try {
+				token = serviceDataCaller.callGetServerToken();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(token != null){
+			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+			new PostLike(repoName, appHashid, like).execute();
 		}
 	}
 
@@ -928,6 +1185,7 @@ public class AppInfo extends Activity {
 
 	@Override
 	public void finish() {
+//		commentsAdapter.shutdownNow();
 		versionInfoManager.versionInfoColectorsPool.shutdownNow();
 		if (serviceDataIsBound) {
 			unbindService(serviceDataConnection);
@@ -936,5 +1194,172 @@ public class AppInfo extends Activity {
 	}
 
 	
+	
+	public class DialogAddComment extends Dialog{
+		private EditText subject;
+		private EditText body;
+		
+		private String repoName;
+		private int appHashid;
+		
+		private long answerTo;
+		private String answerToUser;
+		private ProgressDialog dialogProgress;
+		
+		public DialogAddComment(Context context, String repoName, int appHashid, long answerTo, String answerToUser) {
+			super(context);
+			
+			this.repoName = repoName;
+			this.appHashid = appHashid; 
+			
+			this.answerTo = answerTo;
+			this.answerToUser = answerToUser;
+		}
+		
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			this.setContentView(R.layout.dialog_add_comment);
+			this.setTitle(getContext().getString(R.string.comment_on_app));
+
+			Log.d("Aptoide-AppInfo", "comment answerTo: "+answerToUser);
+			if(answerToUser!= null){
+				TextView inresponse = ((TextView)findViewById(R.id.answer_to));
+				inresponse.append(": "+answerToUser);
+				inresponse.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+				inresponse.setLayoutParams(inresponse.getLayoutParams());
+			}
+
+			subject = ((EditText)findViewById(R.id.subject));
+			body = ((EditText)findViewById(R.id.body));
+			
+			final Button submit = ((Button)findViewById(R.id.submit));
+			
+			submit.setOnClickListener(new View.OnClickListener(){
+				public void onClick(View arg) {
+					if(body.getText().toString().trim().equals("") ){
+						Log.d("Aptoide-AppInfo", "comment body: "+body.getText().toString().trim());
+						Toast.makeText(getContext(), getContext().getString(R.string.no_body), Toast.LENGTH_LONG).show();
+					} else {
+						Log.d("Aptoide-AppInfo", "comment body: "+body.getText().toString().trim());
+						new PostComment(repoName, appHashid, body.getText().toString(), subject.getText().toString(), answerTo).execute();
+					}
+				}
+			});
+
+			dialogProgress = ProgressDialog.show(AppInfo.this, AppInfo.this.getString(R.string.submitting), AppInfo.this.getString(R.string.please_wait),true);
+			dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+			dialogProgress.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					dismiss();
+				}
+			});
+			
+		}
+		
+		class PostComment extends AsyncTask<Void, Void, EnumServerStatus>{
+			private String repoName;
+			private int appHashid;
+			
+			private String body; 
+			private String subject;
+			private long answerTo;
+			
+			
+			public PostComment(String repoName, int appHashid, String body, String subject, long answerTo){
+				this.repoName = repoName;
+				this.appHashid = appHashid;
+				
+				this.body = body;
+				this.subject = subject;
+				this.answerTo = answerTo;
+
+			}
+
+			@Override
+			protected EnumServerStatus doInBackground(Void... params) {
+				try {
+					return EnumServerStatus.reverseOrdinal(serviceDataCaller.callAddAppVersionComment(repoName, appHashid, body, subject, answerTo));
+				} catch (RemoteException e){
+					e.printStackTrace();
+					return null;
+				}
+			}
+			
+			@Override
+			protected void onPostExecute(EnumServerStatus status) {
+				Log.d("Aptoide-AppInfo", "comment status: "+status);
+				if(status!=null){
+					if(status.equals(EnumServerStatus.SUCCESS)){
+						Toast.makeText(getContext(), getContext().getString(R.string.submitted), Toast.LENGTH_SHORT).show();
+					}else{
+						Toast.makeText(getContext(), status.toString(), Toast.LENGTH_SHORT).show();
+					}
+				}else{
+					Toast.makeText(getContext(), getContext().getString(R.string.service_unavailable), Toast.LENGTH_SHORT).show();
+				}
+				dialogProgress.dismiss();
+//				dismiss();
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	class PostLike extends AsyncTask<Void, Void, EnumServerStatus>{
+		private String repoName;
+		private int appHashid;
+		
+		private boolean like; 
+		
+		private ProgressDialog dialogProgress;
+		
+		public PostLike(String repoName, int appHashid, boolean like){
+			this.repoName = repoName;
+			this.appHashid = appHashid;
+			
+			this.like = like;
+			
+			dialogProgress = ProgressDialog.show(AppInfo.this, AppInfo.this.getString(R.string.submitting), AppInfo.this.getString(R.string.please_wait),true);
+			dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+		}
+
+		@Override
+		protected EnumServerStatus doInBackground(Void... params) {
+			try {
+				return EnumServerStatus.reverseOrdinal(serviceDataCaller.callAddAppVersionLike(repoName, appHashid, like));
+			} catch (RemoteException e){
+				e.printStackTrace();
+				return null;
+			}
+		}
+		
+		@Override
+		protected void onPostExecute(EnumServerStatus status) {
+			Log.d("Aptoide-AppInfo", "like status: "+status);
+			if(status!=null){
+				if(status.equals(EnumServerStatus.SUCCESS)){
+					Toast.makeText(AppInfo.this, AppInfo.this.getString(R.string.submitted), Toast.LENGTH_SHORT).show();
+				}else{
+					Toast.makeText(AppInfo.this, status.toString(), Toast.LENGTH_SHORT).show();
+				}
+			}else{
+				Toast.makeText(AppInfo.this, AppInfo.this.getString(R.string.service_unavailable), Toast.LENGTH_SHORT).show();
+			}
+			dialogProgress.dismiss();
+			try {
+				serviceDataCaller.callAddVersionStatsInfo(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.d("Aptoide-AppInfo", "called AddVersionStatsInfo");
+//			versionInfoManager.updateAppStats(selectedVersion.getAppFullHashid());
+		}
+		
+	}
 
 }

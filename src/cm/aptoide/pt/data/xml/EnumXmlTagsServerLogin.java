@@ -32,6 +32,7 @@ public enum EnumXmlTagsServerLogin {
 	status,
 	token,
 	errors,
+	entry,
 	unrecognized;
 	
 	public static EnumXmlTagsServerLogin safeValueOf(String name){

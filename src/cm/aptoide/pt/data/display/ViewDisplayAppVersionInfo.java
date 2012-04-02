@@ -56,6 +56,9 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	private boolean extrasAvailable = false;
 	private ViewDisplayAppVersionExtras extras;
 	
+	private boolean commentsAvailable = false;
+	private ViewDisplayListComments comments;
+	
 
 	/**
 	 * ViewDisplayAppVersionInfo Constructor
@@ -80,6 +83,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		
 		this.statsAvailable = false;
 		this.extrasAvailable = false;
+		this.commentsAvailable = false;
 	}
 	
 	
@@ -162,6 +166,19 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 	public ViewDisplayAppVersionExtras getExtras() {
 		return extras;
 	}
+	
+	public boolean isCommentsAvailable(){
+		return commentsAvailable;
+	}
+
+	public void setComments(ViewDisplayListComments comments) {
+		this.comments = comments;
+		this.commentsAvailable = true;
+	}
+
+	public ViewDisplayListComments getComments() {
+		return comments;
+	}
 
 
 
@@ -184,7 +201,11 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		this.isScheduled = false;
 		
 		this.statsAvailable = false;
+		this.stats = null;
 		this.extrasAvailable = false;
+		this.extras = null;
+		this.commentsAvailable = false;
+		this.comments = null;
 	}
 	
 	/**
@@ -209,6 +230,7 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		
 		this.statsAvailable = false;
 		this.extrasAvailable = false;
+		this.commentsAvailable = false;
 	}
 
 
@@ -235,10 +257,13 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 		StringBuilder string = new StringBuilder(" Name: "+appName+" Version: "+versionName+" VersionCode: "+versionCode+" AppFullHashid: "+appFullHashid+" AppHashid: "+appHashid
 												+" Size: "+size+" RepoUri: "+repoUri+" isInstalled: "+isInstalled+" isScheduled: "+isScheduled);//+" localIconPath: "+localIconPath
 		if(statsAvailable){
-			string.append("\n"+stats.toString());
+			string.append("\n"+stats);
 		}
 		if(extrasAvailable){
-			string.append("\n"+extras.toString());
+			string.append("\n"+extras);
+		}
+		if(commentsAvailable){
+			string.append("\n"+comments);
 		}
 		string.append("\n\n");
 		return string.toString();
@@ -297,6 +322,11 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			if(extrasAvailable){
 				out.writeParcelable(extras, flags);
 			}
+			
+			out.writeValue(commentsAvailable);
+			if(commentsAvailable){
+				out.writeParcelable(comments, flags);
+			}
 		}
 
 		public void readFromParcel(Parcel in) {
@@ -321,6 +351,12 @@ public class ViewDisplayAppVersionInfo implements Parcelable, Serializable{
 			if(extrasAvailable){
 				extras = in.readParcelable(cm.aptoide.pt.data.display.ViewDisplayAppVersionExtras.class.getClassLoader());
 			}
+			
+			commentsAvailable = (Boolean) in.readValue(null);
+			if(commentsAvailable){
+				comments = in.readParcelable(cm.aptoide.pt.data.display.ViewDisplayListComments.class.getClassLoader());
+			}
+			
 		}
 		
 }

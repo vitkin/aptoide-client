@@ -1212,7 +1212,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		super.onCreateOptionsMenu(menu);
 		switch (currentAppsList) {
 			case Updates:
-				menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.manage_repos)
+				menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.update_all)
 					.setIcon(R.drawable.ic_menu_refresh);
 				break;
 				
@@ -1387,7 +1387,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				return true;
 				
 			case UPDATE_ALL:
-				if(allowUpdateAll.get()){
+				if(allowUpdateAll.get() && false){
 					AptoideLog.d(this, "Update all");
 					try {
 						serviceDataCaller.callUpdateAll();
