@@ -201,13 +201,13 @@ public class RepoBareParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoBareParser","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoBareParser","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 
 		if(!applications.isEmpty()){
 			Log.d("Aptoide-RepoBareParser", "bucket not empty, apps: "+applications.size());
@@ -217,6 +217,8 @@ public class RepoBareParser extends DefaultHandler{
 		while(!applicationsInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertApplications(applicationsInsertStack.remove(Constants.FIRST_ELEMENT));
 		}
+		
+		managerXml.getManagerDatabase().optimizeQuerys();
 		
 		managerXml.parsingRepoBareFinished(parseInfo.getRepository());
 		super.endDocument();

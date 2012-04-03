@@ -53,6 +53,7 @@ public class RepoIconParser extends DefaultHandler{
 	
 	private int appFullHashid = 0;
 	private int parsedAppsNumber = 0;
+	private int totalParsedApps = Constants.EMPTY_INT;
 	
 	private StringBuilder tagContentBuilder;
 	
@@ -86,6 +87,7 @@ public class RepoIconParser extends DefaultHandler{
 				
 			case pkg:
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					totalParsedApps += parsedAppsNumber;					
 					parsedAppsNumber = 0;
 					iconsInfoInsertStack.add(iconsInfo);
 
@@ -133,13 +135,13 @@ public class RepoIconParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoIconHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoIconHandler","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		
 		if(!iconsInfo.isEmpty()){
 			Log.d("Aptoide-RepoIconParser", "bucket not empty, apps: "+iconsInfo.size());
@@ -151,7 +153,11 @@ public class RepoIconParser extends DefaultHandler{
 			managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}
 		
-		managerXml.parsingRepoIconsFinished(parseInfo.getRepository());
+		if(totalParsedApps > Constants.APPLICATIONS_IN_EACH_INSERT){
+			managerXml.getManagerDatabase().optimizeQuerys();
+			managerXml.parsingRepoIconsFinished(parseInfo.getRepository());
+		}
+		
 		super.endDocument();
 	}
 

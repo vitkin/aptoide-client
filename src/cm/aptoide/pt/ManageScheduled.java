@@ -391,6 +391,7 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 		if(serviceDataIsBound){
 			unbindService(serviceDataConnection);	
 		}
+		scheduledAppsManager.tasksPool.shutdownNow();
 		super.onDestroy();
 	}
 	

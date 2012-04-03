@@ -404,10 +404,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					
 				case SWITCH_AVAILABLE_TO_PROGRESSBAR:
 					switchAvailableToProgressBar();
-					
-		    		if(currentAppsList.equals(EnumAppsLists.Available)){
-						showAvailableList();
-					}
 					break;
 					
 				case AVAILABLE_PROGRESS_SET_COMPLETION_TARGET:
@@ -424,74 +420,38 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					
 				case SWITCH_INSTALLED_TO_PROGRESSBAR:
 		    		switchInstalledToProgressBar();	
-		    		
-		    		if(currentAppsList.equals(EnumAppsLists.Installed)){
-						showInstalledList();
-					}					
 					break;
 					
 				case SWITCH_INSTALLED_TO_NO_APPS:
 		    		switchInstalledToEmpty();	
-		    		
-		    		if(currentAppsList.equals(EnumAppsLists.Installed)){
-						showInstalledList();
-					}					
 					break;
 					
 				case SWITCH_INSTALLED_TO_LIST:
 		    		switchInstalledToList();	
-		    		
-		    		if(currentAppsList.equals(EnumAppsLists.Installed)){
-						showInstalledList();
-					}					
 					break;
 					
 				case SWITCH_AVAILABLE_TO_NO_APPS:
 					switchAvailableToEmpty();
-
-		    		if(currentAppsList.equals(EnumAppsLists.Available)){
-						showAvailableList();
-					}
 					break;
 					
 				case SWITCH_AVAILABLE_TO_LIST:
 					switchAvailableToList();
-					
-		    		if(currentAppsList.equals(EnumAppsLists.Available)){
-						showAvailableList();
-					}
 					break;
 					
 				case SWITCH_AVAILABLE_TO_CATEGORIES:
 					switchAvailableToCategory();
-					
-					if(currentAppsList.equals(EnumAppsLists.Available)){
-						showAvailableList();
-					}
 					break;
 					
 				case SWITCH_UPDATABLE_TO_PROGRESSBAR:
 		    		switchUpdatableToProgressBar();	
-		    		
-		    		if(currentAppsList.equals(EnumAppsLists.Updates)){
-						showUpdatableList();
-					}					
 					break;
 					
 				case SWITCH_UPDATABLE_TO_NO_APPS:
 		    		switchUpdatableToEmpty();	
-
-		    		if(currentAppsList.equals(EnumAppsLists.Updates)){
-						showUpdatableList();
-					}					
 					break;
 					
 				case SWITCH_UPDATABLE_TO_LIST:
 		    		switchUpdatableToList();	
-
-		    		if(currentAppsList.equals(EnumAppsLists.Updates)){
-						showUpdatableList();
-					}				
 					break;
 					
 				case HANDLE_MYAPP:
@@ -566,7 +526,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			nextViewArrow.setOnClickListener(new OnNextClickedListener());
 			
 			
-			View categoriesView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
+//			View categoriesView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
 			View availableView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
 			View installedView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
 			View updatableView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
@@ -908,7 +868,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 ////		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_NO_APPS);
 		
 		emptyAvailableAppsList.setVisibility(View.VISIBLE);
-		availableAppsListView.setVisibility(View.GONE);
+		availableAppsListView.setVisibility(View.INVISIBLE);
 		loadingAvailableAppsList.setVisibility(View.GONE);
         
         switchUpdatableToEmpty();
@@ -922,7 +882,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 ////		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_PROGRESSBAR);
 		
 		emptyInstalledAppsList.setVisibility(View.GONE);
-		installedAppsListView.setVisibility(View.GONE);
+		installedAppsListView.setVisibility(View.INVISIBLE);
 		loadingInstalledAppsList.setVisibility(View.VISIBLE);
         
         switchUpdatableToProgressBar();
@@ -948,7 +908,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 ////		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_INSTALLED_TO_NO_APPS);
 		
 		emptyInstalledAppsList.setVisibility(View.VISIBLE);
-		installedAppsListView.setVisibility(View.GONE);
+		installedAppsListView.setVisibility(View.INVISIBLE);
 		loadingInstalledAppsList.setVisibility(View.GONE);
 	}
 
@@ -960,7 +920,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 ////		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_PROGRESSBAR);
 		
 		emptyUpdatableAppsList.setVisibility(View.GONE);
-		updatableAppsListView.setVisibility(View.GONE);
+		updatableAppsListView.setVisibility(View.INVISIBLE);
 		loadingUpdatableAppsList.setVisibility(View.VISIBLE);
 	}
 
@@ -984,7 +944,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 ////		switchFlipperElements(EnumAptoideInterfaceTasks.SWITCH_UPDATABLE_TO_NO_APPS);
 		
 		emptyUpdatableAppsList.setVisibility(View.VISIBLE);
-		updatableAppsListView.setVisibility(View.GONE);
+		updatableAppsListView.setVisibility(View.INVISIBLE);
 		loadingUpdatableAppsList.setVisibility(View.GONE);
 	}
 	
@@ -1528,6 +1488,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
             unbindService(serviceDataConnection);
             serviceDataIsBound = false;
         }
+		categoriesAdapter.shutdownNow();
+		availableAdapter.shutdownNow();
+		installedAdapter.shutdownNow();
+		updatableAdapter.shutdownNow();
+		
 		super.onDestroy();
 	}
 	

@@ -54,6 +54,29 @@ public class ViewDisplayApplicationAvailable extends ViewDisplayApplication{
 		this.downloads = downloads;
 	}
 	
+	/**
+	 * ViewDisplayApplicationAvailable Constructor without statistics
+	 *
+	 * @param appHashid
+	 * @param appName
+	 * @param versionName
+	 */
+	public ViewDisplayApplicationAvailable(int appHashid, String appName, String versionName) {
+		super(appHashid, appName, versionName);
+	}
+	
+
+	/**
+	 * completeAppStats, completes statistics for apps creted without them
+	 * 
+	 * @param stars
+	 * @param downloads
+	 */
+	public void completeAppStats(float stars, int downloads){
+		this.stars = stars;
+		this.downloads = downloads;		
+	}
+	
 
 	public float getStars() {
 		return this.stars;

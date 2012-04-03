@@ -35,6 +35,7 @@ import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -118,10 +119,12 @@ public class AppInfo extends ListActivity {
 	private TextView appDescriptionTextView;
 	private Spinner appMultiVersion;
 
+	private TextView screens;
 	Gallery galleryView;
 	
 	private TextView commentOnApp;
 //	ListView comments;
+	private TextView noComments;
 	
 	private Button install;
 	private Button uninstall;
@@ -468,7 +471,8 @@ public class AppInfo extends ListActivity {
 		uninstall = (Button) findViewById(R.id.uninstall);
 		uninstall.setTextColor(Color.DKGRAY);
 
-		galleryView = (Gallery) findViewById(R.id.screens);
+		screens = (TextView) findViewById(R.id.screens);
+		galleryView = (Gallery) findViewById(R.id.screens_gallery);
 		
 		commentOnApp = (TextView) findViewById(R.id.comment_on_app);
 		commentOnApp.setOnClickListener(new OnClickListener() {
@@ -501,7 +505,7 @@ public class AppInfo extends ListActivity {
 				}
 			}
 		});
-		
+		noComments = (TextView) findViewById(android.R.id.empty);
 //		comments = (ListView) findViewById(R.id.list_comments);
 				
 //		commentsAdapter = new StaticCommentsListAdapter(this, comments, serviceDataCaller);
@@ -657,6 +661,399 @@ public class AppInfo extends ListActivity {
 		}
 		selectVersion(appVersion);
 	}
+	
+	private void selectVersion(ViewDisplayAppVersionInfo version){
+		selectedVersion = version;
+		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion.getVersionName());
+		
+		if(scheduledVersion == selectedVersion.getAppHashid() || (scheduledVersion == Constants.EMPTY_INT && version.isScheduled())){
+			later.setChecked(true);
+		}else{
+			later.setChecked(false);
+		}
+		Log.d("Aptoide-AppInfo", "isScheduled: "+selectedVersion.isScheduled()+" later checked: "+later.isChecked());
+		
+		if(installedVersion != null){
+			if(selectedVersion.isInstalled()){
+				activateUninstallButton(true);
+				later.setVisibility(View.INVISIBLE);
+				
+				activateInstallButton(false);
+			}else{ 
+				activateUninstallButton(false);
+				later.setVisibility(View.VISIBLE);
+				
+				if(selectedVersion.getVersionCode() > installedVersion.getVersionCode()){
+					activateUpdateButton(true);
+				}else if(selectedVersion.getVersionCode() < installedVersion.getVersionCode()){
+					activateDowngradeButton(true);
+				}
+			}
+		
+		
+		}else{
+			activateUninstallButton(false);
+			activateInstallButton(true);
+		}
+		
+		try {
+
+			Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
+			serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, version.getAppHashid());
+			if(version.getRepoHashid() != Constants.EMPTY_INT){
+				if(version.getSize() == Constants.EMPTY_INT){
+					serviceDataCaller.callAddVersionDownloadInfo(version.getAppHashid(), version.getRepoHashid());
+					Log.d("Aptoide-AppInfo", "called addVersionDownloadInfo");
+				}
+				if(!version.isExtrasAvailable() || version.getExtras() != null){
+					serviceDataCaller.callAddVersionExtraInfo(version.getAppHashid(), version.getRepoHashid());
+					Log.d("Aptoide-AppInfo", "called AddVersionExtraInfo");
+				}
+				if(!version.isStatsAvailable() || version.getStats() != null){
+					serviceDataCaller.callAddVersionStatsInfo(version.getAppHashid(), version.getRepoHashid());
+					Log.d("Aptoide-AppInfo", "called AddVersionStatsInfo");
+				}
+				serviceDataCaller.callRetrieveVersionComments(version.getAppHashid(), version.getRepoHashid());
+				Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
+			}
+			
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		setVersionRepo();
+		setVersionSize();
+		setVersionStats();
+		setVersionComments();
+	}
+
+	private void setIcon() {
+		String icon_path = Constants.PATH_CACHE_ICONS + appHashid;
+		ImageView icon = (ImageView) findViewById(R.id.icon);
+		File test_icon = new File(icon_path);
+
+		if (test_icon.exists() && test_icon.length() > 0) {
+			icon.setImageDrawable(new BitmapDrawable(icon_path));
+		} else {
+			icon.setImageResource(android.R.drawable.sym_def_app_icon);
+		}
+	}
+
+	private void setVersions() {
+//		int selectedVersionHashid = 0;
+//		if(selectedVersion != null){
+//			selectedVersionHashid = selectedVersion.getAppHashid(); 
+//		}
+		try {
+			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
+			if(appVersions == null){
+				appVersions = serviceDataCaller.callGetAppInfo(appHashid);	
+			}
+
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		Log.d("Aptoide-AppInfo", "appVersions: "+appVersions);
+		if(appVersions == null){
+			finish();
+			return;
+		}
+
+		ArrayList<String> versions = new ArrayList<String>();
+		for (ViewDisplayAppVersionInfo versionInfo : appVersions) {
+			versions.add(versionInfo.getVersionName());	
+//			if(selectedVersionHashid == versionInfo.getAppHashid()){
+//				selectedVersion = versionInfo;
+//			}
+			if(versionInfo.isInstalled()){
+				installedVersion = versionInfo;
+//				Log.d("Aptoide-AppInfo", "Installed version: "+installedVersion.getVersionName());
+			}
+//			else{
+//				Log.d("Aptoide-AppInfo", "available version: "+versionInfo.getVersionName());				
+//			}
+		}
+//		if(selectedVersion == null){
+//		}
+		
+//		selectVersion(appVersions.get(0));
+		selectedVersion = appVersions.get(0);
+		
+
+		multiVersionSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, versions);
+		multiVersionSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		appMultiVersion.setAdapter(multiVersionSpinnerAdapter);
+
+		appMultiVersion.setOnItemSelectedListener(new OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				selectVersion(appVersions.get(appMultiVersion.getSelectedItemPosition()));
+			}
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {
+
+			}
+		});
+		
+		appName = selectedVersion.getAppName();
+		appNameTextView.setText(appName);
+		
+		setVersionDescription();
+		setScreens();
+		
+	}
+	
+	private void setVersionSize(){
+		if(selectedVersion != null && selectedVersion.getSize() != Constants.EMPTY_INT){
+			appSize = Integer.toString(selectedVersion.getSize());
+			appSizeTextView.setText(getString(R.string.size)+": "+appSize+getString(R.string.kB));
+			appSizeTextView.setVisibility(View.VISIBLE);
+		}else{
+			if(selectedVersion.isInstalled()){
+				appSizeTextView.setVisibility(View.GONE);
+			}else{
+				appSizeTextView.setText(getString(R.string.size)+": ");
+				appSizeTextView.setVisibility(View.VISIBLE);
+			}
+		}
+	}
+	
+	private void setVersionRepo(){
+		if(selectedVersion != null && selectedVersion.getRepoUri() != null){
+			repoUri = selectedVersion.getRepoUri();
+			repoUriTextView.setText(getString(R.string.store)+": "+repoUri);
+		}else{
+			repoUriTextView.setText(getString(R.string.store)+": "+getString(R.string.local));
+		}
+	}
+	
+	private void setVersionStats(){
+		if(selectedVersion != null && selectedVersion.isStatsAvailable()){
+			appDownloads = selectedVersion.getStats().getDownloads();
+			appDownloadsTextView.setText(getString(R.string.downloads)+": "+appDownloads);
+			appDownloadsTextView.setVisibility(View.VISIBLE);
+
+			appStars = selectedVersion.getStats().getStars();
+			appStarsRating.setRating(new Float(appStars));
+			appStarsRating.setVisibility(View.VISIBLE);
+			
+			appLikes = selectedVersion.getStats().getLikes();
+			appLikesTextView.setText(""+appLikes);
+			appLikesTextView.setVisibility(View.VISIBLE);
+			appLikesImageView.setVisibility(View.VISIBLE);
+
+			appDislikes = selectedVersion.getStats().getDislikes();
+			appDislikesTextView.setText(""+appDislikes);
+			appDislikesTextView.setVisibility(View.VISIBLE);
+			appDislikesImageView.setVisibility(View.VISIBLE);
+		}else{
+			if(selectedVersion.isInstalled()){
+				appDownloadsTextView.setVisibility(View.GONE);
+				appStarsRating.setVisibility(View.INVISIBLE);
+				appLikesImageView.setVisibility(View.GONE);
+				appDislikesImageView.setVisibility(View.GONE);
+				appLikesTextView.setVisibility(View.GONE);
+				appDislikesTextView.setVisibility(View.GONE);				
+			}else{
+				appDownloadsTextView.setText(getString(R.string.downloads)+": ");
+				appDownloadsTextView.setVisibility(View.VISIBLE);
+				appStarsRating.setVisibility(View.VISIBLE);
+				appLikesImageView.setVisibility(View.VISIBLE);
+				appDislikesImageView.setVisibility(View.VISIBLE);	
+				appLikesTextView.setVisibility(View.INVISIBLE);
+				appDislikesTextView.setVisibility(View.INVISIBLE);			
+			}
+		}
+	}
+	
+	private void setVersionDescription() {
+		if(selectedVersion.isExtrasAvailable() && selectedVersion.getExtras()!=null){
+			//			appDescription = appVersions.toString();
+			appDescription = selectedVersion.getExtras().getDescription();
+			appDescriptionTextView.setText(""+appDescription);
+		}
+	}
+	
+	private void setVersionComments(){
+		if(selectedVersion.isCommentsAvailable() && selectedVersion.getComments() != null){
+	//		commentsAdapter.resetDisplayComments(selectedVersion.getAppFullHashid());
+	//		commentsAdapter.resetDisplayComments(selectedVersion.getComments());
+			commentsAdapter = new StaticCommentsListAdapter(this, selectedVersion.getComments());
+			setListAdapter(commentsAdapter);
+			commentOnApp.setVisibility(View.VISIBLE);
+			getListView().setVisibility(View.VISIBLE);
+		}else{
+			if(selectedVersion.isInstalled()){
+				commentOnApp.setVisibility(View.GONE);
+			}else{
+				commentOnApp.setVisibility(View.VISIBLE);
+			}
+			setListAdapter(null);
+//			getListView().setVisibility(View.INVISIBLE);
+		}
+	}
+
+	private void setScreens() {
+		ArrayList<Drawable> screensDrawables = new ArrayList<Drawable>();
+		int orderNumber = 0;
+		String screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
+		File screen = new File(screenPath);
+		if(screen.exists()){
+			do {
+				screensDrawables.add(Drawable.createFromPath(screenPath));
+				orderNumber++;
+				screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
+				screen = new File(screenPath);
+			} while (screen.exists());			
+		}
+		galleryView.setAdapter(new ImageAdapter(AppInfo.this, screensDrawables, appName));
+		galleryView.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+
+				// Log.d("Aptoide","This view.....");
+				final Dialog dialog = new Dialog(AppInfo.this);
+
+				dialog.setContentView(R.layout.screenshot);
+				dialog.setTitle(appName);
+
+				ImageView image = (ImageView) dialog.findViewById(R.id.image);
+				ImageView fetch = (ImageView) v;
+				image.setImageDrawable(fetch.getDrawable());
+				image.setOnClickListener(new OnClickListener() {
+					public void onClick(View v) {
+						dialog.dismiss();
+					}
+				});
+
+				dialog.setCanceledOnTouchOutside(true);
+
+				dialog.show();
+
+			}
+		});
+		if(galleryView.getAdapter().getCount() == Constants.EMPTY_INT){
+			screens.setVisibility(View.GONE);
+			galleryView.setVisibility(View.GONE);
+			
+		}else{
+			screens.setVisibility(View.VISIBLE);
+			galleryView.setVisibility(View.VISIBLE);
+		}
+	}
+	
+	
+	
+	@Override
+	protected void onListItemClick(ListView list, View view, int position, long id) {
+		final int commentPosition = position;
+//		Log.d("Aptoide-AppInfo", "click on comment, position: "+commentPosition+" comments: "+selectedVersion.getComments());
+		if(token == null){
+			try {
+				token = serviceDataCaller.callGetServerToken();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(token == null){
+			Log.d("Aptoide-AppInfo", "No login set");
+			DialogLogin loginComments = new DialogLogin(AppInfo.this, serviceDataCaller, DialogLogin.InvoqueNature.NO_CREDENTIALS_SET);
+			loginComments.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+					DialogAddComment addComment = new DialogAddComment(AppInfo.this, repoName, selectedVersion.getAppHashid(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getCommentId(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getUserName());
+					addComment.setOnDismissListener(new OnDismissListener() {
+						@Override
+						public void onDismiss(DialogInterface dialog) {
+//							setListAdapter(null);
+							try {
+								serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
+							} catch (RemoteException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
+//							versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
+						}
+					});
+					addComment.show();
+				}
+			});
+			loginComments.show();
+		}else{
+			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+			DialogAddComment addComment = new DialogAddComment(this, repoName, selectedVersion.getAppHashid(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getCommentId(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getUserName());
+			addComment.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+//					setListAdapter(null);
+					try {
+						serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
+//					versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
+				}
+			});
+			addComment.show();
+		}		
+		
+		super.onListItemClick(list, view, position, id);
+	}
+
+
+
+	private void addAppVersionComment(){
+		if(token == null){
+			try {
+				token = serviceDataCaller.callGetServerToken();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(token != null){
+			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+			DialogAddComment addComment = new DialogAddComment(this, repoName, selectedVersion.getAppHashid(), Constants.EMPTY_INT, null);
+			addComment.setOnDismissListener(new OnDismissListener() {
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+//					setListAdapter(null);
+					try {
+						serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
+//					versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
+				}
+			});
+			addComment.show();
+		}
+	}
+	
+	private void addAppVersionLike(boolean like){
+		if(token == null){
+			try {
+				token = serviceDataCaller.callGetServerToken();
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if(token != null){
+			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
+			new PostLike(repoName, appHashid, like).execute();
+		}
+	}
+	
+	
 	
 	private void activateInstallButton(boolean activate){
 		String label = getResources().getString(R.string.install);
@@ -839,350 +1236,9 @@ public class AppInfo extends ListActivity {
 		}
 		
 	}
-	
-	private void selectVersion(ViewDisplayAppVersionInfo version){
-		selectedVersion = version;
-		Log.d("Aptoide-AppInfo", "Selected version: "+selectedVersion.getVersionName());
-		
-		if(scheduledVersion == selectedVersion.getAppHashid() || (scheduledVersion == Constants.EMPTY_INT && version.isScheduled())){
-			later.setChecked(true);
-		}else{
-			later.setChecked(false);
-		}
-		Log.d("Aptoide-AppInfo", "isScheduled: "+selectedVersion.isScheduled()+" later checked: "+later.isChecked());
-		
-		if(installedVersion != null){
-			if(selectedVersion.isInstalled()){
-				activateUninstallButton(true);
-				later.setVisibility(View.INVISIBLE);
-				
-				activateInstallButton(false);
-			}else{ 
-				activateUninstallButton(false);
-				later.setVisibility(View.VISIBLE);
-				
-				if(selectedVersion.getVersionCode() > installedVersion.getVersionCode()){
-					activateUpdateButton(true);
-				}else if(selectedVersion.getVersionCode() < installedVersion.getVersionCode()){
-					activateDowngradeButton(true);
-				}
-			}
-		
-		
-		}else{
-			activateUninstallButton(false);
-			activateInstallButton(true);
-		}
-		
-		try {
 
-			Log.v("Aptoide-AppInfo", "Called for registering as AppInfo Observer");
-			serviceDataCaller.callRegisterAppInfoObserver(serviceDataCallback, version.getAppHashid());
-			if(version.getRepoHashid() != Constants.EMPTY_INT){
-				if(version.getSize() == Constants.EMPTY_INT){
-					serviceDataCaller.callAddVersionDownloadInfo(version.getAppHashid(), version.getRepoHashid());
-					Log.d("Aptoide-AppInfo", "called addVersionDownloadInfo");
-				}
-				if(!version.isExtrasAvailable() || version.getExtras() != null){
-					serviceDataCaller.callAddVersionExtraInfo(version.getAppHashid(), version.getRepoHashid());
-					Log.d("Aptoide-AppInfo", "called AddVersionExtraInfo");
-				}
-				if(!version.isStatsAvailable() || version.getStats() != null){
-					serviceDataCaller.callAddVersionStatsInfo(version.getAppHashid(), version.getRepoHashid());
-					Log.d("Aptoide-AppInfo", "called AddVersionStatsInfo");
-				}
-				serviceDataCaller.callRetrieveVersionComments(version.getAppHashid(), version.getRepoHashid());
-				Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
-			}
-			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		setVersionRepo();
-		setVersionSize();
-		setVersionStats();
-		setListAdapter(null);
-	}
-
-	private void setIcon() {
-		String icon_path = Constants.PATH_CACHE_ICONS + appHashid;
-		ImageView icon = (ImageView) findViewById(R.id.icon);
-		File test_icon = new File(icon_path);
-
-		if (test_icon.exists() && test_icon.length() > 0) {
-			icon.setImageDrawable(new BitmapDrawable(icon_path));
-		} else {
-			icon.setImageResource(android.R.drawable.sym_def_app_icon);
-		}
-	}
-
-	private void setVersions() {
-//		int selectedVersionHashid = 0;
-//		if(selectedVersion != null){
-//			selectedVersionHashid = selectedVersion.getAppHashid(); 
-//		}
-		try {
-			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
-			if(appVersions == null){
-				appVersions = serviceDataCaller.callGetAppInfo(appHashid);	
-			}
-
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		Log.d("Aptoide-AppInfo", "appVersions: "+appVersions);
-		if(appVersions == null){
-			finish();
-			return;
-		}
-
-		ArrayList<String> versions = new ArrayList<String>();
-		for (ViewDisplayAppVersionInfo versionInfo : appVersions) {
-			versions.add(versionInfo.getVersionName());	
-//			if(selectedVersionHashid == versionInfo.getAppHashid()){
-//				selectedVersion = versionInfo;
-//			}
-			if(versionInfo.isInstalled()){
-				installedVersion = versionInfo;
-//				Log.d("Aptoide-AppInfo", "Installed version: "+installedVersion.getVersionName());
-			}
-//			else{
-//				Log.d("Aptoide-AppInfo", "available version: "+versionInfo.getVersionName());				
-//			}
-		}
-//		if(selectedVersion == null){
-//		}
-		
-//		selectVersion(appVersions.get(0));
-		selectedVersion = appVersions.get(0);
-		
-
-		multiVersionSpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, versions);
-		multiVersionSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		appMultiVersion.setAdapter(multiVersionSpinnerAdapter);
-
-		appMultiVersion.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-				selectVersion(appVersions.get(appMultiVersion.getSelectedItemPosition()));
-			}
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-
-			}
-		});
-		
-		appName = selectedVersion.getAppName();
-		appNameTextView.setText(appName);
-		
-		setVersionDescription();
-		setScreens();
-		
-	}
-	
-	private void setVersionSize(){
-		if(selectedVersion != null && selectedVersion.getSize() != Constants.EMPTY_INT){
-			appSize = Integer.toString(selectedVersion.getSize());
-			appSizeTextView.setText(getString(R.string.size)+": "+appSize+getString(R.string.kB));
-		}else{
-			appSizeTextView.setText(getString(R.string.size)+": ");
-		}
-	}
-	
-	private void setVersionRepo(){
-		if(selectedVersion != null && selectedVersion.getRepoUri() != null){
-			repoUri = selectedVersion.getRepoUri();
-			repoUriTextView.setText(getString(R.string.store)+": "+repoUri);
-		}else{
-			repoUriTextView.setText(getString(R.string.store)+": "+getString(R.string.local));
-		}
-	}
-	
-	private void setVersionStats(){
-		if(selectedVersion != null && selectedVersion.isStatsAvailable()){
-			appDownloads = selectedVersion.getStats().getDownloads();
-			appDownloadsTextView.setText(getString(R.string.downloads)+": "+appDownloads);
-
-			appStars = selectedVersion.getStats().getStars();
-			appStarsRating.setRating(new Float(appStars));
-
-			appLikes = selectedVersion.getStats().getLikes();
-			appLikesTextView.setText(""+appLikes);
-
-			appDislikes = selectedVersion.getStats().getDislikes();
-			appDislikesTextView.setText(""+appDislikes);
-		}
-	}
-	
-	private void setVersionDescription() {
-		if(selectedVersion.isExtrasAvailable() && selectedVersion.getExtras()!=null){
-			//			appDescription = appVersions.toString();
-			appDescription = selectedVersion.getExtras().getDescription();
-			appDescriptionTextView.setText(""+appDescription);
-		}
-	}
-	
-	private void setVersionComments(){
-		if(selectedVersion.isCommentsAvailable() && selectedVersion.getComments() != null)
-//		commentsAdapter.resetDisplayComments(selectedVersion.getAppFullHashid());
-//		commentsAdapter.resetDisplayComments(selectedVersion.getComments());
-		commentsAdapter = new StaticCommentsListAdapter(this, selectedVersion.getComments());
-		setListAdapter(commentsAdapter);
-	}
 	
 	
-	
-	@Override
-	protected void onListItemClick(ListView list, View view, int position, long id) {
-		final int commentPosition = position;
-//		Log.d("Aptoide-AppInfo", "click on comment, position: "+commentPosition+" comments: "+selectedVersion.getComments());
-		if(token == null){
-			try {
-				token = serviceDataCaller.callGetServerToken();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(token == null){
-			Log.d("Aptoide-AppInfo", "No login set");
-			DialogLogin loginComments = new DialogLogin(AppInfo.this, serviceDataCaller, DialogLogin.InvoqueNature.NO_CREDENTIALS_SET);
-			loginComments.setOnDismissListener(new OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
-					DialogAddComment addComment = new DialogAddComment(AppInfo.this, repoName, selectedVersion.getAppHashid(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getCommentId(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getUserName());
-					addComment.setOnDismissListener(new OnDismissListener() {
-						@Override
-						public void onDismiss(DialogInterface dialog) {
-//							setListAdapter(null);
-							try {
-								serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
-							} catch (RemoteException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-							Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
-//							versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
-						}
-					});
-					addComment.show();
-				}
-			});
-			loginComments.show();
-		}else{
-			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
-			DialogAddComment addComment = new DialogAddComment(this, repoName, selectedVersion.getAppHashid(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getCommentId(), ((ViewDisplayComment) getListAdapter().getItem(commentPosition)).getUserName());
-			addComment.setOnDismissListener(new OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-//					setListAdapter(null);
-					try {
-						serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
-//					versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
-				}
-			});
-			addComment.show();
-		}		
-		
-		super.onListItemClick(list, view, position, id);
-	}
-
-
-
-	private void addAppVersionComment(){
-		if(token == null){
-			try {
-				token = serviceDataCaller.callGetServerToken();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(token != null){
-			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
-			DialogAddComment addComment = new DialogAddComment(this, repoName, selectedVersion.getAppHashid(), Constants.EMPTY_INT, null);
-			addComment.setOnDismissListener(new OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-//					setListAdapter(null);
-					try {
-						serviceDataCaller.callRetrieveVersionComments(selectedVersion.getAppHashid(), selectedVersion.getRepoHashid());
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Log.d("Aptoide-AppInfo", "called RetrieveVersionComments");
-//					versionInfoManager.updateAppComments(selectedVersion.getAppFullHashid());
-				}
-			});
-			addComment.show();
-		}
-	}
-	
-	private void addAppVersionLike(boolean like){
-		if(token == null){
-			try {
-				token = serviceDataCaller.callGetServerToken();
-			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(token != null){
-			String repoName = selectedVersion.getRepoUri().substring(Constants.SKIP_URI_PREFIX).split("\\.")[Constants.FIRST_ELEMENT];
-			new PostLike(repoName, appHashid, like).execute();
-		}
-	}
-
-	private void setScreens() {
-		ArrayList<Drawable> screensDrawables = new ArrayList<Drawable>();
-		int orderNumber = 0;
-		String screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
-		File screen = null;
-		do {
-			Drawable screenDrawable = Drawable.createFromPath(screenPath);
-			screensDrawables.add(screenDrawable);
-			orderNumber++;
-			screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
-			screen = new File(screenPath);
-		} while (screen.exists());
-		galleryView.setAdapter(new ImageAdapter(AppInfo.this, screensDrawables, appName));
-		galleryView.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-
-				// Log.d("Aptoide","This view.....");
-				final Dialog dialog = new Dialog(AppInfo.this);
-
-				dialog.setContentView(R.layout.screenshot);
-				dialog.setTitle(appName);
-
-				ImageView image = (ImageView) dialog.findViewById(R.id.image);
-				ImageView fetch = (ImageView) v;
-				image.setImageDrawable(fetch.getDrawable());
-				image.setOnClickListener(new OnClickListener() {
-					public void onClick(View v) {
-						dialog.dismiss();
-					}
-				});
-
-				dialog.setCanceledOnTouchOutside(true);
-
-				dialog.show();
-
-			}
-		});
-		galleryView.setVisibility(View.VISIBLE);
-	}
-
 	@Override
 	public void finish() {
 //		commentsAdapter.shutdownNow();
@@ -1241,18 +1297,18 @@ public class AppInfo extends ListActivity {
 						Log.d("Aptoide-AppInfo", "comment body: "+body.getText().toString().trim());
 						Toast.makeText(getContext(), getContext().getString(R.string.no_body), Toast.LENGTH_LONG).show();
 					} else {
+						dialogProgress = ProgressDialog.show(AppInfo.this, AppInfo.this.getString(R.string.submitting), AppInfo.this.getString(R.string.please_wait),true);
+						dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+						dialogProgress.setCancelable(true);
+						dialogProgress.setOnDismissListener(new OnDismissListener() {
+							@Override
+							public void onDismiss(DialogInterface dialog) {
+								dismiss();
+							}
+						});
 						Log.d("Aptoide-AppInfo", "comment body: "+body.getText().toString().trim());
 						new PostComment(repoName, appHashid, body.getText().toString(), subject.getText().toString(), answerTo).execute();
 					}
-				}
-			});
-
-			dialogProgress = ProgressDialog.show(AppInfo.this, AppInfo.this.getString(R.string.submitting), AppInfo.this.getString(R.string.please_wait),true);
-			dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
-			dialogProgress.setOnDismissListener(new OnDismissListener() {
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					dismiss();
 				}
 			});
 			
@@ -1325,6 +1381,7 @@ public class AppInfo extends ListActivity {
 			
 			dialogProgress = ProgressDialog.show(AppInfo.this, AppInfo.this.getString(R.string.submitting), AppInfo.this.getString(R.string.please_wait),true);
 			dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+			dialogProgress.setCancelable(true);
 		}
 
 		@Override

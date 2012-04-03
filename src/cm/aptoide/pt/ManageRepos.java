@@ -105,6 +105,7 @@ public class ManageRepos extends ListActivity{
 	ContextThemeWrapper theme = new ContextThemeWrapper(this, R.style.DialogTheme);
 	
 	private ViewDisplayListRepos repos = null;
+	private ViewDisplayListRepos freshRepos = null;
 	
 	private HashMap<Integer, ViewDisplayRepo> reposInserting;
 	
@@ -138,7 +139,7 @@ public class ManageRepos extends ListActivity{
 			}
 
 			handleIncomingIntent(getIntent());
-			getReposList();
+			reposManager.getRepos();
 			
 		}
 
@@ -156,13 +157,13 @@ public class ManageRepos extends ListActivity{
 
 		@Override
 		public void updateReposBasicInfo() throws RemoteException {
-			interfaceTasksHandler.sendEmptyMessage(EnumReposInfoTasks.UPDATE_REPOS_INFO.ordinal());			
+			reposManager.getRepos();		
 		}
 
 		@Override
 		public void insertedRepo(int repoHashid) throws RemoteException {
 			reposInserting.remove(repoHashid);
-			interfaceTasksHandler.sendEmptyMessage(EnumReposInfoTasks.UPDATE_REPOS_INFO.ordinal());				
+			reposManager.getRepos();			
 		}
 		
 	};
@@ -177,7 +178,7 @@ public class ManageRepos extends ListActivity{
         			break;
         	
 				case UPDATE_REPOS_INFO:
-					getReposList();
+					setReposList();
 					break;
 	
 				default:
@@ -193,6 +194,10 @@ public class ManageRepos extends ListActivity{
     	
     	public ReposManager(){
     		reposThreadPool = Executors.newSingleThreadExecutor();
+    	}
+    	
+    	public void getRepos(){
+    		reposThreadPool.execute(new GetRepos());
     	}
     	
     	public void addRepo(ViewRepository repo){
@@ -217,6 +222,20 @@ public class ManageRepos extends ListActivity{
     	
     	public void updateLogin(ViewRepository repo){
     		reposThreadPool.execute(new UpdateLogin(repo));
+    	}
+    	
+    	private class GetRepos implements Runnable{
+			@Override
+			public void run() {
+				try {
+					freshRepos = serviceDataCaller.callGetRepos();
+					Log.d("Aptoide-ManageRepo", "Repos: "+freshRepos);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				interfaceTasksHandler.sendEmptyMessage(EnumReposInfoTasks.UPDATE_REPOS_INFO.ordinal());				
+			}
     	}
     	
     	private class AddRepo implements Runnable{
@@ -388,14 +407,8 @@ public class ManageRepos extends ListActivity{
     }
     
     
-    private void getReposList(){
-        try {
-			repos = serviceDataCaller.callGetRepos();
-			Log.d("Aptoide-ManageRepo", "Repos: "+repos);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+    private void setReposList(){
+    	repos = freshRepos;
         if((repos == null || repos.getList().size() == 0) && !handlingMyappRepos){
         	interfaceTasksHandler.sendEmptyMessage(EnumReposInfoTasks.NO_MANAGED_REPOS.ordinal());
         }else{
@@ -1127,6 +1140,7 @@ public class ManageRepos extends ListActivity{
 		if(serviceDataIsBound){
 			unbindService(serviceDataConnection);
 		}
+		reposManager.reposThreadPool.shutdownNow();
 		super.finish();
 	}
 	

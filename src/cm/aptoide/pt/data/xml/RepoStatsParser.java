@@ -56,6 +56,7 @@ public class RepoStatsParser extends DefaultHandler{
 	private int appFullHashid = Constants.EMPTY_INT;
 	private int likes = Constants.EMPTY_INT;
 	private int parsedAppsNumber = Constants.EMPTY_INT;
+	private int totalParsedApps = Constants.EMPTY_INT;
 	
 	private StringBuilder tagContentBuilder;
 	
@@ -103,6 +104,7 @@ public class RepoStatsParser extends DefaultHandler{
 				
 			case pkg:
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					totalParsedApps += parsedAppsNumber;
 					parsedAppsNumber = 0;
 					statsListInsertStack.add(statsList);
 
@@ -149,13 +151,13 @@ public class RepoStatsParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoStatsHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoStatsHandler","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoStatsHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoStatsHandler","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		
 		if(!statsList.isEmpty()){
 			Log.d("Aptoide-RepoStatsParser", "bucket not empty, stats: "+statsList.size());
@@ -165,6 +167,10 @@ public class RepoStatsParser extends DefaultHandler{
 		Log.d("Aptoide-RepoStatsParser", "buckets: "+statsListInsertStack.size());
 		while(!statsListInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertOrReplaceStatsInfos(statsListInsertStack.remove(Constants.FIRST_ELEMENT));			
+		}
+		
+		if(totalParsedApps > Constants.APPLICATIONS_IN_EACH_INSERT){
+			managerXml.getManagerDatabase().optimizeQuerys();
 		}
 		
 		if(appHashid != Constants.EMPTY_INT){

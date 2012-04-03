@@ -35,6 +35,7 @@ import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewListIds;
 import cm.aptoide.pt.data.preferences.EnumMinScreenSize;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * RepoDeltaParser, handles Delta Repo xml Sax parsing
@@ -59,6 +60,7 @@ public class RepoDeltaParser extends DefaultHandler{
 	String path;
 	private boolean toRemove = false;
 	private int repoSizeDifferential = 0;
+	private int totalParsedApps = Constants.EMPTY_INT;
 	
 	private StringBuilder tagContentBuilder;
 	
@@ -158,6 +160,7 @@ public class RepoDeltaParser extends DefaultHandler{
 				case appscount:
 //					repoSizeDifferential = Integer.parseInt(tagContentBuilder.toString());
 					parseInfo.getNotification().setProgressCompletionTarget(repoSizeDifferential);
+					totalParsedApps = Integer.parseInt(tagContentBuilder.toString());
 					break;
 				case delta:
 					parseInfo.getRepository().setDelta(tagContentBuilder.toString());
@@ -189,14 +192,14 @@ public class RepoDeltaParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoBareParser","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoBareParser","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
 		parseInfo.getRepository().setSize(parseInfo.getRepository().getSize()+repoSizeDifferential);
-		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + parseInfo.getRepository() + " ... size diff: "+repoSizeDifferential);
+		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ... size diff: "+repoSizeDifferential);
 		
 		managerXml.getManagerDatabase().updateRepository(parseInfo.getRepository());
 		Log.d("Aptoide-RepoBareParser","inserting new apps: " + newApplications + " ...");		
@@ -206,6 +209,10 @@ public class RepoDeltaParser extends DefaultHandler{
 		
 		Log.d("Aptoide-RepoBareParser","inserting new apps icons: " + newIcons + " ...");	
 		managerXml.getManagerDatabase().insertIconsInfo(newIcons);
+		
+		if(totalParsedApps > Constants.APPLICATIONS_IN_EACH_INSERT){
+			managerXml.getManagerDatabase().optimizeQuerys();
+		}
 		
 		managerXml.parsingRepoDeltaFinished(parseInfo.getRepository());
 		super.endDocument();

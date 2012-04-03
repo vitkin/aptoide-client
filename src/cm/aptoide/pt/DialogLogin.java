@@ -113,6 +113,7 @@ public class DialogLogin extends Dialog{
 						
 					ProgressDialog dialogProgress = ProgressDialog.show(getContext(), getContext().getString(R.string.logging_in), getContext().getString(R.string.please_wait),true);
 					dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+					dialogProgress.setCancelable(true);
 					
 //						final AtomicBoolean successLogin = new AtomicBoolean(true);
 					

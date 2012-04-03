@@ -58,6 +58,7 @@ public class RepoExtrasParser extends DefaultHandler{
 	private int appHashid = Constants.EMPTY_INT;
 	private int appFullHashid = Constants.EMPTY_INT;
 	private int parsedAppsNumber = Constants.EMPTY_INT;
+	private int totalParsedApps = Constants.EMPTY_INT;
 	
 	private int screenOrderNumber = 1;
 	
@@ -106,6 +107,7 @@ public class RepoExtrasParser extends DefaultHandler{
 				
 			case pkg:
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					totalParsedApps += parsedAppsNumber;
 					parsedAppsNumber = 0;
 					extrasInsertStack.add(extras);
 
@@ -179,13 +181,13 @@ public class RepoExtrasParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoExtrasHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoExtrasHandler","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoExtrasHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoExtrasHandler","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		
 		if(!extras.isEmpty()){
 			Log.d("Aptoide-RepoExtrasParser", "bucket not empty, apps: "+extras.size());
@@ -205,6 +207,10 @@ public class RepoExtrasParser extends DefaultHandler{
 		Log.d("Aptoide-RepoExtrasParser", "screens buckets: "+screensInfoInsertStack.size());
 		while(!screensInfoInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertScreensInfo(screensInfoInsertStack.remove(Constants.FIRST_ELEMENT));			
+		}
+		
+		if(totalParsedApps > Constants.APPLICATIONS_IN_EACH_INSERT){
+			managerXml.getManagerDatabase().optimizeQuerys();
 		}
 
 		if(appHashid != Constants.EMPTY_INT){

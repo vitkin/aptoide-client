@@ -235,4 +235,8 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
     	
 	}
 	
+	public void shutdownNow(){
+		categoriesManager.categoriesColectorsPool.shutdownNow();
+	}
+	
 }

@@ -212,13 +212,14 @@
                 <TextView
                     android:id="@+id/app_description"
                     android:layout_width="fill_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:paddingLeft="5.0sp"
                     android:paddingRight="5.0sp"
                     android:textSize="18sp" />
 
                 <TextView
+                    android:id="@+id/screens"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_gravity="top"
@@ -231,7 +232,7 @@
                     android:textSize="18.0sp" />
 
                 <Gallery
-                    android:id="@+id/screens"
+                    android:id="@+id/screens_gallery"
                     android:layout_width="fill_parent"
                     android:layout_height="182dp"
                     android:layout_weight="1" />
@@ -254,20 +255,23 @@
 				<ListView
 	                android:id="@android:id/list"
 	                android:layout_width="fill_parent"
-                    android:layout_height="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
 	                android:cacheColorHint="@android:color/transparent" >
 	            </ListView>
-	
 	            <TextView
 	                android:id="@android:id/empty"
 	                android:layout_width="fill_parent"
-	                android:layout_height="fill_parent"
-	                android:layout_alignTop="@android:id/list"
-	                android:gravity="center_vertical|center_horizontal"
-	                android:text="@string/comments_unavailable"
-	                android:textAppearance="?android:attr/textAppearanceLarge"
-	                android:textColor="#4f4f4f" />
+	                android:layout_height="wrap_content"/>
+<!-- 	            <TextView -->
+<!-- 	                android:id="@android:id/empty" -->
+<!-- 	                android:layout_width="fill_parent" -->
+<!-- 	                android:layout_height="fill_parent" -->
+<!-- 	                android:layout_alignTop="@android:id/list" -->
+<!-- 	                android:gravity="center_vertical|center_horizontal" -->
+<!-- 	                android:text="@string/comments_unavailable" -->
+<!-- 	                android:textAppearance="?android:attr/textAppearanceLarge" -->
+<!-- 	                android:textColor="#4f4f4f" /> -->
 	            
 <!--                 <ListView -->
 <!--                     android:id="@+id/list_comments" -->

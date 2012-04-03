@@ -244,4 +244,8 @@ public class StaticInstalledAppsListAdapter extends BaseAdapter{
 		}
 	}
 	
+	public void shutdownNow(){
+		appsManager.installedColectorsPool.shutdownNow();
+	}
+	
 }

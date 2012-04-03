@@ -383,6 +383,7 @@ public class Constants {
 	public static final String FOREIGN_KEY_UPDATE_REPO_REPO_HASHID_STRONG = "foreign_key_update_repo_repo_hashid_strong";
 	public static final String FOREIGN_KEY_DELETE_REPO = "foreign_key_delete_repo";
 
+	public static final String INDEX_REPOSITORY_IN_USE = "index_repository_in_use";
 	
 	
 	public static final String CREATE_TABLE_LOGIN = "CREATE TABLE IF NOT EXISTS " + TABLE_LOGIN + " ("
@@ -423,6 +424,7 @@ public class Constants {
 	public static final String FOREIGN_KEY_UPDATE_APPLICATION_APP_FULL_HASHID_STRONG = "foreign_key_update_application_app_full_hashid_strong";
 	public static final String FOREIGN_KEY_DELETE_APPLICATION = "foreign_key_delete_application";
 
+	public static final String INDEX_APPLICATION_REPO_HASHID = "index_application_repohashid";
 	public static final String INDEX_APPLICATION_PACKAGE_NAME = "index_application_package_name";
 	
 	
@@ -833,9 +835,15 @@ public class Constants {
 			+ "    WHERE (SELECT "+ KEY_APPLICATION_FULL_HASHID +" FROM "+ TABLE_APPLICATION +" WHERE "+ KEY_APPLICATION_FULL_HASHID +" = NEW."+ KEY_APP_COMMENTS_APP_FULL_HASHID+") IS NULL;"
 			+ " END;";
 	
+
+	public static final String CREATE_INDEX_REPOSITORY_IN_USE = "CREATE INDEX IF NOT EXISTS "+INDEX_REPOSITORY_IN_USE+" ON "+TABLE_REPOSITORY+" ("+KEY_REPO_IN_USE+" ASC);";
 	
+	public static final String CREATE_INDEX_APPLICATION_REPO_HASHID = "CREATE INDEX IF NOT EXISTS "+INDEX_APPLICATION_REPO_HASHID+" ON "+TABLE_APPLICATION+" ("+KEY_APPLICATION_REPO_HASHID+" ASC);";
 	public static final String CREATE_INDEX_APPLICATION_PACKAGE_NAME = "CREATE INDEX IF NOT EXISTS "+INDEX_APPLICATION_PACKAGE_NAME+" ON "+TABLE_APPLICATION+" ("+KEY_APPLICATION_PACKAGE_NAME+" ASC);";
 	
 	public static final String CREATE_INDEX_APP_INSTALLED_PACKAGE_NAME = "CREATE INDEX IF NOT EXISTS "+INDEX_APP_INSTALLED_PACKAGE_NAME+" ON "+TABLE_APP_INSTALLED+" ("+KEY_APP_INSTALLED_PACKAGE_NAME+" ASC);";
 
+	
+	
+	public static final String ANALYZE = "ANALYZE";
 }
