@@ -240,4 +240,8 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
 		}
 	}
 	
+	public void shutdownNow(){
+		appsManager.updatableColectorsPool.shutdownNow();
+	}
+	
 }

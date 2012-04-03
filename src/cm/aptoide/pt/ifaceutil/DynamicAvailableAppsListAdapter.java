@@ -85,6 +85,8 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 	private AtomicInteger cacheListOffset;
 	private AtomicInteger cacheAppsTrimmed;
 
+	private boolean headerFooterSet = false;
+	
 	private AtomicInteger globalPosition;
 	private AtomicInteger scrollDirectionOrigin;
 	private AtomicBoolean directionDown;
@@ -516,8 +518,11 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		bottomProgressBar=progressBarLayoutInflater.inflate(R.layout.progress_bar, null); 
 		topProgressBar=progressBarLayoutInflater.inflate(R.layout.progress_bar, null);
 		
-		listView.addFooterView(bottomProgressBar);
-		listView.addHeaderView(topProgressBar);
+		if(!headerFooterSet){
+			headerFooterSet=true;
+			listView.addFooterView(bottomProgressBar);
+			listView.addHeaderView(topProgressBar);
+		}
 		
 		setLoadingHeader(false);
 		setLoadingFooter(false);
@@ -615,6 +620,7 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		
 		if(freshApps.isEmpty()){
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_NO_APPS.ordinal());
+			return;
 		}else{
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_LIST.ordinal());
 		}
@@ -753,5 +759,9 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 //		trimTopAppsList(trimAmount);
 //		appendAndUpdateDisplay(freshAvailableApps);
 //	}
+	
+	public void shutdownNow(){
+		appsManager.dataColector.shutdownNow();
+	}
 	
 }

@@ -56,6 +56,7 @@ public class RepoDownloadParser extends DefaultHandler{
 	private int appHashid = Constants.EMPTY_INT;
 	private int appFullHashid = Constants.EMPTY_INT;
 	private int parsedAppsNumber = Constants.EMPTY_INT;
+	private int totalParsedApps = Constants.EMPTY_INT;
 	
 	private StringBuilder tagContentBuilder;
 	
@@ -106,6 +107,7 @@ public class RepoDownloadParser extends DefaultHandler{
 				
 			case pkg:
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
+					totalParsedApps += parsedAppsNumber;	
 					parsedAppsNumber = 0;
 					downloadsInfoInsertStack.add(downloadsInfo);
 
@@ -177,13 +179,13 @@ public class RepoDownloadParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoDownloadHandler","Started parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoDownloadHandler","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository() + " ...");
+		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		
 		if(!downloadsInfo.isEmpty()){
 			Log.d("Aptoide-RepoDownloadParser", "bucket not empty, apps: "+downloadsInfo.size());
@@ -193,6 +195,10 @@ public class RepoDownloadParser extends DefaultHandler{
 		Log.d("Aptoide-RepoInfoParser", "buckets: "+downloadsInfoInsertStack.size());
 		while(!downloadsInfoInsertStack.isEmpty()){
 			managerXml.getManagerDatabase().insertDownloadsInfo(downloadsInfoInsertStack.remove(Constants.FIRST_ELEMENT));			
+		}
+		
+		if(totalParsedApps > Constants.APPLICATIONS_IN_EACH_INSERT){
+			managerXml.getManagerDatabase().optimizeQuerys();
 		}
 		
 		if(appHashid != Constants.EMPTY_INT){
