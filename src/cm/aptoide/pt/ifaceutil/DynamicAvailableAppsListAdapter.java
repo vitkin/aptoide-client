@@ -620,9 +620,9 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		
 		if(freshApps.isEmpty()){
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_NO_APPS.ordinal());
-			return;
 		}else{
 			aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.SWITCH_AVAILABLE_TO_LIST.ordinal());
+	    	aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
 		}
 
 		sleep.set(false);
@@ -646,7 +646,6 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		}
 //    	listView.setSelectionFromTop(scrollRestorePosition, partialScrollRestorePosition);
     	
-    	aptoideTasksHandler.sendEmptyMessage(EnumAptoideInterfaceTasks.RESET_UPDATABLE_LIST_DISPLAY.ordinal());
 	}
 	
 	private synchronized void trimTopAppsList(int trimAmount){
