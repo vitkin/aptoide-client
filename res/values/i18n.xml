@@ -129,7 +129,7 @@
     <string name="install">Install</string>
     <string name="install_selected">Install Selected</string>
     <string name="update">Update</string>
-     <string name="update_to">Update to:</string>
+    <string name="installed_version">Installed version:</string>
     <string name="downgrade">Downgrade</string>
     <string name="uninstall">Uninstall</string>
     <string name="attention">Attention</string>

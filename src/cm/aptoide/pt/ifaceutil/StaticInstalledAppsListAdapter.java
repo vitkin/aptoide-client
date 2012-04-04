@@ -155,7 +155,7 @@ public class StaticInstalledAppsListAdapter extends BaseAdapter{
 		}
 		
 		rowViewHolder.app_name.setText(apps.get(position).getAppName());
-		rowViewHolder.installed_versionname.setText(apps.get(position).getVersionName());
+		rowViewHolder.installed_versionname.setText(" "+apps.get(position).getVersionName());
 		
 		if(((ViewDisplayApplicationInstalled) apps.get(position)).isDowngradable()){
 			rowViewHolder.app_downgradable.setVisibility(View.VISIBLE);

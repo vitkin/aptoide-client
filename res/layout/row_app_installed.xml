@@ -31,15 +31,30 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/installed_versionname"
+            android:id="@+id/installed_version_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/app_name"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
+            android:text="@string/installed_version"
             android:textColor="#4f4f4f"
             android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/installed_versionname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/installed_version_id"
+            android:layout_below="@id/app_name"
+            android:layout_toRightOf="@+id/installed_version_id"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="#4f4f4f"
+            android:textSize="12sp" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -49,11 +64,11 @@
 
         <ImageView
             android:id="@+id/app_upgradable"
-            android:layout_marginTop="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_marginTop="4dp"
             android:src="@drawable/upgradable"
             android:visibility="invisible" />
 
@@ -65,11 +80,9 @@
             android:layout_below="@+id/app_upgradable"
             android:src="@drawable/downgradable"
             android:visibility="invisible" />
-        
     </RelativeLayout>
 
-</LinearLayout>
-<!--
+</LinearLayout><!--
  * Since v3.0 Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
