@@ -31,27 +31,28 @@
             android:textStyle="bold" />
 
          <TextView
-             android:id="@+id/update_to"
+             android:id="@+id/installed_version_id"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content"
              android:layout_below="@id/app_name"
              android:ellipsize="end"
              android:maxLines="1"
              android:singleLine="true"
-             android:text="@string/update_to"
-             android:textColor="#456700"
+             android:text="@string/installed_version"
+             android:textColor="#4f4f4f"
              android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/uptodate_versionname"
+            android:id="@+id/installed_versionname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/installed_version_id"
             android:layout_below="@+id/app_name"
-            android:layout_toRightOf="@+id/update_to"
+            android:layout_toRightOf="@+id/installed_version_id"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#456700"
+            android:textColor="#4f4f4f"
             android:textSize="12sp" />
 
     </RelativeLayout>
@@ -62,35 +63,40 @@
         android:layout_weight="2"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/downloads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="#b3b3b3"
-            android:textSize="12sp" />
-
         <RatingBar
             android:id="@+id/stars"
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/downloads"
+            android:layout_below="@+id/uptodate_versionname"
             android:isIndicator="true"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
             android:numStars="5" />
+
+        <TextView
+            android:id="@+id/uptodate_versionname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="#456700"
+            android:textSize="12sp" />
 
         <ImageView
             android:id="@+id/app_upgradable"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            android:layout_alignTop="@+id/downloads"
-            android:layout_toLeftOf="@+id/downloads"
+            android:layout_marginBottom="-1dp"
+            android:layout_marginLeft="2dp"
+            android:layout_alignBottom="@+id/uptodate_versionname"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@+id/uptodate_versionname"
             android:src="@drawable/upgradable" />
 
     </RelativeLayout>
