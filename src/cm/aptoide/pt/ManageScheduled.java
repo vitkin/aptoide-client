@@ -255,9 +255,9 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 		menu.clear();
 
 		menu.add(Menu.NONE, EnumOptionsMenu.INVERT_SELECTION.ordinal(), EnumOptionsMenu.INVERT_SELECTION.ordinal(), R.string.invert_selection)
-		.setIcon(R.drawable.ic_menu_invert);
+		.setIcon(R.drawable.ic_menu_revert);
 		menu.add(Menu.NONE, EnumOptionsMenu.REMOVE_SELECTED.ordinal(), EnumOptionsMenu.REMOVE_SELECTED.ordinal(), R.string.remove_selected)
-		.setIcon(android.R.drawable.ic_menu_delete);
+		.setIcon(R.drawable.ic_menu_delete);
 		
 //		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
 //		.setIcon(android.R.drawable.ic_menu_sort_by_size);

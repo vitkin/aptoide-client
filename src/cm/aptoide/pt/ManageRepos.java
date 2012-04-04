@@ -458,7 +458,7 @@ public class ManageRepos extends ListActivity{
 		final String uri = Constants.APPS_REPO;
 		AlertDialog.Builder defaultDialog = new AlertDialog.Builder(theme);
 		defaultDialog.setTitle(getString(R.string.attention));
-		defaultDialog.setIcon(android.R.drawable.ic_dialog_alert);
+		defaultDialog.setIcon(R.drawable.ic_menu_info_details);
 		defaultDialog.setMessage(getString(R.string.add_default_repo_confirm) + uri);
 		defaultDialog.setPositiveButton(getText(R.string.yes), new DialogInterface.OnClickListener() {
 		      public void onClick(DialogInterface dialog, int which) {
@@ -535,7 +535,7 @@ public class ManageRepos extends ListActivity{
 			
 			AlertDialog.Builder builder = new AlertDialog.Builder(theme);
 			builder.setTitle(getString(R.string.add_repo_choose));
-			builder.setIcon(android.R.drawable.ic_menu_add);
+			builder.setIcon(R.drawable.ic_menu_add);
 			builder.setMultiChoiceItems(reposArray, null, new DialogInterface.OnMultiChoiceClickListener() {
 	            		public void onClick(DialogInterface dialog,int whichButton, boolean isChecked) {
 	            		        if(isChecked){
@@ -738,7 +738,7 @@ public class ManageRepos extends ListActivity{
 				sec.setChecked(false);
 			}
 			
-			alrt.setIcon(android.R.drawable.ic_menu_edit);
+			alrt.setIcon(R.drawable.ic_menu_edit);
 			alrt.setTitle(getText(R.string.edit_repo));
 			actionButtonString = getText(R.string.edit);
 		}else{
@@ -746,7 +746,7 @@ public class ManageRepos extends ListActivity{
 			originalRepo = null;
 			sec.setChecked(false);
 			
-			alrt.setIcon(android.R.drawable.ic_menu_add);
+			alrt.setIcon(R.drawable.ic_menu_add);
 			alrt.setTitle(getText(R.string.add_repo));
 			actionButtonString = getText(R.string.add);
 		}
@@ -974,11 +974,11 @@ public class ManageRepos extends ListActivity{
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
 		menu.add(Menu.NONE, EnumOptionsMenu.ADD_REPO.ordinal(),1,R.string.add_repo)
-			.setIcon(android.R.drawable.ic_menu_add);
+			.setIcon(R.drawable.ic_menu_add);
 		menu.add(Menu.NONE, EnumOptionsMenu.EDIT_REPO.ordinal(), 2, R.string.edit_repo)
-			.setIcon(android.R.drawable.ic_menu_edit);
+			.setIcon(R.drawable.ic_menu_edit);
 		menu.add(Menu.NONE, EnumOptionsMenu.REMOVE_REPO.ordinal(), 3, R.string.remove_repo)
-		.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+			.setIcon(R.drawable.ic_menu_close_clear_cancel);
 		return true;
 	}
 
@@ -1012,7 +1012,7 @@ public class ManageRepos extends ListActivity{
 		case REMOVE_REPO:
 			AlertDialog.Builder builder = new AlertDialog.Builder(theme);
 			builder.setTitle(getString(R.string.remove_repo));
-			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+			builder.setIcon(R.drawable.ic_menu_close_clear_cancel);
 			builder.setMessage(getString(R.string.remove_repo_confirm) + " " + repo_selected + " ?");
 			builder.setPositiveButton(getString(R.string.yes), new DialogInterface.OnClickListener() {
                 		public void onClick(DialogInterface dialog, int	whichButton) {
@@ -1071,7 +1071,7 @@ public class ManageRepos extends ListActivity{
 				
 				AlertDialog.Builder builder = new AlertDialog.Builder(theme);
 				builder.setTitle(getString(R.string.remove_repo_choose));
-				builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+				builder.setIcon(R.drawable.ic_menu_close_clear_cancel);
 				builder.setMultiChoiceItems(reposArray, null, new DialogInterface.OnMultiChoiceClickListener() {
 	                		public void onClick(DialogInterface dialog,int whichButton, boolean isChecked) {
 	                		        if(isChecked){
@@ -1108,7 +1108,7 @@ public class ManageRepos extends ListActivity{
 				}		
 				AlertDialog.Builder builder2 = new AlertDialog.Builder(theme);
 				builder2.setTitle(getString(R.string.edit_repo_choose));
-				builder2.setIcon(android.R.drawable.ic_menu_edit);
+				builder2.setIcon(R.drawable.ic_menu_edit);
 				builder2.setSingleChoiceItems(reposArray, -1, new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 							updt_repo = (String)(repos.getList().get(whichButton).get(Constants.KEY_REPO_URI));

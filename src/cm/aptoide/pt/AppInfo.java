@@ -1310,7 +1310,7 @@ public class AppInfo extends ListActivity {
 						Toast.makeText(getContext(), getContext().getString(R.string.no_body), Toast.LENGTH_LONG).show();
 					} else {
 						dialogProgress = ProgressDialog.show(AppInfo.this, AppInfo.this.getString(R.string.submitting), AppInfo.this.getString(R.string.please_wait),true);
-						dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+						dialogProgress.setIcon(R.drawable.ic_menu_info_details);
 						dialogProgress.setCancelable(true);
 						dialogProgress.setOnDismissListener(new OnDismissListener() {
 							@Override
@@ -1392,7 +1392,7 @@ public class AppInfo extends ListActivity {
 			this.like = like;
 			
 			dialogProgress = ProgressDialog.show(AppInfo.this, AppInfo.this.getString(R.string.submitting), AppInfo.this.getString(R.string.please_wait),true);
-			dialogProgress.setIcon(android.R.drawable.ic_dialog_info);
+			dialogProgress.setIcon(R.drawable.ic_menu_info_details);
 			dialogProgress.setCancelable(true);
 		}
 

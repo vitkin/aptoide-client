@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#edece9"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:padding="10dp" >
 
     <LinearLayout
@@ -27,28 +27,28 @@
             android:layout_height="wrap_content"
             android:text="@string/apk"
             android:textColor="#4f4f4f" />
+    </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/buttons"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content" >
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
 
-            <Button
-                android:id="@+id/done"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/done"
-                android:textColor="#4f4f4f" />
+        <Button
+            android:id="@+id/done"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/done"
+            android:textColor="#4f4f4f" />
 
-            <Button
-                android:id="@+id/cancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cancel"
-                android:textColor="#4f4f4f" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:textColor="#4f4f4f" />
     </LinearLayout>
 
 </LinearLayout>

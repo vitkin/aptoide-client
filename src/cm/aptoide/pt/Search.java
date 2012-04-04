@@ -308,7 +308,7 @@ public class Search extends Activity implements OnItemClickListener{
 		menu.clear();
 		
 		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
-		.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		.setIcon(R.drawable.ic_menu_filter);
 		
 		return true;
 	}
@@ -324,7 +324,7 @@ public class Search extends Activity implements OnItemClickListener{
 				View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
 				Builder alrt = new AlertDialog.Builder(this).setView(displayOptions);
 				final AlertDialog sortDialog = alrt.create();
-				sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
+				sortDialog.setIcon(R.drawable.ic_menu_filter);
 				sortDialog.setTitle(getString(R.string.display_options));
 				
 				RadioGroup group_show = (RadioGroup) displayOptions.findViewById(R.id.group_show);

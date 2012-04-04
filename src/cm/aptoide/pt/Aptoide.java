@@ -1260,17 +1260,17 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 
 		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
-			.setIcon(android.R.drawable.ic_menu_agenda);
+			.setIcon(R.drawable.ic_menu_archive);
 		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
-			.setIcon(android.R.drawable.ic_menu_sort_by_size);
+			.setIcon(R.drawable.ic_menu_filter);
 		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.scheduled_downloads)
-			.setIcon(R.drawable.ic_menu_scheduled);
+			.setIcon(R.drawable.ic_menu_clock);
 //		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
 //			.setIcon(android.R.drawable.ic_menu_search);
 		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.settings)
-			.setIcon(android.R.drawable.ic_menu_preferences);
+			.setIcon(R.drawable.ic_menu_preferences);
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),EnumOptionsMenu.ABOUT.ordinal(),R.string.about)
-			.setIcon(android.R.drawable.ic_menu_help);
+			.setIcon(R.drawable.ic_menu_help);
 		
 		
 		return true;
@@ -1295,7 +1295,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
 					Builder dialogBuilder = new AlertDialog.Builder(theme).setView(displayOptions);
 					final AlertDialog sortDialog = dialogBuilder.create();
-					sortDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
+					sortDialog.setIcon(R.drawable.ic_menu_filter);
 					sortDialog.setTitle(getString(R.string.display_options));
 					
 					// ***********************************************************
