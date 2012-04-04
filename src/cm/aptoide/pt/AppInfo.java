@@ -160,7 +160,7 @@ public class AppInfo extends ListActivity {
 //				e.printStackTrace();
 //			}
 
-			setVersions();		
+			versionInfoManager.getAppVersions();
 			
 //			try {
 //				serviceDataCaller.CallFillAppInfo(appHashid);
@@ -246,9 +246,9 @@ public class AppInfo extends ListActivity {
 				setIcon();
 				break;
 
-//			case UPDATE_APP_INFO:
-//				setVersions();
-//				break;
+			case UPDATE_APP_INFO:
+				setVersions();
+				break;
 
 			case UPDATE_APP_SIZE:
 				setVersionSize();
@@ -293,6 +293,10 @@ public class AppInfo extends ListActivity {
 			return 0;
     	}
     	
+    	public void getAppVersions(){
+    		versionInfoColectorsPool.execute(new GetAppVersions());
+    	}
+    	
     	public void updateAppSize(int appFullHashid){
         	versionInfoColectorsPool.execute(new GetAppSize(appFullHashid, getPosition(appFullHashid)));
         }
@@ -308,6 +312,23 @@ public class AppInfo extends ListActivity {
     	public void updateAppComments(int appFullHashid){
         	versionInfoColectorsPool.execute(new GetAppComments(appFullHashid, getPosition(appFullHashid)));
         }
+    	
+    	private class GetAppVersions implements Runnable{
+			@Override
+			public void run() {
+				try {
+					appVersions = serviceDataCaller.callGetAppInfo(appHashid);
+					if(appVersions == null){
+						appVersions = serviceDataCaller.callGetAppInfo(appHashid);	
+					}
+					Log.v("Aptoide-AppInfo", "got appVersions");
+					interfaceTasksHandler.sendEmptyMessage(EnumAppInfoTasks.UPDATE_APP_INFO.ordinal());
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+    	}
     	
     	private class GetAppSize implements Runnable{
     		int appFullHashid = Constants.EMPTY_INT;
@@ -745,16 +766,7 @@ public class AppInfo extends ListActivity {
 //		if(selectedVersion != null){
 //			selectedVersionHashid = selectedVersion.getAppHashid(); 
 //		}
-		try {
-			appVersions = serviceDataCaller.callGetAppInfo(appHashid);
-			if(appVersions == null){
-				appVersions = serviceDataCaller.callGetAppInfo(appHashid);	
-			}
-
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		Log.d("Aptoide-AppInfo", "appVersions: "+appVersions);
 		if(appVersions == null){
 			finish();

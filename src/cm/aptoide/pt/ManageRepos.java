@@ -1140,8 +1140,13 @@ public class ManageRepos extends ListActivity{
 		if(serviceDataIsBound){
 			unbindService(serviceDataConnection);
 		}
-		reposManager.reposThreadPool.shutdownNow();
 		super.finish();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		reposManager.reposThreadPool.shutdownNow();
+		super.onDestroy();
 	}
 	
 	@Override
