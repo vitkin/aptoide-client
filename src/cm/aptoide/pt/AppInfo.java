@@ -49,6 +49,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -122,8 +123,9 @@ public class AppInfo extends ListActivity {
 	private TextView screens;
 	Gallery galleryView;
 	
+	private View appInfo;
 	private TextView commentOnApp;
-//	ListView comments;
+	private ListView comments;
 	private TextView noComments;
 	
 	private Button install;
@@ -452,7 +454,11 @@ public class AppInfo extends ListActivity {
 
 		setContentView(R.layout.app_info);
 	
-
+		comments = (ListView) findViewById(android.R.id.list);
+		LayoutInflater appInfoLayoutInflater = LayoutInflater.from(this);
+		appInfo = appInfoLayoutInflater.inflate(R.layout.header_comments, null); 
+		comments.addFooterView(appInfo);
+		
 		setIcon();
 		
 		if (!serviceDataIsBound) {

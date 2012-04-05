@@ -31,15 +31,30 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/uptodate_versionname"
+            android:id="@+id/version_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/app_name"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
+            android:text="@string/version"
             android:textColor="#4f4f4f"
             android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/uptodate_versionname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/version_id"
+            android:layout_below="@id/app_name"
+            android:layout_toRightOf="@+id/version_id"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColor="#4f4f4f"
+            android:textSize="12sp" />
+
     </RelativeLayout>
 
     <RelativeLayout
