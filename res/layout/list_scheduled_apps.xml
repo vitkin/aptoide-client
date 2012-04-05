@@ -7,35 +7,9 @@
 
     <!-- Green Bar -->
 
-    <RelativeLayout
+    <include
         android:id="@+id/actionbar"
-        android:layout_width="fill_parent"
-        android:layout_height="44sp"
-        android:layout_gravity="top"
-        android:background="@drawable/greenbarwithshadow"
-        android:orientation="vertical" >
-
-        <ImageView
-            android:id="@+id/aptoideicon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="2sp"
-            android:layout_toRightOf="@+id/greenbar"
-            android:src="@drawable/icon" />
-
-        <ImageView
-            android:id="@+id/aptoidebrand"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/aptoideicon"
-            android:padding="5dp"
-            android:scaleType="fitStart"
-            android:src="@drawable/aptoidebrand" />
-    </RelativeLayout>
+        layout="@layout/actionbar" />
 
     <RelativeLayout
         android:id="@+id/content_layout"
