@@ -38,7 +38,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="@string/installed_version"
+            android:text="@string/version"
             android:textColor="#4f4f4f"
             android:textSize="12sp" />
 
