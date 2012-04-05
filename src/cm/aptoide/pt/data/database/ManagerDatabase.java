@@ -2336,71 +2336,61 @@ public class ManagerDatabase {
 		boolean firstWhere = true;
 
 		
-		try{
-			db.beginTransaction();
-			
-			Cursor cursorApps = aptoideNonAtomicQuery(selectAvailableApps, selectAvailableAppsArgs);
+		Cursor cursorApps = aptoideAtomicQuery(selectAvailableApps, selectAvailableAppsArgs);
 
-			
-			availableApps = new ViewDisplayListApps();
-			
-			cursorApps.moveToFirst();
-			
-			if(cursorApps.getCount() == Constants.EMPTY_INT){
-				cursorApps.close();
-				return availableApps;
-			}
-			
-			do{																			
-				app = new ViewDisplayApplicationAvailable(cursorApps.getInt(APP_HASHID), cursorApps.getString(APP_NAME), cursorApps.getString(UP_TO_DATE_VERSION_NAME));
-				availableApps.add(app);
-				appFullHashids.put(cursorApps.getInt(APP_FULL_HASHID), cursorApps.getPosition());
-
-			}while(cursorApps.moveToNext());
+		
+		availableApps = new ViewDisplayListApps();
+		
+		cursorApps.moveToFirst();
+		
+		if(cursorApps.getCount() == Constants.EMPTY_INT){
 			cursorApps.close();
-			
+			return availableApps;
+		}
+		
+		do{																			
+			app = new ViewDisplayApplicationAvailable(cursorApps.getInt(APP_HASHID), cursorApps.getString(APP_NAME), cursorApps.getString(UP_TO_DATE_VERSION_NAME));
+			availableApps.add(app);
+			appFullHashids.put(cursorApps.getInt(APP_FULL_HASHID), cursorApps.getPosition());
 
-			for (int appFullHashid : appFullHashids.keySet()) {
+		}while(cursorApps.moveToNext());
+		cursorApps.close();
+		
 
-				if(firstWhere){
-					firstWhere = false;
-				}else{
-					selectAvailableAppStatisticsWhere.append(",");					
-				}
+		for (int appFullHashid : appFullHashids.keySet()) {
 
-				selectAvailableAppStatisticsWhere.append(appFullHashid);
+			if(firstWhere){
+				firstWhere = false;
+			}else{
+				selectAvailableAppStatisticsWhere.append(",");					
 			}
-			selectAvailableAppStatisticsWhere.append(")");
-			selectAvailableAppsStatistics += selectAvailableAppStatisticsWhere.toString();
+
+			selectAvailableAppStatisticsWhere.append(appFullHashid);
+		}
+		selectAvailableAppStatisticsWhere.append(")");
+		selectAvailableAppsStatistics += selectAvailableAppStatisticsWhere.toString();
 
 //			Log.d("Aptoide-ManagerDatabase", "available apps stats: "+selectAvailableAppsStatistics);
-			Cursor cursorAppStats = aptoideNonAtomicQuery(selectAvailableAppsStatistics);
+		
+		
+		Cursor cursorAppStats = aptoideAtomicQuery(selectAvailableAppsStatistics);
 
-			db.setTransactionSuccessful();
-			db.endTransaction();
-			
-			if(cursorAppStats.getCount() == Constants.EMPTY_INT){
-				cursorAppStats.close();
-				return availableApps;				
-			}
-			
-			cursorAppStats.moveToFirst();
-			ViewDisplayApplicationAvailable appToComplete;
-			do{
-				appToComplete = (ViewDisplayApplicationAvailable) availableApps.get(appFullHashids.get(cursorAppStats.getInt(APP_STATS_FULL_HASHID)));
-				appToComplete.completeAppStats(cursorAppStats.getFloat(STARS), cursorAppStats.getInt(DOWNLOADS));
-			}while(cursorAppStats.moveToNext());
+		
+		if(cursorAppStats.getCount() == Constants.EMPTY_INT){
 			cursorAppStats.close();
-			
-//			Log.d("Aptoide-ManagerDatabase", "available apps: "+availableApps);
-	
-		}catch (Exception e) {
-			if(db.inTransaction()){
-				db.endTransaction();
-			}
-			// TODO: handle exception
-			e.printStackTrace();
+			return availableApps;				
 		}
+		
+		cursorAppStats.moveToFirst();
+		ViewDisplayApplicationAvailable appToComplete;
+		do{
+			appToComplete = (ViewDisplayApplicationAvailable) availableApps.get(appFullHashids.get(cursorAppStats.getInt(APP_STATS_FULL_HASHID)));
+			appToComplete.completeAppStats(cursorAppStats.getFloat(STARS), cursorAppStats.getInt(DOWNLOADS));
+		}while(cursorAppStats.moveToNext());
+		cursorAppStats.close();
+		
+//			Log.d("Aptoide-ManagerDatabase", "available apps: "+availableApps);
+
 		return availableApps;
 	}
 	
