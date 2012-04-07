@@ -172,7 +172,9 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		 * 
 		 */
 		public void scrollDown(){
-			dataColector.execute(new ScrollDown());
+			try {
+				dataColector.execute(new ScrollDown());
+			} catch (Exception e) { }
 		}
 
 		/** 
@@ -180,7 +182,9 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		 * 
 		 */
 		public void scrollUp(){
-			dataColector.execute(new ScrollUp());
+			try {
+				dataColector.execute(new ScrollUp());
+			} catch (Exception e) { }
 		}
 
 		/** 
@@ -188,7 +192,9 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		 * 
 		 */
 		public void reload(){
-			dataColector.execute(new Reload());
+			try {
+				dataColector.execute(new Reload());
+			} catch (Exception e) { }
 		}
 
 		/** 
@@ -196,7 +202,9 @@ public class DynamicAvailableAppsListAdapter extends BaseAdapter{
 		 * 
 		 */
 		public void reset(){
-			dataColector.execute(new Reset());
+			try {
+				dataColector.execute(new Reset());
+			} catch (Exception e) { }
 		}
     	
 		private class ScrollDown implements Runnable {

@@ -294,23 +294,33 @@ public class AppInfo extends ListActivity {
     	}
     	
     	public void getAppVersions(){
-    		versionInfoColectorsPool.execute(new GetAppVersions());
+    		try {
+				versionInfoColectorsPool.execute(new GetAppVersions());
+			} catch (Exception e) { }
     	}
     	
     	public void updateAppSize(int appFullHashid){
-        	versionInfoColectorsPool.execute(new GetAppSize(appFullHashid, getPosition(appFullHashid)));
+    		try {
+    			versionInfoColectorsPool.execute(new GetAppSize(appFullHashid, getPosition(appFullHashid)));
+    		} catch (Exception e) { }
         }
     	
     	public void updateAppStats(int appFullHashid){
-        	versionInfoColectorsPool.execute(new GetAppStats(appFullHashid, getPosition(appFullHashid)));
+    		try {
+    			versionInfoColectorsPool.execute(new GetAppStats(appFullHashid, getPosition(appFullHashid)));
+    		} catch (Exception e) { }
         }
     	
     	public void updateAppDescription(int appFullHashid){
-        	versionInfoColectorsPool.execute(new GetAppDescription(appFullHashid, getPosition(appFullHashid)));
+    		try {
+    			versionInfoColectorsPool.execute(new GetAppDescription(appFullHashid, getPosition(appFullHashid)));
+    		} catch (Exception e) { }
         }
     	
     	public void updateAppComments(int appFullHashid){
-        	versionInfoColectorsPool.execute(new GetAppComments(appFullHashid, getPosition(appFullHashid)));
+    		try {
+    			versionInfoColectorsPool.execute(new GetAppComments(appFullHashid, getPosition(appFullHashid)));
+    		} catch (Exception e) { }
         }
     	
     	private class GetAppVersions implements Runnable{

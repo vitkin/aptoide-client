@@ -1709,7 +1709,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public ViewDisplayCategory getCategories(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Categories");
-		return managerDatabase.getCategoriesDisplayInfo();
+		return managerDatabase.getCategoriesDisplayInfo(managerPreferences.isHwFilterOn());
 	}
 	
 	public int getAppsSortingPolicy(){

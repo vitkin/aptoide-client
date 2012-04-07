@@ -56,6 +56,33 @@ public class ViewDisplayApplicationUpdatable extends ViewDisplayApplication{
 		this.stars = updatestars;
 		this.downloads = updateDownloads;
 	}
+	
+	/**
+	 * ViewDisplayApplicationUpdatable Constructor
+	 *
+	 * @param appHashid
+	 * @param appName
+	 * @param installedVersionName
+	 * @param upToDateVersionName
+	 */
+	public ViewDisplayApplicationUpdatable(int appHashid, String appName, String installedVersionName, String upToDateVersionName) {
+		super(appHashid, appName, upToDateVersionName);
+		
+		this.installedVersionName = installedVersionName;
+	}
+	
+
+	/**
+	 * completeAppStats, completes statistics for apps creted without them
+	 * 
+	 * @param stars
+	 * @param downloads
+	 */
+	public void completeAppStats(float stars, int downloads){
+		this.stars = stars;
+		this.downloads = downloads;		
+	}
+	
 
 	public float getStars() {
 		return this.stars;

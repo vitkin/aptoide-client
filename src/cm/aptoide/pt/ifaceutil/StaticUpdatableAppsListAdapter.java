@@ -93,7 +93,9 @@ public class StaticUpdatableAppsListAdapter extends BaseAdapter{
     	}
     	
     	public void reset(){
-        	updatableColectorsPool.execute(new GetUpdatableApps());
+        	try {
+				updatableColectorsPool.execute(new GetUpdatableApps());
+			} catch (Exception e) { }
         }
     	
     	private class GetUpdatableApps implements Runnable{

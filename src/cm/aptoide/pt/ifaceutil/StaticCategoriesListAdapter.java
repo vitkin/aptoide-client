@@ -89,7 +89,9 @@ public class StaticCategoriesListAdapter extends BaseAdapter{
     	}
     	
     	public void reset(){
-        	categoriesColectorsPool.execute(new GetCategories());
+        	try {
+				categoriesColectorsPool.execute(new GetCategories());
+			} catch (Exception e) { }
         }
     	
     	private class GetCategories implements Runnable{
