@@ -197,7 +197,9 @@ public class ManageRepos extends ListActivity{
     	}
     	
     	public void getRepos(){
-    		reposThreadPool.execute(new GetRepos());
+    		try {
+				reposThreadPool.execute(new GetRepos());
+			} catch (Exception e) {}
     	}
     	
     	public void addRepo(ViewRepository repo){

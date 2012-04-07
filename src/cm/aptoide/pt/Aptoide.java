@@ -505,7 +505,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 	        
 			searchView = (ImageView) findViewById(R.id.search_button);
-			searchView.setOnTouchListener(new UpDownListener());
+			searchView.setOnTouchListener(new SearchClickListener());
 
 			
 			previousViewArrow = (ImageView) findViewById(R.id.previous);
@@ -1141,8 +1141,14 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		
     }
     
+    @Override
+    public boolean onSearchRequested() {
+		availableAdapter.sleep();
+    	return super.onSearchRequested();
+    }
+    
 
-	class UpDownListener implements OnTouchListener {
+	class SearchClickListener implements OnTouchListener {
 
 		public boolean onTouch(View v, MotionEvent event) {
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {

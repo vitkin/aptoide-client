@@ -93,7 +93,9 @@ public class StaticInstalledAppsListAdapter extends BaseAdapter{
     	}
     	
     	public void reset(){
-        	installedColectorsPool.execute(new GetInstalledApps());
+        	try {
+				installedColectorsPool.execute(new GetInstalledApps());
+			} catch (Exception e) { }
         }
     	
     	private class GetInstalledApps implements Runnable{
