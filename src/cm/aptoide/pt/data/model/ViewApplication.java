@@ -144,13 +144,13 @@ public class ViewApplication {
 		return values.getAsFloat(Constants.KEY_APPLICATION_MIN_GLES);
 	}
 	
-//	public void setRating(int rating){
-//		values.put(Constants.KEY_APPLICATION_RATING, rating);
-//	}
-//	
-//	public int getRating() {
-//		return values.getAsInteger(Constants.KEY_APPLICATION_RATING);
-//	}
+	public void setRating(int rating){
+		values.put(Constants.KEY_APPLICATION_RATING, rating);
+	}
+	
+	public int getRating() {
+		return values.getAsInteger(Constants.KEY_APPLICATION_RATING);
+	}
 	
 	/**
 	 * setRepoHashid, sets this application's repo hashid

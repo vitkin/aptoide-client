@@ -33,6 +33,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.util.Log;
 import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.preferences.EnumMinScreenSize;
+import cm.aptoide.pt.data.preferences.EnumAgeRating;
 import cm.aptoide.pt.data.util.Constants;
 
 /**
@@ -99,6 +100,9 @@ public class RepoBareParser extends DefaultHandler{
 			case timestamp:
 				application.setTimestamp(Long.parseLong(tagContentBuilder.toString().trim()));
 				break;
+			case age:
+				application.setRating(EnumAgeRating.safeValueOf(tagContentBuilder.toString().trim()).ordinal());
+				break;
 			case minScreen:
 				application.setMinScreen(EnumMinScreenSize.valueOf(tagContentBuilder.toString().trim()).ordinal());
 				break;
@@ -106,7 +110,11 @@ public class RepoBareParser extends DefaultHandler{
 				application.setMinSdk(Integer.parseInt(tagContentBuilder.toString().trim()));
 				break;
 			case minGles:
-				application.setMinGles(Float.parseFloat(tagContentBuilder.toString().trim()));
+				float gles = Float.parseFloat(tagContentBuilder.toString().trim());
+				if(gles < 1.0){
+					gles = 1;
+				}
+				application.setMinGles(gles);
 				break;
 				
 			case pkg:

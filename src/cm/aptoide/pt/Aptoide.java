@@ -68,12 +68,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewFlipper;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
-import cm.aptoide.pt.data.display.ViewDisplayApplication;
 import cm.aptoide.pt.data.display.ViewDisplayCategory;
 import cm.aptoide.pt.data.listeners.ViewMyapp;
 import cm.aptoide.pt.data.system.ViewScreenDimensions;
@@ -527,9 +527,9 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			
 			
 //			View categoriesView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
-			View availableView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
-			View installedView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
-			View updatableView = LinearLayout.inflate(this, R.layout.apps_list, appsListFlipper);
+			View availableView = LinearLayout.inflate(this, R.layout.list_apps, appsListFlipper);
+			View installedView = LinearLayout.inflate(this, R.layout.list_apps, appsListFlipper);
+			View updatableView = LinearLayout.inflate(this, R.layout.list_apps, appsListFlipper);
 
 			
 //			emptyCategoriesList = categoriesView.findViewById(android.R.id.empty);
@@ -575,7 +575,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			availableAppsListView.setOnTouchListener(swypeListener);
 			availableAppsListView.setOnItemClickListener(this);
 			availableAppsListView.setTag(EnumAppsLists.Available);
-//			availableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
+			availableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(availableAppsList);
 			
 //			installedAppsListView = new ListView(this);
@@ -584,7 +584,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			installedAppsListView.setOnTouchListener(swypeListener);
 			installedAppsListView.setOnItemClickListener(this);
 			installedAppsListView.setTag(EnumAppsLists.Installed);
-//			installedAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
+			installedAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(installedAppsList);
 			
 //			updatableAppsListView = new ListView(this);
@@ -593,7 +593,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			updatableAppsListView.setOnTouchListener(swypeListener);
 			updatableAppsListView.setOnItemClickListener(this);
 			updatableAppsListView.setTag(EnumAppsLists.Updates);
-//			updatableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
+			updatableAppsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 	//		appsListFlipper.addView(updatableAppsList);
 			
 			appsListFlipper = (ViewFlipper) findViewById(R.id.list_flipper);
@@ -1256,9 +1256,21 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		menu.clear();
 		super.onCreateOptionsMenu(menu);
 		switch (currentAppsList) {
+			case Available:
+				menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
+				.setIcon(R.drawable.ic_menu_filter);
+				
+				break;
+				
+			case Installed:
+				
+				break;
+				
 			case Updates:
 				menu.add(Menu.NONE, EnumOptionsMenu.UPDATE_ALL.ordinal(), EnumOptionsMenu.UPDATE_ALL.ordinal(), R.string.update_all)
 					.setIcon(R.drawable.ic_menu_refresh);
+				menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
+				.setIcon(R.drawable.ic_menu_filter);
 				break;
 				
 			default:
@@ -1267,8 +1279,6 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 
 		menu.add(Menu.NONE, EnumOptionsMenu.MANAGE_REPO.ordinal(), EnumOptionsMenu.MANAGE_REPO.ordinal(), R.string.manage_repos)
 			.setIcon(R.drawable.ic_menu_archive);
-		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.display_options)
-			.setIcon(R.drawable.ic_menu_filter);
 		menu.add(Menu.NONE,EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),R.string.scheduled_downloads)
 			.setIcon(R.drawable.ic_menu_clock);
 //		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH_MENU.ordinal(),EnumOptionsMenu.SEARCH_MENU.ordinal(),R.string.menu_search)
@@ -1303,19 +1313,23 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					final AlertDialog sortDialog = dialogBuilder.create();
 					sortDialog.setIcon(R.drawable.ic_menu_filter);
 					sortDialog.setTitle(getString(R.string.display_options));
-					
+
 					// ***********************************************************
 					// Categories
 					final RadioButton byCategory = (RadioButton) displayOptions.findViewById(R.id.by_category);
 					final RadioButton byAll = (RadioButton) displayOptions.findViewById(R.id.by_all);
-					
 					if(availableByCategory){
 						byCategory.setChecked(true);
 					}else{
 						byAll.setChecked(true);
 					}
-
+	
 					final View spacer = displayOptions.findViewById(R.id.spacer);
+					
+					if(currentAppsList != EnumAppsLists.Available){
+						spacer.setVisibility(View.GONE);
+						((RadioGroup) displayOptions.findViewById(R.id.group_show)).setVisibility(View.GONE);
+					}
 					
 					// ***********************************************************
 					// Sorting				

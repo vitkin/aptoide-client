@@ -28,6 +28,34 @@
             android:gravity="bottom"
             android:padding="5dp" >
 
+			<RelativeLayout
+			    xmlns:android="http://schemas.android.com/apk/res/android"
+			    android:id="@+id/loading"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:padding="5dp" >
+			    <TextView
+			        android:id="@+id/loading_title"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_centerHorizontal="true"
+			        android:layout_marginTop="8dp"
+			        android:text="@string/loading"
+			        android:textAppearance="?android:attr/textAppearanceLarge"
+			        android:textColor="#4f4f4f"
+			        android:textSize="14sp" />
+			    <ProgressBar
+			        android:id="@+id/loading_bar"
+			        style="@android:style/Widget.ProgressBar.Small.Inverse"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_alignParentTop="true"
+			        android:layout_margin="10dp"
+			        android:layout_toLeftOf="@+id/loading"
+			        android:indeterminate="true"
+			        android:visibility="visible" />
+			</RelativeLayout>
+
             <ListView
                 android:id="@android:id/list"
                 android:layout_width="fill_parent"

@@ -16,16 +16,6 @@
             android:title="@string/clear_cache" />
     </PreferenceCategory>
     
-<!--     <PreferenceCategory android:title="@string/app_rating" > -->
-<!--         <ListPreference -->
-<!--             android:defaultValue="Pre-Teen" -->
-<!--             android:entries="@array/age_entries" -->
-<!--             android:entryValues="@array/age_entries" -->
-<!--             android:key="app_rating" -->
-<!--             android:summary="@string/app_rating_description" -->
-<!--             android:title="@string/app_rating" /> -->
-<!--     </PreferenceCategory> -->
-    
     <PreferenceCategory android:title="@string/bazaar_login" >
         <Preference
             android:key="clear_server_login"
@@ -48,12 +38,22 @@
         	android:summary="@string/hw_filter_apps"
         	android:key="check_hw_specs"
         	android:defaultValue="true" />
+	        
+    </PreferenceCategory>
+    
+    <PreferenceCategory android:title="@string/app_rating" >
+        <ListPreference
+            android:defaultValue="@string/no_filter"
+            android:entries="@array/age_entries"
+            android:entryValues="@array/age_entries"
+            android:key="app_rating"
+            android:summary="@string/app_rating_description"
+            android:title="@string/app_rating" />
       	
 <!--       	<CheckBoxPreference -->
 <!-- 	     	android:title="@string/mature_filter" -->
 <!-- 	        android:summary="@string/dont_show_mature_content" -->
 <!-- 	        android:key="check_mature" /> -->
-	        
     </PreferenceCategory>
     
     <PreferenceCategory android:title="@string/scheduled_downloads" >

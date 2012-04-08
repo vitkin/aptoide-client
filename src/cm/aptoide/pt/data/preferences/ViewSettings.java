@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt.data.preferences;
 
+import cm.aptoide.pt.EnumReposInfoTasks;
 import cm.aptoide.pt.data.webservices.ViewIconDownloadPermissions;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -32,17 +33,23 @@ import android.os.Parcelable;
  */
 public class ViewSettings implements Parcelable{
 	private ViewIconDownloadPermissions iconDownloadPermissions;
+	private EnumAgeRating rating;
 	private boolean isHwFilterOn;
 	private boolean isAutomaticInstallOn;
 	
-	public ViewSettings(ViewIconDownloadPermissions iconDownloadPermissions, boolean isHwFilterOn, boolean isAutomaticInstallOn) {
+	public ViewSettings(ViewIconDownloadPermissions iconDownloadPermissions, boolean isHwFilterOn, EnumAgeRating rating, boolean isAutomaticInstallOn) {
 		this.iconDownloadPermissions = iconDownloadPermissions;
+		this.rating = rating;
 		this.isHwFilterOn = isHwFilterOn;
 		this.isAutomaticInstallOn = isAutomaticInstallOn;
 	}
 	
 	public ViewIconDownloadPermissions getIconDownloadPermissions(){
 		return iconDownloadPermissions;
+	}
+	
+	public EnumAgeRating getRating(){
+		return rating;
 	}
 
 	public boolean isHwFilterOn() {
@@ -55,7 +62,7 @@ public class ViewSettings implements Parcelable{
 
 	@Override
 	public String toString() {
-		return iconDownloadPermissions+" isHwFilterOn: "+isHwFilterOn+" isAutomaticInstallOn: "+isAutomaticInstallOn;
+		return iconDownloadPermissions+" isHwFilterOn: "+isHwFilterOn+" ageRating: "+rating+" isAutomaticInstallOn: "+isAutomaticInstallOn;
 	}
 
 	
@@ -91,12 +98,14 @@ public class ViewSettings implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeParcelable(iconDownloadPermissions, flags);
+		out.writeInt(rating.ordinal());
 		out.writeValue(isHwFilterOn);
 		out.writeValue(isAutomaticInstallOn);
 	}
 	
 	public void readFromParcel(Parcel in) {
 		iconDownloadPermissions = in.readParcelable(ViewIconDownloadPermissions.class.getClassLoader());
+		rating = EnumAgeRating.reverseOrdinal(in.readInt());
 		isHwFilterOn = (Boolean) in.readValue(null);
 		isAutomaticInstallOn = (Boolean) in.readValue(null);
 	}

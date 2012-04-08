@@ -42,6 +42,7 @@ public enum EnumXmlTagsBare {
 	name,
 	catg2,
 	timestamp,
+	age,
 	minSdk,
 	minScreen,
 	minGles,

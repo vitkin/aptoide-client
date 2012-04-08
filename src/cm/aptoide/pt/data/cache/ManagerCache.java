@@ -25,11 +25,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.StatFs;
 import android.util.Log;
 import cm.aptoide.pt.data.util.Constants;
@@ -49,6 +49,8 @@ public class ManagerCache {
 	
 	/** Object reuse pool */
 	private ArrayList<ViewCache> cachePool;
+	
+	ExecutorService tasksPool = Executors.newCachedThreadPool();
 	
 		
 	public ManagerCache() {
@@ -239,36 +241,46 @@ public class ManagerCache {
 	 * 
 	 * @param cache
 	 */
-	public void clearCache(ViewCache cache){
-		 File file = new File(cache.getLocalPath());
-		 if(file.exists()){
-			 file.delete();
+	public void clearCache(final ViewCache cache){
+		File file = new File(cache.getLocalPath());
+		if(file.exists()){
+			file.delete();
 			Log.d("Aptoide-ManagerCache", "deleted: "+cache.getLocalPath());
-		 }
+		}
 	}
 	
 	/**
 	 * clearIconCache, removes all icons from cache
 	 */
 	public void clearIconCache(){
-		File iconsPath = new File(Constants.PATH_CACHE_ICONS);
-		File[] icons = iconsPath.listFiles();
-		for (File icon : icons) {
-			icon.delete();
-		}
-		Log.d("Aptoide-ManagerCache", "icon cache cleared");
+		tasksPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				File iconsPath = new File(Constants.PATH_CACHE_ICONS);
+				File[] icons = iconsPath.listFiles();
+				for (File icon : icons) {
+					icon.delete();
+				}
+				Log.d("Aptoide-ManagerCache", "icon cache cleared");
+			}
+		});
 	}
 	
 	/**
 	 * clearApkCache, removes all apks from cache
 	 */
 	public void clearApkCache(){
-		File apksPath = new File(Constants.PATH_CACHE_APKS);
-		File[] apks = apksPath.listFiles();
-		for (File apk : apks) {
-			apk.delete();
-		}
-		Log.d("Aptoide-ManagerCache", "apk cache cleared");
+		tasksPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				File apksPath = new File(Constants.PATH_CACHE_APKS);
+				File[] apks = apksPath.listFiles();
+				for (File apk : apks) {
+					apk.delete();
+				}
+				Log.d("Aptoide-ManagerCache", "apk cache cleared");
+			}
+		});
 	}
 	
 	public boolean isIconCached(int appHashid){
@@ -342,17 +354,22 @@ public class ManagerCache {
 		}
 	}
 	
-	public void cacheIcon(int appHashid, Bitmap icon){
-		if(!isIconCached(appHashid)){
-			try {
-				FileOutputStream out = new FileOutputStream(Constants.PATH_CACHE_ICONS+appHashid);
-				icon.compress(Bitmap.CompressFormat.PNG, 90, out);
-				Log.d("Aptoide-ManagerCache", "stored installed app icon in: "+Constants.PATH_CACHE_ICONS+appHashid);
-			} catch (Exception e) {
-				//TODO handle exception
-				e.printStackTrace();
+	public void cacheIcon(final int appHashid, final Bitmap icon){
+		tasksPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				if(!isIconCached(appHashid)){
+					try {
+						FileOutputStream out = new FileOutputStream(Constants.PATH_CACHE_ICONS+appHashid);
+						icon.compress(Bitmap.CompressFormat.PNG, 90, out);
+						Log.d("Aptoide-ManagerCache", "stored installed app icon in: "+Constants.PATH_CACHE_ICONS+appHashid);
+					} catch (Exception e) {
+						//TODO handle exception
+						e.printStackTrace();
+					}
+				}
 			}
-		}
+		});
 	}
 	
 	public void calculateMd5Hash(ViewCache cache){

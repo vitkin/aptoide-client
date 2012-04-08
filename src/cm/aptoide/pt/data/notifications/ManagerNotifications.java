@@ -97,7 +97,7 @@ public class ManagerNotifications {
 	    } catch (NoSuchMethodException e) {
 	        // Running on an older platform.
 	        startForeground = stopForeground = null;
-	        Log.w("Aptoide-ManagerNotifications", "No foreground service support on this android", e);
+	        Log.w("Aptoide-ManagerNotifications", "No foreground service support on this android");
 //	        return;
 	    }
 	    try {

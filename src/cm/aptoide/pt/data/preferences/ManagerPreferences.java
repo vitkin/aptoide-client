@@ -157,16 +157,25 @@ public class ManagerPreferences implements InterfaceAptoideLog{
 	
 	public void setAutomaticInstall(boolean on){
 		setPreferences.putBoolean(EnumPreferences.AUTOMATIC_INSTALL.name(), on);
-		setPreferences.commit();		
+		setPreferences.commit();
 	}
 	
 	public boolean isAutomaticInstallOn(){
 		return getPreferences.getBoolean(EnumPreferences.AUTOMATIC_INSTALL.name(), false);
 	}
 	
+	public void setAgeRating(EnumAgeRating rating){
+		setPreferences.putInt(EnumPreferences.AGE_RATING.name(), rating.ordinal());
+		setPreferences.commit();		
+	}
+	
+	public EnumAgeRating getAgeRating(){
+		return EnumAgeRating.reverseOrdinal(getPreferences.getInt(EnumPreferences.AGE_RATING.name(), EnumAgeRating.No_Filter.ordinal()));
+	}
+	
 	
 	public ViewSettings getSettings(){
-		return new ViewSettings(getIconDownloadPermissions(), isHwFilterOn(), isAutomaticInstallOn());
+		return new ViewSettings(getIconDownloadPermissions(), isHwFilterOn(), getAgeRating(), isAutomaticInstallOn());
 	}
 	
 	//TODO move these next 3 values to database to support multiple servers

@@ -268,7 +268,7 @@ public class Constants {
 	public static final String KEY_APPLICATION_VERSION_NAME = "version_name";
 	public static final String KEY_APPLICATION_NAME = "app_name";		//TODO maybe create index, consider changing columns order to increase lookup performance
 	public static final String KEY_APPLICATION_TIMESTAMP = "timestamp";
-//	public static final String KEY_APPLICATION_RATING = "rating";
+	public static final String KEY_APPLICATION_RATING = "rating";
 	/** min_screen_size defaults to small (supports all screens) **/
 	public static final String KEY_APPLICATION_MIN_SCREEN = "min_screen";
 	/** min_sdk_version defaults to 1 (supports all versions) **/
@@ -301,7 +301,8 @@ public class Constants {
 	
 	public static final String TABLE_APP_TO_INSTALL = "app_to_install";
 	public static final String KEY_APP_TO_INSTALL_HASHID = KEY_APPLICATION_HASHID;
-	public static final int NUMBER_OF_COLUMNS_APP_TO_INSTALL = 1;
+	public static final String KEY_APP_TO_INSTALL_SCHEDULED = "scheduled";
+	public static final int NUMBER_OF_COLUMNS_APP_TO_INSTALL = 2;
 	
 	
 	public static final String TABLE_APP_INSTALLED = "app_installed";
@@ -407,7 +408,7 @@ public class Constants {
 			+ KEY_APPLICATION_VERSION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_TIMESTAMP + " INTEGER NOT NULL, "
-//			+ KEY_APPLICATION_RATING + " INTEGER NOT NULL CHECK ("+KEY_APPLICATION_RATING+">0), "
+			+ KEY_APPLICATION_RATING + " INTEGER DEFAULT (0) CHECK ("+KEY_APPLICATION_RATING+">=0), "
 			/** min_screen_size defaults to small (supports all screens) **/
 			+ KEY_APPLICATION_MIN_SCREEN + " INTEGER DEFAULT (0) CHECK("+KEY_APPLICATION_MIN_SCREEN+">=0), "
 			/** min_sdk_version defaults to 1 (supports all versions) **/
@@ -466,7 +467,8 @@ public class Constants {
 	
 	
 	public static final String CREATE_TABLE_APP_TO_INSTALL = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_TO_INSTALL + " ("
-			+ KEY_APP_TO_INSTALL_HASHID + " INTEGER PRIMARY KEY NOT NULL); ";
+			+ KEY_APP_TO_INSTALL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
+			+ KEY_APP_TO_INSTALL_SCHEDULED + " INTEGER DEFAULT (1) ); ";
 
 	public static final String FOREIGN_KEY_INSERT_APP_TO_INSTALL = "foreign_key_insert_app_to_install";
 	public static final String FOREIGN_KEY_UPDATE_APP_TO_INSTALL_HASHID_WEAK = "foreign_key_update_app_to_install_hashid_weak";
@@ -524,10 +526,10 @@ public class Constants {
 	
 	public static final String CREATE_TABLE_STATS_INFO = "CREATE TABLE IF NOT EXISTS " + TABLE_STATS_INFO + " ("
 			+ KEY_STATS_APP_FULL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
-			+ KEY_STATS_DOWNLOADS + " INTEGER DEFAULT (0) CHECK ("+KEY_STATS_DOWNLOADS+">=0), "
-			+ KEY_STATS_STARS + " REAL DEFAULT (0.0) CHECK ("+KEY_STATS_STARS+">=0), "
-			+ KEY_STATS_LIKES + " INTEGER DEFAULT (0) CHECK ("+KEY_STATS_LIKES+">=0), "
-			+ KEY_STATS_DISLIKES + " INTEGER DEFAULT (0) CHECK ("+KEY_STATS_DISLIKES+">=0), "
+			+ KEY_STATS_DOWNLOADS + " INTEGER CHECK ("+KEY_STATS_DOWNLOADS+">=0), "
+			+ KEY_STATS_STARS + " REAL CHECK ("+KEY_STATS_STARS+">=0), "
+			+ KEY_STATS_LIKES + " INTEGER CHECK ("+KEY_STATS_LIKES+">=0), "
+			+ KEY_STATS_DISLIKES + " INTEGER CHECK ("+KEY_STATS_DISLIKES+">=0), "
 			+ "FOREIGN KEY("+ KEY_STATS_APP_FULL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") );";
 //			+ "PRIMARY KEY("+ KEY_STATS_APP_FULL_HASHID +") );";
 

@@ -31,6 +31,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.util.Log;
 import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.data.AptoideServiceData;
@@ -59,6 +60,7 @@ import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.model.ViewScreenInfo;
 import cm.aptoide.pt.data.model.ViewStatsInfo;
+import cm.aptoide.pt.data.preferences.EnumAgeRating;
 import cm.aptoide.pt.data.system.ViewHwFilters;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.webservices.EnumDownloadType;
@@ -156,7 +158,7 @@ public class ManagerDatabase {
 			Log.d("Aptoide-ManagerDatabase", "Database opened!");
 		}
 		db.execSQL(Constants.PRAGMA_FOREIGN_KEYS_OFF);
-		db.execSQL(Constants.PRAGMA_RECURSIVE_TRIGGERS_OFF);
+//		db.execSQL(Constants.PRAGMA_RECURSIVE_TRIGGERS_OFF);
 	}
 	
 	/**
@@ -703,6 +705,7 @@ public class ManagerDatabase {
 						
 		}catch (Exception e) {
 			Log.d("Aptoide-ManagerDatabase", "insert applications, exception!");
+			e.printStackTrace();
 			// TODO: handle exception
 		}finally{
 			if(db.inTransaction()){
@@ -1582,7 +1585,7 @@ public class ManagerDatabase {
 									  +","+Constants.KEY_REPO_IN_USE+","+Constants.KEY_REPO_SIZE
 									  +","+Constants.KEY_LOGIN_USERNAME+","+Constants.KEY_LOGIN_PASSWORD
 							+" FROM "+Constants.TABLE_REPOSITORY
-							+" INNER LEFT JOIN "+Constants.TABLE_LOGIN;
+							+" NATURAL LEFT JOIN "+Constants.TABLE_LOGIN;
 		ViewDisplayRepo repo;
 		ViewDisplayLogin login;
 //		Log.d("Aptoide-ManagerDatabase", "repos: "+selectRepos);
@@ -1616,6 +1619,7 @@ public class ManagerDatabase {
 
 		}catch (Exception e) {
 			Log.d("Aptoide-ManagerDatabase", "get repos display info, exception! "+listRepos);
+			e.printStackTrace();
 			if(db.inTransaction()){
 				db.endTransaction();
 			}
@@ -1753,18 +1757,19 @@ public class ManagerDatabase {
 	 * getCategoriesDisplayInfo, retrieves a hierarquical list of categories
 	 *  
 	 * @return ViewDisplayCategory top category with its childs
+	 * @param EnumAgeRating ratingFilter
 	 * 
 	 * @author dsilveira
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayCategory getCategoriesDisplayInfo(boolean filterByHw){	//TODO count only once per packageName
+	public ViewDisplayCategory getCategoriesDisplayInfo(boolean filterByHw, EnumAgeRating ratingFilter){	//TODO count only once per packageName
 		
 		ViewHwFilters filters = null;
 		
 		if(filterByHw){
 			filters = serviceData.getManagerSystemSync().getHwFilters();
-			Log.d("Aptoide-ManagerDatabase", "getCategoriesDisplayInfo HW filters ON: "+filters);
+			Log.d("Aptoide-ManagerDatabase", "getCategoriesDisplayInfo HW filters ON: "+filters+" ratingFilter: "+ratingFilter);
 		}
 			
 		final int CATEGORY_HASHID = Constants.COLUMN_FIRST;
@@ -1791,7 +1796,10 @@ public class ManagerDatabase {
 												+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
 												+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 		}
-		selectApplicationsSubCategories	+=		" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+		/* Filter by rating */
+		selectApplicationsSubCategories +=		" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+				
+												+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
 												+" ORDER BY "+Constants.KEY_CATEGORY_NAME;
 		
 		String selectGamesSubCategories = "SELECT C."+Constants.KEY_CATEGORY_HASHID+", C."+Constants.KEY_CATEGORY_NAME+", COUNT("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
@@ -1812,7 +1820,10 @@ public class ManagerDatabase {
 										+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
 										+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 		}
-		selectGamesSubCategories +=		" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
+		/* Filter by rating */
+		selectGamesSubCategories +=		" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+				
+										+" GROUP BY "+Constants.KEY_APP_CATEGORY_CATEGORY_HASHID
 										+" ORDER BY "+Constants.KEY_CATEGORY_NAME;
 
 		String selectOthersApplications =  "SELECT "+Constants.KEY_CATEGORY_HASHID+", COUNT("+Constants.KEY_APP_CATEGORY_APP_FULL_HASHID+")"
@@ -1830,7 +1841,10 @@ public class ManagerDatabase {
 																	+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
 																	+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 		}
-		selectOthersApplications +=							")"
+		/* Filter by rating */
+		selectOthersApplications +=									" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+				
+															+")"
 										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_IN_USE
 																	+" FROM "+Constants.TABLE_REPOSITORY
 																	+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")"
@@ -2166,6 +2180,7 @@ public class ManagerDatabase {
 	 * 
 	 * @param int categoryHashid, hashid of category
 	 * @param boolean filterByHw
+	 * @param EnumAgeRating ratingFilter
 	 * 
 	 * @return int total available apps
 	 * 
@@ -2173,8 +2188,10 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public int getTotalAvailableApps(int categoryHashid, boolean filterByHw){
+	public int getTotalAvailableApps(int categoryHashid, boolean filterByHw, EnumAgeRating ratingFilter){
 
+		Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo ratingFilter: "+ratingFilter);
+		
 		final int TOTAL = Constants.COLUMN_FIRST;
 		
 		int totalApps = Constants.EMPTY_INT;
@@ -2203,7 +2220,10 @@ public class ManagerDatabase {
 																+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
 																+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 			}
-				selectAvailableApps	+=					" )";
+			/* Filter by rating */
+			selectAvailableApps +=								" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+					
+														+" )";
 			
 			/* Filter by category? */
 			if(categoryHashid != Constants.TOP_CATEGORY){
@@ -2212,7 +2232,7 @@ public class ManagerDatabase {
 			}			
 				selectAvailableApps +=" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME;
 				
-		Log.d("Aptoide-ManagerDatabase", "available apps: "+selectAvailableApps);
+//		Log.d("Aptoide-ManagerDatabase", "available apps: "+selectAvailableApps);
 		
 		try{
 			db.beginTransaction();
@@ -2250,6 +2270,7 @@ public class ManagerDatabase {
 	 *  					  TODO sgbd second pass optimization not checked
 	 *  
 	 * @param boolean filterByHw
+	 * @param EnumAgeRating ratingFilter
 	 * 
 	 * @return int total available apps
 	 * 
@@ -2257,8 +2278,8 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public int getTotalAvailableApps(boolean filterByHw){
-		return getTotalAvailableApps(Constants.TOP_CATEGORY, filterByHw);
+	public int getTotalAvailableApps(boolean filterByHw, EnumAgeRating ratingFilter){
+		return getTotalAvailableApps(Constants.TOP_CATEGORY, filterByHw, ratingFilter);
 	}
 	
 	
@@ -2269,6 +2290,7 @@ public class ManagerDatabase {
 	 * @param int range, number of rows to list
 	 * @param int categoryHashid, hashid of category
 	 * @param boolean filterByHw
+	 * @param EnumAgeRating ratingFilter
 	 * @param EnumAppsSorting sortingPolicy
 	 * 
 	 * @return ViewDisplayListApps list of available apps
@@ -2277,8 +2299,10 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, int categoryHashid, boolean filterByHw, EnumAppsSorting sortingPolicy){
+	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, int categoryHashid, boolean filterByHw, EnumAgeRating ratingFilter, EnumAppsSorting sortingPolicy){
 
+		Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo ratingFilter: "+ratingFilter);
+		
 		final int APP_HASHID = Constants.COLUMN_FIRST;
 		final int APP_NAME = Constants.COLUMN_SECOND;
 //		final int PACKAGE_NAME = Constants.COLUMN_THIRD;
@@ -2311,7 +2335,10 @@ public class ManagerDatabase {
 																+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
 																+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 			}
-				selectAvailableApps	+=					" )";
+			/* Filter by rating */
+			selectAvailableApps +=								" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+					
+														+" )";
 			
 			/* Filter by category? */
 			if(categoryHashid != Constants.TOP_CATEGORY){
@@ -2390,6 +2417,9 @@ public class ManagerDatabase {
 	 * 
 	 * @param int offset, number of row to start from
 	 * @param int range, number of rows to list
+	 * @param boolean filterByHw
+	 * @param EnumAgeRating ratingFilter
+	 * @param EnumAppsSorting sortingPolicy
 	 * 
 	 * @return ViewDisplayListApps list of available apps
 	 * 
@@ -2397,16 +2427,17 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, boolean filterByHw, EnumAppsSorting sortingPolicy){
-		return getAvailableAppsDisplayInfo(offset, range, Constants.TOP_CATEGORY, filterByHw, sortingPolicy);
+	public ViewDisplayListApps getAvailableAppsDisplayInfo(int offset, int range, boolean filterByHw, EnumAgeRating ratingFilter, EnumAppsSorting sortingPolicy){
+		return getAvailableAppsDisplayInfo(offset, range, Constants.TOP_CATEGORY, filterByHw, ratingFilter, sortingPolicy);
 	}
 	
 	
 	/**
 	 * getUpdatableAppsDisplayInfo, retrieves a list of all apps' updates
 	 * 
-	 * @param int offset, number of row to start from
-	 * @param int range, number of rows to list
+	 * @param boolean filterByHw
+	 * @param EnumAgeRating ratingFilter
+	 * @param EnumAppsSorting sortingPolicy
 	 * 
 	 * @return ViewDisplayListApps list of apps available updates
 	 * 
@@ -2414,7 +2445,9 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDisplayListApps getUpdatableAppsDisplayInfo(boolean filterByHw, EnumAppsSorting sortingPolicy){
+	public ViewDisplayListApps getUpdatableAppsDisplayInfo(boolean filterByHw, EnumAgeRating ratingFilter, EnumAppsSorting sortingPolicy){
+		Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo ratingFilter: "+ratingFilter);
+		
 		final int APP_HASHID = Constants.COLUMN_FIRST;
 		final int APP_NAME = Constants.COLUMN_SECOND;
 		final int INSTALLED_VERSION_NAME = Constants.COLUMN_THIRD;
@@ -2454,8 +2487,10 @@ public class ManagerDatabase {
 							+								" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
 							+								" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 			}
-
-				selectUpdatableApps	+=						" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
+			/* Filter by rating */
+			selectUpdatableApps +=							" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+					
+															+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
 										+" NATURAL LEFT JOIN "+Constants.TABLE_STATS_INFO
 										+" WHERE U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+"> I."+Constants.KEY_APP_INSTALLED_VERSION_CODE;
 			// Sort by:
@@ -2522,6 +2557,9 @@ public class ManagerDatabase {
 	 * getAppSearchResults, retrieves a list of available Apps matching the search string parameters
 	 * 
 	 * @param String searchString, search parameters
+	 * @param boolean filterByHw
+	 * @param EnumAgeRating ratingFilter
+	 * @param EnumAppsSorting sortingPolicy
 	 * 
 	 * @return ViewDisplayListApps, list of available Apps matching the search string parameters
 	 * 
@@ -2529,7 +2567,9 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */	
-	public ViewDisplayListApps getAppSearchResultsDisplayInfo(String searchString, EnumAppsSorting sortingPolicy){
+	public ViewDisplayListApps getAppSearchResultsDisplayInfo(String searchString, boolean filterByHw, EnumAgeRating ratingFilter, EnumAppsSorting sortingPolicy){
+
+		Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo ratingFilter: "+ratingFilter);
 		
 		final int APP_NAME = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
@@ -2553,8 +2593,21 @@ public class ManagerDatabase {
 											+" AND "+Constants.KEY_APPLICATION_REPO_HASHID
 												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
 														+" FROM "+Constants.TABLE_REPOSITORY
-														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")) A"
-										+" NATURAL LEFT JOIN "+Constants.TABLE_STATS_INFO+" S"
+														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")";
+		// Filter by hardware?
+		if(filterByHw){
+			ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
+			Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
+			selectAvailableApps	+=						" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+						+								" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+						+								" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
+		}
+		/* Filter by rating */
+		selectAvailableApps +=							" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+															
+														+") A"
+														
+									+" NATURAL LEFT JOIN "+Constants.TABLE_STATS_INFO+" S"
 									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME;
 			// Sort by:
 			switch (sortingPolicy) {
@@ -2639,14 +2692,14 @@ public class ManagerDatabase {
 		
 		String selectRepoIconsPath = "SELECT "+Constants.KEY_REPO_ICONS_PATH
 									+" FROM "+Constants.TABLE_REPOSITORY
-									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()+";";
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid();
 		
 		String selectIconDownloadInfo = "SELECT "+Constants.KEY_ICON_REMOTE_PATH_TAIL+","+Constants.KEY_APPLICATION_HASHID+","+Constants.KEY_APPLICATION_NAME
 										+" FROM "+Constants.TABLE_REPOSITORY
 										+" NATURAL INNER JOIN "+Constants.TABLE_APPLICATION
 										+" NATURAL INNER JOIN "+Constants.TABLE_ICON_INFO
 										+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()
-									+" ORDER BY A."+Constants.KEY_APPLICATION_NAME
+									+" ORDER BY "+Constants.KEY_APPLICATION_NAME
 									+" LIMIT ?"
 									+" OFFSET ?";
 		String[] selectIconDownloadInfoArgs = new String[] {Integer.toString(range), Integer.toString(offset)};
@@ -2712,7 +2765,7 @@ public class ManagerDatabase {
 		
 		String selectRepoIconsPath = "SELECT "+Constants.KEY_REPO_ICONS_PATH
 									+" FROM "+Constants.TABLE_REPOSITORY
-									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()+";";
+									+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid();
 		
 		String selectIconDownloadInfo = "SELECT "+Constants.KEY_ICON_REMOTE_PATH_TAIL+","+Constants.KEY_APPLICATION_NAME
 										+" FROM "+Constants.TABLE_REPOSITORY
@@ -2720,7 +2773,7 @@ public class ManagerDatabase {
 										+" NATURAL LEFT JOIN "+Constants.TABLE_ICON_INFO
 										+" WHERE "+Constants.KEY_REPO_HASHID+"="+repository.getHashid()
 										+" AND "+Constants.KEY_APPLICATION_HASHID+"="+appHashid
-									+" ORDER BY A."+Constants.KEY_APPLICATION_NAME;
+									+" ORDER BY "+Constants.KEY_APPLICATION_NAME;
 		
 //		Log.d("Aptoide-ManagerDatabase", "icon: "+selectIconDownloadInfo);
 		try{
@@ -3078,6 +3131,13 @@ public class ManagerDatabase {
 	 */
 	public ViewDisplayAppVersionsInfo getAppDisplayInfo(int appHashid){
 		
+		final boolean sdkLargerThan1_6 = (Build.VERSION.SDK_INT > Build.VERSION_CODES.DONUT);
+		
+//		final boolean fullInfoAtomicRetrieval = (!serviceData.isInsertingDataInDb() && Build.VERSION.SDK_INT >= 8);
+		final boolean fullInfoAtomicRetrieval = (Build.VERSION.SDK_INT >= 8);
+//		final boolean fullInfoAtomicRetrieval = false;
+		Log.d("Aptoide-ManagerDatabase", "GetAppDisplayInfo fullInfoAtomicRetrieval? "+fullInfoAtomicRetrieval+" sdkVersion: "+Build.VERSION.SDK_INT);
+		
 		final int APP_FULL_HASHID = Constants.COLUMN_FIRST;
 		final int APP_HASHID = Constants.COLUMN_SECOND;
 		final int VERSION_CODE = Constants.COLUMN_THIRD;
@@ -3085,13 +3145,20 @@ public class ManagerDatabase {
 		final int APP_NAME = Constants.COLUMN_FIFTH;
 		final int REPO_URI = Constants.COLUMN_SIXTH;
 		final int REPO_HASHID = Constants.COLUMN_SEVENTH;
+		
 		final int LIKES = Constants.COLUMN_EIGTH;
 		final int DISLIKES = Constants.COLUMN_NINTH;
 		final int STARS = Constants.COLUMN_TENTH;
 		final int DOWNLOADS = Constants.COLUMN_ELEVENTH;
 		final int DESCRIPTION = Constants.COLUMN_TWELVETH;
 		final int SIZE = Constants.COLUMN_THERTEENTH;
-		final int SCHEDULED = Constants.COLUMN_FOURTEENTH;
+		
+		final int SCHEDULED;
+		if(fullInfoAtomicRetrieval){
+			SCHEDULED = Constants.COLUMN_FOURTEENTH;
+		}else{
+			SCHEDULED = Constants.COLUMN_EIGTH;
+		}
 		
 		final int INSTALLED_HASHID = Constants.COLUMN_FIRST;
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_SECOND;
@@ -3115,27 +3182,28 @@ public class ManagerDatabase {
 		
 		String selectAppVersions = "SELECT A."+Constants.KEY_APPLICATION_FULL_HASHID+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_VERSION_CODE
 											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+", A."+Constants.KEY_APPLICATION_NAME
-											+", R."+Constants.KEY_REPO_URI+", R."+Constants.KEY_REPO_HASHID
-											+", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
+											+", R."+Constants.KEY_REPO_URI+", R."+Constants.KEY_REPO_HASHID;
+		if(fullInfoAtomicRetrieval){
+			selectAppVersions +=			", S."+Constants.KEY_STATS_LIKES+", S."+Constants.KEY_STATS_DISLIKES+", S."+Constants.KEY_STATS_STARS
 											+", S."+Constants.KEY_STATS_DOWNLOADS
-											+", E."+Constants.KEY_EXTRA_DESCRIPTION+", D."+Constants.KEY_DOWNLOAD_SIZE
-											+", T.scheduled"
-									+" FROM (SELECT "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_URI
-											+" FROM "+Constants.TABLE_REPOSITORY
-											+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+") R"
-									+" NATURAL INNER JOIN (SELECT * " 
-														+" FROM "+Constants.TABLE_APPLICATION
-														+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"') A"
-									+" NATURAL LEFT JOIN "+Constants.TABLE_STATS_INFO+" S"
+											+", E."+Constants.KEY_EXTRA_DESCRIPTION+", D."+Constants.KEY_DOWNLOAD_SIZE;
+		}
+		selectAppVersions +=				", T."+Constants.KEY_APP_TO_INSTALL_SCHEDULED
+									+" FROM "+Constants.TABLE_REPOSITORY+" R"
+									+" NATURAL INNER JOIN "+Constants.TABLE_APPLICATION+" A";
+		if(fullInfoAtomicRetrieval){
+			selectAppVersions += 	" NATURAL LEFT JOIN "+Constants.TABLE_STATS_INFO+" S"
 									+" NATURAL LEFT JOIN "+Constants.TABLE_EXTRA_INFO+" E"
-									+" NATURAL LEFT JOIN "+Constants.TABLE_DOWNLOAD_INFO+" D"
-									+" NATURAL LEFT JOIN (SELECT "+Constants.KEY_APP_TO_INSTALL_HASHID+", "+Constants.KEY_APP_TO_INSTALL_HASHID+" AS scheduled"
-														+" FROM "+Constants.TABLE_APP_TO_INSTALL+") T"
+									+" NATURAL LEFT JOIN "+Constants.TABLE_DOWNLOAD_INFO+" D";
+		}
+		selectAppVersions += 		" NATURAL LEFT JOIN "+Constants.TABLE_APP_TO_INSTALL+" T"
 														
 //									+" NATURAL LEFT JOIN (SELECT "
 //															+Constants.KEY_SCREEN_APP_FULL_HASHID+", COUNT("+Constants.KEY_SCREEN_REMOTE_PATH_TAIL+")"
 //															+" FROM "+Constants.TABLE_SCREEN_INFO+")) C"
-//									+" GROUP BY "+Constants.KEY_APPLICATION_VERSION_CODE	// Show only one version even if it's present in multiple repos
+									+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE
+									+" AND "+Constants.KEY_APPLICATION_PACKAGE_NAME+"='"+packageName+"'"
+									+" GROUP BY "+Constants.KEY_APPLICATION_VERSION_CODE	// Show only one version even if it's present in multiple repos
 									+" ORDER BY "+Constants.KEY_APPLICATION_VERSION_CODE+" DESC";
 		
 		String selectInstalledAppVersion = " SELECT "+Constants.KEY_APP_INSTALLED_HASHID+", "+Constants.KEY_APP_INSTALLED_VERSION_CODE
@@ -3178,7 +3246,9 @@ public class ManagerDatabase {
 					appVersion = new ViewDisplayAppVersionInfo(appVersionsCursor.getString(APP_NAME), appVersionsCursor.getString(VERSION_NAME)
 							, appVersionCode, appVersionsCursor.getInt(APP_FULL_HASHID)
 							, appVersionsCursor.getInt(APP_HASHID)
-							, appVersionIsInstalled, (appVersionsCursor.isNull(SCHEDULED)?false:true));
+							, appVersionIsInstalled, (sdkLargerThan1_6?isApplicationScheduledToInstall(appVersionsCursor.getInt(APP_HASHID)):!appVersionsCursor.isNull(SCHEDULED)));
+					
+//					Log.d("Aptoide-ManagerDatabase", "GetAppDisplayInfo scheduled isnull? "+appVersionsCursor.isNull(SCHEDULED)+" value: "+appVersionsCursor.getInt(SCHEDULED));
 					
 					
 					if(!installedAlsoAvailable && appVersionCode < installedVersionCode && !installedAdded){
@@ -3189,19 +3259,21 @@ public class ManagerDatabase {
 						appVersion.setRepoInfo(appVersionsCursor.getInt(REPO_HASHID), appVersionsCursor.getString(REPO_URI));
 					}
 					
-					if(!appVersionsCursor.isNull(SIZE)){
-						appVersion.setSize(appVersionsCursor.getInt(SIZE));
-					}
-
-					if(!appVersionsCursor.isNull(DOWNLOADS)){
-						appVersion.setStats(new ViewDisplayAppVersionStats(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getInt(LIKES)
-																		, appVersionsCursor.getInt(DISLIKES), appVersionsCursor.getFloat(STARS)
-																		, appVersionsCursor.getInt(DOWNLOADS)));
-					}
-					if(!appVersionsCursor.isNull(DESCRIPTION)){
-						ViewDisplayAppVersionExtras extras = new ViewDisplayAppVersionExtras(appVersionsCursor.getInt(APP_FULL_HASHID)
-																							, appVersionsCursor.getString(DESCRIPTION));
-						appVersion.setExtras(extras);
+					if(fullInfoAtomicRetrieval){
+						if(!appVersionsCursor.isNull(SIZE)){
+							appVersion.setSize(appVersionsCursor.getInt(SIZE));
+						}
+	
+						if(!appVersionsCursor.isNull(DOWNLOADS)){
+							appVersion.setStats(new ViewDisplayAppVersionStats(appVersionsCursor.getInt(APP_FULL_HASHID), appVersionsCursor.getInt(LIKES)
+																			, appVersionsCursor.getInt(DISLIKES), appVersionsCursor.getFloat(STARS)
+																			, appVersionsCursor.getInt(DOWNLOADS)));
+						}
+						if(!appVersionsCursor.isNull(DESCRIPTION)){
+							ViewDisplayAppVersionExtras extras = new ViewDisplayAppVersionExtras(appVersionsCursor.getInt(APP_FULL_HASHID)
+																								, appVersionsCursor.getString(DESCRIPTION));
+							appVersion.setExtras(extras);
+						}
 					}
 					
 					appVersions.add(appVersion);

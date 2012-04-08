@@ -22,6 +22,8 @@ package cm.aptoide.pt.data.system;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -31,6 +33,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
+import android.os.RemoteException;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.model.ViewApplication;
 
@@ -45,6 +48,8 @@ public class ManagerSystemSync {
 
 	AptoideServiceData serviceData;
 	PackageManager packageManager;
+	
+	ExecutorService tasksPool = Executors.newSingleThreadExecutor();
 	
 	public ManagerSystemSync(AptoideServiceData serviceData){
 		this.serviceData = serviceData;
@@ -114,20 +119,25 @@ public class ManagerSystemSync {
 	}
 	
 	public void cacheInstalledIcons(){
-		List<PackageInfo> systemInstalledList = packageManager.getInstalledPackages(0);
-		for (PackageInfo installedAppInfo : systemInstalledList) {
-			if(installedAppInfo.applicationInfo.sourceDir.split("[/]+")[1].equals("system")){
-				continue;
-				//TODO maybe show it but mark as system
+		 tasksPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				List<PackageInfo> systemInstalledList = packageManager.getInstalledPackages(0);
+				for (PackageInfo installedAppInfo : systemInstalledList) {
+					if(installedAppInfo.applicationInfo.sourceDir.split("[/]+")[1].equals("system")){
+						continue;
+						//TODO maybe show it but mark as system
+					}
+					serviceData.getManagerCache().cacheIcon((installedAppInfo.packageName+"|"+installedAppInfo.versionCode).hashCode(), ((BitmapDrawable)installedAppInfo.applicationInfo.loadIcon(packageManager)).getBitmap());
+				}
+//				serviceData.updateInstalledLists();				
 			}
-			serviceData.getManagerCache().cacheIcon((installedAppInfo.packageName+"|"+installedAppInfo.versionCode).hashCode(), ((BitmapDrawable)installedAppInfo.applicationInfo.loadIcon(packageManager)).getBitmap());
-		}
-//		serviceData.updateInstalledLists();
+		});
 	}
 	
 	public ViewHwFilters getHwFilters(){
-		int sdkVersion = Build.VERSION.SDK_INT;;
-		int screenSize = serviceData.getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;;
+		int sdkVersion = Build.VERSION.SDK_INT;
+		int screenSize = serviceData.getResources().getConfiguration().screenLayout&Configuration.SCREENLAYOUT_SIZE_MASK;
 		String glEsVersion = ((ActivityManager) serviceData.getSystemService(Context.ACTIVITY_SERVICE)).getDeviceConfigurationInfo().getGlEsVersion();
 		
 		return new ViewHwFilters(sdkVersion, screenSize, Float.parseFloat(glEsVersion));

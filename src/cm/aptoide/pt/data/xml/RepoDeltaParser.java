@@ -35,6 +35,7 @@ import cm.aptoide.pt.data.model.ViewApplication;
 import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.model.ViewListIds;
 import cm.aptoide.pt.data.preferences.EnumMinScreenSize;
+import cm.aptoide.pt.data.preferences.EnumAgeRating;
 import cm.aptoide.pt.data.util.Constants;
 
 /**
@@ -111,15 +112,22 @@ public class RepoDeltaParser extends DefaultHandler{
 				case timestamp:
 					application.setTimestamp(Long.parseLong(tagContentBuilder.toString()));
 					break;
+				case age:
+					application.setRating(EnumAgeRating.safeValueOf(tagContentBuilder.toString().trim()).ordinal());
+					break;
 				case minScreen:
 					application.setMinScreen(EnumMinScreenSize.valueOf(tagContentBuilder.toString().trim()).ordinal());
 					break;
 				case minSdk:
 					application.setMinSdk(Integer.parseInt(tagContentBuilder.toString().trim()));
 					break;
-//				case minGles:
-//					application.setMinGles(Integer.parseInt(tagContentBuilder.toString().trim()));
-//					break;
+				case minGles:
+					float gles = Float.parseFloat(tagContentBuilder.toString().trim());
+					if(gles < 1.0){
+						gles = 1;
+					}
+					application.setMinGles(gles);
+					break;
 					
 				case icon:
 					icon = new ViewIconInfo(tagContentBuilder.toString(), application.getFullHashid());

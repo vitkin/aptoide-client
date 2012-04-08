@@ -37,7 +37,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
@@ -50,10 +52,15 @@ import android.widget.LinearLayout;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
+import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.ifaceutil.StaticScheduledAppsListAdapter;
 
-public class ManageScheduled extends ListActivity {//implements OnItemClickListener{
+public class ManageScheduled extends ListActivity {
+
+	View loading;
+	View empty;	
 	
+	private ViewDisplayListApps freshScheduledApps;
 	private ViewDisplayListApps scheduledApps;
 	
 	private StaticScheduledAppsListAdapter scheduledAdapter;
@@ -61,6 +68,7 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 	private ArrayList<Boolean> selected;
 	
 	private ScheduledAppsManager scheduledAppsManager;
+	private final int SET_SCHEDULED_LIST = Constants.EMPTY_INT; 
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -77,8 +85,7 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 			
 			Log.v("Aptoide-Search", "Connected to ServiceData");
 	        			
-			getScheduledApps();
-			setScheduledList();
+			scheduledAppsManager.getScheduledApps();
 			
 //            Log.v("Aptoide-Search", "Called for getting apps sorting policy");
 //            try {
@@ -109,20 +116,19 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 //		
 //	};
 	
-//	private Handler interfaceTasksHandler = new Handler() {
-//		@Override
-//        public void handleMessage(Message msg) {
-//        	EnumSearchInterfaceTasks task = EnumSearchInterfaceTasks.reverseOrdinal(msg.what);
-//        	switch (task) {
-//        		case UPDATE_SEARCH_RESULTS:
-////        			updateSearchResults();
-//        			break;
-//	
-//				default:
-//					break;
-//			}
-//        }
-//	};
+	private Handler interfaceTasksHandler = new Handler() {
+		@Override
+        public void handleMessage(Message msg) {
+			switch (msg.what) {
+	    		case SET_SCHEDULED_LIST:
+	    			setScheduledList();
+	    			break;
+	
+				default:
+					break;
+			}
+        }
+	};
     
     
 
@@ -133,14 +139,38 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
     		tasksPool = Executors.newCachedThreadPool();
     	}
     	
+    	public void getScheduledApps(){
+        	try {
+				tasksPool.execute(new GetScheduledApps());
+			} catch (Exception e) { }
+        }
+    	
     	public void install(int appHashid){
-        	tasksPool.execute(new InstallApp(appHashid));
+        	try {
+        		tasksPool.execute(new InstallApp(appHashid));
+        	} catch (Exception e) { }
         }
     	
     	public void unschedule(int appHashid){
-    		tasksPool.execute(new UnscheduleApp(appHashid));
+        	try {
+        		tasksPool.execute(new UnscheduleApp(appHashid));
+        	} catch (Exception e) { }
     	}
     	
+    	private class GetScheduledApps implements Runnable{
+			@Override
+			public void run() {
+				try {
+	    			freshScheduledApps = serviceDataCaller.callGetScheduledApps();
+	    		} catch (RemoteException e) {
+	    			// TODO Auto-generated catch block
+	    			e.printStackTrace();
+	    		}
+				interfaceTasksHandler.sendEmptyMessage(SET_SCHEDULED_LIST);
+			}
+    		
+    	}
+    	    	
     	private class InstallApp implements Runnable{
 
     		private int appHashid;
@@ -185,16 +215,7 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
     }
     
     
-	
-	public void getScheduledApps(){
-		try {
-			scheduledApps = serviceDataCaller.callGetScheduledApps();
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-	}
-	
+    
 	public void resetScheduledList(){		
 //		if(scheduledApps != null){
 //			selected = new ArrayList<Boolean>(scheduledApps.size());
@@ -210,7 +231,9 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 	}
 	
 	
-	public void setScheduledList(){		
+	public void setScheduledList(){	
+		loading.setVisibility(View.GONE);
+		scheduledApps = freshScheduledApps;
 		if(scheduledApps != null){
 			selected = new ArrayList<Boolean>(scheduledApps.size());
 	
@@ -221,6 +244,8 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 	//		Log.d("Aptoide-ManageScheduled", "scheduled: "+scheduledApps+" selected: "+selected);
 			scheduledAdapter = new StaticScheduledAppsListAdapter(this, scheduledApps, selected);
 			setListAdapter(scheduledAdapter);
+		}else{
+    		empty.setVisibility(View.VISIBLE);			
 		}
 	}
 	
@@ -229,6 +254,13 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.list_scheduled_apps);
+		
+		View searchView = findViewById(R.id.search_button);
+		searchView.setVisibility(View.GONE);
+		
+		loading = findViewById(R.id.loading);
+		empty = findViewById(android.R.id.empty);
+		empty.setVisibility(View.INVISIBLE);
 
 		if(!serviceDataIsBound){
 			bindService(new Intent(this, AptoideServiceData.class), serviceDataConnection, Context.BIND_AUTO_CREATE);
@@ -388,10 +420,10 @@ public class ManageScheduled extends ListActivity {//implements OnItemClickListe
 
 	@Override
 	protected void onDestroy() {
+		scheduledAppsManager.tasksPool.shutdownNow();
 		if(serviceDataIsBound){
 			unbindService(serviceDataConnection);	
 		}
-		scheduledAppsManager.tasksPool.shutdownNow();
 		super.onDestroy();
 	}
 	

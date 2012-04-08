@@ -10,4 +10,12 @@
     <string name="apk">Apk</string>
     
     <string name="kB">kB</string>
+    
+    <string-array name="age_entries">
+        <item>@string/no_filter</item>
+        <item>@string/mature</item>
+        <item>@string/teen</item>
+        <item>@string/pre_teen</item>
+    </string-array>
+    
 </resources>
