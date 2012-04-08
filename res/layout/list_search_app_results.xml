@@ -63,7 +63,7 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="fill_parent"
 	            android:gravity="center_vertical|center_horizontal"
-	            android:text="@string/add_repo"
+	            android:text="@string/no_search_results"
 	            android:textAppearance="?android:attr/textAppearanceLarge"
 	            android:textColor="#4f4f4f" />
 	    </RelativeLayout>

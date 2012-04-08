@@ -132,6 +132,7 @@ interface AIDLAptoideServiceData {
 	void callClearApkCache();
 	ViewHwFilters callGetHwFilters();
 	void callSetHwFilter(in boolean on);
+	void callSetAgeRating(in int rating);
 	void callSetAutomaticInstall(in boolean on);
 	void callResetAvailableApps();
 	

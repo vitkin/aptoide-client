@@ -66,6 +66,7 @@ import cm.aptoide.pt.data.model.ViewListIds;
 import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.ManagerNotifications;
+import cm.aptoide.pt.data.preferences.EnumAgeRating;
 import cm.aptoide.pt.data.preferences.ManagerPreferences;
 import cm.aptoide.pt.data.preferences.ViewSettings;
 import cm.aptoide.pt.data.system.ManagerSystemSync;
@@ -498,6 +499,11 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 
 		@Override
+		public void callSetAgeRating(int rating) throws RemoteException {
+			setAgeRating(EnumAgeRating.reverseOrdinal(rating));
+		}
+
+		@Override
 		public void callSetAutomaticInstall(boolean on) throws RemoteException {
 			setAutomaticInstall(on);
 		}
@@ -650,6 +656,10 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		return managerXml;
 	}
 
+	
+	public boolean isInsertingDataInDb(){
+		return (reposInserting.size() > 0 || syncingInstalledApps.get());
+	}
 
 
 	@Override
@@ -860,6 +870,18 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		});
 	}
 	
+	public void setAgeRating(final EnumAgeRating rating){
+		if(!rating.equals(EnumAgeRating.unrecognized)){
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					managerPreferences.setAgeRating(rating);
+					AptoideLog.d(AptoideServiceData.this, "Setting age rating: "+rating);
+				}
+			});
+		}
+	}
+	
 	public void setAutomaticInstall(final boolean on){
 		cachedThreadPool.execute(new Runnable() {
 			@Override
@@ -896,7 +918,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-//				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 				managerDatabase.insertInstalledApplications(managerSystemSync.getInstalledApps());
 				AptoideLog.d(AptoideServiceData.this, "Sync'ed Installed Apps");
 				
@@ -1699,17 +1721,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public int getTotalAvailableApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Total Available Apps");
-		return managerDatabase.getTotalAvailableApps(managerPreferences.isHwFilterOn());
+		return managerDatabase.getTotalAvailableApps(managerPreferences.isHwFilterOn(), managerPreferences.getAgeRating());
 	}
 	
 	public int getTotalAvailableAppsInCategory(int categoryHashid){
 		AptoideLog.d(AptoideServiceData.this, "Getting Total Available Apps in category"+categoryHashid);
-		return managerDatabase.getTotalAvailableApps(categoryHashid, managerPreferences.isHwFilterOn());
+		return managerDatabase.getTotalAvailableApps(categoryHashid, managerPreferences.isHwFilterOn(), managerPreferences.getAgeRating());
 	}
 	
 	public ViewDisplayCategory getCategories(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Categories");
-		return managerDatabase.getCategoriesDisplayInfo(managerPreferences.isHwFilterOn());
+		return managerDatabase.getCategoriesDisplayInfo(managerPreferences.isHwFilterOn(), managerPreferences.getAgeRating());
 	}
 	
 	public int getAppsSortingPolicy(){
@@ -1796,17 +1818,17 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public ViewDisplayListApps getAvailableApps(int offset, int range){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps");
-		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, managerPreferences.isHwFilterOn(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, managerPreferences.isHwFilterOn(), managerPreferences.getAgeRating(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	public ViewDisplayListApps getAvailableApps(int offset, int range, int categoryHashid){
 		AptoideLog.d(AptoideServiceData.this, "Getting Available Apps for category: "+categoryHashid);
-		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, categoryHashid, managerPreferences.isHwFilterOn(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
+		return managerDatabase.getAvailableAppsDisplayInfo(offset, range, categoryHashid, managerPreferences.isHwFilterOn(), managerPreferences.getAgeRating(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	public ViewDisplayListApps getUpdatableApps(){
 		AptoideLog.d(AptoideServiceData.this, "Getting Updatable Apps");
-		return managerDatabase.getUpdatableAppsDisplayInfo(managerPreferences.isHwFilterOn(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
+		return managerDatabase.getUpdatableAppsDisplayInfo(managerPreferences.isHwFilterOn(), managerPreferences.getAgeRating(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	
@@ -1819,7 +1841,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	public ViewDisplayListApps getAppSearchResults(String searchString){
 		AptoideLog.d(AptoideServiceData.this, "Getting App Search Results: "+searchString);
-		return managerDatabase.getAppSearchResultsDisplayInfo(searchString, EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
+		return managerDatabase.getAppSearchResultsDisplayInfo(searchString, managerPreferences.isHwFilterOn(), managerPreferences.getAgeRating(), EnumAppsSorting.reverseOrdinal(managerPreferences.getAppsSortingPolicy()));
 	}
 	
 	

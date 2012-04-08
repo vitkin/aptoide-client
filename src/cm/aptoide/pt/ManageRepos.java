@@ -104,6 +104,9 @@ public class ManageRepos extends ListActivity{
 	
 	ContextThemeWrapper theme = new ContextThemeWrapper(this, R.style.DialogTheme);
 	
+	View loading;
+	View empty;
+	
 	private ViewDisplayListRepos repos = null;
 	private ViewDisplayListRepos freshRepos = null;
 	
@@ -410,8 +413,10 @@ public class ManageRepos extends ListActivity{
     
     
     private void setReposList(){
+		loading.setVisibility(View.GONE);
     	repos = freshRepos;
         if((repos == null || repos.getList().size() == 0) && !handlingMyappRepos){
+    		empty.setVisibility(View.VISIBLE);
         	interfaceTasksHandler.sendEmptyMessage(EnumReposInfoTasks.NO_MANAGED_REPOS.ordinal());
         }else{
         	initReposList();
@@ -493,6 +498,13 @@ public class ManageRepos extends ListActivity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_repos);
+		
+		View searchView = findViewById(R.id.search_button);
+		searchView.setVisibility(View.GONE);
+		
+		loading = findViewById(R.id.loading);
+		empty = findViewById(android.R.id.empty);
+		empty.setVisibility(View.INVISIBLE);
 		
 		this.ctx = this;
 		

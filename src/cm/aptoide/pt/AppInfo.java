@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import android.R.drawable;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
@@ -106,6 +107,7 @@ public class AppInfo extends ListActivity {
 	private int scheduledVersion = Constants.EMPTY_INT;
 	private int unscheduleVersion = Constants.EMPTY_INT;
 	
+	private View loading; 
 	CheckBox later;
 	private TextView appNameTextView;
 	private TextView appDownloadsTextView;
@@ -470,6 +472,8 @@ public class AppInfo extends ListActivity {
 		
 		setIcon();
 		
+		loading = findViewById(R.id.loading);
+		
 		install = (Button) findViewById(R.id.install);
 		install.setTextColor(Color.DKGRAY);
 		uninstall = (Button) findViewById(R.id.uninstall);
@@ -727,6 +731,7 @@ public class AppInfo extends ListActivity {
 	}
 
 	private void setVersions() {
+		loading.setVisibility(View.GONE);
 //		int selectedVersionHashid = 0;
 //		if(selectedVersion != null){
 //			selectedVersionHashid = selectedVersion.getAppHashid(); 
@@ -874,7 +879,7 @@ public class AppInfo extends ListActivity {
 
 	private void setScreens() {
 		ArrayList<Drawable> screensDrawables = new ArrayList<Drawable>();
-		int orderNumber = 0;
+		int orderNumber = 1;
 		String screenPath = Constants.PATH_CACHE_SCREENS + appHashid + "." + orderNumber;
 		File screen = new File(screenPath);
 		if(screen.exists()){
@@ -910,7 +915,8 @@ public class AppInfo extends ListActivity {
 
 			}
 		});
-		if(galleryView.getAdapter().getCount() == Constants.EMPTY_INT){
+		Log.d("Aptoide-AppInfo", "Screens: "+screensDrawables.size());
+		if(screensDrawables.size() == Constants.EMPTY_INT){
 			screens.setVisibility(View.GONE);
 			galleryView.setVisibility(View.GONE);
 			

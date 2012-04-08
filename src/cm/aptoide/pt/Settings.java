@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.preference.CheckBoxPreference;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
@@ -46,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
+import cm.aptoide.pt.data.preferences.EnumAgeRating;
 import cm.aptoide.pt.data.preferences.ViewSettings;
 import cm.aptoide.pt.data.system.ViewHwFilters;
 import cm.aptoide.pt.data.webservices.ViewIconDownloadPermissions;
@@ -65,6 +67,7 @@ public class Settings extends PreferenceActivity {
 	ViewIconDownloadPermissions iconDownloadPermissions;
 	
 	CheckBoxPreference hwFilter;
+	ListPreference ageRating;
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -429,6 +432,25 @@ public class Settings extends PreferenceActivity {
 			}
 		});
 		
+		ageRating = (ListPreference) findPreference("app_rating");
+		ageRating.setDefaultValue(storedSettings.getRating().equals(EnumAgeRating.Pre_Teen)?getString(R.string.pre_teen):(storedSettings.getRating().equals(EnumAgeRating.No_Filter)?getString(R.string.no_filter):storedSettings.getRating().name()));
+		ageRating.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				EnumAgeRating rating = EnumAgeRating.safeValueOf(newValue.toString());
+				Log.d("Aptoide-Settings", "ageRating: "+rating+" storedValue: "+storedSettings.getRating());
+				if(!rating.equals(storedSettings.getRating()) && !rating.equals(EnumAgeRating.unrecognized)){
+					try {
+						serviceDataCaller.callSetAgeRating(rating.ordinal());
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				return true;
+			}
+		});
+		
 		final CheckBoxPreference automaticInstall = (CheckBoxPreference) findPreference("automatic_install");
 		automaticInstall.setChecked(storedSettings.isAutomaticInstallOn());
 		automaticInstall.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -474,7 +496,7 @@ public class Settings extends PreferenceActivity {
 	
 	@Override
 	public void finish() {
-		if(hwFilter.isChecked() != storedSettings.isHwFilterOn()){
+		if(hwFilter.isChecked() != storedSettings.isHwFilterOn() || !EnumAgeRating.safeValueOf(ageRating.getValue()).equals(storedSettings.getRating())){
 			try {
 				serviceDataCaller.callResetAvailableApps();
 			} catch (RemoteException e) {

@@ -202,7 +202,7 @@ public class StaticSearchAppResultsListAdapter extends BaseAdapter{
 //		appsManager.reset();
 //	}
 //	
-//	public void refreshDisplayInstalled(){
+//	public void refreshDisplay(){
 //		notifyDataSetChanged();
 //	}
 //	

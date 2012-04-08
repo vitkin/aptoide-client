@@ -25,52 +25,51 @@
 
 package cm.aptoide.pt;
 
-import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.ListActivity;
 import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RatingBar;
-import android.widget.SimpleAdapter;
-import android.widget.SimpleAdapter.ViewBinder;
-import android.widget.TextView;
 import cm.aptoide.pt.data.AIDLAptoideServiceData;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.display.ViewDisplayListApps;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.ifaceutil.StaticSearchAppResultsListAdapter;
 
-public class Search extends Activity implements OnItemClickListener{
+public class Search extends ListActivity {
+
+	View loading;
+	View empty;
+	ImageView searchView;
 	
-//	private SimpleAdapter resultsAdapter;
-	private ListView resultsListView = null;
+	private ViewDisplayListApps freshSearchResults;
 	private ViewDisplayListApps searchResults;
 	
 	private StaticSearchAppResultsListAdapter resultsAdapter;
@@ -80,6 +79,9 @@ public class Search extends Activity implements OnItemClickListener{
 	private String searchString;
 	private EnumAppsSorting appsSortingPolicy = null;
 	private Handler waitHandler = null;
+
+	private SearchAppsManager searchAppsManager;
+	private final int RESET_RESULTS_LIST = Constants.EMPTY_INT; 
 	
 	private AIDLAptoideServiceData serviceDataCaller = null;
 
@@ -95,8 +97,8 @@ public class Search extends Activity implements OnItemClickListener{
 			serviceDataIsBound = true;
 			
 			Log.v("Aptoide-Search", "Connected to ServiceData");
-	        			
-			getSearchResults();
+
+			searchAppsManager.getSearchResults();
 			
             Log.v("Aptoide-Search", "Called for getting apps sorting policy");
             try {
@@ -127,75 +129,61 @@ public class Search extends Activity implements OnItemClickListener{
 //		
 //	};
 	
-//	private Handler interfaceTasksHandler = new Handler() {
-//		@Override
-//        public void handleMessage(Message msg) {
-//        	EnumSearchInterfaceTasks task = EnumSearchInterfaceTasks.reverseOrdinal(msg.what);
-//        	switch (task) {
-//        		case UPDATE_SEARCH_RESULTS:
-////        			updateSearchResults();
-//        			break;
-//	
-//				default:
-//					break;
-//			}
-//        }
-//	};
+	private Handler interfaceTasksHandler = new Handler() {
+		@Override
+        public void handleMessage(Message msg) {
+        	switch (msg.what) {
+        		case RESET_RESULTS_LIST:
+        			resetResultsList();
+        			break;
 	
-//	class ResultsListBinder implements ViewBinder
-//	{
-//
-//		public boolean setViewValue(View view, Object data, String textRepresentation)
-//		{
-//			if(view.getClass().toString().equalsIgnoreCase("class android.widget.RatingBar")){
-//				RatingBar tmpr = (RatingBar)view;
-//				tmpr.setRating(new Float(textRepresentation));
-//			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.TextView")){
-//				TextView tmpr = (TextView)view;
-//				tmpr.setText(textRepresentation);
-//			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.ImageView")){
-//				ImageView tmpr = (ImageView)view;	
-//				File icn = new File(textRepresentation);
-//             	if(icn.exists() && icn.length() > 0){
-//             		new Uri.Builder().build();
-//    				tmpr.setImageURI(Uri.parse(textRepresentation));
-//             	}else{
-//             		tmpr.setImageResource(android.R.drawable.sym_def_app_icon);
-//             	}
-//			}else if(view.getClass().toString().equalsIgnoreCase("class android.widget.LinearLayout")){
-//				LinearLayout tmpr = (LinearLayout)view;
-//				tmpr.setTag(textRepresentation);
-//			}else{
-//				return false;
-//			}
-//
-//			return true;
-//		}
-//	}
+				default:
+					break;
+			}
+        }
+	};
 	
-	public void getSearchResults(){
-		try {
-			searchResults = serviceDataCaller.callGetAppSearchResults(searchString);
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		resetResultsList();
-		
+	
+	private class SearchAppsManager{
+    	private ExecutorService tasksPool;
+    	
+    	public SearchAppsManager(){
+    		tasksPool = Executors.newSingleThreadExecutor();
+    	}
+    	
+    	public void getSearchResults(){
+        	try {
+				tasksPool.execute(new GetSearchResults());
+			} catch (Exception e) { }
+        }
+    	
+    	private class GetSearchResults implements Runnable{
+			@Override
+			public void run() {
+				try {
+					freshSearchResults = serviceDataCaller.callGetAppSearchResults(searchString);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				interfaceTasksHandler.sendEmptyMessage(RESET_RESULTS_LIST);
+			}
+    	}
+
 	}
 	
 	public void resetSearchResults(){
 		waitHandler.postDelayed(new Runnable() {
             public void run() {
-				getSearchResults();
+            	setLoading();
+				searchAppsManager.getSearchResults();
             }
         }, 200);
 	}
 	
 	private void resetBazaarSearchButton(){
 		if(bazaarSearchView != null)
-        	resultsListView.removeFooterView(bazaarSearchView);
+        	getListView().removeFooterView(bazaarSearchView);
         
         bazaarSearchView = View.inflate(this, R.layout.btn_search_bazaar, null);
         
@@ -211,36 +199,38 @@ public class Search extends Activity implements OnItemClickListener{
 			}
 		});
         
-        resultsListView.addFooterView(bazaarSearchView);
+        getListView().addFooterView(bazaarSearchView);
 	}
 	
-	public void resetResultsList(){		
-//		resultsAdapter = new SimpleAdapter(Search.this, searchResults.getList(), R.layout.row_app_available, 
-//				new String[] {Constants.KEY_APPLICATION_HASHID, Constants.KEY_APPLICATION_NAME, Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME, Constants.KEY_STATS_DOWNLOADS,Constants.KEY_STATS_STARS,  Constants.DISPLAY_APP_ICON_CACHE_PATH},
-//				new int[] {R.id.app_hashid, R.id.app_name, R.id.uptodate_versionname, R.id.downloads, R.id.stars, R.id.app_icon});
-//		
-//		resultsAdapter.setViewBinder(new ResultsListBinder());
+	public void resetResultsList(){	
+		loading.setVisibility(View.GONE);
+		searchResults = freshSearchResults;
+		if(searchResults == null){
+			empty.setVisibility(View.VISIBLE);
+		}
 
 		resultsAdapter = new StaticSearchAppResultsListAdapter(this, searchResults);
-		resultsListView.setAdapter(resultsAdapter);
+		setListAdapter(resultsAdapter);
 	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		setContentView(R.layout.list_search_app_results);
+
+		searchView = (ImageView) findViewById(R.id.search_button);
+		searchView.setOnTouchListener(new SearchClickListener());
+
+		loading = findViewById(R.id.loading);
+		empty = findViewById(android.R.id.empty);
+		empty.setVisibility(View.INVISIBLE);
 		
-		resultsListView = new ListView(this);
-		resultsListView.setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
-		resultsListView.setBackgroundColor(Color.WHITE);
-		resultsListView.setCacheColorHint(Color.TRANSPARENT);
-		resultsListView.setOnItemClickListener(this);
+		getListView().setPersistentDrawingCache(ViewGroup.PERSISTENT_ALL_CACHES);
 		
 		waitHandler = new Handler();
 		
-		setContentView(resultsListView);
-				
-//		resultsListView = getListView();
-//		resultsListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		searchAppsManager = new SearchAppsManager();
 
 		Intent searchIntent = getIntent();
 		if(searchIntent.hasExtra(SearchManager.QUERY)){
@@ -250,16 +240,6 @@ public class Search extends Activity implements OnItemClickListener{
 			searchString = searchString.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
 			
 			resetBazaarSearchButton();
-//		}else if(searchIntent.hasExtra("market")){
-//			String apk_id= searchIntent.getStringExtra("market");
-//			searchString=apk_id;
-//			apk_lst = db.getSearchById(apk_id);
-//			if(!apk_lst.isEmpty())
-//			Log.d("",apk_lst.get(0).apkid);
-//			
-//			if(searchIntent.hasExtra("install")){
-//			onListItemClick(getListView(), getListView(), 0, 0);
-//			}
 		}
 		
 
@@ -268,17 +248,7 @@ public class Search extends Activity implements OnItemClickListener{
 		}
 	}
 
-	@Override
-	public void onItemClick(AdapterView<?> listView, View view, int position, long id) {
-
-		final int appHashid = searchResults.get(position).getAppHashid();
-		Log.d("Aptoide-Search", "Onclick position: "+position+" appHashid: "+appHashid);
-		Intent appInfo = new Intent(this,AppInfo.class);
-		appInfo.putExtra("appHashid", appHashid);
-		startActivity(appInfo);
-		//TODO click change color effect
-	}
-		
+	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
@@ -289,9 +259,23 @@ public class Search extends Activity implements OnItemClickListener{
 			searchString = searchString.replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
 			
 			resetBazaarSearchButton();
+			
+			setLoading();
+			
+			searchAppsManager.getSearchResults();
+			
 		}
 		
 	}
+
+	public void setLoading(){
+		searchResults = new ViewDisplayListApps();
+		resultsAdapter = new StaticSearchAppResultsListAdapter(this, searchResults);
+		setListAdapter(resultsAdapter);
+		empty.setVisibility(View.INVISIBLE);
+		loading.setVisibility(View.VISIBLE);
+	}
+	
 	
 	public void setAppsSortingPolicy(EnumAppsSorting sortingPolicy){
 		Log.d("Aptoide-Search", "setAppsSortingPolicy to: "+sortingPolicy);
@@ -301,6 +285,17 @@ public class Search extends Activity implements OnItemClickListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+
+	@Override
+	protected void onListItemClick(ListView listView, View view, int position, long id) {
+		super.onListItemClick(listView, view, position, id);
+		final int appHashid = searchResults.get(position).getAppHashid();
+		Log.d("Aptoide-Search", "Onclick position: "+position+" appHashid: "+appHashid);
+		Intent appInfo = new Intent(this,AppInfo.class);
+		appInfo.putExtra("appHashid", appHashid);
+		startActivity(appInfo);
 	}
 
 	@Override
@@ -395,9 +390,36 @@ public class Search extends Activity implements OnItemClickListener{
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
+	
+	class SearchClickListener implements OnTouchListener {
+
+		public boolean onTouch(View v, MotionEvent event) {
+			if (event.getAction() == MotionEvent.ACTION_DOWN) {
+				// Button was pressed, change button background
+				searchView.setImageResource(R.drawable.searchover);
+				return true;
+			} else if (event.getAction() == MotionEvent.ACTION_UP) {
+				// Button was released, reset button background
+				searchView.setImageResource(R.drawable.search);
+				onSearchRequested();
+				return true;
+			}
+
+			return true;
+		}
+
+	};
+	
+	@Override
+	public boolean onSearchRequested() {	
+		startSearch(searchString, false, null, false);
+		return true;
+	}
 
 	@Override
 	protected void onDestroy() {
+		searchAppsManager.tasksPool.shutdownNow();
 		if(serviceDataIsBound){
 			unbindService(serviceDataConnection);	
 		}

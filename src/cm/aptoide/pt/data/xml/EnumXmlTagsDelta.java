@@ -42,6 +42,7 @@ public enum EnumXmlTagsDelta {
 	name,
 	catg2,
 	timestamp,
+	age,
 	minSdk,
 	minScreen,
 	minGles,

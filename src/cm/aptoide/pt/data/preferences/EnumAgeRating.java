@@ -1,5 +1,5 @@
 /**
- * EnumPreferences,	auxilliary class to Aptoide's ServiceData
+ * EnumAgeRating,	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -21,29 +21,37 @@
 package cm.aptoide.pt.data.preferences;
 
 /**
- * EnumPreferences, typeSafes Preferences
+ * EnumAgeRating, typeSafes age rating
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public enum EnumPreferences {
-	APTOIDE_CLIENT_UUID,
-	SCREEN_WIDTH,
-	SCREEN_HEIGHT,
-	SCREEN_DENSITY,
-	AUTHORIZED_DOWNLOAD_CONNECTIONS,
-	SHOW_APPLICATIONS_BY_CATEGORY,
-	SORT_APPLICATIONS_BY,
-	DOWNLOAD_ICONS_,
-	IS_HW_FILTER_ON,
-	AGE_RATING,
-	AUTOMATIC_INSTALL,
-	SERVER_USERNAME,	//TODO move these next 3 values to database to support multiple servers
-	SERVER_PASSHASH,
-	SERVER_TOKEN;
+public enum EnumAgeRating {
+	All,
+	Pre_Teen,
+	Teen,
+	Mature,
+	No_Filter,
+	unrecognized;
 	
-	public static EnumPreferences reverseOrdinal(int ordinal){
+	public static EnumAgeRating safeValueOf(String name){
+		EnumAgeRating tag;
+		if(name.equals("Pre-Teen")){
+			tag = EnumAgeRating.Pre_Teen;
+		}else if(name.equals("No Filter")){
+			tag = EnumAgeRating.No_Filter;
+		}else{
+			try {
+				tag = EnumAgeRating.valueOf(name);
+			} catch (Exception e1) {
+				tag = EnumAgeRating.unrecognized;
+			}
+		}
+		return tag;
+	}
+	
+	public static EnumAgeRating reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
 }
