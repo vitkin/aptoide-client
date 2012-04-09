@@ -137,8 +137,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	
 	private boolean availableByCategory = true;
 	private EnumAppsSorting appsSortingPolicy = null;
-	private AtomicBoolean allowAppsDisplayOptionsChange = null;
-	private AtomicBoolean allowUpdateAll = null;
+	private AtomicBoolean loadingRepos = null;
 	private AtomicBoolean resettingFlipper = null;
 	private AtomicBoolean highPriority = null;
 	
@@ -336,25 +335,18 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 		}
 
 		@Override
-		public void allowSortingPolicyChange() throws RemoteException {
-			allowAppsDisplayOptionsChange.set(true);
+		public void startedLoadingRepos() throws RemoteException {
+			loadingRepos.set(true);
 		}
 
 		@Override
-		public void disallowSortingPolicyChange() throws RemoteException {
-			allowAppsDisplayOptionsChange.set(false);
+		public void finishedLoadingRepos() throws RemoteException {
+			loadingRepos.set(false);
 		}
 
 		@Override
-		public void allowUpdateAll() throws RemoteException {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void disallowUpdateAll() throws RemoteException {
-			// TODO Auto-generated method stub
-			
+		public void shutDown() throws RemoteException {
+			finish();
 		}
 	};
 	
@@ -491,8 +483,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			swypeDelayHandler = new Handler();
 			
 			synchronizingInstalledApps = new AtomicBoolean(false);
-			allowAppsDisplayOptionsChange = new AtomicBoolean(true);
-			allowUpdateAll = new AtomicBoolean(true);
+			loadingRepos = new AtomicBoolean(true);
 			resettingFlipper = new AtomicBoolean(false);
 			highPriority = new AtomicBoolean(true);
 			
@@ -1305,7 +1296,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				return true;
 				
 			case DISPLAY_OPTIONS:
-				if(allowAppsDisplayOptionsChange.get()){
+				if(!loadingRepos.get()){
 					//TODO refactor extract dialog management class
 					LayoutInflater displayOptionsInflater = LayoutInflater.from(this);
 					View displayOptions = displayOptionsInflater.inflate(R.layout.dialog_display_options, null);
@@ -1407,7 +1398,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 					
 					sortDialog.show();
 				}else{
-					Toast.makeText(Aptoide.this, "Option not available while updating stores!", Toast.LENGTH_SHORT);					
+					Toast.makeText(Aptoide.this, "Option not available while updating stores!", Toast.LENGTH_SHORT).show();					
 				}
 				return true;
 				
@@ -1446,7 +1437,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 				return true;
 				
 			case UPDATE_ALL:
-				if(allowUpdateAll.get() && false){
+				if(!loadingRepos.get()){
 					AptoideLog.d(this, "Update all");
 					try {
 						serviceDataCaller.callUpdateAll();
@@ -1455,7 +1446,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 						e.printStackTrace();
 					}
 				}else{
-					Toast.makeText(Aptoide.this, "Option not available while updating stores!", Toast.LENGTH_SHORT);
+					Toast.makeText(Aptoide.this, "Option not available while updating stores!", Toast.LENGTH_SHORT).show();
 				}
 				return true;
 				

@@ -42,10 +42,9 @@ interface AIDLAptoideInterface{
 	
 	void handleMyapp();
 	
-	void allowSortingPolicyChange();
-	void disallowSortingPolicyChange();
+	void startedLoadingRepos();
+	void finishedLoadingRepos();
 	
-	void allowUpdateAll();
-	void disallowUpdateAll();
+	void shutDown();
 	
 }

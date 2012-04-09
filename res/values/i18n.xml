@@ -87,7 +87,7 @@
     <string name="mature_filter">Mature Filtering</string>
    <string name="dont_show_mature_content">Don\'t show Mature content</string>
     
-    <string name="app_rating">Application Rating</string>
+    <string name="app_rating">Application Rating Filter</string>
     <string name="mature">Mature</string>
     <string name="teen">Teen</string>
     <string name="pre_teen">Pre-Teen</string>

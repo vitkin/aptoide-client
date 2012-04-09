@@ -66,6 +66,7 @@ import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.webservices.EnumDownloadType;
 import cm.aptoide.pt.data.webservices.ViewDownload;
 import cm.aptoide.pt.data.webservices.ViewDownloadInfo;
+import cm.aptoide.pt.data.webservices.ViewListAppsDownload;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -2539,6 +2540,127 @@ public class ManagerDatabase {
 
 			}while(appsCursor.moveToNext());
 			appsCursor.close();
+			
+//			Log.d("Aptoide-ManagerDatabase", "updatable apps: "+updatableApps);
+			
+		}catch (Exception e) {
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
+			// TODO: handle exception
+		}
+		return updatableApps;
+		
+	}
+	
+	
+	/**
+	 * getUpdatableAppsDownloadInfo, retrieves a list of all updates download info
+	 * 
+	 * @param boolean filterByHw
+	 * @param EnumAgeRating ratingFilter
+	 * 
+	 * @return ViewListAppsDownload updates
+	 * 
+	 * @author dsilveira
+	 * @since 3.0
+	 * 
+	 */
+	public ViewListAppsDownload getUpdatableAppsDownloadInfo(boolean filterByHw, EnumAgeRating ratingFilter){
+		Log.d("Aptoide-ManagerDatabase", "getAvailableAppsDisplayInfo ratingFilter: "+ratingFilter);
+		
+		final int APP_HASHID = Constants.COLUMN_FIRST;
+		final int UP_TO_DATE_VERSION_CODE = Constants.COLUMN_SECOND;
+		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_THIRD;
+		final int APP_NAME = Constants.COLUMN_FOURTH;
+		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FIFTH;
+		final int REMOTE_PATH_TAIL = Constants.COLUMN_SIXTH;
+		final int SIZE = Constants.COLUMN_SEVENTH;
+		final int MD5HASH = Constants.COLUMN_EIGTH;
+		final int REPO_HASHID = Constants.COLUMN_NINTH;
+		final int REMOTE_PATH_BASE = Constants.COLUMN_TENTH;
+		final int USERNAME = Constants.COLUMN_ELEVENTH;
+		final int PASSWORD = Constants.COLUMN_TWELVETH;
+
+		
+		ViewListAppsDownload updatableApps = new ViewListAppsDownload();
+		ViewDownload appDownload = null;
+		
+		
+		String selectAppDownloadInfo = "SELECT "+Constants.KEY_APPLICATION_HASHID
+											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+											+","+Constants.KEY_APP_INSTALLED_NAME+","+Constants.KEY_APP_INSTALLED_VERSION_CODE
+											+", "+Constants.KEY_DOWNLOAD_REMOTE_PATH_TAIL+", "+Constants.KEY_DOWNLOAD_SIZE
+											+", "+Constants.KEY_DOWNLOAD_MD5HASH
+											+", "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_BASE_PATH
+											+", "+Constants.KEY_LOGIN_USERNAME+", "+Constants.KEY_LOGIN_PASSWORD
+										+" FROM "+Constants.TABLE_REPOSITORY									
+										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID+Constants.KEY_APPLICATION_HASHID
+																	+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
+																	+", "+Constants.KEY_APPLICATION_VERSION_CODE+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+																	+", "+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+															+" FROM "+Constants.TABLE_APPLICATION+" A"
+															+" WHERE "+Constants.KEY_APPLICATION_VERSION_CODE
+																	+"="+"(SELECT MAX("+Constants.KEY_APPLICATION_VERSION_CODE+")"
+																		+" FROM "+Constants.TABLE_APPLICATION
+																		+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME
+																				+"= A."+Constants.KEY_APPLICATION_PACKAGE_NAME+")";
+		// Filter by hardware?
+		if(filterByHw){
+			ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
+			Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
+			selectAppDownloadInfo +=						" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+															+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+															+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
+		}
+		/* Filter by rating */
+		selectAppDownloadInfo +=							" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+					
+															+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
+										+" NATURAL INNER JOIN "+Constants.TABLE_APP_INSTALLED+" I"	
+										+" NATURAL LEFT JOIN "+Constants.TABLE_DOWNLOAD_INFO
+										+" NATURAL LEFT JOIN "+Constants.TABLE_LOGIN
+										+" WHERE U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+"> I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
+										+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE;
+
+		Log.d("Aptoide-ManagerDatabase", "updatable apps download info: "+selectAppDownloadInfo);
+		
+		try{
+			db.beginTransaction();
+			
+			Cursor appDownloadInfoCursor = aptoideNonAtomicQuery(selectAppDownloadInfo);
+			
+			db.setTransactionSuccessful();
+			db.endTransaction();
+			
+			if(appDownloadInfoCursor.getCount() == Constants.EMPTY_INT){
+				//TODO throw exception (Unrecognized appHashid)
+			}
+			appDownloadInfoCursor.moveToFirst();
+
+			do{
+				if((appDownloadInfoCursor.getInt(UP_TO_DATE_VERSION_CODE) <= 0?false:(appDownloadInfoCursor.getInt(UP_TO_DATE_VERSION_CODE) > appDownloadInfoCursor.getInt(INSTALLED_VERSION_CODE)))){
+					if(!appDownloadInfoCursor.isNull(REMOTE_PATH_TAIL)){
+						if(appDownloadInfoCursor.isNull(USERNAME)){
+							appDownload = serviceData.getManagerDownloads().prepareApkDownload(appDownloadInfoCursor.getInt(APP_HASHID)
+												, appDownloadInfoCursor.getString(APP_NAME)+"   v."+appDownloadInfoCursor.getString(UP_TO_DATE_VERSION_NAME)
+												, appDownloadInfoCursor.getString(REMOTE_PATH_BASE)+appDownloadInfoCursor.getString(REMOTE_PATH_TAIL)
+												, appDownloadInfoCursor.getInt(SIZE)*Constants.KBYTES_TO_BYTES, appDownloadInfoCursor.getString(MD5HASH));
+						}else{
+							ViewLogin login = new ViewLogin(appDownloadInfoCursor.getString(USERNAME), appDownloadInfoCursor.getString(PASSWORD));
+							
+							appDownload = serviceData.getManagerDownloads().prepareApkDownload(appDownloadInfoCursor.getInt(APP_HASHID)
+									, appDownloadInfoCursor.getString(APP_NAME)+"   v."+appDownloadInfoCursor.getString(UP_TO_DATE_VERSION_NAME)
+									, appDownloadInfoCursor.getString(REMOTE_PATH_BASE)+appDownloadInfoCursor.getString(REMOTE_PATH_TAIL), login
+									, appDownloadInfoCursor.getInt(SIZE)*Constants.KBYTES_TO_BYTES, appDownloadInfoCursor.getString(MD5HASH));
+						}
+						updatableApps.addDownload(appDownload);
+					}else{
+						updatableApps.addNoInfoId(appDownloadInfoCursor.getInt(REPO_HASHID), appDownloadInfoCursor.getInt(APP_HASHID));
+					}
+				}
+			}while(appDownloadInfoCursor.moveToNext());
+			appDownloadInfoCursor.close();
 			
 //			Log.d("Aptoide-ManagerDatabase", "updatable apps: "+updatableApps);
 			
