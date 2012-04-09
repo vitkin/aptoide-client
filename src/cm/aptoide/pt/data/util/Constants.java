@@ -20,6 +20,7 @@
 package cm.aptoide.pt.data.util;
 
 import android.os.Environment;
+import cm.aptoide.pt.data.preferences.EnumAgeRating;
 import cm.aptoide.pt.debug.EnumLogLevels;
 
 /**
@@ -408,7 +409,7 @@ public class Constants {
 			+ KEY_APPLICATION_VERSION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_NAME + " TEXT NOT NULL, "
 			+ KEY_APPLICATION_TIMESTAMP + " INTEGER NOT NULL, "
-			+ KEY_APPLICATION_RATING + " INTEGER DEFAULT (0) CHECK ("+KEY_APPLICATION_RATING+">=0), "
+			+ KEY_APPLICATION_RATING + " INTEGER DEFAULT ("+EnumAgeRating.All.ordinal()+") CHECK ("+KEY_APPLICATION_RATING+">=0), "
 			/** min_screen_size defaults to small (supports all screens) **/
 			+ KEY_APPLICATION_MIN_SCREEN + " INTEGER DEFAULT (0) CHECK("+KEY_APPLICATION_MIN_SCREEN+">=0), "
 			/** min_sdk_version defaults to 1 (supports all versions) **/
