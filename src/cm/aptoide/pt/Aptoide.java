@@ -483,7 +483,7 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 			swypeDelayHandler = new Handler();
 			
 			synchronizingInstalledApps = new AtomicBoolean(false);
-			loadingRepos = new AtomicBoolean(true);
+			loadingRepos = new AtomicBoolean(false);
 			resettingFlipper = new AtomicBoolean(false);
 			highPriority = new AtomicBoolean(true);
 			

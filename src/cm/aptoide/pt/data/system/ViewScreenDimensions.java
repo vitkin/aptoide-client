@@ -51,6 +51,10 @@ public class ViewScreenDimensions implements Parcelable{
 	public float getDensity(){
 		return density;
 	}
+	
+	public String getFormattedString(){
+		return width+"x"+height;
+	}
 
 	@Override
 	public String toString() {

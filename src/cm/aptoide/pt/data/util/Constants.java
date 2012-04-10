@@ -78,6 +78,10 @@ public class Constants {
 	public static final int HOURS_TO_MILISECONDS = 1000*60*60;
 	public static final String UTC_TIMEZONE = "UTC";
 	
+	public static final String TERMINAL_INFO = android.os.Build.MODEL + "("+ android.os.Build.PRODUCT + ")"
+											+";v"+android.os.Build.VERSION.RELEASE+";"+System.getProperty("os.arch");
+	public static final String USER_AGENT_FORMAT = "aptoide-%1$s;"+TERMINAL_INFO+";%2$s;id:%3$s;%4$s";
+	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
 	public static final String PATH_CACHE_REPOS = PATH_CACHE + "repos/";

@@ -42,7 +42,7 @@ import cm.aptoide.pt.data.util.Constants;
  * @since 3.0
  *
  */
-public class RepoDownloadParser extends DefaultHandler{
+public class ParserRepoDownload extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewXmlParse parseInfo;
@@ -61,11 +61,11 @@ public class RepoDownloadParser extends DefaultHandler{
 	private StringBuilder tagContentBuilder;
 	
 		
-	public RepoDownloadParser(ManagerXml managerXml, ViewXmlParse parseInfo){
+	public ParserRepoDownload(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
 	}	
-	public RepoDownloadParser(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
+	public ParserRepoDownload(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
 		this(managerXml, parseInfo);
 		this.appHashid = appHashid;
 	}

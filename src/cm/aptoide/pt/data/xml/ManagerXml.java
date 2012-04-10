@@ -55,6 +55,7 @@ import cm.aptoide.pt.data.util.Constants;
 public class ManagerXml{
 
 	AptoideServiceData serviceData;
+	public ParserDOMSmallRequests dom;
 	
 	/** Ongoing */
 	private HashMap<Integer, ViewXmlParse> xmlParseViews;
@@ -78,6 +79,7 @@ public class ManagerXml{
 	
 	public ManagerXml(AptoideServiceData serviceData) {
 		this.serviceData = serviceData;
+		this.dom = new ParserDOMSmallRequests(this);
 		
 		xmlParseViews = new HashMap<Integer, ViewXmlParse>();
 		xmlParseViewsPool = new ArrayList<ViewXmlParse>();
@@ -96,7 +98,7 @@ public class ManagerXml{
 		DefaultHandler latestVersionInfoParser = null;
 	    try {
 	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-	    	latestVersionInfoParser = new LatestVersionInfoParser(this, cache);
+	    	latestVersionInfoParser = new ParserLatestVersionInfo(this, cache);
 	    	
 	    	xmlReader.setContentHandler(latestVersionInfoParser);
 	    	xmlReader.setErrorHandler(latestVersionInfoParser);
@@ -125,26 +127,26 @@ public class ManagerXml{
 	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
 	    	switch (infoType) {
 				case DELTA:
-					repoParser = new RepoDeltaParser(this, parseInfo);
+					repoParser = new ParserRepoDelta(this, parseInfo);
 					break;
 					
 				case BARE:
-					repoParser = new RepoBareParser(this, parseInfo);
+					repoParser = new ParserRepoBare(this, parseInfo);
 					break;
 					
 				case ICON:
 					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-					repoParser = new RepoIconParser(this, parseInfo);
+					repoParser = new ParserRepoIcon(this, parseInfo);
 					break;	
 					
 				case DOWNLOAD:
 					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-					repoParser = new RepoDownloadParser(this, parseInfo);
+					repoParser = new ParserRepoDownload(this, parseInfo);
 					break;
 				
 				case STATS:
 					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-					repoParser = new RepoStatsParser(this, parseInfo);
+					repoParser = new ParserRepoStats(this, parseInfo);
 					break;
 					
 //				case EXTRAS:
@@ -250,17 +252,17 @@ public class ManagerXml{
 					
 				case DOWNLOAD:
 //					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-					repoParser = new RepoDownloadParser(this, parseInfo, appHashid);
+					repoParser = new ParserRepoDownload(this, parseInfo, appHashid);
 					break;
 				
 				case STATS:
 //					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-					repoParser = new RepoStatsParser(this, parseInfo, appHashid);
+					repoParser = new ParserRepoStats(this, parseInfo, appHashid);
 					break;
 					
 				case EXTRAS:
 //					notification.setProgressCompletionTarget(parseInfo.getRepository().getSize());
-					repoParser = new RepoExtrasParser(this, parseInfo, appHashid);
+					repoParser = new ParserRepoExtras(this, parseInfo, appHashid);
 					break;
 					
 				case COMMENTS:
@@ -316,7 +318,7 @@ public class ManagerXml{
 		DefaultHandler myappParser = null;
 	    try {
 	    	XMLReader xmlReader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-	    	myappParser = new MyappParser(this, cache);
+	    	myappParser = new ParserMyapp(this, cache);
 	    	
 	    	xmlReader.setContentHandler(myappParser);
 	    	xmlReader.setErrorHandler(myappParser);

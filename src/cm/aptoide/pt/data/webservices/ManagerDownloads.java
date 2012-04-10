@@ -21,8 +21,12 @@
 
 package cm.aptoide.pt.data.webservices;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -35,6 +39,7 @@ import java.util.zip.GZIPInputStream;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
@@ -42,18 +47,22 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.widget.Toast;
 import cm.aptoide.pt.EnumAppsSorting;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.data.AptoideServiceData;
 import cm.aptoide.pt.data.ViewClientStatistics;
 import cm.aptoide.pt.data.cache.ManagerCache;
 import cm.aptoide.pt.data.cache.ViewCache;
+import cm.aptoide.pt.data.model.ViewAppDownloadInfo;
 import cm.aptoide.pt.data.model.ViewLogin;
 import cm.aptoide.pt.data.model.ViewRepository;
 import cm.aptoide.pt.data.notifications.EnumNotificationTypes;
 import cm.aptoide.pt.data.notifications.ViewNotification;
 import cm.aptoide.pt.data.util.Constants;
 import cm.aptoide.pt.data.xml.EnumInfoType;
+import cm.aptoide.pt.debug.exceptions.AptoideExceptionDownload;
+import cm.aptoide.pt.debug.exceptions.AptoideExceptionNotFound;
 
 /**
  * ManagerDownloads, centralizes all download processes
@@ -110,7 +119,15 @@ public class ManagerDownloads {
 			public void run() {
 //				downloads.put(download.getNotification().getNotificationHashid(), download);
 				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				download(iconDownload, false);
+				
+				try {
+					download(iconDownload, false);
+				} catch (Exception e) {
+					try {
+						download(iconDownload, false);
+					} catch (Exception e2) { }
+				}	
+				
 				recicleViewDownload(iconDownload);
 				if(iconsDownloadedCounter.incrementAndGet() >= Constants.ICONS_REFRESH_INTERVAL){
 					iconsDownloadedCounter.set(0);
@@ -150,7 +167,15 @@ public class ManagerDownloads {
 			public void run() {
 //				downloads.put(download.getNotification().getNotificationHashid(), download);
 				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				download(screenDownload, false);
+
+				try {
+					download(screenDownload, false);
+				} catch (Exception e) {
+					try {
+						download(screenDownload, false);
+					} catch (Exception e2) { }
+				}				
+				
 				if(orderNumber >= screensNumber){
 					serviceData.gettingAppScreensFinished(screenDownload.getNotification().getTargetsHashid());
 				}
@@ -167,6 +192,17 @@ public class ManagerDownloads {
 	
 	private ViewClientStatistics getClientStatistics(){
 		return serviceData.getStatistics();
+	}
+	
+	private String getServerUsername(){
+		return serviceData.getManagerPreferences().getServerLogin().getUsername();
+	}
+	
+	private String getUserAgentString(){
+		ViewClientStatistics clientStatistics = getClientStatistics();
+		return String.format(Constants.USER_AGENT_FORMAT
+				, clientStatistics.getAptoideVersionNameInUse(), clientStatistics.getScreenDimensions().getFormattedString()
+				, clientStatistics.getAptoideClientUUID(), getServerUsername());
 	}
 	
 	
@@ -306,7 +342,11 @@ public class ManagerDownloads {
 									, serviceData.getString(R.string.self_update), R.string.self_update);
 		ViewDownload download = getNewViewDownload(Constants.URI_LATEST_VERSION_XML, cache, notification);
 
-		download(download, false);
+		try {
+			download(download, true);
+		} catch (Exception e) {
+			download(download, true);
+		}
 
 		return cache;
 	}
@@ -390,63 +430,6 @@ public class ManagerDownloads {
 	
 
 	
-//	public void getRepoIcons(ViewRepository repository, int offset, ArrayList<ViewDownloadInfo> iconsInfo){
-//		int iconsCount = iconsInfo.size();
-//		ViewDownloadInfo iconInfo = null;
-//		ViewCache cache = null;
-//		ViewNotification notification;
-//		int downloaded;
-//		
-//		do{
-//			
-//			for(downloaded = 0; downloaded < Constants.MAX_PARALLEL_DOWNLOADS; ){ //TODO howto keep always only max number concurrent downloads going
-//				final ViewDownload download;
-//				iconInfo = iconsInfo.get(downloaded);
-//				cache = managerCache.getNewIconViewCache(iconInfo.getAppHashid());
-//				notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_ICONS, iconInfo.getAppName(), iconInfo.getAppHashid());
-//				
-//				if(repository.isLoginRequired()){
-//					download = getNewViewDownload(iconInfo.getRemotePath(), repository.getLogin(), cache, notification);
-//				}else{
-//					download = getNewViewDownload(iconInfo.getRemotePath(), cache, notification);
-//				}
-//				try{
-//
-//					new Thread(){
-//						public void run(){
-//							this.setPriority(Thread.MAX_PRIORITY);
-//							
-//							int retrysCount = 3;
-//							boolean downloadSuccess = false; 
-//							
-//							do{
-//								downloadSuccess = download(download.getNotification().getNotificationHashid(), true);
-//								retrysCount--;
-//							}while( !downloadSuccess && retrysCount > 0 );
-//							
-//							if(downloadSuccess){
-//								//TODO increment downloaded
-//							}
-//						}
-//					}.start();
-//
-//				} catch(Exception e){
-//					/** this should never happen */
-//					//TODO handle exception
-//					e.printStackTrace();
-//				}
-//			}
-//			iconsCount -= downloaded;
-//			
-//		}while (iconsCount > 0);
-//		
-//		if(repository.getSize() > offset){
-//			serviceData.getRepoIcons(repository, offset+iconsCount);
-//		}
-//	}
-	
-
-	
 	public ViewCache startRepoDeltaDownload(ViewRepository repository){
 		return startRepoDownload(repository, EnumInfoType.DELTA);
 	}
@@ -470,6 +453,10 @@ public class ManagerDownloads {
 //	public ViewCache startRepoExtraDownload(ViewRepository repository){
 //		return startRepoDownload(repository, EnumInfoType.EXTRAS);
 //	}
+	
+	public ViewCache startRepoStatsDownload(ViewRepository repository){
+		return startRepoDownload(repository, EnumInfoType.STATS);
+	}
 	
 	
 	public ViewCache startRepoDownload(ViewRepository repository, EnumInfoType infoType){
@@ -560,7 +547,11 @@ public class ManagerDownloads {
 			download = getNewViewDownload(xmlRemotePath, cache, notification);
 //		}
 		
-		download(download, true);
+		try {
+			download(download, true);
+		} catch (Exception e) {
+			download(download, true);
+		}
 		
 		return cache;
 	}
@@ -605,7 +596,7 @@ public class ManagerDownloads {
 			default:
 				break;
 		}
-Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
+		Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 		
 		notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.REPO_APP_UPDATE, repoName, appHashid);
 		if(repository.isLoginRequired() && !infoType.equals(EnumInfoType.COMMENTS)){
@@ -616,18 +607,70 @@ Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 			download = getNewViewDownload(xmlRemotePath, cache, notification);
 //		}
 		
-		download(download, true);
+		try {
+			download(download, true);
+		} catch (Exception e) {
+			download(download, true);
+		}
 		
 		return cache;
 	}
+	
+	
+	public ViewCache repoAppDownload(ViewRepository repository, int appHashid){
+		ViewCache cache = null;
+		String xmlRemotePath = repository.getUri()+Constants.PATH_REPO_INFO_XML+"info=download&show_apphashid=true&apphashid="+appHashid;
+		
+		Log.d("Aptoide-ManagerDownloads repoAppDownload: ", xmlRemotePath);
+
+		try {
+			URL endpoint = new URL(xmlRemotePath);
+			HttpURLConnection connection = (HttpURLConnection) endpoint.openConnection(); //Careful with UnknownHostException. Throws MalformedURLException, IOException
+			
+			connection.setRequestMethod("GET");
+			connection.setRequestProperty("Accept", "application/xml");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+//			connection.setConnectTimeout(TIME_OUT);
+
+//			connection.setRequestProperty("User-Agent", getUserAgentString());
+			
+			ViewAppDownloadInfo downloadInfo = serviceData.getManagerXml().dom.parseRepoAppDownloadXml(connection, repository.getHashid());
+			ViewDownload download = null;
+			if(repository.isLoginRequired()){	//TODO getAppName and appHashid (take it out of ViewAppDownloadInfo where it doesn't belong)
+				download = prepareApkDownload(downloadInfo.getAppHashid(), "update "+downloadInfo.getAppHashid(), repository.getBasePath()+downloadInfo.getRemotePathTail()
+											, repository.getLogin(), downloadInfo.getSize(), downloadInfo.getMd5hash());
+			}else{
+				download = prepareApkDownload(downloadInfo.getAppHashid(), "update "+downloadInfo.getAppHashid(), repository.getBasePath()+downloadInfo.getRemotePathTail()
+						, downloadInfo.getSize(), downloadInfo.getMd5hash());
+			}
+			cache = downloadApk(download);
+			
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+		return cache;
+	}
+	
 	
 	public ViewCache downloadMyapp(String uriString, String myappName){
 		ViewCache cache = managerCache.getNewMyappDownloadViewCache(myappName);
 		if(!managerCache.isMyAppCached(myappName)){
 			ViewNotification notification = serviceData.getManagerNotifications().getNewViewNotification(EnumNotificationTypes.GET_MYAPP, "myapp", myappName.hashCode());
 			ViewDownload download = getNewViewDownload(uriString, cache, notification);
+
+			try {
+				download(download, false);
+			} catch (Exception e) {
+				download(download, false);
+			}
 			
-			download(download, false);
 		}
 		return cache;
 	}
@@ -647,7 +690,15 @@ Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 	public ViewCache downloadApk(ViewDownload download){
 //		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
 		if(!getManagerCache().isApkCached(download.getNotification().getTargetsHashid()) || !getManagerCache().md5CheckOk(download.getCache())){
-			download(download, false);
+			try {
+				download(download, false);
+			} catch (Exception e) {
+				try {
+					download(download, false);
+				} catch (Exception e2) {
+					download(download, false);
+				}
+			}
 		}
 		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getNotification().getTargetsHashid());
 		
@@ -663,7 +714,6 @@ Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 		String localPath = localCache.getLocalPath();
 		String remotePath = download.getRemotePath();
 		int targetBytes;
-		ViewClientStatistics clientStatistics = getClientStatistics();
 
 		if(overwriteCache){
 			getManagerCache().clearCache(localCache);
@@ -673,14 +723,10 @@ Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 			FileOutputStream fileOutputStream = new FileOutputStream(localPath);
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(remotePath);
-//			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
+			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
+//			Log.d("Aptoide-download","downloading with: "+getUserAgentString()+" login: "+download.isLoginRequired());
 
-//				SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-//				String myid = sPref.getString("myId", "NoInfo");
-//				String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
-
-//TODO refactor this user-agent string
-//				mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+//			httpGet.setHeader("User-Agent", getUserAgentString());	//TODO is consistently getting 404 from server
 
 			if(download.isLoginRequired()){		//TODO refactor using username/password args when using webservices (only exception left is when getting hard-disk files)
 				URL url = new URL(remotePath);
@@ -707,10 +753,9 @@ Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 				managerCache.clearCache(download.getCache());
 				throw new TimeoutException();
 			}else if(httpResponse.getStatusLine().getStatusCode() == 404){
-				Log.d("Aptoide-ManagerDownloads","404 Not found!");
 				fileOutputStream.close();
 				managerCache.clearCache(download.getCache());
-				throw new Exception();	//TODO not found exception
+				throw new AptoideExceptionNotFound("404 Not found!");
 			}else{
 //				if(download.isSizeKnown()){
 //					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;	//TODO check if server sends kbytes or bytes
@@ -758,9 +803,9 @@ Log.d("Aptoide-ManagerDownloads", "xmlRemotePath: "+xmlRemotePath);
 				}
 
 			}
-		}catch (Exception e) { //TODO  retry on java.net.SocketException: The operation timed out
-			//TODO handle exception
+		}catch (Exception e) {
 			e.printStackTrace();
+			throw new AptoideExceptionDownload(e);
 		}
 	}
 	

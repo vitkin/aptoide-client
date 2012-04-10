@@ -1070,7 +1070,7 @@ public class AppInfo extends ListActivity {
 							serviceDataCaller.callInstallApp(selectedVersion.getAppHashid());
 //							Toast.makeText(AppInfo.this, getResources().getText(R.string.starting).toString()+" "
 //														+getResources().getText(R.string.download).toString(), Toast.LENGTH_LONG).show();
-							Log.d("Aptoide-AppInfo", "called install app");
+							Log.d("Aptoide-AppInfo", "called install app: "+selectedVersion.getAppHashid());
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
