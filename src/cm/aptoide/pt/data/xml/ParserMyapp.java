@@ -30,6 +30,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
 import cm.aptoide.pt.data.cache.ViewCache;
+import cm.aptoide.pt.data.display.ViewDisplayListRepos;
+import cm.aptoide.pt.data.display.ViewDisplayRepo;
+import cm.aptoide.pt.data.listeners.ViewMyapp;
+import cm.aptoide.pt.data.util.Constants;
 
 /**
  * MyappParser, handles myapp xml Sax parsing
@@ -38,20 +42,22 @@ import cm.aptoide.pt.data.cache.ViewCache;
  * @since 3.0
  *
  */
-public class LatestVersionInfoParser extends DefaultHandler{
+public class ParserMyapp extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
-	private ViewCache cachelatestVersionInfo;
-	private ViewLatestVersionInfo viewLatestVersionInfo = null;
+	private ViewCache myapp;
+	private ViewMyapp viewMyapp = null;
+	private ViewDisplayRepo repo = null;
+	private ViewDisplayListRepos listRepos = new ViewDisplayListRepos(1);
 	
-	private EnumXmlTagsLatestVersionInfo tag = EnumXmlTagsLatestVersionInfo.aptoide;
+	private EnumXmlTagsMyapp tag = EnumXmlTagsMyapp.myapp;
 	
 	private StringBuilder tagContentBuilder;
 	
 		
-	public LatestVersionInfoParser(ManagerXml managerXml, ViewCache myapp){
+	public ParserMyapp(ManagerXml managerXml, ViewCache myapp){
 		this.managerXml = managerXml;
-		this.cachelatestVersionInfo = myapp;
+		this.myapp = myapp;
 	}
 	
 	@Override
@@ -65,23 +71,38 @@ public class LatestVersionInfoParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		tag = EnumXmlTagsLatestVersionInfo.safeValueOf(localName.trim());		
+		tag = EnumXmlTagsMyapp.safeValueOf(localName.trim());	
 		
 		switch (tag) {
-			case versionCode:
-				viewLatestVersionInfo = new ViewLatestVersionInfo(Integer.parseInt(tagContentBuilder.toString()));
+			case name:
+				viewMyapp = new ViewMyapp(tagContentBuilder.toString());
 				break;
-			case uri:
-				viewLatestVersionInfo.setRemotePath(tagContentBuilder.toString());
+			case pname:
+				viewMyapp.setPackageName(tagContentBuilder.toString());
 				break;
-			case md5:
-				viewLatestVersionInfo.setMd5sum(tagContentBuilder.toString());
+			case md5sum:
+				viewMyapp.setMd5sum(tagContentBuilder.toString());
+				break;
+			case intsize:
+				viewMyapp.setSize(Integer.parseInt(tagContentBuilder.toString()));
+				break;
+			case get:
+				viewMyapp.setRemotePath(tagContentBuilder.toString());
 				break;
 				
-			case aptoide:
-				Log.d("Aptoide-LatestVersionInfoParser", "latest version info: "+viewLatestVersionInfo);
+			case getapp:
+				Log.d("Aptoide-MyappParser", "myapp: "+viewMyapp);
+				break;
+			
+				
+			case server:
+				repo = new ViewDisplayRepo(tagContentBuilder.toString().hashCode(), tagContentBuilder.toString(), false, Constants.EMPTY_INT);
+				listRepos.addRepo(repo);
 				break;
 				
+			case newserver:
+				Log.d("Aptoide-MyappParser", "list of Repos: "+listRepos);
+				break;
 				
 			default:
 				break;
@@ -101,15 +122,15 @@ public class LatestVersionInfoParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-LatestVersionInfoParser","Started parsing XML from " + cachelatestVersionInfo.getLocalPath() + " ...");
+		Log.d("Aptoide-MyappParser","Started parsing XML from " + myapp.getLocalPath() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-LatestVersionInfoParser","Done parsing XML from " + cachelatestVersionInfo.getLocalPath() + " !");
+		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + myapp.getLocalPath() + " !");
 
-		managerXml.parsingLatestVersionInfoFinished(viewLatestVersionInfo);
+		managerXml.parsingMyappFinished(viewMyapp, listRepos);
 		super.endDocument();
 	}
 

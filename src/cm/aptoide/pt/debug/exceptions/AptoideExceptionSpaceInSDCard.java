@@ -1,5 +1,5 @@
 /**
- * AptoideException,		part of Aptoide
+ * AptoideExceptionSpaceInSDCard,		part of Aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -20,33 +20,33 @@
 package cm.aptoide.pt.debug.exceptions;
 
 /**
- * AptoideException, Aptoide's Exception
+ * AptoideExceptionSpaceInSDCard, Aptoide's Exception
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class AptoideException extends RuntimeException{
+public class AptoideExceptionSpaceInSDCard extends RuntimeException{
 
 	private static final long serialVersionUID = -4416000225399071171L;
 	
-	public AptoideException(){
+	public AptoideExceptionSpaceInSDCard(){
 		super();
 	}
 	
-	public AptoideException(String message){
+	public AptoideExceptionSpaceInSDCard(String message){
 		super(message);
 	}
 	
-	public AptoideException(Throwable rootCause){
+	public AptoideExceptionSpaceInSDCard(Throwable rootCause){
 		super(rootCause);
 	}
 	
-	public AptoideException(String message, Throwable rootCause){
+	public AptoideExceptionSpaceInSDCard(String message, Throwable rootCause){
 		super(message, rootCause);
 	}
 
 	public String toString(){
-		return "Aptoide Exception due to: " + getMessage();
+		return "Aptoide No space in SDCard Exception due to: " + getMessage();
 	}
 }

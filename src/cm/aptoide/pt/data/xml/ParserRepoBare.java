@@ -43,7 +43,7 @@ import cm.aptoide.pt.data.util.Constants;
  * @since 3.0
  *
  */
-public class RepoBareParser extends DefaultHandler{
+public class ParserRepoBare extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewXmlParse parseInfo;
@@ -61,7 +61,7 @@ public class RepoBareParser extends DefaultHandler{
 	private StringBuilder tagContentBuilder;
 	
 		
-	public RepoBareParser(ManagerXml managerXml, ViewXmlParse parseInfo){
+	public ParserRepoBare(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
 	}

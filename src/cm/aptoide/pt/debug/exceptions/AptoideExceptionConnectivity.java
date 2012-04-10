@@ -1,5 +1,5 @@
 /**
- * AptoideException,		part of Aptoide
+ * AptoideExceptionConnectivity,		part of Aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -20,33 +20,33 @@
 package cm.aptoide.pt.debug.exceptions;
 
 /**
- * AptoideException, Aptoide's Exception
+ * AptoideExceptionConnectivity, Aptoide's Exception
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class AptoideException extends RuntimeException{
+public class AptoideExceptionConnectivity extends RuntimeException{
 
 	private static final long serialVersionUID = -4416000225399071171L;
 	
-	public AptoideException(){
+	public AptoideExceptionConnectivity(){
 		super();
 	}
 	
-	public AptoideException(String message){
+	public AptoideExceptionConnectivity(String message){
 		super(message);
 	}
 	
-	public AptoideException(Throwable rootCause){
+	public AptoideExceptionConnectivity(Throwable rootCause){
 		super(rootCause);
 	}
 	
-	public AptoideException(String message, Throwable rootCause){
+	public AptoideExceptionConnectivity(String message, Throwable rootCause){
 		super(message, rootCause);
 	}
 
 	public String toString(){
-		return "Aptoide Exception due to: " + getMessage();
+		return "Aptoide Connectivity Exception due to: " + getMessage();
 	}
 }

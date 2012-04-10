@@ -33,6 +33,7 @@ import cm.aptoide.pt.data.util.Constants;
 public class ViewAppDownloadInfo {
 
 	private ContentValues values;
+	int appHashid;
 
 	
 	/**
@@ -83,6 +84,15 @@ public class ViewAppDownloadInfo {
 	
 	public ContentValues getValues(){
 		return this.values;
+	}
+	
+	
+	public void setAppHashid(int appHashid){
+		this.appHashid = appHashid;
+	}
+	
+	public int getAppHashid(){
+		return appHashid;
 	}
 	
 

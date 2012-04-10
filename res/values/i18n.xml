@@ -155,4 +155,9 @@
     <string name="new_account">New Account</string>
     <string name="loading">Loading...</string>
     
+    <string name="no_network_connection">No network connection</string>
+    <string name="no_permitted_network_connection">No permitted network connection</string>
+    <string name="no_space_left_in_sdcard">No space left in SDcard</string>
+    <string name="download_failed">Download failed</string>
+    
 </resources>

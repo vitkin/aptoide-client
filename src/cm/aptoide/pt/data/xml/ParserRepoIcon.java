@@ -1,5 +1,5 @@
 /**
- * RepoStatsParser, 	auxiliary class to Aptoide's ServiceData
+ * RepoIconParser, 	auxiliary class to Aptoide's ServiceData
  * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  * 
@@ -31,44 +31,36 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
-import cm.aptoide.pt.data.model.ViewStatsInfo;
+import cm.aptoide.pt.data.model.ViewIconInfo;
 import cm.aptoide.pt.data.util.Constants;
 
 /**
- * RepoStatsParser, handles Stats Repo xml Sax parsing
+ * RepoIconParser, handles Icon Repo xml Sax parsing
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class RepoStatsParser extends DefaultHandler{
+public class ParserRepoIcon extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewXmlParse parseInfo;
-	private ViewStatsInfo stats;	
-	private ArrayList<ViewStatsInfo> statsList = new ArrayList<ViewStatsInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
-	private ArrayList<ArrayList<ViewStatsInfo>> statsListInsertStack = new ArrayList<ArrayList<ViewStatsInfo>>(2);
+	private ViewIconInfo iconInfo;	
+	private ArrayList<ViewIconInfo> iconsInfo = new ArrayList<ViewIconInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+	private ArrayList<ArrayList<ViewIconInfo>> iconsInfoInsertStack = new ArrayList<ArrayList<ViewIconInfo>>(2);
 	
-	private EnumXmlTagsStats tag = EnumXmlTagsStats.apklst;
+	private EnumXmlTagsIcon tag = EnumXmlTagsIcon.apklst;
 	
-
-	private int appHashid = Constants.EMPTY_INT;
-	private int appFullHashid = Constants.EMPTY_INT;
-	private int likes = Constants.EMPTY_INT;
-	private int parsedAppsNumber = Constants.EMPTY_INT;
+	private int appFullHashid = 0;
+	private int parsedAppsNumber = 0;
 	private int totalParsedApps = Constants.EMPTY_INT;
 	
 	private StringBuilder tagContentBuilder;
 	
 		
-	public RepoStatsParser(ManagerXml managerXml, ViewXmlParse parseInfo){
+	public ParserRepoIcon(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
-	}
-	
-	public RepoStatsParser(ManagerXml managerXml, ViewXmlParse parseInfo, int appHashid){
-		this(managerXml, parseInfo);
-		this.appHashid = appHashid;
 	}
 	
 	@Override
@@ -82,40 +74,31 @@ public class RepoStatsParser extends DefaultHandler{
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
 		
-		tag = EnumXmlTagsStats.safeValueOf(localName.trim());
+		tag = EnumXmlTagsIcon.safeValueOf(localName.trim());
 		
 		switch (tag) {
 			case apphashid:
 				appFullHashid = (Integer.parseInt(tagContentBuilder.toString())+"|"+parseInfo.getRepository().getHashid()).hashCode();
-				stats = new ViewStatsInfo(appFullHashid);
 				break;
-				
-			case dwn:
-				stats.setDownloads(Integer.parseInt(tagContentBuilder.toString()));
-				break;
-				
-			case likes:
-				likes = Integer.parseInt(tagContentBuilder.toString());
-				break;
-				
-			case dislikes:
-				stats.setLikesDislikes(likes, Integer.parseInt(tagContentBuilder.toString()));
+			case icon:
+				String iconRemotePathTail = tagContentBuilder.toString();
+				iconInfo = new ViewIconInfo(iconRemotePathTail, appFullHashid);
 				break;
 				
 			case pkg:
 				if(parsedAppsNumber >= Constants.APPLICATIONS_IN_EACH_INSERT){
-					totalParsedApps += parsedAppsNumber;
+					totalParsedApps += parsedAppsNumber;					
 					parsedAppsNumber = 0;
-					statsListInsertStack.add(statsList);
+					iconsInfoInsertStack.add(iconsInfo);
 
-					Log.d("Aptoide-RepoStatsParser", "bucket full, inserting stats: "+statsList.size());
+					Log.d("Aptoide-RepoIconParser", "bucket full, inserting apps: "+iconsInfo.size());
 					try{
 						new Thread(){
 							public void run(){
 								this.setPriority(Thread.NORM_PRIORITY);
-								final ArrayList<ViewStatsInfo> statsInserting = statsListInsertStack.remove(Constants.FIRST_ELEMENT);
+								final ArrayList<ViewIconInfo> iconsInfoInserting = iconsInfoInsertStack.remove(Constants.FIRST_ELEMENT);
 								
-								managerXml.getManagerDatabase().insertOrReplaceStatsInfos(statsInserting);
+								managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInserting);
 							}
 						}.start();
 		
@@ -125,18 +108,18 @@ public class RepoStatsParser extends DefaultHandler{
 						e.printStackTrace();
 					}
 					
-					statsList = new ArrayList<ViewStatsInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
+					iconsInfo = new ArrayList<ViewIconInfo>(Constants.APPLICATIONS_IN_EACH_INSERT);
 				}
 				parsedAppsNumber++;
 				parseInfo.getNotification().incrementProgress(1);
 				
-				statsList.add(stats);
+				iconsInfo.add(iconInfo);
 				break;
 				
 			default:
 				break;
 		}
-
+		
 	}
 
 	@Override
@@ -144,6 +127,7 @@ public class RepoStatsParser extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 
 		tagContentBuilder = new StringBuilder();
+		
 	}
 	
 	
@@ -151,33 +135,29 @@ public class RepoStatsParser extends DefaultHandler{
 	
 	@Override
 	public void startDocument() throws SAXException {	//TODO refacto Logs
-		Log.d("Aptoide-RepoStatsHandler","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
+		Log.d("Aptoide-RepoIconHandler","Started parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		super.startDocument();
 	}
 
 	@Override
 	public void endDocument() throws SAXException {
-		Log.d("Aptoide-RepoStatsHandler","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
+		Log.d("Aptoide-RepoIconHandler","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ...");
 		
-		if(!statsList.isEmpty()){
-			Log.d("Aptoide-RepoStatsParser", "bucket not empty, stats: "+statsList.size());
-			statsListInsertStack.add(statsList);
+		if(!iconsInfo.isEmpty()){
+			Log.d("Aptoide-RepoIconParser", "bucket not empty, apps: "+iconsInfo.size());
+			iconsInfoInsertStack.add(iconsInfo);
 		}
 
-		Log.d("Aptoide-RepoStatsParser", "buckets: "+statsListInsertStack.size());
-		while(!statsListInsertStack.isEmpty()){
-			managerXml.getManagerDatabase().insertOrReplaceStatsInfos(statsListInsertStack.remove(Constants.FIRST_ELEMENT));			
+		Log.d("Aptoide-RepoInfoParser", "buckets: "+iconsInfoInsertStack.size());
+		while(!iconsInfoInsertStack.isEmpty()){
+			managerXml.getManagerDatabase().insertIconsInfo(iconsInfoInsertStack.remove(Constants.FIRST_ELEMENT));			
 		}
 		
 		if(totalParsedApps > Constants.APPLICATIONS_IN_EACH_INSERT){
 			managerXml.getManagerDatabase().optimizeQuerys();
+			managerXml.parsingRepoIconsFinished(parseInfo.getRepository());
 		}
 		
-		if(appHashid != Constants.EMPTY_INT){
-			managerXml.parsingRepoAppStatsFinished(parseInfo.getRepository(), appHashid);
-		}else{
-			managerXml.parsingRepoStatsFinished(parseInfo.getRepository());			
-		}
 		super.endDocument();
 	}
 

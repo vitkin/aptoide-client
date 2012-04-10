@@ -1,5 +1,5 @@
 /**
- * AptoideException,		part of Aptoide
+ * AptoideExceptionNotFound,		part of Aptoide
  * Copyright (C) 2011  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -20,33 +20,33 @@
 package cm.aptoide.pt.debug.exceptions;
 
 /**
- * AptoideException, Aptoide's Exception
+ * AptoideExceptionNotFound, not found Exception 
  * 
  * @author dsilveira
  * @since 3.0
  *
  */
-public class AptoideException extends RuntimeException{
+public class AptoideExceptionNotFound extends RuntimeException{
 
-	private static final long serialVersionUID = -4416000225399071171L;
-	
-	public AptoideException(){
+	private static final long serialVersionUID = -6031026487715100961L;
+
+	public AptoideExceptionNotFound() { 
 		super();
 	}
-	
-	public AptoideException(String message){
+
+	public AptoideExceptionNotFound(String message){
 		super(message);
 	}
 	
-	public AptoideException(Throwable rootCause){
+	public AptoideExceptionNotFound(Throwable rootCause){
 		super(rootCause);
 	}
 	
-	public AptoideException(String message, Throwable rootCause){
+	public AptoideExceptionNotFound(String message, Throwable rootCause){
 		super(message, rootCause);
 	}
-
+	@Override
 	public String toString(){
-		return "Aptoide Exception due to: " + getMessage();
+		return "Aptoide Not Found Exception due to: " + getMessage();
 	}
 }

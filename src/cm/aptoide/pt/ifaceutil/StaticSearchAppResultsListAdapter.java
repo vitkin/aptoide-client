@@ -161,7 +161,11 @@ public class StaticSearchAppResultsListAdapter extends BaseAdapter{
 	
 	@Override
 	public int getCount() {
-		return apps.size();
+		if(apps != null){
+			return apps.size();
+		}else{
+			return 0;
+		}
 	}
 
 	@Override

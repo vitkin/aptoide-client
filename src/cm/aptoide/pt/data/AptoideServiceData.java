@@ -33,8 +33,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
+import android.os.Message;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.util.Log;
@@ -87,6 +88,10 @@ import cm.aptoide.pt.data.xml.ManagerXml;
 import cm.aptoide.pt.data.xml.ViewLatestVersionInfo;
 import cm.aptoide.pt.debug.AptoideLog;
 import cm.aptoide.pt.debug.InterfaceAptoideLog;
+import cm.aptoide.pt.debug.exceptions.AptoideExceptionConnectivity;
+import cm.aptoide.pt.debug.exceptions.AptoideExceptionDatabase;
+import cm.aptoide.pt.debug.exceptions.AptoideExceptionDownload;
+import cm.aptoide.pt.debug.exceptions.AptoideExceptionSpaceInSDCard;
 
 /**
  * AptoideServiceData, Aptoide's data I/O manager for the activity classes
@@ -516,6 +521,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		}
 		
 	}; 
+
+	private Handler toastHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			Toast.makeText(AptoideServiceData.this, msg.what, Toast.LENGTH_SHORT).show();
+		}
+	};
 	
 	public void registerSelfUpdateObserver(AIDLSelfUpdate selfUpdateClient){
 		this.selfUpdateClient = selfUpdateClient;
@@ -729,6 +741,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	public void onDestroy() {	//TODO make sure to close all child threads
 		managerNotifications.destroy();
 		unregisterReceiver(installedAppsChangeListener);
+		unregisterNetworkStateChangeReceiver();
 		cachedThreadPool.shutdownNow();
 //		Toast.makeText(this, R.string.aptoide_stopped, Toast.LENGTH_LONG).show();
 		stopSelf();
@@ -742,16 +755,29 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try {
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					Log.d("Aptoide-ServiceData", "Checking for self-update");
+					ViewCache cache;
+					cache = managerDownloads.downloadLatestVersionInfo();
+					managerXml.latestVersionInfoParse(cache);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				}  catch (AptoideExceptionDownload e2) {
+					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e2.printStackTrace();
+				} catch (Exception e3){
+					e3.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				Log.d("Aptoide-ServiceData", "Checking for self-update");
-				ViewCache cache = managerDownloads.downloadLatestVersionInfo();
-				managerXml.latestVersionInfoParse(cache);
-				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
 	}
@@ -774,41 +800,56 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void rejectSelfUpdate(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				if(selfUpdateClient != null){
-					try {
-						selfUpdateClient.cancelUpdateActivity();
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					if(selfUpdateClient != null){
+						try {
+							selfUpdateClient.cancelUpdateActivity();
+						} catch (RemoteException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
+					selfUpdateClient = null;
+					waitingSelfUpdate = null;
 				}
-				selfUpdateClient = null;
-				waitingSelfUpdate = null;
-			}
-		});
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void downloadSelfUpdate(final ViewLatestVersionInfo latesVersionInfo){
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					
+					String aptoide = getApplicationInfo().name;
+					int aptoideHash = (aptoide+"|"+latesVersionInfo.getVersionCode()).hashCode();
+					ViewDownload download = getManagerDownloads().prepareApkDownload( aptoideHash, aptoide
+										, latesVersionInfo.getRemotePath(), latesVersionInfo.getSize(), latesVersionInfo.getMd5sum());
+					ViewCache apk = managerDownloads.downloadApk(download);
+					AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
+					installApp(apk, aptoideHash);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				}catch (Exception e){
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				
-				String aptoide = getApplicationInfo().name;
-				int aptoideHash = (aptoide+"|"+latesVersionInfo.getVersionCode()).hashCode();
-				ViewDownload download = getManagerDownloads().prepareApkDownload( aptoideHash, aptoide
-									, latesVersionInfo.getRemotePath(), latesVersionInfo.getSize(), latesVersionInfo.getMd5sum());
-				ViewCache apk = managerDownloads.downloadApk(download);
-				AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
-				installApp(apk, aptoideHash);
 				rejectSelfUpdate();
 			}
 		});		
@@ -943,122 +984,138 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	public void resetInstalledLists(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable(); 
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_INSTALLED_LIST).newInstalledListDataAvailable(); 
 //					Looper.prepare();
 //					Toast.makeText(getApplicationContext(), "installed list now available in next -> tab", Toast.LENGTH_LONG).show();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) { }
 	}
 
 	
 	public void refreshAvailableDisplay(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).refreshAvailableDisplay();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void updateAvailableLists(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).newAvailableListDataAvailable();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void resetAvailableLists(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).resetAvailableListData();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).resetAvailableListData();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void noAvailableListData(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				AptoideLog.d(AptoideServiceData.this, "No available apps!");
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).noAvailableListDataAvailable();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-			}
-		});
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					AptoideLog.d(AptoideServiceData.this, "No available apps!");
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).noAvailableListDataAvailable();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void loadingAvailableListData(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				AptoideLog.d(AptoideServiceData.this, "Loading available apps!");
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListDataAvailable();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-			}
-		});
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					AptoideLog.d(AptoideServiceData.this, "Loading available apps!");
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListDataAvailable();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void loadingAvailableProgressSetCompletionTarget(final int progressCompletionTarget){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				AptoideLog.d(AptoideServiceData.this, "Loading available apps progress completion target: "+progressCompletionTarget);
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListProgressSetCompletionTarget(progressCompletionTarget);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-			}
-		});
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					AptoideLog.d(AptoideServiceData.this, "Loading available apps progress completion target: "+progressCompletionTarget);
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListProgressSetCompletionTarget(progressCompletionTarget);
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void loadingAvailableProgressUpdate(final int currentProgress){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
 //				AptoideLog.d(AptoideServiceData.this, "Loading available apps progress update: "+currentProgress);
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListProgressUpdate(currentProgress);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-			}
-		});
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).loadingAvailableListProgressUpdate(currentProgress);
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void loadingAvailableProgressIndeterminate(){
@@ -1079,17 +1136,19 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void updateReposLists(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					reposInfoClient.updateReposBasicInfo();
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}	
-			}
-		});
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						reposInfoClient.updateReposBasicInfo();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}	
+				}
+			});
+		} catch (Exception e) { }
 	}
 	
 //	public void insertedRepo(final int repoHashid){
@@ -1171,25 +1230,38 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				ViewRepository repository = managerDatabase.getRepoIfUpdateNeeded(repoHashid);
-				AptoideLog.d(AptoideServiceData.this, "updating repo: "+repository);
-				if(repository != null){
-					reposInserting.add(repoHashid);
-					if(!managerDownloads.isConnectionAvailable()){
-						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					ViewRepository repository = managerDatabase.getRepoIfUpdateNeeded(repoHashid);
+					AptoideLog.d(AptoideServiceData.this, "updating repo: "+repository);
+					if(repository != null){
+						reposInserting.add(repoHashid);
+						if(!managerDownloads.isConnectionAvailable()){
+							throw new AptoideExceptionConnectivity();
+						}
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							throw new AptoideExceptionSpaceInSDCard();
+						}
+						ViewCache cache = null;
+						if(reposInserting.contains(repoHashid)){
+							cache = managerDownloads.startRepoDeltaDownload(repository);
+						}
+	//					Looper.prepare();
+	//					Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
+						if(reposInserting.contains(repoHashid)){
+							managerXml.repoDeltaParse(repository, cache);
+						}
 					}
-					if(!getManagerCache().isFreeSpaceInSdcard()){
-						//TODO raise exception
-					}
-					ViewCache cache = null;
-					if(reposInserting.contains(repoHashid)){
-						cache = managerDownloads.startRepoDeltaDownload(repository);
-					}
-//					Looper.prepare();
-//					Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
-					if(reposInserting.contains(repoHashid)){
-						managerXml.repoDeltaParse(repository, cache);
-					}
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
 			}
 		});
@@ -1203,22 +1275,35 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				ArrayList<ViewRepository> repositorys = managerDatabase.getReposNeedingUpdate();
 				for (ViewRepository repository : repositorys) {
 					AptoideLog.d(AptoideServiceData.this, "updating repo: "+repository);
-					int repoHashid = repository.getHashid();
-					if(repository != null){
-						reposInserting.add(repoHashid);
-						if(!managerDownloads.isConnectionAvailable()){
-							AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					try{
+						int repoHashid = repository.getHashid();
+						if(repository != null){
+							reposInserting.add(repoHashid);
+							if(!managerDownloads.isConnectionAvailable()){
+								throw new AptoideExceptionConnectivity();
+							}
+							if(!getManagerCache().isFreeSpaceInSdcard()){
+								throw new AptoideExceptionSpaceInSDCard();
+							}
+							ViewCache cache = null;
+							if(reposInserting.contains(repoHashid)){
+								cache = managerDownloads.startRepoDeltaDownload(repository);
+							}
+							if(reposInserting.contains(repoHashid)){
+								managerXml.repoDeltaParse(repository, cache);
+							}
 						}
-						if(!getManagerCache().isFreeSpaceInSdcard()){
-							//TODO raise exception
-						}
-						ViewCache cache = null;
-						if(reposInserting.contains(repoHashid)){
-							cache = managerDownloads.startRepoDeltaDownload(repository);
-						}
-						if(reposInserting.contains(repoHashid)){
-							managerXml.repoDeltaParse(repository, cache);
-						}
+					} catch (AptoideExceptionConnectivity e) {
+						toastHandler.sendEmptyMessage(R.string.no_network_connection);
+						e.printStackTrace();
+					} catch (AptoideExceptionSpaceInSDCard e) {
+//						toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+						e.printStackTrace();
+					} catch (AptoideExceptionDownload e) {
+//						toastHandler.sendEmptyMessage(R.string.download_failed);
+						e.printStackTrace();
+					} catch (Exception e){
+						e.printStackTrace();
 					}
 				}
 			}
@@ -1243,32 +1328,48 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			public void run() {
 				ViewRepository repository = originalRepository;
 //				Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewCache cache = null;
+					if(reposInserting.contains(repository.getHashid())){
+						cache = managerDownloads.startRepoBareDownload(repository);
+						loadingAvailableProgressIndeterminate();
+					}
+	//				Looper.prepare();
+	//				Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
+					if(reposInserting.contains(repository.getHashid())){
+						managerXml.repoBareParse(repository, cache);
+					}
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					resetAvailableLists();
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					resetAvailableLists();
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+					toastHandler.sendEmptyMessage(R.string.download_failed);
+					resetAvailableLists();
+					e.printStackTrace();
+				} catch (Exception e){
+					resetAvailableLists();
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = null;
-				if(reposInserting.contains(repository.getHashid())){
-					cache = managerDownloads.startRepoBareDownload(repository);
-					loadingAvailableProgressIndeterminate();
-				}
-//				Looper.prepare();
-//				Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
-				if(reposInserting.contains(repository.getHashid())){
-					managerXml.repoBareParse(repository, cache);
-				}
-				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
 		
 	}
 	
 	public void parsingRepoBareFinished(ViewRepository repository){
-		if(reposInserting.size() == 1){	// If contains only the currently being parsed repo
+//		if(reposInserting.size() == 1){	// If contains only the currently being parsed repo
 			finishedLoadingRepos();
-		}
+//		}
 		if(reposInserting.contains(repository.getHashid())){
 			if(managerPreferences.getShowApplicationsByCategory() ){//)|| repository.getSize() < getDisplayListsDimensions().getFastReset()){
 				resetAvailableLists();
@@ -1284,19 +1385,32 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = null;
-				if(reposInserting.contains(repository.getHashid())){
-					cache = managerDownloads.startRepoDownload(repository, EnumInfoType.STATS);
-				}
-				if(reposInserting.contains(repository.getHashid())){	
-					managerXml.repoStatsParse(repository, cache);
-					//TODO find some way to track global parsing completion status, probably in managerXml
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewCache cache = null;
+					if(reposInserting.contains(repository.getHashid())){
+						cache = managerDownloads.startRepoStatsDownload(repository);
+					}
+					if(reposInserting.contains(repository.getHashid())){	
+						managerXml.repoStatsParse(repository, cache);
+					}
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					Toast.makeText(AptoideServiceData.this, R.string.no_network_connection, Toast.LENGTH_SHORT);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
 			}
 		});
@@ -1317,22 +1431,32 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewCache cache = null;
+					if(reposInserting.contains(repository.getHashid())){
+						cache = managerDownloads.startRepoDownloadDownload(repository);
+					}
+					if(reposInserting.contains(repository.getHashid())){
+						managerXml.repoDownloadParse(repository, cache);
+					}
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = null;
-				if(reposInserting.contains(repository.getHashid())){
-					cache = managerDownloads.startRepoDownloadDownload(repository);
-				}
-	//			Looper.prepare();
-	//			Toast.makeText(getApplicationContext(), "finished downloading bare list", Toast.LENGTH_LONG).show();
-				if(reposInserting.contains(repository.getHashid())){
-					managerXml.repoDownloadParse(repository, cache);
-				}
-				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
 		
@@ -1348,19 +1472,31 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = null;
-				if(reposInserting.contains(repository.getHashid())){
-					cache = managerDownloads.startRepoIconDownload(repository);
-				}
-				if(reposInserting.contains(repository.getHashid())){
-					managerXml.repoIconParse(repository, cache);
-					//TODO find some way to track global parsing completion status, probably in managerXml
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewCache cache = null;
+					if(reposInserting.contains(repository.getHashid())){
+						cache = managerDownloads.startRepoIconDownload(repository);
+					}
+					if(reposInserting.contains(repository.getHashid())){
+						managerXml.repoIconParse(repository, cache);
+					}
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
 			}
 		});
@@ -1387,17 +1523,29 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				@Override
 				public void run() {
 //					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-					if(!managerDownloads.isPermittedConnectionAvailable(managerPreferences.getIconDownloadPermissions())){
-						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-					}else{
-						if(!getManagerCache().isFreeSpaceInSdcard()){
-							//TODO raise exception
-							return;
+					try{
+						if(!managerDownloads.isPermittedConnectionAvailable(managerPreferences.getIconDownloadPermissions())){
+							throw new AptoideExceptionConnectivity();
+						}else{
+							if(!getManagerCache().isFreeSpaceInSdcard()){
+								throw new AptoideExceptionSpaceInSDCard();
+							}
+							AptoideLog.d(AptoideServiceData.this, "getting repo icons");
+		
+							managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), displayListsDimensions.getCacheSize()));
+							//TODO find some way to track global parsing completion status, probably in managerXml
 						}
-						AptoideLog.d(AptoideServiceData.this, "getting repo icons");
-	
-						managerDownloads.getRepoIcons(downloadStatus, managerDatabase.getIconsDownloadInfo(downloadStatus.getRepository(), downloadStatus.getOffset(), displayListsDimensions.getCacheSize()));
-						//TODO find some way to track global parsing completion status, probably in managerXml
+					} catch (AptoideExceptionConnectivity e) {
+						toastHandler.sendEmptyMessage(R.string.no_permitted_network_connection);
+						e.printStackTrace();
+					} catch (AptoideExceptionSpaceInSDCard e) {
+//						toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+						e.printStackTrace();
+					} catch (AptoideExceptionDownload e) {
+//						toastHandler.sendEmptyMessage(R.string.download_failed);
+						e.printStackTrace();
+					} catch (Exception e){
+						e.printStackTrace();
 					}
 				}
 			});
@@ -1495,22 +1643,36 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
-				if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
-					ViewRepository repository = managerDatabase.getRepository(repoHashid);
-					if(!managerDownloads.isConnectionAvailable()){
-						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+					if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
+						ViewRepository repository = managerDatabase.getRepository(repoHashid);
+						if(!managerDownloads.isConnectionAvailable()){
+							throw new AptoideExceptionConnectivity();
+						}
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							throw new AptoideExceptionSpaceInSDCard();
+						}
+						ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.DOWNLOAD);
+						
+						managerXml.repoAppDownloadParse(repository, cache, appHashid);
+					}else{
+						updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);
+						AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
 					}
-					if(!getManagerCache().isFreeSpaceInSdcard()){
-						//TODO raise exception
-					}
-					ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.DOWNLOAD);
-					
-					managerXml.repoAppDownloadParse(repository, cache, appHashid);
-					//TODO find some way to track global parsing completion status, probably in managerXml
-				}else{
-					updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);
-					AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (AptoideExceptionDatabase e) {
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
 			}
 		});
@@ -1537,17 +1699,31 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				ViewRepository repository = managerDatabase.getRepository(repoHashid);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					ViewRepository repository = managerDatabase.getRepository(repoHashid);
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.STATS);
+					
+					managerXml.repoAppStatsParse(repository, cache, appHashid);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (AptoideExceptionDatabase e) {
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.STATS);
-				
-				managerXml.repoAppStatsParse(repository, cache, appHashid);
-				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
 					
@@ -1566,23 +1742,37 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
-				if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
-					ViewRepository repository = managerDatabase.getRepository(repoHashid);
-					if(!managerDownloads.isConnectionAvailable()){
-						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
+					if(!managerDatabase.isAppExtraInfoPresent(appFullHashid)){
+						ViewRepository repository = managerDatabase.getRepository(repoHashid);
+						if(!managerDownloads.isConnectionAvailable()){
+							throw new AptoideExceptionConnectivity();
+						}
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							throw new AptoideExceptionSpaceInSDCard();
+						}
+						ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.EXTRAS);
+						
+						managerXml.repoAppExtrasParse(repository, cache, appHashid);
+					}else{
+						updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_EXTRAS);
+						updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.REFRESH_SCREENS);
+						AptoideLog.d(AptoideServiceData.this, "App extra Info present for:"+appFullHashid);
 					}
-					if(!getManagerCache().isFreeSpaceInSdcard()){
-						//TODO raise exception
-					}
-					ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.EXTRAS);
-					
-					managerXml.repoAppExtrasParse(repository, cache, appHashid);
-					//TODO find some way to track global parsing completion status, probably in managerXml
-				}else{
-					updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_EXTRAS);
-					updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.REFRESH_SCREENS);
-					AptoideLog.d(AptoideServiceData.this, "App extra Info present for:"+appFullHashid);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (AptoideExceptionDatabase e) {
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
 			}
 		});
@@ -1601,16 +1791,29 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 				@Override
 				public void run() {
 //					Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
-					if(!managerDownloads.isConnectionAvailable()){
-						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-					}
-					if(!getManagerCache().isFreeSpaceInSdcard()){
-						//TODO raise exception
-						return;
-					}
+					try{
+						if(!managerDownloads.isConnectionAvailable()){
+							throw new AptoideExceptionConnectivity();
+						}
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							throw new AptoideExceptionSpaceInSDCard();
+						}
+						managerDownloads.getAppScreens(repository, managerDatabase.getScreensDownloadInfo(repository, appHashid));
 
-					managerDownloads.getAppScreens(repository, managerDatabase.getScreensDownloadInfo(repository, appHashid));
-					//TODO find some way to track global parsing completion status, probably in managerXml
+					} catch (AptoideExceptionConnectivity e) {
+						toastHandler.sendEmptyMessage(R.string.no_network_connection);
+						e.printStackTrace();
+					} catch (AptoideExceptionSpaceInSDCard e) {
+//						toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+						e.printStackTrace();
+					} catch (AptoideExceptionDownload e) {
+//						toastHandler.sendEmptyMessage(R.string.download_failed);
+						e.printStackTrace();
+					} catch (AptoideExceptionDatabase e) {
+						e.printStackTrace();
+					} catch (Exception e){
+						e.printStackTrace();
+					}
 				}
 			});
 	}
@@ -1633,17 +1836,31 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 //				Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-				ViewRepository repository = managerDatabase.getRepository(repoHashid);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					ViewRepository repository = managerDatabase.getRepository(repoHashid);
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.COMMENTS);
+					
+					managerXml.repoAppCommentsParse(repository, cache, appHashid);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+//					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+//					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				} catch (AptoideExceptionDatabase e) {
+					e.printStackTrace();
+				} catch (Exception e){
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.COMMENTS);
-				
-				managerXml.repoAppCommentsParse(repository, cache, appHashid);
-				//TODO find some way to track global parsing completion status, probably in managerXml
 			}
 		});
 	}
@@ -1695,8 +1912,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 					break;
 			}
 			
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
+		} catch (Exception e) { 
 			e.printStackTrace();
 		}
 	}
@@ -1779,33 +1995,37 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	}
 	
 	public void finishedLoadingRepos(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).finishedLoadingRepos();
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).finishedLoadingRepos();
 //					searchClients //TODO implement sort blocking in search when loading repo from bare
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void startedLoadingRepos(){
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).startedLoadingRepos();
+		try {
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						aptoideClients.get(EnumServiceDataCallback.UPDATE_AVAILABLE_LIST).startedLoadingRepos();
 //					searchClients //TODO implement sort blocking in search when loading repo from bare
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+		} catch (Exception e) { }
 	}
 	
 	public void setAppsSortingPolicy(final int sortingPolicy){
@@ -1850,48 +2070,67 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			cachedThreadPool.execute(new Runnable() {
 				@Override
 				public void run() {
-					if(!managerDownloads.isConnectionAvailable()){
-						AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+					try{
+						if(!managerDownloads.isConnectionAvailable()){
+							throw new AptoideExceptionConnectivity();
+						}
+						if(!getManagerCache().isFreeSpaceInSdcard()){
+							throw new AptoideExceptionSpaceInSDCard();
+						}
+						ViewCache apk = managerDownloads.downloadApk(download);
+						AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
+						installApp(apk, download.getNotification().getTargetsHashid());
+					} catch (AptoideExceptionConnectivity e) {
+						toastHandler.sendEmptyMessage(R.string.no_network_connection);
+						e.printStackTrace();
+					} catch (AptoideExceptionSpaceInSDCard e) {
+						toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+						e.printStackTrace();
+					} catch (AptoideExceptionDownload e) {
+						toastHandler.sendEmptyMessage(R.string.download_failed);
+						e.printStackTrace();
+					}catch (Exception e){
+						e.printStackTrace();
 					}
-					if(!getManagerCache().isFreeSpaceInSdcard()){
-						return; //TODO raise exception
-					}
-					ViewCache apk = managerDownloads.downloadApk(download);
-					AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
-					installApp(apk, download.getNotification().getTargetsHashid());
 				}
 			});
 		}
-		//TODO downloadRemainingAppInfo (almost done, lacks only dom xmlApkDownloadInfo parse and subsequent install call)
-//		for(Entry<Integer, ArrayList<Integer>> repoAppsList : appsDownload.getNoInfoMap().entrySet()){
-//			for (Integer appHashidValue : repoAppsList.getValue()) {
-//				final int repoHashid = repoAppsList.getKey();
-//				final int appHashid = appHashidValue;
-//				cachedThreadPool.execute(new Runnable() {
-//					@Override
-//					public void run() {
-////						Thread.currentThread().setPriority(Thread.NORM_PRIORITY);
-//						int appFullHashid = (appHashid+"|"+repoHashid).hashCode();
-//						if(!managerDatabase.isAppDownloadInfoPresent(appFullHashid)){
-//							ViewRepository repository = managerDatabase.getRepository(repoHashid);
-//							if(!managerDownloads.isConnectionAvailable()){
-//								AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
-//							}
-//							if(!getManagerCache().isFreeSpaceInSdcard()){
-//								//TODO raise exception
-//							}
-//							ViewCache cache = managerDownloads.startRepoAppDownload(repository, appHashid, EnumInfoType.DOWNLOAD);
-//							
-//							managerXml.repoAppDownloadParse(repository, cache, appHashid);
-//							//TODO find some way to track global parsing completion status, probably in managerXml
-//						}else{
-//							updateAppInfo(appHashid, appFullHashid, EnumServiceDataCallback.UPDATE_APP_DOWNLOAD_INFO);
-//							AptoideLog.d(AptoideServiceData.this, "App downloadInfo present for:"+appFullHashid);
-//						}
-//					}
-//				});
-//			}
-//		}
+		for(Entry<Integer, ArrayList<Integer>> repoAppsList : appsDownload.getNoInfoMap().entrySet()){
+			for (Integer appHashidValue : repoAppsList.getValue()) {
+				final int repoHashid = repoAppsList.getKey();
+				final int appHashid = appHashidValue;
+				cachedThreadPool.execute(new Runnable() {
+					@Override
+					public void run() {
+						try{
+							ViewRepository repository = managerDatabase.getRepository(repoHashid);
+							if(!managerDownloads.isConnectionAvailable()){
+								throw new AptoideExceptionConnectivity();
+							}
+							if(!getManagerCache().isFreeSpaceInSdcard()){
+								throw new AptoideExceptionSpaceInSDCard();
+							}
+							ViewCache cache = managerDownloads.repoAppDownload(repository, appHashid);
+							
+							installApp(cache, appHashid);
+						} catch (AptoideExceptionConnectivity e) {
+							toastHandler.sendEmptyMessage(R.string.no_network_connection);
+							e.printStackTrace();
+						} catch (AptoideExceptionSpaceInSDCard e) {
+	//						toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+							e.printStackTrace();
+						} catch (AptoideExceptionDownload e) {
+	//						toastHandler.sendEmptyMessage(R.string.download_failed);
+							e.printStackTrace();
+						} catch (AptoideExceptionDatabase e) {
+							e.printStackTrace();
+						} catch (Exception e){
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		}
 		
 	}
 	
@@ -1950,26 +2189,38 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			@Override
 			public void run() {
 				AptoideLog.d(AptoideServiceData.this, "Receiving Myapp file: "+uriString);
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+	//				launchAptoide();
+					String[] slashSplitUriString = uriString.split("/");
+					String myappName = slashSplitUriString[slashSplitUriString.length-1];
+					ViewCache cache;
+					if(uriString.startsWith(Constants.SCHEME_FILE_PREFIX)){
+						cache = managerDownloads.getManagerCache().cacheMyapp(uriString.substring(Constants.SCHEME_FILE_PREFIX.length()), myappName);
+					}else{
+						AptoideLog.d(AptoideServiceData.this, "Preparing download of Myapp file: "+myappName);
+						cache = managerDownloads.downloadMyapp(uriString, myappName);
+					}
+					AptoideLog.d(AptoideServiceData.this, "Preparing parsing of Myapp file: "+cache.getLocalPath());
+					
+					managerXml.myappParse(cache, myappName);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				}catch (Exception e){
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-//				launchAptoide();
-				String[] slashSplitUriString = uriString.split("/");
-				String myappName = slashSplitUriString[slashSplitUriString.length-1];
-				ViewCache cache;
-				if(uriString.startsWith(Constants.SCHEME_FILE_PREFIX)){
-					cache = managerDownloads.getManagerCache().cacheMyapp(uriString.substring(Constants.SCHEME_FILE_PREFIX.length()), myappName);
-				}else{
-					AptoideLog.d(AptoideServiceData.this, "Preparing download of Myapp file: "+myappName);
-					cache = managerDownloads.downloadMyapp(uriString, myappName);
-				}
-				AptoideLog.d(AptoideServiceData.this, "Preparing parsing of Myapp file: "+cache.getLocalPath());
-				
-				managerXml.myappParse(cache, myappName);
-				
 			}
 		});
 	}
@@ -2004,17 +2255,30 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewDownload download = getManagerDownloads().prepareApkDownload(myapp.hashCode(), myapp.getName()
+											, myapp.getRemotePath(), myapp.getSize(), myapp.getMd5sum());
+					ViewCache apk = managerDownloads.downloadApk(download);
+					AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
+					installApp(apk, myapp.hashCode());
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				}catch (Exception e){
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					//TODO raise exception
-				}
-				ViewDownload download = getManagerDownloads().prepareApkDownload(myapp.hashCode(), myapp.getName()
-										, myapp.getRemotePath(), myapp.getSize(), myapp.getMd5sum());
-				ViewCache apk = managerDownloads.downloadApk(download);
-				AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
-				installApp(apk, myapp.hashCode());
 			}
 		});		
 	}
@@ -2030,16 +2294,28 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 		cachedThreadPool.execute(new Runnable() {
 			@Override
 			public void run() {
-				if(!managerDownloads.isConnectionAvailable()){
-					AptoideLog.d(AptoideServiceData.this, "No connection");	//TODO raise exception to ask for what to do
+				try{
+					if(!managerDownloads.isConnectionAvailable()){
+						throw new AptoideExceptionConnectivity();
+					}
+					if(!getManagerCache().isFreeSpaceInSdcard()){
+						throw new AptoideExceptionSpaceInSDCard();
+					}
+					ViewCache apk = managerDownloads.downloadApk(managerDatabase.getAppDownload(appHashid));
+					AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
+					installApp(apk, appHashid);
+				} catch (AptoideExceptionConnectivity e) {
+					toastHandler.sendEmptyMessage(R.string.no_network_connection);
+					e.printStackTrace();
+				} catch (AptoideExceptionSpaceInSDCard e) {
+					toastHandler.sendEmptyMessage(R.string.no_space_left_in_sdcard);
+					e.printStackTrace();
+				} catch (AptoideExceptionDownload e) {
+					toastHandler.sendEmptyMessage(R.string.download_failed);
+					e.printStackTrace();
+				}catch (Exception e){
+					e.printStackTrace();
 				}
-				if(!getManagerCache().isFreeSpaceInSdcard()){
-					return;
-					//TODO raise exception
-				}
-				ViewCache apk = managerDownloads.downloadApk(managerDatabase.getAppDownload(appHashid));
-				AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
-				installApp(apk, appHashid);
 			}
 		});
 	}

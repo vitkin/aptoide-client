@@ -45,7 +45,7 @@ import cm.aptoide.pt.data.util.Constants;
  * @since 3.0
  *
  */
-public class RepoDeltaParser extends DefaultHandler{
+public class ParserRepoDelta extends DefaultHandler{
 	private ManagerXml managerXml = null;
 	
 	private ViewXmlParse parseInfo;
@@ -66,7 +66,7 @@ public class RepoDeltaParser extends DefaultHandler{
 	private StringBuilder tagContentBuilder;
 	
 		
-	public RepoDeltaParser(ManagerXml managerXml, ViewXmlParse parseInfo){
+	public ParserRepoDelta(ManagerXml managerXml, ViewXmlParse parseInfo){
 		this.managerXml = managerXml;
 		this.parseInfo = parseInfo;
 	}
@@ -98,6 +98,7 @@ public class RepoDeltaParser extends DefaultHandler{
 				case vercode:
 					int versionCode = Integer.parseInt(tagContentBuilder.toString());
 					application = new ViewApplication(packageName, versionCode, false);
+					application.setRepoHashid(parseInfo.getRepository().getHashid());
 					break;
 				case ver:
 					application.setVersionName(tagContentBuilder.toString());
@@ -139,7 +140,6 @@ public class RepoDeltaParser extends DefaultHandler{
 						repoSizeDifferential--;
 					}else{
 						repoSizeDifferential++;
-						application.setRepoHashid(parseInfo.getRepository().getHashid());
 						newApplications.add(application);
 						newIcons.add(icon);
 					}
@@ -210,10 +210,10 @@ public class RepoDeltaParser extends DefaultHandler{
 		Log.d("Aptoide-RepoBareParser","Done parsing XML from " + parseInfo.getRepository().getRepoName() + " ... size diff: "+repoSizeDifferential);
 		
 		managerXml.getManagerDatabase().updateRepository(parseInfo.getRepository());
-		Log.d("Aptoide-RepoBareParser","inserting new apps: " + newApplications + " ...");		
-		managerXml.getManagerDatabase().insertApplications(newApplications);
 		Log.d("Aptoide-RepoBareParser","removing apps: " + removedApplications + " ...");	
 		managerXml.getManagerDatabase().removeApplications(removedApplications);
+		Log.d("Aptoide-RepoBareParser","inserting new apps: " + newApplications + " ...");		
+		managerXml.getManagerDatabase().insertApplications(newApplications);
 		
 		Log.d("Aptoide-RepoBareParser","inserting new apps icons: " + newIcons + " ...");	
 		managerXml.getManagerDatabase().insertIconsInfo(newIcons);

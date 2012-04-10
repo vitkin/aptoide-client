@@ -67,6 +67,7 @@ import cm.aptoide.pt.data.webservices.EnumDownloadType;
 import cm.aptoide.pt.data.webservices.ViewDownload;
 import cm.aptoide.pt.data.webservices.ViewDownloadInfo;
 import cm.aptoide.pt.data.webservices.ViewListAppsDownload;
+import cm.aptoide.pt.debug.exceptions.AptoideExceptionDatabase;
 
 /**
  * ManagerDatabase, manages aptoide's sqlite data persistence
@@ -1353,7 +1354,7 @@ public class ManagerDatabase {
 
 		Cursor repoCursor = aptoideAtomicQuery(selectRepo);
 		if(repoCursor.getCount() < 1){
-			return null;
+			throw new AptoideExceptionDatabase("No repository found with repoHashid = "+repoHashid);
 		}
 		
 		repoCursor.moveToFirst();
@@ -1728,6 +1729,7 @@ public class ManagerDatabase {
 //		Log.d("Aptoide-ManagerDatabase", "repos needing update: "+selectReposNeedingUpdate);
 
 		if(cursorReposNeedingUpdate == null || cursorReposNeedingUpdate.isClosed()){
+			cursorReposNeedingUpdate.close();
 			return reposNeedingUpdate;
 		}
 		
@@ -2544,6 +2546,7 @@ public class ManagerDatabase {
 //			Log.d("Aptoide-ManagerDatabase", "updatable apps: "+updatableApps);
 			
 		}catch (Exception e) {
+			e.printStackTrace();
 			if(db.inTransaction()){
 				db.endTransaction();
 			}
@@ -2574,11 +2577,11 @@ public class ManagerDatabase {
 		final int UP_TO_DATE_VERSION_NAME = Constants.COLUMN_THIRD;
 		final int APP_NAME = Constants.COLUMN_FOURTH;
 		final int INSTALLED_VERSION_CODE = Constants.COLUMN_FIFTH;
-		final int REMOTE_PATH_TAIL = Constants.COLUMN_SIXTH;
-		final int SIZE = Constants.COLUMN_SEVENTH;
-		final int MD5HASH = Constants.COLUMN_EIGTH;
-		final int REPO_HASHID = Constants.COLUMN_NINTH;
-		final int REMOTE_PATH_BASE = Constants.COLUMN_TENTH;
+		final int REPO_HASHID = Constants.COLUMN_SIXTH;
+		final int REMOTE_PATH_BASE = Constants.COLUMN_SEVENTH;
+		final int REMOTE_PATH_TAIL = Constants.COLUMN_EIGTH;
+		final int SIZE = Constants.COLUMN_NINTH;
+		final int MD5HASH = Constants.COLUMN_TENTH;
 		final int USERNAME = Constants.COLUMN_ELEVENTH;
 		final int PASSWORD = Constants.COLUMN_TWELVETH;
 
@@ -2586,44 +2589,45 @@ public class ManagerDatabase {
 		ViewListAppsDownload updatableApps = new ViewListAppsDownload();
 		ViewDownload appDownload = null;
 		
-		
-		String selectAppDownloadInfo = "SELECT "+Constants.KEY_APPLICATION_HASHID
-											+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+",U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-											+","+Constants.KEY_APP_INSTALLED_NAME+","+Constants.KEY_APP_INSTALLED_VERSION_CODE
-											+", "+Constants.KEY_DOWNLOAD_REMOTE_PATH_TAIL+", "+Constants.KEY_DOWNLOAD_SIZE
-											+", "+Constants.KEY_DOWNLOAD_MD5HASH
-											+", "+Constants.KEY_REPO_HASHID+", "+Constants.KEY_REPO_BASE_PATH
-											+", "+Constants.KEY_LOGIN_USERNAME+", "+Constants.KEY_LOGIN_PASSWORD
-										+" FROM "+Constants.TABLE_REPOSITORY									
-										+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID+Constants.KEY_APPLICATION_HASHID
-																	+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
-																	+", "+Constants.KEY_APPLICATION_VERSION_CODE+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-																	+", "+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
-															+" FROM "+Constants.TABLE_APPLICATION+" A"
-															+" WHERE "+Constants.KEY_APPLICATION_VERSION_CODE
-																	+"="+"(SELECT MAX("+Constants.KEY_APPLICATION_VERSION_CODE+")"
-																		+" FROM "+Constants.TABLE_APPLICATION
-																		+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME
-																				+"= A."+Constants.KEY_APPLICATION_PACKAGE_NAME+")";
+		String selectAppDownloadInfo = "SELECT up_to_date_app_hashid"
+										+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+","+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+										+","+Constants.KEY_APPLICATION_NAME+","+Constants.KEY_APP_INSTALLED_VERSION_CODE
+										+", R."+Constants.KEY_REPO_HASHID+", R."+Constants.KEY_REPO_BASE_PATH
+										+", "+Constants.KEY_DOWNLOAD_REMOTE_PATH_TAIL+", "+Constants.KEY_DOWNLOAD_SIZE
+										+", "+Constants.KEY_DOWNLOAD_MD5HASH
+										+", "+Constants.KEY_LOGIN_USERNAME+", "+Constants.KEY_LOGIN_PASSWORD
+									+" FROM "+Constants.TABLE_APP_INSTALLED+" I"
+									+" NATURAL INNER JOIN "+Constants.TABLE_REPOSITORY+" R"
+									+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID
+																+", "+Constants.KEY_APPLICATION_PACKAGE_NAME
+																+", "+Constants.KEY_APPLICATION_HASHID+" AS up_to_date_app_hashid"
+																+", "+Constants.KEY_APPLICATION_VERSION_CODE+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+																+", "+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+																+", "+Constants.KEY_APPLICATION_TIMESTAMP
+														+" FROM "+Constants.TABLE_APPLICATION+" A"
+														+" WHERE "+Constants.KEY_APPLICATION_VERSION_CODE
+																+"="+"(SELECT MAX("+Constants.KEY_APPLICATION_VERSION_CODE+")"
+																	+" FROM "+Constants.TABLE_APPLICATION
+																	+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME
+																			+"= A."+Constants.KEY_APPLICATION_PACKAGE_NAME+")";
 		// Filter by hardware?
 		if(filterByHw){
-			ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
-			Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
-			selectAppDownloadInfo +=						" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
-															+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
-															+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
+		ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
+		Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
+		selectAppDownloadInfo +=							" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+														+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+														+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 		}
 		/* Filter by rating */
 		selectAppDownloadInfo +=							" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
-					
-															+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
-										+" NATURAL INNER JOIN "+Constants.TABLE_APP_INSTALLED+" I"	
-										+" NATURAL LEFT JOIN "+Constants.TABLE_DOWNLOAD_INFO
-										+" NATURAL LEFT JOIN "+Constants.TABLE_LOGIN
-										+" WHERE U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+"> I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
-										+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE;
-
-		Log.d("Aptoide-ManagerDatabase", "updatable apps download info: "+selectAppDownloadInfo);
+		
+														+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") U"
+									+" NATURAL LEFT JOIN "+Constants.TABLE_DOWNLOAD_INFO
+									+" NATURAL LEFT JOIN "+Constants.TABLE_LOGIN
+									+" WHERE U."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+"> I."+Constants.KEY_APP_INSTALLED_VERSION_CODE
+									+" AND "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE;
+		
+//		Log.d("Aptoide-ManagerDatabase", "updatable apps download info: "+selectAppDownloadInfo);
 		
 		try{
 			db.beginTransaction();
@@ -2705,32 +2709,37 @@ public class ManagerDatabase {
 		ViewDisplayApplicationAvailable app;							
 		
 		String selectAvailableApps = "SELECT A."+Constants.KEY_APPLICATION_NAME+", A."+Constants.KEY_APPLICATION_HASHID+", A."+Constants.KEY_APPLICATION_PACKAGE_NAME
-											+", MAX(A."+Constants.KEY_APPLICATION_VERSION_CODE+") AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
-											+", A."+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+											+", A."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE+", A."+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
 											+", S."+Constants.KEY_STATS_STARS+", S."+Constants.KEY_STATS_DOWNLOADS
-									+" FROM (SELECT *"
-											+" FROM "+Constants.TABLE_APPLICATION
-											+" WHERE ("+Constants.KEY_APPLICATION_NAME+" LIKE '%"+searchString+"%'"
-												+ "OR "+Constants.KEY_APPLICATION_PACKAGE_NAME+" LIKE '%"+searchString+"%'"+")"
-											+" AND "+Constants.KEY_APPLICATION_REPO_HASHID
-												+" IN "+"(SELECT "+Constants.KEY_REPO_HASHID
-														+" FROM "+Constants.TABLE_REPOSITORY
-														+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE+")";
+											+" FROM "+Constants.TABLE_REPOSITORY									
+											+" NATURAL INNER JOIN (SELECT "+Constants.KEY_APPLICATION_FULL_HASHID+", "+Constants.KEY_APPLICATION_REPO_HASHID+", "+Constants.KEY_APPLICATION_HASHID
+																		+", "+Constants.KEY_APPLICATION_PACKAGE_NAME+", "+Constants.KEY_APPLICATION_NAME
+																		+", "+Constants.KEY_APPLICATION_VERSION_CODE+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_CODE
+																		+", "+Constants.KEY_APPLICATION_VERSION_NAME+" AS "+Constants.DISPLAY_APP_UP_TO_DATE_VERSION_NAME
+																+" FROM "+Constants.TABLE_APPLICATION+" P"
+																+" WHERE ("+Constants.KEY_APPLICATION_NAME+" LIKE '%"+searchString+"%'"
+																		+ "OR "+Constants.KEY_APPLICATION_PACKAGE_NAME+" LIKE '%"+searchString+"%'"+")"
+																+" AND "+Constants.KEY_APPLICATION_VERSION_CODE
+																		+"="+"(SELECT MAX("+Constants.KEY_APPLICATION_VERSION_CODE+")"
+																			+" FROM "+Constants.TABLE_APPLICATION
+																			+" WHERE "+Constants.KEY_APPLICATION_PACKAGE_NAME
+																					+"= P."+Constants.KEY_APPLICATION_PACKAGE_NAME+")";
+		
 		// Filter by hardware?
 		if(filterByHw){
 			ViewHwFilters filters = serviceData.getManagerSystemSync().getHwFilters(); 
 			Log.d("Aptoide-ManagerDatabase", "getUpdatableAppsDisplayInfo HW filters ON: "+filters);
-			selectAvailableApps	+=						" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
-						+								" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
-						+								" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
+			selectAvailableApps	+=								" AND "+Constants.KEY_APPLICATION_MIN_SDK+"<="+filters.getSdkVersion()
+																+" AND "+Constants.KEY_APPLICATION_MIN_SCREEN+"<="+filters.getScreenSize()
+																+" AND "+Constants.KEY_APPLICATION_MIN_GLES+"<="+filters.getGlEsVersion();
 		}
 		/* Filter by rating */
-		selectAvailableApps +=							" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
+		selectAvailableApps +=									" AND "+Constants.KEY_APPLICATION_RATING+"<"+ratingFilter.ordinal()
 															
-														+") A"
+																+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME+") A"
 														
 									+" NATURAL LEFT JOIN "+Constants.TABLE_STATS_INFO+" S"
-									+" GROUP BY "+Constants.KEY_APPLICATION_PACKAGE_NAME;
+									+" WHERE "+Constants.KEY_REPO_IN_USE+"="+Constants.DB_TRUE;
 			// Sort by:
 			switch (sortingPolicy) {
 				case ALPHABETIC:
@@ -3430,7 +3439,8 @@ public class ManagerDatabase {
 	 * @since 3.0
 	 * 
 	 */
-	public ViewDownload getAppDownload(int appHashid){
+	public ViewDownload getAppDownload(int appHashid){	//TODO emulator < 2.2 gives wrong query results?!? in those cases use multi-query solution
+//		Log.d("Aptoide-ManagerDatabase", "download appHashid: "+appHashid);
 		
 		final int REMOTE_PATH_TAIL = Constants.COLUMN_FIRST;
 		final int SIZE = Constants.COLUMN_SECOND;
@@ -3455,7 +3465,7 @@ public class ManagerDatabase {
 			selectAppDownloadInfo +=" AND R."+Constants.KEY_REPO_HASHID+"="+Constants.APPS_REPO_HASHID;
 		} 
 		
-//		Log.d("Aptoide-ManagerDatabase", "download: "+selectAppDownloadInfo);
+		Log.d("Aptoide-ManagerDatabase", "download: "+selectAppDownloadInfo);
 		
 		try{
 			db.beginTransaction();
