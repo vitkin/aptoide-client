@@ -580,7 +580,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	private BroadcastReceiver installedAppsChangeListener = new BroadcastReceiver() {
-		
 		@Override
 		public void onReceive(Context receivedContext, Intent receivedIntent) {
 			if(receivedIntent.getAction().equals(Intent.ACTION_PACKAGE_ADDED)){
@@ -606,14 +605,13 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 	
 	
 	private BroadcastReceiver networkStateChangeListener = new BroadcastReceiver() {
-		
 		@Override
 		public void onReceive(Context receivedContext, Intent receivedIntent) {
 			if(receivedIntent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)){
 				boolean connectivity = managerDownloads.isPermittedConnectionAvailable(getIconDownloadPermissions());
 				Log.d("Aptoide-ServiceData", "networkStateChangeListener - permitted conectivity changed to: "+connectivity);
 				if(connectivity){
-					//TODO install scheduled
+					installAllScheduledApps();
 				}
 			}
 		}
@@ -627,7 +625,6 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 			Log.d("Aptoide-ServiceData", "networkStateChangeListener - registered as receiver");
 			registeredNetworkStateChangeReceiver.set(true);
 		}
-		installAllScheduledApps();
 	}
 	
 	private void unregisterNetworkStateChangeReceiver(){
@@ -2179,6 +2176,7 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 						downloadApp(apphashid);
 					}
 				}
+//				downloadApp(-1255082329);
 			}
 		});
 	}
@@ -2302,6 +2300,9 @@ public class AptoideServiceData extends Service implements InterfaceAptoideLog {
 						throw new AptoideExceptionSpaceInSDCard();
 					}
 					ViewCache apk = managerDownloads.downloadApk(managerDatabase.getAppDownload(appHashid));
+//					ViewCache apk = managerDownloads.downloadApk(managerDownloads.prepareApkDownload(appHashid, "Angry Birds Space   v.1.0.1"
+//																									, "http://mirror.apk04.bazaarandroid.com/apks/4/aptoide-f63c6f2461f65f32b6d144d6d2ff982e/apps/com-rovio-angrybirdsspace-ads-1010-380310-8d7a26ef4246dd6bebf520d519dc4db7.apk"
+//																									, 24722432, "8d7a26ef4246dd6bebf520d519dc4db7"));
 					AptoideLog.d(AptoideServiceData.this, "installing from: "+apk.getLocalPath());	
 					installApp(apk, appHashid);
 				} catch (AptoideExceptionConnectivity e) {

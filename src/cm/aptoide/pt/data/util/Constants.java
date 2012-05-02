@@ -473,7 +473,8 @@ public class Constants {
 	
 	public static final String CREATE_TABLE_APP_TO_INSTALL = "CREATE TABLE IF NOT EXISTS " + TABLE_APP_TO_INSTALL + " ("
 			+ KEY_APP_TO_INSTALL_HASHID + " INTEGER PRIMARY KEY NOT NULL, "
-			+ KEY_APP_TO_INSTALL_SCHEDULED + " INTEGER DEFAULT (1) ); ";
+			+ KEY_APP_TO_INSTALL_SCHEDULED + " INTEGER DEFAULT (1) );";
+//			+ "FOREIGN KEY("+ KEY_APP_TO_INSTALL_HASHID +") REFERENCES "+ TABLE_APPLICATION +"("+ KEY_APPLICATION_FULL_HASHID +") ); "; //TODO
 
 	public static final String FOREIGN_KEY_INSERT_APP_TO_INSTALL = "foreign_key_insert_app_to_install";
 	public static final String FOREIGN_KEY_UPDATE_APP_TO_INSTALL_HASHID_WEAK = "foreign_key_update_app_to_install_hashid_weak";

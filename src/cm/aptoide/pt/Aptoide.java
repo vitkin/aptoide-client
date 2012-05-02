@@ -237,6 +237,11 @@ public class Aptoide extends Activity implements InterfaceAptoideLog, OnItemClic
 	            e.printStackTrace();
 	        }
 	        
+	        
+//	        switchAvailableToEmpty();
+//	        switchInstalledToEmpty();
+//	        switchUpdatableToEmpty();
+	        
 		}
 
 		public void onServiceDisconnected(ComponentName className) {

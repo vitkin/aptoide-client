@@ -714,19 +714,23 @@ public class ManagerDownloads {
 		String localPath = localCache.getLocalPath();
 		String remotePath = download.getRemotePath();
 		int targetBytes;
-
-		if(overwriteCache){
-			getManagerCache().clearCache(localCache);
-		}
-
+		
+		FileOutputStream fileOutputStream = null;
+		
 		try{
-			FileOutputStream fileOutputStream = new FileOutputStream(localPath);
+			fileOutputStream = new FileOutputStream(localPath, !overwriteCache);
 			DefaultHttpClient httpClient = new DefaultHttpClient();
 			HttpGet httpGet = new HttpGet(remotePath);
 			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
 //			Log.d("Aptoide-download","downloading with: "+getUserAgentString()+" login: "+download.isLoginRequired());
 
 //			httpGet.setHeader("User-Agent", getUserAgentString());	//TODO is consistently getting 404 from server
+			if(!overwriteCache){
+				String resumeLength = Long.toString(download.getCache().getFile().length());
+				Log.d("Aptoide-download","downloading from [bytes]: "+resumeLength);
+				httpGet.setHeader("Range", "bytes="+resumeLength+"-");
+				notification.incrementProgress(Integer.parseInt(resumeLength));
+			}
 
 			if(download.isLoginRequired()){		//TODO refactor using username/password args when using webservices (only exception left is when getting hard-disk files)
 				URL url = new URL(remotePath);
@@ -757,18 +761,21 @@ public class ManagerDownloads {
 				managerCache.clearCache(download.getCache());
 				throw new AptoideExceptionNotFound("404 Not found!");
 			}else{
+				
+				Log.d("Aptoide-ManagerDownloads", "Download target size: "+notification.getProgressCompletionTarget());
+				
 //				if(download.isSizeKnown()){
 //					targetBytes = download.getSize()*Constants.KBYTES_TO_BYTES;	//TODO check if server sends kbytes or bytes
 //					notification.setProgressCompletionTarget(targetBytes);
 //				}else{
+
 				if(httpResponse.containsHeader("Content-Length")){
 					targetBytes = Integer.parseInt(httpResponse.getFirstHeader("Content-Length").getValue());
 					Log.d("Aptoide-ManagerDownloads","targetBytes: "+targetBytes);
-					notification.setProgressCompletionTarget(targetBytes);
+//					notification.setProgressCompletionTarget(targetBytes);
 				}
 //				}
 				
-				Log.d("Aptoide-ManagerDownloads", "Download target size: "+notification.getProgressCompletionTarget());
 
 				InputStream inputStream= null;
 				
@@ -791,7 +798,7 @@ public class ManagerDownloads {
 					notification.incrementProgress(bytesRead);
 					fileOutputStream.write(data,0,bytesRead);
 				}
-				Log.d("Aptoide-ManagerDownloads","Download done! Name: "+notification.getActionsTargetName() +" localPath: "+localPath);
+				Log.d("Aptoide-ManagerDownloads","Download done! Name: "+notification.getActionsTargetName()+" localPath: "+localPath);
 				notification.setCompleted(true);
 				fileOutputStream.flush();
 				fileOutputStream.close();
@@ -804,7 +811,15 @@ public class ManagerDownloads {
 
 			}
 		}catch (Exception e) {
+			try {
+				fileOutputStream.flush();
+				fileOutputStream.close();	
+			} catch (Exception e1) { }		
 			e.printStackTrace();
+			if(notification.getNotificationType().equals(EnumNotificationTypes.GET_APP) && download.getCache().getFile().length() > 0){
+				notification.setCompleted(true);
+				serviceData.scheduleInstallApp(notification.getTargetsHashid());
+			}
 			throw new AptoideExceptionDownload(e);
 		}
 	}

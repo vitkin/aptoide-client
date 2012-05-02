@@ -1083,7 +1083,9 @@ public class ManagerDatabase {
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 		}
 	}
 	
@@ -1108,7 +1110,9 @@ public class ManagerDatabase {
 		}catch (Exception e) {
 			// TODO: *send to errorHandler the exception, possibly rollback first or find out what went wrong and deal with it and then call errorHandler*
 		}finally{
-			db.endTransaction();
+			if(db.inTransaction()){
+				db.endTransaction();
+			}
 		}
 	}
 		
