@@ -725,11 +725,13 @@ public class ManagerDownloads {
 //			Log.d("Aptoide-download","downloading with: "+getUserAgentString()+" login: "+download.isLoginRequired());
 
 //			httpGet.setHeader("User-Agent", getUserAgentString());	//TODO is consistently getting 404 from server
+			
+			String resumeLength = Long.toString(download.getCache().getFile().length());
+			int resumeLengthInt = Integer.parseInt(resumeLength);
 			if(!overwriteCache){
-				String resumeLength = Long.toString(download.getCache().getFile().length());
 				Log.d("Aptoide-download","downloading from [bytes]: "+resumeLength);
 				httpGet.setHeader("Range", "bytes="+resumeLength+"-");
-				notification.incrementProgress(Integer.parseInt(resumeLength));
+				notification.incrementProgress(resumeLengthInt);
 			}
 
 			if(download.isLoginRequired()){		//TODO refactor using username/password args when using webservices (only exception left is when getting hard-disk files)
@@ -769,7 +771,7 @@ public class ManagerDownloads {
 //					notification.setProgressCompletionTarget(targetBytes);
 //				}else{
 
-				if(httpResponse.containsHeader("Content-Length")){
+				if(httpResponse.containsHeader("Content-Length") && resumeLengthInt != 0){
 					targetBytes = Integer.parseInt(httpResponse.getFirstHeader("Content-Length").getValue());
 					Log.d("Aptoide-ManagerDownloads","targetBytes: "+targetBytes);
 //					notification.setProgressCompletionTarget(targetBytes);
