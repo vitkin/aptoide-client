@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AptoideConcept</string>
+    <string name="start_loading">Loading&#8230;</string>
+    <string name="available_tab">Available</string>
+    <string name="installed_tab">Installed</string>
+    <string name="updates_tab">Updates</string>
+    <string name="add_repo_private">Private</string>
+    <string name="add_repo_text">Add</string>
+    <string name="extended_server">TODO</string>
+    <string name="btn_add_repo">New Store</string>
+    <string name="menu_rem_repo">Remove Store</string>
+    <string name="number_apks">Applications:</string>
+    <string name="please_wait">Please wait&#8230;</string>
+	
+</resources>
