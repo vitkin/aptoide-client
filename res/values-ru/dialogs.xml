@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="top_please_wait">Пожалуйста подождите</string>
+    <string name="top_error">Ошибка</string>
+    <string name="top_download">Загрузка</string>
+
+    <string name="fetch_apk">Получение приложения</string>
+
+    <string name="aptoide_error">Не удается подключиться к удаленному серверу</string>
+	
+    <string name="manage_repo_add">Добавить новый магазин</string>
+    <string name="manage_repo_answ_wrongl">Логин неверный</string>
+    <string name="manage_repo_answ_cc">Не удается подключиться к серверу</string>
+    <string name="manage_repo_answ_lr">Требуется логин</string>
+	
+    <string name="app_pop_up_no_info">Нет информации на сервере. Искать в маркете нажатием на кнопку ниже для подробной информации.</string>
+    <string name="error_no_market">Google Market не установлен!</string>
+		
+    <string name="settings_cache">Очистка кэш...</string>
+    
+    <string name="remote_in_noSD_title">Недостаточно памяти</string>
+    <string name="remote_in_noSD">SD карта не установлена, или она не работает должным образом\nПожалуйста вставьте одну, или повторно вставьте её и попробуйте ещё раз.</string>
+    <string name="remote_in_noSDspace">У вас недостаточно свободного места на SD карте чтобы использовать Aptoide\nПожалуйста освободите место и повторите попытку.</string>
+    
+    <string name="error_on_update">Процесс обновления не может быть выполнен в следующих магазинах:\n</string>
+    
+    <string name="updating_msg">Обновление списка приложений...</string>
+    <string name="update_repos">Обновление магазинов</string>
+    <string name="update_main">Список магазинов был изменен. \ Вы хотите обновить их?</string>
+    
+    <string name="updating_3g">Вы подключены через WIFI или ethernet. Рекомендуется обновление по WiFi или ethernet соединениям.\nОбновить все равно?</string>
+    <string name="updating_cfrm">Подтвердите обновления Aptoide магазинов?</string>
+    <string name="updating_norepos">Магазины не включены в вашем листе.\nПожалуйста добавьте магазин или включите тот который имеете.</string>
+    
+    <string name="repo_ctx">Опции</string>
+    <string name="repo_ctx_edt">Редактировать</string>
+    <string name="repo_ctx_del">Удалить</string>
+    
+    <string name="repo_del">Удалить магазин</string>
+    <string name="repo_del_msg">Вы хотите удалить магазин?</string>
+    <string name="repo_del_msg2">Выберите магазин чтобы удалить</string>
+    <string name="repo_edt_msg1">Выберите магазин чтобы редактировать</string>
+    <string name="repo_edt_msg2">Редактировать магазин</string>
+
+    <string name="update_done_msg1">Магазины успешно обновлены.</string>
+    <string name="update_process">Обновление магазина %1$d из %2$d</string>
+    
+    <string name="dialog_yes">Да</string>
+    <string name="dialog_no">Нет</string>
+    
+    <string name="update_self_title">Обновление доступно</string>
+    <string name="update_self_msg">Новая версия Aptoide доступна,\nВы хотите обновить?</string>
+    
+    <string name="schDown_downselected">Установить выбранное</string>
+    <string name="schDown_invertselection">Убрать отметки</string>
+    <string name="schDown_removeselected">Удалить выбранное</string>
+    <string name="schDown_sureremove">Вы действительно хотите удалить?</string>
+    
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

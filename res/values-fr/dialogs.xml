@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="top_please_wait">Patientez</string>
+  <string name="top_error">Erreur</string>
+  <string name="top_download">Téléchargement</string>
+  <string name="fetch_apk">Application en cours de chargement</string>
+  <string name="aptoide_error">Impossible de se connecter au serveur</string>
+  <string name="manage_repo_add">Ajout d\'un nouveau dépôt</string>
+  <string name="manage_repo_answ_wrongl">Login incorrect</string>
+  <string name="manage_repo_answ_cc">Impossible de se connecter au serveur</string>
+  <string name="manage_repo_answ_lr">Login requis</string>
+  <string name="app_pop_up_no_info">Pas d\'info sur le serveur. Consultez le Market!</string>
+  <string name="error_no_market">Google Market n\'est pas installé.</string>
+  <string name="settings_cache">Vidange du cache...</string>
+  <string name="remote_in_noSD_title">Pas de mémoire</string>
+  <string name="remote_in_noSD">Carte SD absente ou défectueuse\nInsérez une nouvelle ou réintroduisez l\'ancienne.</string>
+  <string name="remote_in_noSDspace">Pas assez de mémoire sur SD pour installer Aptoide\nLibérez de l\'espace et réessayez!</string>
+  <string name="error_on_update">Le processus de MàJ ne peut pas être poursuivi sur le dépôt:\n</string>
+  <string name="updating_msg">MàJ liste des applications...</string>
+  <string name="update_repos">MàJ des dépôts</string>
+  <string name="update_main">La liste des dépôts a été modifiée.\nMettre à jour?</string>
+  <string name="updating_3g">Pas de connection WIFI ou ethernet. Il est recommandé de mettre à jour avec WiFi ou ethernet.\nMàJ?</string>
+  <string name="updating_cfrm">Confirmer MàJ des dépôts Aptoide?</string>
+  <string name="updating_norepos">Pas de dépôt activé.\nAjouter ou activer un dépôt de votre liste.</string>
+  <string name="repo_ctx">Options</string>
+  <string name="repo_ctx_edt">Editer</string>
+  <string name="repo_ctx_del">Enlever</string>
+  <string name="repo_del">Enlever dépôts</string>
+  <string name="repo_del_msg">Voulez-vous enlver des dépôts? </string>
+  <string name="repo_del_msg2">Choisir dépôt à enlever</string>
+  <string name="repo_edt_msg1">Choisir dépôt à éditer</string>
+  <string name="repo_edt_msg2">Editer dépôt</string>
+  <string name="update_done_msg1">Succès de la MàJ des dépôt</string>
+  <string name="update_process">MàJ dépôt %1$d de %2$d</string>
+  <string name="dialog_yes">Oui</string>
+  <string name="dialog_no">Non</string>
+  <string name="update_self_title">MàJ disponible</string>
+  <string name="update_self_msg">Nouvelle version d\'Aptoide.\nVoulez-vous mettre à jour?</string>
+  <string name="schDown_downselected">Installer sélectionné</string>
+  <string name="schDown_invertselection">Inverser sélection</string>
+  <string name="schDown_removeselected">Retirer sélectionné</string>
+  <string name="schDown_sureremove">Etes-vous sûr de retirer?</string>
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

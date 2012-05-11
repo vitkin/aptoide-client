@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#edece9"
+    android:orientation="vertical"
+    android:padding="10dp" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border"
+        android:orientation="vertical"
+        android:padding="5dp" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="20"
+                android:text="@string/add_repo_text"
+                android:textColor="#4f4f4f"
+                android:textSize="16dip" />
+
+            <EditText
+                android:id="@+id/edit_uri"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="20"
+                android:inputType="textUri"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/sec_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Can&apos;t connect to store"
+                android:textColor="#4f4f4f"
+                android:textSize="16dip"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/sec_msg2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#4f4f4f"
+                android:textSize="16dip"
+                android:visibility="gone" />
+
+            <CheckBox
+                android:id="@+id/secure_chk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10sp" />
+
+            <TextView
+                android:id="@+id/repo_private"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_repo_private"
+                android:textColor="#4f4f4f" />
+
+            <CheckBox
+                android:id="@+id/extended_chk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:padding="10sp"
+                android:textColor="#4f4f4f" />
+
+            <TextView
+                android:id="@+id/extended_server"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:text="@string/extended_server"
+                android:textColor="#4f4f4f" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/sec_user"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:enabled="false"
+            android:hint="Username"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <EditText
+            android:id="@+id/sec_pwd"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:enabled="false"
+            android:hint="Password"
+            android:maxLines="1"
+            android:password="true"
+            android:singleLine="true" />
+    </LinearLayout>
+
+</LinearLayout><!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    
+    
+    <string name="menu_update_repo">Atualizar Lista</string>
+    <string name="menu_update_all">Atualizar todas</string>
+    <string name="menu_manage">Gerenciar Lojas</string>
+    <string name="menu_display_options">Mostrar Opções</string>
+    <string name="menu_order">Alterar ordem</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="menu_about">Sobre</string>
+    <string name="menu_search">Busca</string>
+    
+    
+    <string name="menu_add_repo">Nova Loja</string>
+    <string name="menu_rem_repo">Remover Loja</string>
+    <string name="menu_edit_repo">Editar Loja</string>
+    
+    <string name="btn_yes">Sim</string>
+    <string name="btn_no">Não</string>
+    <string name="btn_ok">Ok</string>
+    <string name="btn_add">Adiciona</string>
+    <string name="btn_cancel">Cancela</string>
+    <string name="btn_done">Concluído</string>
+    <string name="btn_chlog">Changelog</string>
+    <string name="btn_search_market">Busca no Market</string>
+    <string name="schDwnBtn">Dwnl. Agendado</string>
+    
+    
+    
+    
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
