@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="top_please_wait">Por favor aguarde</string>
+	<string name="top_error">Erro</string>
+	<string name="top_download">Download</string>
+
+	<string name="fetch_apk">Recebendo aplicação</string>
+
+	<string name="aptoide_error">Não é possível conectar ao servidor remoto</string>
+	
+	<string name="manage_repo_add">Adicionar nova store</string>
+	<string name="manage_repo_answ_wrongl">Login está errado</string>
+	<string name="manage_repo_answ_cc">Não é possível conectar</string>
+	<string name="manage_repo_answ_lr">Login necessário</string>
+	
+	<string name="app_pop_up_no_info">Sem informação no servidor. Procure no market pressionando o botão abaixo para mais informação.</string>
+	<string name="error_no_market">Não tem o Google Market instalado</string>
+		
+    <string name="settings_cache">Limpando cache...</string>
+    
+    <string name="remote_in_noSD_title">Sem memória</string>
+    <string name="remote_in_noSD">Não foi detectado nenhum SDCard.\nPor favor insira um SDCard e tente novamente.</string>
+    <string name="remote_in_noSDspace">Não tem espaço suficiente no SDCard para executar o Aptoide\nPor favor liberte algum espaço e tente novamente.</string>
+    
+    <string name="error_on_update">O processo de update não foi concluído na seguinte loja:\n</string>
+    
+    <string name="updating_msg">A actualizar lista de aplicações...</string>
+    <string name="update_repos">Actualizar store</string>
+    <string name="update_main">A lista de stores em uso mudou.\nDeseja actualizá-las?</string>
+    
+    <string name="updating_3g">Não está conectado através de Wi-Fi nem Ethernet. É aconselhado actualizar através de Wi-Fi ou Ethernet.\nActualizar?</string>
+    <string name="updating_cfrm">Deseja actualizar as stores do Aptoide?</string>
+    <string name="updating_norepos">Não foram seleccionadas stores.\nPor favor adicione ou active uma store que esteja na lista.</string>
+    
+    <string name="repo_ctx">Opções</string>
+    <string name="repo_ctx_edt">Editar</string>
+    <string name="repo_ctx_del">Remover</string>
+    
+    <string name="repo_del">Remover Store</string>
+    <string name="repo_del_msg">Deseja remover a store? </string>
+    <string name="repo_del_msg2">Escolha a store a remover</string>
+    <string name="repo_edt_msg1">Escolha a store a editar</string>
+    <string name="repo_edt_msg2">Editar store</string>
+
+    <string name="update_done_msg1">Actualização com sucesso.</string>
+    <string name="update_process">A actualizar store %1$d de %2$d</string>
+    
+    <string name="dialog_yes">Sim</string>
+    <string name="dialog_no">Não</string>
+    
+    <string name="update_self_title">Actualização disponível</string>
+    <string name="update_self_msg">Existem uma actualização do Aptoide,\ndeseja actualizar?</string>
+    
+    <string name="schDown_downselected">Instalar Seleccionados</string>
+    <string name="schDown_invertselection">Inverter Selecção</string>
+    <string name="schDown_removeselected">Remover Seleccionados</string>
+    <string name="schDown_sureremove">Tem a certeza que deseja remover?</string>
+    
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

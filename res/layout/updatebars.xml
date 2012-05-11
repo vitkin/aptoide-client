@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" 
+    android:background="#ffffff">
+
+    <TextView
+        android:id="@+id/repo_count"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Update store 2 of 10"
+        android:textColor="#4f4f4f" />
+
+    <ProgressBar
+        android:id="@+id/pbar1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@android:drawable/progress_horizontal" />
+
+    <TextView
+        android:id="@+id/icon_count"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingTop="10.0sp"
+        android:text="Fetching icon 13 of ?" 
+        android:textColor="#4f4f4f"/>
+
+    <ProgressBar
+        android:id="@+id/pbar2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@android:drawable/progress_horizontal" />
+
+</LinearLayout>

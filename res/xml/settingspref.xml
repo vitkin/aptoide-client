@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:title="@string/settings_title_bar">
+  
+  
+  <PreferenceCategory
+        android:title="@string/clear_dwn_title">
+        <ListPreference
+            android:title="@string/clear_dwn_btn"
+            android:summary="@string/clear_dwn_msg"
+            android:key="icdown"
+            android:defaultValue="g3w"
+            android:entries="@array/dwnif"
+            android:entryValues="@array/dwnifv" />
+    </PreferenceCategory>
+       
+  
+  <PreferenceCategory
+        android:title="@string/clear_cache_title">
+  		
+  	 <Preference
+     	android:title="@string/clear_cache_btn"
+        android:summary="@string/clear_cache_msg"
+        android:key="clearcache" />
+ 
+  </PreferenceCategory>
+  
+  <PreferenceCategory
+        android:title="@string/credentialssettings">
+	
+	 <Preference
+     	android:title="@string/clearcredentials"
+        android:summary="@string/clearcredentials_summary"
+        android:key="clearcredentials" />
+          		
+  	 <Preference
+     	android:title="@string/setcredentials"
+        android:summary="@string/setcredentials_summary"
+        android:key="setcredentials" />
+        
+  </PreferenceCategory>
+  <PreferenceCategory
+        android:title="@string/setting_hwfiltertitle">
+      <Preference
+     	android:title="@string/setting_hwspecstitle"
+        android:summary="@string/setting_hwspecstitle"
+        android:key="hwspecs" />
+      <CheckBoxPreference
+     	android:title="@string/setting_appfiltertitle"
+        android:summary="@string/setting_appfiltersum"
+        android:key="hwspecsChkBox"
+        android:defaultValue="true" />
+      <CheckBoxPreference
+     	android:title="Mature Filtering"
+        android:summary="Don\'t show Mature content"
+        android:key="matureChkBox" 
+        />
+     
+  </PreferenceCategory>
+  
+      <PreferenceCategory
+        android:title="@string/setting_schdwntitle">
+      
+      <CheckBoxPreference
+     	android:title="@string/setting_schdwninstalltitle"
+        android:summary="@string/setting_schdwninstallsum"
+        android:key="schDwnBox" />
+      </PreferenceCategory>
+      <PreferenceCategory
+        android:title="@string/check_store_title">
+      
+      <CheckBoxPreference
+     	android:title="@string/check_store_title"
+        android:summary="@string/check_store_sum"
+        android:key="reposIsUpdate" />
+      </PreferenceCategory>
+</PreferenceScreen>
