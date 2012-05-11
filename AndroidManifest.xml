@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="cm.aptoide.pt"
+    android:versionCode="324"
+    android:versionName="2.6.1" 
+    android:installLocation="auto">
+
+    
+	<uses-sdk android:minSdkVersion="4" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
+    <application
+        android:icon="@drawable/icon"
+        android:label="@string/app_name" 
+        >
+        <activity
+            android:name="Aptoide"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.NoBarShadow" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="application/vnd.cm.aptoide.pt" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="aptoiderepo" />
+                <data android:scheme="aptoidexml" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="market" />
+            </intent-filter>
+             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="https" android:host="market.android.com"/>
+                
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="RemoteInSearch"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.NoBarShadow" >
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/find" />
+        </activity>
+        <activity
+            android:name="RemoteInTab"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.NoBarShadow" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".RemoteInSearch" />
+
+            <intent-filter>
+                <action android:name="pt.caixamagica.aptoide.INSTALL_APK" />
+                <action android:name="pt.caixamagica.aptoide.UPDATE_REPOS" />
+            </intent-filter>
+        </activity>
+        
+          
+        
+        
+        <activity
+            android:name="TabInstalled"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.NoBarShadow" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".RemoteInSearch" />
+
+            <intent-filter>
+                <action android:name="pt.caixamagica.aptoide.INSTALL_APK_ACTION" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="TabAvailable"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.NoBarShadow" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".RemoteInSearch" />
+        </activity>
+        <activity
+            android:name="TabUpdates"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.NoBarShadow" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".RemoteInSearch" />
+
+            <intent-filter>
+                <action android:name="pt.caixamagica.aptoide.UPDATE_APK_ACTION" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="ManageRepo"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".RemoteInSearch" />
+        </activity>
+        <activity android:name="ScheduledDownload" android:theme="@style/Theme.NoBarShadow">
+        </activity>
+
+        <receiver android:name=".ScheduledDownloadReceiver" >
+            <intent-filter>
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+       
+
+        <activity
+            android:name="Settings"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.NoTitleBar" />
+        <activity
+            android:name=".ApkInfo"
+            android:configChanges="keyboardHidden|orientation|locale"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.NoBarShadow" />
+
+        <service android:name=".FetchIconsService" android:process=":IconsService" >
+        </service>
+        <service android:name=".FetchExtrasService" android:process=":extrasService" >
+        </service>
+        <service android:name=".DownloadQueueService" />
+        <service android:name=".CheckReposService" />
+
+        <activity android:name="HWSpecActivity" 
+            android:theme="@style/Theme.NoBarShadow">
+        </activity>
+         <activity android:name="com.google.ads.AdActivity"
+              android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+        
+        
+        
+        
+        
+    </application>
+
+    
+
+</manifest><!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
