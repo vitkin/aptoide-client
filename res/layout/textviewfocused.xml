@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cm.aptoide.pt.TextViewFocused xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/textviewfocused"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:ellipsize="marquee"
+    android:gravity="center"
+    android:marqueeRepeatLimit="marquee_forever"
+    android:paddingLeft="3.0dip"
+    android:paddingRight="3.0dip"
+    android:singleLine="true"
+    android:textColor="#4f4f4f" />
+<!-- @author rafael -->

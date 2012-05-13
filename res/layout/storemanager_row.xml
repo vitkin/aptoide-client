@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:textColor="#4f4f4f"
             android:textSize="12sp"
-            android:text="Ola" />
+            android:text="No information" />
     </LinearLayout>
   
   
