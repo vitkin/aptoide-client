@@ -1,12 +1,20 @@
 package cm.aptoide.pt;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Queue;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import android.app.Service;
 import android.content.ComponentName;
@@ -20,6 +28,7 @@ import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +45,7 @@ import android.widget.TextView;
 public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>{
 	DownloadQueueService downloadQueueService;
 	long id;
+	long repo_id;
 	DBHandler db;
 	Context context;
 	HashMap<String, String> elements;
@@ -51,6 +61,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private RatingBar rating;
 	private TextView store;
 	ArrayList<VersionApk> versions;
+	String[] images;
 	private Spinner spinnerMulti;
 	private Button action;
 	private ServiceConnection conn = new ServiceConnection() {
@@ -65,7 +76,10 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		}
 	};
 	private TextView description;
+	ViewPager screenshots;
 	private String description_text;
+	
+	
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
 	@Override
@@ -97,6 +111,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		spinnerMulti = ((Spinner)linearLayout.findViewById(R.id.spinnerMultiVersion));
 		action = (Button) findViewById(R.id.btinstall);
 		description = (TextView) linearLayout.findViewById(R.id.descript);
+		screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
+		
+		
 //		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		listView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,new String[]{}));
 		
@@ -120,7 +137,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			public void run() {
 				try{
-				long repo_id = cursor.getLong(cursor
+				repo_id = cursor.getLong(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_REPO_ID));
 				elements.put("name", cursor.getString(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_NAME)));
@@ -162,6 +179,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				}
 				
 				c.close();
+				
+				
+				
 				}catch (Exception e) {
 					e.printStackTrace();
 				}finally{
@@ -169,6 +189,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						
 						public void run() {
 							loadElements();
+							
 						}
 					});
 				}
@@ -185,14 +206,62 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private void loadElements() {
 		name.setText(elements.get("name"));
 		version.setText(elements.get("vername"));
-		rating.setRating(Float.parseFloat(elements.get("rating")));
+		try{
+			rating.setRating(Float.parseFloat(elements.get("rating")));
+		}catch (Exception e) {
+			rating.setRating(0);
+		}
+		
 		store.setText(elements.get("repo"));
 		description.setText(description_text);
 		final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
 		= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions);
-	spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
-	spinnerMulti.setAdapter(spinnerMultiAdapter );
+		spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
+		spinnerMulti.setAdapter(spinnerMultiAdapter );
 		action.setOnClickListener(installListener);
+		screenshots.setVisibility(View.GONE);
+		new Thread(new Runnable() {
+			
+			private JSONArray imagesurl;
+
+			public void run() {
+				try{
+					HttpClient client = new DefaultHttpClient();
+					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+					HttpResponse response=null;
+					HttpGet request = new HttpGet();
+					String repo = db.getRepoName(repo_id).split(".bazaarandroid.com/")[0];
+					repo = repo.split("http://")[1];
+					request.setURI(new URI(db.getWebservicespath(repo_id)+"webservices/listApkScreens/"+repo+"/"+elements.get("apkid")+"/"+elements.get("vername")+"/json"));
+					System.out.println(request.getURI());
+					response = client.execute(request);
+					System.out.println(request.getURI()+"");
+					String temp = EntityUtils.toString(response.getEntity());
+
+					JSONObject respJSON;
+					respJSON = new JSONObject(temp);
+
+					imagesurl = respJSON.getJSONArray("listing");
+					images = new String[imagesurl.length()];
+					for ( int i = 0; i!= imagesurl.length();i++){
+						images[i]=imagesurl.getString(i);
+					}
+				}catch (Exception e) {
+					e.printStackTrace();
+				}finally{
+					runOnUiThread(new Runnable() {
+
+						public void run() {
+							if(images!=null&&images.length>0){
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,images));
+								screenshots.setVisibility(View.VISIBLE);
+							}
+							
+						}
+					});
+				}
+			}
+		}).start();
 	}
 	
 	private OnClickListener installListener = new OnClickListener() {

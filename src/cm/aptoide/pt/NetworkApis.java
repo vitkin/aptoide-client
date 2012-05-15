@@ -26,7 +26,7 @@ import android.content.SharedPreferences;
 
 public class NetworkApis {
 	
-	public static final int TIME_OUT = 12000;
+	public static final int TIME_OUT = 5000;
 	
 	public static HttpResponse getHttpResponse(String url, String srv, Context mctx){
 		try{

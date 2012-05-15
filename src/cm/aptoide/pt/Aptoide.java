@@ -134,7 +134,11 @@ public class Aptoide extends FragmentActivity {
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("pt.caixamagica.aptoide.REDRAW");
 		registerReceiver(receiver, filter);
-		
+		if(getIntent().hasExtra("newrepo")){
+			Intent i = new Intent(this,StoreManager.class);
+			i.putExtra("newrepo", getIntent().getSerializableExtra("newrepo"));
+			startActivityForResult(i, 0);
+		}
 		
 		
 		
@@ -191,7 +195,7 @@ public class Aptoide extends FragmentActivity {
 						
 						if(parse==0){
 							
-							sp.parse(new File(XML_PATH),new RepoParser(context, handler, server.id,XML_PATH));;
+							sp.parse(new File(XML_PATH),new RepoParser(context, handler, server.id,XML_PATH));
 							
 						}else if(parse==1){
 							System.out.println("Repo need no update");
@@ -246,7 +250,13 @@ public class Aptoide extends FragmentActivity {
 				pd=new ProgressDialog(context);
 				pd.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				pd.setMessage("Parsing: "+parsingProgress+" of "+servers.size());
-				pd.setMax(100);
+				if(msg.what<100){
+					pd.setMax(msg.what);
+				}else{
+					pd.setMax(100);
+				}
+				
+				pd.setCancelable(false);
 				pd.show();
 			} else {
 				pd.incrementProgressBy(1);
@@ -254,36 +264,14 @@ public class Aptoide extends FragmentActivity {
 		}
 	};
 	
-
-	private InputStream OpenHttpConnection(String urlString) throws IOException {
-		InputStream in = null;
-		int response = -1;
-		URL url = new URL(urlString);
-		URLConnection conn = url.openConnection();
-		if (!(conn instanceof HttpURLConnection))
-			throw new IOException("Not an HTTP connection");
-		try {
-			HttpURLConnection httpConn = (HttpURLConnection) conn;
-			httpConn.setAllowUserInteraction(false);
-			httpConn.setInstanceFollowRedirects(true);
-			httpConn.setRequestMethod("GET");
-			httpConn.connect();
-			response = httpConn.getResponseCode();
-			if (response == HttpURLConnection.HTTP_OK) {
-				in = httpConn.getInputStream();
-			}
-		} catch (Exception ex) {
-			throw new IOException("Error connecting");
-		}
-		return in;
-	}
-	
 	@Override
 	protected void onActivityResult(int requestCode, int arg1, Intent data) {
 		super.onActivityResult(requestCode, arg1, data);
 		if(requestCode == NEWREPO_FLAG && data != null && data.hasExtra("update")){
 			updateRepos();
 		}else if(requestCode == NEWREPO_FLAG && data != null && data.hasExtra("redraw")){
+			currentCategory1="none";
+			currentCategory2="none";
 			runOnUiThread(new Runnable() {
 				
 				public void run() {
@@ -548,7 +536,15 @@ public class Aptoide extends FragmentActivity {
 		
 	}
 	
-	private int downloadList(String srv, String delta_hash){
+	private int downloadList(final String srv, String delta_hash){
+		runOnUiThread(new Runnable() {
+			
+			public void run() {
+				pd.setMessage("Connecting...");
+				pd.setCancelable(false);
+				
+			}
+		});
 		String url = srv+REMOTE_FILE ;
 		try {
 
@@ -573,14 +569,14 @@ public class Aptoide extends FragmentActivity {
 							Log.d("Aptoide","--------------------->Connection is null");
 					}catch (Exception e) {
 						e.printStackTrace();
-						continue;}
+						}
 				}
 				if(mHttpResponse == null)
 					return -1;
 			}
 
 			Log.d("Aptoide","Got status: "+ mHttpResponse.getStatusLine().getStatusCode());
-
+			
 			if(mHttpResponse.getStatusLine().getStatusCode() == 200){
 				Log.d("Aptoide","Got status 200");
 

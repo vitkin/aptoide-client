@@ -283,7 +283,17 @@ public class DBHandler {
 //		database.setTransactionSuccessful();
 		
 	}
-
+	
+	public void resetRepo(long repo_id){
+		database.delete(DBStructure.TABLE_APK, DBStructure.COLUMN_APK_REPO_ID+"=?", new String[]{repo_id+""});
+		database.delete(DBStructure.TABLE_OLD, DBStructure.COLUMN_APK_OLD_REPO_ID+"=?", new String[]{repo_id+""});
+		database.delete(DBStructure.TABLE_CATEGORY, DBStructure.COLUMN_CATEGORY_REPO_ID+"=?", new String[]{repo_id+""});
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_REPOS_DELTA, 0);
+		values.put(DBStructure.COLUMN_REPOS_UPDATETIME, 0);
+		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_ID+"=?", new String[]{repo_id+""});
+	}
+	
 	public String getCountAll() {
 		Cursor c = database.query(DBStructure.TABLE_APK, new String[]{DBStructure.COLUMN_APK_APKID}, null, null, null, null, null);
 		String returnString = c.getCount()+"";
@@ -711,6 +721,31 @@ public class DBHandler {
 			e.printStackTrace();
 		}
 		return c;
+	}
+
+	public int getApkId(String apkid) {
+		Cursor c = null;
+		try{
+			c = database.query(DBStructure.TABLE_APK, new String[]{DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_APKID+"=?", new String[]{apkid}, null, null, null);
+			c.moveToFirst();
+			if(c.getCount()>0){
+				return c.getInt(0);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	public void setRepoInUse(long repo_id, int i) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_REPOS_INUSE,i);
+		try{
+			database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_ID+"=?", new String[]{repo_id+""});
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}	
 	
 }
