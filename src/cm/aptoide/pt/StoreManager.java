@@ -3,7 +3,7 @@ package cm.aptoide.pt;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -23,30 +23,33 @@ import org.apache.http.protocol.HttpContext;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,6 +66,9 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	private CursorAdapter adapter;
 	private enum returnStatus {OK, LOGIN_REQUIRED, BAD_LOGIN, FAIL, EXCEPTION};
 	private ProgressDialog pd;
+	ArrayList<String> repos;
+	private ArrayList<Integer> cleanRepos = new ArrayList<Integer>();
+	
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -85,15 +91,106 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			public void bindView(View v, Context arg1, Cursor c) {
 				((TextView) v.findViewById(R.id.rowTextView)).setText(c.getString(1));
 				int number_apks= c.getInt(9);
+				int repo_id= c.getInt(0);
+				final boolean checked = c.getInt(10)==1;
+				System.out.println(c.getInt(10));
 				if(number_apks>0){
 					((TextView) v.findViewById(R.id.numberapks)).setText(getText(R.string.number_apks)+" "+number_apks);
+				}else{
+					((TextView) v.findViewById(R.id.numberapks)).setText("No information");
 				}
+				((CheckBox) v.findViewById(R.id.CheckBox01)).setChecked(checked);
+				((CheckBox) v.findViewById(R.id.CheckBox01)).setTag(repo_id);
+				((CheckBox) v.findViewById(R.id.CheckBox01)).setOnClickListener(new View.OnClickListener() {
+					
+					
+
+					public void onClick(View v) {
+						int repo_id = (Integer)v.getTag();
+						if(checked){
+							db.setRepoInUse(repo_id,0);
+							cleanRepos.add(repo_id);
+							
+						}else{
+							if(cleanRepos.contains(repo_id)){
+								cleanRepos.remove((Object)repo_id);
+							}
+							update=true;
+							
+							db.setRepoInUse(repo_id,1);
+						}
+						
+						redraw();
+					}
+				});
+				
 				
 			}
+			
 		};
 		lv.setAdapter(adapter);
+		lv.setOnItemClickListener(storeListener);
+		
 		redraw();
 		registerForContextMenu(lv);
+		if(getIntent().hasExtra("newrepo")){
+			repos = (ArrayList<String>) getIntent().getSerializableExtra("newrepo");
+			for(final String uri2 : repos){
+				
+				AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+				alertDialog.setMessage("Server: "+uri2);
+				alertDialog.setButton(Dialog.BUTTON_POSITIVE,"yes", new OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						pd=new ProgressDialog(context);
+						pd.setMessage(getString(R.string.please_wait));
+						pd.show();
+						new Thread(new Runnable() {
+							private boolean containsRepo;
+							private String uri;
+							public void run() {
+								try {
+									
+									this.uri = (checkServer(serverCheck(uri2), username, password));
+									containsRepo = serverContainsRepo(uri);
+								} catch (Exception e) {
+									e.printStackTrace();
+								} finally {
+									if(uri!=null&&!containsRepo){
+										System.out.println(uri);
+										db.insertRepository(uri,username,password);
+									}
+									
+									runOnUiThread(new Runnable() {
+										
+										public void run() {
+											redraw();
+											pd.dismiss();
+											if(uri==null||containsRepo){
+												runOnUiThread(new Runnable() {
+													
+													public void run() {
+														Toast.makeText(context, "Repo insertion failed", 1).show();
+														
+													}
+												});
+											}
+										}
+									});
+									
+								}
+							}
+
+							
+						}).start();
+						update=true;
+					}
+					
+				});
+				alertDialog.show();
+			}
+			
+		}
 		
 	}
 	
@@ -151,15 +248,41 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 		return super.onOptionsItemSelected(item);
 	}
 	String uri;
+	String password = "";
+	String username = ""; 
 	AlertDialog alertDialog;
+	
+	private OnItemClickListener storeListener = new OnItemClickListener() {
+
+		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,long arg3) {
+			int repo_id=(int) arg0.getItemIdAtPosition(arg2);
+			if(((CheckBox) arg1.findViewById(R.id.CheckBox01)).isChecked()){
+				db.setRepoInUse(repo_id,0);
+				cleanRepos.add(repo_id);
+				
+			}else{
+				if(cleanRepos.contains(repo_id)){
+					cleanRepos.remove((Object)repo_id);
+				}
+				db.setRepoInUse(repo_id,1);
+				update=true;
+			}
+			
+			redraw();
+		}
+		
+	};
+	
 	
 	
 	private OnClickListener addRepoListener = new OnClickListener() {
 
 		public void onClick(DialogInterface dialog, int which) {
+			password = ((TextView) alertDialogView.findViewById(R.id.sec_pwd)).getText().toString();
+			username = ((TextView) alertDialogView.findViewById(R.id.sec_user)).getText().toString();
+			
 			uri = serverCheck(((TextView) alertDialogView.findViewById(R.id.edit_uri)).getText().toString());
-			final String password = ((TextView) alertDialogView.findViewById(R.id.sec_pwd)).getText().toString();
-			final String username = ((TextView) alertDialogView.findViewById(R.id.sec_user)).getText().toString();
+			
 			pd=new ProgressDialog(context);
 			pd.setMessage(getString(R.string.please_wait));
 			pd.show();
@@ -175,6 +298,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 						e.printStackTrace();
 					} finally {
 						if(uri!=null&&!containsRepo){
+							System.out.println(uri);
 							db.insertRepository(uri,username,password);
 						}
 						
@@ -183,7 +307,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 							public void run() {
 								redraw();
 								pd.dismiss();
-								if(uri==null&&containsRepo){
+								if(uri==null||containsRepo){
 									alertDialog.show();
 								}
 								
@@ -217,6 +341,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 		Cursor c = db.getRepositories();
 		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 			if(c.getString(1).equals(uri)){
+				c.close();
 				return true;
 			}
 		}
@@ -311,6 +436,44 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 	
 	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(keyCode==KeyEvent.KEYCODE_BACK){
+			if(!cleanRepos.isEmpty()){
+				pd=new ProgressDialog(context);
+				pd.setMessage(getString(R.string.please_wait));
+				pd.show();
+				new Thread(new Runnable() {
+
+					public void run() {
+						try{
+							for(int i = 0; i!=cleanRepos.size();i++){
+								db.resetRepo(cleanRepos.get(i));
+							}
+						}catch (Exception e) {
+
+						}finally{
+							runOnUiThread(new Runnable() {
+
+								public void run() {
+									pd.dismiss();
+									redraw=true;
+									finish();
+
+								}
+							});
+
+						}
+					}
+				}).start();
+			}else{
+				finish();
+			}
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	
+	@Override
 	public void finish() {
 		if(update){
 			Intent intent = new Intent();
@@ -321,7 +484,9 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			intent.putExtra("redraw", redraw);
 			setResult(Activity.RESULT_OK, intent);
 		}
+		
 		super.finish();
+		
 	}
 	
 private returnStatus checkServerConnection(String uri, String user, String pwd){

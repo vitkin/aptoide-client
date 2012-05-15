@@ -42,7 +42,12 @@ public class AvailableCursorAdapter extends CursorAdapter {
         imageLoader.DisplayImage(cursor.getLong(4) , cursor.getString(cursor.getColumnIndex("icon")), holder.icon, arg1);
         holder.vername.setText(cursor.getString(3));
         holder.downloads.setText(cursor.getString(6));
-        holder.rating.setRating(Float.parseFloat(cursor.getString(5)));
+        try{
+        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
+        }catch (Exception e) {
+        	holder.rating.setRating(0);
+		}
+        
         
 	}
 

@@ -146,7 +146,14 @@ public class ImageLoader {
         	
             if(imageViewReused(photoToLoad))
                 return;
-            Bitmap bmp=getBitmap(db.getBasepath(repo_id)+photoToLoad.url);
+            
+            Bitmap bmp;
+            if(repo_id>0){
+            	bmp=getBitmap(db.getBasepath(repo_id)+photoToLoad.url);
+            }else{
+            	bmp=getBitmap(photoToLoad.url);
+            }
+            
             memoryCache.put(photoToLoad.url, bmp);
             if(imageViewReused(photoToLoad))
                 return;
