@@ -21,5 +21,42 @@
     <string name="download_alrt">Downloading: </string>
     <string name="srch_label">Aptoide</string>
     <string name="srch_hint">Name of the application</string>
+    <string name="tastenotavailable">Not available</string>
+    <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
+    <string name="opinionsuccess">Your request was successfully submitted</string>
+    <string name="likes">Likes: </string>
+    <string name="dislikes">Don\'t likes: </string>
+    <string name="postingtaste">Your request is being submitted</string>
+    <string name="showpass">Show password</string>
+     <string name="user">User name...</string>
+    <string name="pass">Password...</string>
+    <string name="submit">Submit</string>
+    <string name="new_account">New account</string>
+    <string name="setcredentials">Bazaar Login</string>
+    <string name="usernotdef">User not defined</string>
+    <string name="passwordnotdef">Password not defined</string>
+    <string name="loggingin">Logging in...</string>
+    <string name="unabletoexecute">Unable to execute</string>
+    <string name="failedcredentials">Failed to login the given credentials</string>
+    <string name="loading_likes">Likes loading...</string>
+    <string name="ver_str">2.6.2</string>
+    <string name="body">Body...</string>
+    <string name="subject">Subject...</string>
+    <string name="inresponseto">\@</string>
+    <string name="commentlabel">Comment app...</string>
+    <string name="enterbody">Enter your review on the body section</string>
+    <string name="postingcomment">Posting your comment...</string>
+    <string name="commentadded">Your comment as been successfully submitted</string>
+    <string name="order_popup_title1">Order applications by: </string>
+    <string name="order_popup_lst1">Most recent first </string>
+    <string name="order_popup_lst2">Alphabetically </string>
+    <string name="order_popup_lst3">Rating </string>
+    <string name="order_popup_lst4">Download number </string>
+
+    <string name="order_popup_title2">Show applications: </string>
+    <string name="order_popup_catg1">By category </string>
+    <string name="order_popup_catg2">All applications </string>
+    
+    
 	
 </resources>

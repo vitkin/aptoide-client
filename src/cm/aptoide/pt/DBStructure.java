@@ -75,7 +75,7 @@ public class DBStructure extends SQLiteOpenHelper {
 	
 
 	private static final String DATABASE_NAME = "aptoide.db";
-	private static final int DATABASE_VERSION = 31;
+	private static final int DATABASE_VERSION = 32;
 
 	// Database creation sql statement
 	private static final String CREATE_TABLE_APK = "CREATE TABLE "
@@ -84,14 +84,14 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_APK_NAME+ " text , " 
 			+ COLUMN_APK_VERNAME + " text , " 
 			+ COLUMN_APK_VERCODE + " integer , " 
-			+ COLUMN_APK_DOWNLOADS + " text , " 
-			+ COLUMN_APK_RATING + " text , "
+			+ COLUMN_APK_DOWNLOADS + " integer , " 
+			+ COLUMN_APK_RATING + " float , "
 			+ COLUMN_APK_AGE + " text , " 
 			+ COLUMN_APK_SIZE + " text , " 
 			+ COLUMN_APK_MD5 + " text , " 
 			+ COLUMN_APK_PATH + " text , " 
 			+ COLUMN_APK_ICON + " text , " 
-			+ COLUMN_APK_DATE + " text , " 
+			+ COLUMN_APK_DATE + " date , " 
 			+ COLUMN_APK_SDK + " text , " 
 			+ COLUMN_APK_SCREEN + " text , " 
 			+ COLUMN_APK_OPENGLES + " text ," 

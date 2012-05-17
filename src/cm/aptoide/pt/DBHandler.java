@@ -184,11 +184,11 @@ public class DBHandler {
 		}
 	}
 
-	public Cursor getApk() {
+	public Cursor getApk(String orderBy) {
 		Cursor c = null;
 		 try {
 			 
-			c = database.rawQuery("select name,_id,icon,vercode,repo_id from apk order by name collate nocase", null);
+			c = database.rawQuery("select name,_id,icon,vername,repo_id,rating,downloads from apk order by "+orderBy, null);
 			
 			c.moveToFirst();
 //			c= database.query(DBStructure.TABLE_APK , new String[]{"*","max("+DBStructure.COLUMN_APK_VERCODE+")"}, null, null, DBStructure.COLUMN_APK_APKID, null, DBStructure.COLUMN_APK_NAME+" collate nocase",null);
@@ -199,10 +199,10 @@ public class DBHandler {
 				
 	}
 	
-	public Cursor getInstalled() {
+	public Cursor getInstalled(String orderBy) {
 		Cursor c = null;
 		try {
-			c = database.rawQuery("select a.name, b._id, b.icon, a.vername,b.repo_id, b.rating,b.downloads from installed a INNER JOIN apk b ON a.apkid=b.apkid ",null);
+			c = database.rawQuery("select a.name, b._id, b.icon, a.vername,b.repo_id, b.rating,b.downloads from installed a INNER JOIN apk b ON a.apkid=b.apkid order by b."+orderBy,null);
 			c.moveToFirst();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -211,11 +211,11 @@ public class DBHandler {
 				
 	}
 	
-	public Cursor getUpdates() {
+	public Cursor getUpdates(String orderBy) {
 		
 		Cursor c = null;
 		 try {
-			c= database.rawQuery("select b.name, b._id, b.icon, b.vername,b.repo_id, b.rating,b.downloads from installed as a INNER JOIN apk b ON a.apkid=b.apkid and a.vercode < b.vercode",null);
+			c= database.rawQuery("select b.name, b._id, b.icon, b.vername,b.repo_id, b.rating,b.downloads from installed as a INNER JOIN apk b ON a.apkid=b.apkid and a.vercode < b.vercode order by b."+orderBy,null);
 			c.moveToFirst();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -497,11 +497,11 @@ public class DBHandler {
 		}
 	}
 
-	public Cursor getApkByCategory(String category) {
+	public Cursor getApkByCategory(String category, String orderBy) {
 		Cursor c = null;
 		
 		try {
-			c= database.rawQuery("select b.name, b._id,b.icon,b.vername,b.repo_id,b.rating,b.downloads from category a, apk b where a._id=b._id and a.category2='"+category+"' order by b.name collate nocase" ,null);
+			c= database.rawQuery("select b.name, b._id,b.icon,b.vername,b.repo_id,b.rating,b.downloads from category a, apk b where a._id=b._id and a.category2='"+category+"' order by b."+orderBy ,null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -746,6 +746,24 @@ public class DBHandler {
 			e.printStackTrace();
 		}
 		
+	}
+
+	public String[] getLogin(String srv) {
+		String[] login = new String[2];
+		try{
+			Cursor c = database.query(DBStructure.TABLE_REPOS, new String[]{DBStructure.COLUMN_REPOS_USER,DBStructure.COLUMN_REPOS_PASSWORD}, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{srv}, null, null, null);
+			c.moveToFirst();
+			if(c.getCount()!=0){
+				login[0]=c.getString(0);
+				login[1]=c.getString(1);
+			}
+			c.close();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		return login;
 	}	
 	
 }
