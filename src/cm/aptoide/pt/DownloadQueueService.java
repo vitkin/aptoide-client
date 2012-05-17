@@ -273,7 +273,7 @@ public class DownloadQueueService extends Service {
 					
 					String remotePath = notifications.get(threadApkidHash).get("remotePath");
 					String md5sum = notifications.get(threadApkidHash).get("md5sum");
-					
+					String size = notifications.get(threadApkidHash).get("intSize");
 					String localPath = notifications.get(threadApkidHash).get("localPath");
 					 Log.d("Aptoide-DownloadQueuService","thread apkidHash: "+threadApkidHash +" localPath: "+localPath);	
 					
@@ -281,14 +281,31 @@ public class DownloadQueueService extends Service {
 					Message downloadArguments = new Message();
 					try{
 						
-						// If file exists, removes it...
+						FileOutputStream saveit;
+						int intermediateProgress;
+						long range = 0;
 						 File f_chk = new File(localPath);
 						 if(f_chk.exists()){
-							 f_chk.delete();
+							 range = f_chk.length();
+							 System.out.println((range/1000));
+							 System.out.println(Integer.parseInt(size));
+							 if((range/1000)<Integer.parseInt(size)){
+								 
+								 saveit = new FileOutputStream(localPath,true);
+								 intermediateProgress=(int) range;
+							 }else{
+								 range=0;
+								 saveit = new FileOutputStream(localPath);
+								 intermediateProgress = 0;
+							 }
+							 
+						 }else{
+							 saveit = new FileOutputStream(localPath);
+							 intermediateProgress = 0;
 						 }
 						 f_chk = null;
 						
-						FileOutputStream saveit = new FileOutputStream(localPath);
+						
 						DefaultHttpClient mHttpClient = new DefaultHttpClient();
 						HttpGet mHttpGet = new HttpGet(remotePath);
 						
@@ -296,7 +313,11 @@ public class DownloadQueueService extends Service {
 						String myid = sPref.getString("myId", "NoInfo");
 						String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 						
-//						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+						if(range>0){
+							mHttpGet.setHeader("Range", "bytes="+range+"-");
+						}
+						
 						
 						if(Boolean.parseBoolean(notifications.get(threadApkidHash).get("loginRequired"))){
 							URL mUrl = new URL(remotePath);
@@ -327,7 +348,7 @@ public class DownloadQueueService extends Service {
 							red = getit.read(data, 0, 8096);
 
 							int progressNotificationUpdate = 200;
-							int intermediateProgress = 0;
+							
 							while(red != -1) {
 								if(progressNotificationUpdate == 0){
 									if(!keepScreenOn.isHeld()){

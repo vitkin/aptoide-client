@@ -16,12 +16,18 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
+import android.app.Dialog;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -30,19 +36,33 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
+import android.view.View.OnTouchListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import cm.aptoide.pt.webservices.comments.AddCommentDialog;
+import cm.aptoide.pt.webservices.comments.Comment;
+import cm.aptoide.pt.webservices.comments.CommentPosterListOnScrollListener;
+import cm.aptoide.pt.webservices.comments.CommentsAdapter;
+import cm.aptoide.pt.webservices.login.LoginDialog;
+import cm.aptoide.pt.webservices.taste.AddTaste;
+import cm.aptoide.pt.webservices.taste.EnumUserTaste;
+import cm.aptoide.pt.webservices.taste.TastePoster;
+import cm.aptoide.pt.webservices.taste.WrapperUserTaste;
 
-public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>{
+public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>,OnDismissListener{
 	DownloadQueueService downloadQueueService;
 	long id;
 	long repo_id;
@@ -78,7 +98,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private TextView description;
 	ViewPager screenshots;
 	private String description_text;
-	
+	SharedPreferences sPref;
+	private CommentsAdapter<Comment> commentAdapter;
+	private WrapperUserTaste userTaste;
+	private LinearLayout loadComLayout;
+	private String repo;
+	private String apkid;
+	private String vername;
+	private ImageView icon;
+	ImageLoader loader;
 	
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
@@ -87,12 +115,14 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		super.onCreate(arg0);
 		context = this;
 		bindService(new Intent(this,DownloadQueueService.class), conn , Service.BIND_AUTO_CREATE);
+		sPref=getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		id = getIntent().getExtras().getLong("id");
 		type = getIntent().getExtras().getString("type");
 		db = new DBHandler(context);
 		setContentView(R.layout.apk_info);
 		name = (TextView) findViewById(R.id.app_name);
-		
+		icon = (ImageView) findViewById(R.id.app_hashid);
+		loader = new ImageLoader(context);
 		listView = (ListView) findViewById(R.id.listComments);
 		
 		LayoutInflater inflater = this.getLayoutInflater();
@@ -103,19 +133,30 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 		this.like = ((ImageView)linearLayout.findViewById(R.id.likesImage));
 		this.dislike = ((ImageView)linearLayout.findViewById(R.id.dislikesImage));
+		this.userTaste = new WrapperUserTaste();
 		version = (TextView) linearLayout.findViewById(R.id.versionInfo);
 		rating = (RatingBar) linearLayout.findViewById(R.id.rating);
 		apk_about = (TextView)linearLayout.findViewById(R.id.descript);
 		listView.addHeaderView(linearLayout, null, false);
+		TextView textView = new TextView(this);
+		textView.setText(this.getString(R.string.commentlabel));
+		textView.setTextSize(20);
+		textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
+		textView.setPadding(0, 10, 0, 10);
+		textView.setGravity(Gravity.CENTER_HORIZONTAL);
+		listView.addHeaderView(textView);
+		loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
+		listView.addFooterView(loadComLayout);
+		
 		store = (TextView)linearLayout.findViewById(R.id.app_store);
 		spinnerMulti = ((Spinner)linearLayout.findViewById(R.id.spinnerMultiVersion));
 		action = (Button) findViewById(R.id.btinstall);
 		description = (TextView) linearLayout.findViewById(R.id.descript);
 		screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
-		
+		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		
 //		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
-		listView.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,new String[]{}));
+		listView.setAdapter(commentAdapter);
 		
 		getSupportLoaderManager().initLoader(0x20, null, this);
 		
@@ -168,7 +209,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				versions.add(versionApkPassed);
 				Collections.sort(versions, Collections.reverseOrder());
 				if(versions.size()==1){
-					spinnerMulti.setVisibility(View.GONE);
+					runOnUiThread(new Runnable() {
+						
+						public void run() {
+							spinnerMulti.setVisibility(View.GONE);
+						}
+					});
+
 				}
 				Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDBStructure.COLUMN_COMMENTS_COMMENT}, ExtrasDBStructure.COLUMN_COMMENTS_APKID+"=?", new String[]{elements.get("apkid")}, null);
 				c.moveToFirst();
@@ -204,6 +251,12 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	}
 	
 	private void loadElements() {
+		
+		apkid=elements.get("apkid");
+		vername=elements.get("vername");
+		repo = db.getRepoName(repo_id).split("\\.")[0];
+		repo = repo.split("http://")[1];
+		loader.DisplayImage(-1, elements.get("iconpath"), icon, context);
 		name.setText(elements.get("name"));
 		version.setText(elements.get("vername"));
 		try{
@@ -217,8 +270,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
 		= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions);
 		spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
-		spinnerMulti.setAdapter(spinnerMultiAdapter );
+		spinnerMulti.setAdapter(spinnerMultiAdapter);
+		
 		action.setOnClickListener(installListener);
+		loadScreenshots();
+		loadCommentsAndTaste();
+	}
+	private void loadScreenshots() {
 		screenshots.setVisibility(View.GONE);
 		new Thread(new Runnable() {
 			
@@ -230,8 +288,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 					HttpResponse response=null;
 					HttpGet request = new HttpGet();
-					String repo = db.getRepoName(repo_id).split(".bazaarandroid.com/")[0];
-					repo = repo.split("http://")[1];
+					
 					request.setURI(new URI(db.getWebservicespath(repo_id)+"webservices/listApkScreens/"+repo+"/"+elements.get("apkid")+"/"+elements.get("vername")+"/json"));
 					System.out.println(request.getURI());
 					response = client.execute(request);
@@ -311,6 +368,144 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		unbindService(conn);
+	}
+	
+	private TastePoster tastePoster = null;
+	private CommentPosterListOnScrollListener loadOnScrollCommentList;
+	final Runnable newVersionFetchComments = new Runnable(){
+
+
+		public void run() {
+			loadOnScrollCommentList.fetchNewApp(repo, apkid, vername);
+		}
+	};
+	
+	private void loadCommentsAndTaste() {
+		try{
+			loadOnScrollCommentList = new CommentPosterListOnScrollListener(this, commentAdapter, repo, apkid, vername, loadComLayout);
+			listView.setOnScrollListener(loadOnScrollCommentList);
+			new Thread(newVersionFetchComments).start();
+			
+
+			listView.setOnItemClickListener(new OnItemClickListener(){
+				
+
+				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					if(position==1){ // If comment app... option selected
+						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
+								repo,
+				 				apkid, 
+				 				vername,
+				 				userTaste);
+						commentDialog.show();
+					}
+				}
+			});
+			
+			
+			
+			
+			this.like.setOnTouchListener(new OnTouchListener(){
+			      public boolean onTouch(View view, MotionEvent e) {
+			          switch(e.getAction())
+			          {
+			             case MotionEvent.ACTION_DOWN:
+			            	 
+			            	 if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null || sPref.getString(Configs.LOGIN_PASSWORD, null)==null){				
+			            		LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, 
+			            										dislike, repo , 
+			            										apkid, vername, EnumUserTaste.LIKE, userTaste);
+								loginComments.setOnDismissListener(ApkInfo.this);
+								loginComments.show();
+							 }else{
+								
+								 new AddTaste(
+						 				ApkInfo.this, 
+						 				repo,
+						 				apkid, 
+						 				vername, 
+						 				sPref.getString(Configs.LOGIN_USER_NAME, null), 
+						 				sPref.getString(Configs.LOGIN_PASSWORD, null), 
+						 				EnumUserTaste.LIKE, likes, dislikes, like, dislike, userTaste).submit();
+								
+							 } 
+			            	 break;
+			          }
+			          return false;  //means that the listener dosen't consume the event
+			      }
+			});
+			this.dislike.setOnTouchListener(new OnTouchListener(){
+			      public boolean onTouch(View view, MotionEvent e) {
+			          switch(e.getAction())
+			          {
+			             case MotionEvent.ACTION_DOWN:
+			            	 
+			            	  if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null || sPref.getString(Configs.LOGIN_PASSWORD, null)==null){				
+			            		  	LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
+			            		  									repo, apkid, vername, EnumUserTaste.DONTLIKE, userTaste);
+			            		  	loginComments.setOnDismissListener(ApkInfo.this);
+									loginComments.show();
+			            	  }else{
+			            		  
+			            		  new AddTaste(
+								 		ApkInfo.this, 
+								 		repo,
+								 		apkid, 
+								 		vername, 
+								 		sPref.getString(Configs.LOGIN_USER_NAME, null), 
+								 		sPref.getString(Configs.LOGIN_PASSWORD, null), 
+								 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste).submit();
+								 
+			            	  }
+			                  break;
+			          }
+			          return false;  //means that the listener dosen't consume the event
+			      }
+			});
+			
+			selectTaste(repo , apkid, vername, likes, dislikes, like, dislike, userTaste);
+			
+			
+			
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	public void selectTaste(String repo, String apkid, String version, 
+			TextView likes, TextView dontlikes, ImageView like, 
+			ImageView dislike, WrapperUserTaste userTaste){
+		
+		likes.setText(this.getString(R.string.loading_likes));
+		dislikes.setText("");
+		dislike.setImageResource(R.drawable.dontlike);
+		like.setImageResource(R.drawable.like);
+
+		if(tastePoster!=null)
+			tastePoster.cancel(true);
+		
+		
+		
+		tastePoster = new TastePoster(this, apkid, version, repo, likes, dontlikes, 
+				like, dislike, sPref.getString( Configs.LOGIN_USER_ID , null),
+				userTaste);
+		tastePoster.execute();
+
+	}
+	public void onDismiss(DialogInterface dialog) {
+		if(sPref.getString(Configs.LOGIN_USER_NAME, null)!=null && sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
+			new AddTaste(
+	 				ApkInfo.this, 
+	 				repo,
+	 				apkid, 
+	 				vername, 
+	 				sPref.getString(Configs.LOGIN_USER_NAME, null), 
+	 				sPref.getString(Configs.LOGIN_PASSWORD, null), 
+	 				((LoginDialog)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste).submit();
+		}
 	}
 	
 }

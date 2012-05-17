@@ -5,27 +5,39 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,24 +45,27 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import cm.aptoide.pt.utils.Algorithms;
 
 import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
@@ -76,14 +91,17 @@ public class Aptoide extends FragmentActivity {
 	
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 	private String LOCAL_PATH = SDCARD+"/.aptoide";
-	
-	
+	SharedPreferences sPref;
+	Editor editor;
+	boolean pop_change = false;
+	private String order_lst = DBStructure.COLUMN_APK_NAME+" collate nocase";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.aptoide);
-
+		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+		editor = sPref.edit();
 		context = this;
 		XML_PATH = getCacheDir()+"/temp_info.xml";
 		db = new DBHandler(context);
@@ -126,6 +144,7 @@ public class Aptoide extends FragmentActivity {
 		
 		available_listView.setOnItemClickListener(availItemClick);
 		updates_listView.setOnItemClickListener(updatesItemClick);
+		installed_listView.setOnItemClickListener(installedItemClick);
 		search.setOnClickListener(searchClick);
 		
 		File local_path = new File(LOCAL_PATH);
@@ -140,6 +159,46 @@ public class Aptoide extends FragmentActivity {
 			startActivityForResult(i, 0);
 		}
 		
+		if(!sPref.contains("orderByCategory")){
+			editor.putBoolean("orderByCategory", true);
+		}
+		
+		if(!sPref.contains("order_lst")){
+			editor.putString("order_lst", order_lst);
+		}
+		
+		editor.commit();
+		
+		if(sPref.getBoolean("firstrun",true)&&new File(LOCAL_PATH+"/servers.xml").exists()){
+			try{
+				Editor editor = sPref.edit();
+				editor.putBoolean("firstrun", false);
+				editor.commit();
+				SAXParserFactory spf = SAXParserFactory.newInstance();
+				SAXParser sp = spf.newSAXParser();
+		    	
+				MyappHandler handler = new MyappHandler();
+				
+		    	sp.parse(new File("/sdcard/.aptoide/servers.xml"),handler);
+		    	ArrayList<String> server = handler.getServers();
+		    	if(!server.isEmpty()){
+		    		Intent i = new Intent(this,StoreManager.class);
+					i.putExtra("newrepo", server);
+					//TODO Alertdialog
+					startActivityForResult(i, 0);
+		    	}
+		    	
+				
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
+		
+
+		
 		
 		
 	}
@@ -151,6 +210,7 @@ public class Aptoide extends FragmentActivity {
 			menu.add(0, 1, 0, "Update");
 		}
 		menu.add(0, 0, 0, "Manage Stores");
+		menu.add(0, 2, 0, "Display Options");
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -158,12 +218,91 @@ public class Aptoide extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == 0) {
 			startActivityForResult(new Intent(this,StoreManager.class), 0);
-		}else{
+		}else if (item.getItemId() == 1){
 			updateRepos();
+		}else if (item.getItemId() == 2){
+			showDisplayOptionsDialog();
 		}
 		return super.onOptionsItemSelected(item);
 	}
 	
+	private void showDisplayOptionsDialog() {
+		View view = LayoutInflater.from(context).inflate(R.layout.orderpopup, null);
+		Builder builder = new AlertDialog.Builder(context).setView(view);
+		AlertDialog dialog = builder.create();
+		dialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {
+				if(pop_change){
+					editor.commit();
+					redrawAll();
+				}
+			}
+		});
+		
+		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
+		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
+		if(sPref.getBoolean("orderByCategory", false)){
+			btn1.setChecked(true);
+		}else{
+			btn2.setChecked(true);
+		}
+		final RadioGroup grp2 = (RadioGroup) view.findViewById(R.id.groupshow);
+		grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				if(checkedId == btn1.getId()){
+					pop_change = true;
+					editor.putBoolean("orderByCategory", true);
+				}else{
+					pop_change = true;
+					editor.putBoolean("orderByCategory", false);
+				}
+
+			}
+		});
+		
+				final RadioButton ord_rct = (RadioButton) view.findViewById(R.id.org_rct);
+				final RadioButton ord_abc = (RadioButton) view.findViewById(R.id.org_abc);
+				final RadioButton ord_rat = (RadioButton) view.findViewById(R.id.org_rat);
+				final RadioButton ord_dwn = (RadioButton) view.findViewById(R.id.org_dwn);
+
+				if(order_lst.equals(DBStructure.COLUMN_APK_NAME+" collate nocase"))
+					ord_abc.setChecked(true);
+				else if(order_lst.equals(DBStructure.COLUMN_APK_DATE +" desc"))
+					ord_rct.setChecked(true);
+				else if(order_lst.equals(DBStructure.COLUMN_APK_RATING+" desc"))
+					ord_rat.setChecked(true);
+				else if(order_lst.equals(DBStructure.COLUMN_APK_DOWNLOADS+" desc"))
+					ord_dwn.setChecked(true);
+
+				final RadioGroup grp1 = (RadioGroup) view.findViewById(R.id.groupbtn);
+
+				grp1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+					public void onCheckedChanged(RadioGroup group, int checkedId) {
+						if(checkedId == ord_rct.getId()){
+							pop_change = true;
+							order_lst = DBStructure.COLUMN_APK_DATE +" desc";
+						}else if(checkedId == ord_abc.getId()){
+							pop_change = true;
+							order_lst = DBStructure.COLUMN_APK_NAME+" collate nocase";
+						}else if(checkedId == ord_rat.getId()){
+							pop_change = true;
+							order_lst = DBStructure.COLUMN_APK_RATING+" desc";
+						}else if(checkedId == ord_dwn.getId()){
+							pop_change = true;
+							order_lst = DBStructure.COLUMN_APK_DOWNLOADS+" desc";
+						}
+						editor.putString("order_lst", order_lst);
+					}
+					
+				});
+		
+		dialog.show();
+		
+	}
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
@@ -282,7 +421,14 @@ public class Aptoide extends FragmentActivity {
 	}
 	
 	private void redrawAll() {
-		availAdapter = new CategoryCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,false);
+		if(sPref.getBoolean("orderByCategory", true)){
+			availAdapter = new CategoryCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,false);
+		}else{
+			currentCategory1="none";
+			currentCategory2="none";
+			availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		}
+		
 		getSupportLoaderManager().destroyLoader(0x01);
 		getSupportLoaderManager().destroyLoader(0x02);
 		getSupportLoaderManager().destroyLoader(0x03);
@@ -293,7 +439,30 @@ public class Aptoide extends FragmentActivity {
 					
 					@Override
 					public Cursor loadInBackground() {
-						return db.getCategories1();
+						if(sPref.getBoolean("orderByCategory", true)){
+							if(currentCategory2.equals("none")){
+								if(currentCategory1.equals("none")){
+									return db.getCategories1();
+								}else{
+									
+									return db.getCategories2(currentCategory1);
+								}
+								
+							}else{
+								runOnUiThread(new Runnable() {
+									
+									public void run() {
+										availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+										
+									}
+								});
+								return db.getApkByCategory(currentCategory2, order_lst);
+							}
+							
+						}else{
+							return db.getApk(order_lst);
+						}
+						
 					}
 				};
 				
@@ -385,7 +554,7 @@ public class Aptoide extends FragmentActivity {
 
 					@Override
 					public Cursor loadInBackground() {
-						return db.getInstalled();
+						return db.getInstalled(order_lst);
 					}
 				};
 				return a;
@@ -413,7 +582,7 @@ public class Aptoide extends FragmentActivity {
 					
 					@Override
 					public Cursor loadInBackground() {
-						return db.getApkByCategory(category);
+						return db.getApkByCategory(category,order_lst);
 					}
 				};
 				
@@ -442,7 +611,7 @@ public class Aptoide extends FragmentActivity {
 
 					@Override
 					public Cursor loadInBackground() {
-						return db.getUpdates();
+						return db.getUpdates(order_lst);
 					}
 				};
 				return a;
@@ -497,6 +666,17 @@ public class Aptoide extends FragmentActivity {
 		}
 	};
 	
+	private OnItemClickListener installedItemClick = new OnItemClickListener() {
+
+		public void onItemClick(AdapterView<?> parent, View v, int position,
+				long arg3) {
+			Intent i = new Intent(Aptoide.this,ApkInfo.class);
+			i.putExtra("id", parent.getItemIdAtPosition(position));
+			i.putExtra("type", "installed");
+			startActivity(i);			
+		}
+	};
+	
 	private OnClickListener searchClick = new OnClickListener() {
 		
 		public void onClick(View v) {
@@ -510,24 +690,27 @@ public class Aptoide extends FragmentActivity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
-		if(vp.getCurrentItem()==0){
-			System.out.println("Current Category 1:" + currentCategory1);
-			System.out.println("Current Category 2:" + currentCategory2);
-			if(!currentCategory1.equals("none")){
+		if(keyCode==KeyEvent.KEYCODE_BACK){
+			if(vp.getCurrentItem()==0){
+				System.out.println("Current Category 1:" + currentCategory1);
+				System.out.println("Current Category 2:" + currentCategory2);
+				if(!currentCategory1.equals("none")){
 
-				if(currentCategory2.equals("none")){
-					redrawAvailable();
-					currentCategory1="none";
-					return false;
-				}else if(!currentCategory1.equals("none")){
-					redrawCategory(currentCategory1);
-					currentCategory2="none";
-					return false;
+					if(currentCategory2.equals("none")){
+						redrawAvailable();
+						currentCategory1="none";
+						return false;
+					}else if(!currentCategory1.equals("none")){
+						redrawCategory(currentCategory1);
+						currentCategory2="none";
+						return false;
+					}
+
+				}else{
+
+					return super.onKeyDown(keyCode, event);
 				}
-
 			}else{
-
 				return super.onKeyDown(keyCode, event);
 			}
 		}

@@ -1,5 +1,8 @@
 package cm.aptoide.pt;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -20,6 +23,7 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
+import org.xmlpull.v1.XmlSerializer;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,11 +36,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
+import android.util.Xml;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -48,8 +54,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -138,7 +142,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			for(final String uri2 : repos){
 				
 				AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-				alertDialog.setMessage("Server: "+uri2);
+				alertDialog.setMessage("Add server: "+uri2+"?");
 				alertDialog.setButton(Dialog.BUTTON_POSITIVE,"yes", new OnClickListener() {
 					
 					public void onClick(DialogInterface dialog, int which) {
@@ -171,7 +175,6 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 													
 													public void run() {
 														Toast.makeText(context, "Repo insertion failed", 1).show();
-														
 													}
 												});
 											}
@@ -284,6 +287,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			uri = serverCheck(((TextView) alertDialogView.findViewById(R.id.edit_uri)).getText().toString());
 			
 			pd=new ProgressDialog(context);
+			pd.setCancelable(false);
 			pd.setMessage(getString(R.string.please_wait));
 			pd.show();
 			
@@ -300,6 +304,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 						if(uri!=null&&!containsRepo){
 							System.out.println(uri);
 							db.insertRepository(uri,username,password);
+
 						}
 						
 						runOnUiThread(new Runnable() {
@@ -312,8 +317,12 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 								}
 								
 								
+								
+								
+								
 							}
 						});
+						
 						
 					}
 				}
@@ -321,12 +330,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 				
 			}).start();
 			
-			new Thread(new Runnable() {
-				
-				public void run() {
-					generateXML();
-				}
-			}).start();
+			
 			
 			update=true;
 		}
@@ -401,7 +405,61 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	protected void generateXML() {
-			
+        File newxmlfile = new File(Environment.getExternalStorageDirectory()+"/.aptoide/servers.xml");
+        try{
+                newxmlfile.createNewFile();
+        }catch(IOException e){
+                Log.e("IOException", "exception in createNewFile() method");
+        }
+        //we have to bind the new file with a FileOutputStream
+        FileOutputStream fileos = null;        
+        try{
+                fileos = new FileOutputStream(newxmlfile);
+        }catch(FileNotFoundException e){
+                Log.e("FileNotFoundException", "can't create FileOutputStream");
+        }
+        //we create a XmlSerializer in order to write xml data
+        XmlSerializer serializer = Xml.newSerializer();
+        try {
+                //we set the FileOutputStream as output for the serializer, using UTF-8 encoding
+                        serializer.setOutput(fileos, "UTF-8");
+                        //Write <?xml declaration with encoding (if encoding not null) and standalone flag (if standalone not null)
+                        serializer.startDocument(null, Boolean.valueOf(true));
+                        //set indentation option
+//                        serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+                        //start a tag called "root"
+                        serializer.startTag(null, "myapp");
+                        //i indent code just to have a view similar to xml-tree
+                        for(int i = 0; i!=adapter.getCount();i++){
+                        	serializer.startTag(null, "newserver");
+//                            serializer.endTag(null, "child1");
+                           
+                            serializer.startTag(null, "server");
+                            serializer.text(((Cursor) lv.getItemAtPosition(i)).getString(1));
+                            serializer.endTag(null, "server");
+                   
+                            //write some text inside <child3>
+                            
+                            serializer.endTag(null, "newserver");
+                        }
+                                
+                               
+                        serializer.endTag(null, "myapp");
+                        serializer.endDocument();
+                        //write xml data into the FileOutputStream
+                        serializer.flush();
+                        //finally we close the file stream
+                        fileos.close();
+                        
+//                        <newserver><server>http://islafenice.bazaarandroid.com/</server></newserver></myapp>
+                       
+//                TextView tv = (TextView)this.findViewById(R.id.result);
+//                        tv.setText("file has been created on SD card");
+                } catch (Exception e) {
+                        Log.e("Exception","error occurred while creating xml file");
+                }
+    
+
 	}
 
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
@@ -416,7 +474,15 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		adapter.changeCursor(arg1);				
+		adapter.changeCursor(arg1);
+		new Thread(new Runnable() {
+			
+			public void run() {
+				generateXML();
+				
+			}
+		}).start();
+		
 	}
 
 	public void onLoaderReset(Loader<Cursor> arg0) {
@@ -519,7 +585,7 @@ private returnStatus checkServerConnection(String uri, String user, String pwd){
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
         
-//        mHttpGet.setHeader("User-Agent", "aptoide-" + this.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+        mHttpGet.setHeader("User-Agent", "aptoide-" + this.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
         
         try {
         	if(user != null && pwd != null){
@@ -569,6 +635,8 @@ public static DefaultHttpClient getThreadSafeClient() {
     DefaultHttpClient client = new DefaultHttpClient();
     ClientConnectionManager mgr = client.getConnectionManager();
     HttpParams params = client.getParams();
+    HttpConnectionParams.setConnectionTimeout(params, 5000);
+	HttpConnectionParams.setSoTimeout(params, 5000);
  
     client = new DefaultHttpClient(new ThreadSafeClientConnManager(params, 
             mgr.getSchemeRegistry()), params);
