@@ -41,6 +41,7 @@ public class Preferences extends PreferenceActivity {
 			public boolean onPreferenceClick(Preference preference) {
 
 				prefEditFull.remove( Configs.LOGIN_USER_NAME );
+				prefEditFull.remove( "userName" );
 				prefEditFull.remove( Configs.LOGIN_PASSWORD );
 				prefEditFull.remove( Configs.LOGIN_USER_ID );
 				prefEditFull.commit();
