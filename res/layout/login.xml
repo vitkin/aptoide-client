@@ -50,13 +50,6 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal" >
 
-            <Button
-                android:id="@+id/submitLogin"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.50"
-                android:text="@string/submit" />
-
 <!--             <Button -->
 <!--             android:id="@+id/passShowToogle" -->
 <!--             android:layout_width="wrap_content" -->
@@ -69,6 +62,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.50"
                 android:text="@string/new_account" />
+
+            <Button
+                android:id="@+id/submitLogin"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.50"
+                android:text="@string/submit" />
 
         </LinearLayout>
 
