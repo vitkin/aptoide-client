@@ -95,8 +95,8 @@ public class IntentReceiver extends Activity {
 					
 					if(app!=null&&!app.isEmpty()){
 						AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-						alertDialog.setMessage("APK");
-						alertDialog.setButton(Dialog.BUTTON_POSITIVE, "yes", new DialogInterface.OnClickListener() {
+						alertDialog.setMessage("Install " +app.get("name"));
+						alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
 							
 							public void onClick(DialogInterface dialog, int which) {
 								

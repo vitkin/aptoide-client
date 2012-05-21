@@ -93,10 +93,10 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		this.setTitle(getContext().getString(R.string.commentlabel));
 		
 		if(replyTo!=null){
-			TextView inresponse = ((TextView)findViewById(R.id.inresponseto));
-			inresponse.append(replyTo.getUsername());
-			inresponse.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-			inresponse.setLayoutParams(inresponse.getLayoutParams());
+//			TextView inresponse = ((TextView)findViewById(R.id.inresponseto));
+//			inresponse.append(replyTo.getUsername());
+//			inresponse.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//			inresponse.setLayoutParams(inresponse.getLayoutParams());
 		}
 		
 		body = ((EditText)findViewById(R.id.comment));
@@ -140,81 +140,81 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		
 		String username = sharedPreferences.getString(Configs.LOGIN_USER_NAME, null);
 		String passwordSha1 = sharedPreferences.getString(Configs.LOGIN_PASSWORD, null);
-		if(username != null && passwordSha1!=null){
+//		if(username != null && passwordSha1!=null){
 			
 			/**
 			 * @author rafael
 			 * @since summerinternship2011
 			 * 
 			 */
-			class PostComment extends AsyncTask<Void, Void, ResponseHandler>{
-				
-				private String username;
-				private String passwordSha1;
-				
-				private String repo;
-				private String apkid;
-				private String version;
-				
-				public PostComment(String username, String passwordSha1, String repo, String apkid, String version){
-					this.username = username;
-					this.passwordSha1 = passwordSha1;
-					
-					this.repo = repo;
-					this.apkid = apkid;
-					this.version = version;
-				}
+//			class PostComment extends AsyncTask<Void, Void, ResponseHandler>{
+//				
+//				private String username;
+//				private String passwordSha1;
+//				
+//				private String repo;
+//				private String apkid;
+//				private String version;
+//				
+//				public PostComment(String username, String passwordSha1, String repo, String apkid, String version){
+//					this.username = username;
+//					this.passwordSha1 = passwordSha1;
+//					
+//					this.repo = repo;
+//					this.apkid = apkid;
+//					this.version = version;
+//				}
 
-				@Override
-				protected ResponseHandler doInBackground(Void... params) {
-					
-					try {
-						
-						ResponseHandler handler = Comment.sendComment(AddCommentDialog.this.getContext(), 
-								repo, 
-								apkid, 
-								version, 
-								((SetBlankOnFocusChangeListener)subject.getOnFocusChangeListener()).getAlreadySetted()?subject.getText().toString():null,
-								(replyTo!=null?(AddCommentDialog.this.getContext().getString(R.string.inresponseto)+replyTo.getUsername())+Configs.LINE_SEPARATOR:"")+body.getText().toString(), 
-								username, 
-								passwordSha1,
-								replyTo!=null?replyTo.getId():null);
-						
-						if(loadOnScrollComList!=null){
-							loadOnScrollComList.fetchNewComments();
-						}
-						
-						return handler;
-						
-					} catch (Exception e){}
-					
-					return null;
-				}
+//				@Override
+//				protected ResponseHandler doInBackground(Void... params) {
+//					
+//					try {
+//						
+////						ResponseHandler handler = Comment.sendComment(AddCommentDialog.this.getContext(), 
+////								repo, 
+////								apkid, 
+////								version, 
+////								((SetBlankOnFocusChangeListener)subject.getOnFocusChangeListener()).getAlreadySetted()?subject.getText().toString():null,
+////								(replyTo!=null?(AddCommentDialog.this.getContext().getString(R.string.inresponseto)+replyTo.getUsername())+Configs.LINE_SEPARATOR:"")+body.getText().toString(), 
+////								username, 
+////								passwordSha1,
+////								replyTo!=null?replyTo.getId():null);
+//						
+//						if(loadOnScrollComList!=null){
+//							loadOnScrollComList.fetchNewComments();
+//						}
+//						
+//						return handler;
+//						
+//					} catch (Exception e){}
+//					
+//					return null;
+//				}
 				
-				@Override
-				protected void onPostExecute(ResponseHandler result) {
-					dialogProgress.dismiss();
-					if(result!=null){
-						
-						AddCommentDialog.this.dismiss();
-						if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.FAIL)){
-							for(String error: result.getErrors()){
-								Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
-							}
-						}else{
-							Toast.makeText(AddCommentDialog.this.getContext(), getContext().getString(R.string.commentadded), Toast.LENGTH_LONG).show();
-						}
-						
-					}else{
-						Toast.makeText(getContext(), getContext().getString(R.string.unabletoexecutecheknet), Toast.LENGTH_LONG).show();
-					}
-				}
-				
-			}
-			
-			new PostComment(username, passwordSha1, repo, apkid, version).execute();
-			
-		}
+//				@Override
+//				protected void onPostExecute(ResponseHandler result) {
+//					dialogProgress.dismiss();
+//					if(result!=null){
+//						
+//						AddCommentDialog.this.dismiss();
+//						if(result.getStatus().equals(cm.aptoide.pt.webservices.EnumResponseStatus.FAIL)){
+//							for(String error: result.getErrors()){
+//								Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
+//							}
+//						}else{
+//							Toast.makeText(AddCommentDialog.this.getContext(), getContext().getString(R.string.commentadded), Toast.LENGTH_LONG).show();
+//						}
+//						
+//					}else{
+//						Toast.makeText(getContext(), getContext().getString(R.string.unabletoexecutecheknet), Toast.LENGTH_LONG).show();
+//					}
+//				}
+//				
+//			}
+//			
+//			new PostComment(username, passwordSha1, repo, apkid, version).execute();
+//			
+//		}
 	}
 	
 	public void onDismiss(DialogInterface dialog) {	

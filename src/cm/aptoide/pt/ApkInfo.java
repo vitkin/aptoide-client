@@ -107,6 +107,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private String vername;
 	private ImageView icon;
 	ImageLoader loader;
+	private TextView versionInfo;
 	
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
@@ -154,6 +155,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		description = (TextView) linearLayout.findViewById(R.id.descript);
 		screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
 		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
+		versionInfo = (TextView) findViewById(R.id.versionInfo);
 		
 //		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		listView.setAdapter(commentAdapter);
@@ -259,6 +261,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		loader.DisplayImage(-1, elements.get("iconpath"), icon, context);
 		name.setText(elements.get("name"));
 		version.setText(elements.get("vername"));
+		versionInfo.setText("Size: "+elements.get("size")+" Downloads: "+elements.get("downloads"));
 		try{
 			rating.setRating(Float.parseFloat(elements.get("rating")));
 		}catch (Exception e) {
@@ -397,7 +400,12 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				 				apkid, 
 				 				vername,
 				 				userTaste);
-						commentDialog.show();
+//						commentDialog.show();
+						Intent i = new Intent(ApkInfo.this,AddComment.class);
+						i.putExtra("repo", repo);
+						i.putExtra("apkid", apkid);
+						i.putExtra("vername", vername);
+						startActivityForResult(i, 50);
 					}
 				}
 			});
@@ -506,6 +514,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	 				sPref.getString(Configs.LOGIN_PASSWORD, null), 
 	 				((LoginDialog)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste).submit();
 		}
+	}
+	
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+		if(arg0==50&&arg1==RESULT_OK){
+			loadCommentsAndTaste();
+		}
+		
 	}
 	
 }

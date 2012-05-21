@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:title="@string/settings_title_bar">
+  
+  
+  <PreferenceCategory
+        android:title="@string/credentialssettings">
+	
+	 <Preference
+     	android:title="@string/clearcredentials"
+        android:summary="@string/clearcredentials_summary"
+        android:key="clearcredentials" />
+          		
+  	 <Preference
+     	android:title="@string/setcredentials"
+        android:summary="@string/setcredentials_summary"
+        android:key="setcredentials" />
+        
+  </PreferenceCategory>
+     
+</PreferenceScreen>

@@ -15,6 +15,7 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -128,7 +129,7 @@ public class LoginDialog extends Dialog{
 		((Button)this.findViewById(R.id.newAccount)).setOnClickListener(new View.OnClickListener(){
 			
 			public void onClick(View v) {
-				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.bazaarandroid.com/account/new-user"));
+				Intent browserIntent = new Intent(LoginDialog.this.getContext(),CreateUser.class);
 				LoginDialog.this.getContext().startActivity(browserIntent);
 			}
 			
@@ -264,10 +265,18 @@ public class LoginDialog extends Dialog{
 				
 				return response;
 			} 
-//			catch (IOException e) 					{}
-//			catch (ParserConfigurationException e) 	{}
-//			catch (SAXException e) 					{}
-			catch(Exception e)						{}
+			catch (IOException e) 					{
+				e.printStackTrace();
+			}
+			catch (ParserConfigurationException e) 	{
+				e.printStackTrace();
+			}
+			catch (SAXException e) 					{
+				e.printStackTrace();
+			}
+			catch(Exception e)						{
+				e.printStackTrace();
+			}
 			
 			return null;
 		}
