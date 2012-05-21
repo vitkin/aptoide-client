@@ -192,6 +192,11 @@ public class Aptoide extends FragmentActivity {
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
+		}else if(db.getRepositories().getCount()==0){
+			Intent i = new Intent(this,StoreManager.class);
+			i.putExtra("norepos", true);
+			
+			startActivityForResult(i, 0);
 		}
 		
 		
@@ -207,11 +212,11 @@ public class Aptoide extends FragmentActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		if (vp.getCurrentItem() == 0) {
-			menu.add(0, 1, 0, "Update");
+			menu.add(0, 1, 0, getString(R.string.menu_update_repo)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
-		menu.add(0, 0, 0, "Manage Stores");
-		menu.add(0, 2, 0, "Display Options");
-		menu.add(0, 3, 0, "Settings");
+		menu.add(0, 0, 0, getString(R.string.menu_manage)).setIcon(android.R.drawable.ic_menu_agenda);
+		menu.add(0, 2, 0, getString(R.string.menu_display_options)).setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(0, 3, 0, getString(R.string.menu_settings)).setIcon(android.R.drawable.ic_menu_preferences);
 		return super.onPrepareOptionsMenu(menu);
 	}
 

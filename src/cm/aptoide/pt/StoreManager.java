@@ -186,16 +186,69 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 									
 								}
 							}
-
-							
 						}).start();
 						update=true;
 					}
-					
 				});
 				alertDialog.show();
 			}
 			
+		}else if(getIntent().hasExtra("norepos")){
+			AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+			alertDialog.setMessage(getString(R.string.myrepo_alrt));
+			alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Yes", new OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					pd=new ProgressDialog(context);
+					pd.setMessage(getString(R.string.please_wait));
+					pd.show();
+					new Thread(new Runnable() {
+						private boolean containsRepo;
+						private String uri;
+						public void run() {
+							try {
+								
+								this.uri = (checkServer(serverCheck("http://apps.bazaarandroid.com/"), username, password));
+								containsRepo = serverContainsRepo(uri);
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+								if(uri!=null&&!containsRepo){
+									System.out.println(uri);
+									db.insertRepository(uri,username,password);
+								}
+								
+								runOnUiThread(new Runnable() {
+									
+									public void run() {
+										redraw();
+										pd.dismiss();
+										if(uri==null||containsRepo){
+											runOnUiThread(new Runnable() {
+												
+												public void run() {
+													Toast.makeText(context, "Repo insertion failed", 1).show();
+												}
+											});
+										}
+									}
+								});
+								
+							}
+						}
+					}).start();
+					update=true;
+				}
+			});
+			
+			
+			alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,getString(R.string.btn_no),new OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}
+			});
+			alertDialog.show();
 		}
 		
 	}
@@ -203,9 +256,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
-		
 		menu.add(0,0,0,getString(R.string.menu_rem_repo));
-		
 		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 	
@@ -220,22 +271,17 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 					db.beginTransation();
 					db.removeRepo(info.id,true);
 					db.endTransation();
-					
 				}catch (Exception e) {
 					e.printStackTrace();
 				}finally{
 					System.out.println("Removed");
 					redraw=true;
 					runOnUiThread(new Runnable() {
-						
 						public void run() {
 							redraw();
-							
 						}
 					});
-					
 				}
-				
 			}
 		}).start();
 		
@@ -362,7 +408,6 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	};
 	
 	private void redraw() {
-		getSupportLoaderManager().destroyLoader(0x10);
 		getSupportLoaderManager().restartLoader(0x10, null, this);
 	}
 	
@@ -501,6 +546,9 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
 		adapter.changeCursor(arg1);
+		if(arg1.getCount()>0){
+			findViewById(android.R.id.empty).setVisibility(View.GONE);
+		}
 		
 		
 	}
