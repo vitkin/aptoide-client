@@ -54,6 +54,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -142,7 +145,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			for(final String uri2 : repos){
 				
 				AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-				alertDialog.setMessage("Add server: "+uri2+"?");
+				alertDialog.setMessage("Add server: "+uri2+" ?");
 				alertDialog.setButton(Dialog.BUTTON_POSITIVE,"yes", new OnClickListener() {
 					
 					public void onClick(DialogInterface dialog, int which) {
@@ -223,7 +226,14 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 				}finally{
 					System.out.println("Removed");
 					redraw=true;
-					redraw();
+					runOnUiThread(new Runnable() {
+						
+						public void run() {
+							redraw();
+							
+						}
+					});
+					
 				}
 				
 			}
@@ -243,8 +253,23 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId()==0){
 			alertDialogView = LayoutInflater.from(context).inflate(R.layout.addrepo, null);
+			final CheckBox sec = (CheckBox) alertDialogView.findViewById(R.id.secure_chk);
+			final EditText sec_user = (EditText) alertDialogView.findViewById(R.id.sec_user);
+			final EditText sec_pwd = (EditText) alertDialogView.findViewById(R.id.sec_pwd);
+			sec.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+					if(isChecked){
+						sec_user.setEnabled(true);
+						sec_pwd.setEnabled(true);
+					}else{
+						sec_user.setEnabled(false);
+						sec_pwd.setEnabled(false);
+					}
+				}
+			});
+			
 			alertDialog = new AlertDialog.Builder(this).setView(alertDialogView).create();
-			alertDialog.setButton(getString(R.string.btn_add_repo), addRepoListener);
+			alertDialog.setButton(Dialog.BUTTON_POSITIVE,getString(R.string.btn_add_repo), addRepoListener);
 			alertDialog.show();
 			
 		}
@@ -337,6 +362,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	};
 	
 	private void redraw() {
+		getSupportLoaderManager().destroyLoader(0x10);
 		getSupportLoaderManager().restartLoader(0x10, null, this);
 	}
 	
@@ -475,13 +501,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
 		adapter.changeCursor(arg1);
-		new Thread(new Runnable() {
-			
-			public void run() {
-				generateXML();
-				
-			}
-		}).start();
+		
 		
 	}
 
@@ -551,6 +571,14 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			setResult(Activity.RESULT_OK, intent);
 		}
 		
+		new Thread(new Runnable() {
+			
+			public void run() {
+				generateXML();
+				
+			}
+		}).start();
+		
 		super.finish();
 		
 	}
@@ -559,9 +587,6 @@ private returnStatus checkServerConnection(String uri, String user, String pwd){
 		
 		int result;
 		
-		HttpParams httpParameters = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(httpParameters, 10000);
-		HttpConnectionParams.setSoTimeout(httpParameters, 10000);
 		           
 		DefaultHttpClient mHttpClient = getThreadSafeClient();
 		
@@ -636,7 +661,7 @@ public static DefaultHttpClient getThreadSafeClient() {
     ClientConnectionManager mgr = client.getConnectionManager();
     HttpParams params = client.getParams();
     HttpConnectionParams.setConnectionTimeout(params, 5000);
-	HttpConnectionParams.setSoTimeout(params, 5000);
+    HttpConnectionParams.setSoTimeout(params, 5000);
  
     client = new DefaultHttpClient(new ThreadSafeClientConnManager(params, 
             mgr.getSchemeRegistry()), params);

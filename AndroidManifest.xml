@@ -113,6 +113,28 @@
                 android:resource="@xml/find" />
         </activity>
         
+        <activity
+            android:configChanges="orientation"
+            android:name=".AddComment"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+
+        </activity>
+        
+        <activity
+            android:configChanges="orientation"
+            android:name=".Preferences"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Light.NoTitleBar" />
+        
+        <activity
+            android:configChanges="orientation"
+            android:name=".webservices.login.CreateUser"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+
+        </activity>
+        
         <service android:name=".DownloadQueueService"></service>
         <service android:name=".ExtrasService" android:process=":Extras"></service>
 

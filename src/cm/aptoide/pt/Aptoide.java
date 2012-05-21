@@ -211,6 +211,7 @@ public class Aptoide extends FragmentActivity {
 		}
 		menu.add(0, 0, 0, "Manage Stores");
 		menu.add(0, 2, 0, "Display Options");
+		menu.add(0, 3, 0, "Settings");
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -222,6 +223,9 @@ public class Aptoide extends FragmentActivity {
 			updateRepos();
 		}else if (item.getItemId() == 2){
 			showDisplayOptionsDialog();
+		}else if (item.getItemId() == 3){
+			Intent i = new Intent(this,Preferences.class);
+			startActivity(i);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -407,10 +411,24 @@ public class Aptoide extends FragmentActivity {
 	protected void onActivityResult(int requestCode, int arg1, Intent data) {
 		super.onActivityResult(requestCode, arg1, data);
 		if(requestCode == NEWREPO_FLAG && data != null && data.hasExtra("update")){
-			updateRepos();
+			final AlertDialog alrt = new AlertDialog.Builder(this).create();
+			alrt.setTitle(getText(R.string.update_repos));
+			alrt.setMessage(getText(R.string.update_main));
+			alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.dialog_yes), new Dialog.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					updateRepos();
+				}
+			});
+			alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.dialog_no), new Dialog.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					alrt.dismiss();
+				}
+			});
+			alrt.show();
 		}else if(requestCode == NEWREPO_FLAG && data != null && data.hasExtra("redraw")){
 			currentCategory1="none";
 			currentCategory2="none";
+			
 			runOnUiThread(new Runnable() {
 				
 				public void run() {

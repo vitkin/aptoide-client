@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="250dip"
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center_horizontal"
     android:background="#edece9"
@@ -9,44 +9,31 @@
     android:padding="10dp" >
 
     <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="381dp"
+        android:layout_weight="1"
         android:background="@drawable/border"
         android:padding="10dp" >
 
         <!-- Remove focus from subject on create -->
 
         <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="0px" />
-
-        <TextView
-            android:id="@+id/inresponseto"
-            android:layout_width="fill_parent"
-            android:layout_height="0px"
-            android:text="@string/inresponseto"
-            android:textColor="#4f4f4f"
-            android:textSize="18sp" />
-
-        <EditText
-            android:id="@+id/subject"
-            android:layout_below="@+id/inresponseto"
+            android:id="@+id/name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:hint="@string/subject"
             android:singleLine="true"
-            android:text="@string/subject"
             android:textColor="#696969"
             android:textSize="18sp" />
 
         <EditText
             android:id="@+id/comment"
-            android:layout_below="@+id/subject"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_below="@+id/name"
+            android:gravity="top"
+            android:hint="@string/body"
             android:inputType="textMultiLine"
-            android:lines="3"
-            android:singleLine="true"
-            android:text="@string/body"
             android:textColor="#696969"
             android:textSize="18sp" />
     </RelativeLayout>

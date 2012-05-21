@@ -122,11 +122,10 @@ public class Comment{
 			String repo,
 			String apkid, 
 			String version,
-			String subject,
 			String text, 
 			String user, 
-			String pass,
-			BigInteger reply) throws IOException, ParserConfigurationException, SAXException{
+			String pass
+			) throws IOException, ParserConfigurationException, SAXException{
 		
 		HttpURLConnection urlConnection = NetworkApis.send(ctx, Configs.WEB_SERVICE_POST_COMMENT_ADD,repo, apkid, version);
 		
@@ -141,10 +140,6 @@ public class Comment{
 		String lang = SupportedLanguages.getMyCountrCode(ctx);
 		Log.d("Aptoide", "Comment language "+lang);
 		strBuilder.append("&"+URLEncoder.encode("lang", "UTF-8") + "=" + URLEncoder.encode( lang, "UTF-8"));
-		if(reply!=null)
-			strBuilder.append("&"+URLEncoder.encode("answerto", "UTF-8") + "=" + URLEncoder.encode(reply.toString(), "UTF-8"));
-		if(subject!=null && subject.length()!=0)
-			strBuilder.append("&"+URLEncoder.encode("subject", "UTF-8") + "=" + URLEncoder.encode(subject, "UTF-8"));
 	    
 		//
 		urlConnection.setDoOutput(true);
