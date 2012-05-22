@@ -15,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import cm.aptoide.pt.R;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -40,10 +41,8 @@ public class CreateUser extends FragmentActivity {
 			
 			
 			password=((EditText) findViewById(R.id.password_box)).getText().toString();
-			passwordConfirm=((EditText) findViewById(R.id.password_box_confirm)).getText().toString();
 			email=((EditText) findViewById(R.id.email_box)).getText().toString();
 			
-			if(password.equals(passwordConfirm)){
 			
 			new Thread(new Runnable() {
 				
@@ -54,15 +53,9 @@ public class CreateUser extends FragmentActivity {
 
 				
 			}).start();
-			}else{
-				if(stub==null){
-					stub = ((ViewStub) findViewById(R.id.viewStub1)).inflate();
-				}
-				stub.setVisibility(View.VISIBLE);
-				((TextView)stub.findViewById(R.id.error)).setText("Passwords does not match");
-			}
 			
 	};};
+	private boolean setIntent = false;
 	
 	private void submit() {
 		try{
@@ -106,6 +99,7 @@ public class CreateUser extends FragmentActivity {
 						stub.setVisibility(View.VISIBLE);
 						if(json.getString("status").equals("OK")){
 							Toast.makeText(CreateUser.this, "Account successfuly created.", 1).show();
+							setIntent=true;
 							finish();
 						}
 						((TextView)stub.findViewById(R.id.error)).setText(string =(json.has("errors")?json.getString("errors"):json.getString("status")));
@@ -127,5 +121,21 @@ public class CreateUser extends FragmentActivity {
 		super.onCreate(arg0);
 		setContentView(R.layout.createuser);
 		findViewById(R.id.submitCreateUser).setOnClickListener(submitCreateUserListener );
+		
+	}
+	
+	@Override
+	public void finish() {
+		Intent i = new Intent();
+		if(setIntent){
+			
+			i.putExtra("username", email);
+			i.putExtra("password", password);
+			Toast.makeText(this, "Username "+email+" successfuly registered in www.bazaarandroid.com.", 1).show();
+		}
+		
+		setResult(RESULT_OK, i);
+		
+		super.finish();
 	}
 }

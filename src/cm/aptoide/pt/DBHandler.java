@@ -542,9 +542,9 @@ public class DBHandler {
 		int i = 0;
 		try{
 			if(secondaryCatg){
-				c = database.rawQuery("select count(*) from apk a,category b where a._id=b._id and b.category2='"+name+"'", null);
+				c = database.rawQuery("select count(*) from apk as a,category as b where a._id=b._id and b.category2='"+name+"'", null);
 			}else{
-				c = database.rawQuery("select count(*) from apk a,category b where a._id=b._id and b.category1='"+name+"'", null);
+				c = database.rawQuery("select count(*) from apk as a,category as b where a._id=b._id and b.category1='"+name+"'", null);
 			}
 			
 			c.moveToFirst();
@@ -764,6 +764,35 @@ public class DBHandler {
 		
 		
 		return login;
+	}
+
+	public Integer getRepoId(String repoName) {
+		Cursor c = null;
+		int ret_int = 0;
+		try{
+			c= database.query(DBStructure.TABLE_REPOS, new String[]{DBStructure.COLUMN_REPOS_ID}, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{repoName}, null, null, null);
+			c.moveToFirst();
+			ret_int = c.getInt(0);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		c.close();
+		return ret_int;
+	}
+
+	public void addLogin(String username, String password, String new_repo) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_REPOS_USER, username);
+		values.put(DBStructure.COLUMN_REPOS_PASSWORD, password);
+		
+		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{new_repo});
+	}
+
+	public void disableLogin(String new_repo) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_REPOS_USER, "");
+		values.put(DBStructure.COLUMN_REPOS_PASSWORD, "");
+		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{new_repo});
 	}	
 	
 }

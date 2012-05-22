@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
@@ -29,6 +30,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -291,10 +293,15 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		menu.add(0,0,0,"Add repo");
+		menu.add(0,0,0,getString(R.string.menu_add_repo)).setIcon(android.R.drawable.ic_menu_add);
+		menu.add(0,1,0,getString(R.string.menu_rem_repo)).setIcon(android.R.drawable.ic_menu_edit);
+		menu.add(0,2,0,getString(R.string.menu_edit_repo)).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+	CharSequence[] b;
+	CharSequence[] b2;
+	String updt_repo;
+	AlertDialog alert2;
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if(item.getItemId()==0){
@@ -318,6 +325,99 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			alertDialog.setButton(Dialog.BUTTON_POSITIVE,getString(R.string.btn_add_repo), addRepoListener);
 			alertDialog.show();
 			
+		}else if(item.getItemId()==1){
+			final Vector<Integer> rem_lst = new Vector<Integer>();
+			Cursor c = db.getRepositories();
+			b = new CharSequence[c.getCount()];
+			int i=0;
+			for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+				b[i] = c.getString(1);
+				i++;
+			}
+			c.close();
+			
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setTitle(getString(R.string.repo_del_msg2));
+			builder.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+			builder.setMultiChoiceItems(b, null, new DialogInterface.OnMultiChoiceClickListener() {
+                		public void onClick(DialogInterface dialog,int whichButton, boolean isChecked) {
+                		        if(isChecked){
+                		        	rem_lst.addElement(db.getRepoId(b[whichButton].toString()));
+                		        }else{
+                		        	rem_lst.removeElement(db.getRepoId(b[whichButton].toString()));
+                		        }
+                		        System.out.println(whichButton);
+                		 }
+             }); 
+			builder.setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
+                		public void onClick(DialogInterface dialog, int	whichButton) {
+                			final ProgressDialog pd = new ProgressDialog(context);
+                			pd.setCancelable(false);
+                			pd.setMessage(getString(R.string.please_wait));
+                			pd.show();
+                			new Thread(new Runnable() {
+								public void run() {
+									try{
+										for(int i : rem_lst){
+			                				db.beginTransation();
+			            					db.removeRepo(i,true);
+			            					db.endTransation();
+			                			}					
+									}catch (Exception e) {
+										e.printStackTrace();
+									}finally{
+										runOnUiThread(new Runnable() {
+											public void run() {
+												redraw();
+												pd.dismiss();
+											}
+										});
+									}
+								}
+							}).start();
+                			redraw=true;
+                		}
+            });
+			builder.setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+                		public void onClick(DialogInterface dialog, int whichButton) {
+                			return;
+                		}
+            }); 
+			AlertDialog alert = builder.create();
+			alert.show();
+		}else if(item.getItemId()==2){
+			Cursor c = db.getRepositories();
+			b2 = new CharSequence[c.getCount()];
+			int i=0;
+			for(c.moveToFirst(); !c.isAfterLast(); c.moveToNext()){
+				b2[i] = c.getString(1);
+				i++;
+			}
+			c.close();
+			AlertDialog.Builder builder2 = new AlertDialog.Builder(this);
+			builder2.setTitle(getString(R.string.repo_edt_msg1));
+			builder2.setIcon(android.R.drawable.ic_menu_edit);
+			builder2.setSingleChoiceItems(b2, -1, new DialogInterface.OnClickListener() {
+				
+
+				public void onClick(DialogInterface dialog, int which) {
+						updt_repo = b2[which].toString();
+				}
+			}); 
+			builder2.setPositiveButton(getString(R.string.btn_ok), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int	whichButton) {
+					alert2.dismiss();
+					editRepo(updt_repo);
+					return;
+				}
+			});
+			builder2.setNegativeButton(getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					return;
+				}
+			}); 
+			alert2 = builder2.create();
+			alert2.show();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -325,6 +425,61 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	String password = "";
 	String username = ""; 
 	AlertDialog alertDialog;
+	
+	private void editRepo(final String repo){
+		LayoutInflater li = LayoutInflater.from(this);
+		View view = li.inflate(R.layout.addrepo, null);
+		Builder p = new AlertDialog.Builder(this).setView(view);
+		final AlertDialog alrt = p.create();
+		final EditText uri = (EditText) view.findViewById(R.id.edit_uri);
+		uri.setText(repo);
+		uri.setEnabled(false);
+		final EditText sec_user = (EditText) view.findViewById(R.id.sec_user);
+		final EditText sec_pwd = (EditText) view.findViewById(R.id.sec_pwd);
+		final CheckBox sec = (CheckBox) view.findViewById(R.id.secure_chk);
+		sec.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					sec_user.setEnabled(true);
+					sec_pwd.setEnabled(true);
+				}else{
+					sec_user.setEnabled(false);
+					sec_pwd.setEnabled(false);
+				}
+			}
+		});
+		
+		String[] logins = null; 
+		logins = db.getLogin(repo);
+		
+		if(logins != null){
+			sec.setChecked(true);
+			sec_user.setText(logins[0]);																																																				 
+			sec_pwd.setText(logins[1]);
+		}else{
+			sec.setChecked(false);
+		}
+		alrt.setIcon(android.R.drawable.ic_menu_add);
+		alrt.setTitle(getString(R.string.repo_edt_msg2));
+		alrt.setButton(getText(R.string.btn_done), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				String new_repo = uri.getText().toString();
+				if(sec.isChecked()){
+					db.addLogin(sec_user.getText().toString(), sec_pwd.getText().toString(), new_repo);
+				}else{
+					db.disableLogin(new_repo);
+				}
+				update = true;
+				redraw();
+			} });
+
+		alrt.setButton2(getText(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+				return;
+			} });
+		//alert2.dismiss();
+		alrt.show();
+	}
 	
 	private OnItemClickListener storeListener = new OnItemClickListener() {
 

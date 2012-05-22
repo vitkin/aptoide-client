@@ -70,6 +70,7 @@ public class LoginDialog extends Dialog{
 	
 	private EnumUserTaste userTaste;
 	private WrapperUserTaste userTasteGetted;
+	private Context context;
 	
 	/**
 	 * @author rafael
@@ -101,6 +102,7 @@ public class LoginDialog extends Dialog{
 		super(context);
 		sPref = context.getApplicationContext().getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		prefEdit = sPref.edit();
+		this.context=context;
 		isLoginSubmited = false;
 		success = false;
 		this.like = like;
@@ -111,6 +113,7 @@ public class LoginDialog extends Dialog{
 		this.userTaste = userTaste;
 		this.userTasteGetted = userTasteGetted;
 	}
+	
 
 	/**
 	 * 
@@ -130,7 +133,7 @@ public class LoginDialog extends Dialog{
 			
 			public void onClick(View v) {
 				Intent browserIntent = new Intent(LoginDialog.this.getContext(),CreateUser.class);
-				LoginDialog.this.getContext().startActivity(browserIntent);
+				((Activity)context).startActivityForResult(browserIntent,60);
 			}
 			
 		});
@@ -175,7 +178,7 @@ public class LoginDialog extends Dialog{
 				success = false;
 				if(!((SetBlankOnFocusChangeListener)username.getOnFocusChangeListener()).getAlreadySetted()){
 					Toast.makeText(LoginDialog.this.getContext(), LoginDialog.this.getContext().getString(R.string.usernotdef), Toast.LENGTH_LONG).show();
-				}else if(!((SetBlankOnFocusChangeListener)password.getOnFocusChangeListener()).getAlreadySetted()){
+				}else if(password.getText().length()==0){
 					Toast.makeText(LoginDialog.this.getContext(), LoginDialog.this.getContext().getString(R.string.passwordnotdef), Toast.LENGTH_LONG).show();
 				}else{
 					try {

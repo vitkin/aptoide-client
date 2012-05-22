@@ -41,6 +41,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class AddComment extends FragmentActivity implements OnDismissListener{
@@ -71,19 +72,21 @@ public class AddComment extends FragmentActivity implements OnDismissListener{
 		sharedPreferences = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		if(sharedPreferences.getString("userName", null)==null){
 			name.setVisibility(View.VISIBLE);
+			if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)!=null)
+			name.setText(sharedPreferences.getString(Configs.LOGIN_USER_NAME, "").split("@")[0]);
 		}else{
 			name.setVisibility(View.GONE);
 		}
 		
 	}
-	
+	LoginDialog loginComments;
 	private OnClickListener submitCommentListener = new OnClickListener() {
 		
 		public void onClick(View v) {
 			if(comment.getText().toString().length()!=0){
 				//If the text as some content on it provided by the user
 				if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)==null || sharedPreferences.getString(Configs.LOGIN_PASSWORD, null)==null){
-					LoginDialog loginComments = new LoginDialog(AddComment.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, null, null, repo, apkid, vername, null, new WrapperUserTaste());
+					loginComments = new LoginDialog(AddComment.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, null, null, repo, apkid, vername, null, new WrapperUserTaste());
 					loginComments.setOnDismissListener(AddComment.this);
 					loginComments.show();
 				}else{ 
@@ -225,10 +228,21 @@ public class AddComment extends FragmentActivity implements OnDismissListener{
 
 
 	@Override
-	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+	protected void onActivityResult(int arg0, int arg1, Intent intent) {
 		
-		super.onActivityResult(arg0, arg1, arg2);
-		System.out.println("Result");
+		super.onActivityResult(arg0, arg1, intent);
+		if(intent.hasExtra("password")){
+			String username = intent.getStringExtra("username");
+			String password = intent.getStringExtra("password");
+			((EditText) loginComments.findViewById(R.id.user)).setText(username);
+			((EditText) loginComments.findViewById(R.id.pass)).setText(password);
+			((Button)loginComments.findViewById(R.id.submitLogin)).performClick();
+			if(name.getText().length()==0){
+				name.setText(username.split("@")[0]);
+			}
+			
+		}
+		
 	}
 	
 }
