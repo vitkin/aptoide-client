@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -40,6 +41,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -63,6 +65,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import cm.aptoide.pt.utils.Algorithms;
@@ -217,6 +220,7 @@ public class Aptoide extends FragmentActivity {
 		menu.add(0, 0, 0, getString(R.string.menu_manage)).setIcon(android.R.drawable.ic_menu_agenda);
 		menu.add(0, 2, 0, getString(R.string.menu_display_options)).setIcon(android.R.drawable.ic_menu_sort_by_size);
 		menu.add(0, 3, 0, getString(R.string.menu_settings)).setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(0, 4, 0, getString(R.string.menu_about)).setIcon(android.R.drawable.ic_menu_help);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -231,6 +235,22 @@ public class Aptoide extends FragmentActivity {
 		}else if (item.getItemId() == 3){
 			Intent i = new Intent(this,Preferences.class);
 			startActivity(i);
+		}else if(item.getItemId()==4){
+			LayoutInflater li = LayoutInflater.from(this);
+			View view = li.inflate(R.layout.about, null);
+			TextView info = (TextView)view.findViewById(R.id.about11);
+			info.setText(getString(R.string.about_txt11, getString(R.string.ver_str)));
+			Builder pd = new AlertDialog.Builder(this).setView(view);
+			final AlertDialog alrt = pd.create();
+			alrt.setIcon(R.drawable.icon);
+			alrt.setTitle(R.string.app_name);
+			alrt.setButton(getText(R.string.btn_chlog), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int	whichButton) {
+					Uri uri = Uri.parse(getString(R.string.change_log_url));
+					startActivity(new Intent( Intent.ACTION_VIEW, uri));
+				}
+			});
+			alrt.show();
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -317,17 +337,21 @@ public class Aptoide extends FragmentActivity {
 		super.onDestroy();
 		unregisterReceiver(receiver);
 	}
-
+	
+	Vector<String> errorRepos;
+	Vector<String> updatedRepos;
+	boolean errors = false;
+	
 	private void updateRepos() {
 		
 		
-		
+		errorRepos = new Vector<String>();
+		updatedRepos = new Vector<String>();
 		pd = new ProgressDialog(context);
-		pd.setMessage("Please wait...");
 		pd.show();
 		
 		parsingProgress=0;
-		
+		final AlertDialog alert = new AlertDialog.Builder(context).create();
 		new Thread() {
 			
 
@@ -337,6 +361,11 @@ public class Aptoide extends FragmentActivity {
 					SAXParser sp = spf.newSAXParser();
 					servers = new ArrayList<ServerNode>();
 					servers = db.getInUseServers();
+					if(servers.isEmpty()){
+						alert.setMessage(getString(R.string.updating_norepos));
+						errors=true;
+						alert.show();
+					}else{
 					for(ServerNode server : servers){
 						parsingProgress++;
 						int parse = downloadList(server.uri, server.hash);
@@ -346,22 +375,11 @@ public class Aptoide extends FragmentActivity {
 							sp.parse(new File(XML_PATH),new RepoParser(context, handler, server.id,XML_PATH));
 							
 						}else if(parse==1){
-							System.out.println("Repo need no update");
-							runOnUiThread(new Runnable() {
-								
-								public void run() {
-									Toast.makeText(context, "Repo need no update", 1).show();
-									
-								}
-							});
+							updatedRepos.add(server.uri);
+							
 						} else{
-							runOnUiThread(new Runnable() {
-
-								public void run() {
-									Toast.makeText(context, "Repo failed", 1).show();
-
-								}
-							});
+							errorRepos.add(server.uri);
+							errors=true;
 						}
 						
 						
@@ -369,14 +387,46 @@ public class Aptoide extends FragmentActivity {
 					Intent i = new Intent(Aptoide.this,ExtrasService.class);
 					i.putExtra("repos", servers);
 					startService(i);
-					
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					runOnUiThread(new Runnable() {
+						private android.content.DialogInterface.OnClickListener neutralListener = new Dialog.OnClickListener() {
+							
+							public void onClick(DialogInterface dialog, int which) {
+								// TODO Auto-generated method stub
+								
+							}
+						};
+
 						public void run() {
 							pd.dismiss();
 							redrawAll();
+							if(!errors){
+								alert.setMessage(getString(R.string.update_done_msg1));
+								alert.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), neutralListener);
+								alert.show();
+							}
+							if(!errorRepos.isEmpty()){
+								String repos = "";
+								for(String repo : errorRepos){
+									repos.concat("\n"+repo);
+								}
+								alert.setMessage(getString(R.string.error_on_update)+repos);
+								alert.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), neutralListener);
+								alert.show();
+							}
+							if(!updatedRepos.isEmpty()){
+								String repos = "";
+								for(String repo : updatedRepos){
+									repos.concat("\n"+repo);
+								}
+								alert.setMessage("Servers are already up to date: "+repos);
+								alert.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), neutralListener );
+								alert.show();
+							}
+							
 							
 						}
 					});

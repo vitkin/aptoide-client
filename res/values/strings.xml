@@ -39,7 +39,6 @@
     <string name="unabletoexecute">Unable to execute</string>
     <string name="failedcredentials">Failed to login the given credentials</string>
     <string name="loading_likes">Likes loading...</string>
-    <string name="ver_str">2.6.2</string>
     <string name="body">Body...</string>
     <string name="subject">Name</string>
     <string name="inresponseto">\@</string>
@@ -107,5 +106,23 @@
     <string name="no_repo">Add a store!</string>
     
     <string name="myrepo_alrt">It looks like you don\'t have any added store.\nWe suggest you use ours.\nDo you want to add our store?\n(You can search for more stores online)\n\n</string>
+    <string name="error_on_update">The update process could not be completed on the following store:</string>
+    <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
+    <string name="update_done_msg1">Stores updated successfully.</string>
+    
+    <string name="about_txt1">Your package installer to Android phone.\n</string>
+        
+    <string name="about_site">Home: </string>
+    
+    <string name="about_mail">Contact: </string>
+    
+    <string name="about_txt2"> www.aptoide.com</string>
+    <string name="about_txt3"> aptoide@aptoide.com</string>
+    
+    <string name="repo_del_msg2">Choose store to remove</string>
+    
+    <string name="repo_edt_msg1">Choose store to edit</string>
+    <string name="repo_edt_msg2">Edit store</string>
+    
 
 </resources>
