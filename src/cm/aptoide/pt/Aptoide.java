@@ -10,7 +10,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Vector;
+import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
 
 import javax.xml.parsers.SAXParser;
@@ -32,11 +34,14 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
@@ -45,7 +50,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.StatFs;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -89,7 +96,23 @@ public class Aptoide extends FragmentActivity {
 	ArrayList<ServerNode> servers;
 	private int parsingProgress = 0;
 	ImageView search;
+	private DownloadQueueService downloadQueueService;
+	private ServiceConnection conn = new ServiceConnection() {
+
+		
+
+		public void onServiceDisconnected(ComponentName name) {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			downloadQueueService=((DownloadQueueService.DownloadQueueBinder) service).getService();
+		}
+	};
 	
+	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
+
 	private int NEWREPO_FLAG = 0;
 	
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
@@ -98,14 +121,65 @@ public class Aptoide extends FragmentActivity {
 	Editor editor;
 	boolean pop_change = false;
 	private String order_lst = DBStructure.COLUMN_APK_NAME+" collate nocase";
+	private boolean receiverIsRegister = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.aptoide);
+		context = this;
+		
+		File sdcard_file = new File(SDCARD);
+		if(!sdcard_file.exists() || !sdcard_file.canWrite()){
+
+			final AlertDialog upd_alrt = new AlertDialog.Builder(context).create();
+			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+			upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
+			upd_alrt.setMessage(getText(R.string.remote_in_noSD));
+			upd_alrt.setButton(Dialog.BUTTON_NEUTRAL,getText(R.string.btn_ok), new Dialog.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+				}
+			});
+			upd_alrt.show();
+
+		}else{
+			StatFs stat = new StatFs(sdcard_file.getPath());
+			long blockSize = stat.getBlockSize();
+			long totalBlocks = stat.getBlockCount();
+			long availableBlocks = stat.getAvailableBlocks();
+
+			long total = (blockSize * totalBlocks)/1024/1024;
+			long avail = (blockSize * availableBlocks)/1024/1024;
+			Log.d("Aptoide","* * * * * * * * * *");
+			Log.d("Aptoide", "Total: " + total + " Mb");
+			Log.d("Aptoide", "Available: " + avail + " Mb");
+
+			if(avail < 10 ){
+				Log.d("Aptoide","No space left on SDCARD...");
+				Log.d("Aptoide","* * * * * * * * * *");
+
+				final AlertDialog upd_alrt = new AlertDialog.Builder(context).create();
+				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+				upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
+				upd_alrt.setMessage(getText(R.string.remote_in_noSDspace));
+				upd_alrt.setButton(getText(R.string.btn_ok), new Dialog.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				});
+				upd_alrt.show();
+			}else{
+				Log.d("Aptoide","Ok!");
+				Log.d("Aptoide","* * * * * * * * * *");
+
+				File local_path = new File(LOCAL_PATH);
+				if(!local_path.exists())
+					local_path.mkdir();
+				bindService(new Intent(this,DownloadQueueService.class), conn , Service.BIND_AUTO_CREATE);
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		editor = sPref.edit();
-		context = this;
+		
 		XML_PATH = getCacheDir()+"/temp_info.xml";
 		db = new DBHandler(context);
 		db.open();
@@ -150,12 +224,11 @@ public class Aptoide extends FragmentActivity {
 		installed_listView.setOnItemClickListener(installedItemClick);
 		search.setOnClickListener(searchClick);
 		
-		File local_path = new File(LOCAL_PATH);
-		if(!local_path.exists())
-			local_path.mkdir();
 		IntentFilter filter = new IntentFilter();
 		filter.addAction("pt.caixamagica.aptoide.REDRAW");
 		registerReceiver(receiver, filter);
+		receiverIsRegister=true;
+			
 		if(getIntent().hasExtra("newrepo")){
 			Intent i = new Intent(this,StoreManager.class);
 			i.putExtra("newrepo", getIntent().getSerializableExtra("newrepo"));
@@ -203,7 +276,8 @@ public class Aptoide extends FragmentActivity {
 		}
 		
 		
-		
+			}
+		}
 		
 
 		
@@ -216,6 +290,9 @@ public class Aptoide extends FragmentActivity {
 		menu.clear();
 		if (vp.getCurrentItem() == 0) {
 			menu.add(0, 1, 0, getString(R.string.menu_update_repo)).setIcon(android.R.drawable.ic_menu_rotate);
+		}
+		if (vp.getCurrentItem() == 2) {
+			menu.add(0, 5, 0, getString(R.string.menu_update_all)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
 		menu.add(0, 0, 0, getString(R.string.menu_manage)).setIcon(android.R.drawable.ic_menu_agenda);
 		menu.add(0, 2, 0, getString(R.string.menu_display_options)).setIcon(android.R.drawable.ic_menu_sort_by_size);
@@ -251,6 +328,17 @@ public class Aptoide extends FragmentActivity {
 				}
 			});
 			alrt.show();
+		}else if(item.getItemId()==5){
+			new Thread(new Runnable() {
+				
+				public void run() {
+					for(int i = 0;i!=updatesAdapter.getCount();i++){
+						System.out.println(updatesAdapter.getCount());
+						queueDownload(((Cursor) updatesAdapter.getItem(i)).getString(7),((Cursor) updatesAdapter.getItem(i)).getString(3),true);
+					}
+				}
+			}).start();
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -335,7 +423,12 @@ public class Aptoide extends FragmentActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(receiver);
+		if(receiverIsRegister){
+			unregisterReceiver(receiver);
+			unbindService(conn);
+		}
+		
+		
 	}
 	
 	Vector<String> errorRepos;
@@ -919,5 +1012,42 @@ public class Aptoide extends FragmentActivity {
 			
 		}
 	};
+	
+	protected void queueDownload(String packageName, String ver, boolean isUpdate){
+
+
+		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
+
+		try{
+
+			tmp_serv = db.getPathHash(packageName, ver);
+
+			String localPath = new String(LOCAL_APK_PATH+packageName+"."+ver+".apk");
+			String appName = packageName;
+
+			//if(tmp_serv.size() > 0){
+			DownloadNode downloadNode = tmp_serv.firstElement();
+			downloadNode.setPackageName(packageName);
+			downloadNode.setAppName(appName);
+			downloadNode.setLocalPath(localPath);
+			downloadNode.setUpdate(isUpdate);
+			String remotePath = downloadNode.getRemotePath();
+			//}
+
+			if(remotePath.length() == 0)
+				throw new TimeoutException();
+
+			String[] logins = null; 
+//			logins = db.getLogin(downloadNode.getRepo());
+			//			downloadNode.getRemotePath()
+//			downloadNode.setLogins(logins);
+			Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
+			downloadQueueService.setCurrentContext(context);
+			downloadQueueService.startDownload(downloadNode);
+
+		} catch(Exception e){	
+			e.printStackTrace();
+		}
+	}
 	
 }

@@ -2,6 +2,7 @@ package cm.aptoide.pt;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -11,31 +12,53 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class SearchManager extends FragmentActivity implements LoaderCallbacks<Cursor>{
 	ListView lv;
 	String query;
 	EditText searchBox;
 	DBHandler db;
+	View v;
+	private CursorAdapter adapter;
+	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		db = new DBHandler(this);
 		db.open();
 		setContentView(R.layout.searchmanager);
-		lv = (ListView) findViewById(R.id.listView);
-		searchBox = (EditText) findViewById(R.id.search_box);
-//		lv.addFooterView(LayoutInflater.from(getApplicationContext()).inflate(R.layout.bzzsrch, null));
-		lv.setAdapter(new AvailableCursorAdapter(this,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER));
 		if(getIntent().hasExtra("search")){
 			query = getIntent().getExtras().getString("search");
 		}else{
 			query = getIntent().getExtras().getString(android.app.SearchManager.QUERY).replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
 		}
+		lv = (ListView) findViewById(R.id.listView);
+		searchBox = (EditText) findViewById(R.id.search_box);
+		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bzzsrch, null);
+		lv.addFooterView(v);
+		Button bazaar_search =  (Button) v.findViewById(R.id.baz_src);
+		bazaar_search.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
+		
+		bazaar_search.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				String url = "http://m.bazaarandroid.com/searchview.php?search="+query;
+				Intent i = new Intent(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(url));
+				startActivity(i);
+			}
+		});
+		adapter = new AvailableCursorAdapter(this,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		lv.setAdapter(adapter);
+		
 		searchBox.setText(query);
 		searchBox.addTextChangedListener(new TextWatcher() {
 			
@@ -52,7 +75,9 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 				query=editable.toString().replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
 				if(editable.length()>2){
 					getSupportLoaderManager().restartLoader(0x30, null, SearchManager.this);
+					
 				}
+				((TextView) v.findViewById(R.id.baz_src)).setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
 			}
 		});
 		
@@ -85,10 +110,10 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		return a;
 	}
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-		((CursorAdapter) lv.getAdapter()).swapCursor(arg1);
+		adapter.swapCursor(arg1);
 		
 	}
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		((CursorAdapter) lv.getAdapter()).swapCursor(null);		
+		adapter.swapCursor(null);		
 	}
 }

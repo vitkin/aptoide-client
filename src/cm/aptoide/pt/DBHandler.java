@@ -215,7 +215,7 @@ public class DBHandler {
 		
 		Cursor c = null;
 		 try {
-			c= database.rawQuery("select b.name, b._id, b.icon, b.vername,b.repo_id, b.rating,b.downloads from installed as a INNER JOIN apk b ON a.apkid=b.apkid and a.vercode < b.vercode order by b."+orderBy,null);
+			c= database.rawQuery("select b.name, b._id, b.icon, b.vername,b.repo_id, b.rating,b.downloads,b.apkid from installed as a INNER JOIN apk b ON a.apkid=b.apkid and a.vercode < b.vercode order by b."+orderBy,null);
 			c.moveToFirst();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -39,6 +39,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -77,6 +78,12 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	private ProgressDialog pd;
 	ArrayList<String> repos;
 	private ArrayList<Integer> cleanRepos = new ArrayList<Integer>();
+	private OnClickListener neutralListener = new OnClickListener() {
+		
+		public void onClick(DialogInterface arg0, int arg1) {
+			return;
+		}
+	};
 	
 	
 	@Override
@@ -146,9 +153,9 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			repos = (ArrayList<String>) getIntent().getSerializableExtra("newrepo");
 			for(final String uri2 : repos){
 				
-				AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-				alertDialog.setMessage("Add server: "+uri2+" ?");
-				alertDialog.setButton(Dialog.BUTTON_POSITIVE,"yes", new OnClickListener() {
+				final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+				alertDialog.setMessage(getString(R.string.newrepo_alrt)+uri2+" ?");
+				alertDialog.setButton(Dialog.BUTTON_POSITIVE,getString(android.R.string.yes), new OnClickListener() {
 					
 					public void onClick(DialogInterface dialog, int which) {
 						pd=new ProgressDialog(context);
@@ -161,11 +168,10 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 								try {
 									
 									this.uri = (checkServer(serverCheck(uri2), username, password));
-									containsRepo = serverContainsRepo(uri);
 								} catch (Exception e) {
 									e.printStackTrace();
 								} finally {
-									if(uri!=null&&!containsRepo){
+									if(uri!=null){
 										System.out.println(uri);
 										db.insertRepository(uri,username,password);
 									}
@@ -175,7 +181,8 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 										public void run() {
 											redraw();
 											pd.dismiss();
-											if(uri==null||containsRepo){
+											
+											if(uri==null){
 												runOnUiThread(new Runnable() {
 													
 													public void run() {
@@ -192,7 +199,29 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 						update=true;
 					}
 				});
-				alertDialog.show();
+				alertDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no),neutralListener  );
+				
+				new Thread(new Runnable() {
+					
+					public void run() {
+						boolean containsRepo = serverContainsRepo(serverCheck(uri2));
+						if(!containsRepo){
+							runOnUiThread(new Runnable() {
+								
+								public void run() {
+									alertDialog.show();
+								}
+							});	
+						}else{
+							runOnUiThread(new Runnable() {
+								
+								public void run() {
+									Toast.makeText(context, "Store "+uri2+" already exists.", 1).show();
+								}
+							});	
+						}
+					}
+				}).start();
 			}
 			
 		}else if(getIntent().hasExtra("norepos")){
@@ -225,7 +254,15 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 									public void run() {
 										redraw();
 										pd.dismiss();
-										if(uri==null||containsRepo){
+										if(containsRepo){
+											runOnUiThread(new Runnable() {
+												
+												public void run() {
+													Toast.makeText(context, "Store already exists.", 1).show();
+												}
+											});	
+										}
+										if(uri==null){
 											runOnUiThread(new Runnable() {
 												
 												public void run() {

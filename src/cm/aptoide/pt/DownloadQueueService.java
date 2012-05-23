@@ -123,6 +123,7 @@ public class DownloadQueueService extends Service {
 				notification.put("loginRequired", "false");
 			}
 			Log.d("Aptoide-DowloadQueueService", "download Started");
+			Log.d("Aptoide-DowloadQueueService", downloadNode.getRemotePath());
 			notifications.put(downloadNode.getPackageName().hashCode(), notification);
 			setNotification(downloadNode.getPackageName().hashCode(), 0);
 			
@@ -341,6 +342,10 @@ public class DownloadQueueService extends Service {
 						
 						if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 							throw new TimeoutException();
+						}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
+							Message progressArguments = new Message();
+							progressArguments.arg1 = 404;
+							downloadProgress.sendMessage(progressArguments);
 						}else{
 							InputStream getit = mHttpResponse.getEntity().getContent();
 							byte data[] = new byte[8096];
@@ -450,10 +455,12 @@ public class DownloadQueueService extends Service {
 			 int apkHash = downloadArguments.arg2;
 			 notificationManager.cancel(apkHash);
 			 notifications.remove(apkHash);
-			 if(downloadArguments.arg1 == 1){
-//				 Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_LONG).show();
+			 if(downloadArguments.arg1 == 404){
+				 Toast.makeText(context, getString(R.string.error_404), Toast.LENGTH_LONG).show();
+			 }else if(downloadArguments.arg1 == 1){
+				 Toast.makeText(context, getString(R.string.network_error), Toast.LENGTH_LONG).show();
 			 }else{
-//				 Toast.makeText(context, getString(R.string.md5_error), Toast.LENGTH_LONG).show();
+				 Toast.makeText(context, getString(R.string.md5_error), Toast.LENGTH_LONG).show();
 			 }
 		 }
 	 };
