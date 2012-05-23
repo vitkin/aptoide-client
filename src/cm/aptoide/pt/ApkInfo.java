@@ -19,6 +19,7 @@ import org.json.JSONObject;
 
 import android.app.Dialog;
 import android.app.Service;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -52,6 +54,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.pt.webservices.comments.AddCommentDialog;
 import cm.aptoide.pt.webservices.comments.Comment;
 import cm.aptoide.pt.webservices.comments.CommentPosterListOnScrollListener;
@@ -276,6 +279,21 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		spinnerMulti.setAdapter(spinnerMultiAdapter);
 		
 		action.setOnClickListener(installListener);
+		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
+		serch_mrkt.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setAction(android.content.Intent.ACTION_VIEW);
+				intent.setData(Uri.parse("market://details?id="+apkid));
+				try{
+					startActivity(intent);
+				}catch (ActivityNotFoundException e){
+					Toast.makeText(context, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+				}
+			}
+			
+		});
 		loadScreenshots();
 		loadCommentsAndTaste();
 	}
@@ -328,6 +346,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 		public void onClick(View v) {
 			queueDownload(elements.get("apkid"), ((VersionApk) spinnerMulti.getSelectedItem()).getVersion(), false);
+			finish();
 		}
 	};
 	
@@ -340,7 +359,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			tmp_serv = db.getPathHash(packageName, ver);
 
-			String localPath = new String(LOCAL_APK_PATH+packageName+".apk");
+			String localPath = new String(LOCAL_APK_PATH+packageName+"."+ver+".apk");
 			String appName = packageName;
 
 			//if(tmp_serv.size() > 0){

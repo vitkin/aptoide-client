@@ -24,16 +24,20 @@ import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Button;
 
-public class IntentReceiver extends Activity {
-	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";
+public class IntentReceiver extends Activity implements OnDismissListener{
+//	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";
+	String TMP_MYAPP_FILE;
 	private String SDCARD = Environment.getExternalStorageDirectory().getPath();
 	private HashMap<String, String> app;
 	private ArrayList<String> server;
@@ -50,10 +54,17 @@ public class IntentReceiver extends Activity {
 	
 	DownloadQueueService downloadQueueService;
 	DBHandler db;
+	private OnClickListener neutralListener =  new OnClickListener() {
+		
+		public void onClick(DialogInterface dialog, int which) {
+			return;
+		}
+	};
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(getIntent().getData()!=null){
+			TMP_MYAPP_FILE = getCacheDir()+"/myapp.myapp";
 			db=new DBHandler(this);
 			db.open();
 			String uri = getIntent().getDataString();
@@ -90,13 +101,14 @@ public class IntentReceiver extends Activity {
 			}else{
 				try{
 					bindService(new Intent(this,DownloadQueueService.class), conn , Context.BIND_AUTO_CREATE);
+					System.out.println(getIntent().getDataString());
 					downloadMyappFile(getIntent().getDataString());
 					parseXmlMyapp(TMP_MYAPP_FILE);
 					
 					if(app!=null&&!app.isEmpty()){
 						AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-						alertDialog.setMessage("Install " +app.get("name"));
-						alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes", new DialogInterface.OnClickListener() {
+						alertDialog.setMessage(getString(R.string.installapp_alrt) +app.get("name")+"?");
+						alertDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new DialogInterface.OnClickListener() {
 							
 							public void onClick(DialogInterface dialog, int which) {
 								
@@ -104,11 +116,12 @@ public class IntentReceiver extends Activity {
 									downloadNode.setAppName(app.get("name"));
 									downloadQueueService.setCurrentContext(IntentReceiver.this);
 									downloadQueueService.startDownload(downloadNode);
-									proceed();
 								
 								
 							}
 						});
+						alertDialog.setButton(Dialog.BUTTON_NEGATIVE,getString(android.R.string.no), neutralListener );
+						alertDialog.setOnDismissListener(this);
 						alertDialog.show();
 					}else{
 						proceed();
@@ -245,6 +258,10 @@ public class IntentReceiver extends Activity {
 	    } catch (ParserConfigurationException e) {
 	    	e.printStackTrace();
 		}
+	}
+
+	public void onDismiss(DialogInterface dialog) {
+		proceed();
 	}
 	
 }
