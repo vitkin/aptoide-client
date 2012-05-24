@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.IsolatedContext;
 import android.util.Log;
+import android.widget.TextView;
 
 public class DBHandler {
 
@@ -736,6 +737,20 @@ public class DBHandler {
 		}
 		return -1;
 	}
+	
+	public int getOldApkId(String apkid, String vername) {
+		Cursor c = null;
+		try{
+			c = database.query(DBStructure.TABLE_OLD, new String[]{DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_OLD_APKID+"=? and "+DBStructure.COLUMN_APK_OLD_VERNAME+"=?", new String[]{apkid,vername}, null, null, null);
+			c.moveToFirst();
+			if(c.getCount()>0){
+				return c.getInt(0);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
 
 	public void setRepoInUse(long repo_id, int i) {
 		ContentValues values = new ContentValues();
@@ -793,6 +808,60 @@ public class DBHandler {
 		values.put(DBStructure.COLUMN_REPOS_USER, "");
 		values.put(DBStructure.COLUMN_REPOS_PASSWORD, "");
 		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{new_repo});
-	}	
+	}
+	
+	public Cursor getScheduledDownloads(){
+		Cursor c = null;
+		try{
+			c = database.query(DBStructure.TABLE_SCHEDULED, null, null, null, null, null, null);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return c;
+	}
+
+	public void insertScheduledDownload(String apkid, String name,String iconpath,
+			String vername, long repo_id) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_SCHEDULED_APKID, apkid);
+		values.put(DBStructure.COLUMN_SCHEDULED_NAME, name);
+		values.put(DBStructure.COLUMN_SCHEDULED_VERNAME, vername);
+		values.put(DBStructure.COLUMN_SCHEDULED_REPO_ID, repo_id);
+		values.put(DBStructure.COLUMN_SCHEDULED_ICONPATH, iconpath);
+		try{
+			database.insert(DBStructure.TABLE_SCHEDULED, null, values);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getInstalledVercode(String apkid) {
+		Cursor c = null;
+		String vercode = "-1";
+		try{
+			c = database.query(DBStructure.TABLE_INSTALLED, new String[]{DBStructure.COLUMN_INSTALLED_VERCODE}, DBStructure.COLUMN_INSTALLED_APKID+"=?", new String[]{apkid}, null, null, null);
+			c.moveToFirst();
+			if(c.getCount()!=0){
+				vercode = c.getString(0);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		c.close();
+		return vercode;
+	}
+
+	public Cursor getOldApk(long id) {
+		Cursor c = null;
+		try{
+			c= database.query(DBStructure.TABLE_OLD, null, DBStructure.COLUMN_APK_OLD_ID+"=?", new String[]{id+""}, null, null, null);
+			c.moveToFirst();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return c;
+	}
 	
 }
+
