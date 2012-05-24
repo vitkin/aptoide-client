@@ -777,6 +777,10 @@ public class DBHandler {
 			e.printStackTrace();
 		}
 		
+		if(login[0]==null){
+			login[0]="";
+			login[1]="";
+		}
 		
 		return login;
 	}
@@ -820,9 +824,10 @@ public class DBHandler {
 		return c;
 	}
 
-	public void insertScheduledDownload(String apkid, String name,String iconpath,
+	public void insertScheduledDownload(long id, String apkid, String name,String iconpath,
 			String vername, long repo_id) {
 		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_SCHEDULED_ID, id);
 		values.put(DBStructure.COLUMN_SCHEDULED_APKID, apkid);
 		values.put(DBStructure.COLUMN_SCHEDULED_NAME, name);
 		values.put(DBStructure.COLUMN_SCHEDULED_VERNAME, vername);
