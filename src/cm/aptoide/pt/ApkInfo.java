@@ -412,7 +412,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			if(!scheduledDownloadBox.isChecked()){
 				queueDownload(elements.get("apkid"), ((VersionApk) spinnerMulti.getSelectedItem()).getVersion(), false);
 			}else{
-				db.insertScheduledDownload(apkid,elements.get("name"),elements.get("iconpath"),vername,repo_id);
+				db.insertScheduledDownload(id,apkid,elements.get("name"),elements.get("iconpath"),vername,repo_id);
 			}
 			finish();
 		}
