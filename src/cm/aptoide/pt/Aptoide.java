@@ -46,6 +46,8 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -76,6 +78,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import cm.aptoide.pt.utils.Algorithms;
+import cm.aptoide.pt.utils.EnumOptionsMenu;
 
 import com.viewpagerindicator.TitlePageIndicator;
 import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
@@ -97,6 +100,7 @@ public class Aptoide extends FragmentActivity {
 	private int parsingProgress = 0;
 	ImageView search;
 	private DownloadQueueService downloadQueueService;
+	public ConnectivityManager netstate = null; 
 	private ServiceConnection conn = new ServiceConnection() {
 
 		
@@ -177,6 +181,7 @@ public class Aptoide extends FragmentActivity {
 				if(!local_path.exists())
 					local_path.mkdir();
 				bindService(new Intent(this,DownloadQueueService.class), conn , Service.BIND_AUTO_CREATE);
+				netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		editor = sPref.edit();
 		
@@ -289,30 +294,37 @@ public class Aptoide extends FragmentActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		if (vp.getCurrentItem() == 0) {
-			menu.add(0, 1, 0, getString(R.string.menu_update_repo)).setIcon(android.R.drawable.ic_menu_rotate);
+			menu.add(0, EnumOptionsMenu.UPDATE_REPO.ordinal(), 0, getString(R.string.menu_update_repo)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
 		if (vp.getCurrentItem() == 2) {
-			menu.add(0, 5, 0, getString(R.string.menu_update_all)).setIcon(android.R.drawable.ic_menu_rotate);
+			menu.add(0, EnumOptionsMenu.UPDATE_ALL.ordinal(), 0, getString(R.string.menu_update_all)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
-		menu.add(0, 0, 0, getString(R.string.menu_manage)).setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(0, 2, 0, getString(R.string.menu_display_options)).setIcon(android.R.drawable.ic_menu_sort_by_size);
-		menu.add(0, 3, 0, getString(R.string.menu_settings)).setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, 4, 0, getString(R.string.menu_about)).setIcon(android.R.drawable.ic_menu_help);
+		menu.add(0, EnumOptionsMenu.MANAGE_REPO.ordinal(), 0, getString(R.string.menu_manage)).setIcon(android.R.drawable.ic_menu_agenda);
+		menu.add(0, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), 0, getString(R.string.menu_display_options)).setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(0, EnumOptionsMenu.SETTINGS.ordinal(), 0, getString(R.string.menu_settings)).setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(0, EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(), 0, getString(R.string.schDwnBtn)).setIcon(android.R.drawable.ic_menu_recent_history);
+		menu.add(0, EnumOptionsMenu.ABOUT.ordinal(), 0, getString(R.string.menu_about)).setIcon(android.R.drawable.ic_menu_help);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == 0) {
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		switch (menuEntry) {
+		case MANAGE_REPO:
 			startActivityForResult(new Intent(this,StoreManager.class), 0);
-		}else if (item.getItemId() == 1){
-			updateRepos();
-		}else if (item.getItemId() == 2){
+			break;
+		case UPDATE_REPO:
+			forceUpdateRepos();
+			break;
+		case DISPLAY_OPTIONS:
 			showDisplayOptionsDialog();
-		}else if (item.getItemId() == 3){
+			break;
+		case SETTINGS:
 			Intent i = new Intent(this,Preferences.class);
 			startActivity(i);
-		}else if(item.getItemId()==4){
+			break;
+		case ABOUT:
 			LayoutInflater li = LayoutInflater.from(this);
 			View view = li.inflate(R.layout.about, null);
 			TextView info = (TextView)view.findViewById(R.id.about11);
@@ -328,18 +340,28 @@ public class Aptoide extends FragmentActivity {
 				}
 			});
 			alrt.show();
-		}else if(item.getItemId()==5){
+			break;
+		case UPDATE_ALL:
 			new Thread(new Runnable() {
-				
+
 				public void run() {
-					for(int i = 0;i!=updatesAdapter.getCount();i++){
+					for (int i = 0; i != updatesAdapter.getCount(); i++) {
 						System.out.println(updatesAdapter.getCount());
-						queueDownload(((Cursor) updatesAdapter.getItem(i)).getString(7),((Cursor) updatesAdapter.getItem(i)).getString(3),true);
+						queueDownload(((Cursor) updatesAdapter.getItem(i))
+								.getString(7), ((Cursor) updatesAdapter
+								.getItem(i)).getString(3), true);
 					}
 				}
 			}).start();
-			
+		case SCHEDULED_DOWNLOADS:
+			startActivityForResult(new Intent(this,ScheduledDownload.class), 2);
+			break;
+		default:
+			break;
 		}
+			
+			
+			
 		return super.onOptionsItemSelected(item);
 	}
 	
@@ -441,94 +463,142 @@ public class Aptoide extends FragmentActivity {
 		errorRepos = new Vector<String>();
 		updatedRepos = new Vector<String>();
 		pd = new ProgressDialog(context);
+		pd.setMessage(getString(R.string.please_wait));
 		pd.show();
 		
 		parsingProgress=0;
 		final AlertDialog alert = new AlertDialog.Builder(context).create();
-		new Thread() {
+		
+		boolean connectionAvailable = false;
+		try {
+			connectionAvailable = netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+		} catch (Exception e) {
 			
+			e.printStackTrace()	;
+			
+			}
+		try {
+			connectionAvailable = connectionAvailable
+					|| netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			connectionAvailable = connectionAvailable
+					|| netstate.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
 
-			public void run() {
-				try {
-					SAXParserFactory spf = SAXParserFactory.newInstance();
-					SAXParser sp = spf.newSAXParser();
-					servers = new ArrayList<ServerNode>();
-					servers = db.getInUseServers();
-					if(servers.isEmpty()){
-						alert.setMessage(getString(R.string.updating_norepos));
-						errors=true;
-						alert.show();
-					}else{
-					for(ServerNode server : servers){
-						parsingProgress++;
-						int parse = downloadList(server.uri, server.hash);
-						
-						if(parse==0){
-							
-							sp.parse(new File(XML_PATH),new RepoParser(context, handler, server.id,XML_PATH));
-							
-						}else if(parse==1){
-							updatedRepos.add(server.uri);
-							
-						} else{
-							errorRepos.add(server.uri);
-							errors=true;
-						}
-						
-						
-					}
-					Intent i = new Intent(Aptoide.this,ExtrasService.class);
-					i.putExtra("repos", servers);
-					startService(i);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					runOnUiThread(new Runnable() {
-						private android.content.DialogInterface.OnClickListener neutralListener = new Dialog.OnClickListener() {
-							
-							public void onClick(DialogInterface dialog, int which) {
-								// TODO Auto-generated method stub
-								
-							}
-						};
+		} catch (Exception e) {
+			e.printStackTrace();
 
-						public void run() {
-							pd.dismiss();
-							redrawAll();
-							if(!errors){
-								alert.setMessage(getString(R.string.update_done_msg1));
-								alert.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), neutralListener);
-								alert.show();
-							}
-							if(!errorRepos.isEmpty()){
-								String repos = "";
-								for(String repo : errorRepos){
-									repos.concat("\n"+repo);
+		}
+		try {
+			connectionAvailable = connectionAvailable
+					|| netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+		
+		if (connectionAvailable) {
+			new Thread() {
+
+				public void run() {
+					try {
+						SAXParserFactory spf = SAXParserFactory.newInstance();
+						SAXParser sp = spf.newSAXParser();
+						servers = new ArrayList<ServerNode>();
+						servers = db.getInUseServers();
+						if (servers.isEmpty()) {
+							alert.setMessage(getString(R.string.updating_norepos));
+							errors = true;
+							alert.show();
+						} else {
+							for (ServerNode server : servers) {
+								parsingProgress++;
+								int parse = downloadList(server.uri,
+										server.hash);
+
+								if (parse == 0) {
+
+									sp.parse(new File(XML_PATH),
+											new RepoParser(context, handler,
+													server.id, XML_PATH));
+
+								} else if (parse == 1) {
+									updatedRepos.add(server.uri);
+
+								} else {
+									errorRepos.add(server.uri);
+									errors = true;
 								}
-								alert.setMessage(getString(R.string.error_on_update)+repos);
-								alert.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), neutralListener);
-								alert.show();
+
 							}
-							if(!updatedRepos.isEmpty()){
-								String repos = "";
-								for(String repo : updatedRepos){
-									repos.concat("\n"+repo);
-								}
-								alert.setMessage("Servers are already up to date: "+repos);
-								alert.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), neutralListener );
-								alert.show();
-							}
-							
-							
+							Intent i = new Intent(Aptoide.this,
+									ExtrasService.class);
+							i.putExtra("repos", servers);
+							startService(i);
 						}
-					});
-					new File(XML_PATH).delete();
-					
-					
-				}
-			};
-		}.start();
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						runOnUiThread(new Runnable() {
+							private android.content.DialogInterface.OnClickListener neutralListener = new Dialog.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO Auto-generated method stub
+
+								}
+							};
+
+							public void run() {
+								pd.dismiss();
+								redrawAll();
+								if (!errors) {
+									alert.setMessage(getString(R.string.update_done_msg1));
+									alert.setButton(Dialog.BUTTON_NEUTRAL,
+											getString(android.R.string.ok),
+											neutralListener);
+									alert.show();
+								}
+								if (!errorRepos.isEmpty()) {
+									String repos = "";
+									for (String repo : errorRepos) {
+										repos.concat("\n" + repo);
+									}
+									alert.setMessage(getString(R.string.error_on_update)
+											+ repos);
+									alert.setButton(Dialog.BUTTON_NEUTRAL,
+											getString(android.R.string.ok),
+											neutralListener);
+									alert.show();
+								}
+								if (!updatedRepos.isEmpty()) {
+									String repos = "";
+									for (String repo : updatedRepos) {
+										repos.concat("\n" + repo);
+									}
+									alert.setMessage("Servers are already up to date: "
+											+ repos);
+									alert.setButton(Dialog.BUTTON_NEUTRAL,
+											getString(android.R.string.ok),
+											neutralListener);
+									alert.show();
+								}
+
+							}
+						});
+						new File(XML_PATH).delete();
+
+					}
+				};
+			}.start();
+		}else{
+			Log.d("Aptoide","======================= I UPDATEREPOS DISMISS");
+			pd.dismiss();
+			Toast.makeText(context, getText(R.string.aptoide_error), Toast.LENGTH_LONG).show(); 
+		}
 	}
 
 	Handler handler = new Handler() {
@@ -1048,6 +1118,59 @@ public class Aptoide extends FragmentActivity {
 		} catch(Exception e){	
 			e.printStackTrace();
 		}
+	}
+	
+	public void forceUpdateRepos(){
+		final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
+		if(!(db.getInUseServers().size()!=0)){
+			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+			upd_alrt.setTitle(getText(R.string.update_repos));
+			upd_alrt.setMessage(getText(R.string.updating_norepos));
+			upd_alrt.setButton(getText(R.string.btn_ok), new Dialog.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+
+				}
+			});
+		}else{
+			boolean freeConnectionAvailable = false;
+			try {
+				freeConnectionAvailable = netstate.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+				freeConnectionAvailable = freeConnectionAvailable || netstate.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+
+			} catch (Exception e) { }
+
+			if(freeConnectionAvailable){
+				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+				upd_alrt.setTitle(getText(R.string.update_repos));
+				upd_alrt.setMessage(getText(R.string.updating_cfrm));
+				upd_alrt.setButton(getText(R.string.btn_yes), new Dialog.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						updateRepos();
+					}
+				});
+				upd_alrt.setButton2(getText(R.string.btn_no), new Dialog.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						upd_alrt.dismiss();
+					}
+				});
+			}else{
+				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+				upd_alrt.setTitle(getText(R.string.update_repos));
+				upd_alrt.setMessage(getText(R.string.updating_3g));
+				upd_alrt.setButton(getText(R.string.btn_yes), new Dialog.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						updateRepos();
+					}
+				});
+				upd_alrt.setButton2(getText(R.string.btn_no), new Dialog.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						upd_alrt.dismiss();
+					}
+				});
+			}
+		}
+		upd_alrt.show();
+
 	}
 	
 }

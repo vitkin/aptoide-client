@@ -73,9 +73,16 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_INSTALLED_VERNAME = "vername";
 	public static final String COLUMN_INSTALLED_NAME = "name";
 	
+	public static final String TABLE_SCHEDULED = "scheduled";
+	public static final String COLUMN_SCHEDULED_ID = "_id";
+	public static final String COLUMN_SCHEDULED_APKID = "apkid";
+	public static final String COLUMN_SCHEDULED_VERNAME = "vername";
+	public static final String COLUMN_SCHEDULED_NAME = "name";
+	public static final String COLUMN_SCHEDULED_REPO_ID = "repo_uri";
+	public static final String COLUMN_SCHEDULED_ICONPATH = "iconpath";
 
 	private static final String DATABASE_NAME = "aptoide.db";
-	private static final int DATABASE_VERSION = 33;
+	private static final int DATABASE_VERSION = 37;
 
 	// Database creation sql statement
 	private static final String CREATE_TABLE_APK = "CREATE TABLE "
@@ -150,6 +157,15 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_INSTALLED_NAME + " text , "
 			+ COLUMN_INSTALLED_VERNAME + " text , " 
 			+ COLUMN_INSTALLED_VERCODE + " integer, primary key ("+COLUMN_INSTALLED_APKID+", "+COLUMN_INSTALLED_VERCODE+") ); ";
+	
+	private static final String CREATE_TABLE_SCHEDULED = "create table "
+			+ TABLE_SCHEDULED + "(" 
+			+ COLUMN_SCHEDULED_ID + " integer primary key autoincrement, "
+			+ COLUMN_SCHEDULED_APKID + " text , "
+			+ COLUMN_SCHEDULED_NAME + " text , "
+			+ COLUMN_SCHEDULED_VERNAME + " text , "
+			+ COLUMN_SCHEDULED_REPO_ID + " text, "
+			+ COLUMN_SCHEDULED_ICONPATH + " text );";
 
 	public DBStructure(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -162,6 +178,7 @@ public class DBStructure extends SQLiteOpenHelper {
 		database.execSQL(CREATE_TABLE_CATEGORY);
 		database.execSQL(CREATE_TABLE_REPOS);
 		database.execSQL(CREATE_TABLE_INSTALLED);
+		database.execSQL(CREATE_TABLE_SCHEDULED);
 	}
 
 	@Override
@@ -174,6 +191,7 @@ public class DBStructure extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_OLD);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPOS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INSTALLED);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCHEDULED);
 		
 		onCreate(db);
 	}

@@ -46,7 +46,10 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -87,6 +90,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	String[] images;
 	private Spinner spinnerMulti;
 	private Button action;
+	private String actionString;
 	private ServiceConnection conn = new ServiceConnection() {
 		
 		public void onServiceDisconnected(ComponentName name) {
@@ -111,6 +115,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private ImageView icon;
 	ImageLoader loader;
 	private TextView versionInfo;
+	private CheckBox scheduledDownloadBox;
+	private boolean isDefaultSelection;
 	
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
@@ -118,6 +124,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		context = this;
+		isDefaultSelection = true;
+
 		bindService(new Intent(this,DownloadQueueService.class), conn , Service.BIND_AUTO_CREATE);
 		sPref=getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		id = getIntent().getExtras().getLong("id");
@@ -128,13 +136,11 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		icon = (ImageView) findViewById(R.id.app_hashid);
 		loader = new ImageLoader(context);
 		listView = (ListView) findViewById(R.id.listComments);
-		
+		type=getIntent().getStringExtra("type");
 		LayoutInflater inflater = this.getLayoutInflater();
 		final RelativeLayout linearLayout = (RelativeLayout)inflater.inflate(R.layout.headercomments,listView, false);
-		
 		this.likes = (TextView)linearLayout.findViewById(R.id.likes);
 		this.dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
-		
 		this.like = ((ImageView)linearLayout.findViewById(R.id.likesImage));
 		this.dislike = ((ImageView)linearLayout.findViewById(R.id.dislikesImage));
 		this.userTaste = new WrapperUserTaste();
@@ -151,7 +157,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		listView.addHeaderView(textView);
 		loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
 		listView.addFooterView(loadComLayout);
-		
 		store = (TextView)linearLayout.findViewById(R.id.app_store);
 		spinnerMulti = ((Spinner)linearLayout.findViewById(R.id.spinnerMultiVersion));
 		action = (Button) findViewById(R.id.btinstall);
@@ -159,19 +164,25 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
 		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		versionInfo = (TextView) findViewById(R.id.versionInfo);
-		
-//		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
+		scheduledDownloadBox = (CheckBox) findViewById(R.id.schedule_download_box);
 		listView.setAdapter(commentAdapter);
-		
-		getSupportLoaderManager().initLoader(0x20, null, this);
+		Bundle bundle = new Bundle();
+		getSupportLoaderManager().initLoader(0x20,bundle, this);
 		
 	}
-	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+	public Loader<Cursor> onCreateLoader(int arg0, final Bundle bundle) {
 		SimpleCursorLoader a = new SimpleCursorLoader(context) {
 			
 			@Override
 			public Cursor loadInBackground() {
-				return db.getApk(id);
+				if(bundle.containsKey("oldApk")){
+					System.out.println(bundle.getLong("oldApk"));
+					return db.getOldApk(bundle.getLong("oldApk"));
+				}else{
+					return db.getApk(id);
+				}
+					
+				
 			}
 		};
 		return a;
@@ -207,8 +218,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				elements.put("vercode", cursor.getString(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_VERCODE)));
 				elements.put("repo", db.getRepoName(repo_id));
+				elements.put("installedVercode", db.getInstalledVercode(elements.get("apkid")));
 				
-				
+				versions = new ArrayList<VersionApk>();
 				versions = db.getOldApks(elements.get("apkid"));
 				VersionApk versionApkPassed = new VersionApk(elements.get("vername"),Integer.parseInt(elements.get("vercode")),elements.get("apkid"),Integer.parseInt(elements.get("size")), Integer.parseInt(elements.get("downloads")));
 				versions.add(versionApkPassed);
@@ -270,15 +282,30 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		}catch (Exception e) {
 			rating.setRating(0);
 		}
-		
+		action.setOnClickListener(installListener);
+		if(Integer.parseInt(elements.get("vercode"))<Integer.parseInt(elements.get("installedVercode"))){
+			actionString = "Downgrade";
+		}else if (Integer.parseInt(elements.get("vercode"))==Integer.parseInt(elements.get("installedVercode"))){
+			actionString = "Uninstall";
+			action.setOnClickListener(uninstallListener);
+			scheduledDownloadBox.setEnabled(false);
+		}else if (Integer.parseInt(elements.get("vercode"))>Integer.parseInt(elements.get("installedVercode"))&&!elements.get("installedVercode").equals("-1")){
+			actionString = "Upgrade";
+		}else{
+			actionString = "Install";
+		}
 		store.setText(elements.get("repo"));
 		description.setText(description_text);
-		final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
-		= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions);
-		spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
-		spinnerMulti.setAdapter(spinnerMultiAdapter);
+		if(isDefaultSelection){
+			final MultiversionSpinnerAdapter<VersionApk> spinnerMultiAdapter 
+			= new MultiversionSpinnerAdapter<VersionApk>(this, R.layout.textviewfocused, versions);
+			spinnerMultiAdapter.setDropDownViewResource(R.layout.multiversionspinneritem);
+			spinnerMulti.setAdapter(spinnerMultiAdapter);
+		}
 		
-		action.setOnClickListener(installListener);
+		
+		
+		action.setText(actionString);
 		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
 		serch_mrkt.setOnClickListener(new OnClickListener() {
 			
@@ -293,6 +320,43 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				}
 			}
 			
+		});
+		scheduledDownloadBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					action.setText("Schedule");
+				}else{
+					action.setText(actionString);
+				}
+				
+			}
+		});
+		
+		spinnerMulti.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+			public void onItemSelected(AdapterView<?> arg0, View arg1,
+					int arg2, long arg3) {
+				
+				if(isDefaultSelection){
+					System.out.println("On Item Click");	
+					isDefaultSelection=false;
+				}else{
+					Bundle bundle = new Bundle();
+					if(arg2>0){
+						bundle.putLong("oldApk", db.getOldApkId(apkid,((VersionApk)spinnerMulti.getSelectedItem()).getVersion()));
+					}else{
+						id = db.getApkId(apkid);
+					}
+					getSupportLoaderManager().restartLoader(0x20, bundle, ApkInfo.this);
+				}
+				
+			}
+
+			public void onNothingSelected(AdapterView<?> arg0) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		loadScreenshots();
 		loadCommentsAndTaste();
@@ -345,7 +409,21 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private OnClickListener installListener = new OnClickListener() {
 		
 		public void onClick(View v) {
-			queueDownload(elements.get("apkid"), ((VersionApk) spinnerMulti.getSelectedItem()).getVersion(), false);
+			if(!scheduledDownloadBox.isChecked()){
+				queueDownload(elements.get("apkid"), ((VersionApk) spinnerMulti.getSelectedItem()).getVersion(), false);
+			}else{
+				db.insertScheduledDownload(apkid,elements.get("name"),elements.get("iconpath"),vername,repo_id);
+			}
+			finish();
+		}
+	};
+	
+	private OnClickListener uninstallListener = new OnClickListener() {
+
+		public void onClick(View v) {
+			Uri uri = Uri.fromParts("package", apkid, null);
+			Intent intent = new Intent(Intent.ACTION_DELETE, uri);
+			startActivity(intent); 
 			finish();
 		}
 	};

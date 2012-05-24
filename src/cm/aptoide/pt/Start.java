@@ -103,7 +103,7 @@ public class Start extends FragmentActivity {
 							try{
 								
 								getUpdateParameters();
-//								proceedhandler.postDelayed(new Run(false), 4000);
+								proceedhandler.postDelayed(new Run(false), 4000);
 								
 							if( pkginfo.versionCode < Integer.parseInt(updateParams.get("versionCode"))){
 								Log.d("Aptoide-VersionCode", "Using version "+pkginfo.versionCode+", suggest update!");
