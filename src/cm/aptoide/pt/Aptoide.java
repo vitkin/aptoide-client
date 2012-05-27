@@ -186,6 +186,46 @@ public class Aptoide extends FragmentActivity {
 				netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		editor = sPref.edit();
+		if(!sPref.contains("orderByCategory")){
+			editor.putBoolean("orderByCategory", true);
+		}
+		
+		if(!sPref.contains("order_lst")){
+			editor.putString("order_lst", order_lst);
+		}
+		
+//		if(sPref.getInt("version", 0) < pkginfo.versionCode){
+//	   		db.updateTables();
+//	   		editor.putBoolean("mode", true);
+//	   		editor.putInt("version", pkginfo.versionCode);
+//		}
+		
+		if(sPref.getString("myId", null) == null){
+			String rand_id = UUID.randomUUID().toString();
+			editor.putString("myId", rand_id);
+		}
+		
+		if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
+			 DisplayMetrics dm = new DisplayMetrics();
+		     getWindowManager().getDefaultDisplay().getMetrics(dm);
+		     editor.putInt("scW", dm.widthPixels);
+		     editor.putInt("scH", dm.heightPixels);
+		}
+		
+		if(sPref.getString("icdown", null) == null){
+			editor.putString("icdown", "g3w");
+		}
+		if(!sPref.contains("app_rating")){
+			editor.putString("app_rating", "Mature");
+		}
+		if(!sPref.contains("schDwnBox")){
+			editor.putBoolean("schDwnBox", false);
+		}
+		if(!sPref.contains("hwspecsChkBox")){
+			editor.putBoolean("hwspecsChkBox", true);
+		}
+		
+		editor.commit();
 		
 		XML_PATH = getCacheDir()+"/temp_info.xml";
 		db = new DBHandler(context);
@@ -242,46 +282,7 @@ public class Aptoide extends FragmentActivity {
 			startActivityForResult(i, 0);
 		}
 		
-		if(!sPref.contains("orderByCategory")){
-			editor.putBoolean("orderByCategory", true);
-		}
 		
-		if(!sPref.contains("order_lst")){
-			editor.putString("order_lst", order_lst);
-		}
-		
-//		if(sPref.getInt("version", 0) < pkginfo.versionCode){
-//	   		db.updateTables();
-//	   		editor.putBoolean("mode", true);
-//	   		editor.putInt("version", pkginfo.versionCode);
-//		}
-		
-		if(sPref.getString("myId", null) == null){
-			String rand_id = UUID.randomUUID().toString();
-			editor.putString("myId", rand_id);
-		}
-		
-		if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
-			 DisplayMetrics dm = new DisplayMetrics();
-		     getWindowManager().getDefaultDisplay().getMetrics(dm);
-		     editor.putInt("scW", dm.widthPixels);
-		     editor.putInt("scH", dm.heightPixels);
-		}
-		
-		if(sPref.getString("icdown", null) == null){
-			editor.putString("icdown", "g3w");
-		}
-		if(!sPref.contains("app_rating")){
-			editor.putString("app_rating", "Mature");
-		}
-		if(!sPref.contains("schDwnBox")){
-			editor.putBoolean("schDwnBox", false);
-		}
-		if(!sPref.contains("hwspecsChkBox")){
-			editor.putBoolean("hwspecsChkBox", true);
-		}
-		
-		editor.commit();
 		
 		if(sPref.getBoolean("firstrun",true)&&new File(LOCAL_PATH+"/servers.xml").exists()){
 			try{
