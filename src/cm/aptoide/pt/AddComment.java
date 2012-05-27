@@ -101,7 +101,8 @@ public class AddComment extends FragmentActivity implements OnDismissListener{
 		}
 	};
 	public void onDismiss(DialogInterface dialog) {
-		
+		if(sharedPreferences.getString(Configs.LOGIN_USER_NAME, null)!=null)
+			name.setText(sharedPreferences.getString(Configs.LOGIN_USER_NAME, "").split("@")[0]);
 	}
 	
 	
@@ -231,12 +232,9 @@ public class AddComment extends FragmentActivity implements OnDismissListener{
 	protected void onActivityResult(int arg0, int arg1, Intent intent) {
 		
 		super.onActivityResult(arg0, arg1, intent);
-		if(intent.hasExtra("password")){
+		if(intent.hasExtra("username")){
 			String username = intent.getStringExtra("username");
-			String password = intent.getStringExtra("password");
-			((EditText) loginComments.findViewById(R.id.user)).setText(username);
-			((EditText) loginComments.findViewById(R.id.pass)).setText(password);
-			((Button)loginComments.findViewById(R.id.submitLogin)).performClick();
+			loginComments.dismiss();
 			if(name.getText().length()==0){
 				name.setText(username.split("@")[0]);
 			}

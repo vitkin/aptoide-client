@@ -70,7 +70,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#edece9"
+        android:background="@drawable/border_background_normal"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingBottom="10dp"

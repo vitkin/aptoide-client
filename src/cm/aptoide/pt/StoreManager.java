@@ -173,7 +173,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 								} finally {
 									if(uri!=null){
 										System.out.println(uri);
-										db.insertRepository(uri,username,password);
+										db.insertRepository(uri,username,password,true);
 									}
 									
 									runOnUiThread(new Runnable() {
@@ -246,7 +246,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 							} finally {
 								if(uri!=null&&!containsRepo){
 									System.out.println(uri);
-									db.insertRepository(uri,username,password);
+									db.insertRepository(uri,username,password,true);
 								}
 								
 								runOnUiThread(new Runnable() {
@@ -331,8 +331,8 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		menu.add(0,0,0,getString(R.string.menu_add_repo)).setIcon(android.R.drawable.ic_menu_add);
-		menu.add(0,1,0,getString(R.string.menu_rem_repo)).setIcon(android.R.drawable.ic_menu_edit);
-		menu.add(0,2,0,getString(R.string.menu_edit_repo)).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(0,1,0,getString(R.string.menu_rem_repo)).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(0,2,0,getString(R.string.menu_edit_repo)).setIcon(android.R.drawable.ic_menu_edit);
 		return super.onPrepareOptionsMenu(menu);
 	}
 	CharSequence[] b;
@@ -474,6 +474,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 		final EditText sec_user = (EditText) view.findViewById(R.id.sec_user);
 		final EditText sec_pwd = (EditText) view.findViewById(R.id.sec_pwd);
 		final CheckBox sec = (CheckBox) view.findViewById(R.id.secure_chk);
+		final CheckBox extended = (CheckBox) view.findViewById(R.id.extended_chk);
 		sec.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if(isChecked){
@@ -505,6 +506,11 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 					db.addLogin(sec_user.getText().toString(), sec_pwd.getText().toString(), new_repo);
 				}else{
 					db.disableLogin(new_repo);
+				}
+				if(extended.isChecked()){
+					db.setExtended(repo);
+				}else{
+					db.disableExtended(repo);
 				}
 				update = true;
 				redraw();
@@ -566,7 +572,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 					} finally {
 						if(uri!=null&&!containsRepo){
 							System.out.println(uri);
-							db.insertRepository(uri,username,password);
+							db.insertRepository(uri,username,password,((CheckBox) alertDialogView.findViewById(R.id.extended_chk)).isChecked());
 
 						}
 						

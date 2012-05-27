@@ -8,7 +8,7 @@
     <string name="updates_tab">Updates</string>
     <string name="add_repo_private">Private</string>
     <string name="add_repo_text">Add</string>
-    <string name="extended_server">TODO</string>
+    <string name="extended_server">Extended Store</string>
     <string name="btn_add_repo">New Store</string>
     <string name="menu_rem_repo">Remove Store</string>
     <string name="number_apks">Applications:</string>
@@ -151,6 +151,27 @@
    <string name="schDown_nodownloadselect">No Downloads Selected</string>
    <string name="schDown_downerror">Download error. Add %1$s Store.</string>
    <string name="addSchDown">Added to Scheduled Downloads</string>
+   
+   <string name="registration">Bazaar Registration</string>
+    <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+    <string name="username">Email</string>
+    <string name="password">Password</string>
+    <string name="register">Sign Up</string>
     
+    <string name="schDown_invertselection">Invert Selection</string>
+    <string name="schDown_removeselected">Remove Selected</string>
+    <string name="schDown_sureremove">Are you sure you want to remove?</string>
+    <string name="chkBoxSchDwn">Schedule Download</string>
+    
+    <string name="clear_dwn_title">Downloads</string>
+    <string name="clear_dwn_btn">Download icons</string>
+    <string name="clear_dwn_msg">Download icon rules </string>
+    
+    
+    <string-array name="dwnif">
+        <item>3G and Wifi</item>
+        <item>Wifi only</item>
+        <item>Never download</item>
+    </string-array>
 
 </resources>

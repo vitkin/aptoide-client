@@ -30,6 +30,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
+import android.text.Html;
 import android.util.Log;
 
 public class ExtrasService extends Service {
@@ -169,7 +170,7 @@ public class ExtrasService extends Service {
 				apkid=sb.toString();
 				break;
 			case CMT:
-				cmt=sb.toString();
+				cmt=Html.fromHtml(sb.toString().replace("\n","<br>")).toString();
 				break;
 			case DELTA:
 

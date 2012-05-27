@@ -11,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
@@ -60,6 +61,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -248,6 +250,37 @@ public class Aptoide extends FragmentActivity {
 			editor.putString("order_lst", order_lst);
 		}
 		
+//		if(sPref.getInt("version", 0) < pkginfo.versionCode){
+//	   		db.updateTables();
+//	   		editor.putBoolean("mode", true);
+//	   		editor.putInt("version", pkginfo.versionCode);
+//		}
+		
+		if(sPref.getString("myId", null) == null){
+			String rand_id = UUID.randomUUID().toString();
+			editor.putString("myId", rand_id);
+		}
+		
+		if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
+			 DisplayMetrics dm = new DisplayMetrics();
+		     getWindowManager().getDefaultDisplay().getMetrics(dm);
+		     editor.putInt("scW", dm.widthPixels);
+		     editor.putInt("scH", dm.heightPixels);
+		}
+		
+		if(sPref.getString("icdown", null) == null){
+			editor.putString("icdown", "g3w");
+		}
+		if(!sPref.contains("app_rating")){
+			editor.putString("app_rating", "Mature");
+		}
+		if(!sPref.contains("schDwnBox")){
+			editor.putBoolean("schDwnBox", false);
+		}
+		if(!sPref.contains("hwspecsChkBox")){
+			editor.putBoolean("hwspecsChkBox", true);
+		}
+		
 		editor.commit();
 		
 		if(sPref.getBoolean("firstrun",true)&&new File(LOCAL_PATH+"/servers.xml").exists()){
@@ -322,7 +355,7 @@ public class Aptoide extends FragmentActivity {
 			break;
 		case SETTINGS:
 			Intent i = new Intent(this,Preferences.class);
-			startActivity(i);
+			startActivityForResult(i, 15);
 			break;
 		case ABOUT:
 			LayoutInflater li = LayoutInflater.from(this);
@@ -353,6 +386,7 @@ public class Aptoide extends FragmentActivity {
 					}
 				}
 			}).start();
+			break;
 		case SCHEDULED_DOWNLOADS:
 			startActivityForResult(new Intent(this,ScheduledDownload.class), 2);
 			break;
@@ -634,7 +668,7 @@ public class Aptoide extends FragmentActivity {
 			alrt.setMessage(getText(R.string.update_main));
 			alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.dialog_yes), new Dialog.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					updateRepos();
+					forceUpdateRepos();
 				}
 			});
 			alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.dialog_no), new Dialog.OnClickListener() {
@@ -644,6 +678,16 @@ public class Aptoide extends FragmentActivity {
 			});
 			alrt.show();
 		}else if(requestCode == NEWREPO_FLAG && data != null && data.hasExtra("redraw")){
+			currentCategory1="none";
+			currentCategory2="none";
+			
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					redrawAll();
+				}
+			});
+		}else if(requestCode == 15 && data != null && data.hasExtra("redraw")){
 			currentCategory1="none";
 			currentCategory2="none";
 			

@@ -143,6 +143,22 @@
 
         </activity>
         
+        <activity
+            android:configChanges="orientation"
+            android:name=".HWSpecActivity"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+
+        </activity>
+        
+        <activity
+            android:configChanges="orientation"
+            android:name=".ScreenshotsViewer"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+
+        </activity>
+        
         <service android:name=".DownloadQueueService"></service>
         <service android:name=".ExtrasService" android:process=":Extras"></service>
 
@@ -160,7 +176,14 @@
                 
             </intent-filter>
         </receiver>
-
+        
+         <receiver android:name=".ScheduledDownloadReceiver" >
+            <intent-filter>
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+	<activity android:name="com.google.ads.AdActivity"
+              android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
     </application>
 
 </manifest>
