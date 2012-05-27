@@ -13,7 +13,7 @@ import android.widget.TextView;
 public class AvailableCursorAdapter extends CursorAdapter {
 
 	DBHandler database;
-	
+	boolean download;
 	public AvailableCursorAdapter(Context context, Cursor c, int flags) {
 		super(context, c, flags);
 		this.context=context;

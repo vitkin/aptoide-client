@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
+import android.text.Html;
 import android.util.Log;
 
 public class RepoParser extends DefaultHandler {
@@ -27,6 +28,34 @@ public class RepoParser extends DefaultHandler {
 	private int increment = 0;
 	private String xml_path;
 	private boolean isRemove;
+	
+	public enum Screens {
+		notfound,small,normal,large,xlarge;
+		
+		static Screens lookup(String screen){
+			try{
+				return valueOf(screen);
+			}catch (Exception e) {
+				return notfound;
+			}
+			
+			
+		}
+		
+	}
+	
+	public enum Ages {
+		All,Mature;
+		static Ages lookup(String age){
+			try{
+				return valueOf(age);
+			}catch (Exception e) {
+				return All;
+			}
+			
+			
+		}
+	}
 	
 	public RepoParser(Context context, Handler handler,long repo_id, String xml_path) {
 		this.context=context;
@@ -95,7 +124,7 @@ public class RepoParser extends DefaultHandler {
 			apk.apkid=sb.toString();
 			break;
 		case NAME:
-			apk.name=sb.toString();
+			apk.name=Html.fromHtml(sb.toString()).toString();
 			break;
 		case APPSCOUNT:
 			total  = Integer.parseInt(sb.toString());
@@ -163,13 +192,13 @@ public class RepoParser extends DefaultHandler {
 			apk.size=sb.toString();
 			break;
 		case AGE:
-			apk.age=sb.toString();
+			apk.age=Ages.lookup(sb.toString()).ordinal();
 			break;
 		case MINSDK:
 			apk.minSdk=sb.toString();
 			break;
 		case MINSCREEN:
-			apk.minScreenSize=sb.toString();
+			apk.minScreenSize=Screens.valueOf(sb.toString()).ordinal();
 			break;
 			
 		default:

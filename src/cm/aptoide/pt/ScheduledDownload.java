@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +20,8 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -122,6 +125,9 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 				}
 			});
 		redraw();
+		if(getIntent().hasExtra("downloadAll")){
+    		downloadAll=true;
+    	}
 	}
 	private void redraw() {
 		getSupportLoaderManager().restartLoader(0x50, null, this);
@@ -198,7 +204,7 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 		
 		AlertDialog alrt = new AlertDialog.Builder(context).create();
 		alrt.setMessage(getText(R.string.schDown_install));
-		alrt.setButton(getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+		alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				for (int i =0; i!=adapter.getCount();i++){
 					DownloadNode downloadnode = doDownloadNode(i);
@@ -212,7 +218,7 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 				finish();
 				return;
 			} }); 
-		alrt.setButton2(getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+		alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
 				finish();
 				return;
@@ -225,6 +231,62 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 		
 		
 		
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		menu.add(Menu.NONE,1, 0, R.string.schDown_invertselection).setIcon(R.drawable.ic_menu_invert);
+		menu.add(Menu.NONE,2, 0, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		
+		
+		
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		AlertDialog alrt = new AlertDialog.Builder(this).create();
+		switch (item.getItemId()) {
+		case 2:
+			if(isAllChecked()){
+				alrt.setMessage(getText(R.string.schDown_sureremove));
+				alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						for(int i=0; i < adapter.getCount(); i++){
+							LinearLayout itemLayout = (LinearLayout)lv.getChildAt(i);
+							CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
+							if(cb.isChecked()){
+								db.deleteScheduledDownload(((Cursor) adapter.getItem(i)).getString(1),((Cursor) adapter.getItem(i)).getString(3));
+							}
+						}
+						redraw();
+						return;
+					} }); 
+				alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						return;
+					}});
+				alrt.show();
+			} else {
+				Toast.makeText(this, R.string.schDown_nodownloadselect,
+						Toast.LENGTH_LONG).show();
+			}
+
+			break;
+
+		case 1:
+			for(int i=0; i < adapter.getCount(); i++){
+				LinearLayout itemLayout = (LinearLayout)lv.getChildAt(i);
+				CheckBox cb = (CheckBox)itemLayout.findViewById(R.id.schDwnChkBox);
+					cb.toggle();
+				}
+			break;
+		default:
+			break;
+		}
+		
+		return super.onMenuItemSelected(featureId, item);
 	}
 	
 	@Override

@@ -10,6 +10,7 @@ import java.util.Vector;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.IsolatedContext;
@@ -22,10 +23,14 @@ public class DBHandler {
 	private static DBStructure dbHelper;
 	private static ExtrasDBStructure extrasDbHelper;
 	private HashMap<String,Apk> localApk ;
+	private SharedPreferences sPref;
+	private Context context; 
 	
 	public DBHandler(Context context) {
 		dbHelper = new DBStructure(context);
+		this.context=context;
 		extrasDbHelper = new ExtrasDBStructure(context);
+		sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 	}
 	
 	public synchronized void open() {
@@ -187,16 +192,27 @@ public class DBHandler {
 
 	public Cursor getApk(String orderBy) {
 		Cursor c = null;
-		 try {
-			 
-			c = database.rawQuery("select name,_id,icon,vername,repo_id,rating,downloads from apk order by "+orderBy, null);
+		String query = "select b.name, b._id,b.icon,b.vername,b.repo_id,b.rating,b.downloads from apk b";
+		try {
+			if(sPref.getString("app_rating","All").equals("Mature")){
+				query += " where b.age <=1";
+			}else{
+				query += " where b.age <1";
+			}
+			if(sPref.getBoolean("hwspecsChkBox",false)){
+				HWSpecifications specs = new HWSpecifications(context);
+				query += " and b.screen <= "+specs.screenSize+" and b.sdk <= "+specs.sdkVer;
+			}
+			System.out.println(sPref.getString("app_rating","none"));
 			
-			c.moveToFirst();
-//			c= database.query(DBStructure.TABLE_APK , new String[]{"*","max("+DBStructure.COLUMN_APK_VERCODE+")"}, null, null, DBStructure.COLUMN_APK_APKID, null, DBStructure.COLUMN_APK_NAME+" collate nocase",null);
+			
+			query+=" order by b."+orderBy;
+			System.out.println(query);
+			c= database.rawQuery(query ,null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return  c;
+		return c;
 				
 	}
 	
@@ -268,6 +284,7 @@ public class DBHandler {
 		entries+=database.delete(DBStructure.TABLE_APK, DBStructure.COLUMN_APK_REPO_ID+"=?", new String[]{repo_id+""});
 		entries+=database.delete(DBStructure.TABLE_OLD, DBStructure.COLUMN_APK_OLD_REPO_ID+"=?", new String[]{repo_id+""});
 		entries+=database.delete(DBStructure.TABLE_CATEGORY, DBStructure.COLUMN_CATEGORY_REPO_ID+"=?", new String[]{repo_id+""});
+		entries+=database.delete(DBStructure.TABLE_SCHEDULED, DBStructure.COLUMN_SCHEDULED_REPO_ID+"=?", new String[]{repo_id+""});
 		
 		System.out.println("Deleted: "+entries+ " entries.");
 		
@@ -335,12 +352,13 @@ public class DBHandler {
 		return c;
 	}
 	
-	public void insertRepository(String uri, String user, String password) {
+	public void insertRepository(String uri, String user, String password, boolean extended) {
 		ContentValues values = new ContentValues();
 		values.put(DBStructure.COLUMN_REPOS_URI,uri);
 		values.put(DBStructure.COLUMN_REPOS_INUSE,1);
 		values.put(DBStructure.COLUMN_REPOS_USER,user);
 		values.put(DBStructure.COLUMN_REPOS_PASSWORD,password);
+		values.put(DBStructure.COLUMN_REPOS_EXTENDED,extended);
 		
 		try {
 			database.insert(DBStructure.TABLE_REPOS, null,values);
@@ -500,9 +518,27 @@ public class DBHandler {
 
 	public Cursor getApkByCategory(String category, String orderBy) {
 		Cursor c = null;
-		
+		String query = "select b.name, b._id,b.icon,b.vername,b.repo_id,b.rating,b.downloads from category a, apk b where a._id=b._id and a.category2='"+category+"'";
 		try {
-			c= database.rawQuery("select b.name, b._id,b.icon,b.vername,b.repo_id,b.rating,b.downloads from category a, apk b where a._id=b._id and a.category2='"+category+"' order by b."+orderBy ,null);
+			if(sPref.getBoolean("hwspecsChkBox",false)){
+				HWSpecifications specs = new HWSpecifications(context);
+				query += " and b.screen <= "+specs.screenSize+" and b.sdk <= "+specs.sdkVer;
+				
+				
+				
+			}
+			System.out.println(sPref.getString("app_rating","none"));
+				
+			
+			if(sPref.getString("app_rating","All").equals("Mature")){
+				query += " and b.age <=1";
+			}else{
+				query += " and b.age <1";
+			}
+			
+			query+=" order by b."+orderBy;
+			System.out.println(query);
+			c= database.rawQuery(query ,null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -867,6 +903,41 @@ public class DBHandler {
 		}
 		return c;
 	}
+
+	public void deleteScheduledDownload(String apkid, String vername) {
+		try{
+			database.delete(DBStructure.TABLE_SCHEDULED, DBStructure.COLUMN_SCHEDULED_APKID+"=? and "+DBStructure.COLUMN_SCHEDULED_VERNAME+"=?", new String[]{apkid,vername});
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int getExtendedServer(long repo_id) {
+		int return_int = 0;
+		Cursor c = null;
+		try{
+			c= database.query(DBStructure.TABLE_REPOS, new String[]{DBStructure.COLUMN_REPOS_EXTENDED}, DBStructure.COLUMN_REPOS_ID+"=?", new String[]{repo_id+""}, null, null, null);
+			c.moveToFirst();
+			return_int=c.getInt(0);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return return_int;
+	}
+
+	public void setExtended(String repo) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_REPOS_EXTENDED, true);
+		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{repo});
+	}
+
+	public void disableExtended(String repo) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_REPOS_EXTENDED, false);
+		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{repo});
+	}
+	
+	
 	
 }
 

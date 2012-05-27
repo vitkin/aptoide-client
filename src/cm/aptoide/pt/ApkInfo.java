@@ -16,6 +16,12 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
+import com.viewpagerindicator.CirclePageIndicator;
+import com.viewpagerindicator.TitlePageIndicator;
+import com.viewpagerindicator.TitlePageIndicator.IndicatorStyle;
+
 
 import android.app.Dialog;
 import android.app.Service;
@@ -28,6 +34,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,7 +44,9 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
 import android.util.Log;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -76,7 +85,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	Context context;
 	HashMap<String, String> elements;
 	TextView name;
-	ListView listView;
+	CustomListView listView;
 	private TextView likes;
 	private TextView dislikes;
 	private ImageView like;
@@ -117,6 +126,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private TextView versionInfo;
 	private CheckBox scheduledDownloadBox;
 	private boolean isDefaultSelection;
+	private boolean extended;
+	RelativeLayout linearLayout;
+	TextView textView;
 	
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
@@ -135,10 +147,10 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		name = (TextView) findViewById(R.id.app_name);
 		icon = (ImageView) findViewById(R.id.app_hashid);
 		loader = new ImageLoader(context);
-		listView = (ListView) findViewById(R.id.listComments);
+		listView = (CustomListView) findViewById(R.id.listComments);
 		type=getIntent().getStringExtra("type");
 		LayoutInflater inflater = this.getLayoutInflater();
-		final RelativeLayout linearLayout = (RelativeLayout)inflater.inflate(R.layout.headercomments,listView, false);
+		linearLayout = (RelativeLayout)inflater.inflate(R.layout.headercomments,listView, false);
 		this.likes = (TextView)linearLayout.findViewById(R.id.likes);
 		this.dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
 		this.like = ((ImageView)linearLayout.findViewById(R.id.likesImage));
@@ -148,7 +160,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		rating = (RatingBar) linearLayout.findViewById(R.id.rating);
 		apk_about = (TextView)linearLayout.findViewById(R.id.descript);
 		listView.addHeaderView(linearLayout, null, false);
-		TextView textView = new TextView(this);
+		textView = new TextView(this);
 		textView.setText(this.getString(R.string.commentlabel));
 		textView.setTextSize(20);
 		textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
@@ -219,7 +231,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						.getColumnIndex(DBStructure.COLUMN_APK_VERCODE)));
 				elements.put("repo", db.getRepoName(repo_id));
 				elements.put("installedVercode", db.getInstalledVercode(elements.get("apkid")));
-				
+				extended=db.getExtendedServer(repo_id)==1;
 				versions = new ArrayList<VersionApk>();
 				versions = db.getOldApks(elements.get("apkid"));
 				VersionApk versionApkPassed = new VersionApk(elements.get("vername"),Integer.parseInt(elements.get("vercode")),elements.get("apkid"),Integer.parseInt(elements.get("size")), Integer.parseInt(elements.get("downloads")));
@@ -236,6 +248,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				}
 				Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDBStructure.COLUMN_COMMENTS_COMMENT}, ExtrasDBStructure.COLUMN_COMMENTS_APKID+"=?", new String[]{elements.get("apkid")}, null);
 				c.moveToFirst();
+				
 				if(c.getCount()>0){
 					description_text = c.getString(0);
 				}else{
@@ -358,23 +371,52 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				
 			}
 		});
-		loadScreenshots();
-		loadCommentsAndTaste();
+		if(extended){
+			loadScreenshots();
+			loadCommentsAndTaste();
+			findViewById(R.id.likesLayout).setVisibility(View.VISIBLE);
+			findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
+			findViewById(R.id.screenShotsPager).setVisibility(View.VISIBLE);
+			findViewById(R.id.indicator).setVisibility(View.VISIBLE);
+			textView.setVisibility(View.VISIBLE);
+			loadComLayout.setVisibility(View.VISIBLE);
+//			listView.addFooterView(loadComLayout);
+//			listView.addHeaderView(textView);
+		}else{
+			findViewById(R.id.likesLayout).setVisibility(View.GONE);
+			findViewById(R.id.screenshots_label).setVisibility(View.GONE);
+			findViewById(R.id.screenShotsPager).setVisibility(View.GONE);
+			findViewById(R.id.indicator).setVisibility(View.GONE);
+			textView.setVisibility(View.GONE);
+			loadComLayout.setVisibility(View.GONE);
+//			listView.removeFooterView(loadComLayout);
+//			listView.removeHeaderView(textView);
+		}
+		
+		AdView adView = (AdView)this.findViewById(R.id.adView);
+		  adView.loadAd(new AdRequest());
 	}
+	
+	
+
+	
 	private void loadScreenshots() {
+		final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
+		pi.setFillColor(Color.BLACK);
+		pi.setSnap(true);
 		screenshots.setVisibility(View.GONE);
 		new Thread(new Runnable() {
 			
 			private JSONArray imagesurl;
-
+			String uri;
 			public void run() {
 				try{
 					HttpClient client = new DefaultHttpClient();
 					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 					HttpResponse response=null;
 					HttpGet request = new HttpGet();
-					
-					request.setURI(new URI(db.getWebservicespath(repo_id)+"webservices/listApkScreens/"+repo+"/"+elements.get("apkid")+"/"+elements.get("vername")+"/json"));
+					uri = db.getWebservicespath(repo_id)+"webservices/listApkScreens/"+repo+"/"+elements.get("apkid")+"/"+elements.get("vername")+"/json";
+					request.setURI(new URI(uri));
 					System.out.println(request.getURI());
 					response = client.execute(request);
 					System.out.println(request.getURI()+"");
@@ -386,7 +428,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					imagesurl = respJSON.getJSONArray("listing");
 					images = new String[imagesurl.length()];
 					for ( int i = 0; i!= imagesurl.length();i++){
-						images[i]=imagesurl.getString(i);
+						images[i]=screenshotToThumb(imagesurl.getString(i));
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
@@ -395,7 +437,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 						public void run() {
 							if(images!=null&&images.length>0){
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,images));
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,images,uri));
+								pi.setViewPager(screenshots);
 								screenshots.setVisibility(View.VISIBLE);
 							}
 							
@@ -406,6 +449,20 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		}).start();
 	}
 	
+	protected String screenshotToThumb(String string) {
+		
+		String[] splitedString = string.split("/");
+		StringBuilder db = new StringBuilder();
+		for(int i = 0; i !=splitedString.length-1;i++){
+			db.append(splitedString[i]);
+			db.append("/");
+		}
+		db.append("thumbs/mobile/");
+		db.append(splitedString[splitedString.length-1]);
+		
+		return db.toString();
+	}
+
 	private OnClickListener installListener = new OnClickListener() {
 		
 		public void onClick(View v) {
@@ -472,6 +529,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	
 	private TastePoster tastePoster = null;
 	private CommentPosterListOnScrollListener loadOnScrollCommentList;
+	LoginDialog loginComments;
 	final Runnable newVersionFetchComments = new Runnable(){
 
 
@@ -492,11 +550,11 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					if(position==1){ // If comment app... option selected
-						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
-								repo,
-				 				apkid, 
-				 				vername,
-				 				userTaste);
+//						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
+//								repo,
+//				 				apkid, 
+//				 				vername,
+//				 				userTaste);
 //						commentDialog.show();
 						Intent i = new Intent(ApkInfo.this,AddComment.class);
 						i.putExtra("repo", repo);
@@ -517,7 +575,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			             case MotionEvent.ACTION_DOWN:
 			            	 
 			            	 if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null || sPref.getString(Configs.LOGIN_PASSWORD, null)==null){				
-			            		LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, 
+			            		loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, 
 			            										dislike, repo , 
 			            										apkid, vername, EnumUserTaste.LIKE, userTaste);
 								loginComments.setOnDismissListener(ApkInfo.this);
@@ -546,7 +604,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			             case MotionEvent.ACTION_DOWN:
 			            	 
 			            	  if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null || sPref.getString(Configs.LOGIN_PASSWORD, null)==null){				
-			            		  	LoginDialog loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
+			            		  	loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
 			            		  									repo, apkid, vername, EnumUserTaste.DONTLIKE, userTaste);
 			            		  	loginComments.setOnDismissListener(ApkInfo.this);
 									loginComments.show();
@@ -617,6 +675,10 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
 		if(arg0==50&&arg1==RESULT_OK){
+			loadCommentsAndTaste();
+			
+		}else if(arg0==60&&arg1==RESULT_OK){
+			loginComments.dismiss();
 			loadCommentsAndTaste();
 		}
 		

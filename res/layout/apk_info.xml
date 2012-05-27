@@ -87,12 +87,12 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/advertisement"
             android:layout_below="@+id/apkinfoheader"
-            android:background="@drawable/homepage_border"
+            android:background="@drawable/border_background_normal"
             android:paddingBottom="5dp"
             android:paddingLeft="5dp"
             android:paddingRight="5dp" >
 
-            <ListView
+            <cm.aptoide.pt.CustomListView
                 android:id="@+id/listComments"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -101,29 +101,35 @@
                 android:cacheColorHint="#ffffff"
                 android:divider="@drawable/list_comments_divider"
                 android:dividerHeight="1dp" />
+
+            
+            
         </RelativeLayout>
+        
     </RelativeLayout>
 
     <LinearLayout
-        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/advertisement"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/listview_footer"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical" >
+                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/advertisement"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/listview_footer"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical" >
 
-<!--         <com.google.ads.AdView -->
-<!--             android:id="@+id/adView" -->
-<!--             android:layout_width="wrap_content" -->
-<!--             android:layout_height="wrap_content" -->
-<!--             ads:adSize="BANNER" -->
-<!--             ads:adUnitId="a14f30ff2e69698" -->
-<!--             ads:loadAdOnCreate="true" -->
-<!--             ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" > -->
-<!--         </com.google.ads.AdView> -->
+                <com.google.ads.AdView
+                    android:id="@+id/adView"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    ads:adSize="BANNER"
+                    ads:adUnitId="a14f30ff2e69698"
+                    ads:loadAdOnCreate="true"
+                    ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
+                </com.google.ads.AdView>
+
     </LinearLayout>
+    
 
     <LinearLayout
         android:id="@+id/listview_footer"

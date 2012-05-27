@@ -30,7 +30,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-public class ImageLoader {
+public class ScreenshotsImageLoader {
     
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
@@ -38,7 +38,7 @@ public class ImageLoader {
     ExecutorService executorService; 
     Context context;
     boolean download;
-    public ImageLoader(Context context){
+    public ScreenshotsImageLoader(Context context){
         fileCache=new FileCache(context);
         executorService=Executors.newFixedThreadPool(5);
         SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
@@ -65,7 +65,7 @@ public class ImageLoader {
         }else
         {
         	queuePhoto(l,url, imageView);
-            imageView.setImageResource(android.R.drawable.sym_def_app_icon);
+//            imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
         }
     }
@@ -205,14 +205,16 @@ public class ImageLoader {
                 return;
             if(bitmap!=null){
                 photoToLoad.imageView.setImageBitmap(bitmap);
-                Drawable [] arrayDrawable = new Drawable[2];
+//                Drawable [] arrayDrawable = new Drawable[2];
                 
-				arrayDrawable[0] = context.getResources().getDrawable(android.R.drawable.sym_def_app_icon);
-				arrayDrawable[1] = new BitmapDrawable(bitmap);
-				TransitionDrawable transitionDrawable = new TransitionDrawable(arrayDrawable);
-				transitionDrawable.setCrossFadeEnabled(true);
-				photoToLoad.imageView.setImageDrawable(transitionDrawable);
-				transitionDrawable.startTransition(250);
+//				arrayDrawable[0] = context.getResources().getDrawable(android.R.drawable.sym_def_app_icon);
+//				arrayDrawable[1] = new BitmapDrawable(bitmap);
+//				TransitionDrawable transitionDrawable = new TransitionDrawable(arrayDrawable);
+//				transitionDrawable.setCrossFadeEnabled(true);
+				photoToLoad.imageView.setImageBitmap(bitmap);
+				photoToLoad.imageView.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
+				
+//				transitionDrawable.startTransition(250);
             }else{
             	photoToLoad.imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             	

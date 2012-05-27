@@ -24,13 +24,13 @@ public class Apk {
 	public String category1;
 	public String category2;
 	public String stars;
-	public String age;
+	public int age;
 	public String md5;
 	public String path;
 	public String icon;
 	public String date;
 	public String minSdk;
 	public long repo_id;
-	public String minScreenSize;
+	public int minScreenSize;
 
 }

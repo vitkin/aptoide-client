@@ -2,7 +2,10 @@ package cm.aptoide.pt;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,24 +16,33 @@ import android.widget.ImageView;
 public class ViewPagerAdapterScreenshots extends PagerAdapter {
 
 	private Context context;
-	ImageLoader imageLoader;
+	ScreenshotsImageLoader imageLoader;
 	private String[] images;
-	int position;
-
-	public ViewPagerAdapterScreenshots(Context context,String[] images2) {
+	String url;
+	
+	public ViewPagerAdapterScreenshots(Context context,String[] images2,String uri) {
 		
 		this.context=context;
-		imageLoader = new ImageLoader(context);
+		imageLoader = new ScreenshotsImageLoader(context);
 		this.images=images2;
+		this.url=uri;
 	}
 	
 	@Override
-	public Object instantiateItem(ViewGroup container, int position) {
+	public Object instantiateItem(ViewGroup container, final int position) {
 		
 		View v = LayoutInflater.from(context).inflate(R.layout.screenshots, null);
 		imageLoader.DisplayImage(-1, images[position],(ImageView) v.findViewById(R.id.screenshot), context);
 		container.addView(v);
-		
+		v.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				Intent i = new Intent(context,ScreenshotsViewer.class);
+				i.putExtra("url", url);
+				i.putExtra("position", position);
+				context.startActivity(i);
+			}
+		});
 		return v;
 		
 	}
@@ -49,6 +61,8 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 		container.removeView((View) object);
 		
 	}
+	
+	
 	
 	
 

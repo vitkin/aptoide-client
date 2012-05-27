@@ -66,6 +66,7 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_REPOS_INUSE = "inuse";
 	public static final String COLUMN_REPOS_USER = "user";
 	public static final String COLUMN_REPOS_PASSWORD = "password";
+	public static final String COLUMN_REPOS_EXTENDED = "extended";
 	
 	public static final String TABLE_INSTALLED = "installed";
 	public static final String COLUMN_INSTALLED_APKID = "apkid";
@@ -82,7 +83,7 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULED_ICONPATH = "iconpath";
 
 	private static final String DATABASE_NAME = "aptoide.db";
-	private static final int DATABASE_VERSION = 37;
+	private static final int DATABASE_VERSION = 40;
 
 	// Database creation sql statement
 	private static final String CREATE_TABLE_APK = "CREATE TABLE "
@@ -93,14 +94,14 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_APK_VERCODE + " integer , " 
 			+ COLUMN_APK_DOWNLOADS + " integer , " 
 			+ COLUMN_APK_RATING + " float , "
-			+ COLUMN_APK_AGE + " text , " 
+			+ COLUMN_APK_AGE + " integer , " 
 			+ COLUMN_APK_SIZE + " text , " 
 			+ COLUMN_APK_MD5 + " text , " 
 			+ COLUMN_APK_PATH + " text , " 
 			+ COLUMN_APK_ICON + " text , " 
 			+ COLUMN_APK_DATE + " date , " 
-			+ COLUMN_APK_SDK + " text , " 
-			+ COLUMN_APK_SCREEN + " text , " 
+			+ COLUMN_APK_SDK + " integer , " 
+			+ COLUMN_APK_SCREEN + " integer , " 
 			+ COLUMN_APK_OPENGLES + " text ," 
 			+ COLUMN_APK_REPO_ID + " text , PRIMARY KEY ("+COLUMN_APK_ID+" autoincrement)); "; 
 	
@@ -148,7 +149,8 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_REPOS_UPDATETIME + " text , " 
 			+ COLUMN_REPOS_NAPK + " text , "
 			+ COLUMN_REPOS_INUSE + " text , " 
-			+ COLUMN_REPOS_USER + " text , " 
+			+ COLUMN_REPOS_USER + " text , "
+			+ COLUMN_REPOS_EXTENDED + " boolean , " 
 			+ COLUMN_REPOS_PASSWORD + " text ,PRIMARY KEY ("+COLUMN_REPOS_ID+" autoincrement)); "; 
 	
 	private static final String CREATE_TABLE_INSTALLED = "create table "
@@ -166,6 +168,7 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_SCHEDULED_VERNAME + " text , "
 			+ COLUMN_SCHEDULED_REPO_ID + " text, "
 			+ COLUMN_SCHEDULED_ICONPATH + " text );";
+	
 
 	public DBStructure(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
