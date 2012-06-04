@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.test.IsolatedContext;
 import android.util.Log;
 import android.widget.TextView;
@@ -868,7 +869,7 @@ public class DBHandler {
 		values.put(DBStructure.COLUMN_SCHEDULED_NAME, name);
 		values.put(DBStructure.COLUMN_SCHEDULED_VERNAME, vername);
 		values.put(DBStructure.COLUMN_SCHEDULED_REPO_ID, repo_id);
-		values.put(DBStructure.COLUMN_SCHEDULED_ICONPATH, iconpath);
+		values.put(DBStructure.COLUMN_SCHEDULED_ICONSPATH, iconpath);
 		try{
 			database.insert(DBStructure.TABLE_SCHEDULED, null, values);
 		}catch (Exception e) {
@@ -960,6 +961,158 @@ public class DBHandler {
 		return return_string;
 		
 	}
+
+	public Cursor getFeaturedApk(long id) {
+		Cursor c = null;
+		try{
+			c= database.query(DBStructure.TABLE_EDITORSCHOICE, null, DBStructure.COLUMN_APK_ID+"=?", new String[]{id+""}, null, null, null);
+			c.moveToFirst();
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return c;
+	}
+
+	public String getEditorsChoiceRepoName(long repo_id) {
+		Cursor c = null;
+		String return_string = null;
+		try {
+			c = database.query(DBStructure.TABLE_EDITORSCHOICEREPOS, new String[]{DBStructure.COLUMN_EDITORSCHOICEREPO_NAME}, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+"=?", new String[]{repo_id+""}, null, null, null);
+			c.moveToFirst();
+			return_string = c.getString(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		return return_string;
+	}
+
+	public long insertEditorChoiceRepo(Repository repository) {
+		ContentValues values = new ContentValues();
+		if(repository.id!=null){
+			values.put(DBStructure.COLUMN_EDITORSCHOICEREPO_ID, repository.id);
+		}
+		
+		if(repository.hash!=null){
+			values.put(DBStructure.COLUMN_EDITORSCHOICEREPO_HASH, repository.hash);
+		}
+		values.put(DBStructure.COLUMN_EDITORSCHOICEREPO_BASEPATH, repository.basepath);
+		values.put(DBStructure.COLUMN_EDITORSCHOICEREPO_FEATUREDGRAPHICPATH, repository.featuregraphicpath);
+		values.put(DBStructure.COLUMN_EDITORSCHOICEREPO_ICONSPATH, repository.iconspath);
+		values.put(DBStructure.COLUMN_EDITORSCHOICEREPO_SCREENSPATH, repository.screenspath);
+		values.put(DBStructure.COLUMN_EDITORSCHOICEREPO_NAME, repository.name);
+		
+		return database.insert(DBStructure.TABLE_EDITORSCHOICEREPOS, null, values);
+	}
+
+	public void insertEditorsChoice(Apk apk) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_APK_APKID, apk.apkid);
+		values.put(DBStructure.COLUMN_APK_NAME, apk.name);
+		values.put(DBStructure.COLUMN_APK_VERNAME, apk.vername);
+		values.put(DBStructure.COLUMN_APK_VERCODE, apk.vercode);
+		values.put(DBStructure.COLUMN_APK_DOWNLOADS, apk.downloads);
+		values.put(DBStructure.COLUMN_APK_RATING, apk.stars);
+		values.put(DBStructure.COLUMN_APK_AGE, apk.age);
+		values.put(DBStructure.COLUMN_APK_SIZE, apk.size);
+		values.put(DBStructure.COLUMN_APK_MD5, apk.md5);
+		values.put(DBStructure.COLUMN_APK_PATH, apk.path);
+		values.put(DBStructure.COLUMN_APK_ICON, apk.icon);
+		values.put(DBStructure.COLUMN_APK_DATE, apk.date);
+		values.put(DBStructure.COLUMN_APK_SDK, apk.minSdk);
+		values.put(DBStructure.COLUMN_APK_SCREEN, apk.minScreenSize);
+		values.put(DBStructure.COLUMN_APK_REPO_ID, apk.repo_id);
+		values.put(DBStructure.COLUMN_EDITORSCHOICE_FEATUREDGRAPHIC, apk.featuregraphic);
+		database.insert(DBStructure.TABLE_EDITORSCHOICE, null, values);
+		values.clear();
+		
+		
+		
+		
+	}
+
+	public void prepareEditorsChoiceDb() {
+		database.delete(DBStructure.TABLE_EDITORSCHOICE, DBStructure.COLUMN_APK_REPO_ID+">0", null);
+		database.delete(DBStructure.TABLE_EDITORSCHOICEREPOS, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+">0", null);
+	}
+
+	public Vector<String> getFeaturedGraphics() {
+		Cursor c = null;
+		Vector<String> image_urls = new Vector<String>();
+		try{
+			c = database.rawQuery("select featuredgraphicpath,featuredgraphic from editorschoice as a ,editorschoicerepo as b where a.repo_id=b._id and b._id>0",null);
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				image_urls.add(c.getString(0)+c.getString(1));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		return image_urls;
+	}
+
+	public ArrayList<HashMap<String, String>> getTopApps() {
+		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String, String>>();
+		Cursor c = null;
+		try{
+			c=database.query(DBStructure.TABLE_EDITORSCHOICE, new String[]{DBStructure.COLUMN_APK_NAME,DBStructure.COLUMN_APK_ICON,DBStructure.COLUMN_APK_RATING}, DBStructure.COLUMN_APK_REPO_ID+"=?", new String[]{"-1"}, null, null, null);
+			HashMap<String, String> item = null;
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				item = new HashMap<String, String>();
+				item.put("name", c.getString(0));
+				item.put("icon", c.getString(1));
+				item.put("rating", c.getString(2));
+				values.add(item);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		
+		return values;
+	}
+
+	public boolean verifyTopAppsHash(String string) {
+		Cursor c = null;
+		try{
+			c = database.query(DBStructure.TABLE_EDITORSCHOICEREPOS, new String[]{DBStructure.COLUMN_EDITORSCHOICEREPO_HASH}, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+"=?", new String[]{"-1"}, null, null, null);
+			c.moveToFirst();
+			if(c.getCount()!=0&&string.equals(c.getString(0))){
+				return true;
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		return false;
+	}
+
+	public void deleteTopApps() {
+		database.delete(DBStructure.TABLE_EDITORSCHOICE, DBStructure.COLUMN_APK_OLD_REPO_ID+"=-1", null);
+		database.delete(DBStructure.TABLE_EDITORSCHOICEREPOS, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+"=-1", null);
+	}
+
+	public String getTopAppsIconPath() {
+		Cursor c = null;
+		String return_string = null;
+		try{
+			c = database.query(DBStructure.TABLE_EDITORSCHOICEREPOS, new String[]{DBStructure.COLUMN_EDITORSCHOICEREPO_ICONSPATH}, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+"=?", new String[]{"-1"}, null, null, null);
+			c.moveToFirst();
+			return_string = c.getString(0);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return return_string;
+	}
+
+	
+	
+	
+	
 	
 	
 	

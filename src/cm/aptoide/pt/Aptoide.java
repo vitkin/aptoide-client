@@ -9,6 +9,9 @@ import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Queue;
 import java.util.UUID;
@@ -46,6 +49,7 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -79,6 +83,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -358,54 +363,136 @@ public class Aptoide extends FragmentActivity {
 	}
 
 	private void loadFeatured() {
-		LinearLayout ll = (LinearLayout) featured.findViewById(R.id.container); 
-        LinearLayout llAlso = new LinearLayout(this);
-        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-                LayoutParams.WRAP_CONTENT));
-        llAlso.setOrientation(LinearLayout.HORIZONTAL);
+		new Thread(new Runnable() {
+			
+			int[] res_ids = {R.id.central,R.id.topleft,R.id.topright,R.id.bottomleft,R.id.bottomright};
+			Vector<String> image_urls = new Vector<String>();
+			public void run() {
+				try {
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					SAXParser sp = spf.newSAXParser();
 
-        int widthSoFar = 0;
-        for (int i = 0; i!=10; i++) {
-            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
-//            txtSamItem.setText(i+"");
-            txtSamItem.setPadding(10, 0, 0, 0);
-            txtSamItem.setTag(i);
-            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
-            txtSamItem.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    finish();
-                }
-            });
+					//			downloadFeatured();
+					sp.parse(NetworkApis.getInputStream(context,
+							"http://www.bazaarandroid.com/apks/editors.xml"),
+							new EditorsChoiceRepoParser(context));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}finally{
+					image_urls = db.getFeaturedGraphics();
+					Collections.shuffle(image_urls);
+					runOnUiThread(new Runnable() {
+						ImageLoader2 imageLoader = new ImageLoader2(context);
+						public void run() {
+							try{
+								for(int i = 0; i != res_ids.length;i++){
+									ImageView v = (ImageView) featured.findViewById(res_ids[i]); 
+									imageLoader.DisplayImage(-1, image_urls.get(i), v, context);
+								}
+							}catch (Exception e) {
+								e.printStackTrace();
+							}
+							
+							
+						}
+					});
+				}
+			}
 
-            txtSamItem.measure(0, 0);
-            widthSoFar += txtSamItem.getMeasuredWidth();
-            System.out.println(txtSamItem.getMeasuredWidth());
-            if (widthSoFar >= txtSamItem.getMeasuredWidth()*2+100) {
-                ll.addView(llAlso);
+			
+		}).start();
+		
+		new Thread(new Runnable() {
+			
+			public void run() {
+				try {
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					SAXParser sp = spf.newSAXParser();
 
-                llAlso = new LinearLayout(this);
-                llAlso.setLayoutParams(new LayoutParams(
-                        LayoutParams.FILL_PARENT,
-                        100));
-                llAlso.setOrientation(LinearLayout.HORIZONTAL);
-                llAlso.addView(txtSamItem);
-                widthSoFar = txtSamItem.getMeasuredWidth();
-            } else {
-                llAlso.addView(txtSamItem);
-            }
-        }
+					//			downloadFeatured();
+					sp.parse(NetworkApis.getInputStream(context,
+							"http://apps.bazaarandroid.com/top.xml"),
+							new TopAppsRepoParser(context));
+				} catch (Exception e) {
+					e.printStackTrace();
+					
+				}finally{
+					runOnUiThread(new Runnable() {
+						ImageLoader imageLoader = new ImageLoader(context);
+						public void run() {
+							LinearLayout ll = (LinearLayout) featured.findViewById(R.id.container); 
+					        LinearLayout llAlso = new LinearLayout(Aptoide.this);
+					        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+					                LayoutParams.WRAP_CONTENT));
+					        llAlso.setOrientation(LinearLayout.HORIZONTAL);
 
-        ll.addView(llAlso);
+					        int widthSoFar = 0;
+					        ArrayList<HashMap<String, String>> values = db.getTopApps();
+					        for (int i = 0; i!=values.size(); i++) {
+					        	
+					            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
+					           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
+					           	imageLoader.DisplayImage(-1, db.getTopAppsIconPath()+values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context);
+					           	float stars = 0f;
+					           	try{
+					           		stars = Float.parseFloat(values.get(i).get("rating"));
+					           	}catch (Exception e) {
+					           		stars = 0f;
+								}
+					           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
+					            txtSamItem.setPadding(10, 0, 0, 0);
+					            txtSamItem.setTag(i);
+					            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
+					            txtSamItem.setOnClickListener(new OnClickListener() {
+					                public void onClick(View v) {
+					                    finish();
+					                }
+					            });
+
+					            txtSamItem.measure(0, 0);
+					            widthSoFar += txtSamItem.getMeasuredWidth();
+					            System.out.println(txtSamItem.getMeasuredWidth());
+					            if (widthSoFar >= txtSamItem.getMeasuredWidth()*2+100) {
+					                ll.addView(llAlso);
+
+					                llAlso = new LinearLayout(Aptoide.this);
+					                llAlso.setLayoutParams(new LayoutParams(
+					                        LayoutParams.FILL_PARENT,
+					                        100));
+					                llAlso.setOrientation(LinearLayout.HORIZONTAL);
+					                llAlso.addView(txtSamItem);
+					                widthSoFar = txtSamItem.getMeasuredWidth();
+					            } else {
+					                llAlso.addView(txtSamItem);
+					            }
+					        }
+
+					        ll.addView(llAlso);
+						}
+					});
+				}
+			}
+		}).start();
+		
+		
+		
+		
+		
+		
      
+	}
+
+	private void downloadFeatured() {
+		
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		if (vp.getCurrentItem() == 0) {
+		if (vp.getCurrentItem() == 1) {
 			menu.add(0, EnumOptionsMenu.UPDATE_REPO.ordinal(), 0, getString(R.string.menu_update_repo)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
-		if (vp.getCurrentItem() == 2) {
+		if (vp.getCurrentItem() == 3) {
 			menu.add(0, EnumOptionsMenu.UPDATE_ALL.ordinal(), 0, getString(R.string.menu_update_all)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
 		menu.add(0, EnumOptionsMenu.MANAGE_REPO.ordinal(), 0, getString(R.string.menu_manage)).setIcon(android.R.drawable.ic_menu_agenda);
@@ -1047,7 +1134,7 @@ public class Aptoide extends FragmentActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if(keyCode==KeyEvent.KEYCODE_BACK){
-			if(vp.getCurrentItem()==0){
+			if(vp.getCurrentItem()==1){
 				System.out.println("Current Category 1:" + currentCategory1);
 				System.out.println("Current Category 2:" + currentCategory2);
 				if(!currentCategory1.equals("none")){

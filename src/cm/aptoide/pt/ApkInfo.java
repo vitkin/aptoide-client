@@ -141,7 +141,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		bindService(new Intent(this,DownloadQueueService.class), conn , Service.BIND_AUTO_CREATE);
 		sPref=getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		id = getIntent().getExtras().getLong("id");
-		type = getIntent().getExtras().getString("type");
 		db = new DBHandler(context);
 		setContentView(R.layout.apk_info);
 		name = (TextView) findViewById(R.id.app_name);
@@ -187,13 +186,20 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			
 			@Override
 			public Cursor loadInBackground() {
-				if(bundle.containsKey("oldApk")){
-					System.out.println(bundle.getLong("oldApk"));
-					return db.getOldApk(bundle.getLong("oldApk"));
+				if(!type.equals("featured")||!type.equals("tops")){
+					if(bundle.containsKey("oldApk")){
+						System.out.println(bundle.getLong("oldApk"));
+						return db.getOldApk(bundle.getLong("oldApk"));
+					}else{
+						return db.getApk(id);
+					}
 				}else{
-					return db.getApk(id);
+					return db.getFeaturedApk(id);
 				}
-					
+				
+			
+				
+			
 				
 			}
 		};
@@ -284,8 +290,21 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 		apkid=elements.get("apkid");
 		vername=elements.get("vername");
-		repo = db.getRepoName(repo_id).split("\\.")[0];
-		repo = repo.split("http://")[1];
+		if(!type.equals("featured")&&!type.equals("top")){
+			repo = db.getRepoName(repo_id).split("\\.")[0];
+			repo = repo.split("http://")[1];
+		}else{
+			
+			if(type.equals("top")){
+				repo="apps";
+			}else{
+				repo=db.getEditorsChoiceRepoName(repo_id);
+			}
+			
+			
+			
+		}
+		
 		loader.DisplayImage(-1, elements.get("iconpath"), icon, context);
 		name.setText(elements.get("name"));
 		version.setText(elements.get("vername"));

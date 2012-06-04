@@ -80,14 +80,25 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULED_VERNAME = "vername";
 	public static final String COLUMN_SCHEDULED_NAME = "name";
 	public static final String COLUMN_SCHEDULED_REPO_ID = "repo_uri";
-	public static final String COLUMN_SCHEDULED_ICONPATH = "iconpath";
+	public static final String COLUMN_SCHEDULED_ICONSPATH = "iconspath";
 	
-	public static final String TABLE_FEATURED = "scheduled";
-	public static final String COLUMN_FEATURED_ID = "_id";
+	public static final String TABLE_EDITORSCHOICE = "editorschoice";
+	public static final String COLUMN_EDITORSCHOICE_FEATUREDGRAPHIC = "featuredgraphic";
+			//same columns as Table APK
+	
+	public static final String TABLE_EDITORSCHOICEREPOS = "editorschoicerepo";
+	public static final String COLUMN_EDITORSCHOICEREPO_ID = "_id";
+	public static final String COLUMN_EDITORSCHOICEREPO_BASEPATH = "basepath";
+	public static final String COLUMN_EDITORSCHOICEREPO_SCREENSPATH = "screenspath";
+	public static final String COLUMN_EDITORSCHOICEREPO_NAME = "name";
+	public static final String COLUMN_EDITORSCHOICEREPO_FEATUREDGRAPHICPATH= "featuredgraphicpath";
+	public static final String COLUMN_EDITORSCHOICEREPO_ICONSPATH = "iconspath";
+	public static final String COLUMN_EDITORSCHOICEREPO_HASH = "hash";
+	
 	
 
 	private static final String DATABASE_NAME = "aptoide.db";
-	private static final int DATABASE_VERSION = 40;
+	private static final int DATABASE_VERSION = 50;
 
 	// Database creation sql statement
 	private static final String CREATE_TABLE_APK = "CREATE TABLE "
@@ -107,6 +118,26 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_APK_SDK + " integer , " 
 			+ COLUMN_APK_SCREEN + " integer , " 
 			+ COLUMN_APK_OPENGLES + " text ," 
+			+ COLUMN_APK_REPO_ID + " text , PRIMARY KEY ("+COLUMN_APK_ID+" autoincrement)); "; 
+	
+	private static final String CREATE_TABLE_EDITORSCHOICE = "CREATE TABLE "
+			+ TABLE_EDITORSCHOICE + " ( " + COLUMN_APK_ID	+ " integer , "
+			+ COLUMN_APK_APKID+ " text , "
+			+ COLUMN_APK_NAME+ " text , " 
+			+ COLUMN_APK_VERNAME + " text , " 
+			+ COLUMN_APK_VERCODE + " integer , " 
+			+ COLUMN_APK_DOWNLOADS + " integer , " 
+			+ COLUMN_APK_RATING + " float , "
+			+ COLUMN_APK_AGE + " integer , " 
+			+ COLUMN_APK_SIZE + " text , " 
+			+ COLUMN_APK_MD5 + " text , " 
+			+ COLUMN_APK_PATH + " text , " 
+			+ COLUMN_APK_ICON + " text , " 
+			+ COLUMN_APK_DATE + " date , " 
+			+ COLUMN_APK_SDK + " integer , " 
+			+ COLUMN_APK_SCREEN + " integer , " 
+			+ COLUMN_APK_OPENGLES + " text ,"
+			+ COLUMN_EDITORSCHOICE_FEATUREDGRAPHIC + " text ," 
 			+ COLUMN_APK_REPO_ID + " text , PRIMARY KEY ("+COLUMN_APK_ID+" autoincrement)); "; 
 	
 	private static final String CREATE_TABLE_OLD = "create table "
@@ -171,7 +202,18 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_SCHEDULED_NAME + " text , "
 			+ COLUMN_SCHEDULED_VERNAME + " text , "
 			+ COLUMN_SCHEDULED_REPO_ID + " text, "
-			+ COLUMN_SCHEDULED_ICONPATH + " text );";
+			+ COLUMN_SCHEDULED_ICONSPATH + " text );";
+	
+	private static final String CREATE_TABLE_EDITORSCHOICEREPO = "create table "
+			+ TABLE_EDITORSCHOICEREPOS+ "(" 
+			+ COLUMN_EDITORSCHOICEREPO_ID+ " integer primary key autoincrement, "
+			+ COLUMN_EDITORSCHOICEREPO_BASEPATH + " text , "
+			+ COLUMN_EDITORSCHOICEREPO_FEATUREDGRAPHICPATH + " text , "
+			+ COLUMN_EDITORSCHOICEREPO_ICONSPATH + " text , "
+			+ COLUMN_EDITORSCHOICEREPO_NAME + " text, "
+			+ COLUMN_EDITORSCHOICEREPO_HASH + " text, "
+			+ COLUMN_EDITORSCHOICEREPO_SCREENSPATH + " text );";
+	
 	
 
 	public DBStructure(Context context) {
@@ -186,6 +228,8 @@ public class DBStructure extends SQLiteOpenHelper {
 		database.execSQL(CREATE_TABLE_REPOS);
 		database.execSQL(CREATE_TABLE_INSTALLED);
 		database.execSQL(CREATE_TABLE_SCHEDULED);
+		database.execSQL(CREATE_TABLE_EDITORSCHOICE);
+		database.execSQL(CREATE_TABLE_EDITORSCHOICEREPO);
 	}
 
 	@Override
@@ -199,6 +243,8 @@ public class DBStructure extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPOS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INSTALLED);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCHEDULED);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EDITORSCHOICE);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EDITORSCHOICEREPOS);
 		
 		onCreate(db);
 	}
