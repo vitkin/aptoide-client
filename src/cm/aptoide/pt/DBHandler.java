@@ -905,8 +905,13 @@ public class DBHandler {
 	}
 
 	public void deleteScheduledDownload(String apkid, String vername) {
+		System.out.println(apkid + " "+vername);
 		try{
-			database.delete(DBStructure.TABLE_SCHEDULED, DBStructure.COLUMN_SCHEDULED_APKID+"=? and "+DBStructure.COLUMN_SCHEDULED_VERNAME+"=?", new String[]{apkid,vername});
+			int i = database.delete(DBStructure.TABLE_SCHEDULED, DBStructure.COLUMN_SCHEDULED_APKID+"=? and "+DBStructure.COLUMN_SCHEDULED_VERNAME+"=?", new String[]{apkid,vername});
+			if(i==0){
+				i = database.delete(DBStructure.TABLE_SCHEDULED, DBStructure.COLUMN_SCHEDULED_APKID+"=?", new String[]{apkid});
+			}
+			System.out.println("Removed: "+i+" entries");
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -935,6 +940,25 @@ public class DBHandler {
 		ContentValues values = new ContentValues();
 		values.put(DBStructure.COLUMN_REPOS_EXTENDED, false);
 		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_URI+"=?", new String[]{repo});
+	}
+
+	public String getApkName(String packageName) {
+		String return_string = null;
+		Cursor c = null;
+		try{
+			c = database.query(DBStructure.TABLE_APK, new String []{DBStructure.COLUMN_APK_NAME}, DBStructure.COLUMN_APK_APKID+"=?", new String[]{packageName}, null, null, null);
+			c.moveToFirst();
+			return_string = c.getString(0);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		if(return_string==null){
+			return_string=packageName;
+		}
+		return return_string;
+		
 	}
 	
 	

@@ -17,7 +17,7 @@ public class ViewPagerAdapter extends PagerAdapter implements TitleProvider{
 	
 	public ViewPagerAdapter(Context context, ArrayList<View> pages) {
 		this.context=context;
-		tabs=new String[]{context.getString(R.string.available_tab),context.getString(R.string.installed_tab),context.getString(R.string.updates_tab)};
+		tabs=new String[]{context.getString(R.string.featured_tab),context.getString(R.string.available_tab),context.getString(R.string.installed_tab),context.getString(R.string.updates_tab)};
 		this.pages=pages;
 	}
 	

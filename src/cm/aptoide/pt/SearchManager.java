@@ -24,7 +24,7 @@ import android.widget.TextView;
 public class SearchManager extends FragmentActivity implements LoaderCallbacks<Cursor>{
 	ListView lv;
 	String query;
-	EditText searchBox;
+//	EditText searchBox;
 	DBHandler db;
 	View v;
 	private CursorAdapter adapter;
@@ -41,7 +41,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 			query = getIntent().getExtras().getString(android.app.SearchManager.QUERY).replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
 		}
 		lv = (ListView) findViewById(R.id.listView);
-		searchBox = (EditText) findViewById(R.id.search_box);
+//		searchBox = (EditText) findViewById(R.id.search_box);
 		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bzzsrch, null);
 		lv.addFooterView(v);
 		Button bazaar_search =  (Button) v.findViewById(R.id.baz_src);
@@ -59,27 +59,27 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		adapter = new AvailableCursorAdapter(this,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		lv.setAdapter(adapter);
 		
-		searchBox.setText(query);
-		searchBox.addTextChangedListener(new TextWatcher() {
-			
-			public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-				
-			}
-			
-			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-					int arg3) {
-				
-			}
-			
-			public void afterTextChanged(Editable editable) {
-				query=editable.toString().replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
-				if(editable.length()>2){
-					getSupportLoaderManager().restartLoader(0x30, null, SearchManager.this);
-					
-				}
-				((TextView) v.findViewById(R.id.baz_src)).setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
-			}
-		});
+//		searchBox.setText(query);
+//		searchBox.addTextChangedListener(new TextWatcher() {
+//			
+//			public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+//				
+//			}
+//			
+//			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+//					int arg3) {
+//				
+//			}
+//			
+//			public void afterTextChanged(Editable editable) {
+//				query=editable.toString().replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
+//				if(editable.length()>2){
+//					getSupportLoaderManager().restartLoader(0x30, null, SearchManager.this);
+//					
+//				}
+//				((TextView) v.findViewById(R.id.baz_src)).setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
+//			}
+//		});
 		
 		getSupportLoaderManager().initLoader(0x30, null, this);
 		

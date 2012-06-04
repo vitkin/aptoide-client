@@ -20,8 +20,11 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.xml.sax.InputSource;
@@ -110,8 +113,11 @@ public class CreateUser extends FragmentActivity {
 			nameValuePairs.add(new BasicNameValuePair("mode", "json"));
 			
 			post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			HttpClient client = new DefaultHttpClient();
+			BasicHttpParams params = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(params, 10000);
+			HttpConnectionParams.setSoTimeout(params, 10000);
+			HttpClient client = new DefaultHttpClient(params);
+			
 			HttpResponse response = client.execute(post);
 			HttpEntity entity = response.getEntity();
 
@@ -179,7 +185,16 @@ public class CreateUser extends FragmentActivity {
 			});
 			pd.dismiss();
 		}catch (Exception e) {
-			e.printStackTrace();	
+			e.printStackTrace();
+			pd.dismiss();
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					Toast.makeText(context,  context.getString(R.string.unabletoexecute), Toast.LENGTH_LONG).show();
+					
+				}
+			});
+			
 		}
 	}
 	

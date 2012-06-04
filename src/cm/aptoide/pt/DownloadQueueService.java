@@ -38,8 +38,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Binder;
@@ -83,13 +85,22 @@ public class DownloadQueueService extends Service {
 		return binder;
 	}
 
-	
+	BroadcastReceiver receiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.hasExtra("apkid"))
+			dismissNotification(intent.getStringExtra("apkid").hashCode());
+		}
+	};
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		notifications = new HashMap<Integer, HashMap<String,String>>();
-		
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("pt.caixamagica.aptoide.REDRAW");
+		registerReceiver(receiver, filter);
 		PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 		Log.d("Aptoide-DowloadQueueService", "Created");
@@ -104,6 +115,8 @@ public class DownloadQueueService extends Service {
 	
 	public void startDownload(DownloadNode downloadNode){
 		try{
+			
+			
 			HashMap<String,String> notification = new HashMap<String,String>();
 			notification.put("remotePath", downloadNode.getRemotePath());
 			notification.put("md5sum", downloadNode.getMd5sum());
@@ -124,11 +137,14 @@ public class DownloadQueueService extends Service {
 			}
 			Log.d("Aptoide-DowloadQueueService", "download Started");
 			Log.d("Aptoide-DowloadQueueService", downloadNode.getRemotePath());
-			notifications.put(downloadNode.getPackageName().hashCode(), notification);
-			setNotification(downloadNode.getPackageName().hashCode(), 0);
-			
-				
+			if(!notifications.containsKey(downloadNode.getPackageName().hashCode())){
+				notifications.put(downloadNode.getPackageName().hashCode(), notification);
+				setNotification(downloadNode.getPackageName().hashCode(), 0);
 				downloadFile(downloadNode.getPackageName().hashCode());
+			}else{
+				Toast.makeText(context, "Download already on queue", 0).show();
+			}
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -463,6 +479,10 @@ public class DownloadQueueService extends Service {
 				 Toast.makeText(context, getString(R.string.md5_error), Toast.LENGTH_LONG).show();
 			 }
 		 }
+	 };
+	 
+	 public void onDestroy() {
+		 unregisterReceiver(receiver);
 	 };
 
 }

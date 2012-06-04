@@ -85,6 +85,15 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 	};
 	
+	private View.OnClickListener continueListener = new View.OnClickListener() {
+		
+
+		public void onClick(View arg0) {
+			onKeyDown(KeyEvent.KEYCODE_BACK, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+			
+		}
+	};
+	
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -289,6 +298,8 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			});
 			alertDialog.show();
 		}
+		
+		findViewById(R.id.continue_bt).setOnClickListener(continueListener);
 		
 	}
 	

@@ -5,10 +5,12 @@ import java.util.concurrent.TimeoutException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -40,6 +42,15 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 	private CursorAdapter adapter;
 	private DownloadQueueService downloadQueueService;
 	private boolean downloadAll = false;
+	
+	BroadcastReceiver receiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			redraw();
+		}
+	};
+	
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 	    public void onServiceConnected(ComponentName className, IBinder serviceBinder) {
 	        // This is called when the connection with the service has been
@@ -76,6 +87,9 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 		context = this;
 		db = new DBHandler(context);
 		db.open();
+		IntentFilter filter = new IntentFilter();
+		filter.addAction("pt.caixamagica.aptoide.REDRAW");
+		registerReceiver(receiver, filter);
 		setContentView(R.layout.sch_downloadempty);
 		lv = (ListView) findViewById(android.R.id.list);
 		bindService(new Intent(this,DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
@@ -168,7 +182,7 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 			System.out.println(ver+apk_id);
 			String localPath = new String(LOCAL_APK_PATH+apk_id+ver+".apk");
 			String appName = apk_id;
-			appName=((Cursor) adapter.getItem(position)).getString(3);
+			appName=((Cursor) adapter.getItem(position)).getString(2);
 			downloadNode = tmp_serv.firstElement();
 			downloadNode.setPackageName(apk_id);
 			downloadNode.setAppName(appName);
@@ -293,6 +307,8 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindService(serviceConnection);
+		unregisterReceiver(receiver);
+		
 	}
 	
 }
