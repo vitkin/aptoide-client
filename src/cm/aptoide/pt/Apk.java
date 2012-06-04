@@ -32,5 +32,6 @@ public class Apk {
 	public String minSdk;
 	public long repo_id;
 	public int minScreenSize;
+	public String featuregraphic;
 
 }

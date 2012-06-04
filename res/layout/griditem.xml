@@ -8,27 +8,29 @@
     android:gravity="center_horizontal" >
 
     <ImageView
-        android:id="@+id/ImageView02"
+        android:id="@+id/icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="2dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:src="@android:drawable/sym_def_app_icon" />
 
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/icon"
+        android:paddingLeft="2dp"
+        android:text="TextView" />
+
     <RatingBar
-        android:id="@+id/RatingBar03"
+        android:id="@+id/rating"
         style="?android:attr/ratingBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ImageView02"
-        android:layout_alignParentRight="true" />
-
-    <TextView
-        android:id="@+id/TextView02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/ImageView02"
-        android:layout_toRightOf="@+id/ImageView02"
-        android:text="TextView" />
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/name" />
 
 </RelativeLayout>
