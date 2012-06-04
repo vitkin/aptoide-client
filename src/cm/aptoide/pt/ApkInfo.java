@@ -496,7 +496,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			String localPath = new String(LOCAL_APK_PATH+packageName+"."+ver+".apk");
 			String appName = packageName;
-
+			appName = db.getApkName(packageName);
 			//if(tmp_serv.size() > 0){
 			DownloadNode downloadNode = tmp_serv.firstElement();
 			downloadNode.setPackageName(packageName);
@@ -510,9 +510,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				throw new TimeoutException();
 
 			String[] logins = null; 
-//			logins = db.getLogin(downloadNode.getRepo());
-			//			downloadNode.getRemotePath()
-//			downloadNode.setLogins(logins);
+			logins = db.getLogin(downloadNode.getRepo());
+			downloadNode.setLogins(logins);
 			Log.d("Aptoide-BaseManagement","queueing download: "+packageName +" "+downloadNode.getSize());	
 			downloadQueueService.setCurrentContext(context);
 			downloadQueueService.startDownload(downloadNode);

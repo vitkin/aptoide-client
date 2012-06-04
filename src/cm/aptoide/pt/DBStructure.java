@@ -81,6 +81,10 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_SCHEDULED_NAME = "name";
 	public static final String COLUMN_SCHEDULED_REPO_ID = "repo_uri";
 	public static final String COLUMN_SCHEDULED_ICONPATH = "iconpath";
+	
+	public static final String TABLE_FEATURED = "scheduled";
+	public static final String COLUMN_FEATURED_ID = "_id";
+	
 
 	private static final String DATABASE_NAME = "aptoide.db";
 	private static final int DATABASE_VERSION = 40;

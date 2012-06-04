@@ -55,6 +55,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.Parcelable;
 import android.os.StatFs;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -71,11 +72,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,6 +102,7 @@ public class Aptoide extends FragmentActivity {
 	ListView installed_listView;
 	ListView updates_listView;
 	ListView available_listView;
+	View featured;
 	ArrayList<ServerNode> servers;
 	private int parsingProgress = 0;
 	ImageView search;
@@ -126,8 +131,9 @@ public class Aptoide extends FragmentActivity {
 	SharedPreferences sPref;
 	Editor editor;
 	boolean pop_change = false;
-	private String order_lst = DBStructure.COLUMN_APK_NAME+" collate nocase";
+	private String order_lst;
 	private boolean receiverIsRegister = false;
+	private boolean xmlfile = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -187,9 +193,10 @@ public class Aptoide extends FragmentActivity {
 		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		editor = sPref.edit();
 		if(!sPref.contains("orderByCategory")){
+			
 			editor.putBoolean("orderByCategory", true);
 		}
-		
+		order_lst=sPref.getString("order_lst", DBStructure.COLUMN_APK_NAME+" collate nocase");
 		if(!sPref.contains("order_lst")){
 			editor.putString("order_lst", order_lst);
 		}
@@ -247,12 +254,15 @@ public class Aptoide extends FragmentActivity {
 		updatesAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		
 		
-		
-
+		featured = LayoutInflater.from(context).inflate(R.layout.featured, null);
+		pages.add(featured);
 		pages.add(available_listView);
 		pages.add(installed_listView);
 		pages.add(updates_listView);
-
+		
+		
+		
+		
 		vp.setAdapter(new ViewPagerAdapter(context, pages));
 		pi.setViewPager(vp);
 
@@ -261,6 +271,7 @@ public class Aptoide extends FragmentActivity {
 		pi.setSelectedColor(Color.LTGRAY);
 //		db.beginTransation();
 		redrawAll();
+		loadFeatured();
 //		db.endTransation();
 		available_listView.setAdapter(availAdapter);
 		installed_listView.setAdapter(installedAdapter);
@@ -284,44 +295,108 @@ public class Aptoide extends FragmentActivity {
 		
 		
 		
-		if(sPref.getBoolean("firstrun",true)&&new File(LOCAL_PATH+"/servers.xml").exists()){
-			try{
-				Editor editor = sPref.edit();
-				editor.putBoolean("firstrun", false);
-				editor.commit();
-				SAXParserFactory spf = SAXParserFactory.newInstance();
-				SAXParser sp = spf.newSAXParser();
-		    	
-				MyappHandler handler = new MyappHandler();
-				
-		    	sp.parse(new File("/sdcard/.aptoide/servers.xml"),handler);
-		    	ArrayList<String> server = handler.getServers();
-		    	if(!server.isEmpty()){
-		    		Intent i = new Intent(this,StoreManager.class);
-					i.putExtra("newrepo", server);
-					//TODO Alertdialog
-					startActivityForResult(i, 0);
-		    	}
-		    	
-				
-			}catch (Exception e) {
-				e.printStackTrace();
+		
+
+		if(sPref.getBoolean("firstrun",true)){
+			
+			Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+	    	shortcutIntent.setClassName(this, this.getClass().getName());
+	    	shortcutIntent.putExtra("cm.aptoide.pt", "ApiDemos Provided This Shortcut");
+	    	
+	    	final Intent intent = new Intent();
+	    	intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+	    	
+	    	intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+	    	Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.icon);
+	    	
+	    	intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
+	    	intent.putExtra("duplicate", false);
+	    	intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+	    	sendBroadcast(intent);
+
+			if(new File(LOCAL_PATH+"/servers.xml").exists()){
+				try{
+					Editor editor = sPref.edit();
+					
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					SAXParser sp = spf.newSAXParser();
+
+					MyappHandler handler = new MyappHandler();
+
+					sp.parse(new File("/sdcard/.aptoide/servers.xml"),handler);
+					ArrayList<String> server = handler.getServers();
+					if(!server.isEmpty()){
+						Intent i = new Intent(this,StoreManager.class);
+						i.putExtra("newrepo", server);
+						//TODO Alertdialog
+						startActivityForResult(i, 0);
+						xmlfile=true;
+					}
+
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+
 			}
-		}else if(db.getRepositories().getCount()==0){
+			
+
+		}
+			}
+		}
+		
+		if(db.getRepositories().getCount()==0&&!xmlfile){
 			Intent i = new Intent(this,StoreManager.class);
 			i.putExtra("norepos", true);
-			
 			startActivityForResult(i, 0);
 		}
 		
 		
-			}
-		}
+		editor.putBoolean("firstrun", false);
+		editor.commit();
 		
+		
+	}
 
-		
-		
-		
+	private void loadFeatured() {
+		LinearLayout ll = (LinearLayout) featured.findViewById(R.id.container); 
+        LinearLayout llAlso = new LinearLayout(this);
+        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+                LayoutParams.WRAP_CONTENT));
+        llAlso.setOrientation(LinearLayout.HORIZONTAL);
+
+        int widthSoFar = 0;
+        for (int i = 0; i!=10; i++) {
+            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
+//            txtSamItem.setText(i+"");
+            txtSamItem.setPadding(10, 0, 0, 0);
+            txtSamItem.setTag(i);
+            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
+            txtSamItem.setOnClickListener(new OnClickListener() {
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+
+            txtSamItem.measure(0, 0);
+            widthSoFar += txtSamItem.getMeasuredWidth();
+            System.out.println(txtSamItem.getMeasuredWidth());
+            if (widthSoFar >= txtSamItem.getMeasuredWidth()*2+100) {
+                ll.addView(llAlso);
+
+                llAlso = new LinearLayout(this);
+                llAlso.setLayoutParams(new LayoutParams(
+                        LayoutParams.FILL_PARENT,
+                        100));
+                llAlso.setOrientation(LinearLayout.HORIZONTAL);
+                llAlso.addView(txtSamItem);
+                widthSoFar = txtSamItem.getMeasuredWidth();
+            } else {
+                llAlso.addView(txtSamItem);
+            }
+        }
+
+        ll.addView(llAlso);
+     
 	}
 
 	@Override
@@ -1123,6 +1198,7 @@ public class Aptoide extends FragmentActivity {
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals("pt.caixamagica.aptoide.REDRAW")){
 				redrawInstalled();
+				
 			}
 			
 		}
@@ -1139,7 +1215,7 @@ public class Aptoide extends FragmentActivity {
 
 			String localPath = new String(LOCAL_APK_PATH+packageName+"."+ver+".apk");
 			String appName = packageName;
-
+			appName = db.getApkName(packageName);
 			//if(tmp_serv.size() > 0){
 			DownloadNode downloadNode = tmp_serv.firstElement();
 			downloadNode.setPackageName(packageName);
@@ -1166,16 +1242,18 @@ public class Aptoide extends FragmentActivity {
 	}
 	
 	public void forceUpdateRepos(){
-		final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
+		
 		if(!(db.getInUseServers().size()!=0)){
+			final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			upd_alrt.setTitle(getText(R.string.update_repos));
 			upd_alrt.setMessage(getText(R.string.updating_norepos));
-			upd_alrt.setButton(getText(R.string.btn_ok), new Dialog.OnClickListener() {
+			upd_alrt.setButton(Dialog.BUTTON_NEUTRAL,getText(R.string.btn_ok), new Dialog.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 
 				}
 			});
+			upd_alrt.show();
 		}else{
 			boolean freeConnectionAvailable = false;
 			try {
@@ -1185,36 +1263,25 @@ public class Aptoide extends FragmentActivity {
 			} catch (Exception e) { }
 
 			if(freeConnectionAvailable){
-				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-				upd_alrt.setTitle(getText(R.string.update_repos));
-				upd_alrt.setMessage(getText(R.string.updating_cfrm));
-				upd_alrt.setButton(getText(R.string.btn_yes), new Dialog.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						updateRepos();
-					}
-				});
-				upd_alrt.setButton2(getText(R.string.btn_no), new Dialog.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						upd_alrt.dismiss();
-					}
-				});
+				updateRepos();
 			}else{
+				final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				upd_alrt.setTitle(getText(R.string.update_repos));
 				upd_alrt.setMessage(getText(R.string.updating_3g));
-				upd_alrt.setButton(getText(R.string.btn_yes), new Dialog.OnClickListener() {
+				upd_alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new Dialog.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						updateRepos();
 					}
 				});
-				upd_alrt.setButton2(getText(R.string.btn_no), new Dialog.OnClickListener() {
+				upd_alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new Dialog.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						upd_alrt.dismiss();
 					}
 				});
+				upd_alrt.show();
 			}
 		}
-		upd_alrt.show();
 
 	}
 	

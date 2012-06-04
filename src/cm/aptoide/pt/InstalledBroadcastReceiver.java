@@ -22,11 +22,14 @@ public class InstalledBroadcastReceiver extends BroadcastReceiver {
 						PackageManager mPm = context.getPackageManager();
 						PackageInfo pi = mPm.getPackageInfo(arg1.getData().getEncodedSchemeSpecificPart(), 0);
 						db.insertInstalled(arg1.getData().getEncodedSchemeSpecificPart(),pi.versionCode,pi.versionName,(String) pi.applicationInfo.loadLabel(mPm));
+						db.deleteScheduledDownload(arg1.getData().getEncodedSchemeSpecificPart(), pi.versionName);
 					}catch (Exception e) {
 						e.printStackTrace();
 					}finally{
 						db.endTransation();
-						context.sendBroadcast(new Intent("pt.caixamagica.aptoide.REDRAW"));
+						Intent i = new Intent("pt.caixamagica.aptoide.REDRAW");
+						i.putExtra("apkid", arg1.getData().getEncodedSchemeSpecificPart());
+						context.sendBroadcast(i);
 					}
 					
 					
@@ -43,8 +46,9 @@ public class InstalledBroadcastReceiver extends BroadcastReceiver {
 					db.deleteInstalled(arg1.getData()
 							.getEncodedSchemeSpecificPart());
 					db.endTransation();
-					context.sendBroadcast(new Intent(
-							"pt.caixamagica.aptoide.REDRAW"));
+					Intent i = new Intent("pt.caixamagica.aptoide.REDRAW");
+					i.putExtra("apkid", arg1.getData().getEncodedSchemeSpecificPart());
+					context.sendBroadcast(i);
 				}
 			}).start();
 			
