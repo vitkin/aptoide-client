@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="add_repo_text">Varaston URL: </string>
+    <string name="add_repo_private">Yksityinen </string>
+    
+    <string name="order_popup_title1">Järjestä sovellukset: </string>
+    <string name="order_popup_lst1">Viimeisin ensin </string>
+    <string name="order_popup_lst2">Aakkosjärjestys </string>
+    <string name="order_popup_lst3">Luokitus </string>
+    <string name="order_popup_lst4">Latausmäärä </string>
+
+    <string name="order_popup_title2">Näytä sovellukset: </string>
+    <string name="order_popup_catg1">Kategorioittain </string>
+    <string name="order_popup_catg2">Kaikki sovellukset </string>
+    
+    <string name="order_popup_title">Näyttöasetukset </string>
+    
+    <string name="settings_title_bar">Aptoiden asetukset</string>
+    
+    <string name="save_btn">Tallenna </string>
+    <string name="clear_cache_title">Välimuisti</string>
+    <string name="clear_cache_btn">Tyhjennä välimuisti </string>
+    <string name="clear_cache_msg">Varoitus: poistaa kaikki kuvakkeet, odottavat asennukset ja päivitykset Aptoiden välimuistista. Älä tee tätä, jos sinulla on latauksia kesken!</string>
+    
+    <string name="clear_dwn_title">Lataukset</string>
+    <string name="clear_dwn_btn">Lataa kuvakkeet</string>
+    <string name="clear_dwn_msg">Kuvakkeiden lataussäännöt </string>
+    
+    <string name="auto_updating">Odota. Päivitystä ladataan...</string>
+    
+    <string-array name="dwnif">
+        <item>3G ja WLAN</item>
+        <item>Vain WLAN</item>
+        <item>Älä lataa</item>
+    </string-array>
+    
+    
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

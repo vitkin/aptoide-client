@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<string name="top_please_wait">Odota</string>
+	<string name="top_error">Virhe</string>
+	<string name="top_download">Lataa</string>
+
+	<string name="fetch_apk">Noudetaan sovellusta</string>
+
+	<string name="aptoide_error">Etäpalvelimeen ei saada yhteyttä</string>
+	
+	<string name="manage_repo_add">Lisää uusi varasto</string>
+	<string name="manage_repo_answ_wrongl">Kirjautuminen epäonnistui</string>
+	<string name="manage_repo_answ_cc">Palvelinyhteys epäonnistui</string>
+	<string name="manage_repo_answ_lr">Vaatii kirjautumisen</string>
+	
+	<string name="app_pop_up_no_info">Ei tietoja palvelimella. Hae Marketista lisätietoa painamalla alla olevaa painiketta.</string>
+	<string name="error_no_market">Google Marketia ei ole asennettu</string>
+		
+    <string name="settings_cache">Tyhjennetään välimuistia...</string>
+    
+    <string name="remote_in_noSD_title">Ei muistia</string>
+    <string name="remote_in_noSD">Sinulla ei ole SD-muistikorttia tai se ei toimi oikein.\nAseta muistikortti ja yritä uudelleen.</string>
+    <string name="remote_in_noSDspace">SD-muistikortillasi ei ole tarpeeksi tilaa käyttääksesi Aptoidea.\nVapauta tilaa ja yritä uudelleen.</string>
+    
+    <string name="error_on_update">Päivitysprosessia ei voida suorittaa seuraavista varastoista:\n</string>
+    
+    <string name="updating_msg">Päivitetään sovellusluetteloa...</string>
+    <string name="update_repos">Päivitä varasto</string>
+    <string name="update_main">Varastoluetteloon on tullut muutoksia.\nHaluatko päivittää ne?</string>
+    
+    <string name="updating_3g">Et ole yhteydessä WLAN-verkkoihin. Päivitykseen suositellaan WLAN-yhteyttä.\nPäivitä joka tapauksessa?</string>
+    <string name="updating_cfrm">Vahvista Aptoiden varastojen päivitys?</string>
+    <string name="updating_norepos">Luettelossasi ei ole yhtään käytössä olevaa asennuslähdettä.\nLisää asennuslähde tai ota niitä käyttöön.</string>
+    
+    <string name="repo_ctx">Asetukset</string>
+    <string name="repo_ctx_edt">Muokkaa</string>
+    <string name="repo_ctx_del">Poista</string>
+    
+    <string name="repo_del">Poista varasto</string>
+    <string name="repo_del_msg">Haluatko poistaa varaston? </string>
+    <string name="repo_del_msg2">Valitse poistettava varasto</string>
+    <string name="repo_edt_msg1">Valitse muokattava varasto</string>
+    <string name="repo_edt_msg2">Muokkaa varastoa</string>
+
+    <string name="update_done_msg1">Varastot päivitetty onnistuneesti.</string>
+    <string name="update_process">Päivittää varastoa %1$d/%2$d</string>
+    
+    <string name="dialog_yes">Kyllä</string>
+    <string name="dialog_no">Ei</string>
+    
+    <string name="update_self_title">Päivitys saatavilla</string>
+    <string name="update_self_msg">Aptoiden uudempi versio on saatavilla,\nhaluatko päivittää?</string>
+    
+    <string name="schDown_downselected">Asenna valitut</string>
+    <string name="schDown_invertselection">Päinvastainen valinta</string>
+    <string name="schDown_removeselected">Poista valitut</string>
+    <string name="schDown_sureremove">Haluatko varmasti poistaa?</string>
+    
+</resources>
+
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
