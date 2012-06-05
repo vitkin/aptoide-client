@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="#edece9"
     android:orientation="vertical"
-    android:padding="10dp" >
+    android:padding="5dp" >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/border"
+        android:background="@drawable/border_background_normal"
         android:orientation="vertical"
         android:padding="5dp" >
 
@@ -92,6 +92,14 @@
                 android:textColor="#4f4f4f" />
         </LinearLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:text="Username"
+            android:textColor="#4f4f4f"
+            android:textSize="16dip" />
+
         <EditText
             android:id="@+id/sec_user"
             android:layout_width="fill_parent"
@@ -101,6 +109,14 @@
             android:hint="Username"
             android:maxLines="1"
             android:singleLine="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="20"
+            android:text="Password"
+            android:textColor="#4f4f4f"
+            android:textSize="16dip" />
 
         <EditText
             android:id="@+id/sec_pwd"

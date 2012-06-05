@@ -1,58 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="match_parent"
     android:background="#edece9"
     android:gravity="center_vertical"
     android:orientation="vertical" >
 
+    <!-- Green Bar -->
+
     <RelativeLayout
-        android:id="@+id/header"
+        android:id="@+id/actionbar"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal" >
+        android:layout_height="44sp"
+        android:background="@drawable/greenbarwithshadow"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/aptoideicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="9dp"
+            android:src="@drawable/aptoideicon" />
 
         <TextView
             android:id="@+id/registration_intro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/aptoideicon"
             android:text="@string/registration"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#fff" />
 
         <TextView
             android:id="@+id/bazaar_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#424542"
-            android:layout_alignLeft="@+id/registration_intro"
             android:layout_below="@+id/registration_intro"
+            android:layout_toRightOf="@+id/aptoideicon"
             android:text="@string/bazaar_url"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#fff" />
+
     </RelativeLayout>
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scroller"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/header"
-        android:background="#edece9"
-        android:orientation="vertical"
-        android:padding="5dp" >
+        android:layout_weight="0.30" >
 
-        <ScrollView
-            android:id="@+id/scroller"
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.30" >
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="5dp" >
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/border"
+                android:background="@drawable/border_background_normal"
                 android:orientation="vertical"
                 android:padding="5dp" >
 
@@ -101,7 +108,6 @@
                     android:textColor="#696969"
                     android:textSize="18sp" />
 
-
                 <ViewStub
                     android:id="@+id/error_stub"
                     android:layout_width="wrap_content"
@@ -109,22 +115,21 @@
                     android:layout_weight="1"
                     android:layout="@layout/stub" />
             </LinearLayout>
-        </ScrollView>
 
-        <LinearLayout
-            android:id="@+id/signup_layout"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <Button
-                android:id="@+id/submitCreateUser"
+            <LinearLayout
+                android:id="@+id/signup_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/register" />
+                android:orientation="vertical" >
 
+                <Button
+                    android:id="@+id/submitCreateUser"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:text="@string/register" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

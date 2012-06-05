@@ -1,20 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
-	android:gravity="center_vertical|center_horizontal"
-	android:background="#ffffff">
-    <TextView 
-    	android:id="@+id/auto_updating"
-    	android:text="@string/auto_updating" 
-    	android:layout_height="wrap_content" 
-    	android:layout_alignParentTop="true"
-    	android:layout_width="fill_parent"
-		android:gravity="center_vertical|center_horizontal"
-		android:textSize="25sp"
-		android:textColor="#4f4f4f">
-    </TextView>
-    
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#edece9"
+    android:gravity="top"
+    android:orientation="vertical" >
+
+    <!-- Green Bar -->
+
+    <TextView
+        android:id="@+id/auto_updating"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/auto_updating"
+        android:textColor="#4f4f4f"
+        android:textSize="25sp" />
+
+    <RelativeLayout
+        android:id="@+id/actionbar"
+        android:layout_width="fill_parent"
+        android:layout_height="44sp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/greenbarwithshadow"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/aptoideicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="9dp"
+            android:src="@drawable/aptoideicon" />
+
+        <ImageView
+            android:id="@+id/aptoidebrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/aptoideicon"
+            android:padding="10dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/brand" />
+    </RelativeLayout>
+
 </RelativeLayout>

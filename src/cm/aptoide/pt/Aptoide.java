@@ -244,6 +244,7 @@ public class Aptoide extends FragmentActivity {
 		db.open();
 
 		TitlePageIndicator pi = (TitlePageIndicator) findViewById(R.id.indicator);
+		
 		vp = (ViewPager) findViewById(R.id.viewpager);
 		search = (ImageView) findViewById(R.id.btsearch);
 		pages = new ArrayList<View>();
@@ -272,8 +273,9 @@ public class Aptoide extends FragmentActivity {
 		pi.setViewPager(vp);
 
 		pi.setTextColor(Color.WHITE);
+//		pi.setSelectedBold(false);
 		pi.setFooterIndicatorStyle(IndicatorStyle.Triangle);
-		pi.setSelectedColor(Color.LTGRAY);
+		pi.setSelectedColor(Color.argb(200, 119, 170, 10));
 //		db.beginTransation();
 		redrawAll();
 		loadFeatured();
@@ -305,9 +307,7 @@ public class Aptoide extends FragmentActivity {
 		if(sPref.getBoolean("firstrun",true)){
 			
 			Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-	    	shortcutIntent.setClassName(this, this.getClass().getName());
-	    	shortcutIntent.putExtra("cm.aptoide.pt", "ApiDemos Provided This Shortcut");
-	    	
+	    	shortcutIntent.setClassName("cm.aptoide.pt", "cm.aptoide.pt.Start");
 	    	final Intent intent = new Intent();
 	    	intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 	    	

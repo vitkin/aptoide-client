@@ -1,61 +1,85 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView01"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#edece9" >
 
-<ScrollView android:id="@+id/ScrollView01"
-	android:layout_width="fill_parent" android:layout_height="fill_parent"
-	xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/border_background_normal"
+        android:orientation="vertical" >
 
-	<LinearLayout android:orientation="vertical" android:background="#ffffff"
-		android:layout_width="fill_parent" android:minWidth="280dip"
-		android:layout_height="wrap_content">
+        <RadioGroup
+            android:id="@+id/groupbtn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-		<LinearLayout android:orientation="vertical"
-			android:background="@drawable/header" android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
+            <TextView
+                style="@style/DialogText.Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/order_popup_title1"
+                android:textColor="#4f4f4f"
+                android:textStyle="bold" />
 
-			<RadioGroup android:layout_width="fill_parent"
-				android:layout_height="wrap_content" android:orientation="vertical"
-				android:id="@+id/groupbtn">
-				<TextView android:layout_width="fill_parent" style="@style/DialogText.Title"
-					android:layout_height="wrap_content" android:text="@string/order_popup_title1"
-					android:textStyle="bold" android:textColor="#4f4f4f" />
-				<RadioButton android:checked="false" android:text="@string/order_popup_lst1"
-					android:textColor="#4f4f4f" android:id="@+id/org_rct" />
-				<RadioButton android:checked="false" android:text="@string/order_popup_lst2"
-					android:textColor="#4f4f4f" android:id="@+id/org_abc" />
-				<RadioButton android:checked="false" android:text="@string/order_popup_lst3"
-					android:textColor="#4f4f4f" android:id="@+id/org_rat" />
-				<RadioButton android:checked="false" android:text="@string/order_popup_lst4"
-					android:textColor="#4f4f4f" android:id="@+id/org_dwn" />
-			</RadioGroup>
-		</LinearLayout>
+            <RadioButton
+                android:id="@+id/org_rct"
+                android:checked="false"
+                android:text="@string/order_popup_lst1"
+                android:textColor="#4f4f4f" />
 
-		<LinearLayout android:id="@+id/content"
-			android:orientation="vertical" android:background="@drawable/center"
-			android:layout_width="fill_parent" android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/org_abc"
+                android:checked="false"
+                android:text="@string/order_popup_lst2"
+                android:textColor="#4f4f4f" />
 
-			<RadioGroup android:layout_width="fill_parent"
-				android:layout_height="wrap_content" android:orientation="vertical"
-				android:id="@+id/groupshow">
-				<TextView android:layout_width="fill_parent" style="@style/DialogText.Title"
-					android:layout_height="wrap_content" android:text="@string/order_popup_title2"
-					android:textStyle="bold" android:textColor="#4f4f4f"/>
-				<RadioButton android:checked="false" android:text="@string/order_popup_catg1"
-					android:textColor="#4f4f4f" android:id="@+id/shw_ct" />
-				<RadioButton android:checked="true" android:text="@string/order_popup_catg2"
-					android:textColor="#4f4f4f" android:id="@+id/shw_all" />
-			</RadioGroup>
-		</LinearLayout>
-		
-		
-		<LinearLayout android:orientation="horizontal"
-			android:background="@drawable/footer" android:layout_width="fill_parent"
-			android:layout_height="wrap_content">
-		</LinearLayout>
+            <RadioButton
+                android:id="@+id/org_rat"
+                android:checked="false"
+                android:text="@string/order_popup_lst3"
+                android:textColor="#4f4f4f" />
 
-	</LinearLayout>
+            <RadioButton
+                android:id="@+id/org_dwn"
+                android:checked="false"
+                android:text="@string/order_popup_lst4"
+                android:textColor="#4f4f4f" />
+        </RadioGroup>
 
-</ScrollView>
-	<!--
+        <RadioGroup
+            android:layout_marginTop="5dp"
+            android:id="@+id/groupshow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                style="@style/DialogText.Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/order_popup_title2"
+                android:textColor="#4f4f4f"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/shw_ct"
+                android:checked="false"
+                android:text="@string/order_popup_catg1"
+                android:textColor="#4f4f4f" />
+
+            <RadioButton
+                android:id="@+id/shw_all"
+                android:checked="true"
+                android:text="@string/order_popup_catg2"
+                android:textColor="#4f4f4f" />
+        </RadioGroup>
+    </LinearLayout>
+
+</ScrollView><!--
 		* Copyright (C) 2009 Roberto Jacinto * roberto.jacinto@caixamagica.pt
 		* * This program is free software; you can redistribute it and/or *
 		modify it under the terms of the GNU General Public License * as
@@ -68,4 +92,4 @@
 		General Public License * along with this program; if not, write to the
 		Free Software * Foundation, Inc., 51 Franklin Street, Fifth Floor,
 		Boston, MA 02110-1301, USA.
-	-->
+-->
