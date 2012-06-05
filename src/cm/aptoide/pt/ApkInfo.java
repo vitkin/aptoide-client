@@ -37,6 +37,7 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -44,6 +45,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Html;
 import android.util.Log;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -96,7 +98,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private RatingBar rating;
 	private TextView store;
 	ArrayList<VersionApk> versions;
-	String[] images;
+	String[] thumbnailList;
 	private Spinner spinnerMulti;
 	private Button action;
 	private String actionString;
@@ -186,7 +188,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			
 			@Override
 			public Cursor loadInBackground() {
-				if(!type.equals("featured")||!type.equals("tops")){
+				if(!type.equals("featured")){
 					if(bundle.containsKey("oldApk")){
 						System.out.println(bundle.getLong("oldApk"));
 						return db.getOldApk(bundle.getLong("oldApk"));
@@ -224,22 +226,42 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						.getColumnIndex(DBStructure.COLUMN_APK_SIZE)));
 				elements.put("downloads", cursor.getString(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_DOWNLOADS)));
-				elements.put(
-						"iconpath",
-						db.getIconspath(repo_id)
-								+ cursor.getString(cursor
-										.getColumnIndex(DBStructure.COLUMN_APK_ICON)));
+				
+				if(!type.equals("featured")){
+					elements.put(
+							"iconpath",
+							db.getIconspath(repo_id)
+									+ cursor.getString(cursor
+											.getColumnIndex(DBStructure.COLUMN_APK_ICON)));
+				}else{
+					elements.put(
+							"iconpath",
+							db.getFeaturedIconspath(repo_id)
+									+ cursor.getString(cursor
+											.getColumnIndex(DBStructure.COLUMN_APK_ICON)));
+				}
+				
 				elements.put("rating", cursor.getString(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_RATING)));
 				elements.put("vername", cursor.getString(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_VERNAME)));
 				elements.put("vercode", cursor.getString(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_VERCODE)));
-				elements.put("repo", db.getRepoName(repo_id));
+				if(!type.equals("featured")){
+					elements.put("repo", db.getRepoName(repo_id));
+				}
 				elements.put("installedVercode", db.getInstalledVercode(elements.get("apkid")));
-				extended=db.getExtendedServer(repo_id)==1;
+				if(!type.equals("featured")){
+					extended=db.getExtendedServer(repo_id)==1;
+				}else{
+					extended = true;
+				}
+				
 				versions = new ArrayList<VersionApk>();
-				versions = db.getOldApks(elements.get("apkid"));
+				if(!type.equals("featured")){
+					versions = db.getOldApks(elements.get("apkid"));
+				}
+				
 				VersionApk versionApkPassed = new VersionApk(elements.get("vername"),Integer.parseInt(elements.get("vercode")),elements.get("apkid"),Integer.parseInt(elements.get("size")), Integer.parseInt(elements.get("downloads")));
 				versions.add(versionApkPassed);
 				Collections.sort(versions, Collections.reverseOrder());
@@ -290,19 +312,11 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 		apkid=elements.get("apkid");
 		vername=elements.get("vername");
-		if(!type.equals("featured")&&!type.equals("top")){
+		if(!type.equals("featured")){
 			repo = db.getRepoName(repo_id).split("\\.")[0];
 			repo = repo.split("http://")[1];
 		}else{
-			
-			if(type.equals("top")){
-				repo="apps";
-			}else{
-				repo=db.getEditorsChoiceRepoName(repo_id);
-			}
-			
-			
-			
+			repo=db.getEditorsChoiceRepoName(repo_id);
 		}
 		
 		loader.DisplayImage(-1, elements.get("iconpath"), icon, context);
@@ -315,6 +329,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			rating.setRating(0);
 		}
 		action.setOnClickListener(installListener);
+		if(type.equals("featured")){
+			scheduledDownloadBox.setEnabled(false);
+		}
 		if(Integer.parseInt(elements.get("vercode"))<Integer.parseInt(elements.get("installedVercode"))){
 			actionString = "Downgrade";
 		}else if (Integer.parseInt(elements.get("vercode"))==Integer.parseInt(elements.get("installedVercode"))){
@@ -394,8 +411,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			loadScreenshots();
 			loadCommentsAndTaste();
 			findViewById(R.id.likesLayout).setVisibility(View.VISIBLE);
-			findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
-			findViewById(R.id.screenShotsPager).setVisibility(View.VISIBLE);
+//			findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
+//			findViewById(R.id.screenShotsPager).setVisibility(View.VISIBLE);
 			findViewById(R.id.indicator).setVisibility(View.VISIBLE);
 			textView.setVisibility(View.VISIBLE);
 			loadComLayout.setVisibility(View.VISIBLE);
@@ -423,31 +440,48 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 		pi.setFillColor(Color.BLACK);
 		pi.setSnap(true);
-		screenshots.setVisibility(View.GONE);
+		linearLayout.findViewById(R.id.screenshots_label).setVisibility(View.GONE);
+		linearLayout.findViewById(R.id.screenshots_container).setVisibility(View.GONE);
 		new Thread(new Runnable() {
 			
 			private JSONArray imagesurl;
 			String uri;
+			ArrayList<String> originalList;
 			public void run() {
 				try{
-					HttpClient client = new DefaultHttpClient();
-					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-					HttpResponse response=null;
-					HttpGet request = new HttpGet();
-					uri = db.getWebservicespath(repo_id)+"webservices/listApkScreens/"+repo+"/"+elements.get("apkid")+"/"+elements.get("vername")+"/json";
-					request.setURI(new URI(uri));
-					System.out.println(request.getURI());
-					response = client.execute(request);
-					System.out.println(request.getURI()+"");
-					String temp = EntityUtils.toString(response.getEntity());
+					if(!type.equals("featured")){
+						HttpClient client = new DefaultHttpClient();
+						HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+						HttpResponse response=null;
+						HttpGet request = new HttpGet();
+						uri = db.getWebservicespath(repo_id)+"webservices/listApkScreens/"+repo+"/"+elements.get("apkid")+"/"+elements.get("vername")+"/json";
+						request.setURI(new URI(uri));
+						System.out.println(request.getURI());
+						response = client.execute(request);
+						System.out.println(request.getURI()+"");
+						String temp = EntityUtils.toString(response.getEntity());
 
-					JSONObject respJSON;
-					respJSON = new JSONObject(temp);
+						JSONObject respJSON;
+						respJSON = new JSONObject(temp);
 
-					imagesurl = respJSON.getJSONArray("listing");
-					images = new String[imagesurl.length()];
-					for ( int i = 0; i!= imagesurl.length();i++){
-						images[i]=screenshotToThumb(imagesurl.getString(i));
+						imagesurl = respJSON.getJSONArray("listing");
+						thumbnailList = new String[imagesurl.length()];
+
+						for ( int i = 0; i!= imagesurl.length();i++){
+							thumbnailList[i]=screenshotToThumb(imagesurl.getString(i));
+						}
+
+						originalList = new ArrayList<String>();
+						for(int i=0;i < imagesurl.length();i++){ 
+							originalList.add(imagesurl.getString(i));
+						}
+					}else{
+						originalList = db.getFeaturedScreenhots(id,repo_id);
+						thumbnailList = new String[originalList.size()];
+						for(int i = 0; i!=originalList.size();i++){
+							thumbnailList[i]=screenshotToThumb(originalList.get(i));
+						}
+						
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
@@ -455,10 +489,42 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					runOnUiThread(new Runnable() {
 
 						public void run() {
-							if(images!=null&&images.length>0){
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,images,uri));
+							if(thumbnailList!=null&&thumbnailList.length>0){
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList));
 								pi.setViewPager(screenshots);
-								screenshots.setVisibility(View.VISIBLE);
+								pi.setRadius(7.5f);
+								linearLayout.findViewById(R.id.screenshots_container).setVisibility(View.VISIBLE);
+								linearLayout.findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
+								if(originalList.size()==1){
+									findViewById(R.id.right).setVisibility(View.GONE);
+								}
+								pi.setOnPageChangeListener(new OnPageChangeListener() {
+									
+									public void onPageSelected(int position) {
+										
+										findViewById(R.id.left).setVisibility(View.VISIBLE);
+										findViewById(R.id.right).setVisibility(View.VISIBLE);
+										
+										if(position==0){
+											findViewById(R.id.left).setVisibility(View.GONE);
+										}
+										if (position==originalList.size()-1){
+											findViewById(R.id.right).setVisibility(View.GONE);
+										}
+										
+										
+										
+										System.out.println(position + " " +originalList.size());
+									}
+									
+									public void onPageScrolled(int arg0, float arg1, int arg2) {
+										
+									}
+									
+									public void onPageScrollStateChanged(int arg0) {
+										
+									}
+								});
 							}
 							
 						}
@@ -510,12 +576,19 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		Vector<DownloadNode> tmp_serv = new Vector<DownloadNode>();	
 
 		try{
-
-			tmp_serv = db.getPathHash(packageName, ver);
+			
+			String appName = packageName;
+			if(!type.equals("featured")){
+				tmp_serv = db.getPathHash(packageName, ver);
+				appName = db.getApkName(packageName);
+			}else{
+				tmp_serv = db.getFeaturedPathHash(packageName, ver);
+				appName = db.getFeaturedApkName(packageName);
+				
+			}
 
 			String localPath = new String(LOCAL_APK_PATH+packageName+"."+ver+".apk");
-			String appName = packageName;
-			appName = db.getApkName(packageName);
+			
 			//if(tmp_serv.size() > 0){
 			DownloadNode downloadNode = tmp_serv.firstElement();
 			downloadNode.setPackageName(packageName);
@@ -558,7 +631,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	
 	private void loadCommentsAndTaste() {
 		try{
-			loadOnScrollCommentList = new CommentPosterListOnScrollListener(this, commentAdapter, repo, apkid, vername, loadComLayout);
+			loadOnScrollCommentList = new CommentPosterListOnScrollListener(this, commentAdapter, repo, apkid, vername, loadComLayout,repo_id);
 			listView.setOnScrollListener(loadOnScrollCommentList);
 			new Thread(newVersionFetchComments).start();
 			

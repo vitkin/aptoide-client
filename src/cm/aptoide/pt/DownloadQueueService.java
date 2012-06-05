@@ -344,7 +344,7 @@ public class DownloadQueueService extends Service {
 						}
 
 						HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-						
+						System.out.println("Downloading from:" +mHttpGet.getURI());
 						if(mHttpResponse == null){
 							 Log.d("Aptoide","Problem in network... retry...");	
 							 mHttpResponse = mHttpClient.execute(mHttpGet);
@@ -361,7 +361,8 @@ public class DownloadQueueService extends Service {
 						}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
 							Message progressArguments = new Message();
 							progressArguments.arg1 = 404;
-							downloadProgress.sendMessage(progressArguments);
+							progressArguments.arg2 = threadApkidHash;
+							downloadHandler.sendMessage(progressArguments);
 						}else{
 							InputStream getit = mHttpResponse.getEntity().getContent();
 							byte data[] = new byte[8096];
@@ -444,7 +445,11 @@ public class DownloadQueueService extends Service {
 //        		notificationManager.cancel(downloadArguments.arg2);
         		setFinishedNotification(apkidHash, localPath);
    			 	notifications.remove(apkidHash);
-        	}else{ }
+        	}else if(downloadArguments.arg1 == 404){ 
+        		Toast.makeText(context, "There was a 404 error. The file requested was not found.", 1).show();
+        		int apkidHash = downloadArguments.arg2;
+        		notifications.remove(apkidHash);
+        	}
         }
 	};
 	

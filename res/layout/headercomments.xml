@@ -8,15 +8,15 @@
         android:id="@+id/ratings"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:paddingTop="5dp" >
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:paddingTop="5dp"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:paddingTop="5dp" >
 
             <TextView
                 android:id="@+id/versionInfo"
@@ -127,8 +127,7 @@
         <Spinner
             android:id="@+id/spinnerMultiVersion"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
         <CheckBox
             android:id="@+id/schedule_download_box"
@@ -180,18 +179,45 @@
             android:text="Screenshots:"
             android:textAppearance="?android:textAppearanceLarge"
             android:textColor="#3f3f3f"
-            android:textSize="18.0sp" />
-		<com.viewpagerindicator.CirclePageIndicator
+            android:textSize="18.0sp"
+            android:visibility="gone" />
+
+        <com.viewpagerindicator.CirclePageIndicator
             android:id="@+id/indicator"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
-        <android.support.v4.view.ViewPager
+            android:layout_height="wrap_content"
+            android:padding="5dp" />
+
+        <RelativeLayout
+            android:id="@+id/screenshots_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            
+
+            <android.support.v4.view.ViewPager
                 android:id="@+id/screenShotsPager"
                 android:layout_width="fill_parent"
                 android:layout_height="200dp" />
-        
+			<ImageView
+                android:id="@+id/left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="10dp"
+                android:src="@drawable/indicator_prev_arrow" />
+            <ImageView
+                android:id="@+id/right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="10dp"
+                android:src="@drawable/indicator_next_arrow" />
 
+        </RelativeLayout>
     </LinearLayout>
-     
 
 </RelativeLayout>

@@ -84,6 +84,7 @@ public class DBStructure extends SQLiteOpenHelper {
 	
 	public static final String TABLE_EDITORSCHOICE = "editorschoice";
 	public static final String COLUMN_EDITORSCHOICE_FEATUREDGRAPHIC = "featuredgraphic";
+	public static final String COLUMN_EDITORSCHOICE_HIGHLIGHT = "highlighted";
 			//same columns as Table APK
 	
 	public static final String TABLE_EDITORSCHOICEREPOS = "editorschoicerepo";
@@ -95,10 +96,14 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_EDITORSCHOICEREPO_ICONSPATH = "iconspath";
 	public static final String COLUMN_EDITORSCHOICEREPO_HASH = "hash";
 	
+	public static final String TABLE_SCREENSHOTS = "screenshots";
+	public static final String COLUMN_SCREENSHOTS_APKID = "_id";
+	public static final String COLUMN_SCREENSHOTS_REPO_ID = "repo_id";
+	public static final String COLUMN_SCREENSHOTS_SCREENSHOT = "screenshots";
 	
 
 	private static final String DATABASE_NAME = "aptoide.db";
-	private static final int DATABASE_VERSION = 50;
+	private static final int DATABASE_VERSION = 1;
 
 	// Database creation sql statement
 	private static final String CREATE_TABLE_APK = "CREATE TABLE "
@@ -137,8 +142,9 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_APK_SDK + " integer , " 
 			+ COLUMN_APK_SCREEN + " integer , " 
 			+ COLUMN_APK_OPENGLES + " text ,"
+			+ COLUMN_EDITORSCHOICE_HIGHLIGHT + " text ,"
 			+ COLUMN_EDITORSCHOICE_FEATUREDGRAPHIC + " text ," 
-			+ COLUMN_APK_REPO_ID + " text , PRIMARY KEY ("+COLUMN_APK_ID+" autoincrement)); "; 
+			+ COLUMN_APK_REPO_ID + " integer , PRIMARY KEY ("+COLUMN_APK_ID+" autoincrement)); "; 
 	
 	private static final String CREATE_TABLE_OLD = "create table "
 			+ TABLE_OLD + "( " + COLUMN_APK_OLD_ID
@@ -168,6 +174,12 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_CATEGORY_CATEGORY2_NAME+ " text , "
 			+ COLUMN_CATEGORY_APKID + " integer , " 
 			+ COLUMN_CATEGORY_REPO_ID + " text , PRIMARY KEY("+COLUMN_CATEGORY_APKID+")); ";
+	
+	private static final String CREATE_TABLE_SCREENSHOTS = "create table "
+			+ TABLE_SCREENSHOTS + "(" 
+			+ COLUMN_SCREENSHOTS_APKID+ " integer , "
+			+ COLUMN_SCREENSHOTS_REPO_ID+ " integer , "
+			+ COLUMN_SCREENSHOTS_SCREENSHOT + " text); ";
 	
 	
 	
@@ -230,6 +242,7 @@ public class DBStructure extends SQLiteOpenHelper {
 		database.execSQL(CREATE_TABLE_SCHEDULED);
 		database.execSQL(CREATE_TABLE_EDITORSCHOICE);
 		database.execSQL(CREATE_TABLE_EDITORSCHOICEREPO);
+		database.execSQL(CREATE_TABLE_SCREENSHOTS);
 	}
 
 	@Override
@@ -245,6 +258,7 @@ public class DBStructure extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCHEDULED);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EDITORSCHOICE);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EDITORSCHOICEREPOS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCREENSHOTS);
 		
 		onCreate(db);
 	}

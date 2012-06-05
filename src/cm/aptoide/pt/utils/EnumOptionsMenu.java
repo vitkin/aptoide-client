@@ -21,6 +21,7 @@
 package cm.aptoide.pt.utils;
 
 public enum EnumOptionsMenu {
+	UPDATE_FEATURED,
 	UPDATE_ALL,
 	UPDATE_REPO,
 	MANAGE_REPO,

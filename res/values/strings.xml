@@ -175,5 +175,7 @@
     </string-array>
     <string name="continue_bt">Continue</string>
     <string name="featured_tab">Featured</string>
+    <string name="no_info">No Information</string>
+    <string name="repo_insert_failed">Failed to add the Store. Please try again.</string>
 
 </resources>

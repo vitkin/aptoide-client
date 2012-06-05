@@ -1,9 +1,12 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.text.Html;
 
@@ -13,6 +16,11 @@ public class TopAppsRepoParser extends DefaultHandler {
 	private Apk apk;
 	private StringBuilder sb = new StringBuilder();
 	private Repository repository;
+	private ContentValues value;
+	private ContentValues[] value2 = new ContentValues[0];
+	private ArrayList<ContentValues> values = new ArrayList<ContentValues>();
+	
+	
 	public TopAppsRepoParser(Context context) {
 		this.context=context;
 		dbhandler=new DBHandler(context);
@@ -34,6 +42,7 @@ public class TopAppsRepoParser extends DefaultHandler {
 		case PACKAGE:
 			apk = new Apk();
 			apk.repo_id=-1;
+			value=new ContentValues();
 			break;
 		case REPOSITORY:
 			repository = new Repository();
@@ -57,6 +66,7 @@ public class TopAppsRepoParser extends DefaultHandler {
 		super.endElement(uri, localName, qName);
 		switch (EnumElements.lookup(localName.toUpperCase())) {
 		case REPOSITORY:
+			repository.name="apps";
 			dbhandler.insertEditorChoiceRepo(repository);
 			break;
 		case APKID:
@@ -66,14 +76,15 @@ public class TopAppsRepoParser extends DefaultHandler {
 			apk.name=Html.fromHtml(sb.toString()).toString();
 			break;
 		case PACKAGE:
-			dbhandler.insertEditorsChoice(apk);
+			apk.id=dbhandler.insertEditorsChoice(apk);
+			dbhandler.inserFeaturedScreenshots(apk);
+			context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
 			break;
 		case VERCODE:
 			apk.vercode=Integer.valueOf(sb.toString());
 			break;
 		case HASH:
 			if(dbhandler.verifyTopAppsHash(sb.toString())){
-				
 				throw new SAXException();
 			}
 			dbhandler.deleteTopApps();
@@ -102,8 +113,12 @@ public class TopAppsRepoParser extends DefaultHandler {
 			apk.stars=sb.toString();
 			break;
 		case CMT:
+			value.put(ExtrasDBStructure.COLUMN_COMMENTS_APKID, apk.apkid);
+			value.put(ExtrasDBStructure.COLUMN_COMMENTS_COMMENT, sb.toString());
+			values.add(value);
 			break;
 		case SCREEN:
+			apk.screenshots.add(sb.toString());
 			break;
 		case ICON:
 			apk.icon=sb.toString();

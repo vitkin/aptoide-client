@@ -1,6 +1,7 @@
 package cm.aptoide.pt;
 
 import java.sql.Struct;
+import java.util.Vector;
 
 import android.content.ContentValues;
 
@@ -33,5 +34,7 @@ public class Apk {
 	public long repo_id;
 	public int minScreenSize;
 	public String featuregraphic;
+	public String highlighted;
+	public Vector<String> screenshots = new Vector<String>();
 
 }

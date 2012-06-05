@@ -1,6 +1,7 @@
 package cm.aptoide.pt;
 
 import java.net.URI;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -24,7 +25,7 @@ public class ScreenshotsViewer extends FragmentActivity {
 	
 	String url;
 	int position;
-	private String[] images;
+	private String[] images = new String[0];
 	Context context;
 	
 	@Override
@@ -35,33 +36,20 @@ public class ScreenshotsViewer extends FragmentActivity {
 		final ViewPager screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
 		final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 		pi.setCentered(true);
+		pi.setSnap(true);
+		pi.setRadius(7.5f);
 		pi.setFillColor(Color.BLACK);
 		
 		new Thread(new Runnable() {
 			
 			private JSONArray imagesurl;
-			String uri;
+			ArrayList<String> uri;
 			public void run() {
 				try{
 					HttpClient client = new DefaultHttpClient();
 					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-					HttpResponse response=null;
-					HttpGet request = new HttpGet();
-					uri = getIntent().getStringExtra("url");
-					request.setURI(new URI(uri));
-					System.out.println(request.getURI());
-					response = client.execute(request);
-					System.out.println(request.getURI()+"");
-					String temp = EntityUtils.toString(response.getEntity());
-
-					JSONObject respJSON;
-					respJSON = new JSONObject(temp);
-
-					imagesurl = respJSON.getJSONArray("listing");
-					images = new String[imagesurl.length()];
-					for ( int i = 0; i!= imagesurl.length();i++){
-						images[i]=imagesurl.getString(i);
-					}
+					uri = getIntent().getStringArrayListExtra("url");
+					images = uri.toArray(images);
 				}catch (Exception e) {
 					e.printStackTrace();
 				}finally{

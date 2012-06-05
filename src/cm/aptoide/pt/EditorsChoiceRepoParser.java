@@ -1,9 +1,12 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.text.Html;
 
@@ -13,6 +16,9 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 	private DBHandler dbhandler;
 	private Apk apk;
 	private Repository repository;
+	private ContentValues value;
+	private ContentValues[] value2 = new ContentValues[0];
+	private ArrayList<ContentValues> values = new ArrayList<ContentValues>();
 	
 	
 	public EditorsChoiceRepoParser(Context context) {
@@ -24,7 +30,7 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		super.startDocument();
 		dbhandler.open();
-		dbhandler.prepareEditorsChoiceDb();
+		dbhandler.deleteEditorsChoice();
 //		dbhandler.beginTransation();
 	}
 	
@@ -34,6 +40,7 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 		switch (EnumElements.lookup(localName.toUpperCase())) {
 		case PACKAGE:
 			apk = new Apk();
+			value=new ContentValues();
 //			apk.repo_id=repo_id;
 			break;
 		case REPOSITORY:
@@ -56,14 +63,25 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 		super.endElement(uri, localName, qName);
 		switch (EnumElements.lookup(localName.toUpperCase())) {
 		case REPOSITORY:
+			System.out.println(repository.name+"repo");
 			apk.repo_id=dbhandler.insertEditorChoiceRepo(repository);
-			dbhandler.insertEditorsChoice(apk);
+			apk.id=dbhandler.insertEditorsChoice(apk);
+			dbhandler.inserFeaturedScreenshots(apk);
+			context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
 			break;
 		case APKID:
 			apk.apkid=sb.toString();
 			break;
 		case NAME:
-			apk.name=Html.fromHtml(sb.toString()).toString();
+			if(repository.name!=null){
+				apk.name=Html.fromHtml(sb.toString()).toString();
+			}else{
+				repository.name=sb.toString();
+			}
+			
+			break;
+		case HIGHLIGHT:
+			apk.highlighted="yes";
 			break;
 		case VERCODE:
 			apk.vercode=Integer.valueOf(sb.toString());
@@ -89,8 +107,12 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 			apk.stars=sb.toString();
 			break;
 		case CMT:
+			value.put(ExtrasDBStructure.COLUMN_COMMENTS_APKID, apk.apkid);
+			value.put(ExtrasDBStructure.COLUMN_COMMENTS_COMMENT, sb.toString());
+			values.add(value);
 			break;
 		case SCREEN:
+			apk.screenshots.add(sb.toString());
 			break;
 		case FEATUREGRAPHIC:
 			apk.featuregraphic=sb.toString();
