@@ -27,7 +27,12 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.Service;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Environment;
 import android.os.IBinder;
 import android.text.Html;
@@ -62,7 +67,9 @@ public class ExtrasService extends Service {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onStart(final Intent intent, int startId) {
-		
+		WifiManager pm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		final WifiLock wakeLock = pm.createWifiLock(WifiManager.WIFI_MODE_FULL,
+                "MyWakeLock");
 		super.onStart(intent, startId);
 		System.out.println("Started service");
 		parsedList = (ArrayList<ServerNode>) intent.getExtras().getSerializable("repos");
@@ -78,7 +85,8 @@ public class ExtrasService extends Service {
 				public void run() {
 					try {
 						for(ServerNode node : parsedList){
-							if(downloadExtras(node.uri, node.hash)){
+							boolean parse = downloadExtras(node.uri, node.hash);
+							if(parse){
 								try{
 									System.out.println(node.hash+"");
 									sp.parse(new File(EXTRAS_XML_PATH), handler);
@@ -89,7 +97,6 @@ public class ExtrasService extends Service {
 								
 							}
 						}
-						
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -209,7 +216,21 @@ public class ExtrasService extends Service {
 	private boolean downloadExtras(String srv, String delta_hash){
 		String url = srv+REMOTE_EXTRAS_FILE;
 		
+		
+
         try {
+        	
+        	ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+
+    		android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+    		android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        	
+			while (wifi.getState()!=NetworkInfo.State.CONNECTED&&mobile.getState()!=NetworkInfo.State.CONNECTED) {
+				System.out.println("Sleeping 10 sec" + wifi.getState() + " " + mobile.getState());
+				Thread.sleep(10000);
+				
+			}
+        	
         	//String delta_hash = db.getServerDelta(srv);
         	if(delta_hash!=null&&delta_hash.length()>2)
         		url = url.concat("?hash="+delta_hash);
@@ -245,7 +266,7 @@ public class ExtrasService extends Service {
 				while ((nRead = instream.read(data, 0, data.length)) != -1) {
 					saveit.write(data, 0, nRead);
 				}
-				
+				 
 			}else{
 				
 				return false;

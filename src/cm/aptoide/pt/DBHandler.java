@@ -678,6 +678,39 @@ public class DBHandler {
 		return out;
 	}
 	
+	public Vector<DownloadNode> getFeaturedPathHash(String id_apk, String ver){
+		Vector<DownloadNode> out = new Vector<DownloadNode>();
+		Cursor c = null;
+		Cursor e = null;
+		try{
+			c = database.query(DBStructure.TABLE_EDITORSCHOICE, new String[] {DBStructure.COLUMN_APK_REPO_ID, DBStructure.COLUMN_APK_PATH, DBStructure.COLUMN_APK_MD5, DBStructure.COLUMN_APK_SIZE, DBStructure.COLUMN_APK_VERNAME}, "apkid='"+id_apk+"' and vername ='"+ver+"'", null, null, null, null);
+			c.moveToFirst();
+			for(int i =0; i<c.getCount(); i++){
+				String repo = c.getString(0);
+				e = database.query(DBStructure.TABLE_EDITORSCHOICEREPOS, new String[] {"basepath"}, "_id='"+repo+"'", null, null, null, null);
+				e.moveToFirst();
+				String remotePath = e.getString(0)+c.getString(1);
+				String md5sum = null;
+				if(!c.isNull(2)){
+					md5sum = c.getString(2);
+				}
+				int size = c.getInt(3);
+				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size);
+				node.version = c.getString(4);
+				out.add(node);
+			}
+			//c.close();
+		}catch(Exception exception){
+			Log.e("Aptoide", exception.getMessage());
+		}finally{
+			c.close();
+			if(e!=null){
+				e.close();
+			}
+		}
+		return out;
+	}
+	
 	/**
 	 * @author rafael
 	 * 
@@ -961,9 +994,29 @@ public class DBHandler {
 		return return_string;
 		
 	}
+	
+	public String getFeaturedApkName(String packageName) {
+		String return_string = null;
+		Cursor c = null;
+		try{
+			c = database.query(DBStructure.TABLE_EDITORSCHOICE, new String []{DBStructure.COLUMN_APK_NAME}, DBStructure.COLUMN_APK_APKID+"=?", new String[]{packageName}, null, null, null);
+			c.moveToFirst();
+			return_string = c.getString(0);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		if(return_string==null){
+			return_string=packageName;
+		}
+		return return_string;
+		
+	}
 
 	public Cursor getFeaturedApk(long id) {
 		Cursor c = null;
+		System.out.println(id);
 		try{
 			c= database.query(DBStructure.TABLE_EDITORSCHOICE, null, DBStructure.COLUMN_APK_ID+"=?", new String[]{id+""}, null, null, null);
 			c.moveToFirst();
@@ -1006,7 +1059,7 @@ public class DBHandler {
 		return database.insert(DBStructure.TABLE_EDITORSCHOICEREPOS, null, values);
 	}
 
-	public void insertEditorsChoice(Apk apk) {
+	public long insertEditorsChoice(Apk apk) {
 		ContentValues values = new ContentValues();
 		values.put(DBStructure.COLUMN_APK_APKID, apk.apkid);
 		values.put(DBStructure.COLUMN_APK_NAME, apk.name);
@@ -1024,46 +1077,52 @@ public class DBHandler {
 		values.put(DBStructure.COLUMN_APK_SCREEN, apk.minScreenSize);
 		values.put(DBStructure.COLUMN_APK_REPO_ID, apk.repo_id);
 		values.put(DBStructure.COLUMN_EDITORSCHOICE_FEATUREDGRAPHIC, apk.featuregraphic);
-		database.insert(DBStructure.TABLE_EDITORSCHOICE, null, values);
-		values.clear();
+		values.put(DBStructure.COLUMN_EDITORSCHOICE_HIGHLIGHT, apk.highlighted);
+		return database.insert(DBStructure.TABLE_EDITORSCHOICE, null, values);
 		
 		
 		
 		
 	}
 
-	public void prepareEditorsChoiceDb() {
+	public void deleteEditorsChoice() {
 		database.delete(DBStructure.TABLE_EDITORSCHOICE, DBStructure.COLUMN_APK_REPO_ID+">0", null);
+		database.delete(DBStructure.TABLE_SCREENSHOTS, DBStructure.COLUMN_SCREENSHOTS_REPO_ID+">0", null);
 		database.delete(DBStructure.TABLE_EDITORSCHOICEREPOS, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+">0", null);
 	}
 
-	public Vector<String> getFeaturedGraphics() {
+	public ArrayList<HashMap<String, String>> getFeaturedGraphics() {
 		Cursor c = null;
-		Vector<String> image_urls = new Vector<String>();
+		ArrayList<HashMap<String, String>> items = new ArrayList<HashMap<String, String>>();
+		HashMap<String, String> item = null;
 		try{
-			c = database.rawQuery("select featuredgraphicpath,featuredgraphic from editorschoice as a ,editorschoicerepo as b where a.repo_id=b._id and b._id>0",null);
+			c = database.rawQuery("select a._id, featuredgraphicpath,featuredgraphic from editorschoice as a ,editorschoicerepo as b where a.repo_id=b._id and b._id>0 and a.highlighted is null",null);
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
-				image_urls.add(c.getString(0)+c.getString(1));
+				item = new HashMap<String, String>();
+				item.put("id", c.getString(0));
+				item.put("url", c.getString(1)+c.getString(2));
+				items.add(item);
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally{
 			c.close();
 		}
-		return image_urls;
+		return items;
 	}
 
 	public ArrayList<HashMap<String, String>> getTopApps() {
 		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String, String>>();
 		Cursor c = null;
 		try{
-			c=database.query(DBStructure.TABLE_EDITORSCHOICE, new String[]{DBStructure.COLUMN_APK_NAME,DBStructure.COLUMN_APK_ICON,DBStructure.COLUMN_APK_RATING}, DBStructure.COLUMN_APK_REPO_ID+"=?", new String[]{"-1"}, null, null, null);
+			c=database.query(DBStructure.TABLE_EDITORSCHOICE, new String[]{DBStructure.COLUMN_APK_NAME,DBStructure.COLUMN_APK_ICON,DBStructure.COLUMN_APK_RATING,DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_REPO_ID+"=?", new String[]{"-1"}, null, null, null);
 			HashMap<String, String> item = null;
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				item = new HashMap<String, String>();
 				item.put("name", c.getString(0));
 				item.put("icon", c.getString(1));
 				item.put("rating", c.getString(2));
+				item.put("id", c.getString(3));
 				values.add(item);
 			}
 		}catch (Exception e) {
@@ -1094,6 +1153,7 @@ public class DBHandler {
 	public void deleteTopApps() {
 		database.delete(DBStructure.TABLE_EDITORSCHOICE, DBStructure.COLUMN_APK_OLD_REPO_ID+"=-1", null);
 		database.delete(DBStructure.TABLE_EDITORSCHOICEREPOS, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+"=-1", null);
+		database.delete(DBStructure.TABLE_SCREENSHOTS, DBStructure.COLUMN_SCREENSHOTS_REPO_ID+"=-1", null);
 	}
 
 	public String getTopAppsIconPath() {
@@ -1106,6 +1166,84 @@ public class DBHandler {
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+		return return_string;
+	}
+
+	public HashMap<String,String> getHighLightFeature() {
+		Cursor c = null;
+		HashMap<String,String> return_string = null;
+		try{
+			c = database.rawQuery("select a._id,featuredgraphicpath,featuredgraphic from editorschoice as a ,editorschoicerepo as b where a.repo_id=b._id and b._id>0 and a.highlighted is not null",null);
+			c.moveToFirst();
+			if(c.getCount()!=0){
+				return_string = new HashMap<String, String>();
+				return_string.put("url",c.getString(1)+c.getString(2));
+				return_string.put("id",c.getString(0));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return return_string;
+	}
+
+	public void inserFeaturedScreenshots(Apk apk) {
+		ContentValues values = new ContentValues();
+		for(int i =0; i!=apk.screenshots.size();i++){
+			values.put(DBStructure.COLUMN_SCREENSHOTS_APKID, apk.id);
+			values.put(DBStructure.COLUMN_SCREENSHOTS_SCREENSHOT, apk.screenshots.get(i));
+			values.put(DBStructure.COLUMN_SCREENSHOTS_REPO_ID, apk.repo_id);
+			database.insert(DBStructure.TABLE_SCREENSHOTS, null, values);
+			values.clear();
+		}
+	}
+
+	public String getFeaturedIconspath(long repo_id) {
+		String basepath = null;
+		Cursor c=null;
+		try{
+		c = database.query(DBStructure.TABLE_EDITORSCHOICEREPOS, new String[]{DBStructure.COLUMN_REPOS_ICONSPATH}, DBStructure.COLUMN_REPOS_ID+"=?", new String[]{repo_id+""}, null, null, null);
+		
+		c.moveToFirst();
+		basepath=c.getString(0);
+		}catch (Exception e) {
+			
+		}
+		c.close();
+		return basepath;
+	}
+
+	public ArrayList<String> getFeaturedScreenhots(long id,long repo_id) {
+		ArrayList<String> urls = new ArrayList<String>();
+		Cursor c = null;
+		
+		try{
+			c = database.query(DBStructure.TABLE_SCREENSHOTS, new String[]{DBStructure.COLUMN_SCREENSHOTS_SCREENSHOT}, DBStructure.COLUMN_SCREENSHOTS_APKID+"=?", new String[]{id+""}, null, null, null);
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				urls.add(getFeaturedScreenhotsPath(repo_id)+c.getString(0));
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		
+		
+		return urls;
+	}
+
+	private String getFeaturedScreenhotsPath(long repo_id) {
+		String return_string = null;
+		Cursor c = null;
+		try{
+			c=database.query(DBStructure.TABLE_EDITORSCHOICEREPOS, new String[]{DBStructure.COLUMN_EDITORSCHOICEREPO_SCREENSPATH}, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+"=?", new String[]{repo_id+""}, null, null, null);
+			c.moveToFirst();
+			return_string=c.getString(0);
+			
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return return_string;
 	}
 

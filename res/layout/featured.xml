@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-
     android:orientation="vertical" >
 
     <ScrollView
@@ -11,10 +10,16 @@
         android:layout_height="match_parent" >
 
         <LinearLayout
-            android:id="@+id/container"
+            android:id="@+id/main"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/images"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
                 <ImageView
                     android:id="@+id/central"
@@ -32,21 +37,17 @@
                         android:id="@+id/topleft"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        
                         android:layout_marginRight="0.5dp"
                         android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                        />
+                        android:adjustViewBounds="true" />
 
                     <ImageView
                         android:id="@+id/topright"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        
                         android:layout_marginLeft="0.5dp"
                         android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                         />
+                        android:adjustViewBounds="true" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -57,24 +58,31 @@
                         android:id="@+id/bottomleft"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:layout_marginTop="1dp"
                         android:layout_marginRight="0.5dp"
+                        android:layout_marginTop="1dp"
                         android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                         />
+                        android:adjustViewBounds="true" />
 
                     <ImageView
                         android:id="@+id/bottomright"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:layout_marginTop="1dp"
                         android:layout_marginLeft="0.5dp"
+                        android:layout_marginTop="1dp"
                         android:layout_weight="1"
-                        android:adjustViewBounds="true"
-                         />
+                        android:adjustViewBounds="true" />
                 </LinearLayout>
             </LinearLayout>
-
+            
+            <LinearLayout
+                android:id="@+id/container"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+            
+            
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

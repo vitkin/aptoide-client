@@ -18,6 +18,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import cm.aptoide.pt.Configs;
+import cm.aptoide.pt.DBHandler;
 import cm.aptoide.pt.NetworkApis;
 import cm.aptoide.pt.webservices.EnumResponseStatus;
 import cm.aptoide.pt.webservices.exceptions.CancelRequestSAXException;
@@ -67,6 +68,7 @@ public class CommentGetter {
 	private ArrayList<String> errors;
 	private String urlReal;
 	private SAXParser sp;
+	private String webservice_path;
 	
 	/**
 	 * 
@@ -76,7 +78,9 @@ public class CommentGetter {
 	 * @throws SAXException 
 	 * @throws ParserConfigurationException 
 	 */
-	public CommentGetter( String repo, String apkid, String apkversion ) throws ParserConfigurationException, SAXException {
+	public CommentGetter( String repo, String apkid, String apkversion, long repo_id, Context context) throws ParserConfigurationException, SAXException {
+		DBHandler db = new DBHandler(context);
+		webservice_path=db.getWebservicespath(repo_id);
 		reset(repo, apkid, apkversion);
 		SAXParserFactory spf = SAXParserFactory.newInstance(); //Throws SAXException, ParserConfigurationException, SAXException, FactoryConfigurationError 
 		sp = spf.newSAXParser();
@@ -84,7 +88,12 @@ public class CommentGetter {
 	}
 	
 	public void reset(String repo, String apkid, String apkversion){
-		urlReal = String.format(Configs.WEB_SERVICE_COMMENTS_LIST,repo, apkid, apkversion);
+		if(webservice_path==null){
+			urlReal = String.format(Configs.WEB_SERVICE_COMMENTS_LIST,repo, apkid, apkversion);
+		}else{
+			urlReal = webservice_path+"/"+repo+"/"+apkid+"/"+apkversion;
+		}
+		
 		Log.d("",urlReal);
 	}
 	

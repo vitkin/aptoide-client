@@ -18,14 +18,14 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 	private Context context;
 	ScreenshotsImageLoader imageLoader;
 	private String[] images;
-	String url;
+	ArrayList<String> url;
 	
-	public ViewPagerAdapterScreenshots(Context context,String[] images2,String uri) {
+	public ViewPagerAdapterScreenshots(Context context,String[] images2,ArrayList<String> imagesurl) {
 		
 		this.context=context;
 		imageLoader = new ScreenshotsImageLoader(context);
 		this.images=images2;
-		this.url=uri;
+		this.url=imagesurl;
 	}
 	
 	@Override
@@ -38,7 +38,7 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 			
 			public void onClick(View v) {
 				Intent i = new Intent(context,ScreenshotsViewer.class);
-				i.putExtra("url", url);
+				i.putStringArrayListExtra("url", url);
 				i.putExtra("position", position);
 				context.startActivity(i);
 			}
@@ -61,6 +61,8 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 		container.removeView((View) object);
 		
 	}
+	
+	
 	
 	
 	

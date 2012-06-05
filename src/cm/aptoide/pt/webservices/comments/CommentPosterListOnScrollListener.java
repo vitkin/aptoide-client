@@ -48,6 +48,7 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
     
     private AtomicBoolean 	stoped;								//	If mode comments should be fetch
     private TextView 		loadingText;						//	Text field displaying a loading message for messages
+	private long repo_id;
     
     /**
      * 
@@ -61,13 +62,13 @@ public class CommentPosterListOnScrollListener implements OnScrollListener {
      * @throws ParserConfigurationException 
      */
     public CommentPosterListOnScrollListener(Activity context, CommentsAdapter<Comment> commentList, String repo, 
-    								String apkid, String version, LinearLayout loadingLayout) 
+    								String apkid, String version, LinearLayout loadingLayout, long repo_id) 
     										throws ParserConfigurationException, SAXException {
     	
     	this.context 		= context;
     	this.commentList 	= commentList;
-    	
-    	commentGetter 		= new CommentGetter(repo, apkid, version);
+    	this.repo_id = repo_id;
+    	commentGetter 		= new CommentGetter(repo, apkid, version, repo_id,context);
     	
     	this.pendingFetch 	= null;
     	

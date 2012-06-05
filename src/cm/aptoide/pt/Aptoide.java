@@ -54,12 +54,16 @@ import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiManager.WifiLock;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Parcelable;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.os.StatFs;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -361,39 +365,60 @@ public class Aptoide extends FragmentActivity {
 		
 		
 	}
+	
+	private OnClickListener featuredListener = new OnClickListener() {
+		
+		public void onClick(View v) {
+			Intent i = new Intent(Aptoide.this,ApkInfo.class);
+			i.putExtra("id", Long.parseLong((String) v.getTag()));
+			i.putExtra("type", "featured");
+			startActivity(i);
+		}
+	};
 
 	private void loadFeatured() {
 		new Thread(new Runnable() {
-			
+			int a=0;
+			ImageLoader2 imageLoader = new ImageLoader2(context);
 			int[] res_ids = {R.id.central,R.id.topleft,R.id.topright,R.id.bottomleft,R.id.bottomright};
-			Vector<String> image_urls = new Vector<String>();
+			ArrayList<HashMap<String, String>> image_urls = new ArrayList<HashMap<String, String>>();
 			public void run() {
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
 
-					//			downloadFeatured();
 					sp.parse(NetworkApis.getInputStream(context,
 							"http://www.bazaarandroid.com/apks/editors.xml"),
 							new EditorsChoiceRepoParser(context));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}finally{
+					
+					HashMap<String,String> image_url_highlight = db.getHighLightFeature();
+					if(image_url_highlight!=null){
+						a=1;
+						ImageView v = (ImageView) featured.findViewById(res_ids[0]);
+						imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v, context);
+						v.setTag(image_url_highlight.get("id"));
+						v.setOnClickListener(featuredListener);
+					}
 					image_urls = db.getFeaturedGraphics();
 					Collections.shuffle(image_urls);
 					runOnUiThread(new Runnable() {
-						ImageLoader2 imageLoader = new ImageLoader2(context);
+						
 						public void run() {
 							try{
-								for(int i = 0; i != res_ids.length;i++){
-									ImageView v = (ImageView) featured.findViewById(res_ids[i]); 
-									imageLoader.DisplayImage(-1, image_urls.get(i), v, context);
+								for(int i = a; i != res_ids.length;i++){
+									ImageView v = (ImageView) featured.findViewById(res_ids[i]);
+									imageLoader.DisplayImage(-1, image_urls.get(i).get("url"), v, context);
+									v.setTag(image_urls.get(i).get("id"));
+									
+									v.setOnClickListener(featuredListener);
+									
 								}
 							}catch (Exception e) {
 								e.printStackTrace();
 							}
-							
-							
 						}
 					});
 				}
@@ -408,8 +433,6 @@ public class Aptoide extends FragmentActivity {
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
-
-					//			downloadFeatured();
 					sp.parse(NetworkApis.getInputStream(context,
 							"http://apps.bazaarandroid.com/top.xml"),
 							new TopAppsRepoParser(context));
@@ -419,8 +442,10 @@ public class Aptoide extends FragmentActivity {
 				}finally{
 					runOnUiThread(new Runnable() {
 						ImageLoader imageLoader = new ImageLoader(context);
+						
 						public void run() {
 							LinearLayout ll = (LinearLayout) featured.findViewById(R.id.container); 
+							ll.removeAllViews();
 					        LinearLayout llAlso = new LinearLayout(Aptoide.this);
 					        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
 					                LayoutParams.WRAP_CONTENT));
@@ -429,7 +454,6 @@ public class Aptoide extends FragmentActivity {
 					        int widthSoFar = 0;
 					        ArrayList<HashMap<String, String>> values = db.getTopApps();
 					        for (int i = 0; i!=values.size(); i++) {
-					        	
 					            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
 					           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
 					           	imageLoader.DisplayImage(-1, db.getTopAppsIconPath()+values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context);
@@ -441,13 +465,9 @@ public class Aptoide extends FragmentActivity {
 								}
 					           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
 					            txtSamItem.setPadding(10, 0, 0, 0);
-					            txtSamItem.setTag(i);
+					            txtSamItem.setTag(values.get(i).get("id"));
 					            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
-					            txtSamItem.setOnClickListener(new OnClickListener() {
-					                public void onClick(View v) {
-					                    finish();
-					                }
-					            });
+					            txtSamItem.setOnClickListener(featuredListener);
 
 					            txtSamItem.measure(0, 0);
 					            widthSoFar += txtSamItem.getMeasuredWidth();
@@ -482,15 +502,16 @@ public class Aptoide extends FragmentActivity {
      
 	}
 
-	private void downloadFeatured() {
-		
-	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		if (vp.getCurrentItem() == 1) {
 			menu.add(0, EnumOptionsMenu.UPDATE_REPO.ordinal(), 0, getString(R.string.menu_update_repo)).setIcon(android.R.drawable.ic_menu_rotate);
+		}
+		
+		if (vp.getCurrentItem() == 0) {
+			menu.add(0, EnumOptionsMenu.UPDATE_FEATURED.ordinal(), 0, "Refresh Featured").setIcon(android.R.drawable.ic_menu_rotate);
 		}
 		if (vp.getCurrentItem() == 3) {
 			menu.add(0, EnumOptionsMenu.UPDATE_ALL.ordinal(), 0, getString(R.string.menu_update_all)).setIcon(android.R.drawable.ic_menu_rotate);
@@ -507,6 +528,9 @@ public class Aptoide extends FragmentActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
 		switch (menuEntry) {
+		case UPDATE_FEATURED:
+			loadFeatured();
+			break;
 		case MANAGE_REPO:
 			startActivityForResult(new Intent(this,StoreManager.class), 0);
 			break;
@@ -656,7 +680,8 @@ public class Aptoide extends FragmentActivity {
 	
 	private void updateRepos() {
 		
-		
+		 
+
 		errorRepos = new Vector<String>();
 		updatedRepos = new Vector<String>();
 		pd = new ProgressDialog(context);
@@ -762,7 +787,7 @@ public class Aptoide extends FragmentActivity {
 								if (!errorRepos.isEmpty()) {
 									String repos = "";
 									for (String repo : errorRepos) {
-										repos.concat("\n" + repo);
+										repos=repos+"\n" + repo;
 									}
 									alert.setMessage(getString(R.string.error_on_update)
 											+ repos);
@@ -774,7 +799,8 @@ public class Aptoide extends FragmentActivity {
 								if (!updatedRepos.isEmpty()) {
 									String repos = "";
 									for (String repo : updatedRepos) {
-										repos.concat("\n" + repo);
+										
+										repos=repos+"\n" + repo;
 									}
 									alert.setMessage("Servers are already up to date: "
 											+ repos);
@@ -787,7 +813,7 @@ public class Aptoide extends FragmentActivity {
 							}
 						});
 						new File(XML_PATH).delete();
-
+						
 					}
 				};
 			}.start();
@@ -1161,7 +1187,6 @@ public class Aptoide extends FragmentActivity {
 		return super.onKeyDown(keyCode, event);
 		
 	}
-	
 	private int downloadList(final String srv, String delta_hash){
 		runOnUiThread(new Runnable() {
 			
@@ -1252,7 +1277,7 @@ public class Aptoide extends FragmentActivity {
 				while ((nRead = instream.read(data, 0, data.length)) != -1) {
 					saveit.write(data, 0, nRead);
 				}
-
+				
 
 			}else{
 				return -1;

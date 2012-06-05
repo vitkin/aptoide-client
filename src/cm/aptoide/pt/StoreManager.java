@@ -122,7 +122,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 				if(number_apks>0){
 					((TextView) v.findViewById(R.id.numberapks)).setText(getText(R.string.number_apks)+" "+number_apks);
 				}else{
-					((TextView) v.findViewById(R.id.numberapks)).setText("No information");
+					((TextView) v.findViewById(R.id.numberapks)).setText(getString(R.string.no_info));
 				}
 				((CheckBox) v.findViewById(R.id.CheckBox01)).setChecked(checked);
 				((CheckBox) v.findViewById(R.id.CheckBox01)).setTag(repo_id);
@@ -195,7 +195,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 												runOnUiThread(new Runnable() {
 													
 													public void run() {
-														Toast.makeText(context, "Repo insertion failed", 1).show();
+														Toast.makeText(context, getString(R.string.repo_insert_failed), 1).show();
 													}
 												});
 											}
@@ -234,8 +234,8 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			}
 			
 		}else if(getIntent().hasExtra("norepos")){
-			AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-			alertDialog.setMessage(getString(R.string.myrepo_alrt));
+			final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+			alertDialog.setMessage(getString(R.string.myrepo_alrt)+"http://apps.bazaarandroid.com/");
 			alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Yes", new OnClickListener() {
 				
 				public void onClick(DialogInterface dialog, int which) {
@@ -275,9 +275,11 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 											runOnUiThread(new Runnable() {
 												
 												public void run() {
-													Toast.makeText(context, "Repo insertion failed", 1).show();
+													Toast.makeText(context, getString(R.string.repo_insert_failed), 1).show();
+													alertDialog.show();
 												}
 											});
+											
 										}
 									}
 								});
@@ -641,10 +643,11 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			return uri_str;
 
 		case LOGIN_REQUIRED:
-
+			Toast.makeText(context, "Login is required.", 1).show();
 			break;
 
 		case BAD_LOGIN:
+			Toast.makeText(context, "Login failed.", 1).show();
 			break;
 
 		case FAIL:
@@ -666,14 +669,15 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 				return uri_str;
 
 			case LOGIN_REQUIRED:
-
+				Toast.makeText(context, "Login is required.", 1).show();
 				break;
 
 			case BAD_LOGIN:
+				Toast.makeText(context, "Login failed.", 1).show();
 				break;
 
 			case FAIL:
-
+				Toast.makeText(context, "Store insertion failed.", 1).show();
 				break;
 
 			default:
