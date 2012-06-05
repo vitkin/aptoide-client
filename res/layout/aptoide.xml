@@ -10,39 +10,27 @@
     <RelativeLayout
         android:id="@+id/actionbar"
         android:layout_width="fill_parent"
-        android:layout_height="44dp"
+        android:layout_height="44sp"
         android:layout_gravity="top"
         android:background="@drawable/greenbarwithshadow"
         android:orientation="vertical" >
-
-        <LinearLayout
-            android:id="@+id/greenbar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="horizontal" >
-        </LinearLayout>
 
         <ImageView
             android:id="@+id/aptoideicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="3dp"
-            android:layout_toRightOf="@+id/greenbar"
-            android:src="@drawable/icon" />
+            android:layout_margin="7dp"
+            android:src="@drawable/aptoideicon" />
 
         <ImageView
             android:id="@+id/aptoidebrand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/aptoideicon"
-            android:padding="5dp"
+            android:padding="10dp"
             android:scaleType="fitStart"
-            android:src="@drawable/aptoidebrand" />
+            android:src="@drawable/brand" />
 
         <ImageView
             android:id="@+id/btsearch"
@@ -58,13 +46,14 @@
         android:id="@+id/title_list"
         android:layout_width="fill_parent"
         android:layout_height="30dp"
-        android:background="@drawable/titlebar"
+        android:background="@drawable/bar"
         android:gravity="center" >
 
         <com.viewpagerindicator.TitlePageIndicator
             android:id="@+id/indicator"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+             />
     </RelativeLayout>
 
     <LinearLayout
@@ -73,13 +62,12 @@
         android:background="@drawable/border_background_normal"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="5dp"
-        >
+        android:padding="5dp" >
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent" />
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
     </LinearLayout>
 
 </LinearLayout>

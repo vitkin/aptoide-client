@@ -20,22 +20,18 @@
             android:id="@+id/aptoideicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="2sp"
-            android:layout_toRightOf="@+id/greenbar"
-            android:src="@drawable/icon" />
+            android:layout_margin="9dp"
+            android:src="@drawable/aptoideicon" />
 
         <ImageView
             android:id="@+id/aptoidebrand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/aptoideicon"
-            android:padding="5dp"
+            android:padding="10dp"
             android:scaleType="fitStart"
-            android:src="@drawable/aptoidebrand" />
+            android:src="@drawable/brand" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -101,35 +97,29 @@
                 android:cacheColorHint="#ffffff"
                 android:divider="@drawable/list_comments_divider"
                 android:dividerHeight="1dp" />
-
-            
-            
         </RelativeLayout>
-        
     </RelativeLayout>
 
     <LinearLayout
-                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/advertisement"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/listview_footer"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical" >
+        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/advertisement"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/listview_footer"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
 
-                <com.google.ads.AdView
-                    android:id="@+id/adView"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    ads:adSize="BANNER"
-                    ads:adUnitId="a14f30ff2e69698"
-                    ads:loadAdOnCreate="true"
-                    ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
-                </com.google.ads.AdView>
-
+        <com.google.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            ads:adSize="BANNER"
+            ads:adUnitId="a14f30ff2e69698"
+            ads:loadAdOnCreate="true"
+            ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
+        </com.google.ads.AdView>
     </LinearLayout>
-    
 
     <LinearLayout
         android:id="@+id/listview_footer"

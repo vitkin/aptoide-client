@@ -19,21 +19,18 @@
             android:id="@+id/aptoideicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="2sp"
-            android:src="@drawable/icon" />
+            android:layout_margin="7dp"
+            android:src="@drawable/aptoideicon" />
 
         <ImageView
             android:id="@+id/aptoidebrand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/aptoideicon"
-            android:padding="5dp"
+            android:padding="10dp"
             android:scaleType="fitStart"
-            android:src="@drawable/aptoidebrand" />
+            android:src="@drawable/brand" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -49,7 +46,7 @@
             android:layout_height="fill_parent"
             android:layout_above="@+id/sch_down"
             android:layout_below="@+id/content_layout"
-            android:background="@drawable/border"
+            android:background="@drawable/border_background_normal"
             android:gravity="bottom"
             android:padding="5dp" >
 
@@ -69,15 +66,15 @@
                 android:text="@string/no_sch_downloads"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#4f4f4f" />
-
         </RelativeLayout>
 
         <Button
             android:id="@+id/sch_down"
-            android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp" />
     </RelativeLayout>
+
 </LinearLayout>

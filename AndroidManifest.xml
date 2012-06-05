@@ -4,20 +4,23 @@
     android:versionCode="325"
     android:versionName="2.7.0" >
 
-    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4" />
-    
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	
+    <uses-sdk
+        android:minSdkVersion="4"
+        android:targetSdkVersion="4" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+
     <application
-        
         android:icon="@drawable/icon"
         android:label="@string/app_name" >
         <activity
-            android:configChanges="orientation"
             android:name=".Start"
+            android:configChanges="orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen" >
             <intent-filter>
@@ -26,10 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
         <activity
-            android:configChanges="orientation"
             android:name=".IntentReceiver"
+            android:configChanges="orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
             <intent-filter>
@@ -44,8 +46,7 @@
                 <data android:host="*" />
                 <data android:mimeType="application/vnd.cm.aptoide.pt" />
             </intent-filter>
-            
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -62,52 +63,47 @@
 
                 <data android:scheme="market" />
             </intent-filter>
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="https" android:host="market.android.com"/>
-                
+                <data
+                    android:host="market.android.com"
+                    android:scheme="https" />
             </intent-filter>
-            
         </activity>
-        
-         <activity
-             android:name=".Aptoide"
-             android:configChanges="orientation"
-             android:label="@string/app_name"
-             android:theme="@android:style/Theme.Light.NoTitleBar" >
-             <meta-data
-                 android:name="android.app.default_searchable"
-                 android:value=".SearchManager" />
-         </activity>
-         
-         <activity
-             android:name=".ScheduledDownload"
-             android:configChanges="orientation"
-             android:label="@string/app_name"
-             android:theme="@android:style/Theme.Light.NoTitleBar" >
-         </activity>
- 
         <activity
+            android:name=".Aptoide"
             android:configChanges="orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchManager" />
+        </activity>
+        <activity
+            android:name=".ScheduledDownload"
+            android:configChanges="orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity
             android:name=".StoreManager"
+            android:configChanges="orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-        
         <activity
-            android:configChanges="orientation"
             android:name=".ApkInfo"
+            android:configChanges="orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-        
         <activity
-            android:configChanges="orientation"
             android:name=".SearchManager"
+            android:configChanges="orientation"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
             <intent-filter>
@@ -120,70 +116,65 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/find" />
         </activity>
-        
         <activity
-            android:configChanges="orientation"
             android:name=".AddComment"
+            android:configChanges="orientation"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
-
         </activity>
-        
         <activity
-            android:configChanges="orientation"
             android:name=".Preferences"
+            android:configChanges="orientation"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Light.NoTitleBar" />
-        
         <activity
-            android:configChanges="orientation"
             android:name=".webservices.login.CreateUser"
+            android:configChanges="orientation"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
-
         </activity>
-        
         <activity
-            android:configChanges="orientation"
             android:name=".HWSpecActivity"
-            android:launchMode="singleTop"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
-
-        </activity>
-        
-        <activity
             android:configChanges="orientation"
-            android:name=".ScreenshotsViewer"
             android:launchMode="singleTop"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
-
         </activity>
-        
-        <service android:name=".DownloadQueueService"></service>
-        <service android:name=".ExtrasService" android:process=":Extras"></service>
+        <activity
+            android:name=".ScreenshotsViewer"
+            android:configChanges="orientation"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+
+        <service android:name=".DownloadQueueService" >
+        </service>
+        <service
+            android:name=".ExtrasService"
+            android:process=":Extras" >
+        </service>
 
         <provider
             android:name=".ExtrasContentProvider"
             android:authorities="extras.contentprovider" >
         </provider>
-        
+
         <receiver android:name=".InstalledBroadcastReceiver" >
             <intent-filter>
-                
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <action android:name="android.intent.action.PACKAGE_REMOVED"/>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
                 <data android:scheme="package" />
-                
             </intent-filter>
         </receiver>
-        
-         <receiver android:name=".ScheduledDownloadReceiver" >
+        <receiver android:name=".ScheduledDownloadReceiver" >
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
-	<activity android:name="com.google.ads.AdActivity"
-              android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"/>
+
+        <activity
+            android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
     </application>
 
 </manifest>
