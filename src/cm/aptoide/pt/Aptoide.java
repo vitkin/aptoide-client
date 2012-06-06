@@ -81,6 +81,7 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ProgressBar;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -393,7 +394,6 @@ public class Aptoide extends FragmentActivity {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}finally{
-					
 					HashMap<String,String> image_url_highlight = db.getHighLightFeature();
 					if(image_url_highlight!=null){
 						a=1;
@@ -412,10 +412,11 @@ public class Aptoide extends FragmentActivity {
 									ImageView v = (ImageView) featured.findViewById(res_ids[i]);
 									imageLoader.DisplayImage(-1, image_urls.get(i).get("url"), v, context);
 									v.setTag(image_urls.get(i).get("id"));
-									
 									v.setOnClickListener(featuredListener);
-									
 								}
+								featured.findViewById(R.id.editorsProgressBar).setVisibility(View.GONE);;
+								
+								
 							}catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -488,6 +489,7 @@ public class Aptoide extends FragmentActivity {
 					        }
 
 					        ll.addView(llAlso);
+					        featured.findViewById(R.id.topappsProgressBar).setVisibility(View.GONE);
 						}
 					});
 				}

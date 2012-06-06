@@ -1,10 +1,14 @@
 package cm.aptoide.pt;
 
 
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
+
+import cm.aptoide.pt.webservices.login.Algorithms;
 
 
 
@@ -353,8 +357,10 @@ public class DBHandler {
 		return c;
 	}
 	
-	public void insertRepository(String uri, String user, String password, boolean extended) {
+	public void insertRepository(String uri, String user, String password, boolean extended) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 		ContentValues values = new ContentValues();
+		
+		
 		values.put(DBStructure.COLUMN_REPOS_URI,uri);
 		values.put(DBStructure.COLUMN_REPOS_INUSE,1);
 		values.put(DBStructure.COLUMN_REPOS_USER,user);
