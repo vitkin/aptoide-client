@@ -14,7 +14,24 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+            <RelativeLayout
+                android:id="@+id/separator"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp" 
+                android:background="@drawable/ab_solid_light_holo">
 
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:textSize="18sp"
+                    android:paddingLeft="5dp"
+                    android:text="Editors' Choice"
+                     />
+
+            </RelativeLayout>
+            
             <LinearLayout
                 android:id="@+id/images"
                 android:layout_width="match_parent"
@@ -73,15 +90,32 @@
                         android:adjustViewBounds="true" />
                 </LinearLayout>
             </LinearLayout>
-            
+
+            <RelativeLayout
+                android:id="@+id/separator"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp" 
+                android:layout_marginTop="1dp"
+                android:background="@drawable/ab_solid_light_holo">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:textSize="18sp"
+                    android:paddingLeft="5dp"
+                    android:text="Top Apps"
+                     />
+
+            </RelativeLayout>
+
             <LinearLayout
                 android:id="@+id/container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
             </LinearLayout>
-            
-            
         </LinearLayout>
     </ScrollView>
 
