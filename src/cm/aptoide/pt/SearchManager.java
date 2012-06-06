@@ -38,7 +38,8 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		if(getIntent().hasExtra("search")){
 			query = getIntent().getExtras().getString("search");
 		}else{
-			query = getIntent().getExtras().getString(android.app.SearchManager.QUERY).replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
+			query = getIntent().getExtras().getString(android.app.SearchManager.QUERY).replaceAll("\\s{2,}|\\W", " ").trim();
+			query = query.replaceAll("\\s{2,}", " ");
 		}
 		lv = (ListView) findViewById(R.id.listView);
 //		searchBox = (EditText) findViewById(R.id.search_box);

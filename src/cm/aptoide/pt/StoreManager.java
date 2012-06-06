@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -25,6 +27,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.HttpContext;
 import org.xmlpull.v1.XmlSerializer;
+
+import cm.aptoide.pt.webservices.login.Algorithms;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -93,6 +97,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			
 		}
 	};
+	private SharedPreferences sPref;
 	
 	
 	@Override
@@ -102,7 +107,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 		db= new DBHandler(context);
 		db.open();
 		setContentView(R.layout.storemanager);
-		
+		sPref=getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 		
 		lv = (ListView) findViewById(android.R.id.list);
 		adapter = new CursorAdapter(this,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
@@ -182,7 +187,15 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 								} finally {
 									if(uri!=null){
 										System.out.println(uri);
-										db.insertRepository(uri,username,password,true);
+										try {
+											db.insertRepository(uri,username,password,true);
+										} catch (NoSuchAlgorithmException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										} catch (UnsupportedEncodingException e) {
+											// TODO Auto-generated catch block
+											e.printStackTrace();
+										}
 									}
 									
 									runOnUiThread(new Runnable() {
@@ -255,7 +268,13 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 							} finally {
 								if(uri!=null&&!containsRepo){
 									System.out.println(uri);
-									db.insertRepository(uri,username,password,true);
+									try {
+										db.insertRepository(uri,username,password,true);
+									} catch (NoSuchAlgorithmException e) {
+										e.printStackTrace();
+									} catch (UnsupportedEncodingException e) {
+										e.printStackTrace();
+									}
 								}
 								
 								runOnUiThread(new Runnable() {
@@ -363,7 +382,11 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					if(isChecked){
 						sec_user.setEnabled(true);
+						 if(sPref.getString(Configs.LOGIN_USER_NAME, null)!=null || sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
+							 sec_user.setText(sPref.getString(Configs.LOGIN_USER_NAME, ""));
+						 }
 						sec_pwd.setEnabled(true);
+						sec_pwd.setText(sPref.getString(Configs.LOGIN_PASSWORD, ""));
 					}else{
 						sec_user.setEnabled(false);
 						sec_pwd.setEnabled(false);
@@ -492,6 +515,9 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if(isChecked){
 					sec_user.setEnabled(true);
+					if(sPref.getString(Configs.LOGIN_USER_NAME, null)!=null || sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
+						 sec_user.setText(sPref.getString(Configs.LOGIN_USER_NAME, ""));
+					 }
 					sec_pwd.setEnabled(true);
 				}else{
 					sec_user.setEnabled(false);
@@ -585,7 +611,15 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 					} finally {
 						if(uri!=null&&!containsRepo){
 							System.out.println(uri);
-							db.insertRepository(uri,username,password,((CheckBox) alertDialogView.findViewById(R.id.extended_chk)).isChecked());
+							try {
+								db.insertRepository(uri,username,password,((CheckBox) alertDialogView.findViewById(R.id.extended_chk)).isChecked());
+							} catch (NoSuchAlgorithmException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (UnsupportedEncodingException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 
 						}
 						
@@ -637,6 +671,21 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	protected String checkServer(String uri_str, String user, String pwd) {
+		
+		if(user.contains("@")){
+			try{
+				if(pwd.equals(sPref.getString(Configs.LOGIN_PASSWORD, ""))){
+					password = pwd;
+				}else{
+					password = Algorithms.computeSHA1sum(pwd);
+				}
+				
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
 		returnStatus result = checkServerConnection(uri_str, user, pwd);
 		switch (result) {
 		case OK:

@@ -322,7 +322,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		loader.DisplayImage(-1, elements.get("iconpath"), icon, context);
 		name.setText(elements.get("name"));
 		version.setText(elements.get("vername"));
-		versionInfo.setText("Size: "+elements.get("size")+" Downloads: "+elements.get("downloads"));
+		versionInfo.setText("Size: "+elements.get("size")+"KB Downloads: "+elements.get("downloads"));
 		try{
 			rating.setRating(Float.parseFloat(elements.get("rating")));
 		}catch (Exception e) {

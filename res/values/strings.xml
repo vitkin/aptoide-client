@@ -7,9 +7,9 @@
     <string name="installed_tab">Installed</string>
     <string name="updates_tab">Updates</string>
     <string name="add_repo_private">Private</string>
-    <string name="add_repo_text">Add</string>
+    <string name="add_repo_text">New Store</string>
     <string name="extended_server">Extended Store</string>
-    <string name="btn_add_repo">New Store</string>
+    <string name="btn_add_repo">Add store</string>
     <string name="menu_rem_repo">Remove Store</string>
     <string name="number_apks">Applications:</string>
     <string name="please_wait">Please wait…</string>
