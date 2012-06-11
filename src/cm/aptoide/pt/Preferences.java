@@ -48,7 +48,7 @@ public class Preferences extends PreferenceActivity implements
 		hwbox = (CheckBoxPreference) findPreference("hwspecsChkBox");
 		schDwnBox = (CheckBoxPreference) findPreference("schDwnBox");
 		matureChkBox = (CheckBoxPreference) findPreference("matureChkBox");
-
+		matureChkBox.setChecked(userPref.getString("app_rating", "All").equals("All"));
 		if (userPref.getString(Configs.LOGIN_USER_NAME, null) == null) {
 			((Preference) findPreference("clearcredentials")).setEnabled(false);
 		}

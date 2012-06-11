@@ -395,6 +395,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			});
 			
 			alertDialog = new AlertDialog.Builder(this).setView(alertDialogView).create();
+			alertDialog.setTitle(getString(R.string.add_repo_text));
 			alertDialog.setButton(Dialog.BUTTON_POSITIVE,getString(R.string.btn_add_repo), addRepoListener);
 			alertDialog.show();
 			
@@ -692,11 +693,24 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			return uri_str;
 
 		case LOGIN_REQUIRED:
-			Toast.makeText(context, "Login is required.", 1).show();
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					Toast.makeText(context, "Login is required.", 1).show();
+					
+				}
+			});
+			
 			break;
 
 		case BAD_LOGIN:
-			Toast.makeText(context, "Login failed.", 1).show();
+			runOnUiThread(new Runnable() {
+				
+				public void run() {
+					Toast.makeText(context, "Login failed.", 1).show();
+				}
+			});
+			
 			break;
 
 		case FAIL:
@@ -718,15 +732,36 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 				return uri_str;
 
 			case LOGIN_REQUIRED:
-				Toast.makeText(context, "Login is required.", 1).show();
+				runOnUiThread(new Runnable() {
+					
+					public void run() {
+						Toast.makeText(context, "Login is required.", 1).show();
+						
+					}
+				});
+				
 				break;
 
 			case BAD_LOGIN:
-				Toast.makeText(context, "Login failed.", 1).show();
+				runOnUiThread(new Runnable() {
+					
+					public void run() {
+						Toast.makeText(context, "Login failed.", 1).show();
+						
+					}
+				});
+				
 				break;
 
 			case FAIL:
-				Toast.makeText(context, "Store insertion failed.", 1).show();
+				runOnUiThread(new Runnable() {
+					
+					public void run() {
+						Toast.makeText(context, "Store insertion failed.", 1).show();
+						
+					}
+				});
+				
 				break;
 
 			default:

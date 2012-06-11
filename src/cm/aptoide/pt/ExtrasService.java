@@ -224,11 +224,10 @@ public class ExtrasService extends Service {
 
     		android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
     		android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-        	
+    		System.out.println(wifi.getState() + " " + mobile.getState());
 			while (wifi.getState()!=NetworkInfo.State.CONNECTED&&mobile.getState()!=NetworkInfo.State.CONNECTED) {
 				System.out.println("Sleeping 10 sec" + wifi.getState() + " " + mobile.getState());
 				Thread.sleep(10000);
-				
 			}
         	
         	//String delta_hash = db.getServerDelta(srv);

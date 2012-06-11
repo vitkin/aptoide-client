@@ -19,6 +19,8 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 	private ContentValues value;
 	private ContentValues[] value2 = new ContentValues[0];
 	private ArrayList<ContentValues> values = new ArrayList<ContentValues>();
+	private boolean firstIteration = true;
+	private String hash;
 	
 	
 	public EditorsChoiceRepoParser(Context context) {
@@ -30,7 +32,6 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 	public void startDocument() throws SAXException {
 		super.startDocument();
 		dbhandler.open();
-		dbhandler.deleteEditorsChoice();
 //		dbhandler.beginTransation();
 	}
 	
@@ -68,9 +69,21 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 			apk.id=dbhandler.insertEditorsChoice(apk);
 			dbhandler.inserFeaturedScreenshots(apk);
 			context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
+			firstIteration=false;
 			break;
 		case APKID:
 			apk.apkid=sb.toString();
+			break;
+		case HASH:
+			if (firstIteration) {
+				if (dbhandler.verifyEditorsChoiceHash(sb.toString())) {
+					throw new SAXException();
+				}
+				dbhandler.deleteEditorsChoice();
+				hash = sb.toString();
+				
+			}
+			repository.hash = hash;
 			break;
 		case NAME:
 			if(repository.name!=null){

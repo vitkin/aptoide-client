@@ -120,7 +120,6 @@ public class DownloadQueueService extends Service {
 			HashMap<String,String> notification = new HashMap<String,String>();
 			notification.put("remotePath", downloadNode.getRemotePath());
 			notification.put("md5sum", downloadNode.getMd5sum());
-			
 			notification.put("packageName", downloadNode.getPackageName());
 			notification.put("appName", downloadNode.getAppName());
 			notification.put("intSize", Integer.toString(downloadNode.getSize()));
@@ -422,6 +421,11 @@ public class DownloadQueueService extends Service {
 						downloadArguments.arg1= 1;
 						downloadArguments.arg2 =threadApkidHash;
 						downloadErrorHandler.sendMessage(downloadArguments);
+						
+						DBHandler db = new DBHandler(context);
+						db.open();
+						notifications.get(threadApkidHash);
+						db.insertFailedDownload(notifications.get(threadApkidHash));
 					}
 				}
 			}.start();

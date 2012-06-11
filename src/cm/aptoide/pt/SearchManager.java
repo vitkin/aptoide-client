@@ -32,6 +32,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
+		System.out.println("onCreate Search");
 		db = new DBHandler(this);
 		db.open();
 		setContentView(R.layout.searchmanager);
@@ -82,7 +83,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 //			}
 //		});
 		
-		getSupportLoaderManager().initLoader(0x30, null, this);
+		getSupportLoaderManager().restartLoader(0x30, null, this);
 		
 		lv.setOnItemClickListener(new OnItemClickListener() {
 

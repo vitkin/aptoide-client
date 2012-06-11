@@ -1,2 +1,87 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<resources><string name="app_name">Aptoide</string><string name="tab_avail">Beschikbaar</string><string name="tab_inst">Geïnstalleerd</string><string name="tab_updt">Updates</string><string name="repo_app">Toepassingen:</string><string name="repo_noinfo">Geen informatie</string><string name="no_found">Geen toepassing gevonden!</string><string name="no_repo">Er zijn geen voorraden!</string><string name="not_inst">Niet geïnstalleerd</string><string name="installed">Geïnstalleerd - Ver.:</string><string name="installed_update">Update mogelijk - Ver.:</string><string name="srv_version">Beschikbare versie:</string><string name="srch_label">Aptoide</string><string name="srch_hint">Naam van toepassing</string><string name="about_txt1">Je pakketten installatie gereedschap voor je Android toestel.\n</string><string name="about_site">Home:</string><string name="about_mail">Contact:</string><string name="about_txt2">www.aptoide.com</string><string name="about_txt3">aptoide@aptoide.com</string><string name="multi_ver_prompt">Selecteer een versie</string><string name="version">Versie</string><string name="size">Grootte</string><string name="comments">Commentaren:</string><string name="commentsproblem">Commentaren niet beschikbaar</string><string name="reinstall">Opnieuw installeren</string><string name="version_inst">Geïnstalleerde versie</string><string name="installed_downgrade">Downgrade mogelijk.</string><string name="reply">Beantwoorden</string><string name="whattodo">Wat te doen?</string><string name="likes">Leuks:</string><string name="dislikes">Niet  leuks:</string><string name="copyclip">Kopieer naar klembord</string><string name="commentlabel">Geef commentaar...</string><string name="submit">Sturen</string><string name="clear">Leegmaken</string><string name="body">Boodschap..</string><string name="subject">Onderwerp...</string><string name="user">Gebruikersnaam...</string><string name="pass">Wachtwoord...</string><string name="showpass">Laat wachtwoord zien</string><string name="hidepass">Verberg wachtwoord</string><string name="failedcredentials">Inloggen niet gelukt met de ingevoerde gegevens</string><string name="comments_unavailable">Commentaren niet beschikbaar</string><string name="credentialssettings">Bazaar login</string><string name="clearcredentials">Login verwijderen</string><string name="clearcredentials_summary">Je huidige login verwijderen</string><string name="setcredentials">Bazaar Login</string><string name="setcredentials_summary">Nieuwe login maken</string><string name="credentialscleared">Login verwijderd</string><string name="credentialscleared_des">Je gegevens zijn verwijderd</string><string name="commentadded">Je commentaar is met succes geplaatst</string><string name="enterbody">Geef je ervaring in boodschap gedeelte</string><string name="inresponseto">\@</string><string name="usernotdef">Gebruiker niet bekend</string><string name="passwordnotdef">Wachtwoord niet bekend</string><string name="loading_likes">Leuks wordt geladen...</string><string name="postingcomment">Je commentaar wordt gepost...</string><string name="unabletoexecutecheknet">Kon niet voltooien. Check je internet status.</string><string name="opinionsuccess">Je verzoek is met succes verwerkt</string><string name="postingtaste">Je verzoek wordt verwerkt</string><string name="unabletoexecute">Kon niet uitgevoerd worden</string><string name="loggingin">Je wordt ingelogd...</string><string name="tastenotavailable">Leuks niet beschikbaar</string><string name="downgrade_available">downgrade mogelijk</string><string name="loading_comments">Commentaren worden geladen...</string><string name="moving_to">Verplaats naar</string><string name="recognized">Herkend</string><string name="not_recognized">Niet herkend</string><string name="new_account">Nieuwe account</string><string name="chkBoxSchDwn">Download plannen</string><string name="no_sch_downloads">Geen geplande downloads!</string><string name="schDown_wireless_detected">Wifi gevonden: Alle geplande toepassingen downloaden?</string><string name="schDown_nodownloads">Geen geplande downloads</string><string name="schDown_nodownloadselect">Geen downloads geselecteerd</string><string name="schDown_downerror">Download fout. Voeg %1$s Voorraad.</string><string name="addSchDown">Toegevoegd aan geplande downloads</string><string name="ctg_available">beschikbaar</string><string name="ctg_files">bestanden</string><string name="ctg_version">Versie:</string><string name="schDown_install">Wil je alle geplande downloads installeren?</string><string name="schDown_installselected">Geselecteerde installeren</string></resources>
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">Aptoide</string>
+  <string name="available_tab">Beschikbaar</string>
+  <string name="installed_tab">Geïnstalleerd</string>
+  <string name="updates_tab">Updates</string>
+  <string name="number_apks">Applicaties:</string>
+  <string name="uninstall">Opnieuw installeren</string>
+  <string name="install">Geïnstalleerd</string>
+  <string name="srch_label">Aptoide</string>
+  <string name="srch_hint">Naam van de applicatie</string>
+  <string name="tastenotavailable">beschikbaar</string>
+  <string name="unabletoexecutecheknet">Kon niet voltooien. Controleer je internet status.</string>
+  <string name="opinionsuccess">Je verzoek is met succes verwerkt</string>
+  <string name="likes">Leuk:</string>
+  <string name="dislikes">Niet leuk:</string>
+  <string name="postingtaste">Je verzoek wordt verwerkt</string>
+  <string name="showpass">Laat wachtwoord zien</string>
+  <string name="user">Gebruikersnaam...</string>
+  <string name="pass">Wachtwoord...</string>
+  <string name="submit">Versturen</string>
+  <string name="new_account">Nieuwe account</string>
+  <string name="setcredentials">Bazaar Login</string>
+  <string name="usernotdef">Gebruiker niet bekend</string>
+  <string name="passwordnotdef">Wachtwoord niet bekend</string>
+  <string name="loggingin">Je wordt ingelogd...</string>
+  <string name="unabletoexecute">Kon niet uitgevoerd worden</string>
+  <string name="failedcredentials">Inloggen niet gelukt met de ingevoerde gegevens</string>
+  <string name="loading_likes">Leuk wordt geladen...</string>
+  <string name="body">Body..</string>
+  <string name="inresponseto">\\\@</string>
+  <string name="commentlabel">Geef commentaar...</string>
+  <string name="enterbody">Geef je ervaring in boodschap gedeelte</string>
+  <string name="postingcomment">Je commentaar wordt gepost...</string>
+  <string name="commentadded">Je commentaar is met succes geplaatst</string>
+  <string name="order_popup_title1">Applicaties:</string>
+  <string name="order_popup_title2">Applicaties tonen ingesteld als:</string>
+  <string name="order_popup_catg2">Applicaties:</string>
+  <string name="update_repos">Updates</string>
+  <string name="pass_confirmation">Wachtwoord niet bekend</string>
+  <string name="setting_hwfiltertitle">Hardware Filters</string>
+  <string name="setting_hwspecstitle">Hardware specificaties</string>
+  <string name="setting_hwspecssum">Controleer uw hardware specificaties</string>
+  <string name="setting_appfiltertitle">Filter Applicaties</string>
+  <string name="setting_appfiltersum">Toon geen toepassingen die niet compatibel is met uw apparaat.</string>
+  <string name="setting_schdwntitle">Geplande Downloads</string>
+  <string name="setting_schdwninstalltitle">Automatische installatie</string>
+  <string name="setting_schdwninstallsum">Automatisch installeren geplande downloads wanneer een Wifi-verbinding aanwezig is</string>
+  <string name="credentialssettings">Bazaar login</string>
+  <string name="clearcredentials">Login opschonen</string>
+  <string name="clearcredentials_summary">Je huidige login verwijderen</string>
+  <string name="setcredentials_summary">Nieuwe login maken</string>
+  <string name="settings_title_bar">Aptoide</string>
+  <string name="credentialscleared">Login verwijderd</string>
+  <string name="credentialscleared_des">Je gegevens zijn verwijderd</string>
+  <string name="menu_update_repo">Updates</string>
+  <string name="menu_update_all">Updates</string>
+  <string name="schDwnBtn">Geplande Downloads</string>
+  <string name="no_repo">Voeg een winkel toe!</string>
+  <string name="about_txt1">Je pakketten installatie gereedschap voor je Android toestel.\n</string>
+  <string name="about_site">Home:</string>
+  <string name="about_mail">Contact:</string>
+  <string name="about_txt2">www.aptoide.com</string>
+  <string name="about_txt3">aptoide\@aptoide.com</string>
+  <string name="repo_edt_msg2">Voeg een winkel toe!</string>
+  <string name="update_self_title">downgrade mogelijk</string>
+  <string name="updating_cfrm">Controleer winkel update</string>
+  <string name="no_sch_downloads">Geen geplande downloads!</string>
+  <string name="schDown_install">Wil je alle geplande downloads installeren?</string>
+  <string name="schDown_installselected">Geselecteerde installeren</string>
+  <string name="schDown_wireless_detected">Wifi gevonden: Alle geplande toepassingen downloaden?</string>
+  <string name="schDown_nodownloads">Geen geplande downloads</string>
+  <string name="schDown_nodownloadselect">Geen downloads geselecteerd</string>
+  <string name="schDown_downerror">Download fout. Voeg %1$s Voorraad.</string>
+  <string name="addSchDown">Toegevoegd aan geplande downloads</string>
+  <string name="registration">Bazaar login</string>
+  <string name="password">Wachtwoord...</string>
+  <string name="schDown_invertselection">Geselecteerde installeren</string>
+  <string name="chkBoxSchDwn">Download plannen</string>
+  <string name="clear_dwn_title">Geplande Downloads</string>
+  <string-array name="dwnif">
+    <item>3G and Wifi</item>
+    <item>Wifi only</item>
+    <item>Geen geplande downloads!</item>
+  </string-array>
+  <string name="no_info">Geen informatie</string>
+</resources>

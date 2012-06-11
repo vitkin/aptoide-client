@@ -177,5 +177,6 @@
     <string name="featured_tab">Featured</string>
     <string name="no_info">No Information</string>
     <string name="repo_insert_failed">Failed to add the Store. Please try again.</string>
+    <string name="remember_choice">Remember this choice</string>
 
 </resources>
