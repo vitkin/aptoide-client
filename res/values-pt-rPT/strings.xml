@@ -1,124 +1,157 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Aptoide</string>
-    
-    <string name="tab_avail">Disponíveis</string>
-    <string name="tab_inst">Instalados</string>
-    <string name="tab_updt">Actualizações</string>
-    
-    <string name="repo_app">Aplicações:</string>
-    <string name="repo_noinfo">Sem informação</string>
-    
-    <string name="no_found">Aplicação não encontrada</string>
-    <string name="no_repo">Não existem stores!</string>
- 
- 	<string name="not_inst">Não instalado</string>
-    <string name="installed">Instalado - Ver.:</string>
-    <string name="installed_update">Actualização possível - Ver.:</string>
-    <string name="srv_version">Versão disponível:</string>
-    
-    <string name="srch_label">Aptoide</string>
-    <string name="srch_hint">Nome da aplicação</string>
-    
-    <string name="about_txt1">Your package installer to Android phone.\n</string>
-        
-    <string name="about_site">Home: </string>
-    
-    <string name="about_mail">Contact: </string>
-    
-    <string name="about_txt2"> www.aptoide.com</string>
-    <string name="about_txt3"> aptoide@aptoide.com</string>
-    <string name="multi_ver_prompt">Seleccione uma versão</string>
-    <string name="version">Versão</string>
-    <string name="size">Tamanho</string>
-    <string name="comments">Comentários:</string>
-    <string name="commentsproblem">COmentários não disponíveis</string>
-    <string name="reinstall">Reinstalar</string>
-    <string name="version_inst">Versão instalada</string>
-    <string name="installed_downgrade">Downgrade possível.</string>
-    <string name="reply">Responder</string>
-    <string name="whattodo">O que fazer?</string>
-    <string name="likes">Likes: </string>
-    <string name="dislikes">Don\'t likes: </string>
-    <string name="copyclip">Copiar para a clipboard</string>
-    <string name="commentlabel">Comentar aplicação...</string>
-    <string name="submit">Submeter</string>
-    <string name="clear">Limpar</string>
-    <string name="body">Corpo..</string>
-    <string name="subject">Assunto...</string>
-    <string name="user">User name...</string>
-    <string name="pass">Password...</string>
-    <string name="showpass">Mostrar password</string>
-    <string name="hidepass">Esconder password</string>
-    <string name="failedcredentials">Login inválido</string>
-    <string name="comments_unavailable">Comnetários não disponíveis</string>
-    <string name="credentialssettings">Bazaar login</string>
-    <string name="clearcredentials">Limpar login</string>
-    <string name="clearcredentials_summary">Limpar login actual</string>
-    <string name="setcredentials">Bazaar Login</string>
-    <string name="setcredentials_summary">Definir novo login</string>
-    <string name="credentialscleared">Login limpo</string>
-    <string name="credentialscleared_des">Credenciais limpas</string>
-    <string name="commentadded">Comentário submetido com sucesso</string>
-    <string name="enterbody">Enter your review on the body section</string>
-    <string name="inresponseto">\@</string>
-    <string name="usernotdef">Uilizador não definido</string>
-    <string name="passwordnotdef">Password não definida</string>
-    <string name="loading_likes">A carregar likes...</string>
-    <string name="postingcomment">A submeter...</string>
-    <string name="unabletoexecutecheknet">Erro. Verifique ligação à internet.</string>
-    <string name="opinionsuccess">O pedido foi submetido com sucesso</string>
-    <string name="postingtaste">O pedido está a ser submetido</string>
-    <string name="unabletoexecute">Erro</string>
-    <string name="loggingin">Logging in...</string>
-    <string name="tastenotavailable">Likes não disponíveis</string>
-    <string name="downgrade_available">downgrade disponível</string>
-    <string name="loading_comments">A carregar comentários...</string>
-    <string name="moving_to">A mover para</string>
-    <string name="recognized">Reconhecido</string>
-   <string name="not_recognized">Não reconhecido</string>
-   <string name="new_account">Nova conta</string>
-   
-   <string name="chkBoxSchDwn">Agendar download</string>
-   <string name="no_sch_downloads">Sem downloads agendados!</string>
-   <string name="schDown_wireless_detected">Wireless detectado: Fazer download de todas as aplicações nos down. agendados?</string>
-   <string name="schDown_nodownloads">Sem downloads agendados</string>
-   <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
-   <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
-   <string name="addSchDown">Download agendado</string>
-   <string name="ctg_available">disponíveis</string>
-   <string name="ctg_files">ficheiros</string>
-   <string name="ctg_version">Versão:</string>
-   <string name="schDown_install">Instalar todos os downloads agendados?</string>
-   <string name="schDown_installselected">Instalar seleccionados</string>
-   
-       <string name="upgrd_available">, upgrade disponível</string>
-       <string name="setting_hwfiltertitle">Filtros Hardware</string>
-       <string name="setting_hwspecstitle">Especificações Hardware</string>
-       <string name="setting_hwspecssum">Verifique as especificações do hardware</string>
-       <string name="setting_appfiltertitle">Filtrar Aplicações</string>
-       <string name="setting_appfiltersum">Não mostrar aplicações não compatíveis com este dispositivo</string>
-       <string name="setting_schdwntitle">Downloads agendados</string>
-       <string name="setting_schdwninstalltitle">Instalação automática</string>
-       <string name="setting_schdwninstallsum">Instalar downloads agendados automaticamente quando uma ligação Wifi está presente.</string>
-       
+  <string name="app_name">Aptoide</string>
+  <string name="start_loading">A carregar...</string>
+  <string name="available_tab">Disponível</string>
+  <string name="installed_tab">Instalados</string>
+  <string name="updates_tab">Actualizações</string>
+  <string name="add_repo_private">Privada</string>
+  <string name="add_repo_text">Adicionar</string>
+  <string name="extended_server">Loja extendida</string>
+  <string name="btn_add_repo">Nova loja</string>
+  <string name="menu_rem_repo">Remover a loja</string>
+  <string name="number_apks">Aplicações:</string>
+  <string name="please_wait">Por favor, aguarde...</string>
+  <string name="uninstall">Desinstalar</string>
+  <string name="install">Instalar</string>
+  <string name="search_market">Procurar no Market</string>
+  <string name="finished_download_alrt">Download terminado</string>
+  <string name="finished_download_message">Download terminado</string>
+  <string name="download_alrt">A descarregar:</string>
+  <string name="srch_label">Aptoide</string>
+  <string name="srch_hint">Nome da aplicação</string>
+  <string name="tastenotavailable">Indesponível</string>
+  <string name="unabletoexecutecheknet">Erro. Verifique a ligação à internet.</string>
+  <string name="opinionsuccess">O seu pedido foi submetido com sucesso</string>
+  <string name="likes">Gostos:</string>
+  <string name="dislikes">Não Gostos:</string>
+  <string name="postingtaste">O seu pedido está a ser submetido</string>
+  <string name="showpass">Mostrar password</string>
+  <string name="user">User name...</string>
+  <string name="pass">Password...</string>
+  <string name="submit">Submeter</string>
+  <string name="new_account">Nova conta</string>
+  <string name="setcredentials">Bazaar Login</string>
+  <string name="usernotdef">Uilizador não definido</string>
+  <string name="passwordnotdef">Password não definida</string>
+  <string name="loggingin">Logging in...</string>
+  <string name="unabletoexecute">Erro</string>
+  <string name="failedcredentials">Login inválido</string>
+  <string name="loading_likes">A carregar gostos...</string>
+  <string name="body">Corpo..</string>
+  <string name="subject">Nome</string>
+  <string name="inresponseto">\@</string>
+  <string name="commentlabel">Comentar aplicação...</string>
+  <string name="enterbody">Insira a sua revisão no secção corpo</string>
+  <string name="postingcomment">A publicar o seu comentário...</string>
+  <string name="commentadded">Comentário submetido com sucesso</string>
+  <string name="order_popup_title1">Ordenar as aplicações por:</string>
+  <string name="order_popup_lst1">"Mais recentes primeiro "</string>
+  <string name="order_popup_lst2">Alfabeticamente</string>
+  <string name="order_popup_lst3">Classificação</string>
+  <string name="order_popup_lst4">Número do Download</string>
+  <string name="order_popup_title2">Mostrar aplicações:</string>
+  <string name="order_popup_catg1">Por categoria</string>
+  <string name="order_popup_catg2">Todas as aplicações</string>
+  <string name="dialog_yes">Sim</string>
+  <string name="dialog_no">Não</string>
+  <string name="update_repos">Actualizar a Loja</string>
+  <string name="update_main">A lista de lojas em uso foram alteradas.\nVocê deseja actualizá-las?</string>
+  <string name="email">Email</string>
+  <string name="pass_confirmation">Confirmação da password</string>
+  <string name="setting_hwfiltertitle">Filtros de Hardware</string>
+  <string name="setting_hwspecstitle">Especificações de Hardware</string>
+  <string name="setting_hwspecssum">Verifique as especificações de hardware</string>
+  <string name="setting_appfiltertitle">Filtrar Aplicações</string>
+  <string name="setting_appfiltersum">Não mostrar as aplicações não compatíveis com este dispositivo</string>
+  <string name="setting_schdwntitle">Downloads agendados</string>
+  <string name="setting_schdwninstalltitle">Instalação automática</string>
+  <string name="setting_schdwninstallsum">Instalar downloads agendados automaticamente quando uma ligação Wifi está presente.</string>
+  <string name="credentialssettings">Bazaar login</string>
+  <string name="clearcredentials">Limpar login</string>
+  <string name="clearcredentials_summary">Limpar login actual</string>
+  <string name="setcredentials_summary">Definir novo login</string>
+  <string name="settings_title_bar">Configurações do Aptoide</string>
+  <string name="credentialscleared">Login limpo</string>
+  <string name="credentialscleared_des">A suas credenciais foram limpas</string>
+  <string name="menu_update_repo">Actualizações</string>
+  <string name="menu_update_all">Actualizar tudo</string>
+  <string name="menu_manage">Gerir a Loja</string>
+  <string name="menu_display_options">Mostrar as opções</string>
+  <string name="menu_order">Alterar a ordem</string>
+  <string name="menu_settings">Configurações</string>
+  <string name="menu_about">Sobre</string>
+  <string name="menu_search">Procurar</string>
+  <string name="menu_add_repo">Nova Loja</string>
+  <string name="menu_edit_repo">Editar a Loja</string>
+  <string name="btn_yes">Sim</string>
+  <string name="btn_no">Não</string>
+  <string name="btn_ok">Ok</string>
+  <string name="btn_add">Adicionar</string>
+  <string name="btn_cancel">Cancelar</string>
+  <string name="btn_done">Feito</string>
+  <string name="btn_chlog">Changelog</string>
+  <string name="btn_search_market">Procurar no Market</string>
+  <string name="schDwnBtn">Downloads agendados</string>
+  <string name="search_log">Procurar</string>
+  <string name="search_stores">noutras Lojas</string>
+  <string name="no_repo">Adicionar uma Loja!</string>
+  <string name="myrepo_alrt">Parece que você não adicionou nenhuma loja.\nNós sugerimos que use a nossa.\nVocê deseja adicionar a nossa loja?\n(Você pode procurar online por mais lojas)\n\n</string>
+  <string name="error_on_update">O processo de actualização não pode ser concluído nas lojas seguintes:</string>
+  <string name="updating_norepos">Não existem lojas activas na sua lista.\nPor favor, adicione uma loja ou active pelo menos uma das que você já possuí.</string>
+  <string name="update_done_msg1">A lojas foram actualizadas com sucesso.</string>
+  <string name="about_txt1">O seu instalador para dispositivos móveis com sistema Android.\n</string>
+  <string name="about_site">Início:</string>
+  <string name="about_mail">Contacto:</string>
+  <string name="about_txt2">www.aptoide.com</string>
+  <string name="about_txt3">aptoide\@aptoide.com</string>
+  <string name="repo_del_msg2">Escolha a loja para remover</string>
+  <string name="repo_edt_msg1">Escolha a loja para editar</string>
+  <string name="repo_edt_msg2">Editar loja</string>
+  <string name="md5_auto_update_error">A verificação do chechsum da actualização do pacote falhou! Irá ser mantida a versão actual.</string>
+  <string name="network_auto_update_error">A ligação para a actualização falhou! A versão actual será mantida.</string>
+  <string name="auto_updating">Por favor aguarde, enquanto o download da actualização é processado...</string>
+  <string name="update_self_title">Actualização disponível</string>
+  <string name="update_self_msg">Existe uma nova versão do Aptoide disponível,\nvocê deseja actualizar?</string>
+  <string name="md5_error">A verificação do md5 falhou para a aplicação descarregada!\nPor favor, actualize as suas lojas antes de tentar novamente.</string>
+  <string name="network_error">Ocorreu um erro ao obter a aplicação.\nPor favor, tente novamente.</string>
+  <string name="error_404">O ficheiro não foi encontrado na loja fornecida.\nPor favor, tente novamente mais tarde.</string>
+  <string name="error_no_market">Você não tem o Google Market instalado!</string>
+  <string name="newrepo_alrt">Você deseja adicionar esta loja à sua lista?\n\n</string>
+  <string name="installapp_alrt">Você deseja instalar: \n\n</string>
+  <string name="remote_in_noSD_title">Não há memória</string>
+  <string name="remote_in_noSD">Você não tem um SDcard, ou não está a funcionar correctamente\nPor favor, insira um, ou volte a inseri-lo e tente novamente.</string>
+  <string name="remote_in_noSDspace">Você não tem espaço suficiente no seu SDcard para utilizar o Aptoide\nPor favor, liberte algum espaço e tente novamente.</string>
+  <string name="updating_3g">Você não está ligado através de Wifi. Se você estiver limitado à largura de banda disponível para o seu tarifário de dados, nós aconselhamos que faça a actualização que estiver ligado a partir de Wifi.\n Actualizar de qualquer forma?</string>
+  <string name="updating_cfrm">Confirmar a actualização das lojas Aptoide?</string>
+  <string name="aptoide_error">Não foi possível estabelecer ligação com o servidor remoto. Por favor, verifique a sua ligação à Internet.</string>
+  <string name="no_sch_downloads">Sem downloads agendados!</string>
+  <string name="schDown_install">Instalar todos os downloads agendados?</string>
+  <string name="schDown_installselected">Instalar seleccionados</string>
+  <string name="schDown_wireless_detected">Wireless detectado: Fazer download de todas as aplicações nos down. agendados?</string>
+  <string name="schDown_nodownloads">Sem downloads agendados</string>
+  <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
+  <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
+  <string name="addSchDown">Download agendado</string>
+  <string name="registration">Bazaar login</string>
+  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="username">Email</string>
+  <string name="password">Password...</string>
+  <string name="register">Registar</string>
+  <string name="schDown_invertselection">Instalar seleccionados</string>
+  <string name="schDown_removeselected">Remover os seleccionados</string>
+  <string name="schDown_sureremove">Você tem a certeza que pretende remover?</string>
+  <string name="chkBoxSchDwn">Agendar download</string>
+  <string name="clear_dwn_title">Downloads</string>
+  <string name="clear_dwn_btn">Descarregar ícones</string>
+  <string name="clear_dwn_msg">Descarregar regras para ícones</string>
+  <string-array name="dwnif">
+    <item>3G e Wifi</item>
+    <item>Só wifi</item>
+    <item>Nunca descarregar</item>
+  </string-array>
+  <string name="continue_bt">Continuar</string>
+  <string name="featured_tab">Destacado</string>
+  <string name="no_info">Sem informação</string>
+  <string name="repo_insert_failed">Falhou ao adicionar a Loja. Por favor, tente novamente.</string>
 </resources>
-
-<!--
- * Copyright (C) 2009  Roberto Jacinto
- * roberto.jacinto@caixamagica.pt
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
--->

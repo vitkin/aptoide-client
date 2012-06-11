@@ -1,50 +1,87 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Aptoide</string>
-    
-    <string name="tab_avail">Dostępne</string>
-    <string name="tab_inst">Zainstalowane</string>
-    <string name="tab_updt">Uaktualnienia</string>
-    
-    <string name="repo_app">Aplikacje:</string>
-    <string name="repo_noinfo">Brak informacji</string>
-    
-    <string name="no_found">Nie znaleziono aplikacji!</string>
-    <string name="no_repo">Bak repozytoriów!</string>
- 
- 	<string name="not_inst">Nie zainstalowane</string>
-    <string name="installed">Zainstalowane - Ver.:</string>
-    <string name="installed_update">Dostępne uaktualnienie - Ver.:</string>
-    <string name="srv_version">Dostępna wersja:</string>
-    
-    <string name="srch_label">Aptoide</string>
-    <string name="srch_hint">Nazwa aplikacji</string>
-    
-    <string name="about_txt1">Twój instalator aplikacji do telefonu Android.\n</string>
-
-    <string name="about_site">Strona domowa: </string>
-    
-    <string name="about_mail">Kontakt: </string>
-    
-    <string name="about_txt2"> www.aptoide.com</string>
-    <string name="about_txt3"> aptoide@aptoide.com</string>
+  <string name="app_name">Aptoide</string>
+  <string name="available_tab">Dostępne</string>
+  <string name="installed_tab">Zainstalowane</string>
+  <string name="updates_tab">Uaktualnienia</string>
+  <string name="number_apks">Aplikacje:</string>
+  <string name="uninstall">Reinstalacja</string>
+  <string name="install">Zainstalowane</string>
+  <string name="srch_label">Aptoide</string>
+  <string name="srch_hint">Nazwa aplikacji</string>
+  <string name="tastenotavailable">dostępne</string>
+  <string name="unabletoexecutecheknet">Nie można wykonać. Sprawdź połączenie z internetem.</string>
+  <string name="opinionsuccess">Twoje zapytanie zostało wysłane</string>
+  <string name="likes">Lubi:</string>
+  <string name="dislikes">Nie lubi:</string>
+  <string name="postingtaste">Twoje zapytanie jest wysyłane</string>
+  <string name="showpass">Pokaż hasło</string>
+  <string name="user">Nazwa użytkownika...</string>
+  <string name="pass">Hasło...</string>
+  <string name="submit">Wyślij</string>
+  <string name="new_account">Nowe konto</string>
+  <string name="setcredentials">Bazaar Login</string>
+  <string name="usernotdef">Brak nazwy uzytkownika</string>
+  <string name="passwordnotdef">Brak hasła</string>
+  <string name="loggingin">Logowanie...</string>
+  <string name="unabletoexecute">Nie można wykonać</string>
+  <string name="failedcredentials">Nie udało się zalogować z tymi danymi</string>
+  <string name="loading_likes">Ładowanie ocen...</string>
+  <string name="body">Treść...</string>
+  <string name="inresponseto">\\\@</string>
+  <string name="commentlabel">Skomentuj app...</string>
+  <string name="enterbody">Podaj swoja opinię w treści wiadomości</string>
+  <string name="postingcomment">Zamieszczanie twojego komentarza...</string>
+  <string name="commentadded">Twój komentarz został wysłany</string>
+  <string name="order_popup_title1">Aplikacje:</string>
+  <string name="order_popup_title2">Oceń aplikację jako:</string>
+  <string name="order_popup_catg2">Aplikacje:</string>
+  <string name="update_repos">Uaktualnienia</string>
+  <string name="pass_confirmation">Brak hasła</string>
+  <string name="setting_hwfiltertitle">Filtry Sprzętowe</string>
+  <string name="setting_hwspecstitle">Specyfikacje Sprzętowe</string>
+  <string name="setting_hwspecssum">Sprawdź specyfikacje swojego sprzętu</string>
+  <string name="setting_appfiltertitle">Filtr Aplikacji</string>
+  <string name="setting_appfiltersum">Nie pokazuj aplikacji niezgodnych z twoim sprzętem.</string>
+  <string name="setting_schdwntitle">Zaplanowane Pobrania</string>
+  <string name="setting_schdwninstalltitle">Instalacja automatyczna</string>
+  <string name="setting_schdwninstallsum">Zainstaluj wybrane aplikacje automatycznie jeśli dostępne jest połączenie WiFi</string>
+  <string name="credentialssettings">Bazaar login</string>
+  <string name="clearcredentials">Wyczyść login</string>
+  <string name="clearcredentials_summary">Zmień swój aktualny login</string>
+  <string name="setcredentials_summary">Ustaw nowy login</string>
+  <string name="settings_title_bar">Aptoide</string>
+  <string name="credentialscleared">Login wyczyszczony</string>
+  <string name="credentialscleared_des">Twoje dane zostały zmienione</string>
+  <string name="menu_update_repo">Uaktualnienia</string>
+  <string name="menu_update_all">Uaktualnienia</string>
+  <string name="schDwnBtn">Zaplanowane Pobrania</string>
+  <string name="no_repo">Dodaj repozytorium!</string>
+  <string name="about_txt1">Twój instalator aplikacji do telefonu Android.\n</string>
+  <string name="about_site">Strona domowa:</string>
+  <string name="about_mail">Kontakt:</string>
+  <string name="about_txt2">www.aptoide.com</string>
+  <string name="about_txt3">aptoide\@aptoide.com</string>
+  <string name="repo_edt_msg2">Dodaj repozytorium!</string>
+  <string name="update_self_title">dostępna starsza wersja</string>
+  <string name="updating_cfrm">Sprawdź aktualność repozytoriów</string>
+  <string name="no_sch_downloads">Brak zaplanowanych pobierań!</string>
+  <string name="schDown_install">Czy chcesz zainstalować wszystkie zaplanowane pobierania?</string>
+  <string name="schDown_installselected">Zainstaluj wybrane</string>
+  <string name="schDown_wireless_detected">Wykryto sieć bezprzewodową: Wykonać wszystkie Zaplanowane Pobierania?</string>
+  <string name="schDown_nodownloads">Brak Zaplanowanych Pobierań</string>
+  <string name="schDown_nodownloadselect">Nie wybrano nic do pobrania</string>
+  <string name="schDown_downerror">Błąd pobierania. Dodano %1$s repozytoriów.</string>
+  <string name="addSchDown">Dodano do Zaplanowanych Pobierań</string>
+  <string name="registration">Bazaar login</string>
+  <string name="password">Hasło...</string>
+  <string name="schDown_invertselection">Zainstaluj wybrane</string>
+  <string name="chkBoxSchDwn">Zaplanowane Pobieranie</string>
+  <string name="clear_dwn_title">Zaplanowane Pobrania</string>
+  <string-array name="dwnif">
+    <item>3G and Wifi</item>
+    <item>Wifi only</item>
+    <item>Brak zaplanowanych pobierań!</item>
+  </string-array>
+  <string name="no_info">Brak informacji</string>
 </resources>
-
-<!--
- * Copyright (C) 2009  Roberto Jacinto
- * roberto.jacinto@caixamagica.pt
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
--->

@@ -101,9 +101,19 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_SCREENSHOTS_REPO_ID = "repo_id";
 	public static final String COLUMN_SCREENSHOTS_SCREENSHOT = "screenshots";
 	
+	public static final String TABLE_FAILED_DOWNLOADS = "failed_downloads";
+	public static final String COLUMN_FAILED_DOWNLOADS_REMOTEPATH = "remotePath";
+	public static final String COLUMN_FAILED_DOWNLOADS_MD5 = "md5";
+	public static final String COLUMN_FAILED_DOWNLOADS_PACKAGENAME = "packageName";
+	public static final String COLUMN_FAILED_DOWNLOADS_APPNAME = "appName";
+	public static final String COLUMN_FAILED_DOWNLOADS_SIZE = "size";
+	public static final String COLUMN_FAILED_DOWNLOADS_VERSION = "version";
+	public static final String COLUMN_FAILED_DOWNLOADS_LOCALPATH = "localPath";
+	public static final String COLUMN_FAILED_DOWNLOADS_USERNAME = "username";
+	public static final String COLUMN_FAILED_DOWNLOADS_PASSWORD = "password";
 
 	private static final String DATABASE_NAME = "aptoide.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 3;
 
 	// Database creation sql statement
 	private static final String CREATE_TABLE_APK = "CREATE TABLE "
@@ -226,6 +236,18 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_EDITORSCHOICEREPO_HASH + " text, "
 			+ COLUMN_EDITORSCHOICEREPO_SCREENSPATH + " text );";
 	
+	private static final String CREATE_TABLE_FAILEDDOWNLOADS = "create table "
+			+ TABLE_FAILED_DOWNLOADS+ "(" 
+			+ COLUMN_FAILED_DOWNLOADS_APPNAME+ " text, "
+			+ COLUMN_FAILED_DOWNLOADS_LOCALPATH + " text , "
+			+ COLUMN_FAILED_DOWNLOADS_MD5 + " text , "
+			+ COLUMN_FAILED_DOWNLOADS_PACKAGENAME + " text , "
+			+ COLUMN_FAILED_DOWNLOADS_PASSWORD + " text, "
+			+ COLUMN_FAILED_DOWNLOADS_REMOTEPATH + " text, "
+			+ COLUMN_FAILED_DOWNLOADS_USERNAME + " text, "
+			+ COLUMN_FAILED_DOWNLOADS_VERSION + " text, "
+			+ COLUMN_FAILED_DOWNLOADS_SIZE + " text );";
+	
 	
 
 	public DBStructure(Context context) {
@@ -243,6 +265,7 @@ public class DBStructure extends SQLiteOpenHelper {
 		database.execSQL(CREATE_TABLE_EDITORSCHOICE);
 		database.execSQL(CREATE_TABLE_EDITORSCHOICEREPO);
 		database.execSQL(CREATE_TABLE_SCREENSHOTS);
+		database.execSQL(CREATE_TABLE_FAILEDDOWNLOADS);
 	}
 
 	@Override
@@ -259,6 +282,7 @@ public class DBStructure extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EDITORSCHOICE);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_EDITORSCHOICEREPOS);
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCREENSHOTS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAILED_DOWNLOADS);
 		
 		onCreate(db);
 	}

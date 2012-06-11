@@ -6,6 +6,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import cm.aptoide.pt.RepoParser.Ages;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.text.Html;
@@ -66,14 +68,17 @@ public class TopAppsRepoParser extends DefaultHandler {
 		super.endElement(uri, localName, qName);
 		switch (EnumElements.lookup(localName.toUpperCase())) {
 		case REPOSITORY:
-			repository.name="apps";
 			dbhandler.insertEditorChoiceRepo(repository);
 			break;
 		case APKID:
 			apk.apkid=sb.toString();
 			break;
 		case NAME:
-			apk.name=Html.fromHtml(sb.toString()).toString();
+			if(repository.name!=null){
+				apk.name=Html.fromHtml(sb.toString()).toString();
+			}else{
+				repository.name=sb.toString();
+			}
 			break;
 		case PACKAGE:
 			apk.id=dbhandler.insertEditorsChoice(apk);
@@ -140,6 +145,9 @@ public class TopAppsRepoParser extends DefaultHandler {
 			break;
 		case SCREENSPATH:
 			repository.screenspath=sb.toString();
+			break;
+		case AGE:
+			apk.age=Ages.lookup(sb.toString()).ordinal();
 			break;
 		default:
 			break;

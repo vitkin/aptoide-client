@@ -14,31 +14,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-            <RelativeLayout
-                android:id="@+id/separator"
-                android:layout_width="fill_parent"
-                android:layout_height="40dp" 
-                android:background="@drawable/ab_solid_light_holo">
-
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:textSize="18sp"
-                    android:paddingLeft="5dp"
-                    android:text="Editors' Choice"
-                     />
-
-            </RelativeLayout>
-
-
-            <ProgressBar
-                android:id="@+id/editorsProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                 />
 
             <LinearLayout
                 android:id="@+id/images"
@@ -102,33 +77,53 @@
             <RelativeLayout
                 android:id="@+id/separator"
                 android:layout_width="fill_parent"
-                android:layout_height="40dp" 
+                android:layout_height="40dp"
                 android:layout_marginTop="1dp"
-                android:background="@drawable/ab_solid_light_holo">
+                android:background="@drawable/ab_solid_light_holo" >
 
                 <TextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:textSize="18sp"
                     android:paddingLeft="5dp"
                     android:text="Top Apps"
-                     />
-
+                    android:textSize="18sp" />
             </RelativeLayout>
-
-			<ProgressBar
-			    android:id="@+id/topappsProgressBar"
-			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"
-			    android:paddingLeft="5dp"/>
 
             <LinearLayout
                 android:id="@+id/container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/adult_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:orientation="horizontal"
+                android:paddingTop="25dp"
+                android:paddingBottom="5dp" >
+			<ToggleButton
+                    android:id="@+id/toggleButton1"
+                    android:layout_width="90dp"
+                    android:layout_height="30dp"
+                    
+                    android:layout_gravity="right"
+                    android:background="@drawable/mature_slider"
+                    android:textOff=""
+                    android:textOn="" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="Adult Content" />
+
+                
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

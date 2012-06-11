@@ -80,9 +80,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -92,6 +95,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import cm.aptoide.pt.utils.Algorithms;
 import cm.aptoide.pt.utils.EnumOptionsMenu;
@@ -414,7 +418,6 @@ public class Aptoide extends FragmentActivity {
 									v.setTag(image_urls.get(i).get("id"));
 									v.setOnClickListener(featuredListener);
 								}
-								featured.findViewById(R.id.editorsProgressBar).setVisibility(View.GONE);;
 								
 								
 							}catch (Exception e) {
@@ -454,7 +457,8 @@ public class Aptoide extends FragmentActivity {
 
 					        int widthSoFar = 0;
 					        ArrayList<HashMap<String, String>> values = db.getTopApps();
-					        for (int i = 0; i!=values.size(); i++) {
+					        Collections.shuffle(values);
+					        for (int i = 0; i!=10; i++) {
 					            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
 					           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
 					           	imageLoader.DisplayImage(-1, db.getTopAppsIconPath()+values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context);
@@ -489,7 +493,6 @@ public class Aptoide extends FragmentActivity {
 					        }
 
 					        ll.addView(llAlso);
-					        featured.findViewById(R.id.topappsProgressBar).setVisibility(View.GONE);
 						}
 					});
 				}
@@ -499,22 +502,55 @@ public class Aptoide extends FragmentActivity {
 		
 		
 		
-		
-		
-     
+		((ToggleButton) featured.findViewById(R.id.toggleButton1))
+				.setChecked(sPref.getString("app_rating", "All").equals(
+						"Mature"));
+
+		((ToggleButton) featured.findViewById(R.id.toggleButton1))
+				.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+					public void onCheckedChanged(CompoundButton buttonView,
+							boolean isChecked) {
+						if (isChecked) {
+							
+							AlertDialog ad = new AlertDialog.Builder(context).create();
+							ad.setMessage("Are you at least 21 years old?");
+							ad.setButton(Dialog.BUTTON_POSITIVE,getString(R.string.btn_yes), new Dialog.OnClickListener() {
+								
+								public void onClick(DialogInterface dialog, int which) {
+									editor.putString("app_rating", "Mature");
+									editor.commit();
+									loadFeatured();
+									redrawAll();
+								}
+							});
+							ad.setButton(Dialog.BUTTON_NEGATIVE,getString(R.string.btn_no), new Dialog.OnClickListener() {
+								
+								public void onClick(DialogInterface dialog, int which) {
+									((ToggleButton) featured.findViewById(R.id.toggleButton1)).setChecked(false);
+								}
+							});
+							ad.show();
+						} else {
+							editor.putString("app_rating", "All");
+							editor.commit();
+							loadFeatured();
+							redrawAll();
+						}
+						
+					}
+
+				});
 	}
 
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		if (vp.getCurrentItem() == 1) {
+		if (vp.getCurrentItem() <= 1) {
 			menu.add(0, EnumOptionsMenu.UPDATE_REPO.ordinal(), 0, getString(R.string.menu_update_repo)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
 		
-		if (vp.getCurrentItem() == 0) {
-			menu.add(0, EnumOptionsMenu.UPDATE_FEATURED.ordinal(), 0, "Refresh Featured").setIcon(android.R.drawable.ic_menu_rotate);
-		}
 		if (vp.getCurrentItem() == 3) {
 			menu.add(0, EnumOptionsMenu.UPDATE_ALL.ordinal(), 0, getString(R.string.menu_update_all)).setIcon(android.R.drawable.ic_menu_rotate);
 		}
@@ -886,6 +922,7 @@ public class Aptoide extends FragmentActivity {
 				
 				public void run() {
 					redrawAll();
+					loadFeatured();
 				}
 			});
 		}
@@ -1379,22 +1416,38 @@ public class Aptoide extends FragmentActivity {
 			if(freeConnectionAvailable){
 				updateRepos();
 			}else{
-				final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
-				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-				upd_alrt.setTitle(getText(R.string.update_repos));
-				upd_alrt.setMessage(getText(R.string.updating_3g));
-				upd_alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new Dialog.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						updateRepos();
-					}
-				});
-				upd_alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new Dialog.OnClickListener() {
-					public void onClick(DialogInterface dialog, int which) {
-						upd_alrt.dismiss();
-					}
-				});
-				upd_alrt.show();
+				
+				if (sPref.getBoolean("3g", true)) {
+					final View v = LayoutInflater.from(context).inflate(R.layout.remember, null);
+					final Builder upd_alrt_builder = new AlertDialog.Builder(this).setView(v);
+					final AlertDialog upd_alrt = upd_alrt_builder.create();
+					upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
+					upd_alrt.setTitle(getText(R.string.update_repos));
+					upd_alrt.setMessage(getText(R.string.updating_3g));
+					
+					upd_alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new Dialog.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							updateRepos();
+							if(((CheckBox) v.findViewById(R.id.remember)).isChecked()){
+								editor.putBoolean("3g", false);
+								editor.commit();
+							}
+							
+						}
+					});
+					upd_alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new Dialog.OnClickListener() {
+						public void onClick(DialogInterface dialog, int which) {
+							upd_alrt.dismiss();
+						}
+					});
+					upd_alrt.show();
+				}else{
+					updateRepos();
+				}
+				
+				
 			}
+			
 		}
 
 	}

@@ -915,6 +915,21 @@ public class DBHandler {
 			e.printStackTrace();
 		}
 	}
+	
+	public void insertScheduledDownload(String apkid, String name,String iconpath,
+			String vername, long repo_id) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_SCHEDULED_APKID, apkid);
+		values.put(DBStructure.COLUMN_SCHEDULED_NAME, name);
+		values.put(DBStructure.COLUMN_SCHEDULED_VERNAME, vername);
+		values.put(DBStructure.COLUMN_SCHEDULED_REPO_ID, repo_id);
+		values.put(DBStructure.COLUMN_SCHEDULED_ICONSPATH, iconpath);
+		try{
+			database.insert(DBStructure.TABLE_SCHEDULED, null, values);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	public String getInstalledVercode(String apkid) {
 		Cursor c = null;
@@ -1121,15 +1136,23 @@ public class DBHandler {
 		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String, String>>();
 		Cursor c = null;
 		try{
-			c=database.query(DBStructure.TABLE_EDITORSCHOICE, new String[]{DBStructure.COLUMN_APK_NAME,DBStructure.COLUMN_APK_ICON,DBStructure.COLUMN_APK_RATING,DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_REPO_ID+"=?", new String[]{"-1"}, null, null, null);
+			c=database.query(DBStructure.TABLE_EDITORSCHOICE, new String[]{DBStructure.COLUMN_APK_NAME,DBStructure.COLUMN_APK_ICON,DBStructure.COLUMN_APK_RATING,DBStructure.COLUMN_APK_ID,DBStructure.COLUMN_APK_AGE}, DBStructure.COLUMN_APK_REPO_ID+"=?", new String[]{"-1"}, null, null, null);
 			HashMap<String, String> item = null;
+			boolean mature = sPref.getString("app_rating", "All").equals("Mature");
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				item = new HashMap<String, String>();
 				item.put("name", c.getString(0));
 				item.put("icon", c.getString(1));
 				item.put("rating", c.getString(2));
 				item.put("id", c.getString(3));
-				values.add(item);
+				if(mature){
+					values.add(item);
+				}else{
+					if(c.getString(4).equals("0")){
+						values.add(item);
+					}
+				}
+				
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -1253,7 +1276,72 @@ public class DBHandler {
 		return return_string;
 	}
 
+	public void insertFailedDownload(HashMap<String, String> hashMap) {
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_REMOTEPATH,hashMap.get("remotePath"));
+		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_MD5,hashMap.get("md5sum"));
+		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_PACKAGENAME,hashMap.get("packageName"));
+		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_APPNAME,hashMap.get("appName"));
+		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_SIZE,hashMap.get("intSize"));
+		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_VERSION,hashMap.get("version"));
+		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_LOCALPATH,hashMap.get("localPath"));
+		hashMap.get("isUpdate");
+		if(hashMap.containsKey("username")){
+			values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_USERNAME,hashMap.get("username"));
+			values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_PASSWORD,hashMap.get("password"));
+		}
+		
+		database.insert(DBStructure.TABLE_FAILED_DOWNLOADS, null, values);
+		
+	}
 	
+	public ArrayList<HashMap<String, String>> getFailedDownloads(){
+		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String, String>>();
+		Cursor c = null;
+		try {
+			c = database.query(DBStructure.TABLE_FAILED_DOWNLOADS, null, null, null, null, null, null);
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				HashMap<String, String> value = new HashMap<String, String>();
+				value.put("remotePath", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_REMOTEPATH)));
+				value.put("md5sum", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_MD5)));
+				value.put("packageName", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_PACKAGENAME)));
+				value.put("appName", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_APPNAME)));
+				value.put("intSize", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_SIZE)));
+				value.put("version", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_VERSION)));
+				value.put("localPath", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_LOCALPATH)));
+				value.put("username", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_USERNAME)));
+				value.put("password", c.getString(c.getColumnIndex(DBStructure.COLUMN_FAILED_DOWNLOADS_PASSWORD)));
+				if(value.get("username")!=null){
+					value.put("loginRequired","true");
+				}
+				values.add(value);
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return values;
+		
+	}
+
+	public void deleteFailedDownloads() {
+		database.delete(DBStructure.TABLE_FAILED_DOWNLOADS, null, null);
+	}
+
+	public boolean verifyEditorsChoiceHash(String string) {
+		Cursor c = null;
+		try{
+			c = database.rawQuery("select _id from editorschoicerepo where hash ='"+string.trim()+"'", null);
+			c.moveToFirst();
+			System.out.println(c.getCount() + " getcount " +string);
+			return c.getCount()!=0;
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		return false;
+	}
 	
 	
 	

@@ -1,22 +1,35 @@
 package cm.aptoide.pt;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
+import java.util.concurrent.TimeoutException;
+
+import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Environment;
+import android.os.IBinder;
 import android.util.Log;
 
 public class ScheduledDownloadReceiver extends BroadcastReceiver {
+	DBHandler db;
+	Context context;
 
 	
-
+	ArrayList<HashMap<String, String>> failedDownloads;
+	
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
-		// TODO Auto-generated method stub
-		DBHandler db=new DBHandler(arg0);
+		context = arg0;
+		db=new DBHandler(arg0);
 		db.open();
 		final ConnectivityManager connMgr = (ConnectivityManager) 
 				arg0.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -39,10 +52,17 @@ public class ScheduledDownloadReceiver extends BroadcastReceiver {
 				prefEdit.putBoolean("intentChanged", true);
 				prefEdit.commit();
 				Log.i("Reeceiver",sPref.getBoolean("intentChanged", true)+"");
-				arg0.startActivity(intent);}}
-//		if ( ((NetworkInfo)arg1.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)).getState()==NetworkInfo.State.CONNECTED)
-//			if(sPref.getBoolean("schDwnBox", false))
+				arg0.startActivity(intent);
+			}
+			if (db.getFailedDownloads().size()!=0){
+				Intent intent = new Intent(arg0,FailedDownloader.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|-Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+				context.startActivity(intent);
+			}
+		}
 				
 	}
+	
+	
 
 }
