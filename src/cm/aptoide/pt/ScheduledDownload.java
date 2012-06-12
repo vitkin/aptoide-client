@@ -187,6 +187,7 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 			downloadNode.setPackageName(apk_id);
 			downloadNode.setAppName(appName);
 			downloadNode.setLocalPath(localPath);
+			downloadNode.version=ver;
 			downloadNode.setUpdate(false);
 			String remotePath = downloadNode.getRemotePath();
 			if(remotePath.length() == 0)

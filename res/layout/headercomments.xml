@@ -66,9 +66,8 @@
 
         <ImageView
             android:id="@+id/likesImage"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:src="@drawable/like"
             android:visibility="visible" />
 
@@ -97,9 +96,8 @@
 
         <ImageView
             android:id="@+id/dislikesImage"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:src="@drawable/dontlike"
             android:visibility="visible" />
     </LinearLayout>

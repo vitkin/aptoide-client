@@ -60,7 +60,7 @@ protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDir
 
 
 		try{
-			DownloadNode downloadNode = new DownloadNode("", failedDownloads.get(i).get("remotePath"), failedDownloads.get(i).get("md5sum"), Integer.parseInt(failedDownloads.get(i).get("intSize")));
+			DownloadNode downloadNode = new DownloadNode("", failedDownloads.get(i).get("remotePath"), failedDownloads.get(i).get("md5sum"), Integer.parseInt(failedDownloads.get(i).get("intSize")),true);
 			downloadNode.setPackageName(failedDownloads.get(i).get("packageName"));
 			downloadNode.setAppName(failedDownloads.get(i).get("appName"));
 			downloadNode.setLocalPath(failedDownloads.get(i).get("localPath"));

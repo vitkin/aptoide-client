@@ -136,7 +136,8 @@ public class DownloadQueueService extends Service {
 			}
 			Log.d("Aptoide-DowloadQueueService", "download Started");
 			Log.d("Aptoide-DowloadQueueService", downloadNode.getRemotePath());
-			if(!notifications.containsKey(downloadNode.getPackageName().hashCode())){
+			System.out.println(downloadNode.isResume() + " " + !notifications.containsKey(downloadNode.getPackageName().hashCode()));
+			if(downloadNode.isResume()||!notifications.containsKey(downloadNode.getPackageName().hashCode())){
 				notifications.put(downloadNode.getPackageName().hashCode(), notification);
 				setNotification(downloadNode.getPackageName().hashCode(), 0);
 				downloadFile(downloadNode.getPackageName().hashCode());
@@ -418,13 +419,12 @@ public class DownloadQueueService extends Service {
 							keepScreenOn.release();
 						}
 						e.printStackTrace();
-						downloadArguments.arg1= 1;
-						downloadArguments.arg2 =threadApkidHash;
-						downloadErrorHandler.sendMessage(downloadArguments);
-						
+//						downloadArguments.arg1= 1;
+//						downloadArguments.arg2 =threadApkidHash;
+//						downloadErrorHandler.sendMessage(downloadArguments);
 						DBHandler db = new DBHandler(context);
 						db.open();
-						notifications.get(threadApkidHash);
+						
 						db.insertFailedDownload(notifications.get(threadApkidHash));
 					}
 				}

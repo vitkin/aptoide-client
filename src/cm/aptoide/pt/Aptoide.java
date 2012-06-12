@@ -154,7 +154,7 @@ public class Aptoide extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.aptoide);
 		context = this;
-		
+
 		File sdcard_file = new File(SDCARD);
 		if(!sdcard_file.exists() || !sdcard_file.canWrite()){
 
@@ -204,171 +204,184 @@ public class Aptoide extends FragmentActivity {
 					local_path.mkdir();
 				bindService(new Intent(this,DownloadQueueService.class), conn , Service.BIND_AUTO_CREATE);
 				netstate = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-		sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
-		editor = sPref.edit();
-		if(!sPref.contains("orderByCategory")){
-			
-			editor.putBoolean("orderByCategory", true);
-		}
-		order_lst=sPref.getString("order_lst", DBStructure.COLUMN_APK_NAME+" collate nocase");
-		if(!sPref.contains("order_lst")){
-			editor.putString("order_lst", order_lst);
-		}
-		
-//		if(sPref.getInt("version", 0) < pkginfo.versionCode){
-//	   		db.updateTables();
-//	   		editor.putBoolean("mode", true);
-//	   		editor.putInt("version", pkginfo.versionCode);
-//		}
-		
-		if(sPref.getString("myId", null) == null){
-			String rand_id = UUID.randomUUID().toString();
-			editor.putString("myId", rand_id);
-		}
-		
-		if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
-			 DisplayMetrics dm = new DisplayMetrics();
-		     getWindowManager().getDefaultDisplay().getMetrics(dm);
-		     editor.putInt("scW", dm.widthPixels);
-		     editor.putInt("scH", dm.heightPixels);
-		}
-		
-		if(sPref.getString("icdown", null) == null){
-			editor.putString("icdown", "g3w");
-		}
-		if(!sPref.contains("app_rating")){
-			editor.putString("app_rating", "Mature");
-		}
-		if(!sPref.contains("schDwnBox")){
-			editor.putBoolean("schDwnBox", false);
-		}
-		if(!sPref.contains("hwspecsChkBox")){
-			editor.putBoolean("hwspecsChkBox", true);
-		}
-		
-		editor.commit();
-		
-		XML_PATH = getCacheDir()+"/temp_info.xml";
-		db = new DBHandler(context);
-		db.open();
+				sPref = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+				editor = sPref.edit();
+				if(!sPref.contains("orderByCategory")){
 
-		TitlePageIndicator pi = (TitlePageIndicator) findViewById(R.id.indicator);
-		
-		vp = (ViewPager) findViewById(R.id.viewpager);
-		search = (ImageView) findViewById(R.id.btsearch);
-		pages = new ArrayList<View>();
-
-		available_listView = new ListView(context);
-		installed_listView = new ListView(context);
-		updates_listView = new ListView(context);
-		
-//		availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		
-		
-		installedAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		updatesAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		
-		
-		featured = LayoutInflater.from(context).inflate(R.layout.featured, null);
-		pages.add(featured);
-		pages.add(available_listView);
-		pages.add(installed_listView);
-		pages.add(updates_listView);
-		
-		
-		
-		
-		vp.setAdapter(new ViewPagerAdapter(context, pages));
-		pi.setViewPager(vp);
-
-		pi.setTextColor(Color.WHITE);
-//		pi.setSelectedBold(false);
-		pi.setFooterIndicatorStyle(IndicatorStyle.Triangle);
-		pi.setSelectedColor(Color.argb(200, 119, 170, 10));
-//		db.beginTransation();
-		redrawAll();
-		loadFeatured();
-//		db.endTransation();
-		available_listView.setAdapter(availAdapter);
-		installed_listView.setAdapter(installedAdapter);
-		updates_listView.setAdapter(updatesAdapter);
-		
-		available_listView.setOnItemClickListener(availItemClick);
-		updates_listView.setOnItemClickListener(updatesItemClick);
-		installed_listView.setOnItemClickListener(installedItemClick);
-		search.setOnClickListener(searchClick);
-		
-		IntentFilter filter = new IntentFilter();
-		filter.addAction("pt.caixamagica.aptoide.REDRAW");
-		registerReceiver(receiver, filter);
-		receiverIsRegister=true;
-			
-		if(getIntent().hasExtra("newrepo")){
-			Intent i = new Intent(this,StoreManager.class);
-			i.putExtra("newrepo", getIntent().getSerializableExtra("newrepo"));
-			startActivityForResult(i, 0);
-		}
-		
-		
-		
-		
-
-		if(sPref.getBoolean("firstrun",true)){
-			
-			Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-	    	shortcutIntent.setClassName("cm.aptoide.pt", "cm.aptoide.pt.Start");
-	    	final Intent intent = new Intent();
-	    	intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-	    	
-	    	intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-	    	Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.icon);
-	    	
-	    	intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
-	    	intent.putExtra("duplicate", false);
-	    	intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-	    	sendBroadcast(intent);
-
-			if(new File(LOCAL_PATH+"/servers.xml").exists()){
-				try{
-					Editor editor = sPref.edit();
-					
-					SAXParserFactory spf = SAXParserFactory.newInstance();
-					SAXParser sp = spf.newSAXParser();
-
-					MyappHandler handler = new MyappHandler();
-
-					sp.parse(new File("/sdcard/.aptoide/servers.xml"),handler);
-					ArrayList<String> server = handler.getServers();
-					if(!server.isEmpty()){
-						Intent i = new Intent(this,StoreManager.class);
-						i.putExtra("newrepo", server);
-						//TODO Alertdialog
-						startActivityForResult(i, 0);
-						xmlfile=true;
-					}
-
-				}catch (Exception e) {
-					e.printStackTrace();
+					editor.putBoolean("orderByCategory", true);
+				}
+				order_lst=sPref.getString("order_lst", DBStructure.COLUMN_APK_NAME+" collate nocase");
+				if(!sPref.contains("order_lst")){
+					editor.putString("order_lst", order_lst);
 				}
 
+				//		if(sPref.getInt("version", 0) < pkginfo.versionCode){
+				//	   		db.updateTables();
+				//	   		editor.putBoolean("mode", true);
+				//	   		editor.putInt("version", pkginfo.versionCode);
+				//		}
+
+				if(sPref.getString("myId", null) == null){
+					String rand_id = UUID.randomUUID().toString();
+					editor.putString("myId", rand_id);
+				}
+
+				if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
+					DisplayMetrics dm = new DisplayMetrics();
+					getWindowManager().getDefaultDisplay().getMetrics(dm);
+					editor.putInt("scW", dm.widthPixels);
+					editor.putInt("scH", dm.heightPixels);
+				}
+
+				if(sPref.getString("icdown", null) == null){
+					editor.putString("icdown", "g3w");
+				}
+				if(!sPref.contains("app_rating")){
+
+					editor.putString("app_rating", "All");
+				}else if(sPref.getString("app_rating", "All").equals("Teen")){
+					editor.putString("app_rating", "All");
+				}
+
+				if(!sPref.contains("schDwnBox")){
+					editor.putBoolean("schDwnBox", false);
+				}
+				if(!sPref.contains("hwspecsChkBox")){
+					editor.putBoolean("hwspecsChkBox", true);
+				}
+
+				editor.commit();
+
+				XML_PATH = getCacheDir()+"/temp_info.xml";
+				db = new DBHandler(context);
+				db.open();
+
+				TitlePageIndicator pi = (TitlePageIndicator) findViewById(R.id.indicator);
+
+				vp = (ViewPager) findViewById(R.id.viewpager);
+				search = (ImageView) findViewById(R.id.btsearch);
+				pages = new ArrayList<View>();
+
+				available_listView = new ListView(context);
+				installed_listView = new ListView(context);
+				updates_listView = new ListView(context);
+
+				//		availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
+
+				installedAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				updatesAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+
+
+				featured = LayoutInflater.from(context).inflate(R.layout.featured, null);
+				pages.add(featured);
+				pages.add(available_listView);
+				pages.add(installed_listView);
+				pages.add(updates_listView);
+
+
+
+
+				vp.setAdapter(new ViewPagerAdapter(context, pages));
+				pi.setViewPager(vp);
+
+				pi.setTextColor(Color.WHITE);
+				//		pi.setSelectedBold(false);
+				pi.setFooterIndicatorStyle(IndicatorStyle.Triangle);
+				pi.setSelectedColor(Color.argb(200, 119, 170, 10));
+				//		db.beginTransation();
+				redrawAll();
+				loadFeatured();
+				//		db.endTransation();
+				available_listView.setAdapter(availAdapter);
+				installed_listView.setAdapter(installedAdapter);
+				updates_listView.setAdapter(updatesAdapter);
+
+				available_listView.setOnItemClickListener(availItemClick);
+				updates_listView.setOnItemClickListener(updatesItemClick);
+				installed_listView.setOnItemClickListener(installedItemClick);
+				search.setOnClickListener(searchClick);
+
+				IntentFilter filter = new IntentFilter();
+				filter.addAction("pt.caixamagica.aptoide.REDRAW");
+				registerReceiver(receiver, filter);
+				receiverIsRegister=true;
+
+				if(getIntent().hasExtra("newrepo")){
+					Intent i = new Intent(this,StoreManager.class);
+					i.putExtra("newrepo", getIntent().getSerializableExtra("newrepo"));
+					startActivityForResult(i, 0);
+				}
+
+
+
+
+
+				if(sPref.getBoolean("firstrun",true)){
+
+					Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+					shortcutIntent.setClassName("cm.aptoide.pt", "cm.aptoide.pt.Start");
+					final Intent intent = new Intent();
+					intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+
+					intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+					Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.icon);
+
+					intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
+					intent.putExtra("duplicate", false);
+					intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+					sendBroadcast(intent);
+
+					if(new File(LOCAL_PATH+"/servers.xml").exists()){
+						try{
+							Editor editor = sPref.edit();
+
+							SAXParserFactory spf = SAXParserFactory.newInstance();
+							SAXParser sp = spf.newSAXParser();
+
+							MyappHandler handler = new MyappHandler();
+
+							sp.parse(new File("/sdcard/.aptoide/servers.xml"),handler);
+							ArrayList<String> server = handler.getServers();
+							if(!server.isEmpty()){
+								Intent i = new Intent(this,StoreManager.class);
+								i.putExtra("newrepo", server);
+								//TODO Alertdialog
+								startActivityForResult(i, 0);
+								xmlfile=true;
+							}
+
+						}catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+
+
+				}
+				
+				if(db.getRepositories().getCount()==0
+						&&!xmlfile){
+					Intent i = new Intent(this,StoreManager.class);
+					i.putExtra("norepos", true);
+					startActivityForResult(i, 0);
+				}
+
+				editor.putBoolean("firstrun", false);
+				editor.commit();
+				
 			}
+
 			
 
 		}
-			}
-		}
-		
-		if(db.getRepositories().getCount()==0&&!xmlfile){
-			Intent i = new Intent(this,StoreManager.class);
-			i.putExtra("norepos", true);
-			startActivityForResult(i, 0);
-		}
-		
-		
-		editor.putBoolean("firstrun", false);
-		editor.commit();
-		
-		
+
+
+
+
+
+
+
 	}
 	
 	private OnClickListener featuredListener = new OnClickListener() {
@@ -444,106 +457,79 @@ public class Aptoide extends FragmentActivity {
 					e.printStackTrace();
 					
 				}finally{
-					runOnUiThread(new Runnable() {
-						ImageLoader imageLoader = new ImageLoader(context);
-						
-						public void run() {
-							LinearLayout ll = (LinearLayout) featured.findViewById(R.id.container); 
-							ll.removeAllViews();
-					        LinearLayout llAlso = new LinearLayout(Aptoide.this);
-					        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
-					                LayoutParams.WRAP_CONTENT));
-					        llAlso.setOrientation(LinearLayout.HORIZONTAL);
-
-					        int widthSoFar = 0;
-					        ArrayList<HashMap<String, String>> values = db.getTopApps();
-					        Collections.shuffle(values);
-					        for (int i = 0; i!=10; i++) {
-					            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
-					           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
-					           	imageLoader.DisplayImage(-1, db.getTopAppsIconPath()+values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context);
-					           	float stars = 0f;
-					           	try{
-					           		stars = Float.parseFloat(values.get(i).get("rating"));
-					           	}catch (Exception e) {
-					           		stars = 0f;
-								}
-					           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
-					            txtSamItem.setPadding(10, 0, 0, 0);
-					            txtSamItem.setTag(values.get(i).get("id"));
-					            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
-					            txtSamItem.setOnClickListener(featuredListener);
-
-					            txtSamItem.measure(0, 0);
-					            widthSoFar += txtSamItem.getMeasuredWidth();
-					            System.out.println(txtSamItem.getMeasuredWidth());
-					            if (widthSoFar >= txtSamItem.getMeasuredWidth()*2+100) {
-					                ll.addView(llAlso);
-
-					                llAlso = new LinearLayout(Aptoide.this);
-					                llAlso.setLayoutParams(new LayoutParams(
-					                        LayoutParams.FILL_PARENT,
-					                        100));
-					                llAlso.setOrientation(LinearLayout.HORIZONTAL);
-					                llAlso.addView(txtSamItem);
-					                widthSoFar = txtSamItem.getMeasuredWidth();
-					            } else {
-					                llAlso.addView(txtSamItem);
-					            }
-					        }
-
-					        ll.addView(llAlso);
-						}
-					});
+					loadUItopapps();
 				}
 			}
+
+			
 		}).start();
 		
 		
 		
 		
-		((ToggleButton) featured.findViewById(R.id.toggleButton1))
-				.setChecked(sPref.getString("app_rating", "All").equals(
-						"Mature"));
+		
 
-		((ToggleButton) featured.findViewById(R.id.toggleButton1))
-				.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						if (isChecked) {
-							
-							AlertDialog ad = new AlertDialog.Builder(context).create();
-							ad.setMessage("Are you at least 21 years old?");
-							ad.setButton(Dialog.BUTTON_POSITIVE,getString(R.string.btn_yes), new Dialog.OnClickListener() {
-								
-								public void onClick(DialogInterface dialog, int which) {
-									editor.putString("app_rating", "Mature");
-									editor.commit();
-									loadFeatured();
-									redrawAll();
-								}
-							});
-							ad.setButton(Dialog.BUTTON_NEGATIVE,getString(R.string.btn_no), new Dialog.OnClickListener() {
-								
-								public void onClick(DialogInterface dialog, int which) {
-									((ToggleButton) featured.findViewById(R.id.toggleButton1)).setChecked(false);
-								}
-							});
-							ad.show();
-						} else {
-							editor.putString("app_rating", "All");
-							editor.commit();
-							loadFeatured();
-							redrawAll();
-						}
-						
-					}
-
-				});
+		
 	}
 
+	private void loadUItopapps() {
+		((ToggleButton) featured.findViewById(R.id.toggleButton1)).setOnCheckedChangeListener(null);
+		runOnUiThread(new Runnable() {
+			ImageLoader imageLoader = new ImageLoader(context);
+			
+			public void run() {
+				LinearLayout ll = (LinearLayout) featured.findViewById(R.id.container); 
+				ll.removeAllViews();
+		        LinearLayout llAlso = new LinearLayout(Aptoide.this);
+		        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
+		                LayoutParams.WRAP_CONTENT));
+		        llAlso.setOrientation(LinearLayout.HORIZONTAL);
 
+		        ArrayList<HashMap<String, String>> values = db.getTopApps();
+		        for (int i = 0; i!=values.size(); i++) {
+		            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
+		           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
+		           	imageLoader.DisplayImage(-1, db.getTopAppsIconPath()+values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context);
+		           	float stars = 0f;
+		           	try{
+		           		stars = Float.parseFloat(values.get(i).get("rating"));
+		           	}catch (Exception e) {
+		           		stars = 0f;
+					}
+		           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
+		            txtSamItem.setPadding(10, 0, 0, 0);
+		            txtSamItem.setTag(values.get(i).get("id"));
+		            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
+		            txtSamItem.setOnClickListener(featuredListener);
+
+		            txtSamItem.measure(0, 0);
+		            
+		            if (i%2==0) {
+		                ll.addView(llAlso);
+
+		                llAlso = new LinearLayout(Aptoide.this);
+		                llAlso.setLayoutParams(new LayoutParams(
+		                        LayoutParams.FILL_PARENT,
+		                        100));
+		                llAlso.setOrientation(LinearLayout.HORIZONTAL);
+		                llAlso.addView(txtSamItem);
+		            } else {
+		                llAlso.addView(txtSamItem);
+		            }
+		        }
+
+		        ll.addView(llAlso);
+		        System.out.println(sPref.getString("app_rating", "All").equals(
+						"Mature"));
+		        ((ToggleButton) featured.findViewById(R.id.toggleButton1))
+				.setChecked(sPref.getString("app_rating", "All").equals(
+						"Mature"));
+		        ((ToggleButton) featured.findViewById(R.id.toggleButton1))
+				.setOnCheckedChangeListener(adultCheckedListener);
+			}
+		});
+	}
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -623,7 +609,7 @@ public class Aptoide extends FragmentActivity {
 			
 		return super.onOptionsItemSelected(item);
 	}
-	
+	ToggleButton adult ;
 	private void showDisplayOptionsDialog() {
 		View view = LayoutInflater.from(context).inflate(R.layout.orderpopup, null);
 		Builder builder = new AlertDialog.Builder(context).setView(view);
@@ -640,11 +626,14 @@ public class Aptoide extends FragmentActivity {
 		
 		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
 		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
+		adult  = (ToggleButton) view.findViewById(R.id.adultcontent_toggle);
 		if(sPref.getBoolean("orderByCategory", false)){
 			btn1.setChecked(true);
 		}else{
 			btn2.setChecked(true);
 		}
+		adult.setChecked(sPref.getString("app_rating", "All").equals("Mature"));
+		adult.setOnCheckedChangeListener(adultCheckedListener);
 		final RadioGroup grp2 = (RadioGroup) view.findViewById(R.id.groupshow);
 		grp2.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
@@ -922,7 +911,7 @@ public class Aptoide extends FragmentActivity {
 				
 				public void run() {
 					redrawAll();
-					loadFeatured();
+					loadUItopapps();
 				}
 			});
 		}
@@ -1183,6 +1172,57 @@ public class Aptoide extends FragmentActivity {
 			i.putExtra("type", "installed");
 			startActivity(i);			
 		}
+	};
+	
+	CompoundButton.OnCheckedChangeListener adultCheckedListener = new CompoundButton.OnCheckedChangeListener() {
+
+		public void onCheckedChanged(CompoundButton buttonView,
+				boolean isChecked) {
+			if (isChecked) {
+				
+				AlertDialog ad = new AlertDialog.Builder(context).create();
+				ad.setMessage("Are you at least 21 years old?");
+				ad.setButton(Dialog.BUTTON_POSITIVE,getString(R.string.btn_yes), new Dialog.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						editor.putString("app_rating", "Mature");
+						editor.commit();
+						new Thread(new Runnable() {
+							
+							public void run() {
+								loadUItopapps();						
+							}
+						}).start();
+						redrawAll();
+					}
+				});
+				ad.setButton(Dialog.BUTTON_NEGATIVE,getString(R.string.btn_no), new Dialog.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						((ToggleButton) featured.findViewById(R.id.toggleButton1)).setChecked(false);
+						if(adult!=null){
+							adult.setChecked(false);
+						}
+						
+					}
+				});
+				ad.show();
+			} else {
+				editor.putString("app_rating", "All");
+				editor.commit();
+				new Thread(new Runnable() {
+					
+					public void run() {
+						loadUItopapps();						
+					}
+				}).start();
+				
+				redrawAll();
+			}
+			
+			
+		}
+
 	};
 	
 	private OnClickListener searchClick = new OnClickListener() {

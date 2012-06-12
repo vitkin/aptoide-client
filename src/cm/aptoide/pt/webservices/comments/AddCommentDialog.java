@@ -100,7 +100,7 @@ public class AddCommentDialog extends Dialog implements OnDismissListener{
 		}
 		
 		body = ((EditText)findViewById(R.id.comment));
-		subject = ((EditText)findViewById(R.id.subject));
+//		subject = ((EditText)findViewById(R.id.subject));
 		
 		final Button submit = ((Button)findViewById(R.id.submitComment));
 		
