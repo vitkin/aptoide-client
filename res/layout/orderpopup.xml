@@ -77,6 +77,25 @@
                 android:text="@string/order_popup_catg2"
                 android:textColor="#4f4f4f" />
         </RadioGroup>
+        
+        <TextView
+                style="@style/DialogText.Title"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/order_popup_title3"
+                android:textColor="#4f4f4f"
+                android:textStyle="bold" />
+        
+        <ToggleButton
+            android:id="@+id/adultcontent_toggle"
+            android:layout_width="90dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/mature_slider"
+            android:padding="5dp"
+            android:textOff=""
+            android:textOn="" />
+        
     </LinearLayout>
 
 </ScrollView><!--

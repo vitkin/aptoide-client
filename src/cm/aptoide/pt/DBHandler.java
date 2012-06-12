@@ -514,6 +514,19 @@ public class DBHandler {
 	}
 	
 	public void insertNApk(int apks, long repo_id){
+		Cursor c = null;
+		try{
+			c=database.query(DBStructure.TABLE_REPOS, new String[]{DBStructure.COLUMN_REPOS_NAPK}, DBStructure.COLUMN_REPOS_ID+"=?", new String[]{repo_id+""}, null, null, null);
+			c.moveToFirst();
+			if(c.getCount()>0){
+				apks+=c.getInt(0);
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		
 		ContentValues values = new ContentValues();
 		values.put(DBStructure.COLUMN_REPOS_NAPK,apks);
 		try {
@@ -664,7 +677,7 @@ public class DBHandler {
 					md5sum = c.getString(2);
 				}
 				int size = c.getInt(3);
-				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size);
+				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size,false);
 				node.version = c.getString(4);
 				out.add(node);
 			}
@@ -701,7 +714,7 @@ public class DBHandler {
 					md5sum = c.getString(2);
 				}
 				int size = c.getInt(3);
-				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size);
+				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size,false);
 				node.version = c.getString(4);
 				out.add(node);
 			}
@@ -749,7 +762,7 @@ public class DBHandler {
 					md5sum = c.getString(2);
 				}
 				int size = c.getInt(3);
-				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size);
+				DownloadNode node = new DownloadNode(repo, remotePath, md5sum, size,false);
 				node.version = c.getString(4);
 				out.add(node);
 			}
@@ -806,11 +819,13 @@ public class DBHandler {
 			c = database.query(DBStructure.TABLE_APK, new String[]{DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_APKID+"=?", new String[]{apkid}, null, null, null);
 			c.moveToFirst();
 			if(c.getCount()>0){
+				c.close();
 				return c.getInt(0);
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+		c.close();
 		return -1;
 	}
 	
@@ -820,11 +835,13 @@ public class DBHandler {
 			c = database.query(DBStructure.TABLE_OLD, new String[]{DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_OLD_APKID+"=? and "+DBStructure.COLUMN_APK_OLD_VERNAME+"=?", new String[]{apkid,vername}, null, null, null);
 			c.moveToFirst();
 			if(c.getCount()>0){
+				c.close();
 				return c.getInt(0);
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
+		c.close();
 		return -1;
 	}
 
@@ -981,6 +998,8 @@ public class DBHandler {
 			return_int=c.getInt(0);
 		}catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			c.close();
 		}
 		return return_int;
 	}
@@ -1152,6 +1171,9 @@ public class DBHandler {
 						values.add(item);
 					}
 				}
+				if(values.size()==26){
+					break;
+				}
 				
 			}
 		}catch (Exception e) {
@@ -1169,6 +1191,7 @@ public class DBHandler {
 			c = database.query(DBStructure.TABLE_EDITORSCHOICEREPOS, new String[]{DBStructure.COLUMN_EDITORSCHOICEREPO_HASH}, DBStructure.COLUMN_EDITORSCHOICEREPO_ID+"=?", new String[]{"-1"}, null, null, null);
 			c.moveToFirst();
 			if(c.getCount()!=0&&string.equals(c.getString(0))){
+				c.close();
 				return true;
 			}
 		}catch (Exception e) {
@@ -1194,6 +1217,8 @@ public class DBHandler {
 			return_string = c.getString(0);
 		}catch (Exception e) {
 			e.printStackTrace();
+		} finally{
+			c.close();
 		}
 		return return_string;
 	}
@@ -1211,6 +1236,8 @@ public class DBHandler {
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			c.close();
 		}
 		return return_string;
 	}
@@ -1271,6 +1298,8 @@ public class DBHandler {
 			
 		}catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			c.close();
 		}
 		
 		return return_string;
@@ -1278,6 +1307,7 @@ public class DBHandler {
 
 	public void insertFailedDownload(HashMap<String, String> hashMap) {
 		ContentValues values = new ContentValues();
+		
 		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_REMOTEPATH,hashMap.get("remotePath"));
 		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_MD5,hashMap.get("md5sum"));
 		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_PACKAGENAME,hashMap.get("packageName"));
@@ -1285,7 +1315,7 @@ public class DBHandler {
 		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_SIZE,hashMap.get("intSize"));
 		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_VERSION,hashMap.get("version"));
 		values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_LOCALPATH,hashMap.get("localPath"));
-		hashMap.get("isUpdate");
+		
 		if(hashMap.containsKey("username")){
 			values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_USERNAME,hashMap.get("username"));
 			values.put(DBStructure.COLUMN_FAILED_DOWNLOADS_PASSWORD,hashMap.get("password"));
@@ -1319,6 +1349,9 @@ public class DBHandler {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally { 
+			c.close();
+		
 		}
 		return values;
 		
@@ -1334,7 +1367,11 @@ public class DBHandler {
 			c = database.rawQuery("select _id from editorschoicerepo where hash ='"+string.trim()+"'", null);
 			c.moveToFirst();
 			System.out.println(c.getCount() + " getcount " +string);
-			return c.getCount()!=0;
+			if (c.getCount()!=0){
+				c.close();
+				return true;
+			}
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}finally{

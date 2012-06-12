@@ -24,6 +24,7 @@ import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
@@ -101,6 +102,9 @@ public class CreateUser extends FragmentActivity {
 			}else{
 				return;
 			}
+			SharedPreferences sPref = getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+			String myid = sPref.getString("myId", "NoInfo");
+			String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 			
 			HttpPost post = new HttpPost("https://www.bazaarandroid.com/webservices/createUser");
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -117,10 +121,10 @@ public class CreateUser extends FragmentActivity {
 			HttpConnectionParams.setConnectionTimeout(params, 10000);
 			HttpConnectionParams.setSoTimeout(params, 10000);
 			HttpClient client = new DefaultHttpClient(params);
-			
+			client.getParams().setParameter(CoreProtocolPNames.USER_AGENT, "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid);
 			HttpResponse response = client.execute(post);
 			HttpEntity entity = response.getEntity();
-
+			
 			String responseText = EntityUtils.toString(entity);
 			final JSONObject json = new JSONObject(responseText);
 			

@@ -100,31 +100,32 @@
 
             <LinearLayout
                 android:id="@+id/adult_content"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:orientation="horizontal"
-                android:paddingTop="25dp"
-                android:paddingBottom="5dp" >
-			<ToggleButton
-                    android:id="@+id/toggleButton1"
-                    android:layout_width="90dp"
-                    android:layout_height="30dp"
-                    
-                    android:layout_gravity="right"
-                    android:background="@drawable/mature_slider"
-                    android:textOff=""
-                    android:textOn="" />
+                android:orientation="vertical"
+                android:paddingBottom="5dp"
+                android:paddingTop="25dp" >
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_gravity="center_horizontal"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:text="Adult Content" />
 
-                
+                <ToggleButton
+                    android:id="@+id/toggleButton1"
+                    android:layout_width="90dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:background="@drawable/mature_slider"
+                    android:textOff=""
+                    android:textOn="" />
+
             </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 

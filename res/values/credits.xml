@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
    
     <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n\n
     Credits:\n\n
-    \t\t Rui Mateus &amp; Caixa Mágica\n\n
-    \t\t Duarte Silveira &amp; Caixa Mágica\n\n
-    \t\t Teresa Deus &amp; Caixa Mágica\n\n
-    \t\t Rafael Campos &amp; Caixa Mágica\n\n
-    \t\t Roberto Jacinto &amp; Caixa Mágica\n\n
+    \t\t Rui Mateus \n\n
+    \t\t Duarte Silveira \n\n
+    \t\t Teresa Deus \n\n
+    \t\t Rafael Campos \n\n
+    \t\t Roberto Jacinto \n\n
     &#160;Translators:\n\n
     &#160;&#160;&#160;Spanish:\n
     \t\t\tFrancisco \"ppelao3k\"\n

@@ -91,7 +91,7 @@ public class CommentGetter {
 		if(webservice_path==null){
 			urlReal = String.format(Configs.WEB_SERVICE_COMMENTS_LIST,repo, apkid, apkversion);
 		}else{
-			urlReal = webservice_path+"/"+repo+"/"+apkid+"/"+apkversion;
+			urlReal = webservice_path+"webservices/listApkComments/"+repo+"/"+apkid+"/"+apkversion+"/xml";
 		}
 		
 		Log.d("",urlReal);

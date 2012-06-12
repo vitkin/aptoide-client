@@ -330,7 +330,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		}
 		action.setOnClickListener(installListener);
 		if(type.equals("featured")){
-			scheduledDownloadBox.setEnabled(false);
+			scheduledDownloadBox.setVisibility(View.GONE);
 		}
 		if(Integer.parseInt(elements.get("vercode"))<Integer.parseInt(elements.get("installedVercode"))){
 			actionString = "Downgrade";

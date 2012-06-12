@@ -12,9 +12,10 @@ public class DownloadNode extends Object{
 	private String[] logins;
 	private boolean isRepoPrivate;
 	private boolean isUpdate;
+	private boolean isResume = false;
 
 	
-	public DownloadNode(String repo, String remotePath, String md5sum, int size) {
+	public DownloadNode(String repo, String remotePath, String md5sum, int size, boolean isResume) {
 		super();
 		this.repo = repo;
 		this.remotePath = remotePath;
@@ -22,6 +23,7 @@ public class DownloadNode extends Object{
 		this.size = size;
 		this.isRepoPrivate = false;
 		this.isUpdate = false;
+		this.isResume = isResume;
 	}
 
 
@@ -35,6 +37,7 @@ public class DownloadNode extends Object{
 		this.isRepoPrivate = false;
 		this.isUpdate = false;
 	}
+	
 
 	
 	public String getRepo() {
@@ -94,6 +97,10 @@ public class DownloadNode extends Object{
 
 	public boolean isUpdate() {
 		return isUpdate;
+	}
+	
+	public boolean isResume() {
+		return isResume;
 	}
 
 	public void setUpdate(boolean isUpdate) {
