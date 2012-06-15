@@ -73,18 +73,16 @@
         android:background="#edece9"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingBottom="5dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp" >
 
         <RelativeLayout
             android:id="@+id/root"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_above="@+id/advertisement"
             android:layout_below="@+id/apkinfoheader"
-            android:background="@drawable/border_background_normal"
-            android:paddingBottom="5dp"
+            android:background="@drawable/border_background_apkinfo"
             android:paddingLeft="5dp"
             android:paddingRight="5dp" >
 
