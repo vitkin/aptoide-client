@@ -858,7 +858,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	private String serverCheck(String uri_str) {
 		
 		if(uri_str.contains("http//")){
-			return uri_str.replaceFirst("http//", "http://");
+			uri_str= uri_str.replaceFirst("http//", "http://");
 		}
 		
 		if(uri_str.length()!=0 && uri_str.charAt(uri_str.length()-1)!='/'){
@@ -869,6 +869,8 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			uri_str = "http://"+uri_str;
 			Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
 		}
+		
+		
 		return uri_str;
 	}
 	
