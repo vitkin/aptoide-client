@@ -217,6 +217,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 									
 								}
 							}
+							
 						}).start();
 						update=true;
 					}
@@ -855,6 +856,11 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 	
 	private String serverCheck(String uri_str) {
+		
+		if(uri_str.contains("http//")){
+			return uri_str.replaceFirst("http//", "http://");
+		}
+		
 		if(uri_str.length()!=0 && uri_str.charAt(uri_str.length()-1)!='/'){
 			uri_str = uri_str+'/';
 			Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
@@ -995,10 +1001,19 @@ private returnStatus checkServerConnection(String uri, String user, String pwd){
 			}else{
 				return returnStatus.FAIL;
 			}
-		} catch (ClientProtocolException e) { return returnStatus.EXCEPTION;} 
-		catch (IOException e) { return returnStatus.EXCEPTION;}
-		catch (IllegalArgumentException e) { return returnStatus.EXCEPTION;}
-		catch (Exception e) {return returnStatus.EXCEPTION;	}
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+			return returnStatus.EXCEPTION;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return returnStatus.EXCEPTION;
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return returnStatus.EXCEPTION;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return returnStatus.EXCEPTION;
+		}
 	}
 
 public static DefaultHttpClient getThreadSafeClient() {

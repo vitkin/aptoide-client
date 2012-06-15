@@ -191,6 +191,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				if(!type.equals("featured")){
 					if(bundle.containsKey("oldApk")){
 						System.out.println(bundle.getLong("oldApk"));
+						
 						return db.getOldApk(bundle.getLong("oldApk"));
 					}else{
 						return db.getApk(id);
@@ -332,7 +333,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		if(type.equals("featured")){
 			scheduledDownloadBox.setVisibility(View.GONE);
 		}
-		if(Integer.parseInt(elements.get("vercode"))<Integer.parseInt(elements.get("installedVercode"))){
+		if(Integer.parseInt(elements.get("vercode"))<
+				Integer.parseInt(elements.get("installedVercode"))){
 			actionString = "Downgrade";
 		}else if (Integer.parseInt(elements.get("vercode"))==Integer.parseInt(elements.get("installedVercode"))){
 			actionString = "Uninstall";

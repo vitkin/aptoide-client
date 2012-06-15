@@ -118,7 +118,11 @@ public class RepoParser extends DefaultHandler {
 			break;
 		case DELTA:
 			delta=true;
-			dbhandler.setServerDelta(repo_id, sb.toString());
+			String thisDelta = sb.toString();
+			if(!thisDelta.equalsIgnoreCase("")){
+				dbhandler.setServerDelta(repo_id,thisDelta );
+			}
+			
 			break;
 		case APKID:
 			apk.apkid=sb.toString();

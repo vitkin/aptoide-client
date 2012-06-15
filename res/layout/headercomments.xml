@@ -175,11 +175,7 @@
             android:textSize="18.0sp"
             android:visibility="gone" />
 
-        <com.viewpagerindicator.CirclePageIndicator
-            android:id="@+id/indicator"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp" />
+        
 
         <RelativeLayout
             android:id="@+id/screenshots_container"
@@ -211,6 +207,18 @@
                 android:src="@drawable/indicator_next_arrow" />
 
         </RelativeLayout>
+        <com.viewpagerindicator.CirclePageIndicator
+            android:id="@+id/indicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp" />
+        
+        <LinearLayout 
+            android:id="@+id/spacer"
+            android:layout_height="50dp" 
+            android:layout_width="fill_parent">
+        </LinearLayout>
+        
     </LinearLayout>
 
 </RelativeLayout>

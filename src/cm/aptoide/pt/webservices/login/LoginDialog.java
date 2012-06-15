@@ -176,7 +176,7 @@ public class LoginDialog extends Dialog{
 		((Button)findViewById(R.id.submitLogin)).setOnClickListener(new View.OnClickListener(){
 			public void onClick(View arg) {
 				success = false;
-				if(!((SetBlankOnFocusChangeListener)username.getOnFocusChangeListener()).getAlreadySetted()){
+				if(username.getText().length()==0){
 					Toast.makeText(LoginDialog.this.getContext(), LoginDialog.this.getContext().getString(R.string.usernotdef), Toast.LENGTH_LONG).show();
 				}else if(password.getText().length()==0){
 					Toast.makeText(LoginDialog.this.getContext(), LoginDialog.this.getContext().getString(R.string.passwordnotdef), Toast.LENGTH_LONG).show();

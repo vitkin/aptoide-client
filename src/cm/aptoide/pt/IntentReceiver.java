@@ -143,6 +143,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 	}
 
 	private void startMarketIntent(String param) {
+		System.out.println(param);
 		long id = db.getApkId(param);
 		Intent i;
 		if(id>0){

@@ -69,7 +69,7 @@ public class MyappHandler extends DefaultHandler {
 			break;
 			
 		case MD5SUM:
-			app.put("md5", sb.toString());
+			app.put("md5sum", sb.toString());
 			break;
 
 		case MYAPP:

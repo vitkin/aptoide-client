@@ -19,5 +19,7 @@
         android:text="@string/please_wait"
         android:layout_marginLeft="5dp"
         android:textColor="#4f4f4f" />
+    
+    <LinearLayout android:id="@+id/spacer" android:layout_height="50dp" android:layout_width="fill_parent"></LinearLayout>
 
 </LinearLayout>

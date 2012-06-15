@@ -206,8 +206,10 @@ public class DownloadQueueService extends Service {
 	
 	private void setFinishedNotification(int apkidHash, String localPath) {
 		
-		String packageName = notifications.get(apkidHash).get("packageName");
-		String appName = notifications.get(apkidHash).get("appName");
+//		String packageName = notifications.get(apkidHash).get("packageName");
+		String appName = notifications
+				.get(apkidHash)
+				.get("appName");
 		int size = Integer.parseInt(notifications.get(apkidHash).get("intSize"));
 		String version = notifications.get(apkidHash).get("version");
 		
@@ -274,12 +276,13 @@ public class DownloadQueueService extends Service {
 		//TODO Send a broadcast Intent with the data via sendBroadcast(), that the activity picks up with a BroadcastReceiver
 //		
 //	}
-	
+	private boolean error=false;
 	private void downloadFile(final int apkidHash){
-			
 		try{
 			
 			new Thread(){
+				
+
 				public void run(){
 					this.setPriority(Thread.MAX_PRIORITY);
 					
@@ -344,7 +347,7 @@ public class DownloadQueueService extends Service {
 						}
 
 						HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
-						System.out.println("Downloading from:" +mHttpGet.getURI());
+						System.out.println("Downloading from: " +mHttpGet.getURI());
 						if(mHttpResponse == null){
 							 Log.d("Aptoide","Problem in network... retry...");	
 							 mHttpResponse = mHttpClient.execute(mHttpGet);
@@ -359,6 +362,7 @@ public class DownloadQueueService extends Service {
 						if(mHttpResponse.getStatusLine().getStatusCode() == 401){
 							throw new TimeoutException();
 						}else if(mHttpResponse.getStatusLine().getStatusCode() == 404){
+							error=true;
 							Message progressArguments = new Message();
 							progressArguments.arg1 = 404;
 							progressArguments.arg2 = threadApkidHash;
@@ -402,17 +406,20 @@ public class DownloadQueueService extends Service {
 
 						File f = new File(localPath);
 						Md5Handler hash = new Md5Handler();
-						if(md5sum == null || md5sum.equalsIgnoreCase(hash.md5Calc(f))){
-							downloadArguments.arg1 = 1;
-							downloadArguments.arg2 = threadApkidHash;
-							downloadArguments.obj = localPath;
-							downloadHandler.sendMessage(downloadArguments);
-						}else{
-							Log.d("Aptoide",md5sum + " VS " + hash.md5Calc(f));
-							downloadArguments.arg1 = 0;
-							downloadArguments.arg2 = threadApkidHash;
-							downloadErrorHandler.sendMessage(downloadArguments);
+						if(!error){
+							if(md5sum == null || md5sum.equalsIgnoreCase(hash.md5Calc(f))){
+								downloadArguments.arg1 = 1;
+								downloadArguments.arg2 = threadApkidHash;
+								downloadArguments.obj = localPath;
+								downloadHandler.sendMessage(downloadArguments);
+							}else{
+								Log.d("Aptoide",md5sum + " VS " + hash.md5Calc(f));
+								downloadArguments.arg1 = 0;
+								downloadArguments.arg2 = threadApkidHash;
+								downloadErrorHandler.sendMessage(downloadArguments);
+							}
 						}
+						
 
 					}catch (Exception e) { 
 						if(keepScreenOn.isHeld()){
@@ -424,7 +431,6 @@ public class DownloadQueueService extends Service {
 //						downloadErrorHandler.sendMessage(downloadArguments);
 						DBHandler db = new DBHandler(context);
 						db.open();
-						
 						db.insertFailedDownload(notifications.get(threadApkidHash));
 					}
 				}
@@ -447,12 +453,14 @@ public class DownloadQueueService extends Service {
         		int apkidHash = downloadArguments.arg2;
         		String localPath =  (String) downloadArguments.obj;
 //        		notificationManager.cancel(downloadArguments.arg2);
-        		setFinishedNotification(apkidHash, localPath);
+       			setFinishedNotification(apkidHash, localPath);
    			 	notifications.remove(apkidHash);
         	}else if(downloadArguments.arg1 == 404){ 
         		Toast.makeText(context, "There was a 404 error. The file requested was not found.", 1).show();
         		int apkidHash = downloadArguments.arg2;
+        		notificationManager.cancel(apkidHash);
         		notifications.remove(apkidHash);
+        		
         	}
         }
 	};

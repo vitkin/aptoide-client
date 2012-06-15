@@ -46,6 +46,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.View.OnClickListener;
@@ -155,16 +156,14 @@ public class CreateUser extends FragmentActivity {
 									public void onDismiss(DialogInterface arg0) {
 										if(successLogin.get()){
 											
-//											if(success){
-//												isLoginSubmited = true;
-//												LoginDialog.this.dismiss();
+											if(success){
 												
-//												Log.d("Aptoide", "Login action broadcast sent");
-//												Intent loginAction = new Intent();
-//												loginAction.setAction("pt.caixamagica.aptoide.LOGIN_ACTION");
-//												LoginDialog.this.getContext().sendBroadcast(loginAction);
+												Log.d("Aptoide", "Login action broadcast sent");
+												Intent loginAction = new Intent();
+												loginAction.setAction("pt.caixamagica.aptoide.LOGIN_ACTION");
+												sendBroadcast(loginAction);
 												
-//											}
+											}
 											
 										}else{
 											Toast.makeText(context, context.getString(R.string.unabletoexecute), Toast.LENGTH_LONG).show();
