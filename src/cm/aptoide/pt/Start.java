@@ -23,8 +23,10 @@ import org.xml.sax.InputSource;
 
 
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +37,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.TextView;
@@ -56,7 +59,15 @@ public class Start extends FragmentActivity {
         db.open();
 		setContentView(R.layout.start);
 		loading_text = (TextView) findViewById(R.id.loading_text);
-		
+		ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+    	List<RunningTaskInfo> running = activityManager.getRunningTasks(Integer.MAX_VALUE);
+    	
+    	for (RunningTaskInfo runningTask : running) {
+			if(runningTask.baseActivity.getClassName().equals("cm.aptoide.pt.Aptoide")){	//RemoteInTab is the real Aptoide Activity
+				proceed();
+	            return;
+			}
+		}
 		
 		
 		//Check installed
