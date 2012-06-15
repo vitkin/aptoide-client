@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#edece9"
@@ -80,7 +81,6 @@
             android:id="@+id/root"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/advertisement"
             android:layout_below="@+id/apkinfoheader"
             android:background="@drawable/border_background_apkinfo"
             android:paddingLeft="5dp"
@@ -96,29 +96,31 @@
                 android:divider="@drawable/list_comments_divider"
                 android:dividerHeight="1dp" />
         </RelativeLayout>
+
+       
     </RelativeLayout>
-
-    <LinearLayout
-        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/advertisement"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/listview_footer"
-        android:layout_centerHorizontal="true"
-        android:orientation="vertical" >
-
-        <com.google.ads.AdView
-            android:id="@+id/adView"
+	
+     <LinearLayout
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/advertisement"
+            android:layout_above="@+id/listview_footer"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            ads:adSize="BANNER"
-            ads:adUnitId="a14f30ff2e69698"
-            ads:loadAdOnCreate="true"
-            ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
-        </com.google.ads.AdView>
-    </LinearLayout>
+            android:orientation="vertical" >
 
+            <com.google.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                ads:adSize="BANNER"
+                ads:adUnitId="a14f30ff2e69698"
+                ads:loadAdOnCreate="true"
+                ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
+            </com.google.ads.AdView>
+
+    </LinearLayout>
+    
     <LinearLayout
         android:id="@+id/listview_footer"
         android:layout_width="fill_parent"

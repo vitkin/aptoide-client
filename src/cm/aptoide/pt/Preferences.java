@@ -2,9 +2,11 @@ package cm.aptoide.pt;
 
 import cm.aptoide.pt.webservices.login.LoginDialog;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -28,7 +30,32 @@ public class Preferences extends PreferenceActivity implements
 	private CheckBoxPreference hwbox;
 	private CheckBoxPreference schDwnBox;
 	private CheckBoxPreference matureChkBox;
-
+	LoginDialog loginComments;
+	private BroadcastReceiver receiver;
+	
+protected class LoginListener extends BroadcastReceiver {
+		
+		private Preference clear_credentials;
+		private SharedPreferences sPref;
+		public LoginListener(Preference clear_credentials, SharedPreferences sPref){
+			
+			this.clear_credentials = clear_credentials;
+			this.sPref = sPref;
+		}
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d("Aptoide","Settings received "+intent.getAction());
+			if (intent.getAction().equals("pt.caixamagica.aptoide.LOGIN_ACTION")) {
+				if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null){
+					clear_credentials.setEnabled(false);
+				}else{
+					clear_credentials.setEnabled(true);
+				}
+			}
+		}
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -52,7 +79,10 @@ public class Preferences extends PreferenceActivity implements
 		if (userPref.getString(Configs.LOGIN_USER_NAME, null) == null) {
 			((Preference) findPreference("clearcredentials")).setEnabled(false);
 		}
-
+		Log.d("Aptoide", "Broadcast registered");
+		receiver = new LoginListener(clear_credentials, userPref);
+		IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.LOGIN_ACTION");
+		registerReceiver(receiver, filter);
 		clear_credentials
 				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 
@@ -93,7 +123,7 @@ public class Preferences extends PreferenceActivity implements
 		set_credentials
 				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 					public boolean onPreferenceClick(Preference preference) {
-						LoginDialog loginComments = new LoginDialog(
+						loginComments = new LoginDialog(
 								Preferences.this,
 								LoginDialog.InvoqueNature.OVERRIDE_CREDENTIALS);
 						loginComments.show();
@@ -153,7 +183,17 @@ public class Preferences extends PreferenceActivity implements
 		super.onResume();
 		updateSum();
 	}
-
+	
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent intent) {
+		
+		super.onActivityResult(arg0, arg1, intent);
+		if(intent.hasExtra("username")){
+			loginComments.dismiss();
+		}
+		
+	}
+	
 	@Override
 	public void finish() {
 		prefEditFull.putString("icdown", sPref.getString("icdown", "error"));

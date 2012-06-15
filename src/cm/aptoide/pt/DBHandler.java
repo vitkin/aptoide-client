@@ -26,7 +26,6 @@ public class DBHandler {
 
 	private static SQLiteDatabase database;
 	private static DBStructure dbHelper;
-	private static ExtrasDBStructure extrasDbHelper;
 	private HashMap<String,Apk> localApk ;
 	private SharedPreferences sPref;
 	private Context context; 
@@ -34,7 +33,6 @@ public class DBHandler {
 	public DBHandler(Context context) {
 		dbHelper = new DBStructure(context);
 		this.context=context;
-		extrasDbHelper = new ExtrasDBStructure(context);
 		sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 	}
 	
@@ -43,30 +41,13 @@ public class DBHandler {
 		if(database==null||!database.isOpen()){
 			database = dbHelper.getWritableDatabase();
 		}
-			
-		
-		
-		
-		
 	}
 	
-	public synchronized void openExtras() {
-		System.out.println("Opening Extras");
-		if(database==null||!database.isOpen()){
-			database = extrasDbHelper.getWritableDatabase();
-		}
-			
-		
-		
-		
-		
-	}
 
 	public synchronized void close() {
 		if(database.isOpen()){
 			dbHelper.close();
 		}
-		
 		System.out.println("Closed");
 	}
 	
@@ -105,11 +86,8 @@ public class DBHandler {
 	
 	public void insertAPK(Apk apk) {
 		try{
-			
-		
 		ContentValues values = new ContentValues();
 		long id;
-		
 		if(!localApk.containsKey(apk.apkid)){
 			
 			values.put(DBStructure.COLUMN_APK_APKID, apk.apkid);
@@ -187,8 +165,6 @@ public class DBHandler {
 //							values);
 				}
 		}
-		
-		
 		
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -290,7 +266,11 @@ public class DBHandler {
 		entries+=database.delete(DBStructure.TABLE_OLD, DBStructure.COLUMN_APK_OLD_REPO_ID+"=?", new String[]{repo_id+""});
 		entries+=database.delete(DBStructure.TABLE_CATEGORY, DBStructure.COLUMN_CATEGORY_REPO_ID+"=?", new String[]{repo_id+""});
 		entries+=database.delete(DBStructure.TABLE_SCHEDULED, DBStructure.COLUMN_SCHEDULED_REPO_ID+"=?", new String[]{repo_id+""});
-		
+		ContentValues values = new ContentValues();
+		values.put(DBStructure.COLUMN_REPOS_UPDATETIME, "0");
+		values.put(DBStructure.COLUMN_REPOS_DELTA, "0");
+		values.put(DBStructure.COLUMN_REPOS_NAPK, "0");
+		database.update(DBStructure.TABLE_REPOS, values, DBStructure.COLUMN_REPOS_ID+"=?", new String[]{repo_id+""});
 		System.out.println("Deleted: "+entries+ " entries.");
 		
 		
@@ -819,8 +799,9 @@ public class DBHandler {
 			c = database.query(DBStructure.TABLE_APK, new String[]{DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_APKID+"=?", new String[]{apkid}, null, null, null);
 			c.moveToFirst();
 			if(c.getCount()>0){
+				int return_int = c.getInt(0);
 				c.close();
-				return c.getInt(0);
+				return return_int;
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -835,8 +816,9 @@ public class DBHandler {
 			c = database.query(DBStructure.TABLE_OLD, new String[]{DBStructure.COLUMN_APK_ID}, DBStructure.COLUMN_APK_OLD_APKID+"=? and "+DBStructure.COLUMN_APK_OLD_VERNAME+"=?", new String[]{apkid,vername}, null, null, null);
 			c.moveToFirst();
 			if(c.getCount()>0){
+				int return_int =c.getInt(0); 
 				c.close();
-				return c.getInt(0);
+				return return_int;
 			}
 		}catch (Exception e) {
 			e.printStackTrace();

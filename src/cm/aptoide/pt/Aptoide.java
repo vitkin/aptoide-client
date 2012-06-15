@@ -189,7 +189,7 @@ public class Aptoide extends FragmentActivity {
 				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 				upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
 				upd_alrt.setMessage(getText(R.string.remote_in_noSDspace));
-				upd_alrt.setButton(getText(R.string.btn_ok), new Dialog.OnClickListener() {
+				upd_alrt.setButton(Dialog.BUTTON_NEUTRAL,getText(R.string.btn_ok), new Dialog.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						finish();
 					}
@@ -334,14 +334,13 @@ public class Aptoide extends FragmentActivity {
 
 					if(new File(LOCAL_PATH+"/servers.xml").exists()){
 						try{
-							Editor editor = sPref.edit();
 
 							SAXParserFactory spf = SAXParserFactory.newInstance();
 							SAXParser sp = spf.newSAXParser();
 
 							MyappHandler handler = new MyappHandler();
 
-							sp.parse(new File("/sdcard/.aptoide/servers.xml"),handler);
+							sp.parse(new File(Environment.getExternalStorageDirectory().getPath()+".aptoide/servers.xml"),handler);
 							ArrayList<String> server = handler.getServers();
 							if(!server.isEmpty()){
 								Intent i = new Intent(this,StoreManager.class);
@@ -464,17 +463,11 @@ public class Aptoide extends FragmentActivity {
 			
 		}).start();
 		
-		
-		
-		
-		
-
-
-		
 	}
-
+	ArrayList<HashMap<String, String>> values;
 	private void loadUItopapps() {
 		((ToggleButton) featured.findViewById(R.id.toggleButton1)).setOnCheckedChangeListener(null);
+		values = db.getTopApps();
 		runOnUiThread(new Runnable() {
 			ImageLoader imageLoader = new ImageLoader(context);
 			
@@ -485,8 +478,6 @@ public class Aptoide extends FragmentActivity {
 		        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,
 		                LayoutParams.WRAP_CONTENT));
 		        llAlso.setOrientation(LinearLayout.HORIZONTAL);
-
-		        ArrayList<HashMap<String, String>> values = db.getTopApps();
 		        for (int i = 0; i!=values.size(); i++) {
 		            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
 		           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
@@ -1187,10 +1178,27 @@ public class Aptoide extends FragmentActivity {
 					public void onClick(DialogInterface dialog, int which) {
 						editor.putString("app_rating", "Mature");
 						editor.commit();
+						pd = new ProgressDialog(context);
+						pd.setMessage(getString(R.string.please_wait));
+						pd.show();
 						new Thread(new Runnable() {
 							
 							public void run() {
-								loadUItopapps();						
+								try{
+									loadUItopapps();
+								}catch (Exception e) {
+									e.printStackTrace();
+								}finally{
+									runOnUiThread(new Runnable() {
+										
+										public void run() {
+											pd.dismiss();
+											
+										}
+									});	
+								}
+								
+								
 							}
 						}).start();
 						redrawAll();
@@ -1210,10 +1218,22 @@ public class Aptoide extends FragmentActivity {
 			} else {
 				editor.putString("app_rating", "All");
 				editor.commit();
+				pd = new ProgressDialog(context);
+				pd.setMessage(getString(R.string.please_wait));
+				pd.show();
 				new Thread(new Runnable() {
 					
 					public void run() {
-						loadUItopapps();						
+						loadUItopapps();
+						
+						runOnUiThread(new Runnable() {
+							
+							public void run() {
+								pd.dismiss();
+								
+							}
+						});
+						
 					}
 				}).start();
 				
@@ -1285,7 +1305,6 @@ public class Aptoide extends FragmentActivity {
 			Log.d("Aptoide","A fazer fetch info de: " + url);
 
 			FileOutputStream saveit = new FileOutputStream(XML_PATH);
-
 
 			HttpResponse mHttpResponse = null; //NetworkApis.getHttpResponse(url, srv, mctx);
 
@@ -1389,9 +1408,7 @@ public class Aptoide extends FragmentActivity {
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals("pt.caixamagica.aptoide.REDRAW")){
 				redrawInstalled();
-				
 			}
-			
 		}
 	};
 	
