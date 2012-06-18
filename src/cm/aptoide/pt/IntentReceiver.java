@@ -75,6 +75,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				repo.add(uri.substring(14));
 				Intent i = new Intent(IntentReceiver.this,Aptoide.class);
 				i.putExtra("newrepo", repo);
+				i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 				startActivity(i);
 				finish();
 			}else if(uri.startsWith("aptoidexml")){
@@ -82,6 +83,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				parseXmlString(repo);
 				Intent i = new Intent(IntentReceiver.this,Aptoide.class);
 				i.putExtra("newrepo", repo);
+				i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 				startActivity(i);
 				finish();
 			}else if(uri.startsWith("market")){
@@ -94,6 +96,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				} else if (param.contains("pub:")) {
 					param = param.substring(4);
 				}
+				
 				startMarketIntent(param);
 			}else if(uri.startsWith("https://market.android.com/details?id=")){
 				String param = uri.split("=")[1];
@@ -163,6 +166,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 		if(server!=null){
 			Intent i = new Intent(IntentReceiver.this,Aptoide.class);
 			i.putExtra("newrepo", server);
+			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
 			finish();
 		}
