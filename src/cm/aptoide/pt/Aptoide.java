@@ -323,7 +323,7 @@ public class Aptoide extends FragmentActivity {
 					shortcutIntent.setClassName("cm.aptoide.pt", "cm.aptoide.pt.Start");
 					final Intent intent = new Intent();
 					intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-
+					
 					intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
 					Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.icon);
 
@@ -382,6 +382,8 @@ public class Aptoide extends FragmentActivity {
 
 
 	}
+	
+	
 	
 	private OnClickListener featuredListener = new OnClickListener() {
 		
@@ -465,6 +467,17 @@ public class Aptoide extends FragmentActivity {
 		
 	}
 	ArrayList<HashMap<String, String>> values;
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		if(intent.hasExtra("newrepo")){
+			Intent i = new Intent(this,StoreManager.class);
+			i.putExtra("newrepo", intent.getSerializableExtra("newrepo"));
+			startActivityForResult(i, 0);
+		}
+	}
+	
 	private void loadUItopapps() {
 		((ToggleButton) featured.findViewById(R.id.toggleButton1)).setOnCheckedChangeListener(null);
 		values = db.getTopApps();
