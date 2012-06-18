@@ -113,7 +113,7 @@ public class DBStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_FAILED_DOWNLOADS_PASSWORD = "password";
 
 	private static final String DATABASE_NAME = "aptoide.db";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 	// Database creation sql statement
 	private static final String CREATE_TABLE_APK = "CREATE TABLE "
@@ -132,7 +132,7 @@ public class DBStructure extends SQLiteOpenHelper {
 			+ COLUMN_APK_DATE + " date , " 
 			+ COLUMN_APK_SDK + " integer , " 
 			+ COLUMN_APK_SCREEN + " integer , " 
-			+ COLUMN_APK_OPENGLES + " text ," 
+			+ COLUMN_APK_OPENGLES + " integer ," 
 			+ COLUMN_APK_REPO_ID + " text , PRIMARY KEY ("+COLUMN_APK_ID+" autoincrement)); "; 
 	
 	private static final String CREATE_TABLE_EDITORSCHOICE = "CREATE TABLE "

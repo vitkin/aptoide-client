@@ -30,9 +30,9 @@ public class Apk {
 	public String path;
 	public String icon;
 	public String date;
-	public String minSdk;
+	public String minSdk = "0";
 	public long repo_id;
-	public int minScreenSize;
+	public int minScreenSize = 0;
 	public String featuregraphic;
 	public String highlighted;
 	public Vector<String> screenshots = new Vector<String>();
