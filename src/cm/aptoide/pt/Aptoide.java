@@ -210,9 +210,9 @@ public class Aptoide extends FragmentActivity {
 
 					editor.putBoolean("orderByCategory", true);
 				}
-				order_lst=sPref.getString("order_lst", DBStructure.COLUMN_APK_NAME+" collate nocase");
-				if(!sPref.contains("order_lst")){
-					editor.putString("order_lst", order_lst);
+				order_lst=sPref.getString("order_list", DBStructure.COLUMN_APK_NAME+" collate nocase");
+				if(!sPref.contains("order_list")){
+					editor.putString("order_list", order_lst);
 				}
 
 				//		if(sPref.getInt("version", 0) < pkginfo.versionCode){
@@ -685,7 +685,7 @@ public class Aptoide extends FragmentActivity {
 							pop_change = true;
 							order_lst = DBStructure.COLUMN_APK_DOWNLOADS+" desc";
 						}
-						editor.putString("order_lst", order_lst);
+						editor.putString("order_list", order_lst);
 					}
 					
 				});
