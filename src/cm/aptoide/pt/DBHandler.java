@@ -104,6 +104,7 @@ public class DBHandler {
 			values.put(DBStructure.COLUMN_APK_DATE, apk.date);
 			values.put(DBStructure.COLUMN_APK_SDK, apk.minSdk);
 			values.put(DBStructure.COLUMN_APK_SCREEN, apk.minScreenSize);
+			
 			values.put(DBStructure.COLUMN_APK_REPO_ID, apk.repo_id);
 			
 			id = database.insert(DBStructure.TABLE_APK, null,values);
