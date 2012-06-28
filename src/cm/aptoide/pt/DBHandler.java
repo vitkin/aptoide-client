@@ -200,8 +200,22 @@ public class DBHandler {
 	
 	public Cursor getInstalled(String orderBy) {
 		Cursor c = null;
+		
+		String query = "select a.name, b._id, b.icon, a.vername,b.repo_id, b.rating,b.downloads from installed as a INNER JOIN apk as b ON a.apkid=b.apkid";
+		
 		try {
-			c = database.rawQuery("select a.name, b._id, b.icon, a.vername,b.repo_id, b.rating,b.downloads from installed a INNER JOIN apk b ON a.apkid=b.apkid order by b."+orderBy,null);
+			if(sPref.getString("app_rating","All").equals("Mature")){
+				query += " where b.age <=1";
+			}else{
+				query += " where b.age <1";
+			}
+			System.out.println(sPref.getString("app_rating","none"));
+			
+			
+			query+=" order by b."+orderBy;
+			
+			
+			c = database.rawQuery(query,null);
 			c.moveToFirst();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -211,10 +225,24 @@ public class DBHandler {
 	}
 	
 	public Cursor getUpdates(String orderBy) {
-		
+		String query = "select b.name, b._id, b.icon, b.vername,b.repo_id, b.rating,b.downloads,b.apkid from installed as a INNER JOIN apk as b ON a.apkid=b.apkid and a.vercode < b.vercode";
 		Cursor c = null;
 		 try {
-			c= database.rawQuery("select b.name, b._id, b.icon, b.vername,b.repo_id, b.rating,b.downloads,b.apkid from installed as a INNER JOIN apk b ON a.apkid=b.apkid and a.vercode < b.vercode order by b."+orderBy,null);
+			 if(sPref.getString("app_rating","All").equals("Mature")){
+					query += " where b.age <=1";
+				}else{
+					query += " where b.age <1";
+				}
+				if(sPref.getBoolean("hwspecsChkBox",false)){
+					HWSpecifications specs = new HWSpecifications(context);
+					query += " and b.screen <= "+specs.screenSize+" and b.sdk <= "+specs.sdkVer;
+				}
+				System.out.println(sPref.getString("app_rating","none"));
+				
+				
+				query+=" order by b."+orderBy;
+			 
+			c= database.rawQuery(query,null);
 			c.moveToFirst();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -524,9 +552,6 @@ public class DBHandler {
 			if(sPref.getBoolean("hwspecsChkBox",false)){
 				HWSpecifications specs = new HWSpecifications(context);
 				query += " and b.screen <= "+specs.screenSize+" and b.sdk <= "+specs.sdkVer;
-				
-				
-				
 			}
 			System.out.println(sPref.getString("app_rating","none"));
 				
@@ -784,10 +809,27 @@ public class DBHandler {
 		
 	}
 
-	public Cursor getSearch(String query) {
+	public Cursor getSearch(String searchQuery) {
+		String query = "select b.name, b._id, b.icon, b.vername,b.repo_id,b.rating,b.downloads from apk as b where (b.name LIKE '%"+searchQuery+"%' OR "+DBStructure.COLUMN_APK_APKID+" LIKE '%"+searchQuery+"%')";
 		Cursor c = null;
 		try{
-			c= database.query(DBStructure.TABLE_APK, new String[]{DBStructure.COLUMN_APK_NAME,DBStructure.COLUMN_APK_ID,DBStructure.COLUMN_APK_ICON,DBStructure.COLUMN_APK_VERNAME,DBStructure.COLUMN_APK_REPO_ID,DBStructure.COLUMN_APK_RATING,DBStructure.COLUMN_APK_DOWNLOADS,}, DBStructure.COLUMN_APK_NAME+" LIKE '%"+query+"%' OR "+DBStructure.COLUMN_APK_APKID+" LIKE '%"+query+"%'", null, null, null, DBStructure.COLUMN_APK_NAME);
+			if(sPref.getBoolean("hwspecsChkBox",false)){
+				HWSpecifications specs = new HWSpecifications(context);
+				query += " and b.screen <= "+specs.screenSize+" and b.sdk <= "+specs.sdkVer;
+			}
+			System.out.println(sPref.getString("app_rating","none"));
+				
+			
+			if(sPref.getString("app_rating","All").equals("Mature")){
+				query += " and b.age <=1";
+			}else{
+				query += " and b.age <1";
+			}
+			
+			query+=" order by b.name";
+			System.out.println(query);
+			
+			c= database.rawQuery(query,null);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
