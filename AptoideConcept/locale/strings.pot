@@ -1,0 +1,644 @@
+# Translations template for PROJECT.
+# Copyright (C) 2012 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-05-28 10:19+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.0dev\n"
+
+msgctxt "app_name"
+msgid "Aptoide"
+msgstr ""
+
+msgctxt "start_loading"
+msgid "Loading…"
+msgstr ""
+
+msgctxt "available_tab"
+msgid "Available"
+msgstr ""
+
+msgctxt "installed_tab"
+msgid "Installed"
+msgstr ""
+
+msgctxt "updates_tab"
+msgid "Updates"
+msgstr ""
+
+msgctxt "add_repo_private"
+msgid "Private"
+msgstr ""
+
+msgctxt "add_repo_text"
+msgid "Add"
+msgstr ""
+
+msgctxt "extended_server"
+msgid "Extended Store"
+msgstr ""
+
+msgctxt "btn_add_repo"
+msgid "New Store"
+msgstr ""
+
+msgctxt "menu_rem_repo"
+msgid "Remove Store"
+msgstr ""
+
+msgctxt "number_apks"
+msgid "Applications:"
+msgstr ""
+
+msgctxt "please_wait"
+msgid "Please wait…"
+msgstr ""
+
+msgctxt "uninstall"
+msgid "Uninstall"
+msgstr ""
+
+msgctxt "install"
+msgid "Install"
+msgstr ""
+
+msgctxt "search_market"
+msgid "Search Market"
+msgstr ""
+
+msgctxt "finished_download_alrt"
+msgid "Download Finished"
+msgstr ""
+
+msgctxt "finished_download_message"
+msgid "Download Finished"
+msgstr ""
+
+msgctxt "download_alrt"
+msgid "Downloading:"
+msgstr ""
+
+msgctxt "srch_label"
+msgid "Aptoide"
+msgstr ""
+
+msgctxt "srch_hint"
+msgid "Name of the application"
+msgstr ""
+
+msgctxt "tastenotavailable"
+msgid "Not available"
+msgstr ""
+
+msgctxt "unabletoexecutecheknet"
+msgid "Unable to execute. Check internet status."
+msgstr ""
+
+msgctxt "opinionsuccess"
+msgid "Your request was successfully submitted"
+msgstr ""
+
+msgctxt "likes"
+msgid "Likes:"
+msgstr ""
+
+msgctxt "dislikes"
+msgid "Don't likes:"
+msgstr ""
+
+msgctxt "postingtaste"
+msgid "Your request is being submitted"
+msgstr ""
+
+msgctxt "showpass"
+msgid "Show password"
+msgstr ""
+
+msgctxt "user"
+msgid "User name..."
+msgstr ""
+
+msgctxt "pass"
+msgid "Password..."
+msgstr ""
+
+msgctxt "submit"
+msgid "Submit"
+msgstr ""
+
+msgctxt "new_account"
+msgid "New account"
+msgstr ""
+
+msgctxt "setcredentials"
+msgid "Bazaar Login"
+msgstr ""
+
+msgctxt "usernotdef"
+msgid "User not defined"
+msgstr ""
+
+msgctxt "passwordnotdef"
+msgid "Password not defined"
+msgstr ""
+
+msgctxt "loggingin"
+msgid "Logging in..."
+msgstr ""
+
+msgctxt "unabletoexecute"
+msgid "Unable to execute"
+msgstr ""
+
+msgctxt "failedcredentials"
+msgid "Failed to login the given credentials"
+msgstr ""
+
+msgctxt "loading_likes"
+msgid "Likes loading..."
+msgstr ""
+
+msgctxt "body"
+msgid "Body..."
+msgstr ""
+
+msgctxt "subject"
+msgid "Name"
+msgstr ""
+
+msgctxt "inresponseto"
+msgid "@"
+msgstr ""
+
+msgctxt "commentlabel"
+msgid "Comment app..."
+msgstr ""
+
+msgctxt "enterbody"
+msgid "Enter your review on the body section"
+msgstr ""
+
+msgctxt "postingcomment"
+msgid "Posting your comment..."
+msgstr ""
+
+msgctxt "commentadded"
+msgid "Your comment as been successfully submitted"
+msgstr ""
+
+msgctxt "order_popup_title1"
+msgid "Order applications by:"
+msgstr ""
+
+msgctxt "order_popup_lst1"
+msgid "Most recent first"
+msgstr ""
+
+msgctxt "order_popup_lst2"
+msgid "Alphabetically"
+msgstr ""
+
+msgctxt "order_popup_lst3"
+msgid "Rating"
+msgstr ""
+
+msgctxt "order_popup_lst4"
+msgid "Download number"
+msgstr ""
+
+msgctxt "order_popup_title2"
+msgid "Show applications:"
+msgstr ""
+
+msgctxt "order_popup_catg1"
+msgid "By category"
+msgstr ""
+
+msgctxt "order_popup_catg2"
+msgid "All applications"
+msgstr ""
+
+msgctxt "dialog_yes"
+msgid "Yes"
+msgstr ""
+
+msgctxt "dialog_no"
+msgid "No"
+msgstr ""
+
+msgctxt "update_repos"
+msgid "Update store"
+msgstr ""
+
+msgctxt "update_main"
+msgid ""
+"The list of stores in use has been changed.\n"
+"Do you wish to update them?"
+msgstr ""
+
+msgctxt "email"
+msgid "Email"
+msgstr ""
+
+msgctxt "pass_confirmation"
+msgid "Password confirmation"
+msgstr ""
+
+msgctxt "setting_hwfiltertitle"
+msgid "Hardware Filters"
+msgstr ""
+
+msgctxt "setting_hwspecstitle"
+msgid "Hardware Specs"
+msgstr ""
+
+msgctxt "setting_hwspecssum"
+msgid "Check your hardware specifications"
+msgstr ""
+
+msgctxt "setting_appfiltertitle"
+msgid "Filter Applications"
+msgstr ""
+
+msgctxt "setting_appfiltersum"
+msgid "Don't show applications not compatible with your device."
+msgstr ""
+
+msgctxt "setting_schdwntitle"
+msgid "Scheduled Downloads"
+msgstr ""
+
+msgctxt "setting_schdwninstalltitle"
+msgid "Automatic Install"
+msgstr ""
+
+msgctxt "setting_schdwninstallsum"
+msgid ""
+"Install scheduled downloads automatically when a Wifi connection is "
+"present"
+msgstr ""
+
+msgctxt "credentialssettings"
+msgid "Bazaar login"
+msgstr ""
+
+msgctxt "clearcredentials"
+msgid "Clear login"
+msgstr ""
+
+msgctxt "clearcredentials_summary"
+msgid "Unset your current login"
+msgstr ""
+
+msgctxt "setcredentials_summary"
+msgid "Set a new login"
+msgstr ""
+
+msgctxt "settings_title_bar"
+msgid "Aptoide settings"
+msgstr ""
+
+msgctxt "credentialscleared"
+msgid "Login cleared"
+msgstr ""
+
+msgctxt "credentialscleared_des"
+msgid "Your credentials have been unsetted"
+msgstr ""
+
+msgctxt "menu_update_repo"
+msgid "List Update"
+msgstr ""
+
+msgctxt "menu_update_all"
+msgid "Update all"
+msgstr ""
+
+msgctxt "menu_manage"
+msgid "Manage Store"
+msgstr ""
+
+msgctxt "menu_display_options"
+msgid "Display Options"
+msgstr ""
+
+msgctxt "menu_order"
+msgid "Change Order"
+msgstr ""
+
+msgctxt "menu_settings"
+msgid "Settings"
+msgstr ""
+
+msgctxt "menu_about"
+msgid "About"
+msgstr ""
+
+msgctxt "menu_search"
+msgid "Search"
+msgstr ""
+
+msgctxt "menu_add_repo"
+msgid "New Store"
+msgstr ""
+
+msgctxt "menu_edit_repo"
+msgid "Edit Store"
+msgstr ""
+
+msgctxt "btn_yes"
+msgid "Yes"
+msgstr ""
+
+msgctxt "btn_no"
+msgid "No"
+msgstr ""
+
+msgctxt "btn_ok"
+msgid "Ok"
+msgstr ""
+
+msgctxt "btn_add"
+msgid "Add"
+msgstr ""
+
+msgctxt "btn_cancel"
+msgid "Cancel"
+msgstr ""
+
+msgctxt "btn_done"
+msgid "Done"
+msgstr ""
+
+msgctxt "btn_chlog"
+msgid "Changelog"
+msgstr ""
+
+msgctxt "btn_search_market"
+msgid "Search Market"
+msgstr ""
+
+msgctxt "schDwnBtn"
+msgid "Scheduled Dwnl."
+msgstr ""
+
+msgctxt "search_log"
+msgid "Search"
+msgstr ""
+
+msgctxt "search_stores"
+msgid "in other Stores"
+msgstr ""
+
+msgctxt "no_repo"
+msgid "Add a store!"
+msgstr ""
+
+msgctxt "myrepo_alrt"
+msgid ""
+"It looks like you don't have any added store.\n"
+"We suggest you use ours.\n"
+"Do you want to add our store?\n"
+"(You can search for more stores online)\n"
+"\n"
+msgstr ""
+
+msgctxt "error_on_update"
+msgid "The update process could not be completed on the following store:"
+msgstr ""
+
+msgctxt "updating_norepos"
+msgid ""
+"There are no enabled stores in your list.\n"
+"Please add a store or enable at least one that you already have."
+msgstr ""
+
+msgctxt "update_done_msg1"
+msgid "Stores updated successfully."
+msgstr ""
+
+msgctxt "about_txt1"
+msgid "Your package installer to Android phone.\n"
+msgstr ""
+
+msgctxt "about_site"
+msgid "Home:"
+msgstr ""
+
+msgctxt "about_mail"
+msgid "Contact:"
+msgstr ""
+
+msgctxt "about_txt2"
+msgid "www.aptoide.com"
+msgstr ""
+
+msgctxt "about_txt3"
+msgid "aptoide@aptoide.com"
+msgstr ""
+
+msgctxt "repo_del_msg2"
+msgid "Choose store to remove"
+msgstr ""
+
+msgctxt "repo_edt_msg1"
+msgid "Choose store to edit"
+msgstr ""
+
+msgctxt "repo_edt_msg2"
+msgid "Edit store"
+msgstr ""
+
+msgctxt "md5_auto_update_error"
+msgid "Update package checksum failed! Keeping current version."
+msgstr ""
+
+msgctxt "network_auto_update_error"
+msgid "Update connection failed! Keeping current version."
+msgstr ""
+
+msgctxt "auto_updating"
+msgid "Please wait while processing update download..."
+msgstr ""
+
+msgctxt "update_self_title"
+msgid "Update available"
+msgstr ""
+
+msgctxt "update_self_msg"
+msgid ""
+"There is a new version of aptoide available,\n"
+"do you wish to update?"
+msgstr ""
+
+msgctxt "md5_error"
+msgid ""
+"The downloaded application md5 check failed!\n"
+"Please update your stores before retrying."
+msgstr ""
+
+msgctxt "network_error"
+msgid ""
+"There has been an error while fetching the application.\n"
+"Please try again."
+msgstr ""
+
+msgctxt "error_404"
+msgid ""
+"File was not found in the given store.\n"
+"Please try again later."
+msgstr ""
+
+msgctxt "error_no_market"
+msgid "You don't have Google Market installed!"
+msgstr ""
+
+msgctxt "newrepo_alrt"
+msgid ""
+"Do you want to add this store to your list?\n"
+"\n"
+msgstr ""
+
+msgctxt "installapp_alrt"
+msgid ""
+"Do you wish to install: \n"
+"\n"
+msgstr ""
+
+msgctxt "remote_in_noSD_title"
+msgid "No memory"
+msgstr ""
+
+msgctxt "remote_in_noSD"
+msgid ""
+"You don't have an SDcard, or it isn't working properly\n"
+"Please insert one, or re-insert it and try again."
+msgstr ""
+
+msgctxt "remote_in_noSDspace"
+msgid ""
+"You don't have enough space on your SDcard to use Aptoide\n"
+"Please free up some space and try again."
+msgstr ""
+
+msgctxt "updating_3g"
+msgid ""
+"You are not connected through WIFI or ethernet. It is advised to update "
+"with a WiFi or ethernet connection.\n"
+"Update anyway?"
+msgstr ""
+
+msgctxt "updating_cfrm"
+msgid "Confirm Aptoide stores update?"
+msgstr ""
+
+msgctxt "aptoide_error"
+msgid ""
+"Can't connect to the remote server. Please verify your Internet "
+"connection."
+msgstr ""
+
+msgctxt "no_sch_downloads"
+msgid "No scheduled downloads!"
+msgstr ""
+
+msgctxt "schDown_install"
+msgid "Do you want to install all scheduled downloads?"
+msgstr ""
+
+msgctxt "schDown_installselected"
+msgid "Install Selected"
+msgstr ""
+
+msgctxt "schDown_wireless_detected"
+msgid "Wireless detected: Download all aplications on Scheduled Downloads?"
+msgstr ""
+
+msgctxt "schDown_nodownloads"
+msgid "No Scheduled Downloads"
+msgstr ""
+
+msgctxt "schDown_nodownloadselect"
+msgid "No Downloads Selected"
+msgstr ""
+
+#, c-format
+msgctxt "schDown_downerror"
+msgid "Download error. Add %1$s Store."
+msgstr ""
+
+msgctxt "addSchDown"
+msgid "Added to Scheduled Downloads"
+msgstr ""
+
+msgctxt "registration"
+msgid "Bazaar Registration"
+msgstr ""
+
+msgctxt "bazaar_url"
+msgid "http://www.bazaarandroid.com/"
+msgstr ""
+
+msgctxt "username"
+msgid "Email"
+msgstr ""
+
+msgctxt "password"
+msgid "Password"
+msgstr ""
+
+msgctxt "register"
+msgid "Sign Up"
+msgstr ""
+
+msgctxt "schDown_invertselection"
+msgid "Invert Selection"
+msgstr ""
+
+msgctxt "schDown_removeselected"
+msgid "Remove Selected"
+msgstr ""
+
+msgctxt "schDown_sureremove"
+msgid "Are you sure you want to remove?"
+msgstr ""
+
+msgctxt "chkBoxSchDwn"
+msgid "Schedule Download"
+msgstr ""
+
+msgctxt "clear_dwn_title"
+msgid "Downloads"
+msgstr ""
+
+msgctxt "clear_dwn_btn"
+msgid "Download icons"
+msgstr ""
+
+msgctxt "clear_dwn_msg"
+msgid "Download icon rules"
+msgstr ""
+
+msgctxt "dwnif:0"
+msgid "3G and Wifi"
+msgstr ""
+
+msgctxt "dwnif:1"
+msgid "Wifi only"
+msgstr ""
+
+msgctxt "dwnif:2"
+msgid "Never download"
+msgstr ""
+

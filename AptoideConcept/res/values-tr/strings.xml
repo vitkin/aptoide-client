@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="StringFormatMatches">
+  <string name="app_name">Aptoide</string>
+  <string name="available_tab">Mevcut</string>
+  <string name="installed_tab">Kurulu</string>
+  <string name="updates_tab">Güncellemeler</string>
+  <string name="number_apks">Uygulamalar:</string>
+  <string name="uninstall">Yeniden kur</string>
+  <string name="install">Kurulu</string>
+  <string name="srch_label">Aptoide</string>
+  <string name="srch_hint">Uygulamanın adı</string>
+  <string name="tastenotavailable">müsait</string>
+  <string name="unabletoexecutecheknet">Çalıştırılamıyor. İnternet durumunu kontrol ediniz.</string>
+  <string name="opinionsuccess">Girdiniz başarılı bir şekilde yollandı</string>
+  <string name="likes">Beğeniler:</string>
+  <string name="dislikes">Beğenmemeler:</string>
+  <string name="postingtaste">Girdiniz gönderiliyor</string>
+  <string name="showpass">Parolayı göster</string>
+  <string name="user">Kullanıcı adı...</string>
+  <string name="pass">Parola...</string>
+  <string name="submit">Gönder</string>
+  <string name="new_account">Yeni hesap</string>
+  <string name="setcredentials">Bazaar Oturumu</string>
+  <string name="usernotdef">Kullanıcı tanımlanmamıştır</string>
+  <string name="passwordnotdef">Parola tanımlanmamıştır</string>
+  <string name="loggingin">Oturum açılıyor...</string>
+  <string name="unabletoexecute">Çalıştırılamıyor</string>
+  <string name="failedcredentials">Girilen verilerle oturum açılamadı</string>
+  <string name="loading_likes">Beğeniler yükleniyor...</string>
+  <string name="body">Gövde..</string>
+  <string name="inresponseto">\\\@</string>
+  <string name="commentlabel">Uygulamayı yorumla...</string>
+  <string name="enterbody">Yorumunuzu gövde kısmında giriniz</string>
+  <string name="postingcomment">Yorumunuz yollanıyor...</string>
+  <string name="commentadded">Yorumunuz başarılı bir şekilde yollandı</string>
+  <string name="order_popup_title1">Uygulamalar:</string>
+  <string name="order_popup_title2">Uygulamalar:</string>
+  <string name="order_popup_catg2">Uygulamalar:</string>
+  <string name="update_repos">Güncellemeler</string>
+  <string name="pass_confirmation">Parola tanımlanmamıştır</string>
+  <string name="setting_hwfiltertitle">Donanım Filtreleri</string>
+  <string name="setting_hwspecstitle">Donanım Özellikleri</string>
+  <string name="setting_hwspecssum">Donanım özelliklerini denetle</string>
+  <string name="setting_appfiltertitle">Uygulamaları Filtrele</string>
+  <string name="setting_appfiltersum">Cihazla uyumsuz uygulamaları gösterme.</string>
+  <string name="setting_schdwntitle">Programlanmış İndirmeler</string>
+  <string name="setting_schdwninstalltitle">Otomatik Yükleme</string>
+  <string name="setting_schdwninstallsum">Programlanmış indirmeleri bir WiFi bağlantısı bulunduğunda otomatik olarak yükle</string>
+  <string name="credentialssettings">Bazaar oturumu</string>
+  <string name="clearcredentials">Oturumu temizle</string>
+  <string name="clearcredentials_summary">Şimdiki oturum verilerini kaldır</string>
+  <string name="setcredentials_summary">Yeni oturum yapılandır</string>
+  <string name="settings_title_bar">Aptoide</string>
+  <string name="credentialscleared">Oturum verileri temizlendi</string>
+  <string name="credentialscleared_des">Oturum verileriniz kaldırıldı</string>
+  <string name="menu_update_repo">Güncellemeler</string>
+  <string name="menu_update_all">Güncellemeler</string>
+  <string name="schDwnBtn">Programlanmış İndirmeler</string>
+  <string name="no_repo">Hiçbir depo bulunamadı!</string>
+  <string name="about_txt1">Android cihazınıza paket yükleyicisi.\n</string>
+  <string name="about_site">Resmî site:</string>
+  <string name="about_mail">İrtibat:</string>
+  <string name="about_txt2">www.aptoide.com</string>
+  <string name="about_txt3">aptoide\@aptoide.com</string>
+  <string name="repo_edt_msg2">Hiçbir depo bulunamadı!</string>
+  <string name="update_self_title">eski sürüm mevcut</string>
+  <string name="no_sch_downloads">Programlanmış hiçbir indirme yok!</string>
+  <string name="schDown_install">Tüm programlanmış indirmeleri kurmak istiyor musunuz?</string>
+  <string name="schDown_installselected">Seçilenleri Kur</string>
+  <string name="schDown_wireless_detected">Telsiz bağlantı tespit edildi: programlanmış tüm indirmeler indirilsin mi?</string>
+  <string name="schDown_nodownloads">Programlanmış hiçbir indirme yok</string>
+  <string name="schDown_nodownloadselect">Hiçbir indirme seçilmedi</string>
+  <string name="schDown_downerror">İndirme hatası. %1$ deposunu ekleyiniz.</string>
+  <string name="addSchDown">Programlanmış indirmelere eklendi</string>
+  <string name="registration">Bazaar oturumu</string>
+  <string name="password">Parola...</string>
+  <string name="schDown_invertselection">Seçilenleri Kur</string>
+  <string name="chkBoxSchDwn">İndirme Programla</string>
+  <string name="clear_dwn_title">Programlanmış İndirmeler</string>
+  <string-array name="dwnif">
+    <item>3G and Wifi</item>
+    <item>Wifi only</item>
+    <item>Programlanmış hiçbir indirme yok!</item>
+  </string-array>
+  <string name="no_info">Tanımlama bulunamadı</string>
+</resources>

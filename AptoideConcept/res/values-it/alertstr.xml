@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="up_server">Server: </string>
+    <string name="lstver">Versione del server: </string>
+    <string name="dwn_n">Numero di download: </string>
+    <string name="isinst">Installato: </string>
+    <string name="instver">Versione installata: </string>
+    <string name="install">Installa </string>
+    <string name="about_alrt">Info: </string>
+    <string name="rem">Disinstalla </string>
+    <string name="update">Aggiorna</string>
+    
+    <string name="update_alrt">Ci sono aggiornamenti disponibili per alcune applicazioni installate.\nVuoi vederli?</string>
+    <string name="repo_alrt">I repository in uso sono cambiati.\nVuoi eseguire un aggiornamento?</string>
+    
+    <string name="title_repo_alrt">Attenzione</string>
+    <string name="myrepo_alrt">Sembra che tu non abbia aggiunto alcun repository.\nTi consigliamo di aggiungere i nostri\nVuoi aggiungerli?\n(Puoi cercare altri repository in rete)\n\n</string>
+    <string name="newrepo_alrt">Vuoi aggiungere questo repository alla tua lista?\n\n</string>
+    
+    <string name="error_download_alrt">Non posso connettermi al server o il file apk è corrotto!</string>
+    <string name="download_alrt">Scaricando l\'applicazione:\n </string>
+    <string name="finished_download_alrt">Pronto per installare:\n </string>
+    <string name="finished_download_message">Clicca per installare l\'applicazione:\n </string>
+     
+    <string name="md5_error">Il controllo md5 dell\'applicazione scaricata è fallito!\nPer favore aggiorna i tuoi repository prima di riprovare.</string>
+    <string name="md5_auto_update_error">Il controllo del pacchetto di aggiornamento è fallito! Mantengo la stessa versione.</string>
+    <string name="network_auto_update_error">La connessione per l\'aggiornamento è fallita! Mantengo la stessa versione.</string>
+    <string name="network_error">C\'è stato un errore scaricando l\'applicazione.\nPer favore riprova.</string>
+    
+    <string name="failed_update">Aggiornamento fallito!</string>
+    <string name="failed_install">Installazione fallita</string>
+    <string name="downgrade">Downgrade</string>
+    <string name="uninstall">Disinstalla</string>
+    
+</resources>
+<!--
+ * Copyright (C) 2009  Roberto Jacinto
+ * roberto.jacinto@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->

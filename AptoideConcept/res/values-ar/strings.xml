@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="app_name">Aptoide</string>
+  <string name="available_tab">متوفر</string>
+  <string name="installed_tab">مثبت</string>
+  <string name="updates_tab">التحديثات</string>
+  <string name="uninstall">مثبت</string>
+  <string name="install">مثبت</string>
+  <string name="srch_label">Aptoide</string>
+  <string name="srch_hint">إسم البرنامج</string>
+  <string name="tastenotavailable">متوفر</string>
+  <string name="order_popup_title1">البرنامج غير موجود!</string>
+  <string name="order_popup_title2">البرنامج غير موجود!</string>
+  <string name="order_popup_catg2">البرنامج غير موجود!</string>
+  <string name="update_repos">التحديثات</string>
+  <string name="settings_title_bar">Aptoide</string>
+  <string name="menu_update_repo">التحديثات</string>
+  <string name="menu_update_all">التحديثات</string>
+  <string name="no_repo">مخزن البرامج غير موجود!</string>
+  <string name="about_txt1">برنامج لتثبيت البرامج على هاتف اندرويد.\n</string>
+  <string name="about_site">الموقع:</string>
+  <string name="about_mail">الإتصال:</string>
+  <string name="about_txt2">www.aptoide.com</string>
+  <string name="about_txt3">aptoide\@aptoide.com</string>
+  <string name="repo_edt_msg2">مخزن البرامج غير موجود!</string>
+  <string name="update_self_title">متوفر</string>
+  <string-array name="dwnif">
+    <item>3G and Wifi</item>
+    <item>Wifi only</item>
+    <item>Never download</item>
+  </string-array>
+</resources>
