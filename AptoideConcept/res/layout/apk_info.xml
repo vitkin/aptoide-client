@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/lib/com.google.ads"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#edece9"
+    android:gravity="center_horizontal"
+    android:orientation="vertical" >
+
+    <!-- Green Bar -->
+
+    <RelativeLayout
+        android:id="@+id/actionbar"
+        android:layout_width="fill_parent"
+        android:layout_height="44sp"
+        android:layout_gravity="top"
+        android:background="@drawable/greenbarwithshadow"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/aptoideicon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="9dp"
+            android:src="@drawable/aptoideicon" />
+
+        <ImageView
+            android:id="@+id/aptoidebrand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/aptoideicon"
+            android:padding="10dp"
+            android:scaleType="fitStart"
+            android:src="@drawable/brand" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/apkinfoheader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/actionbar"
+        android:gravity="center_vertical" >
+
+        <ImageView
+            android:id="@+id/app_hashid"
+            android:layout_width="48sp"
+            android:layout_height="48sp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="24dp"
+            android:padding="5dp"
+            android:src="@drawable/icon" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10sp"
+            android:layout_toLeftOf="@id/app_hashid"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#4f4f4f" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/advertisement"
+        android:layout_below="@+id/apkinfoheader"
+        android:background="#edece9"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
+
+        <RelativeLayout
+            android:id="@+id/root"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/apkinfoheader"
+            android:background="@drawable/border_background_apkinfo"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp" >
+
+            <cm.aptoide.pt.CustomListView
+                android:id="@+id/listComments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="#ffffff"
+                android:cacheColorHint="#ffffff"
+                android:divider="@drawable/list_comments_divider"
+                android:dividerHeight="1dp" />
+        </RelativeLayout>
+
+       
+    </RelativeLayout>
+	
+     <LinearLayout
+            xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/advertisement"
+            android:layout_above="@+id/listview_footer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <com.google.ads.AdView
+                android:id="@+id/adView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                ads:adSize="BANNER"
+                ads:adUnitId="a14f30ff2e69698"
+                ads:loadAdOnCreate="true"
+                ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
+            </com.google.ads.AdView>
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:id="@+id/listview_footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btinstall"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_weight=".50"
+            android:text="@string/install"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btuninstall"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="@string/uninstall"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/btmarket"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_weight=".50"
+            android:singleLine="true"
+            android:text="@string/search_market"
+            android:textColor="#000000"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</RelativeLayout>
