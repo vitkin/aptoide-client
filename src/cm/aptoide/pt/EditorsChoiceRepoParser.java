@@ -8,6 +8,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 
 public class EditorsChoiceRepoParser extends DefaultHandler {
@@ -161,6 +162,7 @@ public class EditorsChoiceRepoParser extends DefaultHandler {
 	
 	@Override
 	public void endDocument() throws SAXException {
+		context.sendBroadcast(new Intent("RELOAD_EDITORSCHOICE"));
 		super.endDocument();
 //		dbhandler.endTransation();
 	}

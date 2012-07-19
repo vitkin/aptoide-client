@@ -19,6 +19,7 @@ import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -33,6 +34,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.xml.sax.SAXException;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -110,7 +112,7 @@ public class Aptoide extends FragmentActivity {
 	DBHandler db;
 	ViewPager vp;
 	ProgressDialog pd;
-	CursorAdapter availAdapter;
+	CategoryCursorAdapter availAdapter;
 	CursorAdapter installedAdapter;
 	CursorAdapter updatesAdapter;
 	ListView installed_listView;
@@ -123,8 +125,6 @@ public class Aptoide extends FragmentActivity {
 	private DownloadQueueService downloadQueueService;
 	public ConnectivityManager netstate = null; 
 	private ServiceConnection conn = new ServiceConnection() {
-
-		
 
 		public void onServiceDisconnected(ComponentName name) {
 			// TODO Auto-generated method stub
@@ -271,7 +271,7 @@ public class Aptoide extends FragmentActivity {
 
 				installedAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				updatesAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
+				availAdapter2 = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 				featured = LayoutInflater.from(context).inflate(R.layout.featured, null);
 				pages.add(featured);
@@ -304,6 +304,8 @@ public class Aptoide extends FragmentActivity {
 
 				IntentFilter filter = new IntentFilter();
 				filter.addAction("pt.caixamagica.aptoide.REDRAW");
+				filter.addAction("RELOAD_TOPAPPS");
+				filter.addAction("RELOAD_EDITORSCHOICE");
 				registerReceiver(receiver, filter);
 				receiverIsRegister=true;
 
@@ -312,7 +314,6 @@ public class Aptoide extends FragmentActivity {
 					i.putExtra("newrepo", getIntent().getSerializableExtra("newrepo"));
 					startActivityForResult(i, 0);
 				}
-
 
 
 
@@ -397,11 +398,9 @@ public class Aptoide extends FragmentActivity {
 
 	private void loadFeatured() {
 		new Thread(new Runnable() {
-			int a=0;
-			ImageLoader2 imageLoader = new ImageLoader2(context);
-			int[] res_ids = {R.id.central,R.id.topleft,R.id.topright,R.id.bottomleft,R.id.bottomright};
-			ArrayList<HashMap<String, String>> image_urls = new ArrayList<HashMap<String, String>>();
+			
 			public void run() {
+				loadUIEditorsApps();
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
@@ -411,36 +410,9 @@ public class Aptoide extends FragmentActivity {
 							new EditorsChoiceRepoParser(context));
 				} catch (Exception e) {
 					e.printStackTrace();
-				}finally{
-					HashMap<String,String> image_url_highlight = db.getHighLightFeature();
-					if(image_url_highlight!=null){
-						a=1;
-						ImageView v = (ImageView) featured.findViewById(res_ids[0]);
-						imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v, context);
-						v.setTag(image_url_highlight.get("id"));
-						v.setOnClickListener(featuredListener);
-					}
-					image_urls = db.getFeaturedGraphics();
-					Collections.shuffle(image_urls);
-					runOnUiThread(new Runnable() {
-						
-						public void run() {
-							try{
-								for(int i = a; i != res_ids.length;i++){
-									ImageView v = (ImageView) featured.findViewById(res_ids[i]);
-									imageLoader.DisplayImage(-1, image_urls.get(i).get("url"), v, context);
-									v.setTag(image_urls.get(i).get("id"));
-									v.setOnClickListener(featuredListener);
-								}
-								
-								
-							}catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
 				}
 			}
+			
 
 			
 		}).start();
@@ -448,18 +420,21 @@ public class Aptoide extends FragmentActivity {
 		new Thread(new Runnable() {
 			
 			public void run() {
-				try {
-					SAXParserFactory spf = SAXParserFactory.newInstance();
-					SAXParser sp = spf.newSAXParser();
-					sp.parse(NetworkApis.getInputStream(context,
-							"http://apps.bazaarandroid.com/top.xml"),
-							new TopAppsRepoParser(context));
-				} catch (Exception e) {
-					e.printStackTrace();
-					
-				}finally{
+				
 					loadUItopapps();
-				}
+					try {
+						SAXParserFactory spf = SAXParserFactory.newInstance();
+						SAXParser sp = spf.newSAXParser();
+						sp.parse(NetworkApis.getInputStream(context,
+								"http://apps.bazaarandroid.com/top.xml"),
+								new TopAppsRepoParser(context));
+					} catch (ParserConfigurationException e) {
+						e.printStackTrace();
+					} catch (SAXException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 			}
 
 			
@@ -476,6 +451,40 @@ public class Aptoide extends FragmentActivity {
 			i.putExtra("newrepo", intent.getSerializableExtra("newrepo"));
 			startActivityForResult(i, 0);
 		}
+	}
+	int a=0;
+	private void loadUIEditorsApps() {
+		
+		final ImageLoader2 imageLoader = new ImageLoader2(context);
+		final int[] res_ids = {R.id.central,R.id.topleft,R.id.topright,R.id.bottomleft,R.id.bottomright};
+		final ArrayList<HashMap<String, String>> image_urls  = db.getFeaturedGraphics();
+		HashMap<String,String> image_url_highlight = db.getHighLightFeature();
+		if(image_url_highlight!=null){
+			a=1;
+			ImageView v = (ImageView) featured.findViewById(res_ids[0]);
+			imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v, context);
+			v.setTag(image_url_highlight.get("id"));
+			v.setOnClickListener(featuredListener);
+		}
+		
+		Collections.shuffle(image_urls);
+		runOnUiThread(new Runnable() {
+			
+			public void run() {
+				try{
+					for(int i = a; i != res_ids.length;i++){
+						ImageView v = (ImageView) featured.findViewById(res_ids[i]);
+						imageLoader.DisplayImage(-1, image_urls.get(i).get("url"), v, context);
+						v.setTag(image_urls.get(i).get("id"));
+						v.setOnClickListener(featuredListener);
+					}
+					
+					
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	private void loadUItopapps() {
@@ -878,6 +887,7 @@ public class Aptoide extends FragmentActivity {
 			}
 		}
 	};
+	private AvailableCursorAdapter availAdapter2;
 	
 	@Override
 	protected void onActivityResult(int requestCode, int arg1, Intent data) {
@@ -923,11 +933,12 @@ public class Aptoide extends FragmentActivity {
 	
 	private void redrawAll() {
 		if(sPref.getBoolean("orderByCategory", true)){
-			availAdapter = new CategoryCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,false);
+			availAdapter = new CategoryCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+			availAdapter.setSecondaryCatg(false);
 		}else{
 			currentCategory1="none";
 			currentCategory2="none";
-			availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+			availAdapter2 = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		}
 		
 		getSupportLoaderManager().destroyLoader(0x01);
@@ -953,7 +964,7 @@ public class Aptoide extends FragmentActivity {
 								runOnUiThread(new Runnable() {
 									
 									public void run() {
-										availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+										availAdapter2 = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 										
 									}
 								});
@@ -971,13 +982,20 @@ public class Aptoide extends FragmentActivity {
 			}
 
 			public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-				availAdapter.changeCursor(arg1);
-				available_listView.setAdapter(availAdapter);
+				
+				if(sPref.getBoolean("orderByCategory", true)){
+					availAdapter.swapCursor(arg1);
+					available_listView.setAdapter(availAdapter);
+				}else{
+					availAdapter2.swapCursor(arg1);
+					available_listView.setAdapter(availAdapter2);
+				}
+				
 				redrawInstalled();
 			}
 
 			public void onLoaderReset(Loader<Cursor> arg0) {
-				availAdapter.changeCursor(null);
+				availAdapter.swapCursor(null);
 				
 			}
 		});
@@ -985,8 +1003,6 @@ public class Aptoide extends FragmentActivity {
 	}
 	
 	private void redrawAvailable() {
-		availAdapter = new CategoryCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,false);
-		getSupportLoaderManager().destroyLoader(0x01);
 		getSupportLoaderManager().restartLoader(0x01,null,new LoaderCallbacks<Cursor>() {
 
 			public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
@@ -994,6 +1010,7 @@ public class Aptoide extends FragmentActivity {
 					
 					@Override
 					public Cursor loadInBackground() {
+						availAdapter.setSecondaryCatg(false);
 						return db.getCategories1();
 					}
 				};
@@ -1002,12 +1019,12 @@ public class Aptoide extends FragmentActivity {
 			}
 
 			public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-				availAdapter.changeCursor(arg1);
+				availAdapter.swapCursor(arg1);
 				available_listView.setAdapter(availAdapter);
 			}
 
 			public void onLoaderReset(Loader<Cursor> arg0) {
-				availAdapter.changeCursor(null);
+				availAdapter.swapCursor(null);
 				
 			}
 		});
@@ -1015,8 +1032,7 @@ public class Aptoide extends FragmentActivity {
 	}
 	
 	public void redrawCategory(final String category){
-		availAdapter = new CategoryCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,true);
-		getSupportLoaderManager().destroyLoader(0x01);
+		
 		getSupportLoaderManager().restartLoader(0x01,null,new LoaderCallbacks<Cursor>() {
 
 			public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
@@ -1024,6 +1040,7 @@ public class Aptoide extends FragmentActivity {
 					
 					@Override
 					public Cursor loadInBackground() {
+						availAdapter.setSecondaryCatg(true);
 						return db.getCategories2(category);
 					}
 				};
@@ -1032,14 +1049,14 @@ public class Aptoide extends FragmentActivity {
 			}
 
 			public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-				availAdapter.changeCursor(arg1);
+				availAdapter.swapCursor(arg1);
 				available_listView.setAdapter(availAdapter);
 				System.out.println("Current Category 1:" + currentCategory1);
 				System.out.println("Current Category 2:" + currentCategory2);
 			}
 
 			public void onLoaderReset(Loader<Cursor> arg0) {
-				availAdapter.changeCursor(null);
+				availAdapter.swapCursor(null);
 				
 			}
 		});
@@ -1062,20 +1079,19 @@ public class Aptoide extends FragmentActivity {
 			}
 
 			public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-				installedAdapter.changeCursor(arg1);
+				installedAdapter.swapCursor(arg1);
 				redrawUpdates();
 			}
 
 			public void onLoaderReset(Loader<Cursor> arg0) {
-				installedAdapter.changeCursor(null);
+				installedAdapter.swapCursor(null);
 				
 			}
 		});
 	}
 	
 	public void redrawApkByCategory(final String category){
-		availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		getSupportLoaderManager().destroyLoader(0x01);
+		
 		getSupportLoaderManager().restartLoader(0x01,null,new LoaderCallbacks<Cursor>() {
 
 			public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
@@ -1091,14 +1107,14 @@ public class Aptoide extends FragmentActivity {
 			}
 
 			public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-				availAdapter.changeCursor(arg1);
-				available_listView.setAdapter(availAdapter);
+				availAdapter2.swapCursor(arg1);
+				available_listView.setAdapter(availAdapter2);
 				System.out.println("Current Category 1:" + currentCategory1);
 				System.out.println("Current Category 2:" + currentCategory2);
 			}
 
 			public void onLoaderReset(Loader<Cursor> arg0) {
-				availAdapter.changeCursor(null);
+				availAdapter2.swapCursor(null);
 				
 			}
 		});
@@ -1421,6 +1437,10 @@ public class Aptoide extends FragmentActivity {
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equals("pt.caixamagica.aptoide.REDRAW")){
 				redrawInstalled();
+			}else if(intent.getAction().equals("RELOAD_TOPAPPS")){
+				loadUItopapps();
+			}else if(intent.getAction().equals("RELOAD_EDITORSCHOICE")){
+				loadUIEditorsApps();
 			}
 		}
 	};

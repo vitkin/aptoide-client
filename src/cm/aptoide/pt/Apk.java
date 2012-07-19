@@ -1,6 +1,5 @@
 package cm.aptoide.pt;
 
-import java.sql.Struct;
 import java.util.Vector;
 
 import android.content.ContentValues;
@@ -22,8 +21,8 @@ public class Apk {
 	public int vercode;
 	public String downloads;
 	public String size;
-	public String category1;
-	public String category2;
+	public String category1 = "Others";
+	public String category2 = "Others";
 	public String stars;
 	public int age;
 	public String md5;

@@ -90,6 +90,6 @@
         android:id="@+id/schDwnChkBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:checked="true" />
+        android:focusable="false" />
 
 </LinearLayout>

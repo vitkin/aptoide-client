@@ -22,7 +22,9 @@ public class Configs {
 	
 	public static final String LOGIN_USER_ID 	= "useridLogin";
 	public static final String LOGIN_PASSWORD 	= "passwordLogin";
-	public static final String LOGIN_USER_NAME 	= "usernameLogin";
+	public static final String LOGIN_USER_LOGIN 	= "usernameLogin";
+	public static final String LOGIN_USER_TOKEN = "usernameToken";
+	public static final String LOGIN_USER_USERNAME = "usernameName";
 	
 	public static final boolean SEARCH_GESTURE_ON			= false;
 	public static final double 	MIN_SEARCH_GESTURE_CONFIANCE= 1.5d;
@@ -51,6 +53,10 @@ public class Configs {
 	public final static boolean COMMENTS_ON = true;
 	public final static boolean COMMENTS_ADD_ON = true; // For this option have any meaning COMMENTS_LIST_ON = true;
 	public final static boolean TASTE_ADD_ON = true; 	// For this option have any meaning TASTE_LIST_ON = true;
+
+	
+
+	
 	
 	
 	private Configs(){}

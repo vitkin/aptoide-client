@@ -179,5 +179,21 @@
     <string name="no_info">No Information</string>
     <string name="repo_insert_failed">Failed to add the Store. Please try again.</string>
     <string name="remember_choice">Remember this choice</string>
+    
+     <string name="registration">Bazaar Registration</string>
+    <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="accept_terms">By signing up you are agreeing to the Bazaar Terms of Service and Bazaar Content Policy for Developers</string>
+    <string name="register">Sign Up</string>
+    <string name="username_tip">Type your username</string>
+    <string name="password_tip">Choose a password</string>
+    <string name="sign_in">Sign In</string>
+    <string name="bazaar_login">Bazaar Login</string>
+    <string name="username">Username</string>
+    <string name="please_wait">Please Wait…</string>
+    <string name="subject">Name</string>
+    <string name="body">Body…</string>
+    <string name="submit">Submit</string>
 
 </resources>

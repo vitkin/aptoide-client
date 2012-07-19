@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="381dp"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:background="@drawable/border_background_normal"
         android:padding="10dp" >
@@ -43,6 +43,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:onClick="postComment"
         android:text="@string/submit" />
 
 </LinearLayout>

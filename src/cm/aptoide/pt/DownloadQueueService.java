@@ -333,7 +333,7 @@ public class DownloadQueueService extends Service {
 						String myid = sPref.getString("myId", "NoInfo");
 						String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 						
-						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+						mHttpGet.setHeader("User-Agent", "aptoide-" + context.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, ""));
 						if(range>0){
 							mHttpGet.setHeader("Range", "bytes="+range+"-");
 						}

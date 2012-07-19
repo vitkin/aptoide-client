@@ -16,6 +16,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
+
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 import com.viewpagerindicator.CirclePageIndicator;
@@ -69,17 +71,14 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import cm.aptoide.pt.webservices.comments.AddCommentDialog;
-import cm.aptoide.pt.webservices.comments.Comment;
-import cm.aptoide.pt.webservices.comments.CommentPosterListOnScrollListener;
-import cm.aptoide.pt.webservices.comments.CommentsAdapter;
-import cm.aptoide.pt.webservices.login.LoginDialog;
-import cm.aptoide.pt.webservices.taste.AddTaste;
+import cm.aptoide.pt.webservices.comments.AddComment;
+import cm.aptoide.pt.webservices.comments.Comments;
+import cm.aptoide.pt.webservices.comments.ViewComments;
+import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
-import cm.aptoide.pt.webservices.taste.TastePoster;
-import cm.aptoide.pt.webservices.taste.WrapperUserTaste;
+import cm.aptoide.pt.webservices.taste.Likes;
 
-public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>,OnDismissListener{
+public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>{
 	DownloadQueueService downloadQueueService;
 	long id;
 	long repo_id;
@@ -87,11 +86,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	Context context;
 	HashMap<String, String> elements;
 	TextView name;
-	CustomListView listView;
-	private TextView likes;
-	private TextView dislikes;
-	private ImageView like;
-	private ImageView dislike;
+//	CustomListView listView;
 	TextView apk_about;
 	TextView version;
 	private String type;
@@ -117,9 +112,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	ViewPager screenshots;
 	private String description_text;
 	SharedPreferences sPref;
-	private CommentsAdapter<Comment> commentAdapter;
-	private WrapperUserTaste userTaste;
-	private LinearLayout loadComLayout;
+	private EnumUserTaste userTaste;
+//	private LinearLayout loadComLayout;
 	private String repo;
 	private String apkid;
 	private String vername;
@@ -129,8 +123,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private CheckBox scheduledDownloadBox;
 	private boolean isDefaultSelection;
 	private boolean extended;
-	RelativeLayout linearLayout;
-	TextView textView;
+	LinearLayout linearLayout;
+//	Button textView;
+	private LinearLayout likesLinearLayout;
 	
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
 	
@@ -148,37 +143,28 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		name = (TextView) findViewById(R.id.app_name);
 		icon = (ImageView) findViewById(R.id.app_hashid);
 		loader = new ImageLoader(context);
-		listView = (CustomListView) findViewById(R.id.listComments);
 		type=getIntent().getStringExtra("type");
 		LayoutInflater inflater = this.getLayoutInflater();
-		linearLayout = (RelativeLayout)inflater.inflate(R.layout.headercomments,listView, false);
-		this.likes = (TextView)linearLayout.findViewById(R.id.likes);
-		this.dislikes = (TextView)linearLayout.findViewById(R.id.dislikes);
-		this.like = ((ImageView)linearLayout.findViewById(R.id.likesImage));
-		this.dislike = ((ImageView)linearLayout.findViewById(R.id.dislikesImage));
-		this.userTaste = new WrapperUserTaste();
-		version = (TextView) linearLayout.findViewById(R.id.versionInfo);
-		rating = (RatingBar) linearLayout.findViewById(R.id.rating);
-		apk_about = (TextView)linearLayout.findViewById(R.id.descript);
-		listView.addHeaderView(linearLayout, null, false);
-		textView = new TextView(this);
-		textView.setText(this.getString(R.string.commentlabel));
-		textView.setTextSize(20);
-		textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-		textView.setPadding(0, 10, 0, 10);
-		textView.setGravity(Gravity.CENTER_HORIZONTAL);
-		listView.addHeaderView(textView);
-		loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
-		listView.addFooterView(loadComLayout);
-		store = (TextView)linearLayout.findViewById(R.id.app_store);
-		spinnerMulti = ((Spinner)linearLayout.findViewById(R.id.spinnerMultiVersion));
+		linearLayout = (LinearLayout)findViewById(R.id.commentContainer);
+		likesLinearLayout = (LinearLayout)findViewById(R.id.likesLayout);
+		version = (TextView) findViewById(R.id.versionInfo);
+		rating = (RatingBar) findViewById(R.id.rating);
+		apk_about = (TextView)findViewById(R.id.descript);
+//		listView.addHeaderView(linearLayout, null, false);
+//		textView = (Button) LayoutInflater.from(context).inflate(R.layout.button, null);
+//		textView.setText(R.string.commentlabel);
+		
+//		listView.addHeaderView(textView);
+//		loadComLayout = (LinearLayout) inflater.inflate(R.layout.loadingfootercomments,listView, false);
+//		listView.addFooterView(loadComLayout);
+		store = (TextView)findViewById(R.id.app_store);
+		spinnerMulti = ((Spinner)findViewById(R.id.spinnerMultiVersion));
 		action = (Button) findViewById(R.id.btinstall);
-		description = (TextView) linearLayout.findViewById(R.id.descript);
+		description = (TextView) findViewById(R.id.descript);
 		screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
-		commentAdapter = new CommentsAdapter<Comment>(this, R.layout.commentlistviewitem, new ArrayList<Comment>());
 		versionInfo = (TextView) findViewById(R.id.versionInfo);
 		scheduledDownloadBox = (CheckBox) findViewById(R.id.schedule_download_box);
-		listView.setAdapter(commentAdapter);
+//		listView.setAdapter(commentAdapter);
 		Bundle bundle = new Bundle();
 		getSupportLoaderManager().initLoader(0x20,bundle, this);
 		
@@ -409,30 +395,74 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				
 			}
 		});
+		
+		findViewById(R.id.add_comment).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(ApkInfo.this,cm.aptoide.pt.webservices.comments.AddComment.class);
+				i.putExtra("apkid", apkid);
+				i.putExtra("version", elements.get("vername"));
+				i.putExtra("repo", repo);
+				i.putExtra("webservicespath", db.getWebservicespath(repo_id));
+				startActivityForResult(i, cm.aptoide.pt.webservices.comments.AddComment.ADD_COMMENT_REQUESTCODE);
+			}
+		});
+		
+		findViewById(R.id.likesImage).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				postLike(EnumUserTaste.LIKE);
+				
+			}
+		});
+		
+		findViewById(R.id.dislikesImage).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				postLike(EnumUserTaste.DONTLIKE);
+				
+			}
+		});
+		
+		findViewById(R.id.more_comments).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(ApkInfo.this,ViewComments.class);
+				i.putExtra("repo", repo);
+				i.putExtra("apkid", apkid);
+				i.putExtra("vername", elements.get("vername"));
+				i.putExtra("webservicespath", db.getWebservicespath(repo_id));
+				startActivity(i);
+				
+			}
+		});
+		
 		if(extended){
 			loadScreenshots();
 			loadCommentsAndTaste();
 			findViewById(R.id.likesLayout).setVisibility(View.VISIBLE);
 //			findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
-//			findViewById(R.id.screenShotsPager).setVisibility(View.VISIBLE);
+			findViewById(R.id.screenShotsPager).setVisibility(View.VISIBLE);
 			findViewById(R.id.indicator).setVisibility(View.VISIBLE);
-			textView.setVisibility(View.VISIBLE);
-			loadComLayout.setVisibility(View.VISIBLE);
+//			loadComLayout.setVisibility(View.VISIBLE);
 //			listView.addFooterView(loadComLayout);
-//			listView.addHeaderView(textView);
+			
 		}else{
 			findViewById(R.id.likesLayout).setVisibility(View.GONE);
 			findViewById(R.id.screenshots_label).setVisibility(View.GONE);
 			findViewById(R.id.screenShotsPager).setVisibility(View.GONE);
 			findViewById(R.id.indicator).setVisibility(View.GONE);
-			textView.setVisibility(View.GONE);
-			loadComLayout.setVisibility(View.GONE);
+//			loadComLayout.setVisibility(View.GONE);
 //			listView.removeFooterView(loadComLayout);
 //			listView.removeHeaderView(textView);
 		}
 		
 		AdView adView = (AdView)this.findViewById(R.id.adView);
-		  adView.loadAd(new AdRequest());
+		adView.loadAd(new AdRequest());
 	}
 	
 	
@@ -442,8 +472,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 		pi.setFillColor(Color.BLACK);
 		pi.setSnap(true);
-		linearLayout.findViewById(R.id.screenshots_label).setVisibility(View.GONE);
-		linearLayout.findViewById(R.id.screenshots_container).setVisibility(View.GONE);
+		findViewById(R.id.screenshots_label).setVisibility(View.GONE);
+		findViewById(R.id.screenshots_container).setVisibility(View.GONE);
 		new Thread(new Runnable() {
 			
 			private JSONArray imagesurl;
@@ -493,10 +523,11 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						public void run() {
 							if(thumbnailList!=null&&thumbnailList.length>0){
 								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList));
+								
 								pi.setViewPager(screenshots);
 								pi.setRadius(7.5f);
-								linearLayout.findViewById(R.id.screenshots_container).setVisibility(View.VISIBLE);
-								linearLayout.findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
+								findViewById(R.id.screenshots_container).setVisibility(View.VISIBLE);
+								findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
 								if(originalList.size()==1){
 									findViewById(R.id.right).setVisibility(View.GONE);
 								}
@@ -620,162 +651,62 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		unbindService(conn);
 	}
 	
-	private TastePoster tastePoster = null;
-	private CommentPosterListOnScrollListener loadOnScrollCommentList;
-	LoginDialog loginComments;
-	final Runnable newVersionFetchComments = new Runnable(){
-
-
-		public void run() {
-			loadOnScrollCommentList.fetchNewApp(repo, apkid, vername);
-		}
-	};
-	
-	private void loadCommentsAndTaste() {
-		try{
-			loadOnScrollCommentList = new CommentPosterListOnScrollListener(this, commentAdapter, repo, apkid, vername, loadComLayout,repo_id);
-			listView.setOnScrollListener(loadOnScrollCommentList);
-			new Thread(newVersionFetchComments).start();
-			
-
-			listView.setOnItemClickListener(new OnItemClickListener(){
-				
-
-				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					if(position==1){ // If comment app... option selected
-//						Dialog commentDialog = new AddCommentDialog(ApkInfo.this, loadOnScrollCommentList, null, like, dislike, 
-//								repo,
-//				 				apkid, 
-//				 				vername,
-//				 				userTaste);
-//						commentDialog.show();
-						Intent i = new Intent(ApkInfo.this,AddComment.class);
-						i.putExtra("repo", repo);
-						i.putExtra("apkid", apkid);
-						i.putExtra("vername", vername);
-						startActivityForResult(i, 50);
-					}
-				}
-			});
-			
-			
-			
-			
-			this.like.setOnTouchListener(new OnTouchListener(){
-			      public boolean onTouch(View view, MotionEvent e) {
-			          switch(e.getAction())
-			          {
-			             case MotionEvent.ACTION_DOWN:
-			            	 
-			            	 if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null || sPref.getString(Configs.LOGIN_PASSWORD, null)==null){				
-			            		loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, 
-			            										dislike, repo , 
-			            										apkid, vername, EnumUserTaste.LIKE, userTaste);
-								loginComments.setOnDismissListener(ApkInfo.this);
-								loginComments.show();
-							 }else{
-								
-								 new AddTaste(
-						 				ApkInfo.this, 
-						 				repo,
-						 				apkid, 
-						 				vername, 
-						 				sPref.getString(Configs.LOGIN_USER_NAME, null), 
-						 				sPref.getString(Configs.LOGIN_PASSWORD, null), 
-						 				EnumUserTaste.LIKE, likes, dislikes, like, dislike, userTaste).submit();
-								
-							 } 
-			            	 break;
-			          }
-			          return false;  //means that the listener dosen't consume the event
-			      }
-			});
-			this.dislike.setOnTouchListener(new OnTouchListener(){
-			      public boolean onTouch(View view, MotionEvent e) {
-			          switch(e.getAction())
-			          {
-			             case MotionEvent.ACTION_DOWN:
-			            	 
-			            	  if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null || sPref.getString(Configs.LOGIN_PASSWORD, null)==null){				
-			            		  	loginComments = new LoginDialog(ApkInfo.this, LoginDialog.InvoqueNature.NO_CREDENTIALS_SET, like, dislike, 
-			            		  									repo, apkid, vername, EnumUserTaste.DONTLIKE, userTaste);
-			            		  	loginComments.setOnDismissListener(ApkInfo.this);
-									loginComments.show();
-			            	  }else{
-			            		  
-			            		  new AddTaste(
-								 		ApkInfo.this, 
-								 		repo,
-								 		apkid, 
-								 		vername, 
-								 		sPref.getString(Configs.LOGIN_USER_NAME, null), 
-								 		sPref.getString(Configs.LOGIN_PASSWORD, null), 
-								 		EnumUserTaste.DONTLIKE, likes, dislikes, like, dislike, userTaste).submit();
-								 
-			            	  }
-			                  break;
-			          }
-			          return false;  //means that the listener dosen't consume the event
-			      }
-			});
-			
-			selectTaste(repo , apkid, vername, likes, dislikes, like, dislike, userTaste);
-			
-			
-			
-			
-			
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	public void selectTaste(String repo, String apkid, String version, 
-			TextView likes, TextView dontlikes, ImageView like, 
-			ImageView dislike, WrapperUserTaste userTaste){
-		
-		likes.setText(this.getString(R.string.loading_likes));
-		dislikes.setText("");
-		dislike.setImageResource(R.drawable.dontlike);
-		like.setImageResource(R.drawable.like);
-
-		if(tastePoster!=null)
-			tastePoster.cancel(true);
-		
-		
-		
-		tastePoster = new TastePoster(this, apkid, version, repo, likes, dontlikes, 
-				like, dislike, sPref.getString( Configs.LOGIN_USER_ID , null),
-				userTaste);
-		tastePoster.execute();
-
-	}
-	public void onDismiss(DialogInterface dialog) {
-		if(sPref.getString(Configs.LOGIN_USER_NAME, null)!=null && sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
-			new AddTaste(
-	 				ApkInfo.this, 
-	 				repo,
-	 				apkid, 
-	 				vername, 
-	 				sPref.getString(Configs.LOGIN_USER_NAME, null), 
-	 				sPref.getString(Configs.LOGIN_PASSWORD, null), 
-	 				((LoginDialog)dialog).getUserTaste(), likes, dislikes, like, dislike, userTaste).submit();
-		}
-	}
 	
 	@Override
-	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
-		super.onActivityResult(arg0, arg1, arg2);
-		if(arg0==50&&arg1==RESULT_OK){
+	protected void onActivityResult(int requestCode, int resultCode, Intent arg2) {
+		super.onActivityResult(requestCode, resultCode, arg2);
+		if(requestCode==50&&resultCode==RESULT_OK){
 			loadCommentsAndTaste();
 			
-		}else if(arg0==60&&arg1==RESULT_OK){
-			loginComments.dismiss();
+		}else if(requestCode==60&&resultCode==RESULT_OK){
 			loadCommentsAndTaste();
 		}
 		
+		switch (requestCode) {
+		case Login.REQUESTCODE:
+			switch (resultCode) {
+			case RESULT_OK:
+				System.out.println("On Activity Result");
+				postLike(userTaste);
+				break;
+			case RESULT_CANCELED:
+				break;
+			default:
+				break;
+			}
+			break;
+		case AddComment.ADD_COMMENT_REQUESTCODE:
+			loadCommentsAndTaste();
+		default:
+			break;
+		}
+		
 	}
+	private void loadCommentsAndTaste() {
+		Comments comments = new Comments(this, db.getWebservicespath(repo_id));
+		comments.getComments(repo, apkid, elements.get("vername"), linearLayout,false);
+		likes = new Likes(this, db.getWebservicespath(repo_id));
+		likes.getLikes(repo, apkid, elements.get("vername"), likesLinearLayout);
+	}
+	
+	
+	Likes likes;
+	protected void postLike(EnumUserTaste like) {
+		userTaste = like;
+		if(Login.isLoggedIn(this)){
+			try{
+				likes.postLike(repo, apkid, elements.get("vername"), like);	
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
+		}else{
+			Intent i = new Intent(this,Login.class);
+			startActivityForResult(i, Login.REQUESTCODE);
+		}
+	}
+	
+	
 	
 }
 

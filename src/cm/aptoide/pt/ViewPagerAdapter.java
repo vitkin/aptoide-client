@@ -8,9 +8,9 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.viewpagerindicator.TitleProvider;
 
-public class ViewPagerAdapter extends PagerAdapter implements TitleProvider{
+
+public class ViewPagerAdapter extends PagerAdapter{
 	Context context;
 	String[] tabs;
 	ArrayList<View> pages;
@@ -37,8 +37,9 @@ public class ViewPagerAdapter extends PagerAdapter implements TitleProvider{
 	public boolean isViewFromObject(View arg0, Object arg1) {
 		return arg0.equals(arg1);
 	}
-
-	public String getTitle(int position) {
+	
+	
+	public String getPageTitle(int position) {
 		return tabs[position];
 	}
 	

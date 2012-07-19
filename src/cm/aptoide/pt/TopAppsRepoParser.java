@@ -10,6 +10,7 @@ import cm.aptoide.pt.RepoParser.Ages;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
 
 public class TopAppsRepoParser extends DefaultHandler {
@@ -156,6 +157,7 @@ public class TopAppsRepoParser extends DefaultHandler {
 	
 	@Override
 	public void endDocument() throws SAXException {
+		context.sendBroadcast(new Intent("RELOAD_TOPAPPS"));
 		super.endDocument();
 	}
 }

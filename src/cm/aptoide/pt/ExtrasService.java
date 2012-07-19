@@ -81,7 +81,7 @@ public class ExtrasService extends Service {
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			final SAXParser sp = factory.newSAXParser();
 
-			new Thread(new Runnable() {
+			Thread a = new Thread(new Runnable() {
 				public void run() {
 					try {
 						for(ServerNode node : parsedList){
@@ -101,7 +101,9 @@ public class ExtrasService extends Service {
 						e.printStackTrace();
 					}
 				}
-			}).start();
+			});
+			a.setPriority(Thread.MIN_PRIORITY);
+			a.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
