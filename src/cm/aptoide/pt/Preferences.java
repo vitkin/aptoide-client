@@ -1,7 +1,10 @@
 package cm.aptoide.pt;
 
-import cm.aptoide.pt.webservices.login.LoginDialog;
+import java.io.File;
+
+import cm.aptoide.pt.webservices.login.Login;
 import android.app.AlertDialog;
+import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +15,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -30,7 +34,6 @@ public class Preferences extends PreferenceActivity implements
 	private CheckBoxPreference hwbox;
 	private CheckBoxPreference schDwnBox;
 	private CheckBoxPreference matureChkBox;
-	LoginDialog loginComments;
 	private BroadcastReceiver receiver;
 	
 protected class LoginListener extends BroadcastReceiver {
@@ -47,7 +50,7 @@ protected class LoginListener extends BroadcastReceiver {
 		public void onReceive(Context context, Intent intent) {
 			Log.d("Aptoide","Settings received "+intent.getAction());
 			if (intent.getAction().equals("pt.caixamagica.aptoide.LOGIN_ACTION")) {
-				if(sPref.getString(Configs.LOGIN_USER_NAME, null)==null){
+				if(sPref.getString(Configs.LOGIN_USER_LOGIN, null)==null){
 					clear_credentials.setEnabled(false);
 				}else{
 					clear_credentials.setEnabled(true);
@@ -72,68 +75,49 @@ protected class LoginListener extends BroadcastReceiver {
 		Preference set_credentials = (Preference) findPreference("setcredentials");
 		Preference hwspecs = (Preference) findPreference("hwspecs");
 		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
+		Preference login = findPreference("setcredentials");
+		login.setIntent(new Intent(this,Login.class));
 		hwbox = (CheckBoxPreference) findPreference("hwspecsChkBox");
 		schDwnBox = (CheckBoxPreference) findPreference("schDwnBox");
 		matureChkBox = (CheckBoxPreference) findPreference("matureChkBox");
 		matureChkBox.setChecked(userPref.getString("app_rating", "All").equals("All"));
-		if (userPref.getString(Configs.LOGIN_USER_NAME, null) == null) {
-			((Preference) findPreference("clearcredentials")).setEnabled(false);
-		}
 		Log.d("Aptoide", "Broadcast registered");
-		receiver = new LoginListener(clear_credentials, userPref);
-		IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.LOGIN_ACTION");
-		registerReceiver(receiver, filter);
-		clear_credentials
-				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-
-					public boolean onPreferenceClick(Preference preference) {
-
-						prefEditFull.remove(Configs.LOGIN_USER_NAME);
-						prefEditFull.remove("userName");
-						prefEditFull.remove(Configs.LOGIN_PASSWORD);
-						prefEditFull.remove(Configs.LOGIN_USER_ID);
-						prefEditFull.commit();
-
-						Log.d("Aptoide", "Login action broadcast sent");
-						Intent loginAction = new Intent();
-						loginAction
-								.setAction("pt.caixamagica.aptoide.LOGIN_ACTION");
-						Preferences.this.getApplicationContext().sendBroadcast(
-								loginAction);
-
-						final AlertDialog alrtClear = new AlertDialog.Builder(
-								mctx).create();
-						alrtClear.setTitle(mctx
-								.getString(R.string.credentialscleared));
-						alrtClear.setMessage(mctx
-								.getString(R.string.credentialscleared_des));
-						alrtClear.setButton("Ok", new OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								alrtClear.dismiss();
-							}
-						});
-						alrtClear.show();
-
-						return true;
-
-					}
-				});
-
-		set_credentials
-				.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-					public boolean onPreferenceClick(Preference preference) {
-						loginComments = new LoginDialog(
-								Preferences.this,
-								LoginDialog.InvoqueNature.OVERRIDE_CREDENTIALS);
-						loginComments.show();
-						return true;
-					}
-				});
-		getPreferenceScreen().getSharedPreferences()
-				.registerOnSharedPreferenceChangeListener(this);
+		findPreference("clearcache").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				deleteDirectory(getCacheDir());
+				return false;
+			}
+		});
+		
+		findPreference("clearapk").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				deleteDirectory(new File(Environment.getExternalStorageDirectory()+"/.aptoide/"));
+				return false;
+			}
+		});
 
 	}
+	static public boolean deleteDirectory(File path) {
+	    if( path.exists() ) {
+	      File[] files = path.listFiles();
+	      if (files == null) {
+	          return true;
+	      }
+	      for(int i=0; i<files.length; i++) {
+	         if(files[i].isDirectory()) {
+	           deleteDirectory(files[i]);
+	         }
+	         else {
+	           files[i].delete();
+	         }
+	      }
+	    }
+	    return true ;
+	  }
 
 	private void updateSum() {
 		String pref_str = sPref.getString("icdown", "error");
@@ -189,7 +173,7 @@ protected class LoginListener extends BroadcastReceiver {
 		
 		super.onActivityResult(arg0, arg1, intent);
 		if(intent.hasExtra("username")){
-			loginComments.dismiss();
+			
 		}
 		
 	}

@@ -40,7 +40,9 @@ public class DBHandler {
 		System.out.println("Opening");
 		if(database==null||!database.isOpen()){
 			database = dbHelper.getWritableDatabase();
+			database.rawQuery("ANALYZE apk", null);
 		}
+		
 	}
 	
 
@@ -114,7 +116,7 @@ public class DBHandler {
 			values.put(DBStructure.COLUMN_CATEGORY_CATEGORY2_NAME,apk.category2);
 			values.put(DBStructure.COLUMN_CATEGORY_REPO_ID,apk.repo_id);
 			database.insert(DBStructure.TABLE_CATEGORY, null, values);
-			localApk.put(apk.apkid, new Apk(apk.vercode,apk.repo_id));
+//			localApk.put(apk.apkid, new Apk(apk.vercode,apk.repo_id));
 		} else {
 			
 				
@@ -159,7 +161,7 @@ public class DBHandler {
 					database.insert(DBStructure.TABLE_OLD, null,old_values);
 					database.update(DBStructure.TABLE_APK, values, DBStructure.COLUMN_APK_APKID+"=?", new String[]{apk.apkid});
 					localApk.remove(apk.apkid);
-					localApk.put(apk.apkid, new Apk(apk.vercode,apk.repo_id));
+//					localApk.put(apk.apkid, new Apk(apk.vercode,apk.repo_id));
 //				}else if(localApk.get(apk.apkid).vercode==apk.vercode){
 //					values.put(DBStructure.COLUMN_OTHER_SERVER_CATEGORY2, apk.category2);
 //					database.insert(DBStructure.TABLE_OTHER_SERVER, null,
@@ -268,7 +270,6 @@ public class DBHandler {
 		Cursor c = null;
 		try {
 			c = database.query(DBStructure.TABLE_CATEGORY, new String[]{DBStructure.COLUMN_CATEGORY_CATEGORY1_NAME,DBStructure.COLUMN_CATEGORY_APKID}, null, null, DBStructure.COLUMN_CATEGORY_CATEGORY1_NAME, null, null);
-			c.moveToFirst();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -279,7 +280,6 @@ public class DBHandler {
 		Cursor c = null;
 		try {
 			c = database.query(DBStructure.TABLE_CATEGORY, new String[]{DBStructure.COLUMN_CATEGORY_CATEGORY2_NAME,DBStructure.COLUMN_CATEGORY_APKID}, DBStructure.COLUMN_CATEGORY_CATEGORY1_NAME+"=?", new String[]{category1},  DBStructure.COLUMN_CATEGORY_CATEGORY2_NAME, null,null);
-			c.moveToFirst();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1403,6 +1403,27 @@ public class DBHandler {
 			c.close();
 		}
 		return false;
+	}
+
+	public HashMap<String, String> getScheduledDownload(String id) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		Cursor c = null;
+		try{
+			c = database.query(DBStructure.TABLE_SCHEDULED, null, DBStructure.COLUMN_SCHEDULED_ID+"=?", new String[]{id}, null, null, null);
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				map.put("apkid", c.getString(1));
+				map.put("name", c.getString(2));
+				map.put("vername", c.getString(3));
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		
+		
+		return map;
 	}
 	
 	

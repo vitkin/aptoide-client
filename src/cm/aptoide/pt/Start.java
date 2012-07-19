@@ -125,7 +125,7 @@ public class Start extends FragmentActivity {
 									proceedhandler.post(new Run(false));
 							}
 							}catch(Exception e){
-								e.printStackTrace();
+								proceedhandler.post(new Run(false));
 							}
 						}
 					}.start();

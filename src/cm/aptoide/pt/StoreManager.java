@@ -383,8 +383,8 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					if(isChecked){
 						sec_user.setEnabled(true);
-						 if(sPref.getString(Configs.LOGIN_USER_NAME, null)!=null || sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
-							 sec_user.setText(sPref.getString(Configs.LOGIN_USER_NAME, ""));
+						 if(sPref.getString(Configs.LOGIN_USER_LOGIN, null)!=null || sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
+							 sec_user.setText(sPref.getString(Configs.LOGIN_USER_LOGIN, ""));
 						 }
 						sec_pwd.setEnabled(true);
 						sec_pwd.setText(sPref.getString(Configs.LOGIN_PASSWORD, ""));
@@ -517,8 +517,8 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if(isChecked){
 					sec_user.setEnabled(true);
-					if(sPref.getString(Configs.LOGIN_USER_NAME, null)!=null || sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
-						 sec_user.setText(sPref.getString(Configs.LOGIN_USER_NAME, ""));
+					if(sPref.getString(Configs.LOGIN_USER_LOGIN, null)!=null || sPref.getString(Configs.LOGIN_PASSWORD, null)!=null){
+						 sec_user.setText(sPref.getString(Configs.LOGIN_USER_LOGIN, ""));
 					 }
 					sec_pwd.setEnabled(true);
 				}else{
@@ -688,7 +688,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			
 		}
 		
-		returnStatus result = checkServerConnection(uri_str, user, pwd);
+		returnStatus result = checkServerConnection(uri_str, user, password);
 		switch (result) {
 		case OK:
 			return uri_str;
@@ -727,7 +727,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			break;
 		}
 		if(result.equals(returnStatus.FAIL) || result.equals(returnStatus.EXCEPTION)){
-			result = checkServerConnection(uri_str, user, pwd);
+			result = checkServerConnection(uri_str, user, password);
 			switch (result) {
 			case OK:
 				return uri_str;
@@ -963,7 +963,7 @@ private returnStatus checkServerConnection(String uri, String user, String pwd){
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
         
-        mHttpGet.setHeader("User-Agent", "aptoide-" + this.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_NAME, ""));
+        mHttpGet.setHeader("User-Agent", "aptoide-" + this.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, ""));
         
         try {
         	if(user != null && pwd != null){
