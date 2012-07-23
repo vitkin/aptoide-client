@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/lib/com.google.ads"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#edece9"
     android:gravity="center_horizontal"
     android:orientation="vertical" >
 
@@ -136,6 +135,16 @@
                                 android:singleLine="true"
                                 android:textColor="#4f4f4f"
                                 android:textSize="12sp" />
+                            
+                            <TextView
+                            android:id="@+id/inst_version"
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="5dp"
+                            android:visibility="gone"
+                            android:textColor="#4f4f4f"
+                            android:textSize="12sp" />
+                            
                         </LinearLayout>
 
                         <RatingBar
@@ -147,6 +156,7 @@
                             android:numStars="5"
                             android:paddingBottom="15dp"
                             android:paddingTop="2dp" />
+                        
                     </LinearLayout>
 
                     <LinearLayout
@@ -201,19 +211,12 @@
                         android:layout_below="@+id/likesLayout"
                         android:orientation="vertical" >
 
-                        <TextView
-                            android:id="@+id/app_version"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="5dp"
-                            android:textColor="#4f4f4f"
-                            android:textSize="12sp" />
-
+                        
                         <Spinner
                             android:id="@+id/spinnerMultiVersion"
                             android:layout_width="fill_parent"
-                            android:visibility="gone"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            />
 
                         <CheckBox
                             android:id="@+id/schedule_download_box"
@@ -243,15 +246,34 @@
                             android:textColor="#3f3f3f"
                             android:textSize="18.0sp" />
 
-                        <TextView
-                            android:id="@+id/descript"
+                        <LinearLayout
+                            android:id="@+id/description_container"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="left"
-                            android:paddingLeft="5.0sp"
-                            android:paddingRight="5.0sp"
-                            android:paddingTop="10.0dip"
-                            android:textColor="#7e7e7e" />
+                            android:clickable="true"
+                            android:orientation="vertical" >
+
+                            <TextView
+                                android:id="@+id/descript"
+                                android:layout_width="fill_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="left"
+                                android:background="@drawable/highlight_overlay"
+                                android:paddingLeft="5.0sp"
+                                android:paddingRight="5.0sp"
+                                android:paddingTop="10.0dip"
+                                android:textColor="#7e7e7e" />
+
+                            <TextView
+                                android:id="@+id/show_all_description"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawableRight="@drawable/ic_more_arrow_down"
+                                android:layout_gravity="right"
+                                android:gravity="center"
+                                android:visibility="gone"
+                                android:text="Show all description" />
+                        </LinearLayout>
 
                         <TextView
                             android:id="@+id/screenshots_label"
@@ -334,18 +356,15 @@
                         android:id="@+id/more_comments"
                         android:layout_width="fill_parent"
                         android:layout_height="30dp"
-                        android:visibility="gone"
                         android:layout_below="@id/commentContainer"
                         android:background="@drawable/highlight_overlay"
                         android:drawablePadding="12.0dip"
                         android:drawableRight="@drawable/ic_more_arrow_right"
                         android:gravity="fill_vertical|right"
-                        android:text="See All" />
-                    
+                        android:text="See All"
+                        android:visibility="gone" />
                 </RelativeLayout>
-                
             </LinearLayout>
-            
         </ScrollView>
     </RelativeLayout>
 

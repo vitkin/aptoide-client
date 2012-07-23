@@ -1,10 +1,14 @@
 package cm.aptoide.pt;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.Format;
+import java.util.Formatter;
 
 import cm.aptoide.pt.webservices.login.Login;
 import android.app.AlertDialog;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +18,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
@@ -23,6 +28,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
+import android.widget.Toast;
 
 public class Preferences extends PreferenceActivity implements
 		OnSharedPreferenceChangeListener {
@@ -35,6 +41,8 @@ public class Preferences extends PreferenceActivity implements
 	private CheckBoxPreference schDwnBox;
 	private CheckBoxPreference matureChkBox;
 	private BroadcastReceiver receiver;
+	String aptoide_path = Environment.getExternalStorageDirectory()+"/.aptoide/";
+	String icon_path = Environment.getExternalStorageDirectory()+"/.aptoide/icons/";
 	
 protected class LoginListener extends BroadcastReceiver {
 		
@@ -82,25 +90,101 @@ protected class LoginListener extends BroadcastReceiver {
 		matureChkBox = (CheckBoxPreference) findPreference("matureChkBox");
 		matureChkBox.setChecked(userPref.getString("app_rating", "All").equals("All"));
 		Log.d("Aptoide", "Broadcast registered");
+		
+		new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
 		findPreference("clearcache").setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				deleteDirectory(getCacheDir());
+				new DeleteDir().execute(new File(icon_path));
 				return false;
 			}
 		});
-		
 		findPreference("clearapk").setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				deleteDirectory(new File(Environment.getExternalStorageDirectory()+"/.aptoide/"));
+				new DeleteDir().execute(new File(aptoide_path));
 				return false;
 			}
+
+			
 		});
 
 	}
+	
+	
+	public class DeleteDir extends AsyncTask<File, Void, Void>{
+		ProgressDialog pd;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pd = new ProgressDialog(mctx);
+			pd.show();
+		}
+		@Override
+		protected Void doInBackground(File... params) {
+			deleteDirectory(params[0]);
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			pd.dismiss();
+			Toast.makeText(mctx, "Content successfuly deleted", Toast.LENGTH_LONG).show();
+			new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
+		}
+		
+	}
+	
+	
+	
+	
+	
+	public class GetDirSize extends AsyncTask<File, Void, Double[]>{
+		double getDirSize(File dir) {
+			double size = 0;
+			if (dir.isFile()) {
+				size = dir.length();
+			} else {
+				File[] subFiles = dir.listFiles();
+				for (File file : subFiles) {
+					if (file.isFile()) {
+						size += file.length();
+					} else {
+						size += this.getDirSize(file);
+					}
+
+				}
+			}
+
+			return size;
+		}
+		@Override
+		protected Double[] doInBackground(File... dir) {
+			Double [] sizes = new Double[2];
+			
+			for (int i = 0; i!=sizes.length;i++){
+				sizes[i]=this.getDirSize(dir[i]) / 1024 / 1024;
+			}
+			return sizes;
+		}
+		
+		@Override
+		protected void onPostExecute(Double[] result) {
+			super.onPostExecute(result);
+			redrawSizes(result);
+		}
+		
+	}
+	
+	private void redrawSizes(Double[] size) {
+		findPreference("clearapk").setSummary(getString(R.string.clearcontent_sum)+" (Using " +new DecimalFormat("#.##").format(size[0])+"MB)");
+		findPreference("clearcache").setSummary(getString(R.string.clearcache_sum)+" (Using " +new DecimalFormat("#.##").format(size[1])+"MB)");
+	}
+	
+	
 	static public boolean deleteDirectory(File path) {
 	    if( path.exists() ) {
 	      File[] files = path.listFiles();

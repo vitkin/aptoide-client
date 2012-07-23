@@ -195,5 +195,9 @@
     <string name="subject">Name</string>
     <string name="body">Body…</string>
     <string name="submit">Submit</string>
+    
+    <string name="clearcache_sum">"Deletes Aptoide cache (icons, screenshots,..) from the SD card."</string>
+    <string name="clearcontent_sum">"Deletes the content of .aptoide folder from the SD card."</string>
+    
 
 </resources>

@@ -269,8 +269,8 @@ public class Aptoide extends FragmentActivity {
 				//		availAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 
-				installedAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-				updatesAdapter = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				installedAdapter = new InstalledCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+				updatesAdapter = new UpdatesCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				availAdapter2 = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 				featured = LayoutInflater.from(context).inflate(R.layout.featured, null);
@@ -1135,11 +1135,11 @@ public class Aptoide extends FragmentActivity {
 			}
 
 			public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
-				updatesAdapter.changeCursor(arg1);
+				updatesAdapter.swapCursor(arg1);
 			}
 
 			public void onLoaderReset(Loader<Cursor> arg0) {
-				updatesAdapter.changeCursor(null);
+				updatesAdapter.swapCursor(null);
 			}
 		});
 	}
