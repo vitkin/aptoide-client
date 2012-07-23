@@ -17,39 +17,44 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class GetCategoryCount {
+public class GetUpdatesAvailable {
 
 	private ExecutorService executorService;
 	private Context context;
+	
 	private DBHandler db;
 	MemoryCache memoryCache = new MemoryCache();
 	private Map<TextView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<TextView, String>());
 	boolean secondaryCategory = false;
-	
-	public GetCategoryCount(Context context) {
+	public GetUpdatesAvailable(Context context) {
+		this.context = context;
 		executorService = Executors.newFixedThreadPool(5);
 		db = new DBHandler(context);
 		db.open();
 	}
 
-	public void getCount(String category, TextView textView, Context context) {
-		this.context = context;
-		imageViews.put(textView, category);
-		String count = memoryCache.get(category);
+	public void getCount(String apkid, TextView textView, String vername) {
+		imageViews.put(textView, apkid);
+		String count = memoryCache.get(apkid);
 
 		if (count != null) {
-			textView.setText(count + " apps");
+			if(count.equals("true")){
+				textView.setText(vername + " has update.");
+			}else{
+				
+			}
+			
 		} else {
-			queueCount(category, textView);
-			textView.setText("");
+			queueCount(apkid, textView,vername);
+			textView.setText(vername);
 		}
 	}
 	
 	
 
-	private void queueCount(String category, TextView textView) {
+	private void queueCount(String category, TextView textView,String vername) {
 		PhotoToLoad p = new PhotoToLoad(category, textView);
-		executorService.submit(new PhotosLoader(p));
+		executorService.submit(new PhotosLoader(p,vername));
 	}
 
 	boolean imageViewReused(PhotoToLoad photoToLoad){
@@ -61,16 +66,20 @@ public class GetCategoryCount {
 	
 	class BitmapDisplayer implements Runnable
     {
-        String bitmap;
+        boolean bitmap;
         PhotoToLoad photoToLoad;
-        public BitmapDisplayer(String b, PhotoToLoad p){bitmap=b;photoToLoad=p;}
+        String vername;
+        public BitmapDisplayer(boolean b, PhotoToLoad p,String vername){bitmap=b;photoToLoad=p;this.vername=vername;}
         public void run()
         {
+        	System.out.println("checking: " + bitmap);
+        	
             if(imageViewReused(photoToLoad))
                 return;
-            if(bitmap!=null){
-            	photoToLoad.textView.setText(bitmap + " apps");
-//            	photoToLoad.textView.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
+            
+            if(bitmap){
+            	photoToLoad.textView.setText(vername + " has update.");
+            	photoToLoad.textView.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
             }
         }
     }
@@ -78,9 +87,11 @@ public class GetCategoryCount {
 	class PhotosLoader implements Runnable {
     	DBHandler db = new DBHandler(context);
         PhotoToLoad photoToLoad;
+        String vername;
         
-        PhotosLoader(PhotoToLoad photoToLoad){
+        PhotosLoader(PhotoToLoad photoToLoad,String vername){
             this.photoToLoad=photoToLoad;
+            this.vername=vername;
         }
         
         public void run() {
@@ -88,14 +99,14 @@ public class GetCategoryCount {
             if(imageViewReused(photoToLoad))
                 return;
             
-            String bmp;
+            boolean bmp;
             
-            bmp=db.getCategoryCount(photoToLoad.url,secondaryCategory)+"";
+            bmp=db.getUpdateAvailable(photoToLoad.url);
             
-            memoryCache.put(photoToLoad.url, bmp);
+            memoryCache.put(photoToLoad.url, bmp+"");
             if(imageViewReused(photoToLoad))
                 return;
-            bd=new BitmapDisplayer(bmp, photoToLoad);
+            bd=new BitmapDisplayer(bmp, photoToLoad,vername);
             
             ((Activity) context).runOnUiThread(bd);
         }

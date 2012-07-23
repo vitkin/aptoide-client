@@ -38,6 +38,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.opengl.Visibility;
 import android.os.Bundle;
@@ -68,6 +69,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -101,7 +103,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 		public void onServiceDisconnected(ComponentName name) {
 			// TODO Auto-generated method stub
-			
 		}
 		
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -128,6 +129,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	private LinearLayout likesLinearLayout;
 	
 	protected static final String LOCAL_APK_PATH = Environment.getExternalStorageDirectory().getPath()+"/.aptoide/";
+	boolean collapsed = true;
+	
+	int scrollPosition = 0;
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -213,7 +217,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						.getColumnIndex(DBStructure.COLUMN_APK_SIZE)));
 				elements.put("downloads", cursor.getString(cursor
 						.getColumnIndex(DBStructure.COLUMN_APK_DOWNLOADS)));
-				
 				if(!type.equals("featured")){
 					elements.put(
 							"iconpath",
@@ -238,6 +241,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					elements.put("repo", db.getRepoName(repo_id));
 				}
 				elements.put("installedVercode", db.getInstalledVercode(elements.get("apkid")));
+				elements.put("installedVername", db.getInstalledVername(elements.get("apkid")));
+				
 				if(!type.equals("featured")){
 					extended=db.getExtendedServer(repo_id)==1;
 				}else{
@@ -252,15 +257,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				VersionApk versionApkPassed = new VersionApk(elements.get("vername"),Integer.parseInt(elements.get("vercode")),elements.get("apkid"),Integer.parseInt(elements.get("size")), Integer.parseInt(elements.get("downloads")));
 				versions.add(versionApkPassed);
 				Collections.sort(versions, Collections.reverseOrder());
-				if(versions.size()==1){
-					runOnUiThread(new Runnable() {
-						
-						public void run() {
-							spinnerMulti.setVisibility(View.GONE);
-						}
-					});
+//				if(versions.size()==1){
+//					runOnUiThread(new Runnable() {
+//						
+//						public void run() {
+//							spinnerMulti.setVisibility(View.GONE);
+//						}
+//					});
 
-				}
+//				}
 				Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDBStructure.COLUMN_COMMENTS_COMMENT}, ExtrasDBStructure.COLUMN_COMMENTS_APKID+"=?", new String[]{elements.get("apkid")}, null);
 				c.moveToFirst();
 				
@@ -319,18 +324,28 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		if(type.equals("featured")){
 			scheduledDownloadBox.setVisibility(View.GONE);
 		}
-		if(Integer.parseInt(elements.get("vercode"))<
-				Integer.parseInt(elements.get("installedVercode"))){
-			actionString = "Downgrade";
-		}else if (Integer.parseInt(elements.get("vercode"))==Integer.parseInt(elements.get("installedVercode"))){
-			actionString = "Uninstall";
-			action.setOnClickListener(uninstallListener);
-			scheduledDownloadBox.setEnabled(false);
-		}else if (Integer.parseInt(elements.get("vercode"))>Integer.parseInt(elements.get("installedVercode"))&&!elements.get("installedVercode").equals("-1")){
-			actionString = "Upgrade";
-		}else{
+		try{
+			if(Integer.parseInt(elements.get("installedVercode"))>0){
+				((TextView) findViewById(R.id.inst_version)).setText("Installed Version: " + elements.get("installedVername"));
+				((TextView) findViewById(R.id.inst_version)).setVisibility(View.VISIBLE);
+			}
+			
+			if(Integer.parseInt(elements.get("vercode"))<
+					Integer.parseInt(elements.get("installedVercode"))){
+				actionString = "Downgrade";
+			}else if (Integer.parseInt(elements.get("vercode"))==Integer.parseInt(elements.get("installedVercode"))){
+				actionString = "Uninstall";
+				action.setOnClickListener(uninstallListener);
+				scheduledDownloadBox.setEnabled(false);
+			}else if (Integer.parseInt(elements.get("vercode"))>Integer.parseInt(elements.get("installedVercode"))&&!elements.get("installedVercode").equals("-1")){
+				actionString = "Upgrade";
+			}else{
+				actionString = "Install";
+			}
+		}catch (Exception e){
 			actionString = "Install";
 		}
+		
 		store.setText(elements.get("repo"));
 		description.setText(description_text);
 		if(isDefaultSelection){
@@ -440,6 +455,29 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				
 			}
 		});
+		if(description.getLineCount()>10){
+			description.setMaxLines(10);
+			findViewById(R.id.show_all_description).setVisibility(View.VISIBLE);
+			findViewById(R.id.description_container).setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					if(collapsed){
+						collapsed=false;
+						scrollPosition = (int)((ScrollView)findViewById(R.id.scrollView1)).getScrollY();
+						description.setMaxLines(Integer.MAX_VALUE);
+						((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
+					}else{
+						collapsed=true;
+						((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
+						description.setMaxLines(10);
+						((ScrollView)findViewById(R.id.scrollView1)).scrollTo(0, scrollPosition);
+					}
+				}
+			});
+		}
+		
+		
 		
 		if(extended){
 			loadScreenshots();
