@@ -42,10 +42,10 @@
     <PreferenceCategory android:title="Clear memory" >
         <Preference
             android:key="clearapk"
-            android:title="Remove Aptoide data and Configurations" />
+            android:title="@string/clearcontent_title" />
         <Preference
             android:key="clearcache"
-            android:title="Clear Aptoide cache" />
+            android:title="@string/clearcache_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

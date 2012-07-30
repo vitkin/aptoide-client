@@ -28,7 +28,7 @@ public class GetUpdatesAvailable {
 	boolean secondaryCategory = false;
 	public GetUpdatesAvailable(Context context) {
 		this.context = context;
-		executorService = Executors.newFixedThreadPool(5);
+		executorService = Executors.newFixedThreadPool(2);
 		db = new DBHandler(context);
 		db.open();
 	}

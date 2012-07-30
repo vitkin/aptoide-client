@@ -110,7 +110,7 @@ protected class LoginListener extends BroadcastReceiver {
 
 			
 		});
-
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 	}
 	
 	
@@ -120,6 +120,7 @@ protected class LoginListener extends BroadcastReceiver {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			pd = new ProgressDialog(mctx);
+			pd.setMessage(getString(R.string.please_wait));
 			pd.show();
 		}
 		@Override
@@ -132,7 +133,7 @@ protected class LoginListener extends BroadcastReceiver {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			pd.dismiss();
-			Toast.makeText(mctx, "Content successfuly deleted", Toast.LENGTH_LONG).show();
+			Toast.makeText(mctx, getString(R.string.clear_cache_sucess), Toast.LENGTH_LONG).show();
 			new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
 		}
 		
@@ -243,6 +244,7 @@ protected class LoginListener extends BroadcastReceiver {
 		}
 		Intent i = new Intent();
 		i.putExtra("redraw",true);
+		prefEditFull.commit();
 		setResult(RESULT_OK, i);
 	}
 

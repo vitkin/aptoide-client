@@ -144,6 +144,7 @@
   <string name="chkBoxSchDwn">Planification des téléchargements</string>
   <string name="clear_dwn_title">Téléchargements</string>
   <string name="clear_dwn_btn">Téléchargement des icônes</string>
+  <string name="clear_dwn_msg">Règles de téléchargement d\'icônes</string>
   <string-array name="dwnif">
     <item>3G et Wifi</item>
     <item>Wifi seulement</item>

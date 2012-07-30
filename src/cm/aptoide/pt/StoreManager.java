@@ -249,7 +249,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			
 		}else if(getIntent().hasExtra("norepos")){
 			final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-			alertDialog.setMessage(getString(R.string.myrepo_alrt)+"http://apps.bazaarandroid.com/");
+			alertDialog.setMessage(getString(R.string.myrepo_alrt)+"http://apps.aptoide.com/");
 			alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Yes", new OnClickListener() {
 				
 				public void onClick(DialogInterface dialog, int which) {
@@ -262,7 +262,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 						public void run() {
 							try {
 								
-								this.uri = (checkServer(serverCheck("http://apps.bazaarandroid.com/"), username, password));
+								this.uri = (checkServer(serverCheck("http://apps.aptoide.com/"), username, password));
 								containsRepo = serverContainsRepo(uri);
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -716,13 +716,13 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 
 		case FAIL:
 			Log.d("Aptoide-ManageRepo", "return fail");
-			uri_str = uri_str.substring(0, uri_str.length()-1)+".bazaarandroid.com/";
+			uri_str = uri_str.substring(0, uri_str.length()-1)+".store.aptoide.com/";
 			Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
 			break;
 
 		default:
 			Log.d("Aptoide-ManageRepo", "return exception");
-			uri_str = uri_str.substring(0, uri_str.length()-1)+".bazaarandroid.com/";
+			uri_str = uri_str.substring(0, uri_str.length()-1)+".store.aptoide.com/";
 			Log.d("Aptoide-ManageRepo", "repo uri: "+uri_str);
 			break;
 		}

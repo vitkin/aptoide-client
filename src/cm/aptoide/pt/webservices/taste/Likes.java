@@ -37,7 +37,7 @@ public class Likes {
 
 	private static final String listApkLikes = "webservices/listApkLikes/%1$s/%2$s/%3$s/xml";
 	private static final String addApkLike = "webservices/addApkLike";
-	private static final String DEFAULT_PATH = "http://webservices.bazaarandroid.com/";
+	private static final String DEFAULT_PATH = "http://webservices.aptoide.com/";
 	public String WEB_SERVICE_LIKES_LIST;
 	public String WEB_SERVICE_LIKES_POST;
 	private ViewGroup view;

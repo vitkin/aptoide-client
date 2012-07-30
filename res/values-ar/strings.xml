@@ -1,32 +1,229 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+    <string name="add_repo_text">عنوان المخزن:</string>
+    <string name="add_repo_private">تسجيل دخول </string>
+    	<string name="top_please_wait">إنتظر رجاءا</string>
+	<string name="top_error">خطأ</string>
+	<string name="top_download">تنزيل</string>
+
+	<string name="fetch_apk">تنزل البرنامج</string>
+
+	<string name="aptoide_error">تعذر الإتصال بالموقع</string>
+	 <string name="up_server">الملقمات:</string>
+    <string name="lstver">إصدار الملقم:</string>
+    <string name="dwn_n">عدد مرات التنزيل:</string>
+    <string name="isinst">مثبت:</string>
+    <string name="instver">الإصدار المثبت حاليا:</string>
+    <string name="install">تثبيت </string>
+    <string name="about_alrt">حول البرنامج: </string>
+    <string name="rem">حذف</string>
+    <string name="update">تحديث</string>
+    
+    <string name="update_alrt">هناك تحديثات متوفرة لبعض البرامج المثبته.\nهل ترغب في مشاهدتها؟</string>
+    <string name="repo_alrt">قائمة مخازن البرامج المستخدمة قد تغيرت.\nهل ترغب في تحديثها؟</string>
+    
+    <string name="title_repo_alrt">تنبيه!</string>
+    <string name="myrepo_alrt">يبدو أنه لم يتم إضافة أية مخازن للبرامج.\nنقترح عليك إضافة مخزننا الخاص.\n هل ترغب بإضافته؟(يمكنك البحث عن المزيد من البرامج عبر الشبكة)\n\n
+</string>
+    <string name="newrepo_alrt">هل ترغب بإضافة هذا المخزن إلى القائمة؟\n\n</string>
+    
+    <string name="error_download_alrt">تعذر الإتصال بالموقع او أن ملف apk معطوب!</string>
+    <string name="download_alrt">تنزيل البرنامج من:\n </string>
+     
+    <string name="md5_error">فشل تدقيق الMD5 للملف الذي تم تنزيله!\nرجاءا قم بتحديث نظام البرامج قبل إعادة المحاولة.</string>
+    <string name="network_error">حدث خطأ أثناء تنزيل البرنامج.\nحاول مرة أخرى</string>
+	<string name="manage_repo_add">إضافة مخزن جديد للبرامج</string>
+	<string name="manage_repo_answ_wrongl">خطأ في تسجيل الدخول</string>
+	<string name="manage_repo_answ_cc">تعذر الإتصال بالموقع</string>
+	<string name="manage_repo_answ_lr">يجب تسجيل الدخول</string>
+	
+	<string name="app_pop_up_no_info">ا يوجد ملف للمعلومات في الموقع.لمزيد من المعلومات إبحث في متجر اندرويد من خلال الضغط على الزر في الأسفل.</string>
+	<string name="error_no_market">أنت لم تثبت متجر اندرويد على الجهاز!</string>
+		
+    <string name="settings_cache">مسح الذاكرة المؤقته...</string>
+    
+    <string name="remote_in_noSD_title">لا توجد بطاقة ذاكرة</string>
+    <string name="remote_in_noSD">لا توجد بطاقة ذاكرة.\nأدخل البطاقة وحاول مرة أخرى.</string>
+    <string name="remote_in_noSDspace">لا توجد لديك مساحة ذاكرة كافية لإستخدام البرنامج\nرجاءا حرر بعضا من مساحة الذاكرة وحاول مرة اخرى</string>
+    
+    <string name="error_on_update">تعذر تحديث مخازن البرامج التالية:\n</string>
+    
+    <string name="updating_msg">تحديث قائمة البرامج...</string>
+    <string name="update_repos">تحديث مخازن البرامج</string>
+    <string name="update_main">قائمة مخازن البرامج المستخدمة قد تغيرت.\nهل ترغب في تحديثها؟</string>
+    
+    <string name="updating_3g">أنته متصل من خلال خدمة البيانات3G.ننصحك بإستخدام إتصال الواي فاي WiFi.\nتجاهل الأمر والتحديث الآن؟</string>
+    <string name="updating_cfrm">التأكيد على تحديث مخازن البرامج؟</string>
+    <string name="updating_norepos">لا يوجد مواقع للمخازن مفعله لديك\nأضف بعض المخازن او فعل الموجودة مسبقا.</string>
+    
+    <string name="order_popup_title1">فرز قائمة البرامج: </string>
+    <string name="order_popup_lst1">الأحدث أولا</string>
+    <string name="order_popup_lst2">أبجديا</string>
+    <string name="order_popup_lst3">التقييم </string>
+    <string name="order_popup_lst4">مرات التنزيل</string>
+
+    <string name="order_popup_title2">عرض التطبيقات: </string>
+    <string name="order_popup_catg1">حسب الفئة</string>
+    <string name="order_popup_catg2">كل التطبيقات</string>
+    
+    <string name="save_btn">حفظ </string>
+    <string name="clear_cache_btn"> مسح الذاكرة المؤقته</string>
+     <string name="menu_update_repo">تحديث</string>
+    <string name="menu_manage">مخازن البرامج</string>
+    <string name="menu_order">خيارات العرض</string>
+    <string name="menu_settings">الإعدادات</string>
+    <string name="menu_about">حول</string>
+    <string name="menu_search">بحث</string>
+    
+    
+    <string name="menu_add_repo">مخزن جديد</string>
+    <string name="menu_rem_repo">حذف المخزن</string>
+    <string name="menu_edit_repo">تعديل المخزن</string>
+    
+    <string name="btn_yes">نعم</string>
+    <string name="btn_no">لا</string>
+    <string name="btn_ok">حسنا</string>
+    <string name="btn_add">أضف</string>
+    <string name="btn_cancel">إلغاء</string>
+    <string name="btn_done">تم</string>
+    <string name="btn_chlog">التغييرات</string>
+    <string name="btn_search_market">البحث في المتجر</string>
   <string name="app_name">Aptoide</string>
+  <string name="start_loading">تحميل...</string>
   <string name="available_tab">متوفر</string>
   <string name="installed_tab">مثبت</string>
   <string name="updates_tab">التحديثات</string>
-  <string name="uninstall">مثبت</string>
-  <string name="install">مثبت</string>
+  <string name="add_repo_private">خاص</string>
+  <string name="add_repo_text">إضافه</string>
+  <string name="extended_server">مخزن موسع</string>
+  <string name="btn_add_repo">مخزن جديد</string>
+  <string name="menu_rem_repo">حذف المخزن</string>
+  <string name="number_apks">التطبيقات:</string>
+  <string name="please_wait">الرجاء الإنتظار...</string>
+  <string name="uninstall">إلغاء التثبيت</string>
+  <string name="install">التثبيت</string>
+  <string name="search_market">بحث الماركيت</string>
+  <string name="finished_download_alrt">التحميل منتهي</string>
+  <string name="finished_download_message">التحميل منتهي</string>
+  <string name="download_alrt">التحميل:</string>
   <string name="srch_label">Aptoide</string>
-  <string name="srch_hint">إسم البرنامج</string>
-  <string name="tastenotavailable">متوفر</string>
-  <string name="order_popup_title1">البرنامج غير موجود!</string>
-  <string name="order_popup_title2">البرنامج غير موجود!</string>
-  <string name="order_popup_catg2">البرنامج غير موجود!</string>
-  <string name="update_repos">التحديثات</string>
+  <string name="srch_hint">إسم التطبيق</string>
+  <string name="tastenotavailable">غير متوفر</string>
+  <string name="unabletoexecutecheknet">غير قادر على التنفيذ.التحقق من حالة الإنترنت</string>
+  <string name="opinionsuccess">طلبك تم إرساله بنجاح</string>
+  <string name="likes">تحبونه:</string>
+  <string name="dislikes">لاتحبونه:</string>
+  <string name="postingtaste">طلبك مقدم</string>
+  <string name="showpass">إظهار كلمة المرور</string>
+  <string name="user">إسم المستخدم...</string>
+  <string name="pass">كلمة المرور...</string>
+  <string name="submit">تقديم</string>
+  <string name="new_account">حساب جديد</string>
+  <string name="setcredentials">تسجيل الدخول في Bazaar</string>
+  <string name="usernotdef">المستخدم لم يتم تعريفه</string>
+  <string name="passwordnotdef">كلمة المرور لم يتم تعريفها</string>
+  <string name="loggingin">التسجيل في ...</string>
+  <string name="unabletoexecute">غير قادر على التنفيذ</string>
+  <string name="failedcredentials">فشل في تسجيل الدخول للإعتماد المعطاه</string>
+  <string name="loading_likes">تحبون التحميل...</string>
+  <string name="body">الهيئه...</string>
+  <string name="subject">الإسم</string>
+  <string name="inresponseto">\@</string>
+  <string name="commentlabel">تعليق التطبيق...</string>
+  <string name="enterbody">ادخل إستعراضك على قسم الهيئه</string>
+  <string name="postingcomment">نشر تعليقك...</string>
+  <string name="commentadded">تعليقك تم تقديمه بنجاح</string>
+  <string name="order_popup_title1">ترتيب التطبيقات بواسطة:</string>
+  <string name="order_popup_lst1">الاحدث اولا</string>
+  <string name="order_popup_lst2">حسب الترتيب الابجدي</string>
+  <string name="order_popup_lst3">التقييم</string>
+  <string name="order_popup_lst4">رقم التحميل</string>
+  <string name="order_popup_title2">إظهار التطبيقات:</string>
+  <string name="order_popup_catg1">بواسطة الفئه</string>
+  <string name="order_popup_catg2">كل التطبيقات</string>
+  <string name="dialog_yes">نعم</string>
+  <string name="dialog_no">لا</string>
+  <string name="update_repos">تحديث المخزن</string>
+  <string name="update_main">\nالقائمه من المخازن استخدمت لتتم تغيرها قائمة المخازن المستخدمه قد تم تغيرهاهل ترغب في تحديثهم؟</string>
+  <string name="email">الإميل</string>
+  <string name="pass_confirmation">كلمة المرور تأكيدها</string>
+  <string name="setting_hwfiltertitle">تصفية الجهاز</string>
+  <string name="setting_hwspecstitle">مواصفات الجهاز</string>
+  <string name="setting_hwspecssum">فحص مواصفات جهازك</string>
+  <string name="setting_appfiltertitle">تصفية التطبيقات</string>
+  <string name="setting_appfiltersum">لاتظهر التطبيقات الغير متوافقه مع جهازي</string>
+  <string name="setting_schdwntitle">جدولة التحميلات</string>
+  <string name="setting_schdwninstalltitle">التثبيت التلقائي</string>
+  <string name="setting_schdwninstallsum">تثبيت جدولة التحميلات تلقائيا عندما الواي فاي يتصل حاليا</string>
+  <string name="credentialssettings">تسجيل الدخول Bazaar</string>
+  <string name="clearcredentials">مسح تسجيل الدخول</string>
+  <string name="clearcredentials_summary">عدم تعيين تسجيل دخولك الحالي</string>
+  <string name="setcredentials_summary">تعيين تسجيل دخول جديد</string>
   <string name="settings_title_bar">Aptoide</string>
-  <string name="menu_update_repo">التحديثات</string>
-  <string name="menu_update_all">التحديثات</string>
-  <string name="no_repo">مخزن البرامج غير موجود!</string>
-  <string name="about_txt1">برنامج لتثبيت البرامج على هاتف اندرويد.\n</string>
-  <string name="about_site">الموقع:</string>
+  <string name="credentialscleared">تسجيل الدخول ممسوح</string>
+  <string name="menu_update_repo">قائمة التحديث</string>
+  <string name="menu_update_all">كل التحديث</string>
+  <string name="menu_manage">إدارة المخزن</string>
+  <string name="menu_display_options">خيارات العرض</string>
+  <string name="menu_order">تغيير الترتيب</string>
+  <string name="menu_settings">الإعدادات</string>
+  <string name="menu_about">حول</string>
+  <string name="menu_search">البحث</string>
+  <string name="menu_add_repo">مخزن جديد</string>
+  <string name="menu_edit_repo">تحرير المخزن</string>
+  <string name="btn_yes">نعم</string>
+  <string name="btn_no">لا</string>
+  <string name="btn_ok">تم</string>
+  <string name="btn_add">إضافه</string>
+  <string name="btn_cancel">إلغاء</string>
+  <string name="btn_done">تم</string>
+  <string name="btn_chlog">التغيير</string>
+  <string name="btn_search_market">بحث الماركيت</string>
+  <string name="schDwnBtn">جدولة التحميل</string>
+  <string name="search_log">البحث</string>
+  <string name="search_stores">في مخازن اخرى</string>
+  <string name="no_repo">إضافة مخزن!</string>
+  <string name="update_done_msg1">المخازن محدثه بنجاح</string>
+  <string name="about_txt1">\nحزمك المثبته على هاتف اندرويد</string>
+  <string name="about_site">الرئيسيه:</string>
   <string name="about_mail">الإتصال:</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
-  <string name="repo_edt_msg2">مخزن البرامج غير موجود!</string>
-  <string name="update_self_title">متوفر</string>
+  <string name="repo_del_msg2">إختر المخزن للحذف</string>
+  <string name="repo_edt_msg1">إختر المخزن للتحرير</string>
+  <string name="repo_edt_msg2">تحرير المخزن</string>
+  <string name="update_self_title">تحديث متوفر</string>
+  <string name="error_no_market">انت لاتمتلك ماركيت قوقل مثبت</string>
+  <string name="newrepo_alrt">\nهل تريد إضافة المخزن الى قائمتك؟\n</string>
+  <string name="installapp_alrt">هل ترغب في التثبيت:\n\n</string>
+  <string name="remote_in_noSD_title">لايوجود ذاكره</string>
+  <string name="updating_cfrm">تأكيد تحديث مخازن Aptoide ؟</string>
+  <string name="no_sch_downloads">لايوجود جدولة التحميلات!</string>
+  <string name="schDown_install">"هل تريد تثبيت كل جدولة  التحميلات؟"</string>
+  <string name="schDown_installselected">تثبيت المختار</string>
+  <string name="schDown_wireless_detected">الويرليس مكشوف.تحميل كل التطبيقات في جدولة التحميلات؟</string>
+  <string name="schDown_nodownloads">لايوجود جدولة التحميلات</string>
+  <string name="schDown_nodownloadselect">لايوجود تحميلات مختاره</string>
+  <string name="schDown_downerror">خطأ بالتحميل. إضافه %1$s للمخزن</string>
+  <string name="addSchDown">المضاف لجدولة التحميلات</string>
+  <string name="registration">"تسجيل  Bazaar "</string>
+  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="username">الإميل</string>
+  <string name="password">كلمة المرور</string>
+  <string name="register">التسجيل</string>
+  <string name="schDown_invertselection">عكس الإختيار</string>
+  <string name="schDown_removeselected">حذف المختار</string>
+  <string name="schDown_sureremove">هل انت من متأكد من الحذف؟</string>
+  <string name="chkBoxSchDwn">جدولة التحميل</string>
+  <string name="clear_dwn_title">التحميلات</string>
+  <string name="clear_dwn_btn">ايقونات التحميل</string>
+  <string name="clear_dwn_msg">قواعد ايقونة التحميل</string>
   <string-array name="dwnif">
-    <item>3G and Wifi</item>
-    <item>Wifi only</item>
-    <item>Never download</item>
+    <item>3g و الواي فاي</item>
+    <item>الواي فاي فقط</item>
+    <item>التحميل ابدا</item>
   </string-array>
+  <string name="continue_bt">إستمرار</string>
+  <string name="featured_tab">المميز</string>
+  <string name="no_info">لايوجود معلومات</string>
 </resources>

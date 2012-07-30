@@ -94,7 +94,12 @@ public class Login extends Activity {
 	private void checkCredentials(String username, String password) {
 		pd.show();
 		pd.setMessage(getText(R.string.please_wait));
-		new CheckUserCredentials().execute(username, password);
+		if(username.trim().length()>0&&password.trim().length()>0){
+			new CheckUserCredentials().execute(username, password);
+		}else{
+			Toast.makeText(context, "Error. Please check your credentials", Toast.LENGTH_LONG).show();
+		}
+		
 
 	}
 	
@@ -140,7 +145,7 @@ public class Login extends Activity {
 			StringBuilder sb = null;
 			String data = null;
 			try {
-				url = new URL("http://webservices.bazaarandroid.com/webservices/checkUserCredentials");
+				url = new URL("http://webservices.aptoide.com/webservices/checkUserCredentials");
 				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 				connection.setDoOutput(true);
 				data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8");
