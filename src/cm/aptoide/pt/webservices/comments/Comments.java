@@ -49,7 +49,7 @@ public class Comments {
 	
 	private static final String listApkComments = "webservices/listApkComments/%1$s/%2$s/%3$s/xml";
 	private static final String addApkComment = "webservices/addApkComment";
-	private static final String DEFAULT_PATH = "http://webservices.bazaarandroid.com/";
+	private static final String DEFAULT_PATH = "http://webservices.aptoide.com/";
 	private static final String COMMENTS_TO_LOAD = "5";
 	public String WEB_SERVICE_COMMENTS_LIST;
 	public String WEB_SERVICE_COMMENTS_POST;

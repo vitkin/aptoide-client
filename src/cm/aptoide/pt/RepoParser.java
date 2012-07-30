@@ -136,9 +136,11 @@ public class RepoParser extends DefaultHandler {
 			break;
 		case PACKAGE:
 			apks ++;
-			if(isRemove)
+			if(isRemove){
 				dbhandler.removeApk(apk.apkid);
-			dbhandler.insertAPK(apk);
+			}else{
+				dbhandler.insertAPK(apk);
+			}
 			int percent  = (int) Math.round(( (float) apks / (float) total) * 100);
 			if(percent > increment){
 				increment += 1;

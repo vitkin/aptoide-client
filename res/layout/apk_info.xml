@@ -122,7 +122,7 @@
                                 android:singleLine="true"
                                 android:textColor="#4f4f4f"
                                 android:textSize="12sp" />
-
+							
                             <TextView
                                 android:id="@+id/app_store"
                                 android:layout_width="wrap_content"
@@ -135,15 +135,34 @@
                                 android:singleLine="true"
                                 android:textColor="#4f4f4f"
                                 android:textSize="12sp" />
-                            
+
                             <TextView
-                            android:id="@+id/inst_version"
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="5dp"
-                            android:visibility="gone"
-                            android:textColor="#4f4f4f"
-                            android:textSize="12sp" />
+                                android:id="@+id/version_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:text="ola"
+                                android:paddingBottom="2dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="2dp"
+                                android:singleLine="true"
+                                android:textColor="#4f4f4f"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/inst_version"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:maxLines="1"
+                                android:paddingBottom="2dp"
+                                android:paddingLeft="8dp"
+                                android:paddingRight="2dp"
+                                android:singleLine="true"
+                                android:textColor="#4f4f4f"
+                                android:textSize="12sp"
+                                android:visibility="gone" />
                             
                         </LinearLayout>
 
@@ -216,6 +235,7 @@
                             android:id="@+id/spinnerMultiVersion"
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
+                            android:visibility="gone"
                             />
 
                         <CheckBox

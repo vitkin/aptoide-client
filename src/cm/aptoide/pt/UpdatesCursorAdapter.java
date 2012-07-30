@@ -40,7 +40,7 @@ public class UpdatesCursorAdapter extends CursorAdapter {
         String s = cursor.getString(0);
         holder.name.setText(s);
         imageLoader.DisplayImage(cursor.getLong(4) , cursor.getString(cursor.getColumnIndex("icon")), holder.icon, arg1);
-        holder.vername.setText(cursor.getString(8) +" > "+ cursor.getString(3));
+        holder.vername.setText("Upgrade "+cursor.getString(8) +" to "+ cursor.getString(3));
         holder.downloads.setText(cursor.getString(6));
         try{
         	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	

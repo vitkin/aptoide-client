@@ -1464,6 +1464,8 @@ public class DBHandler {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			c.close();
 		}
 		 
 		 return result;

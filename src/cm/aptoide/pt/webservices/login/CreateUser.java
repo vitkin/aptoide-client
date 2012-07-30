@@ -33,7 +33,7 @@ public class CreateUser extends Activity {
 	String password;
 	
 	public static final int REQUEST_CODE = 20;
-	public static final String WEB_SERVICE_CREATEUSER = "http://webservices.bazaarandroid.com/webservices/createUser";
+	public static final String WEB_SERVICE_CREATEUSER = "http://webservices.aptoide.com/webservices/createUser";
 	
 	Context context;
 
@@ -49,7 +49,12 @@ public class CreateUser extends Activity {
 	public void signUp(View v){
 		username = username_box.getText().toString();
 		password = password_box.getText().toString();
-		new CreateUserTask().execute(username,password);
+		if(username.trim().length()>0&&password.trim().length()>0){
+			new CreateUserTask().execute(username.trim(),password.trim());
+		}else{
+			Toast.makeText(context, "Error. Please check your credentials", Toast.LENGTH_LONG).show();
+		}
+		
 	}
 	
 	@Override

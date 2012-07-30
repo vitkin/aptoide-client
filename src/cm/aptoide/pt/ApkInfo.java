@@ -151,7 +151,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		LayoutInflater inflater = this.getLayoutInflater();
 		linearLayout = (LinearLayout)findViewById(R.id.commentContainer);
 		likesLinearLayout = (LinearLayout)findViewById(R.id.likesLayout);
-		version = (TextView) findViewById(R.id.versionInfo);
+		version = (TextView) findViewById(R.id.version_label);
 		rating = (RatingBar) findViewById(R.id.rating);
 		apk_about = (TextView)findViewById(R.id.descript);
 //		listView.addHeaderView(linearLayout, null, false);
@@ -257,15 +257,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				VersionApk versionApkPassed = new VersionApk(elements.get("vername"),Integer.parseInt(elements.get("vercode")),elements.get("apkid"),Integer.parseInt(elements.get("size")), Integer.parseInt(elements.get("downloads")));
 				versions.add(versionApkPassed);
 				Collections.sort(versions, Collections.reverseOrder());
-//				if(versions.size()==1){
-//					runOnUiThread(new Runnable() {
-//						
-//						public void run() {
-//							spinnerMulti.setVisibility(View.GONE);
-//						}
-//					});
+				if(versions.size()>1){
+					runOnUiThread(new Runnable() {
+						
+						public void run() {
+							spinnerMulti.setVisibility(View.VISIBLE);
+						}
+					});
 
-//				}
+				}
 				Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDBStructure.COLUMN_COMMENTS_COMMENT}, ExtrasDBStructure.COLUMN_COMMENTS_APKID+"=?", new String[]{elements.get("apkid")}, null);
 				c.moveToFirst();
 				
@@ -313,7 +313,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 		loader.DisplayImage(-1, elements.get("iconpath"), icon, context);
 		name.setText(elements.get("name"));
-		version.setText(elements.get("vername"));
+		version.setText("Version: "+elements.get("vername"));
 		versionInfo.setText("Size: "+elements.get("size")+"KB Downloads: "+elements.get("downloads"));
 		try{
 			rating.setRating(Float.parseFloat(elements.get("rating")));
@@ -626,6 +626,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				queueDownload(elements.get("apkid"), ((VersionApk) spinnerMulti.getSelectedItem()).getVersion(), false);
 			}else{
 				db.insertScheduledDownload(id,apkid,elements.get("name"),elements.get("iconpath"),vername,repo_id);
+				Toast.makeText(context, elements.get("name") + getString(R.string.schDown_added), Toast.LENGTH_LONG).show();
 			}
 			finish();
 		}

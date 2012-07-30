@@ -196,8 +196,12 @@
     <string name="body">Body…</string>
     <string name="submit">Submit</string>
     
-    <string name="clearcache_sum">"Deletes Aptoide cache (icons, screenshots,..) from the SD card."</string>
+    <string name="clearcache_sum">"Deletes Aptoide cache (icons, screenshots) from the SD card."</string>
     <string name="clearcontent_sum">"Deletes the content of .aptoide folder from the SD card."</string>
+    <string name="clearcontent_title">"Remove Aptoide data and Configurations"</string>
+    <string name="clearcache_title">"Clear Aptoide cache"</string>
+    <string name="schDown_added">" was added to scheduled download list."</string>
+    <string name="clear_cache_sucess">"Content successfuly deleted"</string>
     
 
 </resources>

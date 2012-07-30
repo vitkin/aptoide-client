@@ -98,6 +98,9 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 		registerReceiver(receiver, filter);
 		setContentView(R.layout.sch_downloadempty);
 		lv = (ListView) findViewById(android.R.id.list);
+		if(getIntent().hasExtra("downloadAll")){
+			downloadAll=true;
+		}
 		bindService(new Intent(this,DownloadQueueService.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		adapter =new CursorAdapter(context,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
 			ImageLoader imageLoader = new ImageLoader(context);
@@ -200,9 +203,7 @@ public class ScheduledDownload extends FragmentActivity implements LoaderCallbac
 			}
 		});
 		redraw();
-		if(getIntent().hasExtra("downloadAll")){
-			downloadAll=true;
-		}
+		
 	}
 	private void redraw() {
 		getSupportLoaderManager().restartLoader(0x50, null, this);

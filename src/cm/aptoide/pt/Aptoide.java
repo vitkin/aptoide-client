@@ -1,5 +1,6 @@
 package cm.aptoide.pt;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -309,11 +310,6 @@ public class Aptoide extends FragmentActivity {
 				registerReceiver(receiver, filter);
 				receiverIsRegister=true;
 
-				if(getIntent().hasExtra("newrepo")){
-					Intent i = new Intent(this,StoreManager.class);
-					i.putExtra("newrepo", getIntent().getSerializableExtra("newrepo"));
-					startActivityForResult(i, 0);
-				}
 
 
 
@@ -360,7 +356,12 @@ public class Aptoide extends FragmentActivity {
 
 				}
 				
-				if(db.getRepositories().getCount()==0
+
+				if(getIntent().hasExtra("newrepo")){
+					Intent i = new Intent(this,StoreManager.class);
+					i.putExtra("newrepo", getIntent().getSerializableExtra("newrepo"));
+					startActivityForResult(i, 0);
+				}else if(db.getRepositories().getCount()==0
 						&&!xmlfile){
 					Intent i = new Intent(this,StoreManager.class);
 					i.putExtra("norepos", true);
@@ -405,8 +406,8 @@ public class Aptoide extends FragmentActivity {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
 
-					sp.parse(NetworkApis.getInputStream(context,
-							"http://www.bazaarandroid.com/apks/editors.xml"),
+					sp.parse(new BufferedInputStream(NetworkApis.getInputStream(context,
+							"http://www.aptoide.com/apks/editors.xml"),8*1024),
 							new EditorsChoiceRepoParser(context));
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -425,8 +426,8 @@ public class Aptoide extends FragmentActivity {
 					try {
 						SAXParserFactory spf = SAXParserFactory.newInstance();
 						SAXParser sp = spf.newSAXParser();
-						sp.parse(NetworkApis.getInputStream(context,
-								"http://apps.bazaarandroid.com/top.xml"),
+						sp.parse(new BufferedInputStream(NetworkApis.getInputStream(context,
+								"http://apps.store.aptoide.com/top.xml"),8*1024),
 								new TopAppsRepoParser(context));
 					} catch (ParserConfigurationException e) {
 						e.printStackTrace();
@@ -932,6 +933,7 @@ public class Aptoide extends FragmentActivity {
 	}
 	
 	private void redrawAll() {
+		
 		if(sPref.getBoolean("orderByCategory", true)){
 			availAdapter = new CategoryCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 			availAdapter.setSecondaryCatg(false);
@@ -965,7 +967,6 @@ public class Aptoide extends FragmentActivity {
 									
 									public void run() {
 										availAdapter2 = new AvailableCursorAdapter(context, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-										
 									}
 								});
 								return db.getApkByCategory(currentCategory2, order_lst);
@@ -983,9 +984,19 @@ public class Aptoide extends FragmentActivity {
 
 			public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
 				
+				
 				if(sPref.getBoolean("orderByCategory", true)){
-					availAdapter.swapCursor(arg1);
-					available_listView.setAdapter(availAdapter);
+					
+					if(!currentCategory2.equals("none")){
+						availAdapter2.swapCursor(arg1);
+						available_listView.setAdapter(availAdapter2);
+					}else{
+						availAdapter.swapCursor(arg1);
+						available_listView.setAdapter(availAdapter);	
+					}
+					
+					
+					
 				}else{
 					availAdapter2.swapCursor(arg1);
 					available_listView.setAdapter(availAdapter2);
@@ -1198,6 +1209,7 @@ public class Aptoide extends FragmentActivity {
 
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
+			
 			if (isChecked) {
 				
 				AlertDialog ad = new AlertDialog.Builder(context).create();
