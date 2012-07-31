@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="ver_str">&quot;2.7.0&quot;</string>
-    <string name="change_log_url">http://aptoide.com/changelog_2_7_0.html</string>
+    <string name="ver_str">&quot;2.7.1&quot;</string>
+    <string name="change_log_url">http://aptoide.com/changelog_2_7_1.html</string>
 </resources>
 
 <!--
