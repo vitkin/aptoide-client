@@ -1006,8 +1006,16 @@ public class Aptoide extends FragmentActivity {
 			}
 
 			public void onLoaderReset(Loader<Cursor> arg0) {
-				availAdapter.swapCursor(null);
-				
+				if(sPref.getBoolean("orderByCategory", true)){
+					
+					if(!currentCategory2.equals("none")){
+						availAdapter2.swapCursor(null);
+					}else{
+						availAdapter.swapCursor(null);
+					}
+				}else{
+					availAdapter2.swapCursor(null);
+				}
 			}
 		});
 		

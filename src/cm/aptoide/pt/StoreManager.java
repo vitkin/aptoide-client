@@ -249,7 +249,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 			
 		}else if(getIntent().hasExtra("norepos")){
 			final AlertDialog alertDialog = new AlertDialog.Builder(context).create();
-			alertDialog.setMessage(getString(R.string.myrepo_alrt)+"http://apps.aptoide.com/");
+			alertDialog.setMessage(getString(R.string.myrepo_alrt)+"http://apps.store.aptoide.com/");
 			alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Yes", new OnClickListener() {
 				
 				public void onClick(DialogInterface dialog, int which) {
@@ -262,7 +262,7 @@ public class StoreManager extends FragmentActivity implements LoaderCallbacks<Cu
 						public void run() {
 							try {
 								
-								this.uri = (checkServer(serverCheck("http://apps.aptoide.com/"), username, password));
+								this.uri = (checkServer(serverCheck("http://apps.store.aptoide.com/"), username, password));
 								containsRepo = serverContainsRepo(uri);
 							} catch (Exception e) {
 								e.printStackTrace();

@@ -36,6 +36,7 @@ public class CreateUser extends Activity {
 	public static final String WEB_SERVICE_CREATEUSER = "http://webservices.aptoide.com/webservices/createUser";
 	
 	Context context;
+	private boolean suceed=false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +60,13 @@ public class CreateUser extends Activity {
 	
 	@Override
 	public void finish() {
+		if(suceed){
+			Intent i = new Intent();
+			i.putExtra("username", username_box.getText().toString());
+			i.putExtra("password", password_box.getText().toString());
+			setResult(RESULT_OK,i);
+		}
 		
-		Intent i = new Intent();
-		i.putExtra("username", username_box.getText().toString());
-		i.putExtra("password", password_box.getText().toString());
-		setResult(RESULT_OK,i);
 		super.finish();
 	}
 	
@@ -134,6 +137,7 @@ public class CreateUser extends Activity {
 			
 			switch (result) {
 			case OK:
+				suceed=true;
 				new Handler().postDelayed(new Runnable() {
 					
 					@Override
@@ -151,6 +155,7 @@ public class CreateUser extends Activity {
 					Toast.makeText(context, "Unkown Error. Try again.", Toast.LENGTH_LONG).show();
 				}
 				pd.dismiss();
+				
 				break;
 			default:
 				break;

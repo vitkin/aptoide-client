@@ -32,7 +32,7 @@
     <string name="pass">Password...</string>
     <string name="submit">Submit</string>
     <string name="new_account">New account</string>
-    <string name="setcredentials">Bazaar Login</string>
+    <string name="setcredentials">Aptoide Login</string>
     <string name="usernotdef">User not defined</string>
     <string name="passwordnotdef">Password not defined</string>
     <string name="loggingin">Logging in...</string>
@@ -69,10 +69,10 @@
     <string name="setting_schdwntitle">Scheduled Downloads</string>
     <string name="setting_schdwninstalltitle">Automatic Install</string>
     <string name="setting_schdwninstallsum">Install scheduled downloads automatically when a Wifi connection is present</string>
-    <string name="credentialssettings">Bazaar login</string>
+    <string name="credentialssettings">Aptoide Login</string>
     <string name="clearcredentials">Clear login</string>
     <string name="clearcredentials_summary">Unset your current login</string>
-    <string name="setcredentials">Bazaar Login</string>
+    <string name="setcredentials">Aptoide Login</string>
     <string name="setcredentials_summary">Set a new login</string>
     <string name="settings_title_bar">Aptoide settings</string>
     <string name="credentialscleared">Login cleared</string>
@@ -153,8 +153,8 @@
    <string name="schDown_downerror">Download error. Add %1$s Store.</string>
    <string name="addSchDown">Added to Scheduled Downloads</string>
    
-   <string name="registration">Bazaar Registration</string>
-    <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+   <string name="registration">Aptoide Registration</string>
+    <string name="bazaar_url">http://www.aptoide.com/</string>
     <string name="username">Email</string>
     <string name="password">Password</string>
     <string name="register">Sign Up</string>
@@ -180,16 +180,16 @@
     <string name="repo_insert_failed">Failed to add the Store. Please try again.</string>
     <string name="remember_choice">Remember this choice</string>
     
-     <string name="registration">Bazaar Registration</string>
-    <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+     <string name="registration">Aptoide Registration</string>
+    <string name="bazaar_url">http://www.aptoide.com/</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="accept_terms">By signing up you are agreeing to the Bazaar Terms of Service and Bazaar Content Policy for Developers</string>
+    <string name="accept_terms">By signing up you are agreeing to the Aptoide Terms of Service and Aptoide Content Policy for Developers</string>
     <string name="register">Sign Up</string>
     <string name="username_tip">Type your username</string>
     <string name="password_tip">Choose a password</string>
     <string name="sign_in">Sign In</string>
-    <string name="bazaar_login">Bazaar Login</string>
+    <string name="bazaar_login">Aptoide Login</string>
     <string name="username">Username</string>
     <string name="please_wait">Please Wait…</string>
     <string name="subject">Name</string>

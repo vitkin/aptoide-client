@@ -31,7 +31,7 @@
   <string name="pass">Wachtwoord...</string>
   <string name="submit">Versturen</string>
   <string name="new_account">Nieuwe account</string>
-  <string name="setcredentials">Bazaar Login</string>
+  <string name="setcredentials">Aptoide Login</string>
   <string name="usernotdef">Gebruiker niet bekend</string>
   <string name="passwordnotdef">Wachtwoord niet bekend</string>
   <string name="loggingin">Je wordt ingelogd...</string>
@@ -67,7 +67,7 @@
   <string name="setting_schdwntitle">Geplande Downloads</string>
   <string name="setting_schdwninstalltitle">Automatische installatie</string>
   <string name="setting_schdwninstallsum">Automatisch geplande downloads installeren wanneer een Wifi-verbinding aanwezig is</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Aptoide Login</string>
   <string name="clearcredentials">Login opschonen</string>
   <string name="clearcredentials_summary">Je huidige login verwijderen</string>
   <string name="setcredentials_summary">Nieuwe login maken</string>
@@ -133,8 +133,8 @@
   <string name="schDown_nodownloadselect">Geen downloads geselecteerd</string>
   <string name="schDown_downerror">Download fout. Voeg %1$s Winkel.</string>
   <string name="addSchDown">Toegevoegd aan geplande downloads</string>
-  <string name="registration">Bazaar Registratie</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="registration">Aptoide Registratie</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">Email</string>
   <string name="password">Wachtwoord</string>
   <string name="register">Aanmelden</string>

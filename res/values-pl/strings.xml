@@ -31,7 +31,7 @@
   <string name="pass">Hasło...</string>
   <string name="submit">Wyślij</string>
   <string name="new_account">Nowe konto</string>
-  <string name="setcredentials">Login do Bazaar</string>
+  <string name="setcredentials">Login do Aptoide</string>
   <string name="usernotdef">Brak nazwy użytkownika</string>
   <string name="passwordnotdef">Brak hasła</string>
   <string name="loggingin">Logowanie...</string>
@@ -67,7 +67,7 @@
   <string name="setting_schdwntitle">Zaplanowane pobrania</string>
   <string name="setting_schdwninstalltitle">Instalacja automatyczna</string>
   <string name="setting_schdwninstallsum">Zainstaluj wybrane aplikacje automatycznie jeśli dostępne jest połączenie WiFi</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Aptoide Login</string>
   <string name="clearcredentials">Wyczyść login</string>
   <string name="clearcredentials_summary">Zmień swój aktualny login</string>
   <string name="setcredentials_summary">Ustaw nowy login</string>
@@ -133,8 +133,8 @@
   <string name="schDown_nodownloadselect">Nie wybrano nic do pobrania</string>
   <string name="schDown_downerror">Błąd pobierania. Dodano repozytorium %1$s.</string>
   <string name="addSchDown">Dodano do Zaplanowanych Pobierań</string>
-  <string name="registration">Rejestracja w Bazaar</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="registration">Rejestracja w Aptoide</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">Email</string>
   <string name="password">Hasło</string>
   <string name="register">Logowanie</string>

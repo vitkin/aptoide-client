@@ -20,7 +20,7 @@
   <string name="pass">Password...</string>
   <string name="submit">Invia</string>
   <string name="new_account">Nuovo account</string>
-  <string name="setcredentials">Bazaar Login</string>
+  <string name="setcredentials">Aptoide Login</string>
   <string name="usernotdef">Utente non definito</string>
   <string name="passwordnotdef">Password non definita</string>
   <string name="loggingin">Logging in...</string>
@@ -46,7 +46,7 @@
   <string name="setting_schdwntitle">Download Programmati</string>
   <string name="setting_schdwninstalltitle">Installazione Automatica</string>
   <string name="setting_schdwninstallsum">Installazione automatica dei download programmati quando è disponibile un connessione Wifi</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Aptoide Login</string>
   <string name="clearcredentials">Cancella login</string>
   <string name="clearcredentials_summary">Disattiva il login corrente</string>
   <string name="setcredentials_summary">Attiva nuovo login</string>
@@ -73,7 +73,7 @@
   <string name="schDown_nodownloadselect">Nessun Download Selezionato</string>
   <string name="schDown_downerror">Errore di download. Aggiungi %1$s Repository.</string>
   <string name="addSchDown">Aggiunto ai download programmati</string>
-  <string name="registration">Bazaar login</string>
+  <string name="registration">Aptoide Login</string>
   <string name="password">Password...</string>
   <string name="schDown_invertselection">Installa Selezionati</string>
   <string name="chkBoxSchDwn">Programma Download</string>

@@ -31,7 +31,7 @@
   <string name="pass">Salasana...</string>
   <string name="submit">Lähetä</string>
   <string name="new_account">Uusi tili</string>
-  <string name="setcredentials">Bazaar-kirjautuminen</string>
+  <string name="setcredentials">Aptoide-kirjautuminen</string>
   <string name="usernotdef">Käyttäjää ei määritelty</string>
   <string name="passwordnotdef">Salasanaa ei määritelty</string>
   <string name="loggingin">Kirjautuu...</string>
@@ -67,7 +67,7 @@
   <string name="setting_schdwntitle">Ajastetut lataukset</string>
   <string name="setting_schdwninstalltitle">Automaattinen asennus</string>
   <string name="setting_schdwninstallsum">Asenna ajastetut lataukset automaattisesti, kun WLAN-yhteys on käytettävissä</string>
-  <string name="credentialssettings">Bazaar-kirjautuminen</string>
+  <string name="credentialssettings">Aptoide-kirjautuminen</string>
   <string name="clearcredentials">Tyhjennä kirjautuminen</string>
   <string name="clearcredentials_summary">Poista nykyinen kirjautuminen käytöstä</string>
   <string name="setcredentials_summary">Aseta uusi kirjautuminen</string>
@@ -133,8 +133,8 @@
   <string name="schDown_nodownloadselect">Ei latauksia valittuna</string>
   <string name="schDown_downerror">Latausvirhe. Lisää %1$s varasto.</string>
   <string name="addSchDown">Lisätty ajastettuihin latauksiin</string>
-  <string name="registration">Bazaar-rekisteröityminen</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="registration">Aptoide-rekisteröityminen</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">Sähköposti</string>
   <string name="password">Salasana</string>
   <string name="register">Kirjaudu</string>

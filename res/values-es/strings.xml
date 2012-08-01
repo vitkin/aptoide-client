@@ -31,7 +31,7 @@
   <string name="pass">Contraseña</string>
   <string name="submit">Enviar</string>
   <string name="new_account">Nueva cuenta</string>
-  <string name="setcredentials">Loguearse en Bazaar</string>
+  <string name="setcredentials">Loguearse en Aptoide</string>
   <string name="usernotdef">Usuario no definido</string>
   <string name="passwordnotdef">Contraseña no definida</string>
   <string name="loggingin">Logueandote...</string>
@@ -67,7 +67,7 @@
   <string name="setting_schdwntitle">Descargas programadas</string>
   <string name="setting_schdwninstalltitle">Instalación automática</string>
   <string name="setting_schdwninstallsum">Instalar descargas programadas automáticamente cuando se esté conectado a una red Wifi</string>
-  <string name="credentialssettings">Loguearse en Bazaar</string>
+  <string name="credentialssettings">Loguearse en Aptoide</string>
   <string name="settings_title_bar">Opciones de Aptoide</string>
   <string name="credentialscleared">Logueo terminado</string>
   <string name="menu_update_repo">Lista de actualizaciones</string>
