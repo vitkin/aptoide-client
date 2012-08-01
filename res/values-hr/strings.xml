@@ -20,7 +20,7 @@
   <string name="pass">Pasvord...</string>
   <string name="submit">Dodaj</string>
   <string name="new_account">Novi korisnik</string>
-  <string name="setcredentials">Bazaar Login</string>
+  <string name="setcredentials">Aptoide Login</string>
   <string name="usernotdef">Korisnik nije definisan</string>
   <string name="passwordnotdef">Pasvord nije definisan</string>
   <string name="loggingin">Logging in...</string>
@@ -46,7 +46,7 @@
   <string name="setting_schdwntitle">Pripremljeni download-i</string>
   <string name="setting_schdwninstalltitle">Automatska instalacija</string>
   <string name="setting_schdwninstallsum">Instaliraj pripremljene download-e automatski kada wifi bude dostupan.</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Aptoide Login</string>
   <string name="clearcredentials">Očisti login</string>
   <string name="clearcredentials_summary">Poništi trenutni login</string>
   <string name="setcredentials_summary">Stavi novi login</string>
@@ -72,7 +72,7 @@
   <string name="schDown_nodownloadselect">Nema selektovanih download-a</string>
   <string name="schDown_downerror">Download greška. Dodaj %1$s Repo.</string>
   <string name="addSchDown">Dodani download-i na raspored</string>
-  <string name="registration">Bazaar login</string>
+  <string name="registration">Aptoide Login</string>
   <string name="password">Pasvord...</string>
   <string name="schDown_invertselection">Instalirati odabrano</string>
   <string name="chkBoxSchDwn">Download roasporeda</string>

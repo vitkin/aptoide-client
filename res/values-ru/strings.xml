@@ -20,7 +20,7 @@
   <string name="pass">Пароль...</string>
   <string name="submit">Отправить</string>
   <string name="new_account">Новый аккаунт</string>
-  <string name="setcredentials">Bazaar логин</string>
+  <string name="setcredentials">Aptoide логин</string>
   <string name="usernotdef">Пользователь не определен</string>
   <string name="passwordnotdef">Пароль не определен</string>
   <string name="loggingin">Вход в систему...</string>
@@ -46,7 +46,7 @@
   <string name="setting_schdwntitle">Запланированные загрузки</string>
   <string name="setting_schdwninstalltitle">Автоматическая установка</string>
   <string name="setting_schdwninstallsum">Устанавливать запланированные загрузки автоматически когда соединение по Wifi присутствует</string>
-  <string name="credentialssettings">Bazaar логин</string>
+  <string name="credentialssettings">Aptoide логин</string>
   <string name="clearcredentials">Очистка логин</string>
   <string name="clearcredentials_summary">Отключение текущего логина</string>
   <string name="setcredentials_summary">Установить новый логин</string>
@@ -72,7 +72,7 @@
   <string name="schDown_nodownloadselect">Нет выбранных загрузок</string>
   <string name="schDown_downerror">Ошибка загрузки. Добавьте %1$s Магазин.</string>
   <string name="addSchDown">Добавленно в Запланированные Загрузки</string>
-  <string name="registration">Bazaar логин</string>
+  <string name="registration">Aptoide логин</string>
   <string name="password">Пароль...</string>
   <string name="schDown_invertselection">Установить выбранные</string>
   <string name="chkBoxSchDwn">Запланированные загрузки</string>

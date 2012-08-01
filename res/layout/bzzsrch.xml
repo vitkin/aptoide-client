@@ -20,7 +20,7 @@
         android:layout_marginLeft="20sp"
         android:layout_marginRight="20sp"
         android:gravity="center"
-        android:text="Search on Bazaar"/>
+        android:text="Search on Aptoide"/>
   
   
 </LinearLayout>

@@ -119,7 +119,7 @@
   <string name="pass">كلمة المرور...</string>
   <string name="submit">تقديم</string>
   <string name="new_account">حساب جديد</string>
-  <string name="setcredentials">تسجيل الدخول في Bazaar</string>
+  <string name="setcredentials">تسجيل الدخول في Aptoide</string>
   <string name="usernotdef">المستخدم لم يتم تعريفه</string>
   <string name="passwordnotdef">كلمة المرور لم يتم تعريفها</string>
   <string name="loggingin">التسجيل في ...</string>
@@ -155,7 +155,7 @@
   <string name="setting_schdwntitle">جدولة التحميلات</string>
   <string name="setting_schdwninstalltitle">التثبيت التلقائي</string>
   <string name="setting_schdwninstallsum">تثبيت جدولة التحميلات تلقائيا عندما الواي فاي يتصل حاليا</string>
-  <string name="credentialssettings">تسجيل الدخول Bazaar</string>
+  <string name="credentialssettings">تسجيل الدخول Aptoide</string>
   <string name="clearcredentials">مسح تسجيل الدخول</string>
   <string name="clearcredentials_summary">عدم تعيين تسجيل دخولك الحالي</string>
   <string name="setcredentials_summary">تعيين تسجيل دخول جديد</string>
@@ -206,8 +206,8 @@
   <string name="schDown_nodownloadselect">لايوجود تحميلات مختاره</string>
   <string name="schDown_downerror">خطأ بالتحميل. إضافه %1$s للمخزن</string>
   <string name="addSchDown">المضاف لجدولة التحميلات</string>
-  <string name="registration">"تسجيل  Bazaar "</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="registration">"تسجيل  Aptoide "</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">الإميل</string>
   <string name="password">كلمة المرور</string>
   <string name="register">التسجيل</string>

@@ -31,7 +31,7 @@
   <string name="pass">Password...</string>
   <string name="submit">Submeter</string>
   <string name="new_account">Nova conta</string>
-  <string name="setcredentials">Bazaar Login</string>
+  <string name="setcredentials">Aptoide Login</string>
   <string name="usernotdef">Uilizador não definido</string>
   <string name="passwordnotdef">Password não definida</string>
   <string name="loggingin">Logging in...</string>
@@ -67,7 +67,7 @@
   <string name="setting_schdwntitle">Downloads agendados</string>
   <string name="setting_schdwninstalltitle">Instalação automática</string>
   <string name="setting_schdwninstallsum">Instalar downloads agendados automaticamente quando uma ligação Wifi está presente.</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Aptoide Login</string>
   <string name="clearcredentials">Limpar login</string>
   <string name="clearcredentials_summary">Limpar login actual</string>
   <string name="setcredentials_summary">Definir novo login</string>
@@ -133,8 +133,8 @@
   <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
   <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
   <string name="addSchDown">Download agendado</string>
-  <string name="registration">Bazaar login</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="registration">Aptoide Login</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">Email</string>
   <string name="password">Password...</string>
   <string name="register">Registar</string>

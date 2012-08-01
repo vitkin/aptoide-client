@@ -40,6 +40,10 @@ public class AddComment extends Activity {
 			name_box.setVisibility(View.GONE);
 		}
 		
+		if(Login.isLoggedIn(context)){
+			name_box.setText(Login.getUserLogin(context).split("@")[0]);
+		}
+		
 	}
 	
 	public void postComment(View v){

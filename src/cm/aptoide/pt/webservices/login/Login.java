@@ -64,10 +64,18 @@ public class Login extends Activity {
 		context = this;
 		username_box = (EditText) findViewById(R.id.username);
 		password_box = (EditText) findViewById(R.id.password);
+		pd = new ProgressDialog(context);
 		if(isLoggedIn(context)){
 			username_box.setText(getUserLogin(this));
+		}else if(sPref.getString(Configs.LOGIN_USER_LOGIN, null)!=null){
+			username= sPref.getString(Configs.LOGIN_USER_LOGIN, null);
+			password = sPref.getString(Configs.LOGIN_PASSWORD, null);
+			new CheckUserCredentials().execute(username,password);
+			pd.show();
+			pd.setMessage("Restoring your previous login.");
 		}
-		pd = new ProgressDialog(context);
+		
+		
 		System.out.println("onCreate");
 		prefEdit = sPref.edit();
 	}
@@ -99,14 +107,12 @@ public class Login extends Activity {
 		}else{
 			Toast.makeText(context, "Error. Please check your credentials", Toast.LENGTH_LONG).show();
 		}
-		
-
 	}
 	
 	public static boolean isLoggedIn(Context context){
 		sPref = context.getSharedPreferences("aptoide_prefs", 0);
 		System.out.println("isLoggedin");
-		return sPref.getString(Configs.LOGIN_USER_LOGIN, null)!=null;
+		return sPref.getString(Configs.LOGIN_USER_TOKEN, null)!=null;
 	}
 	
 	public static String getToken(Context context){
@@ -187,6 +193,7 @@ public class Login extends Activity {
 					prefEdit.putString(Configs.LOGIN_USER_LOGIN, username);
 					prefEdit.putString(Configs.LOGIN_USER_ID, Algorithms.computeSHA1sum(username));
 					prefEdit.putString(Configs.LOGIN_USER_TOKEN, array.getString("token"));
+					prefEdit.remove(Configs.LOGIN_USER_USERNAME);
 					prefEdit.commit();
 					finish();
 				}else{
@@ -241,7 +248,7 @@ public class Login extends Activity {
 		String passwordSha1 = sPref.getString(Configs.LOGIN_PASSWORD, null);
 		String email = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
 		String hmac = Algorithms.computeHmacSha1(email+passwordSha1+name+1, "bazaar_hmac");
-		HttpPost post = new HttpPost("https://www.bazaarandroid.com/webservices/createUser");
+		HttpPost post = new HttpPost("https://webservices.aptoide.com/webservices/createUser");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		nameValuePairs.add(new BasicNameValuePair("email", email));
 		nameValuePairs.add(new BasicNameValuePair("passhash", passwordSha1));

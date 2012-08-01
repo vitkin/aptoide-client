@@ -24,7 +24,7 @@ public class Configs {
 	public static final String LOGIN_PASSWORD 	= "passwordLogin";
 	public static final String LOGIN_USER_LOGIN 	= "usernameLogin";
 	public static final String LOGIN_USER_TOKEN = "usernameToken";
-	public static final String LOGIN_USER_USERNAME = "usernameName";
+	public static final String LOGIN_USER_USERNAME = "userName";
 	
 	public static final boolean SEARCH_GESTURE_ON			= false;
 	public static final double 	MIN_SEARCH_GESTURE_CONFIANCE= 1.5d;

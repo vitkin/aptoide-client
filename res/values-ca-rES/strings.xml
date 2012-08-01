@@ -134,7 +134,7 @@
   <string name="schDown_downerror">Error descarregant. Afegir magatzem %1$s.</string>
   <string name="addSchDown">Afegit a descàrregues programades</string>
   <string name="registration">Identificar-se al bazaar</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">Correu-e</string>
   <string name="password">Contrasenya...</string>
   <string name="register">Registrar-se</string>

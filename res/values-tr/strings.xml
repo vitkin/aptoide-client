@@ -31,7 +31,7 @@
   <string name="pass">Parola...</string>
   <string name="submit">Gönder</string>
   <string name="new_account">Yeni hesap</string>
-  <string name="setcredentials">Bazaar Oturumu</string>
+  <string name="setcredentials">Aptoide Oturumu</string>
   <string name="usernotdef">Kullanıcı tanımlanmamıştır</string>
   <string name="passwordnotdef">Parola tanımlanmamıştır</string>
   <string name="loggingin">Oturum açılıyor...</string>
@@ -67,7 +67,7 @@
   <string name="setting_schdwntitle">Programlanmış İndirmeler</string>
   <string name="setting_schdwninstalltitle">Otomatik Yükleme</string>
   <string name="setting_schdwninstallsum">Programlanmış indirmeleri bir WiFi bağlantısı bulunduğunda otomatik olarak yükle</string>
-  <string name="credentialssettings">Bazaar oturumu</string>
+  <string name="credentialssettings">Aptoide oturumu</string>
   <string name="clearcredentials">Oturumu temizle</string>
   <string name="clearcredentials_summary">Şimdiki oturum verilerini kaldır</string>
   <string name="setcredentials_summary">Yeni oturum yapılandır</string>
@@ -133,8 +133,8 @@
   <string name="schDown_nodownloadselect">Hiçbir indirme seçilmedi</string>
   <string name="schDown_downerror">İndirme hatası. %1$s mağazasını ekleyiniz.</string>
   <string name="addSchDown">Programlanmış indirmelere eklendi</string>
-  <string name="registration">Bazaar kaydı</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="registration">Aptoide kaydı</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">E-posta</string>
   <string name="password">Parola</string>
   <string name="register">Hesap aç</string>

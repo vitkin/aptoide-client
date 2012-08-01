@@ -269,6 +269,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDBStructure.COLUMN_COMMENTS_COMMENT}, ExtrasDBStructure.COLUMN_COMMENTS_APKID+"=?", new String[]{elements.get("apkid")}, null);
 				c.moveToFirst();
 				
+				
+				
 				if(c.getCount()>0){
 					description_text = c.getString(0);
 				}else{

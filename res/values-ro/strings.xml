@@ -31,7 +31,7 @@
   <string name="pass">Parolă...</string>
   <string name="submit">Susţine</string>
   <string name="new_account">Cont nou</string>
-  <string name="setcredentials">Logare Bazaar</string>
+  <string name="setcredentials">Logare Aptoide</string>
   <string name="usernotdef">Utilizator nedefinit</string>
   <string name="passwordnotdef">Parolă nedefinită</string>
   <string name="loggingin">Logare în...</string>
@@ -67,7 +67,7 @@
   <string name="setting_schdwntitle">Descărcări programate</string>
   <string name="setting_schdwninstalltitle">Instalare automată</string>
   <string name="setting_schdwninstallsum">Instalează automat descărcările programate când este prezentă conexiune Wifi</string>
-  <string name="credentialssettings">Logare Bazaar</string>
+  <string name="credentialssettings">Logare Aptoide</string>
   <string name="clearcredentials">Ştergere logare</string>
   <string name="clearcredentials_summary">Logare curentă nesetată</string>
   <string name="setcredentials_summary">Setează o nouă logare</string>
@@ -133,8 +133,8 @@
   <string name="schDown_nodownloadselect">Nu sînt descărcări selectate</string>
   <string name="schDown_downerror">Descărcare eşuată. Adăugaţi %1$s la Magazin.</string>
   <string name="addSchDown">Adăugat la descărcări programate</string>
-  <string name="registration">Înregistrare Bazaar</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="registration">Înregistrare Aptoide</string>
+  <string name="bazaar_url">http://www.aptoide.com/</string>
   <string name="username">Email</string>
   <string name="password">Parolă</string>
   <string name="register">Semnează</string>
