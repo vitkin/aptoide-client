@@ -248,7 +248,7 @@ public class Login extends Activity {
 		String passwordSha1 = sPref.getString(Configs.LOGIN_PASSWORD, null);
 		String email = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
 		String hmac = Algorithms.computeHmacSha1(email+passwordSha1+name+1, "bazaar_hmac");
-		HttpPost post = new HttpPost("https://webservices.aptoide.com/webservices/createUser");
+		HttpPost post = new HttpPost("http://webservices.aptoide.com/webservices/createUser");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		nameValuePairs.add(new BasicNameValuePair("email", email));
 		nameValuePairs.add(new BasicNameValuePair("passhash", passwordSha1));
