@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HorizontalScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:scrollbars="none" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/breadcrumb_my_stores"
+            style="@style/breadcrumbs_text"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/dropdown_disabled_holo_dark"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/breadcrumb_store"
+            style="@style/breadcrumbs_text"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/dropdown_disabled_holo_dark"
+            android:ellipsize="end"
+            android:lines="1"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/catg_breadcrumb_one"
+            style="@style/breadcrumbs_text"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/dropdown_disabled_holo_dark"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/catg_breadcrumb_two"
+            style="@style/breadcrumbs_text"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/dropdown_disabled_holo_dark"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true" />
+    </LinearLayout>
+
+</HorizontalScrollView>
