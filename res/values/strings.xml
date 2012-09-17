@@ -1,0 +1,18 @@
+<resources>
+
+    <string name="app_name">Aptoide</string>
+    <string name="title_activity_aptoide_stores">Aptoide</string>
+    <string name="menu_settings">Settings</string>
+	<string name="my_stores">My stores</string>
+	<string name="store_name">Store Name</string>
+	<string name="category1">Category 1</string>
+	<string name="category2">Category 2</string>
+	<string name="add_store">Add Store</string>
+	<string name="empty_store_list">You don\'t have any stores.</string>
+	<string name="new_store">New Store</string>
+	<string name="add_repo_private">Private</string>
+    <string name="extended_server">Extended Store</string>
+    <string name="downloads">downloads</string>
+    <string name="merge_all_stores">Merge all stores</string>
+    <string name="search_for_stores">Search for Stores</string>
+</resources>
