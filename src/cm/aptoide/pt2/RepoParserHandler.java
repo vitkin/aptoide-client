@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import cm.aptoide.pt2.Server.State;
+import cm.aptoide.pt2.views.ViewApk;
 
 import android.content.Context;
 import android.util.Log;
@@ -362,7 +363,7 @@ public class RepoParserHandler extends DefaultHandler {
 	}
 	
 	static StringBuilder sb = new StringBuilder();
-	static Apk apk = new Apk();
+	static ViewApk apk = new ViewApk();
 	static Database db;
 	static Server server;
 	

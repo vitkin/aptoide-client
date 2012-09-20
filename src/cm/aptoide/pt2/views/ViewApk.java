@@ -1,6 +1,6 @@
-package cm.aptoide.pt2;
+package cm.aptoide.pt2.views;
 
-public class Apk {
+public class ViewApk {
 
 	private String apkid = "";
 	private String name = apkid;
