@@ -20,10 +20,8 @@ public class Database {
 	private static Database db;
 	static Context context;
 	
-	public static HashMap<String,Integer> categories1 = new HashMap<String, Integer>();
-	private static HashMap<String,Integer> categories2 = new HashMap<String, Integer>();
-	private static int lastCatg1Id = 0;
-	private static int lastCatg2Id = 0;
+	private HashMap<String,Integer> categories1 = new HashMap<String, Integer>();
+	private HashMap<String,Integer> categories2 = new HashMap<String, Integer>();
 	
 	private Database(Context context) {
 		dbhandler = new DbOpenHelper(context); 
@@ -46,20 +44,20 @@ public class Database {
 			
 			ContentValues values = new ContentValues();
 			insertCategories(apk);
-			values.put("apkid", apk.apkid);
-			values.put("imagepath", apk.iconPath);
-			values.put("name", apk.name);
-			values.put("size", apk.size);
-			values.put("downloads", apk.downloads);
-			values.put("vername", apk.vername);
-			values.put("vercode", apk.vercode);
-			values.put("repo_id", apk.repo_id);
-			values.put("category2", categories2.get(apk.category2));
+			values.put("apkid", apk.getApkid());
+			values.put("imagepath", apk.getIconPath());
+			values.put("name", apk.getName());
+			values.put("size", apk.getSize());
+			values.put("downloads", apk.getDownloads());
+			values.put("vername", apk.getVername());
+			values.put("vercode", apk.getVercode());
+			values.put("repo_id", apk.getRepo_id());
+			values.put("category2", categories2.get(apk.getCategory2()));
 			database.insert("apk", null, values);
 			i++;
 			if(i%300==0){
 				Intent i = new Intent("update");
-				i.putExtra("server", apk.repo_id);
+				i.putExtra("server", apk.getRepo_id());
 				context.sendBroadcast(i);
 			}
 			if(database.yieldIfContendedSafely()){
@@ -80,44 +78,59 @@ public class Database {
 	
 	private void insertCategories(Apk apk) {
 		ContentValues values = new ContentValues();
-		values.put("name", apk.category1);
-		if(categories1.get(apk.category1)==null){
-			categories1.put(apk.category1,++lastCatg1Id);
-		}
-		if(apk.category1.equals("Other")){
-			System.out.println(apk.apkid);
-		}
+		values.put("name", apk.getCategory1());
 		database.insert("category1", null, values);
+		
+		if(categories1.get(apk.getCategory1())==null){
+			Cursor c = database.query("category1", new String[]{"_id"}, "name = ?", new String[]{apk.getCategory1()}, null,null, null);
+			c.moveToFirst();
+			categories1.put(apk.getCategory1(),c.getInt(0));
+			c.close();
+		}
+		
+		
+		if(apk.getCategory1().equals("Other")){
+			System.out.println(apk.getApkid());
+		}
+		
 		values.clear();
-		values.put("repo_id", apk.repo_id);
-		values.put("catg1_id", categories1.get(apk.category1));
+		values.put("repo_id", apk.getRepo_id());
+		values.put("catg1_id", categories1.get(apk.getCategory1()));
 		database.insert("repo_category1", null, values);
 		values.clear();
-		values.put("catg1_id", categories1.get(apk.category1));
-		values.put("name", apk.category2);
-		if(categories2.get(apk.category2)==null){
-			categories2.put(apk.category2,++lastCatg2Id);
-		}
+		values.put("catg1_id", categories1.get(apk.getCategory1()));
+		values.put("name", apk.getCategory2());
 		database.insert("category2", null, values);
+		
+		
+		if(categories2.get(apk.getCategory2())==null){
+			Cursor c = database.query("category2", new String[]{"_id"}, "name = ?", new String[]{apk.getCategory2()}, null,null, null);
+			c.moveToFirst();
+			categories2.put(apk.getCategory2(),c.getInt(0));
+			c.close();
+		}
+		
+		
 		values.clear();
-		values.put("repo_id", apk.repo_id);
-		values.put("catg2_id", categories2.get(apk.category2));
+		values.put("repo_id", apk.getRepo_id());
+		values.put("catg2_id", categories2.get(apk.getCategory2()));
 		database.insert("repo_category2", null, values);
 	}
 	
 	private void insertDynamicCategories(Apk apk) {
 		ContentValues values = new ContentValues();
-		values.put("name", apk.category1);
-		if(categories1.get(apk.category1)==null){
-			categories1.put(apk.category1,++lastCatg1Id);
-		}
-		if(apk.category1.equals("Other")){
-			System.out.println(apk.apkid);
-		}
+		values.put("name", apk.getCategory1());
 		database.insert("category1", null, values);
+		if(categories1.get(apk.getCategory1())==null){
+			Cursor c = database.query("category1", new String[]{"_id"}, "name = ?", new String[]{apk.getCategory1()}, null,null, null);
+			c.moveToFirst();
+			categories1.put(apk.getCategory1(),c.getInt(0));
+			c.close();
+		}
+		
 		values.clear();
-		values.put("repo_id", apk.repo_id);
-		values.put("catg1_id", categories1.get(apk.category1));
+		values.put("repo_id", apk.getRepo_id());
+		values.put("catg1_id", categories1.get(apk.getCategory1()));
 		database.insert("repo_category1", null, values);
 	}
 
@@ -220,11 +233,18 @@ public class Database {
 		return server;
 	}
 	
+	public void deleteTopApps(long id){
+		database.delete("dynamic_apk", "repo_id = ?", new String[]{id+""});
+		database.delete("toprepo_extra", "_id = ?", new String[]{id+""});
+	}
+	
 	public void deleteServer(long id, boolean fromRepoTable){
 		ArrayList<String> catg1_deletes = new ArrayList<String>();
 		ArrayList<String> catg2_deletes = new ArrayList<String>();
 		if(fromRepoTable){
 			database.delete("repo", "_id = ?", new String[]{id+""});
+			database.delete("toprepo_extra", "_id = ?", new String[]{id+""});
+			database.delete("dynamic_apk", "repo_id = ?", new String[]{id+""});
 		}
 		database.delete("apk", "repo_id = ?", new String[]{id+""});
 		if(fromRepoTable){
@@ -351,10 +371,10 @@ public class Database {
 	public void insertInstalled(Apk apk) {
 		ContentValues values = new ContentValues();
 		
-		values.put("apkid", apk.apkid);
-		values.put("vercode", apk.vercode);
-		values.put("vername", apk.vername);
-		values.put("name", apk.name);
+		values.put("apkid", apk.getApkid());
+		values.put("vercode", apk.getVercode());
+		values.put("vername", apk.getVername());
+		values.put("name", apk.getName());
 		
 		database.insert("installed", null, values);
 		
@@ -413,7 +433,7 @@ public class Database {
 		switch (category) {
 		case TOP:
 			try{
-				apk.category1="Top Apps";
+				apk.setCategory1("Top Apps");
 				insertDynamicCategories(apk);
 				insertDynamicApk(apk);
 			}catch (Exception e) {
@@ -425,53 +445,51 @@ public class Database {
 		default:
 			break;
 		}
-		
-		
 	}
 
 	private void insertDynamicApk(Apk apk) {
-		ContentValues values = new ContentValues();
-		values.put("name", apk.name);
-		values.put("category1", categories1.get(apk.category1));
-		values.put("vername", apk.vername);
-		values.put("repo_id", apk.repo_id);
-		values.put("apkid", apk.apkid);
-		values.put("vercode", apk.vercode);
-		values.put("imagepath", apk.iconPath);
-		database.insert("dynamic_apk", null, values);
-		i++;
-		if(i%300==0){
-			Intent i = new Intent("update");
-			i.putExtra("server", apk.repo_id);
-			context.sendBroadcast(i);
+		try{
+			ContentValues values = new ContentValues();
+			values.put("name", apk.getName());
+			values.put("category1", categories1.get(apk.getCategory1()));
+			values.put("vername", apk.getVername());
+			values.put("repo_id", apk.getRepo_id());
+			values.put("apkid", apk.getApkid());
+			values.put("vercode", apk.getVercode());
+			values.put("imagepath", apk.getIconPath());
+			database.insert("dynamic_apk", null, values);
+			i++;
+			if(i%300==0){
+				Intent i = new Intent("update");
+				i.putExtra("server", apk.getRepo_id());
+				context.sendBroadcast(i);
+			}
+			if(database.yieldIfContendedSafely()){
+				System.out.println("yielded");
+			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
-		if(database.yieldIfContendedSafely()){
-			System.out.println("yielded");
-		}
+		
 	}
 
 	public Cursor getTopApps(long category_id, long store_id, boolean joinStores_boolean) {
 		Cursor c = null;
 		try{
 			if(joinStores_boolean){
-//				c = database.query("apk", new String[]{"_id","name","vername"},"category2 = ?", new String[]{l+""}, "name", null, "name collate nocase");
 				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where category1 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by apkid order by name collate nocase",new String[]{category_id+""});
 			}else{
 				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where repo_id = ? and category1 = ? and vercode in (select vercode from dynamic_apk as b where a.apkid=b.apkid order by vercode asc) group by apkid order by name collate nocase",new String[]{store_id+"",category_id+""});
-//				c = database.query("apk", new String[]{"_id","name","vername"},"category2 = ? and repo_id = ?", new String[]{l+"",store+""}, "name", null, "name collate nocase");
 			}
 			System.out.println("getapps " + "repo_id ="+store_id +  " category " + category_id);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
-		
-		
 		return c;
 	}
 
 	public void remove(Apk apk) {
-		database.delete("apk", "apkid=?", new String[]{apk.apkid});
+		database.delete("apk", "apkid=?", new String[]{apk.getApkid()});
 	}
 
 	public String getTopIconsPath(long repo_id) {
@@ -485,14 +503,11 @@ public class Database {
 			}else{
 				path = c.getString(0);
 			}
-			
-			
 		} catch (Exception e){
 			e.printStackTrace();
 		} finally {
 			c.close();
 		}
-		
 		return path;
 	}
 
@@ -500,7 +515,29 @@ public class Database {
 		ContentValues values = new ContentValues();
 		values.put("iconspath", server.iconsPath);
 		values.put("_id", server.id);
+		values.put("top_delta", server.delta);
 		database.insert("toprepo_extra", null, values);
+	}
+	
+	public String getTopAppsHash(long id){
+		Cursor c = null;
+		String return_string = "";
+		try{
+			c= database.query("toprepo_extra", new String[]{"top_delta"}, "_id = ?", new String[]{id+""}, null, null, null);
+			c.moveToFirst();
+			return_string=c.getString(0);
+		}catch (Exception e){
+			e.printStackTrace();
+		}finally{
+			c.close();
+		}
+		return return_string;
+		
+	}
+
+	public void prepare() {
+		categories1.clear();
+		categories2.clear();
 	}
 
 

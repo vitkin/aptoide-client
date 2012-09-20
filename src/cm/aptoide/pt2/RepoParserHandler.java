@@ -155,7 +155,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.name=sb.toString();
+				apk.setName(sb.toString());
 			}
 		});
 
@@ -177,7 +177,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.vername=sb.toString();
+				apk.setVername(sb.toString());
 			}
 		});
 
@@ -188,7 +188,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.vercode=sb.toString();
+				apk.setVercode(sb.toString());
 				
 			}
 		});
@@ -200,7 +200,9 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.apkid=sb.toString();
+				
+				apk.setApkid(sb.toString());
+				
 			}
 		});
 
@@ -211,7 +213,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.iconPath=sb.toString();
+				apk.setIconPath(sb.toString());
 			}
 		});
 
@@ -239,7 +241,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 		elements.put("dwn", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
-				apk.downloads=sb.toString();
+				apk.setDownloads(sb.toString());
 			}
 
 			@Override
@@ -266,7 +268,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.category1=sb.toString();
+				apk.setCategory1(sb.toString());
 			}
 		});
 
@@ -277,7 +279,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.category2=sb.toString();
+				apk.setCategory2(sb.toString());
 			}
 		});
 
@@ -288,7 +290,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.size=sb.toString();
+				apk.setSize(sb.toString());
 			}
 		});
 
@@ -372,10 +374,11 @@ public class RepoParserHandler extends DefaultHandler {
 	
 	public void startDocument() throws SAXException {
 		start = System.currentTimeMillis();
+		db.prepare();
 		server.state=State.PARSING;
 		db.updateStatus(server);
 		db.startTransation();
-		apk.repo_id=server.id;
+		apk.setRepo_id(server.id);
 	}
 
 	@Override
