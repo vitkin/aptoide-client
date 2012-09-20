@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import cm.aptoide.pt2.views.ViewApk;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -38,7 +40,7 @@ public class Database {
 		
 	
 	
-	public void insert(Apk apk) {
+	public void insert(ViewApk apk) {
 		
 		try{
 			
@@ -76,7 +78,7 @@ public class Database {
 		database.close();
 	}
 	
-	private void insertCategories(Apk apk) {
+	private void insertCategories(ViewApk apk) {
 		ContentValues values = new ContentValues();
 		values.put("name", apk.getCategory1());
 		database.insert("category1", null, values);
@@ -117,7 +119,7 @@ public class Database {
 		database.insert("repo_category2", null, values);
 	}
 	
-	private void insertDynamicCategories(Apk apk) {
+	private void insertDynamicCategories(ViewApk apk) {
 		ContentValues values = new ContentValues();
 		values.put("name", apk.getCategory1());
 		database.insert("category1", null, values);
@@ -368,7 +370,7 @@ public class Database {
 		
 	}
 
-	public void insertInstalled(Apk apk) {
+	public void insertInstalled(ViewApk apk) {
 		ContentValues values = new ContentValues();
 		
 		values.put("apkid", apk.getApkid());
@@ -429,7 +431,7 @@ public class Database {
 		database.update("repo", values, "url =?", new String[]{server.url});
 	}
 
-	public void insertDynamic(Apk apk, Category category) {
+	public void insertDynamic(ViewApk apk, Category category) {
 		switch (category) {
 		case TOP:
 			try{
@@ -447,7 +449,7 @@ public class Database {
 		}
 	}
 
-	private void insertDynamicApk(Apk apk) {
+	private void insertDynamicApk(ViewApk apk) {
 		try{
 			ContentValues values = new ContentValues();
 			values.put("name", apk.getName());
@@ -488,7 +490,7 @@ public class Database {
 		return c;
 	}
 
-	public void remove(Apk apk) {
+	public void remove(ViewApk apk) {
 		database.delete("apk", "apkid=?", new String[]{apk.getApkid()});
 	}
 

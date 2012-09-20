@@ -8,6 +8,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import cm.aptoide.pt2.RepoParserHandler.ElementHandler;
+import cm.aptoide.pt2.views.ViewApk;
 
 
 public class DynamicRepoParserHandler extends DefaultHandler {
@@ -18,7 +19,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 	}
 	
 	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
-	final static Apk apk = new Apk();
+	final static ViewApk apk = new ViewApk();
 	final static StringBuilder sb  = new StringBuilder();
 	static {
 		elements.put("name", new ElementHandler() {

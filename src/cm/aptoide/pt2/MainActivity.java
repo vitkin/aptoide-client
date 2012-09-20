@@ -64,6 +64,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt2.MainService.LocalBinder;
 import cm.aptoide.pt2.Server.State;
+import cm.aptoide.pt2.adapters.InstalledAdapter;
+import cm.aptoide.pt2.adapters.ViewPagerAdapter;
+import cm.aptoide.pt2.views.ViewApk;
 
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -386,7 +389,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				for (PackageInfo pkg : system_installed_list) {
 					if (!database_installed_list.contains(pkg.packageName)) {
 						try {
-							Apk apk = new Apk();
+							ViewApk apk = new ViewApk();
 							apk.setApkid(pkg.packageName);
 							apk.setVercode(pkg.versionCode + "");
 							apk.setVername(pkg.versionName);
