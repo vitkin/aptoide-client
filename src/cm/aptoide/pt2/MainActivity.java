@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +39,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -51,11 +51,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -140,8 +143,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			// TODO Auto-generated method stub
-
+			
 		}
 	};
 
@@ -385,10 +387,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					if (!database_installed_list.contains(pkg.packageName)) {
 						try {
 							Apk apk = new Apk();
-							apk.apkid = pkg.packageName;
-							apk.vercode = pkg.versionCode + "";
-							apk.vername = pkg.versionName;
-							apk.name = (String) pkg.applicationInfo.loadLabel(getPackageManager());
+							apk.setApkid(pkg.packageName);
+							apk.setVercode(pkg.versionCode + "");
+							apk.setVername(pkg.versionName);
+							apk.setName((String) pkg.applicationInfo.loadLabel(getPackageManager()));
 							db.insertInstalled(apk);
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -444,7 +446,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									refreshAvailableList(false);
 									installedLoader.forceLoad();
 								} else {
-									Toast.makeText(mContext, "Unable to delete store. Parsing", 1).show();
+									Toast.makeText(mContext, "Unable to delete store. Parsing", Toast.LENGTH_LONG).show();
 								}
 
 							}
@@ -486,7 +488,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		return super.onContextItemSelected(item);
 	}
-
+	LinearLayout breadcrumbs;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -505,7 +507,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		featuredView = new ListView(mContext);
 
 		availableView = LayoutInflater.from(mContext).inflate(R.layout.available_page, null);
-
+		breadcrumbs = (LinearLayout) availableView.findViewById(R.id.breadcrumb_container);
 		installedView = new ListView(mContext);
 		updatesView = new ListView(mContext);
 
@@ -570,7 +572,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				default:
 					return;
 				}
-
+				addBreadCrumb(((Cursor) parent.getItemAtPosition(position)).getString(1),depth);
 				refreshAvailableList(true);
 			}
 		});
@@ -593,9 +595,37 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	
+	private class BreadCrumb{
+		ListDepth depth;
+		int i;
+		public BreadCrumb(ListDepth depth, int i) {
+			this.depth=depth;
+			this.i=i;
+		}
+	}
 	
 	
-	
+	protected void addBreadCrumb(String itemAtPosition,ListDepth depth2) {
+		if(itemAtPosition.contains("http://")){
+			itemAtPosition = itemAtPosition.split("http://")[1];
+			itemAtPosition = itemAtPosition.split(".store")[0];
+		}
+		Button bt = (Button) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb, null);
+		bt.setText(itemAtPosition);
+		bt.setTag(new BreadCrumb(depth,breadcrumbs.getChildCount()+1));
+		System.out.println(breadcrumbs.getChildCount()+1);
+		bt.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				depth=((BreadCrumb) v.getTag()).depth;
+				breadcrumbs.removeViews(((BreadCrumb) v.getTag()).i,breadcrumbs.getChildCount()-((BreadCrumb) v.getTag()).i);
+				refreshAvailableList(true);
+			}
+		});
+		breadcrumbs.addView(bt, new LinearLayout.LayoutParams(-2, LayoutParams.WRAP_CONTENT, 1f));
+	}
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		Integer tag = (Integer) ((AdapterContextMenuInfo) menuInfo).targetView.getTag();
@@ -674,12 +704,16 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				}else{
 					depth = ListDepth.values()[depth.ordinal() - 1];
 				}
-				
+				removeLastBreadCrumb();
 				refreshAvailableList(true);
 				return false;
 			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	private void removeLastBreadCrumb() {
+		breadcrumbs.removeViewAt(breadcrumbs.getChildCount()-1);
 	}
 
 	@Override

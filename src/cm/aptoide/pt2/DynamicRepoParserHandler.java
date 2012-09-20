@@ -28,7 +28,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.name=sb.toString();
+				apk.setName(sb.toString());
 			}
 		});
 		
@@ -44,13 +44,34 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 		});
 		
 		elements.put("repository", new ElementHandler() {
+			
+
 			public void startElement(Attributes atts) throws SAXException {
 
 			}
 
 			@Override
 			public void endElement() throws SAXException {
+				
+				if(!db.getTopAppsHash(server.id).equals(server.delta)){
+					db.deleteTopApps(server.id);
+				}else{
+					throw new SAXException();
+				}
 				db.insertTopServerInfo(server);
+			}
+		});
+		
+		elements.put("hash", new ElementHandler() {
+			
+
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				server.delta=sb.toString();
 			}
 		});
 		
@@ -63,6 +84,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				db.insertDynamic(apk,category);
+				System.out.println("Insert");
 			}
 		});
 		
@@ -73,7 +95,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.vername=sb.toString();
+				apk.setVername(sb.toString());
 			}
 		});
 		
@@ -84,7 +106,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.apkid=sb.toString();
+				apk.setApkid(sb.toString());
 			}
 		});
 		
@@ -95,7 +117,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.vercode=sb.toString();
+				apk.setVercode(sb.toString());
 			}
 		});
 		
@@ -126,7 +148,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.iconPath=sb.toString();
+				apk.setIconPath(sb.toString());
 			}
 		});
 		
@@ -136,7 +158,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 	private static Database db;
 	private static Server server;
 	private static Category category;
-
+	
 	public DynamicRepoParserHandler(Database db, Server server,Category category) {
 		DynamicRepoParserHandler.server = server;
 		DynamicRepoParserHandler.db = db;
@@ -145,8 +167,9 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
+		db.prepare();
 		System.out.println(server.id);
-		apk.repo_id=server.id;
+		apk.setRepo_id(server.id);
 	}
 	@Override
 	public void startElement(String uri, String localName,

@@ -105,26 +105,32 @@ public class MainService extends Service {
 		return f.getAbsolutePath();
     }
 	
-	public String getTop(Server server,String xmlpath) throws MalformedURLException, IOException {
-		getApplicationContext().sendBroadcast(new Intent("connecting"));
-		String url = server.url + "top.xml";
-		System.out.println(url);
-    	InputStream in = getInputStream(new URL(url),server.username,server.password);
-    	
-    	File f = new File(xmlpath);
-    	int i = 0;
-    	while(f.exists()){
-    		f = new File(xmlpath+i++);
-    	}
-		FileOutputStream out = new FileOutputStream(f);
-		
-		byte[] buffer = new byte[1024];
-		int len;
-		getApplicationContext().sendBroadcast(new Intent("downloading"));
-		while ((len = in.read(buffer)) != -1) {
-			out.write(buffer, 0, len);
+	public String getTop(Server server,String xmlpath){
+		File f = new File(xmlpath);
+		try{
+			getApplicationContext().sendBroadcast(new Intent("connecting"));
+			String url = server.url + "top.xml";
+			System.out.println(url);
+	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
+	    	
+	    	
+	    	int i = 0;
+	    	while(f.exists()){
+	    		f = new File(xmlpath+i++);
+	    	}
+			FileOutputStream out = new FileOutputStream(f);
+			
+			byte[] buffer = new byte[1024];
+			int len;
+			getApplicationContext().sendBroadcast(new Intent("downloading"));
+			while ((len = in.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			out.close();
+		}catch (Exception e){
+			e.printStackTrace();
 		}
-		out.close();
+		
 		return f.getAbsolutePath();
     }
     
@@ -162,7 +168,8 @@ public class MainService extends Service {
 			db.addStore(uri_str,username,password);
 			parseServer(db, uri_str);
 		} catch (Exception e){
-			db.getServer(uri_str).state=State.FAILED;
+			server = db.getServer(uri_str);
+			server.state=State.FAILED;
 			db.updateStatus(server);
 			getApplicationContext().sendBroadcast(new Intent("status"));
 			e.printStackTrace();

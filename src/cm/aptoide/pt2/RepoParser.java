@@ -21,6 +21,7 @@ public class RepoParser {
 	
 	private RepoParser(Database db) {
 		this.db=db;
+		System.out.println("New Parser");
 	}
 	
 	public static RepoParser getInstance(Database db){
@@ -58,6 +59,7 @@ public class RepoParser {
 				SAXParser parser = factory.newSAXParser();
 				System.out.println("Parsing repo_id:" + server.id);
 				parser.parse(xml, new RepoParserHandler(db,server));
+				
 			}catch(Exception e){
 				e.printStackTrace();
 			}finally{
@@ -89,7 +91,7 @@ public class RepoParser {
 			}catch(Exception e){
 				e.printStackTrace();
 			}finally{
-//				xml.delete();
+				xml.delete();
 			}
 
 		}
