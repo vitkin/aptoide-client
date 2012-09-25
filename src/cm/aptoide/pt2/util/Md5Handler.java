@@ -1,4 +1,4 @@
-package cm.aptoide.pt2;
+package cm.aptoide.pt2.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,13 +12,13 @@ public class Md5Handler {
 	private static MessageDigest digest;
 	
 	
-	public static String md5Calc(File f) throws NoSuchAlgorithmException{
+	public static String md5Calc(File f){
 		int i;
-		String md5hash = null;		
+		String md5hash = "";		
 		byte[] buffer = new byte[1024];
 		int read = 0;
-		digest = MessageDigest.getInstance("MD5");
 		try {
+			digest = MessageDigest.getInstance("MD5");
 			InputStream is = new FileInputStream(f);
 			while( (read = is.read(buffer)) > 0) {
 				digest.update(buffer, 0, read);
@@ -28,6 +28,7 @@ public class Md5Handler {
 			md5hash = bigInt.toString(16);
 		}catch(Exception e) {
 			e.printStackTrace();
+			return md5hash;
 		}
 		
 		if(md5hash.length() != 33){

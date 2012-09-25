@@ -66,6 +66,8 @@ import cm.aptoide.pt2.MainService.LocalBinder;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.adapters.InstalledAdapter;
 import cm.aptoide.pt2.adapters.ViewPagerAdapter;
+import cm.aptoide.pt2.util.Algorithms;
+import cm.aptoide.pt2.util.Base64;
 import cm.aptoide.pt2.views.ViewApk;
 
 import com.viewpagerindicator.TitlePageIndicator;

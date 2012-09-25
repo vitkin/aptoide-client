@@ -15,6 +15,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import cm.aptoide.pt2.util.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;

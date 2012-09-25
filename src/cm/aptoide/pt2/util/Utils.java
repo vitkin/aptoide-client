@@ -1,4 +1,4 @@
-package cm.aptoide.pt2;
+package cm.aptoide.pt2.util;
 
 
 
