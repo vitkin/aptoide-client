@@ -19,7 +19,9 @@
 */
 package cm.aptoide.pt2.views;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import android.os.Parcel;
+import android.os.Parcelable;
+import cm.aptoide.pt2.ServiceManager;
 
 /**
  * ViewDownload
@@ -27,16 +29,27 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author dsilveira
  *
  */
-public class ViewDownload {
-	String url;
-	int progressTarget;
-	AtomicInteger progress;
-	ViewApk appInfo;
-	ViewCache cache;
+public class ViewDownload implements Parcelable{
+	String remoteUrl;
 	
-	public ViewDownload(String url, ViewApk appInfo) {
-		this.url = url;
-		this.appInfo = appInfo;
+	int progressTarget;
+	int progress;
+	int speedInKbps;
+	
+	
+	
+	/**
+	 * 
+	 * ViewDownload Constructor
+	 *
+	 * @param remoteUrl
+	 * @param cache
+	 */
+	public ViewDownload(String remoteUrl) {
+		this.progressTarget = 0;
+		this.progress = 0;
+		this.speedInKbps = 0;
+		this.remoteUrl = remoteUrl;
 	}
 
 	public int getProgressTarget() {
@@ -47,30 +60,139 @@ public class ViewDownload {
 		this.progressTarget = progressTarget;
 	}
 
-	public AtomicInteger getProgress() {
+	public int getProgress() {
 		return progress;
 	}
 
-	public void setProgress(AtomicInteger progress) {
+	public void setProgress(int progress) {
 		this.progress = progress;
 	}
-
-	public ViewCache getCache() {
-		return cache;
+	
+	/**
+	 * incrementProgress, increments progress
+	 * 
+	 * @param progress
+	 * @return increase in percentage of total
+	 */
+	public int incrementProgress(int progress){
+		int oldProgress = this.progress;
+		this.progress += progress;
+		int newProgress = this.progress;
+		
+		return ((newProgress - oldProgress)*100/progressTarget);
+	}
+	
+	public int getSpeedInKbps(){
+		return speedInKbps;
+	}
+	
+	public void setSpeedInKbps(int speedInKbps){
+		this.speedInKbps = speedInKbps;
 	}
 
-	public void setCache(ViewCache cache) {
-		this.cache = cache;
+	public String getRemoteUrl() {
+		return remoteUrl;
 	}
-
-	public String getUrl() {
-		return url;
-	}
-
-	public ViewApk getAppInfo() {
-		return appInfo;
+	
+	public void setRemoteUrl(String remoteUrl){
+		this.remoteUrl = remoteUrl;
 	}
 	
 	
+	
+	/**
+	 * ViewDownload object reuse clean references
+	 *
+	 */
+	public void clean(){
+		this.progressTarget = 0;
+		this.progress = 0;
+		this.speedInKbps = 0;
+		this.remoteUrl = null;
+	}
+	
+	
+	/**
+	 * ViewDownload object reuse reConstructor
+	 *
+	 * @param remoteUrl
+	 * @param appInfo
+	 * @param cache
+	 */
+	public void reuse(ServiceManager serviceManager, String remoteUrl, ViewCache cache) {
+		this.progressTarget = 0;
+		this.progress = 0;	
+		this.speedInKbps = 0;
+		this.remoteUrl = remoteUrl;
+	}
+
+
+	@Override
+	public int hashCode() {
+		return this.remoteUrl.hashCode();
+	}
+
+
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof ViewDownload){
+			ViewDownload download = (ViewDownload) object;
+			if(download.hashCode() == this.hashCode()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
+	public String toString() {
+		return " remoteUrl: "+remoteUrl+" progress: "+progress+" speed: "+speedInKbps;
+	}
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewDownload> CREATOR = new Parcelable.Creator<ViewDownload>() {
+		public ViewDownload createFromParcel(Parcel in) {
+			return new ViewDownload(in);
+		}
+
+		public ViewDownload[] newArray(int size) {
+			return new ViewDownload[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	protected ViewDownload(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeString(remoteUrl);
+		out.writeInt(progressTarget);
+		out.writeInt(progress);
+		out.writeInt(speedInKbps);
+	}
+
+	public void readFromParcel(Parcel in) {
+		this.remoteUrl = in.readString();
+		this.progressTarget = in.readInt();
+		this.progress = in.readInt();
+		this.speedInKbps = in.readInt();
+	}
 	
 }

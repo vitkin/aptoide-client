@@ -14,6 +14,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import cm.aptoide.pt2.Server.State;
+import cm.aptoide.pt2.util.Base64;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

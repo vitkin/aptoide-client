@@ -11,6 +11,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import cm.aptoide.pt2.Server.State;
+import cm.aptoide.pt2.util.Md5Handler;
 import cm.aptoide.pt2.views.ViewApk;
 
 import android.content.Context;
@@ -423,11 +424,7 @@ public class RepoParserHandler extends DefaultHandler {
 		super.endDocument();
 		server.state = State.PARSED;
 		if(!delta ){
-			try {
-				server.delta = Md5Handler.md5Calc(server.xml);
-			} catch (NoSuchAlgorithmException e) {
-				e.printStackTrace();
-			}
+			server.delta = Md5Handler.md5Calc(server.xml);
 		}
 		db.updateStatus(server);
 		db.endTransation(System.currentTimeMillis() - start,server);

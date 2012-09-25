@@ -2,6 +2,7 @@ package cm.aptoide.pt2.views;
 
 public class ViewApk {
 
+	private long id;
 	private String apkid = "";
 	private String name = apkid;
 	private String vercode = "0";
@@ -13,6 +14,49 @@ public class ViewApk {
 	private long repo_id = 0;
 	private String iconPath;
 
+	
+	/**
+	 * 
+	 * ViewApk Skeleton Constructor
+	 *
+	 */
+	public ViewApk(){
+	}
+	
+	/**
+	 * 
+	 * ViewApk Constructor
+	 *
+	 * @param id
+	 * @param apkid
+	 * @param name
+	 * @param vercode
+	 * @param vername
+	 * @param size
+	 * @param downloads
+	 * @param category1
+	 * @param category2
+	 * @param repo_id
+	 */
+	public ViewApk(long id, String apkid, String name, String vercode, String vername, String size, String downloads, String category1,
+			String category2, long repo_id) {
+		this.id = id;
+		this.apkid = apkid;
+		this.name = name;
+		this.vercode = vercode;
+		this.vername = vername;
+		this.size = size;
+		this.downloads = downloads;
+		this.category1 = category1;
+		this.category2 = category2;
+		this.repo_id = repo_id;
+	}
+	
+
+	public long getId(){
+		return id;
+	}
+	
 	public String getApkid() {
 		return apkid;
 	}
@@ -51,6 +95,11 @@ public class ViewApk {
 
 	public String getIconPath() {
 		return iconPath;
+	}
+	
+	
+	public void setId(long id){
+		this.id = id;
 	}
 	
 	public void setApkid(String apkid) {
@@ -96,7 +145,7 @@ public class ViewApk {
 	
 
 	public void clear() {
-		
+		this.id = 0;
 		this.apkid = "";
 		this.name = apkid;
 		this.vercode = "0";
@@ -106,6 +155,33 @@ public class ViewApk {
 		this.category1 = "Other";
 		this.category2 = "Other";
 		
+	}
+
+
+	/**
+	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer)
+	 */
+	@Override
+	public int hashCode() {
+		return (int) this.id;
+	}
+
+
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof ViewApk){
+			ViewApk app = (ViewApk) object;
+			if(app.hashCode() == this.hashCode()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
+	public String toString() {
+		return " Id: "+hashCode()+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
 	}
 
 }
