@@ -22,6 +22,7 @@ public class Server implements Parcelable{
 	String username;
 	String password;
 	File xml;
+	String screenspath;
 	
 	
 	public Server(String url){
@@ -108,5 +109,4 @@ public class Server implements Parcelable{
                return new Server[size];
            }
        };
-	
 }

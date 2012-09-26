@@ -3,8 +3,8 @@
     android:id="@+id/breadcrumb"
     style="@style/breadcrumbs_text"
     android:layout_width="wrap_content"
-    android:layout_height="50dp"
-    android:background="@drawable/dropdown_disabled_holo_dark"
+    android:layout_height="30dp"
+    android:background="@drawable/back_breadcrumb"
     android:ellipsize="end"
     android:maxLines="1"
     android:singleLine="true" />

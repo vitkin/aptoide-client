@@ -1,11 +1,13 @@
 package cm.aptoide.pt2.views;
 
-public class ViewApk {
+import java.util.ArrayList;
+
+public class ViewApk implements Comparable<ViewApk>{
 
 	private long id;
 	private String apkid = "";
 	private String name = apkid;
-	private String vercode = "0";
+	private int vercode = 0;
 	private String vername = "Unversioned";
 	private String size = "0";
 	private String downloads = "0";
@@ -13,7 +15,8 @@ public class ViewApk {
 	private String category2 = "Other";
 	private long repo_id = 0;
 	private String iconPath;
-
+	private ArrayList<Long> versionsIds = new ArrayList<Long>();
+	private String path;
 	
 	/**
 	 * 
@@ -38,7 +41,7 @@ public class ViewApk {
 	 * @param category2
 	 * @param repo_id
 	 */
-	public ViewApk(long id, String apkid, String name, String vercode, String vername, String size, String downloads, String category1,
+	public ViewApk(long id, String apkid, String name, int vercode, String vername, String size, String downloads, String category1,
 			String category2, long repo_id) {
 		this.id = id;
 		this.apkid = apkid;
@@ -65,7 +68,7 @@ public class ViewApk {
 		return name;
 	}
 
-	public String getVercode() {
+	public int getVercode() {
 		return vercode;
 	}
 
@@ -110,7 +113,7 @@ public class ViewApk {
 		this.name = name;
 	}
 
-	public void setVercode(String vercode) {
+	public void setVercode(int vercode) {
 		this.vercode = vercode;
 	}
 
@@ -148,7 +151,7 @@ public class ViewApk {
 		this.id = 0;
 		this.apkid = "";
 		this.name = apkid;
-		this.vercode = "0";
+		this.vercode = 0;
 		this.vername = "Unversioned";
 		this.size = "No size";
 		this.downloads = "No downloads";
@@ -156,7 +159,6 @@ public class ViewApk {
 		this.category2 = "Other";
 		
 	}
-
 
 	/**
 	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer)
@@ -182,6 +184,19 @@ public class ViewApk {
 	@Override
 	public String toString() {
 		return " Id: "+hashCode()+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
+	}
+
+	public void addVersion(long id) {
+		versionsIds.add(id);
+	}
+
+	@Override
+	public int compareTo(ViewApk another) {
+		return this.vercode-another.getVercode();
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 
 }

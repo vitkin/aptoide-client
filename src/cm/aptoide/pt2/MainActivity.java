@@ -31,7 +31,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
@@ -39,7 +38,6 @@ import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -68,38 +66,40 @@ import cm.aptoide.pt2.adapters.InstalledAdapter;
 import cm.aptoide.pt2.adapters.ViewPagerAdapter;
 import cm.aptoide.pt2.util.Algorithms;
 import cm.aptoide.pt2.util.Base64;
+import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.views.ViewApk;
 
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
+public class MainActivity extends FragmentActivity implements
+		LoaderCallbacks<Cursor> {
 
 	private final static int AVAILABLE_LOADER = 0;
 	private final static int INSTALLED_LOADER = 1;
-	private final static int UPDATES_LOADER = 2;
-	
-	
+	private final static int UPDATES_LOADER   = 2;
+
 	private final Dialog.OnClickListener addRepoListener = new Dialog.OnClickListener() {
 
 		@Override
 		public void onClick(DialogInterface arg0, int arg1) {
-			String url = ((EditText) alertDialog.findViewById(R.id.edit_uri)).getText().toString();
-			dialogAddStore(url,null,null);
+			String url = ((EditText) alertDialog.findViewById(R.id.edit_uri))
+					.getText().toString();
+			dialogAddStore(url, null, null);
 		}
 
-		
 	};
-	
-	private void dialogAddStore(final String url, final String username, final String password) {
+
+	private void dialogAddStore(final String url, final String username,
+			final String password) {
 		final ProgressDialog pd = new ProgressDialog(mContext);
 		pd.show();
-		
+
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					addStore(url,username,password);
+					addStore(url, username, password);
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
@@ -117,7 +117,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			}
 		}).start();
 	}
-	
+
 	private View addStoreButton;
 
 	private final OnClickListener addStoreListener = new OnClickListener() {
@@ -132,7 +132,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private AlertDialog alertDialog;
 
 	private View alertDialogView;
-	private HashMap<String,Long> serversToParse = new HashMap<String, Long>();
+	private HashMap<String, Long> serversToParse = new HashMap<String, Long>();
 	private AvailableListAdapter availableAdapter;
 	private ListView availableListView;
 	private Loader<Cursor> availableLoader;
@@ -148,7 +148,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			
+
 		}
 	};
 
@@ -187,6 +187,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		public void onReceive(Context context, Intent intent) {
 			if (depth.equals(ListDepth.STORES)) {
 				availableLoader.forceLoad();
+				System.out.println("Status broadcast received");
 			}
 		}
 	};
@@ -206,109 +207,129 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				Long server_id = intent.getExtras().getLong("server");
 				if (refreshClick && server_id == store_id) {
 					refreshClick = false;
-					availableView.findViewById(R.id.refresh_view_layout).setVisibility(View.VISIBLE);
-					availableView.findViewById(R.id.refresh_view_layout).findViewById(R.id.refresh_view)
-							.startAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
+					availableView.findViewById(R.id.refresh_view_layout)
+							.setVisibility(View.VISIBLE);
+					availableView
+							.findViewById(R.id.refresh_view_layout)
+							.findViewById(R.id.refresh_view)
+							.startAnimation(
+									AnimationUtils.loadAnimation(mContext,
+											android.R.anim.fade_in));
 				}
 			}
 		}
 	};
 
 	private ListView updatesView;
-	
-	public class AddStoreCredentialsListener implements DialogInterface.OnClickListener{
+
+	public class AddStoreCredentialsListener implements
+			DialogInterface.OnClickListener {
 		private String url;
 		private View dialog;
-		
 
-
-		public AddStoreCredentialsListener(String string, View credentialsDialogView) {
-			this.url=string;
+		public AddStoreCredentialsListener(String string,
+				View credentialsDialogView) {
+			this.url = string;
 			this.dialog = credentialsDialogView;
 		}
 
 		@Override
 		public void onClick(DialogInterface arg0, int which) {
-			dialogAddStore(url, ((EditText) dialog.findViewById(R.id.username)).getText().toString(), ((EditText) dialog.findViewById(R.id.password)).getText().toString());
+			dialogAddStore(url, ((EditText) dialog.findViewById(R.id.username))
+					.getText().toString(),
+					((EditText) dialog.findViewById(R.id.password)).getText()
+							.toString());
 		}
-		
+
 	}
-	
-	public void getAllRepoStatus(){
+
+	public void getAllRepoStatus() {
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
-				String repos ="";
+				String repos = "";
 				String hashes = "";
 				Cursor cursor = db.getStores();
 				int i = 0;
-				for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()){
+				for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
+						.moveToNext()) {
 					String repo;
-					if(i>0){
-						repos = repos+",";
+					if (i > 0) {
+						repos = repos + ",";
 						hashes = hashes + ",";
 					}
 					repo = cursor.getString(1);
-					repo = repo.split("http://")[1];
-					repo = repo.split(".store")[0];
+					repo = RepoUtils.split(repo);
 					repos = repos + repo;
 					hashes = hashes + cursor.getString(2);
 					i++;
 					serversToParse.put(repo, cursor.getLong(0));
-					
+
 				}
 				cursor.close();
-				
-				
-				String url = "https://www.aptoide.com/webservices/listRepositoryChange/"+repos+"/"+hashes+"/json";
-				System.out.println(url);
-				try {
-					HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-				      connection.connect();
-				      int rc = connection.getResponseCode();
-				      if (rc == 200) {
-				        String line = null;
-				        BufferedReader br = new BufferedReader(new java.io.InputStreamReader(connection.getInputStream()));
-				        StringBuilder sb = new StringBuilder();
-				        while ((line = br.readLine()) != null)
-				          sb.append(line + '\n');
-				        
-				        JSONObject json = new JSONObject(sb.toString());
-				        
-				        JSONArray array = json.getJSONArray("listing");
-				        
-				        for(int o = 0; o!=array.length();o++){
-				        	boolean b = Boolean.parseBoolean(array.getJSONObject(o).getString("hasupdates"));
-				        	if(b){
-				        		long id = serversToParse.get(array.getJSONObject(o).getString("repo"));
-				        		service.parseServer(db, db.getServer(id).url);
-				        	}
-				        	
-				        }
-				        
-				      }
-				      connection.disconnect(); 
-					
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
+
+				if (!serversToParse.isEmpty()) {
+
+					String url = "https://www.aptoide.com/webservices/listRepositoryChange/"
+							+ repos + "/" + hashes + "/json";
+					System.out.println(url);
+					try {
+						HttpURLConnection connection = (HttpURLConnection) new URL(
+								url).openConnection();
+						connection.connect();
+						int rc = connection.getResponseCode();
+						if (rc == 200) {
+							String line = null;
+							BufferedReader br = new BufferedReader(
+									new java.io.InputStreamReader(connection
+											.getInputStream()));
+							StringBuilder sb = new StringBuilder();
+							while ((line = br.readLine()) != null)
+								sb.append(line + '\n');
+
+							JSONObject json = new JSONObject(sb.toString());
+
+							JSONArray array = json.getJSONArray("listing");
+
+							for (int o = 0; o != array.length(); o++) {
+								boolean b = Boolean.parseBoolean(array
+										.getJSONObject(o).getString(
+												"hasupdates"));
+								long id = serversToParse.get(array
+										.getJSONObject(o).getString("repo"));
+								if (b) {
+									service.parseServer(db, db.getServer(id));
+								} else {
+									service.parseTop(db, db.getServer(id));
+								}
+
+							}
+
+						}
+						connection.disconnect();
+
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}).start();
-		
+
 	}
 
-	protected void addStore(String uri_str,String username, String password) {
+	protected void addStore(String uri_str, String username, String password) {
 
 		if (uri_str.contains("http//")) {
 			uri_str = uri_str.replaceFirst("http//", "http://");
 		}
 
-		if (uri_str.length() != 0 && uri_str.charAt(uri_str.length() - 1) != '/') {
+		if (uri_str.length() != 0
+				&& uri_str.charAt(uri_str.length() - 1) != '/') {
 			uri_str = uri_str + '/';
 			Log.d("Aptoide-ManageRepo", "repo uri: " + uri_str);
 		}
@@ -316,7 +337,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			uri_str = "http://" + uri_str;
 			Log.d("Aptoide-ManageRepo", "repo uri: " + uri_str);
 		}
-		if(username != null && username.contains("@")){
+		if (username != null && username.contains("@")) {
 			try {
 				password = Algorithms.computeSHA1sum(password);
 			} catch (NoSuchAlgorithmException e) {
@@ -325,44 +346,49 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				e.printStackTrace();
 			}
 		}
-		final int response = checkServerConnection(uri_str,username,password);
-		final String uri = uri_str; 
+		final int response = checkServerConnection(uri_str, username, password);
+		final String uri = uri_str;
 		switch (response) {
 		case 0:
-			service.addStore(db, uri,username,password);
+			service.addStore(db, uri, username, password);
 			break;
 		case 401:
 			runOnUiThread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					showAddStoreCredentialsDialog(uri);
 				}
 			});
-			
+
 			break;
 		default:
 			runOnUiThread(new Runnable() {
-				
+
 				@Override
 				public void run() {
-					Toast.makeText(mContext, response+"", Toast.LENGTH_LONG).show();
+					Toast.makeText(mContext, response + "", Toast.LENGTH_LONG)
+							.show();
 					showAddStoreDialog();
 				}
 			});
 			break;
 		}
-		
 
 	}
 
-	private int checkServerConnection(final String string, final String username, final String password) {
+	private int checkServerConnection(final String string,
+			final String username, final String password) {
 		try {
-			
-			HttpURLConnection client = (HttpURLConnection) new URL(string + "info.xml").openConnection();
-			if(username!=null && password!=null){
-				String basicAuth = "Basic " + new String(Base64.encode((username+":"+password).getBytes(),Base64.NO_WRAP ));
-				client.setRequestProperty ("Authorization", basicAuth);
+
+			HttpURLConnection client = (HttpURLConnection) new URL(string
+					+ "info.xml").openConnection();
+			if (username != null && password != null) {
+				String basicAuth = "Basic "
+						+ new String(Base64.encode(
+								(username + ":" + password).getBytes(),
+								Base64.NO_WRAP));
+				client.setRequestProperty("Authorization", basicAuth);
 			}
 			client.setConnectTimeout(10000);
 			client.setReadTimeout(10000);
@@ -386,16 +412,18 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 			@Override
 			public void run() {
-				List<PackageInfo> system_installed_list = getPackageManager().getInstalledPackages(0);
+				List<PackageInfo> system_installed_list = getPackageManager()
+						.getInstalledPackages(0);
 				List<String> database_installed_list = db.getStartupInstalled();
 				for (PackageInfo pkg : system_installed_list) {
 					if (!database_installed_list.contains(pkg.packageName)) {
 						try {
 							ViewApk apk = new ViewApk();
 							apk.setApkid(pkg.packageName);
-							apk.setVercode(pkg.versionCode + "");
+							apk.setVercode(pkg.versionCode);
 							apk.setVername(pkg.versionName);
-							apk.setName((String) pkg.applicationInfo.loadLabel(getPackageManager()));
+							apk.setName((String) pkg.applicationInfo
+									.loadLabel(getPackageManager()));
 							db.insertInstalled(apk);
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -409,7 +437,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 					@Override
 					public void run() {
-						installedLoader = getSupportLoaderManager().initLoader(INSTALLED_LOADER, null, MainActivity.this);
+						installedLoader = getSupportLoaderManager().initLoader(
+								INSTALLED_LOADER, null, MainActivity.this);
 						installedView.setAdapter(installedAdapter);
 						getUpdates();
 					}
@@ -419,13 +448,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private void getUpdates() {
-		updatesLoader = getSupportLoaderManager().initLoader(UPDATES_LOADER, null, MainActivity.this);
+		updatesLoader = getSupportLoaderManager().initLoader(UPDATES_LOADER,null, MainActivity.this);
 		updatesView.setAdapter(updatesAdapter);
 	}
 
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
-		final ProgressDialog pd ;
+		final ProgressDialog pd;
 		switch (item.getItemId()) {
 		case 0:
 			pd = new ProgressDialog(mContext);
@@ -438,7 +467,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				@Override
 				public void run() {
 					try {
-						result = service.deleteStore(db, ((AdapterContextMenuInfo) item.getMenuInfo()).id);
+						result = service
+								.deleteStore(db, ((AdapterContextMenuInfo) item
+										.getMenuInfo()).id);
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {
@@ -451,7 +482,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									refreshAvailableList(false);
 									installedLoader.forceLoad();
 								} else {
-									Toast.makeText(mContext, "Unable to delete store. Parsing", Toast.LENGTH_LONG).show();
+									Toast.makeText(mContext,
+											"Unable to delete store. Parsing",
+											Toast.LENGTH_LONG).show();
 								}
 
 							}
@@ -465,35 +498,39 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			pd.show();
 			pd.setCancelable(false);
 			new Thread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					try {
-						service.parseServer(db, db.getServer(((AdapterContextMenuInfo)item.getMenuInfo()).id).url);
+						service.parseServer(db, db
+								.getServer(((AdapterContextMenuInfo) item
+										.getMenuInfo()).id));
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
 						e.printStackTrace();
-					} finally{
+					} finally {
 						runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								pd.dismiss();
 								refreshAvailableList(false);
 							}
 						});
-						
+
 					}
 				}
 			}).start();
-			
+
 			break;
 		}
 
 		return super.onContextItemSelected(item);
 	}
+
 	LinearLayout breadcrumbs;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -517,35 +554,47 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		updatesView = new ListView(mContext);
 
 		availableListView = (ListView) availableView.findViewById(R.id.available_list);
-		availableView.findViewById(R.id.refresh_view_layout).findViewById(R.id.refresh_view).setOnClickListener(new OnClickListener() {
+		availableView.findViewById(R.id.refresh_view_layout)
+				.findViewById(R.id.refresh_view)
+				.setOnClickListener(new OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				refreshClick = true;
-				availableView.findViewById(R.id.refresh_view_layout).setVisibility(View.GONE);
-				refreshAvailableList(false);
+					@Override
+					public void onClick(View v) {
+						refreshClick = true;
+						availableView.findViewById(R.id.refresh_view_layout)
+								.setVisibility(View.GONE);
+						refreshAvailableList(false);
 
-			}
-		});
+					}
+				});
 
 		joinStores = (CheckBox) availableView.findViewById(R.id.join_stores);
 		joinStores.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
 				if (isChecked) {
 					depth = ListDepth.CATEGORY1;
 				} else {
 					depth = ListDepth.STORES;
 				}
 				joinStores_boolean = isChecked;
+				if (isChecked) {
+					addBreadCrumb("All Stores", depth);
+				} else {
+					breadcrumbs.removeAllViews();
+				}
 				refreshAvailableList(true);
 			}
 		});
 
-		availableAdapter = new AvailableListAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		installedAdapter = new InstalledAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
-		updatesAdapter = new InstalledAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
+		availableAdapter = new AvailableListAdapter(mContext, null,
+				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		installedAdapter = new InstalledAdapter(mContext, null,
+				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
+		updatesAdapter = new InstalledAdapter(mContext, null,
+				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
 
 		pb = (TextView) availableView.findViewById(R.id.loading_pb);
 		addStoreButton = availableView.findViewById(R.id.add_store);
@@ -554,37 +603,47 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		availableListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
 				switch (depth) {
 				case STORES:
 					depth = ListDepth.CATEGORY1;
 					store_id = id;
 					break;
 				case CATEGORY1:
-					String category = ((Cursor) parent.getItemAtPosition(position)).getString(1);
-					if(category.equals("Top Apps")||category.equals("Most Recent Apps")){
+					String category = ((Cursor) parent
+							.getItemAtPosition(position)).getString(1);
+					if (category.equals("Top Apps") || category.equals("Most Recent Apps")) {
 						depth = ListDepth.TOPAPPS;
 						System.out.println("TopApps");
-					}else{
+					} else {
 						depth = ListDepth.CATEGORY2;
 					}
 					category_id = id;
 					break;
+				
 				case CATEGORY2:
 					depth = ListDepth.APPLICATIONS;
 					category2_id = id;
 					break;
+				case TOPAPPS:
+					break;
+				case APPLICATIONS:
+					Intent i = new Intent(MainActivity.this, ApkInfo.class);
+					i.putExtra("_id", id);
+					startActivity(i);
+					return;
 				default:
 					return;
 				}
-				addBreadCrumb(((Cursor) parent.getItemAtPosition(position)).getString(1),depth);
+				addBreadCrumb(((Cursor) parent.getItemAtPosition(position)).getString(1), depth);
 				refreshAvailableList(true);
 			}
 		});
 
-		LoaderManager.enableDebugLogging(true);
+//		LoaderManager.enableDebugLogging(true);
 		availableLoader = getSupportLoaderManager().initLoader(AVAILABLE_LOADER, null, this);
-
+		
 		ArrayList<View> views = new ArrayList<View>();
 		views.add(featuredView);
 		views.add(availableView);
@@ -599,46 +658,51 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	}
 
-	
-	private class BreadCrumb{
+	private class BreadCrumb {
 		ListDepth depth;
 		int i;
+
 		public BreadCrumb(ListDepth depth, int i) {
-			this.depth=depth;
-			this.i=i;
+			this.depth = depth;
+			this.i = i;
 		}
 	}
-	
-	
-	protected void addBreadCrumb(String itemAtPosition,ListDepth depth2) {
-		if(itemAtPosition.contains("http://")){
+
+	protected void addBreadCrumb(String itemAtPosition, ListDepth depth2) {
+		if (itemAtPosition.contains("http://")) {
 			itemAtPosition = itemAtPosition.split("http://")[1];
 			itemAtPosition = itemAtPosition.split(".store")[0];
 		}
-		Button bt = (Button) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb, null);
+		Button bt = (Button) LayoutInflater.from(mContext).inflate(
+				R.layout.breadcrumb, null);
 		bt.setText(itemAtPosition);
-		bt.setTag(new BreadCrumb(depth,breadcrumbs.getChildCount()+1));
-		System.out.println(breadcrumbs.getChildCount()+1);
+		bt.setTag(new BreadCrumb(depth, breadcrumbs.getChildCount() + 1));
+		System.out.println(breadcrumbs.getChildCount() + 1);
 		bt.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				depth=((BreadCrumb) v.getTag()).depth;
-				breadcrumbs.removeViews(((BreadCrumb) v.getTag()).i,breadcrumbs.getChildCount()-((BreadCrumb) v.getTag()).i);
+				depth = ((BreadCrumb) v.getTag()).depth;
+				breadcrumbs.removeViews(((BreadCrumb) v.getTag()).i,
+						breadcrumbs.getChildCount()
+								- ((BreadCrumb) v.getTag()).i);
 				refreshAvailableList(true);
 			}
 		});
-		breadcrumbs.addView(bt, new LinearLayout.LayoutParams(-2, LayoutParams.WRAP_CONTENT, 1f));
+		breadcrumbs.addView(bt, new LinearLayout.LayoutParams(-2,
+				LayoutParams.WRAP_CONTENT, 1f));
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		Integer tag = (Integer) ((AdapterContextMenuInfo) menuInfo).targetView.getTag();
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		Integer tag = (Integer) ((AdapterContextMenuInfo) menuInfo).targetView
+				.getTag();
 		if (tag != null && tag == 1) {
 			menu.add(0, 1, 0, "reparse");
 		}
 		menu.add(0, 0, 0, "remove");
-		
+
 	}
 
 	@Override
@@ -656,11 +720,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					case CATEGORY1:
 						return db.getCategory1(store_id, joinStores_boolean);
 					case CATEGORY2:
-						return db.getCategory2(category_id, store_id, joinStores_boolean);
+						return db.getCategory2(category_id, store_id,
+								joinStores_boolean);
 					case APPLICATIONS:
-						return db.getApps(category2_id, store_id, joinStores_boolean);
+						return db.getApps(category2_id, store_id,
+								joinStores_boolean);
 					case TOPAPPS:
-						return db.getTopApps(category_id, store_id, joinStores_boolean);
+						return db.getTopApps(category_id, store_id,
+								joinStores_boolean);
 					default:
 						return null;
 					}
@@ -704,9 +771,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (!depth.equals(ListDepth.STORES)) {
-				if(depth.equals(ListDepth.TOPAPPS)){
+				if (depth.equals(ListDepth.TOPAPPS)) {
 					depth = ListDepth.CATEGORY1;
-				}else{
+				} else {
 					depth = ListDepth.values()[depth.ordinal() - 1];
 				}
 				removeLastBreadCrumb();
@@ -718,7 +785,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private void removeLastBreadCrumb() {
-		breadcrumbs.removeViewAt(breadcrumbs.getChildCount()-1);
+		breadcrumbs.removeViewAt(breadcrumbs.getChildCount() - 1);
 	}
 
 	@Override
@@ -752,17 +819,28 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	private void refreshAvailableList(boolean setAdapter) {
 		if (depth.equals(ListDepth.STORES)) {
-			availableView.findViewById(R.id.add_store_layout).setVisibility(View.VISIBLE);
+			availableView.findViewById(R.id.add_store_layout).setVisibility(
+					View.VISIBLE);
 			registerForContextMenu(availableListView);
 		} else {
 			unregisterForContextMenu(availableListView);
 			availableListView.setLongClickable(false);
 			if (!joinStores_boolean) {
-				availableView.findViewById(R.id.add_store_layout).setVisibility(View.GONE);
+				availableView.findViewById(R.id.add_store_layout)
+						.setVisibility(View.GONE);
+			} else if (depth.equals(ListDepth.CATEGORY2)
+					|| depth.equals(ListDepth.APPLICATIONS)
+					|| depth.equals(ListDepth.TOPAPPS)) {
+				availableView.findViewById(R.id.add_store_layout)
+						.setVisibility(View.GONE);
+			} else if (depth.equals(ListDepth.CATEGORY1)) {
+				availableView.findViewById(R.id.add_store_layout)
+						.setVisibility(View.VISIBLE);
 			}
 
 		}
-		availableView.findViewById(R.id.refresh_view_layout).setVisibility(View.GONE);
+		availableView.findViewById(R.id.refresh_view_layout).setVisibility(
+				View.GONE);
 		refreshClick = true;
 		availableAdapter.changeCursor(null);
 		pb.setVisibility(View.VISIBLE);
@@ -773,20 +851,29 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private void showAddStoreDialog() {
-		alertDialogView = LayoutInflater.from(mContext).inflate(R.layout.add_store_dialog, null);
-		alertDialog = new AlertDialog.Builder(mContext).setView(alertDialogView).create();
+		alertDialogView = LayoutInflater.from(mContext).inflate(
+				R.layout.add_store_dialog, null);
+		alertDialog = new AlertDialog.Builder(mContext)
+				.setView(alertDialogView).create();
 		alertDialog.setTitle(getString(R.string.new_store));
-		alertDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.new_store), addRepoListener);
-		alertDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.search_for_stores), searchStoresListener);
-		((EditText) alertDialogView.findViewById(R.id.edit_uri)).setText("savou.store.aptoide.com");
+		alertDialog.setButton(Dialog.BUTTON_NEGATIVE,
+				getString(R.string.new_store), addRepoListener);
+		alertDialog.setButton(Dialog.BUTTON_POSITIVE,
+				getString(R.string.search_for_stores), searchStoresListener);
+		((EditText) alertDialogView.findViewById(R.id.edit_uri))
+				.setText("savou.store.aptoide.com");
 		alertDialog.show();
 	}
-	
+
 	private void showAddStoreCredentialsDialog(String string) {
-		View credentialsDialogView = LayoutInflater.from(mContext).inflate(R.layout.add_store_creddialog, null);
-		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext).setView(credentialsDialogView).create();
+		View credentialsDialogView = LayoutInflater.from(mContext).inflate(
+				R.layout.add_store_creddialog, null);
+		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext)
+				.setView(credentialsDialogView).create();
 		credentialsDialog.setTitle(getString(R.string.new_store));
-		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(R.string.new_store), new AddStoreCredentialsListener(string,credentialsDialogView) );
+		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL,
+				getString(R.string.new_store), new AddStoreCredentialsListener(
+						string, credentialsDialogView));
 		credentialsDialog.show();
 	}
 
@@ -803,9 +890,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		public void bindView(View view, Context context, Cursor cursor) {
 			switch (depth) {
 			case STORES:
-				((TextView) view.findViewById(R.id.store_name)).setText(cursor.getString(1));
-				((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(6));
-				if (cursor.getString(6).equals(State.FAILED.name())||cursor.getString(6).equals(State.PARSED.name())) {
+				((TextView) view.findViewById(R.id.store_name)).setText(cursor
+						.getString(1));
+				((TextView) view.findViewById(R.id.store_dwn_number))
+						.setText(cursor.getString(6));
+				if (cursor.getString(6).equals(State.FAILED.name())
+						|| cursor.getString(6).equals(State.PARSED.name())) {
 					view.setTag(1);
 				}
 				break;
@@ -816,18 +906,23 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					holder = new ViewHolder();
 					holder.name = (TextView) view.findViewById(R.id.app_name);
 					holder.icon = (ImageView) view.findViewById(R.id.app_icon);
-					holder.vername = (TextView) view.findViewById(R.id.installed_versionname);
+					holder.vername = (TextView) view
+							.findViewById(R.id.installed_versionname);
 					view.setTag(holder);
 				}
 				holder.name.setText(cursor.getString(1));
-				loader.DisplayImage(cursor.getLong(3), cursor.getString(4), holder.icon, context,depth==ListDepth.TOPAPPS?true:false);
+				loader.DisplayImage(cursor.getLong(3), cursor.getString(4),
+						holder.icon, context, depth == ListDepth.TOPAPPS ? true
+								: false);
 				holder.vername.setText(cursor.getString(2));
 				break;
 			case CATEGORY1:
-				((TextView) view.findViewById(R.id.category_name)).setText(cursor.getString(1));
+				((TextView) view.findViewById(R.id.category_name))
+						.setText(cursor.getString(1));
 				break;
 			case CATEGORY2:
-				((TextView) view.findViewById(R.id.category_name)).setText(cursor.getString(1));
+				((TextView) view.findViewById(R.id.category_name))
+						.setText(cursor.getString(1));
 				break;
 			default:
 				break;
@@ -839,22 +934,27 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			View v = null;
 			switch (depth) {
 			case STORES:
-				v = LayoutInflater.from(context).inflate(R.layout.stores_row, null);
+				v = LayoutInflater.from(context).inflate(R.layout.stores_row,
+						null);
 				break;
 			case CATEGORY1:
-				v = LayoutInflater.from(context).inflate(R.layout.catg_list, null);
+				v = LayoutInflater.from(context).inflate(R.layout.catg_list,
+						null);
 				break;
 			case CATEGORY2:
-				v = LayoutInflater.from(context).inflate(R.layout.catg_list, null);
+				v = LayoutInflater.from(context).inflate(R.layout.catg_list,
+						null);
 				break;
 			case TOPAPPS:
 			case APPLICATIONS:
-				v = LayoutInflater.from(context).inflate(R.layout.app_row, null);
+				v = LayoutInflater.from(context)
+						.inflate(R.layout.app_row, null);
 				break;
 			default:
 				break;
 			}
-			Animation animation = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in);
+			Animation animation = AnimationUtils.loadAnimation(mContext,
+					android.R.anim.fade_in);
 			v.startAnimation(animation);
 			return v;
 		}

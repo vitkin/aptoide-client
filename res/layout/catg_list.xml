@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:cropToPadding="true"
             android:scaleType="centerInside"
-            android:src="@drawable/expander_ic_minimized" />
+            android:src="@drawable/ic_ab_back_holo_light" />
 
     </LinearLayout>
 

@@ -106,7 +106,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				server.screenspath=sb.toString();
 			}
 		});
 
@@ -117,7 +117,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				server.webservicesPath=sb.toString();
 			}
 		});
 
@@ -128,14 +128,13 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				server.apkPath=sb.toString();
 			}
 		});
 
 		elements.put("package", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 				apk.clear();
-				
 			}
 
 			@Override
@@ -168,7 +167,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				apk.setPath(sb.toString());
 			}
 		});
 
@@ -190,7 +189,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.setVercode(sb.toString());
+				apk.setVercode(Integer.parseInt(sb.toString()));
 				
 			}
 		});
@@ -243,12 +242,12 @@ public class RepoParserHandler extends DefaultHandler {
 
 		elements.put("dwn", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
-				apk.setDownloads(sb.toString());
+				
 			}
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				apk.setDownloads(sb.toString());
 			}
 		});
 
@@ -259,7 +258,6 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
 			}
 		});
 
@@ -371,7 +369,6 @@ public class RepoParserHandler extends DefaultHandler {
 	private static boolean isRemove = false;
 	
 	long start;
-	private int i = 0;
 	private static boolean delta = false;
 	
 	public void startDocument() throws SAXException {
@@ -427,7 +424,7 @@ public class RepoParserHandler extends DefaultHandler {
 			server.delta = Md5Handler.md5Calc(server.xml);
 		}
 		db.updateStatus(server);
-		db.endTransation(System.currentTimeMillis() - start,server);
+		db.endTransation(server);
 	}
 	
 }

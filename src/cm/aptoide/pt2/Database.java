@@ -15,9 +15,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class Database {
 	private static SQLiteDatabase database = null;
-	private static SQLiteDatabase extrasDatabase = null;
 	private static DbOpenHelper dbhandler ;
-	private static ExtrasDbOpenHelper extrasDbHandler ;
 	private int i=0;
 	private static Database db;
 	static Context context;
@@ -62,9 +60,7 @@ public class Database {
 				i.putExtra("server", apk.getRepo_id());
 				context.sendBroadcast(i);
 			}
-			if(database.yieldIfContendedSafely()){
-				System.out.println("yielded");
-			}
+			database.yieldIfContendedSafely();
 			
 		} catch (Exception e){
 			e.printStackTrace();
@@ -141,10 +137,9 @@ public class Database {
 		database.beginTransaction();
 	}
 	
-	public void endTransation(long l, Server server){
+	public void endTransation(Server server){
 		Intent i = new Intent("status");
 		i.putExtra("server", server);
-		i.putExtra("time", l+"");
 		context.sendBroadcast(i);
 		i.setAction("complete");
 		context.sendBroadcast(i);
@@ -159,11 +154,9 @@ public class Database {
 		Cursor c = null;
 		try{
 			if(mergeStores){
-//				c = database.query("apk", new String[]{"_id","name","vername"},"category2 = ?", new String[]{l+""}, "name", null, "name collate nocase");
 				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by apkid order by name collate nocase",new String[]{category2_id+""});
 			}else{
 				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) group by apkid order by name collate nocase",new String[]{store+"",category2_id+""});
-//				c = database.query("apk", new String[]{"_id","name","vername"},"category2 = ? and repo_id = ?", new String[]{l+"",store+""}, "name", null, "name collate nocase");
 			}
 			System.out.println("getapps " + "repo_id ="+store +  " category " + category2_id);
 		}catch(Exception e){
@@ -225,7 +218,6 @@ public class Database {
 			c = database.query("repo", new String[]{"_id, url, delta"}, "_id = ?", new String[]{id+""}, null, null, null);
 			c.moveToFirst();
 			server = new Server(c.getString(1),c.getString(2),c.getLong(0));
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}finally{
@@ -335,7 +327,6 @@ public class Database {
 		} finally {
 			c.close();
 		}
-		
 		return path;
 	}
 
@@ -363,10 +354,12 @@ public class Database {
 		if(server.basePath!=null){
 			values.put("basepath", server.basePath);
 		}
+		if(server.webservicesPath!=null){
+			values.put("webservicespath", server.webservicesPath);
+		}
 		if(values.size()>0){
 			database.update("repo", values,"_id = ?", new String[]{server.id+""});
 		}
-		
 		
 	}
 
@@ -431,13 +424,13 @@ public class Database {
 		database.update("repo", values, "url =?", new String[]{server.url});
 	}
 
-	public void insertDynamic(ViewApk apk, Category category) {
+	public void insertTop(ViewApk apk, Category category) {
 		switch (category) {
 		case TOP:
 			try{
 				apk.setCategory1("Top Apps");
 				insertDynamicCategories(apk);
-				insertDynamicApk(apk);
+				insertTopApk(apk);
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -449,7 +442,7 @@ public class Database {
 		}
 	}
 
-	private void insertDynamicApk(ViewApk apk) {
+	private void insertTopApk(ViewApk apk) {
 		try{
 			ContentValues values = new ContentValues();
 			values.put("name", apk.getName());
@@ -466,9 +459,7 @@ public class Database {
 				i.putExtra("server", apk.getRepo_id());
 				context.sendBroadcast(i);
 			}
-			if(database.yieldIfContendedSafely()){
-				System.out.println("yielded");
-			}
+			database.yieldIfContendedSafely();
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -479,9 +470,9 @@ public class Database {
 		Cursor c = null;
 		try{
 			if(joinStores_boolean){
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where category1 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by apkid order by name collate nocase",new String[]{category_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where category1 = ?",new String[]{category_id+""});
 			}else{
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where repo_id = ? and category1 = ? and vercode in (select vercode from dynamic_apk as b where a.apkid=b.apkid order by vercode asc) group by apkid order by name collate nocase",new String[]{store_id+"",category_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where repo_id = ? and category1 = ?",new String[]{store_id+"",category_id+""});
 			}
 			System.out.println("getapps " + "repo_id ="+store_id +  " category " + category_id);
 		}catch(Exception e){
@@ -515,10 +506,16 @@ public class Database {
 
 	public void insertTopServerInfo(Server server) {
 		ContentValues values = new ContentValues();
-		values.put("iconspath", server.iconsPath);
-		values.put("_id", server.id);
-		values.put("top_delta", server.delta);
-		database.insert("toprepo_extra", null, values);
+		try{
+			values.put("iconspath", server.iconsPath);
+			values.put("_id", server.id);
+			values.put("top_delta", server.delta);
+			database.insert("toprepo_extra", null, values);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		
 	}
 	
 	public String getTopAppsHash(long id){
@@ -540,6 +537,56 @@ public class Database {
 	public void prepare() {
 		categories1.clear();
 		categories2.clear();
+	}
+
+	public ViewApk getApk(long long1) {
+		Cursor c = null;
+		ViewApk apk = new ViewApk();
+		try {
+			c = database.query("apk", new String[]{"apkid","vername","repo_id"}, "_id = ?", new String[]{long1+""}, null, null, null);
+			
+			c.moveToFirst();
+			apk.setApkid(c.getString(0));
+			apk.setVername(c.getString(1));
+			apk.setRepo_id(c.getLong(2));
+			
+			
+		} catch (Exception e){
+			e.printStackTrace();
+		} finally{
+			c.close();
+		}
+		return apk;
+	}
+	
+	public Cursor getAllApkVersions(String apkid) {
+		Cursor c = null;
+		try {
+			c = database.query("apk", new String[]{"_id", "apkid","vername"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
+		} catch (Exception e){
+			e.printStackTrace();
+		} finally{
+		}
+		return c;
+	}
+
+	public String getWebServicesPath(long repo_id) {
+		Cursor c = null;
+		String return_string = null;
+		try{
+			c = database.query("repo", new String[]{"webservicespath"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
+			c.moveToFirst();
+			if(c.getCount()>0){
+				return_string = c.getString(0);
+			}else{
+				return_string = "";
+			}
+		} catch (Exception e){
+			e.printStackTrace();
+		} finally{
+			c.close();
+		}
+		return return_string;
 	}
 
 
