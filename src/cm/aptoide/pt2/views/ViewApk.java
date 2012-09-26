@@ -2,7 +2,7 @@ package cm.aptoide.pt2.views;
 
 import java.util.ArrayList;
 
-public class ViewApk implements Comparable<ViewApk>{
+public class ViewApk {
 
 	private long id;
 	private String apkid = "";
@@ -184,15 +184,6 @@ public class ViewApk implements Comparable<ViewApk>{
 	@Override
 	public String toString() {
 		return " Id: "+hashCode()+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
-	}
-
-	public void addVersion(long id) {
-		versionsIds.add(id);
-	}
-
-	@Override
-	public int compareTo(ViewApk another) {
-		return this.vercode-another.getVercode();
 	}
 
 	public void setPath(String path) {
