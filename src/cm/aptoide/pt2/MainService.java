@@ -2,6 +2,7 @@ package cm.aptoide.pt2;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,12 +42,9 @@ public class MainService extends Service {
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			serversParsing.remove((int)
-					((Server)intent.
-							getParcelableExtra("server")).id);
+			serversParsing.remove((int)((Server)intent.getParcelableExtra("server")).id);
 		}
 	};
-	
 	
 	
 	public class LocalBinder extends Binder{
@@ -78,37 +76,41 @@ public class MainService extends Service {
 //		}.start();
 //	}
 	
-	public String get(Server server,String xmlpath) throws MalformedURLException, IOException {
+	public String get(Server server,String xmlpath) throws MalformedURLException, IOException{
 		getApplicationContext().sendBroadcast(new Intent("connecting"));
 		String hash = "";
-		
-		if(server.delta!=null){
-			hash="?hash=" + server.delta;
+
+		if (server.delta != null) {
+			hash = "?hash=" + server.delta;
 		}
 		String url = server.url + "info.xml" + hash;
 		System.out.println(url);
-    	InputStream in = getInputStream(new URL(url),server.username,server.password);
-    	
-    	File f = new File(xmlpath);
-    	int i = 0;
-    	while(f.exists()){
-    		f = new File(xmlpath+i++);
-    	}
-		FileOutputStream out = new FileOutputStream(f);
 		
-		byte[] buffer = new byte[1024];
-		int len;
-		getApplicationContext().sendBroadcast(new Intent("downloading"));
-		while ((len = in.read(buffer)) != -1) {
-			out.write(buffer, 0, len);
-		}
-		out.close();
+
+		File f = new File(xmlpath);
+			InputStream in = getInputStream(new URL(url), server.username,
+					server.password);
+			int i = 0;
+			while (f.exists()) {
+				f = new File(xmlpath + i++);
+			}
+			FileOutputStream out = new FileOutputStream(f);
+
+			byte[] buffer = new byte[1024];
+			int len;
+			getApplicationContext().sendBroadcast(new Intent("downloading"));
+			while ((len = in.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			out.close();
+		
+		
+    	
 		return f.getAbsolutePath();
     }
 	
-	public String getTop(Server server,String xmlpath){
+	public String getTop(Server server,String xmlpath) throws MalformedURLException, IOException{
 		File f = new File(xmlpath);
-		try{
 			getApplicationContext().sendBroadcast(new Intent("connecting"));
 			String url = server.url + "top.xml";
 			System.out.println(url);
@@ -128,9 +130,6 @@ public class MainService extends Service {
 				out.write(buffer, 0, len);
 			}
 			out.close();
-		}catch (Exception e){
-			e.printStackTrace();
-		}
 		
 		return f.getAbsolutePath();
     }
@@ -160,38 +159,39 @@ public class MainService extends Service {
 	}
 
 	public void addStore(Database db, String uri_str, String username, String password) {
-		Server server = db.getServer(uri_str);
+		Server server = null;
 		try{
-			
-			if(server!=null){
+			if(db.getServer(uri_str)!=null){
 				return;
 			}
 			db.addStore(uri_str,username,password);
-			parseServer(db, uri_str);
-		} catch (Exception e){
 			server = db.getServer(uri_str);
-			server.state=State.FAILED;
-			db.updateStatus(server);
-			getApplicationContext().sendBroadcast(new Intent("status"));
-			e.printStackTrace();
+			parseServer(db, server);
+		} catch (Exception e){
+			
 		}
 	}
 
-	public void parseServer(final Database db, String uri_str) throws MalformedURLException, IOException {
+	public void parseServer(final Database db, final Server server) throws MalformedURLException, IOException {
 		
-		final Server server = db.getServer(uri_str);
 		
 		if(serversParsing.get((int) server.id)==null){
-			final String path = get(server,defaultXmlPath);
-			final String path2 = getTop(server,defaultTopXmlPath);
 			server.state=State.QUEUED;
 			db.updateStatus(server);
 			new Thread(new Runnable() {
 				
 				@Override
 				public void run() {
-					RepoParser.getInstance(db).parse2(new File(path2), server, Category.TOP);
-					RepoParser.getInstance(db).parse(new File(path),server);
+					try{
+						parseTop(db, server);
+						parseInfoXml(db, server);
+					}catch (Exception e){
+						server.state=State.FAILED;
+						db.updateStatus(server);
+						getApplicationContext().sendBroadcast(new Intent("status"));
+						e.printStackTrace();
+					}
+					
 				}
 			}).start();
 			
@@ -205,6 +205,16 @@ public class MainService extends Service {
 			return true;
 		}
 		return false;
+	}
+	
+	public void parseTop(Database db, Server server) throws MalformedURLException, IOException{
+		final String path2 = getTop(server,defaultTopXmlPath);
+		RepoParser.getInstance(db).parse2(new File(path2), server, Category.TOP);
+	}
+	
+	public void parseInfoXml(Database db, Server server) throws MalformedURLException, IOException{
+		final String path = get(server,defaultXmlPath);
+		RepoParser.getInstance(db).parse(new File(path),server);
 	}
 
 }

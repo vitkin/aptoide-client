@@ -11,7 +11,7 @@ import cm.aptoide.pt2.RepoParserHandler.ElementHandler;
 import cm.aptoide.pt2.views.ViewApk;
 
 
-public class DynamicRepoParserHandler extends DefaultHandler {
+public class TopRepoParserHandler extends DefaultHandler {
 	
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
@@ -57,6 +57,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 				if(!db.getTopAppsHash(server.id).equals(server.delta)){
 					db.deleteTopApps(server.id);
 				}else{
+					db.endTransation(server);
 					throw new SAXException();
 				}
 				db.insertTopServerInfo(server);
@@ -84,7 +85,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				db.insertDynamic(apk,category);
+				db.insertTop(apk,category);
 				System.out.println("Insert");
 			}
 		});
@@ -118,7 +119,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.setVercode(sb.toString());
+				apk.setVercode(Integer.parseInt(sb.toString()));
 			}
 		});
 		
@@ -160,15 +161,16 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 	private static Server server;
 	private static Category category;
 	
-	public DynamicRepoParserHandler(Database db, Server server,Category category) {
-		DynamicRepoParserHandler.server = server;
-		DynamicRepoParserHandler.db = db;
-		DynamicRepoParserHandler.category=category;
+	public TopRepoParserHandler(Database db, Server server,Category category) {
+		TopRepoParserHandler.server = server;
+		TopRepoParserHandler.db = db;
+		TopRepoParserHandler.category=category;
 	}
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
 		db.prepare();
+		db.startTransation();
 		System.out.println(server.id);
 		apk.setRepo_id(server.id);
 	}
@@ -183,7 +185,7 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 		if (elementHandler != null) {
 			elementHandler.startElement(attributes);
 		} else {
-//			System.out.println("Element not found:" + localName);
+			System.out.println("Element not found:" + localName);
 		}
 	}
 
@@ -204,13 +206,14 @@ public class DynamicRepoParserHandler extends DefaultHandler {
 		if (elementHandler != null) {
 			elementHandler.endElement();
 		} else {
-//			System.out.println("Element not found:" + localName);
+			System.out.println("Element not found:" + localName);
 		}
 	}
 	
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
+		db.endTransation(server);
 	}
 	
 	

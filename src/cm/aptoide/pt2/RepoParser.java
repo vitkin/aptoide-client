@@ -8,8 +8,6 @@ import java.util.concurrent.Executors;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import cm.aptoide.pt2.DynamicRepoParser.Parser;
-
 import android.content.Context;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -33,11 +31,10 @@ public class RepoParser {
 	}
 	
 	public void parse2(File xml, Server server, Category category){
-		executor.submit(new DynamicParser(server,xml,category));
+		executor.submit(new TopParser(server,xml,category));
 	}
 	
 	public void parse(File xml, Server server){
-		
 		executor.submit(new Parser(server,xml));
 //		new Thread(new Parser()).start();
 	}
@@ -59,8 +56,8 @@ public class RepoParser {
 				SAXParser parser = factory.newSAXParser();
 				System.out.println("Parsing repo_id:" + server.id);
 				parser.parse(xml, new RepoParserHandler(db,server));
-				
 			}catch(Exception e){
+				db.endTransation(server);
 				e.printStackTrace();
 			}finally{
 				xml.delete();
@@ -69,12 +66,12 @@ public class RepoParser {
 		}
 	}
 	
-	public class DynamicParser extends Thread{ 
+	public class TopParser extends Thread{ 
 		Server server;
 		File xml;
 		Category category;
 		
-		public DynamicParser(Server server, File xml, Category category) {
+		public TopParser(Server server, File xml, Category category) {
 			this.server = server;
 			this.xml=xml;
 			server.xml=xml;
@@ -87,8 +84,9 @@ public class RepoParser {
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				System.out.println("DynamicParsing repo_id:" + server.id);
-				parser.parse(xml, new DynamicRepoParserHandler(db,server,category));
+				parser.parse(xml, new TopRepoParserHandler(db,server,category));
 			}catch(Exception e){
+				db.endTransation(server);
 				e.printStackTrace();
 			}finally{
 				xml.delete();
