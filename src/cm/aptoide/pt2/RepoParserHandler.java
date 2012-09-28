@@ -258,6 +258,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
+				apk.setRating(sb.toString());
 			}
 		});
 

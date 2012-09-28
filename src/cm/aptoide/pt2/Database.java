@@ -53,6 +53,8 @@ public class Database {
 			values.put("vercode", apk.getVercode());
 			values.put("repo_id", apk.getRepo_id());
 			values.put("category2", categories2.get(apk.getCategory2()));
+			values.put("rating", apk.getRating());
+			values.put("path", apk.getPath());
 			database.insert("apk", null, values);
 			i++;
 			if(i%300==0){
@@ -154,9 +156,9 @@ public class Database {
 		Cursor c = null;
 		try{
 			if(mergeStores){
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by apkid order by name collate nocase",new String[]{category2_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by apkid order by name collate nocase",new String[]{category2_id+""});
 			}else{
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) group by apkid order by name collate nocase",new String[]{store+"",category2_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) group by apkid order by name collate nocase",new String[]{store+"",category2_id+""});
 			}
 			System.out.println("getapps " + "repo_id ="+store +  " category " + category2_id);
 		}catch(Exception e){
@@ -330,7 +332,7 @@ public class Database {
 		return path;
 	}
 
-	private String getBasePath(long repo_id) {
+	public String getBasePath(long repo_id) {
 		Cursor c = null;
 		String path = null;
 		try{
@@ -356,6 +358,9 @@ public class Database {
 		}
 		if(server.webservicesPath!=null){
 			values.put("webservicespath", server.webservicesPath);
+		}
+		if(server.delta!=null){
+			values.put("delta", server.delta);
 		}
 		if(values.size()>0){
 			database.update("repo", values,"_id = ?", new String[]{server.id+""});
@@ -398,7 +403,7 @@ public class Database {
 	public Cursor getInstalledApps() {
 		Cursor c = null;
 		try{
-			c = database.rawQuery("select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath from installed as a, apk as b where a.apkid=b.apkid group by a.name order by a.name",null);
+			c = database.rawQuery("select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads from installed as a, apk as b where a.apkid=b.apkid group by a.name order by a.name",null);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -408,7 +413,7 @@ public class Database {
 	public Cursor getUpdates() {
 		Cursor c = null;
 		try{
-			c=database.rawQuery("select b._id, b.name,b.vername,b.repo_id,b.imagepath from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) order by b.name", null); 
+			c=database.rawQuery("select b._id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) order by b.name", null); 
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -452,6 +457,9 @@ public class Database {
 			values.put("apkid", apk.getApkid());
 			values.put("vercode", apk.getVercode());
 			values.put("imagepath", apk.getIconPath());
+			values.put("downloads", apk.getDownloads());
+			values.put("size", apk.getSize());
+			values.put("rating", apk.getRating());
 			database.insert("dynamic_apk", null, values);
 			i++;
 			if(i%300==0){
@@ -470,9 +478,9 @@ public class Database {
 		Cursor c = null;
 		try{
 			if(joinStores_boolean){
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where category1 = ?",new String[]{category_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads from dynamic_apk as a where category1 = ?",new String[]{category_id+""});
 			}else{
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath from dynamic_apk as a where repo_id = ? and category1 = ?",new String[]{store_id+"",category_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads from dynamic_apk as a where repo_id = ? and category1 = ?",new String[]{store_id+"",category_id+""});
 			}
 			System.out.println("getapps " + "repo_id ="+store_id +  " category " + category_id);
 		}catch(Exception e){
@@ -507,7 +515,7 @@ public class Database {
 	public void insertTopServerInfo(Server server) {
 		ContentValues values = new ContentValues();
 		try{
-			values.put("iconspath", server.iconsPath);
+//			values.put("iconspath", server.iconsPath);
 			values.put("_id", server.id);
 			values.put("top_delta", server.delta);
 			database.insert("toprepo_extra", null, values);
@@ -539,17 +547,29 @@ public class Database {
 		categories2.clear();
 	}
 
-	public ViewApk getApk(long long1) {
+	public ViewApk getApk(long long1, boolean top) {
 		Cursor c = null;
 		ViewApk apk = new ViewApk();
 		try {
-			c = database.query("apk", new String[]{"apkid","vername","repo_id"}, "_id = ?", new String[]{long1+""}, null, null, null);
+			
+			if(top){
+				c = database.query("dynamic_apk", new String[]{"apkid","vername","repo_id","downloads","size","imagepath","name","rating","path"}, "_id = ?", new String[]{long1+""}, null, null, null);
+			}else{
+				c = database.query("apk", new String[]{"apkid","vername","repo_id","downloads","size","imagepath","name","rating","path"}, "_id = ?", new String[]{long1+""}, null, null, null);
+			}
+			
 			
 			c.moveToFirst();
 			apk.setApkid(c.getString(0));
 			apk.setVername(c.getString(1));
 			apk.setRepo_id(c.getLong(2));
-			
+			apk.setDownloads(c.getString(3));
+			apk.setSize(c.getString(4));
+			apk.setIconPath(c.getString(5));
+			apk.setName(c.getString(6));
+			apk.setRating(c.getString(7));
+			apk.setPath(c.getString(8));
+			apk.setId(long1);
 			
 		} catch (Exception e){
 			e.printStackTrace();
@@ -559,10 +579,14 @@ public class Database {
 		return apk;
 	}
 	
-	public Cursor getAllApkVersions(String apkid) {
+	public Cursor getAllApkVersions(String apkid, boolean b) {
 		Cursor c = null;
 		try {
-			c = database.query("apk", new String[]{"_id", "apkid","vername"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
+			if(b){
+				c = database.query("dynamic_apk", new String[]{"_id", "apkid","vername"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
+			}else{
+				c = database.query("apk", new String[]{"_id", "apkid","vername"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
+			}
 		} catch (Exception e){
 			e.printStackTrace();
 		} finally{

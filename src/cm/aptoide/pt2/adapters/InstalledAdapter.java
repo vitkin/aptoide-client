@@ -41,10 +41,18 @@ public class InstalledAdapter extends CursorAdapter {
             holder.name = (TextView) view.findViewById(R.id.app_name);
             holder.icon= (ImageView) view.findViewById(R.id.app_icon);
             holder.vername= (TextView) view.findViewById(R.id.installed_versionname);
+            holder.downloads= (TextView) view.findViewById(R.id.downloads);
+            holder.rating= (RatingBar) view.findViewById(R.id.stars);
             view.setTag(holder);
         }
 		holder.name.setText(cursor.getString(1));
 		loader.DisplayImage(cursor.getLong(3), cursor.getString(4), holder.icon, context,false);
+		 try{
+	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
+	        }catch (Exception e) {
+	        	holder.rating.setRating(0);
+			}
+		 holder.downloads.setText(cursor.getString(6));
 		holder.vername.setText(cursor.getString(2));
 	}
 	
@@ -52,6 +60,8 @@ public class InstalledAdapter extends CursorAdapter {
 		TextView name;
 		TextView vername;
 		ImageView icon;
+		RatingBar rating;
+		TextView downloads;
 	}
 
 }
