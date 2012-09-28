@@ -9,20 +9,20 @@ public class Server implements Parcelable{
 	
 	public static enum State { PARSING, PARSED, QUEUED, FAILED };
 	
-	long id;
-	String url = "";
-	String delta = "";
-	String timestamp = "";
-	int n_apk = 0;
-	State state = State.QUEUED;
-	String iconsPath;
-	String basePath;
-	String apkPath;
-	String webservicesPath;
-	String username;
-	String password;
-	File xml;
-	String screenspath;
+	public long id;
+	public String url = "";
+	public String delta = "";
+	public String timestamp = "";
+	public int n_apk = 0;
+	public State state = State.QUEUED;
+	public String iconsPath;
+	public String basePath;
+	public String apkPath;
+	public String webservicesPath;
+	public String username;
+	public String password;
+	public File xml;
+	public String screenspath;
 	
 	
 	public Server(String url){

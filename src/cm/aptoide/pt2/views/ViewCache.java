@@ -36,6 +36,7 @@ import android.util.Log;
  */
 public class ViewCache implements Parcelable{
 
+	private long id;
 	private String localPath;
 	private boolean hasMd5Sum;
 	private String md5sum;
@@ -44,6 +45,7 @@ public class ViewCache implements Parcelable{
 	
 
 	public ViewCache(EnumCacheType type, long id) {
+		this.id = id;
 		this.type = type; 
 		switch (type) {
 			case APK:
@@ -62,13 +64,20 @@ public class ViewCache implements Parcelable{
 		this.md5sum = md5sum;
 	}
 
+	public long getId(){
+		return id;
+	}
 
 	public String getLocalPath() {
 		return localPath;
 	}
 	
-	public File getCacheFile(){
+	public File getFile(){
 		return new File(localPath);
+	}
+	
+	public long getFileLength(){
+		return getFile().length();
 	}
 	
 	public boolean hasMd5Sum(){
@@ -112,22 +121,33 @@ public class ViewCache implements Parcelable{
 		}
 	}
 	
+	/**
+	 * chechMd5, checks if the file md5Sum corresponds to the expected signature
+	 * 
+	 * @return true if checks out ok, or if there is no stored signature
+	 */
 	public boolean checkMd5(){
-		File file = new File(this.localPath);
-		String actualMd5Sum = Md5Handler.md5Calc(file);
-		if(this.md5sum.equalsIgnoreCase(actualMd5Sum)){
-			Log.d("Aptoide-ManagerCache", "md5Check OK!");
+		if(!hasMd5Sum){
 			return true;
 		}else{
-			Log.d("Aptoide-ManagerCache",md5sum+ " VS " + actualMd5Sum);
-			return false;
+			File file = new File(this.localPath);
+			String actualMd5Sum = Md5Handler.md5Calc(file);
+			if(this.md5sum.equalsIgnoreCase(actualMd5Sum)){
+				Log.d("Aptoide-ManagerCache", "md5Check OK!");
+				return true;
+			}else{
+				Log.d("Aptoide-ManagerCache",md5sum+ " VS " + actualMd5Sum);
+				return false;
+			}
 		}
 	}
 
-
+	/**
+	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will not overflow integer in a realistic scenario)
+	 */
 	@Override
 	public int hashCode() {
-		return this.localPath.hashCode();
+		return (int) id;
 	}
 
 

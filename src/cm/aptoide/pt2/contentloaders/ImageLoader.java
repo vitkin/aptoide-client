@@ -1,4 +1,4 @@
-package cm.aptoide.pt2;
+package cm.aptoide.pt2.contentloaders;
 
 
 
@@ -16,6 +16,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import cm.aptoide.pt2.Database;
 import cm.aptoide.pt2.util.Utils;
 import android.app.Activity;
 import android.content.Context;

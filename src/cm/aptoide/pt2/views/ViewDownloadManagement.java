@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import android.os.Handler;
 
-import cm.aptoide.pt2.ServiceManager;
+import cm.aptoide.pt2.ApplicationServiceManager;
 
 /**
  * ViewDownloadManagement
@@ -33,7 +33,7 @@ import cm.aptoide.pt2.ServiceManager;
  *
  */
 public class ViewDownloadManagement {
-	ServiceManager serviceManager;
+	ApplicationServiceManager serviceManager;
 	ArrayList<Handler> observers;
 	
 	EnumDownloadStatus status;
@@ -43,12 +43,15 @@ public class ViewDownloadManagement {
 	ViewDownload viewDownload;
 	ViewCache cache;
 	
+	boolean isLoginRequired;
+	ViewLogin login;
+	
 	/**
 	 * 
 	 * ViewDownloadManagement skeleton Constructor
 	 *
 	 */
-	public ViewDownloadManagement(ServiceManager serviceManager){
+	public ViewDownloadManagement(ApplicationServiceManager serviceManager){
 		this.serviceManager = serviceManager;
 		this.observers = new ArrayList<Handler>();
 		this.status = EnumDownloadStatus.SETTING_UP;
@@ -62,7 +65,7 @@ public class ViewDownloadManagement {
 	 * @param appInfo
 	 * @param cache
 	 */
-	public ViewDownloadManagement(ServiceManager serviceManager, String remoteUrl, ViewApk appInfo) {
+	public ViewDownloadManagement(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo) {
 		this(serviceManager);
 		this.viewDownload = new ViewDownload(remoteUrl);
 		this.appInfo = appInfo;
@@ -76,15 +79,32 @@ public class ViewDownloadManagement {
 	 * @param appInfo
 	 * @param cache
 	 */
-	public ViewDownloadManagement(ServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache) {
+	public ViewDownloadManagement(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache) {
 		this(serviceManager);
 		this.viewDownload = new ViewDownload(remoteUrl);
 		this.cache = cache;
 		this.appInfo = appInfo;
 	}
+	
+	/**
+	 * 
+	 * ViewDownloadManagement Constructor
+	 *
+	 * @param url
+	 * @param appInfo
+	 * @param cache
+	 * @param login
+	 */
+	public ViewDownloadManagement(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache, ViewLogin login) {
+		this(serviceManager,remoteUrl, appInfo, cache);
+		if(login != null){
+			this.isLoginRequired = true;
+			this.login = login;
+		}
+	}
 
 	public int getProgress() {
-		return (viewDownload == null?0:viewDownload.getProgress());
+		return (viewDownload == null?0:viewDownload.getProgressPercentage());
 	}
 	
 	public void updateProgress(ViewDownload update){
@@ -101,6 +121,10 @@ public class ViewDownloadManagement {
 	public int getSpeedInKbps(){
 		return viewDownload.getSpeedInKbps();
 	}
+	
+	public ViewDownload getDownload(){
+		return this.viewDownload;
+	}
 
 	public ViewCache getCache() {
 		return cache;
@@ -111,7 +135,7 @@ public class ViewDownloadManagement {
 	}
 
 	public String getRemoteUrl() {
-		return viewDownload.getRemoteUrl();
+		return viewDownload.getRemotePath();
 	}
 
 	public ViewApk getAppInfo() {
@@ -122,7 +146,24 @@ public class ViewDownloadManagement {
 		this.appInfo = appInfo;
 	}
 	
+	public boolean isLoginRequired(){
+		return isLoginRequired;
+	}
 	
+	public ViewLogin getLogin() {
+		return login;
+	}
+
+	public void setLogin(ViewLogin login) {
+		if(login != null){
+			this.isLoginRequired = true;
+			this.login = login;
+		}else{
+			this.isLoginRequired = false;
+			this.login = null;
+		}
+	}
+
 	public void registerObserver(Handler listenerDownloadProgress){
 		observers.add(listenerDownloadProgress);
 	}
@@ -162,7 +203,7 @@ public class ViewDownloadManagement {
 	 *
 	 * @param serviceManager
 	 */
-	public void reuse(ServiceManager serviceManager) {
+	public void reuse(ApplicationServiceManager serviceManager) {
 		this.serviceManager = serviceManager;
 		this.observers = new ArrayList<Handler>();
 		this.status = EnumDownloadStatus.SETTING_UP;
@@ -176,7 +217,7 @@ public class ViewDownloadManagement {
 	 * @param appInfo
 	 * @param cache
 	 */
-	public void reuse(ServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache) {
+	public void reuse(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache) {
 		reuse(serviceManager);
 		this.viewDownload = new ViewDownload(remoteUrl);
 		this.cache = cache;
