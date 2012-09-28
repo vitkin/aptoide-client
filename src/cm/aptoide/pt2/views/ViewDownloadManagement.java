@@ -50,6 +50,7 @@ public class ViewDownloadManagement {
 	 * 
 	 * ViewDownloadManagement skeleton Constructor
 	 *
+	 * @param serviceManager
 	 */
 	public ViewDownloadManagement(ApplicationServiceManager serviceManager){
 		this.serviceManager = serviceManager;
@@ -61,20 +62,7 @@ public class ViewDownloadManagement {
 	 * 
 	 * ViewDownloadManagement Constructor
 	 *
-	 * @param url
-	 * @param appInfo
-	 * @param cache
-	 */
-	public ViewDownloadManagement(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo) {
-		this(serviceManager);
-		this.viewDownload = new ViewDownload(remoteUrl);
-		this.appInfo = appInfo;
-	}
-	
-	/**
-	 * 
-	 * ViewDownloadManagement Constructor
-	 *
+	 * @param serviceManager
 	 * @param url
 	 * @param appInfo
 	 * @param cache
@@ -90,6 +78,7 @@ public class ViewDownloadManagement {
 	 * 
 	 * ViewDownloadManagement Constructor
 	 *
+	 * @param serviceManager
 	 * @param url
 	 * @param appInfo
 	 * @param cache
@@ -221,6 +210,23 @@ public class ViewDownloadManagement {
 		reuse(serviceManager);
 		this.viewDownload = new ViewDownload(remoteUrl);
 		this.cache = cache;
+		this.appInfo = appInfo;
+	}
+	
+	/**
+	 * ViewDownloadManagement object reuse reConstructor
+	 *
+	 * @param serviceManager
+	 * @param remoteUrl
+	 * @param appInfo
+	 * @param cache
+	 * @param login
+	 */
+	public void reuse(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache, ViewLogin login) {
+		reuse(serviceManager);
+		this.viewDownload = new ViewDownload(remoteUrl);
+		this.cache = cache;
+		this.login = login;
 		this.appInfo = appInfo;
 	}
 

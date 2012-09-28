@@ -25,6 +25,7 @@
 
         <activity android:name=".ApkInfo"></activity>
         <service android:name=".services.MainService"></service>
+        <service android:name=".services.ServiceDownload"></service>
     </application>
 
 </manifest>
