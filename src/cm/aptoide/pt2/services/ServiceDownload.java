@@ -250,7 +250,7 @@ public class ServiceDownload extends Service {
 //					notification.setProgressCompletionTarget(targetBytes);
 //				}else{
 
-				if(httpResponse.containsHeader("Content-Length") && resumeLength != 0){
+				if(httpResponse.containsHeader("Content-Length")){
 					targetBytes = Long.parseLong(httpResponse.getFirstHeader("Content-Length").getValue());
 					Log.d("Aptoide-ManagerDownloads","Download targetBytes: "+targetBytes);
 					download.setProgressTarget(targetBytes);
