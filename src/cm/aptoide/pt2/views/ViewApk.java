@@ -161,7 +161,7 @@ public class ViewApk {
 	}
 
 	/**
-	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer)
+	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer in a realistic scenario)
 	 */
 	@Override
 	public int hashCode() {

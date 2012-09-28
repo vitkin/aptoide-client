@@ -1,4 +1,4 @@
-package cm.aptoide.pt2;
+package cm.aptoide.pt2.services;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import cm.aptoide.pt2.Category;
+import cm.aptoide.pt2.Database;
+import cm.aptoide.pt2.RepoParser;
+import cm.aptoide.pt2.Server;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.util.Base64;
 

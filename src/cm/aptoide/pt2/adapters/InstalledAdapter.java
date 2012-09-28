@@ -1,10 +1,10 @@
 package cm.aptoide.pt2.adapters;
 
 import cm.aptoide.pt2.Database;
-import cm.aptoide.pt2.ImageLoader;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.R.id;
 import cm.aptoide.pt2.R.layout;
+import cm.aptoide.pt2.contentloaders.ImageLoader;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;

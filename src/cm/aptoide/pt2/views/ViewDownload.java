@@ -21,7 +21,7 @@ package cm.aptoide.pt2.views;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import cm.aptoide.pt2.ServiceManager;
+import cm.aptoide.pt2.ApplicationServiceManager;
 
 /**
  * ViewDownload
@@ -30,10 +30,10 @@ import cm.aptoide.pt2.ServiceManager;
  *
  */
 public class ViewDownload implements Parcelable{
-	String remoteUrl;
+	String remotePath;
 	
-	int progressTarget;
-	int progress;
+	long progressTarget;
+	long progress;
 	int speedInKbps;
 	
 	
@@ -43,43 +43,40 @@ public class ViewDownload implements Parcelable{
 	 * ViewDownload Constructor
 	 *
 	 * @param remoteUrl
-	 * @param cache
 	 */
 	public ViewDownload(String remoteUrl) {
 		this.progressTarget = 0;
 		this.progress = 0;
 		this.speedInKbps = 0;
-		this.remoteUrl = remoteUrl;
+		this.remotePath = remoteUrl;
 	}
 
-	public int getProgressTarget() {
+	public long getProgressTarget() {
 		return progressTarget;
 	}
 
-	public void setProgressTarget(int progressTarget) {
+	public void setProgressTarget(long progressTarget) {
 		this.progressTarget = progressTarget;
 	}
 
-	public int getProgress() {
+	public long getProgress() {
 		return progress;
 	}
+	
+	public int getProgressPercentage(){
+		return (int) (progress*100/progressTarget);
+	}
 
-	public void setProgress(int progress) {
+	public void setProgress(long progress) {
 		this.progress = progress;
 	}
 	
-	/**
-	 * incrementProgress, increments progress
-	 * 
-	 * @param progress
-	 * @return increase in percentage of total
-	 */
-	public int incrementProgress(int progress){
-		int oldProgress = this.progress;
+	public void incrementProgress(long progress){
 		this.progress += progress;
-		int newProgress = this.progress;
-		
-		return ((newProgress - oldProgress)*100/progressTarget);
+	}
+	
+	public void setCompleted(){
+		this.progress = this.progressTarget;
 	}
 	
 	public int getSpeedInKbps(){
@@ -90,12 +87,12 @@ public class ViewDownload implements Parcelable{
 		this.speedInKbps = speedInKbps;
 	}
 
-	public String getRemoteUrl() {
-		return remoteUrl;
+	public String getRemotePath() {
+		return remotePath;
 	}
 	
-	public void setRemoteUrl(String remoteUrl){
-		this.remoteUrl = remoteUrl;
+	public void setRemotePath(String remoteUrl){
+		this.remotePath = remoteUrl;
 	}
 	
 	
@@ -108,7 +105,7 @@ public class ViewDownload implements Parcelable{
 		this.progressTarget = 0;
 		this.progress = 0;
 		this.speedInKbps = 0;
-		this.remoteUrl = null;
+		this.remotePath = null;
 	}
 	
 	
@@ -116,20 +113,18 @@ public class ViewDownload implements Parcelable{
 	 * ViewDownload object reuse reConstructor
 	 *
 	 * @param remoteUrl
-	 * @param appInfo
-	 * @param cache
 	 */
-	public void reuse(ServiceManager serviceManager, String remoteUrl, ViewCache cache) {
+	public void reuse(String remoteUrl) {
 		this.progressTarget = 0;
 		this.progress = 0;	
 		this.speedInKbps = 0;
-		this.remoteUrl = remoteUrl;
+		this.remotePath = remoteUrl;
 	}
 
 
 	@Override
 	public int hashCode() {
-		return this.remoteUrl.hashCode();
+		return this.remotePath.hashCode();
 	}
 
 
@@ -147,7 +142,7 @@ public class ViewDownload implements Parcelable{
 
 	@Override
 	public String toString() {
-		return " remoteUrl: "+remoteUrl+" progress: "+progress+" speed: "+speedInKbps;
+		return " remoteUrl: "+remotePath+" progress: "+progress+" speed: "+speedInKbps;
 	}
 	
 	
@@ -182,16 +177,16 @@ public class ViewDownload implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeString(remoteUrl);
-		out.writeInt(progressTarget);
-		out.writeInt(progress);
+		out.writeString(remotePath);
+		out.writeLong(progressTarget);
+		out.writeLong(progress);
 		out.writeInt(speedInKbps);
 	}
 
 	public void readFromParcel(Parcel in) {
-		this.remoteUrl = in.readString();
-		this.progressTarget = in.readInt();
-		this.progress = in.readInt();
+		this.remotePath = in.readString();
+		this.progressTarget = in.readLong();
+		this.progress = in.readLong();
 		this.speedInKbps = in.readInt();
 	}
 	

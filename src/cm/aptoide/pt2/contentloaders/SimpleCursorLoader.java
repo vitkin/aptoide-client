@@ -1,4 +1,4 @@
-package cm.aptoide.pt2;
+package cm.aptoide.pt2.contentloaders;
 
 import android.content.Context;
 import android.database.Cursor;

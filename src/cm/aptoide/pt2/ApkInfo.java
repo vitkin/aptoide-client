@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.webservices.comments.Comments;

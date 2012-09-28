@@ -60,10 +60,13 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cm.aptoide.pt2.MainService.LocalBinder;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.adapters.InstalledAdapter;
 import cm.aptoide.pt2.adapters.ViewPagerAdapter;
+import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt2.services.MainService;
+import cm.aptoide.pt2.services.MainService.LocalBinder;
 import cm.aptoide.pt2.util.Algorithms;
 import cm.aptoide.pt2.util.Base64;
 import cm.aptoide.pt2.util.RepoUtils;
@@ -71,8 +74,7 @@ import cm.aptoide.pt2.views.ViewApk;
 
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class MainActivity extends FragmentActivity implements
-		LoaderCallbacks<Cursor> {
+public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
 
 	private final static int AVAILABLE_LOADER = 0;
 	private final static int INSTALLED_LOADER = 1;
