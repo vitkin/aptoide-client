@@ -22,6 +22,8 @@ package cm.aptoide.pt2.services;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
 
@@ -38,6 +40,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.util.Log;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt2.exceptions.AptoideExceptionNotFound;
@@ -79,7 +82,67 @@ public class ServiceDownload extends Service {
         	//update msg.what object id
         }
 	};
+
+	private DownloadManager downloadManager;
+
+    private class DownloadManager{
+    	private ExecutorService installedColectorsPool;
+    	
+    	public DownloadManager(){
+    		installedColectorsPool = Executors.newSingleThreadExecutor();
+    	}
+    	
+    	public void downloadApk(ViewDownload download, ViewCache cache){
+    		downloadApk(download, cache, null);
+    	}
+    	
+    	public void downloadApk(ViewDownload download, ViewCache cache, ViewLogin login){
+        	try {
+				installedColectorsPool.execute(new DownloadApk(download, cache, login));
+			} catch (Exception e) { }
+        }
+    	
+    	private class DownloadApk implements Runnable{
+
+    		ViewDownload download;
+    		ViewCache cache;
+    		ViewLogin login;
+    		
+			public DownloadApk(ViewDownload download, ViewCache cache, ViewLogin login) {
+				this.download = download;
+				this.cache = cache;
+				this.login = login;
+			}
+    		
+			@Override
+			public void run() {
+//	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
+	    		if(!cache.isCached() || !cache.checkMd5()){
+	    			try {
+	    				download(download, cache, login);
+	    			} catch (Exception e) {
+	    				try {
+	    					download(download, cache, login);
+	    				} catch (Exception e2) {
+	    					download(download, cache, login);
+	    				}
+	    			}
+	    		}
+	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getRemotePath());
+			}
+    		
+    	}
+    }
 	
+    
+    
+    @Override
+    public void onCreate() {
+		downloadManager = new DownloadManager();
+    	super.onCreate();
+    }
+    
+    
 //	private 
 	
 
@@ -104,26 +167,13 @@ public class ServiceDownload extends Service {
 		startActivity(install);
 	}
 	
-	public void downloadApk(ViewDownload download, ViewCache cache, ViewLogin login){
-//		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
-		if(!cache.isCached() || !cache.checkMd5()){
-			try {
-				download(download, cache, login);
-			} catch (Exception e) {
-				try {
-					download(download, cache, login);
-				} catch (Exception e2) {
-					download(download, cache, login);
-				}
-			}
-		}
-		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getRemotePath());
-	}
-	
 	public void downloadApk(ViewDownload download, ViewCache cache){
-		downloadApk(download, cache, null);
+		downloadManager.downloadApk(download, cache);
 	}
 	
+	public void downloadApk(ViewDownload download, ViewCache cache, ViewLogin login){
+		downloadManager.downloadApk(download, cache, login);
+	}
 	
 	private void download(ViewDownload download, ViewCache cache, ViewLogin login){
 		boolean overwriteCache = false;

@@ -21,6 +21,8 @@ package cm.aptoide.pt2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import cm.aptoide.pt2.services.ServiceDownload;
 import cm.aptoide.pt2.views.ViewCache;
@@ -32,6 +34,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.util.Log;
 import android.net.NetworkInfo;
 import android.os.IBinder;
@@ -71,9 +74,9 @@ public class ApplicationServiceManager extends Application {
 	private ConnectivityManager connectivityState;
 
 	ArrayList<ViewDownloadManagement> downloadManagementPool;
-	ArrayList<ViewCache> cachePool;
-	
 	HashMap<Integer, ViewDownloadManagement> ongoingDownloads;
+	
+	private ExecutorService cachedThreadPool;
 	
 	@Override
 	public void onCreate() {
@@ -81,6 +84,8 @@ public class ApplicationServiceManager extends Application {
 		
 		downloadManagementPool = new ArrayList<ViewDownloadManagement>();
 		ongoingDownloads = new HashMap<Integer, ViewDownloadManagement>();
+		
+		cachedThreadPool = Executors.newCachedThreadPool();
 		
 		bindService(new Intent(this, ServiceDownload.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		
@@ -140,12 +145,33 @@ public class ApplicationServiceManager extends Application {
 //		return connectionAvailable;
 //	}
 	
-	public void startDownload(ViewDownloadManagement viewDownload){
-		ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
-		if(viewDownload.isLoginRequired()){
-			serviceDownload.downloadApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
+	
+	public void installApp(ViewCache apk){
+//		if(isAppScheduledToInstall(appHashid)){
+//			unscheduleInstallApp(appHashid);
+//		}
+		Intent install = new Intent(Intent.ACTION_VIEW);
+		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		install.setDataAndType(Uri.fromFile(apk.getFile()),"application/vnd.android.package-archive");
+		Log.d("Aptoide", "Installing app: "+apk.getLocalPath());
+		startActivity(install);
+	}
+	
+	public void startDownload(final ViewDownloadManagement viewDownload){
+		if(viewDownload.getCache().isCached()){
+			installApp(viewDownload.getCache());
 		}else{
-			serviceDownload.downloadApk(viewDownload.getDownload(), viewDownload.getCache());
+			ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					if(viewDownload.isLoginRequired()){
+						serviceDownload.downloadApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
+					}else{
+						serviceDownload.downloadApk(viewDownload.getDownload(), viewDownload.getCache());
+					}
+				}
+			});
 		}
 	}
 	
