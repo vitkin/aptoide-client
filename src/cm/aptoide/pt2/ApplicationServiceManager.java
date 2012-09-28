@@ -80,10 +80,9 @@ public class ApplicationServiceManager extends Application {
 		connectivityState = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		downloadManagementPool = new ArrayList<ViewDownloadManagement>();
-		cachePool = new ArrayList<ViewCache>();
 		ongoingDownloads = new HashMap<Integer, ViewDownloadManagement>();
 		
-		bindService(new Intent(getApplicationContext(), ServiceDownload.class), serviceConnection, getApplicationContext().BIND_AUTO_CREATE);
+		bindService(new Intent(this, ServiceDownload.class), serviceConnection, Context.BIND_AUTO_CREATE);
 		
 		super.onCreate();
 	}
