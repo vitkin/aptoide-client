@@ -52,6 +52,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.RatingBar;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -607,6 +608,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				Intent i ;
 				switch (depth) {
 				case STORES:
 					depth = ListDepth.CATEGORY1;
@@ -629,10 +631,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					category2_id = id;
 					break;
 				case TOPAPPS:
-					break;
-				case APPLICATIONS:
-					Intent i = new Intent(MainActivity.this, ApkInfo.class);
+					i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", id);
+					i.putExtra("top", true);
+					startActivity(i);
+					return;
+				case APPLICATIONS:
+					i = new Intent(MainActivity.this, ApkInfo.class);
+					i.putExtra("_id", id);
+					i.putExtra("top", false);
 					startActivity(i);
 					return;
 				default:
@@ -642,7 +649,29 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				refreshAvailableList(true);
 			}
 		});
+		installedView.setOnItemClickListener(new OnItemClickListener() {
 
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long id) {
+				Intent i = new Intent(MainActivity.this, ApkInfo.class);
+				i.putExtra("_id", id);
+				i.putExtra("top", false);
+				startActivity(i);
+			}
+		});
+		
+		updatesView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long id) {
+				Intent i = new Intent(MainActivity.this, ApkInfo.class);
+				i.putExtra("_id", id);
+				i.putExtra("top", false);
+				startActivity(i);
+			}
+		});
 //		LoaderManager.enableDebugLogging(true);
 		availableLoader = getSupportLoaderManager().initLoader(AVAILABLE_LOADER, null, this);
 		
@@ -910,6 +939,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					holder.icon = (ImageView) view.findViewById(R.id.app_icon);
 					holder.vername = (TextView) view
 							.findViewById(R.id.installed_versionname);
+					 holder.downloads= (TextView) view.findViewById(R.id.downloads);
+			            holder.rating= (RatingBar) view.findViewById(R.id.stars);
 					view.setTag(holder);
 				}
 				holder.name.setText(cursor.getString(1));
@@ -917,6 +948,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						holder.icon, context, depth == ListDepth.TOPAPPS ? true
 								: false);
 				holder.vername.setText(cursor.getString(2));
+				 try{
+			        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
+			        }catch (Exception e) {
+			        	holder.rating.setRating(0);
+					}
+				 holder.downloads.setText(cursor.getString(6));
 				break;
 			case CATEGORY1:
 				((TextView) view.findViewById(R.id.category_name))
@@ -966,6 +1003,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		ImageView icon;
 		TextView name;
 		TextView vername;
+		RatingBar rating;
+		TextView downloads;
 	}
 
 }

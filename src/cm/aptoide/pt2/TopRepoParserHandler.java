@@ -40,7 +40,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.iconsPath=sb.toString();
+//				server.iconsPath=sb.toString();
 			}
 		});
 		
@@ -130,6 +130,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
+				apk.setSize(sb.toString());
 			}
 		});
 		
@@ -151,6 +152,39 @@ public class TopRepoParserHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				apk.setIconPath(sb.toString());
+			}
+		});
+		
+		elements.put("dwn", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDownloads(sb.toString());
+			}
+		});
+		
+		elements.put("rat", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setRating(sb.toString());
+			}
+		});
+		
+		elements.put("path", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setPath(sb.toString());
 			}
 		});
 		

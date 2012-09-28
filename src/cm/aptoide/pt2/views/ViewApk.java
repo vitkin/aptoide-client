@@ -15,6 +15,7 @@ public class ViewApk {
 	private String category2 = "Other";
 	private long repo_id = 0;
 	private String iconPath;
+	private String rating = "0";
 	private ArrayList<Long> versionsIds = new ArrayList<Long>();
 	private String path;
 	
@@ -58,6 +59,10 @@ public class ViewApk {
 
 	public long getId(){
 		return id;
+	}
+	
+	public String getRating(){
+		return rating;
 	}
 	
 	public String getApkid() {
@@ -188,6 +193,14 @@ public class ViewApk {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+	
+	public String getPath(){
+		return this.path;
+	}
+
+	public void setRating(String rating) {
+		this.rating=rating;
 	}
 
 }
