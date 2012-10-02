@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import android.os.Handler;
+import android.util.Log;
 
 import cm.aptoide.pt2.ApplicationServiceManager;
 
@@ -97,6 +98,7 @@ public class ViewDownloadManagement {
 	}
 	
 	public void updateProgress(ViewDownload update){
+		Log.d("Aptoide-ViewDownloadManagement", "update: "+update);
 		this.viewDownload.setProgressTarget(update.getProgressTarget());
 		this.viewDownload.setProgress(update.getProgress());
 		this.viewDownload.setSpeedInKbps(update.getSpeedInKbps());

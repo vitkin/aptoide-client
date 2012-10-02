@@ -86,6 +86,10 @@ public class ViewDownload implements Parcelable{
 	public void setSpeedInKbps(int speedInKbps){
 		this.speedInKbps = speedInKbps;
 	}
+	
+	public void incrementSpeed(int speedInKbps){
+		this.speedInKbps += speedInKbps;
+	}
 
 	public String getRemotePath() {
 		return remotePath;
@@ -142,7 +146,7 @@ public class ViewDownload implements Parcelable{
 
 	@Override
 	public String toString() {
-		return " remoteUrl: "+remotePath+" progress: "+progress+" speed: "+speedInKbps;
+		return " remoteUrl: "+remotePath+" progress: "+getProgressPercentage()+" speed: "+speedInKbps;
 	}
 	
 	
