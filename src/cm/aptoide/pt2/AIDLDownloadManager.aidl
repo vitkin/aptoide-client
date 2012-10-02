@@ -1,5 +1,5 @@
-/*
- * Constants, part of Aptoide
+/**
+ * AIDLDownloadManager,		part of Aptoide
  * Copyright (C) 2012 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -17,25 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt2.util;
+package cm.aptoide.pt2;
 
-import android.os.Environment;
+import cm.aptoide.pt2.views.ViewDownload;
 
 /**
- * Constants
+ * AIDLDownloadManager, models Aptoide's download manager AIDL IPC callback API for ApplicationServiceManager
  *
  * @author dsilveira
  *
  */
-public class Constants {
-	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
-	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
-	public static final String PATH_CACHE_REPOS = PATH_CACHE + "repos/";
-	public static final String PATH_CACHE_APKS = PATH_CACHE + "apks/";
-	public static final String PATH_CACHE_ICONS = PATH_CACHE + "icons/";
-	public static final String PATH_CACHE_SCREENS = PATH_CACHE + "screens/";
-	public static final String PATH_CACHE_MYAPPS = PATH_CACHE + "myapps/";
-
-	public static final String APTOIDE_PACKAGE_NAME = "cm.aptoide.pt2";
-	public static final String SERVICE_DOWNLOAD_CLASS_NAME = APTOIDE_PACKAGE_NAME+".services.ServiceDownload";
+interface AIDLDownloadManager{
+	void updateDownloadStatus(in int id, in ViewDownload update);	
 }
