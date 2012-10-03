@@ -36,6 +36,7 @@ public class ViewDownload implements Parcelable{
 	long progress;
 	int speedInKbps;
 	
+	EnumDownloadStatus status;
 	
 	
 	/**
@@ -49,6 +50,16 @@ public class ViewDownload implements Parcelable{
 		this.progress = 0;
 		this.speedInKbps = 0;
 		this.remotePath = remoteUrl;
+		this.status = EnumDownloadStatus.SETTING_UP;
+	}
+	
+	
+	public EnumDownloadStatus getStatus(){
+		return status;
+	}
+	
+	public void setStatus(EnumDownloadStatus status){
+		this.status = status;
 	}
 
 	public long getProgressTarget() {
@@ -65,7 +76,7 @@ public class ViewDownload implements Parcelable{
 	
 	public int getProgressPercentage(){
 		if(progressTarget == 0){
-			return 0;
+			return 100;
 		}else{
 			return (int) (progress*100/progressTarget);			
 		}
@@ -80,14 +91,18 @@ public class ViewDownload implements Parcelable{
 	}
 	
 	public void setCompleted(){
-		this.progress = this.progressTarget;
+		this.status = EnumDownloadStatus.COMPLETED;
 	}
 	
-	public int getSpeedInKbps(){
+	public boolean isComplete(){
+		return (status.equals(EnumDownloadStatus.COMPLETED));
+	}
+	
+	public int getSpeedInKBps(){
 		return speedInKbps;
 	}
 	
-	public void setSpeedInKbps(int speedInKbps){
+	public void setSpeedInKBps(int speedInKbps){
 		this.speedInKbps = speedInKbps;
 	}
 	
@@ -103,6 +118,11 @@ public class ViewDownload implements Parcelable{
 		this.remotePath = remoteUrl;
 	}
 	
+	public String getRemotePathTail(){
+		String[] remoteSplit = remotePath.split("/");
+		return remoteSplit[remoteSplit.length-1];
+	}
+	
 	
 	
 	/**
@@ -114,6 +134,7 @@ public class ViewDownload implements Parcelable{
 		this.progress = 0;
 		this.speedInKbps = 0;
 		this.remotePath = null;
+		this.status = null;
 	}
 	
 	
@@ -127,6 +148,7 @@ public class ViewDownload implements Parcelable{
 		this.progress = 0;	
 		this.speedInKbps = 0;
 		this.remotePath = remoteUrl;
+		this.status = EnumDownloadStatus.SETTING_UP;
 	}
 
 
@@ -150,7 +172,7 @@ public class ViewDownload implements Parcelable{
 
 	@Override
 	public String toString() {
-		return " remoteUrl: "+remotePath+" progress: "+getProgressPercentage()+" speed: "+speedInKbps;
+		return " remote: "+getRemotePathTail()+" progress: "+getProgressPercentage()+" speed: "+speedInKbps;
 	}
 	
 	

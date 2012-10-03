@@ -22,6 +22,8 @@ package cm.aptoide.pt2.services;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
@@ -46,6 +48,8 @@ import android.widget.Toast;
 import cm.aptoide.pt2.AIDLDownloadManager;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt2.exceptions.AptoideExceptionNotFound;
+import cm.aptoide.pt2.util.Constants;
+import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownload;
 import cm.aptoide.pt2.views.ViewLogin;
@@ -147,7 +151,7 @@ public class ServiceDownload extends Service {
 			@Override
 			public void run() {
 //	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
-	    		if(!cache.isCached() || !cache.checkMd5()){
+	    		if(!cache.isCached() || !cache.hasMd5Sum() || !cache.checkMd5()){
 	    			try {
 	    				download(download, cache, login);
 	    			} catch (Exception e) {
@@ -164,11 +168,18 @@ public class ServiceDownload extends Service {
 								} catch (RemoteException e4) {
 									e4.printStackTrace();
 								}
+					    		Log.d("Aptoide-download", "apk downloaded: "+download.getRemotePath());
 							}
 	    				}
 	    			}
+	    		}else if(cache.isCached() && cache.checkMd5()){
+	    			download.setCompleted();
+					try {
+						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+					} catch (RemoteException e4) {
+						e4.printStackTrace();
+					}
 	    		}
-	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getRemotePath());
 			}
     		
     	}
@@ -213,10 +224,10 @@ public class ServiceDownload extends Service {
 
     			HttpResponse httpResponse = httpClient.execute(httpGet);
     			if(httpResponse == null){
-    				Log.d("Aptoide-ManagerDownloads","Problem in network... retry...");	
+    				Log.d("Aptoide-download","Problem in network... retry...");	
     				httpResponse = httpClient.execute(httpGet);
     				if(httpResponse == null){
-    					Log.d("Aptoide-ManagerDownloads","Major network exception... Exiting!");
+    					Log.d("Aptoide-download","Major network exception... Exiting!");
     					/*msg_al.arg1= 1;
     						 download_error_handler.sendMessage(msg_al);*/
     					if(!resuming){
@@ -226,74 +237,108 @@ public class ServiceDownload extends Service {
     				}
     			}
 
-    			if(httpResponse.getStatusLine().getStatusCode() == 401){
-    				Log.d("Aptoide-ManagerDownloads","401 Timed out!");
-    				fileOutputStream.close();
-    				if(!resuming){
-    					cache.clearCache();
-    				}
-    				throw new TimeoutException();
-    			}else if(httpResponse.getStatusLine().getStatusCode() == 404){
-    				fileOutputStream.close();
-    				if(!resuming){
-    					cache.clearCache();
-    				}
-    				throw new AptoideExceptionNotFound("404 Not found!");
-    			}else{
+    			int httpStatusCode = httpResponse.getStatusLine().getStatusCode();
+    			Log.d("Aptoide-download","Server Response Status Code: "+httpStatusCode);
+    			
+    			switch (httpStatusCode) {
+					case 401:
+						fileOutputStream.close();
+	    				if(!resuming){
+	    					cache.clearCache();
+	    				}
+	    				throw new TimeoutException();
+					case 404:
+						fileOutputStream.close();
+	    				if(!resuming){
+	    					cache.clearCache();
+	    				}
+	    				throw new AptoideExceptionNotFound("404 Not found!");
+					case 416:
+						fileOutputStream.close();
+	    				if(!resuming){
+	    					cache.clearCache();
+	    				}
+	    				download.setCompleted();
+	    				try {
+							downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+						} catch (RemoteException e4) {
+							e4.printStackTrace();
+						}
+						return;
+	
+					default:
+						if(httpResponse.containsHeader("Content-Length")){
+	    					targetBytes = Long.parseLong(httpResponse.getFirstHeader("Content-Length").getValue());
+	    					Log.d("Aptoide-download","Download targetBytes: "+targetBytes);
+	    					download.setProgressTarget(targetBytes);
+	    				}
+	    				 				
+	    				InputStream inputStream= null;
+	    				
+	    				if((httpResponse.getEntity().getContentEncoding() != null) && (httpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
+
+	    					Log.d("Aptoide-download","with gzip");
+	    					inputStream = new GZIPInputStream(httpResponse.getEntity().getContent());
+
+	    				}else{
+
+//	    					Log.d("Aptoide-ManagerDownloads","No gzip");
+	    					inputStream = httpResponse.getEntity().getContent();
+
+	    				}
+	    				
+	    				download.setStatus(EnumDownloadStatus.DOWNLOADING);
+	    				
+	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
+	    				/** in percentage */
+	    				int progressTrigger = 5; 
+	    				int triggeredLevel = 0;
+	    				int bytesRead;
+	    				long intervalStartTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
+	    				long intervalEndTime = intervalStartTime;
+	    				long intervalStartProgress = download.getProgress();
+
+	    				while((bytesRead = inputStream.read(data, 0, Constants.DOWNLOAD_CHUNK_SIZE)) > 0) {
+	    					fileOutputStream.write(data,0,bytesRead);
+							download.incrementProgress(bytesRead);
+	    					if((download.getProgressPercentage() % progressTrigger == 0) && (triggeredLevel != download.getProgressPercentage())){
+	    						triggeredLevel = download.getProgressPercentage();
+	        					intervalEndTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
+//	        					Log.d("Aptoide-download", "progress increase: "+((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)+" interval: "+((intervalEndTime - intervalStartTime)/Constants.MILISECONDS_TO_SECONDS));
+	        					download.setSpeedInKBps((int)(((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)/((intervalEndTime - intervalStartTime)/Constants.MILISECONDS_TO_SECONDS)));
+	        					intervalStartTime = intervalEndTime;
+	        					intervalStartProgress = download.getProgress();
+								try {
+									downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+								} catch (RemoteException e4) {
+									e4.printStackTrace();
+								}
+		    					Log.d("Aptoide-download", "download : "+cache.hashCode()+" "+download);
+	    					}
+//		    					Log.d("Aptoide-download", "download : "+cache.hashCode()+" "+download);
+	    				}
+	    				Log.d("Aptoide-download","Download done! Name: "+download.getRemotePathTail()+" localPath: "+localPath);
+	    				download.setCompleted();
+	    				fileOutputStream.flush();
+	    				fileOutputStream.close();
+	    				inputStream.close();
+
+	    				if(cache.hasMd5Sum()){
+	    					if(!cache.checkMd5()){
+	    						cache.clearCache();
+	    						throw new AptoideExceptionDownload("md5 check failed!");
+	    					}
+	    				}
+
+	    				download.setCompleted();
+	    				try {
+							downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+						} catch (RemoteException e4) {
+							e4.printStackTrace();
+						}
+						return;
+				}
     				
-    				if(httpResponse.containsHeader("Content-Length")){
-    					targetBytes = Long.parseLong(httpResponse.getFirstHeader("Content-Length").getValue());
-    					Log.d("Aptoide-ManagerDownloads","Download targetBytes: "+targetBytes);
-    					download.setProgressTarget(targetBytes);
-    				}
-    				
-
-    				InputStream inputStream= null;
-    				
-    				if((httpResponse.getEntity().getContentEncoding() != null) && (httpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
-
-    					Log.d("Aptoide-ManagerDownloads","with gzip");
-    					inputStream = new GZIPInputStream(httpResponse.getEntity().getContent());
-
-    				}else{
-
-//    					Log.d("Aptoide-ManagerDownloads","No gzip");
-    					inputStream = httpResponse.getEntity().getContent();
-
-    				}
-    				
-    				byte data[] = new byte[8096];
-    				/** in percentage */
-    				int progressTrigger = 5; 
-    				int bytesRead;
-
-    				while((bytesRead = inputStream.read(data, 0, 8096)) > 0) {
-    					download.incrementProgress(bytesRead);
-    					fileOutputStream.write(data,0,bytesRead);
-    					if(download.getProgressPercentage() % progressTrigger == 0){
-							try {
-								downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-							} catch (RemoteException e4) {
-								e4.printStackTrace();
-							}
-    					}
-    				}
-    				Log.d("Aptoide-ManagerDownloads","Download done! Name: "+download.getRemotePath()+" localPath: "+localPath);
-    				download.setCompleted();
-    				fileOutputStream.flush();
-    				fileOutputStream.close();
-    				inputStream.close();
-
-    				if(cache.hasMd5Sum()){
-    					if(!cache.checkMd5()){
-    						cache.clearCache();
-    						throw new AptoideExceptionDownload("md5 check failed!");
-    					}
-    				}
-    				
-    				installApp(cache);
-
-    			}
     		}catch (Exception e) {
     			try {
     				fileOutputStream.flush();
@@ -301,7 +346,7 @@ public class ServiceDownload extends Service {
     			} catch (Exception e1) { }		
     			e.printStackTrace();
     			if(cache.getFileLength() > 0){
-    				download.setCompleted();
+    				download.setStatus(EnumDownloadStatus.STOPED);
 					try {
 						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
 					} catch (RemoteException e4) {

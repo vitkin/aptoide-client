@@ -31,7 +31,8 @@ public enum EnumDownloadStatus {
 	DOWNLOADING,
 	PAUSED,
 	STOPED,
-	FAILED;
+	FAILED,
+	COMPLETED;
 	
 	public static EnumDownloadStatus reverseOrdinal(int ordinal){
 		return values()[ordinal];

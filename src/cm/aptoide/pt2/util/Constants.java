@@ -28,6 +28,12 @@ import android.os.Environment;
  *
  */
 public class Constants {
+	public static final String UTC_TIMEZONE = "UTC";
+	public static final int MILISECONDS_TO_SECONDS = 1000;
+	public static final int KILO_BYTE = 1024;
+	
+	public static final int DOWNLOAD_CHUNK_SIZE = 8*KILO_BYTE;
+	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
 	public static final String PATH_CACHE_REPOS = PATH_CACHE + "repos/";
@@ -38,4 +44,5 @@ public class Constants {
 
 	public static final String APTOIDE_PACKAGE_NAME = "cm.aptoide.pt2";
 	public static final String SERVICE_DOWNLOAD_CLASS_NAME = APTOIDE_PACKAGE_NAME+".services.ServiceDownload";
+	
 }

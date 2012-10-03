@@ -37,8 +37,6 @@ public class ViewDownloadManagement {
 	ApplicationServiceManager serviceManager;
 	ArrayList<Handler> observers;
 	
-	EnumDownloadStatus status;
-	
 	ViewApk appInfo;
 	
 	ViewDownload viewDownload;
@@ -56,7 +54,6 @@ public class ViewDownloadManagement {
 	public ViewDownloadManagement(ApplicationServiceManager serviceManager){
 		this.serviceManager = serviceManager;
 		this.observers = new ArrayList<Handler>();
-		this.status = EnumDownloadStatus.SETTING_UP;
 	}
 	
 	/**
@@ -98,19 +95,29 @@ public class ViewDownloadManagement {
 	}
 	
 	public void updateProgress(ViewDownload update){
-		Log.d("Aptoide-ViewDownloadManagement", "update: "+update);
+		Log.d("Aptoide-ViewDownloadManagement", "update: "+update+" downloadStatus: "+update.getStatus());
 		this.viewDownload.setProgressTarget(update.getProgressTarget());
 		this.viewDownload.setProgress(update.getProgress());
-		this.viewDownload.setSpeedInKbps(update.getSpeedInKbps());
-		if(viewDownload.getProgress() >= viewDownload.getProgressTarget()){
-			notifyObservers(EnumDownloadProgressUpdateMessages.COMPLETED);
-		}else{
-			notifyObservers(EnumDownloadProgressUpdateMessages.UPDATE);
-		}
+		this.viewDownload.setSpeedInKBps(update.getSpeedInKBps());
+		this.viewDownload.setStatus(update.getStatus());
+//		if(viewDownload.getProgress() >= viewDownload.getProgressTarget()){
+//			notifyObservers(EnumDownloadProgressUpdateMessages.COMPLETED);
+//		}else{
+//			notifyObservers(EnumDownloadProgressUpdateMessages.UPDATE);
+//		}
+		notifyObservers();
 	}
 	
-	public int getSpeedInKbps(){
-		return viewDownload.getSpeedInKbps();
+	public EnumDownloadStatus getDownloadStatus(){
+		return viewDownload.getStatus();
+	}
+	
+	public int getSpeedInKBps(){
+		return viewDownload.getSpeedInKBps();
+	}
+	
+	public boolean isComplete(){
+		return viewDownload.isComplete();
 	}
 	
 	public ViewDownload getDownload(){
@@ -159,9 +166,11 @@ public class ViewDownloadManagement {
 		observers.add(listenerDownloadProgress);
 	}
 	
-	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
+//	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
+	private void notifyObservers(){
 		for (Handler listenerDownloadProgress : observers) {
-			listenerDownloadProgress.sendEmptyMessage(progressUpdate.ordinal());
+//			listenerDownloadProgress.sendEmptyMessage(progressUpdate.ordinal());
+			listenerDownloadProgress.sendEmptyMessage(hashCode());
 		}
 	}
 	
@@ -184,7 +193,6 @@ public class ViewDownloadManagement {
 	public void clean(){
 		this.serviceManager = null;
 		this.observers = null;
-		this.status = null;
 		this.appInfo = null;
 		this.cache = null;
 	}
@@ -197,7 +205,6 @@ public class ViewDownloadManagement {
 	public void reuse(ApplicationServiceManager serviceManager) {
 		this.serviceManager = serviceManager;
 		this.observers = new ArrayList<Handler>();
-		this.status = EnumDownloadStatus.SETTING_UP;
 	}
 	
 	/**
@@ -253,7 +260,7 @@ public class ViewDownloadManagement {
 
 	@Override
 	public String toString() {
-		return appInfo+" downloadStatus: "+status+viewDownload;
+		return appInfo+" downloadStatus: "+viewDownload.getStatus()+viewDownload;
 	}
 	
 }

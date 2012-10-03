@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import cm.aptoide.pt2.services.AIDLServiceDownload;
 import cm.aptoide.pt2.services.ServiceDownload;
 import cm.aptoide.pt2.util.Constants;
+import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownload;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
@@ -99,6 +100,12 @@ public class ApplicationServiceManager extends Application {
 		@Override
 		public void updateDownloadStatus(int id, ViewDownload update) throws RemoteException {
 			ongoingDownloads.get(id).updateProgress(update);
+			if(ongoingDownloads.get(id).isComplete() || ongoingDownloads.get(id).getDownload().getStatus().equals(EnumDownloadStatus.STOPED)){
+				ViewDownloadManagement download = ongoingDownloads.remove(id);
+				if(download.isComplete()){
+					installApp(download.getCache());					
+				}
+			}
 			updateGlobalProgress();
 		}
 		
@@ -210,9 +217,9 @@ public class ApplicationServiceManager extends Application {
 	}
 	
 	public void startDownload(final ViewDownloadManagement viewDownload){
-		if(viewDownload.getCache().isCached()){
-			installApp(viewDownload.getCache());
-		}else{
+//		if(viewDownload.getCache().isCached()){
+//			installApp(viewDownload.getCache());
+//		}else{
 			ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
 			cachedThreadPool.execute(new Runnable() {
 				@Override
@@ -228,16 +235,16 @@ public class ApplicationServiceManager extends Application {
 					}
 				}
 			});
-		}
+//		}
 	}
 	
 	private synchronized void updateGlobalProgress(){
 		globaDownloadStatus.setProgressTarget(100*ongoingDownloads.size());
 		globaDownloadStatus.setProgress(0);
-		globaDownloadStatus.setSpeedInKbps(0);
+		globaDownloadStatus.setSpeedInKBps(0);
 		for (ViewDownloadManagement download : ongoingDownloads.values()) {
 			globaDownloadStatus.incrementProgress(download.getProgress());
-			globaDownloadStatus.incrementSpeed(download.getSpeedInKbps());
+			globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
 		}
 //		updateNofification();
 	}
