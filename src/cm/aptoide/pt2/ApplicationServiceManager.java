@@ -100,7 +100,7 @@ public class ApplicationServiceManager extends Application {
 		@Override
 		public void updateDownloadStatus(int id, ViewDownload update) throws RemoteException {
 			ongoingDownloads.get(id).updateProgress(update);
-			if(ongoingDownloads.get(id).isComplete() || ongoingDownloads.get(id).getDownload().getStatus().equals(EnumDownloadStatus.STOPED)){
+			if(ongoingDownloads.get(id).isComplete() || ongoingDownloads.get(id).getDownload().getStatus().equals(EnumDownloadStatus.STOPPED)){
 				ViewDownloadManagement download = ongoingDownloads.remove(id);
 				if(download.isComplete()){
 					installApp(download.getCache());					
