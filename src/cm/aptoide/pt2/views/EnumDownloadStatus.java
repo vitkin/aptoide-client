@@ -30,7 +30,7 @@ public enum EnumDownloadStatus {
 	SETTING_UP,
 	DOWNLOADING,
 	PAUSED,
-	STOPED,
+	STOPPED,
 	FAILED,
 	COMPLETED;
 	

@@ -346,7 +346,7 @@ public class ServiceDownload extends Service {
     			} catch (Exception e1) { }		
     			e.printStackTrace();
     			if(cache.getFileLength() > 0){
-    				download.setStatus(EnumDownloadStatus.STOPED);
+    				download.setStatus(EnumDownloadStatus.STOPPED);
 					try {
 						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
 					} catch (RemoteException e4) {
