@@ -64,7 +64,11 @@ public class ViewDownload implements Parcelable{
 	}
 	
 	public int getProgressPercentage(){
-		return (int) (progress*100/progressTarget);
+		if(progressTarget == 0){
+			return 0;
+		}else{
+			return (int) (progress*100/progressTarget);			
+		}
 	}
 
 	public void setProgress(long progress) {

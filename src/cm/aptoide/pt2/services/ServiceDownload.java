@@ -112,13 +112,6 @@ public class ServiceDownload extends Service {
 			Toast.makeText(ServiceDownload.this, msg.what, Toast.LENGTH_SHORT).show();
 		}
 	};
-	
-	private static Handler progressUpdateHandler = new Handler() {
-		@Override
-        public void handleMessage(Message msg) {
-        	//update msg.what object id	//use AIDL for client callback
-        }
-	};
 
 	private DownloadManager downloadManager;
 
@@ -161,7 +154,17 @@ public class ServiceDownload extends Service {
 	    				try {
 	    					download(download, cache, login);
 	    				} catch (Exception e2) {
-	    					download(download, cache, login);
+	    					try {
+								download(download, cache, login);
+							} catch (Exception e3) {
+//								e3.printStackTrace();
+								download.setCompleted();
+								try {
+									downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+								} catch (RemoteException e4) {
+									e4.printStackTrace();
+								}
+							}
 	    				}
 	    			}
 	    		}
@@ -268,7 +271,11 @@ public class ServiceDownload extends Service {
     					download.incrementProgress(bytesRead);
     					fileOutputStream.write(data,0,bytesRead);
     					if(download.getProgressPercentage() % progressTrigger == 0){
-    						progressUpdateHandler.sendEmptyMessage(cache.hashCode());
+							try {
+								downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+							} catch (RemoteException e4) {
+								e4.printStackTrace();
+							}
     					}
     				}
     				Log.d("Aptoide-ManagerDownloads","Download done! Name: "+download.getRemotePath()+" localPath: "+localPath);
@@ -295,7 +302,11 @@ public class ServiceDownload extends Service {
     			e.printStackTrace();
     			if(cache.getFileLength() > 0){
     				download.setCompleted();
-    				progressUpdateHandler.sendEmptyMessage(cache.hashCode());
+					try {
+						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+					} catch (RemoteException e4) {
+						e4.printStackTrace();
+					}
 //    				scheduleInstallApp(cache.getId());
     			}
     			throw new AptoideExceptionDownload(e);
