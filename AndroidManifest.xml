@@ -25,6 +25,7 @@
         </activity>
 
         <activity android:name=".ApkInfo"></activity>
+        <activity android:name=".ScreenshotsViewer"></activity>
         <service android:name=".services.MainService"></service>
         <service android:name=".services.ServiceDownload"></service>
         <activity

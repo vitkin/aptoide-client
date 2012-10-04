@@ -299,12 +299,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								boolean b = Boolean.parseBoolean(array
 										.getJSONObject(o).getString(
 												"hasupdates"));
+								
 								long id = serversToParse.get(array
 										.getJSONObject(o).getString("repo"));
 								if (b) {
 									service.parseServer(db, db.getServer(id));
 								} else {
-									service.parseTop(db, db.getServer(id));
+									Server server = db.getServer(id);
+									service.parseTop(db, server);
+									service.parseLatest(db, server);
 								}
 
 							}
@@ -617,7 +620,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				case CATEGORY1:
 					String category = ((Cursor) parent
 							.getItemAtPosition(position)).getString(1);
-					if (category.equals("Top Apps") || category.equals("Most Recent Apps")) {
+					if (category.equals("Top Apps") || category.equals("Latest Apps")) {
 						depth = ListDepth.TOPAPPS;
 						System.out.println("TopApps");
 					} else {
@@ -849,6 +852,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private void refreshAvailableList(boolean setAdapter) {
+		
 		if (depth.equals(ListDepth.STORES)) {
 			availableView.findViewById(R.id.add_store_layout).setVisibility(
 					View.VISIBLE);
@@ -867,6 +871,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			} else if (depth.equals(ListDepth.CATEGORY1)) {
 				availableView.findViewById(R.id.add_store_layout)
 						.setVisibility(View.VISIBLE);
+				
 			}
 
 		}
@@ -921,10 +926,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		public void bindView(View view, Context context, Cursor cursor) {
 			switch (depth) {
 			case STORES:
+				loader.DisplayImage(-1, cursor.getString(cursor.getColumnIndex("avatar")), (ImageView) view.findViewById(R.id.avatar), context, false);
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
-						.getString(1));
+						.getString(cursor.getColumnIndex("name")));
 				((TextView) view.findViewById(R.id.store_dwn_number))
-						.setText(cursor.getString(6));
+						.setText(cursor.getString(6) + " - "+cursor.getString(cursor.getColumnIndex("downloads")) + " downloads"  );
 				if (cursor.getString(6).equals(State.FAILED.name())
 						|| cursor.getString(6).equals(State.PARSED.name())) {
 					view.setTag(1);
@@ -940,7 +946,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					holder.vername = (TextView) view
 							.findViewById(R.id.installed_versionname);
 					 holder.downloads= (TextView) view.findViewById(R.id.downloads);
-			            holder.rating= (RatingBar) view.findViewById(R.id.stars);
+			         holder.rating= (RatingBar) view.findViewById(R.id.stars);
 					view.setTag(holder);
 				}
 				holder.name.setText(cursor.getString(1));

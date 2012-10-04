@@ -54,13 +54,13 @@ public class TopRepoParserHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				
-				if(!db.getTopAppsHash(server.id).equals(server.delta)){
-					db.deleteTopApps(server.id);
+				if(!db.getTopAppsHash(server.id,category).equals(server.top_hash)){
+					db.deleteTopApps(server.id,category);
 				}else{
 					db.endTransation(server);
 					throw new SAXException();
 				}
-				db.insertTopServerInfo(server);
+				db.insertTopServerInfo(server,category);
 			}
 		});
 		
@@ -73,7 +73,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.delta=sb.toString();
+				server.top_hash=sb.toString();
 			}
 		});
 		
