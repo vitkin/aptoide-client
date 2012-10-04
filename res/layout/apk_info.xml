@@ -89,7 +89,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
+                android:layout_height="wrap_content" 
+                android:orientation="vertical">
 
                 <RelativeLayout
                     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -383,6 +384,15 @@
                         android:text="See All"
                         android:visibility="gone" />
                 </RelativeLayout>
+                
+                     <LinearLayout
+					    android:id="@+id/itembasedapks_container"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"
+					    android:layout_gravity="center_vertical"
+					    android:orientation="vertical" >
+					</LinearLayout>
+
             </LinearLayout>
         </ScrollView>
     </RelativeLayout>
@@ -403,7 +413,8 @@
             ads:adSize="BANNER"
             ads:adUnitId="a14f30ff2e69698"
             ads:loadAdOnCreate="true"
-            ads:testDevices="TEST_EMULATOR, 771498F64F6F454E29F5B9F2CD75EE9F" >
+            ads:testDevices="TEST_EMULATOR, 024E68F7A840AA62AAC99441940B0127">
+" >
         </com.google.ads.AdView>
     </LinearLayout>
 

@@ -1,12 +1,14 @@
 package cm.aptoide.pt2.services;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -14,12 +16,16 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import cm.aptoide.pt2.Category;
 import cm.aptoide.pt2.Database;
 import cm.aptoide.pt2.RepoParser;
 import cm.aptoide.pt2.Server;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.util.Base64;
+import cm.aptoide.pt2.util.RepoUtils;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -137,6 +143,31 @@ public class MainService extends Service {
 		
 		return f.getAbsolutePath();
     }
+	
+	public String getLatest(Server server,String xmlpath) throws MalformedURLException, IOException{
+		File f = new File(xmlpath);
+			getApplicationContext().sendBroadcast(new Intent("connecting"));
+			String url = server.url + "latest.xml";
+			System.out.println(url);
+	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
+	    	
+	    	
+	    	int i = 0;
+	    	while(f.exists()){
+	    		f = new File(xmlpath+i++);
+	    	}
+			FileOutputStream out = new FileOutputStream(f);
+			
+			byte[] buffer = new byte[1024];
+			int len;
+			getApplicationContext().sendBroadcast(new Intent("downloading"));
+			while ((len = in.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
+			out.close();
+		
+		return f.getAbsolutePath();
+    }
     
     public InputStream getInputStream(URL url,String username, String password) throws IOException {
 		URLConnection connection = url.openConnection();
@@ -170,6 +201,7 @@ public class MainService extends Service {
 			}
 			db.addStore(uri_str,username,password);
 			server = db.getServer(uri_str);
+			addStoreInfo(db, server);
 			parseServer(db, server);
 		} catch (Exception e){
 			
@@ -186,13 +218,15 @@ public class MainService extends Service {
 				
 				@Override
 				public void run() {
-					try{
 						parseTop(db, server);
+						parseLatest(db, server);
+					try{
 						parseInfoXml(db, server);
 					}catch (Exception e){
 						server.state=State.FAILED;
 						db.updateStatus(server);
 						getApplicationContext().sendBroadcast(new Intent("status"));
+						serversParsing.remove((int)server.id);
 						e.printStackTrace();
 					}
 					
@@ -211,14 +245,69 @@ public class MainService extends Service {
 		return false;
 	}
 	
-	public void parseTop(Database db, Server server) throws MalformedURLException, IOException{
-		final String path2 = getTop(server,defaultTopXmlPath);
-		RepoParser.getInstance(db).parse2(new File(path2), server, Category.TOP);
+	public void parseTop(Database db, Server server) {
+		String path2;
+		try {
+			path2 = getTop(server,defaultTopXmlPath);
+			RepoParser.getInstance(db).parse2(new File(path2), server, Category.TOP);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void parseLatest(Database db, Server server){
+		String path2;
+		try {
+			path2 = getLatest(server,defaultTopXmlPath);
+			RepoParser.getInstance(db).parse2(new File(path2), server, Category.LATEST);
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void parseInfoXml(Database db, Server server) throws MalformedURLException, IOException{
 		final String path = get(server,defaultXmlPath);
 		RepoParser.getInstance(db).parse(new File(path),server);
+	}
+
+	public void addStoreInfo(Database db, Server server) {
+		try {
+			HttpURLConnection connection = (HttpURLConnection) new URL(
+					String.format("http://webservices.aptoide.com/webservices/getRepositoryInfo/%s/json", RepoUtils.split(server.url))).openConnection();
+			connection.connect();
+			int rc = connection.getResponseCode();
+			if (rc == 200) {
+				String line = null;
+				BufferedReader br = new BufferedReader(
+						new java.io.InputStreamReader(connection
+								.getInputStream()));
+				StringBuilder sb = new StringBuilder();
+				while ((line = br.readLine()) != null)
+					sb.append(line + '\n');
+
+				JSONObject json = new JSONObject(sb.toString());
+				JSONObject array = json.getJSONObject("listing");
+				String avatar = array.getString("avatar");
+				String name = array.getString("name");
+				String downloads = array.getString("downloads");
+				db.addStoreInfo(avatar,name,downloads,server.id);
+			}
+			connection.disconnect();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 
 }

@@ -2,6 +2,7 @@ package cm.aptoide.pt2;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 
 public class Database {
@@ -171,14 +173,48 @@ public class Database {
 	}
 
 	public Cursor getCategory1(long store, boolean mergeStores) {
-		Cursor c = null;
+		Cursor d = null;
 		if(mergeStores){
-			c = database.rawQuery("select a._id,a.name from category1 as a order by a._id",null);
+			d = database.rawQuery("select a._id,a.name from category1 as a order by a._id",null);
 		}else{
-			c = database.rawQuery("select a._id,a.name from category1 as a , repo_category1 as b where a._id=b.catg1_id and b.repo_id = ? order by a._id", new String[]{store+""});
+			d = database.rawQuery("select a._id,a.name from category1 as a , repo_category1 as b where a._id=b.catg1_id and b.repo_id = ? order by a._id", new String[]{store+""});
 		}
 		System.out.println("Getting category1 " + store);
+		
+		MatrixCursor c = new MatrixCursor(new String[]{"_id","name"});
+		ArrayList<Holder> a = new ArrayList<Database.Holder>();
+		ArrayList<Holder> b = new ArrayList<Database.Holder>();
+		for(d.moveToFirst();!d.isAfterLast();d.moveToNext()){
+			if(d.getString(1).equals("Top Apps")|| d.getString(1).equals("Latest Apps")){
+				Holder holder = new Holder();
+				holder.id=d.getLong(0);
+				holder.name=d.getString(1);
+				a.add(holder);
+			}else{
+				c.addRow(new Object[]{d.getString(0),d.getString(1)});
+			}
+			
+		}
+		Collections.sort(a);
+		for(Holder holder : a){
+			c.addRow(new Object[]{holder.id,holder.name});
+		}
+		c.addRow(new Object[]{-2,"Latest Comments"});
+		c.addRow(new Object[]{-1,"Latest Likes"});
+		
+		d.close();
+		
 		return c;
+	}
+	
+	static class Holder implements Comparable<Holder>{
+		long id;
+		String name;
+		
+		@Override
+		public int compareTo(Holder another) {
+			return another.name.compareTo(name);
+		}
 	}
 	
 	public Cursor getCategory2(long l,long store, boolean mergeStores) {
@@ -229,9 +265,22 @@ public class Database {
 		return server;
 	}
 	
-	public void deleteTopApps(long id){
-		database.delete("dynamic_apk", "repo_id = ?", new String[]{id+""});
-		database.delete("toprepo_extra", "_id = ?", new String[]{id+""});
+	public void deleteTopApps(long id, Category category){
+		switch (category) {
+		case TOP:
+			if(categories1.get("Top Apps")!=null){
+				database.delete("dynamic_apk", "repo_id = ? and category1 = ?", new String[]{id+"",categories1.get("Top Apps")+""});
+			}
+			break;
+		case LATEST:
+			if(categories1.get("Latest Apps")!=null){
+				database.delete("dynamic_apk", "repo_id = ? and category1 = ?", new String[]{id+"",categories1.get("Latest Apps")+""});
+			}
+			break;
+		default:
+			break;
+		}
+		database.delete("toprepo_extra", "_id = ? and category = ?", new String[]{id+"",category.name().hashCode()+""});
 	}
 	
 	public void deleteServer(long id, boolean fromRepoTable){
@@ -432,18 +481,19 @@ public class Database {
 	public void insertTop(ViewApk apk, Category category) {
 		switch (category) {
 		case TOP:
-			try{
-				apk.setCategory1("Top Apps");
-				insertDynamicCategories(apk);
-				insertTopApk(apk);
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
-			
+			apk.setCategory1("Top Apps");
 			break;
-
+		case LATEST:
+			apk.setCategory1("Latest Apps");
+			break;
 		default:
 			break;
+		}
+		try{
+			insertDynamicCategories(apk);
+			insertTopApk(apk);
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -512,12 +562,13 @@ public class Database {
 		return path;
 	}
 
-	public void insertTopServerInfo(Server server) {
+	public void insertTopServerInfo(Server server, Category category) {
 		ContentValues values = new ContentValues();
 		try{
 //			values.put("iconspath", server.iconsPath);
 			values.put("_id", server.id);
-			values.put("top_delta", server.delta);
+			values.put("top_delta", server.top_hash);
+			values.put("category", category.name().hashCode());
 			database.insert("toprepo_extra", null, values);
 		}catch (Exception e){
 			e.printStackTrace();
@@ -526,11 +577,11 @@ public class Database {
 		
 	}
 	
-	public String getTopAppsHash(long id){
+	public String getTopAppsHash(long id, Category category){
 		Cursor c = null;
 		String return_string = "";
 		try{
-			c= database.query("toprepo_extra", new String[]{"top_delta"}, "_id = ?", new String[]{id+""}, null, null, null);
+			c= database.query("toprepo_extra", new String[]{"top_delta"}, "_id = ? and category = ?", new String[]{id+"",category.name().hashCode()+""}, null, null, null);
 			c.moveToFirst();
 			return_string=c.getString(0);
 		}catch (Exception e){
@@ -539,7 +590,6 @@ public class Database {
 			c.close();
 		}
 		return return_string;
-		
 	}
 
 	public void prepare() {
@@ -557,7 +607,6 @@ public class Database {
 			}else{
 				c = database.query("apk", new String[]{"apkid","vername","repo_id","downloads","size","imagepath","name","rating","path"}, "_id = ?", new String[]{long1+""}, null, null, null);
 			}
-			
 			
 			c.moveToFirst();
 			apk.setApkid(c.getString(0));
@@ -583,9 +632,9 @@ public class Database {
 		Cursor c = null;
 		try {
 			if(b){
-				c = database.query("dynamic_apk", new String[]{"_id", "apkid","vername"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
+				c = database.query("dynamic_apk", new String[]{"_id", "apkid","vername","repo_id"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
 			}else{
-				c = database.query("apk", new String[]{"_id", "apkid","vername"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
+				c = database.query("apk", new String[]{"_id", "apkid","vername","repo_id"}, "apkid = ?", new String[]{apkid}, null, null, "vercode desc");
 			}
 		} catch (Exception e){
 			e.printStackTrace();
@@ -611,6 +660,84 @@ public class Database {
 			c.close();
 		}
 		return return_string;
+	}
+
+	public void insertItemBasedApk(Server server, ViewApk apk, int hashCode) {
+		//insert itembasedapkrepo
+		try{
+			ContentValues values = new ContentValues();
+			values.put("iconspath",server.iconsPath);
+			//insert itembasedapk
+			long i = database.insert("itembasedapkrepo", null, values);
+			values.clear();
+			values.put("name", apk.getName());
+			values.put("itembasedapkrepo_id", i);
+			values.put("icon",apk.getIconPath());
+			values.put("parent_hashid", hashCode);
+			database.insert("itembasedapk", null, values);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+
+	public ArrayList<HashMap<String, String>> getItemBasedApks(int parentHashCode) {
+		Cursor c = null;
+		Cursor d = null;
+		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String,String>>();
+		
+		
+		try {
+			c = database.query("itembasedapk", new String[]{"name","icon","itembasedapkrepo_id"}, "parent_hashid = ?", new String[]{parentHashCode+""}, null, null, null);
+			
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				HashMap<String, String> value = new HashMap<String, String>();
+				value.put("name", c.getString(0));
+				d = database.query("itembasedapkrepo", new String[]{"iconspath"}, "_id = ?", new String[]{c.getString(2)}, null, null, null);
+				d.moveToFirst();
+				value.put("icon" ,  d.getString(0)+c.getString(1));
+				values.add(value);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if(d!=null){
+				d.close();
+			}
+			c.close();
+		}
+		
+		return values;
+	}
+
+	public String getItemBasedApksHash(int hashCode) {
+		Cursor c = null;
+		String return_string = "";
+		try {
+			c = database.query("itembasedapk_hash", new String[]{"hash"}, "parent_hashid = ?", new String[]{hashCode+""}, null, null, null);
+			c.moveToFirst();
+			return_string = c.getString(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return return_string;
+	}
+
+	public void insertItemBasedApkHash(String md5hash, int parentHashCode) {
+		ContentValues values = new ContentValues();
+		values.put("hash",md5hash);
+		values.put("parent_hashid", parentHashCode);
+		database.insert("itembasedapk_hash", null, values);
+	}
+
+	public void addStoreInfo(String avatar, String name, String downloads,
+			long id) {
+		ContentValues values = new ContentValues();
+		values.put("avatar", avatar);
+		values.put("name", name);
+		values.put("downloads", downloads);
+		database.update("repo", values, "_id=?", new String[]{id+""});
+		
 	}
 
 

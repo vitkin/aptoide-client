@@ -12,6 +12,7 @@ public class Server implements Parcelable{
 	public long id;
 	public String url = "";
 	public String delta = "";
+	public String top_hash = "";
 	public String timestamp = "";
 	public int n_apk = 0;
 	public State state = State.QUEUED;
@@ -24,6 +25,7 @@ public class Server implements Parcelable{
 	public File xml;
 	public String screenspath;
 	
+	public Server() {}
 	
 	public Server(String url){
 		this.url = url;
