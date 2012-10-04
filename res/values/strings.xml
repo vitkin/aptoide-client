@@ -203,5 +203,7 @@
     <string name="schDown_added">" was added to scheduled download list."</string>
     <string name="clear_cache_sucess">"Content successfuly deleted"</string>
     
+    <string name="aptoide_downloading">Aptoide downloading</string>
+    <string name="x_apps">%s apps</string>
 
 </resources>

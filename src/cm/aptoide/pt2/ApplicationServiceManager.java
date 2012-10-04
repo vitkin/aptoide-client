@@ -19,11 +19,29 @@
 */
 package cm.aptoide.pt2;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
+import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.IBinder;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
+import android.os.RemoteException;
+import android.util.Log;
+import android.widget.RemoteViews;
 import cm.aptoide.pt2.services.AIDLServiceDownload;
 import cm.aptoide.pt2.services.ServiceDownload;
 import cm.aptoide.pt2.util.Constants;
@@ -31,19 +49,6 @@ import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownload;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
-import android.app.Application;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.net.ConnectivityManager;
-import android.net.Uri;
-import android.util.Log;
-import android.net.NetworkInfo;
-import android.os.IBinder;
-import android.os.RemoteException;
 
 /**
  * ApplicationServiceManager, manages interaction between interface classes and services
@@ -53,6 +58,9 @@ import android.os.RemoteException;
  */
 public class ApplicationServiceManager extends Application {
 	private boolean isRunning = false;
+	
+	private NotificationManager notificationManager;
+	private WakeLock keepScreenOn;
 
 	private AIDLServiceDownload serviceDownloadCaller = null;
 
@@ -123,6 +131,8 @@ public class ApplicationServiceManager extends Application {
 	public void onCreate() {
 		if (!isRunning) {
 			connectivityState = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 			
 			ongoingDownloads = new HashMap<Integer, ViewDownloadManagement>();
 			
@@ -204,6 +214,53 @@ public class ApplicationServiceManager extends Application {
 //		return connectionAvailable;
 //	}
 	
+
+	private void setNotification() {
+		
+		String notificationTitle = getString(R.string.aptoide_downloading);
+		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.notification_progress_bar);
+				
+		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
+		contentView.setTextViewText(R.id.download_notification_name, notificationTitle);
+		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgressTarget() == 0?true:false));	
+		contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads.size()));
+		
+    	Intent onClick = new Intent();
+		onClick.setClassName(Constants.APTOIDE_PACKAGE_NAME, Constants.APTOIDE_PACKAGE_NAME+".DownloadManager");
+		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+		onClick.setAction(Constants.APTOIDE_PACKAGE_NAME+".FROM_NOTIFICATION");
+    	
+    	// The PendingIntent to launch our activity if the user selects this notification
+    	PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
+
+    	Notification notification = new Notification(R.drawable.ic_notification, notificationTitle, System.currentTimeMillis());
+    	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+		notification.contentView = contentView;
+
+
+		// Set the info for the notification panel.
+    	notification.contentIntent = onClickAction;
+//    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
+
+
+		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+    	// Send the notification.
+    	// We use the position because it is a unique number.  We use it later to cancel.
+    	notificationManager.notify(globaDownloadStatus.hashCode(), notification); 
+    	
+//		Log.d("Aptoide-ApplicationServiceManager", "Notification Set");
+	}
+	
+
+	private void dismissNotification(){
+		try {
+			notificationManager.cancel(globaDownloadStatus.hashCode());
+		} catch (Exception e) { }
+	}
+	
+	
+	
+	
 	
 	public void installApp(ViewCache apk){
 //		if(isAppScheduledToInstall(appHashid)){
@@ -214,6 +271,17 @@ public class ApplicationServiceManager extends Application {
 		install.setDataAndType(Uri.fromFile(apk.getFile()),"application/vnd.android.package-archive");
 		Log.d("Aptoide", "Installing app: "+apk.getLocalPath());
 		startActivity(install);
+	}
+	
+	
+	
+	public ViewDownloadManagement isAppDownloading(int appId){
+		ViewDownloadManagement download = ongoingDownloads.get(appId);
+		if(download == null){
+			return new ViewDownloadManagement();
+		}else{
+			return download;
+		}
 	}
 	
 	public void startDownload(final ViewDownloadManagement viewDownload){
@@ -235,6 +303,7 @@ public class ApplicationServiceManager extends Application {
 					}
 				}
 			});
+			updateGlobalProgress();
 //		}
 	}
 	
@@ -246,7 +315,17 @@ public class ApplicationServiceManager extends Application {
 			globaDownloadStatus.incrementProgress(download.getProgress());
 			globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
 		}
-//		updateNofification();
+		if(ongoingDownloads.size() > 0){
+			if(!keepScreenOn.isHeld()){
+				keepScreenOn.acquire();
+			}
+			setNotification();
+		}else{
+			keepScreenOn.release();
+			dismissNotification();
+		}
 	}
+	
+	
 	
 }

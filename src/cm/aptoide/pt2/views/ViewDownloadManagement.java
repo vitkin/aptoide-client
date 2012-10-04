@@ -45,6 +45,18 @@ public class ViewDownloadManagement {
 	boolean isLoginRequired;
 	ViewLogin login;
 	
+	boolean isNull;
+	
+	
+	/**
+	 * 
+	 * ViewDownloadManagement null object Constructor
+	 *
+	 */
+	public ViewDownloadManagement(){
+		this.isNull = true;
+	}
+	
 	/**
 	 * 
 	 * ViewDownloadManagement skeleton Constructor
@@ -52,6 +64,7 @@ public class ViewDownloadManagement {
 	 * @param serviceManager
 	 */
 	public ViewDownloadManagement(ApplicationServiceManager serviceManager){
+		this.isNull = false;
 		this.serviceManager = serviceManager;
 		this.observers = new ArrayList<Handler>();
 	}
@@ -88,6 +101,11 @@ public class ViewDownloadManagement {
 			this.isLoginRequired = true;
 			this.login = login;
 		}
+	}
+	
+	
+	public boolean isNull(){
+		return this.isNull;
 	}
 
 	public int getProgress() {
