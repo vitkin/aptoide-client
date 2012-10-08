@@ -180,15 +180,19 @@ public class ViewDownloadManagement {
 		}
 	}
 
-	public void registerObserver(Handler listenerDownloadProgress){
-		observers.add(listenerDownloadProgress);
+	public void registerObserver(Handler observerDownloadProgress){
+		observers.add(observerDownloadProgress);
+	}
+
+	public void unregisterObserver(Handler observerDownloadProgress){
+		observers.remove(observerDownloadProgress);
 	}
 	
 	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
 //	private void notifyObservers(){
 		for (Handler listenerDownloadProgress : observers) {
 			listenerDownloadProgress.sendEmptyMessage(progressUpdate.ordinal());
-			listenerDownloadProgress.sendEmptyMessage(hashCode());
+//			listenerDownloadProgress.sendEmptyMessage(hashCode());
 		}
 	}
 	
