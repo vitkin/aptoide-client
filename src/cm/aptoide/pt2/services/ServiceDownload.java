@@ -297,6 +297,7 @@ public class ServiceDownload extends Service {
 	    				long intervalStartTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 	    				long intervalEndTime = intervalStartTime;
 	    				long intervalStartProgress = download.getProgress();
+    					float formatConversion = ((float)Constants.MILISECONDS_TO_SECONDS/Constants.KILO_BYTE);
 
 	    				while((bytesRead = inputStream.read(data, 0, Constants.DOWNLOAD_CHUNK_SIZE)) > 0) {
 	    					fileOutputStream.write(data,0,bytesRead);
@@ -304,9 +305,10 @@ public class ServiceDownload extends Service {
 	    					if((download.getProgressPercentage() % progressTrigger == 0) && (triggeredLevel != download.getProgressPercentage())){
 	    						triggeredLevel = download.getProgressPercentage();
 	        					intervalEndTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
-//	        					Log.d("Aptoide-download", "progress increase: "+((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)+" interval: "+((intervalEndTime - intervalStartTime)/Constants.MILISECONDS_TO_SECONDS));
 	        					try {
-									download.setSpeedInKBps((int)(((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)/((intervalEndTime - intervalStartTime)/Constants.MILISECONDS_TO_SECONDS)));
+	        						int speed = Math.round(formatConversion*((download.getProgress() - intervalStartProgress)/(intervalEndTime - intervalStartTime)));
+//	        						Log.d("Aptoide-download", "progress increase: "+((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)+" interval: "+((intervalEndTime - intervalStartTime))+" speed: "+speed);
+									download.setSpeedInKBps(speed);
 								} catch (ArithmeticException e) {
 									download.setSpeedInKBps(0);
 								}
@@ -314,8 +316,8 @@ public class ServiceDownload extends Service {
 	        					intervalStartProgress = download.getProgress();
 								try {
 									downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-								} catch (RemoteException e4) {
-									e4.printStackTrace();
+								} catch (RemoteException e) {
+									e.printStackTrace();
 								}
 		    					Log.d("Aptoide-download", "download : "+cache.hashCode()+" "+download);
 	    					}

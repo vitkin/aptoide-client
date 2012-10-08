@@ -223,7 +223,11 @@ public class ApplicationServiceManager extends Application {
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
 		contentView.setTextViewText(R.id.download_notification_name, notificationTitle);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgressTarget() == 0?true:false));	
-		contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads.size()));
+		if(ongoingDownloads.size()>1){
+			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads.size()));
+		}else{
+			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_app, ongoingDownloads.size()));
+		}
 		
     	Intent onClick = new Intent();
 		onClick.setClassName(Constants.APTOIDE_PACKAGE_NAME, Constants.APTOIDE_PACKAGE_NAME+".DownloadManager");
