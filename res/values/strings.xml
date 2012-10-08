@@ -204,7 +204,8 @@
     <string name="clear_cache_sucess">"Content successfuly deleted"</string>
     
     <string name="aptoide_downloading">Aptoide downloading</string>
-    <string name="x_apps">%s apps</string>
+    <string name="x_app">%d app</string>
+    <string name="x_apps">%d apps</string>
     <string name="slow">slow</string>
 
 </resources>
