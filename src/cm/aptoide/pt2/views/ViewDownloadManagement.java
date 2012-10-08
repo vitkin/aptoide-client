@@ -107,7 +107,7 @@ public class ViewDownloadManagement {
 	}
 
 	public int getProgress() {
-		return (viewDownload == null?0:(int)viewDownload.getProgress());
+		return (viewDownload == null?0:(int)viewDownload.getProgressPercentage());
 	}
 	
 	public void updateProgress(ViewDownload update){
