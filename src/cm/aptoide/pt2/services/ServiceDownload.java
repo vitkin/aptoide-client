@@ -123,7 +123,7 @@ public class ServiceDownload extends Service {
     	private ExecutorService installedColectorsPool;
     	
     	public DownloadManager(){
-    		installedColectorsPool = Executors.newSingleThreadExecutor();
+    		installedColectorsPool = Executors.newFixedThreadPool(Constants.MAX_PARALLEL_DOWNLOADS);
     	}
     	
     	public void downloadApk(ViewDownload download, ViewCache cache){

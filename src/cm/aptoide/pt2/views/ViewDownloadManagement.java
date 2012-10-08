@@ -118,12 +118,12 @@ public class ViewDownloadManagement {
 		this.viewDownload.setProgress(update.getProgress());
 		this.viewDownload.setSpeedInKBps(update.getSpeedInKBps());
 		this.viewDownload.setStatus(update.getStatus());
-//		if(viewDownload.getProgress() >= viewDownload.getProgressTarget()){
-//			notifyObservers(EnumDownloadProgressUpdateMessages.COMPLETED);
-//		}else{
-//			notifyObservers(EnumDownloadProgressUpdateMessages.UPDATE);
-//		}
-		notifyObservers();
+		if(viewDownload.getProgress() >= viewDownload.getProgressTarget()){
+			notifyObservers(EnumDownloadProgressUpdateMessages.COMPLETED);
+		}else{
+			notifyObservers(EnumDownloadProgressUpdateMessages.UPDATE);
+		}
+//		notifyObservers();
 	}
 	
 	public EnumDownloadStatus getDownloadStatus(){
@@ -184,10 +184,10 @@ public class ViewDownloadManagement {
 		observers.add(listenerDownloadProgress);
 	}
 	
-//	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
-	private void notifyObservers(){
+	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
+//	private void notifyObservers(){
 		for (Handler listenerDownloadProgress : observers) {
-//			listenerDownloadProgress.sendEmptyMessage(progressUpdate.ordinal());
+			listenerDownloadProgress.sendEmptyMessage(progressUpdate.ordinal());
 			listenerDownloadProgress.sendEmptyMessage(hashCode());
 		}
 	}

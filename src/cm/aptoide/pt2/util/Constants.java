@@ -33,6 +33,7 @@ public class Constants {
 	public static final int KILO_BYTE = 1024;
 	
 	public static final int DOWNLOAD_CHUNK_SIZE = 8*KILO_BYTE;
+	public static final int MAX_PARALLEL_DOWNLOADS = 4;
 	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
