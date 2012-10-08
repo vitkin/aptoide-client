@@ -33,18 +33,18 @@ import cm.aptoide.pt2.R;
  *
  */
 public class ViewDownloadManagement {
-	ApplicationServiceManager serviceManager;
-	HashMap<Integer, Handler> observers;
+	private ApplicationServiceManager serviceManager;
+	private HashMap<Integer, Handler> observers;
 	
-	ViewApk appInfo;
+	private ViewApk appInfo;
 	
-	ViewDownload viewDownload;
-	ViewCache cache;
+	private ViewDownload viewDownload;
+	private ViewCache cache;
 	
-	boolean isLoginRequired;
-	ViewLogin login;
+	private boolean isLoginRequired;
+	private ViewLogin login;
 	
-	boolean isNull;
+	private boolean isNull;
 	
 	
 	/**
@@ -131,12 +131,31 @@ public class ViewDownloadManagement {
 		this.viewDownload.setProgress(update.getProgress());
 		this.viewDownload.setSpeedInKBps(update.getSpeedInKBps());
 		this.viewDownload.setStatus(update.getStatus());
-		if(viewDownload.getProgress() >= viewDownload.getProgressTarget()){
-			notifyObservers(EnumDownloadProgressUpdateMessages.COMPLETED);
-		}else{
-			notifyObservers(EnumDownloadProgressUpdateMessages.UPDATE);
+		switch (viewDownload.getStatus()) {
+			case FAILED:
+				notifyObservers(EnumDownloadProgressUpdateMessages.FAILED);
+				break;
+				
+			case PAUSED:
+				notifyObservers(EnumDownloadProgressUpdateMessages.PAUSED);
+				break;
+				
+			case RESUMING:
+				notifyObservers(EnumDownloadProgressUpdateMessages.RESUMING);
+				break;
+				
+			case STOPPED:
+				notifyObservers(EnumDownloadProgressUpdateMessages.STOPPED);
+				break;
+				
+			case COMPLETED:
+				notifyObservers(EnumDownloadProgressUpdateMessages.COMPLETED);
+				break;
+	
+			default:
+				notifyObservers(EnumDownloadProgressUpdateMessages.UPDATE);
+				break;
 		}
-//		notifyObservers();
 	}
 	
 	public EnumDownloadStatus getDownloadStatus(){
@@ -148,11 +167,23 @@ public class ViewDownloadManagement {
 	}
 	
 	public String getSpeedInKBpsString(){
-		if(viewDownload.getSpeedInKBps() == 0){
-			return serviceManager.getString(R.string.slow);
-		}else{
-			return viewDownload.getSpeedInKBps()+" KBps";
+		switch (viewDownload.getStatus()) {
+			case PAUSED:
+				return serviceManager.getString(R.string.paused);
+	
+			case FAILED:
+			case STOPPED:
+				return serviceManager.getString(R.string.stopped);
+				
+			default:
+				if(viewDownload.getSpeedInKBps() == 0){
+					return serviceManager.getString(R.string.slow);
+				}else{
+					return viewDownload.getSpeedInKBps()+" KBps";
+				}
 		}
+		
+		
 	}
 	
 	public boolean isComplete(){

@@ -35,5 +35,6 @@ interface AIDLServiceDownload {
 	void callRegisterDownloadStatusObserver(in AIDLDownloadManager downloadStatusClient);
 	void callDownloadApk(in ViewDownload download, in ViewCache cache);
 	void callDownloadPrivateApk(in ViewDownload download, in ViewCache cache, in ViewLogin login);
+	void callStopDownload(in int appId);
 	
 }

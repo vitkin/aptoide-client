@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -103,6 +104,12 @@ public class ServiceDownload extends Service {
 			Log.d("Aptoide-ServiceDownload", "starting apk download: "+download.getRemotePath());
 			downloadManager.downloadApk(download, cache, login);
 		}
+
+		@Override
+		public void callStopDownload(int appId) throws RemoteException {
+			Log.d("Aptoide-ServiceDownload", "stoping apk download  id: "+appId);
+			downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.STOPPED);
+		}
 		
 	}; 
 	
@@ -110,20 +117,22 @@ public class ServiceDownload extends Service {
 		this.downloadStatusClient = downloadStatusClient;
 	}
 
-	private Handler toastHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			Toast.makeText(ServiceDownload.this, msg.what, Toast.LENGTH_SHORT).show();
-		}
-	};
+//	private Handler toastHandler = new Handler() {
+//		@Override
+//		public void handleMessage(Message msg) {
+//			Toast.makeText(ServiceDownload.this, msg.what, Toast.LENGTH_SHORT).show();
+//		}
+//	};
 
 	private DownloadManager downloadManager;
 
     private class DownloadManager{
     	private ExecutorService installedColectorsPool;
+    	private HashMap<Integer, ViewDownload> ongoingDownloads;
     	
     	public DownloadManager(){
     		installedColectorsPool = Executors.newFixedThreadPool(Constants.MAX_PARALLEL_DOWNLOADS);
+    		ongoingDownloads = new HashMap<Integer, ViewDownload>();
     	}
     	
     	public void downloadApk(ViewDownload download, ViewCache cache){
@@ -131,6 +140,7 @@ public class ServiceDownload extends Service {
     	}
     	
     	public void downloadApk(ViewDownload download, ViewCache cache, ViewLogin login){
+    		ongoingDownloads.put(cache.hashCode(), download);
         	try {
 				installedColectorsPool.execute(new DownloadApk(download, cache, login));
 			} catch (Exception e) { }
@@ -151,7 +161,14 @@ public class ServiceDownload extends Service {
 			@Override
 			public void run() {
 //	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
-	    		if(!cache.isCached() || !cache.hasMd5Sum() || !cache.checkMd5()){
+				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
+	    			download.setCompleted();
+					try {
+						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+					} catch (RemoteException e4) {
+						e4.printStackTrace();
+					}
+	    		}else{
 	    			try {
 	    				download(download, cache, login);
 	    			} catch (Exception e) {
@@ -162,24 +179,11 @@ public class ServiceDownload extends Service {
 								download(download, cache, login);
 							} catch (Exception e3) {
 //								e3.printStackTrace();
-								download.setCompleted();
-								try {
-									downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-								} catch (RemoteException e4) {
-									e4.printStackTrace();
-								}
-					    		Log.d("Aptoide-download", "apk downloaded: "+download.getRemotePath());
 							}
 	    				}
 	    			}
-	    		}else if(cache.isCached() && cache.checkMd5()){
-	    			download.setCompleted();
-					try {
-						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-					} catch (RemoteException e4) {
-						e4.printStackTrace();
-					}
 	    		}
+	    		ongoingDownloads.remove(cache.hashCode());
 			}
     		
     	}
@@ -228,8 +232,6 @@ public class ServiceDownload extends Service {
     				httpResponse = httpClient.execute(httpGet);
     				if(httpResponse == null){
     					Log.d("Aptoide-download","Major network exception... Exiting!");
-    					/*msg_al.arg1= 1;
-    						 download_error_handler.sendMessage(msg_al);*/
     					if(!resuming){
     						cache.clearCache();
     					}
@@ -267,7 +269,7 @@ public class ServiceDownload extends Service {
 						return;
 	
 					default:
-						if(httpResponse.containsHeader("Content-Length")){
+						if(!resuming && httpResponse.containsHeader("Content-Length")){
 	    					targetBytes = Long.parseLong(httpResponse.getFirstHeader("Content-Length").getValue());
 	    					Log.d("Aptoide-download","Download targetBytes: "+targetBytes);
 	    					download.setProgressTarget(targetBytes);
@@ -288,6 +290,12 @@ public class ServiceDownload extends Service {
 	    				}
 	    				
 	    				download.setStatus(EnumDownloadStatus.DOWNLOADING);
+						try {
+							downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
 	    				
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
 	    				/** in percentage */
@@ -300,6 +308,13 @@ public class ServiceDownload extends Service {
     					float formatConversion = ((float)Constants.MILISECONDS_TO_SECONDS/Constants.KILO_BYTE);
 
 	    				while((bytesRead = inputStream.read(data, 0, Constants.DOWNLOAD_CHUNK_SIZE)) > 0) {
+	    					if(download.getStatus().equals(EnumDownloadStatus.STOPPED)) {
+			    				fileOutputStream.flush();
+			    				fileOutputStream.close();
+			    				inputStream.close();
+		    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" stopped");
+			    				return;
+	    					}
 	    					fileOutputStream.write(data,0,bytesRead);
 							download.incrementProgress(bytesRead);
 	    					if((download.getProgressPercentage() % progressTrigger == 0) && (triggeredLevel != download.getProgressPercentage())){
@@ -319,12 +334,11 @@ public class ServiceDownload extends Service {
 								} catch (RemoteException e) {
 									e.printStackTrace();
 								}
-		    					Log.d("Aptoide-download", "download : "+cache.hashCode()+" "+download);
+		    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
 	    					}
 //		    					Log.d("Aptoide-download", "download : "+cache.hashCode()+" "+download);
 	    				}
 	    				Log.d("Aptoide-download","Download done! Name: "+download.getRemotePathTail()+" localPath: "+localPath);
-	    				download.setCompleted();
 	    				fileOutputStream.flush();
 	    				fileOutputStream.close();
 	    				inputStream.close();
@@ -352,7 +366,7 @@ public class ServiceDownload extends Service {
     			} catch (Exception e1) { }		
     			e.printStackTrace();
     			if(cache.getFileLength() > 0){
-    				download.setStatus(EnumDownloadStatus.STOPPED);
+    				download.setStatus(EnumDownloadStatus.FAILED);
 					try {
 						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
 					} catch (RemoteException e4) {
