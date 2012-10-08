@@ -106,8 +106,22 @@ public class ViewDownloadManagement {
 		return this.isNull;
 	}
 
+	/**
+	 * getProgress, in percentage
+	 * 
+	 * @return percentage int
+	 */
 	public int getProgress() {
-		return (viewDownload == null?0:(int)viewDownload.getProgressPercentage());
+		return (viewDownload == null?0:viewDownload.getProgressPercentage());
+	}
+
+	/**
+	 * getProgressString, in percentage
+	 * 
+	 * @return percentage string
+	 */
+	public String getProgressString() {
+		return getProgress()+"%";
 	}
 	
 	public void updateProgress(ViewDownload update){
@@ -130,6 +144,10 @@ public class ViewDownloadManagement {
 	
 	public int getSpeedInKBps(){
 		return viewDownload.getSpeedInKBps();
+	}
+	
+	public String getSpeedInKBpsString(){
+		return viewDownload.getSpeedInKBps()+" KBps";
 	}
 	
 	public boolean isComplete(){
