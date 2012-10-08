@@ -24,6 +24,7 @@ import java.util.HashMap;
 import android.os.Handler;
 import android.util.Log;
 import cm.aptoide.pt2.ApplicationServiceManager;
+import cm.aptoide.pt2.R;
 
 /**
  * ViewDownloadManagement
@@ -147,7 +148,11 @@ public class ViewDownloadManagement {
 	}
 	
 	public String getSpeedInKBpsString(){
-		return viewDownload.getSpeedInKBps()+" KBps";
+		if(viewDownload.getSpeedInKBps() == 0){
+			return serviceManager.getString(R.string.slow);
+		}else{
+			return viewDownload.getSpeedInKBps()+" KBps";
+		}
 	}
 	
 	public boolean isComplete(){
