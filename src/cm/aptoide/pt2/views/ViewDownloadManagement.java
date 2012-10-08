@@ -19,12 +19,10 @@
 */
 package cm.aptoide.pt2.views;
 
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
 
 import android.os.Handler;
 import android.util.Log;
-
 import cm.aptoide.pt2.ApplicationServiceManager;
 
 /**
@@ -35,7 +33,7 @@ import cm.aptoide.pt2.ApplicationServiceManager;
  */
 public class ViewDownloadManagement {
 	ApplicationServiceManager serviceManager;
-	ArrayList<Handler> observers;
+	HashMap<Integer, Handler> observers;
 	
 	ViewApk appInfo;
 	
@@ -66,7 +64,7 @@ public class ViewDownloadManagement {
 	public ViewDownloadManagement(ApplicationServiceManager serviceManager){
 		this.isNull = false;
 		this.serviceManager = serviceManager;
-		this.observers = new ArrayList<Handler>();
+		this.observers = new HashMap<Integer, Handler>();
 	}
 	
 	/**
@@ -109,7 +107,7 @@ public class ViewDownloadManagement {
 	}
 
 	public int getProgress() {
-		return (viewDownload == null?0:viewDownload.getProgressPercentage());
+		return (viewDownload == null?0:(int)viewDownload.getProgress());
 	}
 	
 	public void updateProgress(ViewDownload update){
@@ -180,17 +178,17 @@ public class ViewDownloadManagement {
 		}
 	}
 
-	public void registerObserver(Handler observerDownloadProgress){
-		observers.add(observerDownloadProgress);
+	public void registerObserver(int appId, Handler observerDownloadProgress){
+		observers.put(appId, observerDownloadProgress);
 	}
 
-	public void unregisterObserver(Handler observerDownloadProgress){
-		observers.remove(observerDownloadProgress);
+	public void unregisterObserver(int appId){
+		observers.remove(appId);
 	}
 	
 	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
 //	private void notifyObservers(){
-		for (Handler listenerDownloadProgress : observers) {
+		for (Handler listenerDownloadProgress : observers.values()) {
 			listenerDownloadProgress.sendEmptyMessage(progressUpdate.ordinal());
 //			listenerDownloadProgress.sendEmptyMessage(hashCode());
 		}
@@ -226,7 +224,7 @@ public class ViewDownloadManagement {
 	 */
 	public void reuse(ApplicationServiceManager serviceManager) {
 		this.serviceManager = serviceManager;
-		this.observers = new ArrayList<Handler>();
+		this.observers = new HashMap<Integer, Handler>();
 	}
 	
 	/**
