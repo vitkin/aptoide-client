@@ -28,7 +28,11 @@ package cm.aptoide.pt2.views;
  */
 public enum EnumDownloadProgressUpdateMessages {
 	NOT_STARTED,
+	FAILED,
 	UPDATE,
+	PAUSED,
+	RESUMING,
+	STOPPED,
 	COMPLETED;
 	
 	public static EnumDownloadProgressUpdateMessages reverseOrdinal(int ordinal){

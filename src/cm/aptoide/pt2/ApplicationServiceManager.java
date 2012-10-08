@@ -106,14 +106,18 @@ public class ApplicationServiceManager extends Application {
 	private AIDLDownloadManager.Stub serviceDownloadCallback = new AIDLDownloadManager.Stub() {
 
 		@Override
-		public void updateDownloadStatus(int id, ViewDownload update) throws RemoteException {
-			ongoingDownloads.get(id).updateProgress(update);
-			if(ongoingDownloads.get(id).isComplete() || ongoingDownloads.get(id).getDownload().getStatus().equals(EnumDownloadStatus.STOPPED)){
-				ViewDownloadManagement download = ongoingDownloads.remove(id);
+		public void updateDownloadStatus(int appId, ViewDownload update) throws RemoteException {
+			ViewDownloadManagement updating = ongoingDownloads.get(appId);
+			updating.updateProgress(update);
+			if(updating.isComplete() || updating.getDownloadStatus().equals(EnumDownloadStatus.STOPPED)
+										   || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
+				ViewDownloadManagement download = ongoingDownloads.remove(appId);
 				if(download.isComplete()){
 					installApp(download.getCache());					
+				}else if(download.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
+					failedDownloads.put(appId, download);
 				}
-			}
+			} 
 			updateGlobalProgress();
 		}
 		
@@ -122,6 +126,7 @@ public class ApplicationServiceManager extends Application {
 	private ConnectivityManager connectivityState;
 
 	HashMap<Integer, ViewDownloadManagement> ongoingDownloads;
+	HashMap<Integer, ViewDownloadManagement> failedDownloads;
 	
 	ViewDownload globaDownloadStatus;
 	
@@ -135,6 +140,7 @@ public class ApplicationServiceManager extends Application {
 			keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 			
 			ongoingDownloads = new HashMap<Integer, ViewDownloadManagement>();
+			failedDownloads = new HashMap<Integer, ViewDownloadManagement>();
 			
 			globaDownloadStatus = new ViewDownload("local:\\GLOBAL");
 			
@@ -264,6 +270,25 @@ public class ApplicationServiceManager extends Application {
 	
 	
 	
+	private synchronized void updateGlobalProgress(){
+		globaDownloadStatus.setProgressTarget(100*ongoingDownloads.size());
+		globaDownloadStatus.setProgress(0);
+		globaDownloadStatus.setSpeedInKBps(0);
+		for (ViewDownloadManagement download : ongoingDownloads.values()) {
+			globaDownloadStatus.incrementProgress(download.getProgress());
+			globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
+		}
+		if(ongoingDownloads.size() > 0){
+			if(!keepScreenOn.isHeld()){
+				keepScreenOn.acquire();
+			}
+			setNotification();
+		}else{
+			keepScreenOn.release();
+			dismissNotification();
+		}
+	}
+	
 	
 	
 	public void installApp(ViewCache apk){
@@ -289,47 +314,48 @@ public class ApplicationServiceManager extends Application {
 	}
 	
 	public void startDownload(final ViewDownloadManagement viewDownload){
-//		if(viewDownload.getCache().isCached()){
-//			installApp(viewDownload.getCache());
-//		}else{
+		if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
 			ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
-			cachedThreadPool.execute(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						if(viewDownload.isLoginRequired()){
-							serviceDownloadCaller.callDownloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
-						}else{
-							serviceDownloadCaller.callDownloadApk(viewDownload.getDownload(), viewDownload.getCache());
-						}
-					} catch (RemoteException e) {
-						e.printStackTrace();
+		}
+		cachedThreadPool.execute(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					if(viewDownload.isLoginRequired()){
+						serviceDownloadCaller.callDownloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
+					}else{
+						serviceDownloadCaller.callDownloadApk(viewDownload.getDownload(), viewDownload.getCache());
 					}
+				} catch (RemoteException e) {
+					e.printStackTrace();
 				}
-			});
-			updateGlobalProgress();
-//		}
-	}
-	
-	private synchronized void updateGlobalProgress(){
-		globaDownloadStatus.setProgressTarget(100*ongoingDownloads.size());
-		globaDownloadStatus.setProgress(0);
-		globaDownloadStatus.setSpeedInKBps(0);
-		for (ViewDownloadManagement download : ongoingDownloads.values()) {
-			globaDownloadStatus.incrementProgress(download.getProgress());
-			globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
-		}
-		if(ongoingDownloads.size() > 0){
-			if(!keepScreenOn.isHeld()){
-				keepScreenOn.acquire();
 			}
-			setNotification();
-		}else{
-			keepScreenOn.release();
-			dismissNotification();
+		});
+		updateGlobalProgress();
+	}
+	
+	public void pauseDownload(final int appId){
+		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
+		try {
+			serviceDownloadCaller.callStopDownload(appId);
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 	
+	public void resumeDownload(final int appId){
+		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
+		startDownload(ongoingDownloads.get(appId));
+	}
 	
+	public void stopDownload(final int appId){
+		ongoingDownloads.remove(appId);
+		try {
+			serviceDownloadCaller.callStopDownload(appId);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		updateGlobalProgress();
+	}
 	
 }

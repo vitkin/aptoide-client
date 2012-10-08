@@ -28,6 +28,7 @@ package cm.aptoide.pt2.views;
  */
 public enum EnumDownloadStatus {
 	SETTING_UP,
+	RESUMING,
 	DOWNLOADING,
 	PAUSED,
 	STOPPED,

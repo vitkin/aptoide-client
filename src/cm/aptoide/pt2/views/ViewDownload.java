@@ -21,7 +21,6 @@ package cm.aptoide.pt2.views;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import cm.aptoide.pt2.ApplicationServiceManager;
 
 /**
  * ViewDownload
@@ -30,13 +29,14 @@ import cm.aptoide.pt2.ApplicationServiceManager;
  *
  */
 public class ViewDownload implements Parcelable{
-	String remotePath;
+	private String remotePath;
 	
-	long progressTarget;
-	long progress;
-	int speedInKbps;
+	private long progressTarget;
+	private long progress;
+	private int speedInKbps;
 	
-	EnumDownloadStatus status;
+	private EnumDownloadStatus status;
+	private EnumDownloadFailReason failReason;
 	
 	
 	/**
@@ -51,6 +51,7 @@ public class ViewDownload implements Parcelable{
 		this.speedInKbps = 0;
 		this.remotePath = remoteUrl;
 		this.status = EnumDownloadStatus.SETTING_UP;
+		this.failReason = EnumDownloadFailReason.NO_REASON;
 	}
 	
 	
@@ -98,6 +99,10 @@ public class ViewDownload implements Parcelable{
 		return (status.equals(EnumDownloadStatus.COMPLETED));
 	}
 	
+	public boolean isFailed(){
+		return (status.equals(EnumDownloadStatus.FAILED));
+	}
+	
 	public int getSpeedInKBps(){
 		return speedInKbps;
 	}
@@ -123,8 +128,16 @@ public class ViewDownload implements Parcelable{
 		return remoteSplit[remoteSplit.length-1];
 	}
 	
-	
-	
+	public EnumDownloadFailReason getFailReason() {
+		return failReason;
+	}
+
+	public void setFailReason(EnumDownloadFailReason failReason) {
+		this.failReason = failReason;
+		this.status = EnumDownloadStatus.FAILED;
+	}
+
+
 	/**
 	 * ViewDownload object reuse clean references
 	 *
@@ -135,6 +148,7 @@ public class ViewDownload implements Parcelable{
 		this.speedInKbps = 0;
 		this.remotePath = null;
 		this.status = null;
+		this.failReason = null;
 	}
 	
 	
@@ -149,6 +163,7 @@ public class ViewDownload implements Parcelable{
 		this.speedInKbps = 0;
 		this.remotePath = remoteUrl;
 		this.status = EnumDownloadStatus.SETTING_UP;
+		this.failReason = EnumDownloadFailReason.NO_REASON;
 	}
 
 
@@ -211,6 +226,8 @@ public class ViewDownload implements Parcelable{
 		out.writeLong(progressTarget);
 		out.writeLong(progress);
 		out.writeInt(speedInKbps);
+		out.writeInt(status.ordinal());
+		out.writeInt(failReason.ordinal());
 	}
 
 	public void readFromParcel(Parcel in) {
@@ -218,6 +235,8 @@ public class ViewDownload implements Parcelable{
 		this.progressTarget = in.readLong();
 		this.progress = in.readLong();
 		this.speedInKbps = in.readInt();
+		this.status = EnumDownloadStatus.reverseOrdinal(in.readInt());
+		this.failReason = EnumDownloadFailReason.reverseOrdinal(in.readInt());
 	}
 	
 }
