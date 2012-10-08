@@ -205,5 +205,6 @@
     
     <string name="aptoide_downloading">Aptoide downloading</string>
     <string name="x_apps">%s apps</string>
+    <string name="slow">slow</string>
 
 </resources>
