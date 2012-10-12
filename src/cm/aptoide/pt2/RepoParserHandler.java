@@ -62,7 +62,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				isRemove = true;
 			}
 		});
 
@@ -143,9 +143,9 @@ public class RepoParserHandler extends DefaultHandler {
 					db.remove(apk);
 					isRemove=false;
 				}else{
-					
+					db.insert(apk);
 				}
-				db.insert(apk);
+				
 			}
 		});
 

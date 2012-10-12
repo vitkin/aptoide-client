@@ -17,6 +17,8 @@ import com.viewpagerindicator.CirclePageIndicator;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -27,10 +29,12 @@ import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,6 +43,7 @@ import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.views.EnumCacheType;
+import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
@@ -48,67 +53,92 @@ import cm.aptoide.pt2.webservices.taste.Likes;
 public class ApkInfo extends FragmentActivity implements
 		LoaderCallbacks<Cursor> {
 
+	
 	private ViewApk viewApk = null;
 	private Database db;
 	private Spinner spinner;
 	SimpleCursorAdapter adapter;
 	long id;
+	Category category;
 	Activity context;
 	boolean spinnerInstaciated = false;
-
+	private ViewDownloadManagement download;
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.apk_info);
+		category = Category.values()[getIntent().getIntExtra("category", 0)];
 		context = this;
 		db = Database.getInstance(this);
 		id = getIntent().getExtras().getLong("_id");
 		loadElements(id);
 		// apkVersions = db.getAllApkVersions(viewApk.getApkid());
-		spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
-		spinner.setVisibility(View.VISIBLE);
-		adapter = new SimpleCursorAdapter(this,
-				android.R.layout.simple_spinner_item, null,
-				new String[] { "vername" ,"repo_id"}, new int[] { android.R.id.text1 },
-				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		adapter.setViewBinder(new ViewBinder() {
+		if(!category.equals(Category.ITEMBASED)){
+			spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
+			spinner.setVisibility(View.VISIBLE);
+			adapter = new SimpleCursorAdapter(this,
+					android.R.layout.simple_spinner_item, null,
+					new String[] { "vername" ,"repo_id"}, new int[] { android.R.id.text1 },
+					CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+			adapter.setViewBinder(new ViewBinder() {
 
-			@Override
-			public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
-				((TextView) arg0).setText("Version " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3)).url));
-				System.out.println("repo_id="+arg1.getString(3));
-				return true;
-			}
-		});
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spinner.setAdapter(adapter);
-		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-			@Override
-			public void onItemSelected(AdapterView<?> arg0, View arg1,
-					int arg2, long arg3) {
-				if (spinnerInstaciated) {
-					loadElements(arg3);
-				} else {
-					spinnerInstaciated = true;
+				@Override
+				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
+					((TextView) arg0).setText("Version " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3)).url));
+					System.out.println("repo_id="+arg1.getString(3));
+					return true;
 				}
+			});
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			spinner.setAdapter(adapter);
+			spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+
+				@Override
+				public void onItemSelected(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					if (spinnerInstaciated) {
+						loadElements(arg3);
+					} else {
+						spinnerInstaciated = true;
+					}
+				}
+
+				@Override
+				public void onNothingSelected(AdapterView<?> arg0) {
+
+				}
+			});
+			getSupportLoaderManager().initLoader(0, null, this);
+
+
+		}
 			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> arg0) {
-
-			}
-		});
-		getSupportLoaderManager().initLoader(0, null, this);
-
-	}
-
+	String[] thumbnailList = null;
+	String webservicespath= null;
 	private void loadElements(long id) {
-		System.out.println("loading " + id);
-		viewApk = db.getApk(id, getIntent().getExtras()
-				.getBoolean("top", false));
+		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
+		findViewById(R.id.downloading_name).setVisibility(View.GONE);
+		findViewById(R.id.download_progress).setVisibility(View.GONE);
+		
+		System.out.println("loading " + id + " " +category.name());
+		if(category.equals(Category.ITEMBASED)){
+			viewApk = db.getItemBasedApk(id);
+		}else{
+			viewApk = db.getApk(id, getIntent().getExtras().getBoolean("top", false));
+		}
+		
+		
+		download = ((ApplicationServiceManager)getApplication()).isAppDownloading((int)viewApk.getId());
+		if(!download.isNull()){
+			download.registerObserver((int)viewApk.getId(),handler);
+			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+			((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
+			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+			((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+		}
+		
 		final long repo_id = viewApk.getRepo_id();
-		final String repo_string = RepoUtils.split(db.getServer(viewApk.getRepo_id()).url);
+		final String repo_string = category.equals(Category.ITEMBASED)?db.getItemBasedServer(viewApk.getRepo_id()):RepoUtils.split(db.getServer(viewApk.getRepo_id()).url);
 		((TextView) findViewById(R.id.app_store)).setText(repo_string);
 		try {
 			((RatingBar) findViewById(R.id.rating)).setRating(Float
@@ -116,64 +146,91 @@ public class ApkInfo extends FragmentActivity implements
 		} catch (Exception e) {
 			((RatingBar) findViewById(R.id.rating)).setRating(0);
 		}
-		((TextView) findViewById(R.id.versionInfo))
-				.setText("Downloads: " + viewApk.getDownloads() + " Size: "
-						+ viewApk.getSize() + "KB");
-		((TextView) findViewById(R.id.version_label)).setText("Version: "
-				+ viewApk.getVername());
+		
+		if(category.equals(Category.ITEMBASED)){
+			 webservicespath = "http://webservices.aptoide.com/";
+		}else{
+			webservicespath = db.getWebServicesPath(repo_id);
+		}
+		
+		((TextView) findViewById(R.id.versionInfo)).setText("Downloads: " + viewApk.getDownloads() + " Size: "+ viewApk.getSize() + "KB");
+		((TextView) findViewById(R.id.version_label)).setText("Version: "+ viewApk.getVername());
 		((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 		ImageLoader imageLoader = new ImageLoader(context, db);
-		imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),
-				(ImageView) findViewById(R.id.app_hashid), context, false);
-		Comments comments = new Comments(context,
-				db.getWebServicesPath(repo_id));
-		comments.getComments(repo_string, viewApk.getApkid(),
-				viewApk.getVername(),
-				(LinearLayout) findViewById(R.id.commentContainer), false);
-		Likes likes = new Likes(context, db.getWebServicesPath(repo_id));
-		likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),
-				(ViewGroup) findViewById(R.id.likesLayout));
+		if(category.equals(Category.ITEMBASED)){
+			imageLoader.DisplayImage(-1, db.getItemBasedBasePath(viewApk.getRepo_id())+viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false);
+		}else{
+			imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false);
+		}
+		
+		
+		
+		Comments comments = new Comments(context,webservicespath);
+		comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
+		Likes likes = new Likes(context, webservicespath);
+		likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout));
 		ItemBasedApks items = new ItemBasedApks(context,viewApk);
 		
-		items.getItems(findViewById(R.id.itembasedapks_container));
+		items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container));
 		
 		findViewById(R.id.btinstall).setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				new ViewDownloadManagement(
-						(ApplicationServiceManager) getApplication(), db
-								.getBasePath(viewApk.getRepo_id())
-								+ viewApk.getPath(), viewApk, new ViewCache(
-								EnumCacheType.APK, viewApk.getId()))
-						.startDownload();
+				download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id()))
+						+ viewApk.getPath(), viewApk, new ViewCache(EnumCacheType.APK, viewApk.getApkid().hashCode()));
+				download.registerObserver((int)viewApk.getId(),handler);
+				download.startDownload();
+				findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 			}
 		});
+		
+		
+		
 		new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
-				String uri = db.getWebServicesPath(repo_id)+"webservices/listApkScreens/"+repo_string+"/"+viewApk.getApkid()+"/"+viewApk.getVername()+"/json";
-				HttpClient client = new DefaultHttpClient();
-				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-				HttpResponse response=null;
-				HttpGet request = new HttpGet();
 				try{
-					request.setURI(new URI(uri));
-					System.out.println(request.getURI());
-					response = client.execute(request);
-					System.out.println(request.getURI()+"");
-					String temp = EntityUtils.toString(response.getEntity());
-					JSONObject respJSON = new JSONObject(temp);
-					JSONArray imagesurl = respJSON.getJSONArray("listing");
-					final String[] thumbnailList = new String[imagesurl.length()];
-					for ( int i = 0; i!= imagesurl.length();i++){
-						thumbnailList[i]=screenshotToThumb(imagesurl.getString(i));
+					
+					final ArrayList<String> originalList = new ArrayList<String>();;
+				switch (category) {
+				case TOP:
+				case LATEST:
+					db.getScreenshots(originalList,viewApk,category);
+					thumbnailList = new String[originalList.size()];
+					
+					for ( int i = 0; i!= originalList.size();i++){
+						thumbnailList[i]=screenshotToThumb(originalList.get(i));
 					}
-					final ArrayList<String> originalList = new ArrayList<String>();
-					for(int i=0;i < imagesurl.length();i++){ 
-						originalList.add(imagesurl.getString(i));
-					}
+					break;
+				case ITEMBASED:
+				case INFOXML:
+					String uri = webservicespath+"webservices/listApkScreens/"+repo_string+"/"+viewApk.getApkid()+"/"+viewApk.getVername()+"/json";
+					HttpClient client = new DefaultHttpClient();
+					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+					HttpResponse response=null;
+					HttpGet request = new HttpGet();
+				
+						request.setURI(new URI(uri));
+						System.out.println(request.getURI());
+						response = client.execute(request);
+						System.out.println(request.getURI()+"");
+						String temp = EntityUtils.toString(response.getEntity());
+						JSONObject respJSON = new JSONObject(temp);
+						JSONArray imagesurl = respJSON.getJSONArray("listing");
+						thumbnailList = new String[imagesurl.length()];
+						for ( int i = 0; i!= imagesurl.length();i++){
+							thumbnailList[i]=screenshotToThumb(imagesurl.getString(i));
+						}
+						
+						for(int i=0;i < imagesurl.length();i++){ 
+							originalList.add(imagesurl.getString(i));
+						}
+					break;
+				default:
+					break;
+				}
 					final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 					final CustomViewPager screenshots = (CustomViewPager) findViewById(R.id.screenShotsPager);
 					runOnUiThread(new Runnable() {
@@ -202,10 +259,6 @@ public class ApkInfo extends FragmentActivity implements
 										if (position==originalList.size()-1){
 											findViewById(R.id.right).setVisibility(View.GONE);
 										}
-										
-										
-										
-										System.out.println(position + " " +originalList.size());
 									}
 									
 									public void onPageScrolled(int arg0, float arg1, int arg2) {
@@ -226,8 +279,28 @@ public class ApkInfo extends FragmentActivity implements
 			}
 		}).start();
 		
-		
 	}
+	
+	
+	private Handler handler = new Handler(){
+		
+		public void handleMessage(Message msg) {
+			
+			switch (EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what)) {
+			case UPDATE:
+				((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
+				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+				break;
+			case COMPLETED:
+				findViewById(R.id.download_progress).setVisibility(View.GONE);
+				break;
+			default:
+				break;
+			}
+			
+		};
+	};
 	
 	protected String screenshotToThumb(String string) {
 
@@ -249,8 +322,8 @@ public class ApkInfo extends FragmentActivity implements
 
 			@Override
 			public Cursor loadInBackground() {
-				return db.getAllApkVersions(viewApk.getApkid(), getIntent()
-						.getExtras().getBoolean("top", false));
+				return db.getAllApkVersions(viewApk.getApkid(),viewApk.getId(),viewApk.getVername(), getIntent()
+						.getExtras().getBoolean("top", false),viewApk.getRepo_id());
 			}
 		};
 		return loader;
@@ -266,4 +339,13 @@ public class ApkInfo extends FragmentActivity implements
 		adapter.swapCursor(null);
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(!download.isNull()){
+			download.unregisterObserver((int)viewApk.getId());
+		}
+		handler = null;
+	}
+	
 }

@@ -52,7 +52,7 @@ public class MainService extends Service {
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			serversParsing.remove((int)((Server)intent.getParcelableExtra("server")).id);
+			serversParsing.remove((int)intent.getLongExtra("server", -1));
 		}
 	};
 	
@@ -204,7 +204,7 @@ public class MainService extends Service {
 			addStoreInfo(db, server);
 			parseServer(db, server);
 		} catch (Exception e){
-			
+			e.printStackTrace();
 		}
 	}
 
@@ -248,6 +248,7 @@ public class MainService extends Service {
 	public void parseTop(Database db, Server server) {
 		String path2;
 		try {
+			serversParsing.put((int)server.id, server);
 			path2 = getTop(server,defaultTopXmlPath);
 			RepoParser.getInstance(db).parse2(new File(path2), server, Category.TOP);
 		} catch (MalformedURLException e) {
@@ -263,6 +264,7 @@ public class MainService extends Service {
 	public void parseLatest(Database db, Server server){
 		String path2;
 		try {
+			serversParsing.put((int)server.id, server);
 			path2 = getLatest(server,defaultTopXmlPath);
 			RepoParser.getInstance(db).parse2(new File(path2), server, Category.LATEST);
 		} catch (MalformedURLException e) {
