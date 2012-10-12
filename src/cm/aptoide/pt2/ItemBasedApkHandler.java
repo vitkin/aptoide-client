@@ -40,6 +40,97 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("ver", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setVername(sb.toString());
+			}
+		});
+		
+		elements.put("catg2", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setCategory2(sb.toString());
+			}
+		});
+		
+		elements.put("dwn", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDownloads(sb.toString());
+			}
+		});
+		
+		elements.put("rat", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setRating(sb.toString());
+			}
+		});
+		
+		elements.put("path", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setPath(sb.toString());
+			}
+		});
+		
+		elements.put("sz", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setSize(sb.toString());
+			}
+		});
+		
+		elements.put("vercode", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setVercode(Integer.parseInt(sb.toString()));
+			}
+		});
+		
 		elements.put("iconspath", new ElementHandler() {
 			
 			@Override
@@ -53,6 +144,32 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("screenspath", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				server.screenspath=sb.toString();
+			}
+		});
+		
+		elements.put("basepath", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				server.basePath=sb.toString();
+			}
+		});
+		
 		elements.put("name", new ElementHandler() {
 			
 			@Override
@@ -62,7 +179,12 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			
 			@Override
 			public void endElement() throws SAXException {
-				apk.setName(sb.toString());
+				if(insidePackage){
+					apk.setName(sb.toString());
+				}else{
+					server.url=sb.toString();
+				}
+				
 			}
 		});
 		
@@ -90,16 +212,31 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			public void endElement() throws SAXException {
 				System.out.println("itembased");
 				try{
-					db.insertItemBasedApk(server,apk,parent_apk.getApkid().hashCode());
+					db.insertItemBasedApk(server,apk,parent_apk.getApkid());
 				}catch (Exception e){
 					e.printStackTrace();
 				}
 				
 			}
 		});
+		elements.put("package", new ElementHandler() {
+			
+			
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				insidePackage = true;
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				insidePackage = false;
+			}
+		});
+		
 		
 	}
-
+	private static boolean insidePackage;
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {

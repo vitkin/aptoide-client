@@ -16,7 +16,7 @@ public class ViewApk {
 	private long repo_id = 0;
 	private String iconPath;
 	private String rating = "0";
-	private ArrayList<Long> versionsIds = new ArrayList<Long>();
+	private ArrayList<String> screenshots = new ArrayList<String>();
 	private String path;
 	
 	/**
@@ -153,6 +153,7 @@ public class ViewApk {
 	
 
 	public void clear() {
+		
 		this.id = 0;
 		this.apkid = "";
 		this.name = apkid;
@@ -162,7 +163,9 @@ public class ViewApk {
 		this.downloads = "No downloads";
 		this.category1 = "Other";
 		this.category2 = "Other";
-		
+		this.iconPath="";
+		this.path="";
+		screenshots.clear();
 	}
 
 	/**
@@ -201,6 +204,14 @@ public class ViewApk {
 
 	public void setRating(String rating) {
 		this.rating=rating;
+	}
+
+	public void addScreenshot(String string) {
+		screenshots.add(string);
+	}
+
+	public ArrayList<String> getScreenshots() {
+		return screenshots;
 	}
 
 }

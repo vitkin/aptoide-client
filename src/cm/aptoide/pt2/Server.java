@@ -7,7 +7,7 @@ import android.os.Parcelable;
 
 public class Server implements Parcelable{
 	
-	public static enum State { PARSING, PARSED, QUEUED, FAILED };
+	public static enum State { PARSINGLATEST,PARSINGTOP,PARSING, PARSED, QUEUED, FAILED };
 	
 	public long id;
 	public String url = "";

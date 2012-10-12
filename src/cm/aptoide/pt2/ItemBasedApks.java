@@ -21,14 +21,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.sax.StartElementListener;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.util.Base64;
 import cm.aptoide.pt2.util.Md5Handler;
@@ -38,17 +43,29 @@ public class ItemBasedApks {
 
 	private ViewApk apk;
 	private Context context;
-	private View container;
+	private ViewGroup container;
 	private Database db;
+	private OnClickListener featuredListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			Intent i = new Intent(context,ApkInfo.class);
+			i.putExtra("_id", Long.parseLong((String) v.getTag()));
+			i.putExtra("top", false);
+			i.putExtra("category", Category.ITEMBASED.ordinal());
+			context.startActivity(i);
+		}
+	};
 	
 	
 	public ItemBasedApks(Context context, ViewApk apk) {
 		this.context = context;
 		this.apk=apk;
 		this.db = Database.getInstance(context);
+		pb = new ProgressBar(context);
 	}
-
-	public void getItems(View container) {
+	ProgressBar pb;
+	public void getItems(ViewGroup container) {
 		this.container=container;
 		new ItemLoader().execute(apk.getApkid());
 		new ItemBasedParser().execute(apk.getApkid());
@@ -61,7 +78,7 @@ public class ItemBasedApks {
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(
 				String... params) {
-			return db.getItemBasedApks(params[0].hashCode());
+			return db.getItemBasedApks(params[0]);
 		}
 		
 		@Override
@@ -71,8 +88,10 @@ public class ItemBasedApks {
 		}
 		
 	}
+	
+	
+	
 	public class ItemBasedParser extends AsyncTask<String, Void, ArrayList<HashMap<String, String>> >{
-
 		private String xmlpath = Environment.getExternalStorageDirectory()+"/.aptoide/itembasedapks.xml";
 		private String url = "http://www.aptoide.com/webservices/listItemBasedApks/%s/10/xml";
 		
@@ -80,6 +99,11 @@ public class ItemBasedApks {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			lp.gravity=Gravity.CENTER_HORIZONTAL;
+			((LinearLayout) container).addView(pb,lp);
+			pb.setVisibility(View.VISIBLE);
+			
 		}
 		
 		@Override
@@ -90,10 +114,10 @@ public class ItemBasedApks {
 			InputStream in;
 			try {
 				in = getInputStream(new URL(String.format(url,apkid)), null, null);
-//				int i = 0;
-//				while (f.exists()) {
-//					f = new File(xmlpath + i++);
-//				}
+				int i = 0;
+				while (f.exists()) {
+					f = new File(xmlpath + i++);
+				}
 				FileOutputStream out = new FileOutputStream(f);
 
 				byte[] buffer = new byte[1024];
@@ -104,13 +128,19 @@ public class ItemBasedApks {
 				out.close();
 				
 				String md5hash = Md5Handler.md5Calc(f);
-				int parentHashCode = apk.getApkid().hashCode(); 
-				if(!md5hash.equals(db.getItemBasedApksHash(apk.getApkid().hashCode()))){
-					db.insertItemBasedApkHash(md5hash,parentHashCode);
+				
+				if(!md5hash.equals(db.getItemBasedApksHash(apkid))){
+//					Database.database.beginTransaction();
+					db.deleteItemBasedApks(apk);
+					System.out.println("Old md5" + db.getItemBasedApksHash(apkid));
+					System.out.println("Inserting New md5" + md5hash);
+					db.insertItemBasedApkHash(md5hash,apkid);
 					SAXParserFactory factory = SAXParserFactory.newInstance();
 					SAXParser parser = factory.newSAXParser();
 					parser.parse(f, new ItemBasedApkHandler(db, apk));
-					return db.getItemBasedApks(parentHashCode);
+//					Database.database.setTransactionSuccessful();
+//					Database.database.endTransaction();
+					return db.getItemBasedApks(apkid);
 				}
 				
 			} catch (MalformedURLException e) {
@@ -122,14 +152,19 @@ public class ItemBasedApks {
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
+//				Database.database.endTransaction();
 				e.printStackTrace();
+			} finally{
+				f.delete();
 			}
+			
 			return null;
 		};
 		
 		@Override
 		protected void onPostExecute(ArrayList<HashMap<String, String>> values) {
 			super.onPostExecute(values);
+			pb.setVisibility(View.GONE);
 			if(values!=null ){
 				loadItems(values);
 			}
@@ -154,12 +189,14 @@ public class ItemBasedApks {
 
 	private void loadItems(ArrayList<HashMap<String, String>> values) {
 					ImageLoader imageLoader = new ImageLoader(context,db);
-						LinearLayout ll = (LinearLayout) container; 
-						ll.removeAllViews();
+					if(values.size()>0){
+						container.removeAllViews();
+					}
 				        LinearLayout llAlso = new LinearLayout(context);
 				        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
 				        llAlso.setOrientation(LinearLayout.HORIZONTAL);
 				        for (int i = 0; i!=values.size(); i++) {
+//				        	container.setVisibility(View.VISIBLE);
 				            RelativeLayout txtSamItem = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.griditem, null);
 				           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
 				           	imageLoader.DisplayImage(-1, values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context,false);
@@ -169,16 +206,16 @@ public class ItemBasedApks {
 				           	}catch (Exception e) {
 				           		stars = 0f;
 							}
-		//		           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
+				           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
 				            txtSamItem.setPadding(10, 0, 0, 0);
-		//		            txtSamItem.setTag(values.get(i).get("id"));
+				            txtSamItem.setTag(values.get(i).get("_id"));
 				            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
-		//		            txtSamItem.setOnClickListener(featuredListener);
+				            txtSamItem.setOnClickListener(featuredListener );
 		
 				            txtSamItem.measure(0, 0);
 				            
 				            if (i%2==0) {
-				                ll.addView(llAlso);
+				                container.addView(llAlso);
 		
 				                llAlso = new LinearLayout(context);
 				                llAlso.setLayoutParams(new LayoutParams(
@@ -191,7 +228,7 @@ public class ItemBasedApks {
 				            }
 				        }
 		
-				        ll.addView(llAlso);
+				        container.addView(llAlso);
 	}
 	
 	

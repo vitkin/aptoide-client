@@ -33,14 +33,14 @@ public class TopRepoParserHandler extends DefaultHandler {
 			}
 		});
 		
-		elements.put("iconspath", new ElementHandler() {
+		elements.put("screenspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
 			}
 
 			@Override
 			public void endElement() throws SAXException {
-//				server.iconsPath=sb.toString();
+				server.screenspath=sb.toString();
 			}
 		});
 		
@@ -55,12 +55,14 @@ public class TopRepoParserHandler extends DefaultHandler {
 			public void endElement() throws SAXException {
 				
 				if(!db.getTopAppsHash(server.id,category).equals(server.top_hash)){
+					System.out.println("Deleting " +category.name() +"apps ");
 					db.deleteTopApps(server.id,category);
 				}else{
 					db.endTransation(server);
+					System.out.println("NOT Deleting " +category.name() +"apps ");
 					throw new SAXException();
 				}
-				db.insertTopServerInfo(server,category);
+				db.insertTopServerInfo(server, category);
 			}
 		});
 		
@@ -85,8 +87,8 @@ public class TopRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				db.insertTop(apk,category);
-				System.out.println("Insert");
+				apk.setId(db.insertTop(apk,category));
+				db.insertTopScreenshots(apk,category);
 			}
 		});
 		
@@ -141,6 +143,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
+				apk.addScreenshot(sb.toString());
 			}
 		});
 		
@@ -219,7 +222,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 		if (elementHandler != null) {
 			elementHandler.startElement(attributes);
 		} else {
-			System.out.println("Element not found:" + localName);
+//			System.out.println("Element not found:" + localName);
 		}
 	}
 
@@ -240,7 +243,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 		if (elementHandler != null) {
 			elementHandler.endElement();
 		} else {
-			System.out.println("Element not found:" + localName);
+//			System.out.println("Element not found:" + localName);
 		}
 	}
 	

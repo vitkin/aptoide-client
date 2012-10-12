@@ -3,7 +3,6 @@
     android:id="@+id/cntrl"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:baselineAligned="false"
     android:background="@drawable/list_bgd"
     android:gravity="center_vertical|top"
     android:orientation="horizontal" >
@@ -26,14 +25,6 @@
             android:textColor="#4f4f4f"
             android:textSize="21sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/cat_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/category_name"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -51,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:cropToPadding="true"
+            android:visibility="gone"
             android:scaleType="centerInside"
             android:src="@drawable/ic_ab_back_holo_light" />
 

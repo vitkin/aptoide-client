@@ -1,5 +1,6 @@
 package cm.aptoide.pt2;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -11,9 +12,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -253,7 +259,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			public void run() {
 				String repos = "";
 				String hashes = "";
-				Cursor cursor = db.getStores();
+				Cursor cursor = db.getStores(false);
 				int i = 0;
 				for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 						.moveToNext()) {
@@ -382,6 +388,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 
 	}
+	
+	
+	
+	
 
 	private int checkServerConnection(final String string,
 			final String username, final String password) {
@@ -580,17 +590,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
-				if (isChecked) {
-					depth = ListDepth.CATEGORY1;
-				} else {
-					depth = ListDepth.STORES;
-				}
 				joinStores_boolean = isChecked;
-				if (isChecked) {
-					addBreadCrumb("All Stores", depth);
-				} else {
-					breadcrumbs.removeAllViews();
-				}
+//				if (isChecked) {
+//					addBreadCrumb("All Stores", depth);
+//				} else {
+//					breadcrumbs.removeAllViews();
+//				}
 				refreshAvailableList(true);
 			}
 		});
@@ -637,12 +642,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", id);
 					i.putExtra("top", true);
+					i.putExtra("category", Category.TOP.ordinal());
 					startActivity(i);
 					return;
 				case APPLICATIONS:
 					i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", id);
 					i.putExtra("top", false);
+					i.putExtra("category", Category.INFOXML.ordinal());
 					startActivity(i);
 					return;
 				default:
@@ -689,6 +696,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		refreshAvailableList(true);
 		getInstalled();
 		getAllRepoStatus();
+		addBreadCrumb("Stores", ListDepth.STORES);
 
 	}
 
@@ -750,7 +758,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				public Cursor loadInBackground() {
 					switch (depth) {
 					case STORES:
-						return db.getStores();
+						return db.getStores(joinStores_boolean);
 					case CATEGORY1:
 						return db.getCategory1(store_id, joinStores_boolean);
 					case CATEGORY2:
@@ -843,11 +851,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			break;
 		}
 		pb.setVisibility(View.GONE);
-		if (availableListView.getAdapter().getCount() > 1) {
-			joinStores.setVisibility(View.VISIBLE);
-		} else {
-			joinStores.setVisibility(View.INVISIBLE);
-		}
+//		if (availableListView.getAdapter().getCount() > 1) {
+//			joinStores.setVisibility(View.VISIBLE);
+//		} else {
+//			joinStores.setVisibility(View.INVISIBLE);
+//		}
 
 	}
 
@@ -860,20 +868,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		} else {
 			unregisterForContextMenu(availableListView);
 			availableListView.setLongClickable(false);
-			if (!joinStores_boolean) {
 				availableView.findViewById(R.id.add_store_layout)
 						.setVisibility(View.GONE);
-			} else if (depth.equals(ListDepth.CATEGORY2)
-					|| depth.equals(ListDepth.APPLICATIONS)
-					|| depth.equals(ListDepth.TOPAPPS)) {
-				availableView.findViewById(R.id.add_store_layout)
-						.setVisibility(View.GONE);
-			} else if (depth.equals(ListDepth.CATEGORY1)) {
-				availableView.findViewById(R.id.add_store_layout)
-						.setVisibility(View.VISIBLE);
-				
-			}
-
 		}
 		availableView.findViewById(R.id.refresh_view_layout).setVisibility(
 				View.GONE);
@@ -930,9 +926,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
 						.getString(cursor.getColumnIndex("name")));
 				((TextView) view.findViewById(R.id.store_dwn_number))
-						.setText(cursor.getString(6) + " - "+cursor.getString(cursor.getColumnIndex("downloads")) + " downloads"  );
-				if (cursor.getString(6).equals(State.FAILED.name())
-						|| cursor.getString(6).equals(State.PARSED.name())) {
+						.setText(cursor.getString(cursor.getColumnIndex("status")) + " - "+cursor.getString(cursor.getColumnIndex("downloads")) + " downloads"  );
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name())
+						|| cursor.getString(cursor.getColumnIndex("status")).equals(State.PARSED.name())) {
 					view.setTag(1);
 				}
 				break;
