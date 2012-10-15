@@ -43,6 +43,7 @@ public class ImageLoader {
     boolean download = true;
     private Database db;
 	private boolean top = false;
+	private String hashCode;
     public ImageLoader(Context context, Database db){
         fileCache=new FileCache(context);
         photoLoadThreadPool=Executors.newFixedThreadPool(1);
@@ -59,7 +60,7 @@ public class ImageLoader {
         System.out.println("ICDOWN " + sPref.getString("icdown", "nasdd"));
     }
     
-    public void DisplayImage(long l, String url, ImageView imageView,Context context,boolean top)
+    public void DisplayImage(long l, String url, ImageView imageView,Context context,boolean top, String hashCode)
     {
     	this.top =top;
     	this.context=context;
@@ -70,21 +71,21 @@ public class ImageLoader {
         	
         }else
         {
-        	queuePhoto(l,url, imageView);
+        	queuePhoto(l,url, imageView,hashCode);
             imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
         }
     }
         
-    private void queuePhoto(long l, String url, ImageView imageView)
+    private void queuePhoto(long l, String url, ImageView imageView,String hashCode)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
-        photoLoadThreadPool.submit(new PhotosLoader(p,l));
+        photoLoadThreadPool.submit(new PhotosLoader(p,l,hashCode));
     }
     
-    private Bitmap getBitmap(String url) 
+    private Bitmap getBitmap(String url,String hash) 
     {
-        File f=fileCache.getFile(url);
+        File f=fileCache.getFile(hash);
         
         //from SD cache
         if(f.exists()){
@@ -164,7 +165,10 @@ public class ImageLoader {
         PhotoToLoad photoToLoad;
         
         long repo_id;
-        PhotosLoader(PhotoToLoad photoToLoad,long l){
+
+		private String hash;
+        PhotosLoader(PhotoToLoad photoToLoad,long l,String hash){
+        	this.hash=hash;
             this.photoToLoad=photoToLoad;
             this.repo_id=l;
         }
@@ -178,13 +182,13 @@ public class ImageLoader {
             
             if(repo_id>0){
             	if(top){
-            		bmp=getBitmap(db.getTopIconsPath(repo_id)+photoToLoad.url);
+            		bmp=getBitmap(db.getTopIconsPath(repo_id)+photoToLoad.url,hash);
             	}else{
-            		bmp=getBitmap(db.getIconsPath(repo_id)+photoToLoad.url);
+            		bmp=getBitmap(db.getIconsPath(repo_id)+photoToLoad.url,hash);
             	}
             	
             }else{
-            	bmp=getBitmap(photoToLoad.url);
+            	bmp=getBitmap(photoToLoad.url,hash);
             }
             
             memoryCache.put(photoToLoad.url, bmp);

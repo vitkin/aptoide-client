@@ -41,6 +41,7 @@ public class ScreenshotsImageLoader {
     ExecutorService executorService; 
     Context context;
     boolean download = true;
+	
     public ScreenshotsImageLoader(Context context){
         fileCache=new FileCache(context);
         executorService=Executors.newFixedThreadPool(5);
@@ -56,7 +57,7 @@ public class ScreenshotsImageLoader {
 //        System.out.println("ICDOWN " + sPref.getString("icdown", "nasdd"));
     }
     
-    public void DisplayImage(long l, String url, ImageView imageView,Context context)
+    public void DisplayImage(long l, String url, ImageView imageView,Context context, String hashCode)
     {
     	this.context=context;
         imageViews.put(imageView, url);
@@ -67,21 +68,21 @@ public class ScreenshotsImageLoader {
         	
         }else
         {
-        	queuePhoto(l,url, imageView);
+        	queuePhoto(l,url, imageView,hashCode);
 //            imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
         }
     }
         
-    private void queuePhoto(long l, String url, ImageView imageView)
+    private void queuePhoto(long l, String url, ImageView imageView,String hashCode)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
-        executorService.submit(new PhotosLoader(p,l));
+        executorService.submit(new PhotosLoader(p,l,hashCode));
     }
     
-    private Bitmap getBitmap(String url) 
+    private Bitmap getBitmap(String url, String hashCode) 
     {
-        File f=fileCache.getFile(url);
+        File f=fileCache.getFile(hashCode);
         
         //from SD cache
         if(f.exists()){
@@ -160,9 +161,10 @@ public class ScreenshotsImageLoader {
     class PhotosLoader implements Runnable {
     	Database db = Database.getInstance(context);
         PhotoToLoad photoToLoad;
-        
+        String hashCode;
         long repo_id;
-        PhotosLoader(PhotoToLoad photoToLoad,long l){
+        PhotosLoader(PhotoToLoad photoToLoad,long l, String hashCode){
+        	this.hashCode=hashCode;
             this.photoToLoad=photoToLoad;
             this.repo_id=l;
         }
@@ -175,9 +177,9 @@ public class ScreenshotsImageLoader {
             Bitmap bmp;
             
             if(repo_id>0){
-            	bmp=getBitmap(db.getBasePath(repo_id)+photoToLoad.url);
+            	bmp=getBitmap(db.getBasePath(repo_id)+photoToLoad.url,hashCode);
             }else{
-            	bmp=getBitmap(photoToLoad.url);
+            	bmp=getBitmap(photoToLoad.url,hashCode);
             }
             
             memoryCache.put(photoToLoad.url, bmp);

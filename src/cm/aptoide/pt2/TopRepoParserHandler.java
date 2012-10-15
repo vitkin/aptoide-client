@@ -191,6 +191,17 @@ public class TopRepoParserHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("md5h", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMd5(sb.toString());
+			}
+		});
+		
 		
 	}
 	

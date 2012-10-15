@@ -19,12 +19,11 @@ public class FileCache {
             cacheDir.mkdirs();
     }
     
-    public File getFile(String url){
+    public File getFile(String hash){
         //I identify images by hashcode. Not a perfect solution, good for the demo.
-        String filename=String.valueOf(url.hashCode());
         //Another possible solution (thanks to grantland)
         //String filename = URLEncoder.encode(url);
-        File f = new File(cacheDir, filename);
+        File f = new File(cacheDir, hash);
         return f;
         
     }

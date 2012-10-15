@@ -236,7 +236,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				apk.setMd5(sb.toString());
 			}
 		});
 

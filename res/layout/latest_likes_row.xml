@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_bgd"
+    android:orientation="horizontal" >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="fill_parent"
+            android:layout_height="?android:attr/listPreferredItemHeight"
+            android:layout_centerVertical="true"
+            android:layout_gravity="clip_vertical"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:singleLine="true"
+            android:text="App"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#424142" />
+
+        <TextView
+            android:id="@+id/user_like"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/app_name"
+            android:ellipsize="end"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:singleLine="true"
+            android:text="by user (2 minutes ago)"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#2f6699" />
+    </RelativeLayout>
+
+</RelativeLayout><!--
+ * Aptoide Uploader		uploads android apps to yout Bazaar repository
+ * Copyright (C) 2011  Duarte Silveira
+ * duarte.silveira@caixamagica.pt
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+-->
+

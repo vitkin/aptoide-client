@@ -18,7 +18,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		
 		
-		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, repo_id integer);");
+		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, md5 text,  repo_id integer);");
 		db.execSQL("create table category1 (_id integer primary key, name text , size integer, unique (name) on conflict ignore) ;");
 		db.execSQL("create table category2 (_id integer primary key, catg1_id integer, name text , size integer, unique (name) on conflict ignore);");
 		db.execSQL("create table repo (_id integer primary key, url text, delta text, appcount integer, iconspath text, basepath text, status text, webservicespath text, username text, password text, avatar text, name text, downloads integer);");
@@ -26,7 +26,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.execSQL("create table repo_category1 (repo_id integer, catg1_id integer, primary key(repo_id, catg1_id) on conflict ignore);");
 		db.execSQL("create table repo_category2 (repo_id integer, catg2_id integer, primary key(repo_id, catg2_id) on conflict ignore);");
 		db.execSQL("create table installed (apkid text, vercode integer, vername text, name text);");
-		db.execSQL("create table dynamic_apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer, rating text,path text, category1 integer, repo_id integer);");
+		db.execSQL("create table dynamic_apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer, rating text,path text, category1 integer, md5 text, repo_id integer);");
 		db.execSQL("create table screenshots (_id integer, type integer, path text, repo_id integer);");
 		db.execSQL("create table itembasedapkrepo (_id integer primary key, name text, basepath text, iconspath text, screenspath text);");
 		db.execSQL("create table itembasedapk (_id integer primary key, itembasedapkrepo_id integer, apkid text, name text, vercode integer, vername text, category2 text, downloads integer, rating text, icon text, md5 text, path text, size integer, parent_apkid text);");
