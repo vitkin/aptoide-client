@@ -47,6 +47,7 @@ import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
+import cm.aptoide.pt2.views.ViewLogin;
 import cm.aptoide.pt2.webservices.comments.Comments;
 import cm.aptoide.pt2.webservices.taste.Likes;
 
@@ -178,7 +179,7 @@ public class ApkInfo extends FragmentActivity implements
 			@Override
 			public void onClick(View v) {
 				download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id()))
-						+ viewApk.getPath(), viewApk, new ViewCache(EnumCacheType.APK, viewApk.getApkid().hashCode()));
+						+ viewApk.getPath(), viewApk, new ViewCache(EnumCacheType.APK, (int)viewApk.getId()));
 				download.registerObserver((int)viewApk.getId(),handler);
 				download.startDownload();
 				findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
