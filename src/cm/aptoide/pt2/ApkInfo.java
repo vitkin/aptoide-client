@@ -179,7 +179,7 @@ public class ApkInfo extends FragmentActivity implements
 			@Override
 			public void onClick(View v) {
 				download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id()))
-						+ viewApk.getPath(), viewApk, new ViewCache(EnumCacheType.APK, (int)viewApk.getId()));
+						+ viewApk.getPath(), viewApk, new ViewCache((int)viewApk.getId()));
 				download.registerObserver((int)viewApk.getId(),handler);
 				download.startDownload();
 				findViewById(R.id.download_progress).setVisibility(View.VISIBLE);

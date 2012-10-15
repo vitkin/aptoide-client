@@ -203,11 +203,19 @@
     <string name="schDown_added">" was added to scheduled download list."</string>
     <string name="clear_cache_sucess">"Content successfuly deleted"</string>
     
+    
+    
     <string name="aptoide_downloading">Aptoide downloading</string>
     <string name="x_app">%d app</string>
     <string name="x_apps">%d apps</string>
+    <string name="starting_download">Starting download</string>
     <string name="slow">slow</string>
     <string name="paused">paused</string>
     <string name="stopped">stopped</string>
+    
+    <string name="timeout">timeout</string>
+    <string name="apk_not_found">apk_not_found</string>
+    <string name="invalid_apk">invalid_apk</string>
+    <string name="server_error">server_error</string>
 
 </resources>

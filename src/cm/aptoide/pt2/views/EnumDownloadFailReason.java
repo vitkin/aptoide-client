@@ -20,6 +20,9 @@
 
 package cm.aptoide.pt2.views;
 
+import cm.aptoide.pt2.R;
+import android.content.Context;
+
 /**
  * EnumDownloadFailReason, typeSafes Downloads fail reasons when status equals FAIL in Aptoide
  * 
@@ -27,9 +30,26 @@ package cm.aptoide.pt2.views;
  *
  */
 public enum EnumDownloadFailReason {
-	NO_REASON;
+	NO_REASON,
+	TIMEOUT,
+	NOT_FOUND,
+	MD5_CHECK_FAILED;
 	
 	public static EnumDownloadFailReason reverseOrdinal(int ordinal){
 		return values()[ordinal];
+	}
+
+	public String toString(Context context) {
+		switch (this) {
+			case TIMEOUT:
+				return  context.getString(R.string.timeout);
+			case NOT_FOUND:
+				return  context.getString(R.string.apk_not_found);
+			case MD5_CHECK_FAILED:
+				return  context.getString(R.string.invalid_apk);
+				
+			default:
+				return  context.getString(R.string.server_error);
+		}
 	}
 }

@@ -36,6 +36,7 @@ import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -45,6 +46,7 @@ import android.widget.RemoteViews;
 import cm.aptoide.pt2.services.AIDLServiceDownload;
 import cm.aptoide.pt2.services.ServiceDownload;
 import cm.aptoide.pt2.util.Constants;
+import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownload;
@@ -58,14 +60,25 @@ import cm.aptoide.pt2.views.ViewDownloadManagement;
  */
 public class ApplicationServiceManager extends Application {
 	private boolean isRunning = false;
+
+	private boolean serviceDownloadSeenRunning = false;
+	private boolean serviceDownloadIsBound = false;
+	private ConnectivityManager connectivityState;
+
+	private HashMap<Integer, ViewDownloadManagement> ongoingDownloads;
+	private HashMap<Integer, ViewDownloadManagement> completedDownloads;
+	private HashMap<Integer, ViewDownloadManagement> failedDownloads;
+	
+	Handler downloadManager;
+	
+	private ViewDownload globaDownloadStatus;
+	
+	private ExecutorService cachedThreadPool;
 	
 	private NotificationManager notificationManager;
 	private WakeLock keepScreenOn;
 
 	private AIDLServiceDownload serviceDownloadCaller = null;
-
-	private boolean serviceDownloadSeenRunning = false;
-	private boolean serviceDownloadIsBound = false;
 	
 	private ServiceConnection serviceDownloadConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -112,25 +125,37 @@ public class ApplicationServiceManager extends Application {
 			if(updating.isComplete() || updating.getDownloadStatus().equals(EnumDownloadStatus.STOPPED)
 										   || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
 				ViewDownloadManagement download = ongoingDownloads.remove(appId);
+				Log.d("ManagerDownloads", "download removed from ongoing: "+download);					
 				if(download.isComplete()){
+					completedDownloads.put(download.hashCode(), download);
+					if(downloadManager != null){
+						downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.COMPLETED.ordinal());
+					}
 					installApp(download.getCache());					
 				}else if(download.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
 					failedDownloads.put(appId, download);
+					if(downloadManager != null){
+						downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.FAILED.ordinal());
+					}
 				}
-			} 
+			}else{
+				if(downloadManager != null){
+					downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.UPDATE.ordinal());
+				}
+			}
 			updateGlobalProgress();
 		}
 		
 	};
 	
-	private ConnectivityManager connectivityState;
-
-	HashMap<Integer, ViewDownloadManagement> ongoingDownloads;
-	HashMap<Integer, ViewDownloadManagement> failedDownloads;
+	public void registerDownloadManager(Handler downloadManager){
+		this.downloadManager = downloadManager;
+	}
 	
-	ViewDownload globaDownloadStatus;
+	public void unregisterDownloadManager(){
+		this.downloadManager = null;
+	}
 	
-	private ExecutorService cachedThreadPool;
 	
 	@Override
 	public void onCreate() {
@@ -140,6 +165,7 @@ public class ApplicationServiceManager extends Application {
 			keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 			
 			ongoingDownloads = new HashMap<Integer, ViewDownloadManagement>();
+			completedDownloads = new HashMap<Integer, ViewDownloadManagement>();
 			failedDownloads = new HashMap<Integer, ViewDownloadManagement>();
 			
 			globaDownloadStatus = new ViewDownload("local:\\GLOBAL");
@@ -228,7 +254,7 @@ public class ApplicationServiceManager extends Application {
 				
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
 		contentView.setTextViewText(R.id.download_notification_name, notificationTitle);
-		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgressTarget() == 0?true:false));	
+		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgress() == 0?true:false));	
 		if(ongoingDownloads.size()>1){
 			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads.size()));
 		}else{
@@ -336,6 +362,9 @@ public class ApplicationServiceManager extends Application {
 	
 	public void pauseDownload(final int appId){
 		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
+		if(downloadManager != null){
+			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.PAUSED.ordinal());
+		}
 		try {
 			serviceDownloadCaller.callStopDownload(appId);
 		} catch (RemoteException e) {
@@ -345,17 +374,47 @@ public class ApplicationServiceManager extends Application {
 	
 	public void resumeDownload(final int appId){
 		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
+		if(downloadManager != null){
+			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.RESUMING.ordinal());
+		}
 		startDownload(ongoingDownloads.get(appId));
 	}
 	
 	public void stopDownload(final int appId){
 		ongoingDownloads.remove(appId);
+		if(downloadManager != null){
+			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.STOPPED.ordinal());
+		}
 		try {
 			serviceDownloadCaller.callStopDownload(appId);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 		updateGlobalProgress();
+	}
+	
+	public boolean areDownloadsOngoing(){
+		return !ongoingDownloads.isEmpty();
+	}
+	
+	public Object[] getDownloadsOngoing(){
+		return ongoingDownloads.values().toArray();
+	}
+	
+	public boolean areDownloadsCompleted(){
+		return !completedDownloads.isEmpty();
+	}
+	
+	public Object[] getDownloadsCompleted(){
+		return completedDownloads.values().toArray();
+	}
+	
+	public boolean areDownloadsFailed(){
+		return !failedDownloads.isEmpty();
+	}
+	
+	public Object[] getDownloadsFailed(){
+		return failedDownloads.values().toArray();
 	}
 	
 }

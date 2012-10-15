@@ -37,43 +37,35 @@ import android.util.Log;
 public class ViewCache implements Parcelable{
 
 	private int id;
-	private String localPath;
 	private boolean hasMd5Sum;
 	private String md5sum;
 	
-	private EnumCacheType type;
-	
 
-	public ViewCache(EnumCacheType type, int id) {
+	public ViewCache(int id) {
 		this.id = id;
-		this.type = type; 
-		switch (type) {
-			case APK:
-				this.localPath = Constants.PATH_CACHE_APKS+id;
-				break;
-	
-			default:
-				break;
-		}
 		this.hasMd5Sum = false;
 	}
 	
-	public ViewCache(EnumCacheType type, int id, String md5sum) {
-		this(type, id);
+	public ViewCache(int id, String md5sum) {
+		this(id);
 		this.hasMd5Sum = true;
 		this.md5sum = md5sum;
 	}
 
-	public long getId(){
+	public int getId(){
 		return id;
 	}
 
 	public String getLocalPath() {
-		return localPath;
+		return Constants.PATH_CACHE_APKS+id;
+	}
+
+	public String getIconPath() {
+		return Constants.PATH_CACHE_ICONS+id;
 	}
 	
 	public File getFile(){
-		return new File(localPath);
+		return new File(getLocalPath());
 	}
 	
 	public long getFileLength(){
@@ -92,16 +84,12 @@ public class ViewCache implements Parcelable{
 		return md5sum;
 	}
 	
-	public EnumCacheType getType(){
-		return type;
-	}
-	
 	
 	
 	public boolean isCached(){
-		File icon = new File(this.localPath);
+		File icon = new File(getLocalPath());
 		if(icon.exists()){
-			Log.d("Aptoide-ManagerCache", "already cached: "+this.localPath);
+			Log.d("Aptoide-ManagerCache", "already cached: "+getLocalPath());
 			return true;
 		}else{
 			return false;
@@ -114,10 +102,10 @@ public class ViewCache implements Parcelable{
 	 * @param cache
 	 */
 	public void clearCache(){
-		File file = new File(this.localPath);
+		File file = new File(getLocalPath());
 		if(file.exists()){
 			file.delete();
-			Log.d("Aptoide-ManagerCache", "deleted: "+this.localPath);
+			Log.d("Aptoide-ManagerCache", "deleted: "+getLocalPath());
 		}
 	}
 	
@@ -130,7 +118,7 @@ public class ViewCache implements Parcelable{
 		if(!hasMd5Sum){
 			return true;
 		}else{
-			File file = new File(this.localPath);
+			File file = new File(getLocalPath());
 			String actualMd5Sum = Md5Handler.md5Calc(file);
 			if(this.md5sum.equalsIgnoreCase(actualMd5Sum)){
 				Log.d("Aptoide-ManagerCache", "md5Check OK!");
@@ -164,32 +152,22 @@ public class ViewCache implements Parcelable{
 	
 	@Override
 	public String toString() {
-		return "ViewCache:  localPath: "+localPath+" md5sum: "+md5sum;
+		return "ViewCache:  localPath: "+getLocalPath()+" md5sum: "+md5sum;
 	}
 
 	public void clean(){
 		this.id = 0;
-		this.localPath = null;
 		this.hasMd5Sum = false;
 		this.md5sum = null;
 	}
 	
-	public void reuse(EnumCacheType type, int id) {
+	public void reuse(int id) {
 		this.id = id;
-		this.type = type; 
-		switch (type) {
-			case APK:
-				this.localPath = Constants.PATH_CACHE_APKS+id;
-				break;
-	
-			default:
-				break;
-		}
 		this.hasMd5Sum = false;
 	}
 	
-	public void reuse(EnumCacheType type, int id, String md5sum) {
-		reuse(type, id);
+	public void reuse(int id, String md5sum) {
+		reuse(id);
 		this.hasMd5Sum = true;
 		this.md5sum = md5sum;
 	}
@@ -227,7 +205,6 @@ public class ViewCache implements Parcelable{
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
 		out.writeInt(id);
-		out.writeInt(type.ordinal());
 		out.writeValue(hasMd5Sum);
 		if(hasMd5Sum){
 			out.writeString(md5sum);
@@ -236,15 +213,6 @@ public class ViewCache implements Parcelable{
 
 	public void readFromParcel(Parcel in) {
 		this.id = in.readInt();
-		this.type = EnumCacheType.reverseOrdinal(in.readInt()); 
-		switch (type) {
-			case APK:
-				this.localPath = Constants.PATH_CACHE_APKS+id;
-				break;
-
-			default:
-				break;
-		}
 		this.hasMd5Sum = (Boolean) in.readValue(null);
 		if(hasMd5Sum){
 			this.md5sum = in.readString();
