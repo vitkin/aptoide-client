@@ -125,7 +125,7 @@ public class ApplicationServiceManager extends Application {
 			if(updating.isComplete() || updating.getDownloadStatus().equals(EnumDownloadStatus.STOPPED)
 										   || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
 				ViewDownloadManagement download = ongoingDownloads.remove(appId);
-				Log.d("ManagerDownloads", "download removed from ongoing: "+download);					
+//				Log.d("ManagerDownloads", "download removed from ongoing: "+download);					
 				if(download.isComplete()){
 					completedDownloads.put(download.hashCode(), download);
 					if(downloadManager != null){
@@ -312,6 +312,9 @@ public class ApplicationServiceManager extends Application {
 		}else{
 			keepScreenOn.release();
 			dismissNotification();
+		}
+		if(downloadManager != null){
+			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.UPDATE.ordinal());
 		}
 	}
 	

@@ -43,7 +43,6 @@ import cm.aptoide.pt2.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt2.util.RepoUtils;
-import cm.aptoide.pt2.views.EnumCacheType;
 import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
@@ -100,7 +99,7 @@ public class ApkInfo extends FragmentActivity implements
 						int arg2, long arg3) {
 					if (spinnerInstaciated) {
 						if(!download.isNull()){
-							download.unregisterObserver((int)viewApk.getId());
+							download.unregisterObserver(viewApk.hashCode());
 						}
 						loadElements(arg3);
 					} else {
@@ -133,9 +132,9 @@ public class ApkInfo extends FragmentActivity implements
 		}
 		
 		
-		download = ((ApplicationServiceManager)getApplication()).isAppDownloading((int)viewApk.getId());
+		download = ((ApplicationServiceManager)getApplication()).isAppDownloading(viewApk.hashCode());
 		if(!download.isNull()){
-			download.registerObserver((int)viewApk.getId(),handler);
+			download.registerObserver(viewApk.hashCode(),handler);
 			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 			((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
 			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
@@ -163,9 +162,9 @@ public class ApkInfo extends FragmentActivity implements
 		((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 		ImageLoader imageLoader = new ImageLoader(context, db);
 		if(category.equals(Category.ITEMBASED)){
-			imageLoader.DisplayImage(-1, db.getItemBasedBasePath(viewApk.getRepo_id())+viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+			imageLoader.DisplayImage(-1, db.getItemBasedBasePath(viewApk.getRepo_id())+viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false, viewApk.hashCode()+"");
 		}else{
-			imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+			imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false, viewApk.hashCode()+"");
 		}
 		
 		
@@ -183,8 +182,8 @@ public class ApkInfo extends FragmentActivity implements
 			@Override
 			public void onClick(View v) {
 				download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id()))
-						+ viewApk.getPath(), viewApk, new ViewCache((int)viewApk.getId(),viewApk.getMd5()));
-				download.registerObserver((int)viewApk.getId(),handler);
+						+ viewApk.getPath(), viewApk, new ViewCache(viewApk.hashCode(), viewApk.getMd5()));
+				download.registerObserver(viewApk.hashCode(),handler);
 				download.startDownload();
 				findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 			}
@@ -242,7 +241,7 @@ public class ApkInfo extends FragmentActivity implements
 
 						public void run() {
 							if(thumbnailList!=null&&thumbnailList.length>0){
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()));
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList, viewApk.hashCode()));
 								
 								pi.setViewPager(screenshots);
 								pi.setRadius(7.5f);
@@ -354,7 +353,7 @@ public class ApkInfo extends FragmentActivity implements
 	protected void onDestroy() {
 		super.onDestroy();
 		if(!download.isNull()){
-			download.unregisterObserver((int)viewApk.getId());
+			download.unregisterObserver(viewApk.hashCode());
 		}
 		handler = null;
 	}

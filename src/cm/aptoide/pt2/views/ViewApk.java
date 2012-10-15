@@ -2,6 +2,8 @@ package cm.aptoide.pt2.views;
 
 import java.util.ArrayList;
 
+import android.util.Log;
+
 public class ViewApk {
 
 	private long id;
@@ -19,6 +21,7 @@ public class ViewApk {
 	private ArrayList<String> screenshots = new ArrayList<String>();
 	private String path;
 	private String md5;
+	private int appHashId;
 	
 	/**
 	 * 
@@ -55,6 +58,8 @@ public class ViewApk {
 		this.category1 = category1;
 		this.category2 = category2;
 		this.repo_id = repo_id;
+		this.appHashId = (apkid+"|"+vercode).hashCode();
+		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
 	}
 	
 
@@ -106,6 +111,11 @@ public class ViewApk {
 		return iconPath;
 	}
 	
+	public int getAppHashId(){
+		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
+		return appHashId;
+	}
+	
 	
 	public void setId(long id){
 		this.id = id;
@@ -113,6 +123,8 @@ public class ViewApk {
 	
 	public void setApkid(String apkid) {
 		this.apkid = apkid;
+		this.appHashId = (apkid+"|"+vercode).hashCode();		
+		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
 	}
 
 	public void setName(String name) {
@@ -174,7 +186,7 @@ public class ViewApk {
 	 */
 	@Override
 	public int hashCode() {
-		return (int) this.id;
+		return this.appHashId;
 	}
 
 
@@ -192,7 +204,7 @@ public class ViewApk {
 
 	@Override
 	public String toString() {
-		return " Id: "+hashCode()+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
+		return " appHashId: "+appHashId+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
 	}
 
 	public void setPath(String path) {
