@@ -78,7 +78,7 @@ public class DownloadedListAdapter extends BaseAdapter{
 		ViewDownloadManagement download = (ViewDownloadManagement) downloaded[position];
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
-		imageLoader.DisplayImage(download.getCache().getLocalPath(), rowViewHolder.app_icon);
+		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
 
 		return convertView;
 	}

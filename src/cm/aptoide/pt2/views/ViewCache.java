@@ -36,13 +36,13 @@ import android.util.Log;
  */
 public class ViewCache implements Parcelable{
 
-	private int id;
+	private int appHashId;
 	private boolean hasMd5Sum;
 	private String md5sum;
 	
 
 	public ViewCache(int id) {
-		this.id = id;
+		this.appHashId = id;
 		this.hasMd5Sum = false;
 	}
 	
@@ -52,16 +52,16 @@ public class ViewCache implements Parcelable{
 		this.md5sum = md5sum;
 	}
 
-	public int getId(){
-		return id;
+	public int getAppHashId(){
+		return appHashId;
 	}
 
 	public String getLocalPath() {
-		return Constants.PATH_CACHE_APKS+id;
+		return Constants.PATH_CACHE_APKS+appHashId;
 	}
 
 	public String getIconPath() {
-		return Constants.PATH_CACHE_ICONS+id;
+		return Constants.PATH_CACHE_ICONS+appHashId;
 	}
 	
 	public File getFile(){
@@ -135,7 +135,7 @@ public class ViewCache implements Parcelable{
 	 */
 	@Override
 	public int hashCode() {
-		return id;
+		return appHashId;
 	}
 
 
@@ -156,13 +156,13 @@ public class ViewCache implements Parcelable{
 	}
 
 	public void clean(){
-		this.id = 0;
+		this.appHashId = 0;
 		this.hasMd5Sum = false;
 		this.md5sum = null;
 	}
 	
 	public void reuse(int id) {
-		this.id = id;
+		this.appHashId = id;
 		this.hasMd5Sum = false;
 	}
 	
@@ -204,7 +204,7 @@ public class ViewCache implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeInt(id);
+		out.writeInt(appHashId);
 		out.writeValue(hasMd5Sum);
 		if(hasMd5Sum){
 			out.writeString(md5sum);
@@ -212,7 +212,7 @@ public class ViewCache implements Parcelable{
 	}
 
 	public void readFromParcel(Parcel in) {
-		this.id = in.readInt();
+		this.appHashId = in.readInt();
 		this.hasMd5Sum = (Boolean) in.readValue(null);
 		if(hasMd5Sum){
 			this.md5sum = in.readString();
