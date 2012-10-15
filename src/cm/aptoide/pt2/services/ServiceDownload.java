@@ -47,9 +47,11 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 import cm.aptoide.pt2.AIDLDownloadManager;
+import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt2.exceptions.AptoideExceptionNotFound;
 import cm.aptoide.pt2.util.Constants;
+import cm.aptoide.pt2.views.EnumDownloadFailReason;
 import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownload;
@@ -117,12 +119,12 @@ public class ServiceDownload extends Service {
 		this.downloadStatusClient = downloadStatusClient;
 	}
 
-//	private Handler toastHandler = new Handler() {
-//		@Override
-//		public void handleMessage(Message msg) {
-//			Toast.makeText(ServiceDownload.this, msg.what, Toast.LENGTH_SHORT).show();
-//		}
-//	};
+	private Handler toastHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			Toast.makeText(ServiceDownload.this, msg.what, Toast.LENGTH_SHORT).show();
+		}
+	};
 
 	private DownloadManager downloadManager;
 
@@ -169,6 +171,7 @@ public class ServiceDownload extends Service {
 						e4.printStackTrace();
 					}
 	    		}else{
+					toastHandler.sendEmptyMessage(R.string.starting_download);
 	    			try {
 	    				download(download, cache, login);
 	    			} catch (Exception e) {
@@ -248,12 +251,14 @@ public class ServiceDownload extends Service {
 	    				if(!resuming){
 	    					cache.clearCache();
 	    				}
+	    				download.setFailReason(EnumDownloadFailReason.TIMEOUT);
 	    				throw new TimeoutException();
 					case 404:
 						fileOutputStream.close();
 	    				if(!resuming){
 	    					cache.clearCache();
 	    				}
+	    				download.setFailReason(EnumDownloadFailReason.NOT_FOUND);
 	    				throw new AptoideExceptionNotFound("404 Not found!");
 					case 416:
 						fileOutputStream.close();
@@ -346,6 +351,7 @@ public class ServiceDownload extends Service {
 	    				if(cache.hasMd5Sum()){
 	    					if(!cache.checkMd5()){
 	    						cache.clearCache();
+	    	    				download.setFailReason(EnumDownloadFailReason.MD5_CHECK_FAILED);
 	    						throw new AptoideExceptionDownload("md5 check failed!");
 	    					}
 	    				}
@@ -388,8 +394,11 @@ public class ServiceDownload extends Service {
     }
     
     
-//	private 
-	
+    @Override
+    public void onDestroy() {
+    	toastHandler = null;
+    	super.onDestroy();
+    }
 
 	
 //	private String getUserAgentString(){

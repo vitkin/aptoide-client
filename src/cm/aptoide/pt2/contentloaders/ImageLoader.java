@@ -38,14 +38,14 @@ public class ImageLoader {
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
-    ExecutorService executorService; 
+    ExecutorService photoLoadThreadPool; 
     Context context;
     boolean download = true;
     private Database db;
 	private boolean top = false;
     public ImageLoader(Context context, Database db){
         fileCache=new FileCache(context);
-        executorService=Executors.newFixedThreadPool(1);
+        photoLoadThreadPool=Executors.newFixedThreadPool(1);
         SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
         ConnectivityManager netstate = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         this.db=db;
@@ -79,7 +79,7 @@ public class ImageLoader {
     private void queuePhoto(long l, String url, ImageView imageView)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
-        executorService.submit(new PhotosLoader(p,l));
+        photoLoadThreadPool.submit(new PhotosLoader(p,l));
     }
     
     private Bitmap getBitmap(String url) 
@@ -236,4 +236,74 @@ public class ImageLoader {
         fileCache.clear();
     }
 
+    
+    
+    
+    
+    
+    
+    
+    
+    public ImageLoader(Context context){
+    	this.context = context;
+//        fileCache=new CacheFile(context);
+        photoLoadThreadPool=Executors.newFixedThreadPool(5);
+    }
+    
+    public void DisplayImage(String url, ImageView imageView)//, Context context)
+    {
+//    	this.context=context;
+        imageViews.put(imageView, url);
+        Bitmap bitmap=memoryCache.get(url);
+        if(bitmap!=null){
+            imageView.setImageBitmap(bitmap);
+        	
+        }else
+        {
+            queuePhoto(url, imageView);
+            imageView.setImageResource(android.R.drawable.sym_def_app_icon);
+            
+        }
+    }
+        
+    private void queuePhoto(String url, ImageView imageView)
+    {
+        PhotoToLoad p=new PhotoToLoad(url, imageView);
+        photoLoadThreadPool.execute(new PhotosCacheLoader(p));
+    }
+    
+    private Bitmap getCacheBitmap(String url) 
+    {
+    	File f = new File(url);
+        
+        //from SD cache
+        if(f.exists()){
+        	Bitmap b = decodeFile(f);	
+        	if(b!=null)
+                return b;
+        }
+        return null;
+    }
+      
+    
+    class PhotosCacheLoader implements Runnable {
+        PhotoToLoad photoToLoad;
+        PhotosCacheLoader(PhotoToLoad photoToLoad){
+            this.photoToLoad=photoToLoad;
+        }
+        
+        public void run() {
+            if(imageViewReused(photoToLoad))
+                return;
+            Bitmap bmp=getCacheBitmap(photoToLoad.url);
+            memoryCache.put(photoToLoad.url, bmp);
+            if(imageViewReused(photoToLoad))
+                return;
+            bd=new BitmapDisplayer(bmp, photoToLoad);
+            Activity a=(Activity)photoToLoad.imageView.getContext();
+            a.runOnUiThread(bd);
+        }
+    }
+    
+    
 }
