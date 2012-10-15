@@ -36,7 +36,7 @@ import android.util.Log;
  */
 public class ViewCache implements Parcelable{
 
-	private long id;
+	private int id;
 	private String localPath;
 	private boolean hasMd5Sum;
 	private String md5sum;
@@ -44,7 +44,7 @@ public class ViewCache implements Parcelable{
 	private EnumCacheType type;
 	
 
-	public ViewCache(EnumCacheType type, long id) {
+	public ViewCache(EnumCacheType type, int id) {
 		this.id = id;
 		this.type = type; 
 		switch (type) {
@@ -58,7 +58,7 @@ public class ViewCache implements Parcelable{
 		this.hasMd5Sum = false;
 	}
 	
-	public ViewCache(EnumCacheType type, long id, String md5sum) {
+	public ViewCache(EnumCacheType type, int id, String md5sum) {
 		this(type, id);
 		this.hasMd5Sum = true;
 		this.md5sum = md5sum;
@@ -147,7 +147,7 @@ public class ViewCache implements Parcelable{
 	 */
 	@Override
 	public int hashCode() {
-		return (int) id;
+		return id;
 	}
 
 
@@ -168,18 +168,28 @@ public class ViewCache implements Parcelable{
 	}
 
 	public void clean(){
+		this.id = 0;
 		this.localPath = null;
 		this.hasMd5Sum = false;
 		this.md5sum = null;
 	}
 	
-	public void reuse(String localPath) {
-		this.localPath = localPath;
+	public void reuse(EnumCacheType type, int id) {
+		this.id = id;
+		this.type = type; 
+		switch (type) {
+			case APK:
+				this.localPath = Constants.PATH_CACHE_APKS+id;
+				break;
+	
+			default:
+				break;
+		}
 		this.hasMd5Sum = false;
 	}
 	
-	public void reuse(String localPath, String md5sum) {
-		reuse(localPath);
+	public void reuse(EnumCacheType type, int id, String md5sum) {
+		reuse(type, id);
 		this.hasMd5Sum = true;
 		this.md5sum = md5sum;
 	}
@@ -216,7 +226,8 @@ public class ViewCache implements Parcelable{
 
 	@Override
 	public void writeToParcel(Parcel out, int flags) {
-		out.writeString(localPath);
+		out.writeInt(id);
+		out.writeInt(type.ordinal());
 		out.writeValue(hasMd5Sum);
 		if(hasMd5Sum){
 			out.writeString(md5sum);
@@ -224,7 +235,16 @@ public class ViewCache implements Parcelable{
 	}
 
 	public void readFromParcel(Parcel in) {
-		this.localPath = in.readString();
+		this.id = in.readInt();
+		this.type = EnumCacheType.reverseOrdinal(in.readInt()); 
+		switch (type) {
+			case APK:
+				this.localPath = Constants.PATH_CACHE_APKS+id;
+				break;
+
+			default:
+				break;
+		}
 		this.hasMd5Sum = (Boolean) in.readValue(null);
 		if(hasMd5Sum){
 			this.md5sum = in.readString();

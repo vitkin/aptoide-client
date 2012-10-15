@@ -133,6 +133,7 @@ public class ViewDownloadManagement {
 		this.viewDownload.setStatus(update.getStatus());
 		switch (viewDownload.getStatus()) {
 			case FAILED:
+				this.viewDownload.setFailReason(update.getFailReason());
 				notifyObservers(EnumDownloadProgressUpdateMessages.FAILED);
 				break;
 				
@@ -237,7 +238,9 @@ public class ViewDownloadManagement {
 	}
 
 	public void unregisterObserver(int appId){
-		observers.remove(appId);
+		try {
+			observers.remove(appId);
+		} catch (Exception e) { }
 	}
 	
 	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
