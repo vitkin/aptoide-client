@@ -199,7 +199,7 @@ public class ItemBasedApks {
 //				        	container.setVisibility(View.VISIBLE);
 				            RelativeLayout txtSamItem = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.griditem, null);
 				           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
-				           	imageLoader.DisplayImage(-1, values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context,false);
+				           	imageLoader.DisplayImage(-1, values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context,false,values.get(i).get("hashCode"));
 				           	float stars = 0f;
 				           	try{
 				           		stars = Float.parseFloat(values.get(i).get("rating"));

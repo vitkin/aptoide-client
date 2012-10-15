@@ -18,6 +18,7 @@ public class ViewApk {
 	private String rating = "0";
 	private ArrayList<String> screenshots = new ArrayList<String>();
 	private String path;
+	private String md5;
 	
 	/**
 	 * 
@@ -212,6 +213,14 @@ public class ViewApk {
 
 	public ArrayList<String> getScreenshots() {
 		return screenshots;
+	}
+
+	public String getMd5() {
+		return this.md5;
+	}
+	
+	public void setMd5(String md5) {
+		this.md5 = md5;
 	}
 
 }

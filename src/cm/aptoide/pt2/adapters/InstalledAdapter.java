@@ -46,7 +46,7 @@ public class InstalledAdapter extends CursorAdapter {
             view.setTag(holder);
         }
 		holder.name.setText(cursor.getString(1));
-		loader.DisplayImage(cursor.getLong(3), cursor.getString(4), holder.icon, context,false);
+		loader.DisplayImage(cursor.getLong(3), cursor.getString(4), holder.icon, context,false,(cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode"))).hashCode()+"");
 		 try{
 	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
 	        }catch (Exception e) {

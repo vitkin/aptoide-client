@@ -1,6 +1,5 @@
 package cm.aptoide.pt2;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -12,14 +11,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.SAXException;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -86,6 +81,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private final static int AVAILABLE_LOADER = 0;
 	private final static int INSTALLED_LOADER = 1;
 	private final static int UPDATES_LOADER   = 2;
+	
+	private final static int LATEST_COMMENTS  = -2;
+	private final static int LATEST_LIKES     = -1;
 
 	private final Dialog.OnClickListener addRepoListener = new Dialog.OnClickListener() {
 
@@ -628,7 +626,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					if (category.equals("Top Apps") || category.equals("Latest Apps")) {
 						depth = ListDepth.TOPAPPS;
 						System.out.println("TopApps");
-					} else {
+					} else if(id==LATEST_LIKES){
+						depth = ListDepth.LATEST_LIKES;
+					} else if(id==LATEST_COMMENTS){
+						depth = ListDepth.LATEST_COMMENTS;
+					}else {
 						depth = ListDepth.CATEGORY2;
 					}
 					category_id = id;
@@ -651,6 +653,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					i.putExtra("top", false);
 					i.putExtra("category", Category.INFOXML.ordinal());
 					startActivity(i);
+					return;
+				case LATEST_COMMENTS:
+				case LATEST_LIKES:
+					
+					String apkid = ((Cursor) parent.getItemAtPosition(position)).getString(1);
+					
+					latestClick(apkid);
 					return;
 				default:
 					return;
@@ -698,6 +707,42 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		getAllRepoStatus();
 		addBreadCrumb("Stores", ListDepth.STORES);
 
+	}
+
+	protected void latestClick(final String apkid) {
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				final long id = db.getApkId(apkid,store_id);
+				System.out.println("Getting Latest id"+id);
+				if(id!=-1){
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							Intent i = new Intent(MainActivity.this, ApkInfo.class);
+							i.putExtra("_id", id);
+							i.putExtra("top", false);
+							i.putExtra("category", Category.INFOXML.ordinal());
+							startActivity(i);
+						}
+					});
+				}else{
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							Toast.makeText(mContext, "No APK available in database", Toast.LENGTH_LONG).show();
+						}
+					});
+				}
+				
+				
+			}
+		}).start();
+		
 	}
 
 	private class BreadCrumb {
@@ -770,6 +815,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					case TOPAPPS:
 						return db.getTopApps(category_id, store_id,
 								joinStores_boolean);
+					case LATEST_LIKES:
+						return new LatestLikesComments(store_id,db).getLikes();
+					case LATEST_COMMENTS:
+						return new LatestLikesComments(store_id,db).getComments();
 					default:
 						return null;
 					}
@@ -813,11 +862,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (!depth.equals(ListDepth.STORES)) {
-				if (depth.equals(ListDepth.TOPAPPS)) {
+				if (depth.equals(ListDepth.TOPAPPS) || depth.equals(ListDepth.LATEST_LIKES)||depth.equals(ListDepth.LATEST_COMMENTS)) {
 					depth = ListDepth.CATEGORY1;
 				} else {
 					depth = ListDepth.values()[depth.ordinal() - 1];
 				}
+				
 				removeLastBreadCrumb();
 				refreshAvailableList(true);
 				return false;
@@ -860,7 +910,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private void refreshAvailableList(boolean setAdapter) {
-		
 		if (depth.equals(ListDepth.STORES)) {
 			availableView.findViewById(R.id.add_store_layout).setVisibility(
 					View.VISIBLE);
@@ -922,7 +971,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		public void bindView(View view, Context context, Cursor cursor) {
 			switch (depth) {
 			case STORES:
-				loader.DisplayImage(-1, cursor.getString(cursor.getColumnIndex("avatar")), (ImageView) view.findViewById(R.id.avatar), context, false);
+				loader.DisplayImage(-1, cursor.getString(cursor.getColumnIndex("avatar")), (ImageView) view.findViewById(R.id.avatar), context, false,cursor.getString(cursor.getColumnIndex("avatar")).hashCode()+"");
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
 						.getString(cursor.getColumnIndex("name")));
 				((TextView) view.findViewById(R.id.store_dwn_number))
@@ -948,7 +997,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				holder.name.setText(cursor.getString(1));
 				loader.DisplayImage(cursor.getLong(3), cursor.getString(4),
 						holder.icon, context, depth == ListDepth.TOPAPPS ? true
-								: false);
+								: false,(cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode"))).hashCode()+"");
 				holder.vername.setText(cursor.getString(2));
 				 try{
 			        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
@@ -964,6 +1013,21 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			case CATEGORY2:
 				((TextView) view.findViewById(R.id.category_name))
 						.setText(cursor.getString(1));
+				break;
+			case LATEST_LIKES:
+				((TextView) view.findViewById(R.id.app_name))
+				.setText(cursor.getString(cursor.getColumnIndex("name")));
+				((TextView) view.findViewById(R.id.app_name)).setCompoundDrawablesWithIntrinsicBounds(0, 0, cursor.getString(cursor.getColumnIndex("like")).equals("TRUE")?R.drawable.up:R.drawable.down, 0);
+				((TextView) view.findViewById(R.id.user_like))
+				.setText("by "+cursor.getString(cursor.getColumnIndex("username")));
+				break;
+			case LATEST_COMMENTS:
+				((TextView) view.findViewById(R.id.comment_on_app))
+				.setText("on "+cursor.getString(cursor.getColumnIndex("name")));
+				((TextView) view.findViewById(R.id.comment))
+				.setText(cursor.getString(cursor.getColumnIndex("text")));
+				((TextView) view.findViewById(R.id.comment_owner))
+				.setText("by: "+cursor.getString(cursor.getColumnIndex("username")));
 				break;
 			default:
 				break;
@@ -990,6 +1054,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			case APPLICATIONS:
 				v = LayoutInflater.from(context)
 						.inflate(R.layout.app_row, null);
+				break;
+			case LATEST_LIKES:
+				v = LayoutInflater.from(context).inflate(R.layout.latest_likes_row,
+						null);
+				break;
+			case LATEST_COMMENTS:
+				v = LayoutInflater.from(context).inflate(R.layout.latest_comments_row,
+						null);
 				break;
 			default:
 				break;
