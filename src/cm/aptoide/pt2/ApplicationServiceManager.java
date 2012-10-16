@@ -309,12 +309,12 @@ public class ApplicationServiceManager extends Application {
 				keepScreenOn.acquire();
 			}
 			setNotification();
+			if(downloadManager != null){
+				downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.UPDATE.ordinal());
+			}
 		}else{
 			keepScreenOn.release();
 			dismissNotification();
-		}
-		if(downloadManager != null){
-			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.UPDATE.ordinal());
 		}
 	}
 	

@@ -21,7 +21,7 @@ public class ViewApk {
 	private ArrayList<String> screenshots = new ArrayList<String>();
 	private String path;
 	private String md5;
-	private int appHashId;
+	private int appHashId = 0;
 	
 	/**
 	 * 
@@ -58,8 +58,12 @@ public class ViewApk {
 		this.category1 = category1;
 		this.category2 = category2;
 		this.repo_id = repo_id;
+		generateAppHashid();
+//		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
+	}
+	
+	public void generateAppHashid(){
 		this.appHashId = (apkid+"|"+vercode).hashCode();
-		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
 	}
 	
 
@@ -112,7 +116,9 @@ public class ViewApk {
 	}
 	
 	public int getAppHashId(){
-		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
+		if(appHashId == 0){
+			generateAppHashid();
+		}
 		return appHashId;
 	}
 	
@@ -123,8 +129,6 @@ public class ViewApk {
 	
 	public void setApkid(String apkid) {
 		this.apkid = apkid;
-		this.appHashId = (apkid+"|"+vercode).hashCode();		
-		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
 	}
 
 	public void setName(String name) {
@@ -186,7 +190,7 @@ public class ViewApk {
 	 */
 	@Override
 	public int hashCode() {
-		return this.appHashId;
+		return getAppHashId();
 	}
 
 
