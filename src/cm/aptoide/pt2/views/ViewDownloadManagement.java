@@ -177,6 +177,12 @@ public class ViewDownloadManagement {
 		serviceManager.stopDownload(hashCode());
 	}
 	
+	public void restart(){
+		viewDownload.setStatus(EnumDownloadStatus.RESTARTING);
+		notifyObservers(EnumDownloadProgressUpdateMessages.RESTARTING);
+		serviceManager.restartDownload(hashCode());
+	}
+	
 	public EnumDownloadStatus getDownloadStatus(){
 		return viewDownload.getStatus();
 	}
