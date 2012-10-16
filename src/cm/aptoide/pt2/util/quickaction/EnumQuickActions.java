@@ -1,6 +1,6 @@
 /**
- * AIDLServiceDownload,		part of Aptoide
- * Copyright (C) 2012 Duarte Silveira
+ * EnumQuickActions,		part of aptoide
+ * Copyright (C) 2012  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,25 +17,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt2.services;
 
-import cm.aptoide.pt2.views.ViewDownload;
-import cm.aptoide.pt2.views.ViewCache;
-import cm.aptoide.pt2.views.ViewLogin;
-import cm.aptoide.pt2.AIDLDownloadManager;
+package cm.aptoide.pt2.util.quickaction;
 
 /**
- * AIDLServiceDownload, IPC Interface definition for Aptoide's ServiceDownload
- *
+ * EnumQuickActions, typeSafes Quick Actions in Aptoide
+ * 
  * @author dsilveira
  *
  */
-interface AIDLServiceDownload {
+public enum EnumQuickActions {
+	PLAY,
+	PAUSE,
+	STOP;
 	
-	void callRegisterDownloadStatusObserver(in AIDLDownloadManager downloadStatusClient);
-	void callDownloadApk(in ViewDownload download, in ViewCache cache);
-	void callDownloadPrivateApk(in ViewDownload download, in ViewCache cache, in ViewLogin login);
-	void callPauseDownload(in int appId);
-	void callStopDownload(in int appId);
-	
+	public static EnumQuickActions reverseOrdinal(int ordinal){
+		return values()[ordinal];
+	}
 }

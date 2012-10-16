@@ -58,6 +58,12 @@ import cm.aptoide.pt2.views.ViewDownloadManagement;
  * @author dsilveira
  *
  */
+/**
+ * ApplicationServiceManager
+ *
+ * @author dsilveira
+ *
+ */
 public class ApplicationServiceManager extends Application {
 	private boolean isRunning = false;
 
@@ -342,39 +348,59 @@ public class ApplicationServiceManager extends Application {
 		}
 	}
 	
+	/**
+	 * startDownload, starts managing the received download, and starts the download itself
+	 * 
+	 * @param ViewDownloadManagement
+	 */
 	public void startDownload(final ViewDownloadManagement viewDownload){
-		if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
-			ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
-		}
-		cachedThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if(viewDownload.isLoginRequired()){
-						serviceDownloadCaller.callDownloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
-					}else{
-						serviceDownloadCaller.callDownloadApk(viewDownload.getDownload(), viewDownload.getCache());
-					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
+		ViewCache cache = viewDownload.getCache();
+		if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
+			installApp(cache);
+		}else{
+			if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
+				ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
 			}
-		});
-		updateGlobalProgress();
+			cachedThreadPool.execute(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						if(viewDownload.isLoginRequired()){
+							serviceDownloadCaller.callDownloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
+						}else{
+							serviceDownloadCaller.callDownloadApk(viewDownload.getDownload(), viewDownload.getCache());
+						}
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			updateGlobalProgress();
+		}
 	}
 	
+	/**
+	 * pauseDownload, to be called by ViewDownloadManagement.pause()
+	 * 
+	 * @param appId
+	 */
 	public void pauseDownload(final int appId){
 		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.PAUSED.ordinal());
 		}
 		try {
-			serviceDownloadCaller.callStopDownload(appId);
+			serviceDownloadCaller.callPauseDownload(appId);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+	/**
+	 * resumeDownload, to be called by ViewDownloadManagement.resume()
+	 * 
+	 * @param appId
+	 */
 	public void resumeDownload(final int appId){
 		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
 		if(downloadManager != null){
@@ -382,16 +408,24 @@ public class ApplicationServiceManager extends Application {
 		}
 		startDownload(ongoingDownloads.get(appId));
 	}
-	
+
+	/**
+	 * stopDownload, to be called by ViewDownloadManagement.stop()
+	 * 
+	 * @param appId
+	 */
 	public void stopDownload(final int appId){
-		ongoingDownloads.remove(appId);
+		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
+		ViewDownloadManagement download = ongoingDownloads.remove(appId);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.STOPPED.ordinal());
 		}
-		try {
-			serviceDownloadCaller.callStopDownload(appId);
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		if(download.getDownloadStatus().equals(EnumDownloadStatus.DOWNLOADING)){
+			try {
+				serviceDownloadCaller.callStopDownload(appId);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
 		updateGlobalProgress();
 	}
