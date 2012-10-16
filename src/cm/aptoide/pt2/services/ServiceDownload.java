@@ -108,6 +108,12 @@ public class ServiceDownload extends Service {
 		}
 
 		@Override
+		public void callPauseDownload(int appId) throws RemoteException {
+			Log.d("Aptoide-ServiceDownload", "pausing apk download  id: "+appId);
+			downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.PAUSED);
+		}
+
+		@Override
 		public void callStopDownload(int appId) throws RemoteException {
 			Log.d("Aptoide-ServiceDownload", "stoping apk download  id: "+appId);
 			downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.STOPPED);
@@ -162,7 +168,7 @@ public class ServiceDownload extends Service {
     		
 			@Override
 			public void run() {
-//	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+download.getCache());
+	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+cache);
 				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 	    			download.setCompleted();
 					try {
@@ -171,7 +177,7 @@ public class ServiceDownload extends Service {
 						e4.printStackTrace();
 					}
 	    		}else{
-					toastHandler.sendEmptyMessage(R.string.starting_download);
+					toastHandler.sendEmptyMessage(download.getStatus().equals(EnumDownloadStatus.RESUMING)?R.string.resuming_download:R.string.starting_download);
 	    			try {
 	    				download(download, cache, login);
 	    			} catch (Exception e) {
@@ -274,9 +280,12 @@ public class ServiceDownload extends Service {
 						return;
 	
 					default:
-						if(!resuming && httpResponse.containsHeader("Content-Length")){
+						if(httpResponse.containsHeader("Content-Length")){
 	    					targetBytes = Long.parseLong(httpResponse.getFirstHeader("Content-Length").getValue());
 	    					Log.d("Aptoide-download","Download targetBytes: "+targetBytes);
+	    					if(resuming){
+	    						targetBytes += download.getProgress();
+	    					}
 	    					download.setProgressTarget(targetBytes);
 	    				}
 	    				 				
@@ -313,11 +322,11 @@ public class ServiceDownload extends Service {
     					float formatConversion = ((float)Constants.MILISECONDS_TO_SECONDS/Constants.KILO_BYTE);
 
 	    				while((bytesRead = inputStream.read(data, 0, Constants.DOWNLOAD_CHUNK_SIZE)) > 0) {
-	    					if(download.getStatus().equals(EnumDownloadStatus.STOPPED)) {
+	    					if(download.getStatus().equals(EnumDownloadStatus.STOPPED) || download.getStatus().equals(EnumDownloadStatus.PAUSED)) {
 			    				fileOutputStream.flush();
 			    				fileOutputStream.close();
 			    				inputStream.close();
-		    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" stopped");
+		    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download.getStatus());
 			    				return;
 	    					}
 	    					fileOutputStream.write(data,0,bytesRead);

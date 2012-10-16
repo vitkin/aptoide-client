@@ -159,6 +159,24 @@ public class ViewDownloadManagement {
 		}
 	}
 	
+	public void pause(){
+		viewDownload.setStatus(EnumDownloadStatus.PAUSED);
+		notifyObservers(EnumDownloadProgressUpdateMessages.PAUSED);
+		serviceManager.pauseDownload(hashCode());
+	}
+	
+	public void resume(){
+		viewDownload.setStatus(EnumDownloadStatus.RESUMING);
+		notifyObservers(EnumDownloadProgressUpdateMessages.RESUMING);
+		serviceManager.resumeDownload(hashCode());
+	}
+	
+	public void stop(){
+		viewDownload.setStatus(EnumDownloadStatus.STOPPED);
+		notifyObservers(EnumDownloadProgressUpdateMessages.STOPPED);
+		serviceManager.stopDownload(hashCode());
+	}
+	
 	public EnumDownloadStatus getDownloadStatus(){
 		return viewDownload.getStatus();
 	}

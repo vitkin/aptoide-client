@@ -26,12 +26,14 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -43,6 +45,9 @@ import cm.aptoide.pt2.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt2.util.RepoUtils;
+import cm.aptoide.pt2.util.quickaction.ActionItem;
+import cm.aptoide.pt2.util.quickaction.EnumQuickActions;
+import cm.aptoide.pt2.util.quickaction.QuickAction;
 import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
@@ -123,6 +128,17 @@ public class ApkInfo extends FragmentActivity implements
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
 		findViewById(R.id.downloading_name).setVisibility(View.GONE);
 		findViewById(R.id.download_progress).setVisibility(View.GONE);
+		ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
+		progress.setIndeterminate(true);
+		Button manage = (Button) findViewById(R.id.icon_manage);
+		manage.setVisibility(View.GONE);
+		manage.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				quickAction.show(view);
+			}
+		});
+		setupQuickActions();
 		
 		System.out.println("loading " + id + " " +category.name());
 		if(category.equals(Category.ITEMBASED)){
@@ -136,6 +152,8 @@ public class ApkInfo extends FragmentActivity implements
 		if(!download.isNull()){
 			download.registerObserver(viewApk.hashCode(),handler);
 			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+			findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+			findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
 			((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
 			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
 			((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
@@ -181,11 +199,19 @@ public class ApkInfo extends FragmentActivity implements
 
 			@Override
 			public void onClick(View v) {
-				download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id()))
-						+ viewApk.getPath(), viewApk, new ViewCache(viewApk.hashCode(), viewApk.getMd5()));
-				download.registerObserver(viewApk.hashCode(),handler);
-				download.startDownload();
-				findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
+				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
+					((ApplicationServiceManager)getApplication()).installApp(cache);
+				}else{
+					download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id()))
+							+ viewApk.getPath(), viewApk, cache);
+					
+					download.registerObserver(viewApk.hashCode(),handler);
+					download.startDownload();
+					findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+					findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+					findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
+				}
 			}
 		});
 		
@@ -292,18 +318,22 @@ public class ApkInfo extends FragmentActivity implements
 			
 			switch (EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what)) {
 			case UPDATE:
-				((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
+			case PAUSED:
+			case RESUMING:
+				ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
+				progress.setIndeterminate(false);
+				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-				break;
-			case PAUSED:
-				break;
-			case RESUMING:
+				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				break;
 			case FAILED:
 				Toast.makeText(context, "Download Failed", Toast.LENGTH_LONG).show();
+			case STOPPED:
 			case COMPLETED:
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
+				findViewById(R.id.icon_manage).setVisibility(View.GONE);
+				findViewById(R.id.downloading_name).setVisibility(View.GONE);
 				break;
 			default:
 				break;
@@ -356,6 +386,44 @@ public class ApkInfo extends FragmentActivity implements
 			download.unregisterObserver(viewApk.hashCode());
 		}
 		handler = null;
+	}
+	
+	
+
+
+	private QuickAction quickAction;
+	private void setupQuickActions(){
+		quickAction  = new QuickAction(context);
+		
+		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(android.R.drawable.ic_media_play));
+		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(android.R.drawable.ic_media_pause));
+		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(android.R.drawable.alert_dark_frame));
+		
+		quickAction.addActionItem(playItem);
+		quickAction.addActionItem(pauseItem);
+		quickAction.addActionItem(stopItem);
+
+		quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+			@Override
+			public void onItemClick(QuickAction quickAction, int pos, int actionId) {
+				switch (EnumQuickActions.reverseOrdinal(actionId)) {
+					case PLAY:
+						download.resume();
+						break;
+						
+					case PAUSE:
+						download.pause();
+						break;
+						
+					case STOP:
+						download.stop();
+						break;
+	
+					default:
+						break;
+				}	
+			}
+		});		
 	}
 	
 }

@@ -22,21 +22,25 @@ package cm.aptoide.pt2.adapters;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.util.quickaction.ActionItem;
+import cm.aptoide.pt2.util.quickaction.EnumQuickActions;
+import cm.aptoide.pt2.util.quickaction.QuickAction;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
 
 public class DownloadingListAdapter extends BaseAdapter{
-
+	private Context context;
 	private ImageLoader imageLoader;
-	
 	private LayoutInflater layoutInflater;
-
+	
 	/** ViewDownloadManagemet[] **/
 	private Object[] downloading = null;
 
@@ -47,11 +51,52 @@ public class DownloadingListAdapter extends BaseAdapter{
 	 * @param ImageLoader
 	 */
 	public DownloadingListAdapter(Context context, ImageLoader imageLoader){
+		this.context = context;
 		this.imageLoader = imageLoader;
 
 		layoutInflater = LayoutInflater.from(context);
-
+		setupQuickActions();
 	} 
+
+	
+	
+	private QuickAction quickAction;
+	private int selectedListPosition;
+	private void setupQuickActions(){
+		quickAction  = new QuickAction(context);
+		
+		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(android.R.drawable.ic_media_play));
+		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(android.R.drawable.ic_media_pause));
+		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(android.R.drawable.alert_dark_frame));
+		
+		quickAction.addActionItem(playItem);
+		quickAction.addActionItem(pauseItem);
+		quickAction.addActionItem(stopItem);
+
+		quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+			@Override
+			public void onItemClick(QuickAction quickAction, int pos, int actionId) {
+				switch (EnumQuickActions.reverseOrdinal(actionId)) {
+					case PLAY:
+						getItem(selectedListPosition).resume();
+						break;
+						
+					case PAUSE:
+						getItem(selectedListPosition).pause();
+						break;
+						
+					case STOP:
+						getItem(selectedListPosition).stop();
+						break;
+	
+					default:
+						break;
+				}	
+			}
+		});		
+	}
+	
+	
 
 	public static class DownloadingRowViewHolder{
 		TextView app_name;
@@ -59,10 +104,12 @@ public class DownloadingListAdapter extends BaseAdapter{
 		ProgressBar app_download_progress;
 		TextView app_progress;
 		TextView app_speed;
+		Button manageDownloadsButton;
+		
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
+	public View getView(final int position, View convertView, ViewGroup parent) {
 
 		DownloadingRowViewHolder rowViewHolder;
 
@@ -75,6 +122,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 			rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.downloading_icon);
 			rowViewHolder.app_progress = (TextView) convertView.findViewById(R.id.progress);
 			rowViewHolder.app_speed = (TextView) convertView.findViewById(R.id.speed);
+			rowViewHolder.manageDownloadsButton = (Button) convertView.findViewById(R.id.icon_manage);
 			convertView.setTag(rowViewHolder);
 		}else{
 			rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
@@ -93,7 +141,16 @@ public class DownloadingListAdapter extends BaseAdapter{
 		}
 		rowViewHolder.app_download_progress.setProgress(download.getProgress());
 		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
-
+		
+		
+		rowViewHolder.manageDownloadsButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				selectedListPosition = position;
+				quickAction.show(view);
+			}
+		});
+		
 		return convertView;
 	}
 
