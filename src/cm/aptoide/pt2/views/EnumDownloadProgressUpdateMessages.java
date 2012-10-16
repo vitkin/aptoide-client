@@ -29,6 +29,7 @@ package cm.aptoide.pt2.views;
 public enum EnumDownloadProgressUpdateMessages {
 	NOT_STARTED,
 	FAILED,
+	RESTARTING,
 	UPDATE,
 	PAUSED,
 	RESUMING,

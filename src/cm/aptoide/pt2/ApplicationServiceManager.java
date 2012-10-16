@@ -339,8 +339,15 @@ public class ApplicationServiceManager extends Application {
 	
 	
 	
-	public ViewDownloadManagement isAppDownloading(int appId){
-		ViewDownloadManagement download = ongoingDownloads.get(appId);
+	/**
+	 * getAppDownloading, returns the ViewDownloadManagement of the download with the given appHashid, 
+	 * 					  or the ViewDownloadManagement Null object if it doesn't match any ongoing download
+	 * 
+	 * @param appHashId
+	 * @return ViewDownloadManagement
+	 */
+	public ViewDownloadManagement getAppDownloading(int appHashId){
+		ViewDownloadManagement download = ongoingDownloads.get(appHashId);
 		if(download == null){
 			return new ViewDownloadManagement();
 		}else{
@@ -349,7 +356,8 @@ public class ApplicationServiceManager extends Application {
 	}
 	
 	/**
-	 * startDownload, starts managing the received download, and starts the download itself
+	 * startDownload, starts managing the received download, and starts the download itself, 
+	 * 				  to be called by ViewDownloadManagement.startDownload() or by restart()
 	 * 
 	 * @param ViewDownloadManagement
 	 */
@@ -360,6 +368,8 @@ public class ApplicationServiceManager extends Application {
 		}else{
 			if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
 				ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
+			}else if(!ongoingDownloads.get(viewDownload.hashCode()).getDownloadStatus().equals(EnumDownloadStatus.PAUSED)){
+				return;
 			}
 			cachedThreadPool.execute(new Runnable() {
 				@Override
@@ -382,15 +392,15 @@ public class ApplicationServiceManager extends Application {
 	/**
 	 * pauseDownload, to be called by ViewDownloadManagement.pause()
 	 * 
-	 * @param appId
+	 * @param appHashId
 	 */
-	public void pauseDownload(final int appId){
-		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
+	public void pauseDownload(final int appHashId){
+		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.PAUSED.ordinal());
 		}
 		try {
-			serviceDownloadCaller.callPauseDownload(appId);
+			serviceDownloadCaller.callPauseDownload(appHashId);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -399,36 +409,51 @@ public class ApplicationServiceManager extends Application {
 	/**
 	 * resumeDownload, to be called by ViewDownloadManagement.resume()
 	 * 
-	 * @param appId
+	 * @param appHashId
 	 */
-	public void resumeDownload(final int appId){
-		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
+	public void resumeDownload(final int appHashId){
+		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.RESUMING.ordinal());
 		}
-		startDownload(ongoingDownloads.get(appId));
+		startDownload(ongoingDownloads.get(appHashId));
 	}
 
 	/**
 	 * stopDownload, to be called by ViewDownloadManagement.stop()
 	 * 
-	 * @param appId
+	 * @param appHashId
 	 */
-	public void stopDownload(final int appId){
-		ongoingDownloads.get(appId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
-		ViewDownloadManagement download = ongoingDownloads.remove(appId);
+	public void stopDownload(final int appHashId){
+		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
+		ViewDownloadManagement download = ongoingDownloads.remove(appHashId);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.STOPPED.ordinal());
 		}
 		if(download.getDownloadStatus().equals(EnumDownloadStatus.DOWNLOADING)){
 			try {
-				serviceDownloadCaller.callStopDownload(appId);
+				serviceDownloadCaller.callStopDownload(appHashId);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
 		updateGlobalProgress();
 	}
+
+	/**
+	 * restartDownload, to be called by ViewDownloadManagement.restart()
+	 * 
+	 * @param appHashId
+	 */
+	public void restartDownload(final int appHashid){
+		if(failedDownloads.containsKey(appHashid)){
+			startDownload(failedDownloads.remove(appHashid));
+			if(downloadManager != null){
+				downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.RESTARTING.ordinal());
+			}
+		}		
+	}
+	
 	
 	public boolean areDownloadsOngoing(){
 		return !ongoingDownloads.isEmpty();

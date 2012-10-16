@@ -215,8 +215,9 @@
     <string name="stopped">stopped</string>
     
     <string name="timeout">timeout</string>
-    <string name="apk_not_found">apk_not_found</string>
-    <string name="invalid_apk">invalid_apk</string>
-    <string name="server_error">server_error</string>
+    <string name="apk_not_found">Apk not found</string>
+    <string name="invalid_apk">Invalid apk</string>
+    <string name="server_error">Server error</string>
+    <string name="retrn">return</string>
 
 </resources>

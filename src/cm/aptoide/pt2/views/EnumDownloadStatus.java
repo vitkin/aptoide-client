@@ -33,6 +33,7 @@ public enum EnumDownloadStatus {
 	PAUSED,
 	STOPPED,
 	FAILED,
+	RESTARTING,
 	COMPLETED;
 	
 	public static EnumDownloadStatus reverseOrdinal(int ordinal){

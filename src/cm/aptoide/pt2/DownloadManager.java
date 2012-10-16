@@ -62,7 +62,8 @@ public class DownloadManager extends Activity {
     		ApplicationServiceManager serviceManager = ((ApplicationServiceManager)getApplication());
         	EnumDownloadProgressUpdateMessages task = EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what);
         	switch (task) {
-	
+
+				case RESTARTING:
 				case FAILED:
 					notDownloadedAdapter.updateList(serviceManager.getDownloadsFailed());
 					if(notDownloadedAdapter.isEmpty()){
@@ -71,7 +72,7 @@ public class DownloadManager extends Activity {
 						notDownloaded.setVisibility(View.VISIBLE);
 					}
 					break;
-
+					
 				case UPDATE:
 				case PAUSED:
 				case RESUMING:
@@ -135,12 +136,12 @@ public class DownloadManager extends Activity {
 		ListView notUploadedList = (ListView) findViewById(R.id.failed_list);
 		notDownloadedAdapter = new NotDownloadedListAdapter(this, imageLoader);
 		notUploadedList.setAdapter(notDownloadedAdapter);
-//		notUploadedList.setOnItemClickListener(new OnItemClickListener() {
-//			@Override
-//			public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-//				
-//			}
-//		});
+		notUploadedList.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
+				notDownloadedAdapter.getItem(position).restart();
+			}
+		});
 		notDownloaded.setVisibility(View.GONE);
 
 		exitButton = (Button) findViewById(R.id.exit);

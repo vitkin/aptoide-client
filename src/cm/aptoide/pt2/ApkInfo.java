@@ -148,7 +148,7 @@ public class ApkInfo extends FragmentActivity implements
 		}
 		
 		
-		download = ((ApplicationServiceManager)getApplication()).isAppDownloading(viewApk.hashCode());
+		download = ((ApplicationServiceManager)getApplication()).getAppDownloading(viewApk.hashCode());
 		if(!download.isNull()){
 			download.registerObserver(viewApk.hashCode(),handler);
 			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
@@ -328,7 +328,9 @@ public class ApkInfo extends FragmentActivity implements
 				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				break;
 			case FAILED:
-				Toast.makeText(context, "Download Failed", Toast.LENGTH_LONG).show();
+				Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
+			case RESTARTING:
+				break;
 			case STOPPED:
 			case COMPLETED:
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
