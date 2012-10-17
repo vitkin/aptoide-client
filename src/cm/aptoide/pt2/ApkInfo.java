@@ -399,7 +399,7 @@ public class ApkInfo extends FragmentActivity implements
 		
 		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(android.R.drawable.ic_media_play));
 		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(android.R.drawable.ic_media_pause));
-		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(android.R.drawable.alert_dark_frame));
+		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
 		
 		quickAction.addActionItem(playItem);
 		quickAction.addActionItem(pauseItem);

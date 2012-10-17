@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TextView;
@@ -28,7 +30,8 @@ import cm.aptoide.pt2.R;
 public class QuickAction extends PopupWindows implements OnDismissListener {
 	private ImageView mArrowUp;
 	private ImageView mArrowDown;
-//	private Animation mTrackAnim;
+	private HorizontalScrollView layout;
+	private Animation mTrackAnim;
 	private LayoutInflater inflater;
 	private ViewGroup mTrack;
 	private OnActionItemClickListener mItemClickListener;
@@ -37,15 +40,16 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 	private List<ActionItem> mActionItemList = new ArrayList<ActionItem>();
 	
 	private boolean mDidAction;
-//	private boolean mAnimateTrack;
+	private boolean mAnimateTrack;
 	
 	private int mChildPos;    
-//    private int mAnimStyle;
+    private int mAnimStyle;
     
-//	public static final int ANIM_GROW_FROM_LEFT = 1;
-//	public static final int ANIM_GROW_FROM_RIGHT = 2;
-//	public static final int ANIM_GROW_FROM_CENTER = 3;
-//	public static final int ANIM_AUTO = 4;
+	public static final int ANIM_GROW_FROM_LEFT = 1;
+	public static final int ANIM_GROW_FROM_RIGHT = 2;
+	public static final int ANIM_GROW_FROM_CENTER = 3;
+	public static final int ANIM_REFLECT = 4;
+	public static final int ANIM_AUTO = 5;
 	
 	/**
 	 * Constructor.
@@ -96,6 +100,8 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 		mRootView	= (ViewGroup) inflater.inflate(id, null);
 		mTrack 		= (ViewGroup) mRootView.findViewById(R.id.tracks);
 
+		layout = (HorizontalScrollView) mRootView.findViewById(R.id.scroll);
+		
 		mArrowDown 	= (ImageView) mRootView.findViewById(R.id.arrow_down);
 		mArrowUp 	= (ImageView) mRootView.findViewById(R.id.arrow_up);
 
@@ -225,7 +231,13 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 			onTop	= false;
 		}
 
-		showArrow(((onTop) ? R.id.arrow_down : R.id.arrow_up), anchorRect.centerX());
+//		showArrow(((onTop) ? R.id.arrow_down : R.id.arrow_up), anchorRect.centerX());
+		
+		if(onTop){
+			layout.setBackgroundResource(R.drawable.popup_inline_above);
+		}else{
+			layout.setBackgroundResource(R.drawable.popup_inline);
+		}
 		
 //		setAnimationStyle(screenWidth, anchorRect.centerX(), onTop);
 	
@@ -241,35 +253,18 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 	 * @param requestedX distance from left screen
 	 * @param onTop flag to indicate where the popup should be displayed. Set TRUE if displayed on top of anchor and vice versa
 	 */
-//	private void setAnimationStyle(int screenWidth, int requestedX, boolean onTop) {
-//		int arrowPos = requestedX - mArrowUp.getMeasuredWidth()/2;
-//
-//		switch (mAnimStyle) {
-//		case ANIM_GROW_FROM_LEFT:
-//			mWindow.setAnimationStyle((onTop) ? R.style.Animations_PopUpMenu_Left : R.style.Animations_PopDownMenu_Left);
-//			break;
-//					
-//		case ANIM_GROW_FROM_RIGHT:
-//			mWindow.setAnimationStyle((onTop) ? R.style.Animations_PopUpMenu_Right : R.style.Animations_PopDownMenu_Right);
-//			break;
-//					
-//		case ANIM_GROW_FROM_CENTER:
-//			mWindow.setAnimationStyle((onTop) ? R.style.Animations_PopUpMenu_Center : R.style.Animations_PopDownMenu_Center);
-//		break;
-//					
-//		case ANIM_AUTO:
-//			if (arrowPos <= screenWidth/4) {
-//				mWindow.setAnimationStyle((onTop) ? R.style.Animations_PopUpMenu_Left : R.style.Animations_PopDownMenu_Left);
-//			} else if (arrowPos > screenWidth/4 && arrowPos < 3 * (screenWidth/4)) {
-//				mWindow.setAnimationStyle((onTop) ? R.style.Animations_PopUpMenu_Center : R.style.Animations_PopDownMenu_Center);
-//			} else {
-//				mWindow.setAnimationStyle((onTop) ? R.style.Animations_PopDownMenu_Right : R.style.Animations_PopDownMenu_Right);
-//			}
-//					
-//			break;
-//		}
-//	}
-	
+	private void setAnimationStyle(int screenWidth, int requestedX, boolean onTop) {
+		int arrowPos = requestedX - mArrowUp.getMeasuredWidth()/2;
+
+		switch (mAnimStyle) {
+
+		case ANIM_REFLECT:
+			mWindow.setAnimationStyle((onTop) ? R.style.Animations_PopUpMenu_Reflect : R.style.Animations_PopDownMenu_Reflect);
+			break;
+
+		}
+	}
+
 	/**
 	 * Show arrow
 	 * 
