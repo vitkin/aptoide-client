@@ -398,8 +398,8 @@ public class ApkInfo extends FragmentActivity implements
 	private QuickAction quickAction;
 	private void setupQuickActions(){
 		quickAction  = new QuickAction(context);
-		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(android.R.drawable.ic_media_play));
-		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(android.R.drawable.ic_media_pause));
+		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(R.drawable.ic_media_play));
+		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(R.drawable.ic_media_pause));
 		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
 		
 		quickAction.addActionItem(playItem);
