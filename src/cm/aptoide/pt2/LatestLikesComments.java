@@ -13,7 +13,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.RepoUtils;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 
@@ -22,10 +24,11 @@ public class LatestLikesComments {
 	private String repoName;
 	private String endPointComments = "https://www.aptoide.com/webservices/listRepositoryComments/%s/json";
 	private String endPointLikes = "https://www.aptoide.com/webservices/listRepositoryLikes/%s/json";
+	private Context context;
 	
-	public LatestLikesComments(long store_id, Database db) {
-		
-		this.repoName = RepoUtils.split(db.getServer(store_id).url);
+	public LatestLikesComments(long store_id, Database db, Context context) {
+		this.context=context;
+		this.repoName = RepoUtils.split(db.getServer(store_id,false).url);
 		
 	}
 
@@ -34,18 +37,8 @@ public class LatestLikesComments {
 		MatrixCursor cursor = new MatrixCursor(new String[]{"_id","apkid","name","text","username"});
 		
 		try {
-			HttpURLConnection connection = (HttpURLConnection) new URL(endPointComments).openConnection();
-			connection.setConnectTimeout(5000);
-			connection.setReadTimeout(5000);
-			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line+"\n");
-            }
-            br.close();
 
-			JSONObject respJSON = new JSONObject(sb.toString());
+			JSONObject respJSON = NetworkUtils.getJsonObject(new URL(endPointComments),context);
 			JSONArray array = respJSON.getJSONArray("listing");
 			
 			for(int i = 0;i!=array.length();i++){

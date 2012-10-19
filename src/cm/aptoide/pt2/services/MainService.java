@@ -37,6 +37,8 @@ import android.os.IBinder;
 import android.util.SparseArray;
 import android.widget.Toast;
 
+import cm.aptoide.pt2.util.NetworkUtils;
+
 public class MainService extends Service {
 //	Database db;
 	private static boolean isParsing = false;
@@ -52,7 +54,12 @@ public class MainService extends Service {
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			serversParsing.remove((int)intent.getLongExtra("server", -1));
+			try{
+				serversParsing.remove((int)intent.getLongExtra("server", -1));
+			}catch (Exception e){
+				e.printStackTrace();
+			}
+			
 		}
 	};
 	
@@ -86,20 +93,19 @@ public class MainService extends Service {
 //		}.start();
 //	}
 	
-	public String get(Server server,String xmlpath) throws MalformedURLException, IOException{
+	public String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
 		getApplicationContext().sendBroadcast(new Intent("connecting"));
 		String hash = "";
-
-		if (server.delta != null) {
+		if (delta&&server.delta != null) {
 			hash = "?hash=" + server.delta;
 		}
-		String url = server.url + "info.xml" + hash;
+		String url = server.url + what + hash;
 		System.out.println(url);
 		
 
 		File f = new File(xmlpath);
-			InputStream in = getInputStream(new URL(url), server.username,
-					server.password);
+			InputStream in = NetworkUtils.getInputStream(new URL(url), server.username,
+					server.password,getApplicationContext());
 			int i = 0;
 			while (f.exists()) {
 				f = new File(xmlpath + i++);
@@ -118,70 +124,56 @@ public class MainService extends Service {
     	
 		return f.getAbsolutePath();
     }
-	
-	public String getTop(Server server,String xmlpath) throws MalformedURLException, IOException{
-		File f = new File(xmlpath);
-			getApplicationContext().sendBroadcast(new Intent("connecting"));
-			String url = server.url + "top.xml";
-			System.out.println(url);
-	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
-	    	
-	    	
-	    	int i = 0;
-	    	while(f.exists()){
-	    		f = new File(xmlpath+i++);
-	    	}
-			FileOutputStream out = new FileOutputStream(f);
-			
-			byte[] buffer = new byte[1024];
-			int len;
-			getApplicationContext().sendBroadcast(new Intent("downloading"));
-			while ((len = in.read(buffer)) != -1) {
-				out.write(buffer, 0, len);
-			}
-			out.close();
-		
-		return f.getAbsolutePath();
-    }
-	
-	public String getLatest(Server server,String xmlpath) throws MalformedURLException, IOException{
-		File f = new File(xmlpath);
-			getApplicationContext().sendBroadcast(new Intent("connecting"));
-			String url = server.url + "latest.xml";
-			System.out.println(url);
-	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
-	    	
-	    	
-	    	int i = 0;
-	    	while(f.exists()){
-	    		f = new File(xmlpath+i++);
-	    	}
-			FileOutputStream out = new FileOutputStream(f);
-			
-			byte[] buffer = new byte[1024];
-			int len;
-			getApplicationContext().sendBroadcast(new Intent("downloading"));
-			while ((len = in.read(buffer)) != -1) {
-				out.write(buffer, 0, len);
-			}
-			out.close();
-		
-		return f.getAbsolutePath();
-    }
-    
-    public InputStream getInputStream(URL url,String username, String password) throws IOException {
-		URLConnection connection = url.openConnection();
-		if(username!=null && password!=null){
-			String basicAuth = "Basic " + new String(Base64.encode((username+":"+password).getBytes(),Base64.NO_WRAP ));
-			connection.setRequestProperty ("Authorization", basicAuth);
-		}
-		BufferedInputStream bis = new BufferedInputStream(
-				connection.getInputStream(), 8 * 1024);
-		connection.setConnectTimeout(10000);
-		connection.setReadTimeout(10000);
-		return bis;
-
-	}
+//	
+//	public String getTop(Server server,String xmlpath) throws MalformedURLException, IOException{
+//		File f = new File(xmlpath);
+//			getApplicationContext().sendBroadcast(new Intent("connecting"));
+//			String url = server.url + "top.xml";
+//			System.out.println(url);
+//	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
+//	    	
+//	    	
+//	    	int i = 0;
+//	    	while(f.exists()){
+//	    		f = new File(xmlpath+i++);
+//	    	}
+//			FileOutputStream out = new FileOutputStream(f);
+//			
+//			byte[] buffer = new byte[1024];
+//			int len;
+//			getApplicationContext().sendBroadcast(new Intent("downloading"));
+//			while ((len = in.read(buffer)) != -1) {
+//				out.write(buffer, 0, len);
+//			}
+//			out.close();
+//		
+//		return f.getAbsolutePath();
+//    }
+//	
+//	public String getLatest(Server server,String xmlpath) throws MalformedURLException, IOException{
+//		File f = new File(xmlpath);
+//			getApplicationContext().sendBroadcast(new Intent("connecting"));
+//			String url = server.url + "latest.xml";
+//			System.out.println(url);
+//	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
+//	    	
+//	    	
+//	    	int i = 0;
+//	    	while(f.exists()){
+//	    		f = new File(xmlpath+i++);
+//	    	}
+//			FileOutputStream out = new FileOutputStream(f);
+//			
+//			byte[] buffer = new byte[1024];
+//			int len;
+//			getApplicationContext().sendBroadcast(new Intent("downloading"));
+//			while ((len = in.read(buffer)) != -1) {
+//				out.write(buffer, 0, len);
+//			}
+//			out.close();
+//		
+//		return f.getAbsolutePath();
+//    }
 
 	public boolean isParsing() {
 		return isParsing ;
@@ -249,7 +241,7 @@ public class MainService extends Service {
 		String path2;
 		try {
 			serversParsing.put((int)server.id, server);
-			path2 = getTop(server,defaultTopXmlPath);
+			path2 = get(server,defaultTopXmlPath,"top.xml",false);
 			RepoParser.getInstance(db).parse2(new File(path2), server, Category.TOP);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -265,7 +257,7 @@ public class MainService extends Service {
 		String path2;
 		try {
 			serversParsing.put((int)server.id, server);
-			path2 = getLatest(server,defaultTopXmlPath);
+			path2 = get(server,defaultTopXmlPath,"latest.xml",false);
 			RepoParser.getInstance(db).parse2(new File(path2), server, Category.LATEST);
 		} catch (MalformedURLException e) {
 			// TODO Auto-generated catch block
@@ -278,7 +270,7 @@ public class MainService extends Service {
 	}
 	
 	public void parseInfoXml(Database db, Server server) throws MalformedURLException, IOException{
-		final String path = get(server,defaultXmlPath);
+		final String path = get(server,defaultXmlPath,"info.xml",true);
 		RepoParser.getInstance(db).parse(new File(path),server);
 	}
 
@@ -307,6 +299,7 @@ public class MainService extends Service {
 			connection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
+			db.addStoreInfo("","","0",server.id);
 		}
 		
 		

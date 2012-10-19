@@ -1,18 +1,10 @@
 package cm.aptoide.pt2;
 
-import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import com.viewpagerindicator.CirclePageIndicator;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -30,7 +22,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.webkit.WebView.FindListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
@@ -44,6 +35,7 @@ import android.widget.Toast;
 import cm.aptoide.pt2.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.util.quickaction.ActionItem;
 import cm.aptoide.pt2.util.quickaction.EnumQuickActions;
@@ -52,9 +44,10 @@ import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
-import cm.aptoide.pt2.views.ViewLogin;
 import cm.aptoide.pt2.webservices.comments.Comments;
 import cm.aptoide.pt2.webservices.taste.Likes;
+
+import com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity implements
 		LoaderCallbacks<Cursor> {
@@ -69,17 +62,18 @@ public class ApkInfo extends FragmentActivity implements
 	Activity context;
 	boolean spinnerInstaciated = false;
 	private ViewDownloadManagement download;
+	
+	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.apk_info);
-		category = Category.values()[getIntent().getIntExtra("category", 0)];
+		category = Category.values()[getIntent().getIntExtra("category", 3)];
 		context = this;
 		db = Database.getInstance(this);
 		id = getIntent().getExtras().getLong("_id");
 		loadElements(id);
-		// apkVersions = db.getAllApkVersions(viewApk.getApkid());
-		if(!category.equals(Category.ITEMBASED)){
+		if(category.equals(Category.INFOXML)){
 			spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
 			spinner.setVisibility(View.VISIBLE);
 			adapter = new SimpleCursorAdapter(this,
@@ -90,7 +84,7 @@ public class ApkInfo extends FragmentActivity implements
 
 				@Override
 				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
-					((TextView) arg0).setText("Version " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3)).url));
+					((TextView) arg0).setText("Version " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
 					System.out.println("repo_id="+arg1.getString(3));
 					return true;
 				}
@@ -130,15 +124,7 @@ public class ApkInfo extends FragmentActivity implements
 		findViewById(R.id.download_progress).setVisibility(View.GONE);
 		ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
 		progress.setIndeterminate(true);
-		Button manage = (Button) findViewById(R.id.icon_manage);
-		manage.setVisibility(View.GONE);
-		manage.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				quickAction.show(view);
-			}
-		});
-		setupQuickActions();
+		
 		
 		System.out.println("loading " + id + " " +category.name());
 		if(category.equals(Category.ITEMBASED)){
@@ -150,6 +136,15 @@ public class ApkInfo extends FragmentActivity implements
 		
 		download = ((ApplicationServiceManager)getApplication()).getAppDownloading(viewApk.hashCode());
 		if(!download.isNull()){
+			Button manage = (Button) findViewById(R.id.icon_manage);
+			manage.setVisibility(View.GONE);
+			manage.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					quickAction.show(view);
+				}
+			});
+			setupQuickActions();
 			download.registerObserver(viewApk.hashCode(),handler);
 			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 			findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
@@ -160,7 +155,7 @@ public class ApkInfo extends FragmentActivity implements
 		}
 		
 		final long repo_id = viewApk.getRepo_id();
-		final String repo_string = category.equals(Category.ITEMBASED)?db.getItemBasedServer(viewApk.getRepo_id()):RepoUtils.split(db.getServer(viewApk.getRepo_id()).url);
+		final String repo_string = category.equals(Category.ITEMBASED)?db.getItemBasedServer(viewApk.getRepo_id()):RepoUtils.split(db.getServer(viewApk.getRepo_id(),getIntent().getExtras().getBoolean("top", false)).url);
 		((TextView) findViewById(R.id.app_store)).setText(repo_string);
 		try {
 			((RatingBar) findViewById(R.id.rating)).setRating(Float
@@ -180,9 +175,9 @@ public class ApkInfo extends FragmentActivity implements
 		((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 		ImageLoader imageLoader = new ImageLoader(context, db);
 		if(category.equals(Category.ITEMBASED)){
-			imageLoader.DisplayImage(-1, db.getItemBasedBasePath(viewApk.getRepo_id())+viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false, viewApk.hashCode()+"");
+			imageLoader.DisplayImage(-1, db.getItemBasedBasePath(viewApk.getRepo_id())+viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
 		}else{
-			imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false, viewApk.hashCode()+"");
+			imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, getIntent().getExtras().getBoolean("top", false),(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
 		}
 		
 		
@@ -194,18 +189,28 @@ public class ApkInfo extends FragmentActivity implements
 		ItemBasedApks items = new ItemBasedApks(context,viewApk);
 		
 		items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container));
-		
+		System.out.println("Md5: " + viewApk.getMd5());;
 		findViewById(R.id.btinstall).setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
+				
 				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
 				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 					((ApplicationServiceManager)getApplication()).installApp(cache);
 				}else{
-					download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id()))
+					download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
+							.getExtras().getBoolean("top", false)))
 							+ viewApk.getPath(), viewApk, cache);
-					
+					Button manage = (Button) findViewById(R.id.icon_manage);
+					manage.setVisibility(View.GONE);
+					manage.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							quickAction.show(view);
+						}
+					});
+					setupQuickActions();
 					download.registerObserver(viewApk.hashCode(),handler);
 					download.startDownload();
 					findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
@@ -227,36 +232,28 @@ public class ApkInfo extends FragmentActivity implements
 				switch (category) {
 				case TOP:
 				case LATEST:
+				case ITEMBASED:
 					db.getScreenshots(originalList,viewApk,category);
 					thumbnailList = new String[originalList.size()];
 					
 					for ( int i = 0; i!= originalList.size();i++){
 						thumbnailList[i]=screenshotToThumb(originalList.get(i));
 					}
+					
 					break;
-				case ITEMBASED:
+				
 				case INFOXML:
 					String uri = webservicespath+"webservices/listApkScreens/"+repo_string+"/"+viewApk.getApkid()+"/"+viewApk.getVername()+"/json";
-					HttpClient client = new DefaultHttpClient();
-					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-					HttpResponse response=null;
-					HttpGet request = new HttpGet();
-				
-						request.setURI(new URI(uri));
-						System.out.println(request.getURI());
-						response = client.execute(request);
-						System.out.println(request.getURI()+"");
-						String temp = EntityUtils.toString(response.getEntity());
-						JSONObject respJSON = new JSONObject(temp);
-						JSONArray imagesurl = respJSON.getJSONArray("listing");
-						thumbnailList = new String[imagesurl.length()];
-						for ( int i = 0; i!= imagesurl.length();i++){
-							thumbnailList[i]=screenshotToThumb(imagesurl.getString(i));
-						}
-						
-						for(int i=0;i < imagesurl.length();i++){ 
-							originalList.add(imagesurl.getString(i));
-						}
+					JSONObject respJSON = NetworkUtils.getJsonObject(new URL(uri), ApkInfo.this);
+					JSONArray imagesurl = respJSON.getJSONArray("listing");
+					thumbnailList = new String[imagesurl.length()];
+					for ( int i = 0; i!= imagesurl.length();i++){
+						thumbnailList[i]=screenshotToThumb(imagesurl.getString(i));
+					}
+
+					for(int i=0;i < imagesurl.length();i++){ 
+						originalList.add(imagesurl.getString(i));
+					}
 					break;
 				default:
 					break;
@@ -267,7 +264,7 @@ public class ApkInfo extends FragmentActivity implements
 
 						public void run() {
 							if(thumbnailList!=null&&thumbnailList.length>0){
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList, viewApk.hashCode()));
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()));
 								
 								pi.setViewPager(screenshots);
 								pi.setRadius(7.5f);
@@ -329,10 +326,14 @@ public class ApkInfo extends FragmentActivity implements
 				break;
 			case FAILED:
 				Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
+				findViewById(R.id.download_progress).setVisibility(View.GONE);
+				findViewById(R.id.icon_manage).setVisibility(View.GONE);
+				findViewById(R.id.downloading_name).setVisibility(View.GONE);
 			case RESTARTING:
 				break;
 			case STOPPED:
 			case COMPLETED:
+				quickAction.dismiss();
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);
 				findViewById(R.id.downloading_name).setVisibility(View.GONE);
@@ -396,7 +397,6 @@ public class ApkInfo extends FragmentActivity implements
 	private QuickAction quickAction;
 	private void setupQuickActions(){
 		quickAction  = new QuickAction(context);
-		
 		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(android.R.drawable.ic_media_play));
 		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(android.R.drawable.ic_media_pause));
 		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));

@@ -1,20 +1,29 @@
 package cm.aptoide.pt2;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -41,6 +50,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,26 +63,31 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.RatingBar;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.adapters.InstalledAdapter;
 import cm.aptoide.pt2.adapters.ViewPagerAdapter;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.contentloaders.ImageLoader2;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt2.services.MainService;
 import cm.aptoide.pt2.services.MainService.LocalBinder;
 import cm.aptoide.pt2.util.Algorithms;
-import cm.aptoide.pt2.util.Base64;
+import cm.aptoide.pt2.util.Md5Handler;
+import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.views.ViewApk;
+import cm.aptoide.pt2.webservices.login.Login;
 
 import com.viewpagerindicator.TitlePageIndicator;
 
@@ -95,6 +110,216 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 
 	};
+	int a = 0;
+	private void loadUIEditorsApps() {
+		
+		final ImageLoader2 imageLoader = new ImageLoader2(mContext);
+		final int[] res_ids = {R.id.central,R.id.topleft,R.id.topright,R.id.bottomleft,R.id.bottomright};
+		final ArrayList<HashMap<String, String>> image_urls  = db.getFeaturedGraphics();
+		HashMap<String,String> image_url_highlight = db.getHighLightFeature();
+		if(image_url_highlight!=null){
+			a=1;
+			ImageView v = (ImageView) featuredView.findViewById(res_ids[0]);
+			imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v, mContext);
+			v.setTag(image_url_highlight.get("id"));
+			v.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View arg0) {
+					Intent i = new Intent(MainActivity.this,ApkInfo.class);
+					i.putExtra("_id", Long.parseLong((String)arg0.getTag()));
+					i.putExtra("top", false);
+					i.putExtra("category", Category.ITEMBASED.ordinal());
+					startActivity(i);
+				}
+			});
+//			v.setOnClickListener(featuredListener);
+		}
+		
+		Collections.shuffle(image_urls);
+		runOnUiThread(new Runnable() {
+			
+			public void run() {
+				try{
+					for(int i = a; i != res_ids.length;i++){
+						ImageView v = (ImageView) featuredView.findViewById(res_ids[i]);
+						imageLoader.DisplayImage(-1, image_urls.get(i).get("url"), v, mContext);
+						v.setTag(image_urls.get(i).get("id"));
+						v.setOnClickListener(new OnClickListener() {
+							
+							@Override
+							public void onClick(View arg0) {
+								Intent i = new Intent(MainActivity.this,ApkInfo.class);
+								i.putExtra("_id", Long.parseLong((String)arg0.getTag()));
+								i.putExtra("top", false);
+								i.putExtra("category", Category.ITEMBASED.ordinal());
+								startActivity(i);
+							}
+						});
+//						v.setOnClickListener(featuredListener);
+					}
+					
+					
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
+	private void loadFeatured() {
+		new Thread(new Runnable() {
+			
+			public void run() {
+				loadUIEditorsApps();
+				try {
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					SAXParser sp = spf.newSAXParser();
+					ViewApk parent_apk = new ViewApk();
+					parent_apk.setApkid("editorschoice");
+					BufferedInputStream bis = new BufferedInputStream(NetworkUtils.getInputStream(new URL("http://www.aptoide.com/apks/editors.xml"),null,null,mContext),8*1024);
+					File f = File.createTempFile("abc", "abc");
+					OutputStream out=new FileOutputStream(f);
+					  byte buf[]=new byte[1024];
+					  int len;
+					  while((len=bis.read(buf))>0)
+					  out.write(buf,0,len);
+					  out.close();
+					  bis.close();
+					  String hash = Md5Handler.md5Calc(f);
+					  if(!hash.equals(db.getItemBasedApksHash("editorschoice"))){
+						  sp.parse(f,new ItemBasedApkHandler(db, parent_apk));
+						  db.insertItemBasedApkHash(hash, "editorschoice"); 
+						  loadUIEditorsApps();
+					  }
+					  
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		
+		new Thread(new Runnable() {
+			
+			public void run() {
+				
+					loadUItopapps();
+					try {
+						SAXParserFactory spf = SAXParserFactory.newInstance();
+						SAXParser sp = spf.newSAXParser();
+						Server server = new Server();
+						server.id=0;
+						sp.parse(new BufferedInputStream(NetworkUtils.getInputStream(new URL(
+								"http://apps.store.aptoide.com/top.xml"),null,null,mContext),8*1024),
+								new TopRepoParserHandler(db, server, Category.TOP, true));
+						loadUItopapps();
+					} catch (ParserConfigurationException e) {
+						e.printStackTrace();
+					} catch (SAXException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+			}
+
+			
+		}).start();
+		
+	}
+	
+	private void loadUItopapps() {
+		((ToggleButton) featuredView.findViewById(R.id.toggleButton1)).setOnCheckedChangeListener(null);
+		Cursor c = db.getTopApps(1, 0, joinStores_boolean);
+		values = new ArrayList<HashMap<String,String>>();
+		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+			HashMap<String, String> item = new HashMap<String, String>();
+			item.put("name", c.getString(1));
+			item.put("icon", "http://mirror.apk04.aptoide.com/apks/4/aptoide-f63c6f2461f65f32b6d144d6d2ff982e/apps/"+c.getString(4));
+			item.put("rating", c.getString(5));
+			item.put("id", c.getString(0));
+////			if(mature){
+////				values.add(item);
+////			}else{
+////				if(c.getString(4).equals("0")){
+////					values.add(item);
+////				}
+			if(values.size()==26){
+				break;
+			}
+			values.add(item);
+			}
+		c.close();
+			
+		
+			
+		 
+		runOnUiThread(new Runnable() {
+			ImageLoader2 imageLoader = new ImageLoader2(mContext);
+			
+			public void run() {
+				
+				LinearLayout ll = (LinearLayout) featuredView.findViewById(R.id.container); 
+				ll.removeAllViews();
+		        LinearLayout llAlso = new LinearLayout(MainActivity.this);
+		        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+		        llAlso.setOrientation(LinearLayout.HORIZONTAL);
+		        for (int i = 0; i!=values.size(); i++) {
+		            RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater().inflate(R.layout.griditem, null);
+		           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
+		           	imageLoader.DisplayImage(-1, values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), mContext);
+		           	float stars = 0f;
+		           	try{
+		           		stars = Float.parseFloat(values.get(i).get("rating"));
+		           	}catch (Exception e) {
+		           		stars = 0f;
+					}
+		           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
+		            txtSamItem.setPadding(10, 0, 0, 0);
+		            txtSamItem.setTag(values.get(i).get("id"));
+		            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
+//		            txtSamItem.setOnClickListener(featuredListener);
+		            txtSamItem.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View arg0) {
+							Intent i = new Intent(MainActivity.this,ApkInfo.class);
+							long id = Long.parseLong((String)arg0.getTag());
+							i.putExtra("_id", id);
+							i.putExtra("top", true);
+							i.putExtra("category", Category.TOP.ordinal());
+							startActivity(i);
+						}
+					});
+
+		            txtSamItem.measure(0, 0);
+		            
+		            if (i%2==0) {
+		                ll.addView(llAlso);
+
+		                llAlso = new LinearLayout(MainActivity.this);
+		                llAlso.setLayoutParams(new LayoutParams(
+		                        LayoutParams.FILL_PARENT,
+		                        100));
+		                llAlso.setOrientation(LinearLayout.HORIZONTAL);
+		                llAlso.addView(txtSamItem);
+		            } else {
+		                llAlso.addView(txtSamItem);
+		            }
+		        }
+
+		        ll.addView(llAlso);
+//		        System.out.println(sPref.getString("app_rating", "All").equals(
+//						"Mature"));
+//		        ((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
+//				.setChecked(sPref.getString("app_rating", "All").equals(
+//						"Mature"));
+//		        ((ToggleButton) featured.findViewById(R.id.toggleButton1))
+//				.setOnCheckedChangeListener(adultCheckedListener);
+			}
+		});
+	}
+	
+	ArrayList<HashMap<String, String>> values;
 
 	private void dialogAddStore(final String url, final String username,
 			final String password) {
@@ -163,7 +388,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	private ListDepth depth = ListDepth.STORES;
 
-	private ListView featuredView;
+	private View featuredView;
 
 	private InstalledAdapter installedAdapter;
 
@@ -287,33 +512,20 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						connection.connect();
 						int rc = connection.getResponseCode();
 						if (rc == 200) {
-							String line = null;
-							BufferedReader br = new BufferedReader(
-									new java.io.InputStreamReader(connection
-											.getInputStream()));
-							StringBuilder sb = new StringBuilder();
-							while ((line = br.readLine()) != null)
-								sb.append(line + '\n');
 
-							JSONObject json = new JSONObject(sb.toString());
+							JSONObject json = NetworkUtils.getJsonObject(new URL(url), mContext);
 
 							JSONArray array = json.getJSONArray("listing");
 
 							for (int o = 0; o != array.length(); o++) {
-								boolean b = Boolean.parseBoolean(array
-										.getJSONObject(o).getString(
-												"hasupdates"));
-								
-								long id = serversToParse.get(array
-										.getJSONObject(o).getString("repo"));
-								if (b) {
-									service.parseServer(db, db.getServer(id));
-								} else {
-									Server server = db.getServer(id);
-									service.parseTop(db, server);
-									service.parseLatest(db, server);
+								boolean parse = Boolean.parseBoolean(array.getJSONObject(o).getString("hasupdates"));
+								long id = serversToParse.get(array.getJSONObject(o).getString("repo"));
+								Server server = db.getServer(id,false);
+								if (parse) {
+									service.parseServer(db, server);
 								}
-
+								service.parseTop(db, server);
+								service.parseLatest(db, server);
 							}
 
 						}
@@ -356,7 +568,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				e.printStackTrace();
 			}
 		}
-		final int response = checkServerConnection(uri_str, username, password);
+		final int response = NetworkUtils.checkServerConnection(uri_str, username, password);
 		final String uri = uri_str;
 		switch (response) {
 		case 0:
@@ -372,13 +584,22 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			});
 
 			break;
+		case -1:
+			runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					Toast.makeText(mContext, "An error ocurred. Please check your internet connection.", Toast.LENGTH_LONG).show();
+					showAddStoreDialog();
+				}
+			});
+			break;
 		default:
 			runOnUiThread(new Runnable() {
 
 				@Override
 				public void run() {
-					Toast.makeText(mContext, response + "", Toast.LENGTH_LONG)
-							.show();
+					Toast.makeText(mContext, "An error ocurred. Code: "+response, Toast.LENGTH_LONG).show();
 					showAddStoreDialog();
 				}
 			});
@@ -388,38 +609,31 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 	
 	
-	
-	
-
-	private int checkServerConnection(final String string,
-			final String username, final String password) {
-		try {
-
-			HttpURLConnection client = (HttpURLConnection) new URL(string
-					+ "info.xml").openConnection();
-			if (username != null && password != null) {
-				String basicAuth = "Basic "
-						+ new String(Base64.encode(
-								(username + ":" + password).getBytes(),
-								Base64.NO_WRAP));
-				client.setRequestProperty("Authorization", basicAuth);
-			}
-			client.setConnectTimeout(10000);
-			client.setReadTimeout(10000);
-			if (client.getContentType().equals("application/xml")) {
-				return 0;
-			} else {
-				return client.getResponseCode();
-			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return -1;
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		menu.add(0,1,0,"Login");
+		
+		return super.onPrepareOptionsMenu(menu);
 	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch (item.getItemId()) {
+		case 1:
+			Intent intent = new Intent(this,Login.class);
+			startActivity(intent);
+			break;
+
+		default:
+			break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+
+
 
 	private void getInstalled() {
 		new Thread(new Runnable() {
@@ -481,9 +695,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				@Override
 				public void run() {
 					try {
-						result = service
-								.deleteStore(db, ((AdapterContextMenuInfo) item
-										.getMenuInfo()).id);
+						result = service.deleteStore(db, ((AdapterContextMenuInfo) item.getMenuInfo()).id);
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {
@@ -518,7 +730,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					try {
 						service.parseServer(db, db
 								.getServer(((AdapterContextMenuInfo) item
-										.getMenuInfo()).id));
+										.getMenuInfo()).id,false));
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
@@ -544,6 +756,64 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	LinearLayout breadcrumbs;
+	private BroadcastReceiver loginReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+						
+						try {
+							SAXParserFactory factory = SAXParserFactory.newInstance();
+							SAXParser parser = factory.newSAXParser();
+							parser.parse(NetworkUtils.getInputStream(new URL("https://www.aptoide.com/webservices/listUserBasedApks/254faee9ab502a9d31f2c5a5a7cc55905e1b7dcb4ff2bcb79ec85/10/xml"), null, null, mContext),new DefaultHandler(){
+								
+								ViewApk apk = new ViewApk();
+								StringBuilder sb = new StringBuilder();
+								public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes attributes) throws SAXException {
+									sb.setLength(0);
+									if(localName.equals("package")){
+										apk.clear();
+									}
+								};
+								
+								public void characters(char[] ch, int start, int length) throws SAXException {
+									sb.append(ch,start,length);
+								};
+								
+								public void endElement(String uri, String localName, String qName) throws SAXException {
+									if(localName.equals("apkid")){
+										apk.setApkid(sb.toString());
+									}else if(localName.equals("vercode")){
+										apk.setVercode(Integer.parseInt(sb.toString()));
+									} else if(localName.equals("package")){
+										db.insertUserBasedApk(apk);
+									}
+									
+								};
+							});
+						} catch (MalformedURLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (SAXException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ParserConfigurationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+						
+						
+				}
+			}).start();
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -556,11 +826,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		bindService(i, conn, Context.BIND_AUTO_CREATE);
 		registerReceiver(updatesReceiver, new IntentFilter("update"));
 		registerReceiver(statusReceiver, new IntentFilter("status"));
+		registerReceiver(loginReceiver , new IntentFilter("login"));
 		setContentView(R.layout.activity_aptoide);
 		TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
 		ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
 
-		featuredView = new ListView(mContext);
+		featuredView = LayoutInflater.from(mContext).inflate(R.layout.featured, null);
 
 		availableView = LayoutInflater.from(mContext).inflate(R.layout.available_page, null);
 		breadcrumbs = (LinearLayout) availableView.findViewById(R.id.breadcrumb_container);
@@ -630,6 +901,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						depth = ListDepth.LATEST_LIKES;
 					} else if(id==LATEST_COMMENTS){
 						depth = ListDepth.LATEST_COMMENTS;
+					} else if(id==-3){
+						depth = ListDepth.RECOMMENDED;
 					}else {
 						depth = ListDepth.CATEGORY2;
 					}
@@ -648,6 +921,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					startActivity(i);
 					return;
 				case APPLICATIONS:
+				case RECOMMENDED:
 					i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", id);
 					i.putExtra("top", false);
@@ -705,6 +979,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		refreshAvailableList(true);
 		getInstalled();
 		getAllRepoStatus();
+		loadFeatured();
 		addBreadCrumb("Stores", ListDepth.STORES);
 
 	}
@@ -816,9 +1091,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						return db.getTopApps(category_id, store_id,
 								joinStores_boolean);
 					case LATEST_LIKES:
-						return new LatestLikesComments(store_id,db).getLikes();
+						return new LatestLikesComments(store_id,db,mContext).getLikes();
 					case LATEST_COMMENTS:
-						return new LatestLikesComments(store_id,db).getComments();
+						return new LatestLikesComments(store_id,db,mContext).getComments();
+					case RECOMMENDED:
+						return db.getUserBasedApk(store_id);
+						
 					default:
 						return null;
 					}
@@ -862,7 +1140,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (!depth.equals(ListDepth.STORES)) {
-				if (depth.equals(ListDepth.TOPAPPS) || depth.equals(ListDepth.LATEST_LIKES)||depth.equals(ListDepth.LATEST_COMMENTS)) {
+				if (depth.equals(ListDepth.TOPAPPS) || depth.equals(ListDepth.LATEST_LIKES)||depth.equals(ListDepth.LATEST_COMMENTS)||depth.equals(ListDepth.RECOMMENDED)) {
 					depth = ListDepth.CATEGORY1;
 				} else {
 					depth = ListDepth.values()[depth.ordinal() - 1];
@@ -983,6 +1261,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				break;
 			case TOPAPPS:
 			case APPLICATIONS:
+			case RECOMMENDED:
 				ViewHolder holder = (ViewHolder) view.getTag();
 				if (holder == null) {
 					holder = new ViewHolder();
@@ -1052,6 +1331,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				break;
 			case TOPAPPS:
 			case APPLICATIONS:
+			case RECOMMENDED:
 				v = LayoutInflater.from(context)
 						.inflate(R.layout.app_row, null);
 				break;

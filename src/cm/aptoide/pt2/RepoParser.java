@@ -84,7 +84,7 @@ public class RepoParser {
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				System.out.println("DynamicParsing repo_id:" + server.id);
-				parser.parse(xml, new TopRepoParserHandler(db,server,category));
+				parser.parse(xml, new TopRepoParserHandler(db,server,category,false));
 			}catch(Exception e){
 				db.endTransation(server);
 				e.printStackTrace();

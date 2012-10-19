@@ -193,6 +193,8 @@ public class Login extends Activity {
 					prefEdit.putString(Configs.LOGIN_USER_TOKEN, array.getString("token"));
 					prefEdit.remove(Configs.LOGIN_USER_USERNAME);
 					prefEdit.commit();
+					Intent i = new Intent("login");
+					sendBroadcast(i);
 					finish();
 				}else{
 					Toast.makeText(Login.this, array.getString("errors"), Toast.LENGTH_LONG).show();

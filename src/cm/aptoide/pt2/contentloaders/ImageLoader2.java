@@ -16,8 +16,6 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import cm.aptoide.pt2.Database;
-import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.Utils;
 import android.app.Activity;
 import android.content.Context;
@@ -34,7 +32,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-public class ScreenshotsImageLoader {
+public class ImageLoader2 {
     
     MemoryCache memoryCache=new MemoryCache();
     FileCache fileCache;
@@ -42,8 +40,7 @@ public class ScreenshotsImageLoader {
     ExecutorService executorService; 
     Context context;
     boolean download = true;
-	
-    public ScreenshotsImageLoader(Context context){
+    public ImageLoader2(Context context){
         fileCache=new FileCache(context);
         executorService=Executors.newFixedThreadPool(5);
         SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
@@ -55,10 +52,10 @@ public class ScreenshotsImageLoader {
 //		}else{
 //			download=true;
 //		}
-//        System.out.println("ICDOWN " + sPref.getString("icdown", "nasdd"));
+        System.out.println("ICDOWN " + sPref.getString("icdown", "nasdd"));
     }
     
-    public void DisplayImage(long l, String url, ImageView imageView,Context context, String hashCode)
+    public void DisplayImage(long l, String url, ImageView imageView,Context context)
     {
     	this.context=context;
         imageViews.put(imageView, url);
@@ -69,21 +66,21 @@ public class ScreenshotsImageLoader {
         	
         }else
         {
-        	queuePhoto(l,url, imageView,hashCode);
+        	queuePhoto(l,url, imageView);
 //            imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
         }
     }
         
-    private void queuePhoto(long l, String url, ImageView imageView,String hashCode)
+    private void queuePhoto(long l, String url, ImageView imageView)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
-        executorService.submit(new PhotosLoader(p,l,hashCode));
+        executorService.submit(new PhotosLoader(p,l));
     }
     
-    private Bitmap getBitmap(String url, String hashCode) 
+    private Bitmap getBitmap(String url) 
     {
-        File f=fileCache.getFile(hashCode);
+        File f=fileCache.getFile(url.hashCode()+"");
         
         //from SD cache
         if(f.exists()){
@@ -99,8 +96,12 @@ public class ScreenshotsImageLoader {
 			try {
 				Bitmap bitmap = null;
 				URL imageUrl = new URL(url);
-				NetworkUtils.setTimeout(30000);
-				InputStream is = NetworkUtils.getInputStream(imageUrl, null, null, context);
+				HttpURLConnection conn = (HttpURLConnection) imageUrl
+						.openConnection();
+				conn.setConnectTimeout(30000);
+				conn.setReadTimeout(30000);
+				conn.setInstanceFollowRedirects(true);
+				InputStream is = conn.getInputStream();
 				OutputStream os = new FileOutputStream(f);
 				Utils.CopyStream(is, os);
 				os.close();
@@ -118,28 +119,28 @@ public class ScreenshotsImageLoader {
     //decodes image and scales it to reduce memory consumption
     private Bitmap decodeFile(File f){
         try {
-        	fis = new FileInputStream(f);
-            //decode image size
+        	// decode image size
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
-//            BitmapFactory.decodeStream(fis,null,o);
-//            
-//            //Find the correct scale value. It should be the power of 2.
-//            final int REQUIRED_SIZE=10000;
-//            int width_tmp=o.outWidth, height_tmp=o.outHeight;
-//            int scale=1;
-//            while(true){
-//                if(width_tmp/2<REQUIRED_SIZE || height_tmp/2<REQUIRED_SIZE)
-//                    break;
-//                width_tmp/=2;
-//                height_tmp/=2;
-//                scale*=2;
-//            }
-//            
-//            //decode with inSampleSize
-//            BitmapFactory.Options o2 = new BitmapFactory.Options();
-//            o2.inSampleSize=scale;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, null);
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // Find the correct scale value. It should be the power of 2.
+            final int REQUIRED_SIZE = 500;
+            int width_tmp = o.outWidth, height_tmp = o.outHeight;
+            int scale = 1;
+            while (true) {
+                if (width_tmp / 2 < REQUIRED_SIZE
+                        || height_tmp / 2 < REQUIRED_SIZE)
+                    break;
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale++;
+            }
+
+            // decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
         } catch (FileNotFoundException e) {}
         return null;
     }
@@ -156,12 +157,10 @@ public class ScreenshotsImageLoader {
     }
     BitmapDisplayer bd;
     class PhotosLoader implements Runnable {
-    	Database db = Database.getInstance(context);
         PhotoToLoad photoToLoad;
-        String hashCode;
+        
         long repo_id;
-        PhotosLoader(PhotoToLoad photoToLoad,long l, String hashCode){
-        	this.hashCode=hashCode;
+        PhotosLoader(PhotoToLoad photoToLoad,long l){
             this.photoToLoad=photoToLoad;
             this.repo_id=l;
         }
@@ -173,11 +172,7 @@ public class ScreenshotsImageLoader {
             
             Bitmap bmp;
             
-            if(repo_id>0){
-            	bmp=getBitmap(db.getBasePath(repo_id,false)+photoToLoad.url,hashCode);
-            }else{
-            	bmp=getBitmap(photoToLoad.url,hashCode);
-            }
+            bmp=getBitmap(photoToLoad.url);
             
             memoryCache.put(photoToLoad.url, bmp);
             if(imageViewReused(photoToLoad))
@@ -206,19 +201,11 @@ public class ScreenshotsImageLoader {
             if(imageViewReused(photoToLoad))
                 return;
             if(bitmap!=null){
-                photoToLoad.imageView.setImageBitmap(bitmap);
-//                Drawable [] arrayDrawable = new Drawable[2];
                 
-//				arrayDrawable[0] = context.getResources().getDrawable(android.R.drawable.sym_def_app_icon);
-//				arrayDrawable[1] = new BitmapDrawable(bitmap);
-//				TransitionDrawable transitionDrawable = new TransitionDrawable(arrayDrawable);
-//				transitionDrawable.setCrossFadeEnabled(true);
 				photoToLoad.imageView.setImageBitmap(bitmap);
 				photoToLoad.imageView.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
-				
-//				transitionDrawable.startTransition(250);
             }else{
-            	photoToLoad.imageView.setImageResource(android.R.drawable.sym_def_app_icon);
+//            	photoToLoad.imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             	
                 
             }
