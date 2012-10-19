@@ -18,7 +18,7 @@ public class ScreenshotsViewer extends FragmentActivity {
 	int position;
 	private String[] images = new String[0];
 	Context context;
-	private int hashCode;
+	private String hashCode;
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
@@ -40,7 +40,7 @@ public class ScreenshotsViewer extends FragmentActivity {
 					HttpClient client = new DefaultHttpClient();
 					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 					uri = getIntent().getStringArrayListExtra("url");
-					hashCode = getIntent().getIntExtra("hashCode",0);
+					hashCode = getIntent().getStringExtra("hashCode");
 					images = uri.toArray(images);
 				}catch (Exception e) {
 					e.printStackTrace();
