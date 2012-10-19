@@ -25,6 +25,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ApkInfo"/>
+        <activity android:name=".webservices.login.Login"/>
+        <activity android:name=".webservices.login.CreateUser"/>
         <activity android:name=".ScreenshotsViewer"/>
         <activity android:name=".DownloadManager"/>
         

@@ -7,6 +7,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.content.pm.FeatureInfo;
+
 import cm.aptoide.pt2.RepoParserHandler.ElementHandler;
 import cm.aptoide.pt2.views.ViewApk;
 
@@ -62,7 +64,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 					System.out.println("NOT Deleting " +category.name() +"apps ");
 					throw new SAXException();
 				}
-				db.insertTopServerInfo(server, category);
+				db.insertTopServerInfo(server, category,featured);
 			}
 		});
 		
@@ -88,7 +90,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				apk.setId(db.insertTop(apk,category));
-				db.insertTopScreenshots(apk,category);
+				db.insertScreenshots(apk,category);
 			}
 		});
 		
@@ -202,22 +204,47 @@ public class TopRepoParserHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("basepath", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				server.basePath=sb.toString();
+			}
+		});
+		
+		elements.put("iconspath", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				server.iconsPath=sb.toString();
+			}
+		});
+		
 		
 	}
 	
 	private static Database db;
 	private static Server server;
 	private static Category category;
+	private static boolean featured;
 	
-	public TopRepoParserHandler(Database db, Server server,Category category) {
+	public TopRepoParserHandler(Database db, Server server,Category category, boolean b) {
 		TopRepoParserHandler.server = server;
 		TopRepoParserHandler.db = db;
 		TopRepoParserHandler.category=category;
+		featured = b;
 	}
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
 		db.prepare();
+		server.clear();
 		db.startTransation();
 		System.out.println(server.id);
 		apk.setRepo_id(server.id);

@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import cm.aptoide.pt2.views.ViewApk;
+import cm.aptoide.pt2.webservices.login.Login;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -144,7 +145,8 @@ public class Database {
 	public void endTransation(Server server){
 		Intent intent = new Intent("status");
 		intent.putExtra("server", server.id);
-		if(i!=0){
+		
+		if(i!=0 && server.id>0){
 			context.sendBroadcast(intent);
 			intent.setAction("update");
 			intent.putExtra("server", server.id);
@@ -208,6 +210,10 @@ public class Database {
 			c.addRow(new Object[]{-1,"Latest Likes"});
 		}
 		
+		if(Login.isLoggedIn(context)){
+			c.addRow(new Object[]{-3,"Recommended for you"});
+		}
+		
 		
 		
 		d.close();
@@ -223,6 +229,27 @@ public class Database {
 		public int compareTo(Holder another) {
 			return another.name.compareTo(name);
 		}
+	}
+	
+	public void insertUserBasedApk(ViewApk apk){
+		ContentValues values = new ContentValues();
+		
+		values.put("apkid", apk.getApkid());
+		values.put("vercode", apk.getVercode());
+		
+		database.insert("userbasedapk", null, values);
+	}
+	
+	public Cursor getUserBasedApk(long repo_id){
+		Cursor c = null;
+		
+		try {
+			c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath, a.rating, a.downloads, a.apkid, a.vercode from apk a,userbasedapk b where a.repo_id = ? and a.apkid=b.apkid and a.vercode=b.vercode", new String[]{repo_id+""});
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return c;
 	}
 	
 	public Cursor getCategory2(long l,long store, boolean mergeStores) {
@@ -257,12 +284,17 @@ public class Database {
 		return server;
 	}
 	
-	public Server getServer(long id) {
+	public Server getServer(long id,boolean top) {
 		Server server = null;
 		Cursor c = null;
 		
 		try {
-			c = database.query("repo", new String[]{"_id, url, delta"}, "_id = ?", new String[]{id+""}, null, null, null);
+			if(top){
+				c = database.query("toprepo_extra", new String[]{"_id, url, top_delta"}, "_id = ?", new String[]{id+""}, null, null, null);
+			}else{
+				c = database.query("repo", new String[]{"_id, url, delta"}, "_id = ?", new String[]{id+""}, null, null, null);
+			}
+			
 			if(c.moveToFirst()){
 				server = new Server(c.getString(1),c.getString(2),c.getLong(0));
 			}
@@ -362,7 +394,7 @@ public class Database {
 	public Cursor getStores(boolean mergeStores) {
 		Cursor c = null;
 		try{
-			c = database.query("repo", null, null, null, null, null, null);
+			c = database.query("repo", null, "_id > 0", null, null, null, null);
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
@@ -401,7 +433,7 @@ public class Database {
 			c = database.query("repo", new String[]{"iconspath"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
 			c.moveToFirst();
 			if(c.isNull(0)){
-				path = getBasePath(repo_id);
+				path = getBasePath(repo_id,false);
 			}else{
 				path = c.getString(0);
 			}
@@ -415,11 +447,17 @@ public class Database {
 		return path;
 	}
 
-	public String getBasePath(long repo_id) {
+	public String getBasePath(long repo_id,boolean top) {
 		Cursor c = null;
 		String path = null;
 		try{
-			c = database.query("repo", new String[]{"basepath"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
+			if(top){
+				c = database.query("toprepo_extra", new String[]{"basepath"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
+			}else{
+				c = database.query("repo", new String[]{"basepath"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
+			}
+			
+			
 			c.moveToFirst();
 			path = c.getString(0);
 		} catch (Exception e){
@@ -496,7 +534,7 @@ public class Database {
 	public Cursor getUpdates() {
 		Cursor c = null;
 		try{
-			c=database.rawQuery("select b._id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid,b.vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) order by b.name", null); 
+			c=database.rawQuery("select b._id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid,b.vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by a.apkid order by b.name", null); 
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -552,11 +590,11 @@ public class Database {
 			return_long = database.insert("dynamic_apk", null, values);
 			i++;
 			database.yieldIfContendedSafely();
-			if(i%300==0){
-				Intent i = new Intent("update");
-				i.putExtra("server", apk.getRepo_id());
-				context.sendBroadcast(i);
-			}
+//			if(i%300==0){
+//				Intent i = new Intent("update");
+//				i.putExtra("server", apk.getRepo_id());
+//				context.sendBroadcast(i);
+//			}
 			
 		}catch (Exception e){
 			e.printStackTrace();
@@ -588,10 +626,10 @@ public class Database {
 		Cursor c = null;
 		String path = null;
 		try{
-			c = database.query("repo", new String[]{"iconspath"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
+			c = database.query("toprepo_extra", new String[]{"iconspath"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
 			c.moveToFirst();
 			if(c.isNull(0)){
-				path = getBasePath(repo_id);
+				path = getBasePath(repo_id,true);
 			}else{
 				path = c.getString(0);
 			}
@@ -603,14 +641,25 @@ public class Database {
 		return path;
 	}
 
-	public void insertTopServerInfo(Server server, Category category) {
+	public void insertTopServerInfo(Server server, Category category, boolean featured) {
 		ContentValues values = new ContentValues();
 		try{
 			values.put("screenspath", server.screenspath);
 			values.put("_id", server.id);
 			values.put("top_delta", server.top_hash);
 			values.put("category", category.name().hashCode());
+			
+			if(featured){
+				
+				values.put("url", "http://apps.store.aptoide.com/");
+			}else{
+				values.put("url", server.url);
+			}
+			values.put("iconspath", server.iconsPath);
+			values.put("basepath",server.basePath);
 			database.insert("toprepo_extra", null, values);
+			
+			
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -704,7 +753,7 @@ public class Database {
 			if(c.getCount()>0){
 				return_string = c.getString(0);
 			}else{
-				return_string = "";
+				return_string = "http://webservices.aptoide.com/";
 			}
 		} catch (Exception e){
 			e.printStackTrace();
@@ -714,12 +763,13 @@ public class Database {
 		return return_string;
 	}
 
-	public void insertItemBasedApk(Server server, ViewApk apk, String hashCode) {
+	public void insertItemBasedApk(Server server, ViewApk apk, String hashCode,Category category) {
 		//insert itembasedapkrepo
 		try{
 			ContentValues values = new ContentValues();
 			values.put("iconspath",server.iconsPath);
 			values.put("screenspath",server.screenspath);
+			values.put("featuredgraphicpath",server.featuredgraphicPath);
 			values.put("name", server.url);
 			values.put("basepath", server.basePath);
 			//insert itembasedapk
@@ -733,12 +783,17 @@ public class Database {
 			values.put("rating",apk.getRating());
 			values.put("path",apk.getPath());
 			values.put("size",apk.getSize());
+			values.put("md5",apk.getMd5());
 			values.put("name", apk.getName());
+			if(apk.isHighlighted()){
+				values.put("highlight", "true");
+			}
+			values.put("featuredgraphic", apk.getFeatureGraphic());
 			values.put("itembasedapkrepo_id", i);
 			values.put("icon",apk.getIconPath());
 			values.put("parent_apkid", hashCode);
-			
-			
+			apk.setId(i);
+			insertScreenshots(apk, category);
 			
 			database.insert("itembasedapk", null, values);
 		} catch (Exception e){
@@ -811,7 +866,7 @@ public class Database {
 		
 	}
 
-	public void insertTopScreenshots(ViewApk apk, Category category) {
+	public void insertScreenshots(ViewApk apk, Category category) {
 		ContentValues values = new ContentValues();
 		for(String screenshot : apk.getScreenshots()){
 			values.clear();
@@ -829,11 +884,9 @@ public class Database {
 		String screenspath = db.getScreenshotsPath(viewApk.getRepo_id(),category);
 		try {
 			c=database.query("screenshots", new String[]{"path"}, "_id = ? and type = ?", new String[]{viewApk.getId()+"", category.ordinal()+""}, null, null, null);
-			
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				originalList.add(screenspath+c.getString(0));
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -847,18 +900,23 @@ public class Database {
 		Cursor c = null;
 		try {
 			switch (category) {
+			case LATEST:
 			case TOP:
 				c= database.query("toprepo_extra", new String[]{"screenspath"}, "_id = ? and category = ?", new String[]{repo_id+"",category.name().hashCode()+""}, null, null, null);
-				if(c.moveToFirst()){
-					return_string = c.getString(0);
-				}
-				break;
-			case LATEST:
+				
 				break;
 			case FEATURED:
+				
 				break;
+			case ITEMBASED:
+				c = database.query("itembasedapkrepo", new String[]{"screenspath"}, "_id=?", new String[]{repo_id+""}, null, null, null);
+				break;
+				
 			default:
 				break;
+			}
+			if(c.moveToFirst()){
+				return_string = c.getString(0);
 			}
 			
 		} catch (Exception e) {
@@ -874,12 +932,13 @@ public class Database {
 		Cursor c = null;
 		ViewApk apk = new ViewApk();
 		try {
-			c = database.query("itembasedapk", new String[]{"apkid","vername","itembasedapkrepo_id","downloads","size","icon","name","rating","path"}, "_id = ?", new String[]{id+""}, null, null, null);
+			c = database.query("itembasedapk", new String[]{"apkid","vername","itembasedapkrepo_id","downloads","size","icon","name","rating","path","md5"}, "_id = ?", new String[]{id+""}, null, null, null);
 		
 		c.moveToFirst();
 		apk.setApkid(c.getString(0));
 		apk.setVername(c.getString(1));
 		apk.setRepo_id(c.getLong(2));
+		apk.setMd5(c.getString(9));
 		apk.setDownloads(c.getString(3));
 		apk.setSize(c.getString(4));
 		apk.setIconPath(c.getString(5));
@@ -888,7 +947,7 @@ public class Database {
 		apk.setPath(c.getString(8));
 		apk.setId(id);
 		} catch (Exception e) {
-			// TODO: handle exception
+			e.printStackTrace();
 		}finally{
 			c.close();
 		}
@@ -925,11 +984,13 @@ public class Database {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally{
+			c.close();
 		}
 		
 		return return_string;
 	}
-
+	
 	public void deleteItemBasedApks(ViewApk apk) {
 		
 		Cursor c = null;
@@ -970,6 +1031,54 @@ public class Database {
 		
 		
 		return return_int;
+	}
+
+	public ArrayList<HashMap<String, String>> getFeaturedGraphics() {
+		ArrayList<HashMap<String, String>> arrayList = new ArrayList<HashMap<String,String>>();
+		HashMap<String, String> value;
+		
+		Cursor c = null;
+		
+		try {
+			c = database.rawQuery("select a._id, b.featuredgraphicpath, a.featuredgraphic ,a.apkid, a.vercode from itembasedapk a, itembasedapkrepo b where a.parent_apkid = 'editorschoice' and a.itembasedapkrepo_id = b._id and a.highlight is null ",null);
+			
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				value = new HashMap<String, String>();
+				value.put("url", c.getString(1)+c.getString(2));
+				value.put("id", c.getString(0));
+				value.put("hashCode", (c.getString(3)+"|"+c.getString(4)).hashCode()+"featured");
+				arrayList.add(value);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			c.close();
+		}
+		
+		
+		return arrayList;
+	}
+
+	public HashMap<String, String> getHighLightFeature() {
+		HashMap<String, String> value = null;
+		
+		Cursor c = null;
+		
+		try {
+			c = database.rawQuery("select a._id, b.featuredgraphicpath, a.featuredgraphic ,a.apkid, a.vercode from itembasedapk a, itembasedapkrepo b where a.parent_apkid = 'editorschoice' and a.itembasedapkrepo_id = b._id and a.highlight is not null ",null);
+			
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				value = new HashMap<String, String>();
+				value.put("url", c.getString(1)+c.getString(2));
+				value.put("id", c.getString(0));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			c.close();
+		}
+		return value;
 	}
 
 

@@ -22,6 +22,8 @@ public class ViewApk {
 	private String path;
 	private String md5;
 	private int appHashId = 0;
+	private String featureGraphic;
+	private boolean highlighted = false;
 	
 	/**
 	 * 
@@ -237,6 +239,22 @@ public class ViewApk {
 	
 	public void setMd5(String md5) {
 		this.md5 = md5;
+	}
+
+	public String getFeatureGraphic() {
+		return featureGraphic;
+	}
+
+	public void setFeatureGraphic(String featureGraphic) {
+		this.featureGraphic = featureGraphic;
+	}
+
+	public boolean isHighlighted() {
+		return highlighted;
+	}
+
+	public void setHighlighted(boolean highlighted) {
+		this.highlighted = highlighted;
 	}
 
 }

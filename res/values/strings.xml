@@ -219,5 +219,7 @@
     <string name="invalid_apk">Invalid apk</string>
     <string name="server_error">Server error</string>
     <string name="retrn">Back</string>
+    
+    
 
 </resources>

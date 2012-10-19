@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cm.aptoide.pt2.Database;
+import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.Utils;
 import android.app.Activity;
 import android.content.Context;
@@ -43,7 +44,7 @@ public class ImageLoader {
     boolean download = true;
     private Database db;
 	private boolean top = false;
-	private String hashCode;
+	
     public ImageLoader(Context context, Database db){
         fileCache=new FileCache(context);
         photoLoadThreadPool=Executors.newFixedThreadPool(1);
@@ -85,8 +86,8 @@ public class ImageLoader {
     
     private Bitmap getBitmap(String url,String hash) 
     {
-        File f=fileCache.getFile(hash);
-        
+    	File f=fileCache.getFile(hash);
+    	System.out.println("hash : "+hash);
         //from SD cache
         if(f.exists()){
         	Bitmap b = decodeFile(f);	
@@ -101,12 +102,8 @@ public class ImageLoader {
 			try {
 				Bitmap bitmap = null;
 				URL imageUrl = new URL(url);
-				HttpURLConnection conn = (HttpURLConnection) imageUrl
-						.openConnection();
-				conn.setConnectTimeout(30000);
-				conn.setReadTimeout(30000);
-				conn.setInstanceFollowRedirects(true);
-				InputStream is = conn.getInputStream();
+				NetworkUtils.setTimeout(30000);
+				InputStream is = NetworkUtils.getInputStream(imageUrl, null, null, context);
 				OutputStream os = new FileOutputStream(f);
 				Utils.CopyStream(is, os);
 				os.close();
@@ -146,7 +143,9 @@ public class ImageLoader {
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize=scale;
             return BitmapFactory.decodeStream(new FileInputStream(f), null, null);
-        } catch (FileNotFoundException e) {}
+        } catch (FileNotFoundException e) {
+        	e.printStackTrace();
+        }
         return null;
     }
     
@@ -180,13 +179,12 @@ public class ImageLoader {
             
             Bitmap bmp;
             
-            if(repo_id>0){
+            if(repo_id>-1){
             	if(top){
             		bmp=getBitmap(db.getTopIconsPath(repo_id)+photoToLoad.url,hash);
             	}else{
             		bmp=getBitmap(db.getIconsPath(repo_id)+photoToLoad.url,hash);
             	}
-            	
             }else{
             	bmp=getBitmap(photoToLoad.url,hash);
             }

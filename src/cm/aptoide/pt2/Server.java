@@ -24,6 +24,7 @@ public class Server implements Parcelable{
 	public String password;
 	public File xml;
 	public String screenspath;
+	public String featuredgraphicPath;
 	
 	public Server() {}
 	
@@ -111,4 +112,8 @@ public class Server implements Parcelable{
                return new Server[size];
            }
        };
+
+       public void clear() {
+    		iconsPath = null;
+       }
 }

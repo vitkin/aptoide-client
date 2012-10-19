@@ -53,6 +53,45 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("featuregraphicpath", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				server.featuredgraphicPath=sb.toString();
+			}
+		});
+		
+		elements.put("featuregraphic", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setFeatureGraphic(sb.toString());
+			}
+		});
+		
+		elements.put("highlight", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setHighlighted(true);
+			}
+		});
+		
 		elements.put("catg2", new ElementHandler() {
 			
 			@Override
@@ -205,20 +244,47 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			
 			@Override
 			public void startElement(Attributes atts) throws SAXException {
-				
+				apk.clear();
 			}
 			
 			@Override
 			public void endElement() throws SAXException {
 				System.out.println("itembased");
 				try{
-					db.insertItemBasedApk(server,apk,parent_apk.getApkid());
+					db.insertItemBasedApk(server,apk,parent_apk.getApkid(),Category.ITEMBASED);
 				}catch (Exception e){
 					e.printStackTrace();
 				}
 				
 			}
 		});
+		
+		elements.put("screen", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.addScreenshot(sb.toString());
+			}
+		});
+	
+		elements.put("md5h", new ElementHandler() {
+			
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				
+			}
+			
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMd5(sb.toString());
+			}
+		});
+		
 		elements.put("package", new ElementHandler() {
 			
 			
