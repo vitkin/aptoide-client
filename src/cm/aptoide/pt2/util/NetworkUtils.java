@@ -91,4 +91,11 @@ public class NetworkUtils {
 		
 	}
 	
+	public static String  getUserAgentString(Context mctx){
+		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		String myid = sPref.getString("myId", "NoInfo");
+		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+		return "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, "");
+	}
+	
 }
