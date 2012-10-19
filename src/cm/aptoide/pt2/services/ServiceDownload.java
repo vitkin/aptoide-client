@@ -51,6 +51,7 @@ import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt2.exceptions.AptoideExceptionNotFound;
 import cm.aptoide.pt2.util.Constants;
+import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.views.EnumDownloadFailReason;
 import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
@@ -213,10 +214,10 @@ public class ServiceDownload extends Service {
     			DefaultHttpClient httpClient = new DefaultHttpClient();
     			HttpGet httpGet = new HttpGet(remotePath);
     			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
-//    			Log.d("Aptoide-download","downloading with: "+getUserAgentString());
+    			Log.d("Aptoide-download","downloading with: "+NetworkUtils.getUserAgentString(getApplicationContext()));
     			Log.d("Aptoide-download","downloading mode private: "+isLoginRequired);
 
-//    			httpGet.setHeader("User-Agent", getUserAgentString());
+    			httpGet.setHeader("User-Agent", NetworkUtils.getUserAgentString(getApplicationContext()));
     			
     			long resumeLength = cache.getFileLength();
     			if(!overwriteCache){
