@@ -368,9 +368,17 @@ public class ApplicationServiceManager extends Application {
 		}else{
 			if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
 				ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
-			}else if(!ongoingDownloads.get(viewDownload.hashCode()).getDownloadStatus().equals(EnumDownloadStatus.PAUSED)){
-				return;
+			}else switch (ongoingDownloads.get(viewDownload.hashCode()).getDownloadStatus()) {
+				case SETTING_UP:
+				case PAUSED:
+				case RESUMING:
+				case RESTARTING:					
+					break;
+	
+				default:
+					return;
 			}
+			
 			cachedThreadPool.execute(new Runnable() {
 				@Override
 				public void run() {
