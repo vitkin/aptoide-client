@@ -859,6 +859,15 @@ public class Database {
 	public void addStoreInfo(String avatar, String name, String downloads,
 			long id) {
 		ContentValues values = new ContentValues();
+		if(avatar==null){
+			avatar = "";
+		}
+		if(name==null){
+			name = "Unnamed";
+		}
+		if(downloads==null){
+			downloads = "0";
+		}
 		values.put("avatar", avatar);
 		values.put("name", name);
 		values.put("downloads", downloads);
