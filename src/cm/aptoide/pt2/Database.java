@@ -524,7 +524,7 @@ public class Database {
 	public Cursor getInstalledApps() {
 		Cursor c = null;
 		try{
-			c = database.rawQuery("select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid,b.vercode from installed as a, apk as b where a.apkid=b.apkid group by a.name order by a.name",null);
+			c = database.rawQuery("select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid group by a.name order by a.name",null);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -534,7 +534,7 @@ public class Database {
 	public Cursor getUpdates() {
 		Cursor c = null;
 		try{
-			c=database.rawQuery("select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid,b.vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by a.apkid order by b.name", null); 
+			c=database.rawQuery("select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by a.apkid order by b.name", null); 
 		}catch (Exception e){
 			e.printStackTrace();
 		}
