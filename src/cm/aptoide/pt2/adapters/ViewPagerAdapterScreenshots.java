@@ -21,22 +21,23 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 	ScreenshotsImageLoader imageLoader;
 	private String[] images;
 	ArrayList<String> url;
-	private int hashCode;
+	private String hashCode;
 	
-	public ViewPagerAdapterScreenshots(Context context,String[] images2,ArrayList<String> imagesurl, int hashCode) {
+	public ViewPagerAdapterScreenshots(Context context,String[] images2,ArrayList<String> imagesurl, String hashCode) {
 		
 		this.context=context;
 		imageLoader = new ScreenshotsImageLoader(context);
 		this.images=images2;
 		this.url=imagesurl;
 		this.hashCode=hashCode;
+		System.out.println("hash:Method:"+hashCode);
 	}
 	
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
-		
+		final String hashCode=this.hashCode+"."+position;
 		View v = LayoutInflater.from(context).inflate(R.layout.screenshots, null);
-		imageLoader.DisplayImage(-1, images[position],(ImageView) v.findViewById(R.id.screenshot), context, hashCode+"."+position);
+		imageLoader.DisplayImage(-1, images[position],(ImageView) v.findViewById(R.id.screenshot), context, hashCode);
 		container.addView(v);
 		v.setOnClickListener(new OnClickListener() {
 			

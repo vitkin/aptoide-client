@@ -264,7 +264,8 @@ public class ApkInfo extends FragmentActivity implements
 
 						public void run() {
 							if(thumbnailList!=null&&thumbnailList.length>0){
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()));
+								String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"";
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,hashCode));
 								
 								pi.setViewPager(screenshots);
 								pi.setRadius(7.5f);
@@ -312,7 +313,7 @@ public class ApkInfo extends FragmentActivity implements
 	private Handler handler = new Handler(){
 		
 		public void handleMessage(Message msg) {
-			
+			System.out.println(EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what).name());
 			switch (EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what)) {
 			case UPDATE:
 			case PAUSED:
