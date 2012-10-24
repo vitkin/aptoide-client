@@ -6,7 +6,7 @@
 	<string name="category2">Category 2</string>
 	<string name="add_store">Add Store</string>
 	<string name="empty_store_list">You don\'t have any stores.</string>
-	<string name="new_store">New Store</string>
+	<string name="new_store">Add Store</string>
 	<string name="add_repo_private">Private</string>
     <string name="extended_server">Extended Store</string>
     <string name="downloads">downloads</string>

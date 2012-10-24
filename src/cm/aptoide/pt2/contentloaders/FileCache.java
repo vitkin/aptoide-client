@@ -23,6 +23,7 @@ public class FileCache {
         //I identify images by hashcode. Not a perfect solution, good for the demo.
         //Another possible solution (thanks to grantland)
         //String filename = URLEncoder.encode(url);
+    	System.out.println("Getting file:" +hash);
         File f = new File(cacheDir, hash);
         return f;
         

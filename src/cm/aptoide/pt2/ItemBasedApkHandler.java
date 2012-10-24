@@ -7,6 +7,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import cm.aptoide.pt2.TopRepoParserHandler.ElementHandler;
 import cm.aptoide.pt2.views.ViewApk;
 
 public class ItemBasedApkHandler extends DefaultHandler {
@@ -297,6 +298,50 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				insidePackage = false;
+			}
+		});
+		
+		elements.put("minSdk", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMinSdk(sb.toString());
+			}
+		});
+		
+		elements.put("minGles", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMinGlEs(sb.toString());
+			}
+		});
+		
+		elements.put("minScreen", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMinScreen(Filters.Screens.lookup(sb.toString()).ordinal());
+			}
+		});
+		
+		elements.put("age", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
 			}
 		});
 		

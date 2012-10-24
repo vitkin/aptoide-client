@@ -28,6 +28,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -35,11 +36,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -69,6 +73,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -113,7 +119,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	int a = 0;
 	private void loadUIEditorsApps() {
 		
-		final ImageLoader2 imageLoader = new ImageLoader2(mContext);
+		final ImageLoader2 imageLoader = ImageLoader2.getInstance(mContext);
 		final int[] res_ids = {R.id.central,R.id.topleft,R.id.topright,R.id.bottomleft,R.id.bottomright};
 		final ArrayList<HashMap<String, String>> image_urls  = db.getFeaturedGraphics();
 		HashMap<String,String> image_url_highlight = db.getHighLightFeature();
@@ -230,19 +236,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private void loadUItopapps() {
 		((ToggleButton) featuredView.findViewById(R.id.toggleButton1)).setOnCheckedChangeListener(null);
 		Cursor c = db.getTopApps(1, 0, joinStores_boolean);
+		
 		values = new ArrayList<HashMap<String,String>>();
 		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 			HashMap<String, String> item = new HashMap<String, String>();
 			item.put("name", c.getString(1));
-			item.put("icon", "http://mirror.apk04.aptoide.com/apks/4/aptoide-f63c6f2461f65f32b6d144d6d2ff982e/apps/"+c.getString(4));
+			System.out.println(c.getString(1));
+			item.put("icon", db.getTopIconsPath(c.getLong(3))+c.getString(4));
 			item.put("rating", c.getString(5));
 			item.put("id", c.getString(0));
-////			if(mature){
-////				values.add(item);
-////			}else{
-////				if(c.getString(4).equals("0")){
-////					values.add(item);
-////				}
 			if(values.size()==26){
 				break;
 			}
@@ -254,7 +256,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			
 		 
 		runOnUiThread(new Runnable() {
-			ImageLoader2 imageLoader = new ImageLoader2(mContext);
+			ImageLoader2 imageLoader = ImageLoader2.getInstance(mContext);
+			
 			
 			public void run() {
 				
@@ -308,13 +311,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		        }
 
 		        ll.addView(llAlso);
+		        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mContext);
 //		        System.out.println(sPref.getString("app_rating", "All").equals(
 //						"Mature"));
-//		        ((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
-//				.setChecked(sPref.getString("app_rating", "All").equals(
-//						"Mature"));
-//		        ((ToggleButton) featured.findViewById(R.id.toggleButton1))
-//				.setOnCheckedChangeListener(adultCheckedListener);
+		        ((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
+				.setChecked(!sPref.getBoolean("matureChkBox", true));
+		        ((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
+				.setOnCheckedChangeListener(adultCheckedListener);
 			}
 		});
 	}
@@ -351,6 +354,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private View addStoreButton;
+	
+	
 
 	private final OnClickListener addStoreListener = new OnClickListener() {
 
@@ -544,6 +549,19 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	}
 
+	protected void redrawAll() {
+		installedLoader.forceLoad();
+		availableLoader.forceLoad();
+		updatesLoader.forceLoad();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				loadUItopapps();
+			}
+		}).start();
+	}
+
 	protected void addStore(String uri_str, String username, String password) {
 
 		if (uri_str.contains("http//")) {
@@ -613,7 +631,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		menu.add(0,1,0,"Login");
-		
+		menu.add(0,2,0,"Settings");
+		menu.add(0,3,0,"Scheduled");
+		menu.add(0,4,0,"Display Options");
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
@@ -622,10 +642,21 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		
 		switch (item.getItemId()) {
 		case 1:
-			Intent intent = new Intent(this,Login.class);
-			startActivity(intent);
+			
+			Intent loginIntent = new Intent(this,Login.class);
+			startActivity(loginIntent);
 			break;
-
+		case 2:
+			Intent settingsIntent = new Intent(this,Settings.class);
+			startActivityForResult(settingsIntent,0);
+			break;
+		case 3:
+			Intent scheduledIntent = new Intent(this,ScheduledDownloads.class);
+			startActivity(scheduledIntent);
+			break;
+		case 4:
+			displayOptionsDialog();
+			break;
 		default:
 			break;
 		}
@@ -633,7 +664,112 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+		
+		installedLoader.forceLoad();
+		updatesLoader.forceLoad();
+		availableLoader.forceLoad();
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				loadUItopapps();
+			}
+		}).start();
+		
+		
+		
+	}
 
+	private void displayOptionsDialog() {
+		
+		final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
+		final Editor editor = sPref.edit();
+		
+		View view = LayoutInflater.from(mContext).inflate(R.layout.orderpopup, null);
+		Builder builder = new AlertDialog.Builder(mContext).setView(view);
+		AlertDialog dialog = builder.create();
+
+		final RadioButton ord_rct = (RadioButton) view.findViewById(R.id.org_rct);
+		final RadioButton ord_abc = (RadioButton) view.findViewById(R.id.org_abc);
+		final RadioButton ord_rat = (RadioButton) view.findViewById(R.id.org_rat);
+		final RadioButton ord_dwn = (RadioButton) view.findViewById(R.id.org_dwn);
+		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
+		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
+		
+		final ToggleButton adult  = (ToggleButton) view.findViewById(R.id.adultcontent_toggle);
+		
+		dialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {
+			boolean pop_change = false;
+			public void onClick(DialogInterface dialog, int which) {
+				if(ord_rct.isChecked()){
+					pop_change = true;
+					order=Order.DATE;
+				}else if(ord_abc.isChecked()){
+					pop_change = true;
+					order=Order.NAME;
+				}else if(ord_rat.isChecked()){
+					pop_change = true;
+					order=Order.RATING;
+				}else if(ord_dwn.isChecked()){
+					pop_change = true;
+					order=Order.DOWNLOADS;
+				}
+				
+				if(btn1.isChecked()){
+					pop_change = true;
+					editor.putBoolean("orderByCategory", true);
+				}else if(btn2.isChecked()){
+					pop_change = true;
+					editor.putBoolean("orderByCategory", false);
+				}
+				if(adult.isChecked()){
+					pop_change = true;
+					editor.putBoolean("matureChkBox", false);
+				}else{
+					editor.putBoolean("matureChkBox", true);
+				}
+				if(pop_change){
+					editor.putInt("order_list", order.ordinal());
+					editor.commit();
+					redrawAll();
+					
+				}
+			}
+		});
+		
+		
+		
+		if(sPref.getBoolean("orderByCategory", false)){
+			btn1.setChecked(true);
+		}else{
+			btn2.setChecked(true);
+		}
+		adult.setChecked(!sPref.getBoolean("matureChkBox", false));
+//		adult.setOnCheckedChangeListener(adultCheckedListener);
+				switch (order) {
+				case DATE:
+					ord_rct.setChecked(true);
+					break;
+				case DOWNLOADS:
+					ord_dwn.setChecked(true);
+					break;
+				case NAME:
+					ord_abc.setChecked(true);
+					break;
+				case RATING:
+					ord_rat.setChecked(true);
+					break;
+
+				default:
+					break;
+				}
+
+		dialog.show();
+		
+	}
 
 	private void getInstalled() {
 		new Thread(new Runnable() {
@@ -768,7 +904,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						try {
 							SAXParserFactory factory = SAXParserFactory.newInstance();
 							SAXParser parser = factory.newSAXParser();
-							parser.parse(NetworkUtils.getInputStream(new URL("https://www.aptoide.com/webservices/listUserBasedApks/254faee9ab502a9d31f2c5a5a7cc55905e1b7dcb4ff2bcb79ec85/10/xml"), null, null, mContext),new DefaultHandler(){
+							String token = Login.getToken(mContext);
+							parser.parse(NetworkUtils.getInputStream(new URL("https://www.aptoide.com/webservices/listUserBasedApks/"+token+"/10/xml"), null, null, mContext),new DefaultHandler(){
 								
 								ViewApk apk = new ViewApk();
 								StringBuilder sb = new StringBuilder();
@@ -814,6 +951,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			}).start();
 		}
 	};
+	private BroadcastReceiver redrawInstalledReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			installedLoader.forceLoad();
+			updatesLoader.forceLoad();
+		}
+	};
+	protected Order order;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -824,9 +970,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		Intent i = new Intent(mContext, MainService.class);
 		startService(i);
 		bindService(i, conn, Context.BIND_AUTO_CREATE);
+		
+		order = Order.values()[PreferenceManager.getDefaultSharedPreferences(mContext).getInt("order_list", 0)];
+		
 		registerReceiver(updatesReceiver, new IntentFilter("update"));
 		registerReceiver(statusReceiver, new IntentFilter("status"));
 		registerReceiver(loginReceiver , new IntentFilter("login"));
+		registerReceiver(redrawInstalledReceiver , new IntentFilter("pt.caixamagica.aptoide.REDRAW"));
 		setContentView(R.layout.activity_aptoide);
 		TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
 		ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
@@ -953,7 +1103,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				startActivity(i);
 			}
 		});
-		
+		findViewById(R.id.btsearch).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				onSearchRequested();
+			}
+		});
 		updatesView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -973,14 +1129,17 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		views.add(availableView);
 		views.add(installedView);
 		views.add(updatesView);
-
+		editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
 		pager.setAdapter(new ViewPagerAdapter(mContext, views));
-		indicator.setViewPager(pager, 1);
+		indicator.setViewPager(pager);
 		refreshAvailableList(true);
 		getInstalled();
 		getAllRepoStatus();
 		loadFeatured();
 		addBreadCrumb("Stores", ListDepth.STORES);
+		
+		
+		
 
 	}
 
@@ -1064,7 +1223,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			menu.add(0, 1, 0, "reparse");
 		}
 		menu.add(0, 0, 0, "remove");
-
+		
 	}
 
 	@Override
@@ -1082,14 +1241,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					case CATEGORY1:
 						return db.getCategory1(store_id, joinStores_boolean);
 					case CATEGORY2:
-						return db.getCategory2(category_id, store_id,
-								joinStores_boolean);
+						return db.getCategory2(category_id, store_id, joinStores_boolean);
 					case APPLICATIONS:
-						return db.getApps(category2_id, store_id,
-								joinStores_boolean);
+						return db.getApps(category2_id, store_id, joinStores_boolean, order);
 					case TOPAPPS:
-						return db.getTopApps(category_id, store_id,
-								joinStores_boolean);
+						return db.getTopApps(category_id, store_id, joinStores_boolean);
 					case LATEST_LIKES:
 						return new LatestLikesComments(store_id,db,mContext).getLikes();
 					case LATEST_COMMENTS:
@@ -1108,7 +1264,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public Cursor loadInBackground() {
-					return db.getInstalledApps();
+					return db.getInstalledApps(order);
 				}
 			};
 			return a;
@@ -1117,9 +1273,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public Cursor loadInBackground() {
-					return db.getUpdates();
+					return db.getUpdates(order);
 				}
 			};
+			
 			return a;
 		default:
 			break;
@@ -1133,6 +1290,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		unbindService(conn);
 		unregisterReceiver(updatesReceiver);
 		unregisterReceiver(statusReceiver);
+		unregisterReceiver(redrawInstalledReceiver);
+		unregisterReceiver(loginReceiver);
 		super.onDestroy();
 	}
 
@@ -1215,12 +1374,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		alertDialog = new AlertDialog.Builder(mContext)
 				.setView(alertDialogView).create();
 		alertDialog.setTitle(getString(R.string.new_store));
-		alertDialog.setButton(Dialog.BUTTON_NEGATIVE,
-				getString(R.string.new_store), addRepoListener);
 		alertDialog.setButton(Dialog.BUTTON_POSITIVE,
+				getString(R.string.new_store), addRepoListener);
+		alertDialog.setButton(Dialog.BUTTON_NEGATIVE,
 				getString(R.string.search_for_stores), searchStoresListener);
 		((EditText) alertDialogView.findViewById(R.id.edit_uri))
-				.setText("savou.store.aptoide.com");
+				.setText("apps.store.aptoide.com");
 		alertDialog.show();
 	}
 
@@ -1242,7 +1401,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		public AvailableListAdapter(Context context, Cursor c, int flags) {
 			super(context, c, flags);
-			loader = new ImageLoader(mContext, db);
+			loader = ImageLoader.getInstance(context, db);
 		}
 
 		@Override
@@ -1360,5 +1519,75 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		RatingBar rating;
 		TextView downloads;
 	}
+	Editor editor ;
+	private OnCheckedChangeListener adultCheckedListener = new OnCheckedChangeListener() {
+		
+		ProgressDialog pd;
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+			if (isChecked) {
+				AlertDialog ad = new AlertDialog.Builder(mContext).create();
+				ad.setMessage("Are you at least 21 years old?");
+				ad.setButton(Dialog.BUTTON_POSITIVE,getString(R.string.btn_yes), new Dialog.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						editor.putBoolean("matureChkBox", false);
+						editor.commit();
+						pd = new ProgressDialog(mContext);
+						pd.setMessage(getString(R.string.please_wait));
+						pd.show();
+						new Thread(new Runnable() {
+							
+							public void run() {
+//								loadUItopapps();
+								redrawAll();
+								runOnUiThread(new Runnable() {
+									
+									public void run() {
+										pd.dismiss();
+										
+									}
+								});
+								
+							}
+						}).start();
+					}
+				});
+				ad.setButton(Dialog.BUTTON_NEGATIVE,getString(R.string.btn_no), new Dialog.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						((ToggleButton) featuredView.findViewById(R.id.toggleButton1)).setChecked(false);
+//						if(adult!=null){
+//							adult.setChecked(false);
+//						}
+						
+					}
+				});
+				ad.show();
+			} else {
+				editor.putBoolean("matureChkBox", true);
+				editor.commit();
+				pd = new ProgressDialog(mContext);
+				pd.setMessage(getString(R.string.please_wait));
+				pd.show();
+				new Thread(new Runnable() {
+					
+					public void run() {
+//						loadUItopapps();
+						redrawAll();
+						runOnUiThread(new Runnable() {
+							
+							public void run() {
+								pd.dismiss();
+								
+							}
+						});
+						
+					}
+				}).start();
+			}
+			
+		}
+	};
 
 }

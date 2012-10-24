@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -61,6 +62,7 @@ public class ApkInfo extends FragmentActivity implements
 	Category category;
 	Activity context;
 	boolean spinnerInstaciated = false;
+	CheckBox scheduledDownloadChBox;
 	private ViewDownloadManagement download;
 	
 	
@@ -72,7 +74,9 @@ public class ApkInfo extends FragmentActivity implements
 		context = this;
 		db = Database.getInstance(this);
 		id = getIntent().getExtras().getLong("_id");
+		scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
 		loadElements(id);
+		
 		if(category.equals(Category.INFOXML)){
 			spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
 			spinner.setVisibility(View.VISIBLE);
@@ -144,7 +148,7 @@ public class ApkInfo extends FragmentActivity implements
 					quickAction.show(view);
 				}
 			});
-			setupQuickActions();
+			setupQuickActions(false);
 			download.registerObserver(viewApk.hashCode(),handler);
 			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 			findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
@@ -195,6 +199,12 @@ public class ApkInfo extends FragmentActivity implements
 			@Override
 			public void onClick(View v) {
 				
+				if(scheduledDownloadChBox.isChecked()){
+					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
+							.getExtras().getBoolean("top", false)))
+							+ viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
+				}else{
+				
 				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
 				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 					((ApplicationServiceManager)getApplication()).installApp(cache);
@@ -210,12 +220,13 @@ public class ApkInfo extends FragmentActivity implements
 							quickAction.show(view);
 						}
 					});
-					setupQuickActions();
+					setupQuickActions(false);
 					download.registerObserver(viewApk.hashCode(),handler);
 					download.startDownload();
 					findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 					findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
 					findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
+				}
 				}
 			}
 		});
@@ -304,6 +315,7 @@ public class ApkInfo extends FragmentActivity implements
 				} catch (Exception e){
 					e.printStackTrace();
 				}
+				
 			}
 		}).start();
 		
@@ -314,16 +326,37 @@ public class ApkInfo extends FragmentActivity implements
 		
 		public void handleMessage(Message msg) {
 			System.out.println(EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what).name());
+			ProgressBar progress;
 			switch (EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what)) {
-			case UPDATE:
+			
 			case PAUSED:
-			case RESUMING:
-				ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
+				 progress = (ProgressBar) findViewById(R.id.downloading_progress);
 				progress.setIndeterminate(false);
 				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
 				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+				setupQuickActions(true);
+				break;
+				
+			case RESUMING:
+				 progress = (ProgressBar) findViewById(R.id.downloading_progress);
+				progress.setIndeterminate(false);
+				progress.setProgress(download.getProgress());
+				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+				setupQuickActions(false);
+				break;
+			case UPDATE:
+				
+				 progress = (ProgressBar) findViewById(R.id.downloading_progress);
+				progress.setIndeterminate(false);
+				progress.setProgress(download.getProgress());
+				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+				
 				break;
 			case FAILED:
 				Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
@@ -396,14 +429,19 @@ public class ApkInfo extends FragmentActivity implements
 
 
 	private QuickAction quickAction;
-	private void setupQuickActions(){
+	private void setupQuickActions(boolean playButton){
 		quickAction  = new QuickAction(context);
 		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(R.drawable.ic_media_play));
 		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(R.drawable.ic_media_pause));
 		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
 		
-		quickAction.addActionItem(playItem);
-		quickAction.addActionItem(pauseItem);
+		if(playButton){
+			quickAction.addActionItem(playItem);
+		}else{
+			quickAction.addActionItem(pauseItem);
+		}
+		
+		
 		quickAction.addActionItem(stopItem);
 
 		quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
