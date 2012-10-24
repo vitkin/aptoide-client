@@ -40,14 +40,14 @@ public class ImageLoader {
     FileCache fileCache;
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService photoLoadThreadPool; 
-    Context context;
+    static Context context;
     boolean download = true;
-    private Database db;
+    private static Database db;
 	private boolean top = false;
 	
     public ImageLoader(Context context, Database db){
         fileCache=new FileCache(context);
-        photoLoadThreadPool=Executors.newFixedThreadPool(1);
+        photoLoadThreadPool=Executors.newFixedThreadPool(5);
         SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
         ConnectivityManager netstate = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         this.db=db;
@@ -69,9 +69,8 @@ public class ImageLoader {
         Bitmap bitmap=memoryCache.get(url);
         if(bitmap!=null){
             imageView.setImageBitmap(bitmap);
+        }else {
         	
-        }else
-        {
         	queuePhoto(l,url, imageView,hashCode);
             imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
@@ -86,8 +85,11 @@ public class ImageLoader {
     
     private Bitmap getBitmap(String url,String hash) 
     {
+    	System.out.println(fileCache);
+    	
     	File f=fileCache.getFile(hash);
     	System.out.println("hash : "+hash);
+    	
         //from SD cache
         if(f.exists()){
         	Bitmap b = decodeFile(f);	
@@ -305,6 +307,21 @@ public class ImageLoader {
             Activity a=(Activity)photoToLoad.imageView.getContext();
             a.runOnUiThread(bd);
         }
+    }
+    
+    static ImageLoader imageLoader;
+    
+    public static ImageLoader getInstance(Context context, Database db){
+    	
+    	if(imageLoader==null){
+    		imageLoader = new ImageLoader(context, db);
+    	}
+    	return imageLoader;
+    	
+    }
+    
+    public static void reload(){
+    	imageLoader = new ImageLoader(context, db);
     }
     
     

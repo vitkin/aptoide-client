@@ -24,6 +24,11 @@ public class ViewApk {
 	private int appHashId = 0;
 	private String featureGraphic;
 	private boolean highlighted = false;
+	private String date;
+	private int age = 0;
+	private int minScreen= 0;
+	private String minSdk = "0";
+	private String minGlEs = "0";
 	
 	/**
 	 * 
@@ -184,6 +189,11 @@ public class ViewApk {
 		this.category2 = "Other";
 		this.iconPath="";
 		this.path="";
+		this.date="";
+		this.age=0;
+		this.minGlEs="0";
+		this.minScreen=0;
+		this.minSdk="0";
 		screenshots.clear();
 	}
 
@@ -255,6 +265,46 @@ public class ViewApk {
 
 	public void setHighlighted(boolean highlighted) {
 		this.highlighted = highlighted;
+	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public void setAge(int ordinal) {
+		this.age=ordinal;
+	}
+	
+	public int getAge(){
+		return age;
+	}
+
+	public int getMinScreen() {
+		return minScreen;
+	}
+
+	public void setMinScreen(int minScreen) {
+		this.minScreen = minScreen;
+	}
+
+	public String getMinSdk() {
+		return minSdk;
+	}
+
+	public void setMinSdk(String minSdk) {
+		this.minSdk = minSdk;
+	}
+
+	public String getMinGlEs() {
+		return minGlEs;
+	}
+
+	public void setMinGlEs(String minGlEs) {
+		this.minGlEs = minGlEs;
 	}
 
 }

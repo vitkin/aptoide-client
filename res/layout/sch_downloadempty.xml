@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:baselineAligned="false"
+    android:orientation="vertical" >
+
+    <!-- Green Bar -->
+
+   <include layout="@layout/actionbar"/>
+   
+    <RelativeLayout
+        android:id="@+id/content_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:background="#edece9"
+        android:gravity="top"
+        android:padding="10dp" >
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/sch_down"
+            android:layout_below="@+id/content_layout"
+            android:background="@drawable/border_background_normal"
+            android:gravity="bottom"
+            android:padding="5dp" >
+
+            <ListView
+                android:id="@android:id/list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:cacheColorHint="@android:color/transparent" >
+            </ListView>
+
+            <TextView
+                android:id="@android:id/empty"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_alignTop="@android:id/list"
+                android:gravity="center_vertical|center_horizontal"
+                android:text="@string/no_sch_downloads"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textColor="#4f4f4f" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/sch_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp" />
+    </RelativeLayout>
+
+</LinearLayout>

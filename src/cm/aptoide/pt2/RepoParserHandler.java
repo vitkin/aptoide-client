@@ -53,6 +53,17 @@ public class RepoParserHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("date", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDate(sb.toString());
+			}
+		});
+		
 		elements.put("del", new ElementHandler() {
 
 
@@ -218,17 +229,6 @@ public class RepoParserHandler extends DefaultHandler {
 			}
 		});
 
-		elements.put("date", new ElementHandler() {
-			public void startElement(Attributes atts) throws SAXException {
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				
-			}
-		});
-
 		elements.put("md5h", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -302,7 +302,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
 			}
 		});
 
@@ -313,7 +313,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				apk.setMinSdk(sb.toString());
 			}
 		});
 		
@@ -339,7 +339,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				apk.setMinScreen(Filters.Screens.lookup(sb.toString()).ordinal());
 			}
 		});
 		
@@ -350,7 +350,7 @@ public class RepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+				apk.setMinGlEs(sb.toString());
 			}
 
 		});

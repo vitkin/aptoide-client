@@ -22,7 +22,7 @@ public class InstalledAdapter extends CursorAdapter {
 
 	public InstalledAdapter(Context context, Cursor c, int flags,Database db) {
 		super(context, c, flags);
-		loader = new ImageLoader(context, db);
+		loader = ImageLoader.getInstance(context, db);
 	}
 
 	@Override

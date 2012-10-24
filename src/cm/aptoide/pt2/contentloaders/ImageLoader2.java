@@ -216,5 +216,16 @@ public class ImageLoader2 {
         memoryCache.clear();
         fileCache.clear();
     }
+    
+    static ImageLoader2 imageLoader;
+    
+    public static ImageLoader2 getInstance(Context context){
+    	
+    	if(imageLoader==null){
+    		imageLoader=new ImageLoader2(context);
+    	}
+    	
+    	return imageLoader;
+    }
 
 }

@@ -226,6 +226,50 @@ public class TopRepoParserHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("minSdk", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMinSdk(sb.toString());
+			}
+		});
+		
+		elements.put("minGles", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMinGlEs(sb.toString());
+			}
+		});
+		
+		elements.put("minScreen", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setMinScreen(Filters.Screens.lookup(sb.toString()).ordinal());
+			}
+		});
+		
+		elements.put("age", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
+			}
+		});
+		
 		
 	}
 	

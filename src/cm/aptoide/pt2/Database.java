@@ -9,9 +9,11 @@ import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.preference.PreferenceManager;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.webservices.login.Login;
 
@@ -55,9 +57,14 @@ public class Database {
 			values.put("vercode", apk.getVercode());
 			values.put("md5", apk.getMd5());
 			values.put("repo_id", apk.getRepo_id());
+			values.put("date",apk.getDate());
 			values.put("category2", categories2.get(apk.getCategory2()));
 			values.put("rating", apk.getRating());
 			values.put("path", apk.getPath());
+			values.put("minscreen", apk.getMinScreen());
+			values.put("minsdk", apk.getMinSdk());
+			values.put("mingles", apk.getMinGlEs());
+			values.put("mature", apk.getAge());
 			database.insert("apk", null, values);
 			i++;
 			if(i%300==0){
@@ -160,15 +167,52 @@ public class Database {
 		database.endTransaction();
 	}
 
-	public Cursor getApps(long category2_id, long store, boolean mergeStores) {
+	public Cursor getApps(long category2_id, long store, boolean mergeStores, Order order) {
 		Cursor c = null;
+		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		try{
-			if(mergeStores){
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by apkid order by name collate nocase",new String[]{category2_id+""});
-			}else{
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) group by apkid order by name collate nocase",new String[]{store+"",category2_id+""});
+			
+			String order_string = "";
+			switch (order) {
+			
+			case NAME:
+				order_string = "order by name collate nocase";
+				break;
+			case DATE:
+				order_string = "order by date";
+				break;
+			case DOWNLOADS:
+				order_string = "order by downloads desc";
+				break;
+			case RATING:
+				order_string = "order by rating desc";
+				break;
+			default:
+				break;
 			}
-			System.out.println("getapps " + "repo_id ="+store +  " category " + category2_id);
+			
+			String filter = "";
+			if(sPref.getBoolean("hwspecsChkBox", true)){
+				filter = filter +" and minscreen <= " + HWSpecifications.getScreenSize(context) +
+						" and minsdk <=  " + HWSpecifications.getSdkVer() +
+						" and mingles <= " +HWSpecifications.getEsglVer(context);
+			}
+			
+			if(sPref.getBoolean("matureChkBox", false)){
+				filter = filter + " and mature <= 0"; 
+			}
+			
+			if(mergeStores){
+				
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by apkid "+order_string,new String[]{category2_id+""});
+				
+			}else{
+				
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) "+filter+" group by apkid "+order_string,new String[]{store+"",category2_id+""});
+				
+			}
+			
+			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -521,20 +565,62 @@ public class Database {
 		return apkids;
 	}
 
-	public Cursor getInstalledApps() {
+	public Cursor getInstalledApps(Order order) {
 		Cursor c = null;
 		try{
-			c = database.rawQuery("select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid group by a.name order by a.name",null);
+			
+			
+			String query = "select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid group by a.apkid";
+			
+			
+			switch (order) {
+			
+			case NAME:
+				query = query + " order by b.name collate nocase";
+				break;
+			case DATE:
+				query = query + " order by b.date";
+				break;
+			case DOWNLOADS:
+				query = query + " order by b.downloads desc";
+				break;
+			case RATING:
+				query = query + " order by b.rating desc";
+				break;
+			default:
+				break;
+			}
+			
+			c = database.rawQuery(query,null);
 		}catch (Exception e){
 			e.printStackTrace();
 		}
 		return c;
 	}
 
-	public Cursor getUpdates() {
+	public Cursor getUpdates(Order order) {
 		Cursor c = null;
 		try{
-			c=database.rawQuery("select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by a.apkid order by b.name", null); 
+			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by a.apkid" ;
+			
+			switch (order) {
+			case NAME:
+				query = query + " order by b.name collate nocase";
+				break;
+			case DATE:
+				query = query + " order by b.date";
+				break;
+			case DOWNLOADS:
+				query = query + " order by b.downloads desc";
+				break;
+			case RATING:
+				query = query + " order by b.rating desc";
+				break;
+			default:
+				break;
+			}
+			
+			c=database.rawQuery(query, null); 
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -587,6 +673,10 @@ public class Database {
 			values.put("size", apk.getSize());
 			values.put("rating", apk.getRating());
 			values.put("path", apk.getPath());
+			values.put("minscreen", apk.getMinScreen());
+			values.put("minsdk", apk.getMinSdk());
+			values.put("mingles", apk.getMinGlEs());
+			values.put("mature", apk.getAge());
 			return_long = database.insert("dynamic_apk", null, values);
 			i++;
 			database.yieldIfContendedSafely();
@@ -606,10 +696,23 @@ public class Database {
 	public Cursor getTopApps(long category_id, long store_id, boolean joinStores_boolean) {
 		Cursor c = null;
 		try{
+			String filter="";
+			SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(context);
+			
+			if(sPref.getBoolean("hwspecsChkBox", true)){
+				filter = filter +" and minscreen <= " + HWSpecifications.getScreenSize(context) +
+						" and minsdk <=  " + HWSpecifications.getSdkVer() +
+						" and mingles <= " +HWSpecifications.getEsglVer(context);
+			}
+			
+			if(sPref.getBoolean("matureChkBox", false)){
+				filter = filter + " and mature <= 0"; 
+			}
+			
 			if(joinStores_boolean){
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from dynamic_apk as a where category1 = ?",new String[]{category_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from dynamic_apk as a where category1 = ? "+filter,new String[]{category_id+""});
 			}else{
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from dynamic_apk as a where repo_id = ? and category1 = ?",new String[]{store_id+"",category_id+""});
+				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from dynamic_apk as a where repo_id = ? and category1 = ? "+filter,new String[]{store_id+"",category_id+""});
 			}
 			System.out.println("getapps " + "repo_id ="+store_id +  " category " + category_id);
 		}catch(Exception e){
@@ -793,6 +896,10 @@ public class Database {
 			values.put("icon",apk.getIconPath());
 			values.put("parent_apkid", hashCode);
 			apk.setId(i);
+			values.put("minscreen", apk.getMinScreen());
+			values.put("minsdk", apk.getMinSdk());
+			values.put("mingles", apk.getMinGlEs());
+			values.put("mature", apk.getAge());
 			insertScreenshots(apk, category);
 			
 			database.insert("itembasedapk", null, values);
@@ -806,10 +913,23 @@ public class Database {
 		Cursor c = null;
 		Cursor d = null;
 		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String,String>>();
+		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(context);
+		String filter = ""; 
 		
+		
+		if(sPref.getBoolean("hwspecsChkBox", true)){
+			filter = filter +" and minscreen <= " + HWSpecifications.getScreenSize(context) +
+					" and minsdk <=  " + HWSpecifications.getSdkVer() +
+					" and mingles <= " +HWSpecifications.getEsglVer(context);
+		}
+		
+		if(sPref.getBoolean("matureChkBox", false)){
+			filter = filter + " and mature <= 0"; 
+		}
 		
 		try {
-			c = database.query("itembasedapk", new String[]{"name","icon","itembasedapkrepo_id","_id","rating","apkid","vercode"}, "parent_apkid = ?", new String[]{apkid}, null, null, null);
+			c = database.query("itembasedapk", new String[]{"name","icon","itembasedapkrepo_id","_id","rating","apkid","vercode"}, "parent_apkid = ? " +filter, 
+					new String[]{apkid}, null, null, null);
 			
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				HashMap<String, String> value = new HashMap<String, String>();
@@ -845,6 +965,8 @@ public class Database {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally{
+			c.close();
 		}
 		return return_string;
 	}
@@ -976,6 +1098,8 @@ public class Database {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			c.close();
 		}
 		
 		return return_string;
@@ -1090,8 +1214,66 @@ public class Database {
 		return value;
 	}
 
+	public Cursor getScheduledDownloads() {
+		
+		Cursor c = null;
+		
+		try {
+			c= database.query("scheduled", null, null, null, null, null, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return c;
+	}
+	
+	public void insertScheduledDownload(String apkid, int vercode, String vername, String remotePath,String name, String md5) {
+		
+		ContentValues values = new ContentValues();
+		values.put("name",name);
+		values.put("apkid", apkid);
+		values.put("md5", md5);
+		values.put("vercode", vercode);
+		values.put("vername", vername);
+		values.put("remotepath", remotePath);
+		database.insert("scheduled", null, values);
+		
+	}
 
+	public void deleteScheduledDownload(String planet) {
+		database.delete("scheduled", "_id = ?", new String[]{planet});
+	}
+	
+	public void deleteScheduledDownload(String apkid, String versionName) {
+		database.delete("scheduled", "apkid = ? and vername = ?", new String[]{apkid,versionName});
+	}
 
+	public void insertInstalled(String apkid, int versionCode, String versionName, String appName) {
+		ContentValues values = new ContentValues();
+		values.put("apkid", apkid);
+		values.put("vercode", versionCode);
+		values.put("vername", versionName);
+		values.put("name", appName);
+		database.insert("installed", null, values);
+	}
+
+	public void deleteInstalled(String apkid) {
+		database.delete("installed", "apkid = ?", new String[]{apkid});
+	}
+
+	public Cursor getSearch(String searchQuery) {
+		
+		String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode from apk as b where (b.name LIKE '%"+searchQuery+"%' OR b.apkid LIKE '%"+searchQuery+"%')";
+		
+		Cursor c = null;
+		try {
+			c= database.rawQuery(query, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return c;
+	}
 	
 }
 
