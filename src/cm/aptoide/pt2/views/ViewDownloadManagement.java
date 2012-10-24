@@ -126,7 +126,7 @@ public class ViewDownloadManagement {
 	}
 	
 	public void updateProgress(ViewDownload update){
-		Log.d("Aptoide-ViewDownloadManagement", "update: "+update+" downloadStatus: "+update.getStatus());
+		Log.d("Aptoide-ViewDownloadManagement", "*update* "+update+" downloadStatus: "+update.getStatus());
 		this.viewDownload.setProgressTarget(update.getProgressTarget());
 		this.viewDownload.setProgress(update.getProgress());
 		this.viewDownload.setSpeedInKBps(update.getSpeedInKBps());

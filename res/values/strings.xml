@@ -112,6 +112,7 @@
     <string name="update_done_msg1">Stores updated successfully.</string>
     
     <string name="about_txt1">Your package installer to Android phone.\n</string>
+    <string name="description">@string/about_txt1</string>
         
     <string name="about_site">Home: </string>
     
@@ -214,7 +215,8 @@
     <string name="paused">paused</string>
     <string name="stopped">stopped</string>
     
-    <string name="timeout">timeout</string>
+    <string name="timeout">network connection timeout</string>
+    <string name="connection_error">no network connection</string>
     <string name="apk_not_found">Apk not found</string>
     <string name="invalid_apk">Invalid apk</string>
     <string name="server_error">Server error</string>
