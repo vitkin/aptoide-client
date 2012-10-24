@@ -32,6 +32,7 @@ import android.content.Context;
 public enum EnumDownloadFailReason {
 	NO_REASON,
 	TIMEOUT,
+	CONNECTION_ERROR,
 	NOT_FOUND,
 	MD5_CHECK_FAILED;
 	
@@ -43,6 +44,8 @@ public enum EnumDownloadFailReason {
 		switch (this) {
 			case TIMEOUT:
 				return  context.getString(R.string.timeout);
+			case CONNECTION_ERROR:
+				return  context.getString(R.string.connection_error);
 			case NOT_FOUND:
 				return  context.getString(R.string.apk_not_found);
 			case MD5_CHECK_FAILED:

@@ -43,6 +43,7 @@ import android.os.PowerManager.WakeLock;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.RemoteViews;
+import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.services.AIDLServiceDownload;
 import cm.aptoide.pt2.services.ServiceDownload;
 import cm.aptoide.pt2.util.Constants;
@@ -51,6 +52,7 @@ import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownload;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
+import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
 
 /**
  * ApplicationServiceManager, manages interaction between interface classes and services
@@ -81,7 +83,8 @@ public class ApplicationServiceManager extends Application {
 	
 	private ExecutorService cachedThreadPool;
 	
-	private NotificationManager notificationManager;
+	private ManagerPreferences managerPreferences;
+	private NotificationManager managerNotification;
 	private WakeLock keepScreenOn;
 
 	private AIDLServiceDownload serviceDownloadCaller = null;
@@ -178,6 +181,8 @@ public class ApplicationServiceManager extends Application {
 			
 			cachedThreadPool = Executors.newCachedThreadPool();
 			
+			managerPreferences = new ManagerPreferences(getApplicationContext());
+			
 			makeSureServiceDownloadIsRunning();
 			isRunning = true;
 		}
@@ -221,36 +226,40 @@ public class ApplicationServiceManager extends Application {
 		return connectionAvailable;
 	}
 	
-//	public boolean isPermittedConnectionAvailable(ViewIconDownloadPermissions permissions){
-//		boolean connectionAvailable = false;
-//		if(permissions.isWiFi()){
-//			try {
-//				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+connectionAvailable);
-//			} catch (Exception e) { }
-//		} 
-//		if(permissions.isWiMax()){
-//			try {
-//				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+connectionAvailable);
-//			} catch (Exception e) { }
-//		} 
-//		if(permissions.isMobile()){
-//			try {
-//				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+connectionAvailable);
-//			} catch (Exception e) { }
-//		}
-//		if(permissions.isEthernet()){
-//			try {
-//				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+connectionAvailable);
-//			} catch (Exception e) { }
-//		}
-//
-//		Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
-//		return connectionAvailable;
-//	}
+	public boolean isPermittedConnectionAvailable(ViewIconDownloadPermissions permissions){
+		boolean connectionAvailable = false;
+		if(permissions.isWiFi()){
+			try {
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+connectionAvailable);
+			} catch (Exception e) { }
+		} 
+		if(permissions.isWiMax()){
+			try {
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+connectionAvailable);
+			} catch (Exception e) { }
+		} 
+		if(permissions.isMobile()){
+			try {
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+connectionAvailable);
+			} catch (Exception e) { }
+		}
+		if(permissions.isEthernet()){
+			try {
+				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+connectionAvailable);
+			} catch (Exception e) { }
+		}
+
+		Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
+		return connectionAvailable;
+	}
+	
+	public boolean isPermittedConnectionAvailable(){
+		return isPermittedConnectionAvailable(managerPreferences.getIconDownloadPermissions());
+	}
 	
 
 	private void setNotification() {
@@ -285,10 +294,10 @@ public class ApplicationServiceManager extends Application {
 //    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
 
 
-		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		managerNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
     	// Send the notification.
     	// We use the position because it is a unique number.  We use it later to cancel.
-    	notificationManager.notify(globaDownloadStatus.hashCode(), notification); 
+    	managerNotification.notify(globaDownloadStatus.hashCode(), notification); 
     	
 //		Log.d("Aptoide-ApplicationServiceManager", "Notification Set");
 	}
@@ -296,7 +305,7 @@ public class ApplicationServiceManager extends Application {
 
 	private void dismissNotification(){
 		try {
-			notificationManager.cancel(globaDownloadStatus.hashCode());
+			managerNotification.cancel(globaDownloadStatus.hashCode());
 		} catch (Exception e) { }
 	}
 	
@@ -366,34 +375,36 @@ public class ApplicationServiceManager extends Application {
 		if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 			installApp(cache);
 		}else{
-			if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
-				ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
-			}else switch (ongoingDownloads.get(viewDownload.hashCode()).getDownloadStatus()) {
-				case SETTING_UP:
-				case PAUSED:
-				case RESUMING:
-				case RESTARTING:					
-					break;
-	
-				default:
-					return;
-			}
-			
-			cachedThreadPool.execute(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						if(viewDownload.isLoginRequired()){
-							serviceDownloadCaller.callDownloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
-						}else{
-							serviceDownloadCaller.callDownloadApk(viewDownload.getDownload(), viewDownload.getCache());
-						}
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
+//			if(isPermittedConnectionAvailable()){
+				if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
+					ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
+				}else switch (ongoingDownloads.get(viewDownload.hashCode()).getDownloadStatus()) {
+					case SETTING_UP:
+					case PAUSED:
+					case RESUMING:
+					case RESTARTING:					
+						break;
+		
+					default:
+						return;
 				}
-			});
-			updateGlobalProgress();
+				
+				cachedThreadPool.execute(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							if(viewDownload.isLoginRequired()){
+								serviceDownloadCaller.callDownloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin());
+							}else{
+								serviceDownloadCaller.callDownloadApk(viewDownload.getDownload(), viewDownload.getCache());
+							}
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				updateGlobalProgress();
+//			}
 		}
 	}
 	

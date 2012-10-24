@@ -335,7 +335,7 @@ public class ApkInfo extends FragmentActivity implements
 				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+//				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				setupQuickActions(true);
 				break;
 				
@@ -345,7 +345,7 @@ public class ApkInfo extends FragmentActivity implements
 				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+//				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				setupQuickActions(false);
 				break;
 			case UPDATE:
@@ -355,10 +355,11 @@ public class ApkInfo extends FragmentActivity implements
 				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+//				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				
 				break;
 			case FAILED:
+				Log.d("ApkInfo-DownloadListener", "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()));
 				Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);

@@ -21,6 +21,7 @@ package cm.aptoide.pt2.services;
 
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -35,6 +36,9 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import android.app.Service;
 import android.content.Intent;
@@ -47,6 +51,7 @@ import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
 import cm.aptoide.pt2.AIDLDownloadManager;
+import cm.aptoide.pt2.ApplicationServiceManager;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt2.exceptions.AptoideExceptionNotFound;
@@ -211,7 +216,19 @@ public class ServiceDownload extends Service {
     		
     		try{
     			fileOutputStream = new FileOutputStream(localPath, !overwriteCache);
+    			
     			DefaultHttpClient httpClient = new DefaultHttpClient();
+        		HttpParams httpParameters = new BasicHttpParams();
+        		// Set the timeout in milliseconds until a connection is established.
+        		// The default value is zero, that means the timeout is not used. 
+        		int timeoutConnection = 300000;
+        		HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
+        		// Set the default socket timeout (SO_TIMEOUT) 
+        		// in milliseconds which is the timeout for waiting for data.
+        		int timeoutSocket = 30000;
+        		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
+        		httpClient.setParams(httpParameters);
+        		
     			HttpGet httpGet = new HttpGet(remotePath);
     			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
     			Log.d("Aptoide-download","downloading with: "+NetworkUtils.getUserAgentString(getApplicationContext()));
@@ -313,7 +330,7 @@ public class ServiceDownload extends Service {
     					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
 	    				
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
-	    				/** in percentage */
+	    				/** trigger in percentage */
 	    				int progressTrigger = 5; 
 	    				int triggeredLevel = 0;
 	    				int bytesRead;
@@ -349,9 +366,8 @@ public class ServiceDownload extends Service {
 								} catch (RemoteException e) {
 									e.printStackTrace();
 								}
-		    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
+//		    					Log.d("Aptoide-download", "*downloading* id: "+cache.hashCode()+" "+download);
 	    					}
-//		    					Log.d("Aptoide-download", "download : "+cache.hashCode()+" "+download);
 	    				}
 	    				Log.d("Aptoide-download","Download done! Name: "+download.getRemotePathTail()+" localPath: "+localPath);
 	    				fileOutputStream.flush();
@@ -375,7 +391,21 @@ public class ServiceDownload extends Service {
 						return;
 				}
     				
-    		}catch (Exception e) {
+    		}catch (SocketTimeoutException e) {
+    			try {
+    				fileOutputStream.flush();
+    				fileOutputStream.close();	
+    			} catch (Exception e1) { }		
+    			e.printStackTrace();
+    			download.setStatus(EnumDownloadStatus.FAILED);
+    			download.setFailReason(EnumDownloadFailReason.TIMEOUT);
+				try {
+					downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
+				} catch (RemoteException e4) {
+					e4.printStackTrace();
+				}
+				return;
+			}catch (Exception e) {
     			try {
     				fileOutputStream.flush();
     				fileOutputStream.close();	
@@ -383,6 +413,9 @@ public class ServiceDownload extends Service {
     			e.printStackTrace();
     			if(cache.getFileLength() > 0){
     				download.setStatus(EnumDownloadStatus.FAILED);
+    				if(download.getFailReason().equals(EnumDownloadFailReason.NO_REASON) && !((ApplicationServiceManager)getApplication()).isPermittedConnectionAvailable()){
+    					download.setFailReason(EnumDownloadFailReason.CONNECTION_ERROR);
+    				}
 					try {
 						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
 					} catch (RemoteException e4) {

@@ -187,7 +187,7 @@ public class ViewDownload implements Parcelable{
 
 	@Override
 	public String toString() {
-		return " remote: "+getRemotePathTail()+" progress: "+getProgressPercentage()+" speed: "+speedInKbps;
+		return " progress: "+getProgressPercentage()+" speed: "+speedInKbps+" remote: "+getRemotePathTail();
 	}
 	
 	

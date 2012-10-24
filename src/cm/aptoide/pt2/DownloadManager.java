@@ -65,12 +65,14 @@ public class DownloadManager extends Activity {
 
 				case RESTARTING:
 				case FAILED:
+					downloadingAdapter.updateList(serviceManager.getDownloadsOngoing());
 					notDownloadedAdapter.updateList(serviceManager.getDownloadsFailed());
-					if(notDownloadedAdapter.isEmpty()){
-						notDownloaded.setVisibility(View.GONE);
+					if(downloadingAdapter.isEmpty()){
+						downloading.setVisibility(View.GONE);
 					}else{
-						notDownloaded.setVisibility(View.VISIBLE);
+						downloading.setVisibility(View.VISIBLE);
 					}
+					notDownloaded.setVisibility(View.VISIBLE);
 					break;
 					
 				case UPDATE:
