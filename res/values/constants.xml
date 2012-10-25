@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Aptoide</string>
     <string name="title_activity_aptoide_stores">Aptoide</string>
+    <string name="email_encoding">message/rfc822</string>
+    <string name="ip_blacklisted_email_contact">ipblacklist@aptoide.com</string>
 </resources>

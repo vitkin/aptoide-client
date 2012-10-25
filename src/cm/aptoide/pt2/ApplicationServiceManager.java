@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Application;
+import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -47,6 +48,7 @@ import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.services.AIDLServiceDownload;
 import cm.aptoide.pt2.services.ServiceDownload;
 import cm.aptoide.pt2.util.Constants;
+import cm.aptoide.pt2.views.EnumDownloadFailReason;
 import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
@@ -132,7 +134,7 @@ public class ApplicationServiceManager extends Application {
 			ViewDownloadManagement updating = ongoingDownloads.get(appId);
 			updating.updateProgress(update);
 			if(updating.isComplete() || updating.getDownloadStatus().equals(EnumDownloadStatus.STOPPED)
-										   || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
+									 || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
 				ViewDownloadManagement download = ongoingDownloads.remove(appId);
 //				Log.d("ManagerDownloads", "download removed from ongoing: "+download);					
 				if(download.isComplete()){

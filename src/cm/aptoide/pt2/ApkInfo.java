@@ -41,6 +41,7 @@ import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.util.quickaction.ActionItem;
 import cm.aptoide.pt2.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt2.util.quickaction.QuickAction;
+import cm.aptoide.pt2.views.EnumDownloadFailReason;
 import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
@@ -376,7 +377,11 @@ public class ApkInfo extends FragmentActivity implements
 				break;
 			case FAILED:
 				Log.d("ApkInfo-DownloadListener", "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()));
-				Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
+				if(download.getDownload().getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
+					new DialogIpBlacklisted(ApkInfo.this).show();
+				}else{
+					Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
+				}
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);
 				findViewById(R.id.downloading_name).setVisibility(View.GONE);
