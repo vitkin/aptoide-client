@@ -52,6 +52,7 @@ import android.util.Log;
 import android.widget.Toast;
 import cm.aptoide.pt2.AIDLDownloadManager;
 import cm.aptoide.pt2.ApplicationServiceManager;
+import cm.aptoide.pt2.DialogIpBlacklisted;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt2.exceptions.AptoideExceptionNotFound;
@@ -187,15 +188,15 @@ public class ServiceDownload extends Service {
 	    			try {
 	    				download(download, cache, login);
 	    			} catch (Exception e) {
-	    				try {
-	    					download(download, cache, login);
-	    				} catch (Exception e2) {
-	    					try {
-								download(download, cache, login);
-							} catch (Exception e3) {
-//								e3.printStackTrace();
-							}
-	    				}
+//	    				try {
+//	    					download(download, cache, login);
+//	    				} catch (Exception e2) {
+//	    					try {
+//								download(download, cache, login);
+//							} catch (Exception e3) {
+////								e3.printStackTrace();
+//							}
+//	    				}
 	    			}
 	    		}
 	    		ongoingDownloads.remove(cache.hashCode());
@@ -276,14 +277,21 @@ public class ServiceDownload extends Service {
 	    					cache.clearCache();
 	    				}
 	    				download.setFailReason(EnumDownloadFailReason.TIMEOUT);
-	    				throw new TimeoutException();
+	    				throw new TimeoutException(httpStatusCode+" "+httpResponse.getStatusLine().getReasonPhrase());
+					case 403:
+						fileOutputStream.close();
+	    				if(!resuming){
+	    					cache.clearCache();
+	    				}
+	    				download.setFailReason(EnumDownloadFailReason.IP_BLACKLISTED);
+	    				throw new AptoideExceptionDownload(httpStatusCode+" "+httpResponse.getStatusLine().getReasonPhrase());
 					case 404:
 						fileOutputStream.close();
 	    				if(!resuming){
 	    					cache.clearCache();
 	    				}
 	    				download.setFailReason(EnumDownloadFailReason.NOT_FOUND);
-	    				throw new AptoideExceptionNotFound("404 Not found!");
+	    				throw new AptoideExceptionNotFound(httpStatusCode+" "+httpResponse.getStatusLine().getReasonPhrase());
 					case 416:
 						fileOutputStream.close();
 	    				if(!resuming){
@@ -411,7 +419,7 @@ public class ServiceDownload extends Service {
     				fileOutputStream.close();	
     			} catch (Exception e1) { }		
     			e.printStackTrace();
-    			if(cache.getFileLength() > 0){
+//    			if(cache.getFileLength() > 0){
     				download.setStatus(EnumDownloadStatus.FAILED);
     				if(download.getFailReason().equals(EnumDownloadFailReason.NO_REASON) && !((ApplicationServiceManager)getApplication()).isPermittedConnectionAvailable()){
     					download.setFailReason(EnumDownloadFailReason.CONNECTION_ERROR);
@@ -422,8 +430,12 @@ public class ServiceDownload extends Service {
 						e4.printStackTrace();
 					}
 //    				scheduleInstallApp(cache.getId());
+//    			}
+    			if(download.getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
+    				return;
+    			}else{
+    				throw new AptoideExceptionDownload(e);
     			}
-    			throw new AptoideExceptionDownload(e);
     		}
     	}
     }

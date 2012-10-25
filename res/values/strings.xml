@@ -95,8 +95,10 @@
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
     <string name="btn_ok">OK</string>
+    <string name="ok">@string/btn_ok</string>
     <string name="btn_add">Add</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="cancel">@string/btn_cancel</string>
     <string name="btn_done">Done</string>
     <string name="btn_chlog">Changelog</string>
     <string name="btn_search_market">Search Market</string>
@@ -216,11 +218,15 @@
     <string name="stopped">stopped</string>
     
     <string name="timeout">network connection timeout</string>
+    <string name="ip_blacklisted">blacklisted IP</string>
+    <string name="ip_blacklisted_extended">The application was not retrieved. Your network address (IP) is blacklisted in Aptoide servers. To solve the problem, please contact <a href="mailto:ipblacklist@aptoide.com">ipblacklist@aptoide.com</a> </string>
     <string name="connection_error">no network connection</string>
     <string name="apk_not_found">Apk not found</string>
     <string name="invalid_apk">Invalid apk</string>
     <string name="server_error">Server error</string>
-    <string name="retrn">Back</string>
+    <string name="back">Back</string>
+    <string name="contact">Contact</string>
+    <string name="choose_email_client">Choose an Email client:</string>
     
     
 

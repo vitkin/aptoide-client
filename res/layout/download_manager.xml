@@ -87,7 +87,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:text="@string/retrn"
+        android:text="@string/back"
         android:visibility="visible" />
 
 </LinearLayout>

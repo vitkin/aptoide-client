@@ -26,8 +26,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import cm.aptoide.pt2.DialogIpBlacklisted;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.views.EnumDownloadFailReason;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
 
 public class NotDownloadedListAdapter extends BaseAdapter{

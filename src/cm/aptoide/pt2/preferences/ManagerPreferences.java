@@ -63,7 +63,7 @@ public class ManagerPreferences{
 		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
 		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, context.getString(R.string.app_name));
-		Parcelable iconResource = Intent.ShortcutIconResource.fromContext(context, R.drawable.aptoideicon);
+		Parcelable iconResource = Intent.ShortcutIconResource.fromContext(context, R.drawable.ic_launcher);
 
 		intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
 		intent.putExtra("duplicate", false);
