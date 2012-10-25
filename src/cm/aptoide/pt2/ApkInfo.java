@@ -130,12 +130,28 @@ public class ApkInfo extends FragmentActivity implements
 		progress.setIndeterminate(true);
 		
 		
+		
 		System.out.println("loading " + id + " " +category.name());
 		if(category.equals(Category.ITEMBASED)){
 			viewApk = db.getItemBasedApk(id);
 		}else{
 			viewApk = db.getApk(id, getIntent().getExtras().getBoolean("top", false));
 		}
+		
+		
+		Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
+		
+		String description_text = null;
+		
+		if(c.moveToFirst()){
+			description_text = c.getString(0);
+		}else{
+			description_text="No description available.";
+		}
+		
+		c.close();
+		TextView description = (TextView) findViewById(R.id.descript);
+		description.setText(description_text);
 		
 		
 		download = ((ApplicationServiceManager)getApplication()).getAppDownloading(viewApk.hashCode());

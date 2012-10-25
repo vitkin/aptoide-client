@@ -21,6 +21,7 @@ import org.json.JSONObject;
 
 import cm.aptoide.pt2.Category;
 import cm.aptoide.pt2.Database;
+import cm.aptoide.pt2.ExtrasService;
 import cm.aptoide.pt2.RepoParser;
 import cm.aptoide.pt2.Server;
 import cm.aptoide.pt2.Server.State;
@@ -44,6 +45,7 @@ public class MainService extends Service {
 	private static boolean isParsing = false;
 	String defaultXmlPath = "sdcard/.aptoide/info.xml";
 	String defaultTopXmlPath = "sdcard/.aptoide/top.xml";
+	String defaultExtrasXmlPath = "sdcard/.aptoide/extras.xml";
 	static SparseArray<Server> serversParsing = new SparseArray<Server>();
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -212,6 +214,7 @@ public class MainService extends Service {
 				public void run() {
 						parseTop(db, server);
 						parseLatest(db, server);
+						parseExtras(db, server);
 					try{
 						parseInfoXml(db, server);
 					}catch (Exception e){
@@ -221,6 +224,9 @@ public class MainService extends Service {
 						serversParsing.remove((int)server.id);
 						e.printStackTrace();
 					}
+						
+					
+					
 					
 				}
 			}).start();
@@ -237,41 +243,73 @@ public class MainService extends Service {
 		return false;
 	}
 	
-	public void parseTop(Database db, Server server) {
-		String path2;
-		try {
-			serversParsing.put((int)server.id, server);
-			path2 = get(server,defaultTopXmlPath,"top.xml",false);
-			RepoParser.getInstance(db).parse2(new File(path2), server, Category.TOP);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	public void parseTop(final Database db, final Server server) {
+		new Thread(new Runnable() {
+			public void run() {
+				String path2;
+				try {
+					//			serversParsing.put((int)server.id, server);
+					path2 = get(server, defaultTopXmlPath, "top.xml", false);
+					RepoParser.getInstance(db).parse2(new File(path2), server,
+							Category.TOP);
+				} catch (MalformedURLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
 		
 	}
 	
-	public void parseLatest(Database db, Server server){
-		String path2;
-		try {
-			serversParsing.put((int)server.id, server);
-			path2 = get(server,defaultTopXmlPath,"latest.xml",false);
-			RepoParser.getInstance(db).parse2(new File(path2), server, Category.LATEST);
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+	public void parseExtras(Database db, final Server server){
+		new Thread(new Runnable() {
+			public void run() {
+				String path;
+				try {
+					path = get(server, defaultExtrasXmlPath, "extras.xml", true);
+					Intent service = new Intent(MainService.this,
+							ExtrasService.class);
+					ArrayList<String> array = new ArrayList<String>();
+					array.add(path);
+					service.putExtra("path", array);
+					startService(service);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 	
-	public void parseInfoXml(Database db, Server server) throws MalformedURLException, IOException{
-		final String path = get(server,defaultXmlPath,"info.xml",true);
+	public void parseLatest(final Database db, final Server server){
+			new Thread(new Runnable() {
+
+				public void run() {
+					String path2 = null;
+					//			serversParsing.put((int)server.id, server);
+					try {
+						path2 = get(server, defaultTopXmlPath, "latest.xml", false);
+					} catch (MalformedURLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					RepoParser.getInstance(db).parse2(new File(path2), server,
+							Category.LATEST);
+				}
+			}).start();
+
+	}
+	
+	public void parseInfoXml(final Database db, final Server server) throws MalformedURLException, IOException{
+		String path = null;
+		path = get(server,defaultXmlPath,"info.xml",true);
 		RepoParser.getInstance(db).parse(new File(path),server);
+
 	}
 
 	public void addStoreInfo(Database db, Server server) {
