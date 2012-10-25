@@ -843,6 +843,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								if (result) {
 									refreshAvailableList(false);
 									installedLoader.forceLoad();
+									updatesLoader.forceLoad();
 								} else {
 									Toast.makeText(mContext,
 											"Unable to delete store. Parsing",
@@ -864,9 +865,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				@Override
 				public void run() {
 					try {
-						service.parseServer(db, db
-								.getServer(((AdapterContextMenuInfo) item
-										.getMenuInfo()).id,false));
+						service.parseServer(db, db.getServer(((AdapterContextMenuInfo) item.getMenuInfo()).id,false));
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {

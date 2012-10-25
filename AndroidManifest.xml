@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cm.aptoide.pt2"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="327"
+    android:versionName="2.8.0" >
     <uses-sdk android:minSdkVersion="4"
         	  android:targetSdkVersion="15" />
 	<uses-permission android:name="android.permission.INTERNET"/>
@@ -64,6 +64,7 @@
         
         
         <service android:name=".services.MainService"></service>
+        <service android:name=".ExtrasService" android:process=":ExtrasService"></service>
         <service android:name=".services.ServiceDownload"></service>
         
         <receiver android:name=".InstalledBroadcastReceiver" >
@@ -74,6 +75,12 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
+        
+        <provider
+            android:name=".ExtrasContentProvider"
+            android:exported="false"
+            android:authorities="extras.contentprovider" >
+        </provider>
         
         <activity
             android:name="com.google.ads.AdActivity"

@@ -1,6 +1,7 @@
 package cm.aptoide.pt2;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,11 +10,13 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 public class RepoParser {
 	static ExecutorService executor = Executors.newFixedThreadPool(1);
+	static ExecutorService extrasExecutor = Executors.newFixedThreadPool(1);
 	static Database db;
 	static RepoParser parser;
 	
@@ -36,7 +39,6 @@ public class RepoParser {
 	
 	public void parse(File xml, Server server){
 		executor.submit(new Parser(server,xml));
-//		new Thread(new Parser()).start();
 	}
 	
 	public class Parser extends Thread{ 
@@ -65,6 +67,8 @@ public class RepoParser {
 
 		}
 	}
+	
+	
 	
 	public class TopParser extends Thread{ 
 		Server server;
