@@ -167,7 +167,7 @@ public class Database {
 		database.endTransaction();
 	}
 
-	public Cursor getApps(long category2_id, long store, boolean mergeStores, Order order) {
+	public Cursor getApps(long category2_id, long store, boolean mergeStores, Order order, boolean allApps) {
 		Cursor c = null;
 		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		try{
@@ -202,15 +202,29 @@ public class Database {
 				filter = filter + " and mature <= 0"; 
 			}
 			
-			if(mergeStores){
-				
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by apkid "+order_string,new String[]{category2_id+""});
+			if(allApps){
+				if(mergeStores){
+					
+					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by apkid "+order_string,null);
+					
+				}else{
+					
+					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where repo_id = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) "+filter+" group by apkid "+order_string,new String[]{store+""});
+				}
 				
 			}else{
-				
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) "+filter+" group by apkid "+order_string,new String[]{store+"",category2_id+""});
-				
+				if(mergeStores){
+					
+					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by apkid "+order_string,new String[]{category2_id+""});
+					
+				}else{
+					
+					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) "+filter+" group by apkid "+order_string,new String[]{store+"",category2_id+""});
+					
+				}
 			}
+			
+			
 			
 			
 		}catch(Exception e){
@@ -222,13 +236,17 @@ public class Database {
 		return c;
 	}
 
-	public Cursor getCategory1(long store, boolean mergeStores) {
+	public Cursor getCategory1(long store, boolean mergeStores, boolean allApps) {
 		Cursor d = null;
+			
+			
+			
 		if(mergeStores){
 			d = database.rawQuery("select a._id,a.name from category1 as a order by a._id",null);
 		}else{
 			d = database.rawQuery("select a._id,a.name from category1 as a , repo_category1 as b where a._id=b.catg1_id and b.repo_id = ? order by a._id", new String[]{store+""});
 		}
+		
 		System.out.println("Getting category1 " + store);
 		
 		MatrixCursor c = new MatrixCursor(new String[]{"_id","name"});
@@ -239,12 +257,17 @@ public class Database {
 				holder.id=d.getLong(0);
 				holder.name=d.getString(1);
 				a.add(holder);
-			}else{
+			}else if(!allApps){
 				c.addRow(new Object[]{d.getString(0),d.getString(1)});
 			}
 			
 		}
 		Collections.sort(a);
+		
+		if(allApps){
+			c.addRow(new Object[]{-4,"All Applications"});
+		}
+		
 		for(Holder holder : a){
 			c.addRow(new Object[]{holder.id,holder.name});
 		}
@@ -254,11 +277,7 @@ public class Database {
 			c.addRow(new Object[]{-1,"Latest Likes"});
 		}
 		
-		if(Login.isLoggedIn(context)){
-			c.addRow(new Object[]{-3,"Recommended for you"});
-		}
-		
-		
+		c.addRow(new Object[]{-3,"Recommended for you"});
 		
 		d.close();
 		
@@ -923,7 +942,7 @@ public class Database {
 					" and mingles <= " +HWSpecifications.getEsglVer(context);
 		}
 		
-		if(sPref.getBoolean("matureChkBox", false)){
+		if(!sPref.getBoolean("matureChkBox", false)){
 			filter = filter + " and mature <= 0"; 
 		}
 		
@@ -1162,6 +1181,25 @@ public class Database {
 			c.close();
 		}
 		
+		return return_int;
+	}
+	
+	public long getApkId(String apkid) {
+		Cursor c = null;
+		long return_int = -1;
+		System.out.println(apkid);
+		try{
+			c = database.query("apk", new String[]{"_id"}, "apkid = ?", new String[]{apkid}, null, null, null);
+			
+			if(c.moveToFirst()){
+				return_int = c.getLong(0);
+			}
+			
+		}catch (Exception e){
+			e.printStackTrace();
+		} finally {
+			c.close();
+		}
 		
 		return return_int;
 	}

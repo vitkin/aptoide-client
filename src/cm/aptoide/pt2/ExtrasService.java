@@ -63,6 +63,7 @@ public class ExtrasService extends Service {
 	}
 	private Database dbhandler;
 	private ExecutorService executor = Executors.newFixedThreadPool(1);
+	private ArrayList<String> parsingList = new ArrayList<String>();
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -70,8 +71,12 @@ public class ExtrasService extends Service {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		File xml = new File(((ArrayList<String>) intent.getSerializableExtra("path")).get(0));
-		executor.submit(new ExtrasParser(xml,getApplicationContext()));
+		String path = ((ArrayList<String>) intent.getSerializableExtra("path")).get(0);
+		if(!parsingList.contains(path)){
+			parsingList.add(path);
+			File xml = new File(path);
+			executor.submit(new ExtrasParser(xml,getApplicationContext()));
+		}
 		return START_NOT_STICKY;
 	}
 	
@@ -92,8 +97,10 @@ public class ExtrasService extends Service {
 				parser.parse(xml, new ExtrasHandler(context));
 			}catch(Exception e){
 				e.printStackTrace();
+				parsingList.remove(xml.getAbsolutePath());
 			}finally{
 				xml.delete();
+				parsingList.remove(xml.getAbsolutePath());
 			}
 
 		}
