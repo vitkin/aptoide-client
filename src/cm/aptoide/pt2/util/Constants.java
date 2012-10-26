@@ -35,6 +35,10 @@ public class Constants {
 	public static final int DOWNLOAD_CHUNK_SIZE = 8*KILO_BYTE;
 	public static final int MAX_PARALLEL_DOWNLOADS = 4;
 	
+	/** miliseconds **/
+	public static final int SERVER_CONNECTION_TIMEOUT = 5000;
+	public static final int SERVER_READ_TIMEOUT = 30000;
+	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();
 	public static final String PATH_CACHE = PATH_SDCARD + "/.aptoide/";
 	public static final String PATH_CACHE_REPOS = PATH_CACHE + "repos/";
