@@ -20,12 +20,11 @@ package cm.aptoide.pt2;
 */
 
 
-import android.app.Dialog;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -36,18 +35,17 @@ import android.widget.TextView;
  * @author dsilveira
  *
  */
-public class DialogIpBlacklisted extends Dialog{
-	Context context;
+public class DialogIpBlacklisted extends AlertDialog{
 	
 	public DialogIpBlacklisted(Context context) {
 		super(context);
-		this.context = context;
 	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle(R.string.ip_blacklisted);
+		setIcon(android.R.drawable.ic_dialog_alert);
 		setContentView(R.layout.dialog_ip_blacklisted);
 		
 		TextView ipBlacklistMessage = (TextView) findViewById(R.id.ip_blacklisted_message);
@@ -78,10 +76,10 @@ public class DialogIpBlacklisted extends Dialog{
 	
 	private void sendEmail(){
 		Intent email = new Intent(Intent.ACTION_SEND);
-		email.putExtra(Intent.EXTRA_EMAIL, new String[]{context.getString(R.string.ip_blacklisted_email_contact)});		  
-		email.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.ip_blacklisted));
+		email.putExtra(Intent.EXTRA_EMAIL, new String[]{getContext().getString(R.string.ip_blacklisted_email_contact)});		  
+		email.putExtra(Intent.EXTRA_SUBJECT, getContext().getString(R.string.ip_blacklisted));
 //		email.putExtra(Intent.EXTRA_TEXT, "message");
-		email.setType(context.getString(R.string.email_encoding));
-		context.startActivity(Intent.createChooser(email, context.getString(R.string.choose_email_client)));
+		email.setType(getContext().getString(R.string.email_encoding));
+		getContext().startActivity(Intent.createChooser(email, getContext().getString(R.string.choose_email_client)));
 	}
 }
