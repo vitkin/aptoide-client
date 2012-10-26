@@ -7,7 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -46,7 +49,11 @@ import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
+import cm.aptoide.pt2.webservices.comments.AddComment;
 import cm.aptoide.pt2.webservices.comments.Comments;
+import cm.aptoide.pt2.webservices.comments.ViewComments;
+import cm.aptoide.pt2.webservices.login.Login;
+import cm.aptoide.pt2.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt2.webservices.taste.Likes;
 
 import com.viewpagerindicator.CirclePageIndicator;
@@ -80,7 +87,6 @@ public class ApkInfo extends FragmentActivity implements
 		
 		if(category.equals(Category.INFOXML)){
 			spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
-			spinner.setVisibility(View.VISIBLE);
 			adapter = new SimpleCursorAdapter(this,
 					android.R.layout.simple_spinner_item, null,
 					new String[] { "vername" ,"repo_id"}, new int[] { android.R.id.text1 },
@@ -123,6 +129,8 @@ public class ApkInfo extends FragmentActivity implements
 			}
 	String[] thumbnailList = null;
 	String webservicespath= null;
+	Likes likes;
+	private EnumUserTaste userTaste;
 	private void loadElements(long id) {
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
 		findViewById(R.id.downloading_name).setVisibility(View.GONE);
@@ -190,6 +198,21 @@ public class ApkInfo extends FragmentActivity implements
 		}else{
 			webservicespath = db.getWebServicesPath(repo_id);
 		}
+		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
+		serch_mrkt.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				Intent intent = new Intent();
+				intent.setAction(android.content.Intent.ACTION_VIEW);
+				intent.setData(Uri.parse("market://details?id="+viewApk.getApkid()));
+				try{
+					startActivity(intent);
+				}catch (ActivityNotFoundException e){
+					Toast.makeText(context, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+				}
+			}
+			
+		});
 		
 		((TextView) findViewById(R.id.versionInfo)).setText("Downloads: " + viewApk.getDownloads() + " Size: "+ viewApk.getSize() + "KB");
 		((TextView) findViewById(R.id.version_label)).setText("Version: "+ viewApk.getVername());
@@ -205,7 +228,7 @@ public class ApkInfo extends FragmentActivity implements
 		
 		Comments comments = new Comments(context,webservicespath);
 		comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
-		Likes likes = new Likes(context, webservicespath);
+		likes = new Likes(context, webservicespath);
 		likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout));
 		ItemBasedApks items = new ItemBasedApks(context,viewApk);
 		
@@ -248,6 +271,52 @@ public class ApkInfo extends FragmentActivity implements
 			}
 		});
 		
+		findViewById(R.id.add_comment).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(ApkInfo.this,AddComment.class);
+				i.putExtra("apkid", viewApk.getApkid());
+				i.putExtra("version", viewApk.getVername());
+				i.putExtra("repo", repo_string);
+				i.putExtra("webservicespath",  "http://webservices.aptoide.com/");
+				startActivityForResult(i, AddComment.ADD_COMMENT_REQUESTCODE);
+			}
+		});
+		
+		findViewById(R.id.likesImage).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				postLike(EnumUserTaste.LIKE,repo_string);
+				
+			}
+		});
+		
+		findViewById(R.id.dislikesImage).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				postLike(EnumUserTaste.DONTLIKE,repo_string);
+				
+			}
+		});
+		
+		
+		
+		findViewById(R.id.more_comments).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(ApkInfo.this,ViewComments.class);
+				i.putExtra("repo", repo_string);
+				i.putExtra("apkid", viewApk.getApkid());
+				i.putExtra("vername", viewApk.getVername());
+				i.putExtra("webservicespath", "http://webservices.aptoide.com/");
+				startActivity(i);
+				
+			}
+		});
 		
 		
 		new Thread(new Runnable() {
@@ -338,6 +407,27 @@ public class ApkInfo extends FragmentActivity implements
 		
 	}
 	
+	@Override
+	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+		super.onActivityResult(arg0, arg1, arg2);
+		
+		loadElements(id);
+	}
+	
+	protected void postLike(EnumUserTaste like, String repo_string) {
+		userTaste = like;
+		if(Login.isLoggedIn(this)){
+			try{
+				likes.postLike(repo_string, viewApk.getApkid(), viewApk.getVername(), like);	
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
+		}else{
+			Intent i = new Intent(this,Login.class);
+			startActivityForResult(i, Login.REQUESTCODE);
+		}
+	}
 	
 	private Handler handler = new Handler(){
 		
@@ -431,6 +521,9 @@ public class ApkInfo extends FragmentActivity implements
 	@Override
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
 		adapter.swapCursor(arg1);
+		if(arg1.getCount()>1){
+			spinner.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override

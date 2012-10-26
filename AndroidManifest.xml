@@ -1,9 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cm.aptoide.pt2"
-    android:versionCode="327"
-    android:versionName="2.8.0" >
-    <uses-sdk android:minSdkVersion="4"
-        	  android:targetSdkVersion="15" />
+    android:versionCode="400"
+    android:versionName="4.0.0" >
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="15" />
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -30,22 +29,25 @@
                 android:value=".SearchManager" />
         </activity>
         
-		<activity android:name=".ApkInfo"> 
+		<activity android:name=".ApkInfo" android:configChanges="orientation"> 
 		    <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchManager" />
     	</activity>
 		
-		<activity android:name=".Settings"/>
-		<activity android:name=".ScheduledDownloads">
+		<activity android:name=".Settings" android:configChanges="orientation"/>
+		<activity android:name=".ScheduledDownloads" android:configChanges="orientation">
 		    <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchManager" />
     	</activity>
-        <activity android:name=".webservices.login.Login"/>
-        <activity android:name=".webservices.login.CreateUser"/>
-        <activity android:name=".ScreenshotsViewer"/>
-        <activity android:name=".DownloadManager"/>
+        <activity android:name=".webservices.login.Login" android:configChanges="orientation"/>
+        <activity android:name=".webservices.comments.AddComment" android:configChanges="orientation"/>
+        <activity android:name=".webservices.comments.ViewComments" android:configChanges="orientation"/>
+        <activity android:name=".webservices.login.CreateUser" android:configChanges="orientation"/>
+        <activity android:name=".ScreenshotsViewer" android:configChanges="orientation"/>
+        <activity android:name=".DownloadManager" android:configChanges="orientation"/>
+        
         <activity
             android:name=".SearchManager"
             android:configChanges="orientation"
@@ -62,6 +64,51 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/find" />
             
+        </activity>
+        
+         <activity
+            android:name=".IntentReceiver"
+            android:configChanges="orientation"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:scheme="file" />
+                <data android:host="*" />
+                <data android:mimeType="application/vnd.cm.aptoide.pt" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="aptoiderepo" />
+                <data android:scheme="aptoidexml" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="market" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="market.android.com"
+                    android:scheme="https" />
+            </intent-filter>
         </activity>
         
         

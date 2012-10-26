@@ -2,6 +2,7 @@ package cm.aptoide.pt2;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.zip.Adler32;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -24,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xmlpull.v1.XmlSerializer;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -42,7 +45,9 @@ import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -50,6 +55,7 @@ import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
+import android.util.Xml;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
@@ -86,6 +92,7 @@ import cm.aptoide.pt2.adapters.ViewPagerAdapter;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.ImageLoader2;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.services.MainService;
 import cm.aptoide.pt2.services.MainService.LocalBinder;
 import cm.aptoide.pt2.util.Algorithms;
@@ -105,6 +112,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	
 	private final static int LATEST_COMMENTS  = -2;
 	private final static int LATEST_LIKES     = -1;
+	
+	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
+	private String LOCAL_PATH = SDCARD+"/.aptoide";
 
 	private final Dialog.OnClickListener addRepoListener = new Dialog.OnClickListener() {
 
@@ -198,6 +208,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						  db.insertItemBasedApkHash(hash, "editorschoice"); 
 						  loadUIEditorsApps();
 					  }
+					  f.delete();
 					  
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -315,7 +326,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 //		        System.out.println(sPref.getString("app_rating", "All").equals(
 //						"Mature"));
 		        ((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
-				.setChecked(!sPref.getBoolean("matureChkBox", true));
+				.setChecked(!sPref.getBoolean("matureChkBox", false));
 		        ((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
 				.setOnCheckedChangeListener(adultCheckedListener);
 			}
@@ -963,8 +974,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
 		mContext = this;
+		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mContext);
 		db = Database.getInstance(mContext);
 		Intent i = new Intent(mContext, MainService.class);
 		startService(i);
@@ -1018,6 +1030,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			}
 		});
 
+		
 		availableAdapter = new AvailableListAdapter(mContext, null,
 				CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		installedAdapter = new InstalledAdapter(mContext, null,
@@ -1052,6 +1065,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						depth = ListDepth.LATEST_COMMENTS;
 					} else if(id==-3){
 						depth = ListDepth.RECOMMENDED;
+					} else if(id==-4){
+						depth = ListDepth.ALLAPPLICATIONS;
 					}else {
 						depth = ListDepth.CATEGORY2;
 					}
@@ -1070,6 +1085,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					startActivity(i);
 					return;
 				case APPLICATIONS:
+				case ALLAPPLICATIONS:
 				case RECOMMENDED:
 					i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", id);
@@ -1136,6 +1152,71 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		getAllRepoStatus();
 		loadFeatured();
 		addBreadCrumb("Stores", ListDepth.STORES);
+		
+		if(sPref.getBoolean("firstrun",true)){
+			Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+			shortcutIntent.setClassName("cm.aptoide.pt", "cm.aptoide.pt.Start");
+			final Intent intent = new Intent();
+			intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+			
+			intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+			Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.aptoideicon);
+
+			intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
+			intent.putExtra("duplicate", false);
+			intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+			sendBroadcast(intent);
+			
+			
+			if(new File(LOCAL_PATH+"/servers.xml").exists()){
+				try{
+
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					SAXParser sp = spf.newSAXParser();
+
+					MyappHandler handler = new MyappHandler();
+
+					sp.parse(new File(LOCAL_PATH+"/servers.xml"),handler);
+					ArrayList<String> server = handler.getServers();
+					getIntent().putExtra("newrepo", server);
+
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+			editor.putBoolean("firstrun",false);
+			editor.putBoolean("orderByCategory", true);
+			editor.commit();
+
+		}
+		
+		if(getIntent().hasExtra("newrepo")){
+			ArrayList<String> repos = (ArrayList<String>) getIntent().getSerializableExtra("newrepo");
+			for(final String uri2 : repos){
+			final AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+			alertDialog.setMessage(getString(R.string.newrepo_alrt)+uri2+" ?");
+			alertDialog.setButton(Dialog.BUTTON_POSITIVE,getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					addStore(uri2, null, null);
+				}
+				
+			});
+			alertDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no),new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}
+				
+			});
+			alertDialog.show();
+			
+			
+		}
+		}
 		
 		
 		
@@ -1223,6 +1304,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 		menu.add(0, 0, 0, "remove");
 		
+		
+		
 	}
 
 	@Override
@@ -1238,11 +1321,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					case STORES:
 						return db.getStores(joinStores_boolean);
 					case CATEGORY1:
-						return db.getCategory1(store_id, joinStores_boolean);
+						return db.getCategory1(store_id, joinStores_boolean,!PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("orderByCategory", true));
 					case CATEGORY2:
 						return db.getCategory2(category_id, store_id, joinStores_boolean);
+					case ALLAPPLICATIONS:
 					case APPLICATIONS:
-						return db.getApps(category2_id, store_id, joinStores_boolean, order);
+						return db.getApps(category2_id, store_id, joinStores_boolean, order,!PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean("orderByCategory", true));
 					case TOPAPPS:
 						return db.getTopApps(category_id, store_id, joinStores_boolean);
 					case LATEST_LIKES:
@@ -1291,6 +1375,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		unregisterReceiver(statusReceiver);
 		unregisterReceiver(redrawInstalledReceiver);
 		unregisterReceiver(loginReceiver);
+		generateXML();
 		super.onDestroy();
 	}
 
@@ -1298,7 +1383,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (!depth.equals(ListDepth.STORES)) {
-				if (depth.equals(ListDepth.TOPAPPS) || depth.equals(ListDepth.LATEST_LIKES)||depth.equals(ListDepth.LATEST_COMMENTS)||depth.equals(ListDepth.RECOMMENDED)) {
+				if (depth.equals(ListDepth.TOPAPPS) || 
+						depth.equals(ListDepth.LATEST_LIKES)||
+						depth.equals(ListDepth.LATEST_COMMENTS)||
+						depth.equals(ListDepth.RECOMMENDED)||
+						depth.equals(ListDepth.ALLAPPLICATIONS)) {
 					depth = ListDepth.CATEGORY1;
 				} else {
 					depth = ListDepth.values()[depth.ordinal() - 1];
@@ -1419,6 +1508,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				break;
 			case TOPAPPS:
 			case APPLICATIONS:
+			case ALLAPPLICATIONS:
 			case RECOMMENDED:
 				ViewHolder holder = (ViewHolder) view.getTag();
 				if (holder == null) {
@@ -1488,6 +1578,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						null);
 				break;
 			case TOPAPPS:
+			case ALLAPPLICATIONS:
 			case APPLICATIONS:
 			case RECOMMENDED:
 				v = LayoutInflater.from(context)
@@ -1588,5 +1679,68 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			
 		}
 	};
+	
+	
+	
+	protected void generateXML() {
+		System.out.println("Generating servers.xml");
+        File newxmlfile = new File(Environment.getExternalStorageDirectory()+"/.aptoide/servers.xml");
+        try{
+                newxmlfile.createNewFile();
+        }catch(IOException e){
+                Log.e("IOException", "exception in createNewFile() method");
+        }
+        //we have to bind the new file with a FileOutputStream
+        FileOutputStream fileos = null;        
+        try{
+                fileos = new FileOutputStream(newxmlfile);
+        }catch(FileNotFoundException e){
+                Log.e("FileNotFoundException", "can't create FileOutputStream");
+        }
+        //we create a XmlSerializer in order to write xml data
+        XmlSerializer serializer = Xml.newSerializer();
+        try {
+                //we set the FileOutputStream as output for the serializer, using UTF-8 encoding
+                        serializer.setOutput(fileos, "UTF-8");
+                        //Write <?xml declaration with encoding (if encoding not null) and standalone flag (if standalone not null)
+                        serializer.startDocument(null, Boolean.valueOf(true));
+                        //set indentation option
+//                        serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+                        //start a tag called "root"
+                        serializer.startTag(null, "myapp");
+                        //i indent code just to have a view similar to xml-tree
+                        Cursor c = db.getStores(false);
+                        for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+                        	serializer.startTag(null, "newserver");
+//                            serializer.endTag(null, "child1");
+                           
+                            serializer.startTag(null, "server");
+                            serializer.text(c.getString(1));
+                            serializer.endTag(null, "server");
+                   
+                            //write some text inside <child3>
+                            
+                            serializer.endTag(null, "newserver");
+                        }
+                        c.close();
+                                
+                               
+                        serializer.endTag(null, "myapp");
+                        serializer.endDocument();
+                        //write xml data into the FileOutputStream
+                        serializer.flush();
+                        //finally we close the file stream
+                        fileos.close();
+                        
+//                        <newserver><server>http://islafenice.bazaarandroid.com/</server></newserver></myapp>
+                       
+//                TextView tv = (TextView)this.findViewById(R.id.result);
+//                        tv.setText("file has been created on SD card");
+                } catch (Exception e) {
+                        Log.e("Exception","error occurred while creating xml file");
+                }
+    
+
+	}
 
 }

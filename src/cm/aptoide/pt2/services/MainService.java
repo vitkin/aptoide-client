@@ -291,6 +291,8 @@ public class MainService extends Service {
 					//			serversParsing.put((int)server.id, server);
 					try {
 						path2 = get(server, defaultTopXmlPath, "latest.xml", false);
+						RepoParser.getInstance(db).parse2(new File(path2), server,
+								Category.LATEST);
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -298,8 +300,7 @@ public class MainService extends Service {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					RepoParser.getInstance(db).parse2(new File(path2), server,
-							Category.LATEST);
+					
 				}
 			}).start();
 
