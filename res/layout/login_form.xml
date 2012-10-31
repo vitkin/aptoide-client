@@ -9,7 +9,7 @@
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="@drawable/header1" >
+        android:background="@drawable/greenbar" >
 
         <Button
             android:id="@+id/register_link"
@@ -19,19 +19,23 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:onClick="createUser"
-            android:background="@drawable/blue_button"
+            android:background="@drawable/green_button"
             android:text="@string/register" />
 
         <TextView
             android:id="@+id/sign_in"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="22dp"
+            android:layout_toLeftOf="@+id/register_link"
             android:text="@string/bazaar_login"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#fff" />
+
     </RelativeLayout>
 
     <ScrollView

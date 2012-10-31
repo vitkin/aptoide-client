@@ -21,7 +21,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.sax.StartElementListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,8 +30,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.util.Base64;
@@ -193,42 +190,43 @@ public class ItemBasedApks {
 						container.removeAllViews();
 					}
 				        LinearLayout llAlso = new LinearLayout(context);
-				        llAlso.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
+				        llAlso.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 				        llAlso.setOrientation(LinearLayout.HORIZONTAL);
 				        for (int i = 0; i!=values.size(); i++) {
 //				        	container.setVisibility(View.VISIBLE);
-				            RelativeLayout txtSamItem = (RelativeLayout) LayoutInflater.from(context).inflate(R.layout.griditem, null);
+				            LinearLayout txtSamItem = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.related_griditem, null);
 				           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
 				           	imageLoader.DisplayImage(-1, values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context,false,values.get(i).get("hashCode"));
-				           	float stars = 0f;
-				           	try{
-				           		stars = Float.parseFloat(values.get(i).get("rating"));
-				           	}catch (Exception e) {
-				           		stars = 0f;
-							}
-				           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
-				            txtSamItem.setPadding(10, 0, 0, 0);
+//				           	float stars = 0f;
+//				           	try{
+//				           		stars = Float.parseFloat(values.get(i).get("rating"));
+//				           	}catch (Exception e) {
+//				           		stars = 0f;
+//							}
+//				           	((RatingBar) txtSamItem.findViewById(R.id.rating)).setRating(stars);
+				            txtSamItem.setPadding(10, 10, 10, 10);
 				            txtSamItem.setTag(values.get(i).get("_id"));
-				            txtSamItem.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, 100, 1));
+				            txtSamItem.setLayoutParams(new LayoutParams(120, LayoutParams.FILL_PARENT, 1));
 				            txtSamItem.setOnClickListener(featuredListener );
 		
 				            txtSamItem.measure(0, 0);
 				            
-				            if (i%2==0) {
-				                container.addView(llAlso);
-		
-				                llAlso = new LinearLayout(context);
-				                llAlso.setLayoutParams(new LayoutParams(
-				                        LayoutParams.FILL_PARENT,
-				                        100));
-				                llAlso.setOrientation(LinearLayout.HORIZONTAL);
-				                llAlso.addView(txtSamItem);
-				            } else {
-				                llAlso.addView(txtSamItem);
-				            }
+//				            if (i%2==0) {
+//				                container.addView(llAlso);
+//		
+//				                llAlso = new LinearLayout(context);
+//				                llAlso.setLayoutParams(new LayoutParams(
+//				                        LayoutParams.WRAP_CONTENT,
+//				                        LayoutParams.WRAP_CONTENT));
+//				                llAlso.setOrientation(LinearLayout.HORIZONTAL);
+//				                llAlso.addView(txtSamItem);
+//				            } else {
+//				                llAlso.addView(txtSamItem);
+//				            }
+				            container.addView(txtSamItem);
 				        }
 		
-				        container.addView(llAlso);
+				       
 	}
 	
 	

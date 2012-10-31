@@ -77,7 +77,7 @@ public class ExtrasService extends Service {
 			parsingList.add(path);
 			File xml = new File(path);
 			String md5 = Md5Handler.md5Calc(xml);
-			executor.submit(new ExtrasParser(xml,getApplicationContext(),md5));
+			new Thread(new ExtrasParser(xml,getApplicationContext(),md5)).start();
 		}
 		return START_NOT_STICKY;
 	}

@@ -29,6 +29,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -77,7 +78,7 @@ public class ApkInfo extends FragmentActivity implements
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		setContentView(R.layout.apk_info);
+		setContentView(R.layout.app_info);
 		category = Category.values()[getIntent().getIntExtra("category", 3)];
 		context = this;
 		db = Database.getInstance(this);
@@ -180,12 +181,12 @@ public class ApkInfo extends FragmentActivity implements
 		
 		final long repo_id = viewApk.getRepo_id();
 		final String repo_string = category.equals(Category.ITEMBASED)?db.getItemBasedServer(viewApk.getRepo_id()):RepoUtils.split(db.getServer(viewApk.getRepo_id(),getIntent().getExtras().getBoolean("top", false)).url);
-		((TextView) findViewById(R.id.app_store)).setText(repo_string);
+		((TextView) findViewById(R.id.app_store)).setText("Store: " +repo_string);
 		try {
-			((RatingBar) findViewById(R.id.rating)).setRating(Float
+			((RatingBar) findViewById(R.id.ratingbar)).setRating(Float
 					.parseFloat(viewApk.getRating()));
 		} catch (Exception e) {
-			((RatingBar) findViewById(R.id.rating)).setRating(0);
+			((RatingBar) findViewById(R.id.ratingbar)).setRating(0);
 		}
 		
 		if(category.equals(Category.ITEMBASED)){
@@ -193,30 +194,30 @@ public class ApkInfo extends FragmentActivity implements
 		}else{
 			webservicespath = db.getWebServicesPath(repo_id);
 		}
-		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
-		serch_mrkt.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				Intent intent = new Intent();
-				intent.setAction(android.content.Intent.ACTION_VIEW);
-				intent.setData(Uri.parse("market://details?id="+viewApk.getApkid()));
-				try{
-					startActivity(intent);
-				}catch (ActivityNotFoundException e){
-					Toast.makeText(context, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
-				}
-			}
-			
-		});
+//		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
+//		serch_mrkt.setOnClickListener(new OnClickListener() {
+//			
+//			public void onClick(View v) {
+//				Intent intent = new Intent();
+//				intent.setAction(android.content.Intent.ACTION_VIEW);
+//				intent.setData(Uri.parse("market://details?id="+viewApk.getApkid()));
+//				try{
+//					startActivity(intent);
+//				}catch (ActivityNotFoundException e){
+//					Toast.makeText(context, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+//				}
+//			}
+//			
+//		});
 		
 		((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
 		((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
 		((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 		ImageLoader imageLoader = new ImageLoader(context, db);
 		if(category.equals(Category.ITEMBASED)){
-			imageLoader.DisplayImage(-1, db.getItemBasedBasePath(viewApk.getRepo_id())+viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, false,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+			imageLoader.DisplayImage(-1, db.getItemBasedBasePath(viewApk.getRepo_id())+viewApk.getIconPath(),(ImageView) findViewById(R.id.app_icon), context, false,(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
 		}else{
-			imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),(ImageView) findViewById(R.id.app_hashid), context, getIntent().getExtras().getBoolean("top", false),(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+			imageLoader.DisplayImage(viewApk.getRepo_id(), viewApk.getIconPath(),(ImageView) findViewById(R.id.app_icon), context, getIntent().getExtras().getBoolean("top", false),(viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
 		}
 		
 		
@@ -224,7 +225,7 @@ public class ApkInfo extends FragmentActivity implements
 		Comments comments = new Comments(context,webservicespath);
 		comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
 		likes = new Likes(context, webservicespath);
-		likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout));
+		likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout),(ViewGroup) findViewById(R.id.ratings));
 		ItemBasedApks items = new ItemBasedApks(context,viewApk);
 		
 		items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container));

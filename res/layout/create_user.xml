@@ -9,7 +9,7 @@
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="@drawable/header1"
+        android:background="@drawable/greenbar"
         android:orientation="horizontal" >
 
         <TextView

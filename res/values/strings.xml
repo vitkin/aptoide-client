@@ -26,8 +26,10 @@
     <string name="install">Install</string>
     <string name="uninstall">Uninstall</string>
     <string name="search_market">Search Market</string>
+    <string name="comments">Comments:</string>
     <string name="commentlabel">Add Comment</string>
     <string name="chkBoxSchDwn">Schedule Download</string>
+    <string name="who_downloaded_this">Who downloaded this app also downloaded:</string>
     <string name="submit">Submit</string>
     <string name="body">Body</string>
     <string name="subject">Name</string>
@@ -57,6 +59,10 @@
     <string name="opinionsuccess">Your request was successfully submitted</string>
     <string name="likes">Likes: </string>
     <string name="dislikes">Don\'t likes: </string>
+    <string name="like">Like</string>
+    <string name="dont_like">Don\'t like</string>
+    <string name="users_like_this">users like this,</string>
+    <string name="users_dont_like_this">users do not like this</string>
     <string name="postingtaste">Your request is being submitted</string>
     <string name="showpass">Show password</string>
     <string name="user">User name...</string>
@@ -74,6 +80,7 @@
     <string name="subject">Name</string>
     <string name="inresponseto">\@</string>
     <string name="commentlabel">Comment app...</string>
+    <string name="add_comment">Add comment</string>
     <string name="enterbody">Enter your review on the body section</string>
     <string name="postingcomment">Posting your comment...</string>
     <string name="commentadded">Your comment as been successfully submitted</string>

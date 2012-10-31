@@ -887,6 +887,7 @@ public class Database {
 
 	public void insertItemBasedApk(Server server, ViewApk apk, String hashCode,Category category) {
 		//insert itembasedapkrepo
+		database.beginTransaction();
 		try{
 			ContentValues values = new ContentValues();
 			values.put("iconspath",server.iconsPath);
@@ -922,9 +923,12 @@ public class Database {
 			insertScreenshots(apk, category);
 			
 			database.insert("itembasedapk", null, values);
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}
+		database.setTransactionSuccessful();
+		database.endTransaction();
 		
 	}
 
