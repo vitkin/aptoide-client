@@ -8,10 +8,10 @@
 	
     <ImageView
         android:id="@+id/screenshot"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_height="fill_parent"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="1" />
+        android:layout_weight="1"/>
     
 
 </LinearLayout>

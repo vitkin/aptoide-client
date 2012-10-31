@@ -13,9 +13,11 @@ import android.text.Html;
 public class ExtrasHandler extends DefaultHandler {
 
 	Context context;
+	private String md5;
 	
-	public ExtrasHandler(Context context) {
+	public ExtrasHandler(Context context, String md5) {
 		this.context = context;
+		this.md5 = md5;
 	}
 	
 	private enum Enum {
@@ -32,7 +34,7 @@ public class ExtrasHandler extends DefaultHandler {
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			switch (Enum.valueOf(localName.toUpperCase())) {
 			case PKG:
-				value=new ContentValues();
+				value = new ContentValues();
 				break;
 			default:
 				break;
@@ -82,6 +84,8 @@ public class ExtrasHandler extends DefaultHandler {
 				context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
 				values.clear();
 			}
+			
+			values.clear();
 			
 			System.out.println("Extras ended.");
 		};

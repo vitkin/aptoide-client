@@ -128,7 +128,7 @@
         <provider
             android:name=".ExtrasContentProvider"
             android:exported="false"
-            android:authorities="extras.contentprovider" >
+            android:authorities="extras.contentprovider.beta" >
         </provider>
         
         <activity

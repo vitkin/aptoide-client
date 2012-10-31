@@ -95,7 +95,7 @@ public class ApkInfo extends FragmentActivity implements
 
 				@Override
 				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
-					((TextView) arg0).setText("Version " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
+					((TextView) arg0).setText(arg1.getString(R.string.version)+" " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
 					System.out.println("repo_id="+arg1.getString(3));
 					return true;
 				}
@@ -137,25 +137,20 @@ public class ApkInfo extends FragmentActivity implements
 		findViewById(R.id.download_progress).setVisibility(View.GONE);
 		ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
 		progress.setIndeterminate(true);
-		
-		
-		
 		System.out.println("loading " + id + " " +category.name());
 		if(category.equals(Category.ITEMBASED)){
 			viewApk = db.getItemBasedApk(id);
 		}else{
 			viewApk = db.getApk(id, getIntent().getExtras().getBoolean("top", false));
 		}
-		
-		
 		Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
 		
 		String description_text = null;
-		
+		System.out.println(c.getCount());
 		if(c.moveToFirst()){
 			description_text = c.getString(0);
 		}else{
-			description_text="No description available.";
+			description_text=getString(R.string.no_descript);
 		}
 		
 		c.close();
@@ -214,8 +209,8 @@ public class ApkInfo extends FragmentActivity implements
 			
 		});
 		
-		((TextView) findViewById(R.id.versionInfo)).setText("Downloads: " + viewApk.getDownloads() + " Size: "+ viewApk.getSize() + "KB");
-		((TextView) findViewById(R.id.version_label)).setText("Version: "+ viewApk.getVername());
+		((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
+		((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
 		((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 		ImageLoader imageLoader = new ImageLoader(context, db);
 		if(category.equals(Category.ITEMBASED)){

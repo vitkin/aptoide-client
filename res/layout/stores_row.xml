@@ -30,7 +30,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Store Name"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="@android:color/primary_text_light" />
 
@@ -43,7 +42,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:text="Downloads Number"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@android:color/secondary_text_light" />
         </LinearLayout>

@@ -22,8 +22,8 @@ import android.database.MatrixCursor;
 public class LatestLikesComments {
 
 	private String repoName;
-	private String endPointComments = "https://www.aptoide.com/webservices/listRepositoryComments/%s/json";
-	private String endPointLikes = "https://www.aptoide.com/webservices/listRepositoryLikes/%s/json";
+	private String endPointComments = "https://webservices.aptoide.com/webservices/listRepositoryComments/%s/json";
+	private String endPointLikes = "https://webservices.aptoide.com/webservices/listRepositoryLikes/%s/json";
 	private Context context;
 	
 	public LatestLikesComments(long store_id, Database db, Context context) {

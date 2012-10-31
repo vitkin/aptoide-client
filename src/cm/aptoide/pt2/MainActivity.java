@@ -519,7 +519,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				if (!serversToParse.isEmpty()) {
 
-					String url = "https://www.aptoide.com/webservices/listRepositoryChange/"
+					String url = "https://webservices.aptoide.com/webservices/listRepositoryChange/"
 							+ repos + "/" + hashes + "/json";
 					System.out.println(url);
 					try {
@@ -857,7 +857,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									updatesLoader.forceLoad();
 								} else {
 									Toast.makeText(mContext,
-											"Unable to delete store. Parsing",
+											R.string.error_delete_store,
 											Toast.LENGTH_LONG).show();
 								}
 
@@ -915,7 +915,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							SAXParserFactory factory = SAXParserFactory.newInstance();
 							SAXParser parser = factory.newSAXParser();
 							String token = Login.getToken(mContext);
-							parser.parse(NetworkUtils.getInputStream(new URL("https://www.aptoide.com/webservices/listUserBasedApks/"+token+"/10/xml"), null, null, mContext),new DefaultHandler(){
+							parser.parse(NetworkUtils.getInputStream(new URL("https://webservices.aptoide.com/webservices/listUserBasedApks/"+token+"/10/xml"), null, null, mContext),new DefaultHandler(){
 								
 								ViewApk apk = new ViewApk();
 								StringBuilder sb = new StringBuilder();
@@ -1200,7 +1200,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					addStore(uri2, null, null);
+					dialogAddStore(uri2, null, null);
 				}
 				
 			});
@@ -1248,7 +1248,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						
 						@Override
 						public void run() {
-							Toast.makeText(mContext, "No APK available in database", Toast.LENGTH_LONG).show();
+							Toast.makeText(mContext, R.string.error_latest_apk, Toast.LENGTH_LONG).show();
 						}
 					});
 				}
@@ -1300,9 +1300,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		Integer tag = (Integer) ((AdapterContextMenuInfo) menuInfo).targetView
 				.getTag();
 		if (tag != null && tag == 1) {
-			menu.add(0, 1, 0, "reparse");
+			menu.add(0, 1, 0, R.string.menu_context_reparse);
 		}
-		menu.add(0, 0, 0, "remove");
+		menu.add(0, 0, 0, R.string.menu_context_remove);
 		
 		
 		

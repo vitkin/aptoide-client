@@ -33,6 +33,6 @@
         android:background="@drawable/add_store_button"
         android:padding="10dp"
         android:visibility="gone"
-        android:text="Refresh" />
+        android:text="@string/refresh_list"></Button>
 
 </LinearLayout>

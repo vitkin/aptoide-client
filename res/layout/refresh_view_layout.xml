@@ -12,6 +12,6 @@
         android:layout_gravity="right"
         android:background="@drawable/add_store_button"
         android:padding="10dp"
-        android:text="Refresh" />
+        android:text="@string/refresh_list"/>
 
 </LinearLayout>
