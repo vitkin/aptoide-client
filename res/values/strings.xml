@@ -1,9 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="menu_context_remove">Remove</string>
+    <string name="menu_context_reparse">Reload</string>
+    <string name="error_latest_apk">No APK available in database. Is store still loading?</string>
+	<string name="error_delete_store">Unable to delete store. The store is still loading.</string>
+    <string name="menu_settings">Settings</string>
+    
+	<string name="my_stores">My stores</string>
+	<string name="store_name">Store Name</string>
+	<string name="category1">Category 1</string>
+	<string name="category2">Category 2</string>
+	<string name="add_store">Add Store</string>
+	<string name="version">Version:</string>
+	<string name="empty_store_list">You don\'t have any stores.</string>
+	<string name="new_store">Add Store</string>
+	<string name="add_repo_private">Private</string>
+    <string name="extended_server">Extended Store</string>
+    <string name="downloads">downloads</string>
+    <string name="merge_all_stores">Merge all stores</string>
+    <string name="search_for_stores">Search for Stores</string>
+    <string name="downloading_apps">Downloading apps</string>
+    <string name="downloaded_apps">Downloaded apps</string>
+    <string name="not_downloaded_apps">Not downloaded apps</string>
+    <string name="exit">exit</string>
+    <string name="install">Install</string>
+    <string name="uninstall">Uninstall</string>
+    <string name="search_market">Search Market</string>
+    <string name="commentlabel">Add Comment</string>
+    <string name="chkBoxSchDwn">Schedule Download</string>
+    <string name="submit">Submit</string>
+    <string name="body">Body</string>
+    <string name="subject">Name</string>
     <string name="app_name">Aptoide</string>
     <string name="start_loading">Loading…</string>
     <string name="available_tab">Available</string>
+    <string name="featured_tab">Featured</string>
     <string name="installed_tab">Installed</string>
     <string name="updates_tab">Updates</string>
     <string name="add_repo_private">Private</string>
@@ -120,6 +151,8 @@
     
     <string name="about_mail">Contact: </string>
     
+    <string name="no_descript">No description available</string>
+    
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>
     
@@ -147,6 +180,8 @@
     <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
     <string name="aptoide_error">Can\'t connect to the remote server. Please verify your Internet connection.</string>
     <string name="no_sch_downloads">No scheduled downloads!</string>
+    
+    <string name="size">Size</string>
     
     <string name="schDown_install">Do you want to install all scheduled downloads?</string>
    <string name="schDown_installselected">Install Selected</string>
@@ -177,12 +212,6 @@
         <item>Wifi only</item>
         <item>Never download</item>
     </string-array>
-    <string name="continue_bt">Continue</string>
-    <string name="featured_tab">Featured</string>
-    <string name="no_info">No Information</string>
-    <string name="repo_insert_failed">Failed to add the Store. Please try again.</string>
-    <string name="remember_choice">Remember this choice</string>
-    
      <string name="registration">Aptoide Registration</string>
     <string name="bazaar_url">http://www.aptoide.com/</string>
     <string name="email">Email</string>
@@ -227,6 +256,7 @@
     <string name="back">Back</string>
     <string name="contact">Contact</string>
     <string name="choose_email_client">Choose an Email client:</string>
+    <string name="refresh_list">Refresh</string>
     
     
 

@@ -43,6 +43,6 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:layout_centerInParent="true"
-        android:text="Please wait..." />
+        android:text="@string/please_wait"></TextView>
 
 </RelativeLayout>

@@ -26,6 +26,7 @@ public class ExtrasDbOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL(CREATE_TABLE_COMMENTS);
+		db.execSQL("create index idx on comments(apkid)");
 	}
 
 	@Override

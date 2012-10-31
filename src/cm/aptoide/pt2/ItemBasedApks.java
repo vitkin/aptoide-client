@@ -93,7 +93,7 @@ public class ItemBasedApks {
 	
 	public class ItemBasedParser extends AsyncTask<String, Void, ArrayList<HashMap<String, String>> >{
 		private String xmlpath = Environment.getExternalStorageDirectory()+"/.aptoide/itembasedapks.xml";
-		private String url = "http://www.aptoide.com/webservices/listItemBasedApks/%s/10/xml";
+		private String url = "http://webservices.aptoide.com/webservices/listItemBasedApks/%s/10/xml";
 		
 		
 		@Override

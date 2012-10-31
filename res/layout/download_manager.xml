@@ -16,7 +16,6 @@
             android:id="@+id/downloading_intro"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:background="@drawable/greenbar"
             android:padding="10dp"
             android:text="@string/downloading_apps"
@@ -34,7 +33,6 @@
         android:id="@+id/downloaded_apps"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_below="@+id/downloading_apps"
         android:layout_weight="1"
         android:orientation="vertical" >
 
@@ -42,7 +40,6 @@
             android:id="@+id/downloaded_intro"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:background="@drawable/greenbar"
             android:padding="10dp"
             android:text="@string/downloaded_apps"
@@ -60,7 +57,6 @@
         android:id="@+id/failed_apps"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_below="@+id/downloaded_apps"
         android:layout_weight="1"
         android:orientation="vertical" >
 
@@ -68,7 +64,6 @@
             android:id="@+id/failed_intro"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:background="@drawable/greenbar"
             android:padding="10dp"
             android:text="@string/not_downloaded_apps"

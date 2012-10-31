@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import cm.aptoide.pt2.services.MainService;
+import cm.aptoide.pt2.util.Md5Handler;
 import cm.aptoide.pt2.util.NetworkUtils;
 
 
@@ -75,7 +76,8 @@ public class ExtrasService extends Service {
 		if(!parsingList.contains(path)){
 			parsingList.add(path);
 			File xml = new File(path);
-			executor.submit(new ExtrasParser(xml,getApplicationContext()));
+			String md5 = Md5Handler.md5Calc(xml);
+			executor.submit(new ExtrasParser(xml,getApplicationContext(),md5));
 		}
 		return START_NOT_STICKY;
 	}
@@ -83,10 +85,14 @@ public class ExtrasService extends Service {
 	public class ExtrasParser extends Thread{ 
 		File xml;
 		private Context context;
+		private String md5;
 		
-		public ExtrasParser(File xml, Context context) {
+		
+		
+		public ExtrasParser(File xml, Context context,String md5) {
 			this.xml=xml;
 			this.context=context;
+			this.md5 = md5;
 		}
 
 		public void run(){
@@ -94,8 +100,9 @@ public class ExtrasService extends Service {
 				setPriority(MIN_PRIORITY);
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
-				parser.parse(xml, new ExtrasHandler(context));
+				parser.parse(xml, new ExtrasHandler(context,md5));
 			}catch(Exception e){
+				xml.delete();
 				e.printStackTrace();
 				parsingList.remove(xml.getAbsolutePath());
 			}finally{

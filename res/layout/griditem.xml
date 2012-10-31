@@ -23,8 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/icon"
-        android:paddingLeft="2dp"
-        android:text="TextView" />
+        android:paddingLeft="2dp"/>
 
     <RatingBar
         android:id="@+id/rating"
