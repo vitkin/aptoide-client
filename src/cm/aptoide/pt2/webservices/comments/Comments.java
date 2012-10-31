@@ -194,7 +194,9 @@ public class Comments {
 			loading.setVisibility(View.GONE);
 			if(result.isEmpty()){
 				TextView tv = new TextView(context);
-				tv.setText("No comments. Be the first!");
+				tv.setText("No comments found. Be the first!");
+				tv.setPadding(8, 2, 2, 2);
+				tv.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
 				view.addView(tv);
 			}
 			for(Comment comment : result){

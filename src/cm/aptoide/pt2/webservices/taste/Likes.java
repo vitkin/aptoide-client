@@ -21,8 +21,10 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +48,7 @@ public class Likes {
 	private String version;
 	private String apkid;
 	private String repo;
+	private ViewGroup viewButtons;
 	
 	public Likes(Activity activity, String webservicespath) {
 		context = activity;
@@ -70,11 +73,12 @@ public class Likes {
 	}
 
 	public void getLikes(String repo, String apkid, String version,
-			ViewGroup view) {
+			ViewGroup view, ViewGroup viewButtons) {
 		this.repo = repo;
 		this.apkid = apkid;
 		this.version = version;
 		this.view = view;
+		this.viewButtons = viewButtons;
 		if (task != null) {
 			System.out.println("canceling");
 			task.cancel(true);
@@ -201,12 +205,12 @@ public class Likes {
 				((TextView) view.findViewById(R.id.dislikes)).setText(dislikes+"");
 				switch (usertaste) {
 				case LIKE:
-					((ImageView) view.findViewById(R.id.likesImage)).setImageResource(R.drawable.likehover);
-					((ImageView) view.findViewById(R.id.dislikesImage)).setImageResource(R.drawable.dontlike);
+					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn, 0, 0, 0);
 					break;
 				case DONTLIKE:
-					((ImageView) view.findViewById(R.id.likesImage)).setImageResource(R.drawable.like);
-					((ImageView) view.findViewById(R.id.dislikesImage)).setImageResource(R.drawable.dontlikehover);
+					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn_over, 0, 0, 0);
 					break;
 				default:
 					break;
@@ -277,13 +281,12 @@ public class Likes {
 				Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
 				switch (taste) {
 				case LIKE:
-					((ImageView) view.findViewById(R.id.likesImage)).setImageResource(R.drawable.likehover);
-					((ImageView) view.findViewById(R.id.dislikesImage)).setImageResource(R.drawable.dontlike);
-					
+					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn, 0, 0, 0);
 					break;
 				case DONTLIKE:
-					((ImageView) view.findViewById(R.id.likesImage)).setImageResource(R.drawable.like);
-					((ImageView) view.findViewById(R.id.dislikesImage)).setImageResource(R.drawable.dontlikehover);
+					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn_over, 0, 0, 0);
 					break;
 				default:
 					break;
