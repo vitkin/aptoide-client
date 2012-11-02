@@ -3,15 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
+
     <Button
         android:id="@+id/refresh_view"
-        style="@style/button_style"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:background="@drawable/add_store_button"
-        android:padding="10dp"
-        android:text="@string/refresh_list"/>
+        android:background="@drawable/list_bgd"
+        android:drawableLeft="@android:drawable/ic_popup_sync"
+        android:text="@string/refresh_list"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@android:color/darker_gray" />
 
 </LinearLayout>
