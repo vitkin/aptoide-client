@@ -1154,18 +1154,18 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		addBreadCrumb("Stores", ListDepth.STORES);
 		
 		if(sPref.getBoolean("firstrun",true)){
-			Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-			shortcutIntent.setClassName("cm.aptoide.pt", "cm.aptoide.pt.Start");
-			final Intent intent = new Intent();
-			intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-			
-			intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-			Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.aptoideicon);
-
-			intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
-			intent.putExtra("duplicate", false);
-			intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-			sendBroadcast(intent);
+//			Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+//			shortcutIntent.setClassName("cm.aptoide.pt", "cm.aptoide.pt.Start");
+//			final Intent intent = new Intent();
+//			intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+//			
+//			intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+//			Parcelable iconResource = Intent.ShortcutIconResource.fromContext(this, R.drawable.ic_launcher);
+//
+//			intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, iconResource);
+//			intent.putExtra("duplicate", false);
+//			intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+//			sendBroadcast(intent);
 			
 			
 			if(new File(LOCAL_PATH+"/servers.xml").exists()){
