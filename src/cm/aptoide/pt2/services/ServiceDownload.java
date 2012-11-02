@@ -329,13 +329,12 @@ public class ServiceDownload extends Service {
 
 	    				}
 	    				
-	    				download.setStatus(EnumDownloadStatus.DOWNLOADING);
+    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
 						try {
 							downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
 						} catch (RemoteException e) {
 							e.printStackTrace();
 						}
-    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
 	    				
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
 	    				/** trigger in percentage */
@@ -369,6 +368,8 @@ public class ServiceDownload extends Service {
 								}
 	        					intervalStartTime = intervalEndTime;
 	        					intervalStartProgress = download.getProgress();
+	        					
+	    	    				download.setStatus(EnumDownloadStatus.DOWNLOADING);
 								try {
 									downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
 								} catch (RemoteException e) {

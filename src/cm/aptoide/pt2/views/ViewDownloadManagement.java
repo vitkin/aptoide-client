@@ -193,6 +193,9 @@ public class ViewDownloadManagement {
 	
 	public String getSpeedInKBpsString(){
 		switch (viewDownload.getStatus()) {
+			case SETTING_UP:
+				return serviceManager.getString(R.string.starting);
+				
 			case PAUSED:
 				return serviceManager.getString(R.string.paused);
 	
@@ -202,7 +205,8 @@ public class ViewDownloadManagement {
 				
 			default:
 				if(viewDownload.getSpeedInKBps() == 0){
-					return serviceManager.getString(R.string.slow);
+//					return serviceManager.getString(R.string.slow);
+					return "";
 				}else{
 					return viewDownload.getSpeedInKBps()+" KBps";
 				}

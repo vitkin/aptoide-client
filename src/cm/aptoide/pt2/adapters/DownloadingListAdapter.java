@@ -34,12 +34,17 @@ import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.util.quickaction.ActionItem;
 import cm.aptoide.pt2.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt2.util.quickaction.QuickAction;
+import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
 
 public class DownloadingListAdapter extends BaseAdapter{
 	private Context context;
 	private ImageLoader imageLoader;
 	private LayoutInflater layoutInflater;
+	
+	ActionItem playItem;
+	ActionItem pauseItem;
+	ActionItem stopItem;
 	
 	/** ViewDownloadManagemet[] **/
 	private Object[] downloading = null;
@@ -53,48 +58,17 @@ public class DownloadingListAdapter extends BaseAdapter{
 	public DownloadingListAdapter(Context context, ImageLoader imageLoader){
 		this.context = context;
 		this.imageLoader = imageLoader;
+		
+		playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(R.drawable.ic_media_play));
+		pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(R.drawable.ic_media_pause));
+		stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
 
 		layoutInflater = LayoutInflater.from(context);
-		setupQuickActions();
 	} 
 
 	
 	
-	private QuickAction quickAction;
-	private int selectedListPosition;
-	private void setupQuickActions(){
-		quickAction  = new QuickAction(context);
-		
-		ActionItem playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(R.drawable.ic_media_play));
-		ActionItem pauseItem = new ActionItem(EnumQuickActions.PAUSE.ordinal(), "Pause", context.getResources().getDrawable(R.drawable.ic_media_pause));
-		ActionItem stopItem = new ActionItem(EnumQuickActions.STOP.ordinal(), "Stop", context.getResources().getDrawable(R.drawable.ic_media_stop));
-		
-		quickAction.addActionItem(playItem);
-		quickAction.addActionItem(pauseItem);
-		quickAction.addActionItem(stopItem);
-
-		quickAction.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
-			@Override
-			public void onItemClick(QuickAction quickAction, int pos, int actionId) {
-				switch (EnumQuickActions.reverseOrdinal(actionId)) {
-					case PLAY:
-						getItem(selectedListPosition).resume();
-						break;
-						
-					case PAUSE:
-						getItem(selectedListPosition).pause();
-						break;
-						
-					case STOP:
-						getItem(selectedListPosition).stop();
-						break;
 	
-					default:
-						break;
-				}	
-			}
-		});		
-	}
 	
 	
 
@@ -105,7 +79,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 		TextView app_progress;
 		TextView app_speed;
 		Button manageDownloadsButton;
-		
+				
 	}
 
 	@Override
@@ -128,7 +102,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 			rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
 		}
 
-		ViewDownloadManagement download = (ViewDownloadManagement) downloading[position];
+		final ViewDownloadManagement download = (ViewDownloadManagement) downloading[position];
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
 		rowViewHolder.app_progress.setText(download.getProgressString());
@@ -146,8 +120,47 @@ public class DownloadingListAdapter extends BaseAdapter{
 		rowViewHolder.manageDownloadsButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				selectedListPosition = position;
-				quickAction.show(view);
+				QuickAction actionBar  = new QuickAction(context);
+				
+				switch (download.getDownloadStatus()) {
+					case SETTING_UP:
+					case RESTARTING:
+					case RESUMING:
+						break;
+						
+					case DOWNLOADING:
+						actionBar.addActionItem(pauseItem);
+						break;
+			
+					default:
+						actionBar.addActionItem(playItem);
+						break;
+				}
+				actionBar.addActionItem(stopItem);
+				actionBar.show(view);
+				
+				actionBar.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+					@Override
+					public void onItemClick(QuickAction quickAction, int pos, int actionId) {
+						switch (EnumQuickActions.reverseOrdinal(actionId)) {
+							case PLAY:
+								getItem(position).resume();
+								break;
+								
+							case PAUSE:
+								getItem(position).pause();
+								break;
+								
+							case STOP:
+								getItem(position).stop();
+								break;
+			
+							default:
+								break;
+						}	
+					}
+				});	
+				
 			}
 		});
 		
