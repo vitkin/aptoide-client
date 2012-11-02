@@ -252,6 +252,7 @@
     <string name="slow">slow</string>
     <string name="paused">paused</string>
     <string name="stopped">stopped</string>
+    <string name="starting">starting</string>
     
     <string name="timeout">network connection timeout</string>
     <string name="ip_blacklisted">blacklisted IP</string>
