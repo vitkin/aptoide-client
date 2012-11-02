@@ -172,7 +172,7 @@
                     android:paddingLeft="8dp"
                     android:singleLine="true"
                     android:text="8"
-                    android:textColor="#a8a8a8" />
+                    android:textColor="#4A4" />
 
                 <TextView
                     android:id="@+id/app_liked"
@@ -197,7 +197,7 @@
                     android:paddingLeft="3dp"
                     android:singleLine="true"
                     android:text="4"
-                    android:textColor="#a8a8a8" />
+                    android:textColor="#A44" />
 
                 <TextView
                     android:id="@+id/app_disliked"
