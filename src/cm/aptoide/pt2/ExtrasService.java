@@ -33,6 +33,7 @@ import cm.aptoide.pt2.util.NetworkUtils;
 
 
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -70,15 +71,33 @@ public class ExtrasService extends Service {
 		super.onCreate();
 	}
 	
+	@SuppressLint("NewApi")
+	@Override
+	@Deprecated
+	public void onStart(Intent intent, int startId) {
+		onStartCommand(intent, START_NOT_STICKY, startId);
+		super.onStart(intent, startId);
+	}
+	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		String path = ((ArrayList<String>) intent.getSerializableExtra("path")).get(0);
+		System.out.println("onStart");
+		String path = "";
+		try{
+			path = ((ArrayList<String>) intent.getSerializableExtra("path")).get(0);
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		
+		
 		if(!parsingList.contains(path)){
 			parsingList.add(path);
 			File xml = new File(path);
 			String md5 = Md5Handler.md5Calc(xml);
 			new Thread(new ExtrasParser(xml,getApplicationContext(),md5)).start();
+			System.out.println("Extras starting");
 		}
+		
 		return START_NOT_STICKY;
 	}
 	

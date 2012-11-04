@@ -22,8 +22,8 @@ import android.database.MatrixCursor;
 public class LatestLikesComments {
 
 	private String repoName;
-	private String endPointComments = "https://webservices.aptoide.com/webservices/listRepositoryComments/%s/json";
-	private String endPointLikes = "https://webservices.aptoide.com/webservices/listRepositoryLikes/%s/json";
+	private String endPointComments = "http://webservices.aptoide.com/webservices/listRepositoryComments/%s/json";
+	private String endPointLikes = "http://webservices.aptoide.com/webservices/listRepositoryLikes/%s/json";
 	private Context context;
 	
 	public LatestLikesComments(long store_id, Database db, Context context) {
@@ -46,6 +46,9 @@ public class LatestLikesComments {
 				String name = ((JSONObject)array.get(i)).getString("name");
 				String text = ((JSONObject)array.get(i)).getString("text");
 				String username = ((JSONObject)array.get(i)).getString("username");
+				if(username.equals("NOT_SIGNED_UP")){
+					username = "";
+				}
 				cursor.newRow().add(i).add(apkid).add(name).add(text).add(username);
 			}
 			
@@ -93,6 +96,9 @@ public class LatestLikesComments {
 				String name = ((JSONObject)array.get(i)).getString("name");
 				String like = ((JSONObject)array.get(i)).getString("like");
 				String username = ((JSONObject)array.get(i)).getString("username");
+				if(username.equals("NOT_SIGNED_UP")){
+					username = "";
+				}
 				cursor.newRow().add(i).add(apkid).add(name).add(like).add(username);
 				
 			}

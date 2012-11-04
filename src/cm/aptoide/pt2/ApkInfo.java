@@ -92,16 +92,16 @@ public class ApkInfo extends FragmentActivity implements
 					android.R.layout.simple_spinner_item, null,
 					new String[] { "vername" ,"repo_id"}, new int[] { android.R.id.text1 },
 					CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-			adapter.setViewBinder(new ViewBinder() {
-
-				@Override
-				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
-					((TextView) arg0).setText(arg1.getString(R.string.version)+" " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
-					System.out.println("repo_id="+arg1.getString(3));
-					return true;
-				}
-			});
-			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//			adapter.setViewBinder(new ViewBinder() {
+//
+//				@Override
+//				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
+//					((TextView) arg0).setText(arg1.getString(R.string.version)+" " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
+//					System.out.println("repo_id="+arg1.getString(3));
+//					return true;
+//				}
+//			});
+//			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinner.setAdapter(adapter);
 			spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -471,7 +471,9 @@ public class ApkInfo extends FragmentActivity implements
 				break;
 			case STOPPED:
 			case COMPLETED:
-				actionBar.dismiss();
+				if(actionBar!=null){
+					actionBar.dismiss();
+				}
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);
 				findViewById(R.id.downloading_name).setVisibility(View.GONE);
