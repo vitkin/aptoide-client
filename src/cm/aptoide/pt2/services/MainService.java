@@ -15,6 +15,8 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -270,8 +272,7 @@ public class MainService extends Service {
 				String path;
 				try {
 					path = get(server, defaultExtrasXmlPath, "extras.xml", true);
-					Intent service = new Intent(MainService.this,
-							ExtrasService.class);
+					Intent service = new Intent(MainService.this, ExtrasService.class);
 					ArrayList<String> array = new ArrayList<String>();
 					array.add(path);
 					service.putExtra("path", array);
@@ -333,7 +334,8 @@ public class MainService extends Service {
 				String avatar = array.getString("avatar");
 				String name = array.getString("name");
 				String downloads = array.getString("downloads");
-				db.addStoreInfo(avatar,name,downloads,server.id);
+				
+				db.addStoreInfo(avatar,name,withSuffix(downloads),server.id);
 			}
 			connection.disconnect();
 		} catch (Exception e) {
@@ -343,5 +345,12 @@ public class MainService extends Service {
 		
 		
 	}
-
+	public static String withSuffix(String input) {
+		long count = Long.parseLong(input);
+	    if (count < 1000) return "" + count;
+	    int exp = (int) (Math.log(count) / Math.log(1000));
+	    return String.format("%.1f %c",
+	                         count / Math.pow(1000, exp),
+	                         "kMGTPE".charAt(exp-1));
+	}
 }

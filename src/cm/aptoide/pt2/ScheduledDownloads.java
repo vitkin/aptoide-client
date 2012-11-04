@@ -144,6 +144,29 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 				}
 			}
 		});
+		if(getIntent().hasExtra("downloadAll")){
+			AlertDialog alrt = new AlertDialog.Builder(this).create();
+			alrt.setMessage(getText(R.string.schDown_install));
+			alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					for(String planet : planets.keySet()){
+						ScheduledDownload schDown = planets.get(planet);
+						ViewApk apk = new ViewApk();
+						apk.setApkid(schDown.getApkid());
+						apk.setVercode(schDown.getVercode());
+						apk.setMd5(schDown.getMd5());
+						new ViewDownloadManagement((ApplicationServiceManager) getApplication(),schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())).startDownload();
+					}
+					finish();
+					return;
+				} }); 
+			alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					finish();
+					return;
+				}});
+			alrt.show();
+		}
 	}
 	
 	private static class ScheduledDownload {

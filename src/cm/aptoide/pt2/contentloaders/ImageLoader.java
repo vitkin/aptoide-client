@@ -17,8 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import cm.aptoide.pt2.Database;
+import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.Utils;
+import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -30,6 +32,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -41,24 +44,50 @@ public class ImageLoader {
     private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService photoLoadThreadPool; 
     static Context context;
-    boolean download = true;
+    boolean download = false;
     private static Database db;
 	private boolean top = false;
 	
     public ImageLoader(Context context, Database db){
         fileCache=new FileCache(context);
+        this.context=context;
         photoLoadThreadPool=Executors.newFixedThreadPool(5);
         SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-        ConnectivityManager netstate = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         this.db=db;
-//        if(sPref.getString("icdown", "").equalsIgnoreCase("nd")){
-//			download=false;
-//		}else if((sPref.getString("icdown", "").equalsIgnoreCase("wo")) && (netstate.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED)){
-//			download=false;
-//		}else{
-//			download=true;
-//		}
-        System.out.println("ICDOWN " + sPref.getString("icdown", "nasdd"));
+        resetPermissions();
+    }
+    
+    public void resetPermissions(){
+    	download = false;
+    	ConnectivityManager connectivityState = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    	ManagerPreferences preferences= new ManagerPreferences(context);
+        ViewIconDownloadPermissions permissions = preferences.getIconDownloadPermissions();
+        if(permissions.isWiFi()){
+			try {
+				download = download || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+download);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} 
+		if(permissions.isWiMax()){
+			try {
+				download = download || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+download);
+			} catch (Exception e) { e.printStackTrace();}
+		} 
+		if(permissions.isMobile()){
+			try {
+				download = download || connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+download);
+			} catch (Exception e) { e.printStackTrace();}
+		}
+		if(permissions.isEthernet()){
+			try {
+				download = download || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
+				Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+download);
+			} catch (Exception e) { e.printStackTrace();}
+		}
     }
     
     public void DisplayImage(long l, String url, ImageView imageView,Context context,boolean top, String hashCode)

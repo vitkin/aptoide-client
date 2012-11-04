@@ -14,7 +14,9 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
+import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.views.ViewApk;
+import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
 import cm.aptoide.pt2.webservices.login.Login;
 
 public class Database {
@@ -464,12 +466,8 @@ public class Database {
 			
 		}
 		if(mergeStores&&c.getCount()>0){
-			int downloads=0;
-			for(c.moveToNext();!c.isAfterLast();c.moveToNext()){
-				downloads+=c.getInt(c.getColumnIndex("downloads"));
-			}
 			MatrixCursor mc = new MatrixCursor(new String[]{"_id","name","avatar","downloads","status"});
-			mc.newRow().add(-1).add("All Stores").add("null").add(downloads).add("OK");
+			mc.newRow().add(-1).add("All Stores").add("http://mirror.apk07.bazaarandroid.com/apks/7/aptoide-f63c6f2461f65f32b6d144d6d2ff982e/rmateus/avatar/90b1760bbf02a597564d901fe731dbc0.png").add("").add("");
 			c.close();
 			return mc;
 		}else{
@@ -588,7 +586,6 @@ public class Database {
 		Cursor c = null;
 		try{
 			
-			
 			String query = "select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid group by a.apkid";
 			
 			
@@ -620,7 +617,20 @@ public class Database {
 	public Cursor getUpdates(Order order) {
 		Cursor c = null;
 		try{
-			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) group by a.apkid" ;
+			
+			SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(context);
+			String filter = "";
+			if(sPref.getBoolean("hwspecsChkBox", true)){
+				filter = filter +" and minscreen <= " + HWSpecifications.getScreenSize(context) +
+						" and minsdk <=  " + HWSpecifications.getSdkVer() +
+						" and mingles <= " +HWSpecifications.getEsglVer(context);
+			}
+			
+			if(sPref.getBoolean("matureChkBox", false)){
+				filter = filter + " and mature <= 0"; 
+			}
+			
+			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by a.apkid" ;
 			
 			switch (order) {
 			case NAME:
@@ -858,8 +868,10 @@ public class Database {
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				mc.newRow().add(c.getString(0)).add(c.getString(1)).add(c.getString(2)).add(c.getString(3));
 			}
+			
 		} catch (Exception e){
 			e.printStackTrace();
+			c.close();
 		} finally{
 			c.close();
 		}
@@ -929,7 +941,6 @@ public class Database {
 		}
 		database.setTransactionSuccessful();
 		database.endTransaction();
-		
 	}
 
 	public ArrayList<HashMap<String, String>> getItemBasedApks(String apkid) {

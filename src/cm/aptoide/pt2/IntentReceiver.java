@@ -89,7 +89,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				}
 				
 				startMarketIntent(param);
-			}else if(uri.startsWith("https://market.android.com/details?id=")){
+			}else if(uri.startsWith("http://market.android.com/details?id=")){
 				String param = uri.split("=")[1];
 				startMarketIntent(param);
 			}else{

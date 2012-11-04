@@ -442,9 +442,7 @@
             android:layout_height="wrap_content"
             ads:adSize="BANNER"
             ads:adUnitId="a14f30ff2e69698"
-            ads:loadAdOnCreate="true"
             ads:testDevices="TEST_EMULATOR, 024E68F7A840AA62AAC99441940B0127">
-" >
         </com.google.ads.AdView>
     </LinearLayout>
 
