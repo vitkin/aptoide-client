@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -357,9 +358,9 @@ public class ApkInfo extends FragmentActivity implements
 							if(thumbnailList!=null&&thumbnailList.length>0){
 								String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"";
 								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,hashCode));
-								
+								pi.setFillColor(Color.DKGRAY);
 								pi.setViewPager(screenshots);
-								pi.setRadius(7.5f);
+								pi.setRadius(6.5f);
 								findViewById(R.id.screenshots_container).setVisibility(View.VISIBLE);
 								findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
 								if(originalList.size()==1){
