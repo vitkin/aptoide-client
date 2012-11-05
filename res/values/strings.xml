@@ -17,7 +17,7 @@
 	<string name="add_repo_private">Private</string>
     <string name="extended_server">Extended Store</string>
     <string name="downloads">downloads</string>
-    <string name="merge_all_stores">View all</string>
+    <string name="merge_all_stores">Merge stores</string>
     <string name="search_for_stores">Search for Stores</string>
     <string name="downloading_apps">Downloading apps</string>
     <string name="downloaded_apps">Downloaded apps</string>
