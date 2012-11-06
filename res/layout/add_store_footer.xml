@@ -2,15 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
-
-    <CheckBox
-        android:id="@+id/join_stores"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="5"
-        android:text="@string/merge_all_stores" />
+    android:layout_margin="2dp"
+    android:orientation="vertical" >
 
     <Button
         android:id="@+id/add_store"
@@ -18,8 +11,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right"
-        android:layout_weight="0.5"
-        android:background="@drawable/add_store_button"
+        android:layout_weight="0.52"
+        android:background="@drawable/green_button"
+        android:drawableLeft="@drawable/create_contact"
         android:text="@string/add_store" />
 
 </LinearLayout>

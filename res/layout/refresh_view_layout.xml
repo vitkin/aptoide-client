@@ -6,13 +6,16 @@
 
     <Button
         android:id="@+id/refresh_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:layout_gravity="right"
+        android:background="@drawable/green_button"
         android:drawableLeft="@android:drawable/ic_popup_sync"
         android:text="@string/refresh_list"
-        android:textStyle="bold"
+        android:padding="7dp"
+        android:layout_margin="3dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@android:color/white"
+        android:textStyle="bold" />
 
 </LinearLayout>

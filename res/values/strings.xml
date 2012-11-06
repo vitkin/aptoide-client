@@ -84,13 +84,13 @@
     <string name="enterbody">Enter your review on the body section</string>
     <string name="postingcomment">Posting your comment...</string>
     <string name="commentadded">Your comment as been successfully submitted</string>
-    <string name="order_popup_title1">Order applications by: </string>
+    <string name="order_popup_title1">Order applications by</string>
     <string name="order_popup_lst1">Most recent first </string>
     <string name="order_popup_lst2">Alphabetically </string>
     <string name="order_popup_lst3">Rating </string>
     <string name="order_popup_lst4">Download number </string>
-    <string name="order_popup_title2">Show applications: </string>
-    <string name="order_popup_title3">Adult Content: </string>
+    <string name="order_popup_title2">Show applications</string>
+    <string name="order_popup_title3">Adult Content</string>
     <string name="order_popup_catg1">By category </string>
     <string name="order_popup_catg2">All applications </string>
     <string name="dialog_yes">Yes</string>
@@ -151,6 +151,7 @@
     <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
     <string name="update_done_msg1">Stores updated successfully.</string>
     
+    <string name="about">About</string>
     <string name="about_txt1">Your package installer to Android phone.\n</string>
     <string name="description">@string/about_txt1</string>
         

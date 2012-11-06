@@ -79,14 +79,19 @@
 
     <Button
         android:id="@+id/exit"
+        style="@style/button_style"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:background="@drawable/button"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
         android:text="@string/back"
-        android:visibility="visible" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black"
+        android:textStyle="normal" />
 
-</LinearLayout>
-<!--
+</LinearLayout><!--
  * Copyright (C) 2012  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *

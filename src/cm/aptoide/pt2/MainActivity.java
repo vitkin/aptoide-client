@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import java.util.zip.Adler32;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -30,9 +29,9 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -48,7 +47,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.Parcelable;
 import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -82,8 +80,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -95,7 +93,6 @@ import cm.aptoide.pt2.adapters.ViewPagerAdapter;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.ImageLoader2;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.services.MainService;
 import cm.aptoide.pt2.services.MainService.LocalBinder;
 import cm.aptoide.pt2.util.Algorithms;
@@ -686,32 +683,36 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		menu.add(0, 1, 0, "Login");
-		menu.add(0, 2, 0, "Settings");
-		menu.add(0, 3, 0, "Scheduled");
-		menu.add(0, 4, 0, "Display Options");
+		menu.add(Menu.NONE, EnumOptionsMenu.LOGIN.ordinal(), EnumOptionsMenu.LOGIN.ordinal(), R.string.setcredentials).setIcon(android.R.drawable.ic_menu_edit);
+		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options).setIcon(android.R.drawable.ic_menu_sort_by_size);
+		menu.add(Menu.NONE, EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(), EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(), R.string.setting_schdwntitle).setIcon(android.R.drawable.ic_menu_agenda);
+		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.settings_title_bar).setIcon(android.R.drawable.ic_menu_manage);
+		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(), EnumOptionsMenu.ABOUT.ordinal(), R.string.about).setIcon(android.R.drawable.ic_menu_help);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-
-		switch (item.getItemId()) {
-		case 1:
-
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("AptoideUploader-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		switch (menuEntry) {
+		case LOGIN:
 			Intent loginIntent = new Intent(this, Login.class);
 			startActivity(loginIntent);
 			break;
-		case 2:
-			Intent settingsIntent = new Intent(this, Settings.class);
-			startActivityForResult(settingsIntent, 0);
+		case DISPLAY_OPTIONS:
+			displayOptionsDialog();
 			break;
-		case 3:
+		case SCHEDULED_DOWNLOADS:
 			Intent scheduledIntent = new Intent(this, ScheduledDownloads.class);
 			startActivity(scheduledIntent);
 			break;
-		case 4:
-			displayOptionsDialog();
+		case SETTINGS:
+			Intent settingsIntent = new Intent(this, Settings.class);
+			startActivityForResult(settingsIntent, 0);
+			break;
+		case ABOUT:
+			showAbout();
 			break;
 		default:
 			break;
@@ -736,33 +737,63 @@ public class MainActivity extends FragmentActivity implements
 		}).start();
 
 	}
+	public void showAbout(){
+		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+		alertBuilder.setCancelable(false)
+		.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
+				dialog.cancel();
+			}
+		})
+		.setMessage("Aptoide");
 
+		AlertDialog alert = alertBuilder.create();
+
+		alert.setTitle(R.string.about);
+		alert.setIcon(android.R.drawable.ic_menu_help);
+
+		alert.show();
+	}
+	
 	private void displayOptionsDialog() {
 
-		final SharedPreferences sPref = PreferenceManager
-				.getDefaultSharedPreferences(this);
+		final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
 		final Editor editor = sPref.edit();
 
-		View view = LayoutInflater.from(mContext).inflate(R.layout.orderpopup,
-				null);
-		Builder builder = new AlertDialog.Builder(mContext).setView(view);
-		AlertDialog dialog = builder.create();
-
-		final RadioButton ord_rct = (RadioButton) view
-				.findViewById(R.id.org_rct);
-		final RadioButton ord_abc = (RadioButton) view
-				.findViewById(R.id.org_abc);
-		final RadioButton ord_rat = (RadioButton) view
-				.findViewById(R.id.org_rat);
-		final RadioButton ord_dwn = (RadioButton) view
-				.findViewById(R.id.org_dwn);
+		View view = LayoutInflater.from(mContext).inflate(R.layout.orderpopup, null);
+		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(view);
+		final AlertDialog orderDialog = dialogBuilder.create();
+		orderDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
+		orderDialog.setTitle(getString(R.string.menu_display_options));
+		orderDialog.setCancelable(true);
+		
+		final RadioButton ord_rct = (RadioButton) view.findViewById(R.id.org_rct);
+		final RadioButton ord_abc = (RadioButton) view.findViewById(R.id.org_abc);
+		final RadioButton ord_rat = (RadioButton) view.findViewById(R.id.org_rat);
+		final RadioButton ord_dwn = (RadioButton) view.findViewById(R.id.org_dwn);
 		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
 		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
 
-		final ToggleButton adult = (ToggleButton) view
-				.findViewById(R.id.adultcontent_toggle);
+		joinStores = (CheckBox) view.findViewById(R.id.join_stores);
+		joinStores.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-		dialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
+					@Override
+					public void onCheckedChanged(
+							CompoundButton buttonView, boolean isChecked) {
+						joinStores_boolean = isChecked;
+						 if (joinStores_boolean) {
+							 editor.putBoolean("joinStoresChkBox", true);
+						 } else {
+							 editor.putBoolean("joinStoresChkBox", false);
+						 }
+						 editor.commit();
+						refreshAvailableList(true);
+					}
+				});
+		
+		final ToggleButton adult = (ToggleButton) view.findViewById(R.id.adultcontent_toggle);
+
+		orderDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
 				new Dialog.OnClickListener() {
 					boolean pop_change = false;
 
@@ -808,6 +839,7 @@ public class MainActivity extends FragmentActivity implements
 		} else {
 			btn2.setChecked(true);
 		}
+		joinStores.setChecked(sPref.getBoolean("joinStoresChkBox", joinStores_boolean));
 		adult.setChecked(!sPref.getBoolean("matureChkBox", false));
 		// adult.setOnCheckedChangeListener(adultCheckedListener);
 		switch (order) {
@@ -828,7 +860,7 @@ public class MainActivity extends FragmentActivity implements
 			break;
 		}
 
-		dialog.show();
+		orderDialog.show();
 
 	}
 
@@ -1164,23 +1196,6 @@ public class MainActivity extends FragmentActivity implements
 							}
 						});
 
-				joinStores = (CheckBox) availableView
-						.findViewById(R.id.join_stores);
-				joinStores
-						.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-							@Override
-							public void onCheckedChanged(
-									CompoundButton buttonView, boolean isChecked) {
-								joinStores_boolean = isChecked;
-								// if (isChecked) {
-								// addBreadCrumb("All Stores", depth);
-								// } else {
-								// breadcrumbs.removeAllViews();
-								// }
-								refreshAvailableList(true);
-							}
-						});
 
 				availableAdapter = new AvailableListAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -1616,11 +1631,11 @@ public class MainActivity extends FragmentActivity implements
 			break;
 		}
 		pb.setVisibility(View.GONE);
-		 if (availableListView.getAdapter().getCount() > 1 || joinStores_boolean) {
-		 joinStores.setVisibility(View.VISIBLE);
-		 } else {
-		 joinStores.setVisibility(View.INVISIBLE);
-		 }
+//		 if (availableListView.getAdapter().getCount() > 1 || joinStores_boolean) {
+//		 joinStores.setVisibility(View.VISIBLE);
+//		 } else {
+//		 joinStores.setVisibility(View.INVISIBLE);
+//		 }
 
 	}
 
@@ -1674,7 +1689,8 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	ImageLoader loader;
-
+	ProgressBar store_parsing;
+	ImageView store_please_wait;
 	public class AvailableListAdapter extends CursorAdapter {
 
 		public AvailableListAdapter(Context context, Cursor c, int flags) {
@@ -1695,26 +1711,36 @@ public class MainActivity extends FragmentActivity implements
 						.findViewById(R.id.avatar), context, false, hashcode );
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
 						.getString(cursor.getColumnIndex("name")));
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(
-						"PARSED")) {
-					((TextView) view.findViewById(R.id.store_dwn_number))
-							.setText(cursor.getString(cursor
-									.getColumnIndex("downloads"))
-									+ " downloads");
-				} else {
-					((TextView) view.findViewById(R.id.store_dwn_number))
-							.setText(cursor.getString(cursor
-									.getColumnIndex("status"))
-									+ " - "
-									+ cursor.getString(cursor
-											.getColumnIndex("downloads"))
-									+ " downloads");
+				
+				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSED")) {
+					store_please_wait = (ImageView) view.findViewById(R.id.store_please_wait);
+					store_please_wait.setVisibility(View.GONE);
+					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
+					store_parsing.setVisibility(View.GONE);
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
 				}
-
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(
-						State.FAILED.name())
-						|| cursor.getString(cursor.getColumnIndex("status"))
-								.equals(State.PARSED.name())) {
+				if (cursor.getString(cursor.getColumnIndex("status")).equals("QUEUED")) {
+					store_please_wait = (ImageView) view.findViewById(R.id.store_please_wait);
+					store_please_wait.setVisibility(View.VISIBLE);
+					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
+					store_parsing.setVisibility(View.GONE);
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText("Preparing to load, please wait...");
+				} 
+				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSING")) {
+					store_please_wait = (ImageView) view.findViewById(R.id.store_please_wait);
+					store_please_wait.setVisibility(View.GONE);
+					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
+					store_parsing.setVisibility(View.VISIBLE);
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText("Loading...");
+				} 
+//				else {
+//					((TextView) view.findViewById(R.id.store_dwn_number))
+//							.setText(cursor.getString(cursor.getColumnIndex("status"))
+//									+ " - "
+//									+ cursor.getString(cursor.getColumnIndex("downloads"))
+//									+ " downloads");
+//				}
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name()) || cursor.getString(cursor.getColumnIndex("status")).equals(State.PARSED.name())) {
 					view.setTag(1);
 				}
 				break;

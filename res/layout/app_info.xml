@@ -42,7 +42,7 @@
             android:id="@+id/apkinfoheader"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
-            android:background="#424142"
+            android:background="@drawable/bar"
             android:gravity="right"
             android:padding="5dp" >
 
