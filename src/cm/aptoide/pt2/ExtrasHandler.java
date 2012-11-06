@@ -62,12 +62,6 @@ public class ExtrasHandler extends DefaultHandler {
 				value.put(ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID, apkid);
 				value.put(ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT, cmt);
 				values.add(value);
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				i++;
 				if(i%100==0){
 					context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));

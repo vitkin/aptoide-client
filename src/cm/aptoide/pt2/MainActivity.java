@@ -117,8 +117,7 @@ public class MainActivity extends FragmentActivity implements
 	private final static int LATEST_COMMENTS = -2;
 	private final static int LATEST_LIKES = -1;
 
-	private final String SDCARD = Environment.getExternalStorageDirectory()
-			.getPath();
+	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
 	private String LOCAL_PATH = SDCARD + "/.aptoide";
 
 	private final Dialog.OnClickListener addRepoListener = new Dialog.OnClickListener() {
@@ -208,7 +207,7 @@ public class MainActivity extends FragmentActivity implements
 					parent_apk.setApkid("editorschoice");
 					BufferedInputStream bis = new BufferedInputStream(
 							NetworkUtils.getInputStream(new URL(
-									"http://www.aptoide.com/apks/editors.xml"),
+									"http://imgs.aptoide.com/apks/editors.xml"),
 									null, null, mContext), 8 * 1024);
 					File f = File.createTempFile("abc", "abc");
 					OutputStream out = new FileOutputStream(f);
@@ -575,6 +574,9 @@ public class MainActivity extends FragmentActivity implements
 								if (parse) {
 									service.parseServer(db, server);
 								}
+								while(service==null){
+									Thread.sleep(10);
+								}
 								service.parseTop(db, server);
 								service.parseLatest(db, server);
 							}
@@ -587,6 +589,9 @@ public class MainActivity extends FragmentActivity implements
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (JSONException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -1611,11 +1616,11 @@ public class MainActivity extends FragmentActivity implements
 			break;
 		}
 		pb.setVisibility(View.GONE);
-		// if (availableListView.getAdapter().getCount() > 1) {
-		// joinStores.setVisibility(View.VISIBLE);
-		// } else {
-		// joinStores.setVisibility(View.INVISIBLE);
-		// }
+		 if (availableListView.getAdapter().getCount() > 1 || joinStores_boolean) {
+		 joinStores.setVisibility(View.VISIBLE);
+		 } else {
+		 joinStores.setVisibility(View.INVISIBLE);
+		 }
 
 	}
 
@@ -1647,9 +1652,9 @@ public class MainActivity extends FragmentActivity implements
 		alertDialog = new AlertDialog.Builder(mContext)
 				.setView(alertDialogView).create();
 		alertDialog.setTitle(getString(R.string.new_store));
-		alertDialog.setButton(Dialog.BUTTON_POSITIVE,
-				getString(R.string.new_store), addRepoListener);
 		alertDialog.setButton(Dialog.BUTTON_NEGATIVE,
+				getString(R.string.new_store), addRepoListener);
+		alertDialog.setButton(Dialog.BUTTON_POSITIVE,
 				getString(R.string.search_for_stores), searchStoresListener);
 		((EditText) alertDialogView.findViewById(R.id.edit_uri))
 				.setText("apps.store.aptoide.com");
@@ -1681,11 +1686,13 @@ public class MainActivity extends FragmentActivity implements
 		public void bindView(View view, Context context, Cursor cursor) {
 			switch (depth) {
 			case STORES:
+				String hashcode = cursor
+				.getString(cursor.getColumnIndex("avatar")).hashCode()
+				+ "";
+				System.out.println("hashCode"+hashcode);
 				loader.DisplayImage(-1, cursor.getString(cursor
 						.getColumnIndex("avatar")), (ImageView) view
-						.findViewById(R.id.avatar), context, false, cursor
-						.getString(cursor.getColumnIndex("avatar")).hashCode()
-						+ "");
+						.findViewById(R.id.avatar), context, false, hashcode );
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
 						.getString(cursor.getColumnIndex("name")));
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(

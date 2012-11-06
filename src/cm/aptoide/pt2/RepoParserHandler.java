@@ -151,7 +151,7 @@ public class RepoParserHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				if(isRemove){
-					db.remove(apk);
+					db.remove(apk,server);
 					isRemove=false;
 				}else{
 					db.insert(apk);
@@ -379,6 +379,8 @@ public class RepoParserHandler extends DefaultHandler {
 		db.updateStatus(server);
 		db.startTransation();
 		apk.setRepo_id(server.id);
+		delta = false;
+		
 	}
 
 	@Override
@@ -422,7 +424,9 @@ public class RepoParserHandler extends DefaultHandler {
 		super.endDocument();
 		server.state = State.PARSED;
 		if(!delta ){
+			System.out.println("Writing delta");
 			server.delta = Md5Handler.md5Calc(server.xml);
+			System.out.println("Delta is:" +server.delta);
 		}
 		db.updateStatus(server);
 		db.endTransation(server);
