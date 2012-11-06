@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -93,16 +94,16 @@ public class ApkInfo extends FragmentActivity implements
 					android.R.layout.simple_spinner_item, null,
 					new String[] { "vername" ,"repo_id"}, new int[] { android.R.id.text1 },
 					CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-//			adapter.setViewBinder(new ViewBinder() {
-//
-//				@Override
-//				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
-//					((TextView) arg0).setText(arg1.getString(R.string.version)+" " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
-//					System.out.println("repo_id="+arg1.getString(3));
-//					return true;
-//				}
-//			});
-//			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+			adapter.setViewBinder(new ViewBinder() {
+
+				@Override
+				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
+					((TextView) arg0).setText(getString(R.string.version)+" " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
+					System.out.println("repo_id="+arg1.getString(3));
+					return true;
+				}
+			});
+			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			spinner.setAdapter(adapter);
 			spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
@@ -145,19 +146,8 @@ public class ApkInfo extends FragmentActivity implements
 		}else{
 			viewApk = db.getApk(id, getIntent().getExtras().getBoolean("top", false));
 		}
-		Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
 		
-		String description_text = null;
-		System.out.println(c.getCount());
-		if(c.moveToFirst()){
-			description_text = c.getString(0);
-		}else{
-			description_text=getString(R.string.no_descript);
-		}
 		
-		c.close();
-		TextView description = (TextView) findViewById(R.id.descript);
-		description.setText(description_text);
 		
 		
 		download = ((ApplicationServiceManager)getApplication()).getAppDownloading(viewApk.hashCode());
@@ -396,16 +386,68 @@ public class ApkInfo extends FragmentActivity implements
 				} catch (Exception e){
 					e.printStackTrace();
 				}
+				Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
 				
+				description_text = "";
+				System.out.println(c.getCount());
+				if(c.moveToFirst()){
+					description_text = c.getString(0);
+				}else{
+					description_text=getString(R.string.no_descript);
+				}
+				
+				c.close();
+				
+				
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+				
+						final TextView description = (TextView) findViewById(R.id.descript);
+						description.setText(description_text);
+				if(description.getLineCount()>10){
+					description.setMaxLines(10);
+					findViewById(R.id.show_all_description).setVisibility(View.VISIBLE);
+					findViewById(R.id.description_container).setOnClickListener(new OnClickListener() {
+						
+						
+						@Override
+						public void onClick(View v) {
+							
+							if(collapsed){
+								collapsed=false;
+								scrollPosition = (int)((ScrollView)findViewById(R.id.scrollView1)).getScrollY();
+								description.setMaxLines(Integer.MAX_VALUE);
+								((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
+								((TextView) findViewById(R.id.show_all_description)).setText("Show Less");
+							}else{
+								collapsed=true;
+								((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
+								description.setMaxLines(10);
+								((ScrollView)findViewById(R.id.scrollView1)).scrollTo(0, scrollPosition);
+								((TextView) findViewById(R.id.show_all_description)).setText("Show More");
+							}
+						}
+					});
+				}
+				
+				
+					}
+				});
 			}
+			
+			
 		}).start();
 		
 	}
+	String description_text;
+	private boolean collapsed = true;
+	int scrollPosition = 0;
 	
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
-		
 		loadElements(id);
 	}
 	

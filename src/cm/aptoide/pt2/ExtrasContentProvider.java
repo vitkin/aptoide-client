@@ -56,7 +56,6 @@ public class ExtrasContentProvider extends ContentProvider {
 		        for (ContentValues cv : values) {
 		            long newID = sqlDB.insertOrThrow(ExtrasDbOpenHelper.TABLE_COMMENTS, null, cv);
 		            sqlDB.yieldIfContendedSafely();
-		            Thread.sleep(100);
 		            if (newID <= 0) {
 		                throw new SQLException("Failed to insert row into " + uri);
 		            }
@@ -67,6 +66,7 @@ public class ExtrasContentProvider extends ContentProvider {
 		        catch (Exception e) {
 		        	e.printStackTrace();				
 		    } finally {
+		    	sqlDB.setTransactionSuccessful();
 		        sqlDB.endTransaction();
 		    }
 

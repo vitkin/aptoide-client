@@ -181,7 +181,7 @@ public class Database {
 				order_string = "order by name collate nocase";
 				break;
 			case DATE:
-				order_string = "order by date";
+				order_string = "order by date desc";
 				break;
 			case DOWNLOADS:
 				order_string = "order by downloads desc";
@@ -595,7 +595,7 @@ public class Database {
 				query = query + " order by b.name collate nocase";
 				break;
 			case DATE:
-				query = query + " order by b.date";
+				query = query + " order by b.date desc";
 				break;
 			case DOWNLOADS:
 				query = query + " order by b.downloads desc";
@@ -637,7 +637,7 @@ public class Database {
 				query = query + " order by b.name collate nocase";
 				break;
 			case DATE:
-				query = query + " order by b.date";
+				query = query + " order by b.date desc";
 				break;
 			case DOWNLOADS:
 				query = query + " order by b.downloads desc";
@@ -750,8 +750,8 @@ public class Database {
 		return c;
 	}
 
-	public void remove(ViewApk apk) {
-		database.delete("apk", "apkid=?", new String[]{apk.getApkid()});
+	public void remove(ViewApk apk, Server server) {
+		database.delete("apk", "repo_id = ? and apkid=?", new String[]{server.id+"",apk.getApkid()});
 	}
 
 	public String getTopIconsPath(long repo_id) {

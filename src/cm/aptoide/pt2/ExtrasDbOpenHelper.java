@@ -20,7 +20,7 @@ public class ExtrasDbOpenHelper extends SQLiteOpenHelper {
 			+ COLUMN_COMMENTS_COMMENT + " text , UNIQUE ("+COLUMN_COMMENTS_APKID+") ON CONFLICT REPLACE); ";
 
 	public ExtrasDbOpenHelper(Context context) {
-		super(new DatabaseContext(context), "extras.db", null, 1);
+		super(context, "extras.db", null, 1);
 	}
 
 	@Override
