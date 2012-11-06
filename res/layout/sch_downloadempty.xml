@@ -2,29 +2,33 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="#edece9"
     android:baselineAligned="false"
     android:orientation="vertical" >
 
-    <!-- Green Bar -->
+    <TextView
+        android:id="@+id/scheduled_downloads_intro"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/greenbar"
+        android:padding="10dp"
+        android:text="@string/setting_schdwntitle"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#fff" />
 
-   <include layout="@layout/actionbar"/>
-   
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/content_layout"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:background="#edece9"
+        android:layout_weight="1"
         android:gravity="top"
-        android:padding="10dp" >
+        android:padding="5dp" >
 
         <RelativeLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/list_layout"
+            android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_above="@+id/sch_down"
-            android:layout_below="@+id/content_layout"
-            android:background="@drawable/border_background_normal"
-            android:gravity="bottom"
-            android:padding="5dp" >
+            android:background="@android:color/white" >
 
             <ListView
                 android:id="@android:id/list"
@@ -37,20 +41,24 @@
                 android:id="@android:id/empty"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:layout_alignTop="@android:id/list"
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/no_sch_downloads"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:textColor="#4f4f4f" />
         </RelativeLayout>
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/sch_down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp" />
-    </RelativeLayout>
+    <Button
+        android:id="@+id/sch_down"
+        style="@style/button_style"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black"
+        android:textStyle="normal" />
 
 </LinearLayout>

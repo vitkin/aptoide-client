@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_dark"
     android:orientation="vertical" >
 
     <TextView
@@ -11,14 +11,13 @@
         android:layout_height="wrap_content"
         android:text="SDK Version"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#4f4f4f" />
+        android:textColor="@android:color/primary_text_dark" />
 
     <TextView
         android:id="@+id/sdkver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
-        android:textColor="#4f4f4f" />
+        android:textColor="@android:color/secondary_text_dark_nodisable" />
 
     <TextView
         android:id="@+id/screenSizeTitle"
@@ -26,28 +25,26 @@
         android:layout_height="wrap_content"
         android:text="Screen Size"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#4f4f4f" />
+        android:textColor="@android:color/primary_text_dark" />
 
     <TextView
         android:id="@+id/screenSize"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" 
-        android:textColor="#4f4f4f"/>
+        android:textColor="@android:color/secondary_text_dark_nodisable" />
 
     <TextView
         android:id="@+id/esglVerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ESGL Version"
-        android:textColor="#4f4f4f"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/primary_text_dark" />
 
     <TextView
         android:id="@+id/esglVer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="" 
-        android:textColor="#4f4f4f"/>
+        android:textColor="@android:color/secondary_text_dark_nodisable" />
 
 </LinearLayout>
