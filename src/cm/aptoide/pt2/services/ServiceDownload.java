@@ -361,7 +361,7 @@ public class ServiceDownload extends Service {
 	        					intervalEndTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 	        					try {
 	        						int speed = Math.round(formatConversion*((download.getProgress() - intervalStartProgress)/(intervalEndTime - intervalStartTime)));
-//	        						Log.d("Aptoide-download", "progress increase: "+((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)+" interval: "+((intervalEndTime - intervalStartTime))+" speed: "+speed);
+	        						Log.d("Aptoide-download", "progress increase: "+((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)+" interval: "+((intervalEndTime - intervalStartTime))+" speed: "+speed);
 									download.setSpeedInKBps(speed);
 								} catch (ArithmeticException e) {
 									download.setSpeedInKBps(0);
