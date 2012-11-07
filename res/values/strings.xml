@@ -19,6 +19,7 @@
     <string name="downloads">downloads</string>
     <string name="merge_all_stores">Merge Stores</string>
     <string name="search_for_stores">Search for Stores</string>
+    <string name="download_manager">Download Manager</string>
     <string name="downloading_apps">Downloading apps</string>
     <string name="downloaded_apps">Downloaded apps</string>
     <string name="not_downloaded_apps">Not downloaded apps</string>
@@ -267,6 +268,14 @@
     <string name="choose_email_client">Choose an Email client:</string>
     <string name="refresh_list">Refresh</string>
     
-    
+    <string name="want_to_share">Aptoide will not post without your permission. We respect your phone privacy. Do you want to share the following message?</string>
+    <string name="share">Share</string>
+    <string name="facebook_authentication_failed">Authentication with Facebook failed!</string>
+    <string name="facebook_authentication_cancelled">Authentication with Facebook cancelled!</string>
+    <string name="facebook_failed_post">Failed to post to timeline!</string>
+   	<string name="facebook_message_posted">Message posted to your facebook timeline!</string>
+   	<string name="facebook_blank_response">Blank response.</string>
+   	<string name="facebook_like_failed">Like on Facebook failed!</string>
+    <string name="facebook_like_cancelled">Like on Facebook cancelled!</string>
 
 </resources>
