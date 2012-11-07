@@ -23,10 +23,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.Application;
-import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -48,7 +45,6 @@ import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.services.AIDLServiceDownload;
 import cm.aptoide.pt2.services.ServiceDownload;
 import cm.aptoide.pt2.util.Constants;
-import cm.aptoide.pt2.views.EnumDownloadFailReason;
 import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewCache;
@@ -71,7 +67,7 @@ import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
 public class ApplicationServiceManager extends Application {
 	private boolean isRunning = false;
 
-	private boolean serviceDownloadSeenRunning = false;
+//	private boolean serviceDownloadSeenRunning = false;
 	private boolean serviceDownloadIsBound = false;
 	private ConnectivityManager connectivityState;
 
@@ -100,7 +96,7 @@ public class ApplicationServiceManager extends Application {
 			serviceDownloadCaller = AIDLServiceDownload.Stub.asInterface(service);
 			serviceDownloadIsBound = true;
 			
-			Log.v("Aptoide-ApplicationServiceManager", "Connected to ServiceData");	
+			Log.v("Aptoide-ApplicationServiceManager", "Connected to ServiceDownload");	
 			
 //			if(!serviceDownloadSeenRunning){
 //			}
@@ -121,7 +117,7 @@ public class ApplicationServiceManager extends Application {
 			serviceDownloadCaller = null;
 			serviceDownloadIsBound = false;
 			
-			Log.v("Aptoide-ApplicationServiceManager", "Disconnected from ServiceData");
+			Log.v("Aptoide-ApplicationServiceManager", "Disconnected from ServiceDownload");
 		}
 	};
 	
@@ -131,30 +127,37 @@ public class ApplicationServiceManager extends Application {
 
 		@Override
 		public void updateDownloadStatus(int appId, ViewDownload update) throws RemoteException {
-			ViewDownloadManagement updating = ongoingDownloads.get(appId);
-			updating.updateProgress(update);
-			if(updating.isComplete() || updating.getDownloadStatus().equals(EnumDownloadStatus.STOPPED)
-									 || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
-				ViewDownloadManagement download = ongoingDownloads.remove(appId);
-//				Log.d("ManagerDownloads", "download removed from ongoing: "+download);					
-				if(download.isComplete()){
-					completedDownloads.put(download.hashCode(), download);
-					if(downloadManager != null){
-						downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.COMPLETED.ordinal());
+			try {
+				Log.d("Aptoide", "download update status *************** "+update.getStatus());
+				Log.d("Aptoide", "ongoing downloads *************** "+ongoingDownloads);
+				ViewDownloadManagement updating = ongoingDownloads.get(appId);
+				updating.updateProgress(update);
+				if(updating.isComplete() || updating.getDownloadStatus().equals(EnumDownloadStatus.STOPPED)
+										 || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
+
+					ViewDownloadManagement download = ongoingDownloads.remove(appId);
+					Log.d("ManagerDownloads", "download removed from ongoing: "+download);					
+					if(download.isComplete()){
+						completedDownloads.put(download.hashCode(), download);
+						if(downloadManager != null){
+							downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.COMPLETED.ordinal());
+						}
+						installApp(download.getCache());					
+					}else if(download.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
+						failedDownloads.put(appId, download);
+						if(downloadManager != null){
+							downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.FAILED.ordinal());
+						}
 					}
-					installApp(download.getCache());					
-				}else if(download.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
-					failedDownloads.put(appId, download);
+				}else{
 					if(downloadManager != null){
-						downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.FAILED.ordinal());
+						downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.UPDATE.ordinal());
 					}
 				}
-			}else{
-				if(downloadManager != null){
-					downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.UPDATE.ordinal());
-				}
+				updateGlobalProgress();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			updateGlobalProgress();
 		}
 		
 	};
@@ -192,13 +195,13 @@ public class ApplicationServiceManager extends Application {
 	}
 
 	private void makeSureServiceDownloadIsRunning(){
-    	ActivityManager activityManager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
-    	for (RunningServiceInfo runningService : activityManager.getRunningServices(Integer.MAX_VALUE)) {
-			if(runningService.service.getClassName().equals(Constants.SERVICE_DOWNLOAD_CLASS_NAME)){
-				this.serviceDownloadSeenRunning = true;
-				break;
-			}
-		}
+//    	ActivityManager activityManager = (ActivityManager)this.getSystemService(Context.ACTIVITY_SERVICE);
+//    	for (RunningServiceInfo runningService : activityManager.getRunningServices(Integer.MAX_VALUE)) {
+//			if(runningService.service.getClassName().equals(Constants.SERVICE_DOWNLOAD_CLASS_NAME)){
+//				this.serviceDownloadSeenRunning = true;
+//				break;
+//			}
+//		}
 
     	if(!serviceDownloadIsBound){
 //    		startService(new Intent(this, ServiceDownload.class));	//TODO uncomment this to make service independent of Aptoide's lifecycle
@@ -333,6 +336,8 @@ public class ApplicationServiceManager extends Application {
 			keepScreenOn.release();
 			dismissNotification();
 		}
+
+		Log.d("Aptoide", "update global progress: ongoing downloads *************** "+ongoingDownloads);
 	}
 	
 	
@@ -373,6 +378,7 @@ public class ApplicationServiceManager extends Application {
 	 * @param ViewDownloadManagement
 	 */
 	public void startDownload(final ViewDownloadManagement viewDownload){
+		Log.d("Aptoide", "download being started *************** "+viewDownload.hashCode());
 		ViewCache cache = viewDownload.getCache();
 		if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 			installApp(cache);
@@ -416,6 +422,7 @@ public class ApplicationServiceManager extends Application {
 	 * @param appHashId
 	 */
 	public void pauseDownload(final int appHashId){
+		Log.d("Aptoide", "download being paused *************** "+appHashId);
 		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.PAUSED.ordinal());
@@ -433,6 +440,7 @@ public class ApplicationServiceManager extends Application {
 	 * @param appHashId
 	 */
 	public void resumeDownload(final int appHashId){
+		Log.d("Aptoide", "download being resumed *************** "+appHashId);
 		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.RESUMING.ordinal());
@@ -446,8 +454,10 @@ public class ApplicationServiceManager extends Application {
 	 * @param appHashId
 	 */
 	public void stopDownload(final int appHashId){
+		Log.d("Aptoide", "download being stopped *************** "+appHashId);
 		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
 		ViewDownloadManagement download = ongoingDownloads.remove(appHashId);
+//		ViewDownloadManagement download = ongoingDownloads.get(appHashId);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.STOPPED.ordinal());
 		}
@@ -466,9 +476,10 @@ public class ApplicationServiceManager extends Application {
 	 * 
 	 * @param appHashId
 	 */
-	public void restartDownload(final int appHashid){
-		if(failedDownloads.containsKey(appHashid)){
-			startDownload(failedDownloads.remove(appHashid));
+	public void restartDownload(final int appHashId){
+		Log.d("Aptoide", "download being restarted *************** "+appHashId);
+		if(failedDownloads.containsKey(appHashId)){
+			startDownload(failedDownloads.remove(appHashId));
 			if(downloadManager != null){
 				downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.RESTARTING.ordinal());
 			}
@@ -481,6 +492,7 @@ public class ApplicationServiceManager extends Application {
 	}
 	
 	public Object[] getDownloadsOngoing(){
+		Log.d("Aptoide", "getting downloads ongoing *************** "+ongoingDownloads);
 		return ongoingDownloads.values().toArray();
 	}
 	
