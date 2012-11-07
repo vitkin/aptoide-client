@@ -1690,7 +1690,6 @@ public class MainActivity extends FragmentActivity implements
 
 	ImageLoader loader;
 	ProgressBar store_parsing;
-	ImageView store_please_wait;
 	public class AvailableListAdapter extends CursorAdapter {
 
 		public AvailableListAdapter(Context context, Cursor c, int flags) {
@@ -1713,22 +1712,16 @@ public class MainActivity extends FragmentActivity implements
 						.getString(cursor.getColumnIndex("name")));
 				
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSED")) {
-					store_please_wait = (ImageView) view.findViewById(R.id.store_please_wait);
-					store_please_wait.setVisibility(View.GONE);
 					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
 					store_parsing.setVisibility(View.GONE);
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("QUEUED")) {
-					store_please_wait = (ImageView) view.findViewById(R.id.store_please_wait);
-					store_please_wait.setVisibility(View.VISIBLE);
 					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
 					store_parsing.setVisibility(View.GONE);
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText("Preparing to load, please wait...");
 				} 
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSING")) {
-					store_please_wait = (ImageView) view.findViewById(R.id.store_please_wait);
-					store_please_wait.setVisibility(View.GONE);
 					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
 					store_parsing.setVisibility(View.VISIBLE);
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText("Loading...");

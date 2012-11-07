@@ -19,9 +19,11 @@
  */
 package cm.aptoide.pt2.adapters;
 
-import java.util.ArrayList;
-
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,10 +32,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.sharing.DialogShareOnFacebook;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
 
 public class DownloadedListAdapter extends BaseAdapter{
 
+	private Activity activity;
+	
 	private ImageLoader imageLoader;
 	
 	private LayoutInflater layoutInflater;
@@ -47,16 +52,19 @@ public class DownloadedListAdapter extends BaseAdapter{
 	 * @param context
 	 * @param ImageLoader
 	 */
-	public DownloadedListAdapter(Context context, ImageLoader imageLoader){
+	public DownloadedListAdapter(Activity activity, ImageLoader imageLoader){
+		this.activity = activity;
+		
 		this.imageLoader = imageLoader;
 
-		layoutInflater = LayoutInflater.from(context);
+		layoutInflater = LayoutInflater.from(activity);
 
 	} 
 
 	public static class DownloadingRowViewHolder{
 		TextView app_name;
 		ImageView app_icon;
+		ImageView app_facebook_share;
 	}
 
 	@Override
@@ -66,10 +74,11 @@ public class DownloadedListAdapter extends BaseAdapter{
 
 		if(convertView == null){
 			convertView = layoutInflater.inflate(R.layout.row_app_downloaded, null);
-
+			
 			rowViewHolder = new DownloadingRowViewHolder();
 			rowViewHolder.app_name = (TextView) convertView.findViewById(R.id.downloaded_name);
 			rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.downloaded_icon);
+			rowViewHolder.app_facebook_share = (ImageView) convertView.findViewById(R.id.downloaded_facebook_share);
 			convertView.setTag(rowViewHolder);
 		}else{
 			rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
@@ -79,7 +88,33 @@ public class DownloadedListAdapter extends BaseAdapter{
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
 		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
+		
+		final String shareAppName = download.getAppInfo().getName()+"  "+download.getAppInfo().getVername();
+		final String sharePicture = download.getAppInfo().getIconPath();
+		
+		rowViewHolder.app_facebook_share.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View view) {
+				String facebookShareName = shareAppName;
+				String facebookSharePicture = sharePicture;
+//				String facebookShareText = shareText;
+//				String facebookShareLink = shareLink;  
+//				String facebookShareStore = shareStore;
 
+				Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookSharePicture);
+				
+				final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(activity, facebookShareName, facebookSharePicture);
+
+				shareFacebook.setOnDismissListener(new OnDismissListener() {
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						shareFacebook.dismiss();
+					}
+				});
+				
+				shareFacebook.show();
+		    }
+		});
+		
 		return convertView;
 	}
 
@@ -112,4 +147,5 @@ public class DownloadedListAdapter extends BaseAdapter{
 		notifyDataSetChanged();
 	}
 
+	
 }

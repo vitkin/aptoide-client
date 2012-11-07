@@ -166,7 +166,9 @@ public class ApkInfo extends FragmentActivity implements
 			findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
 			((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
 			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+			((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 			((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+			((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
 		}
 		
 		final long repo_id = viewApk.getRepo_id();
@@ -409,6 +411,27 @@ public class ApkInfo extends FragmentActivity implements
 				if(description.getLineCount()>10){
 					description.setMaxLines(10);
 					findViewById(R.id.show_all_description).setVisibility(View.VISIBLE);
+					findViewById(R.id.show_all_description).setOnClickListener(new OnClickListener() {
+						
+						
+						@Override
+						public void onClick(View v) {
+							
+							if(collapsed){
+								collapsed=false;
+								scrollPosition = (int)((ScrollView)findViewById(R.id.scrollView1)).getScrollY();
+								description.setMaxLines(Integer.MAX_VALUE);
+								((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
+								((TextView) findViewById(R.id.show_all_description)).setText("Show Less");
+							}else{
+								collapsed=true;
+								((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
+								description.setMaxLines(10);
+								((ScrollView)findViewById(R.id.scrollView1)).scrollTo(0, scrollPosition);
+								((TextView) findViewById(R.id.show_all_description)).setText("Show More");
+							}
+						}
+					});
 					findViewById(R.id.description_container).setOnClickListener(new OnClickListener() {
 						
 						
@@ -478,7 +501,9 @@ public class ApkInfo extends FragmentActivity implements
 				progress.setIndeterminate(false);
 				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+				((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+				((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
 //				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				break;
 				
@@ -487,7 +512,9 @@ public class ApkInfo extends FragmentActivity implements
 				progress.setIndeterminate(false);
 				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+				((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+				((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
 //				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				break;
 			case UPDATE:
@@ -496,7 +523,9 @@ public class ApkInfo extends FragmentActivity implements
 				progress.setIndeterminate(false);
 				progress.setProgress(download.getProgress());
 				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+				((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+				((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
 //				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 				
 				break;

@@ -184,7 +184,12 @@ public class DownloadingListAdapter extends BaseAdapter{
 
 	@Override
 	public long getItemId(int position) {
-		return downloading[position].hashCode();
+		try {
+			return downloading[position].hashCode();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	/**

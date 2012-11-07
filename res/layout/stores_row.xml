@@ -66,15 +66,6 @@
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@android:color/darker_gray" />
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/store_please_wait"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/store_status_layout"
-                android:layout_alignParentRight="true"
-                android:visibility="gone"
-                android:background="@android:drawable/presence_busy" />
         </RelativeLayout>
     </LinearLayout>
 
