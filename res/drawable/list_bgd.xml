@@ -4,14 +4,10 @@
     <item android:state_pressed="true"><shape>
             <solid android:drawable="@android:drawable/list_selector_background" />
 
-            <corners android:radius="5dp" />
-
             <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
         </shape></item>
     <item><shape>
             <gradient android:angle="270" android:endColor="#ffffff" android:startColor="#eeeeee" />
-
-            <corners android:radius="6dp" />
 
             <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
         </shape></item>
