@@ -18,8 +18,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="@string/want_to_share"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
             android:layout_width="fill_parent"

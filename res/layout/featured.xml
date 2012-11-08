@@ -26,10 +26,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="0.5dp"
                     android:layout_marginBottom="2dp"
-                    android:clickable="true"
-                    android:adjustViewBounds="true" />
+                    android:layout_marginTop="0.5dp"
+                    android:adjustViewBounds="true"
+                    android:clickable="true" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -41,8 +41,8 @@
                         android:layout_height="fill_parent"
                         android:layout_marginRight="0.5dp"
                         android:layout_weight="1"
-                        android:clickable="true"
-                        android:adjustViewBounds="true" />
+                        android:adjustViewBounds="true"
+                        android:clickable="true" />
 
                     <ImageView
                         android:id="@+id/topright"
@@ -50,8 +50,8 @@
                         android:layout_height="fill_parent"
                         android:layout_marginLeft="0.5dp"
                         android:layout_weight="1"
-                        android:clickable="true"
-                        android:adjustViewBounds="true" />
+                        android:adjustViewBounds="true"
+                        android:clickable="true" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -60,23 +60,23 @@
 
                     <ImageView
                         android:id="@+id/bottomleft"
-                        android:clickable="true"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_marginRight="0.5dp"
                         android:layout_marginTop="1dp"
                         android:layout_weight="1"
-                        android:adjustViewBounds="true" />
+                        android:adjustViewBounds="true"
+                        android:clickable="true" />
 
                     <ImageView
                         android:id="@+id/bottomright"
-                        android:clickable="true"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_marginLeft="0.5dp"
                         android:layout_marginTop="1dp"
                         android:layout_weight="1"
-                        android:adjustViewBounds="true" />
+                        android:adjustViewBounds="true"
+                        android:clickable="true" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -88,13 +88,14 @@
                 android:background="@drawable/ab_solid_light_holo" >
 
                 <TextView
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="5dp"
                     android:text="Top Apps"
-                    android:textSize="18sp" />
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="#3e6e2f" />
             </RelativeLayout>
 
             <LinearLayout
@@ -129,9 +130,7 @@
                     android:background="@drawable/mature_slider"
                     android:textOff=""
                     android:textOn="" />
-
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 
