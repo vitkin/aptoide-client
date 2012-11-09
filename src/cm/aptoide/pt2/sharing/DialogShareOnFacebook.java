@@ -84,7 +84,7 @@ public class DialogShareOnFacebook extends Dialog{
 		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.facebook_bt);
 
 		share_text = (TextView) findViewById(R.id.share_description);
-		share_text.setText("João installed Angry Birds for Android");
+		share_text.setText("I installed An App for Android");
 
 		icon_image = (ImageView) findViewById(R.id.share_image);
 		Drawable drawable = loadImageFromURL(iconToPost);
@@ -118,10 +118,10 @@ public class DialogShareOnFacebook extends Dialog{
 
 	public void postToWall(String name, String icon){
 		Bundle params = new Bundle();
-		params.putString("caption", "A message");
+		params.putString("caption", "Aptoide");
 		params.putString("link", "http://www.aptoide.com/");
-		params.putString("description", "João installed Angry Birds for Android");
-		params.putString("picture", "http://www.aptoide.com/includes/themes/default/images/repo_default_icon.png");
+		params.putString("description", "I installed "+name+" for Android");
+		params.putString("picture", icon);
 		params.putString("name", name);
 		
 		facebook.dialog(activity, "feed", params, new UpdateStatusListener());
