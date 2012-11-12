@@ -94,9 +94,9 @@ public class ExtrasService extends Service {
 			parsingList.add(path);
 			File xml = new File(path);
 			String md5 = Md5Handler.md5Calc(xml);
-			
-			Thread thread = new Thread(new ExtrasParser(xml,getApplicationContext(),md5));
+			Thread thread = new Thread(new ExtrasParser(path,getApplicationContext(),md5));
 			thread.setPriority(1);
+			thread.start();
 			System.out.println("Extras starting");
 		}
 		
@@ -110,8 +110,8 @@ public class ExtrasService extends Service {
 		
 		
 		
-		public ExtrasParser(File xml, Context context,String md5) {
-			this.xml=xml;
+		public ExtrasParser(String xml, Context context,String md5) {
+			this.xml=new File(xml);
 			this.context=context;
 			this.md5 = md5;
 		}

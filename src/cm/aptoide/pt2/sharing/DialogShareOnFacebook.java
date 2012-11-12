@@ -34,21 +34,26 @@ public class DialogShareOnFacebook extends Dialog{
 
 	private static final String TOKEN = "access_token";
 	private static final String EXPIRES = "expires_in";
-	private static final String KEY = "backups-facebook-credentials";
+	private static final String KEY = "aptoide-facebook-credentials";
 
 	private Facebook facebook;
-	private String nameToPost, iconToPost;
-	private TextView share_text;
+	private String nameToPost, iconToPost, messageToPost, descriptionToPost, storeLinkToPost;
+	private TextView share_description;
 	private ImageView icon_image;
-
+	private TextView store_name;
+	private TextView share_visit;
+	
 	Activity activity;
 	private SharedPreferences sharedPreferences;
 
-	public DialogShareOnFacebook(Activity activity, String facebookShareName, String facebookShareIcon) {
+	public DialogShareOnFacebook(Activity activity, String facebookShareName, String facebookShareIcon, String facebookShareText, String facebookShareDescription, String facebookShareStoreLink) {
 		super(activity);
 		this.activity=activity;
 		this.nameToPost = facebookShareName;
 		this.iconToPost = facebookShareIcon;
+		this.messageToPost = facebookShareText;
+		this.descriptionToPost = facebookShareDescription;
+		this.storeLinkToPost = facebookShareStoreLink;
 	}
 
 	public boolean saveCredentials(Facebook facebook) {
@@ -83,13 +88,16 @@ public class DialogShareOnFacebook extends Dialog{
 		setContentView(R.layout.dialog_share_facebook);
 		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.facebook_bt);
 
-		share_text = (TextView) findViewById(R.id.share_description);
-		share_text.setText("I installed An App for Android");
-
+		share_description = (TextView) findViewById(R.id.share_description);
+		share_description.setText(messageToPost);
 		icon_image = (ImageView) findViewById(R.id.share_image);
 		Drawable drawable = loadImageFromURL(iconToPost);
 		icon_image.setImageDrawable(drawable);
-
+		share_visit = (TextView) findViewById(R.id.share_visit);
+		share_visit.setText(descriptionToPost);
+		store_name = (TextView) findViewById(R.id.share_store);
+		store_name.setText(storeLinkToPost);
+		
 		((Button)findViewById(R.id.FacebookShareButton)).setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -97,7 +105,7 @@ public class DialogShareOnFacebook extends Dialog{
 					loginAndPostToWall();
 				}
 				else {
-					postToWall(nameToPost, iconToPost);
+					postToWall(nameToPost, iconToPost, messageToPost, descriptionToPost, storeLinkToPost);
 				}
 			}
 		});
@@ -116,11 +124,11 @@ public class DialogShareOnFacebook extends Dialog{
 		facebook.authorize(activity, PERMISSIONS, Facebook.FORCE_DIALOG_AUTH, new LoginDialogListener());
 	}
 
-	public void postToWall(String name, String icon){
+	public void postToWall(String name, String icon, String message, String description, String storeLink){
 		Bundle params = new Bundle();
-		params.putString("caption", "Aptoide");
-		params.putString("link", "http://www.aptoide.com/");
-		params.putString("description", "I installed "+name+" for Android");
+		params.putString("caption", message);
+		params.putString("link", storeLink);
+		params.putString("description", description + " - " + storeLink);
 		params.putString("picture", icon);
 		params.putString("name", name);
 		
@@ -132,7 +140,7 @@ public class DialogShareOnFacebook extends Dialog{
 		public void onComplete(Bundle values) {
 			saveCredentials(facebook);
 			if(nameToPost != null){
-				postToWall(nameToPost, iconToPost);
+				postToWall(nameToPost, iconToPost, messageToPost, descriptionToPost, storeLinkToPost);
 			}
 		}
 		public void onFacebookError(FacebookError error) {

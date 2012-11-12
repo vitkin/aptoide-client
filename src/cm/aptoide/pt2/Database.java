@@ -467,13 +467,33 @@ public class Database {
 		}
 		if(mergeStores&&c.getCount()>0){
 			MatrixCursor mc = new MatrixCursor(new String[]{"_id","name","avatar","downloads","status"});
-			mc.newRow().add(-1).add("All Stores").add("http://mirror.apk07.bazaarandroid.com/apks/7/aptoide-f63c6f2461f65f32b6d144d6d2ff982e/rmateus/avatar/90b1760bbf02a597564d901fe731dbc0.png").add("").add("");
+			mc.newRow().add(-1).add("All Stores").add("http://imgs.aptoide.com/includes/themes/default/images/repo_default_icon.png").add("").add("");
 			c.close();
 			return mc;
 		}else{
 			return c;
 		}
 		
+	}
+	
+	public String getStoreName(long repo_id){
+		String return_string = null;
+		Cursor c = null;
+		
+		try {
+			c = database.query("repo", new String[]{"name"}, "_id = ?", new String[]{repo_id+""}, null, null, null);
+			
+			if(c.moveToFirst()){
+				return_string=c.getString(c.getColumnIndex("name"));
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			c.close();
+		}
+		
+		return return_string;
 	}
 
 	public long getServerId(String server) {
