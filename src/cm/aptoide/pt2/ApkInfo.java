@@ -8,12 +8,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -75,12 +78,28 @@ public class ApkInfo extends FragmentActivity implements
 	boolean spinnerInstaciated = false;
 	CheckBox scheduledDownloadChBox;
 	private ViewDownloadManagement download;
+	private ServiceConnection conn = new ServiceConnection() {
+		
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			
+		}
+		
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			
+		}
+	};
+	
 	
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.app_info);
+		Intent i = new Intent();
+		bindService(i, conn , BIND_AUTO_CREATE);
+		
 		category = Category.values()[getIntent().getIntExtra("category", 3)];
 		context = this;
 		db = Database.getInstance(this);
@@ -146,7 +165,6 @@ public class ApkInfo extends FragmentActivity implements
 		}else{
 			viewApk = db.getApk(id, getIntent().getExtras().getBoolean("top", false));
 		}
-		
 		
 		
 		
@@ -235,7 +253,7 @@ public class ApkInfo extends FragmentActivity implements
 				
 				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
 				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
-					((ApplicationServiceManager)getApplication()).installApp(cache);
+					((ApplicationServiceManager) getApplication()).installApp(cache);
 				}else{
 					download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
 							.getExtras().getBoolean("top", false)))

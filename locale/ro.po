@@ -8,73 +8,69 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-10-29 14:02+0000\n"
-"PO-Revision-Date: 2012-06-07 15:24+0100\n"
+"PO-Revision-Date: 2012-10-31 16:12+0100\n"
 "Last-Translator: Munteanu <ovidiumunteanu15@yahoo.com>\n"
 "Language-Team: ro <LL@li.org>\n"
-"Plural-Forms: nplurals=3; plural=((n == 1) ? 0 : ((n == 0) || ((n != 1) "
-"&& ((n % 100) >= 1 && (n % 100) <= 19))) ? 1 : 2)\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);;\n"
+"X-Generator: Pootle 2.1.6\n"
 "Generated-By: Babel 1.0dev\n"
 
 msgctxt "menu_context_remove"
 msgid "Remove"
-msgstr ""
+msgstr "Şterge"
 
 msgctxt "menu_context_reparse"
 msgid "Reload"
-msgstr ""
+msgstr "Reîncărcare"
 
 msgctxt "error_latest_apk"
 msgid "No APK available in database. Is store still loading?"
-msgstr ""
+msgstr "Nici o aplicaţie disponibilă în baza de date.Magazinul încă se încarcă?"
 
 msgctxt "error_delete_store"
 msgid "Unable to delete store. The store is still loading."
-msgstr ""
+msgstr "Nu s-a putut şterge magazinul.Magazinul încă se încarcă."
 
 msgctxt "menu_settings"
 msgid "Settings"
 msgstr "Setări"
 
-#, fuzzy
 msgctxt "my_stores"
 msgid "My stores"
-msgstr "Editare magazin"
+msgstr "Magazinele mele"
 
-#, fuzzy
 msgctxt "store_name"
 msgid "Store Name"
-msgstr "Nume utilizator..."
+msgstr "Nume magazin"
 
-#, fuzzy
 msgctxt "category1"
 msgid "Category 1"
-msgstr "După categorie"
+msgstr "Categoria 1"
 
-#, fuzzy
 msgctxt "category2"
 msgid "Category 2"
-msgstr "După categorie"
+msgstr "Categoria 2"
 
-#, fuzzy
 msgctxt "add_store"
 msgid "Add Store"
-msgstr "Adaugă magazin!"
+msgstr "Adaugă magazin"
 
 msgctxt "version"
 msgid "Version:"
-msgstr ""
+msgstr "Versiune:"
 
 msgctxt "empty_store_list"
 msgid "You don't have any stores."
-msgstr ""
+msgstr "Nu aveţi nici un magazin."
 
-#, fuzzy
 msgctxt "new_store"
 msgid "Add Store"
-msgstr "Adaugă magazin!"
+msgstr "Adaugă magazin"
 
 msgctxt "add_repo_private"
 msgid "Private"
@@ -84,36 +80,33 @@ msgctxt "extended_server"
 msgid "Extended Store"
 msgstr "Extensie magazin"
 
-#, fuzzy
 msgctxt "downloads"
 msgid "downloads"
-msgstr "Descărcări"
+msgstr "descărcări"
 
 msgctxt "merge_all_stores"
 msgid "Merge all stores"
-msgstr ""
+msgstr "Uneşte toate magazinele"
 
 msgctxt "search_for_stores"
 msgid "Search for Stores"
-msgstr ""
+msgstr "Căutare magazine"
 
-#, fuzzy
 msgctxt "downloading_apps"
 msgid "Downloading apps"
-msgstr "Descărcare:"
+msgstr "Descărcare aplicaţii"
 
-#, fuzzy
 msgctxt "downloaded_apps"
 msgid "Downloaded apps"
-msgstr "Descărcări"
+msgstr "Aplicaţii descărcate"
 
 msgctxt "not_downloaded_apps"
 msgid "Not downloaded apps"
-msgstr ""
+msgstr "Aplicaţii nedescărcate"
 
 msgctxt "exit"
 msgid "exit"
-msgstr ""
+msgstr "ieşire"
 
 msgctxt "install"
 msgid "Install"
@@ -129,7 +122,7 @@ msgstr "Căutare magazin"
 
 msgctxt "commentlabel"
 msgid "Add Comment"
-msgstr ""
+msgstr "Adaugă comentariu"
 
 msgctxt "chkBoxSchDwn"
 msgid "Schedule Download"
@@ -141,7 +134,7 @@ msgstr "Susţine"
 
 msgctxt "body"
 msgid "Body"
-msgstr ""
+msgstr "Corp"
 
 msgctxt "subject"
 msgid "Name"
@@ -171,15 +164,13 @@ msgctxt "updates_tab"
 msgid "Updates"
 msgstr "Actualizări"
 
-#, fuzzy
 msgctxt "add_repo_text"
 msgid "New Store"
 msgstr "Magazin nou"
 
-#, fuzzy
 msgctxt "btn_add_repo"
 msgid "Add store"
-msgstr "Adaugă magazin!"
+msgstr "Adaugă magazin"
 
 msgctxt "menu_rem_repo"
 msgid "Remove Store"
@@ -253,10 +244,9 @@ msgctxt "new_account"
 msgid "New account"
 msgstr "Cont nou"
 
-#, fuzzy
 msgctxt "setcredentials"
 msgid "Aptoide Login"
-msgstr "Setări Aptoide"
+msgstr "Logare Aptoide"
 
 msgctxt "usernotdef"
 msgid "User not defined"
@@ -324,7 +314,7 @@ msgstr "Arată aplicaţiile:"
 
 msgctxt "order_popup_title3"
 msgid "Adult Content:"
-msgstr ""
+msgstr "Conţinut pentru adulţi:"
 
 msgctxt "order_popup_catg1"
 msgid "By category"
@@ -398,10 +388,9 @@ msgstr ""
 "Instalează automat descărcările programate când este prezentă conexiune "
 "Wifi"
 
-#, fuzzy
 msgctxt "credentialssettings"
 msgid "Aptoide Login"
-msgstr "Setări Aptoide"
+msgstr "Logare Aptoide"
 
 msgctxt "clearcredentials"
 msgid "Clear login"
@@ -473,7 +462,7 @@ msgstr "Nu"
 
 msgctxt "btn_ok"
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgctxt "btn_add"
 msgid "Add"
@@ -527,7 +516,7 @@ msgstr ""
 
 msgctxt "error_on_update"
 msgid "The update process could not be completed on the following store:"
-msgstr "Procesul de actualizare nu s-a putut termina la următoarele magazine:"
+msgstr "Procesul de actualizare nu s-a putut finaliza la următoarele magazine:"
 
 msgctxt "updating_norepos"
 msgid ""
@@ -554,10 +543,9 @@ msgctxt "about_mail"
 msgid "Contact:"
 msgstr "Contact:"
 
-#, fuzzy
 msgctxt "no_descript"
 msgid "No description available"
-msgstr "Indisponibil"
+msgstr "Informaţie indisponibilă"
 
 msgctxt "about_txt2"
 msgid "www.aptoide.com"
@@ -697,7 +685,7 @@ msgstr "Nu sânt descărcări programate!"
 
 msgctxt "size"
 msgid "Size"
-msgstr ""
+msgstr "Mărime"
 
 msgctxt "schDown_install"
 msgid "Do you want to install all scheduled downloads?"
@@ -728,15 +716,13 @@ msgctxt "addSchDown"
 msgid "Added to Scheduled Downloads"
 msgstr "Adăugat la descărcări programate"
 
-#, fuzzy
 msgctxt "registration"
 msgid "Aptoide Registration"
-msgstr "Înregistrare Bazaar"
+msgstr "Înregistrare Aptoide"
 
-#, fuzzy
 msgctxt "bazaar_url"
 msgid "http://www.aptoide.com/"
-msgstr "www.aptoide.com"
+msgstr "http://www.aptoide.com/"
 
 msgctxt "username"
 msgid "Email"
@@ -791,95 +777,91 @@ msgid ""
 "By signing up you are agreeing to the Aptoide Terms of Service and "
 "Aptoide Content Policy for Developers"
 msgstr ""
+"Prin înregistare sânteţi de acord cu serviciile Aptoide şi politica de "
+"conţinut pentru dezvoltatori"
 
 msgctxt "username_tip"
 msgid "Type your username"
-msgstr ""
+msgstr "Tastează numele de utilizator"
 
-#, fuzzy
 msgctxt "password_tip"
 msgid "Choose a password"
-msgstr "Arată parola"
+msgstr "Alege o parolă"
 
 msgctxt "sign_in"
 msgid "Sign In"
-msgstr ""
+msgstr "Semnează"
 
-#, fuzzy
 msgctxt "bazaar_login"
 msgid "Aptoide Login"
-msgstr "Setări Aptoide"
+msgstr "Logare Aptoide"
 
 msgctxt "clearcache_sum"
 msgid "Deletes Aptoide cache (icons, screenshots) from the SD card."
 msgstr ""
+"Ştege cache-urile Aptoide (iconiţe, capturile de ecran) de pe cardul SD."
 
 msgctxt "clearcontent_sum"
 msgid "Deletes the content of .aptoide folder from the SD card."
-msgstr ""
+msgstr "Şterge conţinutul dosarului .aptoide de pe cardul SD."
 
 msgctxt "clearcontent_title"
 msgid "Remove Aptoide data and Configurations"
-msgstr ""
+msgstr "Înlătură datele Aptoide şi configurările"
 
 msgctxt "clearcache_title"
 msgid "Clear Aptoide cache"
-msgstr ""
+msgstr "Curăţă cache-ul Aptoide"
 
-#, fuzzy
 msgctxt "schDown_added"
 msgid " was added to scheduled download list."
-msgstr "Adăugat la descărcări programate"
+msgstr "adăugat în lista descărcărilor programate."
 
-#, fuzzy
 msgctxt "clear_cache_sucess"
 msgid "Content successfuly deleted"
-msgstr "Comentariul dvs. a fost trimis cu succes"
+msgstr "Conţinut şters cu succes"
 
-#, fuzzy
 msgctxt "aptoide_downloading"
 msgid "Aptoide downloading"
-msgstr "Descărcare:"
+msgstr "Descărcare Aptoide"
 
 #, c-format
 msgctxt "x_app"
 msgid "%d app"
-msgstr ""
+msgstr "%d aplicaţie"
 
 #, c-format
 msgctxt "x_apps"
 msgid "%d apps"
-msgstr ""
+msgstr "%d aplicaţii"
 
-#, fuzzy
 msgctxt "starting_download"
 msgid "Starting download"
-msgstr "Nu s-a descărcat niciodată"
+msgstr "Pornire descărcare"
 
-#, fuzzy
 msgctxt "resuming_download"
 msgid "Resuming download"
-msgstr "Nu s-a descărcat niciodată"
+msgstr "Reluare descărcare"
 
 msgctxt "slow"
 msgid "slow"
-msgstr ""
+msgstr "încet"
 
 msgctxt "paused"
 msgid "paused"
-msgstr ""
+msgstr "în pauză"
 
 msgctxt "stopped"
 msgid "stopped"
-msgstr ""
+msgstr "oprit"
 
 msgctxt "timeout"
 msgid "network connection timeout"
-msgstr ""
+msgstr "Timp conexiune reţea expirat"
 
 msgctxt "ip_blacklisted"
 msgid "blacklisted IP"
-msgstr ""
+msgstr "lista neagră a IP-urilor"
 
 msgctxt "ip_blacklisted_extended"
 msgid ""
@@ -887,39 +869,41 @@ msgid ""
 "blacklisted in Aptoide servers. To solve the problem, please contact <a "
 "href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a> "
 msgstr ""
+"Aplicaţia nu a fost primită.Adresa dvs. de internet (IP)este pe lista neagră "
+"în serverele Aptoide.Pentru rezolvarea problemei, vă rugăm contactaţi <a "
+"href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a> "
 
 msgctxt "connection_error"
 msgid "no network connection"
-msgstr ""
+msgstr "nu există conexiune la reţea"
 
 msgctxt "apk_not_found"
 msgid "Apk not found"
-msgstr ""
+msgstr "Aplicaţia nu a fost găsită"
 
 msgctxt "invalid_apk"
 msgid "Invalid apk"
-msgstr ""
+msgstr "Aplicaţia nu este validă"
 
 msgctxt "server_error"
 msgid "Server error"
-msgstr ""
+msgstr "Eroare server"
 
 msgctxt "back"
 msgid "Back"
-msgstr ""
+msgstr "Înapoi"
 
-#, fuzzy
 msgctxt "contact"
 msgid "Contact"
-msgstr "Contact:"
+msgstr "Contact"
 
 msgctxt "choose_email_client"
 msgid "Choose an Email client:"
-msgstr ""
+msgstr "Alegeţi o adresă de Email client:"
 
 msgctxt "refresh_list"
 msgid "Refresh"
-msgstr ""
+msgstr "Reîmprospătare"
 
 #~ msgctxt "add_repo_text"
 #~ msgid "Add"
@@ -964,4 +948,3 @@ msgstr ""
 #~ msgctxt "repo_insert_failed"
 #~ msgid "Failed to add the Store. Please try again."
 #~ msgstr "Adăugare magazin eşuată. Vă rugăm să încercaţi din nou."
-

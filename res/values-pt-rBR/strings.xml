@@ -1,20 +1,34 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="menu_settings">Configurações</string>
+  <string name="my_stores">Editar loja</string>
+  <string name="store_name">Usuário...</string>
+  <string name="category1">Por categoria</string>
+  <string name="category2">Por categoria</string>
+  <string name="add_store">Adicione uma loja!</string>
+  <string name="new_store">Adicione uma loja!</string>
+  <string name="add_repo_private">Privado</string>
+  <string name="extended_server">Loja Estendida</string>
+  <string name="downloads">Downloads</string>
+  <string name="downloading_apps">Fazendo Download:</string>
+  <string name="downloaded_apps">Downloads</string>
+  <string name="install">Instalar</string>
+  <string name="uninstall">Desinstalar</string>
+  <string name="search_market">Procurar Mercado</string>
+  <string name="chkBoxSchDwn">Downloads Agendados</string>
+  <string name="submit">Enviar</string>
+  <string name="subject">Nome</string>
   <string name="app_name">Aptoide</string>
   <string name="start_loading">Carregando...</string>
   <string name="available_tab">Disponível</string>
+  <string name="featured_tab">Destaques</string>
   <string name="installed_tab">Instalado</string>
   <string name="updates_tab">Atualizações</string>
-  <string name="add_repo_private">Privado</string>
-  <string name="add_repo_text">Adicionar</string>
-  <string name="extended_server">Loja Estendida</string>
-  <string name="btn_add_repo">Nova Loja</string>
+  <string name="add_repo_text">Nova Loja</string>
+  <string name="btn_add_repo">Adicione uma loja!</string>
   <string name="menu_rem_repo">Remover Loja</string>
   <string name="number_apks">Aplicativos:</string>
   <string name="please_wait">Por favor aguarde...</string>
-  <string name="uninstall">Desinstalar</string>
-  <string name="install">Instalar</string>
-  <string name="search_market">Procurar Mercado</string>
   <string name="finished_download_alrt">Download Concluído</string>
   <string name="finished_download_message">Download Concluído</string>
   <string name="download_alrt">Fazendo Download:</string>
@@ -29,19 +43,15 @@
   <string name="showpass">Mostrar senha</string>
   <string name="user">Usuário...</string>
   <string name="pass">Senha...</string>
-  <string name="submit">Enviar</string>
   <string name="new_account">Nova conta</string>
-  <string name="setcredentials">Login do Bazaar</string>
+  <string name="setcredentials">Configurações Aptoide</string>
   <string name="usernotdef">Usuário não definido</string>
   <string name="passwordnotdef">Senha não definida</string>
   <string name="loggingin">Conectando...</string>
   <string name="unabletoexecute">Incapaz de executar</string>
   <string name="failedcredentials">Falha no login com as credenciais dadas</string>
   <string name="loading_likes">Carregando gostos...</string>
-  <string name="body">Corpo..</string>
-  <string name="subject">Nome</string>
   <string name="inresponseto">\@</string>
-  <string name="commentlabel">Comentar aplicativo...</string>
   <string name="enterbody">Entre a sua avaliação no corpo</string>
   <string name="postingcomment">Postando seu comentário...</string>
   <string name="commentadded">Seu comentário foi enviado com sucesso</string>
@@ -67,7 +77,7 @@
   <string name="setting_schdwntitle">Downloads Agendados</string>
   <string name="setting_schdwninstalltitle">Instalação Automática</string>
   <string name="setting_schdwninstallsum">Instalar automaticamente downloads agendados quando uma conexão WiFi está presente</string>
-  <string name="credentialssettings">Login do Bazaar</string>
+  <string name="credentialssettings">Configurações Aptoide</string>
   <string name="clearcredentials">Limpar login</string>
   <string name="clearcredentials_summary">Remover o seu login atual</string>
   <string name="setcredentials_summary">Insira um novo login</string>
@@ -79,14 +89,12 @@
   <string name="menu_manage">Gerenciar Loja</string>
   <string name="menu_display_options">Opções de Tela</string>
   <string name="menu_order">Alterar Ordem</string>
-  <string name="menu_settings">Configurações</string>
   <string name="menu_about">Sobre</string>
   <string name="menu_search">Pesquisa</string>
   <string name="menu_add_repo">Nova Loja</string>
   <string name="menu_edit_repo">Editar Loja</string>
   <string name="btn_yes">Sim</string>
   <string name="btn_no">Não</string>
-  <string name="btn_ok">Ok</string>
   <string name="btn_add">Adicionar</string>
   <string name="btn_cancel">Cancelar</string>
   <string name="btn_done">Feito</string>
@@ -103,6 +111,7 @@
   <string name="about_txt1">Seu instalador de pacote para Android.\n</string>
   <string name="about_site">Website:</string>
   <string name="about_mail">Contato:</string>
+  <string name="no_descript">Indisponível</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Escolha a loja a ser removida</string>
@@ -134,14 +143,13 @@
   <string name="schDown_downerror">Erro no download. Adicionar %1$s Loja.</string>
   <string name="addSchDown">Adicionado a Downloads Agendados</string>
   <string name="registration">Registro no Bazaar</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="bazaar_url">www.aptoide.com</string>
   <string name="username">e-mail</string>
   <string name="password">Senha</string>
   <string name="register">Inscreva-se</string>
   <string name="schDown_invertselection">Inverter seleção</string>
   <string name="schDown_removeselected">Remover selecionado</string>
   <string name="schDown_sureremove">Tem certeza que deseja remover?</string>
-  <string name="chkBoxSchDwn">Downloads Agendados</string>
   <string name="clear_dwn_title">Downloads</string>
   <string name="clear_dwn_btn">Fazer download de ícones</string>
   <string name="clear_dwn_msg">Fazer download de regras de ícones</string>
@@ -150,8 +158,12 @@
     <item>Apenas Wi-Fi</item>
     <item>Nunca fazer download</item>
   </string-array>
-  <string name="continue_bt">Continuar</string>
-  <string name="featured_tab">Destaques</string>
-  <string name="no_info">Sem informação</string>
-  <string name="repo_insert_failed">Falha ao adicionar Loja. Por favor tente novamente.</string>
+  <string name="password_tip">Mostrar senha</string>
+  <string name="bazaar_login">Configurações Aptoide</string>
+  <string name="schDown_added">Adicionado a Downloads Agendados</string>
+  <string name="clear_cache_sucess">Seu comentário foi enviado com sucesso</string>
+  <string name="aptoide_downloading">Fazendo Download:</string>
+  <string name="starting_download">Nunca fazer download</string>
+  <string name="resuming_download">Nunca fazer download</string>
+  <string name="contact">Contato:</string>
 </resources>

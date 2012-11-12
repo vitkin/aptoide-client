@@ -27,7 +27,7 @@
 
         <TextView
             android:id="@+id/user_like"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/app_name"
             android:ellipsize="end"
@@ -37,6 +37,7 @@
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:textColor="#2f6699" />
+
     </RelativeLayout>
 
 </RelativeLayout><!--

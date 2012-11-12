@@ -30,6 +30,7 @@ public class ViewApk {
 	private String minSdk = "0";
 	private String minGlEs = "0";
 	
+	
 	/**
 	 * 
 	 * ViewApk Skeleton Constructor
@@ -197,6 +198,7 @@ public class ViewApk {
 		screenshots.clear();
 	}
 
+	
 	/**
 	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer in a realistic scenario)
 	 */

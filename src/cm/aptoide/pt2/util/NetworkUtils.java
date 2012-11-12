@@ -29,14 +29,13 @@ public class NetworkUtils {
 			String basicAuth = "Basic " + new String(Base64.encode((username+":"+password).getBytes(),Base64.NO_WRAP ));
 			connection.setRequestProperty ("Authorization", basicAuth);
 		}
+		
 		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 		connection.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, ""));
 		
-		BufferedInputStream bis = new BufferedInputStream(
-				connection.getInputStream(), 8 * 1024);
-		
+		BufferedInputStream bis = new BufferedInputStream(connection.getInputStream(), 8 * 1024);
 		
 		Log.i("Aptoide", "Getting: "+url.toString());
 		connection.setConnectTimeout(TIME_OUT);
@@ -63,7 +62,7 @@ public class NetworkUtils {
 			}
 			client.setConnectTimeout(TIME_OUT);
 			client.setReadTimeout(TIME_OUT);
-			
+			Log.d("Aptoide-NetworkUtils-checkServerConnection", "Checking on: "+client.getURL().toString());
 			if (client.getContentType().equals("application/xml")) {
 				return 0;
 			} else {

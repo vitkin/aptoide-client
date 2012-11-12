@@ -1,20 +1,33 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="menu_settings">Ustawienia</string>
+  <string name="my_stores">Edytuj repozytorium</string>
+  <string name="store_name">Nazwa użytkownika...</string>
+  <string name="category1">Wg. kategorii</string>
+  <string name="category2">Wg. kategorii</string>
+  <string name="add_store">Dodaj repozytorium!</string>
+  <string name="new_store">Dodaj repozytorium!</string>
+  <string name="add_repo_private">Prywatne</string>
+  <string name="extended_server">Rozszerzone repozytorium</string>
+  <string name="downloads">Pobrania</string>
+  <string name="downloading_apps">Pobieranie:</string>
+  <string name="downloaded_apps">Pobrania</string>
+  <string name="install">Instaluj</string>
+  <string name="uninstall">Odinstaluj</string>
+  <string name="search_market">Przeszukaj Market</string>
+  <string name="chkBoxSchDwn">Zaplanowane Pobieranie</string>
+  <string name="submit">Wyślij</string>
+  <string name="subject">Nazwa</string>
   <string name="app_name">Aptoide</string>
   <string name="start_loading">Ładowanie...</string>
   <string name="available_tab">Dostępne</string>
   <string name="installed_tab">Zainstalowane</string>
   <string name="updates_tab">Uaktualnienia</string>
-  <string name="add_repo_private">Prywatne</string>
-  <string name="add_repo_text">Dodaj</string>
-  <string name="extended_server">Rozszerzone repozytorium</string>
-  <string name="btn_add_repo">Nowe repozytorium</string>
+  <string name="add_repo_text">Nowe repozytorium</string>
+  <string name="btn_add_repo">Dodaj repozytorium!</string>
   <string name="menu_rem_repo">Usuń repozytorium</string>
   <string name="number_apks">Aplikacje:</string>
   <string name="please_wait">Proszę czekać...</string>
-  <string name="uninstall">Odinstaluj</string>
-  <string name="install">Instaluj</string>
-  <string name="search_market">Przeszukaj Market</string>
   <string name="finished_download_alrt">Pobieranie zakończone</string>
   <string name="finished_download_message">Pobieranie zakończone</string>
   <string name="download_alrt">Pobieranie:</string>
@@ -29,19 +42,15 @@
   <string name="showpass">Pokaż hasło</string>
   <string name="user">Nazwa użytkownika...</string>
   <string name="pass">Hasło...</string>
-  <string name="submit">Wyślij</string>
   <string name="new_account">Nowe konto</string>
-  <string name="setcredentials">Login do Bazaar</string>
+  <string name="setcredentials">Ustawienia Aptoide</string>
   <string name="usernotdef">Brak nazwy użytkownika</string>
   <string name="passwordnotdef">Brak hasła</string>
   <string name="loggingin">Logowanie...</string>
   <string name="unabletoexecute">Nie można wykonać</string>
   <string name="failedcredentials">Nie udało się zalogować z tymi danymi</string>
   <string name="loading_likes">Ładowanie ocen...</string>
-  <string name="body">Treść...</string>
-  <string name="subject">Nazwa</string>
   <string name="inresponseto">\@</string>
-  <string name="commentlabel">Skomentuj app-kę...</string>
   <string name="enterbody">Podaj swoja opinię w treści wiadomości</string>
   <string name="postingcomment">Zamieszczanie twojego komentarza...</string>
   <string name="commentadded">Twój komentarz został wysłany</string>
@@ -67,7 +76,7 @@
   <string name="setting_schdwntitle">Zaplanowane pobrania</string>
   <string name="setting_schdwninstalltitle">Instalacja automatyczna</string>
   <string name="setting_schdwninstallsum">Zainstaluj wybrane aplikacje automatycznie jeśli dostępne jest połączenie WiFi</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Ustawienia Aptoide</string>
   <string name="clearcredentials">Wyczyść login</string>
   <string name="clearcredentials_summary">Zmień swój aktualny login</string>
   <string name="setcredentials_summary">Ustaw nowy login</string>
@@ -79,14 +88,12 @@
   <string name="menu_manage">Zarządzaj repozytorium</string>
   <string name="menu_display_options">Pokaż opcje</string>
   <string name="menu_order">Zmień porządek</string>
-  <string name="menu_settings">Ustawienia</string>
   <string name="menu_about">O...</string>
   <string name="menu_search">Szukaj</string>
   <string name="menu_add_repo">Nowe repozytorium</string>
   <string name="menu_edit_repo">Edytuj repozytorium</string>
   <string name="btn_yes">Tak</string>
   <string name="btn_no">Nie</string>
-  <string name="btn_ok">Ok</string>
   <string name="btn_add">Dodaj</string>
   <string name="btn_cancel">Anuluj</string>
   <string name="btn_done">Zrobione</string>
@@ -103,6 +110,7 @@
   <string name="about_txt1">Twój instalator aplikacji do telefonu Android.\n</string>
   <string name="about_site">Strona domowa:</string>
   <string name="about_mail">Kontakt:</string>
+  <string name="no_descript">Niedostępne</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Wybierz repozytorium do usunięcia</string>
@@ -134,14 +142,13 @@
   <string name="schDown_downerror">Błąd pobierania. Dodano repozytorium %1$s.</string>
   <string name="addSchDown">Dodano do Zaplanowanych Pobierań</string>
   <string name="registration">Rejestracja w Bazaar</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="bazaar_url">www.aptoide.com</string>
   <string name="username">Email</string>
   <string name="password">Hasło</string>
   <string name="register">Logowanie</string>
   <string name="schDown_invertselection">Odwróć wybór</string>
   <string name="schDown_removeselected">Usuń wybrane</string>
   <string name="schDown_sureremove">Czy na pewno chcesz usunąć?</string>
-  <string name="chkBoxSchDwn">Zaplanowane Pobieranie</string>
   <string name="clear_dwn_title">Pobrania</string>
   <string name="clear_dwn_btn">Ikony pobrań</string>
   <string name="clear_dwn_msg">Zasady ikon pobrań</string>
@@ -150,7 +157,12 @@
     <item>Tylko Wifi</item>
     <item>Nie pobieraj</item>
   </string-array>
-  <string name="continue_bt">Kontynuuj</string>
-  <string name="no_info">Brak informacji</string>
-  <string name="repo_insert_failed">Nie udało się dodać repozytorium. Spróbuj jeszcze raz.</string>
+  <string name="password_tip">Pokaż hasło</string>
+  <string name="bazaar_login">Ustawienia Aptoide</string>
+  <string name="schDown_added">Dodano do Zaplanowanych Pobierań</string>
+  <string name="clear_cache_sucess">Twój komentarz został wysłany</string>
+  <string name="aptoide_downloading">Pobieranie:</string>
+  <string name="starting_download">Nie pobieraj</string>
+  <string name="resuming_download">Nie pobieraj</string>
+  <string name="contact">Kontakt:</string>
 </resources>

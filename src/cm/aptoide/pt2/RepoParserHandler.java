@@ -1,10 +1,8 @@
 package cm.aptoide.pt2;
 
-import java.security.NoSuchAlgorithmException;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -13,9 +11,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.util.Md5Handler;
 import cm.aptoide.pt2.views.ViewApk;
-
-import android.content.Context;
-import android.util.Log;
 
 
 public class RepoParserHandler extends DefaultHandler {
@@ -356,10 +351,13 @@ public class RepoParserHandler extends DefaultHandler {
 		});
 
 	}
+
+	private String path;
 	
-	public RepoParserHandler(Database db, Server server) {
+	public RepoParserHandler(Database db, Server server, String path) {
 		RepoParserHandler.db = db;
 		RepoParserHandler.server = server;
+		this.path = path;
 	}
 	
 	static StringBuilder sb = new StringBuilder();
@@ -425,7 +423,7 @@ public class RepoParserHandler extends DefaultHandler {
 		server.state = State.PARSED;
 		if(!delta ){
 			System.out.println("Writing delta");
-			server.delta = Md5Handler.md5Calc(server.xml);
+			server.delta = Md5Handler.md5Calc(new File(path));
 			System.out.println("Delta is:" +server.delta);
 		}
 		db.updateStatus(server);

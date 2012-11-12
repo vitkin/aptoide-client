@@ -1,20 +1,34 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="menu_settings">الإعدادات</string>
+  <string name="my_stores">تحرير المخزن</string>
+  <string name="store_name">إسم المستخدم...</string>
+  <string name="category1">بواسطة الفئه</string>
+  <string name="category2">بواسطة الفئه</string>
+  <string name="add_store">إضافة مخزن!</string>
+  <string name="new_store">إضافة مخزن!</string>
+  <string name="add_repo_private">خاص</string>
+  <string name="extended_server">مخزن موسع</string>
+  <string name="downloads">التحميلات</string>
+  <string name="downloading_apps">التحميل:</string>
+  <string name="downloaded_apps">التحميلات</string>
+  <string name="install">التثبيت</string>
+  <string name="uninstall">إلغاء التثبيت</string>
+  <string name="search_market">بحث بالماركيت</string>
+  <string name="chkBoxSchDwn">جدولة التحميل</string>
+  <string name="submit">تقديم</string>
+  <string name="subject">الإسم</string>
   <string name="app_name">Aptoide</string>
   <string name="start_loading">تحميل...</string>
   <string name="available_tab">المتوفر</string>
+  <string name="featured_tab">المميز</string>
   <string name="installed_tab">المثبت</string>
   <string name="updates_tab">التحديثات</string>
-  <string name="add_repo_private">خاص</string>
-  <string name="add_repo_text">إضافه</string>
-  <string name="extended_server">مخزن موسع</string>
-  <string name="btn_add_repo">مخزن جديد</string>
+  <string name="add_repo_text">مخزن جديد</string>
+  <string name="btn_add_repo">إضافة مخزن!</string>
   <string name="menu_rem_repo">حذف المخزن</string>
   <string name="number_apks">التطبيقات:</string>
   <string name="please_wait">الرجاء الإنتظار...</string>
-  <string name="uninstall">إلغاء التثبيت</string>
-  <string name="install">التثبيت</string>
-  <string name="search_market">بحث بالماركيت</string>
   <string name="finished_download_alrt">التحميل منتهي</string>
   <string name="finished_download_message">التحميل منتهي</string>
   <string name="download_alrt">التحميل:</string>
@@ -29,19 +43,15 @@
   <string name="showpass">إظهار كلمة المرور</string>
   <string name="user">إسم المستخدم...</string>
   <string name="pass">كلمة المرور...</string>
-  <string name="submit">تقديم</string>
   <string name="new_account">حساب جديد</string>
-  <string name="setcredentials">تسجيل الدخول في Bazaar</string>
+  <string name="setcredentials">إعدادات Aptoide</string>
   <string name="usernotdef">المستخدم لم يتم تعريفه</string>
   <string name="passwordnotdef">كلمة المرور لم يتم تعريفها</string>
   <string name="loggingin">التسجيل في ...</string>
   <string name="unabletoexecute">غير قادر على التنفيذ</string>
   <string name="failedcredentials">فشل في تسجيل الدخول للإعتماد المعطاه</string>
   <string name="loading_likes">تحبون التحميل...</string>
-  <string name="body">الهيئه...</string>
-  <string name="subject">الإسم</string>
   <string name="inresponseto">\@</string>
-  <string name="commentlabel">تعليق التطبيق...</string>
   <string name="enterbody">ادخل إستعراضك على قسم الهيئه</string>
   <string name="postingcomment">نشر تعليقك...</string>
   <string name="commentadded">تعليقك تم تقديمه بنجاح</string>
@@ -67,7 +77,7 @@
   <string name="setting_schdwntitle">جدولة التحميلات</string>
   <string name="setting_schdwninstalltitle">التثبيت التلقائي</string>
   <string name="setting_schdwninstallsum">تثبيت جدولة التحميلات تلقائيا عندما الواي فاي يتصل حاليا</string>
-  <string name="credentialssettings">تسجيل الدخول Bazaar</string>
+  <string name="credentialssettings">إعدادات Aptoide</string>
   <string name="clearcredentials">مسح تسجيل الدخول</string>
   <string name="clearcredentials_summary">عدم تعيين تسجيل دخولك الحالي</string>
   <string name="setcredentials_summary">تعيين تسجيل دخول جديد</string>
@@ -79,14 +89,12 @@
   <string name="menu_manage">إدارة المخزن</string>
   <string name="menu_display_options">خيارات العرض</string>
   <string name="menu_order">تغيير الترتيب</string>
-  <string name="menu_settings">الإعدادات</string>
   <string name="menu_about">حول</string>
   <string name="menu_search">البحث</string>
   <string name="menu_add_repo">مخزن جديد</string>
   <string name="menu_edit_repo">تحرير المخزن</string>
   <string name="btn_yes">نعم</string>
   <string name="btn_no">لا</string>
-  <string name="btn_ok">تم</string>
   <string name="btn_add">إضافه</string>
   <string name="btn_cancel">إلغاء</string>
   <string name="btn_done">تم</string>
@@ -103,6 +111,7 @@
   <string name="about_txt1">حزمك المثبته على هاتف اندرويد \n</string>
   <string name="about_site">الرئيسيه:</string>
   <string name="about_mail">الإتصال:</string>
+  <string name="no_descript">غير متوفر</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">إختر المخزن للحذف</string>
@@ -134,14 +143,13 @@
   <string name="schDown_downerror">خطأ بالتحميل. إضافه %1$s للمخزن</string>
   <string name="addSchDown">المضاف لجدولة التحميلات</string>
   <string name="registration">"تسجيل Bazaar "</string>
-  <string name="bazaar_url">http://www.bazaarandroid.com/</string>
+  <string name="bazaar_url">www.aptoide.com</string>
   <string name="username">الإميل</string>
   <string name="password">كلمة المرور</string>
   <string name="register">التسجيل</string>
   <string name="schDown_invertselection">عكس الإختيار</string>
   <string name="schDown_removeselected">حذف المختار</string>
   <string name="schDown_sureremove">هل انت من متأكد من الحذف؟</string>
-  <string name="chkBoxSchDwn">جدولة التحميل</string>
   <string name="clear_dwn_title">التحميلات</string>
   <string name="clear_dwn_btn">ايقونات التحميل</string>
   <string name="clear_dwn_msg">قواعد ايقونة التحميل</string>
@@ -150,8 +158,12 @@
     <item>الواي فاي فقط</item>
     <item>التحميل ابدا</item>
   </string-array>
-  <string name="continue_bt">إستمرار</string>
-  <string name="featured_tab">المميز</string>
-  <string name="no_info">لايوجود معلومات</string>
-  <string name="repo_insert_failed">فشل بإضافة المخزن.الرجاء المحاوله مرة اخرى</string>
+  <string name="password_tip">إظهار كلمة المرور</string>
+  <string name="bazaar_login">إعدادات Aptoide</string>
+  <string name="schDown_added">المضاف لجدولة التحميلات</string>
+  <string name="clear_cache_sucess">تعليقك تم تقديمه بنجاح</string>
+  <string name="aptoide_downloading">التحميل:</string>
+  <string name="starting_download">التحميل ابدا</string>
+  <string name="resuming_download">التحميل ابدا</string>
+  <string name="contact">الإتصال:</string>
 </resources>

@@ -94,7 +94,9 @@ public class ExtrasService extends Service {
 			parsingList.add(path);
 			File xml = new File(path);
 			String md5 = Md5Handler.md5Calc(xml);
-			new Thread(new ExtrasParser(xml,getApplicationContext(),md5)).start();
+			
+			Thread thread = new Thread(new ExtrasParser(xml,getApplicationContext(),md5));
+			thread.setPriority(1);
 			System.out.println("Extras starting");
 		}
 		
@@ -116,7 +118,6 @@ public class ExtrasService extends Service {
 
 		public void run(){
 			try{
-				setPriority(MIN_PRIORITY);
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				parser.parse(xml, new ExtrasHandler(context,md5));

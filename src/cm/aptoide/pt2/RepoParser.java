@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.xml.parsers.SAXParser;
@@ -16,7 +17,20 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 public class RepoParser {
-	static ExecutorService executor = Executors.newFixedThreadPool(1);
+	
+	static ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+		
+		@Override
+		public Thread newThread(Runnable r) {
+			
+			Thread t = new Thread(r);
+			
+			t.setPriority(2);
+			
+			return t;
+		}
+	});
+	
 	static ExecutorService extrasExecutor = Executors.newFixedThreadPool(1);
 	static Database db;
 	static RepoParser parser;
@@ -38,32 +52,30 @@ public class RepoParser {
 		executor.submit(new TopParser(server,xml,category));
 	}
 	
-	public void parse(File xml, Server server){
+	public void parse(String xml, Server server){
 		executor.submit(new Parser(server,xml));
 	}
 	
 	public class Parser extends Thread{ 
 		Server server;
-		File xml;
+		String xml;
 		
-		public Parser(Server server, File xml) {
+		public Parser(Server server, String xml) {
 			this.server = server;
 			this.xml=xml;
-			server.xml=xml;
 		}
 
 		public void run(){
 			try{
-				setPriority(MIN_PRIORITY);
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				System.out.println("Parsing repo_id:" + server.id);
-				parser.parse(xml, new RepoParserHandler(db,server));
+				parser.parse(new File(xml), new RepoParserHandler(db,server,xml));
 			}catch(Exception e){
 				db.endTransation(server);
 				e.printStackTrace();
 			}finally{
-				xml.delete();
+				new File(xml).delete();
 			}
 
 		}
@@ -85,7 +97,7 @@ public class RepoParser {
 
 		public void run(){
 			try{
-				setPriority(MIN_PRIORITY);
+				setPriority(Thread.MIN_PRIORITY);
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				System.out.println("DynamicParsing repo_id:" + server.id);

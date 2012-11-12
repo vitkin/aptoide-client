@@ -8,73 +8,68 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-10-29 14:02+0000\n"
-"PO-Revision-Date: 2012-07-01 19:26+0100\n"
-"Last-Translator: Ultra <thraex@numericable.fr>\n"
+"PO-Revision-Date: 2012-11-06 08:46+0100\n"
+"Last-Translator: Alexis <alexisbonvin@infomaniak.ch>\n"
 "Language-Team: fr <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(((n >= 0 && n <= 2) && (n != 2)) ? 0 : "
-"1)\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Pootle 2.1.6\n"
 "Generated-By: Babel 1.0dev\n"
 
 msgctxt "menu_context_remove"
 msgid "Remove"
-msgstr ""
+msgstr "Enlever"
 
 msgctxt "menu_context_reparse"
 msgid "Reload"
-msgstr ""
+msgstr "Recharger"
 
 msgctxt "error_latest_apk"
 msgid "No APK available in database. Is store still loading?"
-msgstr ""
+msgstr "Pas d'app dispo dans la base. Le dépôt se charge-t-il encore?"
 
 msgctxt "error_delete_store"
 msgid "Unable to delete store. The store is still loading."
-msgstr ""
+msgstr "Impossible de supprimer le dépôt. Le dépôt est en cours de chargement."
 
 msgctxt "menu_settings"
 msgid "Settings"
 msgstr "Paramètres"
 
-#, fuzzy
 msgctxt "my_stores"
 msgid "My stores"
-msgstr "Editer dépôt"
+msgstr "Mes dépôts"
 
-#, fuzzy
 msgctxt "store_name"
 msgid "Store Name"
-msgstr "Nom d'utilisateur..."
+msgstr "Nom du dépôt"
 
-#, fuzzy
 msgctxt "category1"
 msgid "Category 1"
-msgstr "Par catégorie"
+msgstr "Catégorie 1"
 
-#, fuzzy
 msgctxt "category2"
 msgid "Category 2"
-msgstr "Par catégorie"
+msgstr "Catégorie 2"
 
-#, fuzzy
 msgctxt "add_store"
 msgid "Add Store"
-msgstr "Ajouter un dépôt!"
+msgstr "Ajouter un dépôt"
 
 msgctxt "version"
 msgid "Version:"
-msgstr ""
+msgstr "Version:"
 
 msgctxt "empty_store_list"
 msgid "You don't have any stores."
-msgstr ""
+msgstr "Vous n'avez pas de dépôts."
 
-#, fuzzy
 msgctxt "new_store"
 msgid "Add Store"
-msgstr "Ajouter un dépôt!"
+msgstr "Ajouter dépôt"
 
 msgctxt "add_repo_private"
 msgid "Private"
@@ -84,36 +79,33 @@ msgctxt "extended_server"
 msgid "Extended Store"
 msgstr "Dépôt Etendu"
 
-#, fuzzy
 msgctxt "downloads"
 msgid "downloads"
-msgstr "Téléchargements"
+msgstr "téléchargements"
 
 msgctxt "merge_all_stores"
 msgid "Merge all stores"
-msgstr ""
+msgstr "Fusionner tous les dépôts"
 
 msgctxt "search_for_stores"
 msgid "Search for Stores"
-msgstr ""
+msgstr "Chercher des dépôts"
 
-#, fuzzy
 msgctxt "downloading_apps"
 msgid "Downloading apps"
-msgstr "Téléchargement en cours:"
+msgstr "Téléchargement des apps"
 
-#, fuzzy
 msgctxt "downloaded_apps"
 msgid "Downloaded apps"
-msgstr "Téléchargements"
+msgstr "Apps téléchargées"
 
 msgctxt "not_downloaded_apps"
 msgid "Not downloaded apps"
-msgstr ""
+msgstr "Apps non téléchargées"
 
 msgctxt "exit"
 msgid "exit"
-msgstr ""
+msgstr "Sortie"
 
 msgctxt "install"
 msgid "Install"
@@ -129,7 +121,7 @@ msgstr "Chercher dans Market"
 
 msgctxt "commentlabel"
 msgid "Add Comment"
-msgstr ""
+msgstr "Ajouter commentaire"
 
 msgctxt "chkBoxSchDwn"
 msgid "Schedule Download"
@@ -141,7 +133,7 @@ msgstr "Soumettre"
 
 msgctxt "body"
 msgid "Body"
-msgstr ""
+msgstr "Corps"
 
 msgctxt "subject"
 msgid "Name"
@@ -171,15 +163,13 @@ msgctxt "updates_tab"
 msgid "Updates"
 msgstr "Màj"
 
-#, fuzzy
 msgctxt "add_repo_text"
 msgid "New Store"
 msgstr "Nouveau dépôt"
 
-#, fuzzy
 msgctxt "btn_add_repo"
 msgid "Add store"
-msgstr "Ajouter un dépôt!"
+msgstr "Ajouter un dépôt"
 
 msgctxt "menu_rem_repo"
 msgid "Remove Store"
@@ -253,10 +243,9 @@ msgctxt "new_account"
 msgid "New account"
 msgstr "Nouveau compte"
 
-#, fuzzy
 msgctxt "setcredentials"
 msgid "Aptoide Login"
-msgstr "Paramètres Aptoide"
+msgstr "Login Aptoide"
 
 msgctxt "usernotdef"
 msgid "User not defined"
@@ -324,7 +313,7 @@ msgstr "Montrer applications:"
 
 msgctxt "order_popup_title3"
 msgid "Adult Content:"
-msgstr ""
+msgstr "Contenu adulte:"
 
 msgctxt "order_popup_catg1"
 msgid "By category"
@@ -396,10 +385,9 @@ msgid ""
 "present"
 msgstr "Installer automatiquement téléchargements programmés si WiFi"
 
-#, fuzzy
 msgctxt "credentialssettings"
 msgid "Aptoide Login"
-msgstr "Paramètres Aptoide"
+msgstr "Login Aptoide"
 
 msgctxt "clearcredentials"
 msgid "Clear login"
@@ -471,7 +459,7 @@ msgstr "Non"
 
 msgctxt "btn_ok"
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 msgctxt "btn_add"
 msgid "Add"
@@ -551,10 +539,9 @@ msgctxt "about_mail"
 msgid "Contact:"
 msgstr "Contact:"
 
-#, fuzzy
 msgctxt "no_descript"
 msgid "No description available"
-msgstr "Indisponible"
+msgstr "Pas de description"
 
 msgctxt "about_txt2"
 msgid "www.aptoide.com"
@@ -692,7 +679,7 @@ msgstr "Pas de téléchargement planifié!"
 
 msgctxt "size"
 msgid "Size"
-msgstr ""
+msgstr "Taille"
 
 msgctxt "schDown_install"
 msgid "Do you want to install all scheduled downloads?"
@@ -723,15 +710,13 @@ msgctxt "addSchDown"
 msgid "Added to Scheduled Downloads"
 msgstr "Ajouter dans la planification"
 
-#, fuzzy
 msgctxt "registration"
 msgid "Aptoide Registration"
-msgstr "Enregistrement Bazaar"
+msgstr "Enregistrement Aptoide"
 
-#, fuzzy
 msgctxt "bazaar_url"
 msgid "http://www.aptoide.com/"
-msgstr "www.aptoide.com"
+msgstr "http://www.aptoide.com/"
 
 msgctxt "username"
 msgid "Email"
@@ -786,95 +771,90 @@ msgid ""
 "By signing up you are agreeing to the Aptoide Terms of Service and "
 "Aptoide Content Policy for Developers"
 msgstr ""
+"En signat, vous acceptez les conditions générales Aptoide et la politique de "
+"contenu pour les développeurs."
 
 msgctxt "username_tip"
 msgid "Type your username"
-msgstr ""
+msgstr "Ecrire votre nom d'utilisateur"
 
-#, fuzzy
 msgctxt "password_tip"
 msgid "Choose a password"
-msgstr "Montrer mot de passe"
+msgstr "Choisir un mot de passe"
 
 msgctxt "sign_in"
 msgid "Sign In"
-msgstr ""
+msgstr "S'inscrire"
 
-#, fuzzy
 msgctxt "bazaar_login"
 msgid "Aptoide Login"
-msgstr "Paramètres Aptoide"
+msgstr "Login Aptoide"
 
 msgctxt "clearcache_sum"
 msgid "Deletes Aptoide cache (icons, screenshots) from the SD card."
-msgstr ""
+msgstr "Vider le cache Aptoide (icônes, captures) de la carte SD."
 
 msgctxt "clearcontent_sum"
 msgid "Deletes the content of .aptoide folder from the SD card."
-msgstr ""
+msgstr "Vider le contenu du répertoire .aptoide de la carte SD."
 
 msgctxt "clearcontent_title"
 msgid "Remove Aptoide data and Configurations"
-msgstr ""
+msgstr "Supprimer les données et configurations d'Aptoide"
 
 msgctxt "clearcache_title"
 msgid "Clear Aptoide cache"
-msgstr ""
+msgstr "Vider le cache d'Aptoide"
 
-#, fuzzy
 msgctxt "schDown_added"
 msgid " was added to scheduled download list."
-msgstr "Ajouter dans la planification"
+msgstr "a été ajouté à la liste des téléchargements prévus."
 
-#, fuzzy
 msgctxt "clear_cache_sucess"
 msgid "Content successfuly deleted"
-msgstr "Votre commentaire a été soumis"
+msgstr "Contenue effacé avec succès"
 
-#, fuzzy
 msgctxt "aptoide_downloading"
 msgid "Aptoide downloading"
-msgstr "Téléchargement en cours:"
+msgstr "Aptoide télécharge"
 
 #, c-format
 msgctxt "x_app"
 msgid "%d app"
-msgstr ""
+msgstr "%d app"
 
 #, c-format
 msgctxt "x_apps"
 msgid "%d apps"
-msgstr ""
+msgstr "%d apps"
 
-#, fuzzy
 msgctxt "starting_download"
 msgid "Starting download"
-msgstr "Jamais de téléchargement"
+msgstr "Début téléchargement"
 
-#, fuzzy
 msgctxt "resuming_download"
 msgid "Resuming download"
-msgstr "Jamais de téléchargement"
+msgstr "Résume téléchargement"
 
 msgctxt "slow"
 msgid "slow"
-msgstr ""
+msgstr "lent"
 
 msgctxt "paused"
 msgid "paused"
-msgstr ""
+msgstr "en pause"
 
 msgctxt "stopped"
 msgid "stopped"
-msgstr ""
+msgstr "arrêté"
 
 msgctxt "timeout"
 msgid "network connection timeout"
-msgstr ""
+msgstr "Délai de connexion réseau dépassé"
 
 msgctxt "ip_blacklisted"
 msgid "blacklisted IP"
-msgstr ""
+msgstr "IP blacklisté"
 
 msgctxt "ip_blacklisted_extended"
 msgid ""
@@ -882,39 +862,41 @@ msgid ""
 "blacklisted in Aptoide servers. To solve the problem, please contact <a "
 "href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a> "
 msgstr ""
+"L'application n'a pas été récupérée. Votre adresse IP est blacklisté dans "
+"les serveurs Aptoide. Pour résoudre ce problème, contacter <a "
+"href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a>"
 
 msgctxt "connection_error"
 msgid "no network connection"
-msgstr ""
+msgstr "Pas de connexion réseau"
 
 msgctxt "apk_not_found"
 msgid "Apk not found"
-msgstr ""
+msgstr "Apk introuvable"
 
 msgctxt "invalid_apk"
 msgid "Invalid apk"
-msgstr ""
+msgstr "Apk invalide"
 
 msgctxt "server_error"
 msgid "Server error"
-msgstr ""
+msgstr "Erreur serveur"
 
 msgctxt "back"
 msgid "Back"
-msgstr ""
+msgstr "Précédent"
 
-#, fuzzy
 msgctxt "contact"
 msgid "Contact"
-msgstr "Contact:"
+msgstr "Contact"
 
 msgctxt "choose_email_client"
 msgid "Choose an Email client:"
-msgstr ""
+msgstr "Choisir un client messagerie:"
 
 msgctxt "refresh_list"
 msgid "Refresh"
-msgstr ""
+msgstr "Actualiser"
 
 #~ msgctxt "add_repo_text"
 #~ msgid "Add"
@@ -959,4 +941,3 @@ msgstr ""
 #~ msgctxt "repo_insert_failed"
 #~ msgid "Failed to add the Store. Please try again."
 #~ msgstr "Ajout échoué de dépôt. Réessayer."
-

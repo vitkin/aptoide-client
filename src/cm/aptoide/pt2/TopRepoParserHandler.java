@@ -60,7 +60,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 					System.out.println("Deleting " +category.name() +"apps ");
 					db.deleteTopApps(server.id,category);
 				}else{
-					db.endTransation(server);
+//					db.endTransation(server);
 					System.out.println("NOT Deleting " +category.name() +"apps ");
 					throw new SAXException();
 				}
@@ -289,7 +289,6 @@ public class TopRepoParserHandler extends DefaultHandler {
 		super.startDocument();
 		db.prepare();
 		server.clear();
-		db.startTransation();
 		System.out.println(server.id);
 		apk.setRepo_id(server.id);
 	}
@@ -332,7 +331,6 @@ public class TopRepoParserHandler extends DefaultHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
-		db.endTransation(server);
 	}
 	
 	

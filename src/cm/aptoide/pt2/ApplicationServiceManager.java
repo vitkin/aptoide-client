@@ -27,6 +27,7 @@ import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -71,9 +72,7 @@ public class ApplicationServiceManager extends Application {
 	private boolean serviceDownloadIsBound = false;
 	private ConnectivityManager connectivityState;
 
-	private HashMap<Integer, ViewDownloadManagement> ongoingDownloads;
-	private HashMap<Integer, ViewDownloadManagement> completedDownloads;
-	private HashMap<Integer, ViewDownloadManagement> failedDownloads;
+	private DataStructureDownloads dataStructureDownloads;
 	
 	Handler downloadManager;
 	
@@ -85,6 +84,19 @@ public class ApplicationServiceManager extends Application {
 	private NotificationManager managerNotification;
 	private WakeLock keepScreenOn;
 
+	
+	private HashMap<Integer, ViewDownloadManagement> ongoingDownloads(){
+		return dataStructureDownloads.getOngoingDownloads();
+	}
+	
+	private HashMap<Integer, ViewDownloadManagement> completedDownloads(){
+		return dataStructureDownloads.getCompletedDownloads();
+	}
+	
+	private HashMap<Integer, ViewDownloadManagement> failedDownloads(){
+		return dataStructureDownloads.getFailedDownloads();
+	}
+	
 	private AIDLServiceDownload serviceDownloadCaller = null;
 	
 	private ServiceConnection serviceDownloadConnection = new ServiceConnection() {
@@ -126,25 +138,25 @@ public class ApplicationServiceManager extends Application {
 	private AIDLDownloadManager.Stub serviceDownloadCallback = new AIDLDownloadManager.Stub() {
 
 		@Override
-		public void updateDownloadStatus(int appId, ViewDownload update) throws RemoteException {
+		public void updateDownloadStatus(int appId, ViewDownload update) {
 			try {
 				Log.d("Aptoide", "download update status *************** "+update.getStatus());
-				Log.d("Aptoide", "ongoing downloads *************** "+ongoingDownloads);
-				ViewDownloadManagement updating = ongoingDownloads.get(appId);
+				Log.d("Aptoide", "ongoing downloads *************** "+ongoingDownloads());
+				ViewDownloadManagement updating = ongoingDownloads().get(appId);
 				updating.updateProgress(update);
 				if(updating.isComplete() || updating.getDownloadStatus().equals(EnumDownloadStatus.STOPPED)
 										 || updating.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
 
-					ViewDownloadManagement download = ongoingDownloads.remove(appId);
+					ViewDownloadManagement download = ongoingDownloads().remove(appId);
 					Log.d("ManagerDownloads", "download removed from ongoing: "+download);					
 					if(download.isComplete()){
-						completedDownloads.put(download.hashCode(), download);
+						completedDownloads().put(download.hashCode(), download);
 						if(downloadManager != null){
 							downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.COMPLETED.ordinal());
 						}
 						installApp(download.getCache());					
 					}else if(download.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
-						failedDownloads.put(appId, download);
+						failedDownloads().put(appId, download);
 						if(downloadManager != null){
 							downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.FAILED.ordinal());
 						}
@@ -178,9 +190,7 @@ public class ApplicationServiceManager extends Application {
 			PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 			keepScreenOn = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK | PowerManager.ON_AFTER_RELEASE, "Full Power");
 			
-			ongoingDownloads = new HashMap<Integer, ViewDownloadManagement>();
-			completedDownloads = new HashMap<Integer, ViewDownloadManagement>();
-			failedDownloads = new HashMap<Integer, ViewDownloadManagement>();
+			dataStructureDownloads = DataStructureDownloads.getInstance();
 			
 			globaDownloadStatus = new ViewDownload("local:\\GLOBAL");
 			
@@ -275,10 +285,10 @@ public class ApplicationServiceManager extends Application {
 		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
 		contentView.setTextViewText(R.id.download_notification_name, notificationTitle);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgress() == 0?true:false));	
-		if(ongoingDownloads.size()>1){
-			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads.size()));
+		if(ongoingDownloads().size()>1){
+			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads().size()));
 		}else{
-			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_app, ongoingDownloads.size()));
+			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_app, ongoingDownloads().size()));
 		}
 		
     	Intent onClick = new Intent();
@@ -317,14 +327,14 @@ public class ApplicationServiceManager extends Application {
 	
 	
 	private synchronized void updateGlobalProgress(){
-		globaDownloadStatus.setProgressTarget(100*ongoingDownloads.size());
+		globaDownloadStatus.setProgressTarget(100*ongoingDownloads().size());
 		globaDownloadStatus.setProgress(0);
 		globaDownloadStatus.setSpeedInKBps(0);
-		for (ViewDownloadManagement download : ongoingDownloads.values()) {
+		for (ViewDownloadManagement download : ongoingDownloads().values()) {
 			globaDownloadStatus.incrementProgress(download.getProgress());
 			globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
 		}
-		if(ongoingDownloads.size() > 0){
+		if(ongoingDownloads().size() > 0){
 			if(!keepScreenOn.isHeld()){
 				keepScreenOn.acquire();
 			}
@@ -337,7 +347,7 @@ public class ApplicationServiceManager extends Application {
 			dismissNotification();
 		}
 
-		Log.d("Aptoide", "update global progress: ongoing downloads *************** "+ongoingDownloads);
+		Log.d("Aptoide", "update global progress: ongoing downloads *************** "+ongoingDownloads());
 	}
 	
 	
@@ -363,7 +373,7 @@ public class ApplicationServiceManager extends Application {
 	 * @return ViewDownloadManagement
 	 */
 	public ViewDownloadManagement getAppDownloading(int appHashId){
-		ViewDownloadManagement download = ongoingDownloads.get(appHashId);
+		ViewDownloadManagement download = ongoingDownloads().get(appHashId);
 		if(download == null){
 			return new ViewDownloadManagement();
 		}else{
@@ -384,9 +394,9 @@ public class ApplicationServiceManager extends Application {
 			installApp(cache);
 		}else{
 //			if(isPermittedConnectionAvailable()){
-				if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
-					ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
-				}else switch (ongoingDownloads.get(viewDownload.hashCode()).getDownloadStatus()) {
+				if(!ongoingDownloads().containsKey(viewDownload.hashCode())){
+					ongoingDownloads().put(viewDownload.hashCode(), viewDownload);
+				}else switch (ongoingDownloads().get(viewDownload.hashCode()).getDownloadStatus()) {
 					case SETTING_UP:
 					case PAUSED:
 					case RESUMING:
@@ -412,9 +422,23 @@ public class ApplicationServiceManager extends Application {
 					}
 				});
 				updateGlobalProgress();
+				
+				
 //			}
 		}
 	}
+//	
+//	private void cycle() {
+//		Handler handler = new Handler();
+//		handler.postDelayed(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				Log.d("Aptoide", "update global progress: ongoing downloads *************** "+ongoingDownloads());
+//				cycle();
+//			}
+//		}, 200);
+//	}
 	
 	/**
 	 * pauseDownload, to be called by ViewDownloadManagement.pause()
@@ -423,7 +447,7 @@ public class ApplicationServiceManager extends Application {
 	 */
 	public void pauseDownload(final int appHashId){
 		Log.d("Aptoide", "download being paused *************** "+appHashId);
-		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
+		ongoingDownloads().get(appHashId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.PAUSED.ordinal());
 		}
@@ -441,11 +465,11 @@ public class ApplicationServiceManager extends Application {
 	 */
 	public void resumeDownload(final int appHashId){
 		Log.d("Aptoide", "download being resumed *************** "+appHashId);
-		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
+		ongoingDownloads().get(appHashId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.RESUMING.ordinal());
 		}
-		startDownload(ongoingDownloads.get(appHashId));
+		startDownload(ongoingDownloads().get(appHashId));
 	}
 
 	/**
@@ -455,8 +479,8 @@ public class ApplicationServiceManager extends Application {
 	 */
 	public void stopDownload(final int appHashId){
 		Log.d("Aptoide", "download being stopped *************** "+appHashId);
-		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
-		ViewDownloadManagement download = ongoingDownloads.remove(appHashId);
+		ongoingDownloads().get(appHashId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
+		ViewDownloadManagement download = ongoingDownloads().remove(appHashId);
 //		ViewDownloadManagement download = ongoingDownloads.get(appHashId);
 		if(downloadManager != null){
 			downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.STOPPED.ordinal());
@@ -478,8 +502,8 @@ public class ApplicationServiceManager extends Application {
 	 */
 	public void restartDownload(final int appHashId){
 		Log.d("Aptoide", "download being restarted *************** "+appHashId);
-		if(failedDownloads.containsKey(appHashId)){
-			startDownload(failedDownloads.remove(appHashId));
+		if(failedDownloads().containsKey(appHashId)){
+			startDownload(failedDownloads().remove(appHashId));
 			if(downloadManager != null){
 				downloadManager.sendEmptyMessage(EnumDownloadProgressUpdateMessages.RESTARTING.ordinal());
 			}
@@ -488,28 +512,28 @@ public class ApplicationServiceManager extends Application {
 	
 	
 	public boolean areDownloadsOngoing(){
-		return !ongoingDownloads.isEmpty();
+		return !ongoingDownloads().isEmpty();
 	}
 	
 	public Object[] getDownloadsOngoing(){
-		Log.d("Aptoide", "getting downloads ongoing *************** "+ongoingDownloads);
-		return ongoingDownloads.values().toArray();
+		Log.d("Aptoide", "getting downloads ongoing *************** "+ongoingDownloads());
+		return ongoingDownloads().values().toArray();
 	}
 	
 	public boolean areDownloadsCompleted(){
-		return !completedDownloads.isEmpty();
+		return !completedDownloads().isEmpty();
 	}
 	
 	public Object[] getDownloadsCompleted(){
-		return completedDownloads.values().toArray();
+		return completedDownloads().values().toArray();
 	}
 	
 	public boolean areDownloadsFailed(){
-		return !failedDownloads.isEmpty();
+		return !failedDownloads().isEmpty();
 	}
 	
 	public Object[] getDownloadsFailed(){
-		return failedDownloads.values().toArray();
+		return failedDownloads().values().toArray();
 	}
 	
 }

@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
@@ -153,12 +154,11 @@ public class Database {
 	
 	public void endTransation(Server server){
 		Intent intent = new Intent("status");
-		intent.putExtra("server", server.id);
+		intent.putExtra("server", server.url);
 		
 		if(i!=0 && server.id>0){
 			context.sendBroadcast(intent);
 			intent.setAction("update");
-			intent.putExtra("server", server.id);
 			context.sendBroadcast(intent);
 		}
 		intent.setAction("complete");
@@ -225,9 +225,6 @@ public class Database {
 					
 				}
 			}
-			
-			
-			
 			
 		}catch(Exception e){
 			e.printStackTrace();
@@ -306,13 +303,16 @@ public class Database {
 	}
 	
 	public Cursor getUserBasedApk(long repo_id){
+		
 		Cursor c = null;
 		
 		try {
-			c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath, a.rating, a.downloads, a.apkid, a.vercode from apk a,userbasedapk b where a.repo_id = ? and a.apkid=b.apkid and a.vercode=b.vercode", new String[]{repo_id+""});
+			c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath, a.rating, a.downloads, a.apkid, a.vercode from apk a,itembasedapk b where a.repo_id = ? and b.parent_apkid = 'recommended' and a.apkid=b.apkid and a.vercode=b.vercode", new String[]{repo_id+""});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
 		
 		return c;
 	}
@@ -845,6 +845,8 @@ public class Database {
 			apk.setMd5(c.getString(9));
 			apk.setId(long1);
 			
+			
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		} finally{
@@ -964,6 +966,50 @@ public class Database {
 		try {
 			c = database.query("itembasedapk", new String[]{"name","icon","itembasedapkrepo_id","_id","rating","apkid","vercode"}, "parent_apkid = ? " +filter, 
 					new String[]{apkid}, null, null, null);
+			
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				HashMap<String, String> value = new HashMap<String, String>();
+				value.put("name", c.getString(0));
+				d = database.query("itembasedapkrepo", new String[]{"iconspath"}, "_id = ?", new String[]{c.getString(2)}, null, null, null);
+				d.moveToFirst();
+				value.put("icon" ,  d.getString(0)+c.getString(1));
+				value.put("_id", c.getString(3));
+				value.put("rating", c.getString(4));
+				value.put("hashCode", (c.getString(5)+"|"+c.getString(6)).hashCode()+"");
+				values.add(value);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			if(d!=null){
+				d.close();
+			}
+			c.close();
+		}
+		
+		return values;
+	}
+	
+	public ArrayList<HashMap<String, String>> getItemBasedApksRecommended(String apkid) {
+		Cursor c = null;
+		Cursor d = null;
+		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String,String>>();
+		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(context);
+		String filter = ""; 
+		
+		
+		if(sPref.getBoolean("hwspecsChkBox", true)){
+			filter = filter +" and a.minscreen <= " + HWSpecifications.getScreenSize(context) +
+					" and a.minsdk <=  " + HWSpecifications.getSdkVer() +
+					" and a.mingles <= " +HWSpecifications.getEsglVer(context);
+		}
+		
+		if(!sPref.getBoolean("matureChkBox", false)){
+			filter = filter + " and a.mature <= 0"; 
+		}
+		
+		try {
+			c = database.rawQuery("select a.name as name, a.icon as icon, a.itembasedapkrepo_id as itembasedapkrepo_id, a._id as _id, a.rating as _id, a.apkid as apkid, a.vercode as vercode from itembasedapk as a where a.parent_apkid = ? "+filter , new String[]{apkid});
 			
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				HashMap<String, String> value = new HashMap<String, String>();

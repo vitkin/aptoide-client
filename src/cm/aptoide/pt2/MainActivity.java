@@ -192,6 +192,125 @@ public class MainActivity extends FragmentActivity implements
 		});
 	}
 
+	private void loadRecommended(){
+		new Thread(new Runnable() {
+
+			private ArrayList<HashMap<String, String>> valuesRecommended;
+
+			public void run() {
+				loadUIRecommendedApps();
+				try {
+					SAXParserFactory spf = SAXParserFactory.newInstance();
+					SAXParser sp = spf.newSAXParser();
+					ViewApk parent_apk = new ViewApk();
+					parent_apk.setApkid("recommended");
+					BufferedInputStream bis = new BufferedInputStream(
+							NetworkUtils.getInputStream(new URL(
+									"http://webservices.aptoide.com/webservices/listUserBasedApks/"+Login.getToken(mContext)+"/10/xml"),
+									null, null, mContext), 8 * 1024);
+					File f = File.createTempFile("abc", "abc");
+					OutputStream out = new FileOutputStream(f);
+					byte buf[] = new byte[1024];
+					int len;
+					while ((len = bis.read(buf)) > 0)
+						out.write(buf, 0, len);
+					out.close();
+					bis.close();
+					String hash = Md5Handler.md5Calc(f);
+					if (!hash.equals(db.getItemBasedApksHash("recommended"))) {
+						db.deleteItemBasedApks(parent_apk);
+						sp.parse(f, new ItemBasedApkHandler(db, parent_apk));
+						db.insertItemBasedApkHash(hash, "recommended");
+						loadUIRecommendedApps();
+					}
+					f.delete();
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+
+			private void loadUIRecommendedApps() {
+		valuesRecommended = db.getItemBasedApksRecommended("recommended");
+
+		runOnUiThread(new Runnable() {
+			ImageLoader2 imageLoader = ImageLoader2.getInstance(mContext);
+
+			public void run() {
+
+				LinearLayout ll = (LinearLayout) featuredView
+						.findViewById(R.id.recommended_container);
+				ll.removeAllViews();
+				LinearLayout llAlso = new LinearLayout(MainActivity.this);
+				llAlso.setLayoutParams(new LayoutParams(
+						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+				llAlso.setOrientation(LinearLayout.HORIZONTAL);
+				if(valuesRecommended.isEmpty()){
+					TextView tv = new TextView(mContext);
+					tv.setText("No recommended apps found. We need more interaction from you. Make some downloads!");
+					ll.addView(tv);
+				}else{
+					
+				
+				for (int i = 0; i != valuesRecommended.size(); i++) {
+					RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater()
+							.inflate(R.layout.griditem, null);
+					((TextView) txtSamItem.findViewById(R.id.name))
+							.setText(valuesRecommended.get(i).get("name"));
+					imageLoader.DisplayImage(-1, valuesRecommended.get(i).get("icon"),
+							(ImageView) txtSamItem.findViewById(R.id.icon),
+							mContext);
+					float stars = 0f;
+					try {
+						stars = Float.parseFloat(valuesRecommended.get(i).get("rating"));
+					} catch (Exception e) {
+						stars = 0f;
+					}
+					((RatingBar) txtSamItem.findViewById(R.id.rating))
+							.setRating(stars);
+					txtSamItem.setPadding(10, 0, 0, 0);
+					txtSamItem.setTag(valuesRecommended.get(i).get("_id"));
+					txtSamItem.setLayoutParams(new LayoutParams(
+							LayoutParams.FILL_PARENT, 100, 1));
+					// txtSamItem.setOnClickListener(featuredListener);
+					txtSamItem.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View arg0) {
+							Intent i = new Intent(MainActivity.this,
+									ApkInfo.class);
+							long id = Long.parseLong((String) arg0.getTag());
+							i.putExtra("_id", id);
+							i.putExtra("top", true);
+							i.putExtra("category", Category.ITEMBASED.ordinal());
+							startActivity(i);
+						}
+					});
+
+					txtSamItem.measure(0, 0);
+
+					if (i % 2 == 0) {
+						ll.addView(llAlso);
+
+						llAlso = new LinearLayout(MainActivity.this);
+						llAlso.setLayoutParams(new LayoutParams(
+								LayoutParams.FILL_PARENT, 100));
+						llAlso.setOrientation(LinearLayout.HORIZONTAL);
+						llAlso.addView(txtSamItem);
+					} else {
+						llAlso.addView(txtSamItem);
+					}
+				}
+
+				ll.addView(llAlso);
+			}
+			}
+		});
+			}
+		}).start();
+		
+	}
+	
 	private void loadFeatured() {
 		new Thread(new Runnable() {
 
@@ -414,6 +533,14 @@ public class MainActivity extends FragmentActivity implements
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			MainActivity.this.service = ((LocalBinder) service).getService();
+			getInstalled();
+			getAllRepoStatus();
+			loadFeatured();
+			if(Login.isLoggedIn(mContext)){
+				loadRecommended();
+			}else{
+				((TextView) featuredView.findViewById(R.id.recommended_textview)).setText("Login to show Recommended Apps");
+			}
 		}
 
 		@Override
@@ -787,7 +914,6 @@ public class MainActivity extends FragmentActivity implements
 							 editor.putBoolean("joinStoresChkBox", false);
 						 }
 						 editor.commit();
-						refreshAvailableList(true);
 					}
 				});
 		
@@ -829,7 +955,7 @@ public class MainActivity extends FragmentActivity implements
 							editor.putInt("order_list", order.ordinal());
 							editor.commit();
 							redrawAll();
-
+							refreshAvailableList(true);
 						}
 					}
 				});
@@ -993,69 +1119,8 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-
-					try {
-						SAXParserFactory factory = SAXParserFactory
-								.newInstance();
-						SAXParser parser = factory.newSAXParser();
-						String token = Login.getToken(mContext);
-						parser.parse(NetworkUtils.getInputStream(new URL(
-								"http://webservices.aptoide.com/webservices/listUserBasedApks/"
-										+ token + "/10/xml"), null, null,
-								mContext), new DefaultHandler() {
-
-							ViewApk apk = new ViewApk();
-							StringBuilder sb = new StringBuilder();
-
-							public void startElement(String uri,
-									String localName, String qName,
-									org.xml.sax.Attributes attributes)
-									throws SAXException {
-								sb.setLength(0);
-								if (localName.equals("package")) {
-									apk.clear();
-								}
-							};
-
-							public void characters(char[] ch, int start,
-									int length) throws SAXException {
-								sb.append(ch, start, length);
-							};
-
-							public void endElement(String uri,
-									String localName, String qName)
-									throws SAXException {
-								if (localName.equals("apkid")) {
-									apk.setApkid(sb.toString());
-								} else if (localName.equals("vercode")) {
-									apk.setVercode(Integer.parseInt(sb
-											.toString()));
-								} else if (localName.equals("package")) {
-									db.insertUserBasedApk(apk);
-								}
-
-							};
-						});
-					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (SAXException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (ParserConfigurationException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-			}).start();
+			((TextView) featuredView.findViewById(R.id.recommended_textview)).setText("Recommended Apps");
+			loadRecommended();
 		}
 	};
 	private BroadcastReceiver redrawInstalledReceiver = new BroadcastReceiver() {
@@ -1149,7 +1214,39 @@ public class MainActivity extends FragmentActivity implements
 				if (!file.exists()) {
 					file.mkdirs();
 				}
+				
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
 
+						// Note the L that tells the compiler to interpret the number as a Long
+						final int MAXFILEAGE = (int) 2678400000L; // 1 month in milliseconds
+
+						// Get file handle to the directory. In this case the application files dir
+						File dir = new File(LOCAL_PATH+"/apks");
+
+						// Optain list of files in the directory. 
+						// listFiles() returns a list of File objects to each file found.
+						File[] files = dir.listFiles();
+
+						// Loop through all files
+						for (File f : files ) {
+
+						   // Get the last modified date. Miliseconds since 1970
+						   long lastmodified = f.lastModified();
+
+						   // Do stuff here to deal with the file.. 
+						   // For instance delete files older than 1 month
+						   if(lastmodified+MAXFILEAGE<System.currentTimeMillis()) {
+						      f.delete();
+						   }
+						}
+					}
+				}).start();
+				
+				
+				joinStores_boolean = sPref.getBoolean("joinStoresChkBox", false);
 				db = Database.getInstance(mContext);
 
 				Intent i = new Intent(mContext, MainService.class);
@@ -1233,7 +1330,13 @@ public class MainActivity extends FragmentActivity implements
 									} else if (id == LATEST_COMMENTS) {
 										depth = ListDepth.LATEST_COMMENTS;
 									} else if (id == -3) {
-										depth = ListDepth.RECOMMENDED;
+										if(!Login.isLoggedIn(mContext)){
+											Toast.makeText(mContext, "You need to login to see recommended apps for you.", Toast.LENGTH_LONG).show();
+											return;
+										}else{
+											depth = ListDepth.RECOMMENDED;
+										}
+											
 									} else if (id == -4) {
 										depth = ListDepth.ALLAPPLICATIONS;
 									} else {
@@ -1327,9 +1430,8 @@ public class MainActivity extends FragmentActivity implements
 				pager.setAdapter(new ViewPagerAdapter(mContext, views));
 				indicator.setViewPager(pager);
 				refreshAvailableList(true);
-				getInstalled();
-				getAllRepoStatus();
-				loadFeatured();
+				
+				
 				addBreadCrumb("Stores", ListDepth.STORES);
 
 				if (sPref.getBoolean("firstrun", true)) {
@@ -1375,6 +1477,26 @@ public class MainActivity extends FragmentActivity implements
 					editor.putBoolean("orderByCategory", true);
 					editor.commit();
 
+				}
+				
+				if(db.getStores(false).getCount()==0){
+					final AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
+					alertDialog.setMessage(getString(R.string.myrepo_alrt)+"http://apps.store.aptoide.com/");
+					alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Yes", new DialogInterface.OnClickListener() {
+						
+						public void onClick(DialogInterface dialog, int which) {
+							dialogAddStore("http://apps.store.aptoide.com", null, null);
+						}
+					});
+					
+					
+					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,getString(R.string.btn_no),new DialogInterface.OnClickListener() {
+						
+						public void onClick(DialogInterface dialog, int which) {
+							return;
+						}
+					});
+					alertDialog.show();
 				}
 
 				if (getIntent().hasExtra("newrepo")) {
@@ -1539,7 +1661,18 @@ public class MainActivity extends FragmentActivity implements
 						return new LatestLikesComments(store_id, db, mContext)
 								.getComments();
 					case RECOMMENDED:
-						return db.getUserBasedApk(store_id);
+						final Cursor c = db.getUserBasedApk(store_id);
+						runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								if(c.getCount()==0){
+									Toast.makeText(mContext, "No recommended apps found. We need more interaction from you. Make some downloads!", Toast.LENGTH_LONG).show();
+								}
+								
+							}
+						});
+						return c;
 
 					default:
 						return null;
@@ -1803,6 +1936,7 @@ public class MainActivity extends FragmentActivity implements
 						.setText("by: "
 								+ cursor.getString(cursor
 										.getColumnIndex("username")));
+				((TextView) view.findViewById(R.id.time)).setText(cursor.getString(cursor.getColumnIndex("time")));
 				break;
 			default:
 				break;

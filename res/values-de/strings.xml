@@ -1,12 +1,23 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="my_stores">Keine Stores!</string>
+  <string name="store_name">Benutzername...</string>
+  <string name="add_store">Keine Stores!</string>
+  <string name="new_store">Keine Stores!</string>
+  <string name="downloads">Geplante Downloads</string>
+  <string name="downloading_apps">Geplante Downloads</string>
+  <string name="downloaded_apps">Geplante Downloads</string>
+  <string name="install">Installiert</string>
+  <string name="uninstall">Erneut Installieren</string>
+  <string name="chkBoxSchDwn">Geplanter Download</string>
+  <string name="submit">Senden</string>
   <string name="app_name">Aptoide</string>
   <string name="available_tab">Verfügbar</string>
   <string name="installed_tab">Installiert</string>
   <string name="updates_tab">Updates</string>
+  <string name="add_repo_text">Updates</string>
+  <string name="btn_add_repo">Keine Stores!</string>
   <string name="number_apks">Anwendungen:</string>
-  <string name="uninstall">Erneut Installieren</string>
-  <string name="install">Installiert</string>
   <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Name der Anwendung</string>
   <string name="tastenotavailable">verfügbar</string>
@@ -18,18 +29,15 @@
   <string name="showpass">Passwort anzeigen</string>
   <string name="user">Benutzername...</string>
   <string name="pass">Passwort...</string>
-  <string name="submit">Senden</string>
   <string name="new_account">Neuer Account</string>
-  <string name="setcredentials">Bazaar Login</string>
+  <string name="setcredentials">Aptoide</string>
   <string name="usernotdef">Kein Benutzer definiert</string>
   <string name="passwordnotdef">Passwort nicht definiert</string>
   <string name="loggingin">Anmelden...</string>
   <string name="unabletoexecute">Durchführung nicht möglich</string>
   <string name="failedcredentials">Login mit den angegebenen Daten fehlgeschlagen</string>
   <string name="loading_likes">Lade Likes...</string>
-  <string name="body">Body..</string>
   <string name="inresponseto">\\\@</string>
-  <string name="commentlabel">App Kommentieren...</string>
   <string name="enterbody">Tragen Sie Ihre Bewertung in den Body-Bereich ein</string>
   <string name="postingcomment">Kommentar wird gepostet...</string>
   <string name="commentadded">Ihr Kommentar wurde übermittelt</string>
@@ -46,7 +54,7 @@
   <string name="setting_schdwntitle">Geplante Downloads</string>
   <string name="setting_schdwninstalltitle">Automatische Installation</string>
   <string name="setting_schdwninstallsum">Geplante Downloads automatisch installieren, wenn eine WiFi-Verbindung besteht</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Aptoide</string>
   <string name="clearcredentials">Login löschen</string>
   <string name="clearcredentials_summary">Aktuellen Login zurücksetzen</string>
   <string name="setcredentials_summary">Neuen Login erstellen</string>
@@ -60,6 +68,7 @@
   <string name="about_txt1">Ihr Package Installer für Android Geräte.\n</string>
   <string name="about_site">Home:</string>
   <string name="about_mail">Kontakt:</string>
+  <string name="no_descript">verfügbar</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_edt_msg2">Keine Stores!</string>
@@ -74,14 +83,21 @@
   <string name="schDown_downerror">Download-Fehler. %1$s Store hinzufügen.</string>
   <string name="addSchDown">Download geplant</string>
   <string name="registration">Bazaar login</string>
+  <string name="bazaar_url">www.aptoide.com</string>
   <string name="password">Passwort...</string>
   <string name="schDown_invertselection">Auswahl installieren</string>
-  <string name="chkBoxSchDwn">Geplanter Download</string>
   <string name="clear_dwn_title">Geplante Downloads</string>
   <string-array name="dwnif">
     <item>3G and Wifi</item>
     <item>Wifi only</item>
     <item>Keine geplanten Downloads!</item>
   </string-array>
-  <string name="no_info">Keine Information</string>
+  <string name="password_tip">Passwort anzeigen</string>
+  <string name="bazaar_login">Aptoide</string>
+  <string name="schDown_added">Download geplant</string>
+  <string name="clear_cache_sucess">Ihr Kommentar wurde übermittelt</string>
+  <string name="aptoide_downloading">Keine geplanten Downloads!</string>
+  <string name="starting_download">Keine geplanten Downloads!</string>
+  <string name="resuming_download">Keine geplanten Downloads!</string>
+  <string name="contact">Kontakt:</string>
 </resources>
