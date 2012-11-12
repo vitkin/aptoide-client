@@ -30,6 +30,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import cm.aptoide.pt2.Database;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.sharing.DialogShareOnFacebook;
@@ -45,6 +46,7 @@ public class DownloadedListAdapter extends BaseAdapter{
 
 	/** ViewDownloadManagemet[] **/
 	private Object[] downloaded = null;
+
 
 	/**
 	 * DownloadedListAdapter Constructor
@@ -65,12 +67,58 @@ public class DownloadedListAdapter extends BaseAdapter{
 		TextView app_name;
 		ImageView app_icon;
 		ImageView app_facebook_share;
+		
+		String shareAppName;
+		String shareIcon;
+		String shareMessage;
+		String shareStore; 
+		String shareDescription;
+		String shareStoreLink;
+		
+		public String getShareAppName() {
+			return shareAppName;
+		}
+		public void setShareAppName(String shareAppName) {
+			this.shareAppName = shareAppName;
+		}
+		public String getShareIcon() {
+			return shareIcon;
+		}
+		public void setShareIcon(String shareIcon) {
+			this.shareIcon = shareIcon;
+		}
+		public String getShareMessage() {
+			return shareMessage;
+		}
+		public void setShareMessage(String shareMessage) {
+			this.shareMessage = shareMessage;
+		}
+		public String getShareStore() {
+			return shareStore;
+		}
+		public void setShareStore(String shareStore) {
+			this.shareStore = shareStore;
+		}
+		public String getShareDescription() {
+			return shareDescription;
+		}
+		public void setShareDescription(String shareDescription) {
+			this.shareDescription = shareDescription;
+		}
+		public String getShareStoreLink() {
+			return shareStoreLink;
+		}
+		public void setShareStoreLink(String shareStoreLink) {
+			this.shareStoreLink = shareStoreLink;
+		}
+		
+		
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
-		DownloadingRowViewHolder rowViewHolder;
+		final DownloadingRowViewHolder rowViewHolder;
 
 		if(convertView == null){
 			convertView = layoutInflater.inflate(R.layout.row_app_downloaded, null);
@@ -89,20 +137,31 @@ public class DownloadedListAdapter extends BaseAdapter{
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
 		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
 		
-		final String shareAppName = download.getAppInfo().getName()+"  "+download.getAppInfo().getVername();
-		final String sharePicture = download.getAppInfo().getIconPath();
 		
+		rowViewHolder.setShareAppName(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
+//		rowViewHolder.setShareIcon(download.getAppInfo().getIconPath());
+		rowViewHolder.setShareIcon("http://cdn1.aptoide.com/imgs/e/f/2/ef2eb8e0a7a5803b868a0c13c99026e9.png");
+		rowViewHolder.setShareMessage("I downloaded "+rowViewHolder.getShareAppName()+" for Android to install on my phone!");
+		
+		rowViewHolder.setShareStore(Database.getInstance(activity).getStoreName(download.getAppInfo().getRepo_id()));
+		if(rowViewHolder.getShareStore()==null){
+			rowViewHolder.setShareDescription("Visit Aptoide and install the best apps");
+			rowViewHolder.setShareStoreLink("http://www.aptoide.com/more/topapps");
+		}else{
+			rowViewHolder.setShareDescription("Visit "+rowViewHolder.getShareStore()+" Android Store to download and install this app");
+			rowViewHolder.setShareStoreLink("http://"+rowViewHolder.getShareStore()+".store.aptoide.com");
+		}
 		rowViewHolder.app_facebook_share.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				String facebookShareName = shareAppName;
-				String facebookSharePicture = sharePicture;
-//				String facebookShareText = shareText;
-//				String facebookShareLink = shareLink;  
-//				String facebookShareStore = shareStore;
+				String facebookShareName = rowViewHolder.getShareAppName();
+				String facebookShareIcon = rowViewHolder.getShareIcon();
+				String facebookShareText = rowViewHolder.getShareMessage();
+				String facebookShareDescription = rowViewHolder.getShareDescription();
+				String facebookShareStoreLink = rowViewHolder.getShareStoreLink();
 
-				Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookSharePicture);
+				Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookShareIcon +", DescriptionToPost: "+facebookShareDescription+", MessageToPost: "+facebookShareText+", StoreLinkToPost: "+facebookShareStoreLink);
 				
-				final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(activity, facebookShareName, facebookSharePicture);
+				final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(activity, facebookShareName, facebookShareIcon, facebookShareText, facebookShareDescription, facebookShareStoreLink);
 
 				shareFacebook.setOnDismissListener(new OnDismissListener() {
 					@Override
