@@ -1,12 +1,23 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="my_stores">У вас нет магазинов!</string>
+  <string name="store_name">Имя пользователя...</string>
+  <string name="add_store">У вас нет магазинов!</string>
+  <string name="new_store">У вас нет магазинов!</string>
+  <string name="downloads">Запланированные загрузки</string>
+  <string name="downloading_apps">Запланированные загрузки</string>
+  <string name="downloaded_apps">Запланированные загрузки</string>
+  <string name="install">Установлено</string>
+  <string name="uninstall">Переустановите</string>
+  <string name="chkBoxSchDwn">Запланированные загрузки</string>
+  <string name="submit">Отправить</string>
   <string name="app_name">Aptoide</string>
   <string name="available_tab">Доступно</string>
   <string name="installed_tab">Установлено</string>
   <string name="updates_tab">Обновления</string>
+  <string name="add_repo_text">Обновления</string>
+  <string name="btn_add_repo">У вас нет магазинов!</string>
   <string name="number_apks">Приложения:</string>
-  <string name="uninstall">Переустановите</string>
-  <string name="install">Установлено</string>
   <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Имя приложения</string>
   <string name="tastenotavailable">доступно</string>
@@ -18,18 +29,15 @@
   <string name="showpass">Показать пароль</string>
   <string name="user">Имя пользователя...</string>
   <string name="pass">Пароль...</string>
-  <string name="submit">Отправить</string>
   <string name="new_account">Новый аккаунт</string>
-  <string name="setcredentials">Bazaar логин</string>
+  <string name="setcredentials">Aptoide</string>
   <string name="usernotdef">Пользователь не определен</string>
   <string name="passwordnotdef">Пароль не определен</string>
   <string name="loggingin">Вход в систему...</string>
   <string name="unabletoexecute">Невозможно выполнить</string>
   <string name="failedcredentials">Ошибка входа</string>
   <string name="loading_likes">Нравится загрузка...</string>
-  <string name="body">Основной текст...</string>
   <string name="inresponseto">\\\@</string>
-  <string name="commentlabel">Комментарий приложения...</string>
   <string name="enterbody">Введите ваш отзыв в разделе body</string>
   <string name="postingcomment">Размещение комментария...</string>
   <string name="commentadded">Ваш комментарий успешно принят</string>
@@ -46,7 +54,7 @@
   <string name="setting_schdwntitle">Запланированные загрузки</string>
   <string name="setting_schdwninstalltitle">Автоматическая установка</string>
   <string name="setting_schdwninstallsum">Устанавливать запланированные загрузки автоматически когда соединение по Wifi присутствует</string>
-  <string name="credentialssettings">Bazaar логин</string>
+  <string name="credentialssettings">Aptoide</string>
   <string name="clearcredentials">Очистка логин</string>
   <string name="clearcredentials_summary">Отключение текущего логина</string>
   <string name="setcredentials_summary">Установить новый логин</string>
@@ -60,6 +68,7 @@
   <string name="about_txt1">Ваш пакет установки для телефона Андроид.\n</string>
   <string name="about_site">Домой:</string>
   <string name="about_mail">Контакты:</string>
+  <string name="no_descript">доступно</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_edt_msg2">У вас нет магазинов!</string>
@@ -73,14 +82,21 @@
   <string name="schDown_downerror">Ошибка загрузки. Добавьте %1$s Магазин.</string>
   <string name="addSchDown">Добавленно в Запланированные Загрузки</string>
   <string name="registration">Bazaar логин</string>
+  <string name="bazaar_url">www.aptoide.com</string>
   <string name="password">Пароль...</string>
   <string name="schDown_invertselection">Установить выбранные</string>
-  <string name="chkBoxSchDwn">Запланированные загрузки</string>
   <string name="clear_dwn_title">Запланированные загрузки</string>
   <string-array name="dwnif">
     <item>3G and Wifi</item>
     <item>Wifi only</item>
     <item>Нет запланированных загрузок!</item>
   </string-array>
-  <string name="no_info">Нет информации</string>
+  <string name="password_tip">Показать пароль</string>
+  <string name="bazaar_login">Aptoide</string>
+  <string name="schDown_added">Добавленно в Запланированные Загрузки</string>
+  <string name="clear_cache_sucess">Ваш комментарий успешно принят</string>
+  <string name="aptoide_downloading">Нет запланированных загрузок!</string>
+  <string name="starting_download">Нет запланированных загрузок!</string>
+  <string name="resuming_download">Нет запланированных загрузок!</string>
+  <string name="contact">Контакты:</string>
 </resources>

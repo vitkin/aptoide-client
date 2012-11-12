@@ -7,17 +7,20 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
 
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cm.aptoide.pt2.util.NetworkUtils;
-import cm.aptoide.pt2.util.RepoUtils;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import cm.aptoide.pt2.util.DateTimeUtils;
+import cm.aptoide.pt2.util.NetworkUtils;
+import cm.aptoide.pt2.util.RepoUtils;
 
 public class LatestLikesComments {
 
@@ -34,7 +37,7 @@ public class LatestLikesComments {
 
 	public Cursor getComments() {
 		endPointComments = String.format(endPointComments, repoName);
-		MatrixCursor cursor = new MatrixCursor(new String[]{"_id","apkid","name","text","username"});
+		MatrixCursor cursor = new MatrixCursor(new String[]{"_id","apkid","name","text","username","time"});
 		
 		try {
 
@@ -45,11 +48,14 @@ public class LatestLikesComments {
 				String apkid = ((JSONObject)array.get(i)).getString("apkid");
 				String name = ((JSONObject)array.get(i)).getString("name");
 				String text = ((JSONObject)array.get(i)).getString("text");
+				String timestamp = ((JSONObject)array.get(i)).getString("timestamp");
+				Date date = Configs.TIME_STAMP_FORMAT.parse(timestamp);
+				String time = DateTimeUtils.getInstance(context).getTimeDiffString(date.getTime());
 				String username = ((JSONObject)array.get(i)).getString("username");
 				if(username.equals("NOT_SIGNED_UP")){
 					username = "";
 				}
-				cursor.newRow().add(i).add(apkid).add(name).add(text).add(username);
+				cursor.newRow().add(i).add(apkid).add(name).add(text).add(username).add(time);
 			}
 			
 		} catch (MalformedURLException e) {
@@ -57,6 +63,9 @@ public class LatestLikesComments {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

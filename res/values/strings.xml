@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
+    
+    <string name="WidgetProvider_timestamp_today">Today</string>
+<string name="WidgetProvider_timestamp_yesterday">Yesterday</string>
+<string name="WidgetProvider_timestamp_hour_ago">%s hour ago</string>
+<string name="WidgetProvider_timestamp_hours_ago">%s hours ago</string>
+<string name="WidgetProvider_timestamp_minutes_ago">%s minutes ago</string>
+<string name="WidgetProvider_timestamp_just_now">Just now</string>
+    
     <string name="menu_context_remove">Remove</string>
     <string name="menu_context_reparse">Reload</string>
     <string name="error_latest_apk">No APK available in database. Is store still loading?</string>

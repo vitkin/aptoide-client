@@ -8,72 +8,68 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-10-29 14:02+0000\n"
-"PO-Revision-Date: 2012-06-07 09:15+0100\n"
+"PO-Revision-Date: 2012-11-02 11:49+0100\n"
 "Last-Translator: Marc <marc.bres@gmail.com>\n"
 "Language-Team: ca_ES <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=((n == 1) ? 0 : 1)\n"
+"Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.1.6\n"
 "Generated-By: Babel 1.0dev\n"
 
 msgctxt "menu_context_remove"
 msgid "Remove"
-msgstr ""
+msgstr "Eliminar"
 
 msgctxt "menu_context_reparse"
 msgid "Reload"
-msgstr ""
+msgstr "Recarregar"
 
 msgctxt "error_latest_apk"
 msgid "No APK available in database. Is store still loading?"
-msgstr ""
+msgstr "No hi ha APK a la base de dades. S'està carregant el repositori encara?"
 
 msgctxt "error_delete_store"
 msgid "Unable to delete store. The store is still loading."
-msgstr ""
+msgstr "No s'ha pogut eliminar el repositori. Encara està carregant"
 
 msgctxt "menu_settings"
 msgid "Settings"
 msgstr "Configuració"
 
-#, fuzzy
 msgctxt "my_stores"
 msgid "My stores"
-msgstr "Editar repositori"
+msgstr "Els meus repositoris"
 
-#, fuzzy
 msgctxt "store_name"
 msgid "Store Name"
-msgstr "Nom d'usuari..."
+msgstr "Nom de categoria"
 
-#, fuzzy
 msgctxt "category1"
 msgid "Category 1"
-msgstr "Per categoria"
+msgstr "Categoria 1"
 
-#, fuzzy
 msgctxt "category2"
 msgid "Category 2"
-msgstr "Per categoria"
+msgstr "Categoria 2"
 
-#, fuzzy
 msgctxt "add_store"
 msgid "Add Store"
-msgstr "No hi ha repositoris!"
+msgstr "Afegir repositori"
 
 msgctxt "version"
 msgid "Version:"
-msgstr ""
+msgstr "Versió:"
 
 msgctxt "empty_store_list"
 msgid "You don't have any stores."
-msgstr ""
+msgstr "No hi ha repositoris."
 
-#, fuzzy
 msgctxt "new_store"
 msgid "Add Store"
-msgstr "No hi ha repositoris!"
+msgstr "Afegir repositori"
 
 msgctxt "add_repo_private"
 msgid "Private"
@@ -83,36 +79,33 @@ msgctxt "extended_server"
 msgid "Extended Store"
 msgstr "Repositori extés"
 
-#, fuzzy
 msgctxt "downloads"
 msgid "downloads"
-msgstr "Descàrregues"
+msgstr "descàrregues"
 
 msgctxt "merge_all_stores"
 msgid "Merge all stores"
-msgstr ""
+msgstr "Fusionar repositoris"
 
 msgctxt "search_for_stores"
 msgid "Search for Stores"
-msgstr ""
+msgstr "Cercar repositoris"
 
-#, fuzzy
 msgctxt "downloading_apps"
 msgid "Downloading apps"
 msgstr "Descarregant"
 
-#, fuzzy
 msgctxt "downloaded_apps"
 msgid "Downloaded apps"
 msgstr "Descàrregues"
 
 msgctxt "not_downloaded_apps"
 msgid "Not downloaded apps"
-msgstr ""
+msgstr "No s'han descarregat aplicacions"
 
 msgctxt "exit"
 msgid "exit"
-msgstr ""
+msgstr "sortir"
 
 msgctxt "install"
 msgid "Install"
@@ -128,7 +121,7 @@ msgstr "Cerca al Market"
 
 msgctxt "commentlabel"
 msgid "Add Comment"
-msgstr ""
+msgstr "Afegir comentari"
 
 msgctxt "chkBoxSchDwn"
 msgid "Schedule Download"
@@ -140,7 +133,7 @@ msgstr "Enviar"
 
 msgctxt "body"
 msgid "Body"
-msgstr ""
+msgstr "Cos"
 
 msgctxt "subject"
 msgid "Name"
@@ -170,15 +163,13 @@ msgctxt "updates_tab"
 msgid "Updates"
 msgstr "Actualitzacions"
 
-#, fuzzy
 msgctxt "add_repo_text"
 msgid "New Store"
 msgstr "Nou repositori"
 
-#, fuzzy
 msgctxt "btn_add_repo"
 msgid "Add store"
-msgstr "No hi ha repositoris!"
+msgstr "Afegir repositori"
 
 msgctxt "menu_rem_repo"
 msgid "Remove Store"
@@ -323,7 +314,7 @@ msgstr "Mostrar aplicacions:"
 
 msgctxt "order_popup_title3"
 msgid "Adult Content:"
-msgstr ""
+msgstr "Contingut per a Adults:"
 
 msgctxt "order_popup_catg1"
 msgid "By category"
@@ -472,7 +463,7 @@ msgstr "No"
 
 msgctxt "btn_ok"
 msgid "OK"
-msgstr ""
+msgstr "D'acord"
 
 msgctxt "btn_add"
 msgid "Add"
@@ -693,7 +684,7 @@ msgstr "No hi ha descàrregues programades!"
 
 msgctxt "size"
 msgid "Size"
-msgstr ""
+msgstr "Mida"
 
 msgctxt "schDown_install"
 msgid "Do you want to install all scheduled downloads?"
@@ -726,15 +717,13 @@ msgctxt "addSchDown"
 msgid "Added to Scheduled Downloads"
 msgstr "Afegit a descàrregues programades"
 
-#, fuzzy
 msgctxt "registration"
 msgid "Aptoide Registration"
-msgstr "Identificar-se al bazaar"
+msgstr "Registrar-se al bazaar"
 
-#, fuzzy
 msgctxt "bazaar_url"
 msgid "http://www.aptoide.com/"
-msgstr "www.aptoide.com"
+msgstr "http://www.aptoide.com"
 
 msgctxt "username"
 msgid "Email"
@@ -789,19 +778,20 @@ msgid ""
 "By signing up you are agreeing to the Aptoide Terms of Service and "
 "Aptoide Content Policy for Developers"
 msgstr ""
+"Connectan-te acceptes els Termes de Servei d'Aptoide i la política de "
+"continguts d'Aptoide per desenvolupadors"
 
 msgctxt "username_tip"
 msgid "Type your username"
-msgstr ""
+msgstr "Introdueix nom d'usuari"
 
-#, fuzzy
 msgctxt "password_tip"
 msgid "Choose a password"
-msgstr "Mostrar contrasenya"
+msgstr "Introdueix contrasenya"
 
 msgctxt "sign_in"
 msgid "Sign In"
-msgstr ""
+msgstr "Connectar-se"
 
 #, fuzzy
 msgctxt "bazaar_login"
@@ -810,74 +800,69 @@ msgstr "Configuració d'Aptoide"
 
 msgctxt "clearcache_sum"
 msgid "Deletes Aptoide cache (icons, screenshots) from the SD card."
-msgstr ""
+msgstr "Elimina cache d'Aptoide de la targeta SD"
 
 msgctxt "clearcontent_sum"
 msgid "Deletes the content of .aptoide folder from the SD card."
-msgstr ""
+msgstr "Elimina el contingut del directori .aptoide de la targeta SD."
 
 msgctxt "clearcontent_title"
 msgid "Remove Aptoide data and Configurations"
-msgstr ""
+msgstr "Eliminar dades i configuracions d'Aptoide"
 
 msgctxt "clearcache_title"
 msgid "Clear Aptoide cache"
-msgstr ""
+msgstr "Netejar cache d'Aptoide"
 
-#, fuzzy
 msgctxt "schDown_added"
 msgid " was added to scheduled download list."
-msgstr "Afegit a descàrregues programades"
+msgstr "afegit a descàrregues programades."
 
-#, fuzzy
 msgctxt "clear_cache_sucess"
 msgid "Content successfuly deleted"
-msgstr "El teu comentari s'ha enviat"
+msgstr "El teu comentari s'ha eliminat"
 
-#, fuzzy
 msgctxt "aptoide_downloading"
 msgid "Aptoide downloading"
-msgstr "Descarregant"
+msgstr "Descarregant Aptoide"
 
 #, c-format
 msgctxt "x_app"
 msgid "%d app"
-msgstr ""
+msgstr "%d app"
 
 #, c-format
 msgctxt "x_apps"
 msgid "%d apps"
-msgstr ""
+msgstr "%d apps"
 
-#, fuzzy
 msgctxt "starting_download"
 msgid "Starting download"
-msgstr "No descarregar mai"
+msgstr "Iniciant baixada"
 
-#, fuzzy
 msgctxt "resuming_download"
 msgid "Resuming download"
-msgstr "No descarregar mai"
+msgstr "Continuant baixada"
 
 msgctxt "slow"
 msgid "slow"
-msgstr ""
+msgstr "lent"
 
 msgctxt "paused"
 msgid "paused"
-msgstr ""
+msgstr "pausat"
 
 msgctxt "stopped"
 msgid "stopped"
-msgstr ""
+msgstr "aturat"
 
 msgctxt "timeout"
 msgid "network connection timeout"
-msgstr ""
+msgstr "s'ha esgotat el temps d'espera de xarxa"
 
 msgctxt "ip_blacklisted"
 msgid "blacklisted IP"
-msgstr ""
+msgstr "IP a la llista negra"
 
 msgctxt "ip_blacklisted_extended"
 msgid ""
@@ -885,39 +870,41 @@ msgid ""
 "blacklisted in Aptoide servers. To solve the problem, please contact <a "
 "href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a> "
 msgstr ""
+"La teva aplicació no s'ha obtingut. La teva adreça de xarxa (IP) és a la "
+"llista negra. Per a resoldre el problema, si us plau contacta <a "
+"href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a>"
 
 msgctxt "connection_error"
 msgid "no network connection"
-msgstr ""
+msgstr "no hi ha connexió"
 
 msgctxt "apk_not_found"
 msgid "Apk not found"
-msgstr ""
+msgstr "No s'ha trobat APK"
 
 msgctxt "invalid_apk"
 msgid "Invalid apk"
-msgstr ""
+msgstr "Apk no vàlid"
 
 msgctxt "server_error"
 msgid "Server error"
-msgstr ""
+msgstr "Error de servidor"
 
 msgctxt "back"
 msgid "Back"
-msgstr ""
+msgstr "Enrere"
 
-#, fuzzy
 msgctxt "contact"
 msgid "Contact"
-msgstr "Contacte:"
+msgstr "Contacte"
 
 msgctxt "choose_email_client"
 msgid "Choose an Email client:"
-msgstr ""
+msgstr "Tria un client de correu-e:"
 
 msgctxt "refresh_list"
 msgid "Refresh"
-msgstr ""
+msgstr "Actualitzar"
 
 #~ msgctxt "add_repo_text"
 #~ msgid "Add"
@@ -962,4 +949,3 @@ msgstr ""
 #~ msgctxt "repo_insert_failed"
 #~ msgid "Failed to add the Store. Please try again."
 #~ msgstr "No s'ha pogut afegir el repositori. Si us plau intenta-ho un altre cop"
-

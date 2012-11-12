@@ -1,12 +1,23 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="my_stores">Nessun repository!</string>
+  <string name="store_name">Nome utente...</string>
+  <string name="add_store">Nessun repository!</string>
+  <string name="new_store">Nessun repository!</string>
+  <string name="downloads">Download Programmati</string>
+  <string name="downloading_apps">Download Programmati</string>
+  <string name="downloaded_apps">Download Programmati</string>
+  <string name="install">Installata</string>
+  <string name="uninstall">Reinstalla</string>
+  <string name="chkBoxSchDwn">Programma Download</string>
+  <string name="submit">Invia</string>
   <string name="app_name">Aptoide</string>
   <string name="available_tab">Disponibile</string>
   <string name="installed_tab">Installata</string>
   <string name="updates_tab">Aggiornamenti</string>
+  <string name="add_repo_text">Aggiornamenti</string>
+  <string name="btn_add_repo">Nessun repository!</string>
   <string name="number_apks">Applicazioni:</string>
-  <string name="uninstall">Reinstalla</string>
-  <string name="install">Installata</string>
   <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Nome dell\'applicazione</string>
   <string name="tastenotavailable">disponibile</string>
@@ -18,18 +29,15 @@
   <string name="showpass">Mostra password</string>
   <string name="user">Nome utente...</string>
   <string name="pass">Password...</string>
-  <string name="submit">Invia</string>
   <string name="new_account">Nuovo account</string>
-  <string name="setcredentials">Bazaar Login</string>
+  <string name="setcredentials">Aptoide</string>
   <string name="usernotdef">Utente non definito</string>
   <string name="passwordnotdef">Password non definita</string>
   <string name="loggingin">Logging in...</string>
   <string name="unabletoexecute">Impossibile eseguire</string>
   <string name="failedcredentials">Il login con questi nome utente e password è fallito</string>
   <string name="loading_likes">Carico i Like...</string>
-  <string name="body">Corpo del messaggio..</string>
   <string name="inresponseto">\\\@</string>
-  <string name="commentlabel">Commenta app...</string>
   <string name="enterbody">Scrivi la recensione nel corpo del messaggio</string>
   <string name="postingcomment">Aggiungo commento...</string>
   <string name="commentadded">Il tuo commento è stato inviato</string>
@@ -46,7 +54,7 @@
   <string name="setting_schdwntitle">Download Programmati</string>
   <string name="setting_schdwninstalltitle">Installazione Automatica</string>
   <string name="setting_schdwninstallsum">Installazione automatica dei download programmati quando è disponibile un connessione Wifi</string>
-  <string name="credentialssettings">Bazaar login</string>
+  <string name="credentialssettings">Aptoide</string>
   <string name="clearcredentials">Cancella login</string>
   <string name="clearcredentials_summary">Disattiva il login corrente</string>
   <string name="setcredentials_summary">Attiva nuovo login</string>
@@ -60,6 +68,7 @@
   <string name="about_txt1">Il tuo app installer di Android.\n</string>
   <string name="about_site">Home:</string>
   <string name="about_mail">Contatti:</string>
+  <string name="no_descript">disponibile</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_edt_msg2">Nessun repository!</string>
@@ -74,14 +83,21 @@
   <string name="schDown_downerror">Errore di download. Aggiungi %1$s Repository.</string>
   <string name="addSchDown">Aggiunto ai download programmati</string>
   <string name="registration">Bazaar login</string>
+  <string name="bazaar_url">www.aptoide.com</string>
   <string name="password">Password...</string>
   <string name="schDown_invertselection">Installa Selezionati</string>
-  <string name="chkBoxSchDwn">Programma Download</string>
   <string name="clear_dwn_title">Download Programmati</string>
   <string-array name="dwnif">
     <item>3G and Wifi</item>
     <item>Wifi only</item>
     <item>Nessun download programmato!</item>
   </string-array>
-  <string name="no_info">Nessuna informazione</string>
+  <string name="password_tip">Mostra password</string>
+  <string name="bazaar_login">Aptoide</string>
+  <string name="schDown_added">Aggiunto ai download programmati</string>
+  <string name="clear_cache_sucess">Il tuo commento è stato inviato</string>
+  <string name="aptoide_downloading">Nessun download programmato!</string>
+  <string name="starting_download">Nessun download programmato!</string>
+  <string name="resuming_download">Nessun download programmato!</string>
+  <string name="contact">Contatti:</string>
 </resources>

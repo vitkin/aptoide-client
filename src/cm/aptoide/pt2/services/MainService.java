@@ -36,6 +36,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.SparseArray;
 import android.widget.Toast;
@@ -45,10 +46,11 @@ import cm.aptoide.pt2.util.NetworkUtils;
 public class MainService extends Service {
 //	Database db;
 	private static boolean isParsing = false;
-	String defaultXmlPath = "sdcard/.aptoide/info.xml";
-	String defaultTopXmlPath = "sdcard/.aptoide/top.xml";
-	String defaultExtrasXmlPath = "sdcard/.aptoide/extras.xml";
-	static SparseArray<Server> serversParsing = new SparseArray<Server>();
+	String defaultPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+	String defaultXmlPath = defaultPath+"/.aptoide/info.xml";
+	String defaultTopXmlPath = defaultPath+"/.aptoide/top.xml";
+	String defaultExtrasXmlPath = defaultPath+"/.aptoide/extras.xml";
+	static ArrayList<String> serversParsing = new ArrayList<String>();
 	@Override
 	public IBinder onBind(Intent intent) {
 		registerReceiver(receiver , new IntentFilter("complete"));
@@ -59,7 +61,7 @@ public class MainService extends Service {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			try{
-				serversParsing.remove((int)intent.getLongExtra("server", -1));
+				serversParsing.remove(intent.getStringExtra("server"));
 			}catch (Exception e){
 				e.printStackTrace();
 			}
@@ -207,7 +209,7 @@ public class MainService extends Service {
 	public void parseServer(final Database db, final Server server) throws MalformedURLException, IOException {
 		
 		
-		if(serversParsing.get((int) server.id)==null){
+		if(!serversParsing.contains(server.url)){
 			server.state=State.QUEUED;
 			db.updateStatus(server);
 			new Thread(new Runnable() {
@@ -216,14 +218,14 @@ public class MainService extends Service {
 				public void run() {
 						parseTop(db, server);
 						parseLatest(db, server);
-						parseExtras(db, server);
+						
 					try{
 						parseInfoXml(db, server);
 					}catch (Exception e){
 						server.state=State.FAILED;
 						db.updateStatus(server);
 						getApplicationContext().sendBroadcast(new Intent("status"));
-						serversParsing.remove((int)server.id);
+						serversParsing.remove(server.url);
 						e.printStackTrace();
 					}
 						
@@ -233,12 +235,12 @@ public class MainService extends Service {
 				}
 			}).start();
 			
-			serversParsing.put((int)server.id, server);	
+			serversParsing.add(server.url);	
 		}
 	}
 	
 	public boolean deleteStore(Database db, long id){
-		if(serversParsing.get((int)id)==null){
+		if(!serversParsing.contains(db.getServer(id, false).url)){
 			db.deleteServer(id,true);
 			return true;
 		}
@@ -266,7 +268,7 @@ public class MainService extends Service {
 		
 	}
 	
-	public void parseExtras(Database db, final Server server){
+	public void parseExtras(final Server server){
 		new Thread(new Runnable() {
 			public void run() {
 				String path;
@@ -295,10 +297,8 @@ public class MainService extends Service {
 						RepoParser.getInstance(db).parse2(new File(path2), server,
 								Category.LATEST);
 					} catch (MalformedURLException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
@@ -310,14 +310,15 @@ public class MainService extends Service {
 	public void parseInfoXml(final Database db, final Server server) throws MalformedURLException, IOException{
 		String path = null;
 		path = get(server,defaultXmlPath,"info.xml",true);
-		RepoParser.getInstance(db).parse(new File(path),server);
-
+		RepoParser.getInstance(db).parse(path,server);
+		parseExtras(server);
 	}
 
 	public void addStoreInfo(Database db, Server server) {
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(
-					String.format("http://webservices.aptoide.com/webservices/getRepositoryInfo/%s/json", RepoUtils.split(server.url))).openConnection();
+					String.format("http://webservices.aptoide.com/webservices/getRepositoryInfo/%s/json", 
+							RepoUtils.split(server.url))).openConnection();
 			connection.connect();
 			int rc = connection.getResponseCode();
 			if (rc == 200) {

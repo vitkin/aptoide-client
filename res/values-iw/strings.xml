@@ -1,12 +1,23 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="my_stores">אין חנויות!</string>
+  <string name="store_name">שם משתמש...</string>
+  <string name="add_store">אין חנויות!</string>
+  <string name="new_store">אין חנויות!</string>
+  <string name="downloads">הורדות ממתינות</string>
+  <string name="downloading_apps">הורדות ממתינות</string>
+  <string name="downloaded_apps">הורדות ממתינות</string>
+  <string name="install">מותקן</string>
+  <string name="uninstall">התקן מחדש</string>
+  <string name="chkBoxSchDwn">הוסף להמתנה</string>
+  <string name="submit">שלח</string>
   <string name="app_name">אפטויד</string>
   <string name="available_tab">זמין</string>
   <string name="installed_tab">מותקן</string>
   <string name="updates_tab">עדכונים</string>
+  <string name="add_repo_text">עדכונים</string>
+  <string name="btn_add_repo">אין חנויות!</string>
   <string name="number_apks">יישומים:</string>
-  <string name="uninstall">התקן מחדש</string>
-  <string name="install">מותקן</string>
   <string name="srch_label">אפטויד</string>
   <string name="srch_hint">שם היישום</string>
   <string name="tastenotavailable">זמין</string>
@@ -18,18 +29,15 @@
   <string name="showpass">הצג סיסמא</string>
   <string name="user">שם משתמש...</string>
   <string name="pass">סיסמא...</string>
-  <string name="submit">שלח</string>
   <string name="new_account">משתמש חדש</string>
-  <string name="setcredentials">התחברות לבזאר</string>
+  <string name="setcredentials">אפטויד</string>
   <string name="usernotdef">משתמש לא מוגדר</string>
   <string name="passwordnotdef">סיסמא לא מוגדרת</string>
   <string name="loggingin">מתחבר...</string>
   <string name="unabletoexecute">ביצוע הפעולה נכשל</string>
   <string name="failedcredentials">אחד או יותר מהנתונים שהזנת שגוי.</string>
   <string name="loading_likes">טוען רשימת אוהבים...</string>
-  <string name="body">גוף ההודעה...</string>
   <string name="inresponseto">\\\@</string>
-  <string name="commentlabel">הגב על היישום...</string>
   <string name="enterbody">הכנס את התגובה שלך בגוף ההודעה...</string>
   <string name="postingcomment">מפרסם תגובה...</string>
   <string name="commentadded">תגובתך פורסמה בהצלחה</string>
@@ -46,7 +54,7 @@
   <string name="setting_schdwntitle">הורדות ממתינות</string>
   <string name="setting_schdwninstalltitle">התקנה אוטומטית</string>
   <string name="setting_schdwninstallsum">התקן אוטומטית הורדות ממתינות כאשר ישנה רשת אלחוטית זמינה</string>
-  <string name="credentialssettings">התחברות לבזאר</string>
+  <string name="credentialssettings">אפטויד</string>
   <string name="clearcredentials">נקה התחברות</string>
   <string name="clearcredentials_summary">בטל התחברות</string>
   <string name="setcredentials_summary">הגדר התחברות חדשה</string>
@@ -60,6 +68,7 @@
   <string name="about_txt1">מתקין החבילות שלך למכשיר האנדרואיד\n</string>
   <string name="about_site">בית:</string>
   <string name="about_mail">אימייל:</string>
+  <string name="no_descript">זמין</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_edt_msg2">אין חנויות!</string>
@@ -74,14 +83,21 @@
   <string name="schDown_downerror">שגיאת הורדה. הוסף חנות %1$s</string>
   <string name="addSchDown">נוסף לרשימת ההמתנה</string>
   <string name="registration">התחברות לבזאר</string>
+  <string name="bazaar_url">www.aptoide.com</string>
   <string name="password">סיסמא...</string>
   <string name="schDown_invertselection">התקן נבחרים</string>
-  <string name="chkBoxSchDwn">הוסף להמתנה</string>
   <string name="clear_dwn_title">הורדות ממתינות</string>
   <string-array name="dwnif">
     <item>3G and Wifi</item>
     <item>Wifi only</item>
     <item>אין הורדות ממתינות!</item>
   </string-array>
-  <string name="no_info">אין מידע</string>
+  <string name="password_tip">הצג סיסמא</string>
+  <string name="bazaar_login">אפטויד</string>
+  <string name="schDown_added">נוסף לרשימת ההמתנה</string>
+  <string name="clear_cache_sucess">תגובתך פורסמה בהצלחה</string>
+  <string name="aptoide_downloading">אין הורדות ממתינות!</string>
+  <string name="starting_download">אין הורדות ממתינות!</string>
+  <string name="resuming_download">אין הורדות ממתינות!</string>
+  <string name="contact">אימייל:</string>
 </resources>

@@ -8,72 +8,69 @@ msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2012-10-29 14:02+0000\n"
-"PO-Revision-Date: 2012-06-29 10:37+0100\n"
+"PO-Revision-Date: 2012-11-01 11:50+0100\n"
 "Last-Translator: Ismail gürol <remix999@gmail.com>\n"
 "Language-Team: nl <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=((n == 1) ? 0 : 1)\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.1.6\n"
 "Generated-By: Babel 1.0dev\n"
 
 msgctxt "menu_context_remove"
 msgid "Remove"
-msgstr ""
+msgstr "Verwijderen"
 
 msgctxt "menu_context_reparse"
 msgid "Reload"
-msgstr ""
+msgstr "Opnieuw laden"
 
 msgctxt "error_latest_apk"
 msgid "No APK available in database. Is store still loading?"
-msgstr ""
+msgstr "Geen APK beschikbaar in database. Is voorraad nog aan het laden?"
 
 msgctxt "error_delete_store"
 msgid "Unable to delete store. The store is still loading."
 msgstr ""
+"Niet mogelijk om voorraad te verwijderen. De voorraad is nog aan het laden."
 
 msgctxt "menu_settings"
 msgid "Settings"
 msgstr "Instellingen"
 
-#, fuzzy
 msgctxt "my_stores"
 msgid "My stores"
-msgstr "Bewerk winkel"
+msgstr "Mijn voorraden"
 
-#, fuzzy
 msgctxt "store_name"
 msgid "Store Name"
-msgstr "Gebruikersnaam..."
+msgstr "Naam voorraad"
 
-#, fuzzy
 msgctxt "category1"
 msgid "Category 1"
-msgstr "Op categorie"
+msgstr "Categorie 1"
 
-#, fuzzy
 msgctxt "category2"
 msgid "Category 2"
-msgstr "Op categorie"
+msgstr "Categorie 2"
 
-#, fuzzy
 msgctxt "add_store"
 msgid "Add Store"
-msgstr "Voeg een winkel toe!"
+msgstr "Voeg voorraad toe"
 
 msgctxt "version"
 msgid "Version:"
-msgstr ""
+msgstr "Versie:"
 
 msgctxt "empty_store_list"
 msgid "You don't have any stores."
-msgstr ""
+msgstr "Je hebt geen voorraden."
 
-#, fuzzy
 msgctxt "new_store"
 msgid "Add Store"
-msgstr "Voeg een winkel toe!"
+msgstr "Voeg voorraad toe"
 
 msgctxt "add_repo_private"
 msgid "Private"
@@ -81,38 +78,35 @@ msgstr "Prive"
 
 msgctxt "extended_server"
 msgid "Extended Store"
-msgstr "uitgebreide winkel"
+msgstr "Uitgebreide voorraad"
 
-#, fuzzy
 msgctxt "downloads"
 msgid "downloads"
-msgstr "Downloads"
+msgstr "downloads"
 
 msgctxt "merge_all_stores"
 msgid "Merge all stores"
-msgstr ""
+msgstr "Voeg alle voorraden bij elkaar"
 
 msgctxt "search_for_stores"
 msgid "Search for Stores"
-msgstr ""
+msgstr "Zoek voor voorraden"
 
-#, fuzzy
 msgctxt "downloading_apps"
 msgid "Downloading apps"
-msgstr "Downloaden:"
+msgstr "Apps Downloaden:"
 
-#, fuzzy
 msgctxt "downloaded_apps"
 msgid "Downloaded apps"
-msgstr "Downloads"
+msgstr "Gedownloade apps"
 
 msgctxt "not_downloaded_apps"
 msgid "Not downloaded apps"
-msgstr ""
+msgstr "Niet gedownloade apps"
 
 msgctxt "exit"
 msgid "exit"
-msgstr ""
+msgstr "Exit"
 
 msgctxt "install"
 msgid "Install"
@@ -128,7 +122,7 @@ msgstr "Zoek Market"
 
 msgctxt "commentlabel"
 msgid "Add Comment"
-msgstr ""
+msgstr "Voeg commentaar"
 
 msgctxt "chkBoxSchDwn"
 msgid "Schedule Download"
@@ -140,7 +134,7 @@ msgstr "Versturen"
 
 msgctxt "body"
 msgid "Body"
-msgstr ""
+msgstr "Commentaar"
 
 msgctxt "subject"
 msgid "Name"
@@ -152,7 +146,7 @@ msgstr "Aptoide"
 
 msgctxt "start_loading"
 msgid "Loading…"
-msgstr "laden..."
+msgstr "Laden..."
 
 msgctxt "available_tab"
 msgid "Available"
@@ -160,7 +154,7 @@ msgstr "Beschikbaar"
 
 msgctxt "featured_tab"
 msgid "Featured"
-msgstr "Featured"
+msgstr "Aanbevolen"
 
 msgctxt "installed_tab"
 msgid "Installed"
@@ -170,19 +164,17 @@ msgctxt "updates_tab"
 msgid "Updates"
 msgstr "Updates"
 
-#, fuzzy
 msgctxt "add_repo_text"
 msgid "New Store"
-msgstr "Nieuwe winkel"
+msgstr "Nieuwe voorraad"
 
-#, fuzzy
 msgctxt "btn_add_repo"
 msgid "Add store"
-msgstr "Voeg een winkel toe!"
+msgstr "Voeg voorraad"
 
 msgctxt "menu_rem_repo"
 msgid "Remove Store"
-msgstr "Winkel verwijderen"
+msgstr "Voorraad verwijderen"
 
 msgctxt "number_apks"
 msgid "Applications:"
@@ -218,7 +210,7 @@ msgstr "Niet beschikbaar"
 
 msgctxt "unabletoexecutecheknet"
 msgid "Unable to execute. Check internet status."
-msgstr "Kan niet voltooien. Controleer je internet status."
+msgstr "Kan niet uitvoeren. Controleer je internet status."
 
 msgctxt "opinionsuccess"
 msgid "Your request was successfully submitted"
@@ -252,10 +244,9 @@ msgctxt "new_account"
 msgid "New account"
 msgstr "Nieuwe account"
 
-#, fuzzy
 msgctxt "setcredentials"
 msgid "Aptoide Login"
-msgstr "Aptoide instellingen"
+msgstr "Aptoide login"
 
 msgctxt "usernotdef"
 msgid "User not defined"
@@ -323,7 +314,7 @@ msgstr "Applicaties tonen:"
 
 msgctxt "order_popup_title3"
 msgid "Adult Content:"
-msgstr ""
+msgstr "Volwassen inhoud:"
 
 msgctxt "order_popup_catg1"
 msgid "By category"
@@ -343,14 +334,14 @@ msgstr "Nee"
 
 msgctxt "update_repos"
 msgid "Update store"
-msgstr "Winkel updaten"
+msgstr "Voorraad updaten"
 
 msgctxt "update_main"
 msgid ""
 "The list of stores in use has been changed.\n"
 "Do you wish to update them?"
 msgstr ""
-"Lijst van winkels is veranderd.\n"
+"Lijst van voorraden is veranderd.\n"
 "Wil je ze updaten?"
 
 msgctxt "email"
@@ -397,10 +388,9 @@ msgstr ""
 "Automatisch geplande downloads installeren wanneer een Wifi-verbinding "
 "aanwezig is"
 
-#, fuzzy
 msgctxt "credentialssettings"
 msgid "Aptoide Login"
-msgstr "Aptoide instellingen"
+msgstr "Aptoide login"
 
 msgctxt "clearcredentials"
 msgid "Clear login"
@@ -436,7 +426,7 @@ msgstr "Alles updaten"
 
 msgctxt "menu_manage"
 msgid "Manage Store"
-msgstr "Winkel beheren"
+msgstr "Voorraad beheren"
 
 msgctxt "menu_display_options"
 msgid "Display Options"
@@ -456,11 +446,11 @@ msgstr "Zoeken"
 
 msgctxt "menu_add_repo"
 msgid "New Store"
-msgstr "Nieuwe winkel"
+msgstr "Nieuwe Voorraad"
 
 msgctxt "menu_edit_repo"
 msgid "Edit Store"
-msgstr "Winkel bewerken"
+msgstr "Voorraad bewerken"
 
 msgctxt "btn_yes"
 msgid "Yes"
@@ -472,7 +462,7 @@ msgstr "Nee"
 
 msgctxt "btn_ok"
 msgid "OK"
-msgstr ""
+msgstr "Oke"
 
 msgctxt "btn_add"
 msgid "Add"
@@ -504,11 +494,11 @@ msgstr "Zoeken"
 
 msgctxt "search_stores"
 msgid "in other Stores"
-msgstr "in andere winkels"
+msgstr "in andere voorraden"
 
 msgctxt "no_repo"
 msgid "Add a store!"
-msgstr "Voeg een winkel toe!"
+msgstr "Voeg een voorraad!"
 
 msgctxt "myrepo_alrt"
 msgid ""
@@ -518,27 +508,27 @@ msgid ""
 "(You can search for more stores online)\n"
 "\n"
 msgstr ""
-"Het lijkt erop dat je geen winkel hebt toegevoegd.\n"
+"Het lijkt erop dat je geen voorraad hebt toegevoegd.\n"
 "We raden je aan om onze te gebruiken.\n"
-"Wil je onze winkel toevoegen?\n"
-"(Je kan online meer winkels zoeken)\n"
+"Wil je onze voorraad toevoegen?\n"
+"(Je kan online meer voorraden zoeken)\n"
 "\n"
 
 msgctxt "error_on_update"
 msgid "The update process could not be completed on the following store:"
-msgstr "Update proces kon niet voltooid worden op volgende winkel:"
+msgstr "Update proces kon niet voltooid worden op volgende voorraad:"
 
 msgctxt "updating_norepos"
 msgid ""
 "There are no enabled stores in your list.\n"
 "Please add a store or enable at least one that you already have."
 msgstr ""
-"Er zijn geen winkels aangevinkt in je lijst. \n"
-"Voeg een winkel toe of vink op z'n minst een winkel aan in je lijst."
+"Er zijn geen voorraden aangevinkt in je lijst. \n"
+"Voeg een voorraad toe of vink op z'n minst een voorraad aan in je lijst."
 
 msgctxt "update_done_msg1"
 msgid "Stores updated successfully."
-msgstr "Winkels zijn met succes bijgewerkt."
+msgstr "Voorraden zijn met succes bijgewerkt."
 
 msgctxt "about_txt1"
 msgid "Your package installer to Android phone.\n"
@@ -552,10 +542,9 @@ msgctxt "about_mail"
 msgid "Contact:"
 msgstr "Contact:"
 
-#, fuzzy
 msgctxt "no_descript"
 msgid "No description available"
-msgstr "Niet beschikbaar"
+msgstr "Geen omschrijving beschikbaar"
 
 msgctxt "about_txt2"
 msgid "www.aptoide.com"
@@ -567,15 +556,15 @@ msgstr "aptoide@aptoide.com"
 
 msgctxt "repo_del_msg2"
 msgid "Choose store to remove"
-msgstr "Kies winkel om te verwijderen"
+msgstr "Kies voorraad om te verwijderen"
 
 msgctxt "repo_edt_msg1"
 msgid "Choose store to edit"
-msgstr "Kies winkel om te bewerken"
+msgstr "Kies voorraad om te bewerken"
 
 msgctxt "repo_edt_msg2"
 msgid "Edit store"
-msgstr "Bewerk winkel"
+msgstr "Bewerk voorraad"
 
 msgctxt "md5_auto_update_error"
 msgid "Update package checksum failed! Keeping current version."
@@ -607,7 +596,7 @@ msgid ""
 "Please update your stores before retrying."
 msgstr ""
 "De md5 controle van gedownloade applicatie is mislukt!\n"
-"Update eerst de winkels probeer dan opnieuw."
+"Update eerst de voorraden probeer dan opnieuw."
 
 msgctxt "network_error"
 msgid ""
@@ -622,7 +611,7 @@ msgid ""
 "File was not found in the given store.\n"
 "Please try again later."
 msgstr ""
-"Bestand is niet gevonden in de winkel.\n"
+"Bestand is niet gevonden in de voorraad.\n"
 "Aub later weer proberen."
 
 msgctxt "error_no_market"
@@ -634,7 +623,7 @@ msgid ""
 "Do you want to add this store to your list?\n"
 "\n"
 msgstr ""
-"Wil je deze winkel toevoegen aan je lijst?\n"
+"Wil je deze voorraad toevoegen aan je lijst?\n"
 "\n"
 
 msgctxt "installapp_alrt"
@@ -677,7 +666,7 @@ msgstr ""
 
 msgctxt "updating_cfrm"
 msgid "Confirm Aptoide stores update?"
-msgstr "Wil je Aptoide winkel update bevestigen?"
+msgstr "Wil je Aptoide voorraden update bevestigen?"
 
 msgctxt "aptoide_error"
 msgid ""
@@ -691,7 +680,7 @@ msgstr "Geen geplande downloads!"
 
 msgctxt "size"
 msgid "Size"
-msgstr ""
+msgstr "Grootte"
 
 msgctxt "schDown_install"
 msgid "Do you want to install all scheduled downloads?"
@@ -716,21 +705,19 @@ msgstr "Geen downloads geselecteerd"
 #, c-format
 msgctxt "schDown_downerror"
 msgid "Download error. Add %1$s Store."
-msgstr "Download fout. Voeg %1$s Winkel."
+msgstr "Download fout. Voeg %1$s Voorraad."
 
 msgctxt "addSchDown"
 msgid "Added to Scheduled Downloads"
 msgstr "Toegevoegd aan geplande downloads"
 
-#, fuzzy
 msgctxt "registration"
 msgid "Aptoide Registration"
-msgstr "Bazaar Registratie"
+msgstr "Aptoide Registratie"
 
-#, fuzzy
 msgctxt "bazaar_url"
 msgid "http://www.aptoide.com/"
-msgstr "www.aptoide.com"
+msgstr "http://www.aptoide.com/"
 
 msgctxt "username"
 msgid "Email"
@@ -770,7 +757,7 @@ msgstr "Icoon download regels"
 
 msgctxt "dwnif:0"
 msgid "3G and Wifi"
-msgstr "3g en Wifi"
+msgstr "3G en Wifi"
 
 msgctxt "dwnif:1"
 msgid "Wifi only"
@@ -785,95 +772,90 @@ msgid ""
 "By signing up you are agreeing to the Aptoide Terms of Service and "
 "Aptoide Content Policy for Developers"
 msgstr ""
+"Door je aan te melden ga je akkoord met \"Aptoide Terms of Service and "
+"Aptoide Policy for Developers\""
 
 msgctxt "username_tip"
 msgid "Type your username"
-msgstr ""
+msgstr "Typ je gebruikersnaam"
 
-#, fuzzy
 msgctxt "password_tip"
 msgid "Choose a password"
-msgstr "Laat wachtwoord zien"
+msgstr "Kies een wachtwoord"
 
 msgctxt "sign_in"
 msgid "Sign In"
-msgstr ""
+msgstr "Inloggen"
 
-#, fuzzy
 msgctxt "bazaar_login"
 msgid "Aptoide Login"
-msgstr "Aptoide instellingen"
+msgstr "Aptoide Login"
 
 msgctxt "clearcache_sum"
 msgid "Deletes Aptoide cache (icons, screenshots) from the SD card."
-msgstr ""
+msgstr "Verwijdert cache van Aptoide (iconen, screenshots) van SD kaart."
 
 msgctxt "clearcontent_sum"
 msgid "Deletes the content of .aptoide folder from the SD card."
-msgstr ""
+msgstr "Verwijdert de inhoud van .aptoide map van SD kaart."
 
 msgctxt "clearcontent_title"
 msgid "Remove Aptoide data and Configurations"
-msgstr ""
+msgstr "Verwijder Aptoide data en instellingen"
 
 msgctxt "clearcache_title"
 msgid "Clear Aptoide cache"
-msgstr ""
+msgstr "Leeg Aptoide cache"
 
-#, fuzzy
 msgctxt "schDown_added"
 msgid " was added to scheduled download list."
-msgstr "Toegevoegd aan geplande downloads"
+msgstr "toegevoegd aan geplande downloads."
 
-#, fuzzy
 msgctxt "clear_cache_sucess"
 msgid "Content successfuly deleted"
-msgstr "Je commentaar is met succes geplaatst"
+msgstr "inhoud met succes verwijderd"
 
-#, fuzzy
 msgctxt "aptoide_downloading"
 msgid "Aptoide downloading"
-msgstr "Downloaden:"
+msgstr "Aptoide downloaden:"
 
 #, c-format
 msgctxt "x_app"
 msgid "%d app"
-msgstr ""
+msgstr "%d app"
 
 #, c-format
 msgctxt "x_apps"
 msgid "%d apps"
-msgstr ""
+msgstr "%d apps"
 
-#, fuzzy
 msgctxt "starting_download"
 msgid "Starting download"
-msgstr "Nooit downloaden"
+msgstr "Begin met downloaden"
 
-#, fuzzy
 msgctxt "resuming_download"
 msgid "Resuming download"
-msgstr "Nooit downloaden"
+msgstr "Download hervatten"
 
 msgctxt "slow"
 msgid "slow"
-msgstr ""
+msgstr "langzaam"
 
 msgctxt "paused"
 msgid "paused"
-msgstr ""
+msgstr "gepauzeerd"
 
 msgctxt "stopped"
 msgid "stopped"
-msgstr ""
+msgstr "gestopt"
 
 msgctxt "timeout"
 msgid "network connection timeout"
-msgstr ""
+msgstr "netwerk verbinding getimeout"
 
 msgctxt "ip_blacklisted"
 msgid "blacklisted IP"
-msgstr ""
+msgstr "IP is op zwartelijst"
 
 msgctxt "ip_blacklisted_extended"
 msgid ""
@@ -881,39 +863,42 @@ msgid ""
 "blacklisted in Aptoide servers. To solve the problem, please contact <a "
 "href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a> "
 msgstr ""
+"De applicatie was niet opgevraagd. Je netwerk adres (IP) staat op "
+"zwartelijst van Aptoide servers. Om probleem op te lossen kun je contact "
+"opnemen met  <a "
+"href=\"mailto:ipblacklist@aptoide.com\">ipblacklist@aptoide.com</a> "
 
 msgctxt "connection_error"
 msgid "no network connection"
-msgstr ""
+msgstr "geen netwerk verbinding"
 
 msgctxt "apk_not_found"
 msgid "Apk not found"
-msgstr ""
+msgstr "Apk niet gevonden"
 
 msgctxt "invalid_apk"
 msgid "Invalid apk"
-msgstr ""
+msgstr "Ongeldig apk"
 
 msgctxt "server_error"
 msgid "Server error"
-msgstr ""
+msgstr "Server fout"
 
 msgctxt "back"
 msgid "Back"
-msgstr ""
+msgstr "Terug"
 
-#, fuzzy
 msgctxt "contact"
 msgid "Contact"
-msgstr "Contact:"
+msgstr "Contact"
 
 msgctxt "choose_email_client"
 msgid "Choose an Email client:"
-msgstr ""
+msgstr "Kies een Email applicatie:"
 
 msgctxt "refresh_list"
 msgid "Refresh"
-msgstr ""
+msgstr "Verversen"
 
 #~ msgctxt "add_repo_text"
 #~ msgid "Add"
@@ -960,4 +945,3 @@ msgstr ""
 #~ msgctxt "repo_insert_failed"
 #~ msgid "Failed to add the Store. Please try again."
 #~ msgstr "Winkel toevoegen is mislukt. Aub opnieuw proberen."
-

@@ -130,7 +130,34 @@
                     android:background="@drawable/mature_slider"
                     android:textOff=""
                     android:textOn="" />
+
             </LinearLayout>
+            
+            <RelativeLayout
+                android:id="@+id/separator"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="1dp"
+                android:background="@drawable/ab_solid_light_holo" >
+
+                <TextView
+                    android:id="@+id/recommended_textview"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:paddingLeft="5dp"
+                    android:text="Recommended Apps"
+                    android:textSize="18sp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/recommended_container"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+            </LinearLayout>
+            
         </LinearLayout>
     </ScrollView>
 
