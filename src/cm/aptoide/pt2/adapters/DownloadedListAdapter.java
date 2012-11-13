@@ -20,21 +20,18 @@
 package cm.aptoide.pt2.adapters;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import cm.aptoide.pt2.Database;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
-import cm.aptoide.pt2.sharing.DialogShareOnFacebook;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
+import cm.aptoide.pt2.views.ViewListDownloads;
 
 public class DownloadedListAdapter extends BaseAdapter{
 
@@ -44,9 +41,17 @@ public class DownloadedListAdapter extends BaseAdapter{
 	
 	private LayoutInflater layoutInflater;
 
-	/** ViewDownloadManagemet[] **/
-	private Object[] downloaded = null;
+	private ViewListDownloads downloaded = null;
+	private ViewListDownloads updated = null;
+	
 
+	private Handler updateListHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	downloaded = updated;
+    		notifyDataSetChanged();        	
+        }
+	};
 
 	/**
 	 * DownloadedListAdapter Constructor
@@ -74,51 +79,13 @@ public class DownloadedListAdapter extends BaseAdapter{
 		String shareStore; 
 		String shareDescription;
 		String shareStoreLink;
-		
-		public String getShareAppName() {
-			return shareAppName;
-		}
-		public void setShareAppName(String shareAppName) {
-			this.shareAppName = shareAppName;
-		}
-		public String getShareIcon() {
-			return shareIcon;
-		}
-		public void setShareIcon(String shareIcon) {
-			this.shareIcon = shareIcon;
-		}
-		public String getShareMessage() {
-			return shareMessage;
-		}
-		public void setShareMessage(String shareMessage) {
-			this.shareMessage = shareMessage;
-		}
-		public String getShareStore() {
-			return shareStore;
-		}
-		public void setShareStore(String shareStore) {
-			this.shareStore = shareStore;
-		}
-		public String getShareDescription() {
-			return shareDescription;
-		}
-		public void setShareDescription(String shareDescription) {
-			this.shareDescription = shareDescription;
-		}
-		public String getShareStoreLink() {
-			return shareStoreLink;
-		}
-		public void setShareStoreLink(String shareStoreLink) {
-			this.shareStoreLink = shareStoreLink;
-		}
-		
-		
+				
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 
-		final DownloadingRowViewHolder rowViewHolder;
+		DownloadingRowViewHolder rowViewHolder;
 
 		if(convertView == null){
 			convertView = layoutInflater.inflate(R.layout.row_app_downloaded, null);
@@ -132,45 +99,39 @@ public class DownloadedListAdapter extends BaseAdapter{
 			rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
 		}
 
-		ViewDownloadManagement download = (ViewDownloadManagement) downloaded[position];
+		final ViewDownloadManagement download = downloaded.get(position);
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
 		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
 		
-		
-		rowViewHolder.setShareAppName(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
-//		rowViewHolder.setShareIcon(download.getAppInfo().getIconPath());
-		rowViewHolder.setShareIcon("http://cdn1.aptoide.com/imgs/e/f/2/ef2eb8e0a7a5803b868a0c13c99026e9.png");
-		rowViewHolder.setShareMessage("I downloaded "+rowViewHolder.getShareAppName()+" for Android to install on my phone!");
-		
-		rowViewHolder.setShareStore(Database.getInstance(activity).getStoreName(download.getAppInfo().getRepo_id()));
-		if(rowViewHolder.getShareStore()==null){
-			rowViewHolder.setShareDescription("Visit Aptoide and install the best apps");
-			rowViewHolder.setShareStoreLink("http://www.aptoide.com/more/topapps");
-		}else{
-			rowViewHolder.setShareDescription("Visit "+rowViewHolder.getShareStore()+" Android Store to download and install this app");
-			rowViewHolder.setShareStoreLink("http://"+rowViewHolder.getShareStore()+".store.aptoide.com");
-		}
 		rowViewHolder.app_facebook_share.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				String facebookShareName = rowViewHolder.getShareAppName();
-				String facebookShareIcon = rowViewHolder.getShareIcon();
-				String facebookShareText = rowViewHolder.getShareMessage();
-				String facebookShareDescription = rowViewHolder.getShareDescription();
-				String facebookShareStoreLink = rowViewHolder.getShareStoreLink();
-
-				Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookShareIcon +", DescriptionToPost: "+facebookShareDescription+", MessageToPost: "+facebookShareText+", StoreLinkToPost: "+facebookShareStoreLink);
-				
-				final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(activity, facebookShareName, facebookShareIcon, facebookShareText, facebookShareDescription, facebookShareStoreLink);
-
-				shareFacebook.setOnDismissListener(new OnDismissListener() {
-					@Override
-					public void onDismiss(DialogInterface dialog) {
-						shareFacebook.dismiss();
-					}
-				});
-				
-				shareFacebook.show();
+				String facebookShareName = download.getAppInfo().getName()+"  "+download.getAppInfo().getVername();
+//				String facebookShareIcon = download.getAppInfo().getIconPath();
+				String facebookShareIcon = "http://cdn1.aptoide.com/imgs/e/f/2/ef2eb8e0a7a5803b868a0c13c99026e9.png";
+				String facebookShareMessage = "I downloaded "+facebookShareName+" for Android to install on my phone!";
+				String facebookShareDescription;
+				String facebookShareStoreLink;
+//				if(download.getAppInfo().getRepoName().equals("Aptoide")){
+//					facebookShareDescription = "Visit Aptoide and install the best apps";
+//					facebookShareStoreLink = "http://www.aptoide.com/more/topapps";
+//				}else{
+//					facebookShareDescription = "Visit "+download.getAppInfo().getRepoName()+" Android Store to download and install this app";
+//					facebookShareStoreLink = "http://"+download.getAppInfo().getRepoName()+".store.aptoide.com";
+//				}
+//				
+//				Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookShareIcon +", DescriptionToPost: "+facebookShareDescription+", MessageToPost: "+facebookShareMessage+", StoreLinkToPost: "+facebookShareStoreLink);
+//				
+//				final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(activity, facebookShareName, facebookShareIcon, facebookShareMessage, facebookShareDescription, facebookShareStoreLink);
+//
+//				shareFacebook.setOnDismissListener(new OnDismissListener() {
+//					@Override
+//					public void onDismiss(DialogInterface dialog) {
+//						shareFacebook.dismiss();
+//					}
+//				});
+//				
+//				shareFacebook.show();
 		    }
 		});
 		
@@ -181,7 +142,7 @@ public class DownloadedListAdapter extends BaseAdapter{
 	@Override
 	public int getCount() {
 		if(downloaded != null){
-			return downloaded.length;
+			return downloaded.size();
 		}else{
 			return 0;
 		}
@@ -189,21 +150,21 @@ public class DownloadedListAdapter extends BaseAdapter{
 
 	@Override
 	public ViewDownloadManagement getItem(int position) {
-		return (ViewDownloadManagement) downloaded[position];
+		return downloaded.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		return downloaded[position].hashCode();
+		return downloaded.get(position).hashCode();
 	}
 	
 	/**
 	 * 
-	 * @param updatedList ViewDownloadManagement[] (uncasted)
+	 * @param updatedList ViewListDownloads
 	 */
-	public void updateList(Object[] updatedList){
-		downloaded = updatedList;
-		notifyDataSetChanged();
+	public void updateList(ViewListDownloads updatedList){
+		updated = updatedList;
+		updateListHandler.sendEmptyMessage(0);
 	}
 
 	

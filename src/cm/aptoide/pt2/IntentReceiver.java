@@ -18,10 +18,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import cm.aptoide.pt2.views.ViewApk;
-import cm.aptoide.pt2.views.ViewCache;
-import cm.aptoide.pt2.views.ViewDownloadManagement;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -35,9 +31,13 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.Message;
+import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Button;
+import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt2.services.ServiceDownloadManager;
+import cm.aptoide.pt2.views.ViewApk;
+import cm.aptoide.pt2.views.ViewCache;
+import cm.aptoide.pt2.views.ViewDownloadManagement;
 
 public class IntentReceiver extends Activity implements OnDismissListener{
 //	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";
@@ -52,79 +52,126 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			return;
 		}
 	};
+
+	private boolean isRunning = false;
+
+	private AIDLServiceDownloadManager serviceDownloadManager = null;
+
+	private boolean serviceManagerIsBound = false;
+
+	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the object we can use to
+			// interact with the service.  We are communicating with the
+			// service using AIDL, so here we set the remote service interface.
+			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+			serviceManagerIsBound = true;
+			
+			Log.v("Aptoide-IntentReceiver", "Connected to ServiceDownloadManager");
+	        
+			continueLoading();
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			serviceManagerIsBound = false;
+			serviceDownloadManager = null;
+			
+			Log.v("Aptoide-IntentReceiver", "Disconnected from ServiceDownloadManager");
+		}
+	};
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		if(getIntent().getData()!=null){
-			TMP_MYAPP_FILE = getCacheDir()+"/myapp.myapp";
-			db=Database.getInstance(this);
-			String uri = getIntent().getDataString();
-			System.out.println(uri);
-			if(uri.startsWith("aptoiderepo")){
+
+			if(!isRunning){
+				isRunning = true;
+
+				if(!serviceManagerIsBound){
+		    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+		    	}
 				
-				ArrayList<String> repo = new ArrayList<String>();
-				repo.add(uri.substring(14));
-				Intent i = new Intent(IntentReceiver.this,MainActivity.class);
-				i.putExtra("newrepo", repo);
-				i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-				startActivity(i);
-				finish();
-			}else if(uri.startsWith("aptoidexml")){
-				String repo = uri.substring(13);
-				parseXmlString(repo);
-				Intent i = new Intent(IntentReceiver.this,MainActivity.class);
-				i.putExtra("newrepo", repo);
-				i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-				startActivity(i);
-				finish();
-			}else if(uri.startsWith("market")){
+			}
+			
+		}
+	}
+		
+	private void continueLoading(){
+		TMP_MYAPP_FILE = getCacheDir()+"/myapp.myapp";
+		db=Database.getInstance(this);
+		String uri = getIntent().getDataString();
+		System.out.println(uri);
+		if(uri.startsWith("aptoiderepo")){
+			
+			ArrayList<String> repo = new ArrayList<String>();
+			repo.add(uri.substring(14));
+			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
+			i.putExtra("newrepo", repo);
+			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			startActivity(i);
+			finish();
+		}else if(uri.startsWith("aptoidexml")){
+			String repo = uri.substring(13);
+			parseXmlString(repo);
+			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
+			i.putExtra("newrepo", repo);
+			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+			startActivity(i);
+			finish();
+		}else if(uri.startsWith("market")){
+			
+			
+			String params = uri.split("&")[0];
+			String param = params.split("=")[1];
+			if (param.contains("pname:")) {
+				param = param.substring(6);
+			} else if (param.contains("pub:")) {
+				param = param.substring(4);
+			}
+			
+			startMarketIntent(param);
+		}else if(uri.startsWith("http://market.android.com/details?id=")){
+			String param = uri.split("=")[1];
+			startMarketIntent(param);
+		}else{
+			try{
+				System.out.println(getIntent().getDataString());
+				downloadMyappFile(getIntent().getDataString());
+				parseXmlMyapp(TMP_MYAPP_FILE);
 				
-				
-				String params = uri.split("&")[0];
-				String param = params.split("=")[1];
-				if (param.contains("pname:")) {
-					param = param.substring(6);
-				} else if (param.contains("pub:")) {
-					param = param.substring(4);
-				}
-				
-				startMarketIntent(param);
-			}else if(uri.startsWith("http://market.android.com/details?id=")){
-				String param = uri.split("=")[1];
-				startMarketIntent(param);
-			}else{
-				try{
-					System.out.println(getIntent().getDataString());
-					downloadMyappFile(getIntent().getDataString());
-					parseXmlMyapp(TMP_MYAPP_FILE);
-					
-					if(app!=null&&!app.isEmpty()){
-						AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-						alertDialog.setMessage(getString(R.string.installapp_alrt) +app.get("name")+"?");
-						alertDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-							
-							public void onClick(DialogInterface dialog, int which) {
-								ViewApk apk = new ViewApk();
-								apk.setApkid(app.get("apkid"));
-								apk.setVercode(0);
-								apk.generateAppHashid();
-								new ViewDownloadManagement((ApplicationServiceManager) getApplication(),app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"))).startDownload();
+				if(app!=null&&!app.isEmpty()){
+					AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+					alertDialog.setMessage(getString(R.string.installapp_alrt) +app.get("name")+"?");
+					alertDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+						
+						public void onClick(DialogInterface dialog, int which) {
+							ViewApk apk = new ViewApk();
+							apk.setApkid(app.get("apkid"));
+							apk.setVercode(0);
+							apk.generateAppHashid();
+							try {
+								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"))));
+							} catch (RemoteException e) {
+								e.printStackTrace();
 							}
-						});
-						alertDialog.setButton(Dialog.BUTTON_NEGATIVE,getString(android.R.string.no), neutralListener );
-						alertDialog.setOnDismissListener(this);
-						alertDialog.show();
-					}else{
-						proceed();
-					}
-				
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
+						}
+					});
+					alertDialog.setButton(Dialog.BUTTON_NEGATIVE,getString(android.R.string.no), neutralListener );
+					alertDialog.setOnDismissListener(this);
+					alertDialog.show();
+				}else{
+					proceed();
+				}
 			
-			}
-			
-			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		}
 		
 	}
@@ -245,4 +292,10 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 		proceed();
 	}
 	
+	@Override
+	protected void onDestroy() {
+		unbindService(serviceManagerConnection);
+		super.onDestroy();
+	}
+
 }

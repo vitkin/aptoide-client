@@ -1,6 +1,6 @@
 /**
- * AIDLServiceDownload,		part of Aptoide
- * Copyright (C) 2012 Duarte Silveira
+ * ViewListDownloads,		part of Aptoide's ServiceData
+ * Copyright (C) 2011 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,25 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt2.services;
-
-import cm.aptoide.pt2.views.ViewDownload;
-import cm.aptoide.pt2.views.ViewCache;
-import cm.aptoide.pt2.views.ViewLogin;
-import cm.aptoide.pt2.AIDLDownloadManager;
+package cm.aptoide.pt2.views;
 
 /**
- * AIDLServiceDownload, IPC Interface definition for Aptoide's ServiceDownload
+ * ViewListDownloads, models ViewListDownloads's AIDL IPC
  *
  * @author dsilveira
+ * @since 3.0
  *
  */
-interface AIDLServiceDownload {
-	
-	void callRegisterDownloadStatusObserver(in AIDLDownloadManager downloadStatusClient);
-	void callDownloadApk(in ViewDownload download, in ViewCache cache);
-	void callDownloadPrivateApk(in ViewDownload download, in ViewCache cache, in ViewLogin login);
-	void callPauseDownload(in int appId);
-	void callStopDownload(in int appId);
-	
-}
+parcelable ViewListDownloads;

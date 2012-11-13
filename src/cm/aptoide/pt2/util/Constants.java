@@ -36,7 +36,7 @@ public class Constants {
 	public static final int MAX_PARALLEL_DOWNLOADS = 4;
 	
 	/** miliseconds **/
-	public static final int SERVER_CONNECTION_TIMEOUT = 5000;
+	public static final int SERVER_CONNECTION_TIMEOUT = 10000;
 	public static final int SERVER_READ_TIMEOUT = 30000;
 	
 	public static final String PATH_SDCARD = Environment.getExternalStorageDirectory().getPath();

@@ -1,5 +1,5 @@
-/**
- * AIDLDownloadManager,		part of Aptoide
+/*
+ * ApplicationAptoide, part of Aptoide
  * Copyright (C) 2012 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -19,12 +19,29 @@
 */
 package cm.aptoide.pt2;
 
+import cm.aptoide.pt2.preferences.ManagerPreferences;
+import cm.aptoide.pt2.services.ServiceDownloadManager;
+import android.app.Application;
+import android.content.Intent;
+
 /**
- * AIDLDownloadManager, models Aptoide's download manager AIDL IPC callback API
+ * ApplicationAptoide, centralizes, statically, calls to instantiated objects
  *
  * @author dsilveira
  *
  */
-interface AIDLDownloadManager{
-	void updateDownloadStatus(in int type);	
+public class ApplicationAptoide extends Application {
+
+	private ManagerPreferences managerPreferences;
+	
+	@Override
+	public void onCreate() {
+		managerPreferences = new ManagerPreferences(getApplicationContext());
+		startService(new Intent(this, ServiceDownloadManager.class));
+		super.onCreate();
+	}
+	
+	public ManagerPreferences getManagerPreferences(){
+		return managerPreferences;
+	}
 }

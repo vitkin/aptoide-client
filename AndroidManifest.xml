@@ -15,7 +15,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Light.NoTitleBar"
-        android:name=".ApplicationServiceManager">
+        android:name=".ApplicationAptoide">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
@@ -116,7 +116,7 @@
         
         <service android:name=".services.MainService"></service>
         <service android:name=".ExtrasService" android:process=":ExtrasService"></service>
-        <service android:name=".services.ServiceDownload"></service>
+        <service android:name=".services.ServiceDownloadManager"></service>
         
         <receiver android:name=".InstalledBroadcastReceiver" >
             <intent-filter>

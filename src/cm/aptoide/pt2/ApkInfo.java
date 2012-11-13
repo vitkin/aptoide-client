@@ -7,17 +7,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -33,7 +33,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -45,15 +44,18 @@ import android.widget.Toast;
 import cm.aptoide.pt2.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt2.services.ServiceDownloadManager;
 import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.util.quickaction.ActionItem;
 import cm.aptoide.pt2.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt2.util.quickaction.QuickAction;
 import cm.aptoide.pt2.views.EnumDownloadFailReason;
-import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
+import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
+import cm.aptoide.pt2.views.ViewDownload;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
 import cm.aptoide.pt2.webservices.comments.AddComment;
 import cm.aptoide.pt2.webservices.comments.Comments;
@@ -64,9 +66,7 @@ import cm.aptoide.pt2.webservices.taste.Likes;
 
 import com.viewpagerindicator.CirclePageIndicator;
 
-public class ApkInfo extends FragmentActivity implements
-		LoaderCallbacks<Cursor> {
-
+public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
 	
 	private ViewApk viewApk = null;
 	private Database db;
@@ -75,31 +75,68 @@ public class ApkInfo extends FragmentActivity implements
 	long id;
 	Category category;
 	Activity context;
-	boolean spinnerInstaciated = false;
+	boolean spinnerInstanciated = false;
 	CheckBox scheduledDownloadChBox;
 	private ViewDownloadManagement download;
-	private ServiceConnection conn = new ServiceConnection() {
-		
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
+
+	
+	private boolean isRunning = false;
+
+	private AIDLServiceDownloadManager serviceDownloadManager = null;
+
+	private boolean serviceManagerIsBound = false;
+
+	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the object we can use to
+			// interact with the service.  We are communicating with the
+			// service using AIDL, so here we set the remote service interface.
+			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+			serviceManagerIsBound = true;
 			
+			Log.v("Aptoide-ApkInfo", "Connected to ServiceDownloadManager");
+	        
+			continueLoading();
 		}
-		
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			serviceManagerIsBound = false;
+			serviceDownloadManager = null;
 			
+			Log.v("Aptoide-ApkInfo", "Disconnected from ServiceDownloadManager");
 		}
 	};
 	
+	private AIDLDownloadObserver.Stub serviceDownloadManagerCallback = new AIDLDownloadObserver.Stub() {
+		@Override
+		public void updateDownloadStatus(ViewDownload update) throws RemoteException {
+			download.updateProgress(update);
+			handler.sendEmptyMessage(update.getStatus().ordinal());
+		}
+	};
+
 	
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.app_info);
-		Intent i = new Intent();
-		bindService(i, conn , BIND_AUTO_CREATE);
 		
+		if(!isRunning){
+			isRunning = true;
+
+			if(!serviceManagerIsBound){
+	    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+	    	}
+			
+		}
+		
+	}
+	
+	private void continueLoading(){
 		category = Category.values()[getIntent().getIntExtra("category", 3)];
 		context = this;
 		db = Database.getInstance(this);
@@ -127,15 +164,18 @@ public class ApkInfo extends FragmentActivity implements
 			spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
 				@Override
-				public void onItemSelected(AdapterView<?> arg0, View arg1,
-						int arg2, long arg3) {
-					if (spinnerInstaciated) {
+				public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+					if (spinnerInstanciated) {
 						if(!download.isNull()){
-							download.unregisterObserver(viewApk.hashCode());
+							try {
+								serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
 						}
 						loadElements(arg3);
 					} else {
-						spinnerInstaciated = true;
+						spinnerInstanciated = true;
 					}
 				}
 
@@ -148,11 +188,14 @@ public class ApkInfo extends FragmentActivity implements
 
 
 		}
-			}
+	}
+	
+	
 	String[] thumbnailList = null;
 	String webservicespath= null;
 	Likes likes;
 	private EnumUserTaste userTaste;
+	
 	private void loadElements(long id) {
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
 		findViewById(R.id.downloading_name).setVisibility(View.GONE);
@@ -167,8 +210,11 @@ public class ApkInfo extends FragmentActivity implements
 		}
 		
 		
-		
-		download = ((ApplicationServiceManager)getApplication()).getAppDownloading(viewApk.hashCode());
+		try {
+			download = serviceDownloadManager.callGetAppDownloading(viewApk.hashCode());
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
 		if(!download.isNull()){
 			Button manage = (Button) findViewById(R.id.icon_manage);
 			manage.setVisibility(View.GONE);
@@ -178,12 +224,16 @@ public class ApkInfo extends FragmentActivity implements
 					setupQuickActions(false, view);
 				}
 			});
-			download.registerObserver(viewApk.hashCode(),handler);
+			try {
+				serviceDownloadManager.callRegisterDownloadObserver(viewApk.hashCode(), serviceDownloadManagerCallback);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 			findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
 			findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
 			((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
-			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
+			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(this));
 			((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 			((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
 			((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
@@ -253,11 +303,14 @@ public class ApkInfo extends FragmentActivity implements
 				
 				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
 				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
-					((ApplicationServiceManager) getApplication()).installApp(cache);
+					try {
+						serviceDownloadManager.callInstallApp(cache);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
 				}else{
-					download = new ViewDownloadManagement((ApplicationServiceManager) getApplication(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
-							.getExtras().getBoolean("top", false)))
-							+ viewApk.getPath(), viewApk, cache);
+					download = new ViewDownloadManagement((category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
+							.getExtras().getBoolean("top", false)))	+ viewApk.getPath(), viewApk, cache);
 					Button manage = (Button) findViewById(R.id.icon_manage);
 					manage.setVisibility(View.GONE);
 					manage.setOnClickListener(new OnClickListener() {
@@ -266,8 +319,11 @@ public class ApkInfo extends FragmentActivity implements
 							setupQuickActions(true, view);
 						}
 					});
-					download.registerObserver(viewApk.hashCode(),handler);
-					download.startDownload();
+					try {
+						serviceDownloadManager.callStartDownloadAndObserve(download, serviceDownloadManagerCallback);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
 					findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 					findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
 					findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
@@ -482,6 +538,8 @@ public class ApkInfo extends FragmentActivity implements
 		}).start();
 		
 	}
+	
+	
 	String description_text;
 	private boolean collapsed = true;
 	int scrollPosition = 0;
@@ -510,69 +568,72 @@ public class ApkInfo extends FragmentActivity implements
 	private Handler handler = new Handler(){
 		
 		public void handleMessage(Message msg) {
-			System.out.println(EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what).name());
+			Log.d("Aptoide-ApkInfo", "download status update: "+EnumDownloadStatus.reverseOrdinal(msg.what).name());
 			ProgressBar progress;
-			switch (EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what)) {
-			
-			case PAUSED:
-				 progress = (ProgressBar) findViewById(R.id.downloading_progress);
-				progress.setIndeterminate(false);
-				progress.setProgress(download.getProgress());
-				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
-				((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-				((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-//				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
-				break;
-				
-			case RESUMING:
-				 progress = (ProgressBar) findViewById(R.id.downloading_progress);
-				progress.setIndeterminate(false);
-				progress.setProgress(download.getProgress());
-				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
-				((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-				((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-//				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
-				break;
-			case UPDATE:
-				
-				 progress = (ProgressBar) findViewById(R.id.downloading_progress);
-				progress.setIndeterminate(false);
-				progress.setProgress(download.getProgress());
-				((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString());
-				((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-				((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-				((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-//				Log.d("ApkInfo-DownloadListener", "receiving: "+download);
-				
-				break;
-			case FAILED:
-				Log.d("ApkInfo-DownloadListener", "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()));
-				if(download.getDownload().getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
-					new DialogIpBlacklisted(ApkInfo.this).show();
-				}else{
-					Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
+			switch (EnumDownloadStatus.reverseOrdinal(msg.what)) {
+				case PAUSED:
+					progress = (ProgressBar) findViewById(R.id.downloading_progress);
+					progress.setIndeterminate(false);
+					progress.setProgress(download.getProgress());
+					((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(ApkInfo.this));
+					((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+					((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+					((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+//					Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+					break;
+	
+				case RESUMING:
+					progress = (ProgressBar) findViewById(R.id.downloading_progress);
+					progress.setIndeterminate(false);
+					progress.setProgress(download.getProgress());
+					((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(ApkInfo.this));
+					((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+					((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+					((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+//					Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+					break;
+					
+				case DOWNLOADING:
+	
+					progress = (ProgressBar) findViewById(R.id.downloading_progress);
+					progress.setIndeterminate(false);
+					progress.setProgress(download.getProgress());
+					((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(ApkInfo.this));
+					((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+					((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+					((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+//					Log.d("ApkInfo-DownloadListener", "receiving: "+download);
+	
+					break;
+					
+				case FAILED:
+					Log.d("ApkInfo-DownloadListener", "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()));
+					if(download.getDownload().getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
+						new DialogIpBlacklisted(ApkInfo.this).show();
+					}else{
+						Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
+					}
+					findViewById(R.id.download_progress).setVisibility(View.GONE);
+					findViewById(R.id.icon_manage).setVisibility(View.GONE);
+					findViewById(R.id.downloading_name).setVisibility(View.GONE);
+				case RESTARTING:
+					break;
+					
+				case STOPPED:
+				case COMPLETED:
+					if(actionBar!=null){
+						actionBar.dismiss();
+					}
+					findViewById(R.id.download_progress).setVisibility(View.GONE);
+					findViewById(R.id.icon_manage).setVisibility(View.GONE);
+					findViewById(R.id.downloading_name).setVisibility(View.GONE);
+					break;
+					
+				default:
+					break;
 				}
-				findViewById(R.id.download_progress).setVisibility(View.GONE);
-				findViewById(R.id.icon_manage).setVisibility(View.GONE);
-				findViewById(R.id.downloading_name).setVisibility(View.GONE);
-			case RESTARTING:
-				break;
-			case STOPPED:
-			case COMPLETED:
-				if(actionBar!=null){
-					actionBar.dismiss();
-				}
-				findViewById(R.id.download_progress).setVisibility(View.GONE);
-				findViewById(R.id.icon_manage).setVisibility(View.GONE);
-				findViewById(R.id.downloading_name).setVisibility(View.GONE);
-				break;
-			default:
-				break;
-			}
 			
-		};
+		}
 	};
 	
 	protected String screenshotToThumb(String string) {
@@ -619,8 +680,13 @@ public class ApkInfo extends FragmentActivity implements
 	protected void onDestroy() {
 		super.onDestroy();
 		if(!download.isNull()){
-			download.unregisterObserver(viewApk.hashCode());
+			try {
+				serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
 		}
+		unbindService(serviceManagerConnection);
 		handler = null;
 	}
 	
@@ -654,21 +720,25 @@ public class ApkInfo extends FragmentActivity implements
 		actionBar.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
 			@Override
 			public void onItemClick(QuickAction quickAction, int pos, int actionId) {
-				switch (EnumQuickActions.reverseOrdinal(actionId)) {
-					case PLAY:
-						download.resume();
-						break;
-						
-					case PAUSE:
-						download.pause();
-						break;
-						
-					case STOP:
-						download.stop();
-						break;
-	
-					default:
-						break;
+				try {
+					switch (EnumQuickActions.reverseOrdinal(actionId)) {
+						case PLAY:
+							serviceDownloadManager.callResumeDownload(download.hashCode());
+							break;
+							
+						case PAUSE:
+							serviceDownloadManager.callPauseDownload(download.hashCode());
+							break;
+							
+						case STOP:
+							serviceDownloadManager.callStopDownload(download.hashCode());
+							break;
+
+						default:
+							break;
+					}
+				} catch (RemoteException e) {
+					e.printStackTrace();
 				}	
 			}
 		});		

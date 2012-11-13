@@ -19,11 +19,11 @@
 */
 package cm.aptoide.pt2.views;
 
-import java.util.HashMap;
-
-import android.os.Handler;
+import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
-import cm.aptoide.pt2.ApplicationServiceManager;
+import cm.aptoide.pt2.AIDLDownloadObserver;
 import cm.aptoide.pt2.R;
 
 /**
@@ -32,9 +32,8 @@ import cm.aptoide.pt2.R;
  * @author dsilveira
  *
  */
-public class ViewDownloadManagement {
-	private ApplicationServiceManager serviceManager;
-	private HashMap<Integer, Handler> observers;
+public class ViewDownloadManagement implements Parcelable{
+	private AIDLDownloadObserver observer;
 	
 	private ViewApk appInfo;
 	
@@ -45,6 +44,7 @@ public class ViewDownloadManagement {
 	private ViewLogin login;
 	
 	private boolean isNull;
+	
 	
 	
 	/**
@@ -58,27 +58,14 @@ public class ViewDownloadManagement {
 	
 	/**
 	 * 
-	 * ViewDownloadManagement skeleton Constructor
-	 *
-	 * @param serviceManager
-	 */
-	public ViewDownloadManagement(ApplicationServiceManager serviceManager){
-		this.isNull = false;
-		this.serviceManager = serviceManager;
-		this.observers = new HashMap<Integer, Handler>();
-	}
-	
-	/**
-	 * 
 	 * ViewDownloadManagement Constructor
 	 *
-	 * @param serviceManager
 	 * @param url
 	 * @param appInfo
 	 * @param cache
 	 */
-	public ViewDownloadManagement(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache) {
-		this(serviceManager);
+	public ViewDownloadManagement(String remoteUrl, ViewApk appInfo, ViewCache cache) {
+		this.isNull = false;
 		this.viewDownload = new ViewDownload(remoteUrl);
 		this.cache = cache;
 		this.appInfo = appInfo;
@@ -88,14 +75,13 @@ public class ViewDownloadManagement {
 	 * 
 	 * ViewDownloadManagement Constructor
 	 *
-	 * @param serviceManager
 	 * @param url
 	 * @param appInfo
 	 * @param cache
 	 * @param login
 	 */
-	public ViewDownloadManagement(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache, ViewLogin login) {
-		this(serviceManager,remoteUrl, appInfo, cache);
+	public ViewDownloadManagement(String remoteUrl, ViewApk appInfo, ViewCache cache, ViewLogin login) {
+		this(remoteUrl, appInfo, cache);
 		if(login != null){
 			this.isLoginRequired = true;
 			this.login = login;
@@ -131,57 +117,43 @@ public class ViewDownloadManagement {
 		this.viewDownload.setProgress(update.getProgress());
 		this.viewDownload.setSpeedInKBps(update.getSpeedInKBps());
 		this.viewDownload.setStatus(update.getStatus());
-		switch (viewDownload.getStatus()) {
-			case FAILED:
-				this.viewDownload.setFailReason(update.getFailReason());
-				notifyObservers(EnumDownloadProgressUpdateMessages.FAILED);
-				break;
-				
-			case PAUSED:
-				notifyObservers(EnumDownloadProgressUpdateMessages.PAUSED);
-				break;
-				
-			case RESUMING:
-				notifyObservers(EnumDownloadProgressUpdateMessages.RESUMING);
-				break;
-				
-			case STOPPED:
-				notifyObservers(EnumDownloadProgressUpdateMessages.STOPPED);
-				break;
-				
-			case COMPLETED:
-				notifyObservers(EnumDownloadProgressUpdateMessages.COMPLETED);
-				break;
-	
-			default:
-				notifyObservers(EnumDownloadProgressUpdateMessages.UPDATE);
-				break;
+		if(viewDownload.getStatus().equals(EnumDownloadStatus.FAILED)){
+			this.viewDownload.setFailReason(update.getFailReason());
 		}
 	}
-	
-	public void pause(){
-		viewDownload.setStatus(EnumDownloadStatus.PAUSED);
-		notifyObservers(EnumDownloadProgressUpdateMessages.PAUSED);
-		serviceManager.pauseDownload(hashCode());
-	}
-	
-	public void resume(){
-		viewDownload.setStatus(EnumDownloadStatus.RESUMING);
-		notifyObservers(EnumDownloadProgressUpdateMessages.RESUMING);
-		serviceManager.resumeDownload(hashCode());
-	}
-	
-	public void stop(){
-		viewDownload.setStatus(EnumDownloadStatus.STOPPED);
-		notifyObservers(EnumDownloadProgressUpdateMessages.STOPPED);
-		serviceManager.stopDownload(hashCode());
-	}
-	
-	public void restart(){
-		viewDownload.setStatus(EnumDownloadStatus.RESTARTING);
-		notifyObservers(EnumDownloadProgressUpdateMessages.RESTARTING);
-		serviceManager.restartDownload(hashCode());
-	}
+
+//
+//	/**
+//	 * startDownloadManagement, starts the download of the apk for the app described within this view
+//	 * 
+//	 * @throws AptoideDownloadException (runtimeException)
+//	 */
+//	public void startDownload(){
+//		serviceManager.startDownload(this);
+//	}
+//	public void pause(AIDLServiceDownloadManager.Stub serviceDownloadManagerCallReceiver){
+//		viewDownload.setStatus(EnumDownloadStatus.PAUSED);
+//		notifyObservers(EnumDownloadProgressUpdateMessages.PAUSED);
+//		serviceManager.pauseDownload(hashCode());
+//	}
+//	
+//	public void resume(){
+//		viewDownload.setStatus(EnumDownloadStatus.RESUMING);
+//		notifyObservers(EnumDownloadProgressUpdateMessages.RESUMING);
+//		serviceManager.resumeDownload(hashCode());
+//	}
+//	
+//	public void stop(){
+//		viewDownload.setStatus(EnumDownloadStatus.STOPPED);
+//		notifyObservers(EnumDownloadProgressUpdateMessages.STOPPED);
+//		serviceManager.stopDownload(hashCode());
+//	}
+//	
+//	public void restart(){
+//		viewDownload.setStatus(EnumDownloadStatus.RESTARTING);
+//		notifyObservers(EnumDownloadProgressUpdateMessages.RESTARTING);
+//		serviceManager.restartDownload(hashCode());
+//	}
 	
 	public EnumDownloadStatus getDownloadStatus(){
 		return viewDownload.getStatus();
@@ -191,21 +163,21 @@ public class ViewDownloadManagement {
 		return viewDownload.getSpeedInKBps();
 	}
 	
-	public String getSpeedInKBpsString(){
+	public String getSpeedInKBpsString(Context context){
 		switch (viewDownload.getStatus()) {
 			case SETTING_UP:
-				return serviceManager.getString(R.string.starting);
+				return context.getString(R.string.starting);
 				
 			case PAUSED:
-				return serviceManager.getString(R.string.paused);
+				return context.getString(R.string.paused);
 	
 			case FAILED:
 			case STOPPED:
-				return serviceManager.getString(R.string.stopped);
+				return context.getString(R.string.stopped);
 				
 			default:
 				if(viewDownload.getSpeedInKBps() == 0){
-//					return serviceManager.getString(R.string.slow);
+//					return context.getString(R.string.slow);
 					return "";
 				}else{
 					return viewDownload.getSpeedInKBps()+" KBps";
@@ -261,33 +233,18 @@ public class ViewDownloadManagement {
 		}
 	}
 
-	public void registerObserver(int appId, Handler observerDownloadProgress){
-		observers.put(appId, observerDownloadProgress);
+	public void registerObserver(AIDLDownloadObserver observer){
+		this.observer = observer;
 	}
 
-	public void unregisterObserver(int appId){
-		try {
-			observers.remove(appId);
-		} catch (Exception e) { }
+	public void unregisterObserver(){
+		observer = null;
 	}
 	
-	private void notifyObservers(EnumDownloadProgressUpdateMessages progressUpdate){
-//	private void notifyObservers(){
-		for (Handler listenerDownloadProgress : observers.values()) {
-			listenerDownloadProgress.sendEmptyMessage(progressUpdate.ordinal());
-//			listenerDownloadProgress.sendEmptyMessage(hashCode());
-		}
+	public AIDLDownloadObserver getObserver(){
+		return observer;
 	}
-	
-	
-	/**
-	 * startDownloadManagement, starts the download of the apk for the app described within this view
-	 * 
-	 * @throws AptoideDownloadException (runtimeException)
-	 */
-	public void startDownload(){
-		serviceManager.startDownload(this);
-	}
+
 	
 	
 	
@@ -296,8 +253,6 @@ public class ViewDownloadManagement {
 	 *
 	 */
 	public void clean(){
-		this.serviceManager = null;
-		this.observers = null;
 		this.appInfo = null;
 		this.cache = null;
 	}
@@ -305,23 +260,20 @@ public class ViewDownloadManagement {
 	/**
 	 * ViewDownloadManagement object skeleton reuse reConstructor
 	 *
-	 * @param serviceManager
 	 */
-	public void reuse(ApplicationServiceManager serviceManager) {
-		this.serviceManager = serviceManager;
-		this.observers = new HashMap<Integer, Handler>();
+	public void reuse() {
+		this.isNull = true;
 	}
 	
 	/**
 	 * ViewDownloadManagement object reuse reConstructor
 	 *
-	 * @param serviceManager
 	 * @param remoteUrl
 	 * @param appInfo
 	 * @param cache
 	 */
-	public void reuse(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache) {
-		reuse(serviceManager);
+	public void reuse(String remoteUrl, ViewApk appInfo, ViewCache cache) {
+		this.isNull = false;
 		this.viewDownload = new ViewDownload(remoteUrl);
 		this.cache = cache;
 		this.appInfo = appInfo;
@@ -330,18 +282,14 @@ public class ViewDownloadManagement {
 	/**
 	 * ViewDownloadManagement object reuse reConstructor
 	 *
-	 * @param serviceManager
 	 * @param remoteUrl
 	 * @param appInfo
 	 * @param cache
 	 * @param login
 	 */
-	public void reuse(ApplicationServiceManager serviceManager, String remoteUrl, ViewApk appInfo, ViewCache cache, ViewLogin login) {
-		reuse(serviceManager);
-		this.viewDownload = new ViewDownload(remoteUrl);
-		this.cache = cache;
+	public void reuse(String remoteUrl, ViewApk appInfo, ViewCache cache, ViewLogin login) {
+		reuse(remoteUrl, appInfo, cache);
 		this.login = login;
-		this.appInfo = appInfo;
 	}
 
 
@@ -366,6 +314,60 @@ public class ViewDownloadManagement {
 	@Override
 	public String toString() {
 		return appInfo+" downloadStatus: "+viewDownload.getStatus()+viewDownload;
+	}
+	
+	
+	
+	
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewDownloadManagement> CREATOR = new Parcelable.Creator<ViewDownloadManagement>() {
+		public ViewDownloadManagement createFromParcel(Parcel in) {
+			return new ViewDownloadManagement(in);
+		}
+
+		public ViewDownloadManagement[] newArray(int size) {
+			return new ViewDownloadManagement[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	protected ViewDownloadManagement(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeParcelable(appInfo, flags);
+		out.writeParcelable(viewDownload, flags);
+		out.writeParcelable(cache, flags);
+		out.writeValue(isLoginRequired);
+		if(isLoginRequired){
+			out.writeParcelable(login, flags);
+		}
+		out.writeValue(isNull);
+	}
+	
+	public void readFromParcel(Parcel in) {
+		this.appInfo = in.readParcelable(ViewApk.class.getClassLoader());
+		this.viewDownload = in.readParcelable(ViewDownload.class.getClassLoader());
+		this.cache = in.readParcelable(ViewCache.class.getClassLoader());
+		this.isLoginRequired = (Boolean) in.readValue(null);
+		if(isLoginRequired){
+			in.readParcelable(ViewLogin.class.getClassLoader());
+		}
+		this.isNull = (Boolean) in.readValue(null);
 	}
 	
 }

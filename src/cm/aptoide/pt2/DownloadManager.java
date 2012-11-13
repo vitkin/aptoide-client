@@ -19,15 +19,17 @@
 */
 package cm.aptoide.pt2;
 
-import cm.aptoide.pt2.adapters.DownloadedListAdapter;
-import cm.aptoide.pt2.adapters.DownloadingListAdapter;
-import cm.aptoide.pt2.adapters.NotDownloadedListAdapter;
-import cm.aptoide.pt2.contentloaders.ImageLoader;
-import cm.aptoide.pt2.views.EnumDownloadProgressUpdateMessages;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -35,6 +37,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import cm.aptoide.pt2.adapters.DownloadedListAdapter;
+import cm.aptoide.pt2.adapters.DownloadingListAdapter;
+import cm.aptoide.pt2.adapters.NotDownloadedListAdapter;
+import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt2.services.ServiceDownloadManager;
+import cm.aptoide.pt2.views.EnumDownloadStatus;
 
 /**
  * DownloadManager
@@ -43,6 +52,8 @@ import android.widget.ListView;
  *
  */
 public class DownloadManager extends Activity {
+	private boolean isRunning = false;
+	
 	private ImageLoader imageLoader;
 	
 	private LinearLayout downloading;
@@ -56,39 +67,114 @@ public class DownloadManager extends Activity {
 
 	private Button exitButton;
 	
-	private Handler updatesHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-    		ApplicationServiceManager serviceManager = ((ApplicationServiceManager)getApplication());
-        	EnumDownloadProgressUpdateMessages task = EnumDownloadProgressUpdateMessages.reverseOrdinal(msg.what);
-        	switch (task) {
 
+	private AIDLServiceDownloadManager serviceManager = null;
+
+	private boolean serviceManagerIsBound = false;
+
+	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the object we can use to
+			// interact with the service.  We are communicating with the
+			// service using AIDL, so here we set the remote service interface.
+			serviceManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+			serviceManagerIsBound = true;
+			
+			Log.v("Aptoide-DownloadManager", "Connected to ServiceDownloadManager");
+	        
+			try {
+				serviceManager.callRegisterDownloadManager(serviceManagerCallback);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+
+			continueLoading();
+			
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			serviceManagerIsBound = false;
+			serviceManager = null;
+			
+			Log.v("Aptoide-DownloadManager", "Disconnected from ServiceDownloadManager");
+		}
+	};
+	
+	private AIDLDownloadManager.Stub serviceManagerCallback = new AIDLDownloadManager.Stub() {
+
+		@Override
+		public void updateDownloadStatus(int status) throws RemoteException {
+        	if (serviceManagerIsBound) {
+    			EnumDownloadStatus task = EnumDownloadStatus.reverseOrdinal(status);
+				switch (task) {
+					case RESTARTING:
+					case FAILED:
+						try {
+							downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
+							notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+	
+					case DOWNLOADING:
+					case PAUSED:
+					case RESUMING:
+					case STOPPED:
+						try {
+							downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+	
+					case COMPLETED:
+						try {
+							downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
+							downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
+	
+					default:
+						break;
+				}
+			}
+        	interfaceTasksHandler.sendEmptyMessage(status);
+		}
+		
+	};
+	
+
+	private Handler interfaceTasksHandler = new Handler(){
+		
+		public void handleMessage(Message msg) {
+			switch (EnumDownloadStatus.reverseOrdinal(msg.what)) {
 				case RESTARTING:
 				case FAILED:
-					downloadingAdapter.updateList(serviceManager.getDownloadsOngoing());
-					notDownloadedAdapter.updateList(serviceManager.getDownloadsFailed());
-					if(downloadingAdapter.isEmpty()){
+					if (downloadingAdapter.isEmpty()) {
 						downloading.setVisibility(View.GONE);
-					}else{
+					} else {
 						downloading.setVisibility(View.VISIBLE);
 					}
 					notDownloaded.setVisibility(View.VISIBLE);
 					break;
-					
-				case UPDATE:
+	
+				case DOWNLOADING:
 				case PAUSED:
 				case RESUMING:
 				case STOPPED:
-					downloadingAdapter.updateList(serviceManager.getDownloadsOngoing());
 					downloading.setVisibility(View.VISIBLE);
 					break;
-					
+	
 				case COMPLETED:
-					downloadingAdapter.updateList(serviceManager.getDownloadsOngoing());
-					downloadedAdapter.updateList(serviceManager.getDownloadsCompleted());
-					if(downloadingAdapter.isEmpty()){
+					if (downloadingAdapter.isEmpty()) {
 						downloading.setVisibility(View.GONE);
-					}else{
+					} else {
 						downloading.setVisibility(View.VISIBLE);
 					}
 					downloaded.setVisibility(View.VISIBLE);
@@ -97,74 +183,98 @@ public class DownloadManager extends Activity {
 				default:
 					break;
 				}
-        }
+			
+		}
 	};
 	
+	
 	private void prePopulateLists(){
-		ApplicationServiceManager serviceManager = ((ApplicationServiceManager)getApplication());
-		if(serviceManager.areDownloadsOngoing()){
-			downloadingAdapter.updateList(serviceManager.getDownloadsOngoing());
-			downloading.setVisibility(View.VISIBLE);
-		}
-		if(serviceManager.areDownloadsCompleted()){
-			downloadedAdapter.updateList(serviceManager.getDownloadsCompleted());
-			downloaded.setVisibility(View.VISIBLE);
-		}
-		if(serviceManager.areDownloadsFailed()){
-			notDownloadedAdapter.updateList(serviceManager.getDownloadsFailed());
-			notDownloaded.setVisibility(View.VISIBLE);
+		try {
+			if(serviceManager.callAreDownloadsOngoing()){
+				downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
+				downloading.setVisibility(View.VISIBLE);
+			}
+			if(serviceManager.callAreDownloadsCompleted()){
+				downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
+				downloaded.setVisibility(View.VISIBLE);
+			}
+			if(serviceManager.callAreDownloadsFailed()){
+				notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
+				notDownloaded.setVisibility(View.VISIBLE);
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
 	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		if(!isRunning){
+			isRunning = true;
 
-		setContentView(R.layout.download_manager);
-		imageLoader = new ImageLoader(this);
-		
-		downloading = (LinearLayout) findViewById(R.id.downloading_apps);
+			if(!serviceManagerIsBound){
+	    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+	    	}
+			
+			setContentView(R.layout.download_manager);
+			imageLoader = new ImageLoader(this);
+
+			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
+
+			downloaded = (LinearLayout) findViewById(R.id.downloaded_apps);
+			downloaded.setVisibility(View.GONE);
+
+			notDownloaded = (LinearLayout) findViewById(R.id.failed_apps);
+			notDownloaded.setVisibility(View.GONE);
+
+			exitButton = (Button) findViewById(R.id.exit);
+			exitButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					finish();
+				}
+			});
+
+
+		}
+
+		super.onCreate(savedInstanceState);
+	}
+	
+	private void continueLoading(){
 		ListView uploadingList = (ListView) findViewById(R.id.downloading_list);
-		downloadingAdapter = new DownloadingListAdapter(this, imageLoader);
+		downloadingAdapter = new DownloadingListAdapter(this, serviceManager, imageLoader);
 		uploadingList.setAdapter(downloadingAdapter);
 		
-		
-		downloaded = (LinearLayout) findViewById(R.id.downloaded_apps);
 		ListView uploadedList = (ListView) findViewById(R.id.downloaded_list);
 		downloadedAdapter = new DownloadedListAdapter(this, imageLoader);
 		uploadedList.setAdapter(downloadedAdapter);
-		downloaded.setVisibility(View.GONE);
 		
-		notDownloaded = (LinearLayout) findViewById(R.id.failed_apps);
 		ListView notUploadedList = (ListView) findViewById(R.id.failed_list);
 		notDownloadedAdapter = new NotDownloadedListAdapter(this, imageLoader);
 		notUploadedList.setAdapter(notDownloadedAdapter);
 		notUploadedList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int position, long positionLong) {
-				notDownloadedAdapter.getItem(position).restart();
+				try {
+					serviceManager.callRestartDownload(notDownloadedAdapter.getItem(position).hashCode());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 			}
 		});
-		notDownloaded.setVisibility(View.GONE);
-
-		exitButton = (Button) findViewById(R.id.exit);
-		exitButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		  });
-		
-		((ApplicationServiceManager)getApplication()).registerDownloadManager(updatesHandler);
 		
 		prePopulateLists();
-		
-		super.onCreate(savedInstanceState);
 	}
 	
 	@Override
 	protected void onDestroy() {
-		((ApplicationServiceManager)getApplication()).unregisterDownloadManager();
-		updatesHandler = null;
+		try {
+			serviceManager.callUnregisterDownloadManager();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		unbindService(serviceManagerConnection);
 		super.onDestroy();
 	}
 	
