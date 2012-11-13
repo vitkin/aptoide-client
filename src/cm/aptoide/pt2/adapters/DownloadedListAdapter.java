@@ -20,8 +20,11 @@
 package cm.aptoide.pt2.adapters;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.sharing.DialogShareOnFacebook;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
 import cm.aptoide.pt2.views.ViewListDownloads;
 
@@ -112,26 +116,26 @@ public class DownloadedListAdapter extends BaseAdapter{
 				String facebookShareMessage = "I downloaded "+facebookShareName+" for Android to install on my phone!";
 				String facebookShareDescription;
 				String facebookShareStoreLink;
-//				if(download.getAppInfo().getRepoName().equals("Aptoide")){
-//					facebookShareDescription = "Visit Aptoide and install the best apps";
-//					facebookShareStoreLink = "http://www.aptoide.com/more/topapps";
-//				}else{
-//					facebookShareDescription = "Visit "+download.getAppInfo().getRepoName()+" Android Store to download and install this app";
-//					facebookShareStoreLink = "http://"+download.getAppInfo().getRepoName()+".store.aptoide.com";
-//				}
-//				
-//				Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookShareIcon +", DescriptionToPost: "+facebookShareDescription+", MessageToPost: "+facebookShareMessage+", StoreLinkToPost: "+facebookShareStoreLink);
-//				
-//				final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(activity, facebookShareName, facebookShareIcon, facebookShareMessage, facebookShareDescription, facebookShareStoreLink);
-//
-//				shareFacebook.setOnDismissListener(new OnDismissListener() {
-//					@Override
-//					public void onDismiss(DialogInterface dialog) {
-//						shareFacebook.dismiss();
-//					}
-//				});
-//				
-//				shareFacebook.show();
+				if(download.getAppInfo().getRepoName().equals("Aptoide")){
+					facebookShareDescription = "Visit Aptoide and install the best apps";
+					facebookShareStoreLink = "http://www.aptoide.com/more/topapps";
+				}else{
+					facebookShareDescription = "Visit "+download.getAppInfo().getRepoName()+" Android Store to download and install this app";
+					facebookShareStoreLink = "http://"+download.getAppInfo().getRepoName()+".store.aptoide.com";
+				}
+				
+				Log.d("Aptoide-sharing", "NameToPost: "+facebookShareName+", IconToPost: "+facebookShareIcon +", DescriptionToPost: "+facebookShareDescription+", MessageToPost: "+facebookShareMessage+", StoreLinkToPost: "+facebookShareStoreLink);
+				
+				final DialogShareOnFacebook shareFacebook = new DialogShareOnFacebook(activity, facebookShareName, facebookShareIcon, facebookShareMessage, facebookShareDescription, facebookShareStoreLink);
+
+				shareFacebook.setOnDismissListener(new OnDismissListener() {
+					@Override
+					public void onDismiss(DialogInterface dialog) {
+						shareFacebook.dismiss();
+					}
+				});
+				
+				shareFacebook.show();
 		    }
 		});
 		
