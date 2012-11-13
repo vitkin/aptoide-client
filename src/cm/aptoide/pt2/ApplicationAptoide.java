@@ -33,12 +33,18 @@ import android.content.Intent;
 public class ApplicationAptoide extends Application {
 
 	private ManagerPreferences managerPreferences;
+	private Intent serviceDownloadManager;
 	
 	@Override
 	public void onCreate() {
 		managerPreferences = new ManagerPreferences(getApplicationContext());
-		startService(new Intent(this, ServiceDownloadManager.class));
+		serviceDownloadManager = new Intent(this, ServiceDownloadManager.class);
+		startService(serviceDownloadManager);
 		super.onCreate();
+	}
+	
+	public void stopDownloadService(){
+		stopService(serviceDownloadManager);
 	}
 	
 	public ManagerPreferences getManagerPreferences(){

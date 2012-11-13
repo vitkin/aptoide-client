@@ -1842,6 +1842,7 @@ public class MainActivity extends FragmentActivity implements
 		unregisterReceiver(statusReceiver);
 		unregisterReceiver(redrawInstalledReceiver);
 		unregisterReceiver(loginReceiver);
+		((ApplicationAptoide)getApplication()).stopDownloadService();
 		generateXML();
 		super.onDestroy();
 	}
