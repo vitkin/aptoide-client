@@ -131,6 +131,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			if(!serviceManagerIsBound){
 	    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+	    	}else{
+	    		continueLoading();
 	    	}
 			
 		}
@@ -212,6 +214,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		} catch (RemoteException e1) {
 			e1.printStackTrace();
 		}
+		Log.d("Aptoide-ApkInfo", "getAppDownloading: "+download);
+		
 		if(!download.isNull()){
 			Button manage = (Button) findViewById(R.id.icon_manage);
 			manage.setVisibility(View.GONE);

@@ -34,6 +34,8 @@ public class Constants {
 	
 	public static final int DOWNLOAD_CHUNK_SIZE = 8*KILO_BYTE;
 	public static final int MAX_PARALLEL_DOWNLOADS = 4;
+	/** miliseconds **/
+	public static final int DOWNLOAD_UPDATE_TRIGGER = 1000;
 	
 	/** miliseconds **/
 	public static final int SERVER_CONNECTION_TIMEOUT = 10000;

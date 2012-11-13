@@ -313,7 +313,11 @@ public class ViewDownloadManagement implements Parcelable{
 
 	@Override
 	public String toString() {
-		return appInfo+" downloadStatus: "+viewDownload.getStatus()+viewDownload;
+		if(isNull){
+			return "isNull";
+		}else{
+			return appInfo+" downloadStatus: "+viewDownload.getStatus()+viewDownload;
+		}
 	}
 	
 	
