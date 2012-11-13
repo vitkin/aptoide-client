@@ -255,6 +255,15 @@ public class ServiceDownloadManager extends Service {
 		}
 		super.onCreate();
 	}
+	
+	@Override
+	public void onDestroy() {
+		Log.d("Aptoide-ServiceDownloadManager", "shuting down");
+		helperDownload.shutdownNow();
+		cachedThreadPool.shutdownNow();
+		dismissNotification();
+		super.onDestroy();
+	}
 
 
 	private void setNotification() {
