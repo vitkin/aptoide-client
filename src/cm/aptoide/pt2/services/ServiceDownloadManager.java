@@ -539,7 +539,7 @@ public class ServiceDownloadManager extends Service {
 			if(isDownloadManagerRegistered()){
 				downloadManager.updateDownloadStatus(EnumDownloadStatus.STOPPED.ordinal());
 			}
-			download.getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
+			download.getObserver().updateDownloadStatus(download.getDownload());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
