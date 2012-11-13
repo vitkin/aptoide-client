@@ -2,9 +2,11 @@ package cm.aptoide.pt2.views;
 
 import java.util.ArrayList;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
-public class ViewApk {
+public class ViewApk implements Parcelable {
 
 	private long id;
 	private String apkid = "";
@@ -54,8 +56,7 @@ public class ViewApk {
 	 * @param category2
 	 * @param repo_id
 	 */
-	public ViewApk(long id, String apkid, String name, int vercode, String vername, String size, String downloads, String category1,
-			String category2, long repo_id) {
+	public ViewApk(long id, String apkid, String name, int vercode, String vername, String size, String downloads, String category1, String category2, long repo_id) {
 		this.id = id;
 		this.apkid = apkid;
 		this.name = name;
@@ -174,56 +175,6 @@ public class ViewApk {
 	public void setIconPath(String iconPath) {
 		this.iconPath = iconPath;
 	}
-	
-	
-
-	public void clear() {
-		
-		this.id = 0;
-		this.apkid = "";
-		this.name = apkid;
-		this.vercode = 0;
-		this.vername = "Unversioned";
-		this.size = "No size";
-		this.downloads = "No downloads";
-		this.category1 = "Other";
-		this.category2 = "Other";
-		this.iconPath="";
-		this.path="";
-		this.date="";
-		this.age=0;
-		this.minGlEs="0";
-		this.minScreen=0;
-		this.minSdk="0";
-		screenshots.clear();
-	}
-
-	
-	/**
-	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer in a realistic scenario)
-	 */
-	@Override
-	public int hashCode() {
-		return getAppHashId();
-	}
-
-
-	@Override
-	public boolean equals(Object object) {
-		if(object instanceof ViewApk){
-			ViewApk app = (ViewApk) object;
-			if(app.hashCode() == this.hashCode()){
-				return true;
-			}
-		}
-		return false;
-	}
-
-
-	@Override
-	public String toString() {
-		return " appHashId: "+appHashId+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
-	}
 
 	public void setPath(String path) {
 		this.path = path;
@@ -308,5 +259,107 @@ public class ViewApk {
 	public void setMinGlEs(String minGlEs) {
 		this.minGlEs = minGlEs;
 	}
+	
+	
 
+	public void clear() {
+		
+		this.id = 0;
+		this.apkid = "";
+		this.name = apkid;
+		this.vercode = 0;
+		this.vername = "Unversioned";
+		this.size = "No size";
+		this.downloads = "No downloads";
+		this.category1 = "Other";
+		this.category2 = "Other";
+		this.iconPath="";
+		this.path="";
+		this.date="";
+		this.age=0;
+		this.minGlEs="0";
+		this.minScreen=0;
+		this.minSdk="0";
+		screenshots.clear();
+	}
+
+	
+	/**
+	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer in a realistic scenario)
+	 */
+	@Override
+	public int hashCode() {
+		return getAppHashId();
+	}
+
+
+	@Override
+	public boolean equals(Object object) {
+		if(object instanceof ViewApk){
+			ViewApk app = (ViewApk) object;
+			if(app.hashCode() == this.hashCode()){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
+	@Override
+	public String toString() {
+		return " appHashId: "+appHashId+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
+	}
+
+	
+
+
+	// Parcelable stuff //
+	
+	
+	public static final Parcelable.Creator<ViewApk> CREATOR = new Parcelable.Creator<ViewApk>() {
+		public ViewApk createFromParcel(Parcel in) {
+			return new ViewApk(in);
+		}
+
+		public ViewApk[] newArray(int size) {
+			return new ViewApk[size];
+		}
+	};
+
+	/** 
+	 * we're annoyingly forced to create this even if we clearly don't need it,
+	 *  so we just use the default return 0
+	 *  
+	 *  @return 0
+	 */
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	protected ViewApk(Parcel in){
+		readFromParcel(in);
+	}
+
+	@Override
+	public void writeToParcel(Parcel out, int flags) {
+		out.writeString(apkid);
+		out.writeString(name);
+		out.writeInt(vercode);
+		out.writeString(vername);
+		out.writeString(iconPath);
+		out.writeString(path);
+		out.writeInt(appHashId);
+	}
+	
+	public void readFromParcel(Parcel in) {
+		this.apkid = in.readString();
+		this.name = in.readString();
+		this.vercode = in.readInt();
+		this.vername = in.readString();
+		this.iconPath = in.readString();
+		this.path = in.readString();
+		this.appHashId = in.readInt();
+	}
+	
 }

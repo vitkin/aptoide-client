@@ -20,17 +20,18 @@
 package cm.aptoide.pt2.adapters;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import cm.aptoide.pt2.DialogIpBlacklisted;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
-import cm.aptoide.pt2.views.EnumDownloadFailReason;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
+import cm.aptoide.pt2.views.ViewListDownloads;
 
 public class NotDownloadedListAdapter extends BaseAdapter{
 
@@ -39,8 +40,17 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 	
 	private LayoutInflater layoutInflater;
 
-	/** ViewDownloadManagemet[] **/
-	private Object[] notDownloaded = null;
+	private ViewListDownloads notDownloaded = null;
+	private ViewListDownloads updated = null;
+	
+	
+	private Handler updateListHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	notDownloaded = updated;
+    		notifyDataSetChanged();        	
+        }
+	};
 
 	/**
 	 * NotDownloadedListAdapter Constructor
@@ -79,7 +89,7 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 			rowViewHolder = (NotUploadedRowViewHolder) convertView.getTag();
 		}
 		
-		ViewDownloadManagement download = (ViewDownloadManagement) notDownloaded[position];
+		ViewDownloadManagement download = notDownloaded.get(position);
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
 		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
@@ -92,7 +102,7 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 	@Override
 	public int getCount() {
 		if(notDownloaded != null){
-			return notDownloaded.length;
+			return notDownloaded.size();
 		}else{
 			return 0;
 		}
@@ -100,21 +110,21 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 
 	@Override
 	public ViewDownloadManagement getItem(int position) {
-		return (ViewDownloadManagement) notDownloaded[position];
+		return notDownloaded.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		return notDownloaded[position].hashCode();
+		return notDownloaded.get(position).hashCode();
 	}
 
 	/**
 	 * 
-	 * @param updatedList ViewDownloadManagement[] (uncasted)
+	 * @param updatedList ViewListDownloads
 	 */
-	public void updateList(Object[] updatedList){
-		notDownloaded = updatedList;
-		notifyDataSetChanged();
+	public void updateList(ViewListDownloads updatedList){
+		updated = updatedList;
+		updateListHandler.sendEmptyMessage(0);
 	}
 	
 }

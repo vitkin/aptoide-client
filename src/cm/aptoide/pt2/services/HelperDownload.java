@@ -1,5 +1,5 @@
 /*
- * ServiceDownload, part of Aptoide
+ * HelperDownload, part of Aptoide
  * Copyright (C) 2012 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
@@ -40,19 +40,10 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
-import android.app.Service;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
-import android.os.Parcel;
-import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
-import cm.aptoide.pt2.AIDLDownloadManager;
-import cm.aptoide.pt2.ApplicationServiceManager;
-import cm.aptoide.pt2.DialogIpBlacklisted;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt2.exceptions.AptoideExceptionNotFound;
@@ -65,77 +56,25 @@ import cm.aptoide.pt2.views.ViewDownload;
 import cm.aptoide.pt2.views.ViewLogin;
 
 /**
- * ServiceDownload, manages the actual download processes, and updates the download manager about the status of each download
+ * HelperDownload, manages the actual download processes, and updates the download manager about the status of each download
  *
  * @author dsilveira
  *
  */
-public class ServiceDownload extends Service {
+public class HelperDownload{
+
+	ServiceDownloadManager serviceDownloadManager;
 	
-	AIDLDownloadManager downloadStatusClient = null;
 	
-	/**
-	 * When binding to the service, we return an interface to our AIDL stub
-	 * allowing clients to send requests to the service.
-	 */
-	@Override
-	public IBinder onBind(Intent intent) {
-		Log.d("Aptoide-ServiceDownload", "binding new client");
-		return serviceDownloadCallReceiver;
-	}
-	
-	private final AIDLServiceDownload.Stub serviceDownloadCallReceiver = new AIDLServiceDownload.Stub() {
-		
-		@Override
-		public boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
-			try {
-				return super.onTransact(code, data, reply, flags);
-			} catch (RuntimeException e) {
-				Log.w("Aptoide-ServiceDownload", "Unexpected serviceData exception", e);
-				throw e;
-			}
-		}
-
-		@Override
-		public void callRegisterDownloadStatusObserver(AIDLDownloadManager downloadStatusClient) throws RemoteException {
-			Log.d("Aptoide-ServiceDownload", "registered download status observer");
-			registerDownloadStatusObserver(downloadStatusClient);
-		}
-
-		@Override
-		public void callDownloadApk(ViewDownload download, ViewCache cache) throws RemoteException {
-			Log.d("Aptoide-ServiceDownload", "starting apk download: "+download.getRemotePath());
-			downloadManager.downloadApk(download, cache);
-		}
-
-		@Override
-		public void callDownloadPrivateApk(ViewDownload download, ViewCache cache, ViewLogin login) throws RemoteException {
-			Log.d("Aptoide-ServiceDownload", "starting apk download: "+download.getRemotePath());
-			downloadManager.downloadApk(download, cache, login);
-		}
-
-		@Override
-		public void callPauseDownload(int appId) throws RemoteException {
-			Log.d("Aptoide-ServiceDownload", "pausing apk download  id: "+appId);
-			downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.PAUSED);
-		}
-
-		@Override
-		public void callStopDownload(int appId) throws RemoteException {
-			Log.d("Aptoide-ServiceDownload", "stoping apk download  id: "+appId);
-			downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.STOPPED);
-		}
-		
-	}; 
-	
-	public void registerDownloadStatusObserver(AIDLDownloadManager downloadStatusClient){
-		this.downloadStatusClient = downloadStatusClient;
+	public HelperDownload(ServiceDownloadManager serviceDownloadManager) {
+		this.serviceDownloadManager = serviceDownloadManager;
+		downloadManager = new DownloadManager();
 	}
 
 	private Handler toastHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			Toast.makeText(ServiceDownload.this, msg.what, Toast.LENGTH_SHORT).show();
+			Toast.makeText(serviceDownloadManager.getApplicationContext(), msg.what, Toast.LENGTH_SHORT).show();
 		}
 	};
 
@@ -178,11 +117,7 @@ public class ServiceDownload extends Service {
 	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+cache);
 				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 	    			download.setCompleted();
-					try {
-						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-					} catch (RemoteException e4) {
-						e4.printStackTrace();
-					}
+					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 	    		}else{
 					toastHandler.sendEmptyMessage(download.getStatus().equals(EnumDownloadStatus.RESUMING)?R.string.resuming_download:R.string.starting_download);
 	    			try {
@@ -232,10 +167,10 @@ public class ServiceDownload extends Service {
         		
     			HttpGet httpGet = new HttpGet(remotePath);
     			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
-    			Log.d("Aptoide-download","downloading with: "+NetworkUtils.getUserAgentString(getApplicationContext()));
+    			Log.d("Aptoide-download","downloading with: "+NetworkUtils.getUserAgentString(serviceDownloadManager.getApplicationContext()));
     			Log.d("Aptoide-download","downloading mode private: "+isLoginRequired);
 
-    			httpGet.setHeader("User-Agent", NetworkUtils.getUserAgentString(getApplicationContext()));
+    			httpGet.setHeader("User-Agent", NetworkUtils.getUserAgentString(serviceDownloadManager.getApplicationContext()));
     			
     			long resumeLength = cache.getFileLength();
     			if(!overwriteCache){
@@ -298,11 +233,7 @@ public class ServiceDownload extends Service {
 	    					cache.clearCache();
 	    				}
 	    				download.setCompleted();
-	    				try {
-							downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-						} catch (RemoteException e4) {
-							e4.printStackTrace();
-						}
+	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 						return;
 	
 					default:
@@ -330,11 +261,7 @@ public class ServiceDownload extends Service {
 	    				}
 	    				
     					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
-						try {
-							downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-						} catch (RemoteException e) {
-							e.printStackTrace();
-						}
+    					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 	    				
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
 	    				/** trigger in percentage */
@@ -370,11 +297,7 @@ public class ServiceDownload extends Service {
 	        					intervalStartProgress = download.getProgress();
 	        					
 	    	    				download.setStatus(EnumDownloadStatus.DOWNLOADING);
-								try {
-									downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-								} catch (RemoteException e) {
-									e.printStackTrace();
-								}
+	    	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 //		    					Log.d("Aptoide-download", "*downloading* id: "+cache.hashCode()+" "+download);
 	    					}
 	    				}
@@ -392,11 +315,7 @@ public class ServiceDownload extends Service {
 	    				}
 
 	    				download.setCompleted();
-	    				try {
-							downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-						} catch (RemoteException e4) {
-							e4.printStackTrace();
-						}
+	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 						return;
 				}
     				
@@ -408,11 +327,7 @@ public class ServiceDownload extends Service {
     			e.printStackTrace();
     			download.setStatus(EnumDownloadStatus.FAILED);
     			download.setFailReason(EnumDownloadFailReason.TIMEOUT);
-				try {
-					downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-				} catch (RemoteException e4) {
-					e4.printStackTrace();
-				}
+    			serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 				return;
 			}catch (Exception e) {
     			try {
@@ -422,14 +337,10 @@ public class ServiceDownload extends Service {
     			e.printStackTrace();
 //    			if(cache.getFileLength() > 0){
     				download.setStatus(EnumDownloadStatus.FAILED);
-    				if(download.getFailReason().equals(EnumDownloadFailReason.NO_REASON) && !((ApplicationServiceManager)getApplication()).isPermittedConnectionAvailable()){
+    				if(download.getFailReason().equals(EnumDownloadFailReason.NO_REASON) && !NetworkUtils.isConnectionAvailable(serviceDownloadManager)){
     					download.setFailReason(EnumDownloadFailReason.CONNECTION_ERROR);
     				}
-					try {
-						downloadStatusClient.updateDownloadStatus(cache.hashCode(), download);
-					} catch (RemoteException e4) {
-						e4.printStackTrace();
-					}
+    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 //    				scheduleInstallApp(cache.getId());
 //    			}
     			if(download.getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
@@ -441,40 +352,26 @@ public class ServiceDownload extends Service {
     	}
     }
 	
-    
-    
-    @Override
-    public void onCreate() {
-		downloadManager = new DownloadManager();
-    	super.onCreate();
-    }
-    
-    
-    @Override
-    public void onDestroy() {
-    	toastHandler = null;
-    	super.onDestroy();
-    }
 
-	
-//	private String getUserAgentString(){
-//		ViewClientStatistics clientStatistics = getClientStatistics();
-//		return String.format(Constants.USER_AGENT_FORMAT
-//				, clientStatistics.getAptoideVersionNameInUse(), clientStatistics.getScreenDimensions().getFormattedString()
-//				, clientStatistics.getAptoideClientUUID(), getServerUsername());
-//	}
-	
-
-	
-	public void installApp(ViewCache apk){
-//		if(isAppScheduledToInstall(appHashid)){
-//			unscheduleInstallApp(appHashid);
-//		}
-		Intent install = new Intent(Intent.ACTION_VIEW);
-		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		install.setDataAndType(Uri.fromFile(apk.getFile()),"application/vnd.android.package-archive");
-		Log.d("Aptoide", "Installing app: "+apk.getLocalPath());
-		startActivity(install);
+    
+	public void downloadApk(ViewDownload download, ViewCache cache) {
+		Log.d("Aptoide-HelperDownload", "starting apk download: "+download.getRemotePath());
+		downloadManager.downloadApk(download, cache);
 	}
 
+	public void downloadPrivateApk(ViewDownload download, ViewCache cache, ViewLogin login) {
+		Log.d("Aptoide-HelperDownload", "starting apk download: "+download.getRemotePath());
+		downloadManager.downloadApk(download, cache, login);
+	}
+
+	public void pauseDownload(int appId) {
+		Log.d("Aptoide-HelperDownload", "pausing apk download  id: "+appId);
+		downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.PAUSED);
+	}
+
+	public void stopDownload(int appId) {
+		Log.d("Aptoide-HelperDownload", "stoping apk download  id: "+appId);
+		downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.STOPPED);
+	}
+	
 }

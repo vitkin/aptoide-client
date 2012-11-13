@@ -4,20 +4,26 @@ import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
@@ -28,6 +34,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt2.services.ServiceDownloadManager;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
@@ -39,10 +47,55 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	CursorAdapter adapter;
 	ImageLoader imageLoader;
 	private Button installButton;
+	
+
+	private boolean isRunning = false;
+
+	private AIDLServiceDownloadManager serviceDownloadManager = null;
+
+	private boolean serviceManagerIsBound = false;
+
+	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the object we can use to
+			// interact with the service.  We are communicating with the
+			// service using AIDL, so here we set the remote service interface.
+			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+			serviceManagerIsBound = true;
+			
+			Log.v("Aptoide-ScheduledDownloads", "Connected to ServiceDownloadManager");
+	        
+			continueLoading();
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			serviceManagerIsBound = false;
+			serviceDownloadManager = null;
+			
+			Log.v("Aptoide-ScheduledDownloads", "Disconnected from ServiceDownloadManager");
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstance) {
 		super.onCreate(savedInstance);
 		setContentView(R.layout.sch_downloadempty);
+
+		if(!isRunning){
+			isRunning = true;
+
+			if(!serviceManagerIsBound){
+	    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+	    	}
+			
+		}
+		
+	}
+	
+	private void continueLoading(){
 		lv = (ListView) findViewById(android.R.id.list);
 		db= Database.getInstance(this);
 		
@@ -134,7 +187,11 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 							apk.setApkid(schDown.getApkid());
 							apk.setVercode(schDown.getVercode());
 							apk.setMd5(schDown.getMd5());
-							new ViewDownloadManagement((ApplicationServiceManager) getApplication(),schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())).startDownload();
+							try {
+								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())));
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 
@@ -155,7 +212,11 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 						apk.setApkid(schDown.getApkid());
 						apk.setVercode(schDown.getVercode());
 						apk.setMd5(schDown.getMd5());
-						new ViewDownloadManagement((ApplicationServiceManager) getApplication(),schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())).startDownload();
+						try {
+							serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())));
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
 					}
 					finish();
 					return;
@@ -327,6 +388,12 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			}
 			
 			return super.onMenuItemSelected(featureId, item);
+		}
+		
+		@Override
+		protected void onDestroy() {
+			unbindService(serviceManagerConnection);
+			super.onDestroy();
 		}
 		
 }

@@ -1,6 +1,6 @@
 /**
- * EnumDownloadProgressUpdate,		part of aptoide
- * Copyright (C) 2012  Duarte Silveira
+ * AIDLDownloadObserver,		part of Aptoide
+ * Copyright (C) 2012 Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
  * This program is free software; you can redistribute it and/or
@@ -17,26 +17,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
+package cm.aptoide.pt2;
 
-package cm.aptoide.pt2.views;
+import cm.aptoide.pt2.views.ViewDownload;
 
 /**
- * EnumDownloadProgressUpdate, typeSafes Downloads progress update messages in Aptoide
- * 
+ * AIDLDownloadObserver, models Aptoide's download Observer AIDL IPC
+ *
  * @author dsilveira
  *
  */
-public enum EnumDownloadProgressUpdateMessages {
-	NOT_STARTED,
-	FAILED,
-	RESTARTING,
-	UPDATE,
-	PAUSED,
-	RESUMING,
-	STOPPED,
-	COMPLETED;
-	
-	public static EnumDownloadProgressUpdateMessages reverseOrdinal(int ordinal){
-		return values()[ordinal];
-	}
+interface AIDLDownloadObserver{
+	void updateDownloadStatus(in ViewDownload update);	
 }

@@ -20,6 +20,9 @@
 package cm.aptoide.pt2.adapters;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,14 +34,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
+import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt2.util.quickaction.ActionItem;
 import cm.aptoide.pt2.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt2.util.quickaction.QuickAction;
-import cm.aptoide.pt2.views.EnumDownloadStatus;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
+import cm.aptoide.pt2.views.ViewListDownloads;
 
 public class DownloadingListAdapter extends BaseAdapter{
 	private Context context;
+	private AIDLServiceDownloadManager serviceManager;
 	private ImageLoader imageLoader;
 	private LayoutInflater layoutInflater;
 	
@@ -46,8 +51,18 @@ public class DownloadingListAdapter extends BaseAdapter{
 	ActionItem pauseItem;
 	ActionItem stopItem;
 	
-	/** ViewDownloadManagemet[] **/
-	private Object[] downloading = null;
+	private ViewListDownloads downloading = null;
+	private ViewListDownloads updated = null;
+	
+	
+
+	private Handler updateListHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        	downloading = updated;
+    		notifyDataSetChanged();        	
+        }
+	};
 
 	/**
 	 * DownloadingListAdapter Constructor
@@ -55,8 +70,9 @@ public class DownloadingListAdapter extends BaseAdapter{
 	 * @param context
 	 * @param ImageLoader
 	 */
-	public DownloadingListAdapter(Context context, ImageLoader imageLoader){
+	public DownloadingListAdapter(Context context, AIDLServiceDownloadManager serviceManager, ImageLoader imageLoader){
 		this.context = context;
+		this.serviceManager = serviceManager;
 		this.imageLoader = imageLoader;
 		
 		playItem = new ActionItem(EnumQuickActions.PLAY.ordinal(), "Resume", context.getResources().getDrawable(R.drawable.ic_media_play));
@@ -66,10 +82,6 @@ public class DownloadingListAdapter extends BaseAdapter{
 		layoutInflater = LayoutInflater.from(context);
 	} 
 
-	
-	
-	
-	
 	
 
 	public static class DownloadingRowViewHolder{
@@ -102,11 +114,11 @@ public class DownloadingListAdapter extends BaseAdapter{
 			rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
 		}
 
-		final ViewDownloadManagement download = (ViewDownloadManagement) downloading[position];
+		final ViewDownloadManagement download = downloading.get(position);
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
 		rowViewHolder.app_progress.setText(download.getProgressString());
-		rowViewHolder.app_speed.setText(download.getSpeedInKBpsString());
+		rowViewHolder.app_speed.setText(download.getSpeedInKBpsString(context));
 		if(download.getProgress() != 0 && download.getProgress() < 99){
 			rowViewHolder.app_download_progress.setIndeterminate(false);
 			rowViewHolder.app_download_progress.setMax(100);
@@ -140,24 +152,30 @@ public class DownloadingListAdapter extends BaseAdapter{
 				actionBar.show(view);
 				
 				actionBar.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
+					final int appHashid = download.hashCode();
+					
 					@Override
 					public void onItemClick(QuickAction quickAction, int pos, int actionId) {
-						switch (EnumQuickActions.reverseOrdinal(actionId)) {
-							case PLAY:
-								getItem(position).resume();
-								break;
-								
-							case PAUSE:
-								getItem(position).pause();
-								break;
-								
-							case STOP:
-								getItem(position).stop();
-								break;
-			
-							default:
-								break;
-						}	
+						try {
+							switch (EnumQuickActions.reverseOrdinal(actionId)) {
+								case PLAY:
+									serviceManager.callResumeDownload(appHashid);
+									break;
+									
+								case PAUSE:
+									serviceManager.callPauseDownload(appHashid);
+									break;
+									
+								case STOP:
+									serviceManager.callStopDownload(appHashid);
+									break;
+				
+								default:
+									break;
+							}	
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
 					}
 				});	
 				
@@ -171,7 +189,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 	@Override
 	public int getCount() {
 		if(downloading != null){
-			return downloading.length;
+			return downloading.size();
 		}else{
 			return 0;
 		}
@@ -179,13 +197,13 @@ public class DownloadingListAdapter extends BaseAdapter{
 
 	@Override
 	public ViewDownloadManagement getItem(int position) {
-		return (ViewDownloadManagement) downloading[position];
+		return downloading.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
 		try {
-			return downloading[position].hashCode();
+			return downloading.get(position).hashCode();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return 0;
@@ -194,11 +212,11 @@ public class DownloadingListAdapter extends BaseAdapter{
 
 	/**
 	 * 
-	 * @param updatedList ViewDownloadManagement[] (uncasted)
+	 * @param updatedList ViewListDownloads
 	 */
-	public void updateList(Object[] updatedList){
-		downloading = updatedList;
-		notifyDataSetChanged();
+	public void updateList(ViewListDownloads updatedList){
+		updated = updatedList;
+		updateListHandler.sendEmptyMessage(0);
 	}
 	
 }
