@@ -161,6 +161,9 @@ public class DownloadManager extends Activity {
 					} else {
 						downloading.setVisibility(View.VISIBLE);
 					}
+					if(downloadedAdapter.isEmpty()){
+						downloaded.setVisibility(View.GONE);
+					}
 					notDownloaded.setVisibility(View.VISIBLE);
 					break;
 	
@@ -169,6 +172,12 @@ public class DownloadManager extends Activity {
 				case RESUMING:
 				case STOPPED:
 					downloading.setVisibility(View.VISIBLE);
+					if(notDownloadedAdapter.isEmpty()){
+						notDownloaded.setVisibility(View.GONE);
+					}
+					if(downloadedAdapter.isEmpty()){
+						downloaded.setVisibility(View.GONE);
+					}
 					break;
 	
 				case COMPLETED:
@@ -176,6 +185,9 @@ public class DownloadManager extends Activity {
 						downloading.setVisibility(View.GONE);
 					} else {
 						downloading.setVisibility(View.VISIBLE);
+					}
+					if(notDownloadedAdapter.isEmpty()){
+						notDownloaded.setVisibility(View.GONE);
 					}
 					downloaded.setVisibility(View.VISIBLE);
 					break;
