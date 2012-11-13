@@ -107,6 +107,7 @@ import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.ImageLoader2;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt2.services.MainService;
+import cm.aptoide.pt2.services.ServiceDownloadManager;
 import cm.aptoide.pt2.services.MainService.LocalBinder;
 import cm.aptoide.pt2.util.Algorithms;
 import cm.aptoide.pt2.util.Md5Handler;
@@ -117,9 +118,9 @@ import cm.aptoide.pt2.webservices.login.Login;
 
 import com.viewpagerindicator.TitlePageIndicator;
 
-public class MainActivity extends FragmentActivity implements
-		LoaderCallbacks<Cursor> {
-
+public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
+	private Intent serviceDownloadManager;
+	
 	private final static int AVAILABLE_LOADER = 0;
 	private final static int INSTALLED_LOADER = 1;
 	private final static int UPDATES_LOADER = 2;
@@ -1253,6 +1254,9 @@ public class MainActivity extends FragmentActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		serviceDownloadManager = new Intent(this, ServiceDownloadManager.class);
+		startService(serviceDownloadManager);
+
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
 
@@ -1842,7 +1846,7 @@ public class MainActivity extends FragmentActivity implements
 		unregisterReceiver(statusReceiver);
 		unregisterReceiver(redrawInstalledReceiver);
 		unregisterReceiver(loginReceiver);
-		((ApplicationAptoide)getApplication()).stopDownloadService();
+		stopService(serviceDownloadManager);
 		generateXML();
 		super.onDestroy();
 	}
