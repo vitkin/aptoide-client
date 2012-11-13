@@ -5,25 +5,37 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xmlpull.v1.XmlSerializer;
@@ -44,6 +56,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -114,16 +127,23 @@ public class MainActivity extends FragmentActivity implements
 	private final static int LATEST_COMMENTS = -2;
 	private final static int LATEST_LIKES = -1;
 
-	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
+	private HashMap<String, String> updateParams = new HashMap<String, String>();
+	private static final String LATEST_VERSION_CODE_URI = "http://imgs.aptoide.com/latest_version.xml";
+	private static final String TMP_UPDATE_FILE = Environment
+			.getExternalStorageDirectory().getPath()
+			+ "/.aptoide/aptoideUpdate.apk";
+
+	private final String SDCARD = Environment.getExternalStorageDirectory()
+			.getPath();
 	private String LOCAL_PATH = SDCARD + "/.aptoide";
 
 	private final Dialog.OnClickListener addRepoListener = new Dialog.OnClickListener() {
 
 		@Override
 		public void onClick(DialogInterface arg0, int arg1) {
-			String url = ((EditText) alertDialog.findViewById(R.id.edit_uri))
+			storeUri = ((EditText) alertDialog.findViewById(R.id.edit_uri))
 					.getText().toString();
-			dialogAddStore(url, null, null);
+			dialogAddStore(storeUri, null, null);
 		}
 
 	};
@@ -192,7 +212,7 @@ public class MainActivity extends FragmentActivity implements
 		});
 	}
 
-	private void loadRecommended(){
+	private void loadRecommended() {
 		new Thread(new Runnable() {
 
 			private ArrayList<HashMap<String, String>> valuesRecommended;
@@ -206,8 +226,10 @@ public class MainActivity extends FragmentActivity implements
 					parent_apk.setApkid("recommended");
 					BufferedInputStream bis = new BufferedInputStream(
 							NetworkUtils.getInputStream(new URL(
-									"http://webservices.aptoide.com/webservices/listUserBasedApks/"+Login.getToken(mContext)+"/10/xml"),
-									null, null, mContext), 8 * 1024);
+									"http://webservices.aptoide.com/webservices/listUserBasedApks/"
+											+ Login.getToken(mContext)
+											+ "/10/xml"), null, null, mContext),
+							8 * 1024);
 					File f = File.createTempFile("abc", "abc");
 					OutputStream out = new FileOutputStream(f);
 					byte buf[] = new byte[1024];
@@ -231,86 +253,101 @@ public class MainActivity extends FragmentActivity implements
 			}
 
 			private void loadUIRecommendedApps() {
-		valuesRecommended = db.getItemBasedApksRecommended("recommended");
+				valuesRecommended = db
+						.getItemBasedApksRecommended("recommended");
 
-		runOnUiThread(new Runnable() {
-			ImageLoader2 imageLoader = ImageLoader2.getInstance(mContext);
+				runOnUiThread(new Runnable() {
+					ImageLoader2 imageLoader = ImageLoader2
+							.getInstance(mContext);
 
-			public void run() {
+					public void run() {
 
-				LinearLayout ll = (LinearLayout) featuredView
-						.findViewById(R.id.recommended_container);
-				ll.removeAllViews();
-				LinearLayout llAlso = new LinearLayout(MainActivity.this);
-				llAlso.setLayoutParams(new LayoutParams(
-						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-				llAlso.setOrientation(LinearLayout.HORIZONTAL);
-				if(valuesRecommended.isEmpty()){
-					TextView tv = new TextView(mContext);
-					tv.setText("No recommended apps found. We need more interaction from you. Make some downloads!");
-					ll.addView(tv);
-				}else{
-					
-				
-				for (int i = 0; i != valuesRecommended.size(); i++) {
-					RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater()
-							.inflate(R.layout.griditem, null);
-					((TextView) txtSamItem.findViewById(R.id.name))
-							.setText(valuesRecommended.get(i).get("name"));
-					imageLoader.DisplayImage(-1, valuesRecommended.get(i).get("icon"),
-							(ImageView) txtSamItem.findViewById(R.id.icon),
-							mContext);
-					float stars = 0f;
-					try {
-						stars = Float.parseFloat(valuesRecommended.get(i).get("rating"));
-					} catch (Exception e) {
-						stars = 0f;
-					}
-					((RatingBar) txtSamItem.findViewById(R.id.rating))
-							.setRating(stars);
-					txtSamItem.setPadding(10, 0, 0, 0);
-					txtSamItem.setTag(valuesRecommended.get(i).get("_id"));
-					txtSamItem.setLayoutParams(new LayoutParams(
-							LayoutParams.FILL_PARENT, 100, 1));
-					// txtSamItem.setOnClickListener(featuredListener);
-					txtSamItem.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View arg0) {
-							Intent i = new Intent(MainActivity.this,
-									ApkInfo.class);
-							long id = Long.parseLong((String) arg0.getTag());
-							i.putExtra("_id", id);
-							i.putExtra("top", true);
-							i.putExtra("category", Category.ITEMBASED.ordinal());
-							startActivity(i);
-						}
-					});
-
-					txtSamItem.measure(0, 0);
-
-					if (i % 2 == 0) {
-						ll.addView(llAlso);
-
-						llAlso = new LinearLayout(MainActivity.this);
+						LinearLayout ll = (LinearLayout) featuredView
+								.findViewById(R.id.recommended_container);
+						ll.removeAllViews();
+						LinearLayout llAlso = new LinearLayout(
+								MainActivity.this);
 						llAlso.setLayoutParams(new LayoutParams(
-								LayoutParams.FILL_PARENT, 100));
+								LayoutParams.FILL_PARENT,
+								LayoutParams.WRAP_CONTENT));
 						llAlso.setOrientation(LinearLayout.HORIZONTAL);
-						llAlso.addView(txtSamItem);
-					} else {
-						llAlso.addView(txtSamItem);
-					}
-				}
+						if (valuesRecommended.isEmpty()) {
+							TextView tv = new TextView(mContext);
+							tv.setText("No recommended apps found. We need more interaction from you. Make some downloads!");
+							ll.addView(tv);
+						} else {
 
-				ll.addView(llAlso);
-			}
-			}
-		});
+							for (int i = 0; i != valuesRecommended.size(); i++) {
+								RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater()
+										.inflate(R.layout.griditem, null);
+								((TextView) txtSamItem.findViewById(R.id.name))
+										.setText(valuesRecommended.get(i).get(
+												"name"));
+								imageLoader.DisplayImage(-1, valuesRecommended
+										.get(i).get("icon"),
+										(ImageView) txtSamItem
+												.findViewById(R.id.icon),
+										mContext);
+								float stars = 0f;
+								try {
+									stars = Float.parseFloat(valuesRecommended
+											.get(i).get("rating"));
+								} catch (Exception e) {
+									stars = 0f;
+								}
+								((RatingBar) txtSamItem
+										.findViewById(R.id.rating))
+										.setRating(stars);
+								txtSamItem.setPadding(10, 0, 0, 0);
+								txtSamItem.setTag(valuesRecommended.get(i).get(
+										"_id"));
+								txtSamItem.setLayoutParams(new LayoutParams(
+										LayoutParams.FILL_PARENT, 100, 1));
+								// txtSamItem.setOnClickListener(featuredListener);
+								txtSamItem
+										.setOnClickListener(new OnClickListener() {
+
+											@Override
+											public void onClick(View arg0) {
+												Intent i = new Intent(
+														MainActivity.this,
+														ApkInfo.class);
+												long id = Long
+														.parseLong((String) arg0
+																.getTag());
+												i.putExtra("_id", id);
+												i.putExtra("top", true);
+												i.putExtra("category",
+														Category.ITEMBASED
+																.ordinal());
+												startActivity(i);
+											}
+										});
+
+								txtSamItem.measure(0, 0);
+
+								if (i % 2 == 0) {
+									ll.addView(llAlso);
+
+									llAlso = new LinearLayout(MainActivity.this);
+									llAlso.setLayoutParams(new LayoutParams(
+											LayoutParams.FILL_PARENT, 100));
+									llAlso.setOrientation(LinearLayout.HORIZONTAL);
+									llAlso.addView(txtSamItem);
+								} else {
+									llAlso.addView(txtSamItem);
+								}
+							}
+
+							ll.addView(llAlso);
+						}
+					}
+				});
 			}
 		}).start();
-		
+
 	}
-	
+
 	private void loadFeatured() {
 		new Thread(new Runnable() {
 
@@ -322,9 +359,11 @@ public class MainActivity extends FragmentActivity implements
 					ViewApk parent_apk = new ViewApk();
 					parent_apk.setApkid("editorschoice");
 					BufferedInputStream bis = new BufferedInputStream(
-							NetworkUtils.getInputStream(new URL(
-									"http://imgs.aptoide.com/apks/editors.xml"),
-									null, null, mContext), 8 * 1024);
+							NetworkUtils
+									.getInputStream(
+											new URL(
+													"http://imgs.aptoide.com/apks/editors.xml"),
+											null, null, mContext), 8 * 1024);
 					File f = File.createTempFile("abc", "abc");
 					OutputStream out = new FileOutputStream(f);
 					byte buf[] = new byte[1024];
@@ -364,7 +403,7 @@ public class MainActivity extends FragmentActivity implements
 													new URL(
 															"http://apps.store.aptoide.com/top.xml"),
 													null, null, mContext),
-									8 * 1024), new TopRepoParserHandler(db,
+									8 * 1024), new LatestTopRepoParserHandler(db,
 									server, Category.TOP, true));
 					loadUItopapps();
 				} catch (ParserConfigurationException e) {
@@ -389,7 +428,6 @@ public class MainActivity extends FragmentActivity implements
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
 			HashMap<String, String> item = new HashMap<String, String>();
 			item.put("name", c.getString(1));
-			System.out.println(c.getString(1));
 			item.put("icon", db.getTopIconsPath(c.getLong(3)) + c.getString(4));
 			item.put("rating", c.getString(5));
 			item.put("id", c.getString(0));
@@ -481,6 +519,7 @@ public class MainActivity extends FragmentActivity implements
 	private void dialogAddStore(final String url, final String username,
 			final String password) {
 		final ProgressDialog pd = new ProgressDialog(mContext);
+		pd.setMessage(getString(R.string.please_wait));
 		pd.show();
 
 		new Thread(new Runnable() {
@@ -521,7 +560,7 @@ public class MainActivity extends FragmentActivity implements
 	private AlertDialog alertDialog;
 
 	private View alertDialogView;
-	private HashMap<String, Long> serversToParse = new HashMap<String, Long>();
+
 	private AvailableListAdapter availableAdapter;
 	private ListView availableListView;
 	private Loader<Cursor> availableLoader;
@@ -536,10 +575,12 @@ public class MainActivity extends FragmentActivity implements
 			getInstalled();
 			getAllRepoStatus();
 			loadFeatured();
-			if(Login.isLoggedIn(mContext)){
+			if (Login.isLoggedIn(mContext)) {
 				loadRecommended();
-			}else{
-				((TextView) featuredView.findViewById(R.id.recommended_textview)).setText("Login to show Recommended Apps");
+			} else {
+				((TextView) featuredView
+						.findViewById(R.id.recommended_textview))
+						.setText("Login to show Recommended Apps");
 			}
 		}
 
@@ -646,6 +687,7 @@ public class MainActivity extends FragmentActivity implements
 	}
 
 	public void getAllRepoStatus() {
+		final HashMap<String, Long> serversToParse = new HashMap<String, Long>();
 		new Thread(new Runnable() {
 
 			@Override
@@ -698,7 +740,7 @@ public class MainActivity extends FragmentActivity implements
 								if (parse) {
 									service.parseServer(db, server);
 								}
-								while(service==null){
+								while (service == null) {
 									Thread.sleep(10);
 								}
 								service.parseTop(db, server);
@@ -810,18 +852,32 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		menu.add(Menu.NONE, EnumOptionsMenu.LOGIN.ordinal(), EnumOptionsMenu.LOGIN.ordinal(), R.string.setcredentials).setIcon(android.R.drawable.ic_menu_edit);
-		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(), R.string.menu_display_options).setIcon(android.R.drawable.ic_menu_sort_by_size);
-		menu.add(Menu.NONE, EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(), EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(), R.string.setting_schdwntitle).setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(), EnumOptionsMenu.SETTINGS.ordinal(), R.string.settings_title_bar).setIcon(android.R.drawable.ic_menu_manage);
-		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(), EnumOptionsMenu.ABOUT.ordinal(), R.string.about).setIcon(android.R.drawable.ic_menu_help);
+		menu.add(Menu.NONE, EnumOptionsMenu.LOGIN.ordinal(),
+				EnumOptionsMenu.LOGIN.ordinal(), R.string.setcredentials)
+				.setIcon(android.R.drawable.ic_menu_edit);
+		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(),
+				EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(),
+				R.string.menu_display_options).setIcon(
+				android.R.drawable.ic_menu_sort_by_size);
+		menu.add(Menu.NONE, EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),
+				EnumOptionsMenu.SCHEDULED_DOWNLOADS.ordinal(),
+				R.string.setting_schdwntitle).setIcon(
+				android.R.drawable.ic_menu_agenda);
+		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(),
+				EnumOptionsMenu.SETTINGS.ordinal(), R.string.settings_title_bar)
+				.setIcon(android.R.drawable.ic_menu_manage);
+		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),
+				EnumOptionsMenu.ABOUT.ordinal(), R.string.about).setIcon(
+				android.R.drawable.ic_menu_help);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
-		Log.d("AptoideUploader-OptionsMenu", "menuOption: "+menuEntry+" itemid: "+item.getItemId());
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item
+				.getItemId());
+		Log.d("AptoideUploader-OptionsMenu", "menuOption: " + menuEntry
+				+ " itemid: " + item.getItemId());
 		switch (menuEntry) {
 		case LOGIN:
 			Intent loginIntent = new Intent(this, Login.class);
@@ -864,15 +920,17 @@ public class MainActivity extends FragmentActivity implements
 		}).start();
 
 	}
-	public void showAbout(){
+
+	public void showAbout() {
 		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-		alertBuilder.setCancelable(false)
-		.setNegativeButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				dialog.cancel();
-			}
-		})
-		.setMessage("Aptoide");
+		alertBuilder
+				.setCancelable(false)
+				.setNegativeButton(getString(R.string.ok),
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						}).setMessage("Aptoide");
 
 		AlertDialog alert = alertBuilder.create();
 
@@ -881,43 +939,50 @@ public class MainActivity extends FragmentActivity implements
 
 		alert.show();
 	}
-	
+
 	private void displayOptionsDialog() {
 
-		final SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(this);
+		final SharedPreferences sPref = PreferenceManager
+				.getDefaultSharedPreferences(this);
 		final Editor editor = sPref.edit();
 
-		View view = LayoutInflater.from(mContext).inflate(R.layout.orderpopup, null);
+		View view = LayoutInflater.from(mContext).inflate(R.layout.orderpopup,
+				null);
 		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(view);
 		final AlertDialog orderDialog = dialogBuilder.create();
 		orderDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		orderDialog.setTitle(getString(R.string.menu_display_options));
 		orderDialog.setCancelable(true);
-		
-		final RadioButton ord_rct = (RadioButton) view.findViewById(R.id.org_rct);
-		final RadioButton ord_abc = (RadioButton) view.findViewById(R.id.org_abc);
-		final RadioButton ord_rat = (RadioButton) view.findViewById(R.id.org_rat);
-		final RadioButton ord_dwn = (RadioButton) view.findViewById(R.id.org_dwn);
+
+		final RadioButton ord_rct = (RadioButton) view
+				.findViewById(R.id.org_rct);
+		final RadioButton ord_abc = (RadioButton) view
+				.findViewById(R.id.org_abc);
+		final RadioButton ord_rat = (RadioButton) view
+				.findViewById(R.id.org_rat);
+		final RadioButton ord_dwn = (RadioButton) view
+				.findViewById(R.id.org_dwn);
 		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
 		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
 
 		joinStores = (CheckBox) view.findViewById(R.id.join_stores);
 		joinStores.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
-					@Override
-					public void onCheckedChanged(
-							CompoundButton buttonView, boolean isChecked) {
-						joinStores_boolean = isChecked;
-						 if (joinStores_boolean) {
-							 editor.putBoolean("joinStoresChkBox", true);
-						 } else {
-							 editor.putBoolean("joinStoresChkBox", false);
-						 }
-						 editor.commit();
-					}
-				});
-		
-		final ToggleButton adult = (ToggleButton) view.findViewById(R.id.adultcontent_toggle);
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,
+					boolean isChecked) {
+				joinStores_boolean = isChecked;
+				if (joinStores_boolean) {
+					editor.putBoolean("joinStoresChkBox", true);
+				} else {
+					editor.putBoolean("joinStoresChkBox", false);
+				}
+				editor.commit();
+			}
+		});
+
+		final ToggleButton adult = (ToggleButton) view
+				.findViewById(R.id.adultcontent_toggle);
 
 		orderDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
 				new Dialog.OnClickListener() {
@@ -965,7 +1030,8 @@ public class MainActivity extends FragmentActivity implements
 		} else {
 			btn2.setChecked(true);
 		}
-		joinStores.setChecked(sPref.getBoolean("joinStoresChkBox", joinStores_boolean));
+		joinStores.setChecked(sPref.getBoolean("joinStoresChkBox",
+				joinStores_boolean));
 		adult.setChecked(!sPref.getBoolean("matureChkBox", false));
 		// adult.setOnCheckedChangeListener(adultCheckedListener);
 		switch (order) {
@@ -1042,6 +1108,7 @@ public class MainActivity extends FragmentActivity implements
 		switch (item.getItemId()) {
 		case 0:
 			pd = new ProgressDialog(mContext);
+			pd.setMessage(getString(R.string.please_wait));
 			pd.show();
 			pd.setCancelable(false);
 			new Thread(new Runnable() {
@@ -1080,6 +1147,7 @@ public class MainActivity extends FragmentActivity implements
 			break;
 		case 1:
 			pd = new ProgressDialog(mContext);
+			pd.setMessage(getString(R.string.please_wait));
 			pd.show();
 			pd.setCancelable(false);
 			new Thread(new Runnable() {
@@ -1119,7 +1187,8 @@ public class MainActivity extends FragmentActivity implements
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			((TextView) featuredView.findViewById(R.id.recommended_textview)).setText("Recommended Apps");
+			((TextView) featuredView.findViewById(R.id.recommended_textview))
+					.setText("Recommended Apps");
 			loadRecommended();
 		}
 	};
@@ -1137,6 +1206,48 @@ public class MainActivity extends FragmentActivity implements
 		}
 	};
 	protected Order order;
+	private BroadcastReceiver newRepoReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.hasExtra("newrepo")) {
+				ArrayList<String> repos = (ArrayList<String>) intent
+						.getSerializableExtra("newrepo");
+				for (final String uri2 : repos) {
+					final AlertDialog alertDialog = new AlertDialog.Builder(
+							mContext).create();
+					alertDialog.setMessage(getString(R.string.newrepo_alrt)
+							+ uri2 + " ?");
+					alertDialog.setButton(Dialog.BUTTON_POSITIVE,
+							getString(android.R.string.yes),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialogAddStore(uri2, null, null);
+								}
+
+							});
+					alertDialog.setButton(Dialog.BUTTON_NEGATIVE,
+							getString(android.R.string.no),
+							new DialogInterface.OnClickListener() {
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									return;
+								}
+
+							});
+					alertDialog.show();
+
+				}
+			}
+
+		}
+	};
+	private String storeUri = "apps.store.aptoide.com";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -1145,8 +1256,7 @@ public class MainActivity extends FragmentActivity implements
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
 
-			final AlertDialog upd_alrt = new AlertDialog.Builder(this)
-					.create();
+			final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
 			upd_alrt.setMessage(getText(R.string.remote_in_noSD));
@@ -1198,12 +1308,12 @@ public class MainActivity extends FragmentActivity implements
 				if (!sPref.contains("matureChkBox")) {
 					editor.putBoolean("matureChkBox", true);
 				}
-				if(sPref.getString("myId", null) == null){
+				if (sPref.getString("myId", null) == null) {
 					String rand_id = UUID.randomUUID().toString();
 					editor.putString("myId", rand_id);
 				}
 
-				if(sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0){
+				if (sPref.getInt("scW", 0) == 0 || sPref.getInt("scH", 0) == 0) {
 					DisplayMetrics dm = new DisplayMetrics();
 					getWindowManager().getDefaultDisplay().getMetrics(dm);
 					editor.putInt("scW", dm.widthPixels);
@@ -1214,39 +1324,45 @@ public class MainActivity extends FragmentActivity implements
 				if (!file.exists()) {
 					file.mkdirs();
 				}
-				
+
 				new Thread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 
-						// Note the L that tells the compiler to interpret the number as a Long
-						final int MAXFILEAGE = (int) 2678400000L; // 1 month in milliseconds
+						// Note the L that tells the compiler to interpret the
+						// number as a Long
+						final long MAXFILEAGE = 2678400000L; // 1 month in
+																// milliseconds
 
-						// Get file handle to the directory. In this case the application files dir
-						File dir = new File(LOCAL_PATH+"/apks");
+						// Get file handle to the directory. In this case the
+						// application files dir
+						File dir = new File(LOCAL_PATH + "/apks");
 
-						// Optain list of files in the directory. 
-						// listFiles() returns a list of File objects to each file found.
+						// Optain list of files in the directory.
+						// listFiles() returns a list of File objects to each
+						// file found.
 						File[] files = dir.listFiles();
 
 						// Loop through all files
-						for (File f : files ) {
+						for (File f : files) {
 
-						   // Get the last modified date. Miliseconds since 1970
-						   long lastmodified = f.lastModified();
+							// Get the last modified date. Miliseconds since
+							// 1970
+							long lastmodified = f.lastModified();
 
-						   // Do stuff here to deal with the file.. 
-						   // For instance delete files older than 1 month
-						   if(lastmodified+MAXFILEAGE<System.currentTimeMillis()) {
-						      f.delete();
-						   }
+							// Do stuff here to deal with the file..
+							// For instance delete files older than 1 month
+							if (lastmodified + MAXFILEAGE < System
+									.currentTimeMillis()) {
+								f.delete();
+							}
 						}
 					}
 				}).start();
-				
-				
-				joinStores_boolean = sPref.getBoolean("joinStoresChkBox", false);
+
+				joinStores_boolean = sPref
+						.getBoolean("joinStoresChkBox", false);
 				db = Database.getInstance(mContext);
 
 				Intent i = new Intent(mContext, MainService.class);
@@ -1262,6 +1378,8 @@ public class MainActivity extends FragmentActivity implements
 				registerReceiver(loginReceiver, new IntentFilter("login"));
 				registerReceiver(redrawInstalledReceiver, new IntentFilter(
 						"pt.caixamagica.aptoide.REDRAW"));
+				registerReceiver(newRepoReceiver, new IntentFilter(
+						"pt.caixamagica.aptoide.NEWREPO"));
 				setContentView(R.layout.activity_aptoide);
 				TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
 				ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
@@ -1292,7 +1410,6 @@ public class MainActivity extends FragmentActivity implements
 
 							}
 						});
-
 
 				availableAdapter = new AvailableListAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
@@ -1330,13 +1447,16 @@ public class MainActivity extends FragmentActivity implements
 									} else if (id == LATEST_COMMENTS) {
 										depth = ListDepth.LATEST_COMMENTS;
 									} else if (id == -3) {
-										if(!Login.isLoggedIn(mContext)){
-											Toast.makeText(mContext, "You need to login to see recommended apps for you.", Toast.LENGTH_LONG).show();
+										if (!Login.isLoggedIn(mContext)) {
+											Toast.makeText(
+													mContext,
+													"You need to login to see recommended apps for you.",
+													Toast.LENGTH_LONG).show();
 											return;
-										}else{
+										} else {
 											depth = ListDepth.RECOMMENDED;
 										}
-											
+
 									} else if (id == -4) {
 										depth = ListDepth.ALLAPPLICATIONS;
 									} else {
@@ -1394,7 +1514,7 @@ public class MainActivity extends FragmentActivity implements
 							int arg2, long id) {
 						Intent i = new Intent(MainActivity.this, ApkInfo.class);
 						i.putExtra("_id", id);
-						i.putExtra("top", false);
+						i.putExtra("category", Category.INFOXML.ordinal());
 						startActivity(i);
 					}
 				});
@@ -1413,7 +1533,7 @@ public class MainActivity extends FragmentActivity implements
 							int arg2, long id) {
 						Intent i = new Intent(MainActivity.this, ApkInfo.class);
 						i.putExtra("_id", id);
-						i.putExtra("top", false);
+						i.putExtra("category", Category.INFOXML.ordinal());
 						startActivity(i);
 					}
 				});
@@ -1430,8 +1550,7 @@ public class MainActivity extends FragmentActivity implements
 				pager.setAdapter(new ViewPagerAdapter(mContext, views));
 				indicator.setViewPager(pager);
 				refreshAvailableList(true);
-				
-				
+
 				addBreadCrumb("Stores", ListDepth.STORES);
 
 				if (sPref.getBoolean("firstrun", true)) {
@@ -1478,26 +1597,6 @@ public class MainActivity extends FragmentActivity implements
 					editor.commit();
 
 				}
-				
-				if(db.getStores(false).getCount()==0){
-					final AlertDialog alertDialog = new AlertDialog.Builder(mContext).create();
-					alertDialog.setMessage(getString(R.string.myrepo_alrt)+"http://apps.store.aptoide.com/");
-					alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Yes", new DialogInterface.OnClickListener() {
-						
-						public void onClick(DialogInterface dialog, int which) {
-							dialogAddStore("http://apps.store.aptoide.com", null, null);
-						}
-					});
-					
-					
-					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,getString(R.string.btn_no),new DialogInterface.OnClickListener() {
-						
-						public void onClick(DialogInterface dialog, int which) {
-							return;
-						}
-					});
-					alertDialog.show();
-				}
 
 				if (getIntent().hasExtra("newrepo")) {
 					ArrayList<String> repos = (ArrayList<String>) getIntent()
@@ -1532,9 +1631,36 @@ public class MainActivity extends FragmentActivity implements
 						alertDialog.show();
 
 					}
-				}
+				} else if (db.getStores(false).getCount() == 0) {
+					final AlertDialog alertDialog = new AlertDialog.Builder(
+							mContext).create();
+					alertDialog.setMessage(getString(R.string.myrepo_alrt)
+							+ "http://apps.store.aptoide.com/");
+					alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes",
+							new DialogInterface.OnClickListener() {
 
+								public void onClick(DialogInterface dialog,
+										int which) {
+									dialogAddStore(
+											"http://apps.store.aptoide.com",
+											null, null);
+								}
+							});
+
+					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+							getString(R.string.btn_no),
+							new DialogInterface.OnClickListener() {
+
+								public void onClick(DialogInterface dialog,
+										int which) {
+									return;
+								}
+
+							});
+					alertDialog.show();
+				}
 			}
+
 		}
 
 	}
@@ -1663,13 +1789,16 @@ public class MainActivity extends FragmentActivity implements
 					case RECOMMENDED:
 						final Cursor c = db.getUserBasedApk(store_id);
 						runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
-								if(c.getCount()==0){
-									Toast.makeText(mContext, "No recommended apps found. We need more interaction from you. Make some downloads!", Toast.LENGTH_LONG).show();
+								if (c.getCount() == 0) {
+									Toast.makeText(
+											mContext,
+											"No recommended apps found. We need more interaction from you. Make some downloads!",
+											Toast.LENGTH_LONG).show();
 								}
-								
+
 							}
 						});
 						return c;
@@ -1764,11 +1893,12 @@ public class MainActivity extends FragmentActivity implements
 			break;
 		}
 		pb.setVisibility(View.GONE);
-//		 if (availableListView.getAdapter().getCount() > 1 || joinStores_boolean) {
-//		 joinStores.setVisibility(View.VISIBLE);
-//		 } else {
-//		 joinStores.setVisibility(View.INVISIBLE);
-//		 }
+		// if (availableListView.getAdapter().getCount() > 1 ||
+		// joinStores_boolean) {
+		// joinStores.setVisibility(View.VISIBLE);
+		// } else {
+		// joinStores.setVisibility(View.INVISIBLE);
+		// }
 
 	}
 
@@ -1805,7 +1935,7 @@ public class MainActivity extends FragmentActivity implements
 		alertDialog.setButton(Dialog.BUTTON_POSITIVE,
 				getString(R.string.search_for_stores), searchStoresListener);
 		((EditText) alertDialogView.findViewById(R.id.edit_uri))
-				.setText("apps.store.aptoide.com");
+				.setText(storeUri);
 		alertDialog.show();
 	}
 
@@ -1823,6 +1953,7 @@ public class MainActivity extends FragmentActivity implements
 
 	ImageLoader loader;
 	ProgressBar store_parsing;
+
 	public class AvailableListAdapter extends CursorAdapter {
 
 		public AvailableListAdapter(Context context, Cursor c, int flags) {
@@ -1834,39 +1965,53 @@ public class MainActivity extends FragmentActivity implements
 		public void bindView(View view, Context context, Cursor cursor) {
 			switch (depth) {
 			case STORES:
-				String hashcode = cursor
-				.getString(cursor.getColumnIndex("avatar")).hashCode()
-				+ "";
-				System.out.println("hashCode"+hashcode);
-				loader.DisplayImage(-1, cursor.getString(cursor
-						.getColumnIndex("avatar")), (ImageView) view
-						.findViewById(R.id.avatar), context, false, hashcode );
+				String hashcode = cursor.getString(
+						cursor.getColumnIndex("avatar")).hashCode()
+						+ "";
+				loader.DisplayImage(
+						cursor.getString(cursor.getColumnIndex("avatar")),
+						(ImageView) view.findViewById(R.id.avatar), context,
+						hashcode);
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
 						.getString(cursor.getColumnIndex("name")));
-				
-				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSED")) {
-					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
+
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(
+						"PARSED")) {
+					store_parsing = (ProgressBar) view
+							.findViewById(R.id.store_parsing_bar);
 					store_parsing.setVisibility(View.GONE);
-					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
+					((TextView) view.findViewById(R.id.store_dwn_number))
+							.setText(cursor.getString(cursor
+									.getColumnIndex("downloads"))
+									+ " downloads");
 				}
-				if (cursor.getString(cursor.getColumnIndex("status")).equals("QUEUED")) {
-					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(
+						"QUEUED")) {
+					store_parsing = (ProgressBar) view
+							.findViewById(R.id.store_parsing_bar);
 					store_parsing.setVisibility(View.GONE);
-					((TextView) view.findViewById(R.id.store_dwn_number)).setText("Preparing to load, please wait...");
-				} 
-				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSING")) {
-					store_parsing = (ProgressBar) view.findViewById(R.id.store_parsing_bar);
+					((TextView) view.findViewById(R.id.store_dwn_number))
+							.setText("Preparing to load, please wait...");
+				}
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(
+						"PARSING")) {
+					store_parsing = (ProgressBar) view
+							.findViewById(R.id.store_parsing_bar);
 					store_parsing.setVisibility(View.VISIBLE);
-					((TextView) view.findViewById(R.id.store_dwn_number)).setText("Loading...");
-				} 
-//				else {
-//					((TextView) view.findViewById(R.id.store_dwn_number))
-//							.setText(cursor.getString(cursor.getColumnIndex("status"))
-//									+ " - "
-//									+ cursor.getString(cursor.getColumnIndex("downloads"))
-//									+ " downloads");
-//				}
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name()) || cursor.getString(cursor.getColumnIndex("status")).equals(State.PARSED.name())) {
+					((TextView) view.findViewById(R.id.store_dwn_number))
+							.setText("Loading...");
+				}
+				// else {
+				// ((TextView) view.findViewById(R.id.store_dwn_number))
+				// .setText(cursor.getString(cursor.getColumnIndex("status"))
+				// + " - "
+				// + cursor.getString(cursor.getColumnIndex("downloads"))
+				// + " downloads");
+				// }
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(
+						State.FAILED.name())
+						|| cursor.getString(cursor.getColumnIndex("status"))
+								.equals(State.PARSED.name())) {
 					view.setTag(1);
 				}
 				break;
@@ -1888,15 +2033,13 @@ public class MainActivity extends FragmentActivity implements
 				}
 				holder.name.setText(cursor.getString(1));
 				loader.DisplayImage(
-						cursor.getLong(3),
-						cursor.getString(4),
+						cursor.getString(cursor.getColumnIndex("iconspath"))
+								+ cursor.getString(cursor
+										.getColumnIndex("imagepath")),
 						holder.icon,
 						context,
-						depth == ListDepth.TOPAPPS ? true : false,
 						(cursor.getString(cursor.getColumnIndex("apkid")) + "|" + cursor
-								.getString(cursor.getColumnIndex("vercode")))
-								.hashCode()
-								+ "");
+								.getString(cursor.getColumnIndex("vercode"))));
 				holder.vername.setText(cursor.getString(2));
 				try {
 					holder.rating.setRating(Float.parseFloat(cursor
@@ -1936,7 +2079,8 @@ public class MainActivity extends FragmentActivity implements
 						.setText("by: "
 								+ cursor.getString(cursor
 										.getColumnIndex("username")));
-				((TextView) view.findViewById(R.id.time)).setText(cursor.getString(cursor.getColumnIndex("time")));
+				((TextView) view.findViewById(R.id.time)).setText(cursor
+						.getString(cursor.getColumnIndex("time")));
 				break;
 			default:
 				break;
@@ -2134,6 +2278,218 @@ public class MainActivity extends FragmentActivity implements
 			Log.e("Exception", "error occurred while creating xml file");
 		}
 
+	}
+
+	private void getUpdateParameters() {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory
+					.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			URLConnection url = new URL(LATEST_VERSION_CODE_URI)
+					.openConnection();
+			url.setReadTimeout(3000);
+			url.setConnectTimeout(3000);
+
+			InputStream a = new BufferedInputStream(url.getInputStream());
+			Document dom = builder.parse(new InputSource(a));
+			dom.getDocumentElement().normalize();
+
+			NodeList items = dom.getElementsByTagName("versionCode");
+			if (items.getLength() > 0) {
+				Node item = items.item(0);
+				Log.d("Aptoide-XmlElement Name", item.getNodeName());
+				Log.d("Aptoide-XmlElement Value", item.getFirstChild()
+						.getNodeValue().trim());
+				updateParams.put("versionCode", item.getFirstChild()
+						.getNodeValue().trim());
+			}
+
+			items = dom.getElementsByTagName("uri");
+			if (items.getLength() > 0) {
+				Node item = items.item(0);
+				Log.d("Aptoide-XmlElement Name", item.getNodeName());
+				Log.d("Aptoide-XmlElement Value", item.getFirstChild()
+						.getNodeValue().trim());
+				updateParams.put("uri", item.getFirstChild().getNodeValue()
+						.trim());
+			}
+
+			items = dom.getElementsByTagName("md5");
+			if (items.getLength() > 0) {
+				Node item = items.item(0);
+				Log.d("Aptoide-XmlElement Name", item.getNodeName());
+				Log.d("Aptoide-XmlElement Value", item.getFirstChild()
+						.getNodeValue().trim());
+				updateParams.put("md5", item.getFirstChild().getNodeValue()
+						.trim());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	private void requestUpdateSelf() {
+		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+		alertBuilder
+				.setCancelable(false)
+				.setPositiveButton(R.string.dialog_yes,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+								new DownloadSelfUpdate().execute();
+							}
+						})
+				.setNegativeButton(R.string.dialog_no,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int id) {
+								dialog.cancel();
+							}
+						}).setMessage(R.string.update_self_msg);
+
+		AlertDialog alert = alertBuilder.create();
+
+		alert.setTitle(R.string.update_self_title);
+		alert.setIcon(R.drawable.ic_launcher);
+
+		alert.show();
+	}
+
+	private class DownloadSelfUpdate extends AsyncTask<Void, Void, Void> {
+		private final ProgressDialog dialog = new ProgressDialog(mContext);
+
+		String latestVersionUri;
+		String referenceMd5;
+
+		void retrieveUpdateParameters() {
+			try {
+				latestVersionUri = updateParams.get("uri");
+				referenceMd5 = updateParams.get("md5");
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.d("Aptoide-Auto-Update",
+						"Update connection failed!  Keeping current version.");
+			}
+		}
+
+		@Override
+		protected void onPreExecute() {
+			this.dialog.setMessage("Retrieving update...");
+			this.dialog.show();
+			super.onPreExecute();
+			retrieveUpdateParameters();
+		}
+
+		@Override
+		protected Void doInBackground(Void... paramArrayOfParams) {
+			try {
+				if (latestVersionUri == null) {
+					retrieveUpdateParameters();
+				}
+				// Message msg_al = new Message();
+				// If file exists, removes it...
+				File f_chk = new File(TMP_UPDATE_FILE);
+				if (f_chk.exists()) {
+					f_chk.delete();
+				}
+				f_chk = null;
+
+				FileOutputStream saveit = new FileOutputStream(TMP_UPDATE_FILE);
+				DefaultHttpClient mHttpClient = new DefaultHttpClient();
+				HttpGet mHttpGet = new HttpGet(latestVersionUri);
+
+				HttpResponse mHttpResponse = mHttpClient.execute(mHttpGet);
+
+				if (mHttpResponse == null) {
+					Log.d("Aptoide", "Problem in network... retry...");
+					mHttpResponse = mHttpClient.execute(mHttpGet);
+					if (mHttpResponse == null) {
+						Log.d("Aptoide", "Major network exception... Exiting!");
+						/*
+						 * msg_al.arg1= 1;
+						 * download_error_handler.sendMessage(msg_al);
+						 */
+						throw new TimeoutException();
+					}
+				}
+
+				if (mHttpResponse.getStatusLine().getStatusCode() == 401) {
+					throw new TimeoutException();
+				} else {
+					InputStream getit = mHttpResponse.getEntity().getContent();
+					byte data[] = new byte[8096];
+					int bytesRead;
+					bytesRead = getit.read(data, 0, 8096);
+					while (bytesRead != -1) {
+						// download_tick.sendEmptyMessage(readed);
+						saveit.write(data, 0, bytesRead);
+						bytesRead = getit.read(data, 0, 8096);
+					}
+					Log.d("Aptoide", "Download done!");
+					saveit.flush();
+					saveit.close();
+					getit.close();
+				}
+			} catch (Exception e) {
+				// download_error_handler.sendMessage(msg_al);
+				e.printStackTrace();
+				Log.d("Aptoide-Auto-Update",
+						"Update connection failed!  Keeping current version.");
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+
+			if (this.dialog.isShowing()) {
+				this.dialog.dismiss();
+			}
+			super.onPostExecute(result);
+
+			if (!(referenceMd5 == null)) {
+				try {
+					File apk = new File(TMP_UPDATE_FILE);
+					if (referenceMd5.equalsIgnoreCase(Md5Handler.md5Calc(apk))) {
+						// msg_al.arg1 = 1;
+						// download_handler.sendMessage(msg_al);
+
+						doUpdateSelf();
+
+					} else {
+						Log.d("Aptoide",
+								referenceMd5 + " VS " + Md5Handler.md5Calc(apk));
+						// msg_al.arg1 = 0;
+						// download_error_handler.sendMessage(msg_al);
+						throw new Exception(referenceMd5 + " VS "
+								+ Md5Handler.md5Calc(apk));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.d("Aptoide-Auto-Update",
+							"Update package checksum failed!  Keeping current version.");
+					if (this.dialog.isShowing()) {
+						this.dialog.dismiss();
+					}
+					finish();
+					super.onPostExecute(result);
+
+				}
+			}
+
+		}
+
+	}
+
+	private void doUpdateSelf() {
+		Intent intent = new Intent();
+		intent.setAction(android.content.Intent.ACTION_VIEW);
+		intent.setDataAndType(Uri.parse("file://" + TMP_UPDATE_FILE),
+				"application/vnd.android.package-archive");
+
+		startActivityForResult(intent, 99);
 	}
 
 }

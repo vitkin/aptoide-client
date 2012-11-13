@@ -1,6 +1,7 @@
 package cm.aptoide.pt2;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,11 +15,8 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.preference.PreferenceManager;
-import android.widget.Toast;
-import cm.aptoide.pt2.preferences.ManagerPreferences;
+import android.util.Log;
 import cm.aptoide.pt2.views.ViewApk;
-import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
-import cm.aptoide.pt2.webservices.login.Login;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -33,7 +31,7 @@ public class Database {
 	private Database(Context context) {
 		dbhandler = new DbOpenHelper(context); 
 		database = dbhandler.getWritableDatabase();
-		this.context=context;
+		Database.context=context;
 	}
 	
 	public static Database getInstance(Context context){
@@ -178,13 +176,13 @@ public class Database {
 			switch (order) {
 			
 			case NAME:
-				order_string = "order by name collate nocase";
+				order_string = "order by a.name collate nocase";
 				break;
 			case DATE:
 				order_string = "order by date desc";
 				break;
 			case DOWNLOADS:
-				order_string = "order by downloads desc";
+				order_string = "order by a.downloads desc";
 				break;
 			case RATING:
 				order_string = "order by rating desc";
@@ -207,21 +205,21 @@ public class Database {
 			if(allApps){
 				if(mergeStores){
 					
-					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by apkid "+order_string,null);
+					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and a.repo_id = c._id "+filter+" group by apkid "+order_string,null);
 					
 				}else{
 					
-					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where repo_id = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) "+filter+" group by apkid "+order_string,new String[]{store+""});
+					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where repo_id = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{store+""});
 				}
 				
 			}else{
 				if(mergeStores){
 					
-					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by apkid "+order_string,new String[]{category2_id+""});
+					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{category2_id+""});
 					
 				}else{
 					
-					c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from apk as a where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) "+filter+" group by apkid "+order_string,new String[]{store+"",category2_id+""});
+					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{store+"",category2_id+""});
 					
 				}
 			}
@@ -307,7 +305,7 @@ public class Database {
 		Cursor c = null;
 		
 		try {
-			c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath, a.rating, a.downloads, a.apkid, a.vercode from apk a,itembasedapk b where a.repo_id = ? and b.parent_apkid = 'recommended' and a.apkid=b.apkid and a.vercode=b.vercode", new String[]{repo_id+""});
+			c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk a,itembasedapk b, itembasedapkrepo as c where a.repo_id = ? and b.parent_apkid = 'recommended' and a.apkid=b.apkid and a.vercode=b.vercode and b.itembasedapkrepo_id=c._id", new String[]{repo_id+""});
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -606,7 +604,7 @@ public class Database {
 		Cursor c = null;
 		try{
 			
-			String query = "select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid group by a.apkid";
+			String query = "select b._id as _id, a.name,a.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath from installed as a, apk as b, repo as c where a.apkid=b.apkid and b.repo_id=c._id group by a.apkid";
 			
 			
 			switch (order) {
@@ -650,7 +648,7 @@ public class Database {
 				filter = filter + " and mature <= 0"; 
 			}
 			
-			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode from installed as a, apk as b where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) "+filter+" group by a.apkid" ;
+			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode , c.iconspath as iconspath from installed as a, apk as b, repo as c where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
 			
 			switch (order) {
 			case NAME:
@@ -728,7 +726,7 @@ public class Database {
 			values.put("mature", apk.getAge());
 			return_long = database.insert("dynamic_apk", null, values);
 			i++;
-			database.yieldIfContendedSafely();
+//			database.yieldIfContendedSafely();
 //			if(i%300==0){
 //				Intent i = new Intent("update");
 //				i.putExtra("server", apk.getRepo_id());
@@ -759,9 +757,9 @@ public class Database {
 			}
 			
 			if(joinStores_boolean){
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from dynamic_apk as a where category1 = ? "+filter,new String[]{category_id+""});
+				c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from dynamic_apk as a, toprepo_extra as c where category1 = ? and a.repo_id = c._id "+filter + " group by a._id",new String[]{category_id+""});
 			}else{
-				c = database.rawQuery("select _id, name, vername, repo_id, imagepath, rating, downloads, apkid, vercode from dynamic_apk as a where repo_id = ? and category1 = ? "+filter,new String[]{store_id+"",category_id+""});
+				c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from dynamic_apk as a, toprepo_extra as c where repo_id = ? and category1 = ? and a.repo_id = c._id "+filter + " group by a._id",new String[]{store_id+"",category_id+""});
 			}
 			System.out.println("getapps " + "repo_id ="+store_id +  " category " + category_id);
 		}catch(Exception e){
@@ -802,13 +800,13 @@ public class Database {
 			values.put("category", category.name().hashCode());
 			
 			if(featured){
-				
 				values.put("url", "http://apps.store.aptoide.com/");
 			}else{
 				values.put("url", server.url);
 			}
 			values.put("iconspath", server.iconsPath);
 			values.put("basepath",server.basePath);
+			values.put("name",server.name);
 			database.insert("toprepo_extra", null, values);
 			
 			
@@ -841,16 +839,29 @@ public class Database {
 		categories2.clear();
 	}
 
-	public ViewApk getApk(long long1, boolean top) {
+	public ViewApk getApk(long id, Category category) {
 		Cursor c = null;
 		ViewApk apk = new ViewApk();
+		
+		switch (category) {
+		case INFOXML:
+			c = database.query("apk as a, repo as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
+			break;
+		
+		case ITEMBASED:
+		case USERBASED:
+		case EDITORSCHOICE:
+			c = database.query("itembasedapk as a, itembasedapkrepo as c", new String[]{"a.apkid","a.vername","a.itembasedapkrepo_id","a.downloads","a.size","a.icon","a.name","a.rating","a.path","a.md5","c.iconspath","c.name"}, "a._id = ? and a.itembasedapkrepo_id = c._id", new String[]{id+""}, null, null, null);
+			break;
+		case TOP:
+		case LATEST:
+		case TOPFEATURED:
+			c = database.query("dynamic_apk as a, toprepo_extra as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
+		default:
+			break;
+		}
+		
 		try {
-			
-			if(top){
-				c = database.query("dynamic_apk", new String[]{"apkid","vername","repo_id","downloads","size","imagepath","name","rating","path","md5"}, "_id = ?", new String[]{long1+""}, null, null, null);
-			}else{
-				c = database.query("apk", new String[]{"apkid","vername","repo_id","downloads","size","imagepath","name","rating","path","md5"}, "_id = ?", new String[]{long1+""}, null, null, null);
-			}
 			
 			c.moveToFirst();
 			apk.setApkid(c.getString(0));
@@ -858,14 +869,13 @@ public class Database {
 			apk.setRepo_id(c.getLong(2));
 			apk.setDownloads(c.getString(3));
 			apk.setSize(c.getString(4));
-			apk.setIconPath(c.getString(5));
+			apk.setIconPath(c.getString(10) + c.getString(5));
 			apk.setName(c.getString(6));
 			apk.setRating(c.getString(7));
 			apk.setPath(c.getString(8));
 			apk.setMd5(c.getString(9));
-			apk.setId(long1);
-			
-			
+			apk.setRepoName(c.getString(11));
+			apk.setId(id);
 			
 		} catch (Exception e){
 			e.printStackTrace();
@@ -979,7 +989,7 @@ public class Database {
 					" and mingles <= " +HWSpecifications.getEsglVer(context);
 		}
 		
-		if(!sPref.getBoolean("matureChkBox", false)){
+		if(sPref.getBoolean("matureChkBox", false)){
 			filter = filter + " and mature <= 0"; 
 		}
 		
@@ -1134,10 +1144,6 @@ public class Database {
 			case LATEST:
 			case TOP:
 				c= database.query("toprepo_extra", new String[]{"screenspath"}, "_id = ? and category = ?", new String[]{repo_id+"",category.name().hashCode()+""}, null, null, null);
-				
-				break;
-			case FEATURED:
-				
 				break;
 			case ITEMBASED:
 				c = database.query("itembasedapkrepo", new String[]{"screenspath"}, "_id=?", new String[]{repo_id+""}, null, null, null);
@@ -1382,7 +1388,7 @@ public class Database {
 
 	public Cursor getSearch(String searchQuery) {
 		
-		String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode from apk as b where (b.name LIKE '%"+searchQuery+"%' OR b.apkid LIKE '%"+searchQuery+"%')";
+		String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath as imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode, c.iconspath as iconspath from apk as b, repo as c where (b.name LIKE '%"+searchQuery+"%' OR b.apkid LIKE '%"+searchQuery+"%') and b.repo_id = c._id";
 		
 		Cursor c = null;
 		try {

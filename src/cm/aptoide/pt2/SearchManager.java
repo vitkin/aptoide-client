@@ -92,8 +92,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 					long arg3) {
 				Intent i = new Intent(SearchManager.this,ApkInfo.class);
 				i.putExtra("_id", arg3);
-				i.putExtra("top",false);
-				i.putExtra("category", Category.INFOXML);
+				i.putExtra("category", Category.INFOXML.ordinal());
 				startActivity(i);
 			}
 		});

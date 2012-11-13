@@ -31,6 +31,7 @@ public class ViewApk implements Parcelable {
 	private int minScreen= 0;
 	private String minSdk = "0";
 	private String minGlEs = "0";
+	private String repoName;
 	
 	
 	/**
@@ -360,6 +361,14 @@ public class ViewApk implements Parcelable {
 		this.iconPath = in.readString();
 		this.path = in.readString();
 		this.appHashId = in.readInt();
+	}
+
+	public String getRepoName() {
+		return repoName;
+	}
+
+	public void setRepoName(String repoName) {
+		this.repoName = repoName;
 	}
 	
 }

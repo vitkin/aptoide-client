@@ -1,34 +1,16 @@
 package cm.aptoide.pt2.services;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-
-import cm.aptoide.pt2.Category;
-import cm.aptoide.pt2.Database;
-import cm.aptoide.pt2.ExtrasService;
-import cm.aptoide.pt2.RepoParser;
-import cm.aptoide.pt2.Server;
-import cm.aptoide.pt2.Server.State;
-import cm.aptoide.pt2.util.Base64;
-import cm.aptoide.pt2.util.RepoUtils;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -38,10 +20,14 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
-import android.util.SparseArray;
-import android.widget.Toast;
-
+import cm.aptoide.pt2.Category;
+import cm.aptoide.pt2.Database;
+import cm.aptoide.pt2.ExtrasService;
+import cm.aptoide.pt2.RepoParser;
+import cm.aptoide.pt2.Server;
+import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.util.NetworkUtils;
+import cm.aptoide.pt2.util.RepoUtils;
 
 public class MainService extends Service {
 //	Database db;
@@ -49,6 +35,7 @@ public class MainService extends Service {
 	String defaultPath = Environment.getExternalStorageDirectory().getAbsolutePath();
 	String defaultXmlPath = defaultPath+"/.aptoide/info.xml";
 	String defaultTopXmlPath = defaultPath+"/.aptoide/top.xml";
+	String defaultLatestXmlPath = defaultPath+"/.aptoide/latest.xml";
 	String defaultExtrasXmlPath = defaultPath+"/.aptoide/extras.xml";
 	static ArrayList<String> serversParsing = new ArrayList<String>();
 	@Override
@@ -99,7 +86,7 @@ public class MainService extends Service {
 //		}.start();
 //	}
 	
-	public String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
+	public synchronized String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
 		getApplicationContext().sendBroadcast(new Intent("connecting"));
 		String hash = "";
 		if (delta&&server.delta != null) {
@@ -218,7 +205,6 @@ public class MainService extends Service {
 				public void run() {
 						parseTop(db, server);
 						parseLatest(db, server);
-						
 					try{
 						parseInfoXml(db, server);
 					}catch (Exception e){
@@ -254,8 +240,7 @@ public class MainService extends Service {
 				try {
 					//			serversParsing.put((int)server.id, server);
 					path2 = get(server, defaultTopXmlPath, "top.xml", false);
-					RepoParser.getInstance(db).parse2(new File(path2), server,
-							Category.TOP);
+					RepoParser.getInstance(db).parse2(path2, server);
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -293,9 +278,8 @@ public class MainService extends Service {
 					String path2 = null;
 					//			serversParsing.put((int)server.id, server);
 					try {
-						path2 = get(server, defaultTopXmlPath, "latest.xml", false);
-						RepoParser.getInstance(db).parse2(new File(path2), server,
-								Category.LATEST);
+						path2 = get(server, defaultLatestXmlPath, "latest.xml", false);
+						RepoParser.getInstance(db).parse3(path2, server);
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {

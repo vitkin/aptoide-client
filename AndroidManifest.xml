@@ -2,7 +2,7 @@
     package="cm.aptoide.pt2"
     android:versionCode="400"
     android:versionName="4.0.0" android:installLocation="auto">
-    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="15" />
+    <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="8" />
     
 	<uses-permission android:name="android.permission.INTERNET"/>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>

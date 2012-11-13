@@ -46,14 +46,12 @@ public class ImageLoader {
     static Context context;
     boolean download = false;
     private static Database db;
-	private boolean top = false;
 	
     public ImageLoader(Context context, Database db){
         fileCache=new FileCache(context);
-        this.context=context;
+        ImageLoader.context=context;
         photoLoadThreadPool=Executors.newFixedThreadPool(5);
-        SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-        this.db=db;
+        ImageLoader.db=db;
         resetPermissions();
     }
     
@@ -91,34 +89,31 @@ public class ImageLoader {
 //		}
     }
     
-    public void DisplayImage(long l, String url, ImageView imageView,Context context,boolean top, String hashCode)
+    public void DisplayImage(String url, ImageView imageView,Context context, String hashCode)
     {
-    	this.top =top;
-    	this.context=context;
+    	ImageLoader.context=context;
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
         if(bitmap!=null){
             imageView.setImageBitmap(bitmap);
         }else {
         	
-        	queuePhoto(l,url, imageView,hashCode);
+        	queuePhoto(url, imageView,hashCode);
             imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
         }
     }
         
-    private void queuePhoto(long l, String url, ImageView imageView,String hashCode)
+    private void queuePhoto(String url, ImageView imageView,String hashCode)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
-        photoLoadThreadPool.submit(new PhotosLoader(p,l,hashCode));
+        photoLoadThreadPool.submit(new PhotosLoader(p,hashCode));
     }
     
     private Bitmap getBitmap(String url,String hash) 
     {
-    	System.out.println(fileCache);
     	
     	File f=fileCache.getFile(hash);
-    	System.out.println("hash : "+hash);
     	
         //from SD cache
         if(f.exists()){
@@ -198,10 +193,9 @@ public class ImageLoader {
         long repo_id;
 
 		private String hash;
-        PhotosLoader(PhotoToLoad photoToLoad,long l,String hash){
+        PhotosLoader(PhotoToLoad photoToLoad,String hash){
         	this.hash=hash;
             this.photoToLoad=photoToLoad;
-            this.repo_id=l;
         }
         
         public void run() {
@@ -210,17 +204,7 @@ public class ImageLoader {
                 return;
             
             Bitmap bmp;
-            
-            if(repo_id>-1){
-            	if(top){
-            		bmp=getBitmap(db.getTopIconsPath(repo_id)+photoToLoad.url,hash);
-            	}else{
-            		bmp=getBitmap(db.getIconsPath(repo_id)+photoToLoad.url,hash);
-            	}
-            }else{
-            	bmp=getBitmap(photoToLoad.url,hash);
-            }
-            
+            	bmp=getBitmap(photoToLoad.url,hash.hashCode()+"");
             memoryCache.put(photoToLoad.url, bmp);
             if(imageViewReused(photoToLoad))
                 return;
@@ -279,7 +263,7 @@ public class ImageLoader {
     
     
     public ImageLoader(Context context){
-    	this.context = context;
+    	ImageLoader.context = context;
 //        fileCache=new CacheFile(context);
         photoLoadThreadPool=Executors.newFixedThreadPool(5);
     }
