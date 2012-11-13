@@ -127,7 +127,7 @@ public class ItemBasedApks {
 				String md5hash = Md5Handler.md5Calc(f);
 				
 				if(!md5hash.equals(db.getItemBasedApksHash(apkid))){
-//					Database.database.beginTransaction();
+					
 					db.deleteItemBasedApks(apk);
 					System.out.println("Old md5" + db.getItemBasedApksHash(apkid));
 					System.out.println("Inserting New md5" + md5hash);
@@ -149,7 +149,7 @@ public class ItemBasedApks {
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
-//				Database.database.endTransaction();
+				
 				e.printStackTrace();
 			} finally{
 				f.delete();
@@ -196,7 +196,7 @@ public class ItemBasedApks {
 //				        	container.setVisibility(View.VISIBLE);
 				            LinearLayout txtSamItem = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.related_griditem, null);
 				           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
-				           	imageLoader.DisplayImage(-1, values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context,false,values.get(i).get("hashCode"));
+				           	imageLoader.DisplayImage(values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context,values.get(i).get("hashCode"));
 //				           	float stars = 0f;
 //				           	try{
 //				           		stars = Float.parseFloat(values.get(i).get("rating"));

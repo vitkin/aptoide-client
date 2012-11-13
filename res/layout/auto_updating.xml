@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#edece9"
+    android:gravity="top"
+    android:orientation="vertical" >
+
+    <!-- Green Bar -->
+
+
+    <TextView
+        android:id="@+id/auto_updating"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="@string/auto_updating"
+        android:textColor="#4f4f4f"
+        android:textSize="25sp" />
+
+</RelativeLayout>

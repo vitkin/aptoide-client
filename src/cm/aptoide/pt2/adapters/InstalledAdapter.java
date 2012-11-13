@@ -8,6 +8,7 @@ import cm.aptoide.pt2.contentloaders.ImageLoader;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +47,11 @@ public class InstalledAdapter extends CursorAdapter {
             view.setTag(holder);
         }
 		holder.name.setText(cursor.getString(1));
-		loader.DisplayImage(cursor.getLong(3), cursor.getString(4), holder.icon, context,false,(cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode"))).hashCode()+"");
+		String iconspath = cursor.getString(9)+
+				cursor.getString(4);
+		String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+
+				cursor.getString(cursor.getColumnIndex("vercode")));
+		loader.DisplayImage(iconspath, holder.icon, context,hash);
 		 try{
 	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
 	        }catch (Exception e) {

@@ -1,5 +1,6 @@
 package cm.aptoide.pt2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import android.content.ContentValues;
 import android.content.pm.FeatureInfo;
 
 import cm.aptoide.pt2.RepoParserHandler.ElementHandler;
@@ -23,15 +25,22 @@ public class TopRepoParserHandler extends DefaultHandler {
 	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
 	final static ViewApk apk = new ViewApk();
 	final static StringBuilder sb  = new StringBuilder();
+	private static boolean insidePackage = false;
 	static {
 		elements.put("name", new ElementHandler() {
+			
+
 			public void startElement(Attributes atts) throws SAXException {
 
 			}
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.setName(sb.toString());
+				if(insidePackage){
+					apk.setName(sb.toString());
+				}else{
+					server.name=sb.toString();
+				}
 			}
 		});
 		
@@ -84,6 +93,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 		elements.put("package", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 				apk.clear();
+				insidePackage = true;
 				
 			}
 
@@ -91,6 +101,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 			public void endElement() throws SAXException {
 				apk.setId(db.insertTop(apk,category));
 				db.insertScreenshots(apk,category);
+				insidePackage = false;
 			}
 		});
 		
@@ -270,6 +281,25 @@ public class TopRepoParserHandler extends DefaultHandler {
 			}
 		});
 		
+		elements.put("cmt", new ElementHandler() {
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				value = new ContentValues();
+				value.put(ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID, apk.getApkid());
+				value.put(ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT, sb.toString());
+				values.add(value);
+				i++;
+				if(i%100==0){
+					Database.context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
+					values.clear();
+				}
+			}
+		});
+		
 		
 	}
 	
@@ -289,6 +319,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 		super.startDocument();
 		db.prepare();
 		server.clear();
+//		db.startTransation();
 		System.out.println(server.id);
 		apk.setRepo_id(server.id);
 	}
@@ -331,7 +362,16 @@ public class TopRepoParserHandler extends DefaultHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
+		if(values.size()>0){
+			Database.context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
+			values.clear();
+		}
+//		db.endTransation(server);
 	}
+	private static int i = 0;
+	private static ContentValues value;
+	private static ContentValues[] value2 = new ContentValues[0];
+	private static ArrayList<ContentValues> values = new ArrayList<ContentValues>();
 	
 	
 }

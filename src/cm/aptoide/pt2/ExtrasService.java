@@ -1,60 +1,29 @@
 package cm.aptoide.pt2;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectOutputStream.PutField;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.zip.GZIPInputStream;
-
+import java.util.concurrent.ThreadFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import cm.aptoide.pt2.services.MainService;
 import cm.aptoide.pt2.util.Md5Handler;
-import cm.aptoide.pt2.util.NetworkUtils;
-
-
-
-
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiManager;
-import android.net.wifi.WifiManager.WifiLock;
-import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
 import android.text.Html;
-import android.util.Log;
 
 public class ExtrasService extends Service {
 
-	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
-	private String LOCAL_PATH = SDCARD+"/.aptoide";
-	private String REMOTE_EXTRAS_FILE = "/extras.xml";
-	private String EXTRAS_XML_PATH = LOCAL_PATH+"/extras.xml";
-	
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
@@ -63,9 +32,18 @@ public class ExtrasService extends Service {
 	private enum Enum {
 		APKID,CMT,DELTA,PKG, EXTRAS
 	}
-	private Database dbhandler;
-	private ExecutorService executor = Executors.newFixedThreadPool(1);
-	private ArrayList<String> parsingList = new ArrayList<String>();
+	private static ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+		
+		@Override
+		public Thread newThread(Runnable r) {
+			
+			Thread t = new Thread(r);
+			t.setPriority(1);
+			
+			return t;
+		}
+	});
+	private static ArrayList<String> parsingList = new ArrayList<String>();
 	@Override
 	public void onCreate() {
 		super.onCreate();
@@ -94,9 +72,7 @@ public class ExtrasService extends Service {
 			parsingList.add(path);
 			File xml = new File(path);
 			String md5 = Md5Handler.md5Calc(xml);
-			Thread thread = new Thread(new ExtrasParser(path,getApplicationContext(),md5));
-			thread.setPriority(1);
-			thread.start();
+			executor.submit(new ExtrasParser(xml,getApplicationContext(),md5));
 			System.out.println("Extras starting");
 		}
 		
@@ -110,8 +86,8 @@ public class ExtrasService extends Service {
 		
 		
 		
-		public ExtrasParser(String xml, Context context,String md5) {
-			this.xml=new File(xml);
+		public ExtrasParser(File xml, Context context,String md5) {
+			this.xml=xml;
 			this.context=context;
 			this.md5 = md5;
 		}
@@ -132,44 +108,7 @@ public class ExtrasService extends Service {
 
 		}
 	}
-	private InputStream openHttpConnection(String urlStr) {
-	    InputStream in = null;
-	    int resCode = -1;
 
-	        try {
-
-
-	            URL url = new URL(urlStr);
-	            URLConnection urlConn = url.openConnection();
-
-	            if (!(urlConn instanceof HttpURLConnection)) {
-
-	                throw new IOException ("URL is not an Http URL");
-
-	            }
-
-	            HttpURLConnection httpConn = (HttpURLConnection)urlConn;
-	            httpConn.setAllowUserInteraction(false);
-	            httpConn.setInstanceFollowRedirects(true);
-	            httpConn.setRequestMethod("GET");
-	            httpConn.connect();
-	            resCode = httpConn.getResponseCode();
-
-
-	            if (resCode == HttpURLConnection.HTTP_OK) {
-
-	                in = httpConn.getInputStream(); 
-
-	            } 
-
-	        } catch (MalformedURLException e) {
-	        e.printStackTrace();
-	        } catch (IOException e) {
-	        e.printStackTrace();
-	        }
-
-	    return in;
-	    }
 	
 	DefaultHandler handler = new DefaultHandler(){
 		
@@ -207,6 +146,11 @@ public class ExtrasService extends Service {
 
 				break;
 			case PKG:
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				value.put(ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID, apkid);
 				value.put(ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT, cmt);
 				values.add(value);
@@ -237,47 +181,4 @@ public class ExtrasService extends Service {
 		};
 	};
 	
-	private boolean downloadExtras(String srv, String delta_hash){
-		String url = srv+REMOTE_EXTRAS_FILE;
-		
-		
-
-        try {
-        	
-        	ConnectivityManager connMgr = (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
-
-    		android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-    		android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-    		System.out.println(wifi.getState() + " " + mobile.getState());
-			while (wifi.getState()!=NetworkInfo.State.CONNECTED&&mobile.getState()!=NetworkInfo.State.CONNECTED) {
-				System.out.println("Sleeping 10 sec" + wifi.getState() + " " + mobile.getState());
-				Thread.sleep(10000);
-			}
-        	
-        	//String delta_hash = db.getServerDelta(srv);
-        	if(delta_hash!=null&&delta_hash.length()>2)
-        		url = url.concat("?hash="+delta_hash);
-        	
-        	Log.d("Aptoide","A fazer fetch extras de: " + url);
-
-        	
-        	FileOutputStream saveit = new FileOutputStream(LOCAL_PATH+REMOTE_EXTRAS_FILE);
-
-				BufferedInputStream instream = NetworkUtils.getInputStream(new URL(url), null, null, getApplicationContext());
-				int nRead;
-				byte[] data = new byte[1024];
-
-				while ((nRead = instream.read(data, 0, data.length)) != -1) {
-					saveit.write(data, 0, nRead);
-				}
-				 
-			return true;
-		} catch (UnknownHostException e){ 
-			e.printStackTrace();
-			return false;} 
-		  catch (ClientProtocolException e) { e.printStackTrace();return false;} 
-		  catch (IOException e) { e.printStackTrace();return false;}
-		  catch (Exception e) {e.printStackTrace();return false;	}
-	}
-
 }

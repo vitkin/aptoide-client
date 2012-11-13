@@ -22,9 +22,10 @@ public class Server implements Parcelable{
 	public String webservicesPath;
 	public String username;
 	public String password;
-	public File xml;
+	public String xml;
 	public String screenspath;
 	public String featuredgraphicPath;
+	public String name;
 	
 	public Server() {}
 	

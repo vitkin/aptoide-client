@@ -25,13 +25,12 @@ public class RepoParser {
 			
 			Thread t = new Thread(r);
 			
-			t.setPriority(2);
+			t.setPriority(3);
 			
 			return t;
 		}
 	});
 	
-	static ExecutorService extrasExecutor = Executors.newFixedThreadPool(1);
 	static Database db;
 	static RepoParser parser;
 	
@@ -48,8 +47,12 @@ public class RepoParser {
 		}
 	}
 	
-	public void parse2(File xml, Server server, Category category){
-		executor.submit(new TopParser(server,xml,category));
+	public void parse2(String xml, Server server){
+		executor.submit(new TopParser(server,xml,Category.TOP));
+	}
+	
+	public void parse3(String xml, Server server){
+		executor.submit(new LatestParser(server,xml,Category.LATEST));
 	}
 	
 	public void parse(String xml, Server server){
@@ -88,22 +91,49 @@ public class RepoParser {
 		File xml;
 		Category category;
 		
-		public TopParser(Server server, File xml, Category category) {
+		public TopParser(Server server, String xml, Category category) {
 			this.server = server;
-			this.xml=xml;
+			this.xml=new File(xml);
 			server.xml=xml;
 			this.category=category;
 		}
 
 		public void run(){
 			try{
-				setPriority(Thread.MIN_PRIORITY);
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				System.out.println("DynamicParsing repo_id:" + server.id);
 				parser.parse(xml, new TopRepoParserHandler(db,server,category,false));
 			}catch(Exception e){
-				db.endTransation(server);
+//				db.endTransation(server);
+				e.printStackTrace();
+			}finally{
+				xml.delete();
+			}
+
+		}
+	}
+	
+	public class LatestParser extends Thread{ 
+		Server server;
+		File xml;
+		Category category;
+		
+		public LatestParser(Server server, String xml, Category category) {
+			this.server = server;
+			this.xml=new File(xml);
+			server.xml=xml;
+			this.category=category;
+		}
+
+		public void run(){
+			try{
+				SAXParserFactory factory = SAXParserFactory.newInstance();
+				SAXParser parser = factory.newSAXParser();
+				System.out.println("DynamicParsing repo_id:" + server.id);
+				parser.parse(xml, new LatestRepoParserHandler(db,server,category,false));
+			}catch(Exception e){
+//				db.endTransation(server);
 				e.printStackTrace();
 			}finally{
 				xml.delete();
