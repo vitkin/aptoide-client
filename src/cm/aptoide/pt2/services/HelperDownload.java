@@ -264,9 +264,8 @@ public class HelperDownload{
     					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 	    				
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
-	    				/** trigger in percentage */
-	    				int progressTrigger = 5; 
-	    				int triggeredLevel = 0;
+	    				/** trigger in miliseconds */
+	    				int progressTrigger = Constants.DOWNLOAD_UPDATE_TRIGGER; 
 	    				int bytesRead;
 	    				long intervalStartTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 	    				long intervalEndTime = intervalStartTime;
@@ -283,8 +282,7 @@ public class HelperDownload{
 	    					}
 	    					fileOutputStream.write(data,0,bytesRead);
 							download.incrementProgress(bytesRead);
-	    					if((download.getProgressPercentage() % progressTrigger == 0) && (triggeredLevel != download.getProgressPercentage())){
-	    						triggeredLevel = download.getProgressPercentage();
+	    					if((Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis() - intervalStartTime) > progressTrigger ){
 	        					intervalEndTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 	        					try {
 	        						int speed = Math.round(formatConversion*((download.getProgress() - intervalStartProgress)/(intervalEndTime - intervalStartTime)));
