@@ -81,11 +81,11 @@ public class HelperDownload{
 	private DownloadManager downloadManager;
 
     private class DownloadManager{
-    	private ExecutorService installedColectorsPool;
+    	private ExecutorService downloadsPool;
     	private HashMap<Integer, ViewDownload> ongoingDownloads;
     	
     	public DownloadManager(){
-    		installedColectorsPool = Executors.newFixedThreadPool(Constants.MAX_PARALLEL_DOWNLOADS);
+    		downloadsPool = Executors.newFixedThreadPool(Constants.MAX_PARALLEL_DOWNLOADS);
     		ongoingDownloads = new HashMap<Integer, ViewDownload>();
     	}
     	
@@ -96,7 +96,7 @@ public class HelperDownload{
     	public void downloadApk(ViewDownload download, ViewCache cache, ViewLogin login){
     		ongoingDownloads.put(cache.hashCode(), download);
         	try {
-				installedColectorsPool.execute(new DownloadApk(download, cache, login));
+				downloadsPool.execute(new DownloadApk(download, cache, login));
 			} catch (Exception e) { }
         }
     	
@@ -370,6 +370,14 @@ public class HelperDownload{
 	public void stopDownload(int appId) {
 		Log.d("Aptoide-HelperDownload", "stoping apk download  id: "+appId);
 		downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.STOPPED);
+	}
+	
+	public void shutdownNow(){
+		Log.d("Aptoide-HelperDownload", "shuting down");
+		for (ViewDownload download : downloadManager.ongoingDownloads.values()) {
+			download.setStatus(EnumDownloadStatus.STOPPED);
+		}
+		downloadManager.downloadsPool.shutdownNow();
 	}
 	
 }
