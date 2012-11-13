@@ -497,7 +497,7 @@ public class ServiceDownloadManager extends Service {
 				downloadManager.updateDownloadStatus(EnumDownloadStatus.PAUSED.ordinal());
 			}
 			ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -516,7 +516,7 @@ public class ServiceDownloadManager extends Service {
 				downloadManager.updateDownloadStatus(EnumDownloadStatus.RESUMING.ordinal());
 			}
 			ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -539,8 +539,8 @@ public class ServiceDownloadManager extends Service {
 			if(isDownloadManagerRegistered()){
 				downloadManager.updateDownloadStatus(EnumDownloadStatus.STOPPED.ordinal());
 			}
-			ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
-		} catch (RemoteException e) {
+			download.getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -559,7 +559,7 @@ public class ServiceDownloadManager extends Service {
 					downloadManager.updateDownloadStatus(EnumDownloadStatus.RESTARTING.ordinal());
 				}
 				ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
-			} catch (RemoteException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}		
@@ -596,18 +596,5 @@ public class ServiceDownloadManager extends Service {
 		failed.addAll(failedDownloads.values());
 		return failed;
 	}
-	
-//	public Object[] getDownloadsOngoing(){
-//		Log.d("Aptoide", "getting downloads ongoing *************** "+ongoingDownloads);
-//		return ongoingDownloads.values().toArray();
-//	}
-	
-//	public Object[] getDownloadsCompleted(){
-//		return completedDownloads.values().toArray();
-//	}
-	
-//	public Object[] getDownloadsFailed(){
-//		return failedDownloads.values().toArray();
-//	}
 	
 }
