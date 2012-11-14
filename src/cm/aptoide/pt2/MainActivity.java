@@ -219,17 +219,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private void loadRecommended() {
 		
 		if(Login.isLoggedIn(mContext)){
-			((Button) featuredView
-					.findViewById(R.id.recommended_login))
-					.setVisibility(View.GONE);
-			
 			((TextView) featuredView
 					.findViewById(R.id.recommended_text))
 					.setVisibility(View.GONE);
 		}else{
-			((Button) featuredView
-					.findViewById(R.id.recommended_login))
-					.setVisibility(View.VISIBLE);
 			
 			((TextView) featuredView
 					.findViewById(R.id.recommended_text))
@@ -297,6 +290,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						if (valuesRecommended.isEmpty()) {
 							TextView tv = new TextView(mContext);
 							tv.setText("No recommended apps found. We need more interaction from you. Make some downloads!");
+							tv.setPadding(10, 10, 10, 10);
 							ll.addView(tv);
 						} else {
 
@@ -1455,16 +1449,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				addStoreButton = availableView.findViewById(R.id.add_store);
 				addStoreButton.setOnClickListener(addStoreListener);
 
-				((Button) featuredView
-						.findViewById(R.id.recommended_login))
-						.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								Intent loginIntent = new Intent(mContext, Login.class);
-								startActivity(loginIntent);
-							}
-						});
-				
 				availableListView
 						.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1996,7 +1980,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	ImageLoader loader;
-	ProgressBar store_parsing;
 
 	public class AvailableListAdapter extends CursorAdapter {
 
@@ -2021,9 +2004,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(
 						"PARSED")) {
-					store_parsing = (ProgressBar) view
-							.findViewById(R.id.store_parsing_bar);
-					store_parsing.setVisibility(View.GONE);
 					((TextView) view.findViewById(R.id.store_dwn_number))
 							.setText(cursor.getString(cursor
 									.getColumnIndex("downloads"))
@@ -2031,17 +2011,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(
 						"QUEUED")) {
-					store_parsing = (ProgressBar) view
-							.findViewById(R.id.store_parsing_bar);
-					store_parsing.setVisibility(View.GONE);
 					((TextView) view.findViewById(R.id.store_dwn_number))
 							.setText("Preparing to load, please wait...");
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(
 						"PARSING")) {
-					store_parsing = (ProgressBar) view
-							.findViewById(R.id.store_parsing_bar);
-					store_parsing.setVisibility(View.VISIBLE);
 					((TextView) view.findViewById(R.id.store_dwn_number))
 					.setText(cursor.getString(cursor
 							.getColumnIndex("downloads"))

@@ -48,14 +48,6 @@
                 android:orientation="horizontal"
                 android:paddingLeft="6dp" >
 
-                <ProgressBar
-                    android:id="@+id/store_parsing_bar"
-                    style="@android:style/Widget.ProgressBar.Small.Inverse"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="2dp"
-                    android:visibility="gone" />
-
                 <TextView
                     android:id="@+id/store_dwn_number"
                     android:layout_width="fill_parent"
