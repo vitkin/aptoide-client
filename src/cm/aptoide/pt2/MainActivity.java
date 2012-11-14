@@ -217,6 +217,25 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private void loadRecommended() {
+		
+		if(Login.isLoggedIn(mContext)){
+			((Button) featuredView
+					.findViewById(R.id.recommended_login))
+					.setVisibility(View.GONE);
+			
+			((TextView) featuredView
+					.findViewById(R.id.recommended_text))
+					.setVisibility(View.GONE);
+		}else{
+			((Button) featuredView
+					.findViewById(R.id.recommended_login))
+					.setVisibility(View.VISIBLE);
+			
+			((TextView) featuredView
+					.findViewById(R.id.recommended_text))
+					.setVisibility(View.VISIBLE);
+		}
+		
 		new Thread(new Runnable() {
 
 			private ArrayList<HashMap<String, String>> valuesRecommended;
@@ -579,13 +598,17 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			getInstalled();
 			getAllRepoStatus();
 			loadFeatured();
-			if (Login.isLoggedIn(mContext)) {
+			
+			if(Login.isLoggedIn(mContext)){
 				loadRecommended();
-			} else {
-				((TextView) featuredView
-						.findViewById(R.id.recommended_textview))
-						.setText("Recommended Apps");
 			}
+			
+			
+			
+			
+			
+				
+			
 		}
 
 		@Override
@@ -1179,8 +1202,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			((TextView) featuredView.findViewById(R.id.recommended_textview))
-					.setText("Recommended Apps");
+			
 			loadRecommended();
 		}
 	};
@@ -1433,6 +1455,16 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				addStoreButton = availableView.findViewById(R.id.add_store);
 				addStoreButton.setOnClickListener(addStoreListener);
 
+				((Button) featuredView
+						.findViewById(R.id.recommended_login))
+						.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								Intent loginIntent = new Intent(mContext, Login.class);
+								startActivity(loginIntent);
+							}
+						});
+				
 				availableListView
 						.setOnItemClickListener(new OnItemClickListener() {
 
