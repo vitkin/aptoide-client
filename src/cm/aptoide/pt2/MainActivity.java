@@ -2029,6 +2029,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				// + " downloads");
 				// }
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(
+						State.FAILED.name())){
+					((TextView) view.findViewById(R.id.store_dwn_number))
+					.setText("Loading failed, please try again...");
+				}
+						
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(
 						State.FAILED.name())
 						|| cursor.getString(cursor.getColumnIndex("status"))
 								.equals(State.PARSED.name())) {

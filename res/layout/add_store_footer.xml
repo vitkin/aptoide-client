@@ -7,8 +7,9 @@
     <CheckBox
         android:id="@+id/join_stores"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:layout_marginTop="-15dp"
         android:text="@string/merge_all_stores"
         android:textColor="@android:color/darker_gray" />
 
@@ -16,7 +17,7 @@
         android:id="@+id/add_store"
         style="@style/button_style"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:background="@drawable/green_button"
         android:drawableLeft="@drawable/create_contact"
