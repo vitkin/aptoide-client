@@ -204,15 +204,27 @@ public class DownloadManager extends Activity {
 		try {
 			if(serviceManager.callAreDownloadsOngoing()){
 				downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
-				downloading.setVisibility(View.VISIBLE);
+				if(!downloadingAdapter.isEmpty()){
+					downloading.setVisibility(View.VISIBLE);
+				}else{
+					downloading.setVisibility(View.GONE);
+				}
 			}
 			if(serviceManager.callAreDownloadsCompleted()){
 				downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
-				downloaded.setVisibility(View.VISIBLE);
+				if (!downloadedAdapter.isEmpty()) {
+					downloaded.setVisibility(View.VISIBLE);
+				}else{
+					downloaded.setVisibility(View.GONE);
+				}
 			}
 			if(serviceManager.callAreDownloadsFailed()){
 				notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
-				notDownloaded.setVisibility(View.VISIBLE);
+				if(!notDownloadedAdapter.isEmpty()){
+					notDownloaded.setVisibility(View.VISIBLE);
+				}else{
+					notDownloaded.setVisibility(View.GONE);
+				}
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
