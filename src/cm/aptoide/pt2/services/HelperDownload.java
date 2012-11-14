@@ -268,6 +268,7 @@ public class HelperDownload{
 	    				int progressTrigger = Constants.DOWNLOAD_UPDATE_TRIGGER; 
 	    				int bytesRead;
 	    				long intervalStartTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
+	    				long currentTime;
 	    				long intervalEndTime = intervalStartTime;
 	    				long intervalStartProgress = download.getProgress();
     					float formatConversion = ((float)Constants.MILISECONDS_TO_SECONDS/Constants.KILO_BYTE);
@@ -280,10 +281,11 @@ public class HelperDownload{
 		    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download.getStatus());
 			    				return;
 	    					}
+	    					currentTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 	    					fileOutputStream.write(data,0,bytesRead);
 							download.incrementProgress(bytesRead);
-	    					if((Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis() - intervalStartTime) > progressTrigger ){
-	        					intervalEndTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
+	    					if((currentTime - intervalStartTime) > progressTrigger ){
+	        					intervalEndTime = currentTime;
 	        					try {
 	        						int speed = Math.round(formatConversion*((download.getProgress() - intervalStartProgress)/(intervalEndTime - intervalStartTime)));
 	        						Log.d("Aptoide-download", "progress increase: "+((download.getProgress() - intervalStartProgress)/Constants.KILO_BYTE)+" interval: "+((intervalEndTime - intervalStartTime))+" speed: "+speed);
