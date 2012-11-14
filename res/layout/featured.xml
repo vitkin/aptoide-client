@@ -140,7 +140,7 @@
                 android:background="@drawable/ab_solid_light_holo" >
 
                 <TextView
-                    android:id="@+id/recommended_textview"
+                    android:id="@+id/recommended_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
@@ -159,6 +159,7 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/recommended_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -168,7 +169,7 @@
                 android:text="Sign in to view the best apps for you" />
 
             <Button
-                android:id="@+id/login"
+                android:id="@+id/recommended_login"
                 style="@style/button_style"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
