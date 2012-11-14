@@ -31,7 +31,7 @@ public class ViewApk implements Parcelable {
 	private int minScreen= 0;
 	private String minSdk = "0";
 	private String minGlEs = "0";
-	private String repoName;
+	private String repoName = "Aptoide";
 	
 	
 	/**

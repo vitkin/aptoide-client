@@ -49,6 +49,8 @@
         <activity android:name=".ScreenshotsViewer" android:configChanges="orientation"/>
         <activity android:name=".DownloadManager" android:configChanges="orientation"/>
         <activity android:name=".HWSpecActivity" android:configChanges="orientation"/>
+        <activity android:name=".sharing.WebViewFacebook" android:configChanges="orientation"/>
+        <activity android:name=".sharing.WebViewTwitter" android:configChanges="orientation"/>
         
         <activity
             android:name=".SearchManager"

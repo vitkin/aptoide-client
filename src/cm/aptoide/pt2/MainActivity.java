@@ -37,7 +37,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 import org.xmlpull.v1.XmlSerializer;
 
 import android.app.AlertDialog;
@@ -54,6 +53,8 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -107,8 +108,10 @@ import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.ImageLoader2;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt2.services.MainService;
-import cm.aptoide.pt2.services.ServiceDownloadManager;
 import cm.aptoide.pt2.services.MainService.LocalBinder;
+import cm.aptoide.pt2.services.ServiceDownloadManager;
+import cm.aptoide.pt2.sharing.WebViewFacebook;
+import cm.aptoide.pt2.sharing.WebViewTwitter;
 import cm.aptoide.pt2.util.Algorithms;
 import cm.aptoide.pt2.util.Md5Handler;
 import cm.aptoide.pt2.util.NetworkUtils;
@@ -870,6 +873,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),
 				EnumOptionsMenu.ABOUT.ordinal(), R.string.about).setIcon(
 				android.R.drawable.ic_menu_help);
+		menu.add(Menu.NONE, EnumOptionsMenu.FOLLOW.ordinal(),
+				EnumOptionsMenu.FOLLOW.ordinal(), R.string.social_networks).setIcon(
+				android.R.drawable.ic_menu_share);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -897,6 +903,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			break;
 		case ABOUT:
 			showAbout();
+			break;
+		case FOLLOW:
+			showFollow();
 			break;
 		default:
 			break;
@@ -2495,6 +2504,64 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				"application/vnd.android.package-archive");
 
 		startActivityForResult(intent, 99);
+	}
+	
+	public void showFollow(){
+		View socialNetworksView = LayoutInflater.from(this).inflate(R.layout.dialog_social_networks, null);
+		Builder dialogBuilder = new AlertDialog.Builder(this).setView(socialNetworksView);
+		final AlertDialog socialDialog = dialogBuilder.create();
+		socialDialog.setIcon(android.R.drawable.ic_menu_share);
+		socialDialog.setTitle(getString(R.string.social_networks));
+		socialDialog.setCancelable(true);
+		
+		Button facebookButton = (Button) socialNetworksView.findViewById(R.id.find_facebook);
+		facebookButton.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				if(isAppInstalled("com.facebook.katana")){
+					Intent sharingIntent;
+					try {
+						getPackageManager().getPackageInfo("com.facebook.katana", 0);
+						sharingIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/225295240870860"));
+						startActivity(sharingIntent);
+					} catch (NameNotFoundException e) {
+						e.printStackTrace();
+					}
+				}else{
+					Intent intent = new Intent(mContext, WebViewFacebook.class);
+					startActivity(intent);
+				}
+				
+			}
+		});
+		
+		Button twitterButton = (Button) socialNetworksView.findViewById(R.id.follow_twitter);
+		twitterButton.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				if(isAppInstalled("com.twitter.android")){
+					String url = "http://www.twitter.com/aptoide";				
+					Intent twitterIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+					startActivity(twitterIntent);
+				}else{
+					Intent intent = new Intent(mContext, WebViewTwitter.class);
+					startActivity(intent);
+				}
+			}
+		});
+		socialDialog.show();
+	}
+	
+	private boolean isAppInstalled(String uri) {
+		PackageManager pm = getPackageManager();
+		boolean installed = false;
+		try {
+			pm.getPackageInfo(uri, PackageManager.GET_ACTIVITIES);
+			installed = true;
+		} catch (PackageManager.NameNotFoundException e) {
+			installed = false;
+		}
+		return installed;
 	}
 
 }

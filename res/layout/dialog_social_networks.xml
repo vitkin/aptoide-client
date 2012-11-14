@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/social_intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/social_network_intro"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/find_facebook"
+            style="@style/button_style"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/button"
+            android:drawableLeft="@drawable/facebook_bt"
+            android:drawablePadding="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/find_us_on_facebook"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#276ba2"
+            android:textStyle="normal" />
+
+        <Button
+            android:id="@+id/follow_twitter"
+            style="@style/button_style"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="91dp"
+            android:background="@drawable/button"
+            android:drawableLeft="@drawable/twitter_bt"
+            android:drawablePadding="10dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/follow_twitter"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#2eb6e5"
+            android:textStyle="normal" />
+
+    </LinearLayout>
+
+</ScrollView>

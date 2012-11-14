@@ -114,6 +114,8 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			i.putExtra("newrepo", repo);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
+			i.setAction("pt.caixamagica.aptoide.NEWREPO");
+			sendBroadcast(i);
 			finish();
 		}else if(uri.startsWith("aptoidexml")){
 			String repo = uri.substring(13);
@@ -122,6 +124,8 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			i.putExtra("newrepo", repo);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
+			i.setAction("pt.caixamagica.aptoide.NEWREPO");
+			sendBroadcast(i);
 			finish();
 		}else if(uri.startsWith("market")){
 			
@@ -200,6 +204,8 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			i.putExtra("newrepo", server);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
+			i.setAction("pt.caixamagica.aptoide.NEWREPO");
+			sendBroadcast(i);
 			finish();
 		}
 	}

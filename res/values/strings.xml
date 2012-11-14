@@ -285,5 +285,11 @@
    	<string name="facebook_blank_response">Blank response.</string>
    	<string name="facebook_like_failed">Like on Facebook failed!</string>
     <string name="facebook_like_cancelled">Like on Facebook cancelled!</string>
+    <string name="loading_facebook">Loading Facebook…</string>
+    <string name="loading_twitter">Loading Twitter…</string>
+    <string name="social_network_intro">Your feedback is important. You can find us on Facebook and/or follow us on Twitter.</string>
+     <string name="find_us_on_facebook">Find us on Facebook</string>
+    <string name="follow_twitter">Follow us on Twitter</string>
+    <string name="social_networks">Social Networks</string>
 
 </resources>
