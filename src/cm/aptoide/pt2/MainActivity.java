@@ -584,7 +584,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			} else {
 				((TextView) featuredView
 						.findViewById(R.id.recommended_textview))
-						.setText("Login to show Recommended Apps");
+						.setText("Recommended Apps");
 			}
 		}
 
@@ -975,22 +975,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
 		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
 
-		joinStores = (CheckBox) view.findViewById(R.id.join_stores);
-		joinStores.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				joinStores_boolean = isChecked;
-				if (joinStores_boolean) {
-					editor.putBoolean("joinStoresChkBox", true);
-				} else {
-					editor.putBoolean("joinStoresChkBox", false);
-				}
-				editor.commit();
-			}
-		});
-
 		final ToggleButton adult = (ToggleButton) view
 				.findViewById(R.id.adultcontent_toggle);
 
@@ -1040,8 +1024,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		} else {
 			btn2.setChecked(true);
 		}
-		joinStores.setChecked(sPref.getBoolean("joinStoresChkBox",
-				joinStores_boolean));
 		adult.setChecked(!sPref.getBoolean("matureChkBox", false));
 		// adult.setOnCheckedChangeListener(adultCheckedListener);
 		switch (order) {
@@ -1374,8 +1356,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					}
 				}).start();
 
-				joinStores_boolean = sPref
-						.getBoolean("joinStoresChkBox", false);
 				db = Database.getInstance(mContext);
 
 				Intent i = new Intent(mContext, MainService.class);
@@ -1424,6 +1404,24 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							}
 						});
 
+				joinStores = (CheckBox) availableView
+						.findViewById(R.id.join_stores);
+				joinStores
+						.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+							@Override
+							public void onCheckedChanged(
+									CompoundButton buttonView, boolean isChecked) {
+								joinStores_boolean = isChecked;
+								// if (isChecked) {
+								// addBreadCrumb("All Stores", depth);
+								// } else {
+								// breadcrumbs.removeAllViews();
+								// }
+								refreshAvailableList(true);
+							}
+						});
+						
 				availableAdapter = new AvailableListAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				installedAdapter = new InstalledAdapter(mContext, null,
@@ -1537,6 +1535,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							@Override
 							public void onClick(View v) {
 								onSearchRequested();
+								
 							}
 						});
 				updatesView.setOnItemClickListener(new OnItemClickListener() {
@@ -1907,12 +1906,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			break;
 		}
 		pb.setVisibility(View.GONE);
-		// if (availableListView.getAdapter().getCount() > 1 ||
-		// joinStores_boolean) {
-		// joinStores.setVisibility(View.VISIBLE);
-		// } else {
-		// joinStores.setVisibility(View.INVISIBLE);
-		// }
+		if (availableListView.getAdapter().getCount() > 1 || joinStores_boolean) {
+			joinStores.setVisibility(View.VISIBLE);
+		} else {
+			joinStores.setVisibility(View.INVISIBLE);
+		}
 
 	}
 
@@ -2013,7 +2011,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							.findViewById(R.id.store_parsing_bar);
 					store_parsing.setVisibility(View.VISIBLE);
 					((TextView) view.findViewById(R.id.store_dwn_number))
-							.setText("Loading...");
+					.setText(cursor.getString(cursor
+							.getColumnIndex("downloads"))
+							+ " downloads");
 				}
 				// else {
 				// ((TextView) view.findViewById(R.id.store_dwn_number))

@@ -130,9 +130,8 @@
                     android:background="@drawable/mature_slider"
                     android:textOff=""
                     android:textOn="" />
-
             </LinearLayout>
-            
+
             <RelativeLayout
                 android:id="@+id/separator"
                 android:layout_width="fill_parent"
@@ -142,13 +141,14 @@
 
                 <TextView
                     android:id="@+id/recommended_textview"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:paddingLeft="5dp"
                     android:text="Recommended Apps"
-                    android:textSize="18sp" />
+                    android:textAppearance="?android:textAppearanceLarge"
+                    android:textColor="#3e6e2f" />
             </RelativeLayout>
 
             <LinearLayout
@@ -157,7 +157,25 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
             </LinearLayout>
-            
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:text="Sign in to view the best apps for you" />
+
+            <Button
+                android:id="@+id/login"
+                style="@style/button_style"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button"
+                android:text="@string/sign_in"
+                android:textColor="@android:color/black"
+                android:textStyle="normal" />
         </LinearLayout>
     </ScrollView>
 
