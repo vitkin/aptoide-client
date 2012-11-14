@@ -111,8 +111,7 @@ public class DownloadedListAdapter extends BaseAdapter{
 		rowViewHolder.app_facebook_share.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				String facebookShareName = download.getAppInfo().getName()+"  "+download.getAppInfo().getVername();
-//				String facebookShareIcon = download.getAppInfo().getIconPath();
-				String facebookShareIcon = "http://cdn1.aptoide.com/imgs/e/f/2/ef2eb8e0a7a5803b868a0c13c99026e9.png";
+				String facebookShareIcon = download.getAppInfo().getIconPath();
 				String facebookShareMessage = "I downloaded "+facebookShareName+" for Android to install on my phone!";
 				String facebookShareDescription;
 				String facebookShareStoreLink;
