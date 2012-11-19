@@ -890,7 +890,7 @@ public class Database {
 			apk.setIconPath(c.getString(10) + c.getString(5));
 			apk.setName(c.getString(6));
 			apk.setRating(c.getString(7));
-			apk.setPath(c.getString(13)+c.getString(8));
+			apk.setPath(c.getString(12)+c.getString(8));
 			apk.setMd5(c.getString(9));
 			apk.setRepoName(c.getString(11));
 			apk.setId(id);
