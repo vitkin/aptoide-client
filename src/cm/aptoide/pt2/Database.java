@@ -577,6 +577,9 @@ public class Database {
 		if(server.delta!=null){
 			values.put("delta", server.delta);
 		}
+		if(server.apkPath!=null){
+			values.put("apkpath", server.apkPath);
+		}
 		if(values.size()>0){
 			database.update("repo", values,"_id = ?", new String[]{server.id+""});
 		}
@@ -860,18 +863,18 @@ public class Database {
 		Log.d("Aptoide-Database","Get APK id:" + id);
 		switch (category) {
 		case INFOXML:
-			c = database.query("apk as a, repo as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
+			c = database.query("apk as a, repo as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.apkpath"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
 			break;
 		
 		case ITEMBASED:
 		case USERBASED:
 		case EDITORSCHOICE:
-			c = database.query("itembasedapk as a, itembasedapkrepo as c", new String[]{"a.apkid","a.vername","a.itembasedapkrepo_id","a.downloads","a.size","a.icon","a.name","a.rating","a.path","a.md5","c.iconspath","c.name"}, "a._id = ? and a.itembasedapkrepo_id = c._id", new String[]{id+""}, null, null, null);
+			c = database.query("itembasedapk as a, itembasedapkrepo as c", new String[]{"a.apkid","a.vername","a.itembasedapkrepo_id","a.downloads","a.size","a.icon","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.basepath"}, "a._id = ? and a.itembasedapkrepo_id = c._id", new String[]{id+""}, null, null, null);
 			break;
 		case TOP:
 		case LATEST:
 		case TOPFEATURED:
-			c = database.query("dynamic_apk as a, toprepo_extra as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
+			c = database.query("dynamic_apk as a, toprepo_extra as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.basepath"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
 		default:
 			break;
 		}
@@ -887,7 +890,7 @@ public class Database {
 			apk.setIconPath(c.getString(10) + c.getString(5));
 			apk.setName(c.getString(6));
 			apk.setRating(c.getString(7));
-			apk.setPath(c.getString(8));
+			apk.setPath(c.getString(13)+c.getString(8));
 			apk.setMd5(c.getString(9));
 			apk.setRepoName(c.getString(11));
 			apk.setId(id);
@@ -1364,6 +1367,14 @@ public class Database {
 	
 	public void insertScheduledDownload(String apkid, int vercode, String vername, String remotePath,String name, String md5) {
 		
+		Cursor c = database.query("scheduled", null, "apkid = ? and vercode = ?", new String[]{apkid,vercode+""}, null, null, null);
+		
+		if(c.moveToFirst()){
+			c.close();
+			return;
+		}
+		c.close();
+		
 		ContentValues values = new ContentValues();
 		values.put("name",name);
 		values.put("apkid", apkid);
@@ -1371,6 +1382,7 @@ public class Database {
 		values.put("vercode", vercode);
 		values.put("vername", vername);
 		values.put("remotepath", remotePath);
+		
 		database.insert("scheduled", null, values);
 		
 	}

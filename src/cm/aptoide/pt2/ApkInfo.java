@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,7 +29,6 @@ import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.CursorAdapter;
@@ -42,6 +42,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -149,21 +151,16 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 	}
 	
-	
-	
-	private void continueLoading(){
-		
+	/**
+	 * 
+	 */
+	protected void continueLoading() {
 		category = Category.values()[getIntent().getIntExtra("category", 3)];
 		context = this;
 		db = Database.getInstance(this);
 		id = getIntent().getExtras().getLong("_id");
-		scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
 		loadElements(id);
-		
-		
 	}
-
-
 
 	/**
 	 * 
@@ -219,7 +216,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	String webservicespath= null;
 	Likes likes;
 	String repo_string;
-	private EnumUserTaste userTaste;
 	
 	private void loadElements(long id) {
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
@@ -227,7 +223,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		findViewById(R.id.download_progress).setVisibility(View.GONE);
 		ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
 		progress.setIndeterminate(true);
-		System.out.println("loading " + id + " " +category.name());
 		Bundle b = new Bundle();
 		b.putLong("_id", id);
 		LoaderManager.enableDebugLogging(true);
@@ -248,17 +243,16 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			@Override
 			public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
-				Log.d("Aptoide-ApkInfo.loadElements(...).new LoaderCallbacks() {...}","OnLoadFinnished");
 				viewApk = arg1;
 				final long repo_id = viewApk.getRepo_id();
 				repo_string = viewApk.getRepoName();
 				checkDownloadStatus();
 				if(category.equals(Category.ITEMBASED)){
-					 webservicespath = "http://webservices.aptoide.com/";
+					webservicespath = "http://webservices.aptoide.com/";
 				}else{
 					webservicespath = db.getWebServicesPath(repo_id);
 				}
-				setClickListeners();
+				
 				try {
 					((RatingBar) findViewById(R.id.ratingbar)).setRating(Float.parseFloat(viewApk.getRating()));
 				} catch (Exception e) {
@@ -268,7 +262,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
 				((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
 				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
-				
 				ImageLoader imageLoader = ImageLoader.getInstance(context, db);
 				imageLoader.DisplayImage(viewApk.getIconPath(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
 				
@@ -281,6 +274,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container));
 				loadScreenshots();
 				loadApkVersions();
+				setClickListeners();
 				
 			}
 
@@ -504,9 +498,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			public void onClick(View v) {
 				
 				if(scheduledDownloadChBox.isChecked()){
-					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
-							.getExtras().getBoolean("top", false)))
-							+ viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
+					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
 				}else{
 				
 				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
@@ -517,8 +509,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						e.printStackTrace();
 					}
 				}else{
-					download = new ViewDownloadManagement((category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
-							.getExtras().getBoolean("top", false)))	+ viewApk.getPath(), viewApk, cache);
+					download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache);
 					Button manage = (Button) findViewById(R.id.icon_manage);
 					manage.setVisibility(View.GONE);
 					manage.setOnClickListener(new OnClickListener() {
@@ -527,11 +518,17 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 							setupQuickActions(true, view);
 						}
 					});
-					try {
-						serviceDownloadManager.callStartDownloadAndObserve(download, serviceDownloadManagerCallback);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
+					new Thread(new Runnable() {
+						public void run() {
+							try {
+								serviceDownloadManager
+										.callStartDownloadAndObserve(download,
+												serviceDownloadManagerCallback);
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+						}
+					}).start();
 					findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
 					findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
 					findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
@@ -586,6 +583,18 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				
 			}
 		});
+		
+		scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
+		scheduledDownloadChBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if(isChecked){
+					((Button) findViewById(R.id.btinstall)).setText(R.string.schDwnBtn);
+				}
+			}
+		});
+		
 	}
 
 
@@ -639,8 +648,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	}
 	
 	protected void postLike(EnumUserTaste like, String repo_string) {
-		userTaste = like;
 		if(Login.isLoggedIn(this)){
+			
 			try{
 				likes.postLike(repo_string, viewApk.getApkid(), viewApk.getVername(), like);	
 			}catch(Exception e){
@@ -652,6 +661,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			startActivityForResult(i, Login.REQUESTCODE);
 		}
 	}
+	
 	
 	private Handler handler = new Handler(){
 		
@@ -667,7 +677,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 					((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
 					((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-//					Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 					break;
 	
 				case RESUMING:
@@ -678,7 +687,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 					((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
 					((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-//					Log.d("ApkInfo-DownloadListener", "receiving: "+download);
 					break;
 					
 				case DOWNLOADING:
@@ -690,8 +698,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
 					((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
 					((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-//					Log.d("ApkInfo-DownloadListener", "receiving: "+download);
-	
 					break;
 					
 				case FAILED:
@@ -807,27 +813,35 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 		actionBar.setOnActionItemClickListener(new QuickAction.OnActionItemClickListener() {
 			@Override
-			public void onItemClick(QuickAction quickAction, int pos, int actionId) {
-				try {
-					switch (EnumQuickActions.reverseOrdinal(actionId)) {
-						case PLAY:
-							serviceDownloadManager.callResumeDownload(download.hashCode());
-							break;
-							
-						case PAUSE:
-							serviceDownloadManager.callPauseDownload(download.hashCode());
-							break;
-							
-						case STOP:
-							serviceDownloadManager.callStopDownload(download.hashCode());
-							break;
+			public void onItemClick(QuickAction quickAction, int pos, final int actionId) {
+				new Thread(new Runnable() {
+					public void run() {
+						try {
+							switch (EnumQuickActions.reverseOrdinal(actionId)) {
+							case PLAY:
+								serviceDownloadManager
+										.callResumeDownload(download.hashCode());
+								break;
 
-						default:
-							break;
+							case PAUSE:
+								serviceDownloadManager
+										.callPauseDownload(download.hashCode());
+								break;
+
+							case STOP:
+								serviceDownloadManager
+										.callStopDownload(download.hashCode());
+								break;
+
+							default:
+								break;
+							}
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
 					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}	
+				}	).start();
+				
 			}
 		});		
 	}
