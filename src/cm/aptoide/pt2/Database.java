@@ -220,21 +220,21 @@ public class Database {
 			if(allApps){
 				if(mergeStores){
 					
-					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and a.repo_id = c._id "+filter+" group by apkid "+order_string,null);
+					c = database.rawQuery("select a._id as _id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid as apkid, a.vercode as vercode, c.iconspath as iconspath from apk as a, repo as c where vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and a.repo_id = c._id "+filter+" group by apkid "+order_string,null);
 					
 				}else{
 					
-					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where repo_id = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{store+""});
+					c = database.rawQuery("select a._id as _id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid as apkid, a.vercode as vercode, c.iconspath as iconspath from apk as a, repo as c where repo_id = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{store+""});
 				}
 				
 			}else{
 				if(mergeStores){
 					
-					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{category2_id+""});
+					c = database.rawQuery("select a._id as _id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads,a.apkid as apkid, a.vercode as vercode, c.iconspath as iconspath from apk as a, repo as c where category2 = ? and vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{category2_id+""});
 					
 				}else{
 					
-					c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk as a, repo as c where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{store+"",category2_id+""});
+					c = database.rawQuery("select a._id as _id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid as apkid, a.vercode as vercode, c.iconspath as iconspath from apk as a, repo as c where repo_id = ? and category2 = ? and vercode in (select vercode from apk as b where a.apkid=b.apkid order by vercode asc) and a.repo_id = c._id "+filter+" group by apkid "+order_string,new String[]{store+"",category2_id+""});
 					
 				}
 			}
@@ -772,9 +772,9 @@ public class Database {
 			}
 			
 			if(joinStores_boolean){
-				c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from dynamic_apk as a, toprepo_extra as c where category1 = ? and a.repo_id = c._id "+filter + " group by a._id",new String[]{category_id+""});
+				c = database.rawQuery("select a._id as _id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid as apkid, a.vercode as vercode, c.iconspath as iconspath from dynamic_apk as a, toprepo_extra as c where category1 = ? and a.repo_id = c._id "+filter + " group by a._id",new String[]{category_id+""});
 			}else{
-				c = database.rawQuery("select a._id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from dynamic_apk as a, toprepo_extra as c where repo_id = ? and category1 = ? and a.repo_id = c._id "+filter + " group by a._id",new String[]{store_id+"",category_id+""});
+				c = database.rawQuery("select a._id as _id, a.name, a.vername, a.repo_id, a.imagepath as imagepath, a.rating, a.downloads, a.apkid as apkid, a.vercode as vercode, c.iconspath as iconspath from dynamic_apk as a, toprepo_extra as c where repo_id = ? and category1 = ? and a.repo_id = c._id "+filter + " group by a._id",new String[]{store_id+"",category_id+""});
 			}
 			System.out.println("getapps " + "repo_id ="+store_id +  " category " + category_id);
 		}catch(Exception e){

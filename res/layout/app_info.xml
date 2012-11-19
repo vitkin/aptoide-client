@@ -11,11 +11,72 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <RelativeLayout
+        android:id="@+id/apkinfoheader"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/bar"
+        android:gravity="right"
+        android:padding="5dp" >
+
+        <ImageView
+            android:id="@+id/app_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/app_icon"
+            android:layout_toRightOf="@+id/app_icon"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="1"
+            android:paddingRight="6dp"
+            android:singleLine="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
+
+        <RatingBar
+            android:id="@+id/ratingbar"
+            style="?android:attr/ratingBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/app_name"
+            android:layout_below="@+id/app_name"
+            android:layout_weight="1"
+            android:numStars="5" />
+
+        <include
+            android:id="@+id/download_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btinstall"
+            layout="@layout/row_app_downloading" />
+
+        <Button
+            android:id="@+id/btinstall"
+            style="@style/button_style"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/app_name"
+            android:layout_below="@+id/app_name"
+            android:background="@drawable/green_button"
+            android:text="@string/install" />
+    </RelativeLayout>
+
     <ScrollView
         android:id="@id/scrollView1"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/advertisement"
+        android:layout_below="@+id/apkinfoheader"
         android:layout_weight="1" >
 
         <LinearLayout
@@ -29,66 +90,6 @@
             <!-- android:id="@+id/actionbar" -->
             <!-- android:layout_height="52dp" -->
             <!-- layout="@layout/actionbar" /> -->
-
-            <RelativeLayout
-                android:id="@+id/apkinfoheader"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bar"
-                android:gravity="right"
-                android:padding="5dp" >
-
-                <ImageView
-                    android:id="@+id/app_icon"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/ic_launcher" />
-
-                <TextView
-                    android:id="@+id/app_name"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/app_icon"
-                    android:layout_toRightOf="@+id/app_icon"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical"
-                    android:maxLines="1"
-                    android:paddingRight="6dp"
-                    android:singleLine="true"
-                    android:text="App Name"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/white" />
-
-                <RatingBar
-                    android:id="@+id/ratingbar"
-                    style="?android:attr/ratingBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/app_name"
-                    android:layout_below="@+id/app_name"
-                    android:layout_weight="1"
-                    android:numStars="5" />
-
-                <include
-                    android:id="@+id/download_progress"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/btinstall"
-                    layout="@layout/row_app_downloading" />
-
-                <Button
-                    android:id="@+id/btinstall"
-                    style="@style/button_style"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignRight="@+id/app_name"
-                    android:layout_below="@+id/app_name"
-                    android:background="@drawable/green_button"
-                    android:text="@string/install" />
-            </RelativeLayout>
 
             <TextView
                 android:id="@+id/screenshots_label"
@@ -164,7 +165,6 @@
                         android:maxLines="1"
                         android:paddingLeft="8dp"
                         android:singleLine="true"
-                        android:text="8"
                         android:textColor="#4A4" />
 
                     <TextView
@@ -189,7 +189,6 @@
                         android:maxLines="1"
                         android:paddingLeft="3dp"
                         android:singleLine="true"
-                        android:text="4"
                         android:textColor="#A44" />
 
                     <TextView
@@ -314,7 +313,6 @@
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:textColor="#3f3f3f" />
                 </LinearLayout>
-
             </LinearLayout>
 
             <TextView
@@ -370,7 +368,7 @@
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
                 android:paddingTop="10.0dip"
-                android:text="Rate"
+                android:text="Rate this app"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3e6e2f" />
 
@@ -413,29 +411,17 @@
                     android:textStyle="normal" />
             </LinearLayout>
 
-            <Button
-                android:id="@+id/add_comment"
-                style="@style/button_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button"
-                android:drawableRight="@drawable/ic_more_arrow_right"
-                android:text="@string/add_comment"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"
-                android:textStyle="normal" >
-            </Button>
-
             <TextView
-                android:id="@+id/comments"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/ab_solid_light_holo"
                 android:gravity="left"
-                android:paddingBottom="5.0dp"
-                android:paddingLeft="5.0dp"
-                android:paddingRight="5.0dp"
-                android:text="@string/comments"
-                android:textColor="#3f3f3f" />
+                android:paddingLeft="5.0sp"
+                android:paddingRight="5.0sp"
+                android:paddingTop="10.0dip"
+                android:text="Comments"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textColor="#3e6e2f" />
 
             <LinearLayout
                 android:id="@+id/commentContainer"
@@ -454,8 +440,24 @@
                 android:drawablePadding="12.0dip"
                 android:drawableRight="@drawable/ic_more_arrow_right"
                 android:gravity="fill_vertical|right"
+                android:paddingLeft="5.0sp"
+                android:paddingRight="5.0sp"
                 android:text="See All"
                 android:visibility="gone" />
+
+            <Button
+                android:id="@+id/add_comment"
+                style="@style/button_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/button"
+                android:drawableRight="@drawable/ic_more_arrow_right"
+                android:text="@string/add_comment"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="normal" >
+            </Button>
 
             <TextView
                 android:layout_width="fill_parent"
