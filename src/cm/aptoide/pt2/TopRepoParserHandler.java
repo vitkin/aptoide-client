@@ -369,10 +369,16 @@ public class TopRepoParserHandler extends DefaultHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
-		if(values.size()>0){
-			Database.context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
-			values.clear();
-		}
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				if(values.size()>0){
+					Database.context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
+					values.clear();
+				}
+			}
+		}).start();
 //		db.endTransation(server);
 	}
 	private static int i = 0;

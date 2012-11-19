@@ -193,6 +193,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 							ViewApk apk = new ViewApk();
 							apk.setApkid(schDown.getApkid());
 							apk.setVercode(schDown.getVercode());
+							apk.setVername(schDown.getVername());
 							apk.setMd5(schDown.getMd5());
 							try {
 								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())));
@@ -242,6 +243,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	    private String url = "" ;
 	    private String apkid = "" ;
 	    private String md5 = "" ;
+	    private String vername = "";
 	    private int vercode = 0 ;
 	    private boolean checked = false ;
 	    public ScheduledDownload( String name, boolean checked ) {
@@ -287,6 +289,12 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		public void setMd5(String md5) {
 			this.md5 = md5;
 		}
+		public String getVername() {
+			return vername;
+		}
+		public void setVername(String vername) {
+			this.vername = vername;
+		}
 	  }
 	  
 	  /** Holds child views for one row. */
@@ -326,6 +334,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 				scheduledDownload.setApkid(c.getString(2));
 				scheduledDownload.setVercode(Integer.parseInt(c.getString(3)));
 				scheduledDownload.setMd5(c.getString(6));
+				scheduledDownload.setVername(c.getString(4));
 				planets.put(c.getString(0),scheduledDownload);
 			}
 			adapter.swapCursor(c);
