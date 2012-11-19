@@ -23,10 +23,13 @@ package cm.aptoide.pt2;
 public enum EnumOptionsMenu {
 	
 	DISPLAY_OPTIONS,
-	SCHEDULED_DOWNLOADS,
+	SETTINGS, 
+	FOLLOW,
 	LOGIN,
-	ABOUT,
-	SETTINGS, FOLLOW;
+	DOWNLOADMANAGER,
+	SCHEDULED_DOWNLOADS,
+	ABOUT;
+	
 	
 	public static EnumOptionsMenu reverseOrdinal(int ordinal){
 		return values()[ordinal];

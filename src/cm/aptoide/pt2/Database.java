@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012 rmateus.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ ******************************************************************************/
 package cm.aptoide.pt2;
 
 
@@ -6,17 +13,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.DatabaseUtils.InsertHelper;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.preference.PreferenceManager;
+import android.support.v4.database.DatabaseUtilsCompat;
 import android.util.Log;
 import cm.aptoide.pt2.views.ViewApk;
+import cm.aptoide.pt2.views.ViewApkFeatured;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -46,6 +59,8 @@ public class Database {
 	public void insert(ViewApk apk) {
 		
 		try{
+			
+
 			
 			ContentValues values = new ContentValues();
 			insertCategories(apk);
@@ -842,7 +857,7 @@ public class Database {
 	public ViewApk getApk(long id, Category category) {
 		Cursor c = null;
 		ViewApk apk = new ViewApk();
-		
+		Log.d("Aptoide-Database","Get APK id:" + id);
 		switch (category) {
 		case INFOXML:
 			c = database.query("apk as a, repo as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
@@ -889,11 +904,7 @@ public class Database {
 		Cursor c = null;
 		MatrixCursor mc = new MatrixCursor(new String[]{"_id","apkid","vername","repo_id"});
 		try {
-			if(b){
-				c = database.query("dynamic_apk", new String[]{"_id", "apkid","vername","repo_id"}, "apkid = ? and repo_id != ?", new String[]{apkid, repo_id+""}, null, null, "vercode desc");
-			}else{
-				c = database.query("apk", new String[]{"_id", "apkid","vername","repo_id"}, "apkid = ? and repo_id != ?", new String[]{apkid,repo_id+""}, null, null, "vercode desc");
-			}
+			c = database.query("apk", new String[]{"_id", "apkid","vername","repo_id"}, "apkid = ? and repo_id != ?", new String[]{apkid,repo_id+""}, null, null, "vercode desc");
 			
 			mc.newRow().add(id).add(apkid).add(vername).add(repo_id);
 			
@@ -903,7 +914,6 @@ public class Database {
 			
 		} catch (Exception e){
 			e.printStackTrace();
-			c.close();
 		} finally{
 			c.close();
 		}
@@ -929,7 +939,7 @@ public class Database {
 		return return_string;
 	}
 
-	public void insertItemBasedApk(Server server, ViewApk apk, String hashCode,Category category) {
+	public void insertItemBasedApk(Server server, ViewApkFeatured apk, String hashCode,Category category) {
 		//insert itembasedapkrepo
 		database.beginTransaction();
 		try{

@@ -7,6 +7,7 @@
  ******************************************************************************/
 package cm.aptoide.pt2.contentloaders;
 
+import cm.aptoide.pt2.views.ViewApk;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.content.AsyncTaskLoader;
@@ -21,37 +22,37 @@ import android.support.v4.content.AsyncTaskLoader;
  *
  * @author cristian
  */
-public abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
-    private Cursor mCursor;
+public abstract class ViewApkLoader extends AsyncTaskLoader<ViewApk> {
+    private ViewApk mCursor;
 
-    public SimpleCursorLoader(Context context) {
+    public ViewApkLoader(Context context) {
         super(context);
     }
 
     /* Runs on a worker thread */
     @Override
-    public abstract Cursor loadInBackground();
+    public abstract ViewApk loadInBackground();
 
     /* Runs on the UI thread */
     @Override
-    public void deliverResult(Cursor cursor) {
+    public void deliverResult(ViewApk cursor) {
         if (isReset()) {
             // An async query came in while the loader is stopped
             if (cursor != null) {
-                cursor.close();
+//                cursor.close();
             }
             return;
         }
-        Cursor oldCursor = mCursor;
+        ViewApk oldCursor = mCursor;
         mCursor = cursor;
 
         if (isStarted()) {
             super.deliverResult(cursor);
         }
 
-        if (oldCursor != null && oldCursor != cursor && !oldCursor.isClosed()) {
-            oldCursor.close();
-        }
+//        if (oldCursor != null && oldCursor != cursor && !oldCursor.isClosed()) {
+//            oldCursor.close();
+//        }
     }
 
     /**
@@ -81,10 +82,10 @@ public abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
     }
 
     @Override
-    public void onCanceled(Cursor cursor) {
-        if (cursor != null && !cursor.isClosed()) {
-            cursor.close();
-        }
+    public void onCanceled(ViewApk cursor) {
+//        if (cursor != null && !cursor.isClosed()) {
+//            cursor.close();
+//        }
     }
 
     @Override
@@ -94,9 +95,9 @@ public abstract class SimpleCursorLoader extends AsyncTaskLoader<Cursor> {
         // Ensure the loader is stopped
         onStopLoading();
 
-        if (mCursor != null && !mCursor.isClosed()) {
-            mCursor.close();
-        }
+//        if (mCursor != null && !mCursor.isClosed()) {
+//            mCursor.close();
+//        }
         mCursor = null;
     }
 }

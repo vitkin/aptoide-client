@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012 rmateus.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ ******************************************************************************/
 package cm.aptoide.pt2;
 
 import java.net.URL;
@@ -19,7 +26,9 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.CursorAdapter;
@@ -44,6 +53,7 @@ import android.widget.Toast;
 import cm.aptoide.pt2.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt2.contentloaders.ViewApkLoader;
 import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt2.services.ServiceDownloadManager;
 import cm.aptoide.pt2.util.NetworkUtils;
@@ -139,7 +149,10 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		
 	}
 	
+	
+	
 	private void continueLoading(){
+		
 		category = Category.values()[getIntent().getIntExtra("category", 3)];
 		context = this;
 		db = Database.getInstance(this);
@@ -147,6 +160,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
 		loadElements(id);
 		
+		
+	}
+
+
+
+	/**
+	 * 
+	 */
+	private void loadApkVersions() {
 		if(category.equals(Category.INFOXML)){
 			spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
 			adapter = new SimpleCursorAdapter(this,
@@ -156,9 +178,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			adapter.setViewBinder(new ViewBinder() {
 
 				@Override
-				public boolean setViewValue(View arg0, Cursor arg1, int arg2) {
-					((TextView) arg0).setText(getString(R.string.version)+" " + arg1.getString(arg2) +" - "+RepoUtils.split(db.getServer(arg1.getLong(3),false).url));
-					System.out.println("repo_id="+arg1.getString(3));
+				public boolean setViewValue(View textView, Cursor cursor, int position) {
+					((TextView) textView).setText(getString(R.string.version)+" " + cursor.getString(position) +" - "+RepoUtils.split(db.getServer(cursor.getLong(3),false).url));
 					return true;
 				}
 			});
@@ -187,8 +208,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 				}
 			});
-			getSupportLoaderManager().initLoader(0, null, this);
-
+			
+			getSupportLoaderManager().initLoader(0, null, ApkInfo.this);
 
 		}
 	}
@@ -197,6 +218,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	String[] thumbnailList = null;
 	String webservicespath= null;
 	Likes likes;
+	String repo_string;
 	private EnumUserTaste userTaste;
 	
 	private void loadElements(long id) {
@@ -206,55 +228,77 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		ProgressBar progress = (ProgressBar) findViewById(R.id.downloading_progress);
 		progress.setIndeterminate(true);
 		System.out.println("loading " + id + " " +category.name());
-		viewApk = db.getApk(id, category);
-		
-		
-		try {
-			download = serviceDownloadManager.callGetAppDownloading(viewApk.hashCode());
-		} catch (RemoteException e1) {
-			e1.printStackTrace();
-		}
-		Log.d("Aptoide-ApkInfo", "getAppDownloading: "+download);
-		
-		if(!download.isNull()){
-			Button manage = (Button) findViewById(R.id.icon_manage);
-			manage.setVisibility(View.GONE);
-			manage.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View view) {
-					setupQuickActions(false, view);
-				}
-			});
-			try {
-				serviceDownloadManager.callRegisterDownloadObserver(viewApk.hashCode(), serviceDownloadManagerCallback);
-			} catch (RemoteException e) {
-				e.printStackTrace();
+		Bundle b = new Bundle();
+		b.putLong("_id", id);
+		LoaderManager.enableDebugLogging(true);
+		getSupportLoaderManager().initLoader(20, b, new LoaderCallbacks<ViewApk>() {
+
+			@Override
+			public Loader<ViewApk> onCreateLoader(int arg0, final Bundle arg1) {
+				
+				ViewApkLoader loader = new ViewApkLoader(ApkInfo.this) {
+					
+					@Override
+					public ViewApk loadInBackground() {
+						return db.getApk(arg1.getLong("_id"), category);
+					}
+				};
+				return loader;
 			}
-			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
-			findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
-			findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
-			((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
-			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(this));
-			((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
-			((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
-			((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
-		}
+
+			@Override
+			public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
+				Log.d("Aptoide-ApkInfo.loadElements(...).new LoaderCallbacks() {...}","OnLoadFinnished");
+				viewApk = arg1;
+				final long repo_id = viewApk.getRepo_id();
+				repo_string = viewApk.getRepoName();
+				checkDownloadStatus();
+				if(category.equals(Category.ITEMBASED)){
+					 webservicespath = "http://webservices.aptoide.com/";
+				}else{
+					webservicespath = db.getWebServicesPath(repo_id);
+				}
+				setClickListeners();
+				try {
+					((RatingBar) findViewById(R.id.ratingbar)).setRating(Float.parseFloat(viewApk.getRating()));
+				} catch (Exception e) {
+					((RatingBar) findViewById(R.id.ratingbar)).setRating(0);
+				}
+				((TextView) findViewById(R.id.app_store)).setText("Store: " +repo_string);
+				((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
+				((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
+				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
+				
+				ImageLoader imageLoader = ImageLoader.getInstance(context, db);
+				imageLoader.DisplayImage(viewApk.getIconPath(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
+				
+				Comments comments = new Comments(context,webservicespath);
+				comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
+				likes = new Likes(context, webservicespath);
+				likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout),(ViewGroup) findViewById(R.id.ratings));
+
+				ItemBasedApks items = new ItemBasedApks(context,viewApk);
+				items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container));
+				loadScreenshots();
+				loadApkVersions();
+				
+			}
+
+			@Override
+			public void onLoaderReset(Loader<ViewApk> arg0) {
+				
+			}
+		});
 		
-		final long repo_id = viewApk.getRepo_id();
-		final String repo_string = viewApk.getRepoName();
-		((TextView) findViewById(R.id.app_store)).setText("Store: " +repo_string);
-		try {
-			((RatingBar) findViewById(R.id.ratingbar)).setRating(Float
-					.parseFloat(viewApk.getRating()));
-		} catch (Exception e) {
-			((RatingBar) findViewById(R.id.ratingbar)).setRating(0);
-		}
 		
-		if(category.equals(Category.ITEMBASED)){
-			 webservicespath = "http://webservices.aptoide.com/";
-		}else{
-			webservicespath = db.getWebServicesPath(repo_id);
-		}
+		
+		
+		
+//		
+		
+//		
+		
+		
 //		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
 //		serch_mrkt.setOnClickListener(new OnClickListener() {
 //			
@@ -271,110 +315,22 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 //			
 //		});
 		
-		((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
-		((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
-		((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
-		ImageLoader imageLoader = new ImageLoader(context, db);
-		imageLoader.DisplayImage(viewApk.getIconPath(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
+//		
 		
-		Comments comments = new Comments(context,webservicespath);
-		comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
-		likes = new Likes(context, webservicespath);
-		likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout),(ViewGroup) findViewById(R.id.ratings));
-		ItemBasedApks items = new ItemBasedApks(context,viewApk);
 		
-		items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container));
-		System.out.println("Md5: " + viewApk.getMd5());;
-		findViewById(R.id.btinstall).setOnClickListener(new OnClickListener() {
+		
+//		
+//		
 
-			@Override
-			public void onClick(View v) {
-				
-				if(scheduledDownloadChBox.isChecked()){
-					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
-							.getExtras().getBoolean("top", false)))
-							+ viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
-				}else{
-				
-				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
-				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
-					try {
-						serviceDownloadManager.callInstallApp(cache);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-				}else{
-					download = new ViewDownloadManagement((category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
-							.getExtras().getBoolean("top", false)))	+ viewApk.getPath(), viewApk, cache);
-					Button manage = (Button) findViewById(R.id.icon_manage);
-					manage.setVisibility(View.GONE);
-					manage.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View view) {
-							setupQuickActions(true, view);
-						}
-					});
-					try {
-						serviceDownloadManager.callStartDownloadAndObserve(download, serviceDownloadManagerCallback);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-					findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
-					findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
-					findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
-				}
-				}
-			}
-		});
 		
-		findViewById(R.id.add_comment).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(ApkInfo.this,AddComment.class);
-				i.putExtra("apkid", viewApk.getApkid());
-				i.putExtra("version", viewApk.getVername());
-				i.putExtra("repo", repo_string);
-				i.putExtra("webservicespath",  "http://webservices.aptoide.com/");
-				startActivityForResult(i, AddComment.ADD_COMMENT_REQUESTCODE);
-			}
-		});
-		
-		findViewById(R.id.likesImage).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				postLike(EnumUserTaste.LIKE,repo_string);
-				
-			}
-		});
-		
-		findViewById(R.id.dislikesImage).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				postLike(EnumUserTaste.DONTLIKE,repo_string);
-				
-			}
-		});
-		
-		
-		
-		findViewById(R.id.more_comments).setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Intent i = new Intent(ApkInfo.this,ViewComments.class);
-				i.putExtra("repo", repo_string);
-				i.putExtra("apkid", viewApk.getApkid());
-				i.putExtra("vername", viewApk.getVername());
-				i.putExtra("webservicespath", "http://webservices.aptoide.com/");
-				startActivity(i);
-				
-			}
-		});
-		
-		
+	}
+
+
+
+	/**
+	 * 
+	 */
+	private void loadScreenshots() {
 		new Thread(new Runnable() {
 			
 			@Override
@@ -534,7 +490,141 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			
 			
 		}).start();
+	}
+
+
+
+	/**
+	 * 
+	 */
+	private void setClickListeners() {
+		findViewById(R.id.btinstall).setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				
+				if(scheduledDownloadChBox.isChecked()){
+					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), (category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
+							.getExtras().getBoolean("top", false)))
+							+ viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
+				}else{
+				
+				ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
+				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
+					try {
+						serviceDownloadManager.callInstallApp(cache);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				}else{
+					download = new ViewDownloadManagement((category.equals(Category.ITEMBASED)?db.getItemBasedBasePath(viewApk.getRepo_id()):db.getBasePath(viewApk.getRepo_id(),getIntent()
+							.getExtras().getBoolean("top", false)))	+ viewApk.getPath(), viewApk, cache);
+					Button manage = (Button) findViewById(R.id.icon_manage);
+					manage.setVisibility(View.GONE);
+					manage.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View view) {
+							setupQuickActions(true, view);
+						}
+					});
+					try {
+						serviceDownloadManager.callStartDownloadAndObserve(download, serviceDownloadManagerCallback);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+					findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+					findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+					findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
+				}
+				}
+			}
+		});
 		
+		findViewById(R.id.add_comment).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(ApkInfo.this,AddComment.class);
+				i.putExtra("apkid", viewApk.getApkid());
+				i.putExtra("version", viewApk.getVername());
+				i.putExtra("repo", repo_string);
+				i.putExtra("webservicespath",  "http://webservices.aptoide.com/");
+				startActivityForResult(i, AddComment.ADD_COMMENT_REQUESTCODE);
+			}
+		});
+		
+		findViewById(R.id.likesImage).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				postLike(EnumUserTaste.LIKE,repo_string);
+				
+			}
+		});
+		
+		findViewById(R.id.dislikesImage).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				postLike(EnumUserTaste.DONTLIKE,repo_string);
+				
+			}
+		});
+		
+		
+		
+		findViewById(R.id.more_comments).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(ApkInfo.this,ViewComments.class);
+				i.putExtra("repo", repo_string);
+				i.putExtra("apkid", viewApk.getApkid());
+				i.putExtra("vername", viewApk.getVername());
+				i.putExtra("webservicespath", "http://webservices.aptoide.com/");
+				startActivity(i);
+				
+			}
+		});
+	}
+
+
+
+	/**
+	 * 
+	 */
+	private void checkDownloadStatus() {
+		try {
+			download = serviceDownloadManager.callGetAppDownloading(viewApk.hashCode());
+		} catch (RemoteException e1) {
+			e1.printStackTrace();
+		}
+		
+		Log.d("Aptoide-ApkInfo", "getAppDownloading: "+download);
+		
+		if(!download.isNull()){
+			Button manage = (Button) findViewById(R.id.icon_manage);
+			manage.setVisibility(View.GONE);
+			manage.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View view) {
+					setupQuickActions(false, view);
+				}
+			});
+			try {
+				serviceDownloadManager.callRegisterDownloadObserver(viewApk.hashCode(), serviceDownloadManagerCallback);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+			findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+			findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
+			((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
+			((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(this));
+			((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
+			((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
+			((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+		}
 	}
 	
 	
