@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012 rmateus.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ ******************************************************************************/
 package cm.aptoide.pt2;
 
 import java.io.BufferedInputStream;
@@ -391,6 +398,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					bis.close();
 					String hash = Md5Handler.md5Calc(f);
 					if (!hash.equals(db.getItemBasedApksHash("editorschoice"))) {
+						db.deleteItemBasedApks(parent_apk);
 						sp.parse(f, new ItemBasedApkHandler(db, parent_apk));
 						db.insertItemBasedApkHash(hash, "editorschoice");
 						loadUIEditorsApps();
@@ -893,6 +901,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		menu.add(Menu.NONE, EnumOptionsMenu.FOLLOW.ordinal(),
 				EnumOptionsMenu.FOLLOW.ordinal(), R.string.social_networks).setIcon(
 				android.R.drawable.ic_menu_share);
+		menu.add(Menu.NONE, EnumOptionsMenu.DOWNLOADMANAGER.ordinal(),
+				EnumOptionsMenu.DOWNLOADMANAGER.ordinal(), R.string.download_manager).setIcon(
+				android.R.drawable.ic_menu_save);
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -920,6 +931,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			break;
 		case ABOUT:
 			showAbout();
+			break;
+		case DOWNLOADMANAGER:
+			startActivity(new Intent(this, DownloadManager.class));
 			break;
 		case FOLLOW:
 			showFollow();

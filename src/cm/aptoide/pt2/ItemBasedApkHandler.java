@@ -1,3 +1,10 @@
+/*******************************************************************************
+ * Copyright (c) 2012 rmateus.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ ******************************************************************************/
 package cm.aptoide.pt2;
 
 import java.util.ArrayList;
@@ -12,6 +19,7 @@ import android.content.ContentValues;
 
 import cm.aptoide.pt2.TopRepoParserHandler.ElementHandler;
 import cm.aptoide.pt2.views.ViewApk;
+import cm.aptoide.pt2.views.ViewApkFeatured;
 
 public class ItemBasedApkHandler extends DefaultHandler {
 	interface ElementHandler {
@@ -27,7 +35,7 @@ public class ItemBasedApkHandler extends DefaultHandler {
 	}
 	private static Database db;
 	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
-	final static ViewApk apk = new ViewApk();
+	final static ViewApkFeatured apk = new ViewApkFeatured();
 	final static Server server = new Server();
 	final static StringBuilder sb  = new StringBuilder();	
 	static {

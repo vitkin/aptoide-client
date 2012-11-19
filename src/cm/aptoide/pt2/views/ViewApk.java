@@ -1,6 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2012 rmateus.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the GNU Public License v2.0
+ * which accompanies this distribution, and is available at
+ * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+ ******************************************************************************/
 package cm.aptoide.pt2.views;
 
 import java.util.ArrayList;
+
+import cm.aptoide.pt2.annotations.DatabaseField;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,23 +18,35 @@ import android.util.Log;
 public class ViewApk implements Parcelable {
 
 	private long id;
+	@DatabaseField
 	private String apkid = "";
+	@DatabaseField
 	private String name = apkid;
+	@DatabaseField
 	private int vercode = 0;
+	@DatabaseField
 	private String vername = "Unversioned";
+	@DatabaseField
 	private String size = "0";
+	@DatabaseField
 	private String downloads = "0";
 	private String category1 = "Other";
+	@DatabaseField
 	private String category2 = "Other";
+	@DatabaseField
 	private long repo_id = 0;
+	@DatabaseField
 	private String iconPath;
+	@DatabaseField
 	private String rating = "0";
 	private ArrayList<String> screenshots = new ArrayList<String>();
+	@DatabaseField
 	private String path;
+	@DatabaseField
 	private String md5;
+	
 	private int appHashId = 0;
-	private String featureGraphic;
-	private boolean highlighted = false;
+	
 	private String date;
 	private int age = 0;
 	private int minScreen= 0;
@@ -203,22 +224,6 @@ public class ViewApk implements Parcelable {
 	
 	public void setMd5(String md5) {
 		this.md5 = md5;
-	}
-
-	public String getFeatureGraphic() {
-		return featureGraphic;
-	}
-
-	public void setFeatureGraphic(String featureGraphic) {
-		this.featureGraphic = featureGraphic;
-	}
-
-	public boolean isHighlighted() {
-		return highlighted;
-	}
-
-	public void setHighlighted(boolean highlighted) {
-		this.highlighted = highlighted;
 	}
 
 	public String getDate() {
