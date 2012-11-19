@@ -209,6 +209,8 @@ public class DownloadManager extends Activity {
 				}else{
 					downloading.setVisibility(View.GONE);
 				}
+			}else{
+				downloading.setVisibility(View.GONE);
 			}
 			if(serviceManager.callAreDownloadsCompleted()){
 				downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
@@ -217,6 +219,8 @@ public class DownloadManager extends Activity {
 				}else{
 					downloaded.setVisibility(View.GONE);
 				}
+			}else{
+				downloaded.setVisibility(View.GONE);
 			}
 			if(serviceManager.callAreDownloadsFailed()){
 				notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
@@ -225,6 +229,8 @@ public class DownloadManager extends Activity {
 				}else{
 					notDownloaded.setVisibility(View.GONE);
 				}
+			}else{
+				notDownloaded.setVisibility(View.GONE);
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
