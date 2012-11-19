@@ -6,102 +6,110 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#edece9"
-    android:orientation="vertical" >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
 
     <LinearLayout
-        android:id="@+id/downloading_apps"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/exit"
+        android:layout_alignParentTop="true"
+        android:background="#edece9"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/downloading_intro"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/greenbar"
-            android:padding="10dp"
-            android:text="@string/downloading_apps"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#fff" />
-
         <LinearLayout
+            android:id="@+id/downloading_apps"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp" >
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
-            <ListView
-                android:id="@+id/downloading_list"
+            <TextView
+                android:id="@+id/downloading_intro"
                 android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/greenbar"
+                android:padding="10dp"
+                android:text="@string/downloading_apps"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fff" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <ListView
+                    android:id="@+id/downloading_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/downloaded_apps"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/downloaded_intro"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/greenbar"
-            android:padding="10dp"
-            android:text="@string/downloaded_apps"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#fff" />
 
         <LinearLayout
+            android:id="@+id/downloaded_apps"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp" >
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
-            <ListView
-                android:id="@+id/downloaded_list"
+            <TextView
+                android:id="@+id/downloaded_intro"
                 android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/greenbar"
+                android:padding="10dp"
+                android:text="@string/downloaded_apps"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fff" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <ListView
+                    android:id="@+id/downloaded_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/failed_apps"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/failed_intro"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/greenbar"
-            android:padding="10dp"
-            android:text="@string/not_downloaded_apps"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#fff" />
 
         <LinearLayout
+            android:id="@+id/failed_apps"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="5dp" >
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
 
-            <ListView
-                android:id="@+id/failed_list"
+            <TextView
+                android:id="@+id/failed_intro"
                 android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/white" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/greenbar"
+                android:padding="10dp"
+                android:text="@string/not_downloaded_apps"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#fff" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp" >
+
+                <ListView
+                    android:id="@+id/failed_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
@@ -110,6 +118,7 @@
         style="@style/button_style"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:background="@drawable/button"
         android:ellipsize="end"
         android:maxLines="1"
@@ -119,7 +128,7 @@
         android:textColor="@android:color/black"
         android:textStyle="normal" />
 
-</LinearLayout><!--
+</RelativeLayout><!--
  * Copyright (C) 2012  Duarte Silveira
  * duarte.silveira@caixamagica.pt
  *
