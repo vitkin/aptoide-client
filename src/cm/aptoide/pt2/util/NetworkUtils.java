@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import cm.aptoide.pt2.Configs;
 import cm.aptoide.pt2.R;
@@ -40,10 +41,7 @@ public class NetworkUtils {
 			connection.setRequestProperty ("Authorization", basicAuth);
 		}
 		
-		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
-		String myid = sPref.getString("myId", "NoInfo");
-		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
-		connection.setRequestProperty("User-Agent", "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, ""));
+		connection.setRequestProperty("User-Agent", getUserAgentString(mctx));
 		
 		BufferedInputStream bis = new BufferedInputStream(connection.getInputStream(), 8 * 1024);
 		
@@ -101,7 +99,7 @@ public class NetworkUtils {
 	}
 	
 	public static String  getUserAgentString(Context mctx){
-		SharedPreferences sPref = mctx.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);
+		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mctx);
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
 		return "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, "");
