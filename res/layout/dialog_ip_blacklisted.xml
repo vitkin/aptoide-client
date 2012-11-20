@@ -12,33 +12,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:background="#edece9"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="10dp" >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/ip_blacklisted_message"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
             android:layout_weight="1"
-            android:background="@drawable/border"
-            android:orientation="vertical"
-            android:padding="10dp" >
-
-            <TextView
-                android:id="@+id/ip_blacklisted_message"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="2dp"
-                android:layout_marginTop="2dp"
-                android:text="@string/ip_blacklisted_extended"
-                android:textColor="#424542"
-                android:textSize="15sp"
-                android:linksClickable="true"
-                android:cursorVisible="true"
-				android:focusable="true"
-				android:focusableInTouchMode="true" />
-        </LinearLayout>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:cursorVisible="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:linksClickable="true"
+            android:text="@string/ip_blacklisted_extended"
+            android:textColor="@android:color/white" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -49,17 +39,33 @@
 
             <Button
                 android:id="@+id/contact"
+                style="@style/button_style"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/contact" />
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:padding="5dp"
+                android:text="@string/contact"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="normal" />
 
             <Button
                 android:id="@+id/cancel"
+                style="@style/button_style"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.5"
-                android:text="@string/cancel" />
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:padding="5dp"
+                android:text="@string/cancel"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="normal" />
         </LinearLayout>
     </LinearLayout>
 

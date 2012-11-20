@@ -25,6 +25,7 @@
             android:layout_weight="1"
             android:padding="5dp"
             android:text="@string/want_to_share"
+            android:textColor="@android:color/white"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout

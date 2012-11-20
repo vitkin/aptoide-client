@@ -30,6 +30,7 @@
     <string name="download_manager">Download Manager</string>
     <string name="downloading_apps">Downloading apps</string>
     <string name="downloaded_apps">Downloaded apps</string>
+    <string name="no_downloads">No downloads. Start downloading!</string>
     <string name="not_downloaded_apps">Not downloaded apps</string>
     <string name="exit">exit</string>
     <string name="install">Install</string>
@@ -265,7 +266,7 @@
     <string name="starting">starting</string>
     
     <string name="timeout">network connection timeout</string>
-    <string name="ip_blacklisted">blacklisted IP</string>
+    <string name="ip_blacklisted">Blacklisted IP</string>
     <string name="ip_blacklisted_extended">The application was not retrieved. Your network address (IP) is blacklisted in Aptoide servers. To solve the problem, please contact <a href="mailto:ipblacklist@aptoide.com">ipblacklist@aptoide.com</a> </string>
     <string name="connection_error">no network connection</string>
     <string name="apk_not_found">Apk not found</string>
