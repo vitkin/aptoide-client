@@ -16,7 +16,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@drawable/bar"
+        android:background="@drawable/apk_info_separator"
         android:gravity="right"
         android:padding="5dp" >
 
@@ -66,6 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_alignRight="@+id/app_name"
             android:layout_below="@+id/app_name"
+            android:layout_marginBottom="15dp"
             android:background="@drawable/green_button"
             android:text="@string/install" />
     </RelativeLayout>
@@ -449,7 +450,7 @@
                 style="@style/button_style"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="25dp"
                 android:background="@drawable/button"
                 android:drawableRight="@drawable/ic_more_arrow_right"
                 android:text="@string/add_comment"
