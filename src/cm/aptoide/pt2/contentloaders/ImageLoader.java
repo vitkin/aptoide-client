@@ -63,37 +63,9 @@ public class ImageLoader {
     }
     
     public void resetPermissions(){
-//    	download = false;
-    	ConnectivityManager connectivityState = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
     	ManagerPreferences preferences= new ManagerPreferences(context);
         ViewIconDownloadPermissions permissions = preferences.getIconDownloadPermissions();
         download = NetworkUtils.isPermittedConnectionAvailable(context, permissions);
-//        if(permissions.isWiFi()){
-//			try {
-//				download = download || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+download);
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//		} 
-//		if(permissions.isWiMax()){
-//			try {
-//				download = download || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+download);
-//			} catch (Exception e) { e.printStackTrace();}
-//		} 
-//		if(permissions.isMobile()){
-//			try {
-//				download = download || connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+download);
-//			} catch (Exception e) { e.printStackTrace();}
-//		}
-//		if(permissions.isEthernet()){
-//			try {
-//				download = download || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
-//				Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+download);
-//			} catch (Exception e) { e.printStackTrace();}
-//		}
     }
     
     public void DisplayImage(String url, ImageView imageView,Context context, String hashCode)

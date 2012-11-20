@@ -121,7 +121,8 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			i.putExtra("newrepo", repo);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
-			i.setAction("pt.caixamagica.aptoide.NEWREPO");
+			i = new Intent("pt.caixamagica.aptoide.NEWREPO");
+			i.putExtra("newrepo", repo);
 			sendBroadcast(i);
 			finish();
 		}else if(uri.startsWith("aptoidexml")){
@@ -135,8 +136,6 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			sendBroadcast(i);
 			finish();
 		}else if(uri.startsWith("market")){
-			
-			
 			String params = uri.split("&")[0];
 			String param = params.split("=")[1];
 			if (param.contains("pname:")) {
@@ -144,7 +143,6 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			} else if (param.contains("pub:")) {
 				param = param.substring(4);
 			}
-			
 			startMarketIntent(param);
 		}else if(uri.startsWith("http://market.android.com/details?id=")){
 			String param = uri.split("=")[1];

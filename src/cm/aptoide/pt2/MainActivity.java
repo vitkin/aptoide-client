@@ -1232,6 +1232,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			Log.d("Aptoide-MainActivity","onNewRepoReceive");
 			if (intent.hasExtra("newrepo")) {
 				ArrayList<String> repos = (ArrayList<String>) intent
 						.getSerializableExtra("newrepo");
@@ -1500,6 +1501,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 									} else if (id == -4) {
 										depth = ListDepth.ALLAPPLICATIONS;
+									}else if (id == -10){
+										Toast.makeText(
+												mContext,
+												"Store is beginning to load, please wait.",
+												Toast.LENGTH_LONG).show();
+										return;
 									} else {
 										depth = ListDepth.CATEGORY2;
 									}
@@ -1884,6 +1891,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		unregisterReceiver(statusReceiver);
 		unregisterReceiver(redrawInstalledReceiver);
 		unregisterReceiver(loginReceiver);
+		unregisterReceiver(newRepoReceiver);
 		stopService(serviceDownloadManager);
 		generateXML();
 		super.onDestroy();
