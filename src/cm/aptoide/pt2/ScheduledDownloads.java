@@ -323,6 +323,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			return a;
 		}
 		public void onLoadFinished(Loader<Cursor> arg0, Cursor c) {
+			planets.clear();
 			if(c.getCount()==0){
 				findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
 			}else{

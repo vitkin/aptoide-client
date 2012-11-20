@@ -69,8 +69,13 @@ public class ItemBasedApks {
 		pb = new ProgressBar(context);
 	}
 	ProgressBar pb;
-	public void getItems(ViewGroup container) {
+	private ViewGroup parent_container;
+	private TextView label;
+	
+	public void getItems(ViewGroup container, ViewGroup parent_container, TextView label) {
 		this.container=container;
+		this.parent_container=parent_container;
+		this.label = label;
 		new ItemLoader().execute(apk.getApkid());
 		new ItemBasedParser().execute(apk.getApkid());
 		
@@ -195,6 +200,11 @@ public class ItemBasedApks {
 					ImageLoader imageLoader = new ImageLoader(context,db);
 					if(values.size()>0){
 						container.removeAllViews();
+						parent_container.setVisibility(View.VISIBLE);
+						label.setVisibility(View.VISIBLE);
+					}else{
+						parent_container.setVisibility(View.GONE);
+						label.setVisibility(View.GONE);
 					}
 				        LinearLayout llAlso = new LinearLayout(context);
 				        llAlso.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));

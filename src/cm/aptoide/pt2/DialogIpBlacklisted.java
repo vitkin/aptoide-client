@@ -27,11 +27,13 @@ package cm.aptoide.pt2;
 */
 
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -42,7 +44,7 @@ import android.widget.TextView;
  * @author dsilveira
  *
  */
-public class DialogIpBlacklisted extends AlertDialog{
+public class DialogIpBlacklisted extends Dialog{
 	
 	public DialogIpBlacklisted(Context context) {
 		super(context);
@@ -51,9 +53,18 @@ public class DialogIpBlacklisted extends AlertDialog{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		WindowManager.LayoutParams params = getWindow().getAttributes();
+		params.width=WindowManager.LayoutParams.FILL_PARENT;
+		params.height=WindowManager.LayoutParams.WRAP_CONTENT;
+		getWindow().setAttributes(params);
+		
+		requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		setTitle(R.string.ip_blacklisted);
-		setIcon(android.R.drawable.ic_dialog_alert);
+
 		setContentView(R.layout.dialog_ip_blacklisted);
+		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_alert);
+		
 		
 		TextView ipBlacklistMessage = (TextView) findViewById(R.id.ip_blacklisted_message);
 		ipBlacklistMessage.setOnClickListener(new View.OnClickListener() {

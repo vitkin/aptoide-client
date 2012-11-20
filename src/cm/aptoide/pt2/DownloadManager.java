@@ -37,6 +37,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import cm.aptoide.pt2.adapters.DownloadedListAdapter;
 import cm.aptoide.pt2.adapters.DownloadingListAdapter;
 import cm.aptoide.pt2.adapters.NotDownloadedListAdapter;
@@ -67,6 +68,7 @@ public class DownloadManager extends Activity {
 
 	private Button exitButton;
 	
+	private TextView noDownloads;
 
 	private AIDLServiceDownloadManager serviceManager = null;
 
@@ -202,7 +204,9 @@ public class DownloadManager extends Activity {
 	
 	private void prePopulateLists(){
 		try {
+			
 			if(serviceManager.callAreDownloadsOngoing()){
+				noDownloads.setVisibility(View.GONE);
 				downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
 				if(!downloadingAdapter.isEmpty()){
 					downloading.setVisibility(View.VISIBLE);
@@ -213,16 +217,18 @@ public class DownloadManager extends Activity {
 				downloading.setVisibility(View.GONE);
 			}
 			if(serviceManager.callAreDownloadsCompleted()){
+				noDownloads.setVisibility(View.GONE);
 				downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
 				if (!downloadedAdapter.isEmpty()) {
 					downloaded.setVisibility(View.VISIBLE);
 				}else{
-					downloaded.setVisibility(View.GONE);
+//					downloaded.setVisibility(View.GONE);
 				}
 			}else{
 				downloaded.setVisibility(View.GONE);
 			}
 			if(serviceManager.callAreDownloadsFailed()){
+				noDownloads.setVisibility(View.GONE);
 				notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
 				if(!notDownloadedAdapter.isEmpty()){
 					notDownloaded.setVisibility(View.VISIBLE);
@@ -250,9 +256,10 @@ public class DownloadManager extends Activity {
 			imageLoader = new ImageLoader(this);
 
 			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
-
+			downloading.setVisibility(View.GONE);
+			
 			downloaded = (LinearLayout) findViewById(R.id.downloaded_apps);
-			downloaded.setVisibility(View.GONE);
+//			downloaded.setVisibility(View.GONE);
 
 			notDownloaded = (LinearLayout) findViewById(R.id.failed_apps);
 			notDownloaded.setVisibility(View.GONE);
@@ -265,7 +272,8 @@ public class DownloadManager extends Activity {
 				}
 			});
 
-
+			noDownloads = (TextView) findViewById(R.id.no_downloads);
+			noDownloads.setVisibility(View.VISIBLE);
 		}
 
 		super.onCreate(savedInstanceState);

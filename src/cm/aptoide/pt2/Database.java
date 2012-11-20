@@ -1027,7 +1027,9 @@ public class Database {
 			if(d!=null){
 				d.close();
 			}
-			c.close();
+			if(c!=null){
+				c.close();
+			}
 		}
 		
 		return values;
