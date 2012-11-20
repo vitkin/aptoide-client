@@ -93,15 +93,13 @@ public class MainService extends Service {
 //		}.start();
 //	}
 	
-	public synchronized String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
+	public String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
 		getApplicationContext().sendBroadcast(new Intent("connecting"));
 		String hash = "";
 		if (delta&&server.delta != null) {
 			hash = "?hash=" + server.delta;
 		}
 		String url = server.url + what + hash;
-		System.out.println(url);
-		
 
 		File f = new File(xmlpath);
 			InputStream in = NetworkUtils.getInputStream(new URL(url), server.username,
@@ -326,13 +324,12 @@ public class MainService extends Service {
 				String avatar = array.getString("avatar");
 				String name = array.getString("name");
 				String downloads = array.getString("downloads");
-				
 				db.addStoreInfo(avatar,name,withSuffix(downloads),server.id);
 			}
 			connection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
-			db.addStoreInfo("","","0",server.id);
+			db.addStoreInfo("",RepoUtils.split(server.url),"0",server.id);
 		}
 		
 		
