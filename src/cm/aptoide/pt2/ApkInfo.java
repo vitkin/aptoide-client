@@ -243,6 +243,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			@Override
 			public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
+				AdView adView = (AdView)findViewById(R.id.adView);
+				adView.loadAd(new AdRequest());
 				viewApk = arg1;
 				final long repo_id = viewApk.getRepo_id();
 				repo_string = viewApk.getRepoName();
@@ -473,9 +475,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 								}
 							});
 						}
-						AdView adView = (AdView)findViewById(R.id.adView);
-						adView.loadAd(new AdRequest());
-
 					}
 
 

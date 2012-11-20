@@ -28,6 +28,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.preference.PreferenceManager;
 import android.support.v4.database.DatabaseUtilsCompat;
 import android.util.Log;
+import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewApkFeatured;
 
@@ -263,6 +264,7 @@ public class Database {
 		
 		MatrixCursor c = new MatrixCursor(new String[]{"_id","name"});
 		ArrayList<Holder> a = new ArrayList<Database.Holder>();
+		
 		for(d.moveToFirst();!d.isAfterLast();d.moveToNext()){
 			if(d.getString(1).equals("Top Apps")|| d.getString(1).equals("Latest Apps")){
 				Holder holder = new Holder();
@@ -272,7 +274,19 @@ public class Database {
 			}else if(!allApps){
 				c.addRow(new Object[]{d.getString(0),d.getString(1)});
 			}
-			
+		}
+		boolean hasCategory = false;
+		if(!mergeStores&&!allApps && !db.getServer(store, false).state.equals(State.PARSED)){
+			for(d.moveToFirst();!d.isAfterLast();d.moveToNext()){
+				if(d.getString(1).equals("Applications")||d.getString(1).equals("Games")){
+					hasCategory = true;
+					break;
+				}
+			}
+		}
+		if(!hasCategory){
+			c.newRow().add(-10).add("Applications");
+			c.newRow().add(-10).add("Games");
 		}
 		Collections.sort(a);
 		

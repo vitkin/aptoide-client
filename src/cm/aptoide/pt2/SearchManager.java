@@ -60,7 +60,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		bazaar_search.setOnClickListener(new OnClickListener() {
 			
 			public void onClick(View v) {
-				String url = "http://m.aptoide.com/searchview.php?search="+query;
+				String url = "http://m.aptoide.com/searchview.php?search="+query+"&search_apps=1&search_repos=1";
 				Intent i = new Intent(Intent.ACTION_VIEW);
 				i.setData(Uri.parse(url));
 				startActivity(i);
