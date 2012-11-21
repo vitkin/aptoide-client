@@ -2007,7 +2007,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		public AvailableListAdapter(Context context, Cursor c, int flags) {
 			super(context, c, flags);
-			loader = ImageLoader.getInstance(context, db);
+			loader = ImageLoader.getInstance(context);
 		}
 
 		@Override

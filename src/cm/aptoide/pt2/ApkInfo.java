@@ -264,7 +264,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
 				((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
 				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
-				ImageLoader imageLoader = ImageLoader.getInstance(context, db);
+				ImageLoader imageLoader = ImageLoader.getInstance(context);
 				imageLoader.DisplayImage(viewApk.getIconPath(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
 
 				Comments comments = new Comments(context,webservicespath);

@@ -253,7 +253,7 @@ public class DownloadManager extends Activity {
 	    	}
 			
 			setContentView(R.layout.download_manager);
-			imageLoader = new ImageLoader(this);
+			imageLoader = ImageLoader.getInstance(this);
 
 			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
 			downloading.setVisibility(View.GONE);

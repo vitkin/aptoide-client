@@ -197,7 +197,7 @@ public class ItemBasedApks {
 	}
 
 	private void loadItems(ArrayList<HashMap<String, String>> values) {
-					ImageLoader imageLoader = new ImageLoader(context,db);
+					ImageLoader imageLoader = ImageLoader.getInstance(context);
 					if(values.size()>0){
 						container.removeAllViews();
 						parent_container.setVisibility(View.VISIBLE);

@@ -126,7 +126,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 			rowViewHolder.app_download_progress.setIndeterminate(true);
 		}
 		rowViewHolder.app_download_progress.setProgress(download.getProgress());
-		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
+		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, context, download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode());
 		
 		
 		rowViewHolder.manageDownloadsButton.setOnClickListener(new OnClickListener() {
