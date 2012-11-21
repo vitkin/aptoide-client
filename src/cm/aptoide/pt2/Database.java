@@ -877,18 +877,18 @@ public class Database {
 		Log.d("Aptoide-Database","Get APK id:" + id);
 		switch (category) {
 		case INFOXML:
-			c = database.query("apk as a, repo as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.apkpath"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
+			c = database.query("apk as a, repo as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.apkpath","a.vercode"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
 			break;
 		
 		case ITEMBASED:
 		case USERBASED:
 		case EDITORSCHOICE:
-			c = database.query("itembasedapk as a, itembasedapkrepo as c", new String[]{"a.apkid","a.vername","a.itembasedapkrepo_id","a.downloads","a.size","a.icon","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.basepath"}, "a._id = ? and a.itembasedapkrepo_id = c._id", new String[]{id+""}, null, null, null);
+			c = database.query("itembasedapk as a, itembasedapkrepo as c", new String[]{"a.apkid","a.vername","a.itembasedapkrepo_id","a.downloads","a.size","a.icon","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.basepath","a.vercode"}, "a._id = ? and a.itembasedapkrepo_id = c._id", new String[]{id+""}, null, null, null);
 			break;
 		case TOP:
 		case LATEST:
 		case TOPFEATURED:
-			c = database.query("dynamic_apk as a, toprepo_extra as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.basepath"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
+			c = database.query("dynamic_apk as a, toprepo_extra as c", new String[]{"a.apkid","a.vername","a.repo_id","a.downloads","a.size","a.imagepath","a.name","a.rating","a.path","a.md5","c.iconspath","c.name","c.basepath","a.vercode"}, "a._id = ? and a.repo_id = c._id", new String[]{id+""}, null, null, null);
 		default:
 			break;
 		}
@@ -898,6 +898,7 @@ public class Database {
 			c.moveToFirst();
 			apk.setApkid(c.getString(0));
 			apk.setVername(c.getString(1));
+			apk.setVercode(c.getInt(13));
 			apk.setRepo_id(c.getLong(2));
 			apk.setDownloads(c.getString(3));
 			apk.setSize(c.getString(4));

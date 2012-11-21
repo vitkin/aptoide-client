@@ -168,7 +168,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			      // ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
 			      // ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
 			      String hashCode = (c.getString(2)+"|"+c.getString(3));
-			      
+			      Log.d("ScheduledDownloadsIcons",hashCode);
 			      imageLoader.DisplayImage(hashCode, imageViewIcon, arg1, hashCode);
 			}
 		};

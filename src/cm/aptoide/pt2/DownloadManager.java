@@ -124,7 +124,19 @@ public class DownloadManager extends Activity {
 	
 					case DOWNLOADING:
 					case PAUSED:
+						try {
+							downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
 					case RESUMING:
+						try {
+							downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						break;
 					case STOPPED:
 						try {
 							downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
