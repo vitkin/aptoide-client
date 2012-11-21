@@ -1598,6 +1598,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				pager.setAdapter(new ViewPagerAdapter(mContext, views));
 				indicator.setViewPager(pager);
+				indicator.setTextSize((float) 20);
 				refreshAvailableList(true);
 
 				addBreadCrumb("Stores", ListDepth.STORES);
