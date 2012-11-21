@@ -49,7 +49,7 @@ import cm.aptoide.pt2.views.ViewDownloadManagement;
 
 public class ScheduledDownloads extends FragmentActivity implements LoaderCallbacks<Cursor>{
 	private Database db;
-	HashMap<String,ScheduledDownload> planets = new HashMap<String, ScheduledDownload>();
+	HashMap<String,ScheduledDownload> scheduledDownloadsHashMap = new HashMap<String, ScheduledDownload>();
 	ListView lv;
 	CursorAdapter adapter;
 	ImageLoader imageLoader;
@@ -117,7 +117,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			@Override
 			public void bindView(View convertView, Context arg1, Cursor c) {
 				// Planet to display
-			      ScheduledDownload scheduledDownload = planets.get(c.getString(0)); 
+			      ScheduledDownload scheduledDownload = scheduledDownloadsHashMap.get(c.getString(0)); 
 
 			      // The child views in each row.
 			      CheckBox checkBoxScheduled ; 
@@ -179,10 +179,10 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View item, int arg2,
 					long arg3) {
-				ScheduledDownload planet = (ScheduledDownload) ((Holder)item.getTag()).checkBoxScheduled.getTag();
-		        planet.toggleChecked();
+				ScheduledDownload scheduledDownload = (ScheduledDownload) ((Holder)item.getTag()).checkBoxScheduled.getTag();
+		        scheduledDownload.toggleChecked();
 		        Holder viewHolder = (Holder) item.getTag();
-		        viewHolder.checkBoxScheduled.setChecked( planet.isChecked() );
+		        viewHolder.checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
 			}
 		});
 		installButton = (Button) findViewById(R.id.sch_down);
@@ -191,9 +191,9 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 
 			public void onClick(View v) {
 				if(isAllChecked()){
-					for(String planet : planets.keySet()){
-						if (planets.get(planet).checked){
-							ScheduledDownload schDown = planets.get(planet);
+					for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+						if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
+							ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
 							ViewApk apk = new ViewApk();
 							apk.setApkid(schDown.getApkid());
 							apk.setVercode(schDown.getVercode());
@@ -218,8 +218,8 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			alrt.setMessage(getText(R.string.schDown_install));
 			alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
-					for(String planet : planets.keySet()){
-						ScheduledDownload schDown = planets.get(planet);
+					for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+						ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
 						ViewApk apk = new ViewApk();
 						apk.setApkid(schDown.getApkid());
 						apk.setVercode(schDown.getVercode());
@@ -330,7 +330,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			return a;
 		}
 		public void onLoadFinished(Loader<Cursor> arg0, Cursor c) {
-			planets.clear();
+			scheduledDownloadsHashMap.clear();
 			if(c.getCount()==0){
 				findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
 			}else{
@@ -343,7 +343,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 				scheduledDownload.setVercode(Integer.parseInt(c.getString(3)));
 				scheduledDownload.setMd5(c.getString(6));
 				scheduledDownload.setVername(c.getString(4));
-				planets.put(c.getString(0),scheduledDownload);
+				scheduledDownloadsHashMap.put(c.getString(0),scheduledDownload);
 			}
 			adapter.swapCursor(c);
 			
@@ -353,11 +353,11 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			adapter.swapCursor(null);
 		}
 		private boolean isAllChecked(){
-			if(planets.isEmpty()){
+			if(scheduledDownloadsHashMap.isEmpty()){
 				return false;
 			}
-			for(String planet : planets.keySet()){
-				if (planets.get(planet).checked){
+			for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+				if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
 					return true;
 				}
 			}
@@ -381,9 +381,9 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 					alrt.setMessage(getText(R.string.schDown_sureremove));
 					alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
-							for(String planet : planets.keySet()){
-								if (planets.get(planet).checked){
-									db.deleteScheduledDownload(planet);
+							for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+								if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
+									db.deleteScheduledDownload(scheduledDownload);
 								}
 							}
 							getSupportLoaderManager().restartLoader(0, null, ScheduledDownloads.this);
@@ -402,8 +402,8 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 				break;
 
 			case 1:
-				for(String planet : planets.keySet()){
-					planets.get(planet).toggleChecked();
+				for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+					scheduledDownloadsHashMap.get(scheduledDownload).toggleChecked();
 				}
 				adapter.notifyDataSetInvalidated();
 				break;
