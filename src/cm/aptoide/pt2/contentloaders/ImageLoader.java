@@ -52,13 +52,11 @@ public class ImageLoader {
     ExecutorService photoLoadThreadPool; 
     static Context context;
     boolean download = false;
-    private static Database db;
 	
-    public ImageLoader(Context context, Database db){
+    private ImageLoader(Context context){
         fileCache=new FileCache(context);
         ImageLoader.context=context;
         photoLoadThreadPool=Executors.newFixedThreadPool(5);
-        ImageLoader.db=db;
         resetPermissions();
     }
     
@@ -91,6 +89,8 @@ public class ImageLoader {
     
     private Bitmap getBitmap(String url,String hash) 
     {
+    	
+    	Log.d("IconLoader","getting hash: " + hash );
     	
     	File f=fileCache.getFile(hash);
     	
@@ -236,17 +236,6 @@ public class ImageLoader {
     
     
     
-    
-    
-    
-    
-    
-    public ImageLoader(Context context){
-    	ImageLoader.context = context;
-//        fileCache=new CacheFile(context);
-        photoLoadThreadPool=Executors.newFixedThreadPool(5);
-    }
-    
     public void DisplayImage(String url, ImageView imageView)//, Context context)
     {
 //    	this.context=context;
@@ -304,17 +293,17 @@ public class ImageLoader {
     
     static ImageLoader imageLoader;
     
-    public static ImageLoader getInstance(Context context, Database db){
+    public static ImageLoader getInstance(Context context){
     	
     	if(imageLoader==null){
-    		imageLoader = new ImageLoader(context, db);
+    		imageLoader = new ImageLoader(context);
     	}
     	return imageLoader;
     	
     }
     
     public static void reload(){
-    	imageLoader = new ImageLoader(context, db);
+    	imageLoader = new ImageLoader(context);
     }
     
     

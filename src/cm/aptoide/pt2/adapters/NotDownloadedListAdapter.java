@@ -92,7 +92,7 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 		ViewDownloadManagement download = notDownloaded.get(position);
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
-		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon);
+		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, context, download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode());
 		rowViewHolder.failed_status.setText(download.getDownload().getFailReason().toString(context));
 
 		return convertView;

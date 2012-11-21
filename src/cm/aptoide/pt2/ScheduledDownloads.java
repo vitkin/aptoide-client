@@ -106,7 +106,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		lv = (ListView) findViewById(android.R.id.list);
 		db= Database.getInstance(this);
 		
-		imageLoader = ImageLoader.getInstance(this, Database.getInstance(this));
+		imageLoader = ImageLoader.getInstance(this);
 		adapter = new CursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
 			
 			@Override
@@ -117,30 +117,32 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			@Override
 			public void bindView(View convertView, Context arg1, Cursor c) {
 				// Planet to display
-			      ScheduledDownload planet = planets.get(c.getString(0)); 
+			      ScheduledDownload scheduledDownload = planets.get(c.getString(0)); 
 
 			      // The child views in each row.
-			      CheckBox checkBox ; 
-			      TextView textView ;
-			      ImageView imageView ; 
+			      CheckBox checkBoxScheduled ; 
+			      TextView textViewName ;
+			      TextView textViewVersion ;
+			      ImageView imageViewIcon ; 
 			      
 			      // Create a new row view
 			      if ( convertView.getTag() == null ) {
 			        
 			        // Find the child views.
-			        textView = (TextView) convertView.findViewById( R.id.name );
-			        checkBox = (CheckBox) convertView.findViewById( R.id.schDwnChkBox );
-			        imageView = (ImageView) convertView.findViewById(R.id.appicon);
+			        textViewName = (TextView) convertView.findViewById(R.id.name);
+			        textViewVersion = (TextView) convertView.findViewById(R.id.appversion);
+			        checkBoxScheduled = (CheckBox) convertView.findViewById(R.id.schDwnChkBox);
+			        imageViewIcon = (ImageView) convertView.findViewById(R.id.appicon);
 			        // Optimization: Tag the row with it's child views, so we don't have to 
 			        // call findViewById() later when we reuse the row.
-			        convertView.setTag( new Holder(textView,checkBox,imageView) );
+			        convertView.setTag( new Holder(textViewName,textViewVersion,checkBoxScheduled,imageViewIcon) );
 
 			        // If CheckBox is toggled, update the planet it is tagged with.
-			        checkBox.setOnClickListener( new View.OnClickListener() {
+			        checkBoxScheduled.setOnClickListener( new View.OnClickListener() {
 			          public void onClick(View v) {
 			            CheckBox cb = (CheckBox) v ;
-			            ScheduledDownload planet = (ScheduledDownload) cb.getTag();
-			            planet.setChecked( cb.isChecked() );
+			            ScheduledDownload schDownload = (ScheduledDownload) cb.getTag();
+			            schDownload.setChecked( cb.isChecked() );
 			          }
 			        });        
 			      }
@@ -148,24 +150,26 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			      else {
 			        // Because we use a ViewHolder, we avoid having to call findViewById().
 			        Holder viewHolder = (Holder) convertView.getTag();
-			        checkBox = viewHolder.checkBox ;
-			        textView = viewHolder.textView ;
-			        imageView = viewHolder.imageView ;
+			        checkBoxScheduled = viewHolder.checkBoxScheduled ;
+			        textViewVersion = viewHolder.textViewVersion;
+			        textViewName = viewHolder.textViewName ;
+			        imageViewIcon = viewHolder.imageViewIcon ;
 			      }
 
 			      // Tag the CheckBox with the Planet it is displaying, so that we can
 			      // access the planet in onClick() when the CheckBox is toggled.
-			      checkBox.setTag( planet ); 
+			      checkBoxScheduled.setTag( scheduledDownload ); 
 			      
 			      // Display planet data
-			      checkBox.setChecked( planet.isChecked() );
-			      textView.setText( planet.getName() );  
-
+			      checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
+			      textViewName.setText( scheduledDownload.getName() );  
+			      textViewVersion.setText( ""+scheduledDownload.getVername() );
+			      
 			      // ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
 			      // ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
 			      String hashCode = (c.getString(2)+"|"+c.getString(3));
 			      
-			      imageLoader.DisplayImage(hashCode, imageView, arg1, hashCode);
+			      imageLoader.DisplayImage(hashCode, imageViewIcon, arg1, hashCode);
 			}
 		};
 		lv.setAdapter(adapter);
@@ -175,10 +179,10 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View item, int arg2,
 					long arg3) {
-				ScheduledDownload planet = (ScheduledDownload) ((Holder)item.getTag()).checkBox.getTag();
+				ScheduledDownload planet = (ScheduledDownload) ((Holder)item.getTag()).checkBoxScheduled.getTag();
 		        planet.toggleChecked();
 		        Holder viewHolder = (Holder) item.getTag();
-		        viewHolder.checkBox.setChecked( planet.isChecked() );
+		        viewHolder.checkBoxScheduled.setChecked( planet.isChecked() );
 			}
 		});
 		installButton = (Button) findViewById(R.id.sch_down);
@@ -219,6 +223,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 						ViewApk apk = new ViewApk();
 						apk.setApkid(schDown.getApkid());
 						apk.setVercode(schDown.getVercode());
+						apk.setVername(schDown.getVername());
 						apk.setMd5(schDown.getMd5());
 						try {
 							serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())));
@@ -299,13 +304,15 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	  
 	  /** Holds child views for one row. */
 	  private static class Holder {
-	    public CheckBox checkBox ;
-	    public TextView textView ;
-	    public ImageView imageView ;
-	    public Holder( TextView textView, CheckBox checkBox, ImageView imageView ) {
-	      this.checkBox = checkBox ;
-	      this.textView = textView ;
-	      this.imageView = imageView ;
+	    public CheckBox checkBoxScheduled ;
+	    public TextView textViewName ;
+	    public TextView textViewVersion;
+	    public ImageView imageViewIcon ;
+	    public Holder( TextView textView, TextView textViewVersion, CheckBox checkBox, ImageView imageView ) {
+	      this.checkBoxScheduled = checkBox ;
+	      this.textViewName = textView ;
+	      this.textViewVersion = textViewVersion;
+	      this.imageViewIcon = imageView ;
 	    }
 	  }
 	  

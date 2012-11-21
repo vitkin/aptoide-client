@@ -33,8 +33,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="0.5dp"
+                    android:layout_margin="0.5dp"
                     android:adjustViewBounds="true"
                     android:clickable="true" />
 
@@ -46,6 +45,8 @@
                         android:id="@+id/topleft"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+                        android:layout_marginBottom="0.5dp"
+                        android:layout_marginLeft="0.5dp"
                         android:layout_marginRight="0.5dp"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
@@ -55,7 +56,8 @@
                         android:id="@+id/topright"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:layout_marginLeft="0.5dp"
+                        android:layout_marginBottom="0.5dp"
+                        android:layout_marginRight="0.5dp"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:clickable="true" />
@@ -69,8 +71,9 @@
                         android:id="@+id/bottomleft"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
+                        android:layout_marginBottom="0.5dp"
+                        android:layout_marginLeft="0.5dp"
                         android:layout_marginRight="0.5dp"
-                        android:layout_marginTop="1dp"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:clickable="true" />
@@ -79,8 +82,8 @@
                         android:id="@+id/bottomright"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:layout_marginLeft="0.5dp"
-                        android:layout_marginTop="1dp"
+                        android:layout_marginBottom="0.5dp"
+                        android:layout_marginRight="0.5dp"
                         android:layout_weight="1"
                         android:adjustViewBounds="true"
                         android:clickable="true" />
