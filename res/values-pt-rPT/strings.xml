@@ -1,22 +1,33 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="menu_context_remove">Remover</string>
+  <string name="menu_context_reparse">Recarregar</string>
+  <string name="error_latest_apk">Não foi encontrado nenhum APK na base de dados. A Store ainda está a carregar?</string>
+  <string name="error_delete_store">Não é possivel remover. A Store ainda está a carregar.</string>
   <string name="menu_settings">Configurações</string>
   <string name="my_stores">Editar loja</string>
-  <string name="store_name">User name...</string>
+  <string name="store_name">Nome da Loja</string>
   <string name="category1">Por categoria</string>
   <string name="category2">Por categoria</string>
   <string name="add_store">Adicionar uma Loja!</string>
+  <string name="version">Versão:</string>
+  <string name="empty_store_list">Não tem nenhuma store.</string>
   <string name="new_store">Adicionar uma Loja!</string>
   <string name="add_repo_private">Privada</string>
   <string name="extended_server">Loja extendida</string>
   <string name="downloads">Downloads</string>
+  <string name="merge_all_stores">Juntar lojas</string>
+  <string name="search_for_stores">Procurar por Lojas</string>
   <string name="downloading_apps">A descarregar:</string>
   <string name="downloaded_apps">Downloads</string>
+  <string name="exit">sair</string>
   <string name="install">Instalar</string>
   <string name="uninstall">Desinstalar</string>
   <string name="search_market">Procurar no Market</string>
+  <string name="commentlabel">Adicionar Comentário</string>
   <string name="chkBoxSchDwn">Agendar download</string>
   <string name="submit">Submeter</string>
+  <string name="body">Corpo da mensagem</string>
   <string name="subject">Nome</string>
   <string name="app_name">Aptoide</string>
   <string name="start_loading">A carregar...</string>
@@ -160,7 +171,7 @@
   </string-array>
   <string name="password_tip">Mostrar password</string>
   <string name="bazaar_login">Configurações do Aptoide</string>
-  <string name="schDown_added">Download agendado</string>
+  <string name="schDown_added">" foi adicionado à lista de agendados."</string>
   <string name="clear_cache_sucess">Comentário submetido com sucesso</string>
   <string name="aptoide_downloading">A descarregar:</string>
   <string name="starting_download">Nunca descarregar</string>

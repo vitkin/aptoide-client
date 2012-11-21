@@ -9,6 +9,8 @@ package cm.aptoide.pt2;
 
 import java.io.File;
 
+import cm.aptoide.pt2.views.ViewLogin;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -27,12 +29,12 @@ public class Server implements Parcelable{
 	public String basePath;
 	public String apkPath;
 	public String webservicesPath;
-	public String username;
-	public String password;
 	public String xml;
 	public String screenspath;
 	public String featuredgraphicPath;
 	public String name;
+	
+	private ViewLogin login;
 	
 	public Server() {}
 	
@@ -124,4 +126,12 @@ public class Server implements Parcelable{
        public void clear() {
     		iconsPath = null;
        }
+
+	public ViewLogin getLogin() {
+		return login;
+	}
+
+	public void setLogin(ViewLogin login) {
+		this.login = login;
+	}
 }

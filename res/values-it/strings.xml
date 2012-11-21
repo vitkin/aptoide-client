@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="my_stores">Nessun repository!</string>
+  <string name="menu_context_remove">Rimuovi</string>
+  <string name="menu_context_reparse">Ricarica</string>
+  <string name="error_latest_apk">Nessun pacchetto disponibile. Ancora in caricamento?</string>
+  <string name="my_stores">Miei repository!</string>
   <string name="store_name">Nome utente...</string>
   <string name="add_store">Nessun repository!</string>
   <string name="new_store">Nessun repository!</string>

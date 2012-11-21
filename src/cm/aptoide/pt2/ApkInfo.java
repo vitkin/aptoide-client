@@ -15,12 +15,14 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -35,6 +37,8 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -69,6 +73,7 @@ import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewCache;
 import cm.aptoide.pt2.views.ViewDownload;
 import cm.aptoide.pt2.views.ViewDownloadManagement;
+import cm.aptoide.pt2.views.ViewLogin;
 import cm.aptoide.pt2.webservices.comments.AddComment;
 import cm.aptoide.pt2.webservices.comments.Comments;
 import cm.aptoide.pt2.webservices.comments.ViewComments;
@@ -225,8 +230,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		progress.setIndeterminate(true);
 		Bundle b = new Bundle();
 		b.putLong("_id", id);
-		LoaderManager.enableDebugLogging(true);
-		getSupportLoaderManager().initLoader(20, b, new LoaderCallbacks<ViewApk>() {
+		findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
+		getSupportLoaderManager().restartLoader(20, b, new LoaderCallbacks<ViewApk>() {
 
 			@Override
 			public Loader<ViewApk> onCreateLoader(int arg0, final Bundle arg1) {
@@ -246,6 +251,22 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				AdView adView = (AdView)findViewById(R.id.adView);
 				adView.loadAd(new AdRequest());
 				viewApk = arg1;
+				int installedVercode = db.getInstalledAppVercode(viewApk.getApkid());
+				
+				if(installedVercode<=viewApk.getVercode()&&installedVercode!=0){
+					findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
+					((TextView) findViewById(R.id.inst_version)).setText("Inst. Ver.: " + db.getInstalledAppVername(viewApk.getApkid()));
+					if(installedVercode<viewApk.getVercode()){
+						((Button) findViewById(R.id.btinstall)).setText("Update");
+					}
+				}else if(installedVercode>viewApk.getVercode()){
+					((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+				}
+				
+				if(installedVercode==viewApk.getVercode()){
+					((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+				}
+				
 				final long repo_id = viewApk.getRepo_id();
 				repo_string = viewApk.getRepoName();
 				checkDownloadStatus();
@@ -275,7 +296,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				ItemBasedApks items = new ItemBasedApks(context,viewApk);
 				items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container),(LinearLayout)findViewById(R.id.itembasedapks_maincontainer),(TextView)findViewById(R.id.itembasedapks_label));
 				loadScreenshots();
-				loadApkVersions();
+				if(!spinnerInstanciated){
+					loadApkVersions();
+				}
 				setClickListeners();
 
 			}
@@ -299,14 +322,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		//		serch_mrkt.setOnClickListener(new OnClickListener() {
 		//			
 		//			public void onClick(View v) {
-		//				Intent intent = new Intent();
-		//				intent.setAction(android.content.Intent.ACTION_VIEW);
-		//				intent.setData(Uri.parse("market://details?id="+viewApk.getApkid()));
-		//				try{
-		//					startActivity(intent);
-		//				}catch (ActivityNotFoundException e){
-		//					Toast.makeText(context, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
-		//				}
+						
 		//			}
 		//			
 		//		});
@@ -321,7 +337,48 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 	}
 
-
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onPrepareOptionsMenu(android.view.Menu)
+	 */
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		if(db.getInstalledAppVercode(viewApk.getApkid())!=0){
+			menu.add(0,0,0,R.string.uninstall);
+		}
+		menu.add(0,1,0,R.string.search_market);
+		return super.onPrepareOptionsMenu(menu);
+	}
+	
+	/* (non-Javadoc)
+	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch (item.getItemId()) {
+		case 0:
+			Uri uri = Uri.fromParts("package", viewApk.getApkid(), null);
+			Intent intent = new Intent(Intent.ACTION_DELETE, uri);
+			startActivity(intent);
+			finish();
+			break;
+		case 1:
+			Intent i = new Intent();
+			i.setAction(android.content.Intent.ACTION_VIEW);
+			i.setData(Uri.parse("market://details?id="+viewApk.getApkid()));
+			try{
+				startActivity(i);
+			}catch (ActivityNotFoundException e){
+				Toast.makeText(context, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+			}
+			break;
+		default:
+			break;
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
 
 	/**
 	 * 
@@ -485,57 +542,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		}).start();
 	}
 
-
+	
 
 	/**
 	 * 
 	 */
 	private void setClickListeners() {
-		findViewById(R.id.btinstall).setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-
-				if(scheduledDownloadChBox.isChecked()){
-					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
-					Toast.makeText(context, getString(R.string.addSchDown), Toast.LENGTH_LONG).show();
-				}else{
-
-					ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
-					if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
-						try {
-							serviceDownloadManager.callInstallApp(cache);
-						} catch (RemoteException e) {
-							e.printStackTrace();
-						}
-					}else{
-						download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache);
-						Button manage = (Button) findViewById(R.id.icon_manage);
-						manage.setVisibility(View.GONE);
-						manage.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View view) {
-								setupQuickActions(true, view);
-							}
-						});
-						new Thread(new Runnable() {
-							public void run() {
-								try {
-									serviceDownloadManager
-									.callStartDownloadAndObserve(download,
-											serviceDownloadManagerCallback);
-								} catch (RemoteException e) {
-									e.printStackTrace();
-								}
-							}
-						}).start();
-						findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
-						findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
-						findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
-					}
-				}
-			}
-		});
+		findViewById(R.id.btinstall).setOnClickListener(installListener);
 
 		findViewById(R.id.add_comment).setOnClickListener(new OnClickListener() {
 
@@ -599,7 +612,64 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 	}
 
+OnClickListener installListener = new OnClickListener() {
 
+	@Override
+	public void onClick(View v) {
+		findViewById(R.id.btinstall).setOnClickListener(null);
+		new Thread(new Runnable() {
+			public void run() {
+				if(scheduledDownloadChBox.isChecked()){
+					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							Toast.makeText(context, getString(R.string.addSchDown), Toast.LENGTH_LONG).show();
+						}
+					});
+				}else{
+					ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
+					if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
+						try {
+							serviceDownloadManager.callInstallApp(cache);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					}else{
+						download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, db.getServer(viewApk.getRepo_id(), false).getLogin());
+
+						runOnUiThread(new Runnable() {
+							
+							@Override
+							public void run() {
+								Button manage = (Button) findViewById(R.id.icon_manage);
+								manage.setVisibility(View.GONE);
+								manage.setOnClickListener(new OnClickListener() {
+									@Override
+									public void onClick(View view) {
+										setupQuickActions(true, view);
+									}
+								});
+								findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+								findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+								findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
+							}
+						});
+						
+						try {
+							serviceDownloadManager.callStartDownloadAndObserve(download,serviceDownloadManagerCallback);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+						
+					}
+				}
+			}
+		}).start();
+		
+	}
+};
 
 	/**
 	 * 
@@ -711,6 +781,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);
 				findViewById(R.id.downloading_name).setVisibility(View.GONE);
+				findViewById(R.id.btinstall).setOnClickListener(installListener);
 			case RESTARTING:
 				break;
 
@@ -719,6 +790,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				if(actionBar!=null){
 					actionBar.dismiss();
 				}
+				findViewById(R.id.btinstall).setOnClickListener(installListener);
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);
 				findViewById(R.id.downloading_name).setVisibility(View.GONE);

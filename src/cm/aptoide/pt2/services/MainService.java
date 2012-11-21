@@ -102,8 +102,8 @@ public class MainService extends Service {
 		String url = server.url + what + hash;
 
 		File f = new File(xmlpath);
-			InputStream in = NetworkUtils.getInputStream(new URL(url), server.username,
-					server.password,getApplicationContext());
+			InputStream in = NetworkUtils.getInputStream(new URL(url), server.getLogin().getUsername(),
+					server.getLogin().getPassword(),getApplicationContext());
 			int i = 0;
 			while (f.exists()) {
 				f = new File(xmlpath + i++);
@@ -219,10 +219,6 @@ public class MainService extends Service {
 						serversParsing.remove(server.url);
 						e.printStackTrace();
 					}
-						
-					
-					
-					
 				}
 			}).start();
 			
