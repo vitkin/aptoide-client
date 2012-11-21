@@ -276,13 +276,16 @@ public class Database {
 			}
 		}
 		boolean hasCategory = false;
-		if(!mergeStores&&!allApps && !db.getServer(store, false).state.equals(State.PARSED)){
+		
+		if(!mergeStores&&!allApps && !db.getServer(store, false).state.equals(State.PARSED)&&!db.getServer(store, false).state.equals(State.FAILED)){
 			for(d.moveToFirst();!d.isAfterLast();d.moveToNext()){
 				if(d.getString(1).equals("Applications")||d.getString(1).equals("Games")){
 					hasCategory = true;
 					break;
 				}
 			}
+		}else{
+			hasCategory=true;
 		}
 		if(!hasCategory){
 			c.newRow().add(-10).add("Applications");
@@ -382,13 +385,14 @@ public class Database {
 		
 		try {
 			if(top){
-				c = database.query("toprepo_extra", new String[]{"_id, url, top_delta"}, "_id = ?", new String[]{id+""}, null, null, null);
+				c = database.query("toprepo_extra", new String[]{"_id, url, top_delta, status"}, "_id = ?", new String[]{id+""}, null, null, null);
 			}else{
-				c = database.query("repo", new String[]{"_id, url, delta"}, "_id = ?", new String[]{id+""}, null, null, null);
+				c = database.query("repo", new String[]{"_id, url, delta, status"}, "_id = ?", new String[]{id+""}, null, null, null);
 			}
 			
 			if(c.moveToFirst()){
 				server = new Server(c.getString(1),c.getString(2),c.getLong(0));
+				server.state=State.valueOf(c.getString(3));
 			}
 			
 		} catch (Exception e) {
