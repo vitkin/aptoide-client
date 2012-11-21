@@ -33,8 +33,8 @@
   <string name="app_name">Aptoide</string>
   <string name="start_loading">Ladataan...</string>
   <string name="available_tab">Saatavissa</string>
-  <string name="featured_tab">Suositeltu</string>
-  <string name="installed_tab">Asennettu</string>
+  <string name="featured_tab">Suositellut</string>
+  <string name="installed_tab">Asennetut</string>
   <string name="updates_tab">Päivitykset</string>
   <string name="add_repo_text">Uusi kauppa</string>
   <string name="btn_add_repo">Lisää kauppa</string>

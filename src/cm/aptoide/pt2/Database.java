@@ -8,29 +8,23 @@
 package cm.aptoide.pt2;
 
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.DatabaseUtils.InsertHelper;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteQueryBuilder;
 import android.preference.PreferenceManager;
-import android.support.v4.database.DatabaseUtilsCompat;
 import android.util.Log;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.views.ViewApk;
 import cm.aptoide.pt2.views.ViewApkFeatured;
+import cm.aptoide.pt2.views.ViewLogin;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -366,8 +360,8 @@ public class Database {
 			c = database.query("repo", new String[]{"_id, url, delta , username, password"}, "url = ?", new String[]{uri}, null, null, null);
 			if(c.moveToFirst()){
 				server = new Server(c.getString(1),c.getString(2),c.getLong(0));
-				server.username = c.getString(3);
-				server.password = c.getString(4);
+				ViewLogin login = new ViewLogin(c.getString(3), c.getString(4));
+				server.setLogin(login);
 			}
 			
 		} catch (Exception e) {
@@ -385,14 +379,16 @@ public class Database {
 		
 		try {
 			if(top){
-				c = database.query("toprepo_extra", new String[]{"_id, url, top_delta, status"}, "_id = ?", new String[]{id+""}, null, null, null);
+				c = database.query("toprepo_extra", new String[]{"_id, url, top_delta, status, username, password"}, "_id = ?", new String[]{id+""}, null, null, null);
 			}else{
-				c = database.query("repo", new String[]{"_id, url, delta, status"}, "_id = ?", new String[]{id+""}, null, null, null);
+				c = database.query("repo", new String[]{"_id, url, delta, status, username, password"}, "_id = ?", new String[]{id+""}, null, null, null);
 			}
 			
 			if(c.moveToFirst()){
 				server = new Server(c.getString(1),c.getString(2),c.getLong(0));
 				server.state=State.valueOf(c.getString(3));
+				ViewLogin login = new ViewLogin(c.getString(3), c.getString(4));
+				server.setLogin(login);
 			}
 			
 		} catch (Exception e) {
@@ -1441,6 +1437,53 @@ public class Database {
 		}
 		
 		return c;
+	}
+
+	/**
+	 * 
+	 */
+	public int getInstalledAppVercode(String apkid) {
+		
+		Cursor c = null;
+		int return_int = 0;
+		try {
+			c= database.query("installed", new String[]{"vercode"}, "apkid = ?", new String[]{apkid}, null, null, null);
+			if(c.moveToFirst()){
+				return_int=c.getInt(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(c!=null){
+				c.close();
+			}
+		}
+		
+		return return_int;
+		
+		
+	}
+	
+	public String getInstalledAppVername(String apkid) {
+		
+		Cursor c = null;
+		String return_string = "";
+		try {
+			c= database.query("installed", new String[]{"vername"}, "apkid = ?", new String[]{apkid}, null, null, null);
+			if(c.moveToFirst()){
+				return_string=c.getString(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally{
+			if(c!=null){
+				c.close();
+			}
+		}
+		
+		return return_string;
+		
+		
 	}
 	
 }

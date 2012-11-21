@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="menu_context_remove">Ukloni</string>
   <string name="my_stores">Nema repozitorija!</string>
   <string name="add_store">Nema repozitorija!</string>
   <string name="new_store">Nema repozitorija!</string>
