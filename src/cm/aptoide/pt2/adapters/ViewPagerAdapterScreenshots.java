@@ -36,8 +36,8 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 		imageLoader = new ScreenshotsImageLoader(context);
 		this.images=images2;
 		this.url=imagesurl;
-		this.hashCode=hashCode;
-		System.out.println("hash:Method:"+hashCode);
+		this.hashCode=hashCode.hashCode()+"";
+		System.out.println("hash:Method:"+hashCode + " " + this.hashCode);
 	}
 	
 	@Override

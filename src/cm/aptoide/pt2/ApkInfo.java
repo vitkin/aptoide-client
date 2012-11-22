@@ -405,8 +405,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						break;
 
 					case INFOXML:
+						NetworkUtils utils = new NetworkUtils();
 						String uri = webservicespath+"webservices/listApkScreens/"+repo_string+"/"+viewApk.getApkid()+"/"+viewApk.getVername()+"/json";
-						JSONObject respJSON = NetworkUtils.getJsonObject(new URL(uri), ApkInfo.this);
+						JSONObject respJSON = utils.getJsonObject(new URL(uri), ApkInfo.this);
 						JSONArray imagesurl = respJSON.getJSONArray("listing");
 						thumbnailList = new String[imagesurl.length()];
 						for ( int i = 0; i!= imagesurl.length();i++){
@@ -426,7 +427,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 						public void run() {
 							if(thumbnailList!=null&&thumbnailList.length>0){
-								String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"";
+								String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
 								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,hashCode));
 								pi.setFillColor(Color.DKGRAY);
 								pi.setViewPager(screenshots);

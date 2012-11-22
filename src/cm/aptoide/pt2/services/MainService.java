@@ -100,9 +100,9 @@ public class MainService extends Service {
 			hash = "?hash=" + server.delta;
 		}
 		String url = server.url + what + hash;
-
+		NetworkUtils utils = new NetworkUtils();
 		File f = new File(xmlpath);
-			InputStream in = NetworkUtils.getInputStream(new URL(url), server.getLogin().getUsername(),
+			InputStream in = utils.getInputStream(new URL(url), server.getLogin().getUsername(),
 					server.getLogin().getPassword(),getApplicationContext());
 			int i = 0;
 			while (f.exists()) {

@@ -247,8 +247,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					SAXParser sp = spf.newSAXParser();
 					ViewApk parent_apk = new ViewApk();
 					parent_apk.setApkid("recommended");
+					NetworkUtils utils = new NetworkUtils();
 					BufferedInputStream bis = new BufferedInputStream(
-							NetworkUtils.getInputStream(new URL(
+							utils.getInputStream(new URL(
 									"http://webservices.aptoide.com/webservices/listUserBasedApks/"
 											+ Login.getToken(mContext)
 											+ "/10/xml"), null, null, mContext),
@@ -382,8 +383,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					SAXParser sp = spf.newSAXParser();
 					ViewApk parent_apk = new ViewApk();
 					parent_apk.setApkid("editorschoice");
+					NetworkUtils utils = new NetworkUtils();
 					BufferedInputStream bis = new BufferedInputStream(
-							NetworkUtils
+							utils
 									.getInputStream(
 											new URL(
 													"http://imgs.aptoide.com/apks/editors.xml"),
@@ -421,9 +423,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					SAXParser sp = spf.newSAXParser();
 					Server server = new Server();
 					server.id = 0;
+					NetworkUtils utils = new NetworkUtils();
 					sp.parse(
 							new BufferedInputStream(
-									NetworkUtils
+									utils
 											.getInputStream(
 													new URL(
 															"http://apps.store.aptoide.com/top.xml"),
@@ -753,8 +756,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						connection.connect();
 						int rc = connection.getResponseCode();
 						if (rc == 200) {
-
-							JSONObject json = NetworkUtils.getJsonObject(
+							NetworkUtils utils = new NetworkUtils();
+							JSONObject json = utils.getJsonObject(
 									new URL(url), mContext);
 
 							JSONArray array = json.getJSONArray("listing");

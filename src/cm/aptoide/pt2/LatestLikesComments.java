@@ -47,8 +47,8 @@ public class LatestLikesComments {
 		MatrixCursor cursor = new MatrixCursor(new String[]{"_id","apkid","name","text","username","time"});
 		
 		try {
-
-			JSONObject respJSON = NetworkUtils.getJsonObject(new URL(endPointComments),context);
+			NetworkUtils utils = new NetworkUtils();
+			JSONObject respJSON = utils.getJsonObject(new URL(endPointComments),context);
 			JSONArray array = respJSON.getJSONArray("listing");
 			
 			for(int i = 0;i!=array.length();i++){
