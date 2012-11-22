@@ -269,7 +269,6 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="2dp"
                             android:singleLine="true"
-                            android:text="Version label"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@android:color/darker_gray" />
 
@@ -284,7 +283,6 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="2dp"
                             android:singleLine="true"
-                            android:text="Version installed"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@android:color/darker_gray"
                             android:visibility="gone" />

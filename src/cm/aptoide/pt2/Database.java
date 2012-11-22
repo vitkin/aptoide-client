@@ -993,7 +993,6 @@ public class Database {
 			values.put("mingles", apk.getMinGlEs());
 			values.put("mature", apk.getAge());
 			insertScreenshots(apk, category);
-			
 			database.insert("itembasedapk", null, values);
 			
 		} catch (Exception e){

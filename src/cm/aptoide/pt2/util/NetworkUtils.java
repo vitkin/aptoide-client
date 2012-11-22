@@ -34,7 +34,7 @@ public class NetworkUtils {
 	private static int TIME_OUT = 10000;
 	
 	
-	public static BufferedInputStream getInputStream(URL url, String username, String password, Context mctx) throws IOException{
+	public BufferedInputStream getInputStream(URL url, String username, String password, Context mctx) throws IOException{
 		URLConnection connection = url.openConnection();
 		if(username!=null && password!=null){
 			String basicAuth = "Basic " + new String(Base64.encode((username+":"+password).getBytes(),Base64.NO_WRAP ));
@@ -86,7 +86,7 @@ public class NetworkUtils {
 		return -1;
 	}
 	
-	public static JSONObject getJsonObject(URL url, Context mctx) throws IOException, JSONException{
+	public JSONObject getJsonObject(URL url, Context mctx) throws IOException, JSONException{
 		String line = null;
 		BufferedReader br = new BufferedReader(new java.io.InputStreamReader(getInputStream(url, null, null, mctx)));
 		StringBuilder sb = new StringBuilder();

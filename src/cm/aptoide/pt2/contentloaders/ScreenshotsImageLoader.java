@@ -106,8 +106,12 @@ public class ScreenshotsImageLoader {
 			try {
 				Bitmap bitmap = null;
 				URL imageUrl = new URL(url);
-				NetworkUtils.setTimeout(30000);
-				InputStream is = NetworkUtils.getInputStream(imageUrl, null, null, context);
+				HttpURLConnection conn = (HttpURLConnection) imageUrl
+						.openConnection();
+				conn.setConnectTimeout(30000);
+				conn.setReadTimeout(30000);
+				conn.setInstanceFollowRedirects(true);
+				InputStream is = conn.getInputStream();
 				OutputStream os = new FileOutputStream(f);
 				Utils.CopyStream(is, os);
 				os.close();
