@@ -60,8 +60,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#4f4f4f" />
 
         <TextView
             android:id="@+id/uptodate_versionname"
@@ -72,15 +72,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
-
-        <ImageView
-            android:id="@+id/app_downgrade"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/app_name"
-            android:layout_toRightOf="@id/installed_versionname" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#4f4f4f" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -114,4 +107,3 @@
     </RelativeLayout>
 
 </LinearLayout>
-
