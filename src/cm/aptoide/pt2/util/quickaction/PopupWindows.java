@@ -83,7 +83,7 @@ public class PopupWindows {
 		else 
 			mWindow.setBackgroundDrawable(mBackground);
 
-		mWindow.setWidth(WindowManager.LayoutParams.WRAP_CONTENT);
+		mWindow.setWidth(WindowManager.LayoutParams.FILL_PARENT);
 		mWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
 		mWindow.setTouchable(true);
 		mWindow.setFocusable(true);

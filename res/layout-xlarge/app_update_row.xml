@@ -15,8 +15,8 @@
 
     <ImageView
         android:id="@+id/app_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="96sp"
+        android:layout_height="96sp"
         android:layout_gravity="center_vertical"
         android:padding="4sp"
         android:scaleType="fitCenter" />
@@ -25,7 +25,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:orientation="vertical" >
 
         <TextView
@@ -36,7 +36,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/secondary_text_light"
             android:textStyle="bold" />
 
@@ -48,7 +48,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#4f4f4f"
             android:textStyle="bold" />
 
@@ -60,8 +60,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#4f4f4f" />
 
         <TextView
             android:id="@+id/uptodate_versionname"
@@ -72,46 +72,33 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
-
-        <ImageView
-            android:id="@+id/app_downgrade"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/app_name"
-            android:layout_toRightOf="@id/installed_versionname" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#4f4f4f" />
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:layout_weight="2"
+        android:layout_weight="6"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/downloads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/app_update"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="#b3b3b3"
-            android:textSize="12sp" />
+            android:padding="5dp"
+            android:src="@drawable/ic_update" />
 
-        <RatingBar
-            android:id="@+id/stars"
-            style="?android:attr/ratingBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/downloads"
-            android:isIndicator="true"
-            android:numStars="5" />
+        <View
+            android:layout_width="1dip"
+            android:layout_height="fill_parent"
+            android:layout_alignLeft="@+id/app_update"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="15dp"
+            android:background="@android:color/darker_gray" />
     </RelativeLayout>
 
 </LinearLayout>
-

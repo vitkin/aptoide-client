@@ -130,7 +130,7 @@
                     android:layout_gravity="center_horizontal"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textAppearance="?android:textAppearanceMedium"
                     android:text="Adult Content" />
 
                 <ToggleButton
@@ -176,7 +176,7 @@
                 android:layout_gravity="center_horizontal"
                 android:padding="10dp"
                 android:text="@string/recommended_text"
-                android:textAppearance="?android:textAppearanceSmall" />
+                android:textAppearance="?android:textAppearanceMedium" />
         </LinearLayout>
     </ScrollView>
 

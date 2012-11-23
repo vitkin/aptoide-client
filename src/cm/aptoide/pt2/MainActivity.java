@@ -68,6 +68,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
@@ -85,6 +86,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -110,10 +112,12 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 import cm.aptoide.pt2.Server.State;
 import cm.aptoide.pt2.adapters.InstalledAdapter;
+import cm.aptoide.pt2.adapters.UpdatesAdapter;
 import cm.aptoide.pt2.adapters.ViewPagerAdapter;
 import cm.aptoide.pt2.contentloaders.ImageLoader;
 import cm.aptoide.pt2.contentloaders.ImageLoader2;
 import cm.aptoide.pt2.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt2.services.MainService;
 import cm.aptoide.pt2.services.MainService.LocalBinder;
 import cm.aptoide.pt2.services.ServiceDownloadManager;
@@ -124,12 +128,14 @@ import cm.aptoide.pt2.util.Md5Handler;
 import cm.aptoide.pt2.util.NetworkUtils;
 import cm.aptoide.pt2.util.RepoUtils;
 import cm.aptoide.pt2.views.ViewApk;
+import cm.aptoide.pt2.views.ViewCache;
+import cm.aptoide.pt2.views.ViewDownloadManagement;
 import cm.aptoide.pt2.webservices.login.Login;
 
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
-	private Intent serviceDownloadManager;
+	private Intent serviceDownloadManagerIntent;
 	
 	private final static int AVAILABLE_LOADER = 0;
 	private final static int INSTALLED_LOADER = 1;
@@ -297,7 +303,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						llAlso.setOrientation(LinearLayout.HORIZONTAL);
 						if (valuesRecommended.isEmpty()) {
 							TextView tv = new TextView(mContext);
-							tv.setText("No recommended apps found. We need more interaction from you. Make some downloads!");
+							tv.setText(R.string.no_recommended_apps);
 							tv.setPadding(10, 10, 10, 10);
 							ll.addView(tv);
 						} else {
@@ -593,6 +599,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private ListView availableListView;
 	private Loader<Cursor> availableLoader;
 	private View availableView;
+	private View updateView;
 	private long category_id;
 	private long category2_id;
 	private final ServiceConnection conn = new ServiceConnection() {
@@ -692,10 +699,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 											android.R.anim.fade_in));
 				}
 			}
+			
 		}
 	};
 
-	private ListView updatesView;
+	private ListView updatesListView;
 
 	public class AddStoreCredentialsListener implements
 			DialogInterface.OnClickListener {
@@ -948,6 +956,44 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		return super.onOptionsItemSelected(item);
 	}
 
+	void updateAll(){
+		
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Cursor c = db.getUpdates(order);
+				
+				for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+					ViewApk apk = new ViewApk();
+					apk.setApkid(c.getString(7));
+					apk.setVername(c.getString(2));
+					apk.setVercode(c.getInt(8));
+					apk.setMd5(c.getString(10));
+					String apkpath = c.getString(11) + c.getString(12);
+					try {
+						serviceDownloadManager.callStartDownload(
+								new ViewDownloadManagement(
+								apkpath,
+								apk,
+								new ViewCache(apk.hashCode(), 
+										apk.getMd5())));
+						Thread.sleep(1000);
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+				}
+				
+				c.close();
+			}
+		}).start();
+	}
+	
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
@@ -966,22 +1012,27 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	public void showAbout() {
-		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-		alertBuilder
-				.setCancelable(false)
-				.setNegativeButton(getString(R.string.ok),
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
-							}
-						}).setMessage("Aptoide");
-
-		AlertDialog alert = alertBuilder.create();
-
-		alert.setTitle(R.string.about);
-		alert.setIcon(android.R.drawable.ic_menu_help);
-
-		alert.show();
+		View aboutView = LayoutInflater.from(this).inflate(R.layout.dialog_about, null);
+		Builder dialogBuilder = new AlertDialog.Builder(this).setView(aboutView);
+		final AlertDialog aboutDialog = dialogBuilder.create();
+		aboutDialog.setIcon(android.R.drawable.ic_menu_help);
+		aboutDialog.setTitle(getString(R.string.about));
+		aboutDialog.setCancelable(true);
+		
+		WindowManager.LayoutParams params = aboutDialog.getWindow().getAttributes();
+		params.width=WindowManager.LayoutParams.FILL_PARENT;
+		aboutDialog.getWindow().setAttributes(params);
+		
+		Button changelog = (Button) aboutView.findViewById(R.id.change_log_button);
+		changelog.setOnClickListener(new View.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				Uri uri = Uri.parse(getString(R.string.change_log_url));
+				startActivity(new Intent( Intent.ACTION_VIEW, uri));
+			}
+		});
+		aboutDialog.show();
+		
 	}
 
 	private void displayOptionsDialog() {
@@ -1125,7 +1176,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private void getUpdates() {
 		updatesLoader = getSupportLoaderManager().initLoader(UPDATES_LOADER,
 				null, MainActivity.this);
-		updatesView.setAdapter(updatesAdapter);
+		updatesListView.setAdapter(updatesAdapter);
 	}
 
 	@Override
@@ -1274,14 +1325,43 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 	};
 	private String storeUri = "apps.store.aptoide.com";
+	
+	
+	private AIDLServiceDownloadManager serviceDownloadManagerConnection = null;
+	private AIDLServiceDownloadManager serviceDownloadManager;
+	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
+		
+
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			// This is called when the connection with the service has been
+			// established, giving us the object we can use to
+			// interact with the service.  We are communicating with the
+			// service using AIDL, so here we set the remote service interface.
+			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
+
+			Log.v("Aptoide-UpdatesAdapter", "Connected to ServiceDownloadManager");
+
+		}
+
+		public void onServiceDisconnected(ComponentName className) {
+			// This is called when the connection with the service has been
+			// unexpectedly disconnected -- that is, its process crashed.
+			serviceDownloadManagerIntent = null;
+
+			Log.v("Aptoide-UpdatesAdapter", "Disconnected from ServiceDownloadManager");
+		}
+	};
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		serviceDownloadManager = new Intent(this, ServiceDownloadManager.class);
-		startService(serviceDownloadManager);
-
+		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
+		startService(serviceDownloadManagerIntent);
+		
+		bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
+		
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
 
@@ -1416,11 +1496,20 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				availableView = LayoutInflater.from(mContext).inflate(
 						R.layout.available_page, null);
+				updateView = LayoutInflater.from(mContext).inflate(
+						R.layout.updates_page, null);
 				breadcrumbs = (LinearLayout) availableView
 						.findViewById(R.id.breadcrumb_container);
 				installedView = new ListView(mContext);
-				updatesView = new ListView(mContext);
-
+				updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
+				
+				updateView.findViewById(R.id.update_button).setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						updateAll();
+					}
+				});
 				availableListView = (ListView) availableView
 						.findViewById(R.id.available_list);
 				availableView.findViewById(R.id.refresh_view_layout)
@@ -1437,7 +1526,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 							}
 						});
-
 				joinStores = (CheckBox) availableView
 						.findViewById(R.id.join_stores);
 				joinStores
@@ -1460,7 +1548,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				installedAdapter = new InstalledAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
-				updatesAdapter = new InstalledAdapter(mContext, null,
+				updatesAdapter = new UpdatesAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
 
 				pb = (TextView) availableView.findViewById(R.id.loading_pb);
@@ -1578,7 +1666,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								
 							}
 						});
-				updatesView.setOnItemClickListener(new OnItemClickListener() {
+				updatesListView.setOnItemClickListener(new OnItemClickListener() {
 
 					@Override
 					public void onItemClick(AdapterView<?> arg0, View arg1,
@@ -1597,11 +1685,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				views.add(featuredView);
 				views.add(availableView);
 				views.add(installedView);
-				views.add(updatesView);
+				views.add(updateView);
 
 				pager.setAdapter(new ViewPagerAdapter(mContext, views));
 				indicator.setViewPager(pager);
-				indicator.setTextSize((float) 20);
 				refreshAvailableList(true);
 
 				addBreadCrumb("Stores", ListDepth.STORES);
@@ -1896,7 +1983,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		unregisterReceiver(redrawInstalledReceiver);
 		unregisterReceiver(loginReceiver);
 		unregisterReceiver(newRepoReceiver);
-		stopService(serviceDownloadManager);
+		stopService(serviceDownloadManagerIntent);
 		generateXML();
 		super.onDestroy();
 	}
@@ -1943,6 +2030,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			break;
 		case UPDATES_LOADER:
 			updatesAdapter.swapCursor(data);
+			if(data.getCount()>1){
+				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.VISIBLE);
+				updateView.findViewById(R.id.loading_pb).setVisibility(View.GONE);
+			}else {
+				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.GONE);
+				updateView.findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
+				((TextView) updateView.findViewById(R.id.loading_pb)).setText(R.string.all_updated);
+			}
 			break;
 		default:
 			break;
@@ -2057,7 +2152,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(
 						State.FAILED.name())){
 					((TextView) view.findViewById(R.id.store_dwn_number))
-					.setText("Loading failed, please try again...");
+					.setText(R.string.loading_failed);
 				}
 						
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(

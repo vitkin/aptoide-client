@@ -6,38 +6,30 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/actionbar"
-    android:layout_width="fill_parent"
-    android:layout_height="35dp"
-    android:layout_gravity="top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/greenbar"
-    android:orientation="vertical" >
-
-    <ImageView
-        android:id="@+id/aptoideicon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:src="@drawable/aptoideicon" />
+    android:orientation="horizontal" >
 
     <ImageView
         android:id="@+id/aptoidebrand"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/aptoideicon"
-        android:layout_margin="8dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="10dp"
+        android:layout_weight="5"
         android:scaleType="fitStart"
         android:src="@drawable/aptoidebrand" />
 
     <ImageView
         android:id="@+id/btsearch"
-        android:layout_width="50dp"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="61dp"
+        android:layout_height="38dp"
+        android:layout_marginRight="3dp"
+        android:layout_weight="0.1"
         android:padding="3dp"
         android:src="@drawable/btsearch" />
 
-</RelativeLayout>
+</LinearLayout>

@@ -13,36 +13,13 @@
     android:gravity="right"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/breadcrumb_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-    </LinearLayout>
-
     <ListView
-        android:id="@+id/available_list"
+        android:id="@+id/updates_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/add_store_layout"
         android:layout_below="@+id/breadcrumb_container" >
     </ListView>
-
-    <include
-        android:id="@+id/add_store_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        layout="@layout/add_store_footer" />
-
-    <include
-        android:id="@+id/refresh_view_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        layout="@layout/refresh_view_layout"
-        android:visibility="gone" />
 
     <include
         android:id="@+id/update_all_view_layout"
