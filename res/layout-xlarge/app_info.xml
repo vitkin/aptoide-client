@@ -23,8 +23,8 @@
 
         <ImageView
             android:id="@+id/app_icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="96sp"
+            android:layout_height="96sp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_margin="5dp" />
@@ -45,7 +45,7 @@
 
         <RatingBar
             android:id="@+id/ratingbar"
-            style="?android:attr/ratingBarStyleSmall"
+            style="?android:attr/ratingBarStyleIndicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/app_name"
@@ -69,13 +69,15 @@
             android:layout_below="@+id/app_name"
             android:layout_marginBottom="15dp"
             android:background="@drawable/green_button"
-            android:text="@string/install" />
+            android:padding="20dp"
+            android:text="@string/install"
+            android:textAppearance="?android:textAppearanceLarge" />
     </RelativeLayout>
 
     <ScrollView
         android:id="@id/scrollView1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/advertisement"
         android:layout_below="@+id/apkinfoheader"
         android:layout_weight="1" >
@@ -115,7 +117,7 @@
                 <cm.aptoide.pt2.CustomViewPager
                     android:id="@+id/screenShotsPager"
                     android:layout_width="fill_parent"
-                    android:layout_height="200dp" />
+                    android:layout_height="500dp" />
 
                 <ImageView
                     android:id="@+id/left"
@@ -165,6 +167,7 @@
                         android:maxLines="1"
                         android:paddingLeft="8dp"
                         android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="#4A4" />
 
                     <TextView
@@ -177,7 +180,7 @@
                         android:paddingLeft="3dp"
                         android:singleLine="true"
                         android:text="@string/users_like_this"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/darker_gray" />
 
                     <TextView
@@ -189,6 +192,7 @@
                         android:maxLines="1"
                         android:paddingLeft="3dp"
                         android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="#A44" />
 
                     <TextView
@@ -201,7 +205,7 @@
                         android:paddingLeft="3dp"
                         android:singleLine="true"
                         android:text="@string/users_dont_like_this"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/darker_gray" />
 
                     <TextView
@@ -233,7 +237,7 @@
                             android:paddingRight="2dp"
                             android:singleLine="true"
                             android:text="Version info"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@android:color/darker_gray" />
 
                         <TextView
@@ -248,7 +252,7 @@
                             android:paddingRight="2dp"
                             android:singleLine="true"
                             android:text="Store"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@android:color/darker_gray" />
                     </TableRow>
 
@@ -269,7 +273,8 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="2dp"
                             android:singleLine="true"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="Version label"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@android:color/darker_gray" />
 
                         <TextView
@@ -283,7 +288,8 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="2dp"
                             android:singleLine="true"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="Version installed"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
                             android:textColor="@android:color/darker_gray"
                             android:visibility="gone" />
                     </TableRow>
@@ -343,6 +349,7 @@
                     android:paddingLeft="5.0sp"
                     android:paddingRight="5.0sp"
                     android:paddingTop="10.0dip"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#7e7e7e" />
             </LinearLayout>
 
@@ -356,6 +363,7 @@
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:text="Show more"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:visibility="gone" />
 
             <TextView
@@ -441,6 +449,7 @@
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
                 android:text="See All"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:visibility="gone" />
 
             <Button
@@ -486,6 +495,7 @@
                     android:paddingLeft="5.0dp"
                     android:paddingRight="5.0dp"
                     android:text="@string/who_downloaded_this"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="#3f3f3f" />
 
                 <HorizontalScrollView

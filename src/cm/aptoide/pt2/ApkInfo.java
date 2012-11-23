@@ -230,7 +230,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		progress.setIndeterminate(true);
 		Bundle b = new Bundle();
 		b.putLong("_id", id);
-		findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
+//		findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
 		getSupportLoaderManager().restartLoader(20, b, new LoaderCallbacks<ViewApk>() {
 
 			@Override
@@ -261,10 +261,12 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					}
 				}else if(installedVercode>viewApk.getVercode()){
 					((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
 				}
 				
 				if(installedVercode==viewApk.getVercode()){
 					((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
 				}
 				
 				final long repo_id = viewApk.getRepo_id();
@@ -638,7 +640,19 @@ OnClickListener installListener = new OnClickListener() {
 							e.printStackTrace();
 						}
 					}else{
-						download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, db.getServer(viewApk.getRepo_id(), false).getLogin());
+						if(category.equals(Category.ITEMBASED)){
+							download = new ViewDownloadManagement(
+									viewApk.getPath(), 
+									viewApk, 
+									cache);
+						}else{
+							download = new ViewDownloadManagement(
+									viewApk.getPath(), 
+									viewApk, 
+									cache, 
+									db.getServer(viewApk.getRepo_id(), false).getLogin());	
+						}
+						
 
 						runOnUiThread(new Runnable() {
 							

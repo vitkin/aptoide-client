@@ -680,7 +680,7 @@ public class Database {
 				filter = filter + " and mature <= 0"; 
 			}
 			
-			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode , c.iconspath as iconspath from installed as a, apk as b, repo as c where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
+			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath as iconspath, b.md5, c.apkpath, b.path from installed as a, apk as b, repo as c where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
 			
 			switch (order) {
 			case NAME:

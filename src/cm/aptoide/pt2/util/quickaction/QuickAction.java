@@ -79,7 +79,7 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 //	            return 1.2f - inner * inner;
 //	        }
 //		});
-	        
+	    
 		setRootViewId(R.layout.quickaction);
 		
 //		mAnimStyle		= ANIM_AUTO;

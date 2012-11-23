@@ -2,11 +2,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     
     <string name="WidgetProvider_timestamp_today">Today</string>
-<string name="WidgetProvider_timestamp_yesterday">Yesterday</string>
-<string name="WidgetProvider_timestamp_hour_ago">%s hour ago</string>
-<string name="WidgetProvider_timestamp_hours_ago">%s hours ago</string>
-<string name="WidgetProvider_timestamp_minutes_ago">%s minutes ago</string>
-<string name="WidgetProvider_timestamp_just_now">Just now</string>
+	<string name="WidgetProvider_timestamp_yesterday">Yesterday</string>
+	<string name="WidgetProvider_timestamp_hour_ago">%s hour ago</string>
+	<string name="WidgetProvider_timestamp_hours_ago">%s hours ago</string>
+	<string name="WidgetProvider_timestamp_minutes_ago">%s minutes ago</string>
+	<string name="WidgetProvider_timestamp_just_now">Just now</string>
     
     <string name="menu_context_remove">Remove</string>
     <string name="menu_context_reparse">Reload</string>
@@ -45,6 +45,7 @@
     <string name="subject">Name</string>
     <string name="app_name">Aptoide</string>
     <string name="start_loading">Loading…</string>
+    <string name="loading_failed">Failed to load, please try again…</string>
     <string name="available_tab">Available</string>
     <string name="featured_tab">Featured</string>
     <string name="installed_tab">Installed</string>
@@ -134,6 +135,11 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
     <string name="menu_search">Search</string>
+    
+    <string name="recommended_apps">Recommended Apps</string>
+    <string name="recommended_text">Sign in to view the best apps for you</string>
+    <string name="no_recommended_apps">No recommended apps found. We need more interaction from you. Make some downloads!</string>
+    <string name="all_updated">All apps are up to date</string>
     
     
     <string name="menu_add_repo">New Store</string>
@@ -276,6 +282,7 @@
     <string name="contact">Contact</string>
     <string name="choose_email_client">Choose an Email client:</string>
     <string name="refresh_list">Refresh</string>
+     <string name="update_all">Update all</string>
     
     <string name="want_to_share">Aptoide will not post without your permission. We respect your phone privacy. Do you want to share the following message?</string>
     <string name="share">Share</string>

@@ -13,8 +13,8 @@
 
     <ImageView
         android:id="@+id/downloading_icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="96sp"
+        android:layout_height="96sp"
         android:layout_gravity="center_vertical"
         android:layout_margin="8dp"
         android:src="@android:drawable/sym_def_app_icon" />

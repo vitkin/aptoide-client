@@ -14,4 +14,5 @@
     android:background="@drawable/back_breadcrumb"
     android:ellipsize="end"
     android:maxLines="1"
-    android:singleLine="true" />
+    android:singleLine="true"
+    android:textAppearance="?android:attr/textAppearanceLarge" />

@@ -25,7 +25,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:orientation="vertical" >
 
         <TextView
@@ -60,8 +60,8 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#4f4f4f" />
 
         <TextView
             android:id="@+id/uptodate_versionname"
@@ -72,46 +72,31 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="#4f4f4f"
-            android:textSize="12sp" />
-
-        <ImageView
-            android:id="@+id/app_downgrade"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/app_name"
-            android:layout_toRightOf="@id/installed_versionname" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#4f4f4f" />
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_gravity="center_vertical"
-        android:layout_weight="2"
+        android:layout_weight="5"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/downloads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="#b3b3b3"
-            android:textSize="12sp" />
+        <ImageView
+            android:id="@+id/app_update"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:padding="5dp"
+            android:src="@drawable/ic_update" />
 
-        <RatingBar
-            android:id="@+id/stars"
-            style="?android:attr/ratingBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/downloads"
-            android:isIndicator="true"
-            android:numStars="5" />
+        <View
+            android:layout_width="1dip"
+            android:layout_height="fill_parent"
+            android:layout_alignLeft="@+id/app_update"
+            android:layout_alignParentLeft="true"
+            android:background="@android:color/darker_gray" />
     </RelativeLayout>
 
 </LinearLayout>
-
