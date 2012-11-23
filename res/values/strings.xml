@@ -283,6 +283,7 @@
     <string name="choose_email_client">Choose an Email client:</string>
     <string name="refresh_list">Refresh</string>
      <string name="update_all">Update all</string>
+     <string name="update_to">Update to</string>
     
     <string name="want_to_share">Aptoide will not post without your permission. We respect your phone privacy. Do you want to share the following message?</string>
     <string name="share">Share</string>

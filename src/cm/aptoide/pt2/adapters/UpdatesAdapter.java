@@ -79,7 +79,7 @@ public class UpdatesAdapter extends CursorAdapter {
             holder = new ViewHolder();
             holder.name = (TextView) view.findViewById(R.id.app_name);
             holder.icon= (ImageView) view.findViewById(R.id.app_icon);
-            holder.vername= (TextView) view.findViewById(R.id.installed_versionname);
+            holder.vername= (TextView) view.findViewById(R.id.uptodate_versionname);
             holder.update = (ImageView) view.findViewById(R.id.app_update);
 //            holder.downloads= (TextView) view.findViewById(R.id.downloads);
 //            holder.rating= (RatingBar) view.findViewById(R.id.stars);
@@ -101,7 +101,7 @@ public class UpdatesAdapter extends CursorAdapter {
 //	        	holder.rating.setRating(0);
 //			}
 //		 holder.downloads.setText(cursor.getString(6));
-		holder.vername.setText(cursor.getString(2));
+		holder.vername.setText("Update to: "+cursor.getString(2));
 		
 		holder.update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
