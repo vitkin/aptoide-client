@@ -234,9 +234,10 @@
     <string name="aptoide_error">Can\'t connect to the remote server. Please verify your Internet connection.</string>
     <string name="no_sch_downloads">No scheduled downloads!</string>
     
-    <string name="size">Size</string>
-    
-    <string name="schDown_install">Do you want to install all scheduled downloads?</string>
+   <string name="size">Size</string>
+   <string name="installed_version">Inst. Ver.</string>
+   
+   <string name="schDown_install">Do you want to install all scheduled downloads?</string>
    <string name="schDown_installselected">Install Selected</string>
    <string name="schDown_wireless_detected">Wireless detected: Download all aplications on Scheduled Downloads?</string>
    <string name="schDown_nodownloads">No Scheduled Downloads</string>
