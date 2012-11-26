@@ -101,7 +101,7 @@ public class UpdatesAdapter extends CursorAdapter {
 //	        	holder.rating.setRating(0);
 //			}
 //		 holder.downloads.setText(cursor.getString(6));
-		holder.vername.setText("Update to: "+cursor.getString(2));
+		holder.vername.setText(context.getString(R.string.update_to)+": "+cursor.getString(2));
 		
 		holder.update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
