@@ -4,6 +4,31 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <ImageView
+        android:id="@+id/ic_aptoide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_launcher" />
+
+    <TextView
+        android:id="@+id/aptoide_brand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/aptoide_brand"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/primary_text_dark" />
+
+    <TextView
+        android:id="@+id/aptoide_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/aptoide_version"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/secondary_text_dark" />
+
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="0dp"
@@ -17,62 +42,66 @@
             android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/about11"
+                android:id="@+id/credits"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="@string/about_txt11"
+                android:text="@string/credits"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@android:color/darker_gray" />
-
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/site"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about_site"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/about2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
-                    android:layout_marginLeft="3dp"
-                    android:autoLink="web"
-                    android:text="@string/about_txt2"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
-
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:orientation="horizontal" >
-
-                <TextView
-                    android:id="@+id/about2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/about_mail"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/darker_gray" />
-
-                <TextView
-                    android:id="@+id/about3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="3dp"
-                    android:autoLink="email"
-                    android:text="@string/about_txt3"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-            </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="2dp" >
+
+        <TextView
+            android:id="@+id/site"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_site"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/about2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:autoLink="web"
+            android:text="@string/about_txt2"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:padding="2dp" >
+
+        <TextView
+            android:id="@+id/about2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/about_mail"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/about3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:autoLink="email"
+            android:text="@string/about_txt3"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/change_log_button"

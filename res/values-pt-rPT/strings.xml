@@ -120,7 +120,7 @@
   <string name="updating_norepos">Não existem lojas activas na sua lista.\nPor favor, adicione uma loja ou active pelo menos uma das que você já possuí.</string>
   <string name="update_done_msg1">A lojas foram actualizadas com sucesso.</string>
   <string name="about_txt1">O seu instalador para dispositivos móveis com sistema Android.\n</string>
-  <string name="about_site">Início:</string>
+  <string name="about_site">Site:</string>
   <string name="about_mail">Contacto:</string>
   <string name="no_descript">Indesponível</string>
   <string name="about_txt2">www.aptoide.com</string>

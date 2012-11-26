@@ -16,7 +16,7 @@
         android:id="@+id/sdkverTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SDK Version"
+        android:text="@string/setting_sdk_version"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/primary_text_dark" />
 
@@ -30,7 +30,7 @@
         android:id="@+id/screenSizeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Screen Size"
+        android:text="@string/setting_screen_size"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/primary_text_dark" />
 
@@ -44,7 +44,7 @@
         android:id="@+id/esglVerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ESGL Version"
+        android:text="@string/setting_esgl_version"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/primary_text_dark" />
 

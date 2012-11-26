@@ -1,48 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
    
-    <string name="about_txt11">Version: %s\n(released under GNU GPL v2 license)\n\n
-    Credits:\n\n
+    <string name="aptoide_version">Version 4.0</string>
+    <string name="aptoide_brand">APTOiDE</string>
+    
+    <string name="credits">
+    &#160;Aptoide Team:\n\n
     \t\t Rui Mateus \n\n
     \t\t Duarte Silveira \n\n
     \t\t Teresa Deus \n\n
     \t\t Rafael Campos \n\n
     \t\t Roberto Jacinto \n\n
     &#160;Translators:\n\n
-    &#160;&#160;&#160;Spanish:\n
-    \t\t\tFrancisco \"ppelao3k\"\n
-    &#160;&#160;&#160;Arabic:\n
-    \t\t\tManaa Alshihe\n
-    &#160;&#160;&#160;Italian:\n
-    \t\t\tPavo Baxter\n
-    &#160;&#160;&#160;French:\n
-    \t\t\tAlexis Bonvin\n
-    &#160;&#160;&#160;Chinese:\n
-    \t\t\tTheodore Wte\n
-    &#160;&#160;&#160;Polish:\n
-    \t\t\tStanislaw \"trurl3\"\n
-    &#160;&#160;&#160;German:\n
-    \t\t\tMartin Nehrdich\n
-    &#160;&#160;&#160;Turkish:\n
-    \t\t\tAnonymous\n
-    &#160;&#160;&#160;Bosnian/Croatian/Serbian&#160;:\n
-    \t\t\tRijad \"rijads\"\n
-    &#160;&#160;&#160;Persian/Farsi:\n
-    \t\t\tMasoud Abdar\n
-    &#160;&#160;&#160;Russian:\n
-    \t\t\tKanat Yesseyev\n
-    &#160;&#160;&#160;Finnish:\n
-    \t\t\tSami Kuusisto\n
-    &#160;&#160;&#160;Brazilian Portuguese:\n
-    \t\t\tEdu Salgado\n
-    &#160;&#160;&#160;Dutch:\n
-    \t\t\tIsmail Gürol Celiktas\n
-    &#160;&#160;&#160;Hebrew:\n
-    \t\t\tשלו מויאל\n
-    &#160;&#160;&#160;Catalan:\n
-    \t\t\tMarc Bres Gil\n
-    &#160;&#160;&#160;Romanian:\n
-    \t\t\tMunteanu Ovidiu\n
+    &#160;&#160;&#160;Spanish: Francisco \"ppelao3k\"\n
+    &#160;&#160;&#160;Arabic: Manaa Alshihe\n
+    &#160;&#160;&#160;Italian: Pavo Baxter\n
+    &#160;&#160;&#160;French: Alexis Bonvin\n
+    &#160;&#160;&#160;Chinese: Theodore Wte\n
+    &#160;&#160;&#160;Polish: Stanislaw \"trurl3\"\n
+    &#160;&#160;&#160;German: Martin Nehrdich\n
+    &#160;&#160;&#160;Turkish: Anonymous\n
+    &#160;&#160;&#160;Bosnian/Croatian/Serbian&#160;: Rijad \"rijads\"\n
+    &#160;&#160;&#160;Persian/Farsi: Masoud Abdar\n
+    &#160;&#160;&#160;Russian: Kanat Yesseyev\n
+    &#160;&#160;&#160;Finnish: Sami Kuusisto\n
+    &#160;&#160;&#160;Brazilian Portuguese: Edu Salgado\n
+    &#160;&#160;&#160;Dutch: Ismail Gürol Celiktas\n
+    &#160;&#160;&#160;Hebrew: שלו מויאל\n
+    &#160;&#160;&#160;Catalan: Marc Bres Gil\n
+    &#160;&#160;&#160;Romanian: Munteanu Ovidiu\n
     </string>
     
 </resources>
