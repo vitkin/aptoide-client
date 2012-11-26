@@ -30,7 +30,6 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingLeft="2dp"
-        android:singleLine="true"
-        android:text="TextView" />
+        android:singleLine="true" />
 
 </LinearLayout>

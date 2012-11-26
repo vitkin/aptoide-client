@@ -10,12 +10,17 @@
     
     <string name="menu_context_remove">Remove</string>
     <string name="menu_context_reparse">Reload</string>
+    <string name="preparing_to_load">Preparing to load, please wait…</string>
+    <string name="start_loading">Loading…</string>
+    <string name="loading_failed">Failed to load, please try again…</string>
     <string name="error_latest_apk">No APK available in database. Is store still loading?</string>
 	<string name="error_delete_store">Unable to delete store. The store is still loading.</string>
+	<string name="cant_connect_to_store">Can\'t connect to store</string>
     <string name="menu_settings">Settings</string>
     
 	<string name="my_stores">My stores</string>
 	<string name="store_name">Store Name</string>
+	<string name="store">Store</string>
 	<string name="category1">Category 1</string>
 	<string name="category2">Category 2</string>
 	<string name="add_store">Add Store</string>
@@ -35,19 +40,22 @@
     <string name="exit">exit</string>
     <string name="install">Install</string>
     <string name="uninstall">Uninstall</string>
+    <string name="update">Update</string>
     <string name="search_market">Search Market</string>
-    <string name="comments">Comments:</string>
+    <string name="comments">Comments</string>
     <string name="commentlabel">Add Comment</string>
+    <string name="no_comments">No comments found. Be the first!</string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="comment_see_all">See All</string>
     <string name="chkBoxSchDwn">Schedule Download</string>
     <string name="who_downloaded_this">Who downloaded this app also downloaded:</string>
     <string name="submit">Submit</string>
     <string name="body">Body</string>
     <string name="subject">Name</string>
     <string name="app_name">Aptoide</string>
-    <string name="start_loading">Loading…</string>
-    <string name="loading_failed">Failed to load, please try again…</string>
     <string name="available_tab">Available</string>
     <string name="featured_tab">Featured</string>
+    <string name="top_apps">Top Apps</string>
     <string name="installed_tab">Installed</string>
     <string name="updates_tab">Updates</string>
     <string name="add_repo_private">Private</string>
@@ -74,26 +82,28 @@
     <string name="dont_like">Don\'t like</string>
     <string name="users_like_this">users like this,</string>
     <string name="users_dont_like_this">users do not like this</string>
+    <string name="by">by</string>
+    <string name="on">on</string>
     <string name="postingtaste">Your request is being submitted</string>
     <string name="showpass">Show password</string>
-    <string name="user">User name...</string>
-    <string name="pass">Password...</string>
+    <string name="user">User name…</string>
+    <string name="pass">Password…</string>
     <string name="submit">Submit</string>
     <string name="new_account">New account</string>
     <string name="setcredentials">Aptoide Login</string>
     <string name="usernotdef">User not defined</string>
     <string name="passwordnotdef">Password not defined</string>
-    <string name="loggingin">Logging in...</string>
+    <string name="loggingin">Logging in…</string>
     <string name="unabletoexecute">Unable to execute</string>
     <string name="failedcredentials">Failed to login the given credentials</string>
-    <string name="loading_likes">Likes loading...</string>
-    <string name="body">Body...</string>
+    <string name="loading_likes">Likes loading…</string>
+    <string name="body">Body…</string>
     <string name="subject">Name</string>
     <string name="inresponseto">\@</string>
-    <string name="commentlabel">Comment app...</string>
+    <string name="commentlabel">Comment app…</string>
     <string name="add_comment">Add comment</string>
     <string name="enterbody">Enter your review on the body section</string>
-    <string name="postingcomment">Posting your comment...</string>
+    <string name="postingcomment">Posting your comment…</string>
     <string name="commentadded">Your comment as been successfully submitted</string>
     <string name="order_popup_title1">Order applications by</string>
     <string name="order_popup_lst1">Most recent first </string>
@@ -110,14 +120,25 @@
     <string name="update_main">The list of stores in use has been changed.\nDo you wish to update them?</string>
     <string name="email">Email</string>
     <string name="pass_confirmation">Password confirmation</string>
+   	<string name="setting_icon_download_rules">Icon Download Rules</string>
+   	<string name="setting_wifi">WiFi</string>
+   	<string name="setting_3g">3G</string>
+   	<string name="setting_4g">4G</string>
+   	<string name="setting_ethernet">Ethernet</string>
     <string name="setting_hwfiltertitle">Hardware Filters</string>
     <string name="setting_hwspecstitle">Hardware Specs</string>
+    <string name="setting_sdk_version">SDK Version</string>
+    <string name="setting_screen_size">Screen Size</string>
+    <string name="setting_esgl_version">ESGL Version</string> 
     <string name="setting_hwspecssum">Check your hardware specifications</string>
     <string name="setting_appfiltertitle">Filter Applications</string>
+    <string name="setting_mature_filtering">Mature filtering</string>
+    <string name="setting_dont_show_mature_content">Don\'t show mature content</string>
     <string name="setting_appfiltersum">Don\'t show applications not compatible with your device.</string>
     <string name="setting_schdwntitle">Scheduled Downloads</string>
     <string name="setting_schdwninstalltitle">Automatic Install</string>
     <string name="setting_schdwninstallsum">Install scheduled downloads automatically when a Wifi connection is present</string>
+    <string name="setting_clear_memory">Clear memory</string>
     <string name="credentialssettings">Aptoide Login</string>
     <string name="clearcredentials">Clear login</string>
     <string name="clearcredentials_summary">Unset your current login</string>
@@ -135,7 +156,14 @@
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
     <string name="menu_search">Search</string>
+    <string name="adult_content">Adult Content</string>
     
+    <string name="stores">Stores</string>
+    <string name="screenshots">Screenshots</string>
+    <string name="app_about">About</string>
+    <string name="show_more">Show more</string>
+    <string name="rate_this_app">Rate this app</string>
+    <string name="related_apps">Related Apps</string>
     <string name="recommended_apps">Recommended Apps</string>
     <string name="recommended_text">Sign in to view the best apps for you</string>
     <string name="no_recommended_apps">No recommended apps found. We need more interaction from you. Make some downloads!</string>
@@ -156,6 +184,7 @@
     <string name="btn_done">Done</string>
     <string name="btn_chlog">Changelog</string>
     <string name="btn_search_market">Search Market</string>
+    <string name="search_on_aptoide">Search on Aptoide</string>
     <string name="schDwnBtn">Scheduled Dwnl.</string>
     <string name="search_log">Search</string>
     <string name="search_stores">in other Stores</string>
@@ -170,11 +199,11 @@
     <string name="about">About</string>
     <string name="about_txt1">Your package installer to Android phone.\n</string>
     <string name="description">@string/about_txt1</string>
-        
     <string name="about_site">Home: </string>
-    
     <string name="about_mail">Contact: </string>
     
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
     <string name="no_descript">No description available</string>
     
     <string name="about_txt2"> www.aptoide.com</string>
@@ -186,7 +215,7 @@
     <string name="repo_edt_msg2">Edit store</string>
     <string name="md5_auto_update_error">Update package checksum failed!  Keeping current version.</string>
     <string name="network_auto_update_error">Update connection failed!  Keeping current version.</string>
-    <string name="auto_updating">Please wait while processing update download...</string>
+    <string name="auto_updating">Please wait while processing update download…</string>
     
     <string name="update_self_title">Update available</string>
     <string name="update_self_msg">There is a new version of aptoide available,\ndo you wish to update?</string>

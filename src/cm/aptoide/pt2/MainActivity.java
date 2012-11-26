@@ -1691,7 +1691,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				indicator.setViewPager(pager);
 				refreshAvailableList(true);
 
-				addBreadCrumb("Stores", ListDepth.STORES);
+				addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
 
 				if (sPref.getBoolean("firstrun", true)) {
 					// Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
@@ -2133,7 +2133,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(
 						"QUEUED")) {
 					((TextView) view.findViewById(R.id.store_dwn_number))
-							.setText("Preparing to load, please wait...");
+							.setText(getString(R.string.preparing_to_load));
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(
 						"PARSING")) {
@@ -2212,18 +2212,18 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								.getString(cursor.getColumnIndex("like"))
 								.equals("TRUE") ? R.drawable.up
 								: R.drawable.down, 0);
-				((TextView) view.findViewById(R.id.user_like)).setText("by "
+				((TextView) view.findViewById(R.id.user_like)).setText(getString(R.string.by) +" "
 						+ cursor.getString(cursor.getColumnIndex("username")));
 				break;
 			case LATEST_COMMENTS:
 				((TextView) view.findViewById(R.id.comment_on_app))
-						.setText("on "
+						.setText(getString(R.string.on) +" "
 								+ cursor.getString(cursor
 										.getColumnIndex("name")));
 				((TextView) view.findViewById(R.id.comment)).setText(cursor
 						.getString(cursor.getColumnIndex("text")));
 				((TextView) view.findViewById(R.id.comment_owner))
-						.setText("by: "
+						.setText(getString(R.string.by) +": "
 								+ cursor.getString(cursor
 										.getColumnIndex("username")));
 				((TextView) view.findViewById(R.id.time)).setText(cursor

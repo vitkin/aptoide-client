@@ -201,7 +201,7 @@ public class Comments {
 			loading.setVisibility(View.GONE);
 			if(result.isEmpty()){
 				TextView tv = new TextView(context);
-				tv.setText("No comments found. Be the first!");
+				tv.setText(context.getString(R.string.no_comments));
 				tv.setPadding(8, 2, 2, 2);
 				tv.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
 				view.addView(tv);
@@ -222,7 +222,7 @@ public class Comments {
 			if(error){
 				if(!internetConnection){
 					TextView tv = new TextView(context);
-					tv.setText("No internet connection.");
+					tv.setText(context.getString(R.string.no_internet_connection));
 					view.addView(tv);
 				}
 				loading.setVisibility(View.GONE);

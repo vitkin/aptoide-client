@@ -257,7 +257,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
 					((TextView) findViewById(R.id.inst_version)).setText("Inst. Ver.: " + db.getInstalledAppVername(viewApk.getApkid()));
 					if(installedVercode<viewApk.getVercode()){
-						((Button) findViewById(R.id.btinstall)).setText("Update");
+						((Button) findViewById(R.id.btinstall)).setText(R.string.update);
 					}
 				}else if(installedVercode>viewApk.getVercode()){
 					((Button) findViewById(R.id.btinstall)).setText(R.string.install);
@@ -283,7 +283,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				} catch (Exception e) {
 					((RatingBar) findViewById(R.id.ratingbar)).setRating(0);
 				}
-				((TextView) findViewById(R.id.app_store)).setText("Store: " +repo_string);
+				((TextView) findViewById(R.id.app_store)).setText(getString(R.string.store)+": " +repo_string);
 				((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
 				((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
 				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
@@ -503,13 +503,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 										scrollPosition = (int)((ScrollView)findViewById(R.id.scrollView1)).getScrollY();
 										description.setMaxLines(Integer.MAX_VALUE);
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
-										((TextView) findViewById(R.id.show_all_description)).setText("Show Less");
+										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
 									}else{
 										collapsed=true;
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
 										description.setMaxLines(10);
 										((ScrollView)findViewById(R.id.scrollView1)).scrollTo(0, scrollPosition);
-										((TextView) findViewById(R.id.show_all_description)).setText("Show More");
+										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
 									}
 								}
 							});
@@ -524,13 +524,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 										scrollPosition = (int)((ScrollView)findViewById(R.id.scrollView1)).getScrollY();
 										description.setMaxLines(Integer.MAX_VALUE);
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
-										((TextView) findViewById(R.id.show_all_description)).setText("Show Less");
+										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
 									}else{
 										collapsed=true;
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
 										description.setMaxLines(10);
 										((ScrollView)findViewById(R.id.scrollView1)).scrollTo(0, scrollPosition);
-										((TextView) findViewById(R.id.show_all_description)).setText("Show More");
+										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
 									}
 								}
 							});

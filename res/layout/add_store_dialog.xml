@@ -45,7 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Can&apos;t connect to store"
+                android:text="@string/cant_connect_to_store"
                 android:textColor="@android:color/primary_text_dark"
                 android:textSize="16dip"
                 android:visibility="gone" />

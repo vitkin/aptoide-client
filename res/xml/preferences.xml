@@ -5,22 +5,22 @@
     <PreferenceCategory android:title="@string/clear_dwn_title" >
         <PreferenceScreen
             android:key="second_preferencescreen"
-            android:title="Icon Download Rules">
+            android:title="@string/setting_icon_download_rules">
         <CheckBoxPreference
                 android:key="wifi"
                 android:defaultValue="true" 
-                android:title="WiFi" />
+                android:title="@string/setting_wifi" />
         <CheckBoxPreference
                 android:key="3g"
                 android:defaultValue="true" 
-                android:title="3g" />
+                android:title="@string/setting_3g" />
         <CheckBoxPreference
                 android:key="4g"
                 android:defaultValue="true" 
-                android:title="4g" />
+                android:title="@string/setting_4g" />
         <CheckBoxPreference
                 android:key="ethernet"
-                android:title="Ethernet"
+                android:title="@string/setting_ethernet"
                 android:defaultValue="true" />
     </PreferenceScreen>
     </PreferenceCategory>
@@ -38,8 +38,8 @@
             android:title="@string/setting_appfiltertitle" />
         <CheckBoxPreference
             android:key="matureChkBox"
-            android:summary="Don\&apos;t show Mature content"
-            android:title="Mature Filtering" />
+            android:summary="@string/setting_dont_show_mature_content"
+            android:title="@string/setting_mature_filtering" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/setting_schdwntitle" >
         <CheckBoxPreference
@@ -47,7 +47,7 @@
             android:summary="@string/setting_schdwninstallsum"
             android:title="@string/setting_schdwninstalltitle" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="Clear memory" >
+    <PreferenceCategory android:title="@string/setting_clear_memory" >
         <Preference
             android:key="clearapk"
             android:title="@string/clearcontent_title" />

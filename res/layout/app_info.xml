@@ -101,7 +101,7 @@
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
                 android:paddingTop="10.0dip"
-                android:text="Screenshots"
+                android:text="@string/screenshots"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3e6e2f"
                 android:visibility="gone" />
@@ -232,7 +232,6 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="2dp"
                             android:singleLine="true"
-                            android:text="Version info"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@android:color/darker_gray" />
 
@@ -247,7 +246,6 @@
                             android:paddingLeft="8dp"
                             android:paddingRight="2dp"
                             android:singleLine="true"
-                            android:text="Store"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:textColor="@android:color/darker_gray" />
                     </TableRow>
@@ -321,7 +319,7 @@
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
                 android:paddingTop="10.0dip"
-                android:text="About"
+                android:text="@string/app_about"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3e6e2f" />
 
@@ -355,7 +353,7 @@
                 android:gravity="center"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:text="Show more"
+                android:text="@string/show_more"
                 android:visibility="gone" />
 
             <TextView
@@ -366,7 +364,7 @@
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
                 android:paddingTop="10.0dip"
-                android:text="Rate this app"
+                android:text="@string/rate_this_app"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3e6e2f" />
 
@@ -417,7 +415,7 @@
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
                 android:paddingTop="10.0dip"
-                android:text="Comments"
+                android:text="@string/comments"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3e6e2f" />
 
@@ -440,7 +438,7 @@
                 android:gravity="fill_vertical|right"
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
-                android:text="See All"
+                android:text="@string/comment_see_all"
                 android:visibility="gone" />
 
             <Button
@@ -466,7 +464,7 @@
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
                 android:paddingTop="10.0dip"
-                android:text="Related Apps"
+                android:text="@string/related_apps"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3e6e2f" />
 
