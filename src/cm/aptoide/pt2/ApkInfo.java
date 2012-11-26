@@ -255,7 +255,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				
 				if(installedVercode<=viewApk.getVercode()&&installedVercode!=0){
 					findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
-					((TextView) findViewById(R.id.inst_version)).setText("Inst. Ver.: " + db.getInstalledAppVername(viewApk.getApkid()));
+					((TextView) findViewById(R.id.inst_version)).setText(R.string.installed_version+": " + db.getInstalledAppVername(viewApk.getApkid()));
 					if(installedVercode<viewApk.getVercode()){
 						((Button) findViewById(R.id.btinstall)).setText(R.string.update);
 					}
