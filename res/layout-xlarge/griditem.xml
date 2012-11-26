@@ -8,11 +8,12 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="200dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/layoutclick"
     android:clickable="true"
     android:focusable="true"
-    android:gravity="center_horizontal" >
+    android:gravity="center_horizontal"
+    android:padding="2dp" >
 
     <ImageView
         android:id="@+id/icon"

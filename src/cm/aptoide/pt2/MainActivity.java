@@ -1066,6 +1066,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		orderDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
 				new Dialog.OnClickListener() {
 					boolean pop_change = false;
+					private boolean pop_change_category = false;
 
 					public void onClick(DialogInterface dialog, int which) {
 						if (ord_rct.isChecked()) {
@@ -1084,9 +1085,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 						if (btn1.isChecked()) {
 							pop_change = true;
+							pop_change_category  = true;
 							editor.putBoolean("orderByCategory", true);
 						} else if (btn2.isChecked()) {
 							pop_change = true;
+							pop_change_category = true;
 							editor.putBoolean("orderByCategory", false);
 						}
 						if (adult.isChecked()) {
@@ -1098,6 +1101,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						if (pop_change) {
 							editor.putInt("order_list", order.ordinal());
 							editor.commit();
+							if(pop_change_category){
+								if(depth.equals(ListDepth.APPLICATIONS)){
+									removeLastBreadCrumb();	
+								}
+								removeLastBreadCrumb();
+								depth=ListDepth.CATEGORY1;
+							}
 							redrawAll();
 							refreshAvailableList(true);
 						}

@@ -117,7 +117,7 @@
                 <cm.aptoide.pt2.CustomViewPager
                     android:id="@+id/screenShotsPager"
                     android:layout_width="fill_parent"
-                    android:layout_height="500dp" />
+                    android:layout_height="300dp" />
 
                 <ImageView
                     android:id="@+id/left"
