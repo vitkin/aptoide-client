@@ -86,7 +86,7 @@ public class UpdatesAdapter extends CursorAdapter {
             view.setTag(holder);
         }
         
-		holder.name.setText(cursor.getString(1));
+        final String name = cursor.getString(1);
 		final String apkId = cursor.getString(7);
 		final String vername = cursor.getString(2);
 		final int vercode = cursor.getInt(8);
@@ -94,6 +94,7 @@ public class UpdatesAdapter extends CursorAdapter {
 		final String apkpath = cursor.getString(11) + cursor.getString(12);  
 		String iconspath = cursor.getString(9)+cursor.getString(4);
 		final String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode")));
+		holder.name.setText(name);
 		loader.DisplayImage(iconspath, holder.icon, context,hash);
 //		 try{
 //	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
@@ -101,12 +102,12 @@ public class UpdatesAdapter extends CursorAdapter {
 //	        	holder.rating.setRating(0);
 //			}
 //		 holder.downloads.setText(cursor.getString(6));
-		holder.vername.setText(context.getString(R.string.update_to)+": "+cursor.getString(2));
-		
+		holder.vername.setText(context.getString(R.string.update_to)+": "+vername);
 		holder.update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				ViewApk apk = new ViewApk();
 				apk.setApkid(apkId);
+				apk.setName(name);
 				apk.setVercode(vercode);
 				apk.setVername(vername);
 				apk.setMd5(md5);

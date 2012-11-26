@@ -640,7 +640,7 @@ OnClickListener installListener = new OnClickListener() {
 							e.printStackTrace();
 						}
 					}else{
-						if(category.equals(Category.ITEMBASED)){
+						if(category.equals(Category.ITEMBASED)||category.equals(Category.TOP)){
 							download = new ViewDownloadManagement(
 									viewApk.getPath(), 
 									viewApk, 
