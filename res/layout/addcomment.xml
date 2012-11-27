@@ -47,10 +47,13 @@
 
     <Button
         android:id="@+id/submitComment"
+        style="@style/button_style"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
+        android:background="@drawable/button"
         android:onClick="postComment"
-        android:text="@string/submit" />
+        android:text="@string/submit"
+        android:textColor="@android:color/black" />
 
 </LinearLayout>

@@ -380,14 +380,14 @@
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/button"
+                    android:background="@drawable/like_button"
                     android:drawableLeft="@drawable/like_btn"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/like"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textStyle="normal" />
 
                 <Button
@@ -396,14 +396,14 @@
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/button"
+                    android:background="@drawable/dont_like_button"
                     android:drawableLeft="@drawable/dislike_btn"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/dont_like"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textStyle="normal" />
             </LinearLayout>
 
@@ -418,6 +418,20 @@
                 android:text="@string/comments"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="#3e6e2f" />
+
+            <Button
+                android:id="@+id/add_comment"
+                style="@style/button_style"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:background="@drawable/button"
+                android:drawableRight="@drawable/ic_more_arrow_right"
+                android:text="@string/add_comment"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/black"
+                android:textStyle="normal" >
+            </Button>
 
             <LinearLayout
                 android:id="@+id/commentContainer"
@@ -440,20 +454,6 @@
                 android:paddingRight="5.0sp"
                 android:text="@string/comment_see_all"
                 android:visibility="gone" />
-
-            <Button
-                android:id="@+id/add_comment"
-                style="@style/button_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"
-                android:background="@drawable/button"
-                android:drawableRight="@drawable/ic_more_arrow_right"
-                android:text="@string/add_comment"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"
-                android:textStyle="normal" >
-            </Button>
 
             <TextView
                 android:id="@+id/itembasedapks_label"
