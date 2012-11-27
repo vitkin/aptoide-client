@@ -94,8 +94,6 @@
         <View
             android:layout_width="1dip"
             android:layout_height="fill_parent"
-            android:layout_alignLeft="@+id/app_update"
-            android:layout_alignParentLeft="true"
             android:background="@android:color/darker_gray" />
     </RelativeLayout>
 

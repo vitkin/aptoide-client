@@ -855,10 +855,24 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
+					
 					showAddStoreCredentialsDialog(uri);
 				}
 			});
 
+			break;
+		case 404:
+			runOnUiThread(new Runnable() {
+
+				@Override
+				public void run() {
+					Toast.makeText(
+							mContext,
+							mContext.getString(R.string.verify_store),
+							Toast.LENGTH_LONG).show();
+					showAddStoreDialog();
+				}
+			});
 			break;
 		case -1:
 			runOnUiThread(new Runnable() {
@@ -867,7 +881,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				public void run() {
 					Toast.makeText(
 							mContext,
-							"An error ocurred. Please check your internet connection.",
+							mContext.getString(R.string.an_error_check_net),
 							Toast.LENGTH_LONG).show();
 					showAddStoreDialog();
 				}
@@ -1023,14 +1037,21 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		params.width=WindowManager.LayoutParams.FILL_PARENT;
 		aboutDialog.getWindow().setAttributes(params);
 		
-		Button changelog = (Button) aboutView.findViewById(R.id.change_log_button);
-		changelog.setOnClickListener(new View.OnClickListener(){
-			@Override
-			public void onClick(View v) {
+//		Button changelog = (Button) aboutView.findViewById(R.id.change_log_button);
+//		changelog.setOnClickListener(new View.OnClickListener(){
+//			@Override
+//			public void onClick(View v) {
+//				
+//			}
+//		});
+		
+		aboutDialog.setButton(getString(R.string.btn_chlog), new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int id) {
 				Uri uri = Uri.parse(getString(R.string.change_log_url));
 				startActivity(new Intent( Intent.ACTION_VIEW, uri));
 			}
 		});
+
 		aboutDialog.show();
 		
 	}
@@ -2040,8 +2061,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			break;
 		case UPDATES_LOADER:
 			updatesAdapter.swapCursor(data);
-			if(data.getCount()>1){
+			if(data.getCount()==1){
+				updateView.findViewById(R.id.loading_pb).setVisibility(View.GONE);
+				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.GONE);
+			}else if(data.getCount()>1){
 				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.VISIBLE);
+//				updateView.findViewById(R.id.update_all_view_layout).startAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
 				updateView.findViewById(R.id.loading_pb).setVisibility(View.GONE);
 			}else {
 				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.GONE);

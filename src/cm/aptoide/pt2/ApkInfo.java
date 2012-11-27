@@ -255,7 +255,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				
 				if(installedVercode<=viewApk.getVercode()&&installedVercode!=0){
 					findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
-					((TextView) findViewById(R.id.inst_version)).setText(R.string.installed_version+": " + db.getInstalledAppVername(viewApk.getApkid()));
+					((TextView) findViewById(R.id.inst_version)).setText(getString(R.string.installed_version)+": " + db.getInstalledAppVername(viewApk.getApkid()));
 					if(installedVercode<viewApk.getVercode()){
 						((Button) findViewById(R.id.btinstall)).setText(R.string.update);
 					}
@@ -658,7 +658,7 @@ OnClickListener installListener = new OnClickListener() {
 							
 							@Override
 							public void run() {
-								Button manage = (Button) findViewById(R.id.icon_manage);
+								ImageView manage = (ImageView) findViewById(R.id.icon_manage);
 								manage.setVisibility(View.GONE);
 								manage.setOnClickListener(new OnClickListener() {
 									@Override
@@ -699,7 +699,7 @@ OnClickListener installListener = new OnClickListener() {
 		Log.d("Aptoide-ApkInfo", "getAppDownloading: "+download);
 
 		if(!download.isNull()){
-			Button manage = (Button) findViewById(R.id.icon_manage);
+			ImageView manage = (ImageView) findViewById(R.id.icon_manage);
 			manage.setVisibility(View.GONE);
 			manage.setOnClickListener(new OnClickListener() {
 				@Override

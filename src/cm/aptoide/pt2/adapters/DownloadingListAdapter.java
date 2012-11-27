@@ -90,7 +90,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 		ProgressBar app_download_progress;
 		TextView app_progress;
 		TextView app_speed;
-		Button manageDownloadsButton;
+		ImageView manageDownloadsButton;
 				
 	}
 
@@ -108,7 +108,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 			rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.downloading_icon);
 			rowViewHolder.app_progress = (TextView) convertView.findViewById(R.id.progress);
 			rowViewHolder.app_speed = (TextView) convertView.findViewById(R.id.speed);
-			rowViewHolder.manageDownloadsButton = (Button) convertView.findViewById(R.id.icon_manage);
+			rowViewHolder.manageDownloadsButton = (ImageView) convertView.findViewById(R.id.icon_manage);
 			convertView.setTag(rowViewHolder);
 		}else{
 			rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
