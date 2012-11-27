@@ -173,9 +173,9 @@
   <string name="password_tip">Mostrar senha</string>
   <string name="bazaar_login">Configurações Aptoide</string>
   <string name="schDown_added">Adicionado a Downloads Agendados</string>
-  <string name="clear_cache_sucess">Seu comentário foi enviado com sucesso</string>
+  <string name="clear_cache_sucess">Cache apagada com sucesso</string>
   <string name="aptoide_downloading">Fazendo Download:</string>
-  <string name="starting_download">Nunca fazer download</string>
-  <string name="resuming_download">Nunca fazer download</string>
+  <string name="starting_download">A fazer download</string>
+  <string name="resuming_download">A retomar download</string>
   <string name="contact">Contato:</string>
 </resources>
