@@ -29,13 +29,15 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 	private String[] images;
 	ArrayList<String> url;
 	private String hashCode;
+	private boolean hd;
 	
-	public ViewPagerAdapterScreenshots(Context context,String[] images2,ArrayList<String> imagesurl, String hashCode) {
+	public ViewPagerAdapterScreenshots(Context context,String[] images2,ArrayList<String> imagesurl, String hashCode, boolean hd) {
 		
 		this.context=context;
 		imageLoader = new ScreenshotsImageLoader(context);
 		this.images=images2;
 		this.url=imagesurl;
+		this.hd=hd;
 		this.hashCode=hashCode.hashCode()+"";
 		System.out.println("hash:Method:"+hashCode + " " + this.hashCode);
 	}
@@ -46,16 +48,18 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 		View v = LayoutInflater.from(context).inflate(R.layout.screenshots, null);
 		imageLoader.DisplayImage(-1, images[position],(ImageView) v.findViewById(R.id.screenshot), context, hashCode);
 		container.addView(v);
-		v.setOnClickListener(new OnClickListener() {
-			
-			public void onClick(View v) {
-				Intent i = new Intent(context,ScreenshotsViewer.class);
-				i.putStringArrayListExtra("url", url);
-				i.putExtra("position", position);
-				i.putExtra("hashCode", hashCode+".hd");
-				context.startActivity(i);
-			}
-		});
+		if(!hd){
+			v.setOnClickListener(new OnClickListener() {
+				
+				public void onClick(View v) {
+					Intent i = new Intent(context,ScreenshotsViewer.class);
+					i.putStringArrayListExtra("url", url);
+					i.putExtra("position", position);
+					i.putExtra("hashCode", hashCode+".hd");
+					context.startActivity(i);
+				}
+			});
+		}
 		return v;
 		
 	}

@@ -64,6 +64,7 @@ public class ImageLoader {
     	ManagerPreferences preferences= new ManagerPreferences(context);
         ViewIconDownloadPermissions permissions = preferences.getIconDownloadPermissions();
         download = NetworkUtils.isPermittedConnectionAvailable(context, permissions);
+        Log.d("Aptoide400-ImageLoader","download is " +download);
     }
     
     public void DisplayImage(String url, ImageView imageView,Context context, String hashCode)

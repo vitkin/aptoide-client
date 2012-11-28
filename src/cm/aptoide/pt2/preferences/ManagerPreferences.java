@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.util.Constants;
@@ -45,7 +46,7 @@ public class ManagerPreferences{
 
 
 	public ManagerPreferences(Context context) {
-		getPreferences = context.getSharedPreferences(Constants.FILE_PREFERENCES, Context.MODE_PRIVATE);
+		getPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		setPreferences = getPreferences.edit();
 		Log.v("Aptoide-ManagerPreferences", "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
 		if(getAptoideClientUUID() == null){
@@ -57,7 +58,7 @@ public class ManagerPreferences{
 	private void createLauncherShortcut(Context context){
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
 		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME);
-		shortcutIntent.putExtra(Constants.APTOIDE_PACKAGE_NAME, context.getString(R.string.description));
+		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 
 		final Intent intent = new Intent();
 		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
@@ -142,20 +143,20 @@ public class ManagerPreferences{
 //		return getPreferences.getBoolean(EnumPreferences.IS_HW_FILTER_ON.name(), false);
 //	}
 	
-	public void setIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions){
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIFI.name(), iconDownloadPermissions.isWiFi());
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), iconDownloadPermissions.isEthernet());
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIMAX.name(), iconDownloadPermissions.isWiMax());
-		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.MOBILE.name(), iconDownloadPermissions.isMobile());
-		setPreferences.commit();		
-	}
+//	public void setIconDownloadPermissions(ViewIconDownloadPermissions iconDownloadPermissions){
+//		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIFI.name(), iconDownloadPermissions.isWiFi());
+//		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), iconDownloadPermissions.isEthernet());
+//		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIMAX.name(), iconDownloadPermissions.isWiMax());
+//		setPreferences.putBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.MOBILE.name(), iconDownloadPermissions.isMobile());
+//		setPreferences.commit();		
+//	}
 	
 	public ViewIconDownloadPermissions getIconDownloadPermissions(){
 		ViewIconDownloadPermissions permissions = new ViewIconDownloadPermissions(
-													getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIFI.name(), true)
-													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.ETHERNET.name(), true)
-													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.WIMAX.name(), true)
-													, getPreferences.getBoolean(EnumPreferences.DOWNLOAD_ICONS_.name()+EnumIconDownloadsPermission.MOBILE.name(), true) );
+													getPreferences.getBoolean("wifi", true)
+													, getPreferences.getBoolean("ethernet", true)
+													, getPreferences.getBoolean("4g", true)
+													, getPreferences.getBoolean("3g", true) );
 		return permissions;
 	}
 	

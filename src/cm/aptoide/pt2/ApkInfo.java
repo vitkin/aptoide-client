@@ -23,6 +23,7 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -36,6 +37,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -425,12 +427,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					}
 					final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 					final CustomViewPager screenshots = (CustomViewPager) findViewById(R.id.screenShotsPager);
+					
+					
+					
 					runOnUiThread(new Runnable() {
 
 						public void run() {
 							if(thumbnailList!=null&&thumbnailList.length>0){
 								String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,hashCode));
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,hashCode,false));
 								pi.setFillColor(Color.DKGRAY);
 								pi.setViewPager(screenshots);
 								pi.setRadius(6.5f);

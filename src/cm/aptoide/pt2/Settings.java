@@ -22,6 +22,7 @@ import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.widget.Toast;
 import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
@@ -31,28 +32,34 @@ public class Settings extends PreferenceActivity{
 	String icon_path = Environment.getExternalStorageDirectory()+"/.aptoide/icons/";
 	ManagerPreferences preferences;
 	Context mctx;
+	private boolean unlocked = false;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         mctx = this;
+        new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
         preferences = new ManagerPreferences(this);
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-			
-			@Override
-			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
-					String key) {
-				preferences.setIconDownloadPermissions(new ViewIconDownloadPermissions(((CheckBoxPreference)findPreference("wifi")).isChecked(),
-						((CheckBoxPreference)findPreference("ethernet")).isChecked(),
-						((CheckBoxPreference)findPreference("4g")).isChecked(),
-						((CheckBoxPreference)findPreference("3g")).isChecked()));
-			}
-		});
+//        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
+//			
+//			@Override
+//			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+//					String key) {
+//				preferences.setIconDownloadPermissions(new ViewIconDownloadPermissions(((CheckBoxPreference)findPreference("wifi")).isChecked(),
+//						((CheckBoxPreference)findPreference("ethernet")).isChecked(),
+//						((CheckBoxPreference)findPreference("4g")).isChecked(),
+//						((CheckBoxPreference)findPreference("3g")).isChecked()));
+//			}
+//		});
         findPreference("clearcache").setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			
+
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				new DeleteDir().execute(new File(icon_path));
+				if(unlocked){
+					new DeleteDir().execute(new File(icon_path));
+				}
+				
 				return false;
 			}
 		});
@@ -60,15 +67,15 @@ public class Settings extends PreferenceActivity{
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				new DeleteDir().execute(new File(aptoide_path));
+				if(unlocked){
+					new DeleteDir().execute(new File(aptoide_path));
+				}
+				
 				return false;
 			}
-
-			
 		});
 		Preference hwspecs = (Preference) findPreference("hwspecs");
 		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
-		new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
 	}
 
 	public class DeleteDir extends AsyncTask<File, Void, Void>{
@@ -133,6 +140,7 @@ public class Settings extends PreferenceActivity{
 		protected void onPostExecute(Double[] result) {
 			super.onPostExecute(result);
 			redrawSizes(result);
+			unlocked=true;
 		}
 		
 	}
