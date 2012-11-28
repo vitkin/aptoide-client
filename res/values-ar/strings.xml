@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="start_loading">تحميل...</string>
   <string name="menu_settings">الإعدادات</string>
   <string name="my_stores">تحرير المخزن</string>
   <string name="store_name">إسم المستخدم...</string>
@@ -19,7 +20,6 @@
   <string name="submit">تقديم</string>
   <string name="subject">الإسم</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">تحميل...</string>
   <string name="available_tab">المتوفر</string>
   <string name="featured_tab">المميز</string>
   <string name="installed_tab">المثبت</string>

@@ -2,6 +2,7 @@
 <resources>
   <string name="menu_context_remove">Poista</string>
   <string name="menu_context_reparse">Poista</string>
+  <string name="start_loading">Ladataan...</string>
   <string name="error_latest_apk">APK:ta ei löydy tietokannasta. Onko kaupan päivitys kesken?</string>
   <string name="error_delete_store">Kaupan poisto ei onnistu. Kaupan päivitys on vielä kesken.</string>
   <string name="menu_settings">Asetukset</string>
@@ -31,7 +32,6 @@
   <string name="body">Runko</string>
   <string name="subject">Nimi</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Ladataan...</string>
   <string name="available_tab">Saatavissa</string>
   <string name="featured_tab">Suositellut</string>
   <string name="installed_tab">Asennetut</string>

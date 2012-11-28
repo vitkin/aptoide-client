@@ -2,6 +2,7 @@
 <resources>
   <string name="menu_context_remove">Enlever</string>
   <string name="menu_context_reparse">Recharger</string>
+  <string name="start_loading">Chargement...</string>
   <string name="error_latest_apk">Pas d\'app dispo dans la base. Le dépôt se charge-t-il encore?</string>
   <string name="error_delete_store">Impossible de supprimer le dépôt. Le dépôt est en cours de chargement.</string>
   <string name="menu_settings">Paramètres</string>
@@ -31,7 +32,6 @@
   <string name="body">Corps</string>
   <string name="subject">Nom</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Chargement...</string>
   <string name="available_tab">Disponible</string>
   <string name="featured_tab">En vedette</string>
   <string name="installed_tab">Installé</string>

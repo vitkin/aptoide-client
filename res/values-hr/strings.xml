@@ -2,6 +2,7 @@
 <resources>
   <string name="menu_context_remove">Ukloni</string>
   <string name="menu_context_reparse">Reload</string>
+  <string name="start_loading">Loading...</string>
   <string name="error_latest_apk">Nema APK u bazi podataka. Da li se store još uvijek podiže ?</string>
   <string name="error_delete_store">Nemoguće ukloniti store. Store se još uvijek podiže.</string>
   <string name="menu_settings">Postavke</string>
@@ -31,7 +32,6 @@
   <string name="body">Tijelo</string>
   <string name="subject">Ime</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Loading...</string>
   <string name="available_tab">Dostupno</string>
   <string name="featured_tab">Istaknuto</string>
   <string name="installed_tab">Instalirano</string>
