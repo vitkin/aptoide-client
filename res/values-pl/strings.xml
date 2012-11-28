@@ -1,5 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="start_loading">Ładowanie...</string>
   <string name="menu_settings">Ustawienia</string>
   <string name="my_stores">Edytuj repozytorium</string>
   <string name="store_name">Nazwa użytkownika...</string>
@@ -19,7 +20,6 @@
   <string name="submit">Wyślij</string>
   <string name="subject">Nazwa</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Ładowanie...</string>
   <string name="available_tab">Dostępne</string>
   <string name="installed_tab">Zainstalowane</string>
   <string name="updates_tab">Uaktualnienia</string>

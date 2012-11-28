@@ -2,6 +2,7 @@
 <resources>
   <string name="menu_context_remove">Verwijderen</string>
   <string name="menu_context_reparse">Opnieuw laden</string>
+  <string name="start_loading">Laden...</string>
   <string name="error_latest_apk">Geen APK beschikbaar in database. Is voorraad nog aan het laden?</string>
   <string name="error_delete_store">Niet mogelijk om voorraad te verwijderen. De voorraad is nog aan het laden.</string>
   <string name="menu_settings">Instellingen</string>
@@ -31,7 +32,6 @@
   <string name="body">Commentaar</string>
   <string name="subject">Naam</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Laden...</string>
   <string name="available_tab">Beschikbaar</string>
   <string name="featured_tab">Aanbevolen</string>
   <string name="installed_tab">Geïnstalleerd</string>

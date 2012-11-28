@@ -2,6 +2,7 @@
 <resources>
   <string name="menu_context_remove">Remover</string>
   <string name="menu_context_reparse">Recarregar</string>
+  <string name="start_loading">Carregando...</string>
   <string name="error_latest_apk">Sem APK disponível no banco de dados. A loja ainda está carregando?</string>
   <string name="error_delete_store">Impossível apagar loja. A loja ainda está carregando.</string>
   <string name="menu_settings">Configurações</string>
@@ -31,7 +32,6 @@
   <string name="body">Corpo</string>
   <string name="subject">Nome</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Carregando...</string>
   <string name="available_tab">Disponível</string>
   <string name="featured_tab">Destaques</string>
   <string name="installed_tab">Instalado</string>

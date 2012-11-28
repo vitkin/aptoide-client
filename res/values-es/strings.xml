@@ -1,20 +1,25 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="app_name">Aptoide</string>
   <string name="start_loading">Cargando...</string>
+  <string name="menu_settings">Configuración</string>
+  <string name="add_repo_private">Privado</string>
+  <string name="extended_server">Repositorio extendido</string>
+  <string name="install">Instalar</string>
+  <string name="uninstall">Desistalar</string>
+  <string name="search_market">Buscar en el Market</string>
+  <string name="commentlabel">Comentar aplicación</string>
+  <string name="submit">Enviar</string>
+  <string name="body">Contenido</string>
+  <string name="subject">Nombre</string>
+  <string name="app_name">Aptoide</string>
   <string name="available_tab">Disponible</string>
   <string name="installed_tab">Instalada</string>
   <string name="updates_tab">Actualizaciones</string>
-  <string name="add_repo_private">Privado</string>
   <string name="add_repo_text">Añadir</string>
-  <string name="extended_server">Repositorio extendido</string>
   <string name="btn_add_repo">Nuevo repositorio</string>
   <string name="menu_rem_repo">Eliminar repositorio</string>
   <string name="number_apks">Aplicaciones:</string>
   <string name="please_wait">Por favor, espera...</string>
-  <string name="uninstall">Desistalar</string>
-  <string name="install">Instalar</string>
-  <string name="search_market">Buscar en el Market</string>
   <string name="finished_download_alrt">Descarga terminada</string>
   <string name="finished_download_message">Dsecarga terminada</string>
   <string name="download_alrt">Descargando:</string>
@@ -29,7 +34,6 @@
   <string name="showpass">Mostrar contraseña</string>
   <string name="user">Nombre de usuario</string>
   <string name="pass">Contraseña</string>
-  <string name="submit">Enviar</string>
   <string name="new_account">Nueva cuenta</string>
   <string name="setcredentials">Loguearse en Bazaar</string>
   <string name="usernotdef">Usuario no definido</string>
@@ -38,10 +42,7 @@
   <string name="unabletoexecute">Imposible de ejecutar</string>
   <string name="failedcredentials">Fallo al loguear los datos proporcionados</string>
   <string name="loading_likes">Cargando positivos...</string>
-  <string name="body">Contenido</string>
-  <string name="subject">Nombre</string>
   <string name="inresponseto">\@</string>
-  <string name="commentlabel">Comentar aplicación</string>
   <string name="enterbody">Escribe tu análisis en la sección \"Contenido\"</string>
   <string name="postingcomment">Publicando tu comentario...</string>
   <string name="commentadded">Tu comentario ha sido publicado con éxito</string>
@@ -75,7 +76,6 @@
   <string name="menu_manage">Gestionar repositorios</string>
   <string name="menu_display_options">Desplegar opciones</string>
   <string name="menu_order">Cambiar orden</string>
-  <string name="menu_settings">Configuración</string>
   <string name="menu_about">Información</string>
   <string name="menu_search">Buscar</string>
   <string name="menu_add_repo">Nuevo repositorio</string>

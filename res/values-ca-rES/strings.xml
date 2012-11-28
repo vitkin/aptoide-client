@@ -2,6 +2,7 @@
 <resources>
   <string name="menu_context_remove">Eliminar</string>
   <string name="menu_context_reparse">Recarregar</string>
+  <string name="start_loading">Carregant...</string>
   <string name="error_latest_apk">No hi ha APK a la base de dades. S\'està carregant el repositori encara?</string>
   <string name="error_delete_store">No s\'ha pogut eliminar el repositori. Encara està carregant</string>
   <string name="menu_settings">Configuració</string>
@@ -31,7 +32,6 @@
   <string name="body">Cos</string>
   <string name="subject">Nom</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Carregant...</string>
   <string name="available_tab">Disponible</string>
   <string name="featured_tab">Recomanats</string>
   <string name="installed_tab">Instal·lat</string>

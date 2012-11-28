@@ -2,6 +2,7 @@
 <resources>
   <string name="menu_context_remove">Şterge</string>
   <string name="menu_context_reparse">Reîncărcare</string>
+  <string name="start_loading">Încărcare...</string>
   <string name="error_latest_apk">Nici o aplicaţie disponibilă în baza de date.Magazinul încă se încarcă?</string>
   <string name="error_delete_store">Nu s-a putut şterge magazinul.Magazinul încă se încarcă.</string>
   <string name="menu_settings">Setări</string>
@@ -31,7 +32,6 @@
   <string name="body">Corp</string>
   <string name="subject">Nume</string>
   <string name="app_name">Aptoide</string>
-  <string name="start_loading">Încărcare...</string>
   <string name="available_tab">Disponibil</string>
   <string name="featured_tab">Caracteristic</string>
   <string name="installed_tab">Instalat</string>
