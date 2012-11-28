@@ -34,34 +34,20 @@ public class UpdatesAdapter extends CursorAdapter {
 
 	private AIDLServiceDownloadManager serviceDownloadManager = null;
 
-	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			// This is called when the connection with the service has been
-			// established, giving us the object we can use to
-			// interact with the service.  We are communicating with the
-			// service using AIDL, so here we set the remote service interface.
-			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
-
-			Log.v("Aptoide-UpdatesAdapter", "Connected to ServiceDownloadManager");
-
-		}
-
-		public void onServiceDisconnected(ComponentName className) {
-			// This is called when the connection with the service has been
-			// unexpectedly disconnected -- that is, its process crashed.
-			serviceDownloadManager = null;
-
-			Log.v("Aptoide-UpdatesAdapter", "Disconnected from ServiceDownloadManager");
-		}
-	};
-
 	
 	private ImageLoader loader;
 
-	public UpdatesAdapter(Context context, Cursor c, int flags,Database db) {
+	public UpdatesAdapter(Context context, Cursor c, int flags) {
 		super(context, c, flags);
 		loader = ImageLoader.getInstance(context);
-		context.bindService(new Intent(context, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+	}
+	
+	/**
+	 * @param serviceDownloadManager the serviceDownloadManager to set
+	 */
+	public void setServiceDownloadManager(
+			AIDLServiceDownloadManager serviceDownloadManager) {
+		this.serviceDownloadManager = serviceDownloadManager;
 	}
 
 	@Override

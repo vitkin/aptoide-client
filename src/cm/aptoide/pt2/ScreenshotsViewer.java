@@ -55,7 +55,7 @@ public class ScreenshotsViewer extends FragmentActivity {
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if(images!=null&&images.length>0){
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,images,uri,hashCode));
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,images,uri,hashCode,true));
 								pi.setViewPager(screenshots);
 								screenshots.setCurrentItem(getIntent().getIntExtra("position", 0));
 							}

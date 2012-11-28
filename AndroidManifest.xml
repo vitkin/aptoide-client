@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cm.aptoide.pt2"
-    android:versionCode="407"
-    android:versionName="4.0.0beta7" android:installLocation="auto">
+    android:versionCode="409"
+    android:versionName="4.0.0beta9" android:installLocation="auto">
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="8" />
     
 	<uses-permission android:name="android.permission.INTERNET"/>
@@ -10,6 +10,9 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK"/>
 	<uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 	<uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+	<uses-permission android:name="android.permission.ACCESS_COURSE_LOCATION" />
 	
     <application
         android:icon="@drawable/ic_launcher"
@@ -30,7 +33,7 @@
                 android:value=".SearchManager" />
         </activity>
         
-		<activity android:name=".ApkInfo" android:configChanges="orientation"> 
+		<activity android:name=".ApkInfo" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"> 
 		    <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchManager" />
@@ -144,6 +147,20 @@
         <activity
             android:name="com.google.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+        
+        <activity
+		android:name="com.adsdk.sdk.banner.InAppWebView"
+		android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+
+	<activity
+		android:name="com.adsdk.sdk.mraid.MraidActivity"
+		android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+
+	<activity
+		android:name="com.adsdk.sdk.video.RichMediaActivity"
+		android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+		android:hardwareAccelerated="false" />
+        
     </application>
 
 </manifest>

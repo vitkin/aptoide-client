@@ -121,6 +121,7 @@ import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt2.services.MainService;
 import cm.aptoide.pt2.services.MainService.LocalBinder;
 import cm.aptoide.pt2.services.ServiceDownloadManager;
+import cm.aptoide.pt2.sharing.DialogShareOnFacebook.UpdateStatusListener;
 import cm.aptoide.pt2.sharing.WebViewFacebook;
 import cm.aptoide.pt2.sharing.WebViewTwitter;
 import cm.aptoide.pt2.util.Algorithms;
@@ -145,7 +146,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private final static int LATEST_LIKES = -1;
 
 	private HashMap<String, String> updateParams = new HashMap<String, String>();
-	private static final String LATEST_VERSION_CODE_URI = "http://imgs.aptoide.com/latest_version.xml";
+	private static final String LATEST_VERSION_CODE_URI = "http://mateus-server.tk/latest_version.xml";
 	private static final String TMP_UPDATE_FILE = Environment
 			.getExternalStorageDirectory().getPath()
 			+ "/.aptoide/aptoideUpdate.apk";
@@ -615,12 +616,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				loadRecommended();
 			}
 			
-			
-			
-			
-			
-				
-			
 		}
 
 		@Override
@@ -994,10 +989,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										apk.getMd5())));
 						Thread.sleep(1000);
 					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					
@@ -1034,7 +1027,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		aboutDialog.setCancelable(true);
 		
 		WindowManager.LayoutParams params = aboutDialog.getWindow().getAttributes();
-		params.width=WindowManager.LayoutParams.FILL_PARENT;
+		params.width=WindowManager.LayoutParams.MATCH_PARENT;
 		aboutDialog.getWindow().setAttributes(params);
 		
 //		Button changelog = (Button) aboutView.findViewById(R.id.change_log_button);
@@ -1369,7 +1362,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			// interact with the service.  We are communicating with the
 			// service using AIDL, so here we set the remote service interface.
 			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
-
+			((UpdatesAdapter)updatesAdapter).setServiceDownloadManager(serviceDownloadManager);
 			Log.v("Aptoide-UpdatesAdapter", "Connected to ServiceDownloadManager");
 
 		}
@@ -1580,7 +1573,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				installedAdapter = new InstalledAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
 				updatesAdapter = new UpdatesAdapter(mContext, null,
-						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
+						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
 				pb = (TextView) availableView.findViewById(R.id.loading_pb);
 				addStoreButton = availableView.findViewById(R.id.add_store);
@@ -1830,6 +1823,34 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							});
 					alertDialog.show();
 				}
+				
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						try{
+							getUpdateParameters();
+							
+							if(getPackageManager().getPackageInfo(getPackageName(), 0).versionCode<
+									Integer.parseInt(updateParams.get("versionCode"))){
+								runOnUiThread(new Runnable() {
+									
+									@Override
+									public void run() {
+										requestUpdateSelf();
+									}
+								});
+								
+							}
+							
+						}catch (Exception e){
+							e.printStackTrace();
+						}
+						
+					}
+				}).start();
+				
+				
 			}
 
 		}
@@ -2008,7 +2029,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	@Override
 	protected void onDestroy() {
-		unbindService(conn);
+		if(service!=null){
+			unbindService(conn);
+		}
+		if(serviceDownloadManager!=null){
+			unbindService(serviceManagerConnection);
+		}
 		unregisterReceiver(updatesReceiver);
 		unregisterReceiver(statusReceiver);
 		unregisterReceiver(redrawInstalledReceiver);
