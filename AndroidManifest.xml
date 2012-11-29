@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cm.aptoide.pt2"
-    android:versionCode="409"
-    android:versionName="4.0.0beta9" android:installLocation="auto">
+    package="cm.aptoide.pt"
+    android:versionCode="400"
+    android:versionName="4.0.0" android:installLocation="auto">
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="8" />
     
 	<uses-permission android:name="android.permission.INTERNET"/>
