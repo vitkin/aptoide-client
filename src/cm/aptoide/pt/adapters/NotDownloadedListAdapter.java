@@ -31,7 +31,7 @@ import android.widget.TextView;
 import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 public class NotDownloadedListAdapter extends BaseAdapter{
 

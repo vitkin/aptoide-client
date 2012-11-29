@@ -9,9 +9,9 @@ package cm.aptoide.pt.adapters;
 
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.contentloaders.ImageLoader;
-import cm.aptoide.pt2.R;
-import cm.aptoide.pt2.R.id;
-import cm.aptoide.pt2.R.layout;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.R.id;
+import cm.aptoide.pt.R.layout;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;

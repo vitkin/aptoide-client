@@ -44,7 +44,7 @@ import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.util.Base64;
 import cm.aptoide.pt.util.Md5Handler;
 import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 public class ItemBasedApks {
 

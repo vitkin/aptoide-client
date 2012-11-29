@@ -27,7 +27,7 @@ import android.view.Gravity;
 import android.widget.Toast;
 import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 public class Settings extends PreferenceActivity{
 	String aptoide_path = Environment.getExternalStorageDirectory()+"/.aptoide/";

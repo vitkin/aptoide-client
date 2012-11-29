@@ -43,10 +43,10 @@ import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
-import cm.aptoide.pt2.AIDLDownloadManager;
-import cm.aptoide.pt2.AIDLDownloadObserver;
-import cm.aptoide.pt2.R;
-import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt.AIDLDownloadManager;
+import cm.aptoide.pt.AIDLDownloadObserver;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 /**
  * ServiceDownloadManager, manages interaction between interface classes and services

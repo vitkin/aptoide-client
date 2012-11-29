@@ -24,7 +24,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.PopupWindow.OnDismissListener;
 import android.widget.TextView;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 /**
  * QuickAction dialog.

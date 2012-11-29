@@ -10,7 +10,7 @@ package cm.aptoide.pt.webservices.comments;
 import java.net.URL;
 
 import cm.aptoide.pt.webservices.login.Login;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 import android.app.Activity;
 import android.content.Context;

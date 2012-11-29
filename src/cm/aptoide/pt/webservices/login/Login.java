@@ -48,7 +48,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.util.Algorithms;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 public class Login extends Activity {
 	ProgressDialog pd;

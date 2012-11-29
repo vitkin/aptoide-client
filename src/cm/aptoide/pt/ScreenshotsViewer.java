@@ -13,7 +13,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 
 import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 import com.viewpagerindicator.CirclePageIndicator;
 import android.content.Context;

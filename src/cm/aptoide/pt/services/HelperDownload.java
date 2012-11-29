@@ -54,7 +54,7 @@ import cm.aptoide.pt.views.EnumDownloadStatus;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewLogin;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 /**
  * HelperDownload, manages the actual download processes, and updates the download manager about the status of each download

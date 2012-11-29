@@ -9,7 +9,7 @@ package cm.aptoide.pt;
 
 import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;

@@ -20,7 +20,7 @@
 
 package cm.aptoide.pt.views;
 
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 import android.content.Context;
 
 /**

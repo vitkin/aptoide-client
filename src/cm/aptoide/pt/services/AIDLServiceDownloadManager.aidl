@@ -17,13 +17,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt2.services;
+package cm.aptoide.pt.services;
 
-import cm.aptoide.pt2.views.ViewListDownloads;
-import cm.aptoide.pt2.views.ViewDownloadManagement;
-import cm.aptoide.pt2.views.ViewCache;
-import cm.aptoide.pt2.AIDLDownloadManager;
-import cm.aptoide.pt2.AIDLDownloadObserver;
+import cm.aptoide.pt.views.ViewListDownloads;
+import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.views.ViewCache;
+import cm.aptoide.pt.AIDLDownloadManager;
+import cm.aptoide.pt.AIDLDownloadObserver;
 
 /**
  * AIDLServiceDownloadManager, IPC Interface definition for Aptoide's ServiceDownloadManager
