@@ -12,7 +12,7 @@ import java.util.Calendar;
 
 import android.content.Context;
 import android.text.format.DateUtils;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 public class DateTimeUtils extends DateUtils {
 

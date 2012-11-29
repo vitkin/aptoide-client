@@ -9,7 +9,7 @@ package cm.aptoide.pt.adapters;
 
 import java.util.ArrayList;
 
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;

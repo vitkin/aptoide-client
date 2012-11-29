@@ -38,8 +38,8 @@ import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
-import cm.aptoide.pt2.R;
-import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 public class DownloadingListAdapter extends BaseAdapter{
 	private Context context;

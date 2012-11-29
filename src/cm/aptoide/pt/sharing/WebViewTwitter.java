@@ -7,7 +7,7 @@
  ******************************************************************************/
 package cm.aptoide.pt.sharing;
 
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;

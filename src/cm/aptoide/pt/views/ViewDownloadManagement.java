@@ -23,8 +23,8 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-import cm.aptoide.pt2.AIDLDownloadObserver;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.AIDLDownloadObserver;
+import cm.aptoide.pt.R;
 
 /**
  * ViewDownloadManagement

@@ -44,8 +44,8 @@ import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt2.R;
-import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 public class IntentReceiver extends Activity implements OnDismissListener{
 //	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";

@@ -27,7 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.ScheduledDownloads;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;

@@ -44,9 +44,9 @@ import cm.aptoide.pt.adapters.NotDownloadedListAdapter;
 import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt2.AIDLDownloadManager;
-import cm.aptoide.pt2.R;
-import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt.AIDLDownloadManager;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 /**
  * DownloadManager

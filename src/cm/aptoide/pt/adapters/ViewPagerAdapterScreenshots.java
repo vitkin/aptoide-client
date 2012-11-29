@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 import cm.aptoide.pt.ScreenshotsViewer;
 import cm.aptoide.pt.contentloaders.ScreenshotsImageLoader;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 import android.content.Context;
 import android.content.Intent;

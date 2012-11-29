@@ -82,9 +82,9 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-import cm.aptoide.pt2.AIDLDownloadObserver;
-import cm.aptoide.pt2.R;
-import cm.aptoide.pt2.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt.AIDLDownloadObserver;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;

@@ -10,7 +10,7 @@ package cm.aptoide.pt.sharing;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 
 import android.app.Activity;

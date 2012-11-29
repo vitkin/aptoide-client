@@ -30,7 +30,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 /**
  * ManagerPreferences, manages aptoide's preferences I/O

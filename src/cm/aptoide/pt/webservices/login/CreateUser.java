@@ -28,7 +28,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 import cm.aptoide.pt.util.Algorithms;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 public class CreateUser extends Activity {
 	

@@ -10,7 +10,7 @@ package cm.aptoide.pt.webservices.comments;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.LinearLayout;
-import cm.aptoide.pt2.R;
+import cm.aptoide.pt.R;
 
 public class ViewComments extends Activity {
 

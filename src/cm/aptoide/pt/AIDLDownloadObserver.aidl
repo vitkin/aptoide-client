@@ -17,9 +17,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
-package cm.aptoide.pt2;
+package cm.aptoide.pt;
 
-import cm.aptoide.pt2.views.ViewDownload;
+import cm.aptoide.pt.views.ViewDownload;
 
 /**
  * AIDLDownloadObserver, models Aptoide's download Observer AIDL IPC
