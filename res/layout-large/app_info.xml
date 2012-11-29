@@ -528,7 +528,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            ads:adSize="BANNER"
+            ads:adSize="SMART_BANNER"
             ads:adUnitId="a14f30ff2e69698" >
         </com.google.ads.AdView>
     </LinearLayout>
