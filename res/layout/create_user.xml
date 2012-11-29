@@ -64,7 +64,6 @@
                     android:id="@+id/BorderLinearLayout"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/border_background_normal"
                     android:orientation="vertical"
                     android:padding="5dp" >
 
@@ -76,8 +75,8 @@
                         android:layout_marginTop="2dp"
                         android:layout_weight="1"
                         android:text="@string/email"
-                        android:textColor="#424542"
-                        android:textSize="15sp" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/darker_gray" />
 
                     <EditText
                         android:id="@+id/email_box"
@@ -87,7 +86,7 @@
                         android:hint="@string/email"
                         android:inputType="textEmailAddress"
                         android:singleLine="true"
-                        android:textSize="18sp" />
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
                         android:id="@+id/password"
@@ -97,8 +96,8 @@
                         android:layout_marginTop="2dp"
                         android:layout_weight="1"
                         android:text="@string/password"
-                        android:textColor="#424542"
-                        android:textSize="15sp" />
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/darker_gray" />
 
                     <EditText
                         android:id="@+id/password_box"
@@ -109,8 +108,7 @@
                         android:ems="10"
                         android:hint="@string/password_tip"
                         android:inputType="textPassword"
-                        android:textSize="18sp" />
-
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -125,14 +123,15 @@
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
-                        android:onClick="signUp"
                         android:background="@drawable/button"
+                        android:onClick="signUp"
                         android:text="@string/register" />
 
                     <TextView
                         android:id="@+id/accept_terms"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
                         android:layout_margin="4dp"
                         android:text="@string/accept_terms"
                         android:textColor="#424542"

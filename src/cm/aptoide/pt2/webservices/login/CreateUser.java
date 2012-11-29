@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -57,7 +58,10 @@ public class CreateUser extends Activity {
 		if(username.trim().length()>0&&password.trim().length()>0){
 			new CreateUserTask().execute(username.trim(),password.trim());
 		}else{
-			Toast.makeText(context, "Error. Please check your credentials", Toast.LENGTH_LONG).show();
+			Toast toast= Toast.makeText(context, 
+					context.getString(R.string.check_your_credentials), Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show();
 		}
 		
 	}
@@ -154,9 +158,15 @@ public class CreateUser extends Activity {
 				
 			case FAIL:
 				try{
-					Toast.makeText(context, json.getString("errors"), Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(context, 
+							json.getString("errors"), Toast.LENGTH_SHORT);  
+							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+							toast.show();
 				}catch (Exception e) {
-					Toast.makeText(context, "Unkown Error. Try again.", Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(context, 
+							context.getString(R.string.unkown_error), Toast.LENGTH_SHORT);  
+							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+							toast.show();
 				}
 				pd.dismiss();
 				

@@ -9,8 +9,8 @@
             <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
         </shape></item>
     <item><shape>
-            <gradient android:angle="270" android:endColor="#992f2f" android:startColor="#ef4444"  />
-
+            <gradient android:angle="270" android:endColor="#bdbebd" android:startColor="#992f2f" />
+            
             <corners android:radius="3dp" />
 
             <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />

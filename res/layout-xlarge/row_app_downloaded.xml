@@ -8,7 +8,7 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
     <ImageView
@@ -39,8 +39,8 @@
 
         <ImageView
             android:id="@+id/downloaded_facebook_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="96sp"
+            android:layout_height="96sp"
             android:layout_gravity="center_vertical"
             android:src="@android:drawable/ic_menu_share" />
 

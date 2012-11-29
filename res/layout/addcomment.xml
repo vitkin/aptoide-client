@@ -19,8 +19,7 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@drawable/border_background_normal"
-        android:padding="10dp" >
+        android:padding="5dp" >
 
         <!-- Remove focus from subject on create -->
 
@@ -30,8 +29,8 @@
             android:layout_height="wrap_content"
             android:hint="@string/subject"
             android:singleLine="true"
-            android:textColor="#696969"
-            android:textSize="18sp" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#696969" />
 
         <EditText
             android:id="@+id/comment"
@@ -41,8 +40,8 @@
             android:gravity="top"
             android:hint="@string/body"
             android:inputType="textMultiLine"
-            android:textColor="#696969"
-            android:textSize="18sp" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#696969" />
     </RelativeLayout>
 
     <Button
@@ -54,6 +53,7 @@
         android:background="@drawable/button"
         android:onClick="postComment"
         android:text="@string/submit"
-        android:textColor="@android:color/black" />
+        android:textColor="@android:color/black"
+        android:textStyle="normal" />
 
 </LinearLayout>

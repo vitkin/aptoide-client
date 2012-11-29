@@ -11,6 +11,7 @@
     <string name="menu_context_remove">Remove</string>
     <string name="menu_context_reparse">Reload</string>
     <string name="preparing_to_load">Preparing to load, please wait…</string>
+    <string name="store_beginning_to_load">Store is beginning to load, please wait…</string>
     <string name="start_loading">Loading…</string>
     <string name="loading_failed">Failed to load, please try again…</string>
     <string name="error_latest_apk">No APK available in database. Is store still loading?</string>
@@ -77,6 +78,7 @@
     <string name="tastenotavailable">Not available</string>
     <string name="unabletoexecutecheknet">Unable to execute. Check internet status.</string>
     <string name="an_error_check_net">An error ocurred. Please check your internet connection.</string>
+    <string name="there_was_an_error">There was an error, please try again</string>
     <string name="opinionsuccess">Your request was successfully submitted</string>
     <string name="likes">Likes: </string>
     <string name="dislikes">Don\'t likes: </string>
@@ -87,6 +89,9 @@
     <string name="by">by</string>
     <string name="on">on</string>
     <string name="postingtaste">Your request is being submitted</string>
+    <string name="another_comment_is_beeing_submited">Another comment is beeing submited, please wait</string>
+    <string name="error_occured">An error occurred. Please try again</string>
+    <string name="comment_submitted">Comment submitted successfuly</string>
     <string name="showpass">Show password</string>
     <string name="user">User name…</string>
     <string name="pass">Password…</string>
@@ -98,6 +103,8 @@
     <string name="loggingin">Logging in…</string>
     <string name="unabletoexecute">Unable to execute</string>
     <string name="failedcredentials">Failed to login the given credentials</string>
+    <string name="check_your_credentials">Error. Please check your credentials</string>
+    <string name="unkown_error">Unkown Error. Try again</string>
     <string name="loading_likes">Likes loading…</string>
     <string name="body">Body…</string>
     <string name="subject">Name</string>
@@ -168,6 +175,7 @@
     <string name="related_apps">Related Apps</string>
     <string name="recommended_apps">Recommended Apps</string>
     <string name="recommended_text">Sign in to view the best apps for you</string>
+    <string name="you_need_to_login">You need to login to see recommended apps for you</string>
     <string name="no_recommended_apps">No recommended apps found. We need more interaction from you. Make some downloads!</string>
     <string name="all_updated">All apps are up to date</string>
     
@@ -302,6 +310,7 @@
     <string name="paused">paused</string>
     <string name="stopped">stopped</string>
     <string name="starting">starting</string>
+    <string name="download_failed_due_to">Download Failed due to</string>
     
     <string name="timeout">network connection timeout</string>
     <string name="ip_blacklisted">Blacklisted IP</string>

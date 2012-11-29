@@ -62,7 +62,7 @@
   <string name="download_alrt">A descarregar:</string>
   <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Nome da aplicação</string>
-  <string name="tastenotavailable">Indesponível</string>
+  <string name="tastenotavailable">Indisponível</string>
   <string name="unabletoexecutecheknet">Erro. Verifique a ligação à internet.</string>
   <string name="an_error_check_net">Ocorreu um erro. Verifique a sua ligação.</string>
   <string name="opinionsuccess">O seu pedido foi submetido com sucesso</string>
@@ -174,7 +174,7 @@
   <string name="about_site">Site:</string>
   <string name="about_mail">Contacto:</string>
   <string name="show_less">Mostrar menos</string>
-  <string name="no_descript">Indesponível</string>
+  <string name="no_descript">Indisponível</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Escolha a loja para remover</string>

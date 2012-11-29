@@ -43,6 +43,7 @@ import org.apache.http.params.HttpParams;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.Toast;
 import cm.aptoide.pt2.R;
 import cm.aptoide.pt2.exceptions.AptoideExceptionDownload;
@@ -74,7 +75,10 @@ public class HelperDownload{
 	private Handler toastHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			Toast.makeText(serviceDownloadManager.getApplicationContext(), msg.what, Toast.LENGTH_SHORT).show();
+			Toast toast= Toast.makeText(serviceDownloadManager.getApplicationContext(), 
+					msg.what, Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show();
 		}
 	};
 

@@ -40,8 +40,8 @@
 
         <ImageView
             android:id="@+id/downloaded_facebook_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="72sp"
+            android:layout_height="72sp"
             android:layout_gravity="center_vertical"
             android:src="@android:drawable/ic_menu_share" />
 

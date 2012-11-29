@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt2.R;
+import cm.aptoide.pt2.ScheduledDownloads;
 
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
@@ -167,10 +169,12 @@ public class DialogShareOnFacebook extends Dialog{
 			final String postId = values.getString("post_id");
 			if (postId != null) {
 				Toast toast = Toast.makeText(getContext(), DialogShareOnFacebook.this.getContext().getString(R.string.facebook_message_posted), Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 				toast.show();
 				dismiss();
 			} else {
 				Toast toast = Toast.makeText(getContext(), DialogShareOnFacebook.this.getContext().getString(R.string.facebook_failed_post), Toast.LENGTH_SHORT);
+				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 				toast.show();
 				dismiss();
 			}
@@ -178,13 +182,15 @@ public class DialogShareOnFacebook extends Dialog{
 
 		@Override
 		public void onFacebookError(FacebookError error) {
-			Toast.makeText(getContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-			dismiss();
+			Toast toast = Toast.makeText(getContext(), "Facebook Error: " + error.getMessage(), Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+			toast.show();
 		}
 
 		@Override
 		public void onCancel() {
 			Toast toast = Toast.makeText(getContext(), "Update status cancelled", Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 			toast.show();
 			dismiss();
 		}
@@ -208,6 +214,9 @@ public class DialogShareOnFacebook extends Dialog{
 	}
 
 	private void showToast(String message){
-		Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+		Toast toast= Toast.makeText(getContext(), 
+				message, Toast.LENGTH_SHORT);  
+				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+				toast.show();
 	}
 }

@@ -386,14 +386,14 @@
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/like_button"
+                    android:background="@drawable/button"
                     android:drawableLeft="@drawable/like_btn"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/like"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:textStyle="normal" />
 
                 <Button
@@ -402,14 +402,14 @@
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/dont_like_button"
+                    android:background="@drawable/button"
                     android:drawableLeft="@drawable/dislike_btn"
                     android:ellipsize="end"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@string/dont_like"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/white"
+                    android:textColor="@android:color/black"
                     android:textStyle="normal" />
             </LinearLayout>
 
@@ -529,7 +529,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="a14f30ff2e69698" >
+            ads:adUnitId="6693e1e6c1d543f4" >
         </com.google.ads.AdView>
     </LinearLayout>
 

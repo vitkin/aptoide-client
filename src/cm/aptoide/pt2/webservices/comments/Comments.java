@@ -34,6 +34,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -239,7 +240,10 @@ public class Comments {
 		if(!submitting){
 			new CommentPoster().execute(Login.getToken(context),repo,apkid,version,comment,username);
 		}else{
-			Toast.makeText(context, "Another comment is beeing submited, please wait.", Toast.LENGTH_LONG).show();
+			Toast toast= Toast.makeText(context, 
+					context.getString(R.string.another_comment_is_beeing_submited), Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show();
 		}
 		
 		
@@ -325,13 +329,20 @@ public class Comments {
 			super.onPostExecute(result);
 			pd.dismiss();
 			submitting = false;
+			Toast toast;
 			switch (result) {
 			case OK:
-				Toast.makeText(context, "Comment submitted successfuly.", Toast.LENGTH_LONG).show();
+				toast= Toast.makeText(context, 
+						context.getString(R.string.comment_submitted), Toast.LENGTH_SHORT);  
+						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+						toast.show();
 				context.finish();
 				break;
 			case FAIL:
-				Toast.makeText(context, "There was an error, please try again", Toast.LENGTH_LONG).show();
+				toast= Toast.makeText(context, 
+						context.getString(R.string.there_was_an_error), Toast.LENGTH_SHORT);  
+						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+						toast.show();
 				break;
 			default:
 				break;
