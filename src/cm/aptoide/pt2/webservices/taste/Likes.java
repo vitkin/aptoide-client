@@ -214,11 +214,11 @@ public class Likes {
 				switch (usertaste) {
 				case LIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
-					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn, 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn, 0);
 					break;
 				case DONTLIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
-					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn_over, 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn_over, 0);
 					break;
 				default:
 					break;
@@ -293,11 +293,11 @@ public class Likes {
 				switch (taste) {
 				case LIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
-					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn, 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn, 0);
 					break;
 				case DONTLIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
-					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.dislike_btn_over, 0, 0, 0);
+					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn_over, 0);
 					break;
 				default:
 					break;
