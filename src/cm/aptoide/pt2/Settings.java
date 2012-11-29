@@ -23,6 +23,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.Gravity;
 import android.widget.Toast;
 import cm.aptoide.pt2.preferences.ManagerPreferences;
 import cm.aptoide.pt2.views.ViewIconDownloadPermissions;
@@ -97,7 +98,9 @@ public class Settings extends PreferenceActivity{
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			pd.dismiss();
-			Toast.makeText(mctx, getString(R.string.clear_cache_sucess), Toast.LENGTH_LONG).show();
+			Toast toast= Toast.makeText(mctx, mctx.getString(R.string.clear_cache_sucess), Toast.LENGTH_SHORT);  
+			toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+			toast.show(); 
 			new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
 		}
 		

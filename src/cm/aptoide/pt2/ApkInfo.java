@@ -39,6 +39,7 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -374,7 +375,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			try{
 				startActivity(i);
 			}catch (ActivityNotFoundException e){
-				Toast.makeText(context, getText(R.string.error_no_market), Toast.LENGTH_LONG).show();
+				Toast toast= Toast.makeText(context, context.getString(R.string.error_no_market), Toast.LENGTH_SHORT);  
+				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+				toast.show(); 
 			}
 			break;
 		default:
@@ -633,7 +636,9 @@ OnClickListener installListener = new OnClickListener() {
 						
 						@Override
 						public void run() {
-							Toast.makeText(context, getString(R.string.addSchDown), Toast.LENGTH_LONG).show();
+							Toast toast= Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);  
+							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+							toast.show(); 
 						}
 					});
 				}else{
@@ -796,7 +801,9 @@ OnClickListener installListener = new OnClickListener() {
 				if(download.getDownload().getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
 					new DialogIpBlacklisted(ApkInfo.this).show();
 				}else{
-					Toast.makeText(context, "Download Failed due to: "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(context, context.getString(R.string.download_failed_due_to)+": "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show(); 
 				}
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);

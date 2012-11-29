@@ -25,9 +25,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:onClick="createUser"
             android:layout_margin="3dp"
             android:background="@drawable/green_button"
+            android:onClick="createUser"
             android:text="@string/register" />
 
         <TextView
@@ -38,12 +38,11 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="22dp"
             android:layout_toLeftOf="@+id/register_link"
-            android:text="@string/bazaar_login"
             android:ellipsize="end"
             android:singleLine="true"
+            android:text="@string/bazaar_login"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#fff" />
-
     </RelativeLayout>
 
     <ScrollView
@@ -64,7 +63,6 @@
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/border_background_normal"
                 android:orientation="vertical"
                 android:padding="5dp" >
 
@@ -75,8 +73,8 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
                     android:text="@string/username"
-                    android:textColor="#424542"
-                    android:textSize="15sp" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/darker_gray" />
 
                 <EditText
                     android:id="@+id/username"
@@ -93,8 +91,8 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
                     android:text="@string/password"
-                    android:textColor="#424542"
-                    android:textSize="15sp" />
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/darker_gray" />
 
                 <EditText
                     android:id="@+id/password"

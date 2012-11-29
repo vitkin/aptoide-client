@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -110,7 +111,10 @@ public class Login extends Activity {
 		if(username.trim().length()>0&&password.trim().length()>0){
 			new CheckUserCredentials().execute(username, password);
 		}else{
-			Toast.makeText(context, "Error. Please check your credentials", Toast.LENGTH_LONG).show();
+			Toast toast= Toast.makeText(context, 
+					context.getString(R.string.check_your_credentials), Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show();
 		}
 	}
 	
@@ -204,7 +208,10 @@ public class Login extends Activity {
 					sendBroadcast(i);
 					finish();
 				}else{
-					Toast.makeText(Login.this, array.getString("errors"), Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(Login.this, 
+							array.getString("errors"), Toast.LENGTH_SHORT);  
+							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+							toast.show();
 				}
 			}catch(Exception e){
 				e.printStackTrace();

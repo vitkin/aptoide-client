@@ -25,6 +25,7 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -208,8 +209,10 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 					}
 
 				} else {
-					Toast.makeText(ScheduledDownloads.this, R.string.schDown_nodownloadselect,
-							Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(ScheduledDownloads.this, 
+							R.string.schDown_nodownloadselect, Toast.LENGTH_SHORT);  
+							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+							toast.show();
 				}
 			}
 		});
@@ -395,8 +398,9 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 						}});
 					alrt.show();
 				} else {
-					Toast.makeText(this, R.string.schDown_nodownloadselect,
-							Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show(); 
 				}
 
 				break;

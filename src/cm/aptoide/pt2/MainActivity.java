@@ -81,6 +81,7 @@ import android.util.Log;
 import android.util.Xml;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -305,6 +306,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						if (valuesRecommended.isEmpty()) {
 							TextView tv = new TextView(mContext);
 							tv.setText(R.string.no_recommended_apps);
+							tv.setTextAppearance(mContext, android.R.attr.textAppearanceMedium);
 							tv.setPadding(10, 10, 10, 10);
 							ll.addView(tv);
 						} else {
@@ -861,10 +863,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
-					Toast.makeText(
-							mContext,
-							mContext.getString(R.string.verify_store),
-							Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.verify_store), Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show(); 
 					showAddStoreDialog();
 				}
 			});
@@ -874,10 +875,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
-					Toast.makeText(
-							mContext,
-							mContext.getString(R.string.an_error_check_net),
-							Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.an_error_check_net), Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show(); 
 					showAddStoreDialog();
 				}
 			});
@@ -887,9 +887,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
-					Toast.makeText(mContext,
-							"An error ocurred. Code: " + response,
-							Toast.LENGTH_LONG).show();
+					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_occured)+" "+response, Toast.LENGTH_SHORT);  
+					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+					toast.show(); 
 					showAddStoreDialog();
 				}
 			});
@@ -1235,9 +1235,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									installedLoader.forceLoad();
 									updatesLoader.forceLoad();
 								} else {
-									Toast.makeText(mContext,
-											R.string.error_delete_store,
-											Toast.LENGTH_LONG).show();
+									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_delete_store), Toast.LENGTH_SHORT);  
+									toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+									toast.show(); 
 								}
 
 							}
@@ -1605,10 +1605,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										depth = ListDepth.LATEST_COMMENTS;
 									} else if (id == -3) {
 										if (!Login.isLoggedIn(mContext)) {
-											Toast.makeText(
-													mContext,
-													"You need to login to see recommended apps for you.",
-													Toast.LENGTH_LONG).show();
+											Toast toast= Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login), Toast.LENGTH_SHORT);  
+											toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+											toast.show(); 
 											return;
 										} else {
 											depth = ListDepth.RECOMMENDED;
@@ -1617,10 +1616,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									} else if (id == -4) {
 										depth = ListDepth.ALLAPPLICATIONS;
 									}else if (id == -10){
-										Toast.makeText(
-												mContext,
-												"Store is beginning to load, please wait.",
-												Toast.LENGTH_LONG).show();
+										Toast toast= Toast.makeText(mContext, mContext.getString(R.string.store_beginning_to_load), Toast.LENGTH_SHORT);  
+										toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+										toast.show(); 
 										return;
 									} else {
 										depth = ListDepth.CATEGORY2;
@@ -1883,8 +1881,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 						@Override
 						public void run() {
-							Toast.makeText(mContext, R.string.error_latest_apk,
-									Toast.LENGTH_LONG).show();
+							Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_latest_apk), Toast.LENGTH_SHORT);  
+							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+							toast.show(); 
 						}
 					});
 				}
@@ -1985,10 +1984,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							@Override
 							public void run() {
 								if (c.getCount() == 0) {
-									Toast.makeText(
-											mContext,
-											"No recommended apps found. We need more interaction from you. Make some downloads!",
-											Toast.LENGTH_LONG).show();
+									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.no_recommended_apps), Toast.LENGTH_SHORT);  
+									toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+									toast.show(); 
 								}
 
 							}

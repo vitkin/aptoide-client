@@ -30,6 +30,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -283,9 +284,12 @@ public class Likes {
 		@Override
 		protected void onPostExecute(EnumResponseStatus result) {
 			super.onPostExecute(result);
+			Toast toast;
 			switch (result) {
 			case OK:
-				Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_LONG).show();
+				toast= Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_SHORT);  
+						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+						toast.show();
 				switch (taste) {
 				case LIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
@@ -300,7 +304,9 @@ public class Likes {
 				}
 				break;
 			case FAIL:
-				Toast.makeText(context, "An error occurred. Please try again.", Toast.LENGTH_LONG).show();
+				toast= Toast.makeText(context, context.getString(R.string.error_occured), Toast.LENGTH_SHORT);  
+				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+				toast.show();
 				break;
 			default:
 				break;
