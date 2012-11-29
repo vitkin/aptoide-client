@@ -20,13 +20,6 @@ public class Configs {
 	
 	public final static String LINE_SEPARATOR = System.getProperty("line.separator");
 	
-	public static final String WEB_SERVICE_COMMENTS_LIST 			= "http://www.bazaarandroid.com/webservices/listApkComments/%1$s/%2$s/%3$s/xml"; // GET
-	public static final String WEB_SERVICE_TASTE_LIST 				= "http://www.bazaarandroid.com/webservices/listApkLikes/%1$s/%2$s/%3$s/xml"; // GET
-	public static final String WEB_SERVICE_POST_COMMENT_ADD			= "http://www.bazaarandroid.com/webservices/addApkComment"; // POST
-	public static final String WEB_SERVICE_GET_TASTE_ADD			= "http://www.bazaarandroid.com/webservices/addApkLike/user/%1$s/%2$s/%3$s/%4$s/%5$s/%6$s"; // GET
-	public static final String WEB_SERVICE_GET_CHECK_CREDENTIALS	= "http://www.bazaarandroid.com/webservices/checkUserCredentials/%1s/%2s/xml"; // GET
-	public static final String WEB_SERVICE_SCREENS_LIST 			= "http://www.bazaarandroid.com/webservices/listApkScreens/";
-	
 	public static final String LOGIN_USER_ID 	= "useridLogin";
 	public static final String LOGIN_PASSWORD 	= "passwordLogin";
 	public static final String LOGIN_USER_LOGIN 	= "usernameLogin";

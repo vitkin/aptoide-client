@@ -1116,11 +1116,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							editor.putInt("order_list", order.ordinal());
 							editor.commit();
 							if(pop_change_category){
-								if(depth.equals(ListDepth.APPLICATIONS)){
-									removeLastBreadCrumb();	
+								
+								if(!depth.equals(ListDepth.CATEGORY1)&&!depth.equals(ListDepth.STORES)){
+									if(depth.equals(ListDepth.APPLICATIONS)){
+										removeLastBreadCrumb();	
+									}
+									removeLastBreadCrumb();
+									depth=ListDepth.CATEGORY1;
 								}
-								removeLastBreadCrumb();
-								depth=ListDepth.CATEGORY1;
+								
 							}
 							redrawAll();
 							refreshAvailableList(true);
@@ -1350,7 +1354,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	};
 	private String storeUri = "apps.store.aptoide.com";
 	
-	
+	ViewPager pager;
 	private AIDLServiceDownloadManager serviceDownloadManagerConnection = null;
 	private AIDLServiceDownloadManager serviceDownloadManager;
 	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
@@ -1513,7 +1517,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						"pt.caixamagica.aptoide.NEWREPO"));
 				setContentView(R.layout.activity_aptoide);
 				TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
-				ViewPager pager = (ViewPager) findViewById(R.id.viewpager);
+				pager = (ViewPager) findViewById(R.id.viewpager);
 
 				featuredView = LayoutInflater.from(mContext).inflate(
 						R.layout.featured, null);
@@ -2046,7 +2050,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (!depth.equals(ListDepth.STORES)) {
+			
+			if (!depth.equals(ListDepth.STORES)&&pager.getCurrentItem()==1) {
 				if (depth.equals(ListDepth.TOPAPPS)
 						|| depth.equals(ListDepth.LATEST_LIKES)
 						|| depth.equals(ListDepth.LATEST_COMMENTS)

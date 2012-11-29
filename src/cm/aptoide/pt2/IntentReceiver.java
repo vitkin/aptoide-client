@@ -132,7 +132,8 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			i.putExtra("newrepo", repo);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
-			i.setAction("pt.caixamagica.aptoide.NEWREPO");
+			i = new Intent("pt.caixamagica.aptoide.NEWREPO");
+			i.putExtra("newrepo", repo);
 			sendBroadcast(i);
 			finish();
 		}else if(uri.startsWith("market")){
@@ -191,8 +192,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 		Intent i;
 		if(id>0){
 			i = new Intent(this,ApkInfo.class);
-			i.putExtra("id", id);
-			i.putExtra("top", false);
+			i.putExtra("_id", id);
 			i.putExtra("category", Category.INFOXML.ordinal());
 		}else{
 			i = new Intent(this,SearchManager.class);
@@ -209,7 +209,8 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			i.putExtra("newrepo", server);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
-			i.setAction("pt.caixamagica.aptoide.NEWREPO");
+			i = new Intent("pt.caixamagica.aptoide.NEWREPO");
+			i.putExtra("newrepo", server);
 			sendBroadcast(i);
 			finish();
 		}
@@ -274,7 +275,9 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 	}
 	
 	private void parseXmlString(String file){
+		
 		SAXParserFactory spf = SAXParserFactory.newInstance();
+		
 	    try {
 	    	
 	    	SAXParser sp = spf.newSAXParser();
