@@ -11,10 +11,12 @@ import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -84,6 +86,13 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			serviceDownloadManager = null;
 			
 			Log.v("Aptoide-ScheduledDownloads", "Disconnected from ServiceDownloadManager");
+		}
+	};
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			getSupportLoaderManager().restartLoader(0, null, ScheduledDownloads.this);
 		}
 	};
 	
@@ -186,6 +195,8 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		        viewHolder.checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
 			}
 		});
+		IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.REDRAW");
+		registerReceiver(receiver, filter);
 		installButton = (Button) findViewById(R.id.sch_down);
 		installButton.setText(getText(R.string.schDown_installselected));
 		installButton.setOnClickListener(new OnClickListener() {
@@ -197,6 +208,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 							ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
 							ViewApk apk = new ViewApk();
 							apk.setApkid(schDown.getApkid());
+							apk.setName(schDown.getName());
 							apk.setVercode(schDown.getVercode());
 							apk.setVername(schDown.getVername());
 							apk.setMd5(schDown.getMd5());
@@ -421,6 +433,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		@Override
 		protected void onDestroy() {
 			unbindService(serviceManagerConnection);
+			unregisterReceiver(receiver );
 			super.onDestroy();
 		}
 		

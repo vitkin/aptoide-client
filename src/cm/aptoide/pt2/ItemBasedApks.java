@@ -17,6 +17,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Vector;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -26,6 +27,7 @@ import org.xml.sax.SAXException;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.view.Gravity;
@@ -49,6 +51,7 @@ public class ItemBasedApks {
 	private Context context;
 	private ViewGroup container;
 	private Database db;
+	private Vector<String> activeStores = new Vector<String>();
 	private OnClickListener featuredListener = new OnClickListener() {
 		
 		@Override
@@ -76,10 +79,15 @@ public class ItemBasedApks {
 		this.container=container;
 		this.parent_container=parent_container;
 		this.label = label;
+		
+		Cursor c = db.getStores(false);
+		
+		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+			activeStores.add(c.getString(c.getColumnIndex("name")));
+		}
+		c.close();
 		new ItemLoader().execute(apk.getApkid());
 		new ItemBasedParser().execute(apk.getApkid());
-		
-		
 	}
 	
 	public class ItemLoader extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>>{
@@ -102,7 +110,7 @@ public class ItemBasedApks {
 	
 	public class ItemBasedParser extends AsyncTask<String, Void, ArrayList<HashMap<String, String>> >{
 		private String xmlpath = Environment.getExternalStorageDirectory()+"/.aptoide/itembasedapks.xml";
-		private String url = "http://webservices.aptoide.com/webservices/listItemBasedApks/%s/10/xml";
+		private String url = "http://webservices.aptoide.com/webservices/listItemBasedApks/%s/10/%s/xml";
 		
 		
 		@Override
@@ -122,7 +130,24 @@ public class ItemBasedApks {
 			File f = new File(xmlpath);
 			InputStream in;
 			try {
-				in = getInputStream(new URL(String.format(url,apkid)), null, null);
+				String activestores = "";
+				int repo_counter = 0;
+				for(String repo : activeStores){
+					if(repo_counter>0){
+						activestores=activestores + ",";
+					}
+					activestores = activestores + repo;
+					repo_counter++;
+				}
+				
+				if(activestores.contains("apps")){
+					if(repo_counter>0){
+						activestores=activestores + ",";
+					}
+					activestores=activestores+"apps";
+				}
+				
+				in = getInputStream(new URL(String.format(url,apkid,activestores)), null, null);
 				int i = 0;
 				while (f.exists()) {
 					f = new File(xmlpath + i++);

@@ -348,10 +348,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
-		if(db.getInstalledAppVercode(viewApk.getApkid())!=0){
-			menu.add(0,0,0,R.string.uninstall);
+		if(viewApk!=null){
+			if(db.getInstalledAppVercode(viewApk.getApkid())!=0){
+				menu.add(0,0,0,R.string.uninstall);
+			}
+			menu.add(0,1,0,R.string.search_market);
 		}
-		menu.add(0,1,0,R.string.search_market);
+		
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
