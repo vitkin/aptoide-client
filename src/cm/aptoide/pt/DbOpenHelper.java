@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 rmateus.
+  * Copyright (c) 2012 rmateus.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, md5 text,  repo_id integer, date date, minscreen int, minsdk int, mingles real, mature int);");
 		db.execSQL("create table category1 (_id integer primary key, name text , size integer, unique (name) on conflict ignore) ;");
 		db.execSQL("create table category2 (_id integer primary key, catg1_id integer, name text , size integer, unique (name) on conflict ignore);");
-		db.execSQL("create table repo (_id integer primary key, url text, delta text, appcount integer, iconspath text, basepath text, status text, webservicespath text, username text, password text, avatar text, name text, downloads integer, apkpath text);");
+		db.execSQL("create table repo (_id integer primary key, url text, delta text, appcount integer, iconspath text, basepath text, status text, webservicespath text, username text, password text, avatar text default '', name text default '', downloads integer default 0, apkpath text);");
 		db.execSQL("create table toprepo_extra (_id integer, top_delta text, screenspath text, category text,iconspath text, basepath text, url text, name text);");
 		db.execSQL("create table repo_category1 (repo_id integer, catg1_id integer, primary key(repo_id, catg1_id) on conflict ignore);");
 		db.execSQL("create table repo_category2 (repo_id integer, catg2_id integer, primary key(repo_id, catg2_id) on conflict ignore);");
