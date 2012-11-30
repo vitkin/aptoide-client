@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 rmateus.
+  * Copyright (c) 2012 rmateus.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the GNU Public License v2.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class ExtrasDbOpenHelper extends SQLiteOpenHelper {
 			+ COLUMN_COMMENTS_COMMENT + " text , UNIQUE ("+COLUMN_COMMENTS_APKID+") ON CONFLICT REPLACE); ";
 
 	public ExtrasDbOpenHelper(Context context) {
-		super(context, "extras.db", null, 1);
+		super(context, "extras.db", null, 23);
 	}
 
 	@Override
@@ -38,7 +38,8 @@ public class ExtrasDbOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		
+		db.execSQL("DROP TABLE IF EXISTS comments");
+		onCreate(db);
 	}
 
 }
