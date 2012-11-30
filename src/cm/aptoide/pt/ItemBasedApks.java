@@ -141,15 +141,14 @@ public class ItemBasedApks {
 					repo_counter++;
 				}
 				
-				if(activestores.contains("apps")){
+				if(!activestores.contains("apps")){
 					if(repo_counter>0){
 						activestores=activestores + ",";
 					}
 					activestores=activestores+"apps";
 				}
-				
 				in = getInputStream(new URL(String.format(url,apkid,activestores)), null, null);
-				System.out.println(url);
+				
 				int i = 0;
 				while (f.exists()) {
 					f = new File(xmlpath + i++);
@@ -209,6 +208,7 @@ public class ItemBasedApks {
 	}
 	
 	public InputStream getInputStream(URL url,String username, String password) throws IOException {
+		System.out.println("Query:" + url.toString());
 		URLConnection connection = url.openConnection();
 		if(username!=null && password!=null){
 			String basicAuth = "Basic " + new String(Base64.encode((username+":"+password).getBytes(),Base64.NO_WRAP ));
@@ -218,7 +218,7 @@ public class ItemBasedApks {
 				connection.getInputStream(), 8 * 1024);
 		connection.setConnectTimeout(10000);
 		connection.setReadTimeout(10000);
-		System.out.println("Query:" + url.toString());
+		
 		return bis;
 
 	}
