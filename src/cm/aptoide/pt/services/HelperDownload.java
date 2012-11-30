@@ -75,10 +75,7 @@ public class HelperDownload{
 	private Handler toastHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			Toast toast= Toast.makeText(serviceDownloadManager.getApplicationContext(), 
-					msg.what, Toast.LENGTH_SHORT);  
-					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
-					toast.show();
+			Toast.makeText(serviceDownloadManager.getApplicationContext(), msg.what, Toast.LENGTH_SHORT).show();
 		}
 	};
 

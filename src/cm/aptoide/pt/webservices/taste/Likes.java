@@ -288,8 +288,7 @@ public class Likes {
 			switch (result) {
 			case OK:
 				toast= Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_SHORT);  
-						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
-						toast.show();
+				toast.show();
 				switch (taste) {
 				case LIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
@@ -305,7 +304,6 @@ public class Likes {
 				break;
 			case FAIL:
 				toast= Toast.makeText(context, context.getString(R.string.error_occured), Toast.LENGTH_SHORT);  
-				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 				toast.show();
 				break;
 			default:
