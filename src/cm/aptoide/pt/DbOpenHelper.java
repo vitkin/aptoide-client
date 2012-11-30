@@ -47,6 +47,23 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		
+		db.execSQL("DROP TABLE IF EXISTS apk");
+		db.execSQL("DROP TABLE IF EXISTS category1");
+		db.execSQL("DROP TABLE IF EXISTS category2");
+		db.execSQL("DROP TABLE IF EXISTS repo");
+		db.execSQL("DROP TABLE IF EXISTS toprepo_extra");
+		db.execSQL("DROP TABLE IF EXISTS repo_category1");
+		db.execSQL("DROP TABLE IF EXISTS repo_category2");
+		db.execSQL("DROP TABLE IF EXISTS installed");
+		db.execSQL("DROP TABLE IF EXISTS dynamic_apk");
+		db.execSQL("DROP TABLE IF EXISTS itembasedapkrepo");
+		db.execSQL("DROP TABLE IF EXISTS itembasedapk");
+		db.execSQL("DROP TABLE IF EXISTS itembasedapk_hash");
+		db.execSQL("DROP TABLE IF EXISTS userbasedapk");
+		db.execSQL("DROP TABLE IF EXISTS scheduled");
+		db.execSQL("DROP TABLE IF EXISTS screenshots");
+		
 		onCreate(db);
 	}
 

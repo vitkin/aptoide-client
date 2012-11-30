@@ -27,7 +27,7 @@ public class ExtrasContentProvider extends ContentProvider {
 	private static final int TODOS = 10;
 	private static final int TODO_ID = 20;
 
-	private static final String AUTHORITY = "extras.contentprovider.beta";
+	private static final String AUTHORITY = "extras.contentprovider";
 
 	private static final String BASE_PATH = "todos";
 	public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY
