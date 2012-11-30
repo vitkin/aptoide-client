@@ -149,6 +149,7 @@ public class ItemBasedApks {
 				}
 				
 				in = getInputStream(new URL(String.format(url,apkid,activestores)), null, null);
+				System.out.println(url);
 				int i = 0;
 				while (f.exists()) {
 					f = new File(xmlpath + i++);
