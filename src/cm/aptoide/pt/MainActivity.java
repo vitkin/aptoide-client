@@ -1443,9 +1443,21 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				editor = PreferenceManager
 						.getDefaultSharedPreferences(mContext).edit();
 
+				
+				
+				
+				
 				if (!sPref.contains("matureChkBox")) {
+
 					editor.putBoolean("matureChkBox", true);
+					SharedPreferences sPrefOld = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
+					if(sPrefOld.getString("app_rating", "none").equals("Mature")){
+						editor.putBoolean("matureChkBox", false);
+					}					
+					
 				}
+				
+				
 				if (sPref.getString("myId", null) == null) {
 					String rand_id = UUID.randomUUID().toString();
 					editor.putString("myId", rand_id);
