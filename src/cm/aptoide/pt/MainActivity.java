@@ -1610,7 +1610,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										depth = ListDepth.LATEST_COMMENTS;
 									} else if (id == -3) {
 										if (!Login.isLoggedIn(mContext)) {
-											Toast toast= Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login), Toast.LENGTH_SHORT);  
+											Toast toast= Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login_toast), Toast.LENGTH_SHORT);  
 											toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 											toast.show(); 
 											return;
@@ -1989,7 +1989,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							@Override
 							public void run() {
 								if (c.getCount() == 0) {
-									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.no_recommended_apps), Toast.LENGTH_SHORT);  
+									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.no_recommended_toast), Toast.LENGTH_SHORT);  
 									toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 									toast.show(); 
 								}

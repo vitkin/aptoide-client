@@ -176,7 +176,9 @@
     <string name="recommended_apps">Recommended Apps</string>
     <string name="recommended_text">Sign in to view the best apps for you</string>
     <string name="you_need_to_login">You need to login to see recommended apps for you</string>
+    <string name="you_need_to_login_toast">You need to login</string>
     <string name="no_recommended_apps">No recommended apps found. We need more interaction from you. Make some downloads!</string>
+    <string name="no_recommended_toast">No recommended apps found</string>
     <string name="all_updated">All apps are up to date</string>
     
     
