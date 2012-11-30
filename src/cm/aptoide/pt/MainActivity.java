@@ -1389,8 +1389,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
 		startService(serviceDownloadManagerIntent);
 		
-		bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
-		
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
 
@@ -1516,7 +1514,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				Intent i = new Intent(mContext, MainService.class);
 				startService(i);
 				bindService(i, conn, Context.BIND_AUTO_CREATE);
-
 				order = Order.values()[PreferenceManager
 						.getDefaultSharedPreferences(mContext).getInt(
 								"order_list", 0)];
@@ -1591,7 +1588,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
 				updatesAdapter = new UpdatesAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-
+				bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
 				pb = (TextView) availableView.findViewById(R.id.loading_pb);
 				addStoreButton = availableView.findViewById(R.id.add_store);
 				addStoreButton.setOnClickListener(addStoreListener);
