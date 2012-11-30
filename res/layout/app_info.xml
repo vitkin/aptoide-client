@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" >
 
-                <cm.aptoide.pt2.CustomViewPager
+                <cm.aptoide.pt.CustomViewPager
                     android:id="@+id/screenShotsPager"
                     android:layout_width="fill_parent"
                     android:layout_height="200dp" />
