@@ -865,7 +865,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				@Override
 				public void run() {
 					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.verify_store), Toast.LENGTH_SHORT);  
-					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 					toast.show(); 
 					showAddStoreDialog();
 				}
@@ -877,7 +876,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				@Override
 				public void run() {
 					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.an_error_check_net), Toast.LENGTH_SHORT);  
-					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 					toast.show(); 
 					showAddStoreDialog();
 				}
