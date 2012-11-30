@@ -1241,7 +1241,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									updatesLoader.forceLoad();
 								} else {
 									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_delete_store), Toast.LENGTH_SHORT);  
-									toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 									toast.show(); 
 								}
 
@@ -1620,7 +1619,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									} else if (id == -3) {
 										if (!Login.isLoggedIn(mContext)) {
 											Toast toast= Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login_toast), Toast.LENGTH_SHORT);  
-											toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 											toast.show(); 
 											return;
 										} else {
@@ -1631,7 +1629,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										depth = ListDepth.ALLAPPLICATIONS;
 									}else if (id == -10){
 										Toast toast= Toast.makeText(mContext, mContext.getString(R.string.store_beginning_to_load), Toast.LENGTH_SHORT);  
-										toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 										toast.show(); 
 										return;
 									} else {
@@ -1896,7 +1893,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						@Override
 						public void run() {
 							Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_latest_apk), Toast.LENGTH_SHORT);  
-							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 							toast.show(); 
 						}
 					});
@@ -1999,7 +1995,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							public void run() {
 								if (c.getCount() == 0) {
 									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.no_recommended_toast), Toast.LENGTH_SHORT);  
-									toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 									toast.show(); 
 								}
 

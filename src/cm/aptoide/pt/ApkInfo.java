@@ -381,7 +381,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				startActivity(i);
 			}catch (ActivityNotFoundException e){
 				Toast toast= Toast.makeText(context, context.getString(R.string.error_no_market), Toast.LENGTH_SHORT);  
-				toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 				toast.show(); 
 			}
 			break;
@@ -642,7 +641,6 @@ OnClickListener installListener = new OnClickListener() {
 						@Override
 						public void run() {
 							Toast toast= Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);  
-							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 							toast.show(); 
 						}
 					});
@@ -807,7 +805,6 @@ OnClickListener installListener = new OnClickListener() {
 					new DialogIpBlacklisted(ApkInfo.this).show();
 				}else{
 					Toast toast= Toast.makeText(context, context.getString(R.string.download_failed_due_to)+": "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_SHORT);  
-					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 					toast.show(); 
 				}
 				findViewById(R.id.download_progress).setVisibility(View.GONE);

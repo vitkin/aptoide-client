@@ -242,7 +242,6 @@ public class Comments {
 		}else{
 			Toast toast= Toast.makeText(context, 
 					context.getString(R.string.another_comment_is_beeing_submited), Toast.LENGTH_SHORT);  
-					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 					toast.show();
 		}
 		
@@ -334,14 +333,12 @@ public class Comments {
 			case OK:
 				toast= Toast.makeText(context, 
 						context.getString(R.string.comment_submitted), Toast.LENGTH_SHORT);  
-						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 						toast.show();
 				context.finish();
 				break;
 			case FAIL:
 				toast= Toast.makeText(context, 
 						context.getString(R.string.there_was_an_error), Toast.LENGTH_SHORT);  
-						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 						toast.show();
 				break;
 			default:

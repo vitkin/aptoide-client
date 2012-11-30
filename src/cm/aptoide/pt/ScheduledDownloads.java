@@ -224,7 +224,6 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 				} else {
 					Toast toast= Toast.makeText(ScheduledDownloads.this, 
 							R.string.schDown_nodownloadselect, Toast.LENGTH_SHORT);  
-							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 							toast.show();
 				}
 			}
@@ -412,7 +411,6 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 					alrt.show();
 				} else {
 					Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);  
-					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 					toast.show(); 
 				}
 
