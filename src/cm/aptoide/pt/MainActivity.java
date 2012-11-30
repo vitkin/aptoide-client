@@ -148,7 +148,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private final static int LATEST_LIKES = -1;
 
 	private HashMap<String, String> updateParams = new HashMap<String, String>();
-	private static final String LATEST_VERSION_CODE_URI = "http://mateus-server.tk/latest_version.xml";
+	private static final String LATEST_VERSION_CODE_URI = "http://imgs.aptoide.com/latest_version.xml";
 	private static final String TMP_UPDATE_FILE = Environment
 			.getExternalStorageDirectory().getPath()
 			+ "/.aptoide/aptoideUpdate.apk";
