@@ -489,7 +489,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 				llAlso.setOrientation(LinearLayout.HORIZONTAL);
 				for (int i = 0; i != values.size(); i++) {
-					RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater()
+					LinearLayout txtSamItem = (LinearLayout) getLayoutInflater()
 							.inflate(R.layout.griditem, null);
 					((TextView) txtSamItem.findViewById(R.id.name))
 							.setText(values.get(i).get("name"));
