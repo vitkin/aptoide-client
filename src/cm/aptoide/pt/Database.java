@@ -1268,6 +1268,7 @@ public class Database {
 			
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				database.delete("itembasedapk", "_id = ?", new String[]{c.getString(0)});
+				database.delete("screenshots", "_id = ? and type = 5", new String[]{c.getString(0)});
 			}
 			
 			

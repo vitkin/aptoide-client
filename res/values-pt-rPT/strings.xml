@@ -226,7 +226,7 @@
   <string name="username_tip">Escreve o seu username</string>
   <string name="password_tip">Mostrar password</string>
   <string name="sign_in">Login</string>
-  <string name="bazaar_login">Configurações do Aptoide</string>
+  <string name="bazaar_login">Aptoide Login</string>
   <string name="clearcache_sum">Apaga a cache (icons, screenshots) do cartão SD.</string>
   <string name="clearcontent_sum">Apaga o conteúdo da pasta .aptoide do cartão SD</string>
   <string name="clearcontent_title">Remover dados e configurações do Aptoide</string>
