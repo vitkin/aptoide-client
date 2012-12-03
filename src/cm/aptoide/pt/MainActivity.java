@@ -411,7 +411,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					String hash = Md5Handler.md5Calc(f);
 					if (!hash.equals(db.getItemBasedApksHash("editorschoice"))) {
 						db.deleteItemBasedApks(parent_apk);
-						sp.parse(f, new ItemBasedApkHandler(db, parent_apk));
+						sp.parse(f, new EditorsChoiceHandler(db, parent_apk));
 						db.insertItemBasedApkHash(hash, "editorschoice");
 						loadUIEditorsApps();
 					}
@@ -559,7 +559,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		final ProgressDialog pd = new ProgressDialog(mContext);
 		pd.setMessage(getString(R.string.please_wait));
 		pd.show();
-
+		
 		new Thread(new Runnable() {
 
 			@Override
@@ -573,7 +573,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 						@Override
 						public void run() {
-							pd.dismiss();
+							if(pd.isShowing()){
+								pd.dismiss();
+							}
 							refreshAvailableList(true);
 						}
 					});
@@ -1377,6 +1379,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			Log.v("Aptoide-UpdatesAdapter", "Disconnected from ServiceDownloadManager");
 		}
 	};
+
+	private boolean registered = false;
 	
 
 	@Override
@@ -1522,6 +1526,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						"pt.caixamagica.aptoide.REDRAW"));
 				registerReceiver(newRepoReceiver, new IntentFilter(
 						"pt.caixamagica.aptoide.NEWREPO"));
+				registered=true;
 				setContentView(R.layout.activity_aptoide);
 				TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
 				pager = (ViewPager) findViewById(R.id.viewpager);
@@ -2040,11 +2045,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		if(serviceDownloadManager!=null){
 			unbindService(serviceManagerConnection);
 		}
-		unregisterReceiver(updatesReceiver);
-		unregisterReceiver(statusReceiver);
-		unregisterReceiver(redrawInstalledReceiver);
-		unregisterReceiver(loginReceiver);
-		unregisterReceiver(newRepoReceiver);
+		if(registered ){
+			unregisterReceiver(updatesReceiver);
+			unregisterReceiver(statusReceiver);
+			unregisterReceiver(redrawInstalledReceiver);
+			unregisterReceiver(loginReceiver);
+			unregisterReceiver(newRepoReceiver);	
+		}
+		
 		stopService(serviceDownloadManagerIntent);
 		generateXML();
 		super.onDestroy();

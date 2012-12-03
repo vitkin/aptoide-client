@@ -21,7 +21,7 @@ import cm.aptoide.pt.TopRepoParserHandler.ElementHandler;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewApkFeatured;
 
-public class ItemBasedApkHandler extends DefaultHandler {
+public class EditorsChoiceHandler extends DefaultHandler {
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
@@ -29,9 +29,9 @@ public class ItemBasedApkHandler extends DefaultHandler {
 
 	private static ViewApk parent_apk;
 
-	public ItemBasedApkHandler(Database db, ViewApk parent_apk) {
-		ItemBasedApkHandler.parent_apk=parent_apk;
-		ItemBasedApkHandler.db=db;
+	public EditorsChoiceHandler(Database db, ViewApk parent_apk) {
+		EditorsChoiceHandler.parent_apk=parent_apk;
+		EditorsChoiceHandler.db=db;
 	}
 	private static Database db;
 	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
