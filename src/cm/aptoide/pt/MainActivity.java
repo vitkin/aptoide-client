@@ -313,7 +313,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						} else {
 
 							for (int i = 0; i != valuesRecommended.size(); i++) {
-								RelativeLayout txtSamItem = (RelativeLayout) getLayoutInflater()
+								LinearLayout txtSamItem = (LinearLayout) getLayoutInflater()
 										.inflate(R.layout.griditem, null);
 								((TextView) txtSamItem.findViewById(R.id.name))
 										.setText(valuesRecommended.get(i).get(
