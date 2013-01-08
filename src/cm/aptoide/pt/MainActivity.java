@@ -86,6 +86,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
@@ -187,11 +188,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void onClick(View arg0) {
+					
 					Intent i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", Long.parseLong((String) arg0.getTag()));
 					i.putExtra("top", false);
 					i.putExtra("category", Category.ITEMBASED.ordinal());
 					startActivity(i);
+					
 				}
 			});
 			// v.setOnClickListener(featuredListener);
@@ -1552,6 +1555,43 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				});
 				availableListView = (ListView) availableView
 						.findViewById(R.id.available_list);
+				availableListView.setFastScrollEnabled(true);
+				updatesListView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(
+						) {
+					
+					@Override
+					public void onCreateContextMenu(ContextMenu menu, View v,
+							ContextMenuInfo menuInfo) {
+						final View view = ((AdapterContextMenuInfo) menuInfo).targetView;
+						final boolean updatable = ((UpdatesAdapter.ViewHolder)((AdapterContextMenuInfo) menuInfo).targetView.getTag()).updateExcluded;
+						if(!updatable){
+							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,"Add to Updates Excluded list").setOnMenuItemClickListener(new OnMenuItemClickListener() {
+								
+								@Override
+								public boolean onMenuItemClick(MenuItem item) {
+									System.out.println(item.getItemId());
+//									((UpdatesAdapter.ViewHolder)view.getTag()).updateExcluded = true;
+									db.setExcludeUpdate(item.getItemId(), true);
+									updatesLoader.forceLoad();
+									return false;
+								}
+							});
+						}else{
+							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,"Remove from Updates Excluded list").setOnMenuItemClickListener(new OnMenuItemClickListener() {
+								
+								@Override
+								public boolean onMenuItemClick(MenuItem item) {
+									System.out.println(item.getItemId());
+//									((UpdatesAdapter.ViewHolder)view.getTag()).updateExcluded = false;
+									db.setExcludeUpdate(item.getItemId(), false);
+									updatesLoader.forceLoad();
+									return false;
+								}
+							});
+						}
+						
+					}
+				});
 				availableView.findViewById(R.id.refresh_view_layout)
 						.findViewById(R.id.refresh_view)
 						.setOnClickListener(new OnClickListener() {

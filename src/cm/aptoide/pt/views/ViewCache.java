@@ -39,6 +39,8 @@ public class ViewCache implements Parcelable{
 	private int appHashId;
 	private boolean hasMd5Sum;
 	private String md5sum;
+	private String apkid;
+	private String versionName;
 	
 
 	public ViewCache(int id) {
@@ -51,13 +53,19 @@ public class ViewCache implements Parcelable{
 		this.hasMd5Sum = true;
 		this.md5sum = md5sum;
 	}
+	
+	public ViewCache(int id, String md5sum, String apkid, String versionName){
+		this(id,md5sum);
+		this.apkid = apkid;
+		this.versionName = versionName;
+	}
 
 	public int getAppHashId(){
 		return appHashId;
 	}
 
 	public String getLocalPath() {
-		return Constants.PATH_CACHE_APKS+appHashId;
+		return Constants.PATH_CACHE_APKS+apkid+"."+versionName+".apk";
 	}
 
 	public String getIconPath() {

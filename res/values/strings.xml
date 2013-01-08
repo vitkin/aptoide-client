@@ -343,5 +343,6 @@
      <string name="find_us_on_facebook">Find us on Facebook</string>
     <string name="follow_twitter">Follow us on Twitter</string>
     <string name="social_networks">Social Networks</string>
+    <string name="logout">Logout</string>
 
 </resources>

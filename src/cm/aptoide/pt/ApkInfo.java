@@ -645,7 +645,7 @@ OnClickListener installListener = new OnClickListener() {
 						}
 					});
 				}else{
-					ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5());
+					ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5(),viewApk.getApkid(),viewApk.getVername());
 					if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 						try {
 							serviceDownloadManager.callInstallApp(cache);

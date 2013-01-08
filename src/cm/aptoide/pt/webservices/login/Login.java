@@ -56,6 +56,9 @@ public class Login extends Activity {
 	EditText password_box;
 	String username;
 	String password;
+	
+	
+	
 	static Context context;
 	private boolean succeed = false;
 	private static SharedPreferences sPref; 
@@ -73,6 +76,8 @@ public class Login extends Activity {
 		pd = new ProgressDialog(context);
 		if(isLoggedIn(context)){
 			username_box.setText(getUserLogin(this));
+			findViewById(R.id.logout).setVisibility(View.VISIBLE);
+			findViewById(R.id.login).setVisibility(View.GONE);
 		}else if(sPref.getString(Configs.LOGIN_USER_LOGIN, null)!=null){
 			username= sPref.getString(Configs.LOGIN_USER_LOGIN, null);
 			password = sPref.getString(Configs.LOGIN_PASSWORD, null);
@@ -103,6 +108,16 @@ public class Login extends Activity {
 		}catch(Exception e){};
 		
 		checkCredentials(username, password);
+	}
+	
+	public void logout(View v) {
+		prefEdit.remove(Configs.LOGIN_PASSWORD);
+		prefEdit.remove(Configs.LOGIN_USER_ID);
+		prefEdit.remove(Configs.LOGIN_USER_LOGIN);
+		prefEdit.remove(Configs.LOGIN_USER_TOKEN);
+		prefEdit.remove(Configs.LOGIN_USER_USERNAME);
+		prefEdit.commit();
+		onCreate(null);
 	}
 
 	private void checkCredentials(String username, String password) {

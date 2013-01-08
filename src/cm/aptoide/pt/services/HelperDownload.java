@@ -303,6 +303,7 @@ public class HelperDownload{
 	    					}
 	    				}
 	    				Log.d("Aptoide-download","Download done! Name: "+download.getRemotePathTail()+" localPath: "+localPath);
+	    				
 	    				fileOutputStream.flush();
 	    				fileOutputStream.close();
 	    				inputStream.close();
@@ -315,6 +316,8 @@ public class HelperDownload{
 	    					}
 	    				}
 
+	    				
+	    				
 	    				download.setCompleted();
 	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 						return;

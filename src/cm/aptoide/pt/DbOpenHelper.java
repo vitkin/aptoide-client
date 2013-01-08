@@ -24,7 +24,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		
 		
-		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, md5 text,  repo_id integer, date date, minscreen int, minsdk int, mingles real, mature int);");
+		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, md5 text,  repo_id integer, date date, minscreen int, minsdk int, mingles real, mature int, exclude_update boolean default false);");
 		db.execSQL("create table category1 (_id integer primary key, name text , size integer, unique (name) on conflict ignore) ;");
 		db.execSQL("create table category2 (_id integer primary key, catg1_id integer, name text , size integer, unique (name) on conflict ignore);");
 		db.execSQL("create table repo (_id integer primary key, url text default '', delta text, appcount integer, iconspath text default '', basepath text default '', status text default '', webservicespath text default '', username text, password text, avatar text default '', name text default '', downloads integer default 0, apkpath text default '');");
@@ -43,8 +43,9 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		db.execSQL("CREATE INDEX mytest_id_idx ON apk(apkid,vercode,category2,repo_id);");
 		db.execSQL("CREATE INDEX mytest_id3_idx ON dynamic_apk(apkid,vercode,category1,repo_id);");
 		
+		
 	}
-
+	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		

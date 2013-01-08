@@ -44,6 +44,7 @@ public class MainService extends Service {
 	String defaultTopXmlPath = defaultPath+"/.aptoide/top.xml";
 	String defaultLatestXmlPath = defaultPath+"/.aptoide/latest.xml";
 	String defaultExtrasXmlPath = defaultPath+"/.aptoide/extras.xml";
+	
 	static ArrayList<String> serversParsing = new ArrayList<String>();
 	@Override
 	public IBinder onBind(Intent intent) {
