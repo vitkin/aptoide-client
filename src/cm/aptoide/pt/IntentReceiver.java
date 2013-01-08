@@ -163,6 +163,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 						public void onClick(DialogInterface dialog, int which) {
 							ViewApk apk = new ViewApk();
 							apk.setApkid(app.get("apkid"));
+							apk.setName(app.get("name"));
 							apk.setVercode(0);
 							apk.generateAppHashid();
 							try {

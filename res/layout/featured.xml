@@ -7,6 +7,7 @@
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
@@ -122,7 +123,8 @@
                 android:gravity="right"
                 android:orientation="vertical"
                 android:paddingBottom="5dp"
-                android:paddingTop="25dp" >
+                android:paddingTop="25dp" 
+                xmlns:app="http://schemas.android.com/apk/res/de.ankri.switchtest">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -130,8 +132,8 @@
                     android:layout_gravity="center_horizontal"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    android:text="@string/adult_content" />
+                    android:text="@string/adult_content"
+                    android:textAppearance="?android:textAppearanceSmall" />
 
                 <ToggleButton
                     android:id="@+id/toggleButton1"

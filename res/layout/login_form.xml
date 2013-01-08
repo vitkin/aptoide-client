@@ -117,6 +117,18 @@
                 android:orientation="vertical" >
 
                 <Button
+                    android:id="@+id/logout"
+                    style="@style/button_style"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/button"
+                    android:onClick="logout"
+                    android:visibility="gone"
+                    android:text="@string/logout"
+                    android:textColor="@android:color/black"
+                    android:textStyle="normal" />
+
+                <Button
                     android:id="@+id/login"
                     style="@style/button_style"
                     android:layout_width="fill_parent"

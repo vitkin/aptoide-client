@@ -74,7 +74,7 @@ public class LatestTopRepoParserHandler extends DefaultHandler {
 				
 				if(!db.getTopAppsHash(server.id,category).equals(server.top_hash)){
 					System.out.println("Deleting " +category.name() +"apps ");
-					db.deleteTopApps(server.id,category);
+					db.deleteFeaturedTopApps(server.id,category);
 				}else{
 //					db.endTransation(server);
 					System.out.println("NOT Deleting " +category.name() +"apps ");

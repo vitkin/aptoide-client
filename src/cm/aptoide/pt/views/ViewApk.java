@@ -25,7 +25,7 @@ public class ViewApk implements Parcelable {
 	@DatabaseField
 	private int vercode = 0;
 	@DatabaseField
-	private String vername = "Unversioned";
+	private String vername = "Not Available";
 	@DatabaseField
 	private String size = "0";
 	@DatabaseField

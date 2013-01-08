@@ -400,18 +400,44 @@ public class Database {
 		return server;
 	}
 	
+	public void setExcludeUpdate(long _id , boolean exclude){
+		
+		ContentValues values = new ContentValues();
+		values.put("exclude_update", exclude);
+		
+		database.update("apk", values, "_id=?", new String[]{_id+""});
+	}
+	
 	public void deleteTopApps(long id, Category category){
 		switch (category) {
 		case TOP:
 			if(categories1.get("Top Apps")!=null){
 				database.delete("dynamic_apk", "repo_id = ? and category1 = ?", new String[]{id+"",categories1.get("Top Apps")+""});
-				
 			}
 			break;
 		case LATEST:
 			if(categories1.get("Latest Apps")!=null){
 				database.delete("dynamic_apk", "repo_id = ? and category1 = ?", new String[]{id+"",categories1.get("Latest Apps")+""});
 			}
+			break;
+		default:
+			break;
+		}
+		database.delete("screenshots", "type = ?", new String[]{category.ordinal()+""});
+		database.delete("toprepo_extra", "_id = ? and category = ?", new String[]{id+"",category.name().hashCode()+""});
+	}
+	
+	public void deleteFeaturedTopApps(long id, Category category){
+		switch (category) {
+		case TOP:
+//			if(categories1.get("Top Apps")!=null){
+				database.delete("dynamic_apk", "repo_id = ? and category1 = ?", new String[]{id+"",1+""});
+//			}
+			break;
+		case LATEST:
+//			if(categories1.get("Latest Apps")!=null){
+				database.delete("dynamic_apk", "repo_id = ? and category1 = ?", new String[]{id+"",categories1.get("Latest Apps")+""});
+//			}
 			break;
 		default:
 			break;
@@ -677,10 +703,14 @@ public class Database {
 			}
 			
 			if(sPref.getBoolean("matureChkBox", false)){
-				filter = filter + " and mature <= 0"; 
+				filter = filter + " and mature <= 0 "; 
 			}
 			
-			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath as iconspath, b.md5, c.apkpath, b.path from installed as a, apk as b, repo as c where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
+			if(sPref.getBoolean("showExcludedUpdates", true)){
+				filter = filter + " and exclude_update = 'false' "; 
+			}
+			
+			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.imagepath as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath as iconspath, b.md5, c.apkpath, b.path, b.exclude_update as exclude_update from installed as a, apk as b, repo as c where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
 			
 			switch (order) {
 			case NAME:

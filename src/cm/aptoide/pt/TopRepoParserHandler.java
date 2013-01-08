@@ -35,7 +35,6 @@ public class TopRepoParserHandler extends DefaultHandler {
 	private static boolean insidePackage = false;
 	static {
 		elements.put("name", new ElementHandler() {
-			
 
 			public void startElement(Attributes atts) throws SAXException {
 
