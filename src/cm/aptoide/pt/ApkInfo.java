@@ -93,6 +93,7 @@ import com.viewpagerindicator.CirclePageIndicator;
 public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
 	
 	
+	
 
 	private ViewApk viewApk = null;
 	private Database db;
