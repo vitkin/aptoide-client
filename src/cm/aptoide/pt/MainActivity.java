@@ -337,6 +337,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										.findViewById(R.id.rating))
 										.setRating(stars);
 								txtSamItem.setPadding(10, 0, 0, 0);
+								((TextView) txtSamItem.findViewById(R.id.version))
+									.setText(values.get(i).get("vername"));
+								((TextView) txtSamItem.findViewById(R.id.downloads))
+									.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 								txtSamItem.setTag(valuesRecommended.get(i).get(
 										"_id"));
 								txtSamItem.setLayoutParams(new LayoutParams(
@@ -472,6 +476,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			item.put("icon", db.getTopIconsPath(c.getLong(3)) + c.getString(4));
 			item.put("rating", c.getString(5));
 			item.put("id", c.getString(0));
+			item.put("vername", c.getString(2));
+			item.put("downloads", c.getString(6));
 			if (values.size() == 26) {
 				break;
 			}
@@ -496,6 +502,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							.inflate(R.layout.griditem, null);
 					((TextView) txtSamItem.findViewById(R.id.name))
 							.setText(values.get(i).get("name"));
+					((TextView) txtSamItem.findViewById(R.id.version))
+							.setText(values.get(i).get("vername"));
+					((TextView) txtSamItem.findViewById(R.id.downloads))
+							.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 					imageLoader.DisplayImage(-1, values.get(i).get("icon"),
 							(ImageView) txtSamItem.findViewById(R.id.icon),
 							mContext);
@@ -906,7 +916,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		menu.add(Menu.NONE, EnumOptionsMenu.LOGIN.ordinal(),
-				EnumOptionsMenu.LOGIN.ordinal(), R.string.setcredentials)
+				EnumOptionsMenu.LOGIN.ordinal(), R.string.my_account)
 				.setIcon(android.R.drawable.ic_menu_edit);
 		menu.add(Menu.NONE, EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(),
 				EnumOptionsMenu.DISPLAY_OPTIONS.ordinal(),

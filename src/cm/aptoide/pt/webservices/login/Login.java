@@ -45,6 +45,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.util.Algorithms;
@@ -56,60 +57,64 @@ public class Login extends Activity {
 	EditText password_box;
 	String username;
 	String password;
-	
-	
-	
+
 	static Context context;
 	private boolean succeed = false;
-	private static SharedPreferences sPref; 
+	private static SharedPreferences sPref;
 	private static SharedPreferences.Editor prefEdit;
 	public final static int REQUESTCODE = 10;
-	
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.login_form);
 		context = this;
-		username_box = (EditText) findViewById(R.id.username);
-		password_box = (EditText) findViewById(R.id.password);
 		pd = new ProgressDialog(context);
-		if(isLoggedIn(context)){
-			username_box.setText(getUserLogin(this));
-			findViewById(R.id.logout).setVisibility(View.VISIBLE);
-			findViewById(R.id.login).setVisibility(View.GONE);
-		}else if(sPref.getString(Configs.LOGIN_USER_LOGIN, null)!=null){
-			username= sPref.getString(Configs.LOGIN_USER_LOGIN, null);
+		if (isLoggedIn(context)) {
+			setContentView(R.layout.logout_form);
+			((TextView) findViewById(R.id.username)).setText(getUserLogin(this));
+		} else{
+			setContentView(R.layout.login_form);
+			username_box = (EditText) findViewById(R.id.username);
+			password_box = (EditText) findViewById(R.id.password);
+		}
+			
+			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
+			
+			username = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
 			password = sPref.getString(Configs.LOGIN_PASSWORD, null);
-			new CheckUserCredentials().execute(username,password);
+			new CheckUserCredentials().execute(username, password);
 			pd.show();
 			pd.setMessage("Restoring your previous login.");
 		}
-		
-		
+
 		System.out.println("onCreate");
 		prefEdit = sPref.edit();
+		
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		getMenuInflater().inflate(R.menu.activity_main, menu);
-//		return true;
-//	}
+	// @Override
+	// public boolean onCreateOptionsMenu(Menu menu) {
+	// getMenuInflater().inflate(R.menu.activity_main, menu);
+	// return true;
+	// }
 
 	public void createUser(View v) {
-		startActivityForResult(new Intent(this, CreateUser.class),CreateUser.REQUEST_CODE);
+		startActivityForResult(new Intent(this, CreateUser.class),
+				CreateUser.REQUEST_CODE);
 	}
 
 	public void login(View v) {
-		username=username_box.getText().toString();
-		try{
-			password=Algorithms.computeSHA1sum(password_box.getText().toString());
-		}catch(Exception e){};
-		
+		username = username_box.getText().toString();
+		try {
+			password = Algorithms.computeSHA1sum(password_box.getText()
+					.toString());
+		} catch (Exception e) {
+		}
+		;
+
 		checkCredentials(username, password);
 	}
-	
+
 	public void logout(View v) {
 		prefEdit.remove(Configs.LOGIN_PASSWORD);
 		prefEdit.remove(Configs.LOGIN_USER_ID);
@@ -123,83 +128,89 @@ public class Login extends Activity {
 	private void checkCredentials(String username, String password) {
 		pd.show();
 		pd.setMessage(getText(R.string.please_wait));
-		if(username.trim().length()>0&&password.trim().length()>0){
+		if (username.trim().length() > 0 && password.trim().length() > 0) {
 			new CheckUserCredentials().execute(username, password);
-		}else{
-			Toast toast= Toast.makeText(context, 
-					context.getString(R.string.check_your_credentials), Toast.LENGTH_SHORT);  
-					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
-					toast.show();
+		} else {
+			Toast toast = Toast.makeText(context,
+					context.getString(R.string.check_your_credentials),
+					Toast.LENGTH_SHORT);
+			toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL, 0, 30);
+			toast.show();
 		}
 	}
-	
-	public static boolean isLoggedIn(Context context){
+
+	public static boolean isLoggedIn(Context context) {
 		sPref = context.getSharedPreferences("aptoide_prefs", 0);
 		System.out.println("isLoggedin");
-		return sPref.getString(Configs.LOGIN_USER_TOKEN, null)!=null;
+		return sPref.getString(Configs.LOGIN_USER_TOKEN, null) != null;
 	}
-	
-	public static String getToken(Context context){
+
+	public static String getToken(Context context) {
 		sPref = context.getSharedPreferences("aptoide_prefs", 0);
 		return sPref.getString(Configs.LOGIN_USER_TOKEN, null);
 	}
-	
-	
-	static String getUserId(Context context){
+
+	static String getUserId(Context context) {
 		sPref = context.getSharedPreferences("aptoide_prefs", 0);
 		return sPref.getString(Configs.LOGIN_USER_ID, null);
 	}
-	
-	public static String getUserLogin(Context context){
+
+	public static String getUserLogin(Context context) {
 		sPref = context.getSharedPreferences("aptoide_prefs", 0);
 		return sPref.getString(Configs.LOGIN_USER_LOGIN, null);
 	}
-	
-	public static String getUserName(Context context){
+
+	public static String getUserName(Context context) {
 		sPref = context.getSharedPreferences("aptoide_prefs", 0);
 		return sPref.getString(Configs.LOGIN_USER_USERNAME, null);
 	}
-	
-	public static String getPassword(Context context){
+
+	public static String getPassword(Context context) {
 		sPref = context.getSharedPreferences("aptoide_prefs", 0);
 		return sPref.getString(Configs.LOGIN_PASSWORD, null);
 	}
-	
 
 	class CheckUserCredentials extends AsyncTask<String, Void, String> {
 
 		@Override
 		protected String doInBackground(String... params) {
-			
+
 			URL url;
 			StringBuilder sb = null;
 			String data = null;
 			try {
-				url = new URL("http://webservices.aptoide.com/webservices/checkUserCredentials");
-				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				url = new URL(
+						"http://webservices.aptoide.com/webservices/checkUserCredentials");
+				HttpURLConnection connection = (HttpURLConnection) url
+						.openConnection();
 				connection.setDoOutput(true);
-				data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(params[0], "UTF-8");
-			    data += "&" + URLEncoder.encode("passhash", "UTF-8") + "=" + URLEncoder.encode(params[1],"UTF-8");
-			    data += "&" + URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8");
-			    OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
-			    wr.write(data);
-			    wr.flush();
-				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                sb = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line+"\n");
-                }
-                wr.close();
-                br.close();
+				data = URLEncoder.encode("user", "UTF-8") + "="
+						+ URLEncoder.encode(params[0], "UTF-8");
+				data += "&" + URLEncoder.encode("passhash", "UTF-8") + "="
+						+ URLEncoder.encode(params[1], "UTF-8");
+				data += "&" + URLEncoder.encode("mode", "UTF-8") + "="
+						+ URLEncoder.encode("json", "UTF-8");
+				OutputStreamWriter wr = new OutputStreamWriter(
+						connection.getOutputStream());
+				wr.write(data);
+				wr.flush();
+				BufferedReader br = new BufferedReader(new InputStreamReader(
+						connection.getInputStream()));
+				sb = new StringBuilder();
+				String line;
+				while ((line = br.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				wr.close();
+				br.close();
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			} 
-			if(sb!=null){
+			}
+			if (sb != null) {
 				return sb.toString();
-			}else{
+			} else {
 				return "ERROR";
 			}
 		}
@@ -209,48 +220,49 @@ public class Login extends Activity {
 			super.onPostExecute(result);
 			pd.dismiss();
 			JSONObject array;
-			try{
+			try {
 				array = new JSONObject(result);
-				if(array.getString("status").equals("OK")){
-					succeed=true;
+				if (array.getString("status").equals("OK")) {
+					succeed = true;
 					prefEdit.putString(Configs.LOGIN_PASSWORD, password);
 					prefEdit.putString(Configs.LOGIN_USER_LOGIN, username);
-					prefEdit.putString(Configs.LOGIN_USER_ID, Algorithms.computeSHA1sum(username));
-					prefEdit.putString(Configs.LOGIN_USER_TOKEN, array.getString("token"));
+					prefEdit.putString(Configs.LOGIN_USER_ID,
+							Algorithms.computeSHA1sum(username));
+					prefEdit.putString(Configs.LOGIN_USER_TOKEN,
+							array.getString("token"));
 					prefEdit.remove(Configs.LOGIN_USER_USERNAME);
 					prefEdit.commit();
 					Intent i = new Intent("login");
 					sendBroadcast(i);
 					finish();
-				}else{
-					Toast toast= Toast.makeText(Login.this, 
-							array.getString("errors"), Toast.LENGTH_SHORT);  
-							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
-							toast.show();
+				} else {
+					Toast toast = Toast.makeText(Login.this,
+							array.getString("errors"), Toast.LENGTH_SHORT);
+					toast.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL,
+							0, 30);
+					toast.show();
 				}
-			}catch(Exception e){
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-			
-			
+
 		}
 	}
-	
+
 	@Override
 	public void finish() {
-		
-		if(succeed){
+
+		if (succeed) {
 			Intent i = new Intent();
 			i.putExtra("username", username_box.getText().toString());
-			setResult(RESULT_OK,i);
-		}else{
+			setResult(RESULT_OK, i);
+		} else {
 			setResult(RESULT_CANCELED);
 		}
 		super.finish();
-		
+
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -260,7 +272,7 @@ public class Login extends Activity {
 			case RESULT_OK:
 				username_box.setText(data.getStringExtra("username"));
 				password_box.setText(data.getStringExtra("password"));
-				((Button)findViewById(R.id.login)).performClick();
+				((Button) findViewById(R.id.login)).performClick();
 				break;
 
 			default:
@@ -272,12 +284,16 @@ public class Login extends Activity {
 			break;
 		}
 	}
-	
-	public static void updateName(String name) throws InvalidKeyException, IllegalStateException, NoSuchAlgorithmException, ClientProtocolException, IOException, JSONException {
+
+	public static void updateName(String name) throws InvalidKeyException,
+			IllegalStateException, NoSuchAlgorithmException,
+			ClientProtocolException, IOException, JSONException {
 		String passwordSha1 = sPref.getString(Configs.LOGIN_PASSWORD, null);
 		String email = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
-		String hmac = Algorithms.computeHmacSha1(email+passwordSha1+name+1, "bazaar_hmac");
-		HttpPost post = new HttpPost("http://webservices.aptoide.com/webservices/createUser");
+		String hmac = Algorithms.computeHmacSha1(email + passwordSha1 + name
+				+ 1, "bazaar_hmac");
+		HttpPost post = new HttpPost(
+				"http://webservices.aptoide.com/webservices/createUser");
 		List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		nameValuePairs.add(new BasicNameValuePair("email", email));
 		nameValuePairs.add(new BasicNameValuePair("passhash", passwordSha1));
@@ -285,7 +301,7 @@ public class Login extends Activity {
 		nameValuePairs.add(new BasicNameValuePair("update", "1"));
 		nameValuePairs.add(new BasicNameValuePair("hmac", hmac));
 		nameValuePairs.add(new BasicNameValuePair("mode", "json"));
-		
+
 		post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 		HttpClient client = new DefaultHttpClient();
@@ -294,15 +310,14 @@ public class Login extends Activity {
 
 		String responseText = EntityUtils.toString(entity);
 		final JSONObject json = new JSONObject(responseText);
-		if(json.has("errors")){
-			
-		}else{
+		if (json.has("errors")) {
+
+		} else {
 			Editor sPrefeditor = sPref.edit();
 			sPrefeditor.putString(Configs.LOGIN_USER_USERNAME, name);
 			sPrefeditor.commit();
 		}
-		
-		
+
 	}
 
 }

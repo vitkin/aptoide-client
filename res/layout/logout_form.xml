@@ -31,7 +31,7 @@
             android:text="@string/register" />
 
         <TextView
-            android:id="@+id/sign_in"
+            android:id="@+id/sign_out"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -62,72 +62,44 @@
 
             <LinearLayout
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
                 android:padding="5dp" >
 
                 <TextView
-                    android:id="@+id/username_id"
-                    android:layout_width="fill_parent"
+                    android:id="@+id/logged_as"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
-                    android:text="@string/username"
+                    android:text="You are logged as:"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/darker_gray" />
 
-                <EditText
+                <TextView
                     android:id="@+id/username"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/username_tip"
-                    android:inputType="textEmailAddress"
-                    android:singleLine="true" />
-
-                <TextView
-                    android:id="@+id/password_id"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
+                    android:layout_weight="1"
                     android:text="@string/password"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/darker_gray" />
-
-                <EditText
-                    android:id="@+id/password"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:singleLine="true" />
-
-                <ViewStub
-                    android:id="@+id/login_error_stub"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout="@layout/stub" />
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/login_button"
+            <Button
+                android:id="@+id/logout"
+                style="@style/button_style"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
-
-                
-                <Button
-                    android:id="@+id/login"
-                    style="@style/button_style"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/button"
-                    android:onClick="login"
-                    android:text="@string/sign_in"
-                    android:textColor="@android:color/black"
-                    android:textStyle="normal" />
-            </LinearLayout>
+                android:layout_weight="1"
+                android:background="@drawable/button"
+                android:onClick="logout"
+                android:text="@string/sign_out"
+                android:textColor="@android:color/black"
+                android:textStyle="normal" />
         </LinearLayout>
     </ScrollView>
 

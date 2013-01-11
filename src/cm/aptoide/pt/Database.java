@@ -1100,7 +1100,7 @@ public class Database {
 		}
 		
 		try {
-			c = database.rawQuery("select a.name as name, a.icon as icon, a.itembasedapkrepo_id as itembasedapkrepo_id, a._id as _id, a.rating as _id, a.apkid as apkid, a.vercode as vercode from itembasedapk as a where a.parent_apkid = ? "+filter , new String[]{apkid});
+			c = database.rawQuery("select a.name as name, a.icon as icon, a.itembasedapkrepo_id as itembasedapkrepo_id, a._id as _id, a.rating as _id, a.apkid as apkid, a.vercode as vercode, a.vername as vername, a.downloads as downloads from itembasedapk as a where a.parent_apkid = ? "+filter , new String[]{apkid});
 			
 			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 				HashMap<String, String> value = new HashMap<String, String>();

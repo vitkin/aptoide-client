@@ -60,13 +60,6 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		
-		TableCreator creator = new TableCreator(db);
-		
-		creator.newTable(TABLE_TOP_LATEST_REPO_INFO).addColumn(SQLiteType.TEXT,"").addColumn(SQLiteType.TEXT,"").createTable();
-		
-		creator.newTable(TABLE_APK).addColumn(SQLiteType.INTEGER,COLUMN__ID);
-		creator.newTable(TABLE_CATEGORY_1ST).addColumn(SQLiteType.INTEGER, name);
-		MatrixCursor cursor = new MatrixCursor(new String[]{"ola"});
 		
 		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, md5 text,  repo_id integer, date date, minscreen int, minsdk int, mingles real, mature int, exclude_update boolean default false);");
 		db.execSQL("create table category1 (_id integer primary key, name text , size integer, unique (name) on conflict ignore) ;");
