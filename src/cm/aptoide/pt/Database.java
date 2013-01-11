@@ -59,7 +59,10 @@ public class Database {
 			
 			ContentValues values = new ContentValues();
 			insertCategories(apk);
+			
 			values.put("apkid", apk.getApkid());
+			
+			
 			values.put("imagepath", apk.getIconPath());
 			values.put("name", apk.getName());
 			values.put("size", apk.getSize());
@@ -130,7 +133,6 @@ public class Database {
 			categories2.put(apk.getCategory2(),c.getInt(0));
 			c.close();
 		}
-		
 		
 		values.clear();
 		values.put("repo_id", apk.getRepo_id());

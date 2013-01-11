@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -22,12 +23,14 @@ import cm.aptoide.pt.RepoParserHandler.ElementHandler;
 import cm.aptoide.pt.views.ViewApk;
 
 
-public class LatestTopRepoParserHandler extends DefaultHandler {
+public class LatestTopRepoParserHandler extends DefaultHandler{
 	
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
+	
+	
 	
 	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
 	final static ViewApk apk = new ViewApk();

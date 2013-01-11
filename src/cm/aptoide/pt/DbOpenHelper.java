@@ -9,12 +9,49 @@ package cm.aptoide.pt;
 
 
 
+import java.util.HashMap;
+
+import cm.aptoide.pt.util.databasecreator.TableCreator;
+import cm.aptoide.pt.util.databasecreator.TableCreator.SQLiteType;
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteQuery;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.widget.Toast;
 
 public class DbOpenHelper extends SQLiteOpenHelper {
 
+	
+	
+	
+	public final static String TABLE_TOP_LATEST_REPO_INFO= "top_latest_repo_info";
+	public final static String TABLE_APK= "apk";
+	public final static String TABLE_CATEGORY_1ST = "category_1st";
+	public final static String TABLE_CATEGORY_2ND = "category_2nd";
+	
+	public final static String COLUMN__ID = "_id";
+	public final static String COLUMN_NAME = "name";
+	public final static String COLUMN_VERNAME = "vername";
+	public final static String COLUMN_VERCODE = "vercode";
+	public final static String COLUMN_ICONPATH = "icon";
+	public final static String COLUMN_DOWNLOADS = "downloads";
+	public final static String COLUMN_SIZE = "size";
+	public final static String COLUMN_RATING = "rating";
+	public final static String COLUMN_REMOTE_PATH = "remote_path";
+	public final static String COLUMN_CATEGORY_2ND = "category_2nd";
+	public final static String COLUMN_CATEGORY_1ST = "category_1st";
+	public final static String COLUMN_MD5 = "md5";
+	public final static String COLUMN_REPO_ID = "repo_id";
+	public final static String COLUMN_DATE = "date";
+	public final static String COLUMN_MIN_SDK = "minsdk";
+	public final static String COLUMN_MIN_SCREEN = "minscreen";
+	public final static String COLUMN_MIN_GLES = "mingles";
+	public final static String COLUMN_MATURE = "mature";
+	public final static String COLUMN_HASH = "hash";
 	
 	public DbOpenHelper(Context context) {
 		super(context, "aptoide.db", null, 5);
@@ -23,6 +60,13 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		
+		TableCreator creator = new TableCreator(db);
+		
+		creator.newTable(TABLE_TOP_LATEST_REPO_INFO).addColumn(SQLiteType.TEXT,"").addColumn(SQLiteType.TEXT,"").createTable();
+		
+		creator.newTable(TABLE_APK).addColumn(SQLiteType.INTEGER,COLUMN__ID);
+		creator.newTable(TABLE_CATEGORY_1ST).addColumn(SQLiteType.INTEGER, name);
+		MatrixCursor cursor = new MatrixCursor(new String[]{"ola"});
 		
 		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, md5 text,  repo_id integer, date date, minscreen int, minsdk int, mingles real, mature int, exclude_update boolean default false);");
 		db.execSQL("create table category1 (_id integer primary key, name text , size integer, unique (name) on conflict ignore) ;");
@@ -67,5 +111,7 @@ public class DbOpenHelper extends SQLiteOpenHelper {
 		
 		onCreate(db);
 	}
+	
+	
 
 }
