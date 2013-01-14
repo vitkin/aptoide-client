@@ -338,7 +338,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										.setRating(stars);
 								txtSamItem.setPadding(10, 0, 0, 0);
 								((TextView) txtSamItem.findViewById(R.id.version))
-									.setText(values.get(i).get("vername"));
+									.setText(getString(R.string.version) +" "+ values.get(i).get("vername"));
 								((TextView) txtSamItem.findViewById(R.id.downloads))
 									.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 								txtSamItem.setTag(valuesRecommended.get(i).get(
@@ -503,7 +503,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					((TextView) txtSamItem.findViewById(R.id.name))
 							.setText(values.get(i).get("name"));
 					((TextView) txtSamItem.findViewById(R.id.version))
-							.setText(values.get(i).get("vername"));
+							.setText(getString(R.string.version) +" "+ values.get(i).get("vername"));
 					((TextView) txtSamItem.findViewById(R.id.downloads))
 							.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 					imageLoader.DisplayImage(-1, values.get(i).get("icon"),

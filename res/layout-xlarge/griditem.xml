@@ -10,7 +10,6 @@
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:clickable="true"
-    android:layout_margin="8dp"
     android:background="@drawable/griditem_bgd"
     android:focusable="true"  
     android:gravity="center_horizontal"
@@ -70,7 +69,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingRight="2dp"
-                android:visibility="gone"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#ccc" />

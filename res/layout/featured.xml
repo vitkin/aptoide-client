@@ -10,6 +10,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="#edece9"
     android:orientation="vertical" >
 
     <ScrollView
@@ -116,35 +117,6 @@
                 android:orientation="vertical" >
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/adult_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:orientation="vertical"
-                android:paddingBottom="5dp"
-                android:paddingTop="25dp" 
-                xmlns:app="http://schemas.android.com/apk/res/de.ankri.switchtest">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:paddingLeft="10dp"
-                    android:paddingRight="10dp"
-                    android:text="@string/adult_content"
-                    android:textAppearance="?android:textAppearanceSmall" />
-
-                <ToggleButton
-                    android:id="@+id/toggleButton1"
-                    android:layout_width="90dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="center_horizontal"
-                    android:background="@drawable/mature_slider"
-                    android:textOff=""
-                    android:textOn="" />
-            </LinearLayout>
-
             <RelativeLayout
                 android:id="@+id/separator"
                 android:layout_width="fill_parent"
@@ -165,20 +137,58 @@
             </RelativeLayout>
 
             <LinearLayout
-                android:id="@+id/recommended_container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:background="@android:color/white"
                 android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/recommended_container"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/recommended_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="10dp"
+                    android:text="@string/recommended_text"
+                    android:textAppearance="?android:textAppearanceSmall" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/recommended_text"
+            <LinearLayout
+                xmlns:app="http://schemas.android.com/apk/res/de.ankri.switchtest"
+                android:id="@+id/adult_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:padding="10dp"
-                android:text="@string/recommended_text"
-                android:textAppearance="?android:textAppearanceSmall" />
+                android:gravity="right"
+                android:orientation="vertical"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:text="@string/adult_content"
+                    android:textAppearance="?android:textAppearanceSmall" />
+
+                <ToggleButton
+                    android:id="@+id/toggleButton1"
+                    android:layout_width="90dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="5dp"
+                    android:background="@drawable/mature_slider"
+                    android:padding="5dp"
+                    android:textOff=""
+                    android:textOn="" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
