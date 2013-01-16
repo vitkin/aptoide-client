@@ -7,39 +7,39 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.LoaderManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,28 +63,26 @@ import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.contentloaders.ViewApkLoader;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
+import cm.aptoide.pt.views.EnumApkMalware;
 import cm.aptoide.pt.views.EnumDownloadFailReason;
 import cm.aptoide.pt.views.EnumDownloadStatus;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt.views.ViewLogin;
 import cm.aptoide.pt.webservices.comments.AddComment;
 import cm.aptoide.pt.webservices.comments.Comments;
 import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-import cm.aptoide.pt.AIDLDownloadObserver;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
@@ -311,6 +309,64 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				}
 				setClickListeners();
 
+				//Malware badges
+				try{
+					NetworkUtils utils = new NetworkUtils();
+					String uri = "http://www.aptoide.com/webservices/getApkMalwareInfo/" + viewApk.getMd5()+"/json";
+					JSONObject respJSON = utils.getJsonObject(new URL(uri), ApkInfo.this);
+					JSONObject listingResults = respJSON.getJSONObject("listing");
+					final String malwareStatus = listingResults.getString("status");
+					final String malwareReason = listingResults.getString("reason");
+
+					((TextView) findViewById(R.id.app_badge_text)).setText(malwareStatus+"");
+					Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
+					Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
+					
+					EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase());
+					switch(ApkStatus){
+					case SCANNED:
+						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
+						break;
+					case UNKNOWN:
+						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
+						break;
+					case WARN:
+						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
+						break;
+					case CRITICAL:
+						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
+						break;
+					default:
+						break;
+					}
+					
+					LinearLayout badge_layout = (LinearLayout) findViewById(R.id.badge_layout);
+					badge_layout.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+							alertDialogBuilder.setTitle(R.string.status+ ": " + malwareStatus);
+							alertDialogBuilder
+							.setMessage(R.string.status+ ": " + malwareReason)
+							.setIcon(android.R.drawable.ic_menu_info_details)
+							.setCancelable(false)
+							.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+								public void onClick(DialogInterface dialog,int id) {
+									dialog.cancel();
+								}
+							});
+
+							AlertDialog alertDialog = alertDialogBuilder.create();
+							alertDialog.show();
+
+						}
+					});
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+				
+				
+				
 			}
 
 			@Override

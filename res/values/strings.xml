@@ -70,6 +70,8 @@
     <string name="uninstall">Uninstall</string>
     <string name="install">Install</string>
     <string name="search_market">Search Market</string>
+    <string name="status">Status</string>
+    <string name="details">Details</string>
     <string name="finished_download_alrt">Download Finished</string>
     <string name="finished_download_message">Download Finished</string>
     <string name="download_alrt">Downloading: </string>
