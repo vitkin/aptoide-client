@@ -347,7 +347,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 							AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 							alertDialogBuilder.setTitle(R.string.status+ ": " + malwareStatus);
 							alertDialogBuilder
-							.setMessage(R.string.status+ ": " + malwareReason)
+							.setMessage(R.string.details+ ": " + malwareReason)
 							.setIcon(android.R.drawable.ic_menu_info_details)
 							.setCancelable(false)
 							.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
