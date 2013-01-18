@@ -318,7 +318,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					final String malwareStatus = listingResults.getString("status");
 					final String malwareReason = listingResults.getString("reason");
 
-					
 					Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
 					Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
 					
@@ -328,18 +327,18 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						((TextView) findViewById(R.id.app_badge_text)).setText("Trusted");
 						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
 						break;
-					case UNKNOWN:
-						((TextView) findViewById(R.id.app_badge_text)).setText("Unknown");
-						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
-						break;
-					case WARN:
-						((TextView) findViewById(R.id.app_badge_text)).setText("Warn");
-						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
-						break;
-					case CRITICAL:
-						((TextView) findViewById(R.id.app_badge_text)).setText("Critical");
-						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
-						break;
+//					case UNKNOWN:
+//						((TextView) findViewById(R.id.app_badge_text)).setText("Unknown");
+//						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
+//						break;
+//					case WARN:
+//						((TextView) findViewById(R.id.app_badge_text)).setText("Warn");
+//						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
+//						break;
+//					case CRITICAL:
+//						((TextView) findViewById(R.id.app_badge_text)).setText("Critical");
+//						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
+//						break;
 					default:
 						break;
 					}
