@@ -318,22 +318,26 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					final String malwareStatus = listingResults.getString("status");
 					final String malwareReason = listingResults.getString("reason");
 
-					((TextView) findViewById(R.id.app_badge_text)).setText(malwareStatus+"");
+					
 					Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
 					Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
 					
 					EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase());
 					switch(ApkStatus){
 					case SCANNED:
+						((TextView) findViewById(R.id.app_badge_text)).setText("Trusted");
 						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
 						break;
 					case UNKNOWN:
+						((TextView) findViewById(R.id.app_badge_text)).setText("Unknown");
 						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
 						break;
 					case WARN:
+						((TextView) findViewById(R.id.app_badge_text)).setText("Warn");
 						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
 						break;
 					case CRITICAL:
+						((TextView) findViewById(R.id.app_badge_text)).setText("Critical");
 						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
 						break;
 					default:
@@ -345,13 +349,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						@Override
 						public void onClick(View v) {
 							AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-							alertDialogBuilder.setTitle(getString(R.string.status)+ ": " + malwareStatus);
-							alertDialogBuilder
-							.setMessage(getString(R.string.details)+ ": " + malwareReason)
+							alertDialogBuilder.setTitle(getString(R.string.status)+ ": "+ malwareStatus);
+							alertDialogBuilder.setMessage("Scanned on 11-2-2012 by: norton av1.2, "+"f-secure 2-4 for Android, "+"mcafee 1.5" +
+									"\n"+"3party validated on 11-2-2012 by: Google Play")
 							.setIcon(android.R.drawable.ic_menu_info_details)
 							.setCancelable(false)
 							.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,int id) {
+								public void onClick(DialogInterface dialog, int id) {
 									dialog.cancel();
 								}
 							});
@@ -374,9 +378,6 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			}
 		});
-
-
-
 
 
 		//		

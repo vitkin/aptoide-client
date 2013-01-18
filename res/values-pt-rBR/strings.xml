@@ -112,7 +112,7 @@
   <string name="btn_done">Feito</string>
   <string name="btn_chlog">Mudanças</string>
   <string name="btn_search_market">Pesquisar Mercado</string>
-  <string name="schDwnBtn">Downloads Agendados</string>
+  <string name="schDwnBtn">Agendar download</string>
   <string name="search_log">Pesquisa</string>
   <string name="search_stores">em outras Lojas</string>
   <string name="no_repo">Adicione uma loja!</string>

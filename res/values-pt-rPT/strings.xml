@@ -161,7 +161,7 @@
   <string name="btn_chlog">Changelog</string>
   <string name="btn_search_market">Procurar no Market</string>
   <string name="search_on_aptoide">Procurar no Aptoide</string>
-  <string name="schDwnBtn">Downloads agendados</string>
+  <string name="schDwnBtn">Agendar download</string>
   <string name="search_log">Procurar</string>
   <string name="search_stores">noutras Lojas</string>
   <string name="no_repo">Adicionar uma Loja!</string>
