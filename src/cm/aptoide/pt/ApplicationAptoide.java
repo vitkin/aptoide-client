@@ -22,6 +22,7 @@ package cm.aptoide.pt;
 import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 
 /**
@@ -33,14 +34,30 @@ import android.content.Intent;
 public class ApplicationAptoide extends Application {
 
 	private ManagerPreferences managerPreferences;
+	private static Context context;
 	
 	@Override
 	public void onCreate() {
 		managerPreferences = new ManagerPreferences(getApplicationContext());
+		setContext(getApplicationContext());
 		super.onCreate();
 	}
 	
 	public ManagerPreferences getManagerPreferences(){
 		return managerPreferences;
+	}
+
+	/**
+	 * @return the context
+	 */
+	public static Context getContext() {
+		return context;
+	}
+
+	/**
+	 * @param context the context to set
+	 */
+	public static void setContext(Context context) {
+		ApplicationAptoide.context = context;
 	}
 }

@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -76,18 +77,15 @@ public class Login extends Activity {
 			setContentView(R.layout.login_form);
 			username_box = (EditText) findViewById(R.id.username);
 			password_box = (EditText) findViewById(R.id.password);
+//			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
+//				
+//				username = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
+//				password = sPref.getString(Configs.LOGIN_PASSWORD, null);
+//				new CheckUserCredentials().execute(username, password);
+//				pd.show();
+//				pd.setMessage("Restoring your previous login.");
+//			}
 		}
-			
-			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
-			
-			username = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
-			password = sPref.getString(Configs.LOGIN_PASSWORD, null);
-			new CheckUserCredentials().execute(username, password);
-			pd.show();
-			pd.setMessage("Restoring your previous login.");
-		}
-
-		System.out.println("onCreate");
 		prefEdit = sPref.edit();
 		
 	}
@@ -140,33 +138,33 @@ public class Login extends Activity {
 	}
 
 	public static boolean isLoggedIn(Context context) {
-		sPref = context.getSharedPreferences("aptoide_prefs", 0);
+		sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		System.out.println("isLoggedin");
 		return sPref.getString(Configs.LOGIN_USER_TOKEN, null) != null;
 	}
 
 	public static String getToken(Context context) {
-		sPref = context.getSharedPreferences("aptoide_prefs", 0);
+		sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sPref.getString(Configs.LOGIN_USER_TOKEN, null);
 	}
 
 	static String getUserId(Context context) {
-		sPref = context.getSharedPreferences("aptoide_prefs", 0);
+		sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sPref.getString(Configs.LOGIN_USER_ID, null);
 	}
 
 	public static String getUserLogin(Context context) {
-		sPref = context.getSharedPreferences("aptoide_prefs", 0);
+		sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sPref.getString(Configs.LOGIN_USER_LOGIN, null);
 	}
 
 	public static String getUserName(Context context) {
-		sPref = context.getSharedPreferences("aptoide_prefs", 0);
+		sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sPref.getString(Configs.LOGIN_USER_USERNAME, null);
 	}
 
 	public static String getPassword(Context context) {
-		sPref = context.getSharedPreferences("aptoide_prefs", 0);
+		sPref = PreferenceManager.getDefaultSharedPreferences(context);
 		return sPref.getString(Configs.LOGIN_PASSWORD, null);
 	}
 

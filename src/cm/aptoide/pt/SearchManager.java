@@ -43,7 +43,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		System.out.println("onCreate Search");
-		db = Database.getInstance(this);
+		db = Database.getInstance();
 		setContentView(R.layout.searchmanager);
 		if(getIntent().hasExtra("search")){
 			query = getIntent().getExtras().getString("search");

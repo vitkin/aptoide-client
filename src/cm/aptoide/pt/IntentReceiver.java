@@ -111,7 +111,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 		
 	private void continueLoading(){
 		TMP_MYAPP_FILE = getCacheDir()+"/myapp.myapp";
-		db=Database.getInstance(this);
+		db=Database.getInstance();
 		String uri = getIntent().getDataString();
 		System.out.println(uri);
 		if(uri.startsWith("aptoiderepo")){

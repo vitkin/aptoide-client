@@ -12,28 +12,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.ContentValues;
 import android.content.pm.FeatureInfo;
 
-import cm.aptoide.pt.RepoParserHandler.ElementHandler;
+import cm.aptoide.pt.HandlerInfoXml.ElementHandler;
 import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.views.ViewApkTop;
 
 
-public class LatestRepoParserHandler extends DefaultHandler {
+public class HandlerTop extends DefaultHandler{
 	
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
 	
-	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
-	final static ViewApk apk = new ViewApk();
-	final static StringBuilder sb  = new StringBuilder();
-	private static boolean insidePackage = false;
-	static {
+	final Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
+	final ViewApkTop apk = new ViewApkTop();
+	final StringBuilder sb  = new StringBuilder();
+	private boolean insidePackage = false;
+	void loadElements() {
 		elements.put("name", new ElementHandler() {
 			
 
@@ -46,7 +48,7 @@ public class LatestRepoParserHandler extends DefaultHandler {
 				if(insidePackage){
 					apk.setName(sb.toString());
 				}else{
-					server.name=sb.toString();
+					apk.getServer().name=sb.toString();
 				}
 			}
 		});
@@ -58,7 +60,7 @@ public class LatestRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.screenspath=sb.toString();
+				apk.getServer().screenspath=sb.toString();
 			}
 		});
 		
@@ -72,15 +74,15 @@ public class LatestRepoParserHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				
-				if(!db.getTopAppsHash(server.id,category).equals(server.top_hash)){
-					System.out.println("Deleting " +category.name() +"apps ");
-					db.deleteTopApps(server.id,category);
-				}else{
-//					db.endTransation(server);
-					System.out.println("NOT Deleting " +category.name() +"apps ");
-					throw new SAXException();
-				}
-				db.insertTopServerInfo(server, category,featured);
+//				if(!db.getRepoHash(apk.getServer().id,Category.TOP).equals(apk.getServer().hash)){
+//					System.out.println("Deleting " +category.name() +"apps ");
+					db.deleteApps(apk.getServer().id,Category.TOP);
+//				}else{
+////					db.endTransation(server);
+//					System.out.println("NOT Deleting " +category.name() +"apps ");
+//					throw new SAXException();
+//				}
+				db.insertServerInfo(apk.getServer(),Category.TOP);
 			}
 		});
 		
@@ -93,7 +95,7 @@ public class LatestRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.top_hash=sb.toString();
+				apk.getServer().hash=sb.toString();
 			}
 		});
 		
@@ -101,13 +103,12 @@ public class LatestRepoParserHandler extends DefaultHandler {
 			public void startElement(Attributes atts) throws SAXException {
 				apk.clear();
 				insidePackage = true;
-				
 			}
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.setId(db.insertTop(apk,category));
-				db.insertScreenshots(apk,category);
+				db.insert(apk);
+//				db.insertScreenshots(apk,category);
 				insidePackage = false;
 			}
 		});
@@ -229,7 +230,7 @@ public class LatestRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.basePath=sb.toString();
+				apk.getServer().basePath=sb.toString();
 			}
 		});
 		
@@ -240,7 +241,7 @@ public class LatestRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.iconsPath=sb.toString();
+				apk.getServer().iconsPath=sb.toString();
 			}
 		});
 		
@@ -310,25 +311,17 @@ public class LatestRepoParserHandler extends DefaultHandler {
 		
 	}
 	
-	private static Database db;
-	private static Server server;
-	private static Category category;
-	private static boolean featured;
+	private static Database db = Database.getInstance();
 	
-	public LatestRepoParserHandler(Database db, Server server,Category category, boolean b) {
-		LatestRepoParserHandler.server = server;
-		LatestRepoParserHandler.db = db;
-		LatestRepoParserHandler.category=category;
-		featured = b;
+	public HandlerTop(Server server) {
+		apk.setServer(server);
+		apk.setRepo_id(server.id);
+		loadElements();
 	}
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
-		db.prepare();
-		server.clear();
 //		db.startTransation();
-		System.out.println(server.id);
-		apk.setRepo_id(server.id);
 	}
 	@Override
 	public void startElement(String uri, String localName,
@@ -379,7 +372,6 @@ public class LatestRepoParserHandler extends DefaultHandler {
 				}
 			}
 		}).start();
-	
 //		db.endTransation(server);
 	}
 	private static int i = 0;

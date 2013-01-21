@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-    <string name="ver_str">&quot;4.0.0&quot;</string>
+    <string name="ver_str">&quot;4.0.1&quot;</string>
     <string name="change_log_url">http://co.aptoide.com/changelog</string>
 </resources>
 

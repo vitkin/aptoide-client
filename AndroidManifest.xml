@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cm.aptoide.pt"
-    android:versionCode="400"
-    android:versionName="4.0.0" android:installLocation="auto">
+    android:versionCode="401"
+    android:versionName="4.0.1" android:installLocation="auto">
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="8" />
     
 	<uses-permission android:name="android.permission.INTERNET"/>
@@ -46,6 +46,7 @@
                 android:value=".SearchManager" />
     	</activity>
         <activity android:name=".webservices.login.Login" android:configChanges="orientation"/>
+        <activity android:name=".ExcludedUpdatesActivity" android:configChanges="orientation"/>
         <activity android:name=".webservices.comments.AddComment" android:configChanges="orientation"/>
         <activity android:name=".webservices.comments.ViewComments" android:configChanges="orientation"/>
         <activity android:name=".webservices.login.CreateUser" android:configChanges="orientation"/>

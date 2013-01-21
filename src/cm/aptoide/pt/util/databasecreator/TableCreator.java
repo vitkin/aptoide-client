@@ -1,40 +1,12 @@
 package cm.aptoide.pt.util.databasecreator;
 
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
+
 
 public class TableCreator {
-	
-	public enum SQLiteType{
-		INTEGER, TEXT, FLOAT, DATE, REAL
-	}
-
-	private class Column {
-		
-		private SQLiteType type;
-		private String name;
-		private String dfault;
-		
-		public Column(SQLiteType type, String name) {
-			this.type = type;
-			this.name = name;
-		}
-		
-		public Column(SQLiteType type, String name, String dfault) {
-			this(type, name);
-			this.dfault = dfault;
-		}
-		
-		@Override
-		public String toString() {
-			return name + " " + type + (dfault != null ? " DEFAULT " + dfault : "");
-		}
-		
-	}
 	
 	private SQLiteDatabase database;
 	
@@ -47,16 +19,11 @@ public class TableCreator {
 			this.tableName = tableName;
 		}
 		
-		public TableBuilder addColumn(SQLiteType type, String name) {
-			columns.add(new Column(type, name));
+		public TableBuilder addColumn(Column column) {
+			columns.add(column);
 			return this;
 		}
 		
-		public TableBuilder addColumn(SQLiteType type, String name, String dfault) {
-			columns.add(new Column(type, name, dfault));
-			return this;
-		}
-
 		public void createTable() throws IllegalArgumentException {
 			if(tableName==null){
 				throw new IllegalArgumentException("No table name especified");
@@ -64,7 +31,59 @@ public class TableCreator {
 			if(columns.size()==0){
 				throw new IllegalArgumentException("No columns especified");
 			}
-			database.execSQL("CREATE TABLE " + tableName + " " + columnsToString(columns));
+			String sql = "CREATE TABLE " + tableName + " (" + columnsToString(columns) + ")";
+			
+			Log.d("TableCreator","Executing SQL: " + sql);
+			
+			database.execSQL(sql);
+		}
+		
+		private String columnsToString(ArrayList<Column> columns) {
+			StringBuilder sb = new StringBuilder();
+			Iterator<Column> it = columns.iterator();
+			for(;;){
+				Column column = it.next();
+				sb.append(column);
+				if(!it.hasNext()){
+					return sb.toString() + columnsPrimaryKeys(columns);
+				}
+				sb.append(", ");
+			}
+		}
+
+		private String columnsPrimaryKeys(ArrayList<Column> columns) {
+			Iterator<Column> it = columns.iterator();
+			ArrayList<Column> primaryKeys = new ArrayList<Column>();
+			for(;;){
+				Column column = it.next();
+				if(column.isPrimaryKey()){
+					primaryKeys.add(column);
+				}
+				
+				if(!it.hasNext()){
+					if(primaryKeys.isEmpty()){
+						return "";
+					}else{
+						return ", PRIMARY KEY(" + columnsPrimaryKeysToString(primaryKeys) + ")";
+					}
+					 
+				}
+				
+			}
+		}
+		
+		private String columnsPrimaryKeysToString(ArrayList<Column> primaryKeys){
+			StringBuilder sb = new StringBuilder();
+			Iterator<Column> it = primaryKeys.iterator();
+			for(;;){
+				Column column = it.next();
+				sb.append(column.getName());
+				if(!it.hasNext()){
+					return sb.toString();
+				}
+				sb.append(", ");
+			}
+			
 		}
 		
 	}
@@ -75,19 +94,6 @@ public class TableCreator {
 
 	public TableBuilder newTable(String tableName) {
 		return new TableBuilder(tableName);
-	}
-	
-	private String columnsToString(Iterable<Column> columns) {
-		StringBuilder sb = new StringBuilder();
-		Iterator<Column> it = columns.iterator();
-		for(;;){
-			Column column = it.next();
-			sb.append(column);
-			if(!it.hasNext()){
-				return sb.toString();
-			}
-			sb.append(", ");
-		}
 	}
 	
 }

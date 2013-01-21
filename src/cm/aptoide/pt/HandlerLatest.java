@@ -12,29 +12,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.ContentValues;
 import android.content.pm.FeatureInfo;
 
-import cm.aptoide.pt.RepoParserHandler.ElementHandler;
+import cm.aptoide.pt.HandlerInfoXml.ElementHandler;
 import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.views.ViewApkLatest;
 
 
-public class TopRepoParserHandler extends DefaultHandler {
+public class HandlerLatest extends DefaultHandler{
 	
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
 	
-	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
-	final static ViewApk apk = new ViewApk();
-	final static StringBuilder sb  = new StringBuilder();
-	private static boolean insidePackage = false;
-	static {
+	Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
+	ViewApkLatest apk;
+	StringBuilder sb  = new StringBuilder();
+	boolean insidePackage = false;
+	
+	void loadElements() {
 		elements.put("name", new ElementHandler() {
+			
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -71,15 +75,15 @@ public class TopRepoParserHandler extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				
-				if(!db.getTopAppsHash(server.id,category).equals(server.top_hash)){
-					System.out.println("Deleting " +category.name() +"apps ");
-					db.deleteTopApps(server.id,category);
-				}else{
-//					db.endTransation(server);
-					System.out.println("NOT Deleting " +category.name() +"apps ");
-					throw new SAXException();
-				}
-				db.insertTopServerInfo(server, category,featured);
+//				if(!db.getRepoHash(server.id,Category.LATEST).equals(server.hash)){
+//					System.out.println("Deleting " +category.name() +"apps ");
+					db.deleteApps(server.id,Category.LATEST);
+//				}else{
+////					db.endTransation(server);
+//					System.out.println("NOT Deleting " +category.name() +"apps ");
+//					throw new SAXException();
+//				}
+				db.insertServerInfo(server, Category.LATEST);
 			}
 		});
 		
@@ -92,7 +96,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.top_hash=sb.toString();
+				server.hash=sb.toString();
 			}
 		});
 		
@@ -105,8 +109,10 @@ public class TopRepoParserHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				apk.setId(db.insertTop(apk,category));
-				db.insertScreenshots(apk,category);
+//				apk.setId(
+						db.insert(apk);
+//						);
+//				db.insertScreenshots(apk,category);
 				insidePackage = false;
 			}
 		});
@@ -309,25 +315,20 @@ public class TopRepoParserHandler extends DefaultHandler {
 		
 	}
 	
-	private static Database db;
-	private static Server server;
-	private static Category category;
-	private static boolean featured;
+	private static Database db = Database.getInstance();
+	private Server server;
 	
-	public TopRepoParserHandler(Database db, Server server,Category category, boolean b) {
-		TopRepoParserHandler.server = server;
-		TopRepoParserHandler.db = db;
-		TopRepoParserHandler.category=category;
-		featured = b;
+	public HandlerLatest(Server server) {
+		loadElements();
+		this.server=server;
+		apk = new ViewApkLatest();
+		apk.setServer(server);
+		apk.setRepo_id(server.id);
 	}
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
-		db.prepare();
-		server.clear();
-//		db.startTransation();
-		System.out.println(server.id);
-		apk.setRepo_id(server.id);
+		
 	}
 	@Override
 	public void startElement(String uri, String localName,
@@ -368,7 +369,7 @@ public class TopRepoParserHandler extends DefaultHandler {
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
-		new Thread(new Runnable() {
+new Thread(new Runnable() {
 			
 			@Override
 			public void run() {

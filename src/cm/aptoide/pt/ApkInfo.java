@@ -166,9 +166,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	 * 
 	 */
 	protected void continueLoading() {
-		category = Category.values()[getIntent().getIntExtra("category", 3)];
+		category = Category.values()[getIntent().getIntExtra("category", -1)];
 		context = this;
-		db = Database.getInstance(this);
+		db = Database.getInstance();
 		id = getIntent().getExtras().getLong("_id");
 		loadElements(id);
 	}
@@ -294,7 +294,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
 				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 				ImageLoader imageLoader = ImageLoader.getInstance(context);
-				imageLoader.DisplayImage(viewApk.getIconPath(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
+				imageLoader.DisplayImage(viewApk.getIcon(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
 
 				Comments comments = new Comments(context,webservicespath);
 				comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
@@ -465,6 +465,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					case TOP:
 					case LATEST:
 					case ITEMBASED:
+					case EDITORSCHOICE:
+					case TOPFEATURED:
+					case USERBASED:
 						db.getScreenshots(originalList,viewApk,category);
 						thumbnailList = new String[originalList.size()];
 
@@ -488,6 +491,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 							originalList.add(imagesurl.getString(i));
 						}
 						break;
+					
 					default:
 						break;
 					}

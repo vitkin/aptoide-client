@@ -24,8 +24,8 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 
 public class RepoParser {
-	
-	static ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
+	static Object lock = new Object();
+	static ExecutorService executor = Executors.newFixedThreadPool(4, new ThreadFactory() {
 		
 		@Override
 		public Thread newThread(Runnable r) {
@@ -47,22 +47,26 @@ public class RepoParser {
 	}
 	
 	public static RepoParser getInstance(Database db){
-		if(parser==null){
-			return new RepoParser(db);
-		}else{
-			return parser;
-		}
+		
+			if(parser==null){
+				synchronized (lock) {
+					return new RepoParser(db);
+				}
+			}else{
+				return parser;
+			}
+		
 	}
 	
-	public void parse2(String xml, Server server){
+	public void parseTop(String xml, Server server){
 		executor.submit(new TopParser(server,xml,Category.TOP));
 	}
 	
-	public void parse3(String xml, Server server){
+	public void parseLatest(String xml, Server server){
 		executor.submit(new LatestParser(server,xml,Category.LATEST));
 	}
 	
-	public void parse(String xml, Server server){
+	public void parseInfoXML(String xml, Server server){
 		executor.submit(new Parser(server,xml));
 	}
 	
@@ -76,17 +80,21 @@ public class RepoParser {
 		}
 
 		public void run(){
+			db.startTransation();
+			server.state = cm.aptoide.pt.Server.State.PARSING;
+			db.updateStatus(server);
 			try{
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
-				System.out.println("Parsing repo_id:" + server.id);
-				parser.parse(new File(xml), new RepoParserHandler(db,server,xml));
+				parser.parse(new File(xml), new HandlerInfoXml(server,xml));
 			}catch(Exception e){
-				db.endTransation(server);
 				e.printStackTrace();
 			}finally{
 				new File(xml).delete();
 			}
+			server.state = cm.aptoide.pt.Server.State.PARSED;
+			db.updateStatus(server);
+			db.endTransation(server);
 
 		}
 	}
@@ -106,18 +114,20 @@ public class RepoParser {
 		}
 
 		public void run(){
+//			db.startTransation();
+			server.state = cm.aptoide.pt.Server.State.PARSINGTOP;
+			db.updateStatus(server);
 			try{
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
-				System.out.println("DynamicParsing repo_id:" + server.id);
-				parser.parse(xml, new TopRepoParserHandler(db,server,category,false));
+				parser.parse(xml, new HandlerTop(server));
 			}catch(Exception e){
 //				db.endTransation(server);
-				e.printStackTrace();
 			}finally{
 				xml.delete();
 			}
-
+			db.updateStatus(server);
+//			db.endTransation(server);
 		}
 	}
 	
@@ -134,18 +144,17 @@ public class RepoParser {
 		}
 
 		public void run(){
+//			db.startTransation();
 			try{
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
-				System.out.println("DynamicParsing repo_id:" + server.id);
-				parser.parse(xml, new LatestRepoParserHandler(db,server,category,false));
+				parser.parse(xml, new HandlerLatest(server));
 			}catch(Exception e){
 //				db.endTransation(server);
-				e.printStackTrace();
 			}finally{
 				xml.delete();
 			}
-
+//			db.endTransation(server);
 		}
 	}
 	

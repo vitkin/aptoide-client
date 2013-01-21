@@ -97,8 +97,8 @@ public class MainService extends Service {
 	public String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
 		getApplicationContext().sendBroadcast(new Intent("connecting"));
 		String hash = "";
-		if (delta&&server.delta != null) {
-			hash = "?hash=" + server.delta;
+		if (delta&&server.hash != null) {
+			hash = "?hash=" + server.hash;
 		}
 		String url = server.url + what + hash;
 		NetworkUtils utils = new NetworkUtils();
@@ -242,12 +242,10 @@ public class MainService extends Service {
 				try {
 					//			serversParsing.put((int)server.id, server);
 					path2 = get(server, defaultTopXmlPath, "top.xml", false);
-					RepoParser.getInstance(db).parse2(path2, server);
+					RepoParser.getInstance(db).parseTop(path2, server);
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -281,7 +279,7 @@ public class MainService extends Service {
 					//			serversParsing.put((int)server.id, server);
 					try {
 						path2 = get(server, defaultLatestXmlPath, "latest.xml", false);
-						RepoParser.getInstance(db).parse3(path2, server);
+						RepoParser.getInstance(db).parseLatest(path2, server);
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
@@ -296,7 +294,7 @@ public class MainService extends Service {
 	public void parseInfoXml(final Database db, final Server server) throws MalformedURLException, IOException{
 		String path = null;
 		path = get(server,defaultXmlPath,"info.xml",true);
-		RepoParser.getInstance(db).parse(path,server);
+		RepoParser.getInstance(db).parseInfoXML(path,server);
 		parseExtras(server);
 	}
 

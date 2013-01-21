@@ -78,6 +78,8 @@ public class Settings extends PreferenceActivity{
 		});
 		Preference hwspecs = (Preference) findPreference("hwspecs");
 		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
+		Preference showExcluded = (Preference) findPreference("showexcludedupdates");
+		showExcluded.setIntent(new Intent(getBaseContext(), ExcludedUpdatesActivity.class));
 	}
 
 	public class DeleteDir extends AsyncTask<File, Void, Void>{

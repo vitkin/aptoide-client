@@ -192,7 +192,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					Intent i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", Long.parseLong((String) arg0.getTag()));
 					i.putExtra("top", false);
-					i.putExtra("category", Category.ITEMBASED.ordinal());
+					i.putExtra("category", Category.EDITORSCHOICE.ordinal());
 					startActivity(i);
 					
 				}
@@ -221,7 +221,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										Long.parseLong((String) arg0.getTag()));
 								i.putExtra("top", false);
 								i.putExtra("category",
-										Category.ITEMBASED.ordinal());
+										Category.EDITORSCHOICE.ordinal());
 								startActivity(i);
 							}
 						});
@@ -257,8 +257,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
-					ViewApk parent_apk = new ViewApk();
-					parent_apk.setApkid("recommended");
 					NetworkUtils utils = new NetworkUtils();
 					BufferedInputStream bis = new BufferedInputStream(
 							utils.getInputStream(new URL(
@@ -275,12 +273,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					out.close();
 					bis.close();
 					String hash = Md5Handler.md5Calc(f);
-					if (!hash.equals(db.getItemBasedApksHash("recommended"))) {
-						db.deleteItemBasedApks(parent_apk);
-						sp.parse(f, new ItemBasedApkHandler(db, parent_apk));
-						db.insertItemBasedApkHash(hash, "recommended");
-						loadUIRecommendedApps();
-					}
+//					TODO
+//					if (!hash.equals(db.getEditorsChoiceHash())) {
+//						db.deleteEditorsChoice();
+//						sp.parse(f, new HandlerUserBased());
+////						db.insertUserBasedApkHash(hash);
+////						loadUIRecommendedApps();
+//					}
 					f.delete();
 
 				} catch (Exception e) {
@@ -394,12 +393,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		new Thread(new Runnable() {
 
 			public void run() {
-				loadUIEditorsApps();
+//				loadUIEditorsApps();
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
-					ViewApk parent_apk = new ViewApk();
-					parent_apk.setApkid("editorschoice");
 					NetworkUtils utils = new NetworkUtils();
 					BufferedInputStream bis = new BufferedInputStream(
 							utils
@@ -415,11 +412,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						out.write(buf, 0, len);
 					out.close();
 					bis.close();
+					Server server = new Server();
 					String hash = Md5Handler.md5Calc(f);
-					if (!hash.equals(db.getItemBasedApksHash("editorschoice"))) {
-						db.deleteItemBasedApks(parent_apk);
-						sp.parse(f, new EditorsChoiceHandler(db, parent_apk));
-						db.insertItemBasedApkHash(hash, "editorschoice");
+					if (!hash.equals(db.getEditorsChoiceHash())) {
+						db.deleteEditorsChoice();
+						sp.parse(f, new HandlerEditorsChoice(server));
+						db.insertEditorsChoiceHash(hash);
 						loadUIEditorsApps();
 					}
 					f.delete();
@@ -439,7 +437,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
 					Server server = new Server();
-					server.id = 0;
+					server.id = 1;
 					NetworkUtils utils = new NetworkUtils();
 					sp.parse(
 							new BufferedInputStream(
@@ -448,13 +446,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 													new URL(
 															"http://apps.store.aptoide.com/top.xml"),
 													null, null, mContext),
-									8 * 1024), new LatestTopRepoParserHandler(db,
-									server, Category.TOP, true));
+									8 * 1024), new HandlerFeaturedTop(server));
 					loadUItopapps();
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
 				} catch (SAXException e) {
-					e.printStackTrace();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -467,13 +463,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private void loadUItopapps() {
 		((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
 				.setOnCheckedChangeListener(null);
-		Cursor c = db.getTopApps(1, 0, joinStores_boolean);
+		Cursor c = db.getFeaturedTopApps();
 
 		values = new ArrayList<HashMap<String, String>>();
 		for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
 			HashMap<String, String> item = new HashMap<String, String>();
 			item.put("name", c.getString(1));
-			item.put("icon", db.getTopIconsPath(c.getLong(3)) + c.getString(4));
+			item.put("icon", db.getIconsPath(0, Category.TOPFEATURED) + c.getString(4));
 			item.put("rating", c.getString(5));
 			item.put("id", c.getString(0));
 			item.put("vername", c.getString(2));
@@ -531,7 +527,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							long id = Long.parseLong((String) arg0.getTag());
 							i.putExtra("_id", id);
 							i.putExtra("top", true);
-							i.putExtra("category", Category.TOP.ordinal());
+							i.putExtra("category", Category.TOPFEATURED.ordinal());
 							startActivity(i);
 						}
 					});
@@ -655,7 +651,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	private CheckBox joinStores;
 	private boolean joinStores_boolean = false;
-	private Context mContext;
+	public static Context mContext;
 
 	private TextView pb;
 	private boolean refreshClick = true;
@@ -790,6 +786,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								long id = serversToParse.get(array
 										.getJSONObject(o).getString("repo"));
 								Server server = db.getServer(id, false);
+								
 								if (parse) {
 									service.parseServer(db, server);
 								}
@@ -798,6 +795,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								}
 								service.parseTop(db, server);
 								service.parseLatest(db, server);
+								service.addStoreInfo(db, server);
 							}
 
 						}
@@ -1522,8 +1520,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						}
 					}
 				}).start();
-
-				db = Database.getInstance(mContext);
+				db = Database.getInstance();
 
 				Intent i = new Intent(mContext, MainService.class);
 				startService(i);
@@ -1572,34 +1569,17 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					@Override
 					public void onCreateContextMenu(ContextMenu menu, View v,
 							ContextMenuInfo menuInfo) {
-						final View view = ((AdapterContextMenuInfo) menuInfo).targetView;
-						final boolean updatable = ((UpdatesAdapter.ViewHolder)((AdapterContextMenuInfo) menuInfo).targetView.getTag()).updateExcluded;
-						if(!updatable){
 							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,"Add to Updates Excluded list").setOnMenuItemClickListener(new OnMenuItemClickListener() {
 								
 								@Override
 								public boolean onMenuItemClick(MenuItem item) {
 									System.out.println(item.getItemId());
 //									((UpdatesAdapter.ViewHolder)view.getTag()).updateExcluded = true;
-									db.setExcludeUpdate(item.getItemId(), true);
+									db.addToExcludeUpdate(item.getItemId());
 									updatesLoader.forceLoad();
 									return false;
 								}
 							});
-						}else{
-							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,"Remove from Updates Excluded list").setOnMenuItemClickListener(new OnMenuItemClickListener() {
-								
-								@Override
-								public boolean onMenuItemClick(MenuItem item) {
-									System.out.println(item.getItemId());
-//									((UpdatesAdapter.ViewHolder)view.getTag()).updateExcluded = false;
-									db.setExcludeUpdate(item.getItemId(), false);
-									updatesLoader.forceLoad();
-									return false;
-								}
-							});
-						}
-						
 					}
 				});
 				availableView.findViewById(R.id.refresh_view_layout)
@@ -1661,10 +1641,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									String category = ((Cursor) parent
 											.getItemAtPosition(position))
 											.getString(1);
-									if (category.equals("Top Apps")
-											|| category.equals("Latest Apps")) {
+									if (category.equals("Top Apps")){
 										depth = ListDepth.TOPAPPS;
-										System.out.println("TopApps");
+									}else if(category.equals("Latest Apps")) {
+										depth = ListDepth.LATESTAPPS;
 									} else if (id == LATEST_LIKES) {
 										depth = ListDepth.LATEST_LIKES;
 									} else if (id == LATEST_COMMENTS) {
@@ -1695,12 +1675,22 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									category2_id = id;
 									break;
 								case TOPAPPS:
+								
 									i = new Intent(MainActivity.this,
 											ApkInfo.class);
 									i.putExtra("_id", id);
 									i.putExtra("top", true);
 									i.putExtra("category",
 											Category.TOP.ordinal());
+									startActivity(i);
+									return;
+								case LATESTAPPS:
+									i = new Intent(MainActivity.this,
+											ApkInfo.class);
+									i.putExtra("_id", id);
+									i.putExtra("top", true);
+									i.putExtra("category",
+											Category.LATEST.ordinal());
 									startActivity(i);
 									return;
 								case APPLICATIONS:
@@ -2032,7 +2022,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										.getDefaultSharedPreferences(mContext)
 										.getBoolean("orderByCategory", true));
 					case TOPAPPS:
-						return db.getTopApps(category_id, store_id,
+						return db.getTopApps(store_id,
+								joinStores_boolean);
+					case LATESTAPPS:
+						return db.getLatestApps(store_id,
 								joinStores_boolean);
 					case LATEST_LIKES:
 						return new LatestLikesComments(store_id, db, mContext)
@@ -2115,6 +2108,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			if (!depth.equals(ListDepth.STORES)&&pager.getCurrentItem()==1) {
 				if (depth.equals(ListDepth.TOPAPPS)
 						|| depth.equals(ListDepth.LATEST_LIKES)
+						|| depth.equals(ListDepth.LATESTAPPS)
 						|| depth.equals(ListDepth.LATEST_COMMENTS)
 						|| depth.equals(ListDepth.RECOMMENDED)
 						|| depth.equals(ListDepth.ALLAPPLICATIONS)) {
@@ -2239,10 +2233,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			switch (depth) {
 			case STORES:
 				String hashcode = cursor.getString(
-						cursor.getColumnIndex("avatar")).hashCode()
+						cursor.getColumnIndex("avatar_url")).hashCode()
 						+ "";
 				loader.DisplayImage(
-						cursor.getString(cursor.getColumnIndex("avatar")),
+						cursor.getString(cursor.getColumnIndex("avatar_url")),
 						(ImageView) view.findViewById(R.id.avatar), context,
 						hashcode);
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
@@ -2289,6 +2283,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				break;
 			case TOPAPPS:
 			case APPLICATIONS:
+			case LATESTAPPS:
 			case ALLAPPLICATIONS:
 			case RECOMMENDED:
 				ViewHolder holder = (ViewHolder) view.getTag();
@@ -2376,6 +2371,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						null);
 				break;
 			case TOPAPPS:
+			case LATESTAPPS:
 			case ALLAPPLICATIONS:
 			case APPLICATIONS:
 			case RECOMMENDED:

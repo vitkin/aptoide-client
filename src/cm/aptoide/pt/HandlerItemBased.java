@@ -17,28 +17,46 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.ContentValues;
 
-import cm.aptoide.pt.TopRepoParserHandler.ElementHandler;
+import cm.aptoide.pt.HandlerFeaturedTop.ElementHandler;
 import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewApkFeatured;
+import cm.aptoide.pt.views.ViewApkFeaturedEditorsChoice;
+import cm.aptoide.pt.views.ViewApkItemBased;
 
-public class ItemBasedApkHandler extends DefaultHandler {
+public class HandlerItemBased extends DefaultHandler {
+	
+	Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
+	protected Database db = Database.getInstance();
+	
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
-
-	private static ViewApk parent_apk;
-
-	public ItemBasedApkHandler(Database db, ViewApk parent_apk) {
-		ItemBasedApkHandler.parent_apk=parent_apk;
-		ItemBasedApkHandler.db=db;
+	
+	protected ViewApkItemBased apk;
+	StringBuilder sb  = new StringBuilder();
+	
+	public HandlerItemBased(ViewApk parent_apk){
+		apk = new ViewApkItemBased();
+		apk.setServer(new Server());
+		apk.setParentApk(parent_apk);
+		loadSpecificElements();
 	}
-	private static Database db;
-	final static Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
-	final static ViewApkFeatured apk = new ViewApkFeatured();
-	final static Server server = new Server();
-	final static StringBuilder sb  = new StringBuilder();	
-	static {
+
+	void loadSpecificElements() {
+		
+		elements.put("apklst", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+		
 		elements.put("apkid", new ElementHandler() {
 
 			@Override
@@ -51,142 +69,7 @@ public class ItemBasedApkHandler extends DefaultHandler {
 				apk.setApkid(sb.toString());
 			}
 		});
-
-		elements.put("hash", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		elements.put("appscount", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
 		
-		elements.put("apklst", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-		elements.put("status", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-		elements.put("productscount", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		elements.put("type", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		elements.put("timestamp", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		elements.put("likes", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		elements.put("dislikes", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
 		elements.put("ver", new ElementHandler() {
 
 			@Override
@@ -199,46 +82,7 @@ public class ItemBasedApkHandler extends DefaultHandler {
 				apk.setVername(sb.toString());
 			}
 		});
-
-		elements.put("featuregraphicpath", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				server.featuredgraphicPath=sb.toString();
-			}
-		});
-
-		elements.put("featuregraphic", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				apk.setFeatureGraphic(sb.toString());
-			}
-		});
-
-		elements.put("highlight", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				apk.setHighlighted(true);
-			}
-		});
-
+		
 		elements.put("catg2", new ElementHandler() {
 
 			@Override
@@ -251,7 +95,7 @@ public class ItemBasedApkHandler extends DefaultHandler {
 				apk.setCategory2(sb.toString());
 			}
 		});
-
+		
 		elements.put("dwn", new ElementHandler() {
 
 			@Override
@@ -316,7 +160,7 @@ public class ItemBasedApkHandler extends DefaultHandler {
 				apk.setVercode(Integer.parseInt(sb.toString()));
 			}
 		});
-
+		
 		elements.put("iconspath", new ElementHandler() {
 
 			@Override
@@ -326,10 +170,10 @@ public class ItemBasedApkHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.iconsPath=sb.toString();
+				apk.getServer().iconsPath=sb.toString();
 			}
 		});
-
+		
 		elements.put("screenspath", new ElementHandler() {
 
 			@Override
@@ -339,7 +183,7 @@ public class ItemBasedApkHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.screenspath=sb.toString();
+				apk.getServer().screenspath=sb.toString();
 			}
 		});
 
@@ -352,11 +196,11 @@ public class ItemBasedApkHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				server.basePath=sb.toString();
+				apk.getServer().basePath=sb.toString();
 			}
 		});
-
-		elements.put("name", new ElementHandler() {
+		
+		elements.put("md5h", new ElementHandler() {
 
 			@Override
 			public void startElement(Attributes atts) throws SAXException {
@@ -365,48 +209,10 @@ public class ItemBasedApkHandler extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				if(insidePackage){
-					apk.setName(sb.toString());
-				}else{
-					server.url=sb.toString();
-				}
-
+				apk.setMd5(sb.toString());
 			}
 		});
-
-		elements.put("icon", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				apk.setIconPath(sb.toString());
-			}
-		});
-
-		elements.put("package", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-				apk.clear();
-				insidePackage = true;
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				try{
-					db.insertItemBasedApk(server,apk,parent_apk.getApkid(),Category.ITEMBASED);
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-				insidePackage = false;
-
-			}
-		});
-
+		
 		elements.put("screen", new ElementHandler() {
 
 			@Override
@@ -420,18 +226,6 @@ public class ItemBasedApkHandler extends DefaultHandler {
 			}
 		});
 
-		elements.put("md5h", new ElementHandler() {
-
-			@Override
-			public void startElement(Attributes atts) throws SAXException {
-
-			}
-
-			@Override
-			public void endElement() throws SAXException {
-				apk.setMd5(sb.toString());
-			}
-		});
 
 		elements.put("minSdk", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
@@ -476,6 +270,175 @@ public class ItemBasedApkHandler extends DefaultHandler {
 				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
 			}
 		});
+		
+		elements.put("hash", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+
+		elements.put("appscount", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+		
+		
+		elements.put("status", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+		
+		elements.put("productscount", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+
+		elements.put("type", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+
+		elements.put("timestamp", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+
+		elements.put("likes", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+
+		elements.put("dislikes", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+
+			}
+		});
+
+		elements.put("featuregraphicpath", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.getServer().featuredgraphicPath=sb.toString();
+			}
+		});
+
+		elements.put("name", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				if(insidePackage){
+					apk.setName(sb.toString());
+				}else{
+					apk.getServer().url=sb.toString();
+				}
+
+			}
+		});
+
+		elements.put("icon", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setIconPath(sb.toString());
+			}
+		});
+
+		elements.put("package", new ElementHandler() {
+
+			@Override
+			public void startElement(Attributes atts) throws SAXException {
+				apk.clear();
+				insidePackage = true;
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				try{
+					db.insert(apk);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+				insidePackage = false;
+
+			}
+		});
 
 		elements.put("cmt", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
@@ -499,35 +462,7 @@ public class ItemBasedApkHandler extends DefaultHandler {
 
 	}
 	private static boolean insidePackage;
-	@Override
-	public void characters(char[] ch, int start, int length)
-			throws SAXException {
-		super.characters(ch, start, length);
-		sb.append(ch, start, length);
-	}
-
-	@Override
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) throws SAXException {
-		super.startElement(uri, localName, qName, attributes);
-		try {
-			elements.get(localName).startElement(attributes);
-		} catch (Exception e) {
-			System.out.println("Element not found: " + localName);
-		}
-		sb.setLength(0);
-	}
-
-	@Override
-	public void endElement(String uri, String localName, String qName)
-			throws SAXException {
-		super.endElement(uri, localName, qName);
-		try {
-			elements.get(localName).endElement();
-		} catch (Exception e) {
-			System.out.println("Element not found: " + localName);
-		}
-	}
+	
 
 	@Override
 	public void endDocument() throws SAXException {
@@ -542,7 +477,42 @@ public class ItemBasedApkHandler extends DefaultHandler {
 				}
 			}
 		}).start();
+	}
+	
+	@Override
+	public void startElement(String uri, String localName,
+			String qName, Attributes attributes)
+			throws SAXException {
+		super.startElement(uri, localName, qName, attributes);
+		sb.setLength(0);
+		ElementHandler elementHandler = elements.get(localName);
+		 
+		if (elementHandler != null) {
+			elementHandler.startElement(attributes);
+		} else {
+//			System.out.println("Element not found:" + localName);
+		}
+	}
 
+	@Override
+	public void characters(char[] ch, int start, int length)
+			throws SAXException {
+		super.characters(ch, start, length);
+		sb.append(ch,start,length);
+	}
+
+	@Override
+	public void endElement(String uri, String localName,
+			String qName) throws SAXException {
+		super.endElement(uri, localName, qName);
+		
+		ElementHandler elementHandler = elements.get(localName);
+		 
+		if (elementHandler != null) {
+			elementHandler.endElement();
+		} else {
+//			System.out.println("Element not found:" + localName);
+		}
 	}
 
 	private static int i = 0;

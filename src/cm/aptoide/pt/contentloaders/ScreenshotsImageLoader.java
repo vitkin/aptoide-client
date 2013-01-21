@@ -167,7 +167,7 @@ public class ScreenshotsImageLoader {
     }
     BitmapDisplayer bd;
     class PhotosLoader implements Runnable {
-    	Database db = Database.getInstance(context);
+    	Database db = Database.getInstance();
         PhotoToLoad photoToLoad;
         String hashCode;
         long repo_id;
@@ -184,11 +184,7 @@ public class ScreenshotsImageLoader {
             
             Bitmap bmp;
             
-            if(repo_id>0){
-            	bmp=getBitmap(db.getBasePath(repo_id,false)+photoToLoad.url,hashCode);
-            }else{
-            	bmp=getBitmap(photoToLoad.url,hashCode);
-            }
+            bmp=getBitmap(photoToLoad.url,hashCode);
             
             memoryCache.put(photoToLoad.url, bmp);
             if(imageViewReused(photoToLoad))

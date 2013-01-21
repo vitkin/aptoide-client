@@ -115,7 +115,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	
 	private void continueLoading(){
 		lv = (ListView) findViewById(android.R.id.list);
-		db= Database.getInstance(this);
+		db= Database.getInstance();
 		
 		imageLoader = ImageLoader.getInstance(this);
 		adapter = new CursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {

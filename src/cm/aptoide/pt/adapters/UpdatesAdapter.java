@@ -80,7 +80,6 @@ public class UpdatesAdapter extends CursorAdapter {
 		final String apkpath = cursor.getString(11) + cursor.getString(12);  
 		String iconspath = cursor.getString(9)+cursor.getString(4);
 		final String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode")));
-		holder.updateExcluded = cursor.getInt((cursor.getColumnIndex("exclude_update")))>0;
 		holder.name.setText(name);
 		loader.DisplayImage(iconspath, holder.icon, context,hash);
 //		 try{
@@ -89,8 +88,7 @@ public class UpdatesAdapter extends CursorAdapter {
 //	        	holder.rating.setRating(0);
 //			}
 //		 holder.downloads.setText(cursor.getString(6));
-		String extra = holder.updateExcluded?" not showing":"";
-		holder.vername.setText(context.getString(R.string.update_to)+": "+ vername + extra);
+		holder.vername.setText(context.getString(R.string.update_to)+": "+ vername);
 		holder.update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
 				ViewApk apk = new ViewApk();

@@ -19,7 +19,7 @@ public class InstalledBroadcastReceiver extends BroadcastReceiver {
 	public void onReceive(final Context context, final Intent arg1) {
 		
 		if(arg1.getAction().equals(Intent.ACTION_PACKAGE_ADDED)){
-			final Database db = Database.getInstance(context);
+			final Database db = Database.getInstance();
 			new Thread(new Runnable() {
 				
 				public void run() {
@@ -42,7 +42,7 @@ public class InstalledBroadcastReceiver extends BroadcastReceiver {
 			
 		
 		}else if (arg1.getAction().equals(Intent.ACTION_PACKAGE_REMOVED)){
-			final Database db = Database.getInstance(context);
+			final Database db = Database.getInstance();
 			new Thread(new Runnable() {
 				public void run() {
 					db.deleteInstalled(arg1.getData().getEncodedSchemeSpecificPart());

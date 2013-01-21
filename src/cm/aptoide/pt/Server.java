@@ -16,12 +16,11 @@ import android.os.Parcelable;
 
 public class Server implements Parcelable{
 	
-	public static enum State { PARSINGLATEST,PARSINGTOP,PARSING, PARSED, QUEUED, FAILED };
+	public static enum State { PARSINGLATEST, PARSINGTOP, PARSING, PARSED, QUEUED, FAILED };
 	
 	public long id;
 	public String url = "";
-	public String delta = "";
-	public String top_hash = "";
+	public String hash = "";
 	public String timestamp = "";
 	public int n_apk = 0;
 	public State state = State.QUEUED;
@@ -44,7 +43,7 @@ public class Server implements Parcelable{
 	
 	public Server(String url, String delta, long id){
 		this.url = url;
-		this.delta = delta;
+		this.hash = delta;
 		this.id=id;
 	}
 
@@ -73,7 +72,7 @@ public class Server implements Parcelable{
 		// will come back in the same order
 		dest.writeLong(id);
 		dest.writeString(url);
-		dest.writeString(delta);
+		dest.writeString(hash);
 		dest.writeString(timestamp);
 		dest.writeInt(n_apk);
 		dest.writeInt(state.ordinal());
@@ -93,7 +92,7 @@ public class Server implements Parcelable{
 		// written to the parcel
 		id = in.readLong();
 		url = in.readString();
-		delta = in.readString();
+		hash = in.readString();
 		timestamp = in.readString();
 		n_apk = in.readInt();
 		state = State.values()[in.readInt()];

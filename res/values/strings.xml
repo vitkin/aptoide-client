@@ -348,5 +348,7 @@
     <string name="follow_twitter">Follow us on Twitter</string>
     <string name="social_networks">Social Networks</string>
     <string name="logout">Logout</string>
+    <string name="showexcludedupdates">Excluded Updates</string>
+    <string name="showexcludedupdates_title">Show Excluded Updates</string>
 
 </resources>

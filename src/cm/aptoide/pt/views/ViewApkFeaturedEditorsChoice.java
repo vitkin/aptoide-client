@@ -7,9 +7,7 @@ package cm.aptoide.pt.views;
  * @author rmateus
  *
  */
-public class ViewApkFeatured extends ViewApk {
-
-	
+public class ViewApkFeaturedEditorsChoice extends ViewApk {
 	private String featureGraphic;
 	private boolean highlighted = false;
 	
@@ -29,5 +27,5 @@ public class ViewApkFeatured extends ViewApk {
 	public void setHighlighted(boolean highlighted) {
 		this.highlighted = highlighted;
 	}
-	
+
 }

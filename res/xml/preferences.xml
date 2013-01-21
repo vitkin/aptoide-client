@@ -40,11 +40,6 @@
             android:key="matureChkBox"
             android:summary="@string/setting_dont_show_mature_content"
             android:title="@string/setting_mature_filtering" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:key="showExcludedUpdates"
-            android:summary="@string/setting_appfiltersum"
-            android:title="@string/setting_appfiltertitle" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/setting_schdwntitle" >
         <CheckBoxPreference
@@ -59,6 +54,11 @@
         <Preference
             android:key="clearcache"
             android:title="@string/clearcache_title" />
+    </PreferenceCategory>
+     <PreferenceCategory android:title="@string/showexcludedupdates" >
+        <Preference
+            android:key="showexcludedupdates"
+            android:title="@string/showexcludedupdates_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>

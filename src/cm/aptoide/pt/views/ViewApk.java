@@ -9,6 +9,7 @@ package cm.aptoide.pt.views;
 
 import java.util.ArrayList;
 
+import cm.aptoide.pt.Server;
 import cm.aptoide.pt.annotations.DatabaseField;
 
 import android.os.Parcel;
@@ -18,32 +19,22 @@ import android.util.Log;
 public class ViewApk implements Parcelable {
 
 	private long id;
-	@DatabaseField
 	private String apkid = "";
-	@DatabaseField
 	private String name = apkid;
-	@DatabaseField
 	private int vercode = 0;
-	@DatabaseField
 	private String vername = "Not Available";
-	@DatabaseField
 	private String size = "0";
-	@DatabaseField
 	private String downloads = "0";
 	private String category1 = "Other";
-	@DatabaseField
 	private String category2 = "Other";
-	@DatabaseField
 	private long repo_id = 0;
-	@DatabaseField
-	private String iconPath;
-	@DatabaseField
+	private String icon;
 	private String rating = "0";
 	private ArrayList<String> screenshots = new ArrayList<String>();
-	@DatabaseField
 	private String path;
-	@DatabaseField
 	private String md5;
+	
+	private Server server;
 	
 	private int appHashId = 0;
 	
@@ -142,8 +133,8 @@ public class ViewApk implements Parcelable {
 		return repo_id;
 	}
 
-	public String getIconPath() {
-		return iconPath;
+	public String getIcon() {
+		return icon;
 	}
 	
 	public int getAppHashId(){
@@ -195,7 +186,7 @@ public class ViewApk implements Parcelable {
 	}
 
 	public void setIconPath(String iconPath) {
-		this.iconPath = iconPath;
+		this.icon = iconPath;
 	}
 
 	public void setPath(String path) {
@@ -279,7 +270,7 @@ public class ViewApk implements Parcelable {
 		this.downloads = "No downloads";
 		this.category1 = "Other";
 		this.category2 = "Other";
-		this.iconPath="";
+		this.icon="";
 		this.path="";
 		this.date="";
 		this.age=0;
@@ -353,7 +344,7 @@ public class ViewApk implements Parcelable {
 		out.writeString(name);
 		out.writeInt(vercode);
 		out.writeString(vername);
-		out.writeString(iconPath);
+		out.writeString(icon);
 		out.writeString(path);
 		out.writeInt(appHashId);
 	}
@@ -363,7 +354,7 @@ public class ViewApk implements Parcelable {
 		this.name = in.readString();
 		this.vercode = in.readInt();
 		this.vername = in.readString();
-		this.iconPath = in.readString();
+		this.icon = in.readString();
 		this.path = in.readString();
 		this.appHashId = in.readInt();
 	}
@@ -374,6 +365,20 @@ public class ViewApk implements Parcelable {
 
 	public void setRepoName(String repoName) {
 		this.repoName = repoName;
+	}
+
+	/**
+	 * @return the server
+	 */
+	public Server getServer() {
+		return server;
+	}
+
+	/**
+	 * @param server the server to set
+	 */
+	public void setServer(Server server) {
+		this.server = server;
 	}
 	
 }

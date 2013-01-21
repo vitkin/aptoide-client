@@ -37,7 +37,7 @@ public class ScheduledDownloadReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context arg0, Intent arg1) {
 		context = arg0;
-		db=Database.getInstance(context);
+		db=Database.getInstance();
 		final ConnectivityManager connMgr = (ConnectivityManager) 
 				arg0.getSystemService(Context.CONNECTIVITY_SERVICE);
 

@@ -48,7 +48,7 @@ import cm.aptoide.pt.R;
 
 public class ItemBasedApks {
 
-	private ViewApk apk;
+	private ViewApk parent_apk;
 	private Context context;
 	private ViewGroup container;
 	private Database db;
@@ -68,8 +68,8 @@ public class ItemBasedApks {
 	
 	public ItemBasedApks(Context context, ViewApk apk) {
 		this.context = context;
-		this.apk=apk;
-		this.db = Database.getInstance(context);
+		this.parent_apk=apk;
+		this.db = Database.getInstance();
 		pb = new ProgressBar(context);
 	}
 	ProgressBar pb;
@@ -87,8 +87,8 @@ public class ItemBasedApks {
 			activeStores.add(c.getString(c.getColumnIndex("name")));
 		}
 		c.close();
-		new ItemLoader().execute(apk.getApkid());
-		new ItemBasedParser().execute(apk.getApkid());
+		new ItemLoader().execute(parent_apk.getApkid());
+		new ItemBasedParser().execute(parent_apk.getApkid());
 	}
 	
 	public class ItemLoader extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>>{
@@ -164,19 +164,19 @@ public class ItemBasedApks {
 				
 				String md5hash = Md5Handler.md5Calc(f);
 				
-				if(!md5hash.equals(db.getItemBasedApksHash(apkid))){
+//				if(!md5hash.equals(db.getItemBasedApksHash(apkid))){
 					
-					db.deleteItemBasedApks(apk);
+					db.deleteItemBasedApks(parent_apk);
 					System.out.println("Old md5" + db.getItemBasedApksHash(apkid));
 					System.out.println("Inserting New md5" + md5hash);
 					db.insertItemBasedApkHash(md5hash,apkid);
 					SAXParserFactory factory = SAXParserFactory.newInstance();
 					SAXParser parser = factory.newSAXParser();
-					parser.parse(f, new ItemBasedApkHandler(db, apk));
+					parser.parse(f, new HandlerItemBased(parent_apk));
 //					Database.database.setTransactionSuccessful();
 //					Database.database.endTransaction();
 					return db.getItemBasedApks(apkid);
-				}
+//				}
 				
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
