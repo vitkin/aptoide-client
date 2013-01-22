@@ -270,9 +270,10 @@ public class ServiceDownloadManager extends Service {
 	private void setNotification() {
 		
 		String notificationTitle = getString(R.string.aptoide_downloading);
+		int notificationIcon = android.R.drawable.stat_sys_download;
 		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.notification_progress_bar);
-				
-		contentView.setImageViewResource(R.id.download_notification_icon, R.drawable.ic_notification);
+
+		contentView.setImageViewResource(R.id.download_notification_icon, notificationIcon);
 		contentView.setTextViewText(R.id.download_notification_name, notificationTitle);
 		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgress() == 0?true:false));	
 		if(ongoingDownloads.size()>1){
@@ -289,7 +290,7 @@ public class ServiceDownloadManager extends Service {
     	// The PendingIntent to launch our activity if the user selects this notification
     	PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
 
-    	Notification notification = new Notification(R.drawable.ic_notification, notificationTitle, System.currentTimeMillis());
+    	Notification notification = new Notification(notificationIcon, notificationTitle, System.currentTimeMillis());
     	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
 		notification.contentView = contentView;
 
