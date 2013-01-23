@@ -816,7 +816,7 @@ public class Database {
 			
 			String filter = filters();
 			
-			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.icon as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath as iconspath, b.md5, c.apkpath, b.remote_path from installed as a, apk as b, repo as c where a.apkid=b.apkid and a.apkid not in excluded_apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
+			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.icon as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath as iconspath, b.md5, c.apkpath, b.remote_path from installed as a, apk as b, repo as c where a.apkid=b.apkid and a.apkid not in (select apkid from excluded_apkid) and a.vercode not in (select vercode from excluded_apkid)  and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
 			
 			query = orderBy(order, query);
 			
@@ -1944,13 +1944,19 @@ public class Database {
 
 	public void addToExcludeUpdate(int itemId) {
 		ContentValues values = new ContentValues();
-		String apkid = getApk(itemId, Category.INFOXML).getApkid();
+		ViewApk apk = getApk(itemId, Category.INFOXML);
+		
+		String apkid = apk.getApkid();
+		int vercode = apk.getVercode();
+		String name = apk.getName();
 		values.put(DbStructure.COLUMN_APKID, apkid);
+		values.put(DbStructure.COLUMN_VERCODE, vercode);
+		values.put(DbStructure.COLUMN_NAME, name);
 		database.insert(DbStructure.TABLE_EXCLUDED_APKID, null, values);
 	}
 
-	public void deleteFromExcludeUpdate(String apkid) {
-		database.delete(DbStructure.TABLE_EXCLUDED_APKID, "apkid = ?", new String[]{apkid});
+	public void deleteFromExcludeUpdate(String apkid, int vercode) {
+		database.delete(DbStructure.TABLE_EXCLUDED_APKID, "apkid = ? and vercode = ?", new String[]{apkid, vercode+""});
 	}
 	
 	public Cursor getExcludedApks(){
