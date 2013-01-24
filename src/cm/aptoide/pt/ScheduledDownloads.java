@@ -58,7 +58,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	CursorAdapter adapter;
 	ImageLoader imageLoader;
 	private Button installButton;
-	
+
 
 	private boolean isRunning = false;
 
@@ -74,9 +74,9 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			// service using AIDL, so here we set the remote service interface.
 			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
 			serviceManagerIsBound = true;
-			
+
 			Log.v("Aptoide-ScheduledDownloads", "Connected to ServiceDownloadManager");
-	        
+
 			continueLoading();
 		}
 
@@ -85,18 +85,18 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			// unexpectedly disconnected -- that is, its process crashed.
 			serviceManagerIsBound = false;
 			serviceDownloadManager = null;
-			
+
 			Log.v("Aptoide-ScheduledDownloads", "Disconnected from ServiceDownloadManager");
 		}
 	};
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
-		
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			getSupportLoaderManager().restartLoader(0, null, ScheduledDownloads.this);
 		}
 	};
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstance) {
 		super.onCreate(savedInstance);
@@ -106,81 +106,81 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			isRunning = true;
 
 			if(!serviceManagerIsBound){
-	    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
-	    	}
-			
+				bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
+			}
+
 		}
-		
+
 	}
-	
+
 	private void continueLoading(){
 		lv = (ListView) findViewById(android.R.id.list);
 		db= Database.getInstance();
-		
+
 		imageLoader = ImageLoader.getInstance(this);
 		adapter = new CursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
-			
+
 			@Override
 			public View newView(Context context, Cursor arg1, ViewGroup arg2) {
 				return LayoutInflater.from(context).inflate(R.layout.sch_download, null);
 			}
-			
+
 			@Override
 			public void bindView(View convertView, Context arg1, Cursor c) {
 				// Planet to display
-			      ScheduledDownload scheduledDownload = scheduledDownloadsHashMap.get(c.getString(0)); 
+				ScheduledDownload scheduledDownload = scheduledDownloadsHashMap.get(c.getString(0)); 
 
-			      // The child views in each row.
-			      CheckBox checkBoxScheduled ; 
-			      TextView textViewName ;
-			      TextView textViewVersion ;
-			      ImageView imageViewIcon ; 
-			      
-			      // Create a new row view
-			      if ( convertView.getTag() == null ) {
-			        
-			        // Find the child views.
-			        textViewName = (TextView) convertView.findViewById(R.id.name);
-			        textViewVersion = (TextView) convertView.findViewById(R.id.appversion);
-			        checkBoxScheduled = (CheckBox) convertView.findViewById(R.id.schDwnChkBox);
-			        imageViewIcon = (ImageView) convertView.findViewById(R.id.appicon);
-			        // Optimization: Tag the row with it's child views, so we don't have to 
-			        // call findViewById() later when we reuse the row.
-			        convertView.setTag( new Holder(textViewName,textViewVersion,checkBoxScheduled,imageViewIcon) );
+				// The child views in each row.
+				CheckBox checkBoxScheduled ; 
+				TextView textViewName ;
+				TextView textViewVersion ;
+				ImageView imageViewIcon ; 
 
-			        // If CheckBox is toggled, update the planet it is tagged with.
-			        checkBoxScheduled.setOnClickListener( new View.OnClickListener() {
-			          public void onClick(View v) {
-			            CheckBox cb = (CheckBox) v ;
-			            ScheduledDownload schDownload = (ScheduledDownload) cb.getTag();
-			            schDownload.setChecked( cb.isChecked() );
-			          }
-			        });        
-			      }
-			      // Reuse existing row view
-			      else {
-			        // Because we use a ViewHolder, we avoid having to call findViewById().
-			        Holder viewHolder = (Holder) convertView.getTag();
-			        checkBoxScheduled = viewHolder.checkBoxScheduled ;
-			        textViewVersion = viewHolder.textViewVersion;
-			        textViewName = viewHolder.textViewName ;
-			        imageViewIcon = viewHolder.imageViewIcon ;
-			      }
+				// Create a new row view
+				if ( convertView.getTag() == null ) {
 
-			      // Tag the CheckBox with the Planet it is displaying, so that we can
-			      // access the planet in onClick() when the CheckBox is toggled.
-			      checkBoxScheduled.setTag( scheduledDownload ); 
-			      
-			      // Display planet data
-			      checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
-			      textViewName.setText( scheduledDownload.getName() );  
-			      textViewVersion.setText( ""+scheduledDownload.getVername() );
-			      
-			      // ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
-			      // ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
-			      String hashCode = (c.getString(2)+"|"+c.getString(3));
-			      Log.d("ScheduledDownloadsIcons",hashCode);
-			      imageLoader.DisplayImage(hashCode, imageViewIcon, arg1, hashCode);
+					// Find the child views.
+					textViewName = (TextView) convertView.findViewById(R.id.name);
+					textViewVersion = (TextView) convertView.findViewById(R.id.appversion);
+					checkBoxScheduled = (CheckBox) convertView.findViewById(R.id.schDwnChkBox);
+					imageViewIcon = (ImageView) convertView.findViewById(R.id.appicon);
+					// Optimization: Tag the row with it's child views, so we don't have to 
+					// call findViewById() later when we reuse the row.
+					convertView.setTag( new Holder(textViewName,textViewVersion,checkBoxScheduled,imageViewIcon) );
+
+					// If CheckBox is toggled, update the planet it is tagged with.
+					checkBoxScheduled.setOnClickListener( new View.OnClickListener() {
+						public void onClick(View v) {
+							CheckBox cb = (CheckBox) v ;
+							ScheduledDownload schDownload = (ScheduledDownload) cb.getTag();
+							schDownload.setChecked( cb.isChecked() );
+						}
+					});        
+				}
+				// Reuse existing row view
+				else {
+					// Because we use a ViewHolder, we avoid having to call findViewById().
+					Holder viewHolder = (Holder) convertView.getTag();
+					checkBoxScheduled = viewHolder.checkBoxScheduled ;
+					textViewVersion = viewHolder.textViewVersion;
+					textViewName = viewHolder.textViewName ;
+					imageViewIcon = viewHolder.imageViewIcon ;
+				}
+
+				// Tag the CheckBox with the Planet it is displaying, so that we can
+				// access the planet in onClick() when the CheckBox is toggled.
+				checkBoxScheduled.setTag( scheduledDownload ); 
+
+				// Display planet data
+				checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
+				textViewName.setText( scheduledDownload.getName() );  
+				textViewVersion.setText( ""+scheduledDownload.getVername() );
+
+				// ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
+				// ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
+				String hashCode = (c.getString(2)+"|"+c.getString(3));
+				Log.d("ScheduledDownloadsIcons",hashCode);
+				imageLoader.DisplayImage(hashCode, imageViewIcon, arg1, hashCode);
 			}
 		};
 		lv.setAdapter(adapter);
@@ -191,9 +191,9 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			public void onItemClick(AdapterView<?> arg0, View item, int arg2,
 					long arg3) {
 				ScheduledDownload scheduledDownload = (ScheduledDownload) ((Holder)item.getTag()).checkBoxScheduled.getTag();
-		        scheduledDownload.toggleChecked();
-		        Holder viewHolder = (Holder) item.getTag();
-		        viewHolder.checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
+				scheduledDownload.toggleChecked();
+				Holder viewHolder = (Holder) item.getTag();
+				viewHolder.checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
 			}
 		});
 		IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.REDRAW");
@@ -224,7 +224,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 				} else {
 					Toast toast= Toast.makeText(ScheduledDownloads.this, 
 							R.string.schDown_nodownloadselect, Toast.LENGTH_SHORT);  
-							toast.show();
+					toast.show();
 				}
 			}
 		});
@@ -257,34 +257,34 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			alrt.show();
 		}
 	}
-	
+
 	private static class ScheduledDownload {
-	    private String name = "" ;
-	    private String url = "" ;
-	    private String apkid = "" ;
-	    private String md5 = "" ;
-	    private String vername = "";
-	    private int vercode = 0 ;
-	    private boolean checked = false ;
-	    public ScheduledDownload( String name, boolean checked ) {
-	      this.name = name ;
-	      this.checked = checked ;
-	    }
-	    public String getName() {
-	      return name;
-	    }
-	    public boolean isChecked() {
-	      return checked;
-	    }
-	    public void setChecked(boolean checked) {
-	      this.checked = checked;
-	    }
-	    public String toString() {
-	      return name ; 
-	    }
-	    public void toggleChecked() {
-	      checked = !checked ;
-	    }
+		private String name = "" ;
+		private String url = "" ;
+		private String apkid = "" ;
+		private String md5 = "" ;
+		private String vername = "";
+		private int vercode = 0 ;
+		private boolean checked = false ;
+		public ScheduledDownload( String name, boolean checked ) {
+			this.name = name ;
+			this.checked = checked ;
+		}
+		public String getName() {
+			return name;
+		}
+		public boolean isChecked() {
+			return checked;
+		}
+		public void setChecked(boolean checked) {
+			this.checked = checked;
+		}
+		public String toString() {
+			return name ; 
+		}
+		public void toggleChecked() {
+			checked = !checked ;
+		}
 		public String getUrl() {
 			return url;
 		}
@@ -315,125 +315,125 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		public void setVername(String vername) {
 			this.vername = vername;
 		}
-	  }
-	  
-	  /** Holds child views for one row. */
-	  private static class Holder {
-	    public CheckBox checkBoxScheduled ;
-	    public TextView textViewName ;
-	    public TextView textViewVersion;
-	    public ImageView imageViewIcon ;
-	    public Holder( TextView textView, TextView textViewVersion, CheckBox checkBox, ImageView imageView ) {
-	      this.checkBoxScheduled = checkBox ;
-	      this.textViewName = textView ;
-	      this.textViewVersion = textViewVersion;
-	      this.imageViewIcon = imageView ;
-	    }
-	  }
-	  
-		public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
-			SimpleCursorLoader a = new SimpleCursorLoader(this) {
-				
-				
+	}
 
-				@Override
-				public Cursor loadInBackground() {
-					
-					return db.getScheduledDownloads();
-				}
-			};
-			return a;
+	/** Holds child views for one row. */
+	private static class Holder {
+		public CheckBox checkBoxScheduled ;
+		public TextView textViewName ;
+		public TextView textViewVersion;
+		public ImageView imageViewIcon ;
+		public Holder( TextView textView, TextView textViewVersion, CheckBox checkBox, ImageView imageView ) {
+			this.checkBoxScheduled = checkBox ;
+			this.textViewName = textView ;
+			this.textViewVersion = textViewVersion;
+			this.imageViewIcon = imageView ;
 		}
-		public void onLoadFinished(Loader<Cursor> arg0, Cursor c) {
-			scheduledDownloadsHashMap.clear();
-			if(c.getCount()==0){
-				findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
-			}else{
-				findViewById(android.R.id.empty).setVisibility(View.GONE);
+	}
+
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		SimpleCursorLoader a = new SimpleCursorLoader(this) {
+
+
+
+			@Override
+			public Cursor loadInBackground() {
+
+				return db.getScheduledDownloads();
 			}
-			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
-				ScheduledDownload scheduledDownload = new ScheduledDownload(c.getString(1), true);
-				scheduledDownload.setUrl(c.getString(5));
-				scheduledDownload.setApkid(c.getString(2));
-				scheduledDownload.setVercode(Integer.parseInt(c.getString(3)));
-				scheduledDownload.setMd5(c.getString(6));
-				scheduledDownload.setVername(c.getString(4));
-				scheduledDownloadsHashMap.put(c.getString(0),scheduledDownload);
-			}
-			adapter.swapCursor(c);
-			
-			
+		};
+		return a;
+	}
+	public void onLoadFinished(Loader<Cursor> arg0, Cursor c) {
+		scheduledDownloadsHashMap.clear();
+		if(c.getCount()==0){
+			findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
+		}else{
+			findViewById(android.R.id.empty).setVisibility(View.GONE);
 		}
-		public void onLoaderReset(Loader<Cursor> arg0) {
-			adapter.swapCursor(null);
+		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+			ScheduledDownload scheduledDownload = new ScheduledDownload(c.getString(1), true);
+			scheduledDownload.setUrl(c.getString(5));
+			scheduledDownload.setApkid(c.getString(2));
+			scheduledDownload.setVercode(Integer.parseInt(c.getString(3)));
+			scheduledDownload.setMd5(c.getString(6));
+			scheduledDownload.setVername(c.getString(4));
+			scheduledDownloadsHashMap.put(c.getString(0),scheduledDownload);
 		}
-		private boolean isAllChecked(){
-			if(scheduledDownloadsHashMap.isEmpty()){
-				return false;
-			}
-			for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
-				if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
-					return true;
-				}
-			}
+		adapter.swapCursor(c);
+
+
+	}
+	public void onLoaderReset(Loader<Cursor> arg0) {
+		adapter.swapCursor(null);
+	}
+	private boolean isAllChecked(){
+		if(scheduledDownloadsHashMap.isEmpty()){
 			return false;
 		}
-		
-		
-		@Override
-		public boolean onCreateOptionsMenu(Menu menu) {
-			
-			menu.add(Menu.NONE,1, 0, R.string.schDown_invertselection).setIcon(R.drawable.ic_menu_invert);
-			menu.add(Menu.NONE,2, 0, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-			return super.onCreateOptionsMenu(menu);
-		}
-		
-		public boolean onMenuItemSelected(int featureId, MenuItem item) {
-			AlertDialog alrt = new AlertDialog.Builder(this).create();
-			switch (item.getItemId()) {
-			case 2:
-				if(isAllChecked()){
-					alrt.setMessage(getText(R.string.schDown_sureremove));
-					alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
-								if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
-									db.deleteScheduledDownload(scheduledDownload);
-								}
-							}
-							getSupportLoaderManager().restartLoader(0, null, ScheduledDownloads.this);
-							return;
-						} }); 
-					alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							return;
-						}});
-					alrt.show();
-				} else {
-					Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);  
-					toast.show(); 
-				}
-
-				break;
-
-			case 1:
-				for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
-					scheduledDownloadsHashMap.get(scheduledDownload).toggleChecked();
-				}
-				adapter.notifyDataSetInvalidated();
-				break;
-			default:
-				break;
+		for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+			if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
+				return true;
 			}
-			
-			return super.onMenuItemSelected(featureId, item);
 		}
-		
-		@Override
-		protected void onDestroy() {
-			unbindService(serviceManagerConnection);
-			unregisterReceiver(receiver );
-			super.onDestroy();
+		return false;
+	}
+
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		menu.add(Menu.NONE,1, 0, R.string.schDown_invertselection).setIcon(R.drawable.ic_menu_invert);
+		menu.add(Menu.NONE,2, 0, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		AlertDialog alrt = new AlertDialog.Builder(this).create();
+		switch (item.getItemId()) {
+		case 2:
+			if(isAllChecked()){
+				alrt.setMessage(getText(R.string.schDown_sureremove));
+				alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+							if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
+								db.deleteScheduledDownload(scheduledDownload);
+							}
+						}
+						getSupportLoaderManager().restartLoader(0, null, ScheduledDownloads.this);
+						return;
+					} }); 
+				alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						return;
+					}});
+				alrt.show();
+			} else {
+				Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);  
+				toast.show(); 
+			}
+
+			break;
+
+		case 1:
+			for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+				scheduledDownloadsHashMap.get(scheduledDownload).toggleChecked();
+			}
+			adapter.notifyDataSetInvalidated();
+			break;
+		default:
+			break;
 		}
-		
+
+		return super.onMenuItemSelected(featureId, item);
+	}
+
+	@Override
+	protected void onDestroy() {
+		unbindService(serviceManagerConnection);
+		unregisterReceiver(receiver );
+		super.onDestroy();
+	}
+
 }

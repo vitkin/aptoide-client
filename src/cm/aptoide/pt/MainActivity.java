@@ -1569,7 +1569,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					@Override
 					public void onCreateContextMenu(ContextMenu menu, View v,
 							ContextMenuInfo menuInfo) {
-							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,"Add to Updates Excluded list").setOnMenuItemClickListener(new OnMenuItemClickListener() {
+							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,mContext.getString(R.string.exclude_update)).setOnMenuItemClickListener(new OnMenuItemClickListener() {
 								
 								@Override
 								public boolean onMenuItemClick(MenuItem item) {

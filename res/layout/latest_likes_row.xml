@@ -9,7 +9,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_bgd"
+   	android:background="@drawable/ab_solid_shadow_holo"
+    android:padding="10dp"
     android:orientation="horizontal" >
 
     <RelativeLayout

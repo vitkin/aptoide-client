@@ -50,6 +50,11 @@
     <string name="no_internet_connection">No internet connection.</string>
     <string name="comment_see_all">See All</string>
     <string name="chkBoxSchDwn">Schedule Download</string>
+   	<string name="exclude_update">Ignore Update</string> 
+   	<string name="restore_updates">Restore Updates</string> 
+   	<string name="remove_from_excluded_updates_list">Remove from Excluded Updates list</string>
+   	<string name="excluded_updates">Excluded Updates</string>
+   	<string name="no_excluded_updates">No Excluded Updates</string>
     <string name="who_downloaded_this">Who downloaded this app also downloaded:</string>
     <string name="submit">Submit</string>
     <string name="body">Body</string>

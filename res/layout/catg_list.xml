@@ -10,7 +10,8 @@
     android:id="@+id/cntrl"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/list_bgd"
+    android:background="@drawable/ab_solid_shadow_holo"
+    android:padding="10dp"
     android:gravity="center_vertical|top"
     android:orientation="horizontal" android:baselineAligned="false">
 
