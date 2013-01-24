@@ -551,20 +551,29 @@ public class Database {
 	}
 	
 	public void deleteTopOrLatest(long id, Category category){
-		switch (category) {
-		case TOP:
-			database.delete(DbStructure.TABLE_TOP_APK, "repo_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_TOP_SCREENSHOTS, "repo_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_TOP_REPO, "_id = ?", new String[]{id+""});
-			break;
-		case LATEST:
-			database.delete(DbStructure.TABLE_LATEST_APK, "repo_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_LATEST_SCREENSHOTS, "repo_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_LATEST_REPO, "_id = ?", new String[]{id+""});
-			break;
-		default:
-			break;
+		database.beginTransaction();
+		try{
+			switch (category) {
+			case TOP:
+				database.delete(DbStructure.TABLE_TOP_APK, "repo_id = ?", new String[]{id+""});
+				database.delete(DbStructure.TABLE_TOP_SCREENSHOTS, "repo_id = ?", new String[]{id+""});
+				database.delete(DbStructure.TABLE_TOP_REPO, "_id = ?", new String[]{id+""});
+				break;
+			case LATEST:
+				database.delete(DbStructure.TABLE_LATEST_APK, "repo_id = ?", new String[]{id+""});
+				database.delete(DbStructure.TABLE_LATEST_SCREENSHOTS, "repo_id = ?", new String[]{id+""});
+				database.delete(DbStructure.TABLE_LATEST_REPO, "_id = ?", new String[]{id+""});
+				break;
+			default:
+				break;
+			}
+			database.setTransactionSuccessful();
+		}catch (Exception e){
+			e.printStackTrace();
 		}
+		
+		database.endTransaction();
+	
 	}
 	
 	public void deleteFeatured(long id, Category category){
@@ -585,53 +594,50 @@ public class Database {
 	}
 	
 	public void deleteServer(long id, boolean fromRepoTable){
-		ArrayList<String> catg1_deletes = new ArrayList<String>();
-		ArrayList<String> catg2_deletes = new ArrayList<String>();
+//		ArrayList<String> catg1_deletes = new ArrayList<String>();
+//		ArrayList<String> catg2_deletes = new ArrayList<String>();
 		if(fromRepoTable){
 			database.delete("repo", "_id = ?", new String[]{id+""});
 			deleteTopOrLatest(id, Category.TOP);
 			deleteTopOrLatest(id, Category.LATEST);
-		}
-		database.delete(DbStructure.TABLE_APK, "repo_id = ?", new String[]{id+""});
-		if(fromRepoTable){
 			database.delete("repo_category_1st", "repo_id = ?", new String[]{id+""});
 			database.delete("repo_category_2nd", "repo_id = ?", new String[]{id+""});
+		}
+		database.delete(DbStructure.TABLE_APK, "repo_id = ?", new String[]{id+""});
 		
-		
-		Cursor c = database.query("category_1st", new String[]{"_id"}, null, null, null, null, null);
-		Cursor d = null;
-		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
-			
-			d = database.query("repo_category_1st", new String[]{"repo_id"}, "category_1st_id=?", new String[]{c.getString(0)}, null, null, null); 
-			
-			if(d.getCount()==0){
-				catg1_deletes.add(c.getString(0));
-			}
-			
-		}
-		c = database.query(DbStructure.COLUMN_CATEGORY_2ND, new String[]{"_id"}, null, null, null, null, null);
-		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
-			d = database.query("repo_category_2nd", new String[]{"repo_id"}, "category_2nd_id=?", new String[]{c.getString(0)}, null, null, null); 
-			if(d.getCount()==0){
-				catg2_deletes.add(c.getString(0));
-			}
-			
-		}
-		
-		for(String s : catg1_deletes){
-			if(!s.equals("Top Apps")&&!s.equals("Latest Apps")){
-				database.delete("category_1st", "_id = ?", new String[]{s});
-			}
-		}
-		
-		for(String s : catg2_deletes){
-			database.delete(DbStructure.COLUMN_CATEGORY_2ND, "_id = ?", new String[]{s});
-		}
-		c.close();
-		if(d!=null){
-			d.close();
-		}
-		}
+//		Cursor c = database.query("category_1st", new String[]{"_id"}, null, null, null, null, null);
+//		Cursor d = null;
+//		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+//			
+//			d = database.query("repo_category_1st", new String[]{"repo_id"}, "category_1st_id=?", new String[]{c.getString(0)}, null, null, null); 
+//			
+//			if(d.getCount()==0){
+//				catg1_deletes.add(c.getString(0));
+//			}
+//			
+//		}
+//		c = database.query(DbStructure.COLUMN_CATEGORY_2ND, new String[]{"_id"}, null, null, null, null, null);
+//		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+//			d = database.query("repo_category_2nd", new String[]{"repo_id"}, "category_2nd_id=?", new String[]{c.getString(0)}, null, null, null); 
+//			if(d.getCount()==0){
+//				catg2_deletes.add(c.getString(0));
+//			}
+//			
+//		}
+//		
+//		for(String s : catg1_deletes){
+//			if(!s.equals("Top Apps")&&!s.equals("Latest Apps")){
+//				database.delete("category_1st", "_id = ?", new String[]{s});
+//			}
+//		}
+//		
+//		for(String s : catg2_deletes){
+//			database.delete(DbStructure.COLUMN_CATEGORY_2ND, "_id = ?", new String[]{s});
+//		}
+//		c.close();
+//		if(d!=null){
+//			d.close();
+//		}
 		
 	}
 
@@ -816,7 +822,8 @@ public class Database {
 			
 			String filter = filters();
 			
-			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.icon as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath as iconspath, b.md5, c.apkpath, b.remote_path from installed as a, apk as b, repo as c where a.apkid=b.apkid and a.apkid not in (select apkid from excluded_apkid) and a.vercode not in (select vercode from excluded_apkid)  and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id"+filter+" group by a.apkid" ;
+			String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.icon as imagepath,b.rating,b.downloads,b.apkid as apkid,b.vercode as vercode, c.iconspath as iconspath, b.md5, c.apkpath, b.remote_path from installed as a, apk as b, repo as c " +
+					"where a.apkid=b.apkid and b.vercode > a.vercode and b.vercode = (select max(vercode) from apk as b where a.apkid=b.apkid) and b.repo_id = c._id and not exists (select 1 from excluded_apkid as d where b.apkid = d.apkid and b.vercode = d.vercode ) "+filter+" group by a.apkid" ;
 			
 			query = orderBy(order, query);
 			
@@ -1048,7 +1055,9 @@ public class Database {
 	public void insertServerInfo(Server server, Category category) {
 		ContentValues values = new ContentValues();
 		try{
-			values.put(DbStructure.COLUMN_SCREENS_PATH, server.screenspath);
+			if(server.screenspath!=null){
+				values.put(DbStructure.COLUMN_SCREENS_PATH, server.screenspath);
+			}
 			if(!category.equals(Category.INFOXML)){
 				values.put(DbStructure.COLUMN__ID, server.id);
 			}
@@ -1078,6 +1087,7 @@ public class Database {
 				if(server.webservicesPath!=null){
 					values.put(DbStructure.COLUMN_WEBSERVICESPATH, server.webservicesPath);
 				}
+				
 				database.update(DbStructure.TABLE_REPO, values, "_id = ?", new String[]{server.id+""});
 				break;
 			case ITEMBASED:
@@ -1098,6 +1108,7 @@ public class Database {
 				break;
 			}
 			
+			Log.d("Database","Updated repo " + category.name() +" with: " + values);
 			
 			
 //			values.put("_id", server.id);
@@ -1922,25 +1933,6 @@ public class Database {
 	public void insertEditorsChoiceHash(String hash) {
 		//TODO
 	}
-
-
-	public void deleteApps(long id, Category category) {
-		switch (category) {
-		case LATEST:
-			database.delete(DbStructure.TABLE_LATEST_APK, "repo_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_LATEST_REPO, "_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_LATEST_SCREENSHOTS, "repo_id = ?", new String[]{id+""});
-			break;
-		case TOP:
-			database.delete(DbStructure.TABLE_TOP_APK, "repo_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_TOP_REPO, "_id = ?", new String[]{id+""});
-			database.delete(DbStructure.TABLE_TOP_SCREENSHOTS, "repo_id = ?", new String[]{id+""});
-			break;
-		default:
-			break;
-		}
-	}
-
 
 	public void addToExcludeUpdate(int itemId) {
 		ContentValues values = new ContentValues();
