@@ -76,7 +76,7 @@ public class HandlerTop extends DefaultHandler{
 				
 //				if(!db.getRepoHash(apk.getServer().id,Category.TOP).equals(apk.getServer().hash)){
 //					System.out.println("Deleting " +category.name() +"apps ");
-					db.deleteApps(apk.getServer().id,Category.TOP);
+					db.deleteTopOrLatest(apk.getServer().id,Category.TOP);
 //				}else{
 ////					db.endTransation(server);
 //					System.out.println("NOT Deleting " +category.name() +"apps ");

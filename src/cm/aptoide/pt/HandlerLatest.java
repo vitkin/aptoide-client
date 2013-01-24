@@ -77,7 +77,7 @@ public class HandlerLatest extends DefaultHandler{
 				
 //				if(!db.getRepoHash(server.id,Category.LATEST).equals(server.hash)){
 //					System.out.println("Deleting " +category.name() +"apps ");
-					db.deleteApps(server.id,Category.LATEST);
+					db.deleteTopOrLatest(server.id,Category.LATEST);
 //				}else{
 ////					db.endTransation(server);
 //					System.out.println("NOT Deleting " +category.name() +"apps ");
