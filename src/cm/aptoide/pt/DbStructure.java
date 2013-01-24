@@ -369,7 +369,10 @@ public class DbStructure extends SQLiteOpenHelper {
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MD5))
 										 .createTable();
 		
-		creator.newTable(TABLE_EXCLUDED_APKID).addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID)).createTable();
+		creator.newTable(TABLE_EXCLUDED_APKID).addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
+											  .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME))
+											  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_VERCODE))
+											  .createTable();
 		
 		ContentValues values = new ContentValues();
 		values.put(COLUMN__ID, Database.TOP_ID);
