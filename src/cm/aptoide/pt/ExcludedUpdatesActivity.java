@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.CursorAdapter;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
@@ -27,7 +29,8 @@ public class ExcludedUpdatesActivity extends Activity {
 	ListView lv;
 	TextView tv_no_excluded_downloads;
 	Button bt_restore_updates;
-	CursorAdapter adapter;
+	ArrayAdapter<ExcludedUpdate> adapter;
+	private Context context;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,59 +38,30 @@ public class ExcludedUpdatesActivity extends Activity {
 		setContentView(R.layout.excluded_uploads_list);
 		lv = (ListView) findViewById(R.id.excluded_updates_list);
 		tv_no_excluded_downloads = (TextView) findViewById(R.id.tv_no_excluded_downloads);
-		
-		redraw();
-		
-		bt_restore_updates = (Button) findViewById(R.id.restore_update);
-		bt_restore_updates.setText(getString(R.string.restore_updates));
-		bt_restore_updates.setOnClickListener(new OnClickListener() {
-
-			public void onClick(View v) {
-				if(isAllChecked()){
-
-				} else {
-					Toast toast= Toast.makeText(ExcludedUpdatesActivity.this, 
-							R.string.no_excluded_updates, Toast.LENGTH_SHORT);  
-					toast.show();
-				}
-			}
-		});
-		
-
-//		registerForContextMenu(getListView());
-	}
-
-	private boolean isAllChecked(){
-		if(adapter.isEmpty()){
-			return false;
-		}
-		return false;
-	}
-	
-	/**
-	 * 
-	 */
-	private void redraw() {
-		Cursor c = db.getExcludedApks();
-		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
-			ExcludedUpdate excludedUpdate = new ExcludedUpdate(c.getString(2), c.getString(0), c.getInt(1));
-			excludedUpdates.add(excludedUpdate);
-		}
-//		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, excludedUpdates));
-		
-		adapter = new CursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
+		context = this;
+		adapter = new ArrayAdapter<ExcludedUpdate>(this, 0, excludedUpdates) {
 
 			@Override
-			public View newView(Context context, Cursor arg1, ViewGroup arg2) {
+			public View getView(int position, View convertView, ViewGroup parent) {
+				View v;
+		        if (convertView == null) {
+		            v = newView(parent);
+		        } else {
+		            v = convertView;
+		        }
+		        bindView(v, position);
+				return v;
+			}
+			
+			public View newView(ViewGroup arg2) {
 				return LayoutInflater.from(context).inflate(R.layout.excluded_update, null);
 			}
 			@Override
 			public long getItemId(int position) {
 				return position;
 			}
-			@Override
-			public void bindView(View convertView, Context arg1, Cursor c) {
-				ExcludedUpdate excludedUpdate = excludedUpdates.get(0); 
+			public void bindView(View convertView, int c) {
+				ExcludedUpdate excludedUpdate = getItem(c); 
 				
 				CheckBox cb_exclude; 
 				TextView tv_name;
@@ -122,12 +96,66 @@ public class ExcludedUpdatesActivity extends Activity {
 				tv_apkid.setText(excludedUpdate.getApkid());
 			}
 		};
+		redraw();
+		
+		bt_restore_updates = (Button) findViewById(R.id.restore_update);
+		bt_restore_updates.setText(getString(R.string.restore_updates));
+		bt_restore_updates.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				if(isAllChecked()){
+					for(ExcludedUpdate excludedUpdate : excludedUpdates){
+						if(excludedUpdate.checked){
+							db.deleteFromExcludeUpdate(excludedUpdate.apkid, excludedUpdate.vercode);
+						}
+					}
+					redraw();
+				} else {
+					Toast toast= Toast.makeText(ExcludedUpdatesActivity.this, 
+							R.string.no_excluded_updates, Toast.LENGTH_SHORT);  
+					toast.show();
+				}
+			}
+		});
 		lv.setAdapter(adapter);
+		
+
+//		registerForContextMenu(getListView());
+	}
+
+	private boolean isAllChecked(){
+		if(adapter.isEmpty()){
+			return false;
+		}
+		for(ExcludedUpdate excludedUpdate: excludedUpdates){
+			if (excludedUpdate.checked){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 */
+	private void redraw() {
+		Cursor c = db.getExcludedApks();
+		excludedUpdates.clear();
+		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+			ExcludedUpdate excludedUpdate = new ExcludedUpdate(c.getString(1), c.getString(0), c.getInt(2));
+			excludedUpdates.add(excludedUpdate);
+		}
+//		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, excludedUpdates));
+		adapter.notifyDataSetChanged();
+		
 		Log.d("ExcludedUpdatesActivity","excluded updates: " + excludedUpdates.toString());
 		
 		if(!adapter.isEmpty()){
 			tv_no_excluded_downloads.setVisibility(View.GONE);
+		}else{
+			tv_no_excluded_downloads.setVisibility(View.VISIBLE);
 		}
+		
 	}
 
 	@Override
