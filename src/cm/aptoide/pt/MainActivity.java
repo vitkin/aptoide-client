@@ -105,10 +105,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -116,15 +114,12 @@ import cm.aptoide.pt.Server.State;
 import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.adapters.UpdatesAdapter;
 import cm.aptoide.pt.adapters.ViewPagerAdapter;
-import cm.aptoide.pt.contentloaders.ImageLoader;
-import cm.aptoide.pt.contentloaders.ImageLoader2;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.services.MainService;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.services.MainService.LocalBinder;
 import cm.aptoide.pt.sharing.WebViewFacebook;
 import cm.aptoide.pt.sharing.WebViewTwitter;
-import cm.aptoide.pt.sharing.DialogShareOnFacebook.UpdateStatusListener;
 import cm.aptoide.pt.util.Algorithms;
 import cm.aptoide.pt.util.Md5Handler;
 import cm.aptoide.pt.util.NetworkUtils;
@@ -136,6 +131,7 @@ import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
@@ -172,7 +168,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	private void loadUIEditorsApps() {
 
-		final ImageLoader2 imageLoader = ImageLoader2.getInstance(mContext);
 		final int[] res_ids = { R.id.central, R.id.topleft, R.id.topright,
 				R.id.bottomleft, R.id.bottomright };
 		final ArrayList<HashMap<String, String>> image_urls = db
@@ -181,8 +176,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		if (image_url_highlight != null) {
 			a = 1;
 			ImageView v = (ImageView) featuredView.findViewById(res_ids[0]);
-			imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v,
-					mContext);
+//			imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v,
+//					mContext);
+			
+			com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_url_highlight.get("url"), v);
 			v.setTag(image_url_highlight.get("id"));
 			v.setOnClickListener(new OnClickListener() {
 
@@ -208,8 +205,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					for (int i = a; i != res_ids.length; i++) {
 						ImageView v = (ImageView) featuredView
 								.findViewById(res_ids[i]);
-						imageLoader.DisplayImage(-1,
-								image_urls.get(i).get("url"), v, mContext);
+//						imageLoader.DisplayImage(-1,
+//								image_urls.get(i).get("url"), v, mContext);
+						com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_urls.get(i).get("url"), v);
+						
 						v.setTag(image_urls.get(i).get("id"));
 						v.setOnClickListener(new OnClickListener() {
 
@@ -273,13 +272,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					out.close();
 					bis.close();
 					String hash = Md5Handler.md5Calc(f);
-//					TODO
-//					if (!hash.equals(db.getEditorsChoiceHash())) {
-//						db.deleteEditorsChoice();
-//						sp.parse(f, new HandlerUserBased());
-////						db.insertUserBasedApkHash(hash);
-////						loadUIRecommendedApps();
-//					}
+					ViewApk parent_apk = new ViewApk();
+					parent_apk.setApkid("recommended");
+					if (!hash.equals(db.getItemBasedApksHash(parent_apk.getApkid()))) {
+						db.deleteItemBasedApks(parent_apk);
+						sp.parse(f, new HandlerItemBased(parent_apk));
+						db.insertItemBasedApkHash(hash, parent_apk.getApkid());
+						loadUIRecommendedApps();
+					}
 					f.delete();
 
 				} catch (Exception e) {
@@ -292,8 +292,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						.getItemBasedApksRecommended("recommended");
 
 				runOnUiThread(new Runnable() {
-					ImageLoader2 imageLoader = ImageLoader2
-							.getInstance(mContext);
 
 					public void run() {
 
@@ -303,7 +301,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						LinearLayout llAlso = new LinearLayout(
 								MainActivity.this);
 						llAlso.setLayoutParams(new LayoutParams(
-								LayoutParams.FILL_PARENT,
+								LayoutParams.MATCH_PARENT,
 								LayoutParams.WRAP_CONTENT));
 						llAlso.setOrientation(LinearLayout.HORIZONTAL);
 						if (valuesRecommended.isEmpty()) {
@@ -320,11 +318,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								((TextView) txtSamItem.findViewById(R.id.name))
 										.setText(valuesRecommended.get(i).get(
 												"name"));
-								imageLoader.DisplayImage(-1, valuesRecommended
+								ImageLoader.getInstance().displayImage(valuesRecommended
 										.get(i).get("icon"),
 										(ImageView) txtSamItem
-												.findViewById(R.id.icon),
-										mContext);
+												.findViewById(R.id.icon));
 								float stars = 0f;
 								try {
 									stars = Float.parseFloat(valuesRecommended
@@ -343,7 +340,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								txtSamItem.setTag(valuesRecommended.get(i).get(
 										"_id"));
 								txtSamItem.setLayoutParams(new LayoutParams(
-										LayoutParams.FILL_PARENT, 100, 1));
+										LayoutParams.MATCH_PARENT, 100, 1));
 								// txtSamItem.setOnClickListener(featuredListener);
 								txtSamItem
 										.setOnClickListener(new OnClickListener() {
@@ -372,7 +369,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 									llAlso = new LinearLayout(MainActivity.this);
 									llAlso.setLayoutParams(new LayoutParams(
-											LayoutParams.FILL_PARENT, 100));
+											LayoutParams.MATCH_PARENT, 100));
 									llAlso.setOrientation(LinearLayout.HORIZONTAL);
 									llAlso.addView(txtSamItem);
 								} else {
@@ -482,7 +479,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		c.close();
 
 		runOnUiThread(new Runnable() {
-			ImageLoader2 imageLoader = ImageLoader2.getInstance(mContext);
 
 			public void run() {
 
@@ -491,7 +487,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				ll.removeAllViews();
 				LinearLayout llAlso = new LinearLayout(MainActivity.this);
 				llAlso.setLayoutParams(new LayoutParams(
-						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+						LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 				llAlso.setOrientation(LinearLayout.HORIZONTAL);
 				for (int i = 0; i != values.size(); i++) {
 					LinearLayout txtSamItem = (LinearLayout) getLayoutInflater()
@@ -502,9 +498,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							.setText(getString(R.string.version) +" "+ values.get(i).get("vername"));
 					((TextView) txtSamItem.findViewById(R.id.downloads))
 							.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
-					imageLoader.DisplayImage(-1, values.get(i).get("icon"),
-							(ImageView) txtSamItem.findViewById(R.id.icon),
-							mContext);
+					
+					com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView) txtSamItem.findViewById(R.id.icon));
+					
+//					imageLoader.DisplayImage(-1, values.get(i).get("icon"),
+//							(ImageView) txtSamItem.findViewById(R.id.icon),
+//							mContext);
 					float stars = 0f;
 					try {
 						stars = Float.parseFloat(values.get(i).get("rating"));
@@ -516,7 +515,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					txtSamItem.setPadding(10, 0, 0, 0);
 					txtSamItem.setTag(values.get(i).get("id"));
 					txtSamItem.setLayoutParams(new LayoutParams(
-							LayoutParams.FILL_PARENT, 100, 1));
+							LayoutParams.MATCH_PARENT, 100, 1));
 					// txtSamItem.setOnClickListener(featuredListener);
 					txtSamItem.setOnClickListener(new OnClickListener() {
 
@@ -539,7 +538,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 						llAlso = new LinearLayout(MainActivity.this);
 						llAlso.setLayoutParams(new LayoutParams(
-								LayoutParams.FILL_PARENT, 100));
+								LayoutParams.MATCH_PARENT, 100));
 						llAlso.setOrientation(LinearLayout.HORIZONTAL);
 						llAlso.addView(txtSamItem);
 					} else {
@@ -789,12 +788,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								
 								if (parse) {
 									service.parseServer(db, server);
+								}else{
+									service.parseTop(db, server);
+									service.parseLatest(db, server);
 								}
-								while (service == null) {
-									Thread.sleep(10);
-								}
-								service.parseTop(db, server);
-								service.parseLatest(db, server);
 								service.addStoreInfo(db, server);
 							}
 
@@ -806,9 +803,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					} catch (IOException e) {
 						e.printStackTrace();
 					} catch (JSONException e) {
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -1016,7 +1010,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
-		loader.resetPermissions();
 		installedLoader.forceLoad();
 		updatesLoader.forceLoad();
 		availableLoader.forceLoad();
@@ -1050,7 +1043,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 //			}
 //		});
 		
-		aboutDialog.setButton(getString(R.string.btn_chlog), new DialogInterface.OnClickListener() {
+		aboutDialog.setButton(DialogInterface.BUTTON_POSITIVE,getString(R.string.btn_chlog), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				Uri uri = Uri.parse(getString(R.string.change_log_url));
 				startActivity(new Intent( Intent.ACTION_VIEW, uri));
@@ -1366,7 +1359,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private String storeUri = "apps.store.aptoide.com";
 	
 	ViewPager pager;
-	private AIDLServiceDownloadManager serviceDownloadManagerConnection = null;
 	private AIDLServiceDownloadManager serviceDownloadManager;
 	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
 		
@@ -2096,7 +2088,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			unregisterReceiver(newRepoReceiver);	
 		}
 		
-		stopService(serviceDownloadManagerIntent);
+//		stopService(serviceDownloadManagerIntent);
 		generateXML();
 		super.onDestroy();
 	}
@@ -2225,7 +2217,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		public AvailableListAdapter(Context context, Cursor c, int flags) {
 			super(context, c, flags);
-			loader = ImageLoader.getInstance(context);
 		}
 
 		@Override
@@ -2235,9 +2226,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				String hashcode = cursor.getString(
 						cursor.getColumnIndex("avatar_url")).hashCode()
 						+ "";
-				loader.DisplayImage(
+				com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
 						cursor.getString(cursor.getColumnIndex("avatar_url")),
-						(ImageView) view.findViewById(R.id.avatar), context,
+						(ImageView) view.findViewById(R.id.avatar),
 						hashcode);
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor
 						.getString(cursor.getColumnIndex("name")));
@@ -2299,14 +2290,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					view.setTag(holder);
 				}
 				holder.name.setText(cursor.getString(1));
-				loader.DisplayImage(
+				com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
 						cursor.getString(cursor.getColumnIndex("iconspath"))
 								+ cursor.getString(cursor
 										.getColumnIndex("imagepath")),
 						holder.icon,
-						context,
 						(cursor.getString(cursor.getColumnIndex("apkid")) + "|" + cursor
-								.getString(cursor.getColumnIndex("vercode"))));
+								.getString(cursor.getColumnIndex("vercode"))).hashCode()+"");
+				
 				holder.vername.setText(cursor.getString(2));
 				try {
 					holder.rating.setRating(Float.parseFloat(cursor
@@ -2679,11 +2670,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						 * msg_al.arg1= 1;
 						 * download_error_handler.sendMessage(msg_al);
 						 */
+						saveit.close();
 						throw new TimeoutException();
 					}
 				}
 
 				if (mHttpResponse.getStatusLine().getStatusCode() == 401) {
+					saveit.close();
 					throw new TimeoutException();
 				} else {
 					InputStream getit = mHttpResponse.getEntity().getContent();

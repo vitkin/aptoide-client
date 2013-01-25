@@ -20,6 +20,12 @@
 package cm.aptoide.pt.views;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+import com.nostra13.universalimageloader.utils.FileUtils;
 
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.util.Md5Handler;
@@ -137,6 +143,14 @@ public class ViewCache implements Parcelable{
 			}
 		}
 	}
+	
+	public void export(String path) throws IOException {
+		if(isCached()){
+			FileInputStream is = new FileInputStream(getLocalPath());
+			FileOutputStream os = new FileOutputStream(path);
+			FileUtils.copyStream(is, os);
+		}
+	}
 
 	/**
 	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will not overflow integer in a realistic scenario)
@@ -226,4 +240,5 @@ public class ViewCache implements Parcelable{
 			this.md5sum = in.readString();
 		}
 	}
+
 }

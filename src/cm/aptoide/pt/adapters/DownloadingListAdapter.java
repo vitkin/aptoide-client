@@ -19,6 +19,8 @@
  */
 package cm.aptoide.pt.adapters;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -28,11 +30,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
@@ -126,7 +126,7 @@ public class DownloadingListAdapter extends BaseAdapter{
 			rowViewHolder.app_download_progress.setIndeterminate(true);
 		}
 		rowViewHolder.app_download_progress.setProgress(download.getProgress());
-		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, context, download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode());
+		imageLoader.displayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, (download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode()).hashCode()+"");
 		
 		
 		rowViewHolder.manageDownloadsButton.setOnClickListener(new OnClickListener() {

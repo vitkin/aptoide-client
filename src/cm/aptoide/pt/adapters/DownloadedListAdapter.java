@@ -19,6 +19,8 @@
  */
 package cm.aptoide.pt.adapters;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
@@ -31,7 +33,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.sharing.DialogShareOnFacebook;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
@@ -63,10 +64,10 @@ public class DownloadedListAdapter extends BaseAdapter{
 	 * @param context
 	 * @param ImageLoader
 	 */
-	public DownloadedListAdapter(Activity activity, ImageLoader imageLoader){
+	public DownloadedListAdapter(Activity activity, ImageLoader imageLoader2){
 		this.activity = activity;
 		
-		this.imageLoader = imageLoader;
+		this.imageLoader = imageLoader2;
 
 		layoutInflater = LayoutInflater.from(activity);
 
@@ -104,9 +105,9 @@ public class DownloadedListAdapter extends BaseAdapter{
 		}
 
 		final ViewDownloadManagement download = downloaded.get(position);
-
+		
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
-		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, activity, download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode());
+		imageLoader.displayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, (download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode()).hashCode()+"");
 		
 		rowViewHolder.app_facebook_share.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {

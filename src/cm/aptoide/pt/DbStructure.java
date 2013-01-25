@@ -401,9 +401,11 @@ public class DbStructure extends SQLiteOpenHelper {
 //		db.execSQL("create table itembasedapk_hash (hash text, apkid text primary key, unique (apkid) on conflict replace);");
 //		db.execSQL("create table userbasedapk (_id integer primary key, apkid text, vercode integer);");
 //		db.execSQL("create table scheduled (_id integer primary key, name text, apkid text, vercode integer, vername text, remotepath text, md5 text );");
-//		db.execSQL("CREATE INDEX mytest_id2_idx ON installed(apkid);");
+		db.execSQL("CREATE INDEX mytest_id2_idx ON installed(apkid);");
 		db.execSQL("CREATE INDEX mytest_id_idx ON apk(apkid,vercode,category_2nd,repo_id);");
-//		db.execSQL("CREATE INDEX mytest_id3_idx ON dynamic_apk(apkid,vercode,category1,repo_id);");
+		db.execSQL("CREATE INDEX mytest_id3_idx ON top_apk(apkid,vercode,repo_id);");
+		db.execSQL("CREATE INDEX mytest_id4_idx ON latest_apk(apkid,vercode,repo_id);");
+		db.execSQL("CREATE INDEX mytest_id5_idx ON itembased_apk(apkid,vercode,repo_id);");
 		
 		
 	}

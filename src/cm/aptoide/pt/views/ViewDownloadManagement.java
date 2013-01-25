@@ -121,6 +121,7 @@ public class ViewDownloadManagement implements Parcelable{
 			this.viewDownload.setFailReason(update.getFailReason());
 		}
 	}
+	
 
 //
 //	/**

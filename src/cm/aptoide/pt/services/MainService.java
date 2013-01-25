@@ -27,12 +27,13 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
-import cm.aptoide.pt.Category;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.ExtrasService;
 import cm.aptoide.pt.RepoParser;
 import cm.aptoide.pt.Server;
 import cm.aptoide.pt.Server.State;
+import cm.aptoide.pt.ServerLatest;
+import cm.aptoide.pt.ServerTop;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
 
@@ -97,7 +98,7 @@ public class MainService extends Service {
 	public String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
 		getApplicationContext().sendBroadcast(new Intent("connecting"));
 		String hash = "";
-		if (delta&&server.hash != null) {
+		if (delta&&server.hash.length() > 0) {
 			hash = "?hash=" + server.hash;
 		}
 		String url = server.url + what + hash;
@@ -242,7 +243,7 @@ public class MainService extends Service {
 				try {
 					//			serversParsing.put((int)server.id, server);
 					path2 = get(server, defaultTopXmlPath, "top.xml", false);
-					RepoParser.getInstance(db).parseTop(path2, server);
+					RepoParser.getInstance(db).parseTop(path2, new ServerTop(server));
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -279,7 +280,7 @@ public class MainService extends Service {
 					//			serversParsing.put((int)server.id, server);
 					try {
 						path2 = get(server, defaultLatestXmlPath, "latest.xml", false);
-						RepoParser.getInstance(db).parseLatest(path2, server);
+						RepoParser.getInstance(db).parseLatest(path2, new ServerLatest(server));
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
@@ -295,7 +296,7 @@ public class MainService extends Service {
 		String path = null;
 		path = get(server,defaultXmlPath,"info.xml",true);
 		RepoParser.getInstance(db).parseInfoXML(path,server);
-		parseExtras(server);
+//		parseExtras(server);
 	}
 
 	public void addStoreInfo(Database db, Server server) {

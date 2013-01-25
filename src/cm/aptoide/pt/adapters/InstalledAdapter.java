@@ -7,15 +7,13 @@
  ******************************************************************************/
 package cm.aptoide.pt.adapters;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import cm.aptoide.pt.Database;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.R.id;
-import cm.aptoide.pt.R.layout;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,11 +24,8 @@ import android.widget.TextView;
 public class InstalledAdapter extends CursorAdapter {
 
 	
-	private ImageLoader loader;
-
 	public InstalledAdapter(Context context, Cursor c, int flags,Database db) {
 		super(context, c, flags);
-		loader = ImageLoader.getInstance(context);
 	}
 
 	@Override
@@ -57,8 +52,8 @@ public class InstalledAdapter extends CursorAdapter {
 		String iconspath = cursor.getString(9)+
 				cursor.getString(4);
 		String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+
-				cursor.getString(cursor.getColumnIndex("vercode")));
-		loader.DisplayImage(iconspath, holder.icon, context,hash);
+				cursor.getString(cursor.getColumnIndex("vercode")).hashCode());
+		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash.hashCode()+"");
 		 try{
 	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
 	        }catch (Exception e) {

@@ -46,9 +46,9 @@ import android.widget.ImageView;
 
 public class ImageLoader {
     
-    MemoryCache memoryCache=new MemoryCache();
+    MemoryCache memoryCache=MemoryCache.getInstance();
     FileCache fileCache;
-    private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
+    private static Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService photoLoadThreadPool; 
     static Context context;
     boolean download = false;
@@ -72,14 +72,14 @@ public class ImageLoader {
     	ImageLoader.context=context;
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
-        if(bitmap!=null){
-            imageView.setImageBitmap(bitmap);
-        }else {
+//        if(bitmap!=null){
+//            imageView.setImageBitmap(bitmap);
+//        }else {
         	
-        	queuePhoto(url, imageView,hashCode);
+//        	queuePhoto(url, imageView,hashCode);
             imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
-        }
+//        }
     }
         
     private void queuePhoto(String url, ImageView imageView,String hashCode)
@@ -298,14 +298,6 @@ public class ImageLoader {
     
     static ImageLoader imageLoader;
     
-    public static ImageLoader getInstance(Context context){
-    	
-    	if(imageLoader==null){
-    		imageLoader = new ImageLoader(context);
-    	}
-    	return imageLoader;
-    	
-    }
     
     public static void reload(){
     	imageLoader = new ImageLoader(context);

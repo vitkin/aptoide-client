@@ -25,6 +25,8 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -40,7 +42,6 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.util.Base64;
 import cm.aptoide.pt.util.Md5Handler;
 import cm.aptoide.pt.views.ViewApk;
@@ -224,7 +225,6 @@ public class ItemBasedApks {
 	}
 
 	private void loadItems(ArrayList<HashMap<String, String>> values) {
-					ImageLoader imageLoader = ImageLoader.getInstance(context);
 					if(values.size()>0){
 						container.removeAllViews();
 						parent_container.setVisibility(View.VISIBLE);
@@ -240,7 +240,7 @@ public class ItemBasedApks {
 //				        	container.setVisibility(View.VISIBLE);
 				            LinearLayout txtSamItem = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.related_griditem, null);
 				           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
-				           	imageLoader.DisplayImage(values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), context,values.get(i).get("hashCode"));
+				           	ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), values.get(i).get("hashCode"));
 //				           	float stars = 0f;
 //				           	try{
 //				           		stars = Float.parseFloat(values.get(i).get("rating"));

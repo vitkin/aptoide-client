@@ -9,6 +9,8 @@ package cm.aptoide.pt;
 
 import java.util.HashMap;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
@@ -27,7 +29,6 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +43,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
@@ -56,7 +56,6 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	HashMap<String,ScheduledDownload> scheduledDownloadsHashMap = new HashMap<String, ScheduledDownload>();
 	ListView lv;
 	CursorAdapter adapter;
-	ImageLoader imageLoader;
 	private Button installButton;
 
 
@@ -117,7 +116,6 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		lv = (ListView) findViewById(android.R.id.list);
 		db= Database.getInstance();
 
-		imageLoader = ImageLoader.getInstance(this);
 		adapter = new CursorAdapter(this, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER) {
 
 			@Override
@@ -176,11 +174,20 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 				textViewName.setText( scheduledDownload.getName() );  
 				textViewVersion.setText( ""+scheduledDownload.getVername() );
 
-				// ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
-				// ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
-				String hashCode = (c.getString(2)+"|"+c.getString(3));
-				Log.d("ScheduledDownloadsIcons",hashCode);
-				imageLoader.DisplayImage(hashCode, imageViewIcon, arg1, hashCode);
+			      // Tag the CheckBox with the Planet it is displaying, so that we can
+			      // access the planet in onClick() when the CheckBox is toggled.
+			      checkBoxScheduled.setTag( scheduledDownload ); 
+			      
+			      // Display planet data
+			      checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
+			      textViewName.setText( scheduledDownload.getName() );  
+			      textViewVersion.setText( ""+scheduledDownload.getVername() );
+			      
+			      // ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
+			      // ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
+			      String hashCode = (c.getString(2)+"|"+c.getString(3)).hashCode()+"";
+			      Log.d("ScheduledDownloadsIcons",hashCode);
+			      ImageLoader.getInstance().displayImage(hashCode, imageViewIcon, hashCode);
 			}
 		};
 		lv.setAdapter(adapter);

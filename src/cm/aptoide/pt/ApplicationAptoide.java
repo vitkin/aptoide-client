@@ -19,11 +19,21 @@
 */
 package cm.aptoide.pt;
 
-import cm.aptoide.pt.preferences.ManagerPreferences;
-import cm.aptoide.pt.services.ServiceDownloadManager;
+import java.io.File;
+
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
+import android.os.Environment;
+import cm.aptoide.pt.preferences.ManagerPreferences;
+
+import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 /**
  * ApplicationAptoide, centralizes, statically, calls to instantiated objects
@@ -40,6 +50,23 @@ public class ApplicationAptoide extends Application {
 	public void onCreate() {
 		managerPreferences = new ManagerPreferences(getApplicationContext());
 		setContext(getApplicationContext());
+		 // Create global configuration and initialize ImageLoader with this configuration
+		DisplayImageOptions options = new DisplayImageOptions.Builder()
+		
+															 .displayer(new FadeInBitmapDisplayer(1000))
+															 .showStubImage(android.R.drawable.sym_def_app_icon)
+															 .resetViewBeforeLoading()
+															 .cacheInMemory()
+															 .cacheOnDisc()
+															 .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+        															  .defaultDisplayImageOptions(options)
+        															  .enableLogging()
+        															  .discCache(new UnlimitedDiscCache(new File(Environment.getExternalStorageDirectory().getPath()+"/.aptoide/icons/")))
+        															  .build();
+        
+        
+        ImageLoader.getInstance().init(config);
 		super.onCreate();
 	}
 	
@@ -53,6 +80,8 @@ public class ApplicationAptoide extends Application {
 	public static Context getContext() {
 		return context;
 	}
+	
+	
 
 	/**
 	 * @param context the context to set

@@ -6,19 +6,22 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="horizontal" 
-    >
+    android:gravity="center" >
 
-	
     <ImageView
         android:id="@+id/screenshot"
-        android:layout_width="0dp"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center_horizontal"
-        android:layout_weight="1"/>
-    
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+         />
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/screenshots_pb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+</RelativeLayout>

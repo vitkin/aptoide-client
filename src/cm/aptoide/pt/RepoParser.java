@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 
 public class RepoParser {
 	static Object lock = new Object();
@@ -59,14 +60,17 @@ public class RepoParser {
 	}
 	
 	public void parseTop(String xml, Server server){
+		Log.d("Parser", "Starting top.xml on serverid "+  server.id);
 		executor.submit(new TopParser(server,xml,Category.TOP));
 	}
 	
 	public void parseLatest(String xml, Server server){
+		Log.d("Parser", "Starting latest.xml on serverid "+  server.id);
 		executor.submit(new LatestParser(server,xml,Category.LATEST));
 	}
 	
 	public void parseInfoXML(String xml, Server server){
+		Log.d("Parser", "Starting info.xml on serverid "+  server.id);
 		executor.submit(new Parser(server,xml));
 	}
 	

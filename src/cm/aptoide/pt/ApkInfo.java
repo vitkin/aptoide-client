@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -60,7 +62,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.contentloaders.ViewApkLoader;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
@@ -86,6 +87,8 @@ import cm.aptoide.pt.webservices.taste.Likes;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
@@ -148,7 +151,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.app_info);
-
+		
 		if(!isRunning){
 			isRunning = true;
 
@@ -168,6 +171,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	protected void continueLoading() {
 		category = Category.values()[getIntent().getIntExtra("category", -1)];
 		context = this;
+		pd = new ProgressDialog(context);
 		db = Database.getInstance();
 		id = getIntent().getExtras().getLong("_id");
 		loadElements(id);
@@ -227,7 +231,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	String webservicespath= null;
 	Likes likes;
 	String repo_string;
-
+	ProgressDialog pd;
 	private void loadElements(long id) {
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
 		findViewById(R.id.downloading_name).setVisibility(View.GONE);
@@ -236,12 +240,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		progress.setIndeterminate(true);
 		Bundle b = new Bundle();
 		b.putLong("_id", id);
+		
 //		findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
 		getSupportLoaderManager().restartLoader(20, b, new LoaderCallbacks<ViewApk>() {
 
 			@Override
 			public Loader<ViewApk> onCreateLoader(int arg0, final Bundle arg1) {
-
+				pd.show();
+				pd.setMessage(getString(R.string.please_wait));
+				pd.setCancelable(false);
 				ViewApkLoader loader = new ViewApkLoader(ApkInfo.this) {
 
 					@Override
@@ -256,6 +263,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
 				AdView adView = (AdView)findViewById(R.id.adView);
 				adView.loadAd(new AdRequest());
+				pd.dismiss();
 				viewApk = arg1;
 				int installedVercode = db.getInstalledAppVercode(viewApk.getApkid());
 				
@@ -293,9 +301,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
 				((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
 				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
-				ImageLoader imageLoader = ImageLoader.getInstance(context);
-				imageLoader.DisplayImage(viewApk.getIcon(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
-
+//				ImageLoader imageLoader = ImageLoader.getInstance(context);
+//				imageLoader.DisplayImage(viewApk.getIcon(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
+				
+				ImageLoader.getInstance().displayImage(viewApk.getIcon(), (ImageView) findViewById(R.id.app_icon), (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+				
+				
+				
 				Comments comments = new Comments(context,webservicespath);
 				comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
 				likes = new Likes(context, webservicespath);
@@ -321,7 +333,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
 					Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
 					
-					EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase());
+					EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase(Locale.ENGLISH));
 					switch(ApkStatus){
 					case SCANNED:
 						((TextView) findViewById(R.id.app_badge_text)).setText("Trusted");
@@ -716,7 +728,7 @@ OnClickListener installListener = new OnClickListener() {
 							e.printStackTrace();
 						}
 					}else{
-						if(category.equals(Category.ITEMBASED)||category.equals(Category.TOP)){
+						if(category.equals(Category.ITEMBASED)||category.equals(Category.TOP)||category.equals(Category.TOPFEATURED)||category.equals(Category.EDITORSCHOICE)){
 							download = new ViewDownloadManagement(
 									viewApk.getPath(), 
 									viewApk, 
@@ -938,6 +950,7 @@ OnClickListener installListener = new OnClickListener() {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		
 		if(download!=null&&!download.isNull()){
 			try {
 				serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());

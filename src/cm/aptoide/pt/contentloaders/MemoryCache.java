@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import cm.aptoide.pt.Database;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -25,6 +27,14 @@ public class MemoryCache {
     private long size=0;//current allocated size
     private long limit=1000000;//max memory in bytes
 
+    private static class SingletonHolder { 
+        public static final MemoryCache INSTANCE = new MemoryCache();
+	}
+	
+	public static MemoryCache getInstance(){
+			return SingletonHolder.INSTANCE;
+	}
+    
     public MemoryCache(){
         //use 25% of available heap size
         setLimit(Runtime.getRuntime().maxMemory()/4);

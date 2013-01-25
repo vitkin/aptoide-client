@@ -19,6 +19,8 @@
  */
 package cm.aptoide.pt.adapters;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
@@ -28,7 +30,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
 import cm.aptoide.pt.R;
@@ -58,9 +59,9 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 	 * @param context
 	 * @param ImageLoader
 	 */
-	public NotDownloadedListAdapter(Context context, ImageLoader imageLoader){
+	public NotDownloadedListAdapter(Context context, ImageLoader imageLoader2){
 		this.context = context;
-		this.imageLoader = imageLoader;
+		this.imageLoader = imageLoader2;
 
 		layoutInflater = LayoutInflater.from(context);
 
@@ -92,7 +93,7 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 		ViewDownloadManagement download = notDownloaded.get(position);
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
-		imageLoader.DisplayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, context, download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode());
+		imageLoader.displayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, (download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode()).hashCode()+"");
 		rowViewHolder.failed_status.setText(download.getDownload().getFailReason().toString(context));
 
 		return convertView;

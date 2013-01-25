@@ -9,44 +9,79 @@ package cm.aptoide.pt.adapters;
 
 import java.util.ArrayList;
 
-import cm.aptoide.pt.ScreenshotsViewer;
-import cm.aptoide.pt.contentloaders.ScreenshotsImageLoader;
-import cm.aptoide.pt.R;
-
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.ScreenshotsViewer;
+
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 public class ViewPagerAdapterScreenshots extends PagerAdapter {
 
 	private Context context;
-	ScreenshotsImageLoader imageLoader;
+	ImageLoader imageLoader;
 	private String[] images;
 	ArrayList<String> url;
 	private String hashCode;
 	private boolean hd;
+	DisplayImageOptions options;
 	
 	public ViewPagerAdapterScreenshots(Context context,String[] images2,ArrayList<String> imagesurl, String hashCode, boolean hd) {
 		
 		this.context=context;
-		imageLoader = new ScreenshotsImageLoader(context);
+		imageLoader = ImageLoader.getInstance();
 		this.images=images2;
 		this.url=imagesurl;
 		this.hd=hd;
 		this.hashCode=hashCode.hashCode()+"";
 		System.out.println("hash:Method:"+hashCode + " " + this.hashCode);
+		options = new DisplayImageOptions.Builder()
+		 .displayer(new FadeInBitmapDisplayer(1000))
+		 .resetViewBeforeLoading()
+		 .cacheOnDisc()
+		 .build();
 	}
 	
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
 		final String hashCode=this.hashCode+"."+position;
-		View v = LayoutInflater.from(context).inflate(R.layout.screenshots, null);
-		imageLoader.DisplayImage(-1, images[position],(ImageView) v.findViewById(R.id.screenshot), context, hashCode);
+		final View v = LayoutInflater.from(context).inflate(R.layout.screenshots, null);
+		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshots_pb);
+		imageLoader.displayImage(images[position],(ImageView) v.findViewById(R.id.screenshot),options, new ImageLoadingListener() {
+			
+			@Override
+			public void onLoadingStarted() {
+				pb.setVisibility(View.VISIBLE);
+			}
+			
+			@Override
+			public void onLoadingFailed(FailReason failReason) {
+				((ImageView) v.findViewById(R.id.screenshot)).setImageResource(android.R.drawable.ic_delete);		
+			}
+			
+			@Override
+			public void onLoadingComplete(Bitmap loadedImage) {
+				pb.setVisibility(View.GONE);
+			}
+			
+			@Override
+			public void onLoadingCancelled() {
+				// TODO Auto-generated method stub
+				
+			}
+		}, hashCode);
 		container.addView(v);
 		if(!hd){
 			v.setOnClickListener(new OnClickListener() {

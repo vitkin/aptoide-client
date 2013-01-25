@@ -19,6 +19,8 @@
 */
 package cm.aptoide.pt;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -30,7 +32,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -41,7 +46,6 @@ import android.widget.TextView;
 import cm.aptoide.pt.adapters.DownloadedListAdapter;
 import cm.aptoide.pt.adapters.DownloadingListAdapter;
 import cm.aptoide.pt.adapters.NotDownloadedListAdapter;
-import cm.aptoide.pt.contentloaders.ImageLoader;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.EnumDownloadStatus;
 import cm.aptoide.pt.AIDLDownloadManager;
@@ -56,8 +60,6 @@ import cm.aptoide.pt.services.AIDLServiceDownloadManager;
  */
 public class DownloadManager extends Activity {
 	private boolean isRunning = false;
-	
-	private ImageLoader imageLoader;
 	
 	private LinearLayout downloading;
 	private DownloadingListAdapter downloadingAdapter;
@@ -267,7 +269,6 @@ public class DownloadManager extends Activity {
 	    	}
 			
 			setContentView(R.layout.download_manager);
-			imageLoader = ImageLoader.getInstance(this);
 
 			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
 			downloading.setVisibility(View.GONE);
@@ -295,15 +296,28 @@ public class DownloadManager extends Activity {
 	
 	private void continueLoading(){
 		ListView uploadingList = (ListView) findViewById(R.id.downloading_list);
-		downloadingAdapter = new DownloadingListAdapter(this, serviceManager, imageLoader);
+		downloadingAdapter = new DownloadingListAdapter(this, serviceManager, ImageLoader.getInstance());
 		uploadingList.setAdapter(downloadingAdapter);
 		
 		ListView uploadedList = (ListView) findViewById(R.id.downloaded_list);
-		downloadedAdapter = new DownloadedListAdapter(this, imageLoader);
+		downloadedAdapter = new DownloadedListAdapter(this, ImageLoader.getInstance());
 		uploadedList.setAdapter(downloadedAdapter);
 		
+		uploadedList.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				try {
+					serviceManager.callInstallApp(downloadedAdapter.getItem(position).getCache());
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		
 		ListView notUploadedList = (ListView) findViewById(R.id.failed_list);
-		notDownloadedAdapter = new NotDownloadedListAdapter(this, imageLoader);
+		notDownloadedAdapter = new NotDownloadedListAdapter(this, ImageLoader.getInstance());
 		notUploadedList.setAdapter(notDownloadedAdapter);
 		notUploadedList.setOnItemClickListener(new OnItemClickListener() {
 			@Override
@@ -317,6 +331,7 @@ public class DownloadManager extends Activity {
 		});
 		
 		prePopulateLists();
+		registerForContextMenu(uploadedList);
 	}
 	
 	@Override
@@ -328,6 +343,32 @@ public class DownloadManager extends Activity {
 		}
 		unbindService(serviceManagerConnection);
 		super.onDestroy();
+	}
+	
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		
+		menu.add(0,0,0,"Export APK");
+		
+		
+		super.onCreateContextMenu(menu, v, menuInfo);
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		
+		switch (item.getItemId()) {
+		case 0:
+			
+			break;
+
+		default:
+			break;
+		}
+		
+		return super.onContextItemSelected(item);
 	}
 	
 }

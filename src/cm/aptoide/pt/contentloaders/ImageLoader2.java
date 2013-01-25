@@ -41,9 +41,9 @@ import android.widget.ImageView;
 
 public class ImageLoader2 {
     
-    MemoryCache memoryCache=new MemoryCache();
+    MemoryCache memoryCache=MemoryCache.getInstance();
     FileCache fileCache;
-    private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
+    private Map<ImageView, String>  imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService; 
     Context context;
     boolean download = true;
@@ -68,15 +68,15 @@ public class ImageLoader2 {
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
         
-        if(bitmap!=null){
-            imageView.setImageBitmap(bitmap);
+//        if(bitmap!=null){
+//            imageView.setImageBitmap(bitmap);
         	
-        }else
-        {
-        	queuePhoto(l,url, imageView);
-//            imageView.setImageResource(android.R.drawable.sym_def_app_icon);
+//        }else
+//        {
+//        	queuePhoto(l,url, imageView);
+            imageView.setImageResource(android.R.drawable.sym_def_app_icon);
             
-        }
+//        }
     }
         
     private void queuePhoto(long l, String url, ImageView imageView)
@@ -132,7 +132,7 @@ public class ImageLoader2 {
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
 
             // Find the correct scale value. It should be the power of 2.
-            final int REQUIRED_SIZE = 500;
+            final int REQUIRED_SIZE = 300;
             int width_tmp = o.outWidth, height_tmp = o.outHeight;
             int scale = 1;
             while (true) {
@@ -226,13 +226,5 @@ public class ImageLoader2 {
     
     static ImageLoader2 imageLoader;
     
-    public static ImageLoader2 getInstance(Context context){
-    	
-    	if(imageLoader==null){
-    		imageLoader=new ImageLoader2(context);
-    	}
-    	
-    	return imageLoader;
-    }
 
 }

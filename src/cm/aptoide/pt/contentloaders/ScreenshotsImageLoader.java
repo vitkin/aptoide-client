@@ -43,14 +43,14 @@ import android.widget.ImageView;
 
 public class ScreenshotsImageLoader {
     
-    MemoryCache memoryCache=new MemoryCache();
+    MemoryCache memoryCache=MemoryCache.getInstance();
     FileCache fileCache;
-    private Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
+    private static Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
     ExecutorService executorService; 
     Context context;
     boolean download = true;
 	
-    public ScreenshotsImageLoader(Context context){
+    private ScreenshotsImageLoader(Context context){
         fileCache=new FileCache(context);
         executorService=Executors.newFixedThreadPool(5);
         SharedPreferences sPref = context.getSharedPreferences("aptoide_prefs", Context.MODE_PRIVATE);

@@ -7,23 +7,17 @@
  ******************************************************************************/
 package cm.aptoide.pt.adapters;
 
-import android.content.ComponentName;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.widget.CursorAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import cm.aptoide.pt.Database;
-import cm.aptoide.pt.contentloaders.ImageLoader;
-import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
@@ -35,11 +29,9 @@ public class UpdatesAdapter extends CursorAdapter {
 	private AIDLServiceDownloadManager serviceDownloadManager = null;
 
 	
-	private ImageLoader loader;
 
 	public UpdatesAdapter(Context context, Cursor c, int flags) {
 		super(context, c, flags);
-		loader = ImageLoader.getInstance(context);
 	}
 	
 	/**
@@ -81,7 +73,7 @@ public class UpdatesAdapter extends CursorAdapter {
 		String iconspath = cursor.getString(9)+cursor.getString(4);
 		final String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode")));
 		holder.name.setText(name);
-		loader.DisplayImage(iconspath, holder.icon, context,hash);
+		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash.hashCode()+"");
 //		 try{
 //	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
 //	        }catch (Exception e) {
