@@ -10,9 +10,10 @@
     android:id="@+id/pkg"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/ab_solid_shadow_holo"
-    android:padding="10dp"
-    android:orientation="horizontal" >
+    android:background="@drawable/list_selector_holo_light"
+    android:padding="10dp" 
+    android:orientation="horizontal"
+    >
 
     <LinearLayout
         android:id="@+id/app_details"
@@ -41,23 +42,66 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <TextView
-                android:id="@+id/tv_apkid"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/darker_gray" />
-
-            <TextView
-                android:id="@+id/tv_vercode"
+            <LinearLayout
+                android:id="@+id/apk_id_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/tv_apkid_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/apk_id"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/darker_gray" />
+
+                <TextView
+                    android:id="@+id/tv_apkid"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/darker_gray" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/vercode_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_weight="2"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/tv_vercode_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:text="@string/vercode"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/darker_gray" />
+
+                <TextView
+                    android:id="@+id/tv_vercode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@android:color/darker_gray" />
+            </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>

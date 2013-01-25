@@ -24,7 +24,7 @@
                 android:defaultValue="true" />
     </PreferenceScreen>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/setting_hwfiltertitle" >
+    <PreferenceCategory android:title="@string/setting_filters_title" >
         <Preference
             android:key="hwspecs"
             android:summary="@string/setting_hwspecstitle"
@@ -40,6 +40,9 @@
             android:key="matureChkBox"
             android:summary="@string/setting_dont_show_mature_content"
             android:title="@string/setting_mature_filtering" />
+        <Preference
+            android:key="showexcludedupdates"
+            android:title="@string/excluded_updates" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/setting_schdwntitle" >
         <CheckBoxPreference
@@ -55,10 +58,6 @@
             android:key="clearcache"
             android:title="@string/clearcache_title" />
     </PreferenceCategory>
-     <PreferenceCategory android:title="@string/showexcludedupdates" >
-        <Preference
-            android:key="showexcludedupdates"
-            android:title="@string/showexcludedupdates_title" />
-    </PreferenceCategory>
+
 
 </PreferenceScreen>

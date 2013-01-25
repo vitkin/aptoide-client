@@ -27,6 +27,8 @@
 	<string name="category2">Category 2</string>
 	<string name="add_store">Add Store</string>
 	<string name="version">Version:</string>
+	<string name="apk_id">APK ID:</string>
+	<string name="vercode">Version code:</string>
 	<string name="empty_store_list">You don\'t have any stores.</string>
 	<string name="new_store">Add Store</string>
 	<string name="add_repo_private">Private</string>
@@ -55,7 +57,8 @@
    	<string name="remove_from_excluded_updates_list">Remove from Excluded Updates list</string>
    	<string name="excluded_updates">Excluded Updates</string>
    	<string name="no_excluded_updates">No Excluded Updates</string>
-    <string name="who_downloaded_this">Who downloaded this app also downloaded:</string>
+	<string name="no_excluded_updates_selected">No Excluded Updates selected</string>
+   	<string name="who_downloaded_this">Who downloaded this app also downloaded:</string>
     <string name="submit">Submit</string>
     <string name="body">Body</string>
     <string name="subject">Name</string>
@@ -141,7 +144,7 @@
    	<string name="setting_3g">3G</string>
    	<string name="setting_4g">4G</string>
    	<string name="setting_ethernet">Ethernet</string>
-    <string name="setting_hwfiltertitle">Hardware Filters</string>
+    <string name="setting_filters_title">Filters</string>
     <string name="setting_hwspecstitle">Hardware Specs</string>
     <string name="setting_sdk_version">SDK Version</string>
     <string name="setting_screen_size">Screen Size</string>

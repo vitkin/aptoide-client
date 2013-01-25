@@ -112,7 +112,7 @@ public class ExcludedUpdatesActivity extends Activity {
 					redraw();
 				} else {
 					Toast toast= Toast.makeText(ExcludedUpdatesActivity.this, 
-							R.string.no_excluded_updates, Toast.LENGTH_SHORT);  
+							R.string.no_excluded_updates_selected, Toast.LENGTH_SHORT);  
 					toast.show();
 				}
 			}
@@ -120,7 +120,6 @@ public class ExcludedUpdatesActivity extends Activity {
 		lv.setAdapter(adapter);
 		
 
-//		registerForContextMenu(getListView());
 	}
 
 	private boolean isAllChecked(){
@@ -145,7 +144,6 @@ public class ExcludedUpdatesActivity extends Activity {
 			ExcludedUpdate excludedUpdate = new ExcludedUpdate(c.getString(1), c.getString(0), c.getInt(2));
 			excludedUpdates.add(excludedUpdate);
 		}
-//		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, excludedUpdates));
 		adapter.notifyDataSetChanged();
 		
 		Log.d("ExcludedUpdatesActivity","excluded updates: " + excludedUpdates.toString());
@@ -156,20 +154,6 @@ public class ExcludedUpdatesActivity extends Activity {
 			tv_no_excluded_downloads.setVisibility(View.VISIBLE);
 		}
 		
-	}
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		menu.add(getString(R.string.remove_from_excluded_updates_list));
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		db.deleteFromExcludeUpdate(excludedUpdates.get(item.getItemId()).name, excludedUpdates.get(item.getItemId()).vercode);
-		excludedUpdates.clear();
-		redraw();
-		return super.onContextItemSelected(item);
 	}
 
 

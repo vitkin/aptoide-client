@@ -65,6 +65,15 @@
                     android:textColor="@android:color/darker_gray" />
             </LinearLayout>
         </RelativeLayout>
+
+        <ProgressBar
+            android:id="@+id/pb_store_loading"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="2dp" />
+
     </LinearLayout>
 
 </LinearLayout><!--

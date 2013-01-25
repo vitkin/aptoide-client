@@ -8,7 +8,7 @@
   <string name="WidgetProvider_timestamp_just_now">Agora mesmo</string>
   <string name="menu_context_remove">Remover</string>
   <string name="menu_context_reparse">Recarregar</string>
-  <string name="preparing_to_load">A preparar para carregar, por favor espere..</string>
+  <string name="preparing_to_load">A preparar para carregar, por favor aguarde...</string>
   <string name="start_loading">A carregar...</string>
   <string name="loading_failed">Carregamento falhou, tente novamente</string>
   <string name="error_latest_apk">Não foi encontrado nenhum APK na base de dados. A Store ainda está a carregar?</string>

@@ -105,6 +105,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -2223,52 +2224,32 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		public void bindView(View view, Context context, Cursor cursor) {
 			switch (depth) {
 			case STORES:
-				String hashcode = cursor.getString(
-						cursor.getColumnIndex("avatar_url")).hashCode()
-						+ "";
+				String hashcode = cursor.getString(cursor.getColumnIndex("avatar_url")).hashCode()+ "";
 				com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
 						cursor.getString(cursor.getColumnIndex("avatar_url")),
 						(ImageView) view.findViewById(R.id.avatar),
 						hashcode);
-				((TextView) view.findViewById(R.id.store_name)).setText(cursor
-						.getString(cursor.getColumnIndex("name")));
-
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(
-						"PARSED")) {
-					((TextView) view.findViewById(R.id.store_dwn_number))
-							.setText(cursor.getString(cursor
-									.getColumnIndex("downloads"))
-									+ " downloads");
+				((TextView) view.findViewById(R.id.store_name)).setText(cursor.getString(cursor.getColumnIndex("name")));
+				((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
+				
+				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSED")) {
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
+					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
 				}
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(
-						"QUEUED")) {
-					((TextView) view.findViewById(R.id.store_dwn_number))
-							.setText(getString(R.string.preparing_to_load));
+				if (cursor.getString(cursor.getColumnIndex("status")).equals("QUEUED")) {
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText(getString(R.string.preparing_to_load));
+					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
 				}
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(
-						"PARSING")) {
-					((TextView) view.findViewById(R.id.store_dwn_number))
-					.setText(cursor.getString(cursor
-							.getColumnIndex("downloads"))
-							+ " downloads");
+				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSING")) {
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
+					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.VISIBLE);
 				}
-				// else {
-				// ((TextView) view.findViewById(R.id.store_dwn_number))
-				// .setText(cursor.getString(cursor.getColumnIndex("status"))
-				// + " - "
-				// + cursor.getString(cursor.getColumnIndex("downloads"))
-				// + " downloads");
-				// }
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(
-						State.FAILED.name())){
-					((TextView) view.findViewById(R.id.store_dwn_number))
-					.setText(R.string.loading_failed);
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name())){
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText(R.string.loading_failed);
+					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
 				}
 						
-				if (cursor.getString(cursor.getColumnIndex("status")).equals(
-						State.FAILED.name())
-						|| cursor.getString(cursor.getColumnIndex("status"))
-								.equals(State.PARSED.name())) {
+				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name()) || cursor.getString(cursor.getColumnIndex("status")).equals(State.PARSED.name())) {
 					view.setTag(1);
 				}
 				break;
