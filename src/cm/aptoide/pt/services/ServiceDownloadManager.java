@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt.services;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,6 +31,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.PowerManager;
@@ -454,6 +456,7 @@ public class ServiceDownloadManager extends Service {
 	 */
 	public void startDownload(final ViewDownloadManagement viewDownload){
 		Log.d("Aptoide", "download being started *************** "+viewDownload.hashCode());
+		checkDirectorySize(Environment.getExternalStorageDirectory().getAbsolutePath()+"/apks");
 		ViewCache cache = viewDownload.getCache();
 		if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 			installApp(cache);
@@ -494,6 +497,48 @@ public class ServiceDownloadManager extends Service {
 		}
 	}
 	
+	double getDirSize(File dir) {
+		double size = 0;
+		if (dir.isFile()) {
+			size = dir.length();
+		} else {
+			File[] subFiles = dir.listFiles();
+			for (File file : subFiles) {
+				if (file.isFile()) {
+					size += file.length();
+				} else {
+					size += this.getDirSize(file);
+				}
+
+			}
+		}
+
+		return size;
+	}
+	
+	private void checkDirectorySize(String dirPath) {
+		File dir = new File(dirPath);
+		double size = getDirSize(dir)/1024/1024;
+		
+		if(size>=200){
+			File[] files = dir.listFiles();
+			long latestTime = System.currentTimeMillis();
+			long currentTime = 0;
+			File fileToDelete = null;
+			for (File file : files){
+				currentTime = file.lastModified();
+				if(currentTime<latestTime){
+					latestTime=currentTime;
+					fileToDelete = file;
+				}
+			}
+			if(fileToDelete!=null){
+				fileToDelete.delete();
+			}
+			checkDirectorySize(dirPath);
+		}
+	}
+
 	/**
 	 * pauseDownload, to be called by ViewDownloadManagement.pause()
 	 * 
