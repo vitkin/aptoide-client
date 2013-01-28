@@ -1615,6 +1615,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
 				pb = (TextView) availableView.findViewById(R.id.loading_pb);
+				pb.setText(R.string.add_store_button_below);
 				addStoreButton = availableView.findViewById(R.id.add_store);
 				addStoreButton.setOnClickListener(addStoreListener);
 
@@ -2161,6 +2162,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			joinStores.setVisibility(View.INVISIBLE);
 		}
 
+		if (availableListView.getAdapter().getCount() > 0){
+			pb.setVisibility(View.GONE);
+		}else{
+			pb.setVisibility(View.VISIBLE);
+			pb.setText(R.string.add_store_button_below);
+		}
 	}
 
 	private void refreshAvailableList(boolean setAdapter) {
@@ -2179,6 +2186,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		refreshClick = true;
 		availableAdapter.changeCursor(null);
 		pb.setVisibility(View.VISIBLE);
+		pb.setText(R.string.please_wait);
 		if (setAdapter) {
 			availableListView.setAdapter(availableAdapter);
 		}

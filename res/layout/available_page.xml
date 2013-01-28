@@ -10,7 +10,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="right"
+    android:gravity="top"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -59,7 +59,7 @@
         android:layout_centerInParent="true"
         android:text="@string/please_wait"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:visibility="gone" >
+        android:textColor="@android:color/darker_gray" >
     </TextView>
 
 </RelativeLayout>
