@@ -165,7 +165,7 @@
   <string name="search_log">Procurar</string>
   <string name="search_stores">noutras Lojas</string>
   <string name="no_repo">Adicionar uma Loja!</string>
-  <string name="myrepo_alrt">Parece que você não adicionou nenhuma loja.\nNós sugerimos que use a nossa.\nVocê deseja adicionar a nossa loja?\n(Você pode procurar online por mais lojas)\n\n</string>
+  <string name="myrepo_alrt">Pode procurar por lojas online. Nós sugerimos que use a nossa loja oficial.\n\nDeseja adicionar?</string>
   <string name="error_on_update">O processo de actualização não pode ser concluído nas lojas seguintes:</string>
   <string name="updating_norepos">Não existem lojas activas na sua lista.\nPor favor, adicione uma loja ou active pelo menos uma das que você já possuí.</string>
   <string name="update_done_msg1">A lojas foram actualizadas com sucesso.</string>

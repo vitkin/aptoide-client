@@ -343,6 +343,26 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					case SCANNED:
 						((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.trusted));
 						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
+						LinearLayout badge_layout = (LinearLayout) findViewById(R.id.badge_layout);
+						badge_layout.setOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_trusted, null);
+								Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
+								final AlertDialog trustedDialog = dialogBuilder.create();
+								trustedDialog.setIcon(R.drawable.badge_scanned);
+								trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
+								trustedDialog.setCancelable(true);
+								Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
+								okButton.setOnClickListener(new View.OnClickListener(){
+									@Override
+									public void onClick(View v) {
+										trustedDialog.dismiss();
+									}
+								});
+								trustedDialog.show();
+							}
+						});
 						break;
 //					case UNKNOWN:
 //						((TextView) findViewById(R.id.app_badge_text)).setText("Unknown");
@@ -360,26 +380,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						break;
 					}
 					
-					LinearLayout badge_layout = (LinearLayout) findViewById(R.id.badge_layout);
-					badge_layout.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_trusted, null);
-							Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
-							final AlertDialog trustedDialog = dialogBuilder.create();
-							trustedDialog.setIcon(R.drawable.badge_scanned);
-							trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
-							trustedDialog.setCancelable(true);
-							Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
-							okButton.setOnClickListener(new View.OnClickListener(){
-								@Override
-								public void onClick(View v) {
-									trustedDialog.dismiss();
-								}
-							});
-							trustedDialog.show();
-						}
-					});
+					
 				}catch (Exception e){
 					e.printStackTrace();
 				}

@@ -92,7 +92,7 @@
   <string name="search_log">Buscar</string>
   <string name="search_stores">en otros Repositorios</string>
   <string name="no_repo">Añade un repositorio!</string>
-  <string name="myrepo_alrt">Parece que no has añadido nigún repositorio.\nTe sugerimos que utilices los nuestros.\nTe gustaría añadirlos?\n(Puedes buscar más repositorios en línea)\n\n</string>
+  <string name="myrepo_alrt">Puedes buscar repositorios en línea. Te sugerimos que utilices los nuestros official repositorio.\n\nTe gustaría añadirlos?</string>
   <string name="error_on_update">El proceso de actualización no pudo ser completado en los siguientes \"\n\"repositorios:\n</string>
   <string name="updating_norepos">No hay repositorios activados en tu lista.\nPor favor añade repositorios o activa al menos uno de los que ya tienes.</string>
   <string name="update_done_msg1">Repositorios actualizados con éxito.</string>

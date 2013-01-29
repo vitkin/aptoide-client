@@ -214,7 +214,7 @@
     
     <string name="no_repo">Add a store!</string>
     
-    <string name="myrepo_alrt">It looks like you don\'t have any added store.\nWe suggest you use ours.\nDo you want to add our store?\n(You can search for more stores online)\n\n</string>
+    <string name="myrepo_alrt">You can search for stores online or you can add our official store.\n\nDo you want to add our store?</string>
     <string name="error_on_update">The update process could not be completed on the following store:</string>
     <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
     <string name="update_done_msg1">Stores updated successfully.</string>

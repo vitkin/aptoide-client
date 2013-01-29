@@ -118,7 +118,7 @@
   <string name="search_log">Chercher</string>
   <string name="search_stores">dans les autres dépôts</string>
   <string name="no_repo">Ajouter un dépôt!</string>
-  <string name="myrepo_alrt">Il semble que vous n\'ayez pas de dépôt.\nNous vous proposons le nôtre.\nEtes-vous d\'accord?\n(Vous pouvez chercher des dépôts sur internet.)\n\n</string>
+  <string name="myrepo_alrt">Vous pouvez chercher des dépôts sur internet. Nous vous proposons le nôtre official dépôt.\n\nEtes-vous d\'accord?</string>
   <string name="error_on_update">Le processus de MàJ n\'est pas terminé dans le dépôt suivant:</string>
   <string name="updating_norepos">Aucun dépôt activé dans la liste.\nAjouter ou activer un dépôt, svp.</string>
   <string name="update_done_msg1">MàJ dépôt réussie</string>

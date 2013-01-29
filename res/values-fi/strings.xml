@@ -118,7 +118,7 @@
   <string name="search_log">Haku</string>
   <string name="search_stores">toisista kaupoista</string>
   <string name="no_repo">Lisää kauppa!</string>
-  <string name="myrepo_alrt">Näyttää siltä, ettei sinulla ole yhtäkään lisättyä kauppaa.\nSuosittelemme, että lisäät omamme.\nHaluaisitko lisätä kauppamme?\n(Voit hakea lisää kauppoja internetistä)\n\n</string>
+  <string name="myrepo_alrt">Voit hakea kauppoja internetistä. Suosittelemme, että lisäät omamme.\n\nHaluaisitko lisätä kauppamme?</string>
   <string name="error_on_update">Päivitysprosessi ei voitu suorittaa seuraaville kaupoille:</string>
   <string name="updating_norepos">Luettelossasi ei ole käytössä olevia kauppoja.\nLisää kauppa tai ota käyttöön ainakin yksi ennestään lisäämäsi kauppa.</string>
   <string name="update_done_msg1">Kaupat päivitetty onnistuneesti.</string>

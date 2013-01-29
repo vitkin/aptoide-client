@@ -104,7 +104,7 @@
   <string name="search_log">Ara</string>
   <string name="search_stores">başka mağazalarda</string>
   <string name="no_repo">Bir mağaza ekleyin!</string>
-  <string name="myrepo_alrt">Hiçbir mağaza kurulu değil gibi görünüyor.\nBizim mağazamızı eklemenizi öneririz.\nMağazamızı eklemek ister misiniz?\n(Çevrim içinde ilâve mağazalar arayabilirsiniz)\n\n</string>
+  <string name="myrepo_alrt">Çevrim içinde ilâve mağazalar arayabilirsiniz. Bizim mağazamızı eklemenizi öneririz.\n\nMağazamızı eklemek ister misiniz?</string>
   <string name="error_on_update">Güncelleme işlemi şu mağazada tamamlanamadı:</string>
   <string name="updating_norepos">Listenizde hiçbir faal mağaza bulunmamaktadır.\nBir mağaza ekleyiniz ya da en azından bulunan bir mağazayı etkinleştiriniz.</string>
   <string name="update_done_msg1">Mağazalar başarılı olarak güncellendi.</string>

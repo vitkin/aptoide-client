@@ -118,7 +118,7 @@
   <string name="search_log">Căutare</string>
   <string name="search_stores">în alte magazine</string>
   <string name="no_repo">Adaugă magazin!</string>
-  <string name="myrepo_alrt">Se pare că nu aveţi nici un magazin adăugat.\nVă sugerăm să le folosiţi pe ale noastre.\nDoriţi să adăugaţi magazinul nostru.\n(Puteţi căuta mai multe magazine online)\n\n</string>
+  <string name="myrepo_alrt">Puteţi căuta mai multe magazine online. Vă sugerăm să le folosiţi pe ale noastre.\n\nDoriţi să adăugaţi magazinul nostru?</string>
   <string name="error_on_update">Procesul de actualizare nu s-a putut finaliza la următoarele magazine:</string>
   <string name="updating_norepos">Nu sânt magazine active în lista dvs.\nVă rugăm adăugaţi un magazin sau activaţi cel puţin unul din cele pe care le aveţi.</string>
   <string name="update_done_msg1">Magazine actualizate cu succes.</string>

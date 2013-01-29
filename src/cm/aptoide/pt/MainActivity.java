@@ -1844,8 +1844,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				} else if (db.getStores(false).getCount() == 0) {
 					final AlertDialog alertDialog = new AlertDialog.Builder(
 							mContext).create();
-					alertDialog.setMessage(getString(R.string.myrepo_alrt)
+					alertDialog.setMessage(getString(R.string.myrepo_alrt) + "\n"
 							+ "http://apps.store.aptoide.com/");
+					alertDialog.setIcon(android.R.drawable.ic_menu_add);
 					alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes",
 							new DialogInterface.OnClickListener() {
 

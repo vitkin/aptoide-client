@@ -116,7 +116,7 @@
   <string name="search_log">Pesquisa</string>
   <string name="search_stores">em outras Lojas</string>
   <string name="no_repo">Adicione uma loja!</string>
-  <string name="myrepo_alrt">Parece que você não tem nenhuma loja adicionada.\nSugerimos que utilize a nossa.\nDeseja adicionar nossa loja?\n(Você pode pesquisar por mais lojas online)\n\n</string>
+  <string name="myrepo_alrt">Você pode pesquisar por lojas online. Sugerimos que utilize a nossa loja oficial.\n\nDeseja adicionar nossa loja?</string>
   <string name="error_on_update">O processo de atualização não pôde ser completado na seguinte loja:</string>
   <string name="updating_norepos">Não há lojas habilitadas na sua lista.\nPor favor adicione uma loja para habilitar pelo menos uma que você já tenha.</string>
   <string name="update_done_msg1">Atualização de lojas bem sucedida.</string>

@@ -118,7 +118,7 @@
   <string name="search_log">Cerca</string>
   <string name="search_stores">a altres repositoris</string>
   <string name="no_repo">No hi ha repositoris!</string>
-  <string name="myrepo_alrt">Sembla que no tens cap respositori\nEt suggerim que utilitzis el nostre.\nVols afegir-lo?\n(Pots trobar més repositoris en línia)\n\n</string>
+  <string name="myrepo_alrt">Pots trobar repositoris en línia. Et suggerim que utilitzis el nostre official repositori.\n\nVols afegir-lo?</string>
   <string name="error_on_update">El procés d\'actualització no s\'ha pogut realitzar pel repositori:</string>
   <string name="updating_norepos">No hi ha repositoris actius a la teva llista.\nSi us plau, afegeix un repositori o activa\'n un que ja tinguis</string>
   <string name="update_done_msg1">Repositoris actualitzats correctament.</string>

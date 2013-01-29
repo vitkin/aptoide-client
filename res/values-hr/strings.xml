@@ -118,7 +118,7 @@
   <string name="search_log">Pretraga</string>
   <string name="search_stores">u drugim Store-ovima</string>
   <string name="no_repo">Dodaj store</string>
-  <string name="myrepo_alrt">Izgleda da niste dodali store.Preporučujemo da koristite naš.Želite li dodati naš store?(Možete tražiti store-ove online)</string>
+  <string name="myrepo_alrt">Možete tražiti store-ove online. Preporučujemo da koristite naš.\n\nŽelite li dodati naš store?</string>
   <string name="error_on_update">Proces update-anja se nije mogao izvršiti na sljedečem store-u:</string>
   <string name="updating_norepos">Nema omogučenih store-ova na vašoj listi.Molimo dodajte store ili uključite bar jedan koji več imate.</string>
   <string name="update_done_msg1">Store-ovi update-ani uspješno.</string>
