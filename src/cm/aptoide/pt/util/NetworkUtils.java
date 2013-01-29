@@ -24,6 +24,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
 import cm.aptoide.pt.R;
@@ -45,7 +46,7 @@ public class NetworkUtils {
 		
 		BufferedInputStream bis = new BufferedInputStream(connection.getInputStream(), 8 * 1024);
 		
-		Log.i("Aptoide", "Getting: "+url.toString());
+		if(ApplicationAptoide.DEBUG_MODE)Log.i("Aptoide-NetworkUtils", "Getting: "+url.toString());
 		connection.setConnectTimeout(TIME_OUT);
 		connection.setReadTimeout(TIME_OUT);
 		return bis;
@@ -56,7 +57,7 @@ public class NetworkUtils {
 		NetworkUtils.TIME_OUT=timeout;
 	}
 	
-	public static int checkServerConnection(final String string, final String username, final String password) {
+	public int checkServerConnection(final String string, final String username, final String password) {
 		try {
 
 			HttpURLConnection client = (HttpURLConnection) new URL(string
@@ -70,7 +71,7 @@ public class NetworkUtils {
 			}
 			client.setConnectTimeout(TIME_OUT);
 			client.setReadTimeout(TIME_OUT);
-			Log.d("Aptoide-NetworkUtils-checkServerConnection", "Checking on: "+client.getURL().toString());
+			if(ApplicationAptoide.DEBUG_MODE)Log.i("Aptoide-NetworkUtils-checkServerConnection", "Checking on: "+client.getURL().toString());
 			if (client.getContentType().equals("application/xml")) {
 				return 0;
 			} else {
@@ -135,29 +136,29 @@ public class NetworkUtils {
 		if(permissions.isWiFi()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
-				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+connectionAvailable);
+				if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+connectionAvailable);
 			} catch (Exception e) { }
 		} 
 		if(permissions.isWiMax()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
-				Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+connectionAvailable);
+				if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+connectionAvailable);
 			} catch (Exception e) { }
 		} 
 		if(permissions.isMobile()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
-				Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+connectionAvailable);
+				if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable mobile: "+connectionAvailable);
 			} catch (Exception e) { }
 		}
 		if(permissions.isEthernet()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
-				Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+connectionAvailable);
+				if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable ethernet: "+connectionAvailable);
 			} catch (Exception e) { }
 		}
 
-		Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
+		if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
 		return connectionAvailable;
 	}
 	

@@ -13,21 +13,18 @@ import java.text.DecimalFormat;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.CheckBoxPreference;
+import android.preference.EditTextPreference;
 import android.preference.Preference;
+import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.view.Gravity;
+import android.text.InputType;
+import android.widget.EditText;
 import android.widget.Toast;
 import cm.aptoide.pt.preferences.ManagerPreferences;
-import cm.aptoide.pt.views.ViewIconDownloadPermissions;
-import cm.aptoide.pt.R;
 
 public class Settings extends PreferenceActivity{
 	String aptoide_path = Environment.getExternalStorageDirectory()+"/.aptoide/";
@@ -80,6 +77,22 @@ public class Settings extends PreferenceActivity{
 		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
 		Preference showExcluded = (Preference) findPreference("showexcludedupdates");
 		showExcluded.setIntent(new Intent(getBaseContext(), ExcludedUpdatesActivity.class));
+		
+		EditTextPreference maxFileCache = (EditTextPreference) findPreference("maxFileCache");
+		maxFileCache.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				
+				System.out.println(preference);
+				System.out.println(newValue);
+				
+				return false;
+			}
+		});
+		
+		maxFileCache.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
+		
 	}
 
 	public class DeleteDir extends AsyncTask<File, Void, Void>{

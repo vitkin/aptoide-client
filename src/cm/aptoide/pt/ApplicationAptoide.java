@@ -19,12 +19,19 @@
 */
 package cm.aptoide.pt;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URLConnection;
 
 import android.app.Application;
 import android.content.Context;
 import android.os.Environment;
 import cm.aptoide.pt.preferences.ManagerPreferences;
+import cm.aptoide.pt.util.NetworkUtils;
+import cm.aptoide.pt.views.ViewIconDownloadPermissions;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -32,8 +39,10 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.FlushedInputStream;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 /**
  * ApplicationAptoide, centralizes, statically, calls to instantiated objects
@@ -45,28 +54,48 @@ public class ApplicationAptoide extends Application {
 
 	private ManagerPreferences managerPreferences;
 	private static Context context;
+	public static boolean DEBUG_MODE = false;
 	
 	@Override
 	public void onCreate() {
 		managerPreferences = new ManagerPreferences(getApplicationContext());
 		setContext(getApplicationContext());
 		 // Create global configuration and initialize ImageLoader with this configuration
-		DisplayImageOptions options = new DisplayImageOptions.Builder()
 		
+		File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/debug.log");
+		
+		if(file.exists()){
+			DEBUG_MODE = true;
+		}
+		
+		DisplayImageOptions options = new DisplayImageOptions.Builder()
 															 .displayer(new FadeInBitmapDisplayer(1000))
 															 .showStubImage(android.R.drawable.sym_def_app_icon)
 															 .resetViewBeforeLoading()
 															 .cacheInMemory()
 															 .cacheOnDisc()
 															 .build();
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-        															  .defaultDisplayImageOptions(options)
-        															  .enableLogging()
-        															  .discCache(new UnlimitedDiscCache(new File(Environment.getExternalStorageDirectory().getPath()+"/.aptoide/icons/")))
-        															  .build();
-        
-        
+		
+		ImageLoaderConfiguration config;
+		
+		if(DEBUG_MODE){
+			config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+																				  .defaultDisplayImageOptions(options)
+																				  .discCache(new UnlimitedDiscCache(new File(Environment.getExternalStorageDirectory().getPath()+"/.aptoide/icons/")))
+																				  .enableLogging()
+																				  .imageDownloader(new ImageDownloaderWithPermissions())
+																				  .build();
+		}else{
+			config = new ImageLoaderConfiguration.Builder(getApplicationContext())
+																				  .defaultDisplayImageOptions(options)
+																				  .discCache(new UnlimitedDiscCache(new File(Environment.getExternalStorageDirectory().getPath()+"/.aptoide/icons/")))
+																				  .imageDownloader(new ImageDownloaderWithPermissions())
+																				  .build();
+		}
+		
         ImageLoader.getInstance().init(config);
+        
+        
 		super.onCreate();
 	}
 	
@@ -81,7 +110,41 @@ public class ApplicationAptoide extends Application {
 		return context;
 	}
 	
-	
+	public class ImageDownloaderWithPermissions extends ImageDownloader{
+		
+		/** {@value} */
+		public static final int DEFAULT_HTTP_CONNECT_TIMEOUT = 5 * 1000; // milliseconds
+		/** {@value} */
+		public static final int DEFAULT_HTTP_READ_TIMEOUT = 20 * 1000; // milliseconds
+
+		private int connectTimeout;
+		private int readTimeout;
+
+		public ImageDownloaderWithPermissions() {
+			this(DEFAULT_HTTP_CONNECT_TIMEOUT, DEFAULT_HTTP_READ_TIMEOUT);
+		}
+
+		public ImageDownloaderWithPermissions(int connectTimeout, int readTimeout) {
+			this.connectTimeout = connectTimeout;
+			this.readTimeout = readTimeout;
+		}
+
+		@Override
+		public InputStream getStreamFromNetwork(URI imageUri) throws IOException {
+			
+	        boolean download = NetworkUtils.isPermittedConnectionAvailable(context, managerPreferences.getIconDownloadPermissions());
+			
+	        if(download){
+	        	URLConnection conn = imageUri.toURL().openConnection();
+				conn.setConnectTimeout(connectTimeout);
+				conn.setReadTimeout(readTimeout);
+				return new FlushedInputStream(new BufferedInputStream(conn.getInputStream(), BUFFER_SIZE));
+	        }else{
+	        	return null;
+	        }
+		}
+
+	}
 
 	/**
 	 * @param context the context to set

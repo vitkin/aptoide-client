@@ -57,6 +57,11 @@
         <Preference
             android:key="clearcache"
             android:title="@string/clearcache_title" />
+
+        <EditTextPreference
+            android:title="@string/settings_maxFileCache_title"
+            android:key="maxFileCache" />
+        
     </PreferenceCategory>
 
 

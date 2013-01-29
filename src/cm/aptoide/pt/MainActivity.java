@@ -391,7 +391,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		new Thread(new Runnable() {
 
 			public void run() {
-//				loadUIEditorsApps();
+				loadUIEditorsApps();
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
@@ -439,10 +439,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					NetworkUtils utils = new NetworkUtils();
 					sp.parse(
 							new BufferedInputStream(
-									utils
-											.getInputStream(
-													new URL(
-															"http://apps.store.aptoide.com/top.xml"),
+									utils.getInputStream(new URL("http://apps.store.aptoide.com/top.xml"),
 													null, null, mContext),
 									8 * 1024), new HandlerFeaturedTop(server));
 					loadUItopapps();
@@ -734,6 +731,34 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 
 	}
+	
+	public class UpdateStoreCredentialsListener implements
+	DialogInterface.OnClickListener {
+		private String url;
+		private View dialog;
+
+		public UpdateStoreCredentialsListener(String string,
+				View credentialsDialogView) {
+			this.url = string;
+			this.dialog = credentialsDialogView;
+		}
+
+		@Override
+		public void onClick(DialogInterface arg0, int which) {
+			db.updateServerCredentials(url, ((EditText) dialog.findViewById(R.id.username))
+					.getText().toString(),
+					((EditText) dialog.findViewById(R.id.password)).getText()
+							.toString());
+			try {
+				service.parseServer(db, db.getServer(url));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 
 	public void getAllRepoStatus() {
 		final HashMap<String, Long> serversToParse = new HashMap<String, Long>();
@@ -849,7 +874,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				e.printStackTrace();
 			}
 		}
-		final int response = NetworkUtils.checkServerConnection(uri_str,
+		NetworkUtils utils = new NetworkUtils();
+		final int response = utils.checkServerConnection(uri_str,
 				username, password);
 		final String uri = uri_str;
 		switch (response) {
@@ -1385,6 +1411,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	};
 
 	private boolean registered = false;
+
+	private BroadcastReceiver storePasswordReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			System.out.println("server url " + intent.getExtras().getString("url"));
+			showUpdateStoreCredentialsDialog(intent.getStringExtra("url"));
+		}
+	};
 	
 
 	@Override
@@ -1445,10 +1480,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						.getDefaultSharedPreferences(mContext);
 				editor = PreferenceManager
 						.getDefaultSharedPreferences(mContext).edit();
-
-				
-				
-				
 				
 				if (!sPref.contains("matureChkBox")) {
 
@@ -1474,6 +1505,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				}
 				editor.commit();
 				File file = new File(LOCAL_PATH + "/apks");
+				if (!file.exists()) {
+					file.mkdirs();
+				}
+				
+				file = new File(LOCAL_PATH + "/icons");
 				if (!file.exists()) {
 					file.mkdirs();
 				}
@@ -1525,6 +1561,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				registerReceiver(updatesReceiver, new IntentFilter("update"));
 				registerReceiver(statusReceiver, new IntentFilter("status"));
 				registerReceiver(loginReceiver, new IntentFilter("login"));
+				registerReceiver(storePasswordReceiver , new IntentFilter("401"));
 				registerReceiver(redrawInstalledReceiver, new IntentFilter(
 						"pt.caixamagica.aptoide.REDRAW"));
 				registerReceiver(newRepoReceiver, new IntentFilter(
@@ -2217,6 +2254,18 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		credentialsDialog.setTitle(getString(R.string.new_store));
 		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL,
 				getString(R.string.new_store), new AddStoreCredentialsListener(
+						string, credentialsDialogView));
+		credentialsDialog.show();
+	}
+	
+	private void showUpdateStoreCredentialsDialog(String string) {
+		View credentialsDialogView = LayoutInflater.from(mContext).inflate(
+				R.layout.dialog_add_pvt_store, null);
+		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext)
+				.setView(credentialsDialogView).create();
+		credentialsDialog.setTitle(getString(R.string.new_store));
+		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL,
+				getString(R.string.new_store), new UpdateStoreCredentialsListener(
 						string, credentialsDialogView));
 		credentialsDialog.show();
 	}

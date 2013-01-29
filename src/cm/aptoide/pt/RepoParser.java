@@ -26,7 +26,7 @@ import android.util.Log;
 
 public class RepoParser {
 	static Object lock = new Object();
-	static ExecutorService executor = Executors.newFixedThreadPool(4, new ThreadFactory() {
+	static ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
 		
 		@Override
 		public Thread newThread(Runnable r) {
@@ -118,7 +118,7 @@ public class RepoParser {
 		}
 
 		public void run(){
-//			db.startTransation();
+			db.startTransation();
 			server.state = cm.aptoide.pt.Server.State.PARSINGTOP;
 			db.updateStatus(server);
 			try{
@@ -126,12 +126,12 @@ public class RepoParser {
 				SAXParser parser = factory.newSAXParser();
 				parser.parse(xml, new HandlerTop(server));
 			}catch(Exception e){
-//				db.endTransation(server);
+				
 			}finally{
 				xml.delete();
 			}
 			db.updateStatus(server);
-//			db.endTransation(server);
+			db.endTransation(server);
 		}
 	}
 	
@@ -148,17 +148,18 @@ public class RepoParser {
 		}
 
 		public void run(){
-//			db.startTransation();
+			db.startTransation();
 			try{
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				parser.parse(xml, new HandlerLatest(server));
 			}catch(Exception e){
-//				db.endTransation(server);
+				
 			}finally{
 				xml.delete();
 			}
-//			db.endTransation(server);
+			
+			db.endTransation(server);
 		}
 	}
 	

@@ -30,6 +30,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
@@ -37,6 +38,7 @@ import android.os.Parcel;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 import cm.aptoide.pt.util.Constants;
@@ -456,7 +458,7 @@ public class ServiceDownloadManager extends Service {
 	 */
 	public void startDownload(final ViewDownloadManagement viewDownload){
 		Log.d("Aptoide", "download being started *************** "+viewDownload.hashCode());
-		checkDirectorySize(Environment.getExternalStorageDirectory().getAbsolutePath()+"/apks");
+		checkDirectorySize(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/apks");
 		ViewCache cache = viewDownload.getCache();
 		if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
 			installApp(cache);
@@ -512,15 +514,14 @@ public class ServiceDownloadManager extends Service {
 
 			}
 		}
-
 		return size;
 	}
 	
 	private void checkDirectorySize(String dirPath) {
 		File dir = new File(dirPath);
 		double size = getDirSize(dir)/1024/1024;
-		
-		if(size>=200){
+		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		if(size>=Integer.parseInt((sPref.getString("maxFileCache", "200")))){
 			File[] files = dir.listFiles();
 			long latestTime = System.currentTimeMillis();
 			long currentTime = 0;

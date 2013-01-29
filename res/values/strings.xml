@@ -369,5 +369,6 @@
     <string name="logout">Logout</string>
     <string name="showexcludedupdates">Excluded Updates</string>
     <string name="showexcludedupdates_title">Show Excluded Updates</string>
+    <string name="settings_maxFileCache_title">Maximum Downloaded Cache</string>
 
 </resources>
