@@ -30,12 +30,12 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/loading_pb"
+        android:id="@+id/all_apps_up_to_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/please_wait"
         android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/darker_gray"
         android:visibility="gone" >
     </TextView>
 

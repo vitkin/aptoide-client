@@ -225,6 +225,16 @@
     <string name="about_site">Home: </string>
     <string name="about_mail">Contact: </string>
     
+    <string name="is">is</string>
+    <string name="trusted">Trusted</string>
+    <string name="trusted_classification">This application was scanned by Aptoide Anti-Malware platform and did not catch any signal of virus.</string>
+    <string name="scanned_with_av">Scanned with Anti-Virus:</string>  
+    <string name="compared_with_another_market">Compared with another Android Marketplace: </string>
+    <string name="about_aptoide_antimalware">Aptoide Anti-Malware platform analyses applications in run-time and disables potential threats across all stores. This system scans all the new application files from the stores and certificates them by comparison against other Android Marketplaces.</string>
+    <string name="norton_av">Norton Anti-Virus 1.2</string>
+    <string name="fsecure_av">F-Secure 2-4 for Android</string>
+    <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
+   	<string name="google_play">Google Play </string> 
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
     <string name="no_descript">No description available</string>

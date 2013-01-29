@@ -1061,7 +1061,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				.getDefaultSharedPreferences(this);
 		final Editor editor = sPref.edit();
 
-		View view = LayoutInflater.from(mContext).inflate(R.layout.orderpopup,
+		View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_order_popup,
 				null);
 		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(view);
 		final AlertDialog orderDialog = dialogBuilder.create();
@@ -2140,16 +2140,16 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		case UPDATES_LOADER:
 			updatesAdapter.swapCursor(data);
 			if(data.getCount()==1){
-				updateView.findViewById(R.id.loading_pb).setVisibility(View.GONE);
+				updateView.findViewById(R.id.all_apps_up_to_date).setVisibility(View.GONE);
 				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.GONE);
 			}else if(data.getCount()>1){
 				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.VISIBLE);
 //				updateView.findViewById(R.id.update_all_view_layout).startAnimation(AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in));
-				updateView.findViewById(R.id.loading_pb).setVisibility(View.GONE);
+				updateView.findViewById(R.id.all_apps_up_to_date).setVisibility(View.GONE);
 			}else {
 				updateView.findViewById(R.id.update_all_view_layout).setVisibility(View.GONE);
-				updateView.findViewById(R.id.loading_pb).setVisibility(View.VISIBLE);
-				((TextView) updateView.findViewById(R.id.loading_pb)).setText(R.string.all_updated);
+				updateView.findViewById(R.id.all_apps_up_to_date).setVisibility(View.VISIBLE);
+				((TextView) updateView.findViewById(R.id.all_apps_up_to_date)).setText(R.string.all_updated);
 			}
 			break;
 		default:
@@ -2195,7 +2195,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	private void showAddStoreDialog() {
 		alertDialogView = LayoutInflater.from(mContext).inflate(
-				R.layout.add_store_dialog, null);
+				R.layout.dialog_add_store, null);
 		alertDialog = new AlertDialog.Builder(mContext)
 				.setView(alertDialogView).create();
 		alertDialog.setTitle(getString(R.string.new_store));
@@ -2210,7 +2210,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	private void showAddStoreCredentialsDialog(String string) {
 		View credentialsDialogView = LayoutInflater.from(mContext).inflate(
-				R.layout.add_store_creddialog, null);
+				R.layout.dialog_add_pvt_store, null);
 		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext)
 				.setView(credentialsDialogView).create();
 		credentialsDialog.setTitle(getString(R.string.new_store));

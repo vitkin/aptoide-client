@@ -20,12 +20,14 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -42,6 +44,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -66,6 +69,8 @@ import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.contentloaders.ViewApkLoader;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
+import cm.aptoide.pt.sharing.WebViewFacebook;
+import cm.aptoide.pt.sharing.WebViewTwitter;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
@@ -336,7 +341,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase(Locale.ENGLISH));
 					switch(ApkStatus){
 					case SCANNED:
-						((TextView) findViewById(R.id.app_badge_text)).setText("Trusted");
+						((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.trusted));
 						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
 						break;
 //					case UNKNOWN:
@@ -359,21 +364,20 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					badge_layout.setOnClickListener(new OnClickListener() {
 						@Override
 						public void onClick(View v) {
-							AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-							alertDialogBuilder.setTitle(getString(R.string.status)+ ": "+ malwareStatus);
-							alertDialogBuilder.setMessage("Scanned on 11-2-2012 by: norton av1.2, "+"f-secure 2-4 for Android, "+"mcafee 1.5" +
-									"\n"+"3party validated on 11-2-2012 by: Google Play")
-							.setIcon(android.R.drawable.ic_menu_info_details)
-							.setCancelable(false)
-							.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int id) {
-									dialog.cancel();
+							View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_trusted, null);
+							Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
+							final AlertDialog trustedDialog = dialogBuilder.create();
+							trustedDialog.setIcon(R.drawable.badge_scanned);
+							trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
+							trustedDialog.setCancelable(true);
+							Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
+							okButton.setOnClickListener(new View.OnClickListener(){
+								@Override
+								public void onClick(View v) {
+									trustedDialog.dismiss();
 								}
 							});
-
-							AlertDialog alertDialog = alertDialogBuilder.create();
-							alertDialog.show();
-
+							trustedDialog.show();
 						}
 					});
 				}catch (Exception e){
