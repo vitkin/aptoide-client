@@ -369,6 +369,8 @@
     <string name="logout">Logout</string>
     <string name="showexcludedupdates">Excluded Updates</string>
     <string name="showexcludedupdates_title">Show Excluded Updates</string>
-    <string name="settings_maxFileCache_title">Maximum Downloaded Cache</string>
+    <string name="excluded_updates_sum">Restore your Ignored Updates</string>
+    <string name="settings_maxFileCache_title">Cache size (MB)</string>
+    <string name="settings_maxFileCache_sum">Set usage SD card space</string>
 
 </resources>

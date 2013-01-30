@@ -5,31 +5,31 @@
     <PreferenceCategory android:title="@string/clear_dwn_title" >
         <PreferenceScreen
             android:key="second_preferencescreen"
-            android:title="@string/setting_icon_download_rules">
-        <CheckBoxPreference
+            android:title="@string/setting_icon_download_rules" >
+            <CheckBoxPreference
+                android:defaultValue="true"
                 android:key="wifi"
-                android:defaultValue="true" 
                 android:title="@string/setting_wifi" />
-        <CheckBoxPreference
+            <CheckBoxPreference
+                android:defaultValue="true"
                 android:key="3g"
-                android:defaultValue="true" 
                 android:title="@string/setting_3g" />
-        <CheckBoxPreference
+            <CheckBoxPreference
+                android:defaultValue="true"
                 android:key="4g"
-                android:defaultValue="true" 
                 android:title="@string/setting_4g" />
-        <CheckBoxPreference
+            <CheckBoxPreference
+                android:defaultValue="true"
                 android:key="ethernet"
-                android:title="@string/setting_ethernet"
-                android:defaultValue="true" />
-    </PreferenceScreen>
+                android:title="@string/setting_ethernet" />
+        </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/setting_filters_title" >
         <Preference
             android:key="hwspecs"
             android:summary="@string/setting_hwspecstitle"
             android:title="@string/setting_hwspecstitle" >
-            </Preference>
+        </Preference>
 
         <CheckBoxPreference
             android:defaultValue="true"
@@ -40,8 +40,10 @@
             android:key="matureChkBox"
             android:summary="@string/setting_dont_show_mature_content"
             android:title="@string/setting_mature_filtering" />
+
         <Preference
             android:key="showexcludedupdates"
+            android:summary="@string/excluded_updates_sum"
             android:title="@string/excluded_updates" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/setting_schdwntitle" >
@@ -59,10 +61,9 @@
             android:title="@string/clearcache_title" />
 
         <EditTextPreference
-            android:title="@string/settings_maxFileCache_title"
-            android:key="maxFileCache" />
-        
+            android:key="maxFileCache"
+            android:summary="@string/settings_maxFileCache_sum"
+            android:title="@string/settings_maxFileCache_title" />
     </PreferenceCategory>
-
 
 </PreferenceScreen>

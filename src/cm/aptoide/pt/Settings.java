@@ -10,8 +10,11 @@ package cm.aptoide.pt;
 import java.io.File;
 import java.text.DecimalFormat;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +25,11 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.text.InputType;
+import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.preferences.ManagerPreferences;
 
@@ -73,19 +80,54 @@ public class Settings extends PreferenceActivity{
 				return false;
 			}
 		});
-		Preference hwspecs = (Preference) findPreference("hwspecs");
-		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
+		
+//		Preference hwspecs = (Preference) findPreference("hwspecs");
+//		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
+		Preference hwSpecs = (Preference) findPreference("hwspecs");
+		hwSpecs.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				
+				View hwSpecsView = LinearLayout.inflate(Settings.this, R.layout.dialog_hw_specs, null);
+				Builder dialogBuilder = new AlertDialog.Builder(Settings.this).setView(hwSpecsView);
+				final AlertDialog hwSpecsDialog = dialogBuilder.create();
+				hwSpecsDialog.setIcon(android.R.drawable.ic_menu_info_details);
+				hwSpecsDialog.setTitle(getString(R.string.setting_hwspecstitle));
+				
+				TextView sdkVer= (TextView) hwSpecsView.findViewById(R.id.sdkver);
+				TextView screenSize = (TextView) hwSpecsView.findViewById(R.id.screenSize);
+				TextView esglVer = (TextView) hwSpecsView.findViewById(R.id.esglVer);
+				
+				sdkVer.setText(HWSpecifications.getSdkVer()+"");
+				screenSize.setText(HWSpecifications.getScreenSize(getBaseContext())+"");
+				esglVer.setText(HWSpecifications.getEsglVer(getBaseContext()));
+				
+				hwSpecsDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {
+						hwSpecsDialog.dismiss();
+					}
+				});
+				
+				hwSpecsDialog.show();
+				return true;
+			}
+		});
+		
 		Preference showExcluded = (Preference) findPreference("showexcludedupdates");
 		showExcluded.setIntent(new Intent(getBaseContext(), ExcludedUpdatesActivity.class));
 		
 		EditTextPreference maxFileCache = (EditTextPreference) findPreference("maxFileCache");
+		
+		
+		
 		maxFileCache.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				
-				System.out.println(preference);
-				System.out.println(newValue);
+				System.out.println("asdfasdf" + preference);
+				System.out.println("asdfasdf" + newValue);
 				
 				return false;
 			}
