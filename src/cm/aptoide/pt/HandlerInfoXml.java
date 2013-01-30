@@ -15,6 +15,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import cm.aptoide.pt.HandlerTop.ElementHandler;
 import cm.aptoide.pt.Server.State;
 import cm.aptoide.pt.util.Md5Handler;
 import cm.aptoide.pt.views.ViewApkInfoXml;
@@ -355,6 +356,19 @@ public class HandlerInfoXml extends DefaultHandler {
 				apk.setMinGlEs(sb.toString());
 			}
 
+		});
+		
+		elements.put("date", new ElementHandler() {
+			
+
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDate(sb.toString());
+			}
 		});
 
 	}

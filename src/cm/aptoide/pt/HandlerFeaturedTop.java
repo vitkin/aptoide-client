@@ -73,14 +73,27 @@ public class HandlerFeaturedTop extends DefaultHandler{
 			@Override
 			public void endElement() throws SAXException {
 				
-//				if(!db.getRepoHash(apk.getServer().id,Category.TOPFEATURED).equals(apk.getServer().hash)){
-//					System.out.println("Deleting featured top apps ");
+				if(!db.getRepoHash(apk.getServer().id,Category.TOPFEATURED).equals(apk.getServer().hash)){
+					System.out.println("Deleting featured top apps ");
 					db.deleteFeaturedTopApps();
-//				}else{
-//					System.out.println("NOT Deleting featured top apps ");
-//					throw new SAXException();
-//				}
+				}else{
+					System.out.println("NOT Deleting featured top apps ");
+					throw new SAXException();
+				}
 				db.insertServerInfo(apk.getServer(), Category.TOPFEATURED);
+			}
+		});
+		
+		elements.put("date", new ElementHandler() {
+			
+
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDate(sb.toString());
 			}
 		});
 		

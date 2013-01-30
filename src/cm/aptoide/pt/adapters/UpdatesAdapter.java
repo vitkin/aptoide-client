@@ -21,6 +21,9 @@ import android.widget.TextView;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.Category;
+import cm.aptoide.pt.Database;
+import cm.aptoide.pt.DbStructure;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
@@ -63,7 +66,7 @@ public class UpdatesAdapter extends CursorAdapter {
 //            holder.rating= (RatingBar) view.findViewById(R.id.stars);
             view.setTag(holder);
         }
-        
+        final long id = cursor.getLong(0);
         final String name = cursor.getString(1);
 		final String apkId = cursor.getString(7);
 		final String vername = cursor.getString(2);
@@ -83,19 +86,14 @@ public class UpdatesAdapter extends CursorAdapter {
 		holder.vername.setText(context.getString(R.string.update_to)+": "+ vername);
 		holder.update.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				ViewApk apk = new ViewApk();
-				apk.setApkid(apkId);
-				apk.setName(name);
-				apk.setVercode(vercode);
-				apk.setVername(vername);
-				apk.setMd5(md5);
+				ViewApk apk = Database.getInstance().getApk(id, Category.INFOXML);
 				try {
 					serviceDownloadManager.callStartDownload(
 							new ViewDownloadManagement(
 							apkpath,
 							apk,
 							new ViewCache(apk.hashCode(), 
-									apk.getMd5())));
+									apk.getMd5(),apkId,vername)));
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

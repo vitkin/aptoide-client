@@ -44,7 +44,7 @@ public class DbStructure extends SQLiteOpenHelper {
 	public static final String TABLE_FEATURED_EDITORSCHOICE_SCREENSHOTS = "featured_editorschoice_screenshots";
 	public static final String TABLE_ITEMBASED_APK = "itembased_apk";
 	public static final String TABLE_ITEMBASED_REPO = "itembased_repo";
-	public static final String TABLE_ITEMBASED_HASHES = "itembased_hashes";
+	public static final String TABLE_HASHES = "hashes";
 	public static final String TABLE_ITEMBASED_SCREENSHOTS = "itembased_screenshots";
 	public static final String TABLE_SCHEDULED = "scheduled";
 	
@@ -349,7 +349,7 @@ public class DbStructure extends SQLiteOpenHelper {
 											  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME,""))
 											  .createTable();
 		
-		creator.newTable(TABLE_ITEMBASED_HASHES).addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH))
+		creator.newTable(TABLE_HASHES).addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH))
 												.addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID).setPrimaryKey().setUnique(OnConflict.REPLACE))
 												.createTable();
 		

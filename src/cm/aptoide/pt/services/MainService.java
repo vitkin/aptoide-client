@@ -199,7 +199,7 @@ public class MainService extends Service {
 			}
 			db.addStore(uri_str,username,password);
 			server = db.getServer(uri_str);
-//			addStoreInfo(db, server);
+			db.addStoreInfo("",RepoUtils.split(server.url),"0",server.id);
 			parseServer(db, server);
 		} catch (Exception e){
 			e.printStackTrace();
@@ -216,6 +216,7 @@ public class MainService extends Service {
 				
 				@Override
 				public void run() {
+						addStoreInfo(db, server);
 						parseTop(db, server);
 						parseLatest(db, server);
 					try{
@@ -306,7 +307,7 @@ public class MainService extends Service {
 		String path = null;
 		path = get(server,defaultXmlPath,"info.xml",true);
 		RepoParser.getInstance(db).parseInfoXML(path,server);
-//		parseExtras(server);
+		parseExtras(server);
 	}
 
 	public void addStoreInfo(Database db, Server server) {

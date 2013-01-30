@@ -1711,7 +1711,7 @@ public class Database {
 		Cursor c = null;
 		String return_string = "";
 		try {
-			c = database.query(DbStructure.TABLE_ITEMBASED_HASHES,
+			c = database.query(DbStructure.TABLE_HASHES,
 					new String[] { DbStructure.COLUMN_HASH }, "apkid = ?",
 					new String[] { string }, null, null, null);
 			if (c.moveToFirst()) {
@@ -1730,7 +1730,7 @@ public class Database {
 		ContentValues values = new ContentValues();
 		values.put(DbStructure.COLUMN_HASH, md5hash);
 		values.put(DbStructure.COLUMN_APKID, apkid);
-		database.insert(DbStructure.TABLE_ITEMBASED_HASHES, null, values);
+		database.insert(DbStructure.TABLE_HASHES, null, values);
 	}
 
 	public void addStoreInfo(String avatar, String name, String downloads,
@@ -2233,8 +2233,16 @@ public class Database {
 	}
 
 	public String getEditorsChoiceHash() {
-		// TODO
-		return "";
+		String hash = "";
+		
+		Cursor c = database.query(DbStructure.TABLE_HASHES, new String[]{DbStructure.COLUMN_HASH}, DbStructure.COLUMN_APKID + "=?", new String[]{"editorschoice"}, null, null, null);
+		
+		if(c.moveToFirst()){
+			hash = c.getString(0);
+			c.close();
+		}
+		
+		return hash;
 	}
 
 	public Cursor getFeaturedTopApps() {
@@ -2260,10 +2268,14 @@ public class Database {
 				null);
 		database.delete(DbStructure.TABLE_FEATURED_EDITORSCHOICE_SCREENSHOTS,
 				null, null);
+		database.delete(DbStructure.TABLE_HASHES, DbStructure.COLUMN_APKID + "=?", new String[]{"editorschoice"});
 	}
 
 	public void insertEditorsChoiceHash(String hash) {
-		// TODO
+		ContentValues values = new ContentValues();
+		values.put(DbStructure.COLUMN_APKID, "editorschoice");
+		values.put(DbStructure.COLUMN_HASH, hash);
+		database.insert(DbStructure.TABLE_HASHES, null, values);
 	}
 
 	public void addToExcludeUpdate(int itemId) {

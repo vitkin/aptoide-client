@@ -49,12 +49,12 @@ public class ViewCache implements Parcelable{
 	private String versionName;
 	
 
-	public ViewCache(int id) {
+	private ViewCache(int id) {
 		this.appHashId = id;
 		this.hasMd5Sum = false;
 	}
 	
-	public ViewCache(int id, String md5sum) {
+	private ViewCache(int id, String md5sum) {
 		this(id);
 		this.hasMd5Sum = true;
 		this.md5sum = md5sum;

@@ -165,9 +165,10 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 							apk.setApkid(app.get("apkid"));
 							apk.setName(app.get("name"));
 							apk.setVercode(0);
+							apk.setVername("");
 							apk.generateAppHashid();
 							try {
-								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"))));
+								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"),app.get("apkid"),"")));
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}

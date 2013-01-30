@@ -107,7 +107,7 @@ public class DownloadedListAdapter extends BaseAdapter{
 		final ViewDownloadManagement download = downloaded.get(position);
 		
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
-		imageLoader.displayImage(download.getCache().getIconPath(), rowViewHolder.app_icon, (download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode()).hashCode()+"");
+		imageLoader.displayImage(download.getAppInfo().getIcon(), rowViewHolder.app_icon, (download.getAppInfo().getApkid()+"|"+download.getAppInfo().getVercode()).hashCode()+"");
 		
 		rowViewHolder.app_facebook_share.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {

@@ -53,6 +53,19 @@ public class HandlerTop extends DefaultHandler{
 			}
 		});
 		
+		elements.put("date", new ElementHandler() {
+			
+
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDate(sb.toString());
+			}
+		});
+		
 		elements.put("screenspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -74,14 +87,13 @@ public class HandlerTop extends DefaultHandler{
 			@Override
 			public void endElement() throws SAXException {
 				
-//				if(!db.getRepoHash(apk.getServer().id,Category.TOP).equals(apk.getServer().hash)){
-//					System.out.println("Deleting " +category.name() +"apps ");
+				if(!db.getRepoHash(apk.getServer().id,Category.TOP).equals(apk.getServer().hash)){
+					System.out.println("Deleting " +Category.TOP.name() +"apps ");
 					db.deleteTopOrLatest(apk.getServer().id,Category.TOP);
-//				}else{
-////					db.endTransation(server);
-//					System.out.println("NOT Deleting " +category.name() +"apps ");
-//					throw new SAXException();
-//				}
+				}else{
+					System.out.println("NOT Deleting " +Category.TOP.name() +"apps ");
+					throw new SAXException();
+				}
 				db.insertServerInfo(apk.getServer(),Category.TOP);
 			}
 		});

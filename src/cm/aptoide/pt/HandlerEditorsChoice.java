@@ -57,6 +57,19 @@ public class HandlerEditorsChoice extends DefaultHandler {
 			}
 		});
 		
+		elements.put("date", new ElementHandler() {
+			
+
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDate(sb.toString());
+			}
+		});
+		
 		elements.put("apkid", new ElementHandler() {
 
 			@Override

@@ -132,7 +132,9 @@ import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
@@ -154,6 +156,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private final String SDCARD = Environment.getExternalStorageDirectory()
 			.getPath();
 	private String LOCAL_PATH = SDCARD + "/.aptoide";
+	
+	private HashMap<ListDepth, ListViewPosition> scrollMemory = new HashMap<ListDepth, ListViewPosition>();
 
 	private final Dialog.OnClickListener addRepoListener = new Dialog.OnClickListener() {
 
@@ -166,6 +170,16 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	};
 	int a = 0;
+	
+	private class ListViewPosition{
+		
+		int index;
+		int top;
+		public ListViewPosition(int top, int index) {
+			this.top=top;
+			this.index=index;
+		}
+	}
 
 	private void loadUIEditorsApps() {
 
@@ -179,8 +193,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			ImageView v = (ImageView) featuredView.findViewById(res_ids[0]);
 //			imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v,
 //					mContext);
-			
-			com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_url_highlight.get("url"), v);
+			DisplayImageOptions options = new DisplayImageOptions.Builder()
+			 .displayer(new FadeInBitmapDisplayer(1000))
+			 .cacheOnDisc()
+			 .cacheInMemory()
+			 .build();
+			com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_url_highlight.get("url"), v,options);
 			v.setTag(image_url_highlight.get("id"));
 			v.setOnClickListener(new OnClickListener() {
 
@@ -208,7 +226,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								.findViewById(res_ids[i]);
 //						imageLoader.DisplayImage(-1,
 //								image_urls.get(i).get("url"), v, mContext);
-						com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_urls.get(i).get("url"), v);
+						DisplayImageOptions options = new DisplayImageOptions.Builder()
+						 .displayer(new FadeInBitmapDisplayer(1000))
+						 .cacheOnDisc()
+						 .cacheInMemory()
+						 .build();
+						com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_urls.get(i).get("url"), v,options);
 						
 						v.setTag(image_urls.get(i).get("id"));
 						v.setOnClickListener(new OnClickListener() {
@@ -452,7 +475,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			}
 
 		}).start();
-
+		
 	}
 
 	private void loadUItopapps() {
@@ -817,8 +840,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								}else{
 									service.parseTop(db, server);
 									service.parseLatest(db, server);
+									service.addStoreInfo(db, server);
 								}
-								service.addStoreInfo(db, server);
+								
 							}
 
 						}
@@ -1007,19 +1031,16 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				Cursor c = db.getUpdates(order);
 				
 				for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
-					ViewApk apk = new ViewApk();
-					apk.setApkid(c.getString(7));
-					apk.setVername(c.getString(2));
-					apk.setVercode(c.getInt(8));
-					apk.setMd5(c.getString(10));
-					String apkpath = c.getString(11) + c.getString(12);
+					ViewApk apk = db.getApk(c.getLong(0), Category.INFOXML);
 					try {
-						serviceDownloadManager.callStartDownload(
-								new ViewDownloadManagement(
-								apkpath,
-								apk,
-								new ViewCache(apk.hashCode(), 
-										apk.getMd5())));
+						ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername());
+						ViewDownloadManagement download = new ViewDownloadManagement(
+								apk.getPath(), 
+								apk, 
+								cache, 
+								db.getServer(apk.getRepo_id(), false).getLogin());	
+						
+						serviceDownloadManager.callStartDownload(download);
 						Thread.sleep(1000);
 					} catch (RemoteException e) {
 						e.printStackTrace();
@@ -1663,6 +1684,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							public void onItemClick(AdapterView<?> parent,
 									View view, int position, long id) {
 								Intent i;
+								View v = availableListView.getChildAt(0);
+								scrollMemory.put(depth, new ListViewPosition((v == null) ? 0 : v.getTop(),availableListView.getFirstVisiblePosition()));
 								switch (depth) {
 								case STORES:
 									depth = ListDepth.CATEGORY1;
@@ -2125,7 +2148,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			unregisterReceiver(statusReceiver);
 			unregisterReceiver(redrawInstalledReceiver);
 			unregisterReceiver(loginReceiver);
-			unregisterReceiver(newRepoReceiver);	
+			unregisterReceiver(newRepoReceiver);
+			unregisterReceiver(storePasswordReceiver);
 		}
 		
 //		stopService(serviceDownloadManagerIntent);
@@ -2136,7 +2160,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			
+			View v = availableListView.getChildAt(0);
+			scrollMemory.put(depth, new ListViewPosition((v == null) ? 0 : v.getTop(),availableListView.getFirstVisiblePosition()));
 			if (!depth.equals(ListDepth.STORES)&&pager.getCurrentItem()==1) {
 				if (depth.equals(ListDepth.TOPAPPS)
 						|| depth.equals(ListDepth.LATEST_LIKES)
@@ -2148,7 +2173,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				} else {
 					depth = ListDepth.values()[depth.ordinal() - 1];
 				}
-
 				removeLastBreadCrumb();
 				refreshAvailableList(true);
 				return false;
@@ -2171,6 +2195,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		switch (loader.getId()) {
 		case AVAILABLE_LOADER:
 			availableAdapter.swapCursor(data);
+			if(scrollMemory.get(depth)!=null){
+				ListViewPosition lvp = scrollMemory.get(depth);
+				availableListView.setSelectionFromTop(lvp.index, lvp.top);
+			}
 			break;
 		case INSTALLED_LOADER:
 			installedAdapter.swapCursor(data);
@@ -2202,10 +2230,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		if (availableListView.getAdapter().getCount() > 0){
 			pb.setVisibility(View.GONE);
-		}else{
+		}else if(depth==ListDepth.STORES){
 			pb.setVisibility(View.VISIBLE);
 			pb.setText(R.string.add_store_button_below);
 		}
+		
+			
 	}
 
 	private void refreshAvailableList(boolean setAdapter) {
@@ -2229,6 +2259,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			availableListView.setAdapter(availableAdapter);
 		}
 		availableLoader.forceLoad();
+		
 	}
 
 	private void showAddStoreDialog() {

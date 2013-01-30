@@ -221,7 +221,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 							apk.setVername(schDown.getVername());
 							apk.setMd5(schDown.getMd5());
 							try {
-								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())));
+								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername())));
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}
@@ -248,7 +248,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 						apk.setVername(schDown.getVername());
 						apk.setMd5(schDown.getMd5());
 						try {
-							serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5())));
+							serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername())));
 						} catch (RemoteException e) {
 							e.printStackTrace();
 						}

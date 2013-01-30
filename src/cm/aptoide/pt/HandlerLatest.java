@@ -75,15 +75,27 @@ public class HandlerLatest extends DefaultHandler{
 			@Override
 			public void endElement() throws SAXException {
 				
-//				if(!db.getRepoHash(server.id,Category.LATEST).equals(server.hash)){
-//					System.out.println("Deleting " +category.name() +"apps ");
+				if(!db.getRepoHash(server.id,Category.LATEST).equals(server.hash)){
+					System.out.println("Deleting " +Category.LATEST.name() +" apps ");
 					db.deleteTopOrLatest(server.id,Category.LATEST);
-//				}else{
-////					db.endTransation(server);
-//					System.out.println("NOT Deleting " +category.name() +"apps ");
-//					throw new SAXException();
-//				}
+				}else{
+					System.out.println("NOT Deleting " +Category.LATEST.name() +" apps ");
+					throw new SAXException();
+				}
 				db.insertServerInfo(server, Category.LATEST);
+			}
+		});
+		
+		elements.put("date", new ElementHandler() {
+			
+
+			public void startElement(Attributes atts) throws SAXException {
+
+			}
+
+			@Override
+			public void endElement() throws SAXException {
+				apk.setDate(sb.toString());
 			}
 		});
 		

@@ -356,7 +356,9 @@ public class ServiceDownloadManager extends Service {
 		ViewDownloadManagement updating = ongoingDownloads.get(appId);
 		updating.updateProgress(update);
 		try {
-			updating.getObserver().updateDownloadStatus(update);
+			if(updating.getObserver()!=null){
+				updating.getObserver().updateDownloadStatus(update);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
