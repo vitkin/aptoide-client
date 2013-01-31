@@ -5,7 +5,7 @@
     <string name="aptoide_brand">APTOiDE</string>
     
     <string name="credits">
-    &#160;Aptoide Team:\n\n
+    \tAptoide Team:\n\n
     \t\t Rui Mateus\n
     \t\t rui.mateus@aptoide.com\n\n
     \t\t Teresa Deus\n
@@ -15,9 +15,7 @@
     \t\t Roberto Jacinto\n
     \t\t roberto.jacinto@aptoide.com\n\n
     
-    Aptoide is using an adaptation of Universal-Image-Loader (c) 2011, Sergey Tarasevich and View Pager Indicator (c) 2012, Jake Wharton
-    \n\n
-    \t\tThank you to our translators:\n\n
+    \tThank you to our translators:\n\n
     \t\tSpanish: Francisco \"ppelao3k\" | 
     Arabic: Manaa Alshihe | 
     Italian: Pavo Baxter | 
@@ -34,7 +32,11 @@
  	Dutch: Ismail Gürol Celiktas | 
  	Hebrew: שלו מויאל\n | 
  	Catalan: Marc Bres Gil | 
- 	Romanian: Munteanu Ovidiu | </string>
+ 	Romanian: Munteanu Ovidiu 
+ 	
+ 	\n\n
+ 	\t\tAptoide is using an adaptation of Universal-Image-Loader (c) 2011, Sergey Tarasevich and View Pager Indicator (c) 2012, Jake Wharton
+ 	</string>
     
 </resources>
 

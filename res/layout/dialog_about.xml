@@ -6,24 +6,14 @@
     android:orientation="vertical" >
 
     <ImageView
-        android:id="@+id/ic_aptoide"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/ic_launcher" />
-
-    <TextView
         android:id="@+id/aptoide_brand"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ic_aptoide"
+        android:layout_width="161dp"
+        android:layout_height="47dp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:text="@string/aptoide_brand"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/primary_text_dark" />
+        android:layout_margin="-10dp"
+        android:src="@drawable/logo_about" />
 
     <TextView
         android:id="@+id/aptoide_version"
@@ -48,7 +38,9 @@
             android:id="@+id/scroll_child"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical" 
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp">
 
             <TextView
                 android:id="@+id/credits"
