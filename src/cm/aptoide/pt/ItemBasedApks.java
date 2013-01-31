@@ -113,6 +113,7 @@ public class ItemBasedApks {
 	public class ItemBasedParser extends AsyncTask<String, Void, ArrayList<HashMap<String, String>> >{
 		private String xmlpath = Environment.getExternalStorageDirectory()+"/.aptoide/itembasedapks.xml";
 		private String url = "http://webservices.aptoide.com/webservices/listItemBasedApks/%s/10/%s/xml";
+		private boolean inTransaction = false;
 		
 		
 		@Override
@@ -128,7 +129,7 @@ public class ItemBasedApks {
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(String... params) {
 			String apkid = params[0];
-
+			
 			File f = new File(xmlpath);
 			InputStream in;
 			try {
@@ -164,9 +165,9 @@ public class ItemBasedApks {
 				out.close();
 				
 				String md5hash = Md5Handler.md5Calc(f);
-				
-//				if(!md5hash.equals(db.getItemBasedApksHash(apkid))){
-					
+				Database.database.beginTransaction();
+				inTransaction = true;
+				if(!md5hash.equals(db.getItemBasedApksHash(apkid))){
 					db.deleteItemBasedApks(parent_apk);
 					System.out.println("Old md5" + db.getItemBasedApksHash(apkid));
 					System.out.println("Inserting New md5" + md5hash);
@@ -174,10 +175,12 @@ public class ItemBasedApks {
 					SAXParserFactory factory = SAXParserFactory.newInstance();
 					SAXParser parser = factory.newSAXParser();
 					parser.parse(f, new HandlerItemBased(parent_apk));
-//					Database.database.setTransactionSuccessful();
-//					Database.database.endTransaction();
+					if(inTransaction ){
+						Database.database.setTransactionSuccessful();
+						Database.database.endTransaction();
+					}
 					return db.getItemBasedApks(apkid);
-//				}
+				}
 				
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
@@ -193,7 +196,10 @@ public class ItemBasedApks {
 			} finally{
 				f.delete();
 			}
-			
+			if(inTransaction ){
+				Database.database.setTransactionSuccessful();
+				Database.database.endTransaction();
+			}
 			return null;
 		};
 		

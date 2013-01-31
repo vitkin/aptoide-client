@@ -78,8 +78,8 @@ public class ExtrasService extends Service {
 		if(!parsingList.contains(path)){
 			parsingList.add(path);
 			File xml = new File(path);
-			String md5 = Md5Handler.md5Calc(xml);
-			executor.submit(new ExtrasParser(xml,getApplicationContext(),md5));
+//			String md5 = Md5Handler.md5Calc(xml);
+			executor.submit(new ExtrasParser(xml,getApplicationContext(),""));
 			System.out.println("Extras starting");
 		}
 		

@@ -152,6 +152,7 @@ public class Database {
 
 	}
 
+	@SuppressLint("NewApi")
 	public void insert(ViewApkInfoXml apk) {
 		
 			ContentValues values = new ContentValues();
@@ -161,7 +162,7 @@ public class Database {
 					categories2.get(apk.getCategory2()));
 			putCommonValues(apk, values);
 			database.insert(DbStructure.TABLE_APK, null, values);
-			if(database.yieldIfContendedSafely()){
+			if(database.yieldIfContendedSafely(1000)){
 				System.out.println("Yielded" + i);
 			}
 			i++;
@@ -186,14 +187,17 @@ public class Database {
 		values.put(DbStructure.COLUMN_NAME, apk.getServer().url);
 		values.put(DbStructure.COLUMN_BASE_PATH, apk.getServer().basePath);
 		long i = database.insert(DbStructure.TABLE_ITEMBASED_REPO, null, values);
+		database.yieldIfContendedSafely();
 		values.clear();
 		values.put("repo_id", i);
 		values.put("parent_apkid", apk.getParentApk().getApkid());
 		putCommonValues(apk, values);
 		long id = database.insert(DbStructure.TABLE_ITEMBASED_APK, null, values);
+		database.yieldIfContendedSafely();
 		apk.setRepo_id(i);
 		apk.setId(id);
 		insertScreenshots(apk, Category.ITEMBASED);
+		database.yieldIfContendedSafely();
 	}
 
 	// public void insert(ViewApk apk) {
@@ -246,9 +250,6 @@ public class Database {
 	// }
 
 	private void insertCategories(ViewApk apk) {
-
-		synchronized (lock) {
-
 			ContentValues values = new ContentValues();
 			values.put(DbStructure.COLUMN_NAME, apk.getCategory1());
 			database.insert("category_1st", null, values);
@@ -286,7 +287,6 @@ public class Database {
 			values.put("repo_id", apk.getRepo_id());
 			values.put("category_2nd_id", categories2.get(apk.getCategory2()));
 			database.insert(DbStructure.TABLE_REPO_CATEGORY_2ND, null, values);
-		}
 	}
 
 	private void insertDynamicCategories(ViewApk apk, Category category) {
@@ -306,13 +306,13 @@ public class Database {
 	}
 
 	@SuppressLint("NewApi")
-	public synchronized void startTransation() {
+	public void startTransation() {
 		// context.sendBroadcast(new Intent("status"));
 		System.out.println("Starting transaction");
 		database.beginTransaction();
 	}
 
-	public synchronized void endTransation(Server server) {
+	public void endTransation(Server server) {
 		Intent intent = new Intent("status");
 		intent.putExtra("server", server.url);
 
@@ -1788,6 +1788,7 @@ public class Database {
 			default:
 				break;
 			}
+			database.yieldIfContendedSafely();
 		}
 
 	}

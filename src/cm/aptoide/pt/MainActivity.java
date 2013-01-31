@@ -305,7 +305,6 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						loadUIRecommendedApps();
 					}
 					f.delete();
-
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -436,23 +435,28 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					Server server = new Server();
 					String hash = Md5Handler.md5Calc(f);
 					if (!hash.equals(db.getEditorsChoiceHash())) {
+						Database.database.beginTransaction();
 						db.deleteEditorsChoice();
 						sp.parse(f, new HandlerEditorsChoice(server));
 						db.insertEditorsChoiceHash(hash);
+						Database.database.setTransactionSuccessful();
+						Database.database.endTransaction();
 						loadUIEditorsApps();
+						
 					}
 					f.delete();
-
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				
 			}
 		}).start();
 
 		new Thread(new Runnable() {
 
 			public void run() {
-
+				Database.database.beginTransaction();
 				loadUItopapps();
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -460,6 +464,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					Server server = new Server();
 					server.id = 1;
 					NetworkUtils utils = new NetworkUtils();
+					
 					sp.parse(
 							new BufferedInputStream(
 									utils.getInputStream(new URL("http://apps.store.aptoide.com/top.xml"),
@@ -472,6 +477,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+				Database.database.setTransactionSuccessful();
+				Database.database.endTransaction();
 			}
 
 		}).start();
