@@ -327,65 +327,82 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				setClickListeners();
 
 				//Malware badges
-				try{
-					NetworkUtils utils = new NetworkUtils();
-					String uri = "http://www.aptoide.com/webservices/getApkMalwareInfo/" + viewApk.getMd5()+"/json";
-					JSONObject respJSON = utils.getJsonObject(new URL(uri), ApkInfo.this);
-					JSONObject listingResults = respJSON.getJSONObject("listing");
-					final String malwareStatus = listingResults.getString("status");
-					final String malwareReason = listingResults.getString("reason");
+				loadMalwareBadges();
+				
+				
+				
+			}
 
-					Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
-					Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
+			private void loadMalwareBadges() {
+				new Thread(new Runnable() {
 					
-					EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase(Locale.ENGLISH));
-					switch(ApkStatus){
-					case SCANNED:
-						((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.trusted));
-						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
-						LinearLayout badge_layout = (LinearLayout) findViewById(R.id.badge_layout);
-						badge_layout.setOnClickListener(new OnClickListener() {
-							@Override
-							public void onClick(View v) {
-								View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_trusted, null);
-								Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
-								final AlertDialog trustedDialog = dialogBuilder.create();
-								trustedDialog.setIcon(R.drawable.badge_scanned);
-								trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
-								trustedDialog.setCancelable(true);
-								Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
-								okButton.setOnClickListener(new View.OnClickListener(){
-									@Override
-									public void onClick(View v) {
-										trustedDialog.dismiss();
-									}
-								});
-								trustedDialog.show();
-							}
-						});
-						break;
-//					case UNKNOWN:
-//						((TextView) findViewById(R.id.app_badge_text)).setText("Unknown");
-//						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
-//						break;
-//					case WARN:
-//						((TextView) findViewById(R.id.app_badge_text)).setText("Warn");
-//						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
-//						break;
-//					case CRITICAL:
-//						((TextView) findViewById(R.id.app_badge_text)).setText("Critical");
-//						((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
-//						break;
-					default:
-						break;
+					@Override
+					public void run() {
+						try{
+							NetworkUtils utils = new NetworkUtils();
+							String uri = "http://www.aptoide.com/webservices/getApkMalwareInfo/" + viewApk.getMd5()+"/json";
+							JSONObject respJSON = utils.getJsonObject(new URL(uri), ApkInfo.this);
+							JSONObject listingResults = respJSON.getJSONObject("listing");
+							final String malwareStatus = listingResults.getString("status");
+							final String malwareReason = listingResults.getString("reason");
+
+							Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
+							Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
+							runOnUiThread(new Runnable() {
+								
+								@Override
+								public void run() {
+									EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase(Locale.ENGLISH));
+									switch(ApkStatus){
+									case SCANNED:
+										((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.trusted));
+										((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
+										LinearLayout badge_layout = (LinearLayout) findViewById(R.id.badge_layout);
+										badge_layout.setOnClickListener(new OnClickListener() {
+											@Override
+											public void onClick(View v) {
+												View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_trusted, null);
+												Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
+												final AlertDialog trustedDialog = dialogBuilder.create();
+												trustedDialog.setIcon(R.drawable.badge_scanned);
+												trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
+												trustedDialog.setCancelable(true);
+												Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
+												okButton.setOnClickListener(new View.OnClickListener(){
+													@Override
+													public void onClick(View v) {
+														trustedDialog.dismiss();
+													}
+												});
+												trustedDialog.show();
+											}
+										});
+										break;
+//									case UNKNOWN:
+//										((TextView) findViewById(R.id.app_badge_text)).setText("Unknown");
+//										((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
+//										break;
+//									case WARN:
+//										((TextView) findViewById(R.id.app_badge_text)).setText("Warn");
+//										((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
+//										break;
+//									case CRITICAL:
+//										((TextView) findViewById(R.id.app_badge_text)).setText("Critical");
+//										((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
+//										break;
+									default:
+										break;
+									}									
+								}
+							});
+							
+							
+							
+						}catch (Exception e){
+							e.printStackTrace();
+						}						
 					}
-					
-					
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-				
-				
+				}).start();
 				
 			}
 

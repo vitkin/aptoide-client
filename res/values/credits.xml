@@ -1,34 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
    
-    <string name="aptoide_version">Version 4.0.0</string>
+    <string name="aptoide_version">Version 4.0.1</string>
     <string name="aptoide_brand">APTOiDE</string>
     
     <string name="credits">
     &#160;Aptoide Team:\n\n
-    \t\t Rui Mateus \n\n
-    \t\t Duarte Silveira \n\n
-    \t\t Teresa Deus \n\n
-    \t\t Roberto Jacinto \n\n
-    &#160;Translators:\n\n
-    &#160;&#160;&#160;Spanish: Francisco \"ppelao3k\"\n
-    &#160;&#160;&#160;Arabic: Manaa Alshihe\n
-    &#160;&#160;&#160;Italian: Pavo Baxter\n
-    &#160;&#160;&#160;French: Alexis Bonvin\n
-    &#160;&#160;&#160;Chinese: Theodore Wte\n
-    &#160;&#160;&#160;Polish: Stanislaw \"trurl3\"\n
-    &#160;&#160;&#160;German: Martin Nehrdich\n
-    &#160;&#160;&#160;Turkish: Anonymous\n
-    &#160;&#160;&#160;Bosnian/Croatian/Serbian&#160;: Rijad \"rijads\"\n
-    &#160;&#160;&#160;Persian/Farsi: Masoud Abdar\n
-    &#160;&#160;&#160;Russian: Kanat Yesseyev\n
-    &#160;&#160;&#160;Finnish: Sami Kuusisto\n
-    &#160;&#160;&#160;Brazilian Portuguese: Edu Salgado\n
-    &#160;&#160;&#160;Dutch: Ismail Gürol Celiktas\n
-    &#160;&#160;&#160;Hebrew: שלו מויאל\n
-    &#160;&#160;&#160;Catalan: Marc Bres Gil\n
-    &#160;&#160;&#160;Romanian: Munteanu Ovidiu\n
-    </string>
+    \t\t Rui Mateus\n
+    \t\t rui.mateus@aptoide.com\n\n
+    \t\t Teresa Deus\n
+    \t\t teresa.deus@aptoide.com\n\n
+    \t\t Duarte Silveira\n
+    \t\t duarte.silveira@aptoide.com\n\n
+    \t\t Roberto Jacinto\n
+    \t\t roberto.jacinto@aptoide.com\n\n
+    
+    Aptoide is using an adaptation of Universal-Image-Loader (c) 2011, Sergey Tarasevich and View Pager Indicator (c) 2012, Jake Wharton
+    \n\n
+    \t\tThank you to our translators:\n\n
+    \t\tSpanish: Francisco \"ppelao3k\" | 
+    Arabic: Manaa Alshihe | 
+    Italian: Pavo Baxter | 
+    French: Alexis Bonvin | 
+    Chinese: Theodore Wte | 
+    Polish: Stanislaw \"trurl3\" |
+	German: Martin Nehrdich | 
+	Turkish: Anonymous | 
+	Bosnian/Croatian/Serbian: Rijad \"rijads\" | 
+	Persian/Farsi: Masoud Abdar | 
+	Russian: Kanat Yesseyev | 
+	Finnish: Sami Kuusisto |
+ 	Brazilian Portuguese: Edu Salgado | 
+ 	Dutch: Ismail Gürol Celiktas | 
+ 	Hebrew: שלו מויאל\n | 
+ 	Catalan: Marc Bres Gil | 
+ 	Romanian: Munteanu Ovidiu | </string>
     
 </resources>
 

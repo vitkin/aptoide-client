@@ -68,7 +68,8 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 			
 			@Override
 			public void onLoadingFailed(FailReason failReason) {
-				((ImageView) v.findViewById(R.id.screenshot)).setImageResource(android.R.drawable.ic_delete);		
+				((ImageView) v.findViewById(R.id.screenshot)).setImageResource(android.R.drawable.ic_delete);
+				pb.setVisibility(View.GONE);
 			}
 			
 			@Override
