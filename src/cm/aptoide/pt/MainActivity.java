@@ -331,11 +331,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								LayoutParams.WRAP_CONTENT));
 						llAlso.setOrientation(LinearLayout.HORIZONTAL);
 						if (valuesRecommended.isEmpty()) {
-							TextView tv = new TextView(mContext);
-							tv.setText(R.string.no_recommended_apps);
-							tv.setTextAppearance(mContext, android.R.attr.textAppearanceMedium);
-							tv.setPadding(10, 10, 10, 10);
-							ll.addView(tv);
+							if(Login.isLoggedIn(mContext)){
+								TextView tv = new TextView(mContext);
+								tv.setText(R.string.no_recommended_apps);
+								tv.setTextAppearance(mContext, android.R.attr.textAppearanceMedium);
+								tv.setPadding(10, 10, 10, 10);
+								ll.addView(tv);
+							}
 						} else {
 
 							for (int i = 0; i != valuesRecommended.size(); i++) {
@@ -880,7 +882,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			@Override
 			public void run() {
 				loadUItopapps();
-				loadRecommended();
+				if(Login.isLoggedIn(mContext)){
+					loadRecommended();
+				}
+				
 			}
 		}).start();
 	}

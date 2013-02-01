@@ -49,7 +49,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.Configs;
+import cm.aptoide.pt.Database;
 import cm.aptoide.pt.util.Algorithms;
+import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.R;
 
 public class Login extends Activity {
@@ -120,6 +122,11 @@ public class Login extends Activity {
 		prefEdit.remove(Configs.LOGIN_USER_TOKEN);
 		prefEdit.remove(Configs.LOGIN_USER_USERNAME);
 		prefEdit.commit();
+		ViewApk apk = new ViewApk();
+		apk.setApkid("recommended");
+		Database.getInstance().deleteItemBasedApks(apk);
+		Intent i = new Intent("login");
+		sendBroadcast(i);
 		onCreate(null);
 	}
 

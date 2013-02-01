@@ -390,9 +390,8 @@ public class DownloadManager extends Activity {
 			
 			if(downloadedAdapter.getCount()>0 || notDownloadedAdapter.getCount()>0){
 				try {
-					serviceManager.callClearDownload();
+					serviceManager.callClearDownloads();
 					downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
-//					downloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
 					notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block

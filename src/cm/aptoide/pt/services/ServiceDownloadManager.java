@@ -223,7 +223,7 @@ public class ServiceDownloadManager extends Service {
 		}
 
 		@Override
-		public void callClearDownload() throws RemoteException {
+		public void callClearDownloads() throws RemoteException {
 			failedDownloads.clear();
 			completedDownloads.clear();
 		}

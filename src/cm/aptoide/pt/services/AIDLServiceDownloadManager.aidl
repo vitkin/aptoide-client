@@ -51,6 +51,6 @@ interface AIDLServiceDownloadManager {
 	ViewListDownloads callGetDownloadsCompleted();
 	boolean callAreDownloadsFailed();
 	ViewListDownloads callGetDownloadsFailed();
-	void callClearDownload();
+	void callClearDownloads();
 	
 }
