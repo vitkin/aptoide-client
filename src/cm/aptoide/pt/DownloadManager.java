@@ -388,11 +388,12 @@ public class DownloadManager extends Activity {
 		case 0:
 			Log.d("Aptoide-DownloadManager", "clear all");
 			
-			if(downloadedAdapter.getCount()>0){
+			if(downloadedAdapter.getCount()>0 || notDownloadedAdapter.getCount()>0){
 				try {
 					serviceManager.callClearDownload();
 					downloadedAdapter.updateList(serviceManager.callGetDownloadsCompleted());
-					downloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
+//					downloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
+					notDownloadedAdapter.updateList(serviceManager.callGetDownloadsFailed());
 				} catch (RemoteException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

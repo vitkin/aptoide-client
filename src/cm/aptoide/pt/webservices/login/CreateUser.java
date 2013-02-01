@@ -89,7 +89,7 @@ public class CreateUser extends Activity {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			pd.show();
-			pd.setMessage("Please wait.");
+			pd.setMessage(context.getString(R.string.please_wait));
 		}
 		
 		@Override
