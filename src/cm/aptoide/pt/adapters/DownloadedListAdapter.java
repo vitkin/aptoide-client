@@ -77,6 +77,7 @@ public class DownloadedListAdapter extends BaseAdapter{
 		TextView app_name;
 		ImageView app_icon;
 		ImageView app_facebook_share;
+//		ImageView app_export_apk;
 		
 		String shareAppName;
 		String shareIcon;
@@ -99,6 +100,7 @@ public class DownloadedListAdapter extends BaseAdapter{
 			rowViewHolder.app_name = (TextView) convertView.findViewById(R.id.downloaded_name);
 			rowViewHolder.app_icon = (ImageView) convertView.findViewById(R.id.downloaded_icon);
 			rowViewHolder.app_facebook_share = (ImageView) convertView.findViewById(R.id.downloaded_facebook_share);
+//			rowViewHolder.app_export_apk = (ImageView) convertView.findViewById(R.id.downloaded_app_export);
 			convertView.setTag(rowViewHolder);
 		}else{
 			rowViewHolder = (DownloadingRowViewHolder) convertView.getTag();
@@ -139,6 +141,16 @@ public class DownloadedListAdapter extends BaseAdapter{
 		    }
 		});
 		
+//		rowViewHolder.app_export_apk.setOnClickListener(new View.OnClickListener() {
+//
+//			@Override
+//			public void onClick(View v) {
+//				// TODO Auto-generated method stub
+//				Log.d("Aptoide-exportApk", "TODO");
+//			}
+//			
+//		});
+		
 		return convertView;
 	}
 
@@ -171,5 +183,9 @@ public class DownloadedListAdapter extends BaseAdapter{
 		updateListHandler.sendEmptyMessage(0);
 	}
 
+	public void clearAll(){
+		downloaded.clear();
+		updated.clear();
+	}
 	
 }

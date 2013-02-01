@@ -128,4 +128,8 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 		updateListHandler.sendEmptyMessage(0);
 	}
 	
+	public void clearAll(){
+		notDownloaded.clear();
+	}
+	
 }

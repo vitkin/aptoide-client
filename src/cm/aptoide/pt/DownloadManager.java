@@ -33,6 +33,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -48,6 +49,7 @@ import cm.aptoide.pt.adapters.DownloadingListAdapter;
 import cm.aptoide.pt.adapters.NotDownloadedListAdapter;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.EnumDownloadStatus;
+import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.AIDLDownloadManager;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
@@ -346,29 +348,59 @@ public class DownloadManager extends Activity {
 	}
 	
 	
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		
-		menu.add(0,0,0,"Export APK");
-		
-		
-		super.onCreateContextMenu(menu, v, menuInfo);
-	}
+//	@Override
+//	public void onCreateContextMenu(ContextMenu menu, View v,
+//			ContextMenuInfo menuInfo) {
+//
+//		menu.add(0, 0, 0, getString(R.string.export_apk));
+//
+//		super.onCreateContextMenu(menu, v, menuInfo);
+//	}
+//
+//	@Override
+//	public boolean onContextItemSelected(MenuItem item) {
+//
+//		switch (item.getItemId()) {
+//		case 0:
+//
+//			break;
+//
+//		default:
+//			break;
+//		}
+//
+//		return super.onContextItemSelected(item);
+//	}
 	
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		menu.clear();
+		menu.add(Menu.NONE, 0, 0, R.string.clear_all).setIcon(android.R.drawable.ic_notification_clear_all);
 		
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
+		Log.d("Aptoide-DownloadManager", "menuOption: " + menuEntry + " itemid: " + item.getItemId());
 		switch (item.getItemId()) {
 		case 0:
+			Log.d("Aptoide-DownloadManager", "clear all");
 			
+			if(downloadedAdapter.getCount()>0){
+				downloadedAdapter.clearAll();
+				downloadedAdapter.notifyDataSetChanged();
+			}
+			if(notDownloadedAdapter.getCount()>0){
+				notDownloadedAdapter.clearAll();
+				notDownloadedAdapter.notifyDataSetChanged();
+			}	
 			break;
-
 		default:
 			break;
 		}
-		
-		return super.onContextItemSelected(item);
+
+		return super.onOptionsItemSelected(item);
 	}
-	
 }

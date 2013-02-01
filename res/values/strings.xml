@@ -191,7 +191,7 @@
     <string name="no_recommended_apps">No recommended apps found. We need more interaction from you. Make some downloads!</string>
     <string name="no_recommended_toast">No recommended apps found</string>
     <string name="all_updated">All apps are up to date</string>
-    
+   	<string name="clear_all">Clear all</string>
     
     <string name="menu_add_repo">New Store</string>
     <string name="menu_rem_repo">Remove Store</string>
