@@ -221,6 +221,12 @@ public class ServiceDownloadManager extends Service {
 			Log.d("Aptoide-ServiceDownloadManager", "getting downloads failed");
 			return getDownloadsFailed();
 		}
+
+		@Override
+		public void callClearDownload() throws RemoteException {
+			failedDownloads.clear();
+			completedDownloads.clear();
+		}
 		
 	}; 
 	

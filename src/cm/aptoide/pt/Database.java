@@ -514,12 +514,28 @@ public class Database {
 
 	public Cursor getUserBasedApk(long repo_id) {
 
+		
+		
+		SharedPreferences sPref = PreferenceManager
+				.getDefaultSharedPreferences(context);
+		String filter = "";
+		if (sPref.getBoolean("hwspecsChkBox", true)) {
+			filter = filter + " and b.minscreen <= "
+					+ HWSpecifications.getScreenSize(context)
+					+ " and b.minsdk <=  " + HWSpecifications.getSdkVer()
+					+ " and b.mingles <= " + HWSpecifications.getEsglVer(context);
+		}
+
+		if (sPref.getBoolean("matureChkBox", false)) {
+			filter = filter + " and b.mature <= 0 ";
+		}
+		
 		Cursor c = null;
 
 		try {
 			c = database
 					.rawQuery(
-							"select a._id, a.name, a.vername, a.repo_id, a.icon as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk a,itembasedapk b, itembasedapkrepo as c where a.repo_id = ? and b.parent_apkid = 'recommended' and a.apkid=b.apkid and a.vercode=b.vercode and b.itembasedapkrepo_id=c._id",
+							"select a._id, a.name, a.vername, a.repo_id, a.icon as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk a,itembased_apk b, itembased_repo as c where a.repo_id = ? and b.parent_apkid = 'recommended' and a.apkid=b.apkid and a.vercode=b.vercode and b.repo_id=c._id " +filter,
 							new String[] { repo_id + "" });
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1669,7 +1685,7 @@ public class Database {
 					+ HWSpecifications.getEsglVer(context);
 		}
 
-		if (!sPref.getBoolean("matureChkBox", false)) {
+		if (sPref.getBoolean("matureChkBox", false)) {
 			filter = filter + " and a.mature <= 0";
 		}
 

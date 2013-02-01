@@ -299,9 +299,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					ViewApk parent_apk = new ViewApk();
 					parent_apk.setApkid("recommended");
 					if (!hash.equals(db.getItemBasedApksHash(parent_apk.getApkid()))) {
+						Database.database.beginTransaction();
 						db.deleteItemBasedApks(parent_apk);
 						sp.parse(f, new HandlerItemBased(parent_apk));
 						db.insertItemBasedApkHash(hash, parent_apk.getApkid());
+						Database.database.setTransactionSuccessful();
+						Database.database.endTransaction();
 						loadUIRecommendedApps();
 					}
 					f.delete();
@@ -877,6 +880,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			@Override
 			public void run() {
 				loadUItopapps();
+				loadRecommended();
 			}
 		}).start();
 	}
