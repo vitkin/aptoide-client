@@ -402,7 +402,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
-		menu.add(Menu.NONE,1, 0, R.string.schDown_invertselection).setIcon(R.drawable.ic_menu_invert);
+		menu.add(Menu.NONE,1, 0, R.string.schDown_invertselection).setIcon(android.R.drawable.ic_menu_revert);
 		menu.add(Menu.NONE,2, 0, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		return super.onCreateOptionsMenu(menu);
 	}
