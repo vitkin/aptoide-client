@@ -70,7 +70,7 @@
     <string name="top_apps">Top Apps</string>
     <string name="installed_tab">Installed</string>
     <string name="updates_tab">Updates</string>
-    <string name="add_repo_private">Private</string>
+    <string name="add_private_store">Add private store</string>
     <string name="add_repo_text">New Store</string>
     <string name="extended_server">Extended Store</string>
     <string name="btn_add_repo">Add store</string>
@@ -249,6 +249,7 @@
     <string name="repo_edt_msg2">Edit store</string>
     <string name="md5_auto_update_error">Update package checksum failed!  Keeping current version.</string>
     <string name="network_auto_update_error">Update connection failed!  Keeping current version.</string>
+    <string name="aptoide_update">Aptoide Update…</string>
     <string name="auto_updating">Please wait while processing update download…</string>
     
     <string name="update_self_title">Update available</string>

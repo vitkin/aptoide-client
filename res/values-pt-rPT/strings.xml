@@ -19,7 +19,7 @@
   <string name="menu_settings">Configurações</string>
   <string name="my_stores">Editar loja</string>
   <string name="store_name">Nome da Loja</string>
-  <string name="store">Store</string>
+  <string name="store">Loja</string>
   <string name="category1">Por categoria</string>
   <string name="category2">Por categoria</string>
   <string name="add_store">Adicionar uma Loja!</string>
@@ -27,6 +27,7 @@
   <string name="empty_store_list">Não tem nenhuma store.</string>
   <string name="new_store">Adicionar uma Loja!</string>
   <string name="add_repo_private">Privada</string>
+  <string name="add_private_store">Adicionar loja privada</string>
   <string name="extended_server">Loja extendida</string>
   <string name="downloads">Downloads</string>
   <string name="merge_all_stores">Juntar lojas</string>
@@ -71,8 +72,8 @@
   <string name="dislikes">Não Gostos:</string>
   <string name="like">Gostar</string>
   <string name="dont_like">Não gostar</string>
-  <string name="users_like_this">utilizadores gostaram</string>
-  <string name="users_dont_like_this">utilizadores não gostaram</string>
+  <string name="users_like_this">utilizadores gostam</string>
+  <string name="users_dont_like_this">utilizadores não gostam</string>
   <string name="by">por</string>
   <string name="on">em</string>
   <string name="postingtaste">O seu pedido está a ser submetido</string>

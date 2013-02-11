@@ -29,7 +29,7 @@
         android:gravity="center_vertical"
         android:maxLines="2"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#424142" />
+        android:textColor="@color/dark_custom_gray" />
 
     <ImageView
         android:id="@+id/imageView2"
@@ -55,7 +55,7 @@
             android:paddingRight="6dp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#2f6699" />
+            android:textColor="@color/custom_color" />
 
         <TextView
             android:id="@+id/comment_owner"
@@ -68,7 +68,7 @@
             android:paddingRight="6dp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#2f6699" />
+            android:textColor="@color/custom_color" />
         
         <TextView
             android:id="@+id/time"
@@ -82,7 +82,7 @@
             android:paddingRight="6dp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#2f6699" />
+            android:textColor="@color/dark_custom_color" />
 
     </LinearLayout>
 

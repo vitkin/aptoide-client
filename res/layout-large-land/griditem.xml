@@ -70,7 +70,7 @@
                 android:paddingRight="2dp"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#ccc" />
+                android:textColor="@android:color/darker_gray" />
 
             <RatingBar
                 android:id="@+id/rating"

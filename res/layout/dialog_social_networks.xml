@@ -32,7 +32,7 @@
             android:drawableLeft="@drawable/facebook_bt"
             android:drawablePadding="10dp"
             android:text="@string/find_us_on_facebook"
-            android:textColor="#276ba2" />
+            android:textColor="@color/facebook_color" />
 
         <Button
             android:id="@+id/follow_twitter"
@@ -40,7 +40,7 @@
             android:drawableLeft="@drawable/twitter_bt"
             android:drawablePadding="10dp"
             android:text="@string/follow_twitter"
-            android:textColor="#2eb6e5" />
+            android:textColor="@color/twitter_color" />
     </LinearLayout>
 
 </ScrollView>

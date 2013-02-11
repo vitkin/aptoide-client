@@ -35,7 +35,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black" />
+            android:textColor="@color/dark_custom_gray" />
 
         <ProgressBar
             android:id="@+id/downloading_progress"

@@ -21,7 +21,7 @@
         android:padding="10dp"
         android:text="@string/setting_schdwntitle"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#fff" />
+        android:textColor="@android:color/white" />
 
     <LinearLayout
         android:id="@+id/content_layout"

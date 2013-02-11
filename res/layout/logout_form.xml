@@ -9,21 +9,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:padding="10dp"
         android:background="@drawable/actionbar_bgd" >
-
-        <Button
-            android:id="@+id/register_link"
-            style="@style/custom_button_style"
-            android:layout_alignParentRight="true"
-            android:onClick="createUser"
-            android:text="@string/register" />
 
         <TextView
             android:id="@+id/sign_out"
@@ -32,12 +26,11 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="22dp"
-            android:layout_toLeftOf="@+id/register_link"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="@string/my_account"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#fff" />
+            android:textColor="@android:color/white" />
     </RelativeLayout>
 
     <ScrollView
@@ -46,7 +39,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/login_button"
         android:layout_below="@+id/header"
-        android:background="#edece9"
+        android:background="@color/custom_background_color"
         android:orientation="vertical"
         android:padding="5dp" >
 

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="separator_line">#ffdddddd</color>
+    <color name="like_text_color">#4A4</color>
+    <color name="dont_like_text_color">#A44</color>
+    <color name="facebook_color">#276ba2</color>
+    <color name="twitter_color">#2eb6e5</color>
     
     <color name="dark_custom_color">#3c5505</color>
     <color name="middle_custom_color">#597f07</color>
@@ -11,8 +15,9 @@
     <color name="lighter_custom_color">#659405</color>
     
     <color name="dark_custom_gray">#4c4c4c</color>
-    <color name="lighter_custom_gray">#efefef</color>
-    <color name="light_custom_gray">#cccccc</color>
+    <color name="medium_custom_gray">#c6c7c6</color>
+    <color name="light_custom_gray">#efefef</color>
+    <color name="lighter_custom_gray">#cccccc</color>
     
     <color name="custom_background_color">#edece9</color>
     <color name="custom_inside_background_color">@android:color/white</color>

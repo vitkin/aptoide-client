@@ -28,7 +28,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_vertical|center_horizontal"
-        android:textColor="#666"
+        android:textColor="@android:color/darker_gray"
         android:textSize="12sp" />
 
 </LinearLayout>

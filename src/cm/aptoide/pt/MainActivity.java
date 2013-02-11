@@ -184,7 +184,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private void loadUIEditorsApps() {
 
 		final int[] res_ids = { R.id.central, R.id.topleft, R.id.topright,
-				R.id.bottomleft, R.id.bottomright };
+				R.id.bottomleft, R.id.bottomcenter, R.id.bottomright };
 		final ArrayList<HashMap<String, String>> image_urls = db
 				.getFeaturedGraphics();
 		HashMap<String, String> image_url_highlight = db.getHighLightFeature();
@@ -2312,7 +2312,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				R.layout.dialog_add_pvt_store, null);
 		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext)
 				.setView(credentialsDialogView).create();
-		credentialsDialog.setTitle(getString(R.string.new_store));
+		credentialsDialog.setTitle(getString(R.string.add_private_store) + " " + RepoUtils.split(string));
 		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL,
 				getString(R.string.new_store), new AddStoreCredentialsListener(
 						string, credentialsDialogView));
@@ -2324,7 +2324,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				R.layout.dialog_add_pvt_store, null);
 		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext)
 				.setView(credentialsDialogView).create();
-		credentialsDialog.setTitle(getString(R.string.new_store));
+		credentialsDialog.setTitle(getString(R.string.add_private_store) + " " + RepoUtils.split(string));
 		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL,
 				getString(R.string.new_store), new UpdateStoreCredentialsListener(
 						string, credentialsDialogView));

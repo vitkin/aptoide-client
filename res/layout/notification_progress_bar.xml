@@ -9,7 +9,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
- 
     android:orientation="horizontal"
     android:padding="3dp" >
 
@@ -22,14 +21,13 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-       
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/download_notification_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="#4f4f4f" />
+            android:textColor="@color/dark_custom_gray" />
 
         <ProgressBar
             android:id="@+id/download_notification_progress_bar"
@@ -39,12 +37,12 @@
             android:max="100"
             android:orientation="horizontal"
             android:visibility="visible" />
-        
+
         <TextView
             android:id="@+id/download_notification_number"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="#4f4f4f" />
+            android:textColor="@color/dark_custom_gray" />
     </LinearLayout>
 
 </LinearLayout><!--

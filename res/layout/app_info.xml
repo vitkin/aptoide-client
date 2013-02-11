@@ -180,7 +180,7 @@
                         android:maxLines="1"
                         android:paddingLeft="8dp"
                         android:singleLine="true"
-                        android:textColor="#4A4" />
+                        android:textColor="@color/like_text_color" />
 
                     <TextView
                         android:id="@+id/app_liked"
@@ -193,7 +193,7 @@
                         android:singleLine="true"
                         android:text="@string/users_like_this"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@color/dark_custom_gray" />
 
                     <TextView
                         android:id="@+id/dislikes"
@@ -204,7 +204,7 @@
                         android:maxLines="1"
                         android:paddingLeft="3dp"
                         android:singleLine="true"
-                        android:textColor="#A44" />
+                        android:textColor="@color/dont_like_text_color" />
 
                     <TextView
                         android:id="@+id/app_disliked"
@@ -217,7 +217,7 @@
                         android:singleLine="true"
                         android:text="@string/users_dont_like_this"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textColor="@color/dark_custom_gray" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -248,7 +248,7 @@
                             android:paddingRight="2dp"
                             android:singleLine="true"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/dark_custom_gray" />
 
                         <TextView
                             android:id="@+id/app_store"
@@ -262,7 +262,7 @@
                             android:paddingRight="2dp"
                             android:singleLine="true"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/dark_custom_gray" />
                     </TableRow>
 
                     <TableRow
@@ -283,7 +283,7 @@
                             android:paddingRight="2dp"
                             android:singleLine="true"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textColor="@android:color/darker_gray" />
+                            android:textColor="@color/dark_custom_gray" />
 
                         <TextView
                             android:id="@+id/inst_version"
@@ -297,7 +297,7 @@
                             android:paddingRight="2dp"
                             android:singleLine="true"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textColor="@android:color/darker_gray"
+                            android:textColor="@color/dark_custom_gray"
                             android:visibility="gone" />
                     </TableRow>
                 </TableLayout>
@@ -322,7 +322,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/chkBoxSchDwn"
                         android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="#3f3f3f" />
+                        android:textColor="@color/dark_custom_gray" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -348,7 +348,7 @@
                     android:paddingLeft="5.0sp"
                     android:paddingRight="5.0sp"
                     android:paddingTop="10.0dip"
-                    android:textColor="#7e7e7e" />
+                    android:textColor="@color/dark_custom_gray" />
             </LinearLayout>
 
             <TextView
@@ -444,7 +444,7 @@
                     android:paddingLeft="5.0dp"
                     android:paddingRight="5.0dp"
                     android:text="@string/who_downloaded_this"
-                    android:textColor="#3f3f3f" />
+                    android:textColor="@color/dark_custom_gray" />
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"

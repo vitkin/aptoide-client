@@ -28,7 +28,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#4f4f4f"
+            android:textColor="@color/dark_custom_gray"
             android:textStyle="bold" />
 
         <TextView
@@ -41,7 +41,7 @@
             android:maxLines="1"
             android:paddingLeft="5dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#4f4f4f"
+            android:textColor="@color/dark_custom_gray"
             android:textStyle="italic" />
     </LinearLayout>
 
@@ -49,7 +49,7 @@
         android:id="@+id/content"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textColor="#4f4f4f" />
+        android:textColor="@color/dark_custom_gray" />
 
     <View
         android:layout_width="fill_parent"

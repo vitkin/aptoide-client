@@ -31,7 +31,7 @@
             android:paddingRight="6dp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#424142" />
+            android:textColor="@color/dark_custom_gray" />
 
         <TextView
             android:id="@+id/user_like"
@@ -44,7 +44,7 @@
             android:paddingRight="6dp"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#2f6699" />
+            android:textColor="@color/custom_color" />
 
     </RelativeLayout>
 

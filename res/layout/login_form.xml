@@ -9,13 +9,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:padding="2dp"
         android:background="@drawable/actionbar_bgd" >
 
         <Button
@@ -37,7 +38,7 @@
             android:singleLine="true"
             android:text="@string/my_account"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#fff" />
+            android:textColor="@android:color/white" />
     </RelativeLayout>
 
     <ScrollView
@@ -46,7 +47,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/login_button"
         android:layout_below="@+id/header"
-        android:background="#edece9"
+        android:background="@color/custom_background_color"
         android:orientation="vertical"
         android:padding="5dp" >
 
@@ -97,12 +98,6 @@
                     android:inputType="textPassword"
                     android:singleLine="true" />
 
-                <ViewStub
-                    android:id="@+id/login_error_stub"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout="@layout/stub" />
             </LinearLayout>
 
             <LinearLayout
