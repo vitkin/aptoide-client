@@ -11,7 +11,7 @@
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:shadowRadius">2</item>
-        <item name="android:background">@drawable/dark_custom_button</item>
+        <item name="android:background">@drawable/custom_color_button</item>
         <item name="android:padding">10dp</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
         <item name="android:textStyle">bold</item>

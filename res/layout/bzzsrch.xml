@@ -22,11 +22,7 @@
 
     <Button
         android:id="@+id/baz_src"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20sp"
-        android:layout_marginRight="20sp"
-        android:gravity="center"
+        style="@style/gray_button_style"
         android:text="@string/search_on_aptoide" />
 
 </LinearLayout><!--
