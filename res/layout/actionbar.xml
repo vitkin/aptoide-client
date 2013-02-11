@@ -21,7 +21,7 @@
         android:layout_margin="10dp"
         android:layout_weight="5"
         android:scaleType="fitStart"
-        android:src="@drawable/aptoidebrand" />
+        android:src="@drawable/brand" />
 
     <ImageView
         android:id="@+id/btsearch"
