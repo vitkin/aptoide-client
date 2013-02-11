@@ -87,7 +87,6 @@
                     android:layout_margin="0.5dp"
                     android:layout_weight="1"
                     android:adjustViewBounds="true"
-                    android:visibility="gone"
                     android:clickable="true" />
 
                 <ImageView
