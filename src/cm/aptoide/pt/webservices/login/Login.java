@@ -248,6 +248,10 @@ public class Login extends Activity {
 					toast.show();
 				}
 			} catch (Exception e) {
+				Toast toast= Toast.makeText(context, 
+						context.getString(R.string.error_occured), Toast.LENGTH_SHORT);  
+						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
+						toast.show();
 				e.printStackTrace();
 			}
 
@@ -275,9 +279,11 @@ public class Login extends Activity {
 		case CreateUser.REQUEST_CODE:
 			switch (resultCode) {
 			case RESULT_OK:
-				username_box.setText(data.getStringExtra("username"));
-				password_box.setText(data.getStringExtra("password"));
-				((Button) findViewById(R.id.login)).performClick();
+				if(username_box != null && password_box!=null && ((Button) findViewById(R.id.login) != null)){
+					username_box.setText(data.getStringExtra("username"));
+					password_box.setText(data.getStringExtra("password"));
+					((Button) findViewById(R.id.login)).performClick();
+				}
 				break;
 
 			default:

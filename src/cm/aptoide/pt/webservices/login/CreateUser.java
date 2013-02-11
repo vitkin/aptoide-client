@@ -146,6 +146,7 @@ public class CreateUser extends Activity {
 			switch (result) {
 			case OK:
 				suceed=true;
+				pd.setCancelable(false);
 				new Handler().postDelayed(new Runnable() {
 					
 					@Override
@@ -168,7 +169,10 @@ public class CreateUser extends Activity {
 							toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 							toast.show();
 				}
-				pd.dismiss();
+				if(pd!=null){
+					pd.dismiss();
+				}
+				
 				
 				break;
 			default:

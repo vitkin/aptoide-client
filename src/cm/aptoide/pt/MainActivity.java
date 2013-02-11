@@ -362,9 +362,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										.setRating(stars);
 								txtSamItem.setPadding(10, 0, 0, 0);
 								((TextView) txtSamItem.findViewById(R.id.version))
-									.setText(getString(R.string.version) +" "+ values.get(i).get("vername"));
+									.setText(getString(R.string.version) +" "+ valuesRecommended.get(i).get("vername"));
 								((TextView) txtSamItem.findViewById(R.id.downloads))
-									.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
+									.setText("(" + valuesRecommended.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 								txtSamItem.setTag(valuesRecommended.get(i).get(
 										"_id"));
 								txtSamItem.setLayoutParams(new LayoutParams(
@@ -2119,7 +2119,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						return new LatestLikesComments(store_id, db, mContext)
 								.getComments();
 					case RECOMMENDED:
-						final Cursor c = db.getUserBasedApk(store_id);
+						final Cursor c = db.getUserBasedApk(store_id,joinStores_boolean);
 						runOnUiThread(new Runnable() {
 
 							@Override

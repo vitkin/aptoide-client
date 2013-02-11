@@ -511,7 +511,7 @@ public class Database {
 		database.insert("userbasedapk", null, values);
 	}
 
-	public Cursor getUserBasedApk(long repo_id) {
+	public Cursor getUserBasedApk(long repo_id, boolean joinStores) {
 
 		
 		yield();
@@ -532,10 +532,16 @@ public class Database {
 		Cursor c = null;
 
 		try {
+			if(joinStores){
+			c = database
+					.rawQuery(
+							"select a._id, a.name, a.vername, a.repo_id, a.icon as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk a,itembased_apk b, itembased_repo as c where b.parent_apkid = 'recommended' and a.apkid=b.apkid and a.vercode=b.vercode and b.repo_id=c._id " +filter,null);
+			}else{
 			c = database
 					.rawQuery(
 							"select a._id, a.name, a.vername, a.repo_id, a.icon as imagepath, a.rating, a.downloads, a.apkid, a.vercode, c.iconspath as iconspath from apk a,itembased_apk b, itembased_repo as c where a.repo_id = ? and b.parent_apkid = 'recommended' and a.apkid=b.apkid and a.vercode=b.vercode and b.repo_id=c._id " +filter,
 							new String[] { repo_id + "" });
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1733,6 +1739,8 @@ public class Database {
 				value.put(DbStructure.COLUMN_ICON,
 						d.getString(0) + c.getString(1));
 				value.put("_id", c.getString(3));
+				value.put("vername", c.getString(7));
+				value.put("downloads", c.getString(8));
 				value.put(DbStructure.COLUMN_RATING, c.getString(4));
 				value.put("hashCode",
 						(c.getString(5) + "|" + c.getString(6)).hashCode() + "");
