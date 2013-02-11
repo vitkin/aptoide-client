@@ -7,14 +7,11 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -94,6 +91,7 @@ import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
@@ -308,8 +306,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 //				ImageLoader imageLoader = ImageLoader.getInstance(context);
 //				imageLoader.DisplayImage(viewApk.getIcon(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
-				
-				ImageLoader.getInstance().displayImage(viewApk.getIcon(), (ImageView) findViewById(R.id.app_icon), (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+				Log.d("APKInfo Icon Hash","hash: " + (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+				DisplayImageOptions options = new DisplayImageOptions.Builder()
+				 .displayer(new FadeInBitmapDisplayer(1000))
+				 .showStubImage(android.R.drawable.sym_def_app_icon)
+				 .resetViewBeforeLoading()
+				 .cacheInMemory()
+				 .cacheOnDisc()
+				 .build();
+				ImageLoader.getInstance().displayImage(viewApk.getIcon(), (ImageView) findViewById(R.id.app_icon), options, null, (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
 				
 				
 				
@@ -732,7 +737,7 @@ OnClickListener installListener = new OnClickListener() {
 		new Thread(new Runnable() {
 			public void run() {
 				if(scheduledDownloadChBox.isChecked()){
-					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(),viewApk.getName(),viewApk.getMd5());
+					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(),viewApk.getName(),viewApk.getMd5(),viewApk.getIcon());
 					runOnUiThread(new Runnable() {
 						
 						@Override

@@ -299,12 +299,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					ViewApk parent_apk = new ViewApk();
 					parent_apk.setApkid("recommended");
 					if (!hash.equals(db.getItemBasedApksHash(parent_apk.getApkid()))) {
-						Database.database.beginTransaction();
+//						Database.database.beginTransaction();
 						db.deleteItemBasedApks(parent_apk);
 						sp.parse(f, new HandlerItemBased(parent_apk));
 						db.insertItemBasedApkHash(hash, parent_apk.getApkid());
-						Database.database.setTransactionSuccessful();
-						Database.database.endTransaction();
+//						Database.database.setTransactionSuccessful();
+//						Database.database.endTransaction();
 						loadUIRecommendedApps();
 					}
 					f.delete();
@@ -429,7 +429,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 											new URL(
 													"http://imgs.aptoide.com/apks/editors.xml"),
 											null, null, mContext), 8 * 1024);
-					File f = File.createTempFile("abc", "abc");
+					File f = File.createTempFile("tempFile","");
 					OutputStream out = new FileOutputStream(f);
 					byte buf[] = new byte[1024];
 					int len;
@@ -440,17 +440,19 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					Server server = new Server();
 					String hash = Md5Handler.md5Calc(f);
 					if (!hash.equals(db.getEditorsChoiceHash())) {
-						Database.database.beginTransaction();
+//						Database.database.beginTransaction();
 						db.deleteEditorsChoice();
 						sp.parse(f, new HandlerEditorsChoice(server));
 						db.insertEditorsChoiceHash(hash);
-						Database.database.setTransactionSuccessful();
-						Database.database.endTransaction();
+//						Database.database.setTransactionSuccessful();
+//						Database.database.endTransaction();
 						loadUIEditorsApps();
 						
 					}
 					f.delete();
-					
+				} catch (SAXException e){
+//					Database.database.setTransactionSuccessful();
+//					Database.database.endTransaction();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -461,7 +463,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		new Thread(new Runnable() {
 
 			public void run() {
-				Database.database.beginTransaction();
+				
 				loadUItopapps();
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -469,21 +471,31 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					Server server = new Server();
 					server.id = 1;
 					NetworkUtils utils = new NetworkUtils();
-					
-					sp.parse(
-							new BufferedInputStream(
-									utils.getInputStream(new URL("http://apps.store.aptoide.com/top.xml"),
-													null, null, mContext),
-									8 * 1024), new HandlerFeaturedTop(server));
+					BufferedInputStream bis = new BufferedInputStream(
+							utils
+									.getInputStream(
+											new URL(
+													"http://apps.store.aptoide.com/top.xml"),
+											null, null, mContext), 8 * 1024);
+					File f = File.createTempFile("tempFile","");
+					OutputStream out = new FileOutputStream(f);
+					byte buf[] = new byte[1024];
+					int len;
+					while ((len = bis.read(buf)) > 0)
+						out.write(buf, 0, len);
+					out.close();
+					bis.close();
+//					Database.database.beginTransaction();
+					sp.parse(f, new HandlerFeaturedTop(server));
 					loadUItopapps();
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
 				} catch (SAXException e) {
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				Database.database.setTransactionSuccessful();
-				Database.database.endTransaction();
+//				b
 			}
 
 		}).start();
@@ -502,6 +514,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			item.put("icon", db.getIconsPath(0, Category.TOPFEATURED) + c.getString(4));
 			item.put("rating", c.getString(5));
 			item.put("id", c.getString(0));
+			item.put("apkid", c.getString(7));
+			item.put("vercode", c.getString(8));
 			item.put("vername", c.getString(2));
 			item.put("downloads", c.getString(6));
 			if (values.size() == 26) {
@@ -531,8 +545,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							.setText(getString(R.string.version) +" "+ values.get(i).get("vername"));
 					((TextView) txtSamItem.findViewById(R.id.downloads))
 							.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
-					
-					com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView) txtSamItem.findViewById(R.id.icon));
+					String hashCode = (values.get(i).get("apkid") +"|"+values.get(i).get("vercode"))+"";
+					com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView) txtSamItem.findViewById(R.id.icon),hashCode);
 					
 //					imageLoader.DisplayImage(-1, values.get(i).get("icon"),
 //							(ImageView) txtSamItem.findViewById(R.id.icon),
@@ -2329,29 +2343,24 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		public void bindView(View view, Context context, Cursor cursor) {
 			switch (depth) {
 			case STORES:
-				String hashcode = cursor.getString(cursor.getColumnIndex("avatar_url")).hashCode()+ "";
+				String hashcode = cursor.getString(cursor.getColumnIndex("avatar_url"));
 				com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
 						cursor.getString(cursor.getColumnIndex("avatar_url")),
 						(ImageView) view.findViewById(R.id.avatar),
 						hashcode);
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor.getString(cursor.getColumnIndex("name")));
-				((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
 				
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSED")) {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
-					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("QUEUED")) {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(getString(R.string.preparing_to_load));
-					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSING")) {
-					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
-					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.VISIBLE);
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + getString(R.string.loading_store));
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name())){
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(R.string.loading_failed);
-					((ProgressBar) view.findViewById(R.id.pb_store_loading)).setVisibility(View.GONE);
 				}
 						
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name()) || cursor.getString(cursor.getColumnIndex("status")).equals(State.PARSED.name())) {

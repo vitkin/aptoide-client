@@ -28,39 +28,19 @@
 
         <Button
             android:id="@+id/find_facebook"
-            style="@style/button_style"
-            android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:background="@drawable/button"
+            style="@style/gray_button_style"
             android:drawableLeft="@drawable/facebook_bt"
             android:drawablePadding="10dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
             android:text="@string/find_us_on_facebook"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#276ba2"
-            android:textStyle="normal" />
+            android:textColor="#276ba2" />
 
         <Button
             android:id="@+id/follow_twitter"
-            style="@style/button_style"
-            android:layout_width="fill_parent"
-            android:layout_height="45dp"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="91dp"
-            android:background="@drawable/button"
+            style="@style/gray_button_style"
             android:drawableLeft="@drawable/twitter_bt"
             android:drawablePadding="10dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
             android:text="@string/follow_twitter"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#2eb6e5"
-            android:textStyle="normal" />
-
+            android:textColor="#2eb6e5" />
     </LinearLayout>
 
 </ScrollView>

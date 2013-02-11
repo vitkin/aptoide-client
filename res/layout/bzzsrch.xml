@@ -6,32 +6,30 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<LinearLayout
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:layout_width="fill_parent"
-  android:layout_height="fill_parent"
-  android:orientation="vertical"
-  android:tag="bazaar"
-  android:background="#ffffff">
-  
-  <ImageView android:id="@+id/bzr"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:tag="bazaar" >
+
+    <ImageView
+        android:id="@+id/bzr"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:cropToPadding ="true"
+        android:cropToPadding="true"
         android:src="@drawable/logotipo" />
-        
-  <Button
-  		android:id="@+id/baz_src"
-  		android:layout_width="fill_parent"
+
+    <Button
+        android:id="@+id/baz_src"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20sp"
         android:layout_marginRight="20sp"
         android:gravity="center"
-        android:text="@string/search_on_aptoide"/>
-  
-  
-</LinearLayout>
-<!--
+        android:text="@string/search_on_aptoide" />
+
+</LinearLayout><!--
  * Copyright (C) 2011  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *

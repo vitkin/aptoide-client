@@ -9,7 +9,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:baselineAligned="false"
     android:orientation="vertical" >
 
@@ -17,7 +17,7 @@
         android:id="@+id/tv_excluded_uploads"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/greenbar"
+        android:background="@drawable/actionbar_bgd"
         android:padding="10dp"
         android:text="@string/excluded_updates"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -35,7 +35,7 @@
             android:id="@+id/list_layout"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@android:color/white" >
+            android:background="@color/custom_inside_background_color" >
 
             <ListView
                 android:id="@+id/excluded_updates_list"
@@ -58,15 +58,6 @@
 
     <Button
         android:id="@+id/restore_update"
-        style="@style/button_style"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/black"
-        android:textStyle="normal" />
+        style="@style/gray_button_style" />
 
 </LinearLayout>

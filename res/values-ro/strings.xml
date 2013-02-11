@@ -82,7 +82,6 @@
   <string name="update_main">Lista magazinelor în uz a fost schimbată.\nDoriţi să le actualizaţi?</string>
   <string name="email">Email</string>
   <string name="pass_confirmation">Confirmare parolă</string>
-  <string name="setting_hwfiltertitle">Filtre hardware</string>
   <string name="setting_hwspecstitle">Specificaţii hardware</string>
   <string name="setting_hwspecssum">Verificaţi specificaţiile hardware</string>
   <string name="setting_appfiltertitle">Filtru aplicaţii</string>

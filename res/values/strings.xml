@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     
-    <string name="WidgetProvider_timestamp_today">Today</string>
+    <string name="WidgetProvider_timestamp_today" >Today</string>
 	<string name="WidgetProvider_timestamp_yesterday">Yesterday</string>
 	<string name="WidgetProvider_timestamp_hour_ago">%s hour ago</string>
 	<string name="WidgetProvider_timestamp_hours_ago">%s hours ago</string>
@@ -14,6 +14,7 @@
     <string name="store_beginning_to_load">Store is beginning to load, please wait…</string>
     <string name="start_loading">Loading…</string>
     <string name="loading_failed">Failed to load, please try again…</string>
+    <string name="loading_store">Updating</string>
     <string name="error_latest_apk">No APK available in database. Is store still loading?</string>
 	<string name="error_delete_store">Unable to delete store. The store is still loading.</string>
 	<string name="cant_connect_to_store">Can\'t connect to store</string>
@@ -370,7 +371,7 @@
     <string name="showexcludedupdates">Excluded Updates</string>
     <string name="showexcludedupdates_title">Show Excluded Updates</string>
     <string name="excluded_updates_sum">Restore your Ignored Updates</string>
-    <string name="settings_maxFileCache_title">Cache size (MB)</string>
-    <string name="settings_maxFileCache_sum">Set usage SD card space</string>
+    <string name="settings_maxFileCache_title">Downloaded File Cache (MB)</string>
+    <string name="settings_maxFileCache_sum">Set a maximum size to keep your apk files</string>
 
 </resources>

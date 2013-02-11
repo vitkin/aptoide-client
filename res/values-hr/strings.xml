@@ -1,8 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+  <string name="WidgetProvider_timestamp_today">Danas</string>
+  <string name="WidgetProvider_timestamp_yesterday">Jučer</string>
+  <string name="WidgetProvider_timestamp_just_now">Upravo</string>
   <string name="menu_context_remove">Ukloni</string>
-  <string name="menu_context_reparse">Reload</string>
-  <string name="start_loading">Loading...</string>
+  <string name="menu_context_reparse">Osvježi</string>
+  <string name="preparing_to_load">Priprema za učitavanje, molimo pričekajte...</string>
+  <string name="start_loading">Učitavanje...</string>
   <string name="error_latest_apk">Nema APK u bazi podataka. Da li se store još uvijek podiže ?</string>
   <string name="error_delete_store">Nemoguće ukloniti store. Store se još uvijek podiže.</string>
   <string name="menu_settings">Postavke</string>
@@ -59,11 +63,14 @@
   <string name="setcredentials">Aptoide Login</string>
   <string name="usernotdef">Korisnik nije definisan</string>
   <string name="passwordnotdef">Password nije definisan</string>
-  <string name="loggingin">Logging in...</string>
+  <string name="loggingin">Prijavljivanje...</string>
   <string name="unabletoexecute">Nije u mogućnosti da se pokrene</string>
   <string name="failedcredentials">Neuspješna prijava sa datim informacijama</string>
-  <string name="loading_likes">Otvaranje lajkova...</string>
+  <string name="check_your_credentials">Greška. Molimo provjerite vaše podatke za prijavu</string>
+  <string name="unkown_error">Nepoznata Greška. Pokušajte ponovo</string>
+  <string name="loading_likes">Učitavanje lajkova...</string>
   <string name="inresponseto">\@</string>
+  <string name="add_comment">Dodaj komentar</string>
   <string name="enterbody">Ostavite svoj dojam na tijelu sekcije</string>
   <string name="postingcomment">Objavljivanje vašeg komentara...</string>
   <string name="commentadded">Vaš komentar je uspješno objavljen</string>
@@ -82,7 +89,6 @@
   <string name="update_main">Lista stores u korištenju je mjenjana. Želite li ih update-ovati?</string>
   <string name="email">Email.</string>
   <string name="pass_confirmation">Konfirmacija passworda.</string>
-  <string name="setting_hwfiltertitle">Hardware Filteri</string>
   <string name="setting_hwspecstitle">Hardware Specifikacije</string>
   <string name="setting_hwspecssum">Pogledajte vaše hardware specifikacije</string>
   <string name="setting_appfiltertitle">Filtriraj aplikacije</string>
@@ -90,6 +96,7 @@
   <string name="setting_schdwntitle">Pripremljeni download-i</string>
   <string name="setting_schdwninstalltitle">Automatska instalacija</string>
   <string name="setting_schdwninstallsum">Instaliraj pripremljene download-e automatski kada wifi bude dostupan.</string>
+  <string name="setting_clear_memory">Očisti memoriju</string>
   <string name="credentialssettings">Aptoide Login</string>
   <string name="clearcredentials">Očisti login</string>
   <string name="clearcredentials_summary">Poništi trenutni login</string>
@@ -125,6 +132,10 @@
   <string name="about_txt1">Vaš paket za instaliranje na android\n</string>
   <string name="about_site">Home:</string>
   <string name="about_mail">Contact:</string>
+  <string name="fsecure_av">F-Secure 2-4 za Android</string>
+  <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
+  <string name="google_play">Google Play</string>
+  <string name="show_less">Prikaži manje</string>
   <string name="no_descript">Nema dostupnog opisa</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
@@ -203,4 +214,9 @@
   <string name="contact">Kontakt</string>
   <string name="choose_email_client">Izaberite Email klient:</string>
   <string name="refresh_list">Osvježi</string>
+  <string name="share">Podijeli</string>
+  <string name="find_us_on_facebook">Pronađi nas na Facebook-u</string>
+  <string name="follow_twitter">Prati nas na Twitter-u</string>
+  <string name="social_networks">Društvene Mreže</string>
+  <string name="logout">Odjava</string>
 </resources>

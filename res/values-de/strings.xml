@@ -46,7 +46,6 @@
   <string name="order_popup_catg2">Anwendungen:</string>
   <string name="update_repos">Updates</string>
   <string name="pass_confirmation">Passwort nicht definiert</string>
-  <string name="setting_hwfiltertitle">Hardware Filter</string>
   <string name="setting_hwspecstitle">Technische Daten</string>
   <string name="setting_hwspecssum">Überprüfen Sie Ihre technischen Daten</string>
   <string name="setting_appfiltertitle">App Filter</string>
@@ -82,7 +81,7 @@
   <string name="schDown_nodownloadselect">Keine Downloads ausgewählt</string>
   <string name="schDown_downerror">Download-Fehler. %1$s Store hinzufügen.</string>
   <string name="addSchDown">Download geplant</string>
-  <string name="registration">Bazaar login</string>
+  <string name="registration">Aptoide Registration</string>
   <string name="bazaar_url">www.aptoide.com</string>
   <string name="password">Passwort...</string>
   <string name="schDown_invertselection">Auswahl installieren</string>

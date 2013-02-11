@@ -76,7 +76,7 @@ public class UpdatesAdapter extends CursorAdapter {
 		String iconspath = cursor.getString(9)+cursor.getString(4);
 		final String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode")));
 		holder.name.setText(name);
-		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash.hashCode()+"");
+		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash);
 //		 try{
 //	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
 //	        }catch (Exception e) {

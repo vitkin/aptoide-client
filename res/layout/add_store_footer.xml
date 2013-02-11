@@ -7,7 +7,7 @@
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" >
 
@@ -15,18 +15,16 @@
         android:id="@+id/join_stores"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginTop="-5dp"
+        android:layout_weight="1"
         android:text="@string/merge_all_stores"
         android:textColor="@android:color/darker_gray" />
 
     <Button
         android:id="@+id/add_store"
-        style="@style/button_style"
+        style="@style/custom_button_style"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:background="@drawable/green_button"
         android:drawableLeft="@drawable/create_contact"
         android:text="@string/add_store" />
 

@@ -21,7 +21,7 @@
         android:id="@+id/title_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bar"
+        android:background="@drawable/title_bar_bgd"
         android:gravity="center" >
 
         <com.viewpagerindicator.TitlePageIndicator
@@ -29,16 +29,15 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            app:footerColor="#84b222"
+            app:footerColor="@color/middle_custom_color"
             app:footerLineHeight="2dp"
-            app:selectedColor="#C877AA0A" />
+            app:selectedColor="@color/middle_custom_color" />
     </RelativeLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/title_list"
         android:layout_weight="1" >
     </android.support.v4.view.ViewPager>
 

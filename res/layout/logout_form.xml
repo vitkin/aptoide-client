@@ -16,17 +16,12 @@
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/greenbar" >
+        android:background="@drawable/actionbar_bgd" >
 
         <Button
             android:id="@+id/register_link"
-            style="@style/button_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/custom_button_style"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_margin="3dp"
-            android:background="@drawable/green_button"
             android:onClick="createUser"
             android:text="@string/register" />
 
@@ -89,20 +84,14 @@
                     android:text="@string/password"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/darker_gray" />
-
             </LinearLayout>
 
             <Button
                 android:id="@+id/logout"
-                style="@style/button_style"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                style="@style/gray_button_style"
                 android:layout_weight="1"
-                android:background="@drawable/button"
                 android:onClick="logout"
-                android:text="@string/sign_out"
-                android:textColor="@android:color/black"
-                android:textStyle="normal" />
+                android:text="@string/sign_out" />
         </LinearLayout>
     </ScrollView>
 

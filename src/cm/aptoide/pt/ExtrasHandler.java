@@ -8,6 +8,7 @@
 package cm.aptoide.pt;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -39,7 +40,7 @@ public class ExtrasHandler extends DefaultHandler {
 		private int i = 0;
 		
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-			switch (Enum.valueOf(localName.toUpperCase())) {
+			switch (Enum.valueOf(localName.toUpperCase(Locale.ENGLISH))) {
 			case PKG:
 				value = new ContentValues();
 				break;
@@ -55,7 +56,7 @@ public class ExtrasHandler extends DefaultHandler {
 		};
 		
 		public void endElement(String uri, String localName, String qName) throws SAXException {
-			switch (Enum.valueOf(localName.toUpperCase())) {
+			switch (Enum.valueOf(localName.toUpperCase(Locale.ENGLISH))) {
 			case APKID:
 				apkid=sb.toString();
 				break;
@@ -70,11 +71,15 @@ public class ExtrasHandler extends DefaultHandler {
 				value.put(ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT, cmt);
 				values.add(value);
 				i++;
-				if(i%100==0){
+				if(i%200==0){
 					context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
 					values.clear();
 				}
-				
+				try {
+					Thread.sleep(75);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 //				getContentResolver().insert(ExtrasContentProvider.CONTENT_URI, value);
 //				dbhandler.addComment(apkid,cmt);
 				apkid="";

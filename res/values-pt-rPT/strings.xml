@@ -11,6 +11,7 @@
   <string name="preparing_to_load">A preparar para carregar, por favor aguarde...</string>
   <string name="start_loading">A carregar...</string>
   <string name="loading_failed">Carregamento falhou, tente novamente</string>
+  <string name="loading_store">A actualizar</string>
   <string name="error_latest_apk">Não foi encontrado nenhum APK na base de dados. A Store ainda está a carregar?</string>
   <string name="error_delete_store">Não é possivel remover. A Store ainda está a carregar.</string>
   <string name="cant_connect_to_store">Não é possível ligar à store</string>
@@ -111,7 +112,6 @@
   <string name="setting_3g">3g</string>
   <string name="setting_4g">4g</string>
   <string name="setting_ethernet">Ethernet</string>
-  <string name="setting_hwfiltertitle">Filtros de Hardware</string>
   <string name="setting_hwspecstitle">Especificações de Hardware</string>
   <string name="setting_sdk_version">Versão de SDK</string>
   <string name="setting_screen_size">Tamanho do ecran</string>
@@ -207,7 +207,7 @@
   <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
   <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
   <string name="addSchDown">Download agendado</string>
-  <string name="registration">Bazaar login</string>
+  <string name="registration">Aptoide Registration</string>
   <string name="bazaar_url">www.aptoide.com</string>
   <string name="username">Email</string>
   <string name="password">Password...</string>

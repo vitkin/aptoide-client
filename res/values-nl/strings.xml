@@ -82,7 +82,6 @@
   <string name="update_main">Lijst van voorraden is veranderd.\nWil je ze updaten?</string>
   <string name="email">Email</string>
   <string name="pass_confirmation">Wachtwoord bevestiging</string>
-  <string name="setting_hwfiltertitle">Hardware Filters</string>
   <string name="setting_hwspecstitle">Hardware specificaties</string>
   <string name="setting_hwspecssum">Controleer je hardware specificaties</string>
   <string name="setting_appfiltertitle">Filter Applicaties</string>

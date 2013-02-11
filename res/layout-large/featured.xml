@@ -9,7 +9,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:orientation="vertical" >
 
     <ScrollView
@@ -90,23 +90,9 @@
                     android:clickable="true" />
             </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/separator"
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/ab_solid_light_holo" >
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="5dp"
-                    android:text="@string/top_apps"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="#597f07" />
-            </RelativeLayout>
+            <TextView
+                style="@style/label_style"
+                android:text="@string/top_apps" />
 
             <LinearLayout
                 android:id="@+id/container"
@@ -115,29 +101,15 @@
                 android:orientation="vertical" >
             </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/separator"
-                android:layout_width="fill_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="1dp"
-                android:background="@drawable/ab_solid_light_holo" >
-
-                <TextView
-                    android:id="@+id/recommended_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="5dp"
-                    android:text="@string/recommended_apps"
-                    android:textAppearance="?android:textAppearanceLarge"
-                    android:textColor="#597f07" />
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/recommended_label"
+                style="@style/label_style"
+                android:text="@string/recommended_apps" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white"
+                android:background="@color/custom_inside_background_color"
                 android:orientation="vertical" >
 
                 <LinearLayout

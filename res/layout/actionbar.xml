@@ -10,7 +10,7 @@
     android:id="@+id/actionbar"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/greenbar"
+    android:background="@drawable/actionbar_bgd"
     android:orientation="horizontal" >
 
     <ImageView
@@ -25,11 +25,13 @@
 
     <ImageView
         android:id="@+id/btsearch"
+        style="@style/custom_button_style"
         android:layout_width="61dp"
         android:layout_height="38dp"
         android:layout_marginRight="3dp"
         android:layout_weight="0.1"
+        android:background="@drawable/search_button"
         android:padding="3dp"
-        android:src="@drawable/btsearch" />
+        android:src="@drawable/ic_search" />
 
 </LinearLayout>

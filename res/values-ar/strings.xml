@@ -69,7 +69,6 @@
   <string name="update_main">القائمه من المخازن استخدمت لتتم تغيرها قائمة المخازن المستخدمه قد تم تغيرها \nهل ترغب في تحديثهم؟</string>
   <string name="email">الإميل</string>
   <string name="pass_confirmation">كلمة المرور تأكيدها</string>
-  <string name="setting_hwfiltertitle">تصفية الجهاز</string>
   <string name="setting_hwspecstitle">مواصفات الجهاز</string>
   <string name="setting_hwspecssum">فحص مواصفات جهازك</string>
   <string name="setting_appfiltertitle">تصفية التطبيقات</string>

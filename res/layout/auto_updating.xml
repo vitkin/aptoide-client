@@ -9,12 +9,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:gravity="top"
     android:orientation="vertical" >
-
-    <!-- Green Bar -->
-
 
     <TextView
         android:id="@+id/auto_updating"

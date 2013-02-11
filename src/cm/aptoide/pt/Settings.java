@@ -11,6 +11,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -24,6 +25,7 @@ import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -102,7 +104,7 @@ public class Settings extends PreferenceActivity{
 				screenSize.setText(HWSpecifications.getScreenSize(getBaseContext())+"");
 				esglVer.setText(HWSpecifications.getEsglVer(getBaseContext()));
 				
-				hwSpecsDialog.setButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+				hwSpecsDialog.setButton(Dialog.BUTTON_NEUTRAL,getString(R.string.ok), new DialogInterface.OnClickListener() {
 					
 					public void onClick(DialogInterface dialog, int which) {
 						hwSpecsDialog.dismiss();
@@ -119,22 +121,15 @@ public class Settings extends PreferenceActivity{
 		
 		EditTextPreference maxFileCache = (EditTextPreference) findPreference("maxFileCache");
 		
-		
-		
-		maxFileCache.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		maxFileCache.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
+		maxFileCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			
 			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				
-				System.out.println("asdfasdf" + preference);
-				System.out.println("asdfasdf" + newValue);
-				
+			public boolean onPreferenceClick(Preference preference) {
+				((EditTextPreference) preference).getEditText().setText(PreferenceManager.getDefaultSharedPreferences(mctx).getString("maxFileCache","200"));
 				return false;
 			}
 		});
-		
-		maxFileCache.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-		
 	}
 
 	public class DeleteDir extends AsyncTask<File, Void, Void>{
@@ -170,20 +165,23 @@ public class Settings extends PreferenceActivity{
 	public class GetDirSize extends AsyncTask<File, Void, Double[]>{
 		double getDirSize(File dir) {
 			double size = 0;
-			if (dir.isFile()) {
-				size = dir.length();
-			} else {
-				File[] subFiles = dir.listFiles();
-				for (File file : subFiles) {
-					if (file.isFile()) {
-						size += file.length();
-					} else {
-						size += this.getDirSize(file);
+			try{
+				if (dir.isFile()) {
+					size = dir.length();
+				} else {
+					File[] subFiles = dir.listFiles();
+					for (File file : subFiles) {
+						if (file.isFile()) {
+							size += file.length();
+						} else {
+							size += this.getDirSize(file);
+						}
+
 					}
-
 				}
+			}catch (Exception e){
+				e.printStackTrace();
 			}
-
 			return size;
 		}
 		@Override

@@ -9,7 +9,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/dialog_full_holo_light"
+    android:background="@drawable/dialog_background"
     android:orientation="horizontal" >
 
     <LinearLayout
@@ -63,16 +63,17 @@
                     android:singleLine="true"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@android:color/darker_gray" />
+
             </LinearLayout>
         </RelativeLayout>
 
-        <ProgressBar
-            android:id="@+id/pb_store_loading"
-            style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="2dp" />
+        <!-- <ProgressBar -->
+        <!-- android:id="@+id/pb_store_loading" -->
+        <!-- style="?android:attr/progressBarStyleSmall" -->
+        <!-- android:layout_width="wrap_content" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_gravity="center_vertical" -->
+        <!-- android:layout_margin="2dp" /> -->
 
     </LinearLayout>
 

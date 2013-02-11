@@ -82,7 +82,6 @@
   <string name="update_main">Käytössä olevien kauppojen luettelo on muuttunut.\nHaluatko päivittää ne?</string>
   <string name="email">Sähköposti</string>
   <string name="pass_confirmation">Salasanan varmistus</string>
-  <string name="setting_hwfiltertitle">Laitteistosuodattimet</string>
   <string name="setting_hwspecstitle">Laitteistotiedot</string>
   <string name="setting_hwspecssum">Tarkista laitetietosi</string>
   <string name="setting_appfiltertitle">Suodata sovelluksia</string>

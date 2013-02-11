@@ -58,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
+            android:layout_marginRight="2dp"
             android:layout_weight="1"
             android:orientation="horizontal" >
 
@@ -70,10 +71,10 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:paddingRight="2dp"
-                android:visibility="gone"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#ccc" />
+                android:textColor="#ccc"
+                android:visibility="gone" />
 
             <RatingBar
                 android:id="@+id/rating"

@@ -69,7 +69,6 @@
   <string name="update_main">Kullanılmakta olan mağazaların listesi değişti.\nGüncellemek ister misiniz?</string>
   <string name="email">E-posta</string>
   <string name="pass_confirmation">Parola doğrulaması</string>
-  <string name="setting_hwfiltertitle">Donanım filtreleri</string>
   <string name="setting_hwspecstitle">Donanım özellikleri</string>
   <string name="setting_hwspecssum">Donanım özelliklerini denetle</string>
   <string name="setting_appfiltertitle">Uygulamaları Filtrele</string>

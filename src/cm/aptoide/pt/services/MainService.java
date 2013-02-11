@@ -188,6 +188,18 @@ public class MainService extends Service {
 	@Override
 	public void onDestroy() {
 		unregisterReceiver(receiver);
+		System.out.println("MainService OnDestroy");
+		try{
+			File[] files = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide").listFiles(); 
+			
+			for(File file : files){
+				if(file.getName().endsWith(".xml")&&!file.getName().contains("servers.xml")){
+					file.delete();
+				}
+			}	
+		}catch (Exception e){
+			e.printStackTrace();
+		}
 		super.onDestroy();
 	}
 

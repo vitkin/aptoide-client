@@ -81,7 +81,6 @@
   <string name="update_main">A lista de lojas em uso mudou.\nDeseja atualizá-las?</string>
   <string name="email">e-mail</string>
   <string name="pass_confirmation">Confirmação de senha</string>
-  <string name="setting_hwfiltertitle">Filtros de Hardware</string>
   <string name="setting_hwspecstitle">Especificações de Hardware</string>
   <string name="setting_hwspecssum">Confira suas especificações de hardware</string>
   <string name="setting_appfiltertitle">Filtrar Aplicativos</string>

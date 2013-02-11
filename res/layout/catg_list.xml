@@ -10,7 +10,7 @@
     android:id="@+id/cntrl"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/list_selector_holo_light"
+    android:background="@drawable/list_background"
     android:padding="10dp"
     android:gravity="center_vertical|top"
     android:orientation="horizontal" android:baselineAligned="false">

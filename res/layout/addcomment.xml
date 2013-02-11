@@ -10,7 +10,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center_horizontal"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="10dp" >
@@ -46,14 +46,8 @@
 
     <Button
         android:id="@+id/submitComment"
-        style="@style/button_style"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/button"
+        style="@style/gray_button_style"
         android:onClick="postComment"
-        android:text="@string/submit"
-        android:textColor="@android:color/black"
-        android:textStyle="normal" />
+        android:text="@string/submit" />
 
 </LinearLayout>

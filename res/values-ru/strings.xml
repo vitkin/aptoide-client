@@ -46,7 +46,6 @@
   <string name="order_popup_catg2">Приложения:</string>
   <string name="update_repos">Обновления</string>
   <string name="pass_confirmation">Пароль не определен</string>
-  <string name="setting_hwfiltertitle">Аппаратные фильтры</string>
   <string name="setting_hwspecstitle">Аппаратные характеристики</string>
   <string name="setting_hwspecssum">Проверьте аппаратные спецификации</string>
   <string name="setting_appfiltertitle">Фильтры приложений</string>

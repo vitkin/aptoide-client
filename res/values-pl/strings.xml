@@ -68,7 +68,6 @@
   <string name="update_main">Lista repozytoriów zmieniła się.\nCzy chcesz ja uaktualnić?</string>
   <string name="email">Email</string>
   <string name="pass_confirmation">Potwierdzenie hasła</string>
-  <string name="setting_hwfiltertitle">Filtry sprzętowe</string>
   <string name="setting_hwspecstitle">Specyfikacje Sprzętowe</string>
   <string name="setting_hwspecssum">Sprawdź specyfikacje swojego sprzętu</string>
   <string name="setting_appfiltertitle">Filtr aplikacji</string>

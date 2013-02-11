@@ -185,8 +185,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			      
 			      // ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
 			      // ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
-			      String hashCode = (c.getString(2)+"|"+c.getString(3)).hashCode()+"";
-			      Log.d("ScheduledDownloadsIcons",hashCode);
+			      String hashCode = (c.getString(2)+"|"+c.getString(3));
 			      ImageLoader.getInstance().displayImage(hashCode, imageViewIcon, hashCode);
 			}
 		};
@@ -218,6 +217,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 							apk.setApkid(schDown.getApkid());
 							apk.setName(schDown.getName());
 							apk.setVercode(schDown.getVercode());
+							apk.setIconPath(schDown.getIconPath());
 							apk.setVername(schDown.getVername());
 							apk.setMd5(schDown.getMd5());
 							try {
@@ -244,6 +244,8 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 						ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
 						ViewApk apk = new ViewApk();
 						apk.setApkid(schDown.getApkid());
+						apk.setName(schDown.getName());
+						apk.setIconPath(schDown.getIconPath());
 						apk.setVercode(schDown.getVercode());
 						apk.setVername(schDown.getVername());
 						apk.setMd5(schDown.getMd5());
@@ -273,9 +275,15 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		private String vername = "";
 		private int vercode = 0 ;
 		private boolean checked = false ;
+		private String iconPath = "";
+		
+		
 		public ScheduledDownload( String name, boolean checked ) {
 			this.name = name ;
 			this.checked = checked ;
+		}
+		public String getIconPath() {
+			return this.iconPath ;
 		}
 		public String getName() {
 			return name;
@@ -322,6 +330,9 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		public void setVername(String vername) {
 			this.vername = vername;
 		}
+		public void setIconPath(String iconPath) {
+			this.iconPath=iconPath;
+		}
 	}
 
 	/** Holds child views for one row. */
@@ -365,6 +376,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 			scheduledDownload.setVercode(Integer.parseInt(c.getString(3)));
 			scheduledDownload.setMd5(c.getString(6));
 			scheduledDownload.setVername(c.getString(4));
+			scheduledDownload.setIconPath(c.getString(7));
 			scheduledDownloadsHashMap.put(c.getString(0),scheduledDownload);
 		}
 		adapter.swapCursor(c);

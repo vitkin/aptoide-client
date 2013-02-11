@@ -165,7 +165,7 @@ public class ItemBasedApks {
 				out.close();
 				
 				String md5hash = Md5Handler.md5Calc(f);
-				Database.database.beginTransaction();
+//				Database.database.beginTransaction();
 				inTransaction = true;
 				if(!md5hash.equals(db.getItemBasedApksHash(apkid))){
 					db.deleteItemBasedApks(parent_apk);
@@ -175,10 +175,10 @@ public class ItemBasedApks {
 					SAXParserFactory factory = SAXParserFactory.newInstance();
 					SAXParser parser = factory.newSAXParser();
 					parser.parse(f, new HandlerItemBased(parent_apk));
-					if(inTransaction ){
-						Database.database.setTransactionSuccessful();
-						Database.database.endTransaction();
-					}
+//					if(inTransaction ){
+//						Database.database.setTransactionSuccessful();
+//						Database.database.endTransaction();
+//					}
 					return db.getItemBasedApks(apkid);
 				}
 				
@@ -196,10 +196,10 @@ public class ItemBasedApks {
 			} finally{
 				f.delete();
 			}
-			if(inTransaction ){
-				Database.database.setTransactionSuccessful();
-				Database.database.endTransaction();
-			}
+//			if(inTransaction ){
+//				Database.database.setTransactionSuccessful();
+//				Database.database.endTransaction();
+//			}
 			return null;
 		};
 		

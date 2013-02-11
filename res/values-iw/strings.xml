@@ -81,7 +81,6 @@
   <string name="update_repos">עדכן חנות</string>
   <string name="email">אימייל</string>
   <string name="pass_confirmation">אישור סיסמא</string>
-  <string name="setting_hwfiltertitle">מסנני חומרה</string>
   <string name="setting_hwspecstitle">מאפייני חומרה</string>
   <string name="setting_hwspecssum">בדוק את מאפייני החומרה של המכשיר</string>
   <string name="setting_appfiltertitle">סינון יישומים</string>

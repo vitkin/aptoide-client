@@ -52,8 +52,8 @@ public class InstalledAdapter extends CursorAdapter {
 		String iconspath = cursor.getString(9)+
 				cursor.getString(4);
 		String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+
-				cursor.getString(cursor.getColumnIndex("vercode")).hashCode());
-		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash.hashCode()+"");
+				cursor.getString(cursor.getColumnIndex("vercode")));
+		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash);
 		 try{
 	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
 	        }catch (Exception e) {

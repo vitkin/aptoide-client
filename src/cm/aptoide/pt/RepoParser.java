@@ -118,7 +118,7 @@ public class RepoParser {
 		}
 
 		public void run(){
-			db.startTransation();
+//			db.startTransation();
 			server.state = cm.aptoide.pt.Server.State.PARSINGTOP;
 			db.updateStatus(server);
 			try{
@@ -130,8 +130,8 @@ public class RepoParser {
 			}finally{
 				xml.delete();
 			}
-			db.updateStatus(server);
-			db.endTransation(server);
+//			db.updateStatus(server);
+//			db.endTransation(server);
 		}
 	}
 	
@@ -148,7 +148,7 @@ public class RepoParser {
 		}
 
 		public void run(){
-			db.startTransation();
+//			db.startTransation();
 			try{
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
@@ -159,7 +159,7 @@ public class RepoParser {
 				xml.delete();
 			}
 			
-			db.endTransation(server);
+//			db.endTransation(server);
 		}
 	}
 	

@@ -88,7 +88,7 @@ public class Database {
 				values);
 		apk.setId(id);
 		insertScreenshots(apk, Category.TOPFEATURED);
-		// database.yieldIfContendedSafely();
+		// database.yieldIfContendedSafely(1000);
 		// database.setTransactionSuccessful();
 		// database.endTransaction();
 	}
@@ -121,9 +121,10 @@ public class Database {
 			values.put(DbStructure.COLUMN_REPO_ID, apk.getRepo_id());
 			values.put(DbStructure.COLUMN_CATEGORY_2ND, apk.getCategory2());
 			putCommonValues(apk, values);
-			database.yieldIfContendedSafely();
+			yield();
 			long id = database.insert(DbStructure.TABLE_LATEST_APK, null,
 					values);
+			yield();
 			insertDynamicCategories(apk, Category.LATEST);
 			apk.setId(id);
 			insertScreenshots(apk, Category.LATEST);
@@ -140,7 +141,7 @@ public class Database {
 			values.put(DbStructure.COLUMN_REPO_ID, apk.getRepo_id());
 			values.put(DbStructure.COLUMN_CATEGORY_2ND, apk.getCategory2());
 			putCommonValues(apk, values);
-			database.yieldIfContendedSafely();
+			yield();
 			long id = database.insert(DbStructure.TABLE_TOP_APK, null, values);
 			insertDynamicCategories(apk, Category.TOP);
 			apk.setId(id);
@@ -162,9 +163,7 @@ public class Database {
 					categories2.get(apk.getCategory2()));
 			putCommonValues(apk, values);
 			database.insert(DbStructure.TABLE_APK, null, values);
-			if(database.yieldIfContendedSafely(1000)){
-				System.out.println("Yielded" + i);
-			}
+			yield();
 			i++;
 			if (i % 300 == 0) {
 				Intent i = new Intent("update");
@@ -177,7 +176,7 @@ public class Database {
 		ContentValues values = new ContentValues();
 		putCommonValues(apk, values);
 		database.insert(DbStructure.TABLE_APK, null, values);
-		database.yieldIfContendedSafely();
+		yield();
 	}
 
 	public void insert(ViewApkItemBased apk) {
@@ -187,17 +186,17 @@ public class Database {
 		values.put(DbStructure.COLUMN_NAME, apk.getServer().url);
 		values.put(DbStructure.COLUMN_BASE_PATH, apk.getServer().basePath);
 		long i = database.insert(DbStructure.TABLE_ITEMBASED_REPO, null, values);
-		database.yieldIfContendedSafely();
+		yield();
 		values.clear();
 		values.put("repo_id", i);
 		values.put("parent_apkid", apk.getParentApk().getApkid());
 		putCommonValues(apk, values);
 		long id = database.insert(DbStructure.TABLE_ITEMBASED_APK, null, values);
-		database.yieldIfContendedSafely();
+		yield();
 		apk.setRepo_id(i);
 		apk.setId(id);
 		insertScreenshots(apk, Category.ITEMBASED);
-		database.yieldIfContendedSafely();
+		yield();
 	}
 
 	// public void insert(ViewApk apk) {
@@ -239,7 +238,7 @@ public class Database {
 	// }
 	//
 	//
-	// database.yieldIfContendedSafely();
+	// database.yieldIfContendedSafely(1000);
 	//
 	// } catch (Exception e){
 	// e.printStackTrace();
@@ -253,7 +252,6 @@ public class Database {
 			ContentValues values = new ContentValues();
 			values.put(DbStructure.COLUMN_NAME, apk.getCategory1());
 			database.insert("category_1st", null, values);
-
 			if (categories1.get(apk.getCategory1()) == null) {
 				Cursor c = database.query("category_1st",
 						new String[] { "_id" }, "name = ?",
@@ -332,6 +330,7 @@ public class Database {
 	public Cursor getApps(long category2_id, long store, boolean mergeStores,
 			Order order, boolean allApps) {
 		Cursor c = null;
+		yield();
 		SharedPreferences sPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		try {
@@ -422,7 +421,7 @@ public class Database {
 
 	public Cursor getCategory1(long store, boolean mergeStores, boolean allApps) {
 		Cursor d = null;
-
+		yield();
 		if (mergeStores) {
 			d = database
 					.rawQuery(
@@ -515,7 +514,7 @@ public class Database {
 	public Cursor getUserBasedApk(long repo_id) {
 
 		
-		
+		yield();
 		SharedPreferences sPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
 		String filter = "";
@@ -546,6 +545,7 @@ public class Database {
 
 	public Cursor getCategory2(long l, long store, boolean mergeStores) {
 		Cursor c = null;
+		yield();
 		if (mergeStores) {
 			c = database
 					.rawQuery(
@@ -564,7 +564,7 @@ public class Database {
 	public Server getServer(String uri) {
 		Server server = null;
 		Cursor c = null;
-
+		yield();
 		try {
 			c = database.query("repo",
 					new String[] { "_id, url, hash , username, password" },
@@ -588,7 +588,7 @@ public class Database {
 	public Server getServer(long id, boolean top) {
 		Server server = null;
 		Cursor c = null;
-
+		yield();
 		try {
 			if (top) {
 				c = database
@@ -742,6 +742,7 @@ public class Database {
 	}
 
 	public Cursor getStores(boolean mergeStores) {
+		yield();
 		Cursor c = null;
 		try {
 			c = database.query("repo", null, "_id > 0", null, null, null, null);
@@ -770,7 +771,7 @@ public class Database {
 	public String getStoreName(long repo_id) {
 		String return_string = null;
 		Cursor c = null;
-
+		yield();
 		try {
 			c = database.query("repo",
 					new String[] { DbStructure.COLUMN_NAME }, "_id = ?",
@@ -792,6 +793,7 @@ public class Database {
 
 	public long getServerId(String server) {
 		System.out.println(server);
+		yield();
 		Cursor c = database.query("repo", new String[] { "_id" }, "url = ?",
 				new String[] { server }, null, null, null);
 		c.moveToFirst();
@@ -802,6 +804,7 @@ public class Database {
 	}
 
 	public String getBasePath(long repo_id, Category category) {
+		yield();
 		Cursor c = null;
 		String path = null;
 		try {
@@ -919,6 +922,7 @@ public class Database {
 	}
 
 	public Cursor getInstalledApps(Order order) {
+		yield();
 		Cursor c = null;
 		try {
 
@@ -934,6 +938,7 @@ public class Database {
 	}
 
 	public Cursor getUpdates(Order order) {
+		yield();
 		Cursor c = null;
 		try {
 
@@ -1020,7 +1025,7 @@ public class Database {
 			return_long = database.insert(DbStructure.TABLE_TOP_APK, null,
 					values);
 			i++;
-			// database.yieldIfContendedSafely();
+			// database.yieldIfContendedSafely(1000);
 			// if(i%300==0){
 			// Intent i = new Intent("update");
 			// i.putExtra("server", apk.getRepo_id());
@@ -1056,6 +1061,7 @@ public class Database {
 	}
 
 	public Cursor getTopApps(long store_id, boolean joinStores_boolean) {
+		yield();
 		Cursor c = null;
 		try {
 			String filter = "";
@@ -1107,6 +1113,7 @@ public class Database {
 
 	public Cursor getLatestApps(long store_id, boolean joinStores_boolean) {
 		Cursor c = null;
+		yield();
 		try {
 			String filter = "";
 			SharedPreferences sPref = PreferenceManager
@@ -1163,6 +1170,7 @@ public class Database {
 	public String getIconsPath(long repo_id, Category category) {
 		Cursor c = null;
 		String path = null;
+		yield();
 		try {
 			switch (category) {
 			case EDITORSCHOICE:
@@ -1303,6 +1311,7 @@ public class Database {
 	public String getRepoHash(long repo_id, Category category) {
 		Cursor c = null;
 		String return_string = "";
+		yield();
 		try {
 			switch (category) {
 			case EDITORSCHOICE:
@@ -1363,6 +1372,7 @@ public class Database {
 		Cursor c = null;
 		ViewApk apk = new ViewApk();
 		Log.d("Aptoide-Database", "Get APK id: " + category.name() + " " + id);
+		yield();
 		switch (category) {
 		case INFOXML:
 			c = database.query("apk as a, repo as c", new String[] { "a.apkid",
@@ -1460,6 +1470,7 @@ public class Database {
 		MatrixCursor mc = new MatrixCursor(
 				new String[] { "_id", DbStructure.COLUMN_APKID,
 						DbStructure.COLUMN_VERNAME, "repo_id" });
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_APK, new String[] {
 					DbStructure.COLUMN__ID, DbStructure.COLUMN_APKID,
@@ -1485,6 +1496,8 @@ public class Database {
 	public String getWebServicesPath(long repo_id, Category category) {
 		Cursor c = null;
 		String return_string = null;
+		yield();
+		
 		try {
 			switch (category) {
 			case EDITORSCHOICE:
@@ -1541,9 +1554,21 @@ public class Database {
 		return return_string;
 	}
 
+	/**
+	 * 
+	 */
+	private void yield() {
+		try{
+			if(database.yieldIfContendedSafely(1000)){
+				System.out.println("Yelded at id: " + i);
+			}
+		} catch (Exception e){};
+	}
+
 	public String getWebServicesPath(long repo_id) {
 		Cursor c = null;
 		String return_string = null;
+		yield();
 		try {
 			c = database.query("repo", new String[] { "webservicespath" },
 					"_id = ?", new String[] { repo_id + "" }, null, null, null);
@@ -1614,6 +1639,7 @@ public class Database {
 	public ArrayList<HashMap<String, String>> getItemBasedApks(String apkid) {
 		Cursor c = null;
 		Cursor d = null;
+		yield();
 		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String, String>>();
 		SharedPreferences sPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
@@ -1651,7 +1677,7 @@ public class Database {
 				value.put("_id", c.getString(3));
 				value.put(DbStructure.COLUMN_RATING, c.getString(4));
 				value.put("hashCode",
-						(c.getString(5) + "|" + c.getString(6)).hashCode() + "");
+						(c.getString(5) + "|" + c.getString(6)));
 				values.add(value);
 			}
 		} catch (Exception e) {
@@ -1672,6 +1698,7 @@ public class Database {
 			String apkid) {
 		Cursor c = null;
 		Cursor d = null;
+		yield();
 		ArrayList<HashMap<String, String>> values = new ArrayList<HashMap<String, String>>();
 		SharedPreferences sPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
@@ -1726,6 +1753,7 @@ public class Database {
 	public String getItemBasedApksHash(String string) {
 		Cursor c = null;
 		String return_string = "";
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_HASHES,
 					new String[] { DbStructure.COLUMN_HASH }, "apkid = ?",
@@ -1804,7 +1832,7 @@ public class Database {
 			default:
 				break;
 			}
-			database.yieldIfContendedSafely();
+			yield();
 		}
 
 	}
@@ -1812,6 +1840,7 @@ public class Database {
 	public void getScreenshots(ArrayList<String> originalList, ViewApk viewApk,
 			Category category) {
 		Cursor c = null;
+		yield();
 		String screenspath = getScreenshotsPath(viewApk.getRepo_id(), category);
 		try {
 
@@ -1868,6 +1897,7 @@ public class Database {
 	private String getScreenshotsPath(long repo_id, Category category) {
 		String return_string = "";
 		Cursor c = null;
+		yield();
 		try {
 			switch (category) {
 			case TOPFEATURED:
@@ -1921,6 +1951,7 @@ public class Database {
 	public ViewApk getItemBasedApk(long id) {
 		Cursor c = null;
 		ViewApk apk = new ViewApk();
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_ITEMBASED_APK, new String[] {
 					DbStructure.COLUMN_APKID, DbStructure.COLUMN_VERNAME,
@@ -1954,6 +1985,7 @@ public class Database {
 	public String getItemBasedServer(long repo_id) {
 		Cursor c = null;
 		String return_string = null;
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_ITEMBASED_REPO,
 					new String[] { DbStructure.COLUMN_NAME }, "_id=?",
@@ -1975,6 +2007,7 @@ public class Database {
 	public String getItemBasedBasePath(long repo_id) {
 		Cursor c = null;
 		String return_string = null;
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_ITEMBASED_REPO,
 					new String[] { DbStructure.COLUMN_BASE_PATH }, "_id=?",
@@ -1996,7 +2029,7 @@ public class Database {
 	public void deleteItemBasedApks(ViewApk apk) {
 
 		Cursor c = null;
-
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_ITEMBASED_APK,
 					new String[] { "repo_id" }, "parent_apkid = ?",
@@ -2023,6 +2056,7 @@ public class Database {
 		Cursor c = null;
 		long return_int = -1;
 		System.out.println(apkid + " " + store_id);
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_APK, new String[] { "_id" },
 					"apkid = ? and repo_id = ?", new String[] { apkid,
@@ -2045,6 +2079,7 @@ public class Database {
 		Cursor c = null;
 		long return_int = -1;
 		System.out.println(apkid);
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_APK, new String[] { "_id" },
 					"apkid = ?", new String[] { apkid }, null, null, null);
@@ -2067,7 +2102,7 @@ public class Database {
 		HashMap<String, String> value;
 
 		Cursor c = null;
-
+		yield();
 		try {
 			c = database
 					.rawQuery(
@@ -2096,7 +2131,7 @@ public class Database {
 		HashMap<String, String> value = null;
 
 		Cursor c = null;
-
+		yield();
 		try {
 			c = database
 					.rawQuery(
@@ -2120,7 +2155,7 @@ public class Database {
 	public Cursor getScheduledDownloads() {
 
 		Cursor c = null;
-
+		yield();
 		try {
 			c = database.query(DbStructure.TABLE_SCHEDULED, null, null, null,
 					null, null, null);
@@ -2132,7 +2167,7 @@ public class Database {
 	}
 
 	public void insertScheduledDownload(String apkid, int vercode,
-			String vername, String remotePath, String name, String md5) {
+			String vername, String remotePath, String name, String md5, String icon) {
 
 		Cursor c = database.query(DbStructure.TABLE_SCHEDULED, null,
 				"apkid = ? and vercode = ?",
@@ -2151,6 +2186,7 @@ public class Database {
 		values.put(DbStructure.COLUMN_VERCODE, vercode);
 		values.put(DbStructure.COLUMN_VERNAME, vername);
 		values.put(DbStructure.COLUMN_REMOTE_PATH, remotePath);
+		values.put(DbStructure.COLUMN_ICON, icon);
 
 		database.insert(DbStructure.TABLE_SCHEDULED, null, values);
 
@@ -2183,7 +2219,7 @@ public class Database {
 	}
 
 	public Cursor getSearch(String searchQuery) {
-
+		yield();
 		String query = "select b._id as _id, b.name,b.vername,b.repo_id,b.icon as imagepath,b.rating,b.downloads,b.apkid as apkid ,b.vercode as vercode, c.iconspath as iconspath from apk as b, repo as c where (b.name LIKE '%"
 				+ searchQuery
 				+ "%' OR b.apkid LIKE '%"
@@ -2204,7 +2240,7 @@ public class Database {
 	 * 
 	 */
 	public int getInstalledAppVercode(String apkid) {
-
+		yield();
 		Cursor c = null;
 		int return_int = 0;
 		try {
@@ -2227,7 +2263,7 @@ public class Database {
 	}
 
 	public String getInstalledAppVername(String apkid) {
-
+		yield();
 		Cursor c = null;
 		String return_string = "";
 		try {
@@ -2251,7 +2287,7 @@ public class Database {
 
 	public String getEditorsChoiceHash() {
 		String hash = "";
-		
+		yield();
 		Cursor c = database.query(DbStructure.TABLE_HASHES, new String[]{DbStructure.COLUMN_HASH}, DbStructure.COLUMN_APKID + "=?", new String[]{"editorschoice"}, null, null, null);
 		
 		if(c.moveToFirst()){
@@ -2263,6 +2299,7 @@ public class Database {
 	}
 
 	public Cursor getFeaturedTopApps() {
+		yield();
 		Cursor c = database
 				.rawQuery(
 						"select a._id as _id, a.name, a.vername, a.repo_id, a.icon as imagepath, a.rating, a.downloads, a.apkid as apkid, a.vercode as vercode, c.iconspath as iconspath from featured_top_apk as a, featured_top_repo as c where c._id = a.repo_id "

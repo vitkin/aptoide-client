@@ -9,14 +9,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
-        android:background="@drawable/greenbar"
+        android:background="@drawable/actionbar_bgd"
         android:orientation="horizontal" >
 
         <TextView

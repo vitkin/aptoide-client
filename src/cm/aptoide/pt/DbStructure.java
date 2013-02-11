@@ -9,6 +9,8 @@ package cm.aptoide.pt;
 
 
 
+import java.util.ArrayList;
+
 import cm.aptoide.pt.RepoParser.TopParser;
 import cm.aptoide.pt.util.databasecreator.Column;
 import cm.aptoide.pt.util.databasecreator.Column.OnConflict;
@@ -17,8 +19,10 @@ import cm.aptoide.pt.util.databasecreator.TableCreator;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DbStructure extends SQLiteOpenHelper {
 	
@@ -367,6 +371,7 @@ public class DbStructure extends SQLiteOpenHelper {
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_VERNAME))
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_REMOTE_PATH))
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MD5))
+										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_ICON))
 										 .createTable();
 		
 		creator.newTable(TABLE_EXCLUDED_APKID).addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
@@ -412,6 +417,21 @@ public class DbStructure extends SQLiteOpenHelper {
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		Log.d("Database", "OnUpgrade");
+		ArrayList<Server> oldServers = new ArrayList<Server>();
+		try{
+			Cursor c = db.query("repo", new String[]{"url","name"}, null, null, null, null, null);
+			for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+				Server server = new Server();
+				server.name=c.getString(1);
+				server.url=c.getString(0);
+				oldServers.add(server);
+			}
+			c.close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+		
 		
 		db.execSQL("DROP TABLE IF EXISTS apk");
 		db.execSQL("DROP TABLE IF EXISTS category1");
@@ -428,8 +448,18 @@ public class DbStructure extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS userbasedapk");
 		db.execSQL("DROP TABLE IF EXISTS scheduled");
 		db.execSQL("DROP TABLE IF EXISTS screenshots");
-		
 		onCreate(db);
+		
+		for(Server oldServer : oldServers){
+			ContentValues values = new ContentValues();
+			values.put(COLUMN_URL, oldServer.url);
+			values.put(COLUMN_NAME, oldServer.name);
+			values.put(COLUMN_STATUS, "PARSED");
+			values.put(COLUMN_HASH, "dummyHash");
+			db.insert("repo", null, values);
+			Log.d("Database", oldServer.url);
+		}
+		
 	}
 	
 	

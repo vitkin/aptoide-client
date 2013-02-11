@@ -9,7 +9,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="#edece9" >
+    android:background="@color/custom_background_color" >
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,13 +29,8 @@
 
             <TextView
                 android:id="@+id/downloading_intro"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/greenbar"
-                android:padding="10dp"
-                android:text="@string/downloading_apps"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#fff" />
+                style="@style/label_style"
+                android:text="@string/downloading_apps" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -47,7 +42,7 @@
                     android:id="@+id/downloading_list"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/white" />
+                    android:background="@color/custom_inside_background_color" />
             </LinearLayout>
         </LinearLayout>
 
@@ -60,13 +55,8 @@
 
             <TextView
                 android:id="@+id/downloaded_intro"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/greenbar"
-                android:padding="10dp"
-                android:text="@string/downloaded_apps"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#fff" />
+                style="@style/label_style"
+                android:text="@string/downloaded_apps" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -78,7 +68,7 @@
                     android:id="@+id/downloaded_list"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/white" />
+                    android:background="@color/custom_inside_background_color" />
             </LinearLayout>
         </LinearLayout>
 
@@ -91,13 +81,8 @@
 
             <TextView
                 android:id="@+id/failed_intro"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/greenbar"
-                android:padding="10dp"
-                android:text="@string/not_downloaded_apps"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#fff" />
+                style="@style/label_style"
+                android:text="@string/not_downloaded_apps" />
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -109,7 +94,7 @@
                     android:id="@+id/failed_list"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
-                    android:background="@android:color/white" />
+                    android:background="@color/custom_inside_background_color" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
@@ -126,17 +111,9 @@
 
     <Button
         android:id="@+id/exit"
-        style="@style/button_style"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        style="@style/gray_button_style"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/button"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="@string/back"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/black"
-        android:textStyle="normal" />
+        android:text="@string/back" />
 
 </RelativeLayout><!--
  * Copyright (C) 2012  Duarte Silveira

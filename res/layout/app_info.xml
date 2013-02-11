@@ -9,7 +9,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#edece9"
+    android:background="@color/custom_background_color"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -60,25 +60,21 @@
             android:layout_below="@+id/btinstall"
             layout="@layout/row_app_downloading" />
 
-              <Button
+        <Button
             android:id="@+id/btinstall"
-            style="@style/button_style"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/custom_button_style"
+            android:layout_alignParentRight="true"
             android:layout_below="@+id/app_name"
             android:layout_marginBottom="15dp"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/green_button"
-            android:padding="10dp"
             android:text="@string/install" />
 
         <LinearLayout
             android:id="@+id/badge_layout"
-            android:layout_marginRight="5dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-			android:layout_alignBottom="@+id/btinstall"
+            android:layout_alignBottom="@+id/btinstall"
             android:layout_alignTop="@+id/btinstall"
+            android:layout_marginRight="5dp"
             android:layout_toLeftOf="@+id/btinstall"
             android:clickable="true"
             android:focusable="true"
@@ -122,17 +118,7 @@
 
             <TextView
                 android:id="@+id/screenshots_label"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ab_solid_light_holo"
-                android:gravity="left"
-                android:paddingBottom="5.0sp"
-                android:paddingLeft="5.0sp"
-                android:paddingRight="5.0sp"
-                android:paddingTop="10.0dip"
-                android:text="@string/screenshots"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="#3e6e2f"
+                style="@style/label_style"
                 android:visibility="gone" />
 
             <RelativeLayout
@@ -144,7 +130,7 @@
                 <cm.aptoide.pt.CustomViewPager
                     android:id="@+id/screenShotsPager"
                     android:layout_width="fill_parent"
-                    android:layout_height="200dp" />
+                    android:layout_height="158dp" />
 
                 <ImageView
                     android:id="@+id/left"
@@ -176,7 +162,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@android:color/white"
+                android:background="@color/custom_inside_background_color"
                 android:orientation="vertical" >
 
                 <LinearLayout
@@ -341,23 +327,15 @@
             </LinearLayout>
 
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ab_solid_light_holo"
-                android:gravity="left"
-                android:paddingLeft="5.0sp"
-                android:paddingRight="5.0sp"
-                android:paddingTop="10.0dip"
-                android:text="@string/app_about"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="#3e6e2f" />
+                style="@style/label_style"
+                android:text="@string/app_about" />
 
             <LinearLayout
                 android:id="@+id/description_container"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@android:color/white"
+                android:background="@color/custom_inside_background_color"
                 android:clickable="true"
                 android:orientation="vertical" >
 
@@ -386,16 +364,8 @@
                 android:visibility="gone" />
 
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ab_solid_light_holo"
-                android:gravity="left"
-                android:paddingLeft="5.0sp"
-                android:paddingRight="5.0sp"
-                android:paddingTop="10.0dip"
-                android:text="@string/rate_this_app"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="#3e6e2f" />
+                style="@style/label_style"
+                android:text="@string/rate_this_app" />
 
             <LinearLayout
                 android:id="@+id/ratings"
@@ -405,61 +375,30 @@
 
                 <Button
                     android:id="@+id/likesImage"
-                    style="@style/button_style"
-                    android:layout_width="fill_parent"
+                    style="@style/gray_button_style"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/button"
                     android:drawableLeft="@drawable/like_btn"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="@string/like"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black"
-                    android:textStyle="normal" />
+                    android:text="@string/like" />
 
                 <Button
                     android:id="@+id/dislikesImage"
-                    style="@style/button_style"
-                    android:layout_width="fill_parent"
+                    style="@style/gray_button_style"
                     android:layout_height="50dp"
                     android:layout_weight="1"
-                    android:background="@drawable/button"
                     android:drawableRight="@drawable/dislike_btn"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:text="@string/dont_like"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/black"
-                    android:textStyle="normal" />
+                    android:text="@string/dont_like" />
             </LinearLayout>
 
             <TextView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ab_solid_light_holo"
-                android:gravity="left"
-                android:paddingLeft="5.0sp"
-                android:paddingRight="5.0sp"
-                android:paddingTop="10.0dip"
-                android:text="@string/comments"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="#3e6e2f" />
+                style="@style/label_style"
+                android:text="@string/comments" />
 
             <Button
                 android:id="@+id/add_comment"
-                style="@style/button_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="25dp"
-                android:background="@drawable/button"
+                style="@style/gray_button_style"
                 android:drawableRight="@drawable/ic_more_arrow_right"
-                android:text="@string/add_comment"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/black"
-                android:textStyle="normal" >
+                android:text="@string/add_comment" >
             </Button>
 
             <LinearLayout
@@ -467,7 +406,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@android:color/white"
+                android:background="@color/custom_inside_background_color"
                 android:orientation="vertical" >
             </LinearLayout>
 
@@ -486,16 +425,8 @@
 
             <TextView
                 android:id="@+id/itembasedapks_label"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ab_solid_light_holo"
-                android:gravity="left"
-                android:paddingLeft="5.0sp"
-                android:paddingRight="5.0sp"
-                android:paddingTop="10.0dip"
-                android:text="@string/related_apps"
-                android:textAppearance="?android:textAppearanceLarge"
-                android:textColor="#3e6e2f" />
+                style="@style/label_style"
+                android:text="@string/related_apps" />
 
             <LinearLayout
                 android:id="@+id/itembasedapks_maincontainer"
@@ -519,7 +450,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
-                    android:background="@android:color/white"
+                    android:background="@color/custom_inside_background_color"
                     android:fadeScrollbars="true"
                     android:orientation="vertical"
                     android:scrollbars="none" >

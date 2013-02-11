@@ -82,7 +82,6 @@
   <string name="update_main">La llista de repositoris ha canviat.\nVols actualitzar-los?</string>
   <string name="email">Correu-e</string>
   <string name="pass_confirmation">Confirmació de constrasenya</string>
-  <string name="setting_hwfiltertitle">Filtres de maquinari</string>
   <string name="setting_hwspecstitle">Especificacions de maquinari</string>
   <string name="setting_hwspecssum">Comprova les especificacions de maquinari</string>
   <string name="setting_appfiltertitle">Filtrar apicacions</string>

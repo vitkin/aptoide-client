@@ -262,7 +262,7 @@ public class HelperDownload{
 	    				}
 	    				
     					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
-    					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
+//    					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 	    				
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
 	    				/** trigger in miliseconds */

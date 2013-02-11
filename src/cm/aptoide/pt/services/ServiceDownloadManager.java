@@ -478,7 +478,7 @@ public class ServiceDownloadManager extends Service {
 					case SETTING_UP:
 					case PAUSED:
 					case RESUMING:
-					case RESTARTING:					
+					case RESTARTING:	
 						break;
 		
 					default:
