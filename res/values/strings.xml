@@ -101,7 +101,7 @@
     <string name="by">by</string>
     <string name="on">on</string>
     <string name="postingtaste">Your request is being submitted</string>
-    <string name="another_comment_is_beeing_submited">Another comment is beeing submited, please wait</string>
+    <string name="another_comment_is_beeing_submited">Another comment is being submitted, please wait</string>
     <string name="error_occured">An error occurred. Please try again</string>
     <string name="comment_submitted">Comment submitted successfuly</string>
     <string name="showpass">Show password</string>
