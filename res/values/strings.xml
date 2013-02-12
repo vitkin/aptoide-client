@@ -324,7 +324,7 @@
     <string name="clearcontent_title">"Remove Aptoide data and Configurations"</string>
     <string name="clearcache_title">"Clear Aptoide cache"</string>
     <string name="schDown_added">" was added to scheduled download list."</string>
-    <string name="clear_cache_sucess">"Content successfuly deleted"</string>
+    <string name="clear_cache_sucess">Content successfully deleted</string>
     
     
     
