@@ -297,4 +297,13 @@
   <string name="update_to">Actualizar para</string>
   <string name="want_to_share">O Aptoide não publica sem a sua permissão. Respeitamos a privacidade do seu telefone. Quer publicar a seguinte mensagem?</string>
   <string name="share">Partilhar</string>
+  <string name="facebook_authentication_failed">Autenticação com Facebook falhado!</string>
+  <string name="facebook_failed_post">A publicação falhou!</string>
+  <string name="facebook_message_posted">A mensagem foi publicada na timeline do seu Facebook!</string>
+  <string name="loading_facebook">Carregando Facebook...</string>
+  <string name="loading_twitter">Carregando Twitter...</string>
+  <string name="social_network_intro">O seu feedback é importante. Tu podes encontra-nos no Facebook e/ou segui-nos no Twitter</string>
+  <string name="find_us_on_facebook">"Encontra-nos no Facebook "</string>
+  <string name="follow_twitter">Segue-nos no Twitter</string>
+  <string name="social_networks">Redes Sociais</string>
 </resources>

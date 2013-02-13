@@ -190,7 +190,7 @@
   <string name="schDwnBtn">Agendar download</string>
   <string name="search_log">Procurar</string>
   <string name="search_stores">noutras Lojas</string>
-  <string name="no_repo">Adicionar uma Loja!</string>
+  <string name="no_repo">Adicionar uma loja!</string>
   <string name="myrepo_alrt">Pode procurar por lojas online. Nós sugerimos que use a nossa loja oficial.\n\nDeseja adicionar?</string>
   <string name="error_on_update">O processo de actualização não pode ser concluído nas lojas seguintes:</string>
   <string name="updating_norepos">Não existem lojas activas na sua lista.\nPor favor, adicione uma loja ou active pelo menos uma das que você já possuí.</string>
@@ -286,7 +286,7 @@
   <string name="ip_blacklisted">IP excluído</string>
   <string name="ip_blacklisted_extended">"A aplicação não foi recuperada. O seu endereço de internet (IP) está excluído dos servidores Aptoide. Para resolver este problema, por favor contacte "<a href="mailto:ipblacklist@aptoide.com">ipblacklist\@aptoide.com</a></string>
   <string name="connection_error">sem ligação à internet</string>
-  <string name="apk_not_found">o APK não foi encontrado</string>
+  <string name="apk_not_found">O APK não foi encontrado</string>
   <string name="invalid_apk">APK inválido</string>
   <string name="server_error">Erro de servidor</string>
   <string name="back">Voltar</string>

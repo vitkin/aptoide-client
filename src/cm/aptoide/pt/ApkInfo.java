@@ -92,6 +92,7 @@ import com.google.ads.AdView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import com.nostra13.universalimageloader.utils.FileUtils;
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
@@ -127,7 +128,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			serviceManagerIsBound = true;
 
 			Log.v("Aptoide-ApkInfo", "Connected to ServiceDownloadManager");
-
+			
 			continueLoading();
 		}
 
@@ -235,6 +236,21 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	Likes likes;
 	String repo_string;
 	ProgressDialog pd;
+	
+	private OnClickListener openListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			try{
+				Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage(viewApk.getApkid());
+				startActivity(LaunchIntent);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Toast.makeText(context, R.string.no_launcher_activity, Toast.LENGTH_LONG).show();
+			}
+			
+		}
+	};
 	private void loadElements(long id) {
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
 		findViewById(R.id.downloading_name).setVisibility(View.GONE);
@@ -273,16 +289,27 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				if(installedVercode<=viewApk.getVercode()&&installedVercode!=0){
 					findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
 					((TextView) findViewById(R.id.inst_version)).setText(getString(R.string.installed_version)+": " + db.getInstalledAppVername(viewApk.getApkid()));
-					if(installedVercode<viewApk.getVercode()){
+					if(installedVercode<viewApk.getVercode()&&!getIntent().hasExtra("installed")){
 						((Button) findViewById(R.id.btinstall)).setText(R.string.update);
+					}else if(getIntent().hasExtra("installed")){
+						((Button) findViewById(R.id.btinstall)).setText(R.string.open);
 					}
 				}else if(installedVercode>viewApk.getVercode()){
-					((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+					if(getIntent().hasExtra("installed")){
+						((Button) findViewById(R.id.btinstall)).setText(R.string.open);
+					}else{
+						((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+					}
+					
 					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
 				}
 				
 				if(installedVercode==viewApk.getVercode()){
-					((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+					if(getIntent().hasExtra("installed")){
+						((Button) findViewById(R.id.btinstall)).setText(R.string.open);
+					}else{
+						((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+					}
 					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
 				}
 				
@@ -665,7 +692,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	 * 
 	 */
 	private void setClickListeners() {
-		findViewById(R.id.btinstall).setOnClickListener(installListener);
+		if(getIntent().hasExtra("installed")){
+			findViewById(R.id.btinstall).setOnClickListener(openListener );
+		}else if(getIntent().hasExtra("updates")){
+			findViewById(R.id.btinstall).setOnClickListener(installListener);
+		}else{
+			findViewById(R.id.btinstall).setOnClickListener(installListener);
+		}
 
 		findViewById(R.id.add_comment).setOnClickListener(new OnClickListener() {
 

@@ -147,14 +147,8 @@ public class CreateUser extends Activity {
 			case OK:
 				suceed=true;
 				pd.setCancelable(false);
-				new Handler().postDelayed(new Runnable() {
-					
-					@Override
-					public void run() {
-						pd.dismiss();
-						finish();
-					}
-				}, 3000);
+				pd.dismiss();
+				finish();
 				break;
 				
 			case FAIL:

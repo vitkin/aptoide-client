@@ -465,6 +465,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			public void run() {
 				
 				loadUItopapps();
+				File f = null;
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
@@ -477,7 +478,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 											new URL(
 													"http://apps.store.aptoide.com/top.xml"),
 											null, null, mContext), 8 * 1024);
-					File f = File.createTempFile("tempFile","");
+					f = File.createTempFile("tempFile","");
 					OutputStream out = new FileOutputStream(f);
 					byte buf[] = new byte[1024];
 					int len;
@@ -488,14 +489,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 //					Database.database.beginTransaction();
 					sp.parse(f, new HandlerFeaturedTop(server));
 					loadUItopapps();
+					f.delete();
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
 				} catch (SAXException e) {
-					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-//				b
+				if(f!=null)f.delete();
 			}
 
 		}).start();
@@ -888,9 +889,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	protected void redrawAll() {
-		installedLoader.forceLoad();
-		availableLoader.forceLoad();
-		updatesLoader.forceLoad();
+		if(installedLoader!=null)installedLoader.forceLoad();
+		if(availableLoader!=null)availableLoader.forceLoad();
+		if(updatesLoader!=null)updatesLoader.forceLoad();
 		new Thread(new Runnable() {
 
 			@Override
@@ -1813,6 +1814,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							int arg2, long id) {
 						Intent i = new Intent(MainActivity.this, ApkInfo.class);
 						i.putExtra("_id", id);
+						i.putExtra("installed", true);
 						i.putExtra("category", Category.INFOXML.ordinal());
 						startActivity(i);
 					}
@@ -1833,6 +1835,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							int arg2, long id) {
 						Intent i = new Intent(MainActivity.this, ApkInfo.class);
 						i.putExtra("_id", id);
+						i.putExtra("updates", true);
 						i.putExtra("category", Category.INFOXML.ordinal());
 						startActivity(i);
 					}

@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -110,7 +111,6 @@ public class Login extends Activity {
 					.toString());
 		} catch (Exception e) {
 		}
-		;
 
 		checkCredentials(username, password);
 	}
@@ -131,10 +131,8 @@ public class Login extends Activity {
 	}
 
 	private void checkCredentials(String username, String password) {
-		pd.show();
-		pd.setMessage(getText(R.string.please_wait));
 		if (username.trim().length() > 0 && password.trim().length() > 0) {
-			new CheckUserCredentials().execute(username, password);
+			new CheckUserCredentials().execute(username, password,"false");
 		} else {
 			Toast toast = Toast.makeText(context,
 					context.getString(R.string.check_your_credentials),
@@ -175,64 +173,99 @@ public class Login extends Activity {
 		return sPref.getString(Configs.LOGIN_PASSWORD, null);
 	}
 
-	class CheckUserCredentials extends AsyncTask<String, Void, String> {
+	class CheckUserCredentials extends AsyncTask<String, Void, JSONObject> {
 
+		int retry = 0;
+		String username_string;
+		String password_string;
+		String fromSignIn;
+		JSONObject array;
 		@Override
-		protected String doInBackground(String... params) {
-
-			URL url;
-			StringBuilder sb = null;
-			String data = null;
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pd.show();
+			pd.setMessage(getText(R.string.please_wait));
+		}
+		
+		@Override
+		protected JSONObject doInBackground(String... params) {
+			
+			fromSignIn = params[2];
+			username_string = params[0];
+			password_string = params[1];
 			try {
-				url = new URL(
-						"http://webservices.aptoide.com/webservices/checkUserCredentials");
-				HttpURLConnection connection = (HttpURLConnection) url
-						.openConnection();
-				connection.setDoOutput(true);
-				data = URLEncoder.encode("user", "UTF-8") + "="
-						+ URLEncoder.encode(params[0], "UTF-8");
-				data += "&" + URLEncoder.encode("passhash", "UTF-8") + "="
-						+ URLEncoder.encode(params[1], "UTF-8");
-				data += "&" + URLEncoder.encode("mode", "UTF-8") + "="
-						+ URLEncoder.encode("json", "UTF-8");
-				OutputStreamWriter wr = new OutputStreamWriter(
-						connection.getOutputStream());
-				wr.write(data);
-				wr.flush();
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						connection.getInputStream()));
-				sb = new StringBuilder();
-				String line;
-				while ((line = br.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-				wr.close();
-				br.close();
+				return checkUserCredentials(username_string,password_string);
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			if (sb != null) {
-				return sb.toString();
-			} else {
-				return "ERROR";
+			
+			return null;
+		}
+
+		/**
+		 * @throws MalformedURLException
+		 * @throws IOException
+		 * @throws UnsupportedEncodingException
+		 * @throws JSONException
+		 * @throws InterruptedException 
+		 */
+		private JSONObject checkUserCredentials(String username, String password) throws MalformedURLException,
+				IOException, UnsupportedEncodingException, JSONException, InterruptedException {
+			URL url;
+			StringBuilder sb;
+			String data;
+			url = new URL("http://webservices.aptoide.com/webservices/checkUserCredentials");
+			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+			connection.setDoOutput(true);
+			data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
+			data += "&" + URLEncoder.encode("passhash", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
+			data += "&" + URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8");
+			OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+			wr.write(data);
+			wr.flush();
+			BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			sb = new StringBuilder();
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line + "\n");
 			}
+			wr.close();
+			br.close();
+			JSONObject array = new JSONObject(sb.toString());
+			System.out.println(array);
+			if(array.has("errors")){
+				if(array.getString("errors").contains("credentials")&&fromSignIn.equals("true")){
+					pd.setMessage(getString(R.string.retrying_registration));
+					if(retry>=10){
+						array = null;
+						throw new IOException();
+					}
+					Thread.sleep(3000);
+					retry++;
+					System.out.println("Retrying " +retry );
+					array = checkUserCredentials(username,password);
+				}
+			}
+			return array;
 		}
 
 		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
+		protected void onPostExecute(JSONObject array) {
+			super.onPostExecute(array);
 			pd.dismiss();
-			JSONObject array;
 			try {
-				array = new JSONObject(result);
 				if (array.getString("status").equals("OK")) {
 					succeed = true;
-					prefEdit.putString(Configs.LOGIN_PASSWORD, password);
-					prefEdit.putString(Configs.LOGIN_USER_LOGIN, username);
+					prefEdit.putString(Configs.LOGIN_PASSWORD, password_string);
+					prefEdit.putString(Configs.LOGIN_USER_LOGIN, username_string);
 					prefEdit.putString(Configs.LOGIN_USER_ID,
-							Algorithms.computeSHA1sum(username));
+							Algorithms.computeSHA1sum(username_string));
 					prefEdit.putString(Configs.LOGIN_USER_TOKEN,
 							array.getString("token"));
 					prefEdit.remove(Configs.LOGIN_USER_USERNAME);
@@ -254,7 +287,7 @@ public class Login extends Activity {
 						toast.show();
 				e.printStackTrace();
 			}
-
+			
 		}
 	}
 
@@ -279,10 +312,16 @@ public class Login extends Activity {
 		case CreateUser.REQUEST_CODE:
 			switch (resultCode) {
 			case RESULT_OK:
-				if(username_box != null && password_box!=null && ((Button) findViewById(R.id.login) != null)){
-					username_box.setText(data.getStringExtra("username"));
-					password_box.setText(data.getStringExtra("password"));
-					((Button) findViewById(R.id.login)).performClick();
+				if(!Login.isLoggedIn(context)){
+					try {
+						username_box.setText(data.getStringExtra("username"));
+						password_box.setText(data.getStringExtra("password"));
+						new CheckUserCredentials().execute(data.getStringExtra("username"), Algorithms.computeSHA1sum(data.getStringExtra("password")),"true");
+					} catch (NoSuchAlgorithmException e) {
+						e.printStackTrace();
+					} catch (UnsupportedEncodingException e) {
+						e.printStackTrace();
+					}
 				}
 				break;
 

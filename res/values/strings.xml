@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    
-    <string name="WidgetProvider_timestamp_today" >Today</string>
-	<string name="WidgetProvider_timestamp_yesterday">Yesterday</string>
-	<string name="WidgetProvider_timestamp_hour_ago">%s hour ago</string>
-	<string name="WidgetProvider_timestamp_hours_ago">%s hours ago</string>
-	<string name="WidgetProvider_timestamp_minutes_ago">%s minutes ago</string>
-	<string name="WidgetProvider_timestamp_just_now">Just now</string>
-    
+
+    <string name="WidgetProvider_timestamp_today">Today</string>
+    <string name="WidgetProvider_timestamp_yesterday">Yesterday</string>
+    <string name="WidgetProvider_timestamp_hour_ago">%s hour ago</string>
+    <string name="WidgetProvider_timestamp_hours_ago">%s hours ago</string>
+    <string name="WidgetProvider_timestamp_minutes_ago">%s minutes ago</string>
+    <string name="WidgetProvider_timestamp_just_now">Just now</string>
     <string name="menu_context_remove">Remove</string>
     <string name="menu_context_reparse">Reload</string>
     <string name="preparing_to_load">Preparing to load, please wait…</string>
@@ -16,24 +15,23 @@
     <string name="loading_failed">Failed to load, please try again…</string>
     <string name="loading_store">Updating</string>
     <string name="error_latest_apk">No APK available in database. Is store still loading?</string>
-	<string name="error_delete_store">Unable to delete store. The store is still loading.</string>
-	<string name="cant_connect_to_store">Can\'t connect to store</string>
-	<string name="verify_store">Verify the name of the store</string>
+    <string name="error_delete_store">Unable to delete store. The store is still loading.</string>
+    <string name="cant_connect_to_store">Can\'t connect to store</string>
+    <string name="verify_store">Verify the name of the store</string>
     <string name="menu_settings">Settings</string>
-    
-	<string name="my_stores">My stores</string>
-	<string name="store_name">Store Name</string>
-	<string name="store">Store</string>
-	<string name="category1">Category 1</string>
-	<string name="category2">Category 2</string>
-	<string name="add_store">Add Store</string>
-	<string name="add_store_button_below">Add a store in the button below!</string>
-	<string name="version">Version:</string>
-	<string name="apk_id">APK ID:</string>
-	<string name="vercode">Version code:</string>
-	<string name="empty_store_list">You don\'t have any stores.</string>
-	<string name="new_store">Add Store</string>
-	<string name="add_repo_private">Private</string>
+    <string name="my_stores">My stores</string>
+    <string name="store_name">Store Name</string>
+    <string name="store">Store</string>
+    <string name="category1">Category 1</string>
+    <string name="category2">Category 2</string>
+    <string name="add_store">Add Store</string>
+    <string name="add_store_button_below">Add a store in the button below!</string>
+    <string name="version">Version:</string>
+    <string name="apk_id">APK ID:</string>
+    <string name="vercode">Version code:</string>
+    <string name="empty_store_list">You don\'t have any stores.</string>
+    <string name="new_store">Add Store</string>
+    <string name="add_repo_private">Private</string>
     <string name="extended_server">Extended Store</string>
     <string name="downloads">downloads</string>
     <string name="merge_all_stores">Merge Stores</string>
@@ -47,6 +45,7 @@
     <string name="install">Install</string>
     <string name="uninstall">Uninstall</string>
     <string name="update">Update</string>
+    <string name="open">Open</string>
     <string name="search_market">Search Market</string>
     <string name="comments">Comments</string>
     <string name="commentlabel">Add Comment</string>
@@ -54,13 +53,13 @@
     <string name="no_internet_connection">No internet connection.</string>
     <string name="comment_see_all">See All</string>
     <string name="chkBoxSchDwn">Schedule Download</string>
-   	<string name="exclude_update">Ignore Update</string> 
-   	<string name="restore_updates">Restore Updates</string> 
-   	<string name="remove_from_excluded_updates_list">Remove from Excluded Updates list</string>
-   	<string name="excluded_updates">Excluded Updates</string>
-   	<string name="no_excluded_updates">No Excluded Updates</string>
-	<string name="no_excluded_updates_selected">No Excluded Updates selected</string>
-   	<string name="who_downloaded_this">Who downloaded this app also downloaded:</string>
+    <string name="exclude_update">Ignore Update</string>
+    <string name="restore_updates">Restore Updates</string>
+    <string name="remove_from_excluded_updates_list">Remove from Excluded Updates list</string>
+    <string name="excluded_updates">Excluded Updates</string>
+    <string name="no_excluded_updates">No Excluded Updates</string>
+    <string name="no_excluded_updates_selected">No Excluded Updates selected</string>
+    <string name="who_downloaded_this">Who downloaded this app also downloaded:</string>
     <string name="submit">Submit</string>
     <string name="body">Body</string>
     <string name="subject">Name</string>
@@ -141,16 +140,16 @@
     <string name="update_main">The list of stores in use has been changed.\nDo you wish to update them?</string>
     <string name="email">Email</string>
     <string name="pass_confirmation">Password confirmation</string>
-   	<string name="setting_icon_download_rules">Icon Download Rules</string>
-   	<string name="setting_wifi">WiFi</string>
-   	<string name="setting_3g">3G</string>
-   	<string name="setting_4g">4G</string>
-   	<string name="setting_ethernet">Ethernet</string>
+    <string name="setting_icon_download_rules">Icon Download Rules</string>
+    <string name="setting_wifi">WiFi</string>
+    <string name="setting_3g">3G</string>
+    <string name="setting_4g">4G</string>
+    <string name="setting_ethernet">Ethernet</string>
     <string name="setting_filters_title">Filters</string>
     <string name="setting_hwspecstitle">Hardware Specs</string>
     <string name="setting_sdk_version">SDK Version</string>
     <string name="setting_screen_size">Screen Size</string>
-    <string name="setting_esgl_version">ESGL Version</string> 
+    <string name="setting_esgl_version">ESGL Version</string>
     <string name="setting_hwspecssum">Check your hardware specifications</string>
     <string name="setting_appfiltertitle">Filter Applications</string>
     <string name="setting_mature_filtering">Mature filtering</string>
@@ -168,7 +167,6 @@
     <string name="settings_title_bar">Aptoide settings</string>
     <string name="credentialscleared">Login cleared</string>
     <string name="credentialscleared_des">Your credentials have been unsetted</string>
-    
     <string name="menu_update_repo">List Update</string>
     <string name="menu_update_all">Update all</string>
     <string name="menu_manage">Manage Store</string>
@@ -178,7 +176,6 @@
     <string name="menu_about">About</string>
     <string name="menu_search">Search</string>
     <string name="adult_content">Adult Content</string>
-    
     <string name="stores">Stores</string>
     <string name="screenshots">Screenshots</string>
     <string name="app_about">About</string>
@@ -192,12 +189,10 @@
     <string name="no_recommended_apps">No recommended apps found. We need more interaction from you. Make some downloads!</string>
     <string name="no_recommended_toast">No recommended apps found</string>
     <string name="all_updated">All apps are up to date</string>
-   	<string name="clear_all">Clear all</string>
-    
+    <string name="clear_all">Clear all</string>
     <string name="menu_add_repo">New Store</string>
     <string name="menu_rem_repo">Remove Store</string>
     <string name="menu_edit_repo">Edit Store</string>
-    
     <string name="btn_yes">Yes</string>
     <string name="btn_no">No</string>
     <string name="btn_ok">OK</string>
@@ -212,46 +207,38 @@
     <string name="schDwnBtn">Schedule Download</string>
     <string name="search_log">Search</string>
     <string name="search_stores">in other Stores</string>
-    
     <string name="no_repo">Add a store!</string>
-    
     <string name="myrepo_alrt">You can search for stores online or you can add our official store.\n\nDo you want to add our store?</string>
     <string name="error_on_update">The update process could not be completed on the following store:</string>
     <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
     <string name="update_done_msg1">Stores updated successfully.</string>
-    
     <string name="about">About</string>
     <string name="about_txt1">Your package installer to Android phone.\n</string>
     <string name="description">@string/about_txt1</string>
     <string name="about_site">Home: </string>
     <string name="about_mail">Contact: </string>
-    
     <string name="is">is</string>
     <string name="trusted">Trusted</string>
     <string name="trusted_classification">This application was scanned by Aptoide Anti-Malware platform and did not catch any signal of virus.</string>
-    <string name="scanned_with_av">Scanned with Anti-Virus:</string>  
+    <string name="scanned_with_av">Scanned with Anti-Virus:</string>
     <string name="compared_with_another_market">Compared with another Android Marketplace: </string>
     <string name="about_aptoide_antimalware">Aptoide Anti-Malware platform analyses applications in run-time and disables potential threats across all stores. This system scans all the new application files from the stores and certificates them by comparison against other Android Marketplaces.</string>
     <string name="norton_av">Norton Anti-Virus 1.2</string>
     <string name="fsecure_av">F-Secure 2-4 for Android</string>
     <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
-   	<string name="google_play">Google Play </string> 
+    <string name="google_play">Google Play </string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
     <string name="no_descript">No description available</string>
-    
     <string name="about_txt2"> www.aptoide.com</string>
     <string name="about_txt3"> aptoide@aptoide.com</string>
-    
     <string name="repo_del_msg2">Choose store to remove</string>
-    
     <string name="repo_edt_msg1">Choose store to edit</string>
     <string name="repo_edt_msg2">Edit store</string>
     <string name="md5_auto_update_error">Update package checksum failed!  Keeping current version.</string>
     <string name="network_auto_update_error">Update connection failed!  Keeping current version.</string>
     <string name="aptoide_update">Aptoide Update…</string>
     <string name="auto_updating">Please wait while processing update download…</string>
-    
     <string name="update_self_title">Update available</string>
     <string name="update_self_msg">There is a new version of aptoide available,\ndo you wish to update?</string>
     <string name="md5_error">The downloaded application md5 check failed!\nPlease update your stores before retrying.</string>
@@ -268,40 +255,35 @@
     <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
     <string name="aptoide_error">Can\'t connect to the remote server. Please verify your Internet connection.</string>
     <string name="no_sch_downloads">No scheduled downloads!</string>
-    
-   <string name="size">Size</string>
-   <string name="installed_version">Inst. Ver.</string>
-   
-   <string name="schDown_install">Do you want to install all scheduled downloads?</string>
-   <string name="schDown_installselected">Install Selected</string>
-   <string name="schDown_wireless_detected">Wireless detected: Download all aplications on Scheduled Downloads?</string>
-   <string name="schDown_nodownloads">No Scheduled Downloads</string>
-   <string name="schDown_nodownloadselect">No Downloads Selected</string>
-   <string name="schDown_downerror">Download error. Add %1$s Store.</string>
-   <string name="addSchDown">Added to Scheduled Downloads</string>
-   
-   <string name="registration">Aptoide Registration</string>
+    <string name="size">Size</string>
+    <string name="installed_version">Inst. Ver.</string>
+    <string name="schDown_install">Do you want to install all scheduled downloads?</string>
+    <string name="schDown_installselected">Install Selected</string>
+    <string name="schDown_wireless_detected">Wireless detected: Download all aplications on Scheduled Downloads?</string>
+    <string name="schDown_nodownloads">No Scheduled Downloads</string>
+    <string name="schDown_nodownloadselect">No Downloads Selected</string>
+    <string name="schDown_downerror">Download error. Add %1$s Store.</string>
+    <string name="addSchDown">Added to Scheduled Downloads</string>
+    <string name="registration">Aptoide Registration</string>
     <string name="bazaar_url">http://www.aptoide.com/</string>
     <string name="username">Email</string>
     <string name="password">Password</string>
     <string name="register">Sign Up</string>
-    
     <string name="schDown_invertselection">Invert Selection</string>
     <string name="schDown_removeselected">Remove Selected</string>
     <string name="schDown_sureremove">Are you sure you want to remove?</string>
     <string name="chkBoxSchDwn">Schedule Download</string>
-    
     <string name="clear_dwn_title">Downloads</string>
     <string name="clear_dwn_btn">Download icons</string>
     <string name="clear_dwn_msg">Download icon rules </string>
-    
-    
+
     <string-array name="dwnif">
         <item>3G and Wifi</item>
         <item>Wifi only</item>
         <item>Never download</item>
     </string-array>
-     <string name="registration">Aptoide Registration</string>
+
+    <string name="registration">Aptoide Registration</string>
     <string name="bazaar_url">http://www.aptoide.com/</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
@@ -318,16 +300,12 @@
     <string name="subject">Name</string>
     <string name="body">Body…</string>
     <string name="submit">Submit</string>
-    
     <string name="clearcache_sum">"Deletes Aptoide cache (icons, screenshots) from the SD card."</string>
     <string name="clearcontent_sum">"Deletes the content of .aptoide folder from the SD card."</string>
     <string name="clearcontent_title">"Remove Aptoide data and Configurations"</string>
     <string name="clearcache_title">"Clear Aptoide cache"</string>
     <string name="schDown_added">" was added to scheduled download list."</string>
     <string name="clear_cache_sucess">Content successfully deleted</string>
-    
-    
-    
     <string name="aptoide_downloading">Aptoide downloading</string>
     <string name="x_app">%d app</string>
     <string name="x_apps">%d apps</string>
@@ -338,10 +316,9 @@
     <string name="stopped">stopped</string>
     <string name="starting">starting</string>
     <string name="download_failed_due_to">Download Failed due to</string>
-    
     <string name="timeout">network connection timeout</string>
     <string name="ip_blacklisted">Blacklisted IP</string>
-    <string name="ip_blacklisted_extended">The application was not retrieved. Your network address (IP) is blacklisted in Aptoide servers. To solve the problem, please contact <a href="mailto:ipblacklist@aptoide.com">ipblacklist@aptoide.com</a> </string>
+    <string name="ip_blacklisted_extended">The application was not retrieved. Your network address (IP) is blacklisted in Aptoide servers. To solve the problem, please contact <a href="mailto:ipblacklist@aptoide.com">ipblacklist@aptoide.com</a></string>
     <string name="connection_error">no network connection</string>
     <string name="apk_not_found">Apk not found</string>
     <string name="invalid_apk">Invalid apk</string>
@@ -350,22 +327,21 @@
     <string name="contact">Contact</string>
     <string name="choose_email_client">Choose an Email client:</string>
     <string name="refresh_list">Refresh</string>
-     <string name="update_all">Update all</string>
-     <string name="update_to">Update to</string>
-    
+    <string name="update_all">Update all</string>
+    <string name="update_to">Update to</string>
     <string name="want_to_share">Aptoide will not post without your permission. We respect your phone privacy. Do you want to share the following message?</string>
     <string name="share">Share</string>
     <string name="facebook_authentication_failed">Authentication with Facebook failed!</string>
     <string name="facebook_authentication_cancelled">Authentication with Facebook cancelled!</string>
     <string name="facebook_failed_post">Failed to post to timeline!</string>
-   	<string name="facebook_message_posted">Message posted to your facebook timeline!</string>
-   	<string name="facebook_blank_response">Blank response.</string>
-   	<string name="facebook_like_failed">Like on Facebook failed!</string>
+    <string name="facebook_message_posted">Message posted to your facebook timeline!</string>
+    <string name="facebook_blank_response">Blank response.</string>
+    <string name="facebook_like_failed">Like on Facebook failed!</string>
     <string name="facebook_like_cancelled">Like on Facebook cancelled!</string>
     <string name="loading_facebook">Loading Facebook…</string>
     <string name="loading_twitter">Loading Twitter…</string>
     <string name="social_network_intro">Your feedback is important. You can find us on Facebook and/or follow us on Twitter.</string>
-     <string name="find_us_on_facebook">Find us on Facebook</string>
+    <string name="find_us_on_facebook">Find us on Facebook</string>
     <string name="follow_twitter">Follow us on Twitter</string>
     <string name="social_networks">Social Networks</string>
     <string name="logout">Logout</string>
@@ -374,5 +350,7 @@
     <string name="excluded_updates_sum">Restore your Ignored Updates</string>
     <string name="settings_maxFileCache_title">Downloaded File Cache (MB)</string>
     <string name="settings_maxFileCache_sum">Set a maximum size to keep your apk files</string>
+    <string name="no_launcher_activity">No launcher activity found</string>
+    <string name="retrying_registration">Completing registration process</string>
 
 </resources>
