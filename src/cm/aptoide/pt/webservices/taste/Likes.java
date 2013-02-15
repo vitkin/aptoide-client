@@ -58,17 +58,17 @@ public class Likes {
 	private String repo;
 	private ViewGroup viewButtons;
 	
-	public Likes(Activity activity, String webservicespath) {
-		context = activity;
+	public Likes(Context context, String webservicespath) {
+		this.context = context;
 			if(webservicespath==null){
 				webservicespath = DEFAULT_PATH;
 			}
 			WEB_SERVICE_LIKES_LIST = webservicespath + listApkLikes;
 			WEB_SERVICE_LIKES_POST = webservicespath + addApkLike;
-		isLoggedin =Login.isLoggedIn(activity);
+		isLoggedin =Login.isLoggedIn(context);
 		if(isLoggedin){
 			try {
-				userHashId=Algorithms.computeSHA1sum(Login.getUserLogin(activity));
+				userHashId=Algorithms.computeSHA1sum(Login.getUserLogin(context));
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -309,8 +309,7 @@ public class Likes {
 			default:
 				break;
 			}
-			
-			pd.dismiss();
+			if(pd.isShowing())pd.dismiss();
 		}
 	}
 

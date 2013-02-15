@@ -244,11 +244,8 @@ public class Comments {
 					context.getString(R.string.another_comment_is_beeing_submited), Toast.LENGTH_SHORT);  
 					toast.show();
 		}
-		
-		
-		
-		
 	}
+	
 	
 	public enum EnumCommentResponse {
 		OK, FAIL
@@ -311,13 +308,10 @@ public class Comments {
 				e.printStackTrace();
 				return EnumCommentResponse.FAIL;
 			} catch (InvalidKeyException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			return response;
@@ -326,7 +320,7 @@ public class Comments {
 		@Override
 		protected void onPostExecute(EnumCommentResponse result) {
 			super.onPostExecute(result);
-			pd.dismiss();
+			if(pd.isShowing())pd.dismiss();
 			submitting = false;
 			Toast toast;
 			switch (result) {

@@ -241,7 +241,6 @@ public class Login extends Activity {
 			System.out.println(array);
 			if(array.has("errors")){
 				if(array.getString("errors").contains("credentials")&&fromSignIn.equals("true")){
-					pd.setMessage(getString(R.string.retrying_registration));
 					if(retry>=10){
 						array = null;
 						throw new IOException();
