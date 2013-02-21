@@ -1060,6 +1060,7 @@ public class Database {
 		values.put(DbStructure.COLUMN_SIZE, apk.getSize());
 		values.put(DbStructure.COLUMN_RATING, apk.getRating());
 		values.put(DbStructure.COLUMN_REMOTE_PATH, apk.getPath());
+		values.put(DbStructure.COLUMN_DATE, apk.getDate());
 		values.put(DbStructure.COLUMN_MIN_SCREEN, apk.getMinScreen());
 		values.put(DbStructure.COLUMN_MIN_SDK, apk.getMinSdk());
 		values.put(DbStructure.COLUMN_MIN_GLES, apk.getMinGlEs());
