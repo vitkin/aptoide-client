@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DialogTheme" parent="@android:style/Theme">
+        <item name="android:alertDialogStyle">@style/dialog</item>
+    </style>
+
+    <style name="AptoideTheme" parent="@android:style/Theme.Light">
+        <item name="android:windowBackground">@color/custom_background_color</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+    </style>
+
+</resources>

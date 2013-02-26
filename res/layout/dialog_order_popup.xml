@@ -24,7 +24,6 @@
             android:orientation="vertical" >
 
             <TextView
-                style="@style/DialogText.Title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/order_popup_title1"
@@ -65,7 +64,6 @@
             android:orientation="vertical" >
 
             <TextView
-                style="@style/DialogText.Title"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/order_popup_title2"
@@ -86,7 +84,6 @@
         </RadioGroup>
 
         <TextView
-            style="@style/DialogText.Title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
