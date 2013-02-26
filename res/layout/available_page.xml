@@ -7,7 +7,6 @@
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="top"
@@ -42,14 +41,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         layout="@layout/refresh_view_layout"
-        android:visibility="gone" />
-
-    <include
-        android:id="@+id/update_all_view_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        layout="@layout/update_all_view_layout"
         android:visibility="gone" />
 
     <TextView

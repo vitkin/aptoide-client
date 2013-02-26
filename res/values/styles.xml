@@ -2,7 +2,6 @@
 
     <style name="aptoide_theme" parent="@android:style/Theme.Light">
         <item name="android:windowBackground">@color/custom_background_color</item>
-        <item name="android:colorBackground">@android:color/white</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
     </style>
