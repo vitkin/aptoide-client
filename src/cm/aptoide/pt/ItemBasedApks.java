@@ -25,7 +25,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.content.Context;
 import android.content.Intent;

@@ -9,7 +9,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/custom_background_color"
     android:orientation="vertical" >
 
     <RelativeLayout
@@ -17,8 +16,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/actionbar_bgd"
-        android:padding="5dp"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:padding="5dp" >
 
         <TextView
             android:id="@+id/registration_intro"
@@ -42,101 +41,93 @@
             android:textColor="@color/light_custom_gray" />
     </RelativeLayout>
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/scroller"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/header"
-        android:background="@color/custom_background_color"
-        android:orientation="vertical"
         android:padding="5dp" >
 
-        <ScrollView
-            android:id="@+id/scroller"
+        <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.30" >
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
             <LinearLayout
+                android:id="@+id/BorderLinearLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:padding="5dp" >
 
-                <LinearLayout
-                    android:id="@+id/BorderLinearLayout"
+                <TextView
+                    android:id="@+id/email"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="5dp" >
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="1"
+                    android:text="@string/email"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/darker_gray" />
 
-                    <TextView
-                        android:id="@+id/email"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_weight="1"
-                        android:text="@string/email"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/darker_gray" />
-
-                    <EditText
-                        android:id="@+id/email_box"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:hint="@string/email"
-                        android:inputType="textEmailAddress"
-                        android:singleLine="true"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    <TextView
-                        android:id="@+id/password"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginLeft="2dp"
-                        android:layout_marginTop="2dp"
-                        android:layout_weight="1"
-                        android:text="@string/password"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/darker_gray" />
-
-                    <EditText
-                        android:id="@+id/password_box"
-                        android:layout_width="fill_parent"
-                        android:layout_height="0dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:ems="10"
-                        android:hint="@string/password_tip"
-                        android:inputType="textPassword"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/signup_layout"
+                <EditText
+                    android:id="@+id/email_box"
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:orientation="vertical" >
+                    android:hint="@string/email"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
-                    <Button
-                        android:id="@+id/submitCreateUser"
-                        style="@style/gray_button_style"
-                        android:onClick="signUp"
-                        android:text="@string/register" />
+                <TextView
+                    android:id="@+id/password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_weight="1"
+                    android:text="@string/password"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/darker_gray" />
 
-                    <TextView
-                        android:id="@+id/accept_terms"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_margin="4dp"
-                        android:text="@string/accept_terms"
-                        android:textColor="@color/dark_custom_gray"
-                        android:textSize="15sp" />
-                </LinearLayout>
+                <EditText
+                    android:id="@+id/password_box"
+                    android:layout_width="fill_parent"
+                    android:layout_height="0dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:hint="@string/password_tip"
+                    android:inputType="textPassword"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/signup_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/submitCreateUser"
+                    style="@style/gray_button_style"
+                    android:onClick="signUp"
+                    android:text="@string/register" />
+
+                <TextView
+                    android:id="@+id/accept_terms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_margin="4dp"
+                    android:text="@string/accept_terms"
+                    android:textColor="@color/dark_custom_gray"
+                    android:textSize="15sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>

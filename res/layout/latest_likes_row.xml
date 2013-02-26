@@ -9,62 +9,36 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-   	android:background="@drawable/list_background"
-    android:padding="10dp"
-    android:orientation="horizontal" >
+    android:background="@drawable/list_background"
+    android:orientation="horizontal"
+    android:padding="10dp" >
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/app_name"
+        android:layout_width="fill_parent"
+        android:layout_height="?android:attr/listPreferredItemHeight"
+        android:layout_centerVertical="true"
+        android:layout_gravity="clip_vertical"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/dark_custom_gray" />
+
+    <TextView
+        android:id="@+id/user_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_alignBottom="@+id/app_name"
+        android:ellipsize="end"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/custom_color" />
 
-        <TextView
-            android:id="@+id/app_name"
-            android:layout_width="fill_parent"
-            android:layout_height="?android:attr/listPreferredItemHeight"
-            android:layout_centerVertical="true"
-            android:layout_gravity="clip_vertical"
-            android:ellipsize="end"
-            android:gravity="center_vertical"
-            android:maxLines="1"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/dark_custom_gray" />
-
-        <TextView
-            android:id="@+id/user_like"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/app_name"
-            android:ellipsize="end"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/custom_color" />
-
-    </RelativeLayout>
-
-</RelativeLayout><!--
- * Aptoide Uploader		uploads android apps to yout Bazaar repository
- * Copyright (C) 2011  Duarte Silveira
- * duarte.silveira@caixamagica.pt
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
--->
-
+</RelativeLayout>

@@ -10,7 +10,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -21,8 +21,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:layout_weight="1"
-            android:cursorVisible="true"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:linksClickable="true"
@@ -32,9 +30,8 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ip_blacklisted_message"
             android:orientation="horizontal" >
 
             <Button
@@ -47,8 +44,9 @@
                 android:id="@+id/cancel"
                 style="@style/gray_button_style"
                 android:layout_weight="1"
-                android:text="@string/cancel" />
+                android:text="@android:string/cancel" />
         </LinearLayout>
-    </LinearLayout>
+
+    </RelativeLayout>
 
 </ScrollView>

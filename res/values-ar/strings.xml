@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="start_loading">تحميل...</string>
+  <string name="start_loading">تحميل&#8230;</string>
   <string name="menu_settings">الإعدادات</string>
   <string name="my_stores">تحرير المخزن</string>
-  <string name="store_name">إسم المستخدم...</string>
+  <string name="store_name">إسم المستخدم&#8230;</string>
   <string name="category1">بواسطة الفئه</string>
   <string name="category2">بواسطة الفئه</string>
   <string name="add_store">إضافة مخزن!</string>
@@ -28,7 +28,7 @@
   <string name="btn_add_repo">إضافة مخزن!</string>
   <string name="menu_rem_repo">حذف المخزن</string>
   <string name="number_apks">التطبيقات:</string>
-  <string name="please_wait">الرجاء الإنتظار...</string>
+  <string name="please_wait">الرجاء الإنتظار&#8230;</string>
   <string name="finished_download_alrt">التحميل منتهي</string>
   <string name="finished_download_message">التحميل منتهي</string>
   <string name="download_alrt">التحميل:</string>
@@ -41,19 +41,19 @@
   <string name="dislikes">لاتحبونه:</string>
   <string name="postingtaste">طلبك مقدم</string>
   <string name="showpass">إظهار كلمة المرور</string>
-  <string name="user">إسم المستخدم...</string>
-  <string name="pass">كلمة المرور...</string>
+  <string name="user">إسم المستخدم&#8230;</string>
+  <string name="pass">كلمة المرور&#8230;</string>
   <string name="new_account">حساب جديد</string>
   <string name="setcredentials">إعدادات Aptoide</string>
   <string name="usernotdef">المستخدم لم يتم تعريفه</string>
   <string name="passwordnotdef">كلمة المرور لم يتم تعريفها</string>
-  <string name="loggingin">التسجيل في ...</string>
+  <string name="loggingin">التسجيل في &#8230;</string>
   <string name="unabletoexecute">غير قادر على التنفيذ</string>
   <string name="failedcredentials">فشل في تسجيل الدخول للإعتماد المعطاه</string>
-  <string name="loading_likes">تحبون التحميل...</string>
+  <string name="loading_likes">تحبون التحميل&#8230;</string>
   <string name="inresponseto">\@</string>
   <string name="enterbody">ادخل إستعراضك على قسم الهيئه</string>
-  <string name="postingcomment">نشر تعليقك...</string>
+  <string name="postingcomment">نشر تعليقك&#8230;</string>
   <string name="commentadded">تعليقك تم تقديمه بنجاح</string>
   <string name="order_popup_title1">ترتيب التطبيقات بواسطة:</string>
   <string name="order_popup_lst1">الاحدث اولا</string>
@@ -118,7 +118,7 @@
   <string name="repo_edt_msg2">تحرير المخزن</string>
   <string name="md5_auto_update_error">فشل بفحص تحديث الحزم ! الحفاظ على النسخه الحاليه</string>
   <string name="network_auto_update_error">فشل بتحديث الإتصال ! الحفاظ على الإصدار الحالي</string>
-  <string name="auto_updating">الرجاء الإنتظار عندما العمليه تحميل التحديث...</string>
+  <string name="auto_updating">الرجاء الإنتظار عندما العمليه تحميل التحديث&#8230;</string>
   <string name="update_self_title">تحديث متوفر</string>
   <string name="update_self_msg">هذه نسخه جديده من aptoide متوفره \nهل ترغب في التحديث؟</string>
   <string name="md5_error">فشل التحقق من التطبيق الذي تم تنزيله n\\ md5 الرجاء تحديث المخازن الخاصة بك قبل إعادة المحاولة.</string>

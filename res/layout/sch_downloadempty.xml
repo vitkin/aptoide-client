@@ -6,10 +6,9 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/custom_background_color"
     android:baselineAligned="false"
     android:orientation="vertical" >
 
@@ -23,41 +22,37 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/white" />
 
-    <LinearLayout
-        android:id="@+id/content_layout"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/list_layout"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:gravity="top"
-        android:padding="5dp" >
+        android:layout_above="@+id/sch_down"
+        android:layout_below="@+id/scheduled_downloads_intro"
+        android:background="@color/custom_inside_background_color" >
 
-        <RelativeLayout
-            android:id="@+id/list_layout"
+        <ListView
+            android:id="@android:id/list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/custom_inside_background_color" >
+            android:cacheColorHint="@android:color/transparent" >
+        </ListView>
 
-            <ListView
-                android:id="@android:id/list"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:cacheColorHint="@android:color/transparent" >
-            </ListView>
-
-            <TextView
-                android:id="@android:id/empty"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_margin="5dp"
-                android:text="@string/no_sch_downloads"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/darker_gray" />
-        </RelativeLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@android:id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="5dp"
+            android:text="@string/no_sch_downloads"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/darker_gray" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/sch_down"
-        style="@style/gray_button_style" />
+        style="@style/gray_button_style"
+        android:text="@string/schDown_installselected"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true" />
 
-</LinearLayout>
+</RelativeLayout>

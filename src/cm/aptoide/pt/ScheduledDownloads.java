@@ -9,7 +9,7 @@ package cm.aptoide.pt;
 
 import java.util.HashMap;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -205,7 +205,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		IntentFilter filter = new IntentFilter("pt.caixamagica.aptoide.REDRAW");
 		registerReceiver(receiver, filter);
 		installButton = (Button) findViewById(R.id.sch_down);
-		installButton.setText(getText(R.string.schDown_installselected));
+//		installButton.setText(getText(R.string.schDown_installselected));
 		installButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
@@ -238,7 +238,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		if(getIntent().hasExtra("downloadAll")){
 			AlertDialog alrt = new AlertDialog.Builder(this).create();
 			alrt.setMessage(getText(R.string.schDown_install));
-			alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+			alrt.setButton(Dialog.BUTTON_POSITIVE,getText(android.R.string.yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
 						ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
@@ -258,7 +258,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 					finish();
 					return;
 				} }); 
-			alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+			alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(android.R.string.no), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					finish();
 					return;
@@ -413,7 +413,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		case 2:
 			if(isAllChecked()){
 				alrt.setMessage(getText(R.string.schDown_sureremove));
-				alrt.setButton(Dialog.BUTTON_POSITIVE,getText(R.string.btn_yes), new DialogInterface.OnClickListener() {
+				alrt.setButton(Dialog.BUTTON_POSITIVE,getText(android.R.string.yes), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
 							if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
@@ -423,7 +423,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 						getSupportLoaderManager().restartLoader(0, null, ScheduledDownloads.this);
 						return;
 					} }); 
-				alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(R.string.btn_no), new DialogInterface.OnClickListener() {
+				alrt.setButton(Dialog.BUTTON_NEGATIVE,getText(android.R.string.no), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						return;
 					}});

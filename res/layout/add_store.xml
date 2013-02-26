@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/textView1"
-        android:text=".store.aptoide.com/"
+        android:text="@string/store_path"
         android:inputType="textUri"
         android:focusable="true"
         android:focusableInTouchMode="true"

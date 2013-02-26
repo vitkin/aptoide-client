@@ -5,7 +5,7 @@
   <string name="menu_context_remove">Eliminar</string>
   <string name="menu_context_reparse">Actualizar</string>
   <string name="preparing_to_load">Preparando para cargar, por favor espere</string>
-  <string name="start_loading">Cargando...</string>
+  <string name="start_loading">Cargando&#8230;</string>
   <string name="loading_failed">Fallo durante la carga, por favor vuelva a intentarlo</string>
   <string name="cant_connect_to_store">No se puede conectar a la tienda</string>
   <string name="verify_store">Verifica el nombre de la tienda</string>
@@ -13,8 +13,6 @@
   <string name="my_stores">Mis tiendas</string>
   <string name="store_name">Nombre de tienda</string>
   <string name="store">Tienda</string>
-  <string name="category1">Categoria 1</string>
-  <string name="category2">Categoria 2</string>
   <string name="add_store">Añadir tienda</string>
   <string name="add_store_button_below">Añadir tienda en el botón de abajo</string>
   <string name="version">Versión:</string>
@@ -56,7 +54,7 @@
   <string name="btn_add_repo">Nuevo repositorio</string>
   <string name="menu_rem_repo">Eliminar repositorio</string>
   <string name="number_apks">Aplicaciones:</string>
-  <string name="please_wait">Por favor, espera...</string>
+  <string name="please_wait">Por favor, espera&#8230;</string>
   <string name="status">Estado</string>
   <string name="details">Detalles</string>
   <string name="finished_download_alrt">Descarga terminada</string>
@@ -82,16 +80,16 @@
   <string name="setcredentials">Loguearse en Bazaar</string>
   <string name="usernotdef">Usuario no definido</string>
   <string name="passwordnotdef">Contraseña no definida</string>
-  <string name="loggingin">Logueandote...</string>
+  <string name="loggingin">Logueandote&#8230;</string>
   <string name="unabletoexecute">Imposible de ejecutar</string>
   <string name="failedcredentials">Fallo al loguear los datos proporcionados</string>
   <string name="check_your_credentials">Error. Por favor, comprueba tus credenciales</string>
   <string name="unkown_error">Error desconocido. Intenta otra vez</string>
-  <string name="loading_likes">Cargando positivos...</string>
+  <string name="loading_likes">Cargando positivos&#8230;</string>
   <string name="inresponseto">\@</string>
   <string name="add_comment">Añadir comentario</string>
   <string name="enterbody">Escribe tu análisis en la sección \"Contenido\"</string>
-  <string name="postingcomment">Publicando tu comentario...</string>
+  <string name="postingcomment">Publicando tu comentario&#8230;</string>
   <string name="commentadded">Tu comentario ha sido publicado con éxito</string>
   <string name="order_popup_title1">Ordenar aplicaciones por:</string>
   <string name="order_popup_lst1">Más reciente primero</string>
@@ -152,7 +150,7 @@
   <string name="repo_edt_msg2">Editar repositorio</string>
   <string name="md5_auto_update_error">Suma de comprobación de la actualización del paquete fállida! Manteniendo versión actual.</string>
   <string name="network_auto_update_error">Conexión de la actualización fállida! Manteniendo versión actual.</string>
-  <string name="auto_updating">Por favor espera mientras se procesa la descarga de la actualización...</string>
+  <string name="auto_updating">Por favor espera mientras se procesa la descarga de la actualización&#8230;</string>
   <string name="update_self_title">Actualización disponible</string>
   <string name="update_self_msg">Hay una nueva versión de aptoide disponible,\nquieres actualizar?</string>
   <string name="md5_error">El chequeo md5 de la aplicación descargado falló!\nPor favor actualiza tu sistema de aplicaciones antes de reintentarlo.</string>

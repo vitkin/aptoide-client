@@ -16,9 +16,7 @@
     <ListView
         android:id="@+id/updates_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/add_store_layout"
-        android:layout_below="@+id/breadcrumb_container" >
+        android:layout_height="match_parent" >
     </ListView>
 
     <include

@@ -60,7 +60,6 @@
     </ScrollView>
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/site_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,7 +78,6 @@
             android:textColor="@android:color/darker_gray" />
 
         <TextView
-            android:id="@+id/about2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"
@@ -89,7 +87,6 @@
     </LinearLayout>
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/contact_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -100,7 +97,6 @@
         android:padding="2dp" >
 
         <TextView
-            android:id="@+id/about2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/about_mail"
@@ -108,7 +104,6 @@
             android:textColor="@android:color/darker_gray" />
 
         <TextView
-            android:id="@+id/about3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="3dp"

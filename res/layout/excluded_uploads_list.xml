@@ -6,10 +6,9 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@color/custom_background_color"
     android:baselineAligned="false"
     android:orientation="vertical" >
 
@@ -23,41 +22,36 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@android:color/white" />
 
-    <LinearLayout
-        android:id="@+id/content_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:gravity="top"
+    <RelativeLayout
+        android:id="@+id/list_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="379dp"
+        android:layout_above="@+id/restore_update"
+        android:layout_below="@+id/tv_excluded_uploads"
+        android:background="@color/custom_inside_background_color"
         android:padding="5dp" >
 
-        <RelativeLayout
-            android:id="@+id/list_layout"
+        <ListView
+            android:id="@+id/excluded_updates_list"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@color/custom_inside_background_color" >
+            android:cacheColorHint="@android:color/transparent" >
+        </ListView>
 
-            <ListView
-                android:id="@+id/excluded_updates_list"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:cacheColorHint="@android:color/transparent" >
-            </ListView>
-
-            <TextView
-                android:id="@+id/tv_no_excluded_downloads"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_margin="5dp"
-                android:text="@string/no_excluded_updates"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/darker_gray" />
-        </RelativeLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/tv_no_excluded_downloads"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="5dp"
+            android:text="@string/no_excluded_updates"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/darker_gray" />
+    </RelativeLayout>
 
     <Button
         android:id="@+id/restore_update"
-        style="@style/gray_button_style" />
+        style="@style/gray_button_style"
+        android:layout_alignParentBottom="true" />
 
-</LinearLayout>
+</RelativeLayout>

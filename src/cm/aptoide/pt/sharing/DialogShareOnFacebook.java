@@ -18,7 +18,6 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,13 +25,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import cm.aptoide.pt.ScheduledDownloads;
+import cm.aptoide.com.facebook.android.DialogError;
+import cm.aptoide.com.facebook.android.Facebook;
+import cm.aptoide.com.facebook.android.Facebook.DialogListener;
+import cm.aptoide.com.facebook.android.FacebookError;
 import cm.aptoide.pt.R;
-
-import com.facebook.android.DialogError;
-import com.facebook.android.Facebook;
-import com.facebook.android.Facebook.DialogListener;
-import com.facebook.android.FacebookError;
 
 
 

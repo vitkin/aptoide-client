@@ -2,7 +2,7 @@
 <resources>
   <string name="menu_context_remove">Şterge</string>
   <string name="menu_context_reparse">Reîncărcare</string>
-  <string name="start_loading">Încărcare...</string>
+  <string name="start_loading">Încărcare&#8230;</string>
   <string name="error_latest_apk">Nici o aplicaţie disponibilă în baza de date.Magazinul încă se încarcă?</string>
   <string name="error_delete_store">Nu s-a putut şterge magazinul.Magazinul încă se încarcă.</string>
   <string name="menu_settings">Setări</string>
@@ -40,7 +40,7 @@
   <string name="btn_add_repo">Adaugă magazin</string>
   <string name="menu_rem_repo">Şterge magazin</string>
   <string name="number_apks">Aplicaţii:</string>
-  <string name="please_wait">Vă rugăm aşteptaţi...</string>
+  <string name="please_wait">Vă rugăm aşteptaţi&#8230;</string>
   <string name="finished_download_alrt">Descărcare terminată</string>
   <string name="finished_download_message">Descărcare terminată</string>
   <string name="download_alrt">Descărcare:</string>
@@ -53,19 +53,19 @@
   <string name="dislikes">Nu îmi place:</string>
   <string name="postingtaste">Cererea dvs. este în curs de trimitere</string>
   <string name="showpass">Arată parola</string>
-  <string name="user">Nume utilizator...</string>
-  <string name="pass">Parolă...</string>
+  <string name="user">Nume utilizator&#8230;</string>
+  <string name="pass">Parolă&#8230;</string>
   <string name="new_account">Cont nou</string>
   <string name="setcredentials">Logare Aptoide</string>
   <string name="usernotdef">Utilizator nedefinit</string>
   <string name="passwordnotdef">Parolă nedefinită</string>
-  <string name="loggingin">Logare în...</string>
+  <string name="loggingin">Logare în&#8230;</string>
   <string name="unabletoexecute">Nu se poate executa</string>
   <string name="failedcredentials">Conectare eşuată la acreditările indicate</string>
-  <string name="loading_likes">Încarcă \"Îmi place\"...</string>
+  <string name="loading_likes">Încarcă \"Îmi place\"&#8230;</string>
   <string name="inresponseto">\@</string>
   <string name="enterbody">Introduceţi recenzia în secţiunea corp</string>
-  <string name="postingcomment">Postează comentariu...</string>
+  <string name="postingcomment">Postează comentariu&#8230;</string>
   <string name="commentadded">Comentariul dvs. a fost trimis cu succes</string>
   <string name="order_popup_title1">Ordonează aplicaţiile după:</string>
   <string name="order_popup_lst1">Cele mai recente întâi</string>
@@ -132,7 +132,7 @@
   <string name="repo_edt_msg2">Editare magazin</string>
   <string name="md5_auto_update_error">Verificarea sumei pachetului actualizat eşuată! Păstraţi versiunea curentă.</string>
   <string name="network_auto_update_error">Conexiune actualizare eşuată! Păstraţi versiunea curentă.</string>
-  <string name="auto_updating">Vă rugăm aşteptaţi prelucrarea actualizării descărcate...</string>
+  <string name="auto_updating">Vă rugăm aşteptaţi prelucrarea actualizării descărcate&#8230;</string>
   <string name="update_self_title">Actualizare disponibilă</string>
   <string name="update_self_msg">Este disponibilă o versiune nouă Aptoide,\nvreţi să actualizaţi?</string>
   <string name="md5_error">Verificarea md5 a aplicaţiei descărcate a eşuat!\nVă rugăm actualizaţi magazinele şi reîncercaţi.</string>

@@ -104,7 +104,7 @@ public class Settings extends PreferenceActivity{
 				screenSize.setText(HWSpecifications.getScreenSize(getBaseContext())+"");
 				esglVer.setText(HWSpecifications.getEsglVer(getBaseContext()));
 				
-				hwSpecsDialog.setButton(Dialog.BUTTON_NEUTRAL,getString(R.string.ok), new DialogInterface.OnClickListener() {
+				hwSpecsDialog.setButton(Dialog.BUTTON_NEUTRAL,getString(android.R.string.ok), new DialogInterface.OnClickListener() {
 					
 					public void onClick(DialogInterface dialog, int which) {
 						hwSpecsDialog.dismiss();

@@ -132,10 +132,10 @@ import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.viewpagerindicator.TitlePageIndicator;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
 	private Intent serviceDownloadManagerIntent;
@@ -198,7 +198,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			 .cacheOnDisc()
 			 .cacheInMemory()
 			 .build();
-			com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_url_highlight.get("url"), v,options);
+			cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_url_highlight.get("url"), v,options);
 			v.setTag(image_url_highlight.get("id"));
 			v.setOnClickListener(new OnClickListener() {
 
@@ -231,7 +231,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						 .cacheOnDisc()
 						 .cacheInMemory()
 						 .build();
-						com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_urls.get(i).get("url"), v,options);
+						cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_urls.get(i).get("url"), v,options);
 						
 						v.setTag(image_urls.get(i).get("id"));
 						v.setOnClickListener(new OnClickListener() {
@@ -547,7 +547,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					((TextView) txtSamItem.findViewById(R.id.downloads))
 							.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 					String hashCode = (values.get(i).get("apkid") +"|"+values.get(i).get("vercode"))+"";
-					com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView) txtSamItem.findViewById(R.id.icon),hashCode);
+					cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView) txtSamItem.findViewById(R.id.icon),hashCode);
 					
 //					imageLoader.DisplayImage(-1, values.get(i).get("icon"),
 //							(ImageView) txtSamItem.findViewById(R.id.icon),
@@ -1488,7 +1488,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
 			upd_alrt.setMessage(getText(R.string.remote_in_noSD));
-			upd_alrt.setButton(Dialog.BUTTON_NEUTRAL, getText(R.string.btn_ok),
+			upd_alrt.setButton(Dialog.BUTTON_NEUTRAL, getText(android.R.string.ok),
 					new Dialog.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
 							finish();
@@ -1518,7 +1518,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
 				upd_alrt.setMessage(getText(R.string.remote_in_noSDspace));
 				upd_alrt.setButton(Dialog.BUTTON_NEUTRAL,
-						getText(R.string.btn_ok), new Dialog.OnClickListener() {
+						getText(android.R.string.ok), new Dialog.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
 								finish();
@@ -1952,7 +1952,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							});
 
 					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-							getString(R.string.btn_no),
+							getString(android.R.string.no),
 							new DialogInterface.OnClickListener() {
 
 								public void onClick(DialogInterface dialog,
@@ -2347,7 +2347,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			switch (depth) {
 			case STORES:
 				String hashcode = cursor.getString(cursor.getColumnIndex("avatar_url"));
-				com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
+				cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
 						cursor.getString(cursor.getColumnIndex("avatar_url")),
 						(ImageView) view.findViewById(R.id.avatar),
 						hashcode);
@@ -2388,7 +2388,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					view.setTag(holder);
 				}
 				holder.name.setText(cursor.getString(1));
-				com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
+				cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
 						cursor.getString(cursor.getColumnIndex("iconspath"))
 								+ cursor.getString(cursor
 										.getColumnIndex("imagepath")),
@@ -2505,7 +2505,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				AlertDialog ad = new AlertDialog.Builder(mContext).create();
 				ad.setMessage("Are you at least 21 years old?");
 				ad.setButton(Dialog.BUTTON_POSITIVE,
-						getString(R.string.btn_yes),
+						getString(android.R.string.yes),
 						new Dialog.OnClickListener() {
 
 							public void onClick(DialogInterface dialog,
@@ -2533,7 +2533,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							}
 						});
 				ad.setButton(Dialog.BUTTON_NEGATIVE,
-						getString(R.string.btn_no),
+						getString(android.R.string.no),
 						new Dialog.OnClickListener() {
 
 							public void onClick(DialogInterface dialog,

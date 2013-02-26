@@ -7,9 +7,9 @@
  ******************************************************************************/
 package cm.aptoide.pt.sharing;
 
-import com.facebook.android.DialogError;
-import com.facebook.android.Facebook.DialogListener;
-import com.facebook.android.FacebookError;
+import cm.aptoide.com.facebook.android.DialogError;
+import cm.aptoide.com.facebook.android.Facebook.DialogListener;
+import cm.aptoide.com.facebook.android.FacebookError;
 
 /**
  * Skeleton base class for RequestListeners, providing default error handling.

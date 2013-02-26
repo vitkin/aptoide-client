@@ -15,7 +15,7 @@ import org.apache.http.params.HttpConnectionParams;
 import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt.R;
 
-import com.viewpagerindicator.CirclePageIndicator;
+import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;

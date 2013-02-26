@@ -37,7 +37,6 @@
         android:id="@+id/scroller"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/login_button"
         android:layout_below="@+id/header"
         android:background="@color/custom_background_color"
         android:orientation="vertical"
@@ -62,18 +61,17 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
-                    android:text="You are logged as:"
+                    android:text="@string/logged_as"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/darker_gray" />
 
                 <TextView
                     android:id="@+id/username"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dip"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
-                    android:layout_weight="1"
                     android:text="@string/password"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/darker_gray" />

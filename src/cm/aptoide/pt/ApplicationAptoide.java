@@ -33,16 +33,16 @@ import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
 
-import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
-import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.nostra13.universalimageloader.core.assist.FlushedInputStream;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.core.download.ImageDownloader;
+import cm.aptoide.com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
+import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import cm.aptoide.com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.FlushedInputStream;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.nostra13.universalimageloader.core.download.ImageDownloader;
 
 /**
  * ApplicationAptoide, centralizes, statically, calls to instantiated objects

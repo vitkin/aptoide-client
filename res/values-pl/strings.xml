@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="start_loading">Ładowanie...</string>
+  <string name="start_loading">Ładowanie&#8230;</string>
   <string name="menu_settings">Ustawienia</string>
   <string name="my_stores">Edytuj repozytorium</string>
-  <string name="store_name">Nazwa użytkownika...</string>
+  <string name="store_name">Nazwa użytkownika&#8230;</string>
   <string name="category1">Wg. kategorii</string>
   <string name="category2">Wg. kategorii</string>
   <string name="add_store">Dodaj repozytorium!</string>
@@ -27,7 +27,7 @@
   <string name="btn_add_repo">Dodaj repozytorium!</string>
   <string name="menu_rem_repo">Usuń repozytorium</string>
   <string name="number_apks">Aplikacje:</string>
-  <string name="please_wait">Proszę czekać...</string>
+  <string name="please_wait">Proszę czekać&#8230;</string>
   <string name="finished_download_alrt">Pobieranie zakończone</string>
   <string name="finished_download_message">Pobieranie zakończone</string>
   <string name="download_alrt">Pobieranie:</string>
@@ -40,19 +40,19 @@
   <string name="dislikes">Nie lubi:</string>
   <string name="postingtaste">Twoje zapytanie jest wysyłane</string>
   <string name="showpass">Pokaż hasło</string>
-  <string name="user">Nazwa użytkownika...</string>
-  <string name="pass">Hasło...</string>
+  <string name="user">Nazwa użytkownika&#8230;</string>
+  <string name="pass">Hasło&#8230;</string>
   <string name="new_account">Nowe konto</string>
   <string name="setcredentials">Ustawienia Aptoide</string>
   <string name="usernotdef">Brak nazwy użytkownika</string>
   <string name="passwordnotdef">Brak hasła</string>
-  <string name="loggingin">Logowanie...</string>
+  <string name="loggingin">Logowanie&#8230;</string>
   <string name="unabletoexecute">Nie można wykonać</string>
   <string name="failedcredentials">Nie udało się zalogować z tymi danymi</string>
-  <string name="loading_likes">Ładowanie ocen...</string>
+  <string name="loading_likes">Ładowanie ocen&#8230;</string>
   <string name="inresponseto">\@</string>
   <string name="enterbody">Podaj swoja opinię w treści wiadomości</string>
-  <string name="postingcomment">Zamieszczanie twojego komentarza...</string>
+  <string name="postingcomment">Zamieszczanie twojego komentarza&#8230;</string>
   <string name="commentadded">Twój komentarz został wysłany</string>
   <string name="order_popup_title1">Porządkuj aplikacje wg.:</string>
   <string name="order_popup_lst1">Ostatnie na początku</string>
@@ -87,7 +87,7 @@
   <string name="menu_manage">Zarządzaj repozytorium</string>
   <string name="menu_display_options">Pokaż opcje</string>
   <string name="menu_order">Zmień porządek</string>
-  <string name="menu_about">O...</string>
+  <string name="menu_about">O&#8230;</string>
   <string name="menu_search">Szukaj</string>
   <string name="menu_add_repo">Nowe repozytorium</string>
   <string name="menu_edit_repo">Edytuj repozytorium</string>
@@ -117,7 +117,7 @@
   <string name="repo_edt_msg2">Edytuj repozytorium</string>
   <string name="md5_auto_update_error">Błąd sumy kontrolnej uaktualnienia! Zachowana bieżąca wersja.</string>
   <string name="network_auto_update_error">Błąd połączenia z uaktualnieniem! Zachowana bieżąca wersja.</string>
-  <string name="auto_updating">Proszę czekać na pobranie uaktualnienia...</string>
+  <string name="auto_updating">Proszę czekać na pobranie uaktualnienia&#8230;</string>
   <string name="update_self_title">Dostępne jest uaktualnienie</string>
   <string name="update_self_msg">Dostępna jest nowa wersja Aptoide,\nczy chcesz uaktualnić?</string>
   <string name="md5_error">Błąd sumy kontrolnej MD5 pobranej aplikacji!\nUaktualnij swoje repozytoria przed ponownym pobraniem.</string>

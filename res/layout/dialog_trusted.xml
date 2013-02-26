@@ -19,7 +19,7 @@
 
         <LinearLayout
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="10dp" >
 
@@ -52,7 +52,6 @@
                 android:padding="10dp" >
 
                 <ImageView
-                    android:id="@+id/iv_yes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/yes" />
@@ -110,7 +109,6 @@
                 android:padding="10dp" >
 
                 <ImageView
-                    android:id="@+id/iv_yes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/yes" />
@@ -150,7 +148,6 @@
                 android:padding="10dp" >
 
                 <ImageView
-                    android:id="@+id/iv_yes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/yes" />
@@ -187,6 +184,6 @@
         android:id="@+id/bt_ok"
         style="@style/gray_button_style"
         android:layout_alignParentBottom="true"
-        android:text="@string/ok" />
+        android:text="@android:string/ok" />
 
 </RelativeLayout>

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="my_stores">Keine Stores!</string>
-  <string name="store_name">Benutzername...</string>
+  <string name="store_name">Benutzername&#8230;</string>
   <string name="add_store">Keine Stores!</string>
   <string name="new_store">Keine Stores!</string>
   <string name="downloads">Geplante Downloads</string>
@@ -27,19 +27,19 @@
   <string name="dislikes">Dislikes:</string>
   <string name="postingtaste">Ihre Anfrage wird übermittelt</string>
   <string name="showpass">Passwort anzeigen</string>
-  <string name="user">Benutzername...</string>
-  <string name="pass">Passwort...</string>
+  <string name="user">Benutzername&#8230;</string>
+  <string name="pass">Passwort&#8230;</string>
   <string name="new_account">Neuer Account</string>
   <string name="setcredentials">Aptoide</string>
   <string name="usernotdef">Kein Benutzer definiert</string>
   <string name="passwordnotdef">Passwort nicht definiert</string>
-  <string name="loggingin">Anmelden...</string>
+  <string name="loggingin">Anmelden&#8230;</string>
   <string name="unabletoexecute">Durchführung nicht möglich</string>
   <string name="failedcredentials">Login mit den angegebenen Daten fehlgeschlagen</string>
-  <string name="loading_likes">Lade Likes...</string>
+  <string name="loading_likes">Lade Likes&#8230;</string>
   <string name="inresponseto">\\\@</string>
   <string name="enterbody">Tragen Sie Ihre Bewertung in den Body-Bereich ein</string>
-  <string name="postingcomment">Kommentar wird gepostet...</string>
+  <string name="postingcomment">Kommentar wird gepostet&#8230;</string>
   <string name="commentadded">Ihr Kommentar wurde übermittelt</string>
   <string name="order_popup_title1">Anwendungen:</string>
   <string name="order_popup_title2">Zeige Apps bewertet als:</string>
@@ -83,7 +83,7 @@
   <string name="addSchDown">Download geplant</string>
   <string name="registration">Aptoide Registration</string>
   <string name="bazaar_url">www.aptoide.com</string>
-  <string name="password">Passwort...</string>
+  <string name="password">Passwort&#8230;</string>
   <string name="schDown_invertselection">Auswahl installieren</string>
   <string name="clear_dwn_title">Geplante Downloads</string>
   <string-array name="dwnif">

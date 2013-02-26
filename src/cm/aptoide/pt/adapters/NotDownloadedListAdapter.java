@@ -19,7 +19,7 @@
  */
 package cm.aptoide.pt.adapters;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.content.Context;
 import android.os.Handler;

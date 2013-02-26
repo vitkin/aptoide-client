@@ -25,7 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.nostra13.universalimageloader.utils.FileUtils;
+import cm.aptoide.com.nostra13.universalimageloader.utils.FileUtils;
 
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.util.Md5Handler;

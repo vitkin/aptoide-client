@@ -89,11 +89,11 @@ import cm.aptoide.pt.webservices.taste.Likes;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.nostra13.universalimageloader.utils.FileUtils;
-import com.viewpagerindicator.CirclePageIndicator;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.nostra13.universalimageloader.utils.FileUtils;
+import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
 	

@@ -1,6 +1,11 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Light.NoTitleBar" />
+    <style name="aptoide_theme" parent="@android:style/Theme.Light">
+        <item name="android:windowBackground">@color/custom_background_color</item>
+        <item name="android:colorBackground">@android:color/white</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+    </style>
 
     <style name="custom_button_style">
         <item name="android:layout_width">wrap_content</item>
@@ -69,7 +74,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
         <item name="android:textColor">@color/dark_custom_color</item>
-        <item name="android:background">@drawable/ab_solid_light_holo</item>
+        <item name="android:background">@drawable/label_bgd</item>
         <item name="android:paddingBottom">5.0sp</item>
         <item name="android:paddingLeft">5.0sp</item>
         <item name="android:paddingRight">5.0sp</item>

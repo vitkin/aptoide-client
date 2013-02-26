@@ -43,7 +43,7 @@ public class WebViewTwitter extends Activity {
 
     		});
             TwitterWebView.getSettings().setJavaScriptEnabled(true);
-            TwitterWebView.getSettings().setDomStorageEnabled(true);
+//            TwitterWebView.getSettings().setDomStorageEnabled(true);
             TwitterWebView.getSettings().setSavePassword(false);
             TwitterWebView.getSettings().setSaveFormData(false);
             TwitterWebView.getSettings().setSupportZoom(false);

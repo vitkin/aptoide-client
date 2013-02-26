@@ -22,11 +22,11 @@ import android.widget.ProgressBar;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.ScreenshotsViewer;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
-import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
 public class ViewPagerAdapterScreenshots extends PagerAdapter {
 
