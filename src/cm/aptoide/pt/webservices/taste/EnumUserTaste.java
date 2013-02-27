@@ -7,6 +7,8 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.taste;
 
+import java.util.Locale;
+
 /**
  * @author rafael
  * @since 2.5.3
@@ -14,11 +16,11 @@ package cm.aptoide.pt.webservices.taste;
  */
 public enum EnumUserTaste { 
 
-	LIKE, DONTLIKE, TASTELESS, NOTEVALUATED; 
+	LIKE, DISLIKE, TASTELESS, NOVOTE; 
 	
 	@Override
 	public String toString() {
-		return super.toString().toLowerCase();
+		return super.toString().toLowerCase(Locale.ENGLISH);
 	}
 	
 }

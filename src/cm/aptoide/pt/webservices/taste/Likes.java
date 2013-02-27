@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -37,13 +38,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import cm.aptoide.pt.util.Algorithms;
+import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.webservices.EnumResponseStatus;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.R;
 
 public class Likes {
 
-	private static final String listApkLikes = "webservices/listApkLikes/%1$s/%2$s/%3$s/xml";
+	private static final String listApkLikesWithToken = "webservices/listApkLikesCount/%1$s/%2$s/%3$s/%4$s/json";
+	private static final String listApkLikes = "webservices/listApkLikesCount/%1$s/%2$s/%3$s/json";
 	private static final String addApkLike = "webservices/addApkLike";
 	private static final String DEFAULT_PATH = "http://webservices.aptoide.com/";
 	public String WEB_SERVICE_LIKES_LIST;
@@ -63,20 +66,15 @@ public class Likes {
 			if(webservicespath==null){
 				webservicespath = DEFAULT_PATH;
 			}
-			WEB_SERVICE_LIKES_LIST = webservicespath + listApkLikes;
-			WEB_SERVICE_LIKES_POST = webservicespath + addApkLike;
-		isLoggedin =Login.isLoggedIn(context);
-		if(isLoggedin){
-			try {
-				userHashId=Algorithms.computeSHA1sum(Login.getUserLogin(context));
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			isLoggedin = Login.isLoggedIn(context);
+			
+			if(isLoggedin){
+				WEB_SERVICE_LIKES_LIST = webservicespath + listApkLikesWithToken;
+			}else{
+				WEB_SERVICE_LIKES_LIST = webservicespath + listApkLikes;
 			}
-		}
+			
+			WEB_SERVICE_LIKES_POST = webservicespath + addApkLike;
 		
 	}
 
@@ -99,8 +97,8 @@ public class Likes {
 		task = new LikesPoster().execute(Login.getToken(context),repo, apkid, version,taste.toString());
 	}
 	
-	int likes = 0;
-	int dislikes = 0;
+	String likes = "";
+	String dislikes = "";
 	EnumUserTaste taste;
 	boolean userTasted =false;
 	boolean userTasted2 =false;
@@ -120,82 +118,111 @@ public class Likes {
 		@Override
 		protected EnumResponseStatus doInBackground(String... params) {
 			try {
-				HttpURLConnection connection = (HttpURLConnection) new URL(
-						String.format(WEB_SERVICE_LIKES_LIST, new Object[] {
-								params[0], params[1], params[2] }))
-						.openConnection();
-				System.out.println(connection.getURL());
-				connection.setConnectTimeout(10000);
-				connection.setReadTimeout(10000);
-				BufferedInputStream bis = new BufferedInputStream(
-						connection.getInputStream(), 8 * 1024);
-				SAXParserFactory spfact = SAXParserFactory.newInstance();
-				SAXParser parser = spfact.newSAXParser();
-				parser.parse(bis, new DefaultHandler() {
-					StringBuilder sb = new StringBuilder();
-
-					@Override
-					public void startElement(String uri, String localName,
-							String qName, Attributes attributes)
-							throws SAXException {
-						super.startElement(uri, localName, qName, attributes);
-						switch (EnumResponseTasteElement
-								.valueOfToUpper(localName)) {
-								case LIKES:
-									tasteIndicator = EnumResponseTasteElement.LIKES;
-									break;
-								case DISLIKES:
-									tasteIndicator = EnumResponseTasteElement.DISLIKES;
-									break;
-								default:
-							break;
-						}
-
-						sb.setLength(0);
-
+				
+				
+				
+				
+				NetworkUtils network = new NetworkUtils();
+				URL url;
+				if(isLoggedin){
+					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, new Object[] {params[0], params[1], params[2], Login.getToken(context) }));
+				}else{
+					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, new Object[] {params[0], params[1], params[2] }));
+				}
+				
+				
+				JSONObject response = network.getJsonObject(url, context);
+				
+				result = EnumResponseStatus.valueOf(response.getString("status"));
+//				
+				switch (result) {
+				case OK:
+					likes = response.getJSONObject("listing").getString("likes");
+					dislikes = response.getJSONObject("listing").getString("dislikes");
+					
+					if(response.getJSONObject("listing").has("uservote")){
+						usertaste = EnumUserTaste.valueOf(response.getJSONObject("listing").getString("uservote").toUpperCase(Locale.ENGLISH));
 					}
+					break;
 
-					@Override
-					public void characters(char[] ch, int start, int length)
-							throws SAXException {
-						super.characters(ch, start, length);
-						sb.append(ch, start, length);
-					}
-
-					@Override
-					public void endElement(String uri, String localName,
-							String qName) throws SAXException {
-						super.endElement(uri, localName, qName);
-
-						if (EnumResponseTasteElement.valueOfToUpper(localName) == EnumResponseTasteElement.ENTRY) {
-							if (isLoggedin&&sb.toString().equals(userHashId)) {
-								userTasted = true;
-								userTasted2 = true;
-							}
-							switch (tasteIndicator) {
-							case LIKES:
-								likes++;
-								if (userTasted) {
-									usertaste = EnumUserTaste.LIKE;
-									userTasted=false;
-								}
-								break;
-							case DISLIKES:
-								if (userTasted) {
-									usertaste = EnumUserTaste.DONTLIKE;
-									userTasted=false;
-								}
-								dislikes++;
-								break;
-							default:
-								break;
-							}
-						}
-
-					}
-				});
-				bis.close();
-			    result = EnumResponseStatus.OK;
+				default:
+					break;
+				}
+				
+				
+				
+//				System.out.println(connection.getURL());
+//				connection.setConnectTimeout(10000);
+//				connection.setReadTimeout(10000);
+//				BufferedInputStream bis = new BufferedInputStream(
+//						connection.getInputStream(), 8 * 1024);
+//				SAXParserFactory spfact = SAXParserFactory.newInstance();
+//				SAXParser parser = spfact.newSAXParser();
+//				parser.parse(bis, new DefaultHandler() {
+//					StringBuilder sb = new StringBuilder();
+//
+//					@Override
+//					public void startElement(String uri, String localName,
+//							String qName, Attributes attributes)
+//							throws SAXException {
+//						super.startElement(uri, localName, qName, attributes);
+//						switch (EnumResponseTasteElement
+//								.valueOfToUpper(localName)) {
+//								case LIKES:
+//									tasteIndicator = EnumResponseTasteElement.LIKES;
+//									break;
+//								case DISLIKES:
+//									tasteIndicator = EnumResponseTasteElement.DISLIKES;
+//									break;
+//								default:
+//							break;
+//						}
+//
+//						sb.setLength(0);
+//
+//					}
+//
+//					@Override
+//					public void characters(char[] ch, int start, int length)
+//							throws SAXException {
+//						super.characters(ch, start, length);
+//						sb.append(ch, start, length);
+//					}
+//
+//					@Override
+//					public void endElement(String uri, String localName,
+//							String qName) throws SAXException {
+//						super.endElement(uri, localName, qName);
+//
+//						if (EnumResponseTasteElement.valueOfToUpper(localName) == EnumResponseTasteElement.ENTRY) {
+//							if (isLoggedin&&sb.toString().equals(userHashId)) {
+//								userTasted = true;
+//								userTasted2 = true;
+//							}
+//							switch (tasteIndicator) {
+//							case LIKES:
+//								likes++;
+//								if (userTasted) {
+//									usertaste = EnumUserTaste.LIKE;
+//									userTasted=false;
+//								}
+//								break;
+//							case DISLIKES:
+//								if (userTasted) {
+//									usertaste = EnumUserTaste.DONTLIKE;
+//									userTasted=false;
+//								}
+//								dislikes++;
+//								break;
+//							default:
+//								break;
+//							}
+//						}
+//
+//					}
+//				});
+//				bis.close();
+			    
 			} catch (Exception e) {
 				e.printStackTrace();
 				result = EnumResponseStatus.FAIL;
@@ -216,7 +243,7 @@ public class Likes {
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
 					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn, 0);
 					break;
-				case DONTLIKE:
+				case DISLIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
 					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn_over, 0);
 					break;
@@ -294,7 +321,7 @@ public class Likes {
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
 					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn, 0);
 					break;
-				case DONTLIKE:
+				case DISLIKE:
 					((Button) viewButtons.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
 					((Button) viewButtons.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn_over, 0);
 					break;

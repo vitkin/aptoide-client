@@ -99,7 +99,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	
 	
 	
-
+	
 	private ViewApk viewApk = null;
 	private Database db;
 	private Spinner spinner;
@@ -726,7 +726,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 			@Override
 			public void onClick(View v) {
-				postLike(EnumUserTaste.DONTLIKE,repo_string);
+				postLike(EnumUserTaste.DISLIKE,repo_string);
 
 			}
 		});
