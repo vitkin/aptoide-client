@@ -13,6 +13,7 @@
     android:orientation="horizontal" >
 
     <LinearLayout
+        android:id="@+id/dialog_border"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
@@ -26,7 +27,7 @@
             android:src="@drawable/ic_launcher" />
 
         <RelativeLayout
-            android:layout_width="fill_parent"
+            android:layout_width="0dip"
             android:layout_height="fill_parent"
             android:layout_weight="0.95"
             android:orientation="vertical" >

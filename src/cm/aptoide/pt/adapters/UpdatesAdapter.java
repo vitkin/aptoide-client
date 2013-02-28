@@ -48,7 +48,7 @@ public class UpdatesAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		
-		View v = LayoutInflater.from(context).inflate(R.layout.app_update_row, null);
+		View v = LayoutInflater.from(context).inflate(R.layout.row_app_update, null);
 		
 		return v;
 	}

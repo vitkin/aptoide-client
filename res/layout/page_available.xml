@@ -33,14 +33,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
-        layout="@layout/add_store_footer" />
+        layout="@layout/footer_add_store" />
 
     <include
         android:id="@+id/refresh_view_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        layout="@layout/refresh_view_layout"
+        layout="@layout/footer_refresh_view"
         android:visibility="gone" />
 
     <TextView

@@ -99,7 +99,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 	@Override
 	protected void onCreate(Bundle savedInstance) {
 		super.onCreate(savedInstance);
-		setContentView(R.layout.sch_downloadempty);
+		setContentView(R.layout.list_sch_downloads);
 
 		if(!isRunning){
 			isRunning = true;
@@ -120,7 +120,7 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 
 			@Override
 			public View newView(Context context, Cursor arg1, ViewGroup arg2) {
-				return LayoutInflater.from(context).inflate(R.layout.sch_download, null);
+				return LayoutInflater.from(context).inflate(R.layout.row_sch_download, null);
 			}
 
 			@Override

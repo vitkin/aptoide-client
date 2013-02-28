@@ -208,7 +208,7 @@ public class Comments {
 				view.addView(tv);
 			}
 			for(Comment comment : result){
-				View v = LayoutInflater.from(context).inflate(R.layout.commentlistviewitem, null);
+				View v = LayoutInflater.from(context).inflate(R.layout.row_comment_item, null);
 				((TextView) v.findViewById(R.id.author)).setText(comment.username);
 				((TextView) v.findViewById(R.id.content)).setText(comment.text);
 				((TextView) v.findViewById(R.id.date)).setText(dateFormater.format(comment.timeStamp));

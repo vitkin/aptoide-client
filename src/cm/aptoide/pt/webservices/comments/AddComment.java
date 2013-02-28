@@ -35,7 +35,7 @@ public class AddComment extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.addcomment);
+		setContentView(R.layout.form_add_comment);
 		context = this;
 		this.repo = getIntent().getStringExtra("repo");
 		this.apkid = getIntent().getStringExtra("apkid");

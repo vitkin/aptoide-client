@@ -1627,9 +1627,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						R.layout.featured, null);
 
 				availableView = LayoutInflater.from(mContext).inflate(
-						R.layout.available_page, null);
+						R.layout.page_available, null);
 				updateView = LayoutInflater.from(mContext).inflate(
-						R.layout.updates_page, null);
+						R.layout.page_updates, null);
 				breadcrumbs = (LinearLayout) availableView
 						.findViewById(R.id.breadcrumb_container);
 				installedView = new ListView(mContext);
@@ -2448,15 +2448,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			View v = null;
 			switch (depth) {
 			case STORES:
-				v = LayoutInflater.from(context).inflate(R.layout.stores_row,
+				v = LayoutInflater.from(context).inflate(R.layout.row_stores,
 						null);
 				break;
 			case CATEGORY1:
-				v = LayoutInflater.from(context).inflate(R.layout.catg_list,
+				v = LayoutInflater.from(context).inflate(R.layout.row_catg_list,
 						null);
 				break;
 			case CATEGORY2:
-				v = LayoutInflater.from(context).inflate(R.layout.catg_list,
+				v = LayoutInflater.from(context).inflate(R.layout.row_catg_list,
 						null);
 				break;
 			case TOPAPPS:
@@ -2465,15 +2465,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			case APPLICATIONS:
 			case RECOMMENDED:
 				v = LayoutInflater.from(context)
-						.inflate(R.layout.app_row, null);
+						.inflate(R.layout.row_app, null);
 				break;
 			case LATEST_LIKES:
 				v = LayoutInflater.from(context).inflate(
-						R.layout.latest_likes_row, null);
+						R.layout.row_latest_likes, null);
 				break;
 			case LATEST_COMMENTS:
 				v = LayoutInflater.from(context).inflate(
-						R.layout.latest_comments_row, null);
+						R.layout.row_latest_comments, null);
 				break;
 			default:
 				break;

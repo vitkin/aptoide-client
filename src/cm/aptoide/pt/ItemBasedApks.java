@@ -244,7 +244,7 @@ public class ItemBasedApks {
 				        llAlso.setOrientation(LinearLayout.HORIZONTAL);
 				        for (int i = 0; i!=values.size(); i++) {
 //				        	container.setVisibility(View.VISIBLE);
-				            LinearLayout txtSamItem = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.related_griditem, null);
+				            LinearLayout txtSamItem = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.row_related_griditem, null);
 				           	((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
 				           	ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView)txtSamItem.findViewById(R.id.icon), values.get(i).get("hashCode"));
 //				           	float stars = 0f;

@@ -35,7 +35,7 @@ public class ExcludedUpdatesActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.excluded_uploads_list);
+		setContentView(R.layout.list_excluded_uploads);
 		lv = (ListView) findViewById(R.id.excluded_updates_list);
 		tv_no_excluded_downloads = (TextView) findViewById(R.id.tv_no_excluded_downloads);
 		context = this;
@@ -54,7 +54,7 @@ public class ExcludedUpdatesActivity extends Activity {
 			}
 			
 			public View newView(ViewGroup arg2) {
-				return LayoutInflater.from(context).inflate(R.layout.excluded_update, null);
+				return LayoutInflater.from(context).inflate(R.layout.row_excluded_update, null);
 			}
 			@Override
 			public long getItemId(int position) {

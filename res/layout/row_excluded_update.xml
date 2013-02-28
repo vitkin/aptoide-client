@@ -92,15 +92,15 @@
 
                 <TextView
                     android:id="@+id/tv_vercode"
-                    android:layout_width="0dip"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_marginLeft="3dp"
-                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@android:color/darker_gray" />
             </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 

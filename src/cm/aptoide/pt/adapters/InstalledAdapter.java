@@ -31,7 +31,7 @@ public class InstalledAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		
-		View v = LayoutInflater.from(context).inflate(R.layout.app_row, null);
+		View v = LayoutInflater.from(context).inflate(R.layout.row_app, null);
 		
 		return v;
 	}

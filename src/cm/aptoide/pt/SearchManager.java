@@ -53,7 +53,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		}
 		lv = (ListView) findViewById(R.id.listView);
 //		searchBox = (EditText) findViewById(R.id.search_box);
-		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bzzsrch, null);
+		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.search_aptoide, null);
 		lv.addFooterView(v);
 		Button bazaar_search =  (Button) v.findViewById(R.id.baz_src);
 		bazaar_search.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));

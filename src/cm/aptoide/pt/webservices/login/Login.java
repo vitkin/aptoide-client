@@ -74,10 +74,10 @@ public class Login extends Activity {
 		context = this;
 		pd = new ProgressDialog(context);
 		if (isLoggedIn(context)) {
-			setContentView(R.layout.logout_form);
+			setContentView(R.layout.form_logout);
 			((TextView) findViewById(R.id.username)).setText(getUserLogin(this));
 		} else{
-			setContentView(R.layout.login_form);
+			setContentView(R.layout.form_login);
 			username_box = (EditText) findViewById(R.id.username);
 			password_box = (EditText) findViewById(R.id.password);
 //			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
