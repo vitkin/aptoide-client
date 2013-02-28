@@ -641,7 +641,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 									if(collapsed){
 										collapsed=false;
-										scrollPosition = (int)((ScrollView)findViewById(R.id.scrollView1)).getScrollY();
+										scrollPosition = (int)((ScrollView)findViewById(R.id.app_info_scroller)).getScrollY();
 										description.setMaxLines(Integer.MAX_VALUE);
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
 										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
@@ -649,7 +649,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 										collapsed=true;
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
 										description.setMaxLines(10);
-										((ScrollView)findViewById(R.id.scrollView1)).scrollTo(0, scrollPosition);
+										((ScrollView)findViewById(R.id.app_info_scroller)).scrollTo(0, scrollPosition);
 										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
 									}
 								}
@@ -662,7 +662,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 									if(collapsed){
 										collapsed=false;
-										scrollPosition = (int)((ScrollView)findViewById(R.id.scrollView1)).getScrollY();
+										scrollPosition = (int)((ScrollView)findViewById(R.id.app_info_scroller)).getScrollY();
 										description.setMaxLines(Integer.MAX_VALUE);
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
 										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
@@ -670,7 +670,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 										collapsed=true;
 										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
 										description.setMaxLines(10);
-										((ScrollView)findViewById(R.id.scrollView1)).scrollTo(0, scrollPosition);
+										((ScrollView)findViewById(R.id.app_info_scroller)).scrollTo(0, scrollPosition);
 										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
 									}
 								}

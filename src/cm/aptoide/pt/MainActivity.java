@@ -1104,7 +1104,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	public void showAbout() {
 		View aboutView = LayoutInflater.from(this).inflate(R.layout.dialog_about, null);
-		Builder dialogBuilder = new AlertDialog.Builder(this).setView(aboutView);
+		Builder dialogBuilder = (Integer.parseInt(android.os.Build.VERSION.SDK) < 11)? new AlertDialog.Builder(this) : new AlertDialog.Builder(this, R.style.DialogTheme);
+		dialogBuilder.setView(aboutView);
 		final AlertDialog aboutDialog = dialogBuilder.create();
 		aboutDialog.setIcon(android.R.drawable.ic_menu_help);
 		aboutDialog.setTitle(getString(R.string.about));
