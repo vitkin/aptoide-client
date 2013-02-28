@@ -342,7 +342,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 							for (int i = 0; i != valuesRecommended.size(); i++) {
 								LinearLayout txtSamItem = (LinearLayout) getLayoutInflater()
-										.inflate(R.layout.griditem, null);
+										.inflate(R.layout.row_grid_item, null);
 								((TextView) txtSamItem.findViewById(R.id.name))
 										.setText(valuesRecommended.get(i).get(
 												"name"));
@@ -539,7 +539,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				llAlso.setOrientation(LinearLayout.HORIZONTAL);
 				for (int i = 0; i != values.size(); i++) {
 					LinearLayout txtSamItem = (LinearLayout) getLayoutInflater()
-							.inflate(R.layout.griditem, null);
+							.inflate(R.layout.row_grid_item, null);
 					((TextView) txtSamItem.findViewById(R.id.name))
 							.setText(values.get(i).get("name"));
 					((TextView) txtSamItem.findViewById(R.id.version))
@@ -1104,8 +1104,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	public void showAbout() {
 		View aboutView = LayoutInflater.from(this).inflate(R.layout.dialog_about, null);
-		Builder dialogBuilder = (Integer.parseInt(android.os.Build.VERSION.SDK) < 11)? new AlertDialog.Builder(this) : new AlertDialog.Builder(this, R.style.DialogTheme);
-		dialogBuilder.setView(aboutView);
+		Builder dialogBuilder = new AlertDialog.Builder(this).setView(aboutView);
 		final AlertDialog aboutDialog = dialogBuilder.create();
 		aboutDialog.setIcon(android.R.drawable.ic_menu_help);
 		aboutDialog.setTitle(getString(R.string.about));
@@ -1625,7 +1624,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				pager = (ViewPager) findViewById(R.id.viewpager);
 
 				featuredView = LayoutInflater.from(mContext).inflate(
-						R.layout.featured, null);
+						R.layout.page_featured, null);
 
 				availableView = LayoutInflater.from(mContext).inflate(
 						R.layout.page_available, null);
