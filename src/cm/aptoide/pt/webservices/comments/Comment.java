@@ -12,10 +12,10 @@ import java.util.Date;
 
 public class Comment {
 
-	BigInteger id;
-	String username;
-	String subject;
-	String text;
-	Date timeStamp;
-	
+    public Integer id;
+    public String username;
+    public String subject;
+    public String text;
+    public Date timeStamp;
+
 }

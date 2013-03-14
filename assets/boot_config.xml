@@ -1,0 +1,28 @@
+
+<aptoideboot>
+    <aptoideconf>
+
+        <partnertype>basic</partnertype>
+        <partnerid>933e4fb9b00ddeb538b7c7fc8f8c9cdc</partnerid>
+        <defaultstorename>savou</defaultstorename>
+        <brand>http://www.aptoide.com/</brand>
+        <splashscreen>http://www.aptoide.com/</splashscreen>
+        <maturecontentswitch>false</maturecontentswitch>
+        <maturecontentswitchvalue>false</maturecontentswitchvalue>
+        <multiplestores>false</multiplestores>
+        <searchstores>false</searchstores>
+        <customeditorschoice>false</customeditorschoice>
+        <aptoidetheme>0</aptoidetheme>
+
+    </aptoideconf>
+
+    <storeconf>
+        <theme>0</theme>
+        <name>oem</name>
+        <avatar>http://www.aptoide.com/</avatar>
+        <description>Best Market Online</description>
+        <view>list</view>
+        <items>games,applications</items>
+    </storeconf>
+
+</aptoideboot>

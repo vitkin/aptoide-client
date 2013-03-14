@@ -7,11 +7,18 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import android.app.Dialog;
+import android.os.*;
+import cm.aptoide.pt.webservices.TasteModel;
+import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
+import cm.aptoide.pt.webservices.comments.Comment;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -28,11 +35,6 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -96,10 +98,10 @@ import cm.aptoide.com.nostra13.universalimageloader.utils.FileUtils;
 import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
-	
-	
-	
-	
+
+
+
+
 	private ViewApk viewApk = null;
 	private Database db;
 	private Spinner spinner;
@@ -128,7 +130,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			serviceManagerIsBound = true;
 
 			Log.v("Aptoide-ApkInfo", "Connected to ServiceDownloadManager");
-			
+
 			continueLoading();
 		}
 
@@ -149,13 +151,15 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			handler.sendEmptyMessage(update.getStatus().ordinal());
 		}
 	};
+    private double price;
+    private boolean isPaid;
 
 
-	@Override
+    @Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setContentView(R.layout.app_info);
-		
+
 		if(!isRunning){
 			isRunning = true;
 
@@ -170,7 +174,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	protected void continueLoading() {
 		category = Category.values()[getIntent().getIntExtra("category", -1)];
@@ -182,7 +186,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void loadApkVersions() {
 		if(category.equals(Category.INFOXML)){
@@ -236,9 +240,9 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 	Likes likes;
 	String repo_string;
 	ProgressDialog pd;
-	
+
 	private OnClickListener openListener = new OnClickListener() {
-		
+
 		@Override
 		public void onClick(View v) {
 			try{
@@ -248,7 +252,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				e.printStackTrace();
 				Toast.makeText(context, R.string.no_launcher_activity, Toast.LENGTH_LONG).show();
 			}
-			
+
 		}
 	};
 	private void loadElements(long id) {
@@ -259,7 +263,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		progress.setIndeterminate(true);
 		Bundle b = new Bundle();
 		b.putLong("_id", id);
-		
+
 //		findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
 		getSupportLoaderManager().restartLoader(20, b, new LoaderCallbacks<ViewApk>() {
 
@@ -285,7 +289,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				pd.dismiss();
 				viewApk = arg1;
 				int installedVercode = db.getInstalledAppVercode(viewApk.getApkid());
-				
+
 				if(installedVercode<=viewApk.getVercode()&&installedVercode!=0){
 					findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
 					((TextView) findViewById(R.id.inst_version)).setText(getString(R.string.installed_version)+": " + db.getInstalledAppVername(viewApk.getApkid()));
@@ -300,10 +304,10 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					}else{
 						((Button) findViewById(R.id.btinstall)).setText(R.string.install);
 					}
-					
+
 					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
 				}
-				
+
 				if(installedVercode==viewApk.getVercode()){
 					if(getIntent().hasExtra("installed")){
 						((Button) findViewById(R.id.btinstall)).setText(R.string.open);
@@ -312,11 +316,11 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 					}
 					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
 				}
-				
+
 				final long repo_id = viewApk.getRepo_id();
 				repo_string = viewApk.getRepoName();
 				checkDownloadStatus();
-				if(category.equals(Category.ITEMBASED)){
+				if(category.equals(Category.ITEMBASED)||category.equals(Category.EDITORSCHOICE)||category.equals(Category.TOPFEATURED)){
 					webservicespath = "http://webservices.aptoide.com/";
 				}else{
 					webservicespath = db.getWebServicesPath(repo_id);
@@ -342,17 +346,19 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 				 .cacheOnDisc()
 				 .build();
 				ImageLoader.getInstance().displayImage(viewApk.getIcon(), (ImageView) findViewById(R.id.app_icon), options, null, (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
-				
-				
-				
-				Comments comments = new Comments(context,webservicespath);
-				comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);
+
+
+                new GetApkInfo().execute();
+
+
+				/*Comments comments = new Comments(context,webservicespath);
+				comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);*/
 				likes = new Likes(context, webservicespath);
-				likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout),(ViewGroup) findViewById(R.id.ratings));
+				/*likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout),(ViewGroup) findViewById(R.id.ratings));*/
 
 				ItemBasedApks items = new ItemBasedApks(context,viewApk);
 				items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container),(LinearLayout)findViewById(R.id.itembasedapks_maincontainer),(TextView)findViewById(R.id.itembasedapks_label));
-				loadScreenshots();
+
 				if(!spinnerInstanciated){
 					loadApkVersions();
 				}
@@ -360,14 +366,14 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 				//Malware badges
 				loadMalwareBadges();
-				
-				
-				
+                new checkPaymentTask().execute();
+
+
 			}
 
 			private void loadMalwareBadges() {
 				new Thread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						try{
@@ -381,7 +387,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 							Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
 							Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
 							runOnUiThread(new Runnable() {
-								
+
 								@Override
 								public void run() {
 									EnumApkMalware ApkStatus = EnumApkMalware.valueOf(malwareStatus.toUpperCase(Locale.ENGLISH));
@@ -424,18 +430,18 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 //										break;
 									default:
 										break;
-									}									
+									}
 								}
 							});
-							
-							
-							
+
+
+
 						}catch (Exception e){
 							e.printStackTrace();
-						}						
+						}
 					}
 				}).start();
-				
+
 			}
 
 			@Override
@@ -445,26 +451,26 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		});
 
 
-		//		
+		//
 
-		//		
+		//
 
 
 		//		Button serch_mrkt = (Button)findViewById(R.id.btmarket);
 		//		serch_mrkt.setOnClickListener(new OnClickListener() {
-		//			
+		//
 		//			public void onClick(View v) {
-						
+
 		//			}
-		//			
+		//
 		//		});
 
-		//		
+		//
 
 
 
-		//		
-		//		
+		//
+		//
 
 
 	}
@@ -481,16 +487,16 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			}
 			menu.add(0,1,0,R.string.search_market).setIcon(android.R.drawable.ic_menu_add);
 		}
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		
+
 		switch (item.getItemId()) {
 		case 0:
 			Uri uri = Uri.fromParts("package", viewApk.getApkid(), null);
@@ -505,21 +511,21 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 			try{
 				startActivity(i);
 			}catch (ActivityNotFoundException e){
-				Toast toast= Toast.makeText(context, context.getString(R.string.error_no_market), Toast.LENGTH_SHORT);  
-				toast.show(); 
+				Toast toast= Toast.makeText(context, context.getString(R.string.error_no_market), Toast.LENGTH_SHORT);
+				toast.show();
 			}
 			break;
 		default:
 			break;
 		}
-		
+
 		return super.onOptionsItemSelected(item);
 	}
 
 	/**
-	 * 
+	 *
 	 */
-	private void loadScreenshots() {
+	private void loadScreenshots(final JSONArray array) {
 		new Thread(new Runnable() {
 
 			@Override
@@ -544,28 +550,24 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 						break;
 
 					case INFOXML:
-						NetworkUtils utils = new NetworkUtils();
-						String uri = webservicespath+"webservices/listApkScreens/"+repo_string+"/"+viewApk.getApkid()+"/"+viewApk.getVername()+"/json";
-						JSONObject respJSON = utils.getJsonObject(new URL(uri), ApkInfo.this);
-						JSONArray imagesurl = respJSON.getJSONArray("listing");
-						thumbnailList = new String[imagesurl.length()];
-						for ( int i = 0; i!= imagesurl.length();i++){
-							thumbnailList[i]=screenshotToThumb(imagesurl.getString(i));
+                        thumbnailList = new String[array.length()];
+						for ( int i = 0; i!= array.length();i++){
+							thumbnailList[i]=screenshotToThumb(array.getString(i));
 						}
 
-						for(int i=0;i < imagesurl.length();i++){ 
-							originalList.add(imagesurl.getString(i));
+						for(int i=0;i < array.length();i++){
+							originalList.add(array.getString(i));
 						}
 						break;
-					
+
 					default:
 						break;
 					}
 					final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 					final CustomViewPager screenshots = (CustomViewPager) findViewById(R.id.screenShotsPager);
-					
-					
-					
+
+
+
 					runOnUiThread(new Runnable() {
 
 						public void run() {
@@ -607,6 +609,8 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 						}
 					});
+
+
 				} catch (Exception e){
 					e.printStackTrace();
 				}
@@ -686,10 +690,10 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		}).start();
 	}
 
-	
+
 
 	/**
-	 * 
+	 *
 	 */
 	private void setClickListeners() {
 		if(getIntent().hasExtra("installed")){
@@ -772,11 +776,11 @@ OnClickListener installListener = new OnClickListener() {
 				if(scheduledDownloadChBox.isChecked()){
 					db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(),viewApk.getName(),viewApk.getMd5(),viewApk.getIcon());
 					runOnUiThread(new Runnable() {
-						
+
 						@Override
 						public void run() {
-							Toast toast= Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);  
-							toast.show(); 
+							Toast toast= Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);
+							toast.show();
 						}
 					});
 				}else{
@@ -790,20 +794,20 @@ OnClickListener installListener = new OnClickListener() {
 					}else{
 						if(category.equals(Category.ITEMBASED)||category.equals(Category.TOP)||category.equals(Category.TOPFEATURED)||category.equals(Category.EDITORSCHOICE)){
 							download = new ViewDownloadManagement(
-									viewApk.getPath(), 
-									viewApk, 
+									viewApk.getPath(),
+									viewApk,
 									cache);
 						}else{
 							download = new ViewDownloadManagement(
-									viewApk.getPath(), 
-									viewApk, 
-									cache, 
-									db.getServer(viewApk.getRepo_id(), false).getLogin());	
+									viewApk.getPath(),
+									viewApk,
+									cache,
+									db.getServer(viewApk.getRepo_id(), false).getLogin());
 						}
-						
+
 
 						runOnUiThread(new Runnable() {
-							
+
 							@Override
 							public void run() {
 								ImageView manage = (ImageView) findViewById(R.id.icon_manage);
@@ -819,23 +823,23 @@ OnClickListener installListener = new OnClickListener() {
 								findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
 							}
 						});
-						
+
 						try {
 							serviceDownloadManager.callStartDownloadAndObserve(download,serviceDownloadManagerCallback);
 						} catch (RemoteException e) {
 							e.printStackTrace();
 						}
-						
+
 					}
 				}
 			}
 		}).start();
-		
+
 	}
 };
 
 	/**
-	 * 
+	 *
 	 */
 	private void checkDownloadStatus() {
 		try {
@@ -886,7 +890,7 @@ OnClickListener installListener = new OnClickListener() {
 		if(Login.isLoggedIn(this)){
 
 			try{
-				likes.postLike(repo_string, viewApk.getApkid(), viewApk.getVername(), like);	
+				likes.postLike(repo_string, viewApk.getApkid(), viewApk.getVername(), like, (ViewGroup) findViewById(R.id.ratings));
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -939,8 +943,8 @@ OnClickListener installListener = new OnClickListener() {
 				if(download.getDownload().getFailReason().equals(EnumDownloadFailReason.IP_BLACKLISTED)){
 					new DialogIpBlacklisted(ApkInfo.this).show();
 				}else{
-					Toast toast= Toast.makeText(context, context.getString(R.string.download_failed_due_to)+": "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_SHORT);  
-					toast.show(); 
+					Toast toast= Toast.makeText(context, context.getString(R.string.download_failed_due_to)+": "+download.getDownload().getFailReason().toString(getApplicationContext()), Toast.LENGTH_SHORT);
+					toast.show();
 				}
 				findViewById(R.id.download_progress).setVisibility(View.GONE);
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);
@@ -1010,7 +1014,7 @@ OnClickListener installListener = new OnClickListener() {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
+
 		if(download!=null&&!download.isNull()){
 			try {
 				serviceDownloadManager.callUnregisterDownloadObserver(viewApk.hashCode());
@@ -1081,7 +1085,252 @@ OnClickListener installListener = new OnClickListener() {
 				}	).start();
 
 			}
-		});		
+		});
 	}
+
+    private class GetApkInfo extends AsyncTask<Void,Void,Void> {
+
+        private WebserviceGetApkInfo webservice;
+        private ViewGroup viewComments;
+        private ViewGroup viewLikes;
+        private View loading;
+        private ViewGroup viewLikesButton;
+
+        /**
+         * Runs on the UI thread before {@link #doInBackground}.
+         *
+         * @see #onPostExecute
+         * @see #doInBackground
+         */
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();    //To change body of overridden methods use File | Settings | File Templates.
+            viewComments = (ViewGroup) findViewById(R.id.commentContainer);
+            viewComments.removeAllViews();
+
+           loading = LayoutInflater.from(context).inflate(R.layout.loadingfootercomments, null);
+            viewComments.addView(loading, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            viewLikes = (ViewGroup) findViewById(R.id.likesLayout);
+            viewLikesButton = (ViewGroup) findViewById(R.id.ratings);
+            ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.loading_likes));
+            ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
+
+
+
+
+        }
+
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p/>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task.
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                webservice = new WebserviceGetApkInfo(webservicespath,viewApk.getRepoName(),viewApk.getApkid(),viewApk.getVername(),Login.getToken(context));
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (JSONException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+
+            return null;  //To change body of implemented methods use File | Settings | File Templates.
+        }
+
+        /**
+         * <p>Runs on the UI thread after {@link #doInBackground}. The
+         * specified result is the value returned by {@link #doInBackground}.</p>
+         * <p/>
+         * <p>This method won't be invoked if the task was cancelled.</p>
+         *
+         * @param aVoid The result of the operation computed by {@link #doInBackground}.
+         * @see #onPreExecute
+         * @see #doInBackground
+         * @see #onCancelled(Object)
+         */
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            try{
+            ArrayList<Comment> result = webservice.getComments();
+            loading.setVisibility(View.GONE);
+            if(result.isEmpty()){
+                TextView tv = new TextView(context);
+                tv.setText(context.getString(R.string.no_comments));
+                tv.setPadding(8, 2, 2, 2);
+                tv.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
+                viewComments.addView(tv);
+            }
+            for(Comment comment : result){
+                View v = LayoutInflater.from(context).inflate(R.layout.row_comment_item, null);
+                ((TextView) v.findViewById(R.id.author)).setText(comment.username);
+                ((TextView) v.findViewById(R.id.content)).setText(comment.text);
+                ((TextView) v.findViewById(R.id.date)).setText(comment.timeStamp.toString());
+                viewComments.addView(v);
+            }
+            if(webservice.isSeeAll()){
+                findViewById(R.id.more_comments).setVisibility(View.VISIBLE);
+            }
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            try {
+                loadScreenshots(webservice.getScreenshots());
+            } catch (Exception e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+            try{
+                TasteModel model = webservice.getLikes();
+
+                ((TextView) viewLikes.findViewById(R.id.likes)).setText(model.likes);
+                ((TextView) viewLikes.findViewById(R.id.dislikes)).setText(model.dislikes);
+
+                if(model.uservote!=null){
+
+                    if(model.uservote.equals("like")){
+                        ((Button) viewLikesButton.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn_over , 0, 0, 0);
+                        ((Button) viewLikesButton.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn, 0);
+                    }else if(model.uservote.equals("dislike")){
+                        ((Button) viewLikesButton.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
+                        ((Button) viewLikesButton.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn_over, 0);
+                    }
+                    TextView tv = new TextView(context);
+                    tv.setText(context.getString(R.string.no_internet_connection));
+                    viewComments.addView(tv);
+
+                loading.setVisibility(View.GONE);
+
+                }
+
+            }catch (Exception e){
+                ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.tastenotavailable));
+                ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
+            }
+
+
+        }
+    }
+
+    public class checkPaymentTask extends AsyncTask<Void, Void, JSONObject>{
+
+        ProgressDialog pd = new ProgressDialog(context);
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            findViewById(R.id.btinstall).setEnabled(false);
+            ((Button)findViewById(R.id.btinstall)).setTextColor(Color.GRAY);
+        }
+
+        @Override
+        protected JSONObject doInBackground(Void... params) {
+            JSONObject json = null;
+            try{
+                NetworkUtils utils = new NetworkUtils();
+                String request = "http://webservices.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/" + Login.getUserLogin(context) + "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
+                System.out.println(request);
+                json = utils.getJsonObject(new URL(request), ApkInfo.this);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return json;
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject json) {
+            super.onPostExecute(json);
+            if(pd.isShowing())pd.dismiss();
+            try{
+                System.out.println("JSON" + json);
+                String status = json.getString("status");
+                if(status.equals("FAIL")){
+                    try{
+                        price = json.getDouble("amount");
+                        if(price > 0){
+                            isPaid = true;
+                            findViewById(R.id.btinstall).setOnClickListener(buyListener );
+                            ((Button) findViewById(R.id.btinstall)).setText("Buy" + " $" + price);
+                        }
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+
+                    String path = json.getString("apkpath") + json.getString("path");
+                    viewApk.setPath(path);
+                    findViewById(R.id.btinstall).setOnClickListener( installListener );
+                    ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                findViewById(R.id.btinstall).setOnClickListener( installListener );
+                ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+                Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
+
+            }
+            findViewById(R.id.btinstall).setEnabled(true);
+            ((Button)findViewById(R.id.btinstall)).setTextColor(Color.WHITE);
+
+
+        }
+
+    }
+    private OnClickListener buyListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if(Login.isLoggedIn(context)){
+                AlertDialog method = new AlertDialog.Builder(context).create();
+                method.setTitle("Payment Method");
+                method.setMessage(getString(R.string.paypal_message));
+
+                method.setButton(Dialog.BUTTON_POSITIVE,"Credit Card", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(ApkInfo.this, CreditCard.class);
+                        i.putExtra("apkid", viewApk.getApkid());
+                        i.putExtra("versionName", viewApk.getVername());
+                        i.putExtra("repo", viewApk.getRepoName());
+                        startActivityForResult(i, 1);
+                    }});
+
+                method.setButton(Dialog.BUTTON_NEGATIVE,"PayPal", new DialogInterface.OnClickListener() {
+
+
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent(ApkInfo.this, Buy.class);
+                        i.putExtra("apkid", viewApk.getApkid());
+                        i.putExtra("versionName", viewApk.getVername());
+                        i.putExtra("repo", viewApk.getRepoName());
+                        startActivityForResult(i, 1);
+                    }
+
+                });
+                method.show();
+            }else{
+                startActivityForResult(new Intent(ApkInfo.this,Login.class), 1);
+            }
+
+
+
+
+
+        }
+    };
 
 }

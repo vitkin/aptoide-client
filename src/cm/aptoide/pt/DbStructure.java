@@ -11,11 +11,10 @@ package cm.aptoide.pt;
 
 import java.util.ArrayList;
 
-import cm.aptoide.pt.RepoParser.TopParser;
 import cm.aptoide.pt.util.databasecreator.Column;
+import cm.aptoide.pt.util.databasecreator.TableCreator;
 import cm.aptoide.pt.util.databasecreator.Column.OnConflict;
 import cm.aptoide.pt.util.databasecreator.Column.SQLiteType;
-import cm.aptoide.pt.util.databasecreator.TableCreator;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -25,7 +24,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DbStructure extends SQLiteOpenHelper {
-	
+
 	public final static String TABLE_TOP_LATEST_REPO_INFO= "top_latest_repo_info";
 	public final static String TABLE_APK= "apk";
 	public final static String TABLE_REPO= "repo";
@@ -51,7 +50,7 @@ public class DbStructure extends SQLiteOpenHelper {
 	public static final String TABLE_HASHES = "hashes";
 	public static final String TABLE_ITEMBASED_SCREENSHOTS = "itembased_screenshots";
 	public static final String TABLE_SCHEDULED = "scheduled";
-	
+
 	public final static String COLUMN__ID = "_id";
 	public final static String COLUMN_APKID = "apkid";
 	public final static String COLUMN_NAME = "name";
@@ -72,7 +71,7 @@ public class DbStructure extends SQLiteOpenHelper {
 	public final static String COLUMN_MIN_GLES = "mingles";
 	public final static String COLUMN_MATURE = "mature";
 	public final static String COLUMN_HASH = "hash";
-	
+
 	public final static String COLUMN_URL = "url";
 	public final static String COLUMN_ICONS_PATH = "iconspath";
 	public final static String COLUMN_BASE_PATH = "basepath";
@@ -83,7 +82,7 @@ public class DbStructure extends SQLiteOpenHelper {
 	public final static String COLUMN_PASSWORD = "password";
 	public final static String COLUMN_AVATAR_URL = "avatar_url";
 	public final static String COLUMN_APKPATH = "apkpath";
-	
+
 	public final static String COLUMN_CATEGORY_1ST_ID = COLUMN_CATEGORY_1ST + "_id";
 	public final static String COLUMN_CATEGORY_2ND_ID = COLUMN_CATEGORY_2ND + "_id";
 	public static final String COLUMN_ITEMBASEDREPO_ID = "itembased_repo_id";
@@ -92,20 +91,21 @@ public class DbStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_FEATURED_HIGHLIGHTED = "highlighted";
 	public static final String COLUMN_PARENT_APKID = "parent_apkid";
 	public static final String TABLE_EXCLUDED_APKID = "excluded_apkid";
-	
-	
-	
-	
+	public static final String COLUMN_PRICE = "price";
+
+
+
+
 	public DbStructure(Context context) {
 		super(context, "aptoide.db", null, 6);
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		
+
 		TableCreator creator = new TableCreator(db);
-		
-		
+
+
 		creator.newTable(TABLE_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 								   .addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
 								   .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME))
@@ -124,20 +124,21 @@ public class DbStructure extends SQLiteOpenHelper {
 								   .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MIN_SDK))
 								   .addColumn(new Column(SQLiteType.REAL, COLUMN_MIN_GLES))
 								   .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MATURE))
+								   .addColumn(new Column(SQLiteType.REAL, COLUMN_PRICE ))
 								   .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_CATEGORY_1ST).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 											.addColumn(new Column(SQLiteType.TEXT,COLUMN_NAME).setUnique(OnConflict.IGNORE))
 											.createTable();
-		
-		
+
+
 		creator.newTable(TABLE_CATEGORY_2ND).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 											.addColumn(new Column(SQLiteType.TEXT,COLUMN_NAME).setUnique(OnConflict.IGNORE))
 											.addColumn(new Column(SQLiteType.INTEGER, COLUMN_CATEGORY_1ST_ID))
 											.createTable();
-		
-		
+
+
 		creator.newTable(TABLE_REPO).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_URL,""))
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH,""))
@@ -152,9 +153,9 @@ public class DbStructure extends SQLiteOpenHelper {
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_SCREENS_PATH,""))
 									.addColumn(new Column(SQLiteType.INTEGER, COLUMN_DOWNLOADS,"0"))
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_APKPATH,""))
-									.createTable(); 
-		
-		
+									.createTable();
+
+
 		creator.newTable(TABLE_TOP_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 											  .addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
 											  .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME))
@@ -173,15 +174,16 @@ public class DbStructure extends SQLiteOpenHelper {
 											  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MIN_SDK))
 											  .addColumn(new Column(SQLiteType.REAL, COLUMN_MIN_GLES))
 											  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MATURE))
+											  .addColumn(new Column(SQLiteType.REAL, COLUMN_PRICE ))
 											  .createTable();
-		
+
 
 		creator.newTable(TABLE_TOP_SCREENSHOTS).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
 											   .addColumn(new Column(SQLiteType.TEXT, COLUMN_REMOTE_PATH))
 											   .addColumn(new Column(SQLiteType.INTEGER, COLUMN_REPO_ID))
 											   .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_TOP_REPO).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 										.addColumn(new Column(SQLiteType.TEXT, COLUMN_URL,""))
 										.addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH,""))
@@ -190,8 +192,8 @@ public class DbStructure extends SQLiteOpenHelper {
 										.addColumn(new Column(SQLiteType.TEXT, COLUMN_SCREENS_PATH,""))
 										.addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME,""))
 										.createTable();
-		
-		
+
+
 		creator.newTable(TABLE_LATEST_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 										  .addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
 										  .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME))
@@ -210,9 +212,10 @@ public class DbStructure extends SQLiteOpenHelper {
 										  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MIN_SDK))
 										  .addColumn(new Column(SQLiteType.REAL, COLUMN_MIN_GLES))
 										  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MATURE))
+										  .addColumn(new Column(SQLiteType.REAL, COLUMN_PRICE ))
 										  .createTable();
 
-		
+
 		creator.newTable(TABLE_LATEST_SCREENSHOTS).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
 												  .addColumn(new Column(SQLiteType.TEXT, COLUMN_REMOTE_PATH))
 												  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_REPO_ID))
@@ -227,28 +230,28 @@ public class DbStructure extends SQLiteOpenHelper {
 										   .addColumn(new Column(SQLiteType.TEXT, COLUMN_SCREENS_PATH,""))
 										   .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME,""))
 										   .createTable();
-		
+
 		db.execSQL("create table " + TABLE_REPO_CATEGORY_1ST + " (repo_id integer, " + COLUMN_CATEGORY_1ST_ID+ " integer, primary key(repo_id, " + COLUMN_CATEGORY_1ST_ID+ ") on conflict ignore);");
 		db.execSQL("create table " + TABLE_REPO_CATEGORY_2ND + " (repo_id integer, " + COLUMN_CATEGORY_2ND_ID+ " integer, primary key(repo_id, " + COLUMN_CATEGORY_2ND_ID+ ") on conflict ignore);");
-		
+
 //		creator.newTable(TABLE_REPO_CATEGORY_1ST).addColumn(new Column(SQLiteType.INTEGER, COLUMN_REPO_ID).setPrimaryKey().setUnique(OnConflict.IGNORE))
 //												 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_CATEGORY_1ST_ID).setPrimaryKey().setUnique(OnConflict.IGNORE))
 //												 .createTable();
-//		
-//		
+//
+//
 //		creator.newTable(TABLE_REPO_CATEGORY_2ND).addColumn(new Column(SQLiteType.INTEGER, COLUMN_REPO_ID).setPrimaryKey().setUnique(OnConflict.IGNORE))
 //												 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_CATEGORY_2ND_ID).setPrimaryKey().setUnique(OnConflict.IGNORE))
 //												 .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_INSTALLED).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
 										 .addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
 										 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_VERCODE))
 										 .addColumn(new Column(SQLiteType.TEXT, COLUMN_VERNAME))
 										 .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME))
 										 .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_FEATURED_TOP_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 									  	        .addColumn(new Column(SQLiteType.TEXT,    COLUMN_APKID))
 									  	        .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME))
@@ -267,9 +270,10 @@ public class DbStructure extends SQLiteOpenHelper {
 									  	        .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MIN_SDK))
 									  	        .addColumn(new Column(SQLiteType.REAL,    COLUMN_MIN_GLES))
 									  	        .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MATURE))
+									  	        .addColumn(new Column(SQLiteType.REAL, COLUMN_PRICE ))
 									  	        .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_FEATURED_TOP_REPO).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 												 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_URL,""))
 												 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_HASH,""))
@@ -277,14 +281,15 @@ public class DbStructure extends SQLiteOpenHelper {
 												 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_BASE_PATH,""))
 												 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_SCREENS_PATH,""))
 												 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME,""))
+
 												 .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_FEATURED_TOP_SCREENSHOTS).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
 												     	.addColumn(new Column(SQLiteType.TEXT,    COLUMN_REMOTE_PATH))
 												    	.createTable();
-		
-		
+
+
 		creator.newTable(TABLE_FEATURED_EDITORSCHOICE_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 														  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_APKID))
 														  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME))
@@ -305,9 +310,10 @@ public class DbStructure extends SQLiteOpenHelper {
 														  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MATURE))
 														  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_FEATURED_GRAPHIC))
 														  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_FEATURED_HIGHLIGHTED))
+														  .addColumn(new Column(SQLiteType.REAL, COLUMN_PRICE ))
 														  .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_FEATURED_EDITORSCHOICE_REPO).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 														   .addColumn(new Column(SQLiteType.TEXT, COLUMN_URL,""))
 														   .addColumn(new Column(SQLiteType.TEXT, COLUMN_ICONS_PATH,""))
@@ -316,14 +322,14 @@ public class DbStructure extends SQLiteOpenHelper {
 														   .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME,""))
 														   .addColumn(new Column(SQLiteType.TEXT, COLUMN_FEATURED_GRAPHICS_PATH,""))
 														   .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_FEATURED_EDITORSCHOICE_SCREENSHOTS).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
 																  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_REMOTE_PATH))
 																  .createTable();
-		
-		
-		
+
+
+
 		creator.newTable(TABLE_ITEMBASED_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 											 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_APKID))
 											 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME))
@@ -343,8 +349,9 @@ public class DbStructure extends SQLiteOpenHelper {
 											 .addColumn(new Column(SQLiteType.REAL,    COLUMN_MIN_GLES))
 											 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_MATURE))
 											 .addColumn(new Column(SQLiteType.TEXT, COLUMN_PARENT_APKID))
+											 .addColumn(new Column(SQLiteType.REAL, COLUMN_PRICE ))
 											 .createTable();
-		
+
 		creator.newTable(TABLE_ITEMBASED_REPO).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 											  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_URL,""))
 											  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_ICONS_PATH,""))
@@ -352,18 +359,18 @@ public class DbStructure extends SQLiteOpenHelper {
 											  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_SCREENS_PATH,""))
 											  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME,""))
 											  .createTable();
-		
+
 		creator.newTable(TABLE_HASHES).addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH))
 												.addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID).setPrimaryKey().setUnique(OnConflict.REPLACE))
 												.createTable();
-		
-		
+
+
 		creator.newTable(TABLE_ITEMBASED_SCREENSHOTS).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
 		   											 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_REMOTE_PATH))
 		   											 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_REPO_ID))
 		   											 .createTable();
-		
-		
+
+
 		creator.newTable(TABLE_SCHEDULED).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME))
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_APKID))
@@ -373,31 +380,31 @@ public class DbStructure extends SQLiteOpenHelper {
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MD5))
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_ICON))
 										 .createTable();
-		
+
 		creator.newTable(TABLE_EXCLUDED_APKID).addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
 											  .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME))
 											  .addColumn(new Column(SQLiteType.INTEGER, COLUMN_VERCODE))
 											  .createTable();
-		
+
 		ContentValues values = new ContentValues();
 		values.put(COLUMN__ID, Database.TOP_ID);
 		values.put(COLUMN_NAME, "Top Apps");
 		db.insert(TABLE_CATEGORY_1ST, null, values);
-		
+
 		values = new ContentValues();
 		values.put(COLUMN__ID, Database.LATEST_ID);
 		values.put(COLUMN_NAME, "Latest Apps");
 		db.insert(TABLE_CATEGORY_1ST, null, values);
 //		db.execSQL("create table scheduled (_id integer primary key, name text, apkid text, vercode integer, vername text, remotepath text, md5 text );");
 
-		
-		
+
+
 //		db.execSQL("create table apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer,rating text,path text, category2 integer, md5 text,  repo_id integer, date date, minscreen int, minsdk int, mingles real, mature int, exclude_update boolean default false);");
 //		db.execSQL("create table category1 (_id integer primary key, name text , size integer, unique (name) on conflict ignore) ;");
 //		db.execSQL("create table category2 (_id integer primary key, catg1_id integer, name text , size integer, unique (name) on conflict ignore);");
 //		db.execSQL("create table repo (_id integer primary key, url text default '', delta text, appcount integer, iconspath text default '', basepath text default '', status text default '', webservicespath text default '', username text, password text, avatar text default '', name text default '', downloads integer default 0, apkpath text default '');");
 //		db.execSQL("create table toprepo_extra (_id integer, top_delta text, screenspath text, category text,iconspath text, basepath text, url text, name text);");
-		
+
 //		db.execSQL("create table installed (apkid text, vercode integer, vername text, name text);");
 //		db.execSQL("create table dynamic_apk (_id integer primary key, apkid text, name text, vername text, vercode integer, imagepath text, downloads integer, size integer, rating text,path text, category1 integer, md5 text, repo_id integer, minscreen int, minsdk int, mingles real, mature int);");
 //		db.execSQL("create table screenshots (_id integer, type integer, path text, repo_id integer);");
@@ -411,10 +418,10 @@ public class DbStructure extends SQLiteOpenHelper {
 		db.execSQL("CREATE INDEX mytest_id3_idx ON top_apk(apkid,vercode,repo_id);");
 		db.execSQL("CREATE INDEX mytest_id4_idx ON latest_apk(apkid,vercode,repo_id);");
 		db.execSQL("CREATE INDEX mytest_id5_idx ON itembased_apk(apkid,vercode,repo_id);");
-		
-		
+
+
 	}
-	
+
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.d("Database", "OnUpgrade");
@@ -431,8 +438,8 @@ public class DbStructure extends SQLiteOpenHelper {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		
-		
+
+
 		db.execSQL("DROP TABLE IF EXISTS apk");
 		db.execSQL("DROP TABLE IF EXISTS category1");
 		db.execSQL("DROP TABLE IF EXISTS category2");
@@ -449,7 +456,7 @@ public class DbStructure extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS scheduled");
 		db.execSQL("DROP TABLE IF EXISTS screenshots");
 		onCreate(db);
-		
+
 		for(Server oldServer : oldServers){
 			ContentValues values = new ContentValues();
 			values.put(COLUMN_URL, oldServer.url);
@@ -459,9 +466,9 @@ public class DbStructure extends SQLiteOpenHelper {
 			db.insert("repo", null, values);
 			Log.d("Database", oldServer.url);
 		}
-		
+
 	}
-	
-	
+
+
 
 }

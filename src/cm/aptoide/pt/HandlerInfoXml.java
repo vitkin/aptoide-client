@@ -22,14 +22,16 @@ import cm.aptoide.pt.views.ViewApkInfoXml;
 
 
 public class HandlerInfoXml extends DefaultHandler {
+
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
+
 	final Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
-	 
+
 	void loadElements() {
-		
+
 		elements.put("apklst", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -37,7 +39,7 @@ public class HandlerInfoXml extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+
 			}
 		});
 
@@ -52,10 +54,10 @@ public class HandlerInfoXml extends DefaultHandler {
 					db.deleteServer(apk.getServer().id,false);
 				}
 				db.insertServerInfo(apk.getServer(),Category.INFOXML);
-				
+
 			}
 		});
-		
+
 		elements.put("date", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -66,7 +68,7 @@ public class HandlerInfoXml extends DefaultHandler {
 				apk.setDate(sb.toString());
 			}
 		});
-		
+
 		elements.put("del", new ElementHandler() {
 
 
@@ -90,7 +92,7 @@ public class HandlerInfoXml extends DefaultHandler {
 				apk.getServer().basePath = sb.toString();
 			}
 		});
-		
+
 		elements.put("appscount", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -98,10 +100,10 @@ public class HandlerInfoXml extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+
 			}
 		});
-		
+
 		elements.put("iconspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -112,7 +114,7 @@ public class HandlerInfoXml extends DefaultHandler {
 				apk.getServer().iconsPath = sb.toString();
 			}
 		});
-		
+
 		elements.put("screenspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -159,7 +161,7 @@ public class HandlerInfoXml extends DefaultHandler {
 				}else{
 					db.insert(apk);
 				}
-				
+
 			}
 		});
 
@@ -204,7 +206,7 @@ public class HandlerInfoXml extends DefaultHandler {
 			@Override
 			public void endElement() throws SAXException {
 				apk.setVercode(Integer.parseInt(sb.toString()));
-				
+
 			}
 		});
 
@@ -215,9 +217,9 @@ public class HandlerInfoXml extends DefaultHandler {
 
 			@Override
 			public void endElement() throws SAXException {
-				
+
 				apk.setApkid(sb.toString());
-				
+
 			}
 		});
 
@@ -245,7 +247,7 @@ public class HandlerInfoXml extends DefaultHandler {
 
 		elements.put("dwn", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
-				
+
 			}
 
 			@Override
@@ -319,10 +321,10 @@ public class HandlerInfoXml extends DefaultHandler {
 				apk.setMinSdk(sb.toString());
 			}
 		});
-		
+
 		elements.put("delta", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
-				
+
 			}
 
 			@Override
@@ -331,7 +333,7 @@ public class HandlerInfoXml extends DefaultHandler {
 				if(sb.toString().length()>0){
 					apk.getServer().hash = sb.toString();
 				}
-				
+
 			}
 		});
 
@@ -345,7 +347,7 @@ public class HandlerInfoXml extends DefaultHandler {
 				apk.setMinScreen(Filters.Screens.lookup(sb.toString()).ordinal());
 			}
 		});
-		
+
 		elements.put("minGles", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -357,9 +359,9 @@ public class HandlerInfoXml extends DefaultHandler {
 			}
 
 		});
-		
+
 		elements.put("date", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -371,33 +373,48 @@ public class HandlerInfoXml extends DefaultHandler {
 			}
 		});
 
+        elements.put("price", new ElementHandler() {
+
+
+            public void startElement(Attributes atts) throws SAXException {
+
+            }
+
+            @Override
+            public void endElement() throws SAXException {
+                apk.setPrice(Double.parseDouble(sb.toString()));
+
+            }
+        });
+
 	}
 
 	private String path;
-	
+
 	public HandlerInfoXml(Server server, String path) {
 		this.path = path;
+
 		apk.setServer(server);
+
 		loadElements();
 	}
-	
+
 	StringBuilder sb = new StringBuilder();
 	ViewApkInfoXml apk = new ViewApkInfoXml();
 	static Database db = Database.getInstance();
-	
+
 	private boolean isRemove = false;
-	
+
 	long start;
+
 	private boolean delta = false;
-	
+
 	public void startDocument() throws SAXException {
 		start = System.currentTimeMillis();
 		db.prepare();
-		
-//		db.startTransation();
 		apk.setRepo_id(apk.getServer().id);
 		delta = false;
-		
+
 	}
 
 	@Override
@@ -407,7 +424,7 @@ public class HandlerInfoXml extends DefaultHandler {
 		super.startElement(uri, localName, qName, attributes);
 		sb.setLength(0);
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.startElement(attributes);
 		} else {
@@ -426,9 +443,9 @@ public class HandlerInfoXml extends DefaultHandler {
 	public void endElement(String uri, String localName,
 			String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		
+
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.endElement();
 		} else {
@@ -444,7 +461,6 @@ public class HandlerInfoXml extends DefaultHandler {
 			apk.getServer().hash = Md5Handler.md5Calc(new File(path));
 			System.out.println("Delta is:" +apk.getServer().hash);
 		}
-//		db.endTransation(server);
 	}
-	
+
 }

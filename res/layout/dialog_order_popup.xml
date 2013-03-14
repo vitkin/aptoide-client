@@ -53,6 +53,12 @@
                 android:checked="false"
                 android:text="@string/order_popup_lst4"
                 android:textColor="@android:color/darker_gray" />
+
+            <RadioButton
+                    android:id="@+id/org_price"
+                    android:checked="false"
+                    android:text="@string/order_popup_lst5"
+                    android:textColor="@android:color/darker_gray" />
         </RadioGroup>
 
         <RadioGroup
@@ -84,6 +90,7 @@
         </RadioGroup>
 
         <TextView
+            android:id="@+id/dialog_adult_content_label"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"

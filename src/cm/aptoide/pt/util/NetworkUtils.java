@@ -31,32 +31,32 @@ import cm.aptoide.pt.R;
 
 public class NetworkUtils {
 
-	
+
 	private static int TIME_OUT = 10000;
-	
-	
+
+
 	public BufferedInputStream getInputStream(URL url, String username, String password, Context mctx) throws IOException{
 		URLConnection connection = url.openConnection();
 		if(username!=null && password!=null){
 			String basicAuth = "Basic " + new String(Base64.encode((username+":"+password).getBytes(),Base64.NO_WRAP ));
 			connection.setRequestProperty ("Authorization", basicAuth);
 		}
-		
+
 		connection.setRequestProperty("User-Agent", getUserAgentString(mctx));
-		
+        System.out.println(getUserAgentString(mctx) + " TAAAAG");
 		BufferedInputStream bis = new BufferedInputStream(connection.getInputStream(), 8 * 1024);
-		
+
 		if(ApplicationAptoide.DEBUG_MODE)Log.i("Aptoide-NetworkUtils", "Getting: "+url.toString());
 		connection.setConnectTimeout(TIME_OUT);
 		connection.setReadTimeout(TIME_OUT);
 		return bis;
-		
+
 	}
-	
+
 	public static void setTimeout(int timeout){
 		NetworkUtils.TIME_OUT=timeout;
 	}
-	
+
 	public int checkServerConnection(final String string, final String username, final String password) {
 		try {
 
@@ -86,7 +86,7 @@ public class NetworkUtils {
 		}
 		return -1;
 	}
-	
+
 	public JSONObject getJsonObject(URL url, Context mctx) throws IOException, JSONException{
 		String line = null;
 		BufferedReader br = new BufferedReader(new java.io.InputStreamReader(getInputStream(url, null, null, mctx)));
@@ -94,25 +94,30 @@ public class NetworkUtils {
 		while ((line = br.readLine()) != null){
 			sb.append(line + '\n');
 		}
-			
+
 		return new JSONObject(sb.toString());
-		
+
 	}
-	
+
 	public static String  getUserAgentString(Context mctx){
 		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mctx);
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
-		return "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, "");
+        String partnerid = "";
+        if(ApplicationAptoide.PARTNERID!=null){
+            partnerid = "PartnerID:"+ApplicationAptoide.PARTNERID+";";
+        }
+
+		return "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, "")+";"+partnerid;
 	}
-	
-	
+
+
 	public static boolean isConnectionAvailable(Context context){
 		ConnectivityManager connectivityState = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		boolean connectionAvailable = false;
 		try {
 			connectionAvailable = connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
-			Log.d("ManagerDownloads", "isConnectionAvailable mobile: "+connectionAvailable);	
+			Log.d("ManagerDownloads", "isConnectionAvailable mobile: "+connectionAvailable);
 		} catch (Exception e) { }
 		try {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
@@ -126,10 +131,10 @@ public class NetworkUtils {
 			connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(9).getState() == NetworkInfo.State.CONNECTED;
 			Log.d("ManagerDownloads", "isConnectionAvailable ethernet: "+connectionAvailable);
 		} catch (Exception e) { }
-		
+
 		return connectionAvailable;
 	}
-	
+
 	public static boolean isPermittedConnectionAvailable(Context context, ViewIconDownloadPermissions permissions){
 		ConnectivityManager connectivityState = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		boolean connectionAvailable = false;
@@ -138,13 +143,13 @@ public class NetworkUtils {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(1).getState() == NetworkInfo.State.CONNECTED;
 				if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable wifi: "+connectionAvailable);
 			} catch (Exception e) { }
-		} 
+		}
 		if(permissions.isWiMax()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(6).getState() == NetworkInfo.State.CONNECTED;
 				if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable wimax: "+connectionAvailable);
 			} catch (Exception e) { }
-		} 
+		}
 		if(permissions.isMobile()){
 			try {
 				connectionAvailable = connectionAvailable || connectivityState.getNetworkInfo(0).getState() == NetworkInfo.State.CONNECTED;
@@ -161,5 +166,5 @@ public class NetworkUtils {
 		if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
 		return connectionAvailable;
 	}
-	
+
 }

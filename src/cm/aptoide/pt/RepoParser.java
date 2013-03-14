@@ -43,7 +43,7 @@ public class RepoParser {
 	static RepoParser parser;
 	
 	private RepoParser(Database db) {
-		this.db=db;
+		RepoParser.db=db;
 		System.out.println("New Parser");
 	}
 	

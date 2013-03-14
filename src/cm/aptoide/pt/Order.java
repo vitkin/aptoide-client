@@ -9,6 +9,6 @@ package cm.aptoide.pt;
 
 public enum Order {
 
-	NAME, DOWNLOADS, DATE, RATING
-	
+	NAME, DOWNLOADS, DATE, PRICE, RATING
+
 }

@@ -33,29 +33,31 @@ public class ViewApk implements Parcelable {
 	private ArrayList<String> screenshots = new ArrayList<String>();
 	private String path;
 	private String md5;
-	
+
 	private Server server;
-	
+
+
 	private int appHashId = 0;
-	
+
 	private String date;
 	private int age = 0;
 	private int minScreen= 0;
 	private String minSdk = "0";
 	private String minGlEs = "0";
 	private String repoName = "Aptoide";
-	
-	
+	private double price = 0;
+
+
 	/**
-	 * 
+	 *
 	 * ViewApk Skeleton Constructor
 	 *
 	 */
 	public ViewApk(){
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * ViewApk Constructor
 	 *
 	 * @param id
@@ -83,20 +85,23 @@ public class ViewApk implements Parcelable {
 		generateAppHashid();
 //		Log.d("Aptoide-ViewApk", "\n\n\napkid: "+apkid+" vercode: "+vercode+" appHashid: "+appHashId);
 	}
-	
+
 	public void generateAppHashid(){
 		this.appHashId = (apkid+"|"+vercode).hashCode();
 	}
-	
+
+	public void setPrice(double price) {
+		this.price  = price;
+	}
 
 	public long getId(){
 		return id;
 	}
-	
+
 	public String getRating(){
 		return rating;
 	}
-	
+
 	public String getApkid() {
 		return apkid;
 	}
@@ -136,19 +141,19 @@ public class ViewApk implements Parcelable {
 	public String getIcon() {
 		return icon;
 	}
-	
+
 	public int getAppHashId(){
 		if(appHashId == 0){
 			generateAppHashid();
 		}
 		return appHashId;
 	}
-	
-	
+
+
 	public void setId(long id){
 		this.id = id;
 	}
-	
+
 	public void setApkid(String apkid) {
 		this.apkid = apkid;
 	}
@@ -192,7 +197,7 @@ public class ViewApk implements Parcelable {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
+
 	public String getPath(){
 		return this.path;
 	}
@@ -212,7 +217,7 @@ public class ViewApk implements Parcelable {
 	public String getMd5() {
 		return this.md5;
 	}
-	
+
 	public void setMd5(String md5) {
 		this.md5 = md5;
 	}
@@ -228,7 +233,7 @@ public class ViewApk implements Parcelable {
 	public void setAge(int ordinal) {
 		this.age=ordinal;
 	}
-	
+
 	public int getAge(){
 		return age;
 	}
@@ -256,11 +261,11 @@ public class ViewApk implements Parcelable {
 	public void setMinGlEs(String minGlEs) {
 		this.minGlEs = minGlEs;
 	}
-	
-	
+
+
 
 	public void clear() {
-		
+
 		this.id = 0;
 		this.apkid = "";
 		this.name = apkid;
@@ -277,10 +282,11 @@ public class ViewApk implements Parcelable {
 		this.minGlEs="0";
 		this.minScreen=0;
 		this.minSdk="0";
+        this.price=0;
 		screenshots.clear();
 	}
 
-	
+
 	/**
 	 * hashCode, unsafe cast from long (theoretically the id which is the db's auto-increment id will never overflow integer in a realistic scenario)
 	 */
@@ -307,12 +313,12 @@ public class ViewApk implements Parcelable {
 		return " appHashId: "+appHashId+" PackageName: "+apkid+" Name: "+name+"  VersionName: "+vername;
 	}
 
-	
+
 
 
 	// Parcelable stuff //
-	
-	
+
+
 	public static final Parcelable.Creator<ViewApk> CREATOR = new Parcelable.Creator<ViewApk>() {
 		public ViewApk createFromParcel(Parcel in) {
 			return new ViewApk(in);
@@ -323,10 +329,10 @@ public class ViewApk implements Parcelable {
 		}
 	};
 
-	/** 
+	/**
 	 * we're annoyingly forced to create this even if we clearly don't need it,
 	 *  so we just use the default return 0
-	 *  
+	 *
 	 *  @return 0
 	 */
 	@Override
@@ -348,7 +354,7 @@ public class ViewApk implements Parcelable {
 		out.writeString(path);
 		out.writeInt(appHashId);
 	}
-	
+
 	public void readFromParcel(Parcel in) {
 		this.apkid = in.readString();
 		this.name = in.readString();
@@ -380,5 +386,9 @@ public class ViewApk implements Parcelable {
 	public void setServer(Server server) {
 		this.server = server;
 	}
-	
+
+	public double getPrice() {
+		return price ;
+	}
+
 }

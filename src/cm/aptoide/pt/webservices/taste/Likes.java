@@ -53,37 +53,30 @@ public class Likes {
 	public String WEB_SERVICE_LIKES_POST;
 	private ViewGroup view;
 	private AsyncTask<String, Void, EnumResponseStatus> task;
-	String userHashId;
-	private boolean isLoggedin = false;
+    private boolean isLoggedin = false;
 	Context context;
-	private String version;
-	private String apkid;
-	private String repo;
-	private ViewGroup viewButtons;
-	
+    private ViewGroup viewButtons;
+
 	public Likes(Context context, String webservicespath) {
 		this.context = context;
 			if(webservicespath==null){
 				webservicespath = DEFAULT_PATH;
 			}
 			isLoggedin = Login.isLoggedIn(context);
-			
+
 			if(isLoggedin){
 				WEB_SERVICE_LIKES_LIST = webservicespath + listApkLikesWithToken;
 			}else{
 				WEB_SERVICE_LIKES_LIST = webservicespath + listApkLikes;
 			}
-			
+
 			WEB_SERVICE_LIKES_POST = webservicespath + addApkLike;
-		
+
 	}
 
 	public void getLikes(String repo, String apkid, String version,
 			ViewGroup view, ViewGroup viewButtons) {
-		this.repo = repo;
-		this.apkid = apkid;
-		this.version = version;
-		this.view = view;
+        this.view = view;
 		this.viewButtons = viewButtons;
 		if (task != null) {
 			System.out.println("canceling");
@@ -91,23 +84,22 @@ public class Likes {
 		}
 		task = new LikesGetter().execute(repo, apkid, version);
 	}
-	
-	public void postLike(String repo, String apkid, String version, EnumUserTaste taste) {
+
+	public void postLike(String repo, String apkid, String version, EnumUserTaste taste,ViewGroup viewButtons) {
 		this.taste = taste;
+        this.viewButtons = viewButtons;
 		task = new LikesPoster().execute(Login.getToken(context),repo, apkid, version,taste.toString());
 	}
-	
+
 	String likes = "";
 	String dislikes = "";
 	EnumUserTaste taste;
-	boolean userTasted =false;
-	boolean userTasted2 =false;
-	public class LikesGetter extends AsyncTask<String, Void, EnumResponseStatus> {
 
-		
+    public class LikesGetter extends AsyncTask<String, Void, EnumResponseStatus> {
+
+
 		EnumUserTaste usertaste = EnumUserTaste.TASTELESS;
-		EnumResponseTasteElement tasteIndicator;
-		EnumResponseStatus result;
+        EnumResponseStatus result;
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -118,28 +110,28 @@ public class Likes {
 		@Override
 		protected EnumResponseStatus doInBackground(String... params) {
 			try {
-				
-				
-				
-				
+
+
+
+
 				NetworkUtils network = new NetworkUtils();
 				URL url;
 				if(isLoggedin){
-					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, new Object[] {params[0], params[1], params[2], Login.getToken(context) }));
+					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, params[0], params[1], params[2], Login.getToken(context)));
 				}else{
-					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, new Object[] {params[0], params[1], params[2] }));
+					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, params[0], params[1], params[2]));
 				}
-				
-				
+
+
 				JSONObject response = network.getJsonObject(url, context);
-				
+
 				result = EnumResponseStatus.valueOf(response.getString("status"));
-//				
+//
 				switch (result) {
 				case OK:
 					likes = response.getJSONObject("listing").getString("likes");
 					dislikes = response.getJSONObject("listing").getString("dislikes");
-					
+
 					if(response.getJSONObject("listing").has("uservote")){
 						usertaste = EnumUserTaste.valueOf(response.getJSONObject("listing").getString("uservote").toUpperCase(Locale.ENGLISH));
 					}
@@ -148,9 +140,9 @@ public class Likes {
 				default:
 					break;
 				}
-				
-				
-				
+
+
+
 //				System.out.println(connection.getURL());
 //				connection.setConnectTimeout(10000);
 //				connection.setReadTimeout(10000);
@@ -222,7 +214,7 @@ public class Likes {
 //					}
 //				});
 //				bis.close();
-			    
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				result = EnumResponseStatus.FAIL;
@@ -258,11 +250,11 @@ public class Likes {
 			default:
 				break;
 			}
-			
+
 		}
 
 	}
-	
+
 	public class LikesPoster extends AsyncTask<String, Void, EnumResponseStatus>{
 		ProgressDialog pd = new ProgressDialog(context);
 		@Override
@@ -271,12 +263,12 @@ public class Likes {
 			pd.show();
 			super.onPreExecute();
 		}
-		
+
 		@Override
 		protected EnumResponseStatus doInBackground(String... params) {
-			String data = null;
-			StringBuilder sb=null;
-			EnumResponseStatus response = EnumResponseStatus.FAIL;
+			String data;
+			StringBuilder sb;
+			EnumResponseStatus response;
 			try{
 				HttpURLConnection connection = (HttpURLConnection) new URL(WEB_SERVICE_LIKES_POST).openConnection();
 				connection.setConnectTimeout(10000);
@@ -297,7 +289,7 @@ public class Likes {
                 sb = new StringBuilder();
                 String line;
                 while ((line = br.readLine()) != null) {
-                    sb.append(line+"\n");
+                    sb.append(line).append("\n");
                 }
                 JSONObject object = new JSONObject(sb.toString());
 			    response = EnumResponseStatus.valueOf(object.getString("status").toUpperCase());
@@ -307,14 +299,14 @@ public class Likes {
 			}
 			return response;
 		}
-		
+
 		@Override
 		protected void onPostExecute(EnumResponseStatus result) {
 			super.onPostExecute(result);
 			Toast toast;
 			switch (result) {
 			case OK:
-				toast= Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_SHORT);  
+				toast= Toast.makeText(context, context.getString(R.string.opinionsuccess), Toast.LENGTH_SHORT);
 				toast.show();
 				switch (taste) {
 				case LIKE:
@@ -330,7 +322,7 @@ public class Likes {
 				}
 				break;
 			case FAIL:
-				toast= Toast.makeText(context, context.getString(R.string.error_occured), Toast.LENGTH_SHORT);  
+				toast= Toast.makeText(context, context.getString(R.string.error_occured), Toast.LENGTH_SHORT);
 				toast.show();
 				break;
 			default:

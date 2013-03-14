@@ -33,6 +33,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -139,7 +141,7 @@ import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
 
 public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
 	private Intent serviceDownloadManagerIntent;
-	
+
 	private final static int AVAILABLE_LOADER = 0;
 	private final static int INSTALLED_LOADER = 1;
 	private final static int UPDATES_LOADER = 2;
@@ -156,7 +158,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private final String SDCARD = Environment.getExternalStorageDirectory()
 			.getPath();
 	private String LOCAL_PATH = SDCARD + "/.aptoide";
-	
+
 	private HashMap<ListDepth, ListViewPosition> scrollMemory = new HashMap<ListDepth, ListViewPosition>();
 
 	private final Dialog.OnClickListener addRepoListener = new Dialog.OnClickListener() {
@@ -170,9 +172,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	};
 	int a = 0;
-	
+
 	private class ListViewPosition{
-		
+
 		int index;
 		int top;
 		public ListViewPosition(int top, int index) {
@@ -180,6 +182,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			this.index=index;
 		}
 	}
+
+
+
 
 	private void loadUIEditorsApps() {
 
@@ -204,13 +209,13 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void onClick(View arg0) {
-					
+
 					Intent i = new Intent(MainActivity.this, ApkInfo.class);
 					i.putExtra("_id", Long.parseLong((String) arg0.getTag()));
 					i.putExtra("top", false);
 					i.putExtra("category", Category.EDITORSCHOICE.ordinal());
 					startActivity(i);
-					
+
 				}
 			});
 			// v.setOnClickListener(featuredListener);
@@ -232,7 +237,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						 .cacheInMemory()
 						 .build();
 						cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_urls.get(i).get("url"), v,options);
-						
+
 						v.setTag(image_urls.get(i).get("id"));
 						v.setOnClickListener(new OnClickListener() {
 
@@ -259,18 +264,18 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	private void loadRecommended() {
-		
+
 		if(Login.isLoggedIn(mContext)){
 			((TextView) featuredView
 					.findViewById(R.id.recommended_text))
 					.setVisibility(View.GONE);
 		}else{
-			
+
 			((TextView) featuredView
 					.findViewById(R.id.recommended_text))
 					.setVisibility(View.VISIBLE);
 		}
-		
+
 		new Thread(new Runnable() {
 
 			private ArrayList<HashMap<String, String>> valuesRecommended;
@@ -423,11 +428,19 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
 					NetworkUtils utils = new NetworkUtils();
+                    URL url;
+
+                    if(ApplicationAptoide.CUSTOMEDITORSCHOICE){
+                        url = new URL("http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/editors.xml");
+                    }else{
+                        url = new URL("http://imgs.aptoide.com/apks/editors.xml");
+                    }
+
+
 					BufferedInputStream bis = new BufferedInputStream(
 							utils
 									.getInputStream(
-											new URL(
-													"http://imgs.aptoide.com/apks/editors.xml"),
+											url,
 											null, null, mContext), 8 * 1024);
 					File f = File.createTempFile("tempFile","");
 					OutputStream out = new FileOutputStream(f);
@@ -447,7 +460,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 //						Database.database.setTransactionSuccessful();
 //						Database.database.endTransaction();
 						loadUIEditorsApps();
-						
+
 					}
 					f.delete();
 				} catch (SAXException e){
@@ -456,14 +469,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 			}
 		}).start();
 
 		new Thread(new Runnable() {
 
 			public void run() {
-				
+
 				loadUItopapps();
 				File f = null;
 				try {
@@ -500,7 +513,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			}
 
 		}).start();
-		
+
 	}
 
 	private void loadUItopapps() {
@@ -548,7 +561,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 					String hashCode = (values.get(i).get("apkid") +"|"+values.get(i).get("vercode"))+"";
 					cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(values.get(i).get("icon"), (ImageView) txtSamItem.findViewById(R.id.icon),hashCode);
-					
+
 //					imageLoader.DisplayImage(-1, values.get(i).get("icon"),
 //							(ImageView) txtSamItem.findViewById(R.id.icon),
 //							mContext);
@@ -615,7 +628,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		final ProgressDialog pd = new ProgressDialog(mContext);
 		pd.setMessage(getString(R.string.please_wait));
 		pd.show();
-		
+
 		new Thread(new Runnable() {
 
 			@Override
@@ -672,11 +685,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			getInstalled();
 			getAllRepoStatus();
 			loadFeatured();
-			
+
 			if(Login.isLoggedIn(mContext)){
 				loadRecommended();
 			}
-			
+            if(ApplicationAptoide.DEFAULTSTORE!=null){
+                MainActivity.this.service.addStore(Database.getInstance(), "http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/", null, null);
+            }
+
 		}
 
 		@Override
@@ -755,7 +771,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 											android.R.anim.fade_in));
 				}
 			}
-			
+
 		}
 	};
 
@@ -781,7 +797,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 
 	}
-	
+
 	public class UpdateStoreCredentialsListener implements
 	DialogInterface.OnClickListener {
 		private String url;
@@ -861,7 +877,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								long id = serversToParse.get(array
 										.getJSONObject(o).getString("repo"));
 								Server server = db.getServer(id, false);
-								
+
 								if (parse) {
 									service.parseServer(db, server);
 								}else{
@@ -869,7 +885,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									service.parseLatest(db, server);
 									service.addStoreInfo(db, server);
 								}
-								
+
 							}
 
 						}
@@ -900,7 +916,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				if(Login.isLoggedIn(mContext)){
 					loadRecommended();
 				}
-				
+
 			}
 		}).start();
 	}
@@ -942,7 +958,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
-					
+
 					showAddStoreCredentialsDialog(uri);
 				}
 			});
@@ -953,8 +969,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
-					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.verify_store), Toast.LENGTH_SHORT);  
-					toast.show(); 
+					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.verify_store), Toast.LENGTH_SHORT);
+					toast.show();
 					showAddStoreDialog();
 				}
 			});
@@ -964,8 +980,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
-					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.an_error_check_net), Toast.LENGTH_SHORT);  
-					toast.show(); 
+					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.an_error_check_net), Toast.LENGTH_SHORT);
+					toast.show();
 					showAddStoreDialog();
 				}
 			});
@@ -975,9 +991,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 				@Override
 				public void run() {
-					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_occured)+" "+response, Toast.LENGTH_SHORT);  
+					Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_occured)+" "+response, Toast.LENGTH_SHORT);
 					toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
-					toast.show(); 
+					toast.show();
 					showAddStoreDialog();
 				}
 			});
@@ -1003,9 +1019,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		menu.add(Menu.NONE, EnumOptionsMenu.SETTINGS.ordinal(),
 				EnumOptionsMenu.SETTINGS.ordinal(), R.string.settings_title_bar)
 				.setIcon(android.R.drawable.ic_menu_manage);
-		menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),
-				EnumOptionsMenu.ABOUT.ordinal(), R.string.about).setIcon(
-				android.R.drawable.ic_menu_help);
+
+        if(ApplicationAptoide.PARTNERID==null){
+		    menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),
+	    			EnumOptionsMenu.ABOUT.ordinal(), R.string.about).setIcon(
+	    			android.R.drawable.ic_menu_help);
+        }
 		menu.add(Menu.NONE, EnumOptionsMenu.FOLLOW.ordinal(),
 				EnumOptionsMenu.FOLLOW.ordinal(), R.string.social_networks).setIcon(
 				android.R.drawable.ic_menu_share);
@@ -1054,23 +1073,23 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	}
 
 	void updateAll(){
-		
+
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Cursor c = db.getUpdates(order);
-				
+
 				for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 					ViewApk apk = db.getApk(c.getLong(0), Category.INFOXML);
 					try {
 						ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername());
 						ViewDownloadManagement download = new ViewDownloadManagement(
-								apk.getPath(), 
-								apk, 
-								cache, 
-								db.getServer(apk.getRepo_id(), false).getLogin());	
-						
+								apk.getPath(),
+								apk,
+								cache,
+								db.getServer(apk.getRepo_id(), false).getLogin());
+
 						serviceDownloadManager.callStartDownload(download);
 						Thread.sleep(1000);
 					} catch (RemoteException e) {
@@ -1078,14 +1097,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
-					
+
 				}
-				
+
 				c.close();
 			}
 		}).start();
 	}
-	
+
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
@@ -1109,19 +1128,19 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		aboutDialog.setIcon(android.R.drawable.ic_menu_help);
 		aboutDialog.setTitle(getString(R.string.about));
 		aboutDialog.setCancelable(true);
-		
+
 		WindowManager.LayoutParams params = aboutDialog.getWindow().getAttributes();
 		params.width=WindowManager.LayoutParams.MATCH_PARENT;
 		aboutDialog.getWindow().setAttributes(params);
-		
+
 //		Button changelog = (Button) aboutView.findViewById(R.id.change_log_button);
 //		changelog.setOnClickListener(new View.OnClickListener(){
 //			@Override
 //			public void onClick(View v) {
-//				
+//
 //			}
 //		});
-		
+
 		aboutDialog.setButton(DialogInterface.BUTTON_POSITIVE,getString(R.string.btn_chlog), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				Uri uri = Uri.parse(getString(R.string.change_log_url));
@@ -1130,7 +1149,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		});
 
 		aboutDialog.show();
-		
+
 	}
 
 	private void displayOptionsDialog() {
@@ -1155,6 +1174,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				.findViewById(R.id.org_rat);
 		final RadioButton ord_dwn = (RadioButton) view
 				.findViewById(R.id.org_dwn);
+        final RadioButton ord_price = (RadioButton) view
+                .findViewById(R.id.org_price);
 		final RadioButton btn1 = (RadioButton) view.findViewById(R.id.shw_ct);
 		final RadioButton btn2 = (RadioButton) view.findViewById(R.id.shw_all);
 
@@ -1179,7 +1200,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						} else if (ord_dwn.isChecked()) {
 							pop_change = true;
 							order = Order.DOWNLOADS;
-						}
+						} else if (ord_price.isChecked()) {
+                            pop_change = true;
+                            order = Order.PRICE;
+                        }
 
 						if (btn1.isChecked()) {
 							pop_change = true;
@@ -1200,15 +1224,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							editor.putInt("order_list", order.ordinal());
 							editor.commit();
 							if(pop_change_category){
-								
+
 								if(!depth.equals(ListDepth.CATEGORY1)&&!depth.equals(ListDepth.STORES)){
 									if(depth.equals(ListDepth.APPLICATIONS)){
-										removeLastBreadCrumb();	
+										removeLastBreadCrumb();
 									}
 									removeLastBreadCrumb();
 									depth=ListDepth.CATEGORY1;
 								}
-								
+
 							}
 							redrawAll();
 							refreshAvailableList(true);
@@ -1221,6 +1245,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		} else {
 			btn2.setChecked(true);
 		}
+        if(!ApplicationAptoide.MATURECONTENTSWITCH){
+            adult.setVisibility(View.GONE);
+            view.findViewById(R.id.dialog_adult_content_label).setVisibility(View.GONE);
+        }
 		adult.setChecked(!sPref.getBoolean("matureChkBox", false));
 		// adult.setOnCheckedChangeListener(adultCheckedListener);
 		switch (order) {
@@ -1236,6 +1264,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		case RATING:
 			ord_rat.setChecked(true);
 			break;
+        case PRICE:
+            ord_price.setChecked(true);
+            break;
 
 		default:
 			break;
@@ -1323,8 +1354,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									installedLoader.forceLoad();
 									updatesLoader.forceLoad();
 								} else {
-									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_delete_store), Toast.LENGTH_SHORT);  
-									toast.show(); 
+									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_delete_store), Toast.LENGTH_SHORT);
+									toast.show();
 								}
 
 							}
@@ -1375,7 +1406,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			
+
 			loadRecommended();
 		}
 	};
@@ -1436,11 +1467,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 	};
 	private String storeUri = "apps.store.aptoide.com";
-	
+
 	ViewPager pager;
 	private AIDLServiceDownloadManager serviceDownloadManager;
 	private ServiceConnection serviceManagerConnection = new ServiceConnection() {
-		
+
 
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			// This is called when the connection with the service has been
@@ -1465,14 +1496,14 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 	private boolean registered = false;
 
 	private BroadcastReceiver storePasswordReceiver = new BroadcastReceiver() {
-		
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			System.out.println("server url " + intent.getExtras().getString("url"));
 			showUpdateStoreCredentialsDialog(intent.getStringExtra("url"));
 		}
 	};
-	
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -1480,7 +1511,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
 		startService(serviceDownloadManagerIntent);
-		
+
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
 
@@ -1532,18 +1563,18 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						.getDefaultSharedPreferences(mContext);
 				editor = PreferenceManager
 						.getDefaultSharedPreferences(mContext).edit();
-				
+
 				if (!sPref.contains("matureChkBox")) {
 
-					editor.putBoolean("matureChkBox", true);
+					editor.putBoolean("matureChkBox", ApplicationAptoide.MATURECONTENTSWITCHVALUE);
 					SharedPreferences sPrefOld = getSharedPreferences("aptoide_prefs", MODE_PRIVATE);
 					if(sPrefOld.getString("app_rating", "none").equals("Mature")){
 						editor.putBoolean("matureChkBox", false);
-					}					
-					
+					}
+
 				}
-				
-				
+
+
 				if (sPref.getString("myId", null) == null) {
 					String rand_id = UUID.randomUUID().toString();
 					editor.putString("myId", rand_id);
@@ -1560,7 +1591,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				if (!file.exists()) {
 					file.mkdirs();
 				}
-				
+
 				file = new File(LOCAL_PATH + "/icons");
 				if (!file.exists()) {
 					file.mkdirs();
@@ -1634,9 +1665,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						.findViewById(R.id.breadcrumb_container);
 				installedView = new ListView(mContext);
 				updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
-				
+
 				updateView.findViewById(R.id.update_button).setOnClickListener(new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View v) {
 						updateAll();
@@ -1647,12 +1678,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				availableListView.setFastScrollEnabled(true);
 				updatesListView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(
 						) {
-					
+
 					@Override
 					public void onCreateContextMenu(ContextMenu menu, View v,
 							ContextMenuInfo menuInfo) {
 							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,mContext.getString(R.string.exclude_update)).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-								
+
 								@Override
 								public boolean onMenuItemClick(MenuItem item) {
 									System.out.println(item.getItemId());
@@ -1695,7 +1726,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 								refreshAvailableList(true);
 							}
 						});
-						
+
 				availableAdapter = new AvailableListAdapter(mContext, null,
 						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 				installedAdapter = new InstalledAdapter(mContext, null,
@@ -1707,6 +1738,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				pb.setText(R.string.add_store_button_below);
 				addStoreButton = availableView.findViewById(R.id.add_store);
 				addStoreButton.setOnClickListener(addStoreListener);
+
+                if(!ApplicationAptoide.MULTIPLESTORES){
+                    addStoreButton.setVisibility(View.GONE);
+
+                }
 
 				availableListView
 						.setOnItemClickListener(new OnItemClickListener() {
@@ -1736,8 +1772,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										depth = ListDepth.LATEST_COMMENTS;
 									} else if (id == -3) {
 										if (!Login.isLoggedIn(mContext)) {
-											Toast toast= Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login_toast), Toast.LENGTH_SHORT);  
-											toast.show(); 
+											Toast toast= Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login_toast), Toast.LENGTH_SHORT);
+											toast.show();
 											return;
 										} else {
 											depth = ListDepth.RECOMMENDED;
@@ -1746,8 +1782,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									} else if (id == -4) {
 										depth = ListDepth.ALLAPPLICATIONS;
 									}else if (id == -10){
-										Toast toast= Toast.makeText(mContext, mContext.getString(R.string.store_beginning_to_load), Toast.LENGTH_SHORT);  
-										toast.show(); 
+										Toast toast= Toast.makeText(mContext, mContext.getString(R.string.store_beginning_to_load), Toast.LENGTH_SHORT);
+										toast.show();
 										return;
 									} else {
 										depth = ListDepth.CATEGORY2;
@@ -1760,7 +1796,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 									category2_id = id;
 									break;
 								case TOPAPPS:
-								
+
 									i = new Intent(MainActivity.this,
 											ApkInfo.class);
 									i.putExtra("_id", id);
@@ -1825,7 +1861,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							@Override
 							public void onClick(View v) {
 								onSearchRequested();
-								
+
 							}
 						});
 				updatesListView.setOnItemClickListener(new OnItemClickListener() {
@@ -1854,7 +1890,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				indicator.setViewPager(pager);
 				refreshAvailableList(true);
 
-				addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
+                addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
 
 				if (sPref.getBoolean("firstrun", true)) {
 					// Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
@@ -1876,7 +1912,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					// intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
 					// sendBroadcast(intent);
 
-					if (new File(LOCAL_PATH + "/servers.xml").exists()) {
+					if (new File(LOCAL_PATH + "/servers.xml").exists() && ApplicationAptoide.DEFAULTSTORE==null) {
 						try {
 
 							SAXParserFactory spf = SAXParserFactory
@@ -1900,6 +1936,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					editor.commit();
 
 				}
+
+
 
 				if (getIntent().hasExtra("newrepo")) {
 					ArrayList<String> repos = (ArrayList<String>) getIntent()
@@ -1934,63 +1972,73 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						alertDialog.show();
 
 					}
-				} else if (db.getStores(false).getCount() == 0) {
-					final AlertDialog alertDialog = new AlertDialog.Builder(
-							mContext).create();
-					alertDialog.setMessage(getString(R.string.myrepo_alrt) + "\n"
-							+ "http://apps.store.aptoide.com/");
-					alertDialog.setIcon(android.R.drawable.ic_menu_add);
-					alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes",
-							new DialogInterface.OnClickListener() {
+				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORE==null) {
 
-								public void onClick(DialogInterface dialog,
-										int which) {
-									dialogAddStore(
-											"http://apps.store.aptoide.com",
-											null, null);
-								}
-							});
 
-					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-							getString(android.R.string.no),
-							new DialogInterface.OnClickListener() {
+                        final AlertDialog alertDialog = new AlertDialog.Builder(
+                                mContext).create();
+                        alertDialog.setMessage(getString(R.string.myrepo_alrt) + "\n"
+                                + "http://apps.store.aptoide.com/");
+                        alertDialog.setIcon(android.R.drawable.ic_menu_add);
+                        alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes",
+                                new DialogInterface.OnClickListener() {
 
-								public void onClick(DialogInterface dialog,
-										int which) {
-									return;
-								}
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        dialogAddStore(
+                                                "http://apps.store.aptoide.com",
+                                                null, null);
+                                    }
+                                });
 
-							});
-					alertDialog.show();
+                        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                                getString(android.R.string.no),
+                                new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog,
+                                            int which) {
+                                        return;
+                                    }
+
+                                });
+                        alertDialog.show();
+
 				}
-				
+
 				new Thread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						try{
 							getUpdateParameters();
-							
+
 							if(getPackageManager().getPackageInfo(getPackageName(), 0).versionCode<
 									Integer.parseInt(updateParams.get("versionCode"))){
 								runOnUiThread(new Runnable() {
-									
+
 									@Override
 									public void run() {
 										requestUpdateSelf();
 									}
 								});
-								
+
 							}
-							
+
 						}catch (Exception e){
 							e.printStackTrace();
 						}
-						
+
 					}
 				}).start();
-				
-				
+
+
+
+
+                if(!ApplicationAptoide.MATURECONTENTSWITCH){
+                    featuredView.findViewById(R.id.toggleButton1).setVisibility(View.GONE);
+                    featuredView.findViewById(R.id.adultcontent_label).setVisibility(View.GONE);
+                }
+
 			}
 
 		}
@@ -2023,8 +2071,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 						@Override
 						public void run() {
-							Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_latest_apk), Toast.LENGTH_SHORT);  
-							toast.show(); 
+							Toast toast= Toast.makeText(mContext, mContext.getString(R.string.error_latest_apk), Toast.LENGTH_SHORT);
+							toast.show();
 						}
 					});
 				}
@@ -2128,8 +2176,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							@Override
 							public void run() {
 								if (c.getCount() == 0) {
-									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.no_recommended_toast), Toast.LENGTH_SHORT);  
-									toast.show(); 
+									Toast toast= Toast.makeText(mContext, mContext.getString(R.string.no_recommended_toast), Toast.LENGTH_SHORT);
+									toast.show();
 								}
 
 							}
@@ -2184,7 +2232,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			unregisterReceiver(newRepoReceiver);
 			unregisterReceiver(storePasswordReceiver);
 		}
-		
+
 //		stopService(serviceDownloadManagerIntent);
 		generateXML();
 		super.onDestroy();
@@ -2267,8 +2315,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			pb.setVisibility(View.VISIBLE);
 			pb.setText(R.string.add_store_button_below);
 		}
-		
-			
+
+
 	}
 
 	private void refreshAvailableList(boolean setAdapter) {
@@ -2292,7 +2340,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			availableListView.setAdapter(availableAdapter);
 		}
 		availableLoader.forceLoad();
-		
+
 	}
 
 	private void showAddStoreDialog() {
@@ -2321,7 +2369,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						string, credentialsDialogView));
 		credentialsDialog.show();
 	}
-	
+
 	private void showUpdateStoreCredentialsDialog(String string) {
 		View credentialsDialogView = LayoutInflater.from(mContext).inflate(
 				R.layout.dialog_add_pvt_store, null);
@@ -2352,7 +2400,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						(ImageView) view.findViewById(R.id.avatar),
 						hashcode);
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor.getString(cursor.getColumnIndex("name")));
-				
+
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSED")) {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads");
 				}
@@ -2365,7 +2413,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name())){
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(R.string.loading_failed);
 				}
-						
+
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name()) || cursor.getString(cursor.getColumnIndex("status")).equals(State.PARSED.name())) {
 					view.setTag(1);
 				}
@@ -2395,7 +2443,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						holder.icon,
 						(cursor.getString(cursor.getColumnIndex("apkid")) + "|" + cursor
 								.getString(cursor.getColumnIndex("vercode"))).hashCode()+"");
-				
+
 				holder.vername.setText(cursor.getString(2));
 				try {
 					holder.rating.setRating(Float.parseFloat(cursor
@@ -2850,7 +2898,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 		startActivityForResult(intent, 99);
 	}
-	
+
 	public void showFollow(){
 		View socialNetworksView = LayoutInflater.from(this).inflate(R.layout.dialog_social_networks, null);
 		Builder dialogBuilder = new AlertDialog.Builder(this).setView(socialNetworksView);
@@ -2858,7 +2906,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		socialDialog.setIcon(android.R.drawable.ic_menu_share);
 		socialDialog.setTitle(getString(R.string.social_networks));
 		socialDialog.setCancelable(true);
-		
+
 		Button facebookButton = (Button) socialNetworksView.findViewById(R.id.find_facebook);
 		facebookButton.setOnClickListener(new View.OnClickListener(){
 			@Override
@@ -2876,16 +2924,16 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					Intent intent = new Intent(mContext, WebViewFacebook.class);
 					startActivity(intent);
 				}
-				
+
 			}
 		});
-		
+
 		Button twitterButton = (Button) socialNetworksView.findViewById(R.id.follow_twitter);
 		twitterButton.setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v) {
 				if(isAppInstalled("com.twitter.android")){
-					String url = "http://www.twitter.com/aptoide";				
+					String url = "http://www.twitter.com/aptoide";
 					Intent twitterIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
 					startActivity(twitterIntent);
 				}else{
@@ -2896,7 +2944,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		});
 		socialDialog.show();
 	}
-	
+
 	private boolean isAppInstalled(String uri) {
 		PackageManager pm = getPackageManager();
 		boolean installed = false;

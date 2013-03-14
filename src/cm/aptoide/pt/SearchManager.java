@@ -38,7 +38,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 	Database db;
 	View v;
 	private InstalledAdapter adapter;
-	
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -55,11 +55,16 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 //		searchBox = (EditText) findViewById(R.id.search_box);
 		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.search_aptoide, null);
 		lv.addFooterView(v);
+
+        if(!ApplicationAptoide.SEARCHSTORES){
+            findViewById(R.id.baz_src).setVisibility(View.GONE);
+        }
+
 		Button bazaar_search =  (Button) v.findViewById(R.id.baz_src);
 		bazaar_search.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
-		
+
 		bazaar_search.setOnClickListener(new OnClickListener() {
-			
+
 			public void onClick(View v) {
 				String url = "http://m.aptoide.com/searchview.php?search="+query;
 				Intent i = new Intent(Intent.ACTION_VIEW);
@@ -69,31 +74,31 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		});
 		adapter = new InstalledAdapter(this,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,db);
 		lv.setAdapter(adapter);
-		
+
 //		searchBox.setText(query);
 //		searchBox.addTextChangedListener(new TextWatcher() {
-//			
+//
 //			public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-//				
+//
 //			}
-//			
+//
 //			public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
 //					int arg3) {
-//				
+//
 //			}
-//			
+//
 //			public void afterTextChanged(Editable editable) {
 //				query=editable.toString().replaceAll("[\\%27]|[\\']|[\\-]{2}|[\\%23]|[#]|\\s{2,}", " ").trim();
 //				if(editable.length()>2){
 //					getSupportLoaderManager().restartLoader(0x30, null, SearchManager.this);
-//					
+//
 //				}
 //				((TextView) v.findViewById(R.id.baz_src)).setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
 //			}
 //		});
-		
+
 		getSupportLoaderManager().restartLoader(0x30, null, this);
-		
+
 		lv.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> parent, View v, int position,
@@ -105,14 +110,14 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 			}
 		});
 	}
-	
-	
+
+
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		SimpleCursorLoader a = new SimpleCursorLoader(this) {
-			
+
 			@Override
 			public Cursor loadInBackground() {
-				
+
 				return db.getSearch(query);
 			}
 		};
@@ -120,9 +125,9 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 	}
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
 		adapter.swapCursor(arg1);
-		
+
 	}
 	public void onLoaderReset(Loader<Cursor> arg0) {
-		adapter.swapCursor(null);		
+		adapter.swapCursor(null);
 	}
 }

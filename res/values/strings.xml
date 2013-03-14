@@ -350,5 +350,7 @@
     <string name="settings_maxFileCache_sum">Set a maximum size to keep your apk files</string>
     <string name="no_launcher_activity">No launcher activity found</string>
     <string name="retrying_registration">Completing registration process</string>
+    <string name="paypal_message">You can pay using your credit card or your PayPal account with agreement. If you want to use your PayPal account without agreement, select Credit Card</string>
+    <string name="order_popup_lst5">Price</string>
 
 </resources>

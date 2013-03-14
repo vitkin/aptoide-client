@@ -29,6 +29,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import cm.aptoide.pt.DbStructure;
 import cm.aptoide.pt.Server.State;
 import cm.aptoide.pt.sharing.DialogBaseShareListener;
 import cm.aptoide.pt.views.ViewApk;
@@ -40,7 +41,6 @@ import cm.aptoide.pt.views.ViewApkLatest;
 import cm.aptoide.pt.views.ViewApkTop;
 import cm.aptoide.pt.views.ViewApkUserBased;
 import cm.aptoide.pt.views.ViewLogin;
-import cm.aptoide.pt.DbStructure;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -155,7 +155,7 @@ public class Database {
 
 	@SuppressLint("NewApi")
 	public void insert(ViewApkInfoXml apk) {
-		
+
 			ContentValues values = new ContentValues();
 			insertCategories(apk);
 			values.put(DbStructure.COLUMN_REPO_ID, apk.getRepo_id());
@@ -321,7 +321,7 @@ public class Database {
 		}
 		intent.setAction("complete");
 		context.sendBroadcast(intent);
-		
+
 		System.out.println("Endind transaction");
 		database.setTransactionSuccessful();
 		database.endTransaction();
@@ -349,6 +349,9 @@ public class Database {
 				break;
 			case RATING:
 				order_string = "order by rating desc";
+				break;
+			case PRICE:
+				order_string = "order by price desc";
 				break;
 			default:
 				break;
@@ -513,7 +516,7 @@ public class Database {
 
 	public Cursor getUserBasedApk(long repo_id, boolean joinStores) {
 
-		
+
 		yield();
 		SharedPreferences sPref = PreferenceManager
 				.getDefaultSharedPreferences(context);
@@ -528,7 +531,7 @@ public class Database {
 		if (sPref.getBoolean("matureChkBox", false)) {
 			filter = filter + " and b.mature <= 0 ";
 		}
-		
+
 		Cursor c = null;
 
 		try {
@@ -1060,9 +1063,10 @@ public class Database {
 		values.put(DbStructure.COLUMN_SIZE, apk.getSize());
 		values.put(DbStructure.COLUMN_RATING, apk.getRating());
 		values.put(DbStructure.COLUMN_REMOTE_PATH, apk.getPath());
-		values.put(DbStructure.COLUMN_DATE, apk.getDate());
 		values.put(DbStructure.COLUMN_MIN_SCREEN, apk.getMinScreen());
 		values.put(DbStructure.COLUMN_MIN_SDK, apk.getMinSdk());
+		values.put(DbStructure.COLUMN_DATE, apk.getDate());
+		values.put(DbStructure.COLUMN_PRICE, apk.getPrice());
 		values.put(DbStructure.COLUMN_MIN_GLES, apk.getMinGlEs());
 		values.put(DbStructure.COLUMN_MATURE, apk.getAge());
 	}
@@ -1385,7 +1389,7 @@ public class Database {
 			c = database.query("apk as a, repo as c", new String[] { "a.apkid",
 					"a.vername", "a.repo_id", "a.downloads", "a.size",
 					"a.icon", "a.name", "a.rating", "a.remote_path", "a.md5",
-					"c.iconspath", "c.name", "c.apkpath", "a.vercode" },
+					"c.iconspath", "c.name", "c.apkpath", "a.vercode","a.price" },
 					"a._id = ? and a.repo_id = c._id",
 					new String[] { id + "" }, null, null, null);
 			break;
@@ -1397,7 +1401,7 @@ public class Database {
 									"a.downloads", "a.size", "a.icon",
 									"a.name", "a.rating", "a.remote_path",
 									"a.md5", "c.iconspath", "c.name",
-									"c.basepath", "a.vercode" },
+									"c.basepath", "a.vercode","a.price" },
 							"a._id = ? and a.repo_id = c._id",
 							new String[] { id + "" }, null, null, null);
 			break;
@@ -1408,7 +1412,7 @@ public class Database {
 									"a.downloads", "a.size", "a.icon",
 									"a.name", "a.rating", "a.remote_path",
 									"a.md5", "c.iconspath", "c.name",
-									"c.basepath", "a.vercode" },
+									"c.basepath", "a.vercode","a.price" },
 							"a._id = ? and a.repo_id = c._id",
 							new String[] { id + "" }, null, null, null);
 			break;
@@ -1418,7 +1422,7 @@ public class Database {
 							"a.apkid", "a.vername", "a.repo_id", "a.downloads",
 							"a.size", "a.icon", "a.name", "a.rating",
 							"a.remote_path", "a.md5", "c.iconspath", "c.name",
-							"c.basepath", "a.vercode" },
+							"c.basepath", "a.vercode","a.price" },
 							"a._id = ? and a.repo_id = c._id",
 							new String[] { id + "" }, null, null, null);
 			break;
@@ -1428,7 +1432,7 @@ public class Database {
 							"a.apkid", "a.vername", "a.repo_id", "a.downloads",
 							"a.size", "a.icon", "a.name", "a.rating",
 							"a.remote_path", "a.md5", "c.iconspath", "c.name",
-							"c.basepath", "a.vercode" },
+							"c.basepath", "a.vercode","a.price" },
 							"a._id = ? and a.repo_id = c._id",
 							new String[] { id + "" }, null, null, null);
 			break;
@@ -1439,7 +1443,7 @@ public class Database {
 									"a.downloads", "a.size", "a.icon",
 									"a.name", "a.rating", "a.remote_path",
 									"a.md5", "c.iconspath", "c.name",
-									"c.basepath", "a.vercode" },
+									"c.basepath", "a.vercode","a.price" },
 							"a._id = ? and a.repo_id = c._id",
 							new String[] { id + "" }, null, null, null);
 		default:
@@ -1462,7 +1466,7 @@ public class Database {
 			apk.setMd5(c.getString(9));
 			apk.setRepoName(c.getString(11));
 			apk.setId(id);
-
+			apk.setPrice(Double.parseDouble(c.getString(14)));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1504,7 +1508,7 @@ public class Database {
 		Cursor c = null;
 		String return_string = null;
 		yield();
-		
+
 		try {
 			switch (category) {
 			case EDITORSCHOICE:
@@ -1551,7 +1555,7 @@ public class Database {
 			if (c.moveToFirst()) {
 				return_string = c.getString(0);
 			} else {
-				return_string = "http://webservices.aptoide.com/";
+				return_string = "http://www.aptoide.com/";
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1562,7 +1566,7 @@ public class Database {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void yield() {
 		try{
@@ -2246,7 +2250,7 @@ public class Database {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public int getInstalledAppVercode(String apkid) {
 		yield();
@@ -2298,12 +2302,12 @@ public class Database {
 		String hash = "";
 		yield();
 		Cursor c = database.query(DbStructure.TABLE_HASHES, new String[]{DbStructure.COLUMN_HASH}, DbStructure.COLUMN_APKID + "=?", new String[]{"editorschoice"}, null, null, null);
-		
+
 		if(c.moveToFirst()){
 			hash = c.getString(0);
 			c.close();
 		}
-		
+
 		return hash;
 	}
 
