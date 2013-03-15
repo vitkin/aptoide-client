@@ -54,7 +54,7 @@ public class Buy extends Activity {
 	String userMail ;
 	String token ;
 	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
-	String urlPay = ("http://dev.aptoide.com/webservices/payApk/");
+	String urlPay = ("http://webservices.aptoide.com/webservices/payApk/");
 	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct/");
 	String urlRedirect="http://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
 

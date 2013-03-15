@@ -220,7 +220,7 @@ public class Login extends Activity {
 			URL url;
 			StringBuilder sb;
 			String data;
-			url = new URL("http://dev.aptoide.com/webservices/checkUserCredentials");
+			url = new URL("http://webservices.aptoide.com/webservices/checkUserCredentials");
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");

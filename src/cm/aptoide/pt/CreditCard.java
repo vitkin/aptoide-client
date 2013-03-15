@@ -89,20 +89,20 @@ public class CreditCard extends Activity {
 				if(url.contains("return") && !wait){
 					wait=true;
 					Log.i("preapproval", "payment confirmed!");
-					String params = token+"/"+userMail+"/"+repo+"/"+apkid+"/"+versionName+"/completed_payment/json";
+					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/completed_payment/json";
 					send(urlPay, params);
 				}
 				if(url.contains("cancel") && !wait){
 					wait=true;
 					failed=true;
 					Log.i("preapproval", "payment failed!");
-					String params = token+"/"+userMail+"/"+repo+"/"+apkid+"/"+versionName+"/canceled_payment/json";
+					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/canceled_payment/json";
 					send(urlPay, params);
 				}
 			}
 		});
 
-		String params =token+"/"+userMail+"/"+repo+"/"+apkid+"/"+versionName+"/try_pay/json";
+		String params =token+"/"+repo+"/"+apkid+"/"+versionName+"/try_pay/json";
 		send(urlPay, params);
 	}
 
