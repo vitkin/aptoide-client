@@ -46,9 +46,10 @@ public class ViewApk implements Parcelable {
 	private String minGlEs = "0";
 	private String repoName = "Aptoide";
 	private double price = 0;
+    private boolean isPaid;
 
 
-	/**
+    /**
 	 *
 	 * ViewApk Skeleton Constructor
 	 *
@@ -391,4 +392,15 @@ public class ViewApk implements Parcelable {
 		return price ;
 	}
 
+    public void setIsPaid(boolean paid) {
+        isPaid = paid;
+    }
+
+    public boolean isPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(boolean paid) {
+        isPaid = paid;
+    }
 }

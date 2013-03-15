@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
 
+import cm.aptoide.pt.ApplicationAptoide;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -55,6 +56,8 @@ import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewLogin;
 import cm.aptoide.pt.R;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * HelperDownload, manages the actual download processes, and updates the download manager about the status of each download
@@ -65,8 +68,8 @@ import cm.aptoide.pt.R;
 public class HelperDownload{
 
 	ServiceDownloadManager serviceDownloadManager;
-	
-	
+
+
 	public HelperDownload(ServiceDownloadManager serviceDownloadManager) {
 		this.serviceDownloadManager = serviceDownloadManager;
 		downloadManager = new DownloadManager();
@@ -84,35 +87,37 @@ public class HelperDownload{
     private class DownloadManager{
     	private ExecutorService downloadsPool;
     	private HashMap<Integer, ViewDownload> ongoingDownloads;
-    	
+
     	public DownloadManager(){
     		downloadsPool = Executors.newFixedThreadPool(Constants.MAX_PARALLEL_DOWNLOADS);
     		ongoingDownloads = new HashMap<Integer, ViewDownload>();
     	}
-    	
-    	public void downloadApk(ViewDownload download, ViewCache cache){
-    		downloadApk(download, cache, null);
+
+    	public void downloadApk(ViewDownload download, ViewCache cache, boolean isPaid){
+    		downloadApk(download, cache, null, isPaid);
     	}
-    	
-    	public void downloadApk(ViewDownload download, ViewCache cache, ViewLogin login){
+
+    	public void downloadApk(ViewDownload download, ViewCache cache, ViewLogin login, boolean isPaid){
     		ongoingDownloads.put(cache.hashCode(), download);
         	try {
-				downloadsPool.execute(new DownloadApk(download, cache, login));
+				downloadsPool.execute(new DownloadApk(download, cache, login, isPaid));
 			} catch (Exception e) { }
         }
-    	
+
     	private class DownloadApk implements Runnable{
 
     		ViewDownload download;
     		ViewCache cache;
     		ViewLogin login;
-    		
-			public DownloadApk(ViewDownload download, ViewCache cache, ViewLogin login) {
+            boolean isPaid;
+
+			public DownloadApk(ViewDownload download, ViewCache cache, ViewLogin login, boolean isPaid) {
 				this.download = download;
 				this.cache = cache;
 				this.login = login;
+                this.isPaid = isPaid;
 			}
-    		
+
 			@Override
 			public void run() {
 	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+cache);
@@ -122,7 +127,7 @@ public class HelperDownload{
 	    		}else{
 					toastHandler.sendEmptyMessage(download.getStatus().equals(EnumDownloadStatus.RESUMING)?R.string.resuming_download:R.string.starting_download);
 	    			try {
-	    				download(download, cache, login);
+	    				download(download, cache, login, isPaid);
 	    			} catch (Exception e) {
 //	    				try {
 //	    					download(download, cache, login);
@@ -137,42 +142,44 @@ public class HelperDownload{
 	    		}
 	    		ongoingDownloads.remove(cache.hashCode());
 			}
-    		
+
     	}
-    	
-    	private void download(ViewDownload download, ViewCache cache, ViewLogin login){
-    		boolean overwriteCache = false;
+
+    	private void download(ViewDownload download, ViewCache cache, ViewLogin login, boolean isPaid){
+    		boolean overwriteCache = isPaid;
     		boolean resuming = false;
     		boolean isLoginRequired = (login != null);
-    		
+
     		String localPath = cache.getLocalPath();
     		String remotePath = download.getRemotePath();
     		long targetBytes;
-    		
+
     		FileOutputStream fileOutputStream = null;
-    		
+
     		try{
     			fileOutputStream = new FileOutputStream(localPath, !overwriteCache);
-    			
+
     			DefaultHttpClient httpClient = new DefaultHttpClient();
         		HttpParams httpParameters = new BasicHttpParams();
         		// Set the timeout in milliseconds until a connection is established.
-        		// The default value is zero, that means the timeout is not used. 
+        		// The default value is zero, that means the timeout is not used.
         		int timeoutConnection = Constants.SERVER_CONNECTION_TIMEOUT;
         		HttpConnectionParams.setConnectionTimeout(httpParameters, timeoutConnection);
-        		// Set the default socket timeout (SO_TIMEOUT) 
+        		// Set the default socket timeout (SO_TIMEOUT)
         		// in milliseconds which is the timeout for waiting for data.
         		int timeoutSocket = Constants.SERVER_READ_TIMEOUT;
         		HttpConnectionParams.setSoTimeout(httpParameters, timeoutSocket);
         		httpClient.setParams(httpParameters);
-        		
+
     			HttpGet httpGet = new HttpGet(remotePath);
     			Log.d("Aptoide-download","downloading from: "+remotePath+" to: "+localPath);
     			Log.d("Aptoide-download","downloading with: "+NetworkUtils.getUserAgentString(serviceDownloadManager.getApplicationContext()));
     			Log.d("Aptoide-download","downloading mode private: "+isLoginRequired);
 
     			httpGet.setHeader("User-Agent", NetworkUtils.getUserAgentString(serviceDownloadManager.getApplicationContext()));
-    			
+
+
+
     			long resumeLength = cache.getFileLength();
     			if(!overwriteCache){
     				if(resumeLength > 0){
@@ -183,7 +190,7 @@ public class HelperDownload{
     				download.setProgress(resumeLength);
     			}
 
-    			if(isLoginRequired){	
+    			if(isLoginRequired){
     				URL url = new URL(remotePath);
     				httpClient.getCredentialsProvider().setCredentials(
     						new AuthScope(url.getHost(), url.getPort()),
@@ -192,7 +199,7 @@ public class HelperDownload{
 
     			HttpResponse httpResponse = httpClient.execute(httpGet);
     			if(httpResponse == null){
-    				Log.d("Aptoide-download","Problem in network... retry...");	
+    				Log.d("Aptoide-download","Problem in network... retry...");
     				httpResponse = httpClient.execute(httpGet);
     				if(httpResponse == null){
     					Log.d("Aptoide-download","Major network exception... Exiting!");
@@ -205,7 +212,7 @@ public class HelperDownload{
 
     			int httpStatusCode = httpResponse.getStatusLine().getStatusCode();
     			Log.d("Aptoide-download","Server Response Status Code: "+httpStatusCode);
-    			
+
     			switch (httpStatusCode) {
 					case 401:
 						fileOutputStream.close();
@@ -236,7 +243,7 @@ public class HelperDownload{
 	    				download.setCompleted();
 	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 						return;
-	
+
 					default:
 						if(httpResponse.containsHeader("Content-Length")){
 	    					targetBytes = Long.parseLong(httpResponse.getFirstHeader("Content-Length").getValue());
@@ -246,9 +253,27 @@ public class HelperDownload{
 	    					}
 	    					download.setProgressTarget(targetBytes);
 	    				}
-	    				 				
+
+                        if(isPaid && !httpResponse.getFirstHeader("Content-Type").getValue().equals("application/vnd.android.package-archive")){
+                            try{
+
+                                download.setFailReason(EnumDownloadFailReason.PAIDAPP_NOTFOUND);
+                                JSONObject object = new NetworkUtils().getJsonObject(new URL(remotePath), ApplicationAptoide.getContext());
+                                throw new AptoideExceptionDownload(object.getString("errors"));
+
+                            }catch (JSONException e){
+
+                                throw new Exception();
+
+                            }
+
+
+
+
+                        }
+
 	    				InputStream inputStream= null;
-	    				
+
 	    				if((httpResponse.getEntity().getContentEncoding() != null) && (httpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
 
 	    					Log.d("Aptoide-download","with gzip");
@@ -260,13 +285,13 @@ public class HelperDownload{
 	    					inputStream = httpResponse.getEntity().getContent();
 
 	    				}
-	    				
+
     					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
 //    					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
-	    				
+
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
 	    				/** trigger in miliseconds */
-	    				int progressTrigger = Constants.DOWNLOAD_UPDATE_TRIGGER; 
+	    				int progressTrigger = Constants.DOWNLOAD_UPDATE_TRIGGER;
 	    				int bytesRead;
 	    				long intervalStartTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 	    				long currentTime;
@@ -296,14 +321,14 @@ public class HelperDownload{
 								}
 	        					intervalStartTime = intervalEndTime;
 	        					intervalStartProgress = download.getProgress();
-	        					
+
 	    	    				download.setStatus(EnumDownloadStatus.DOWNLOADING);
 	    	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 //		    					Log.d("Aptoide-download", "*downloading* id: "+cache.hashCode()+" "+download);
 	    					}
 	    				}
 	    				Log.d("Aptoide-download","Download done! Name: "+download.getRemotePathTail()+" localPath: "+localPath);
-	    				
+
 	    				fileOutputStream.flush();
 	    				fileOutputStream.close();
 	    				inputStream.close();
@@ -316,18 +341,18 @@ public class HelperDownload{
 	    					}
 	    				}
 
-	    				
-	    				
+
+
 	    				download.setCompleted();
 	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 						return;
 				}
-    				
+
     		}catch (SocketTimeoutException e) {
     			try {
     				fileOutputStream.flush();
-    				fileOutputStream.close();	
-    			} catch (Exception e1) { }		
+    				fileOutputStream.close();
+    			} catch (Exception e1) { }
     			e.printStackTrace();
     			download.setStatus(EnumDownloadStatus.FAILED);
     			download.setFailReason(EnumDownloadFailReason.TIMEOUT);
@@ -336,8 +361,8 @@ public class HelperDownload{
 			}catch (Exception e) {
     			try {
     				fileOutputStream.flush();
-    				fileOutputStream.close();	
-    			} catch (Exception e1) { }		
+    				fileOutputStream.close();
+    			} catch (Exception e1) { }
     			e.printStackTrace();
 //    			if(cache.getFileLength() > 0){
     				download.setStatus(EnumDownloadStatus.FAILED);
@@ -355,17 +380,17 @@ public class HelperDownload{
     		}
     	}
     }
-	
 
-    
-	public void downloadApk(ViewDownload download, ViewCache cache) {
+
+
+	public void downloadApk(ViewDownload download, ViewCache cache, boolean paid) {
 		Log.d("Aptoide-HelperDownload", "starting apk download: "+download.getRemotePath());
-		downloadManager.downloadApk(download, cache);
+		downloadManager.downloadApk(download, cache, paid);
 	}
 
-	public void downloadPrivateApk(ViewDownload download, ViewCache cache, ViewLogin login) {
+	public void downloadPrivateApk(ViewDownload download, ViewCache cache, ViewLogin login, boolean paid) {
 		Log.d("Aptoide-HelperDownload", "starting apk download: "+download.getRemotePath());
-		downloadManager.downloadApk(download, cache, login);
+		downloadManager.downloadApk(download, cache, login, paid);
 	}
 
 	public void pauseDownload(int appId) {
@@ -377,7 +402,7 @@ public class HelperDownload{
 		Log.d("Aptoide-HelperDownload", "stoping apk download  id: "+appId);
 		downloadManager.ongoingDownloads.get(appId).setStatus(EnumDownloadStatus.STOPPED);
 	}
-	
+
 	public void shutdownNow(){
 		Log.d("Aptoide-HelperDownload", "shuting down");
 		for (ViewDownload download : downloadManager.ongoingDownloads.values()) {
@@ -385,5 +410,5 @@ public class HelperDownload{
 		}
 		downloadManager.downloadsPool.shutdownNow();
 	}
-	
+
 }

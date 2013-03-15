@@ -352,5 +352,6 @@
     <string name="retrying_registration">Completing registration process</string>
     <string name="paypal_message">You can pay using your credit card or your PayPal account with agreement. If you want to use your PayPal account without agreement, select Credit Card</string>
     <string name="order_popup_lst5">Price</string>
+    <string name="paidapp_not_found">Error downloading app. Please try again or contact support.</string>
 
 </resources>

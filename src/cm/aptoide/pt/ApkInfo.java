@@ -8,6 +8,7 @@
 package cm.aptoide.pt;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -830,6 +831,14 @@ OnClickListener installListener = new OnClickListener() {
 							e.printStackTrace();
 						}
 
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                findViewById(R.id.btinstall).setOnClickListener(installListener);
+                            }
+                        });
+
 					}
 				}
 			}
@@ -1209,17 +1218,18 @@ OnClickListener installListener = new OnClickListener() {
                         ((Button) viewLikesButton.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
                         ((Button) viewLikesButton.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn_over, 0);
                     }
-                    TextView tv = new TextView(context);
-                    tv.setText(context.getString(R.string.no_internet_connection));
-                    viewComments.addView(tv);
 
-                loading.setVisibility(View.GONE);
 
                 }
 
             }catch (Exception e){
                 ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.tastenotavailable));
                 ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
+                TextView tv = new TextView(context);
+                tv.setText(context.getString(R.string.no_internet_connection));
+                viewComments.addView(tv);
+
+                loading.setVisibility(View.GONE);
             }
 
 
@@ -1241,7 +1251,10 @@ OnClickListener installListener = new OnClickListener() {
             JSONObject json = null;
             try{
                 NetworkUtils utils = new NetworkUtils();
-                String request = "http://webservices.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/" + Login.getUserLogin(context) + "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
+//                String request = "http://webservices.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/" + Login.getUserLogin(context) + "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
+
+                String request = "http://dev.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
+
                 System.out.println(request);
                 json = utils.getJsonObject(new URL(request), ApkInfo.this);
             }catch (Exception e){
@@ -1270,9 +1283,10 @@ OnClickListener installListener = new OnClickListener() {
                     }
                 }else{
 
-                    String path = json.getString("apkpath") + json.getString("path");
+                    String path = json.getString("apkpath");
                     viewApk.setPath(path);
-                    findViewById(R.id.btinstall).setOnClickListener( installListener );
+                    viewApk.setIsPaid(true);
+                    findViewById(R.id.btinstall).setOnClickListener(installListener);
                     ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
 
                 }

@@ -1654,6 +1654,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
 				pager = (ViewPager) findViewById(R.id.viewpager);
 
+                if(!ApplicationAptoide.MULTIPLESTORES){
+                    depth = ListDepth.CATEGORY1;
+                    store_id = 1;
+                }
+
 				featuredView = LayoutInflater.from(mContext).inflate(
 						R.layout.page_featured, null);
 
@@ -1890,7 +1895,11 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				indicator.setViewPager(pager);
 				refreshAvailableList(true);
 
-                addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
+                if(!ApplicationAptoide.MULTIPLESTORES){
+                    addBreadCrumb("Store", ListDepth.CATEGORY1);
+                }else{
+                    addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
+                }
 
 				if (sPref.getBoolean("firstrun", true)) {
 					// Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
@@ -2243,21 +2252,41 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			View v = availableListView.getChildAt(0);
 			scrollMemory.put(depth, new ListViewPosition((v == null) ? 0 : v.getTop(),availableListView.getFirstVisiblePosition()));
-			if (!depth.equals(ListDepth.STORES)&&pager.getCurrentItem()==1) {
-				if (depth.equals(ListDepth.TOPAPPS)
-						|| depth.equals(ListDepth.LATEST_LIKES)
-						|| depth.equals(ListDepth.LATESTAPPS)
-						|| depth.equals(ListDepth.LATEST_COMMENTS)
-						|| depth.equals(ListDepth.RECOMMENDED)
-						|| depth.equals(ListDepth.ALLAPPLICATIONS)) {
-					depth = ListDepth.CATEGORY1;
-				} else {
-					depth = ListDepth.values()[depth.ordinal() - 1];
-				}
-				removeLastBreadCrumb();
-				refreshAvailableList(true);
-				return false;
-			}
+
+            if(!ApplicationAptoide.MULTIPLESTORES){
+                if (!depth.equals(ListDepth.CATEGORY1)&&pager.getCurrentItem()==1) {
+                    if (depth.equals(ListDepth.TOPAPPS)
+                            || depth.equals(ListDepth.LATEST_LIKES)
+                            || depth.equals(ListDepth.LATESTAPPS)
+                            || depth.equals(ListDepth.LATEST_COMMENTS)
+                            || depth.equals(ListDepth.RECOMMENDED)
+                            || depth.equals(ListDepth.ALLAPPLICATIONS)) {
+                        depth = ListDepth.CATEGORY1;
+                    } else {
+                        depth = ListDepth.values()[depth.ordinal() - 1];
+                    }
+                    removeLastBreadCrumb();
+                    refreshAvailableList(true);
+                    return false;
+                }
+            }else {
+                if (!depth.equals(ListDepth.STORES)&&pager.getCurrentItem()==1) {
+                    if (depth.equals(ListDepth.TOPAPPS)
+                            || depth.equals(ListDepth.LATEST_LIKES)
+                            || depth.equals(ListDepth.LATESTAPPS)
+                            || depth.equals(ListDepth.LATEST_COMMENTS)
+                            || depth.equals(ListDepth.RECOMMENDED)
+                            || depth.equals(ListDepth.ALLAPPLICATIONS)) {
+                        depth = ListDepth.CATEGORY1;
+                    } else {
+                        depth = ListDepth.values()[depth.ordinal() - 1];
+                    }
+                    removeLastBreadCrumb();
+                    refreshAvailableList(true);
+                    return false;
+                }
+
+            }
 		}
 		return super.onKeyDown(keyCode, event);
 	}

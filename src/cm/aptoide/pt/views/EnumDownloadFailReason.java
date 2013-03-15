@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -25,7 +25,7 @@ import android.content.Context;
 
 /**
  * EnumDownloadFailReason, typeSafes Downloads fail reasons when status equals FAIL in Aptoide
- * 
+ *
  * @author dsilveira
  *
  */
@@ -35,8 +35,9 @@ public enum EnumDownloadFailReason {
 	IP_BLACKLISTED,
 	CONNECTION_ERROR,
 	NOT_FOUND,
-	MD5_CHECK_FAILED;
-	
+	MD5_CHECK_FAILED,
+    PAIDAPP_NOTFOUND;
+
 	public static EnumDownloadFailReason reverseOrdinal(int ordinal){
 		return values()[ordinal];
 	}
@@ -53,7 +54,8 @@ public enum EnumDownloadFailReason {
 				return  context.getString(R.string.apk_not_found);
 			case MD5_CHECK_FAILED:
 				return  context.getString(R.string.invalid_apk);
-				
+            case PAIDAPP_NOTFOUND:
+                return context.getString(R.string.paidapp_not_found);
 			default:
 				return  context.getString(R.string.server_error);
 		}

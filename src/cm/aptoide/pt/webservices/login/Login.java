@@ -81,7 +81,7 @@ public class Login extends Activity {
 			username_box = (EditText) findViewById(R.id.username);
 			password_box = (EditText) findViewById(R.id.password);
 //			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
-//				
+//
 //				username = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
 //				password = sPref.getString(Configs.LOGIN_PASSWORD, null);
 //				new CheckUserCredentials().execute(username, password);
@@ -90,7 +90,7 @@ public class Login extends Activity {
 //			}
 		}
 		prefEdit = sPref.edit();
-		
+
 	}
 
 	// @Override
@@ -186,10 +186,10 @@ public class Login extends Activity {
 			pd.show();
 			pd.setMessage(getText(R.string.please_wait));
 		}
-		
+
 		@Override
 		protected JSONObject doInBackground(String... params) {
-			
+
 			fromSignIn = params[2];
 			username_string = params[0];
 			password_string = params[1];
@@ -204,7 +204,7 @@ public class Login extends Activity {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
+
 			return null;
 		}
 
@@ -213,14 +213,14 @@ public class Login extends Activity {
 		 * @throws IOException
 		 * @throws UnsupportedEncodingException
 		 * @throws JSONException
-		 * @throws InterruptedException 
+		 * @throws InterruptedException
 		 */
 		private JSONObject checkUserCredentials(String username, String password) throws MalformedURLException,
 				IOException, UnsupportedEncodingException, JSONException, InterruptedException {
 			URL url;
 			StringBuilder sb;
 			String data;
-			url = new URL("http://webservices.aptoide.com/webservices/checkUserCredentials");
+			url = new URL("http://dev.aptoide.com/webservices/checkUserCredentials");
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 			connection.setDoOutput(true);
 			data = URLEncoder.encode("user", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
@@ -280,13 +280,13 @@ public class Login extends Activity {
 					toast.show();
 				}
 			} catch (Exception e) {
-				Toast toast= Toast.makeText(context, 
-						context.getString(R.string.error_occured), Toast.LENGTH_SHORT);  
+				Toast toast= Toast.makeText(context,
+						context.getString(R.string.error_occured), Toast.LENGTH_SHORT);
 						toast.setGravity(Gravity.TOP|Gravity.CENTER_HORIZONTAL, 0, 30);
 						toast.show();
 				e.printStackTrace();
 			}
-			
+
 		}
 	}
 

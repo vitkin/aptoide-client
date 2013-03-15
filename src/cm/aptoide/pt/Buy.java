@@ -54,7 +54,7 @@ public class Buy extends Activity {
 	String userMail ;
 	String token ;
 	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
-	String urlPay = ("http://webservices.aptoide.com/webservices/payApk/");
+	String urlPay = ("http://dev.aptoide.com/webservices/payApk/");
 	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct/");
 	String urlRedirect="http://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
 
@@ -79,7 +79,8 @@ public class Buy extends Activity {
 		apkid = b.getString("apkid");
 		versionName = b.getString("versionName");
 		repo=b.getString("repo");
-		String params = token+"/"+userMail+"/check/json";
+//		String params = token+"/"+userMail+"/check/json";
+        String params = token+"/check/json";
 		send(url, params);
 		tv=(TextView) findViewById(R.id.tv);
 
@@ -275,13 +276,16 @@ public class Buy extends Activity {
 		if(resultCode!=RESULT_OK){
 			tv.setText("Canceled.");
 			canceled=true;
-			String params = token+"/"+userMail+"/validate"+"/"+pakey+"/false/json";
-			send(url, params);
+//			String params = token+"/"+userMail+"/validate"+"/"+pakey+"/false/json";
+            String params = token+"/validate"+"/"+pakey+"/false/json";
+            send(url, params);
 		}else{
 			tv.setText("Key validated!");
 			Log.i("preapproval", "key validated");
-			String params = token+"/"+userMail+"/validate"+"/"+pakey+"/true/json";
-			send(url, params);
+//			String params = token+"/"+userMail+"/validate"+"/"+pakey+"/true/json";
+            String params = token+"/validate"+"/"+pakey+"/true/json";
+
+            send(url, params);
 		}
 	}
 
@@ -289,8 +293,10 @@ public class Buy extends Activity {
 		Log.i("preapproval", "Payment started");
 		operation=3;
 		tv.setText("Waiting for server response...");
-		String params = token+"/"+userMail+"/" + repo +"/"+apkid+"/"+versionName+"/pay/json";
-		Log.i("preapproval", "url: "+urlPay+"/"+params);
+//		String params = token+"/"+userMail+"/" + repo +"/"+apkid+"/"+versionName+"/pay/json";
+        String params = token+"/" + repo +"/"+apkid+"/"+versionName+"/pay/json";
+
+        Log.i("preapproval", "url: "+urlPay+"/"+params);
 		send(urlPay, params);
 	}
 
