@@ -1253,7 +1253,7 @@ OnClickListener installListener = new OnClickListener() {
                 NetworkUtils utils = new NetworkUtils();
 //                String request = "http://webservices.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/" + Login.getUserLogin(context) + "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
 
-                String request = "http://dev.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
+                String request = "http://webservices.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
 
                 System.out.println(request);
                 json = utils.getJsonObject(new URL(request), ApkInfo.this);
@@ -1268,6 +1268,7 @@ OnClickListener installListener = new OnClickListener() {
             super.onPostExecute(json);
             if(pd.isShowing())pd.dismiss();
             try{
+
                 System.out.println("JSON" + json);
                 String status = json.getString("status");
                 if(status.equals("FAIL")){
