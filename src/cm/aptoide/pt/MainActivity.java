@@ -224,7 +224,7 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 					for (int i = a; i != res_ids.length; i++) {
 						ImageView v = (ImageView) featuredView
 								.findViewById(res_ids[i]);
-						
+
 //						imageLoader.DisplayImage(-1,
 //								image_urls.get(i).get("url"), v, mContext);
 						DisplayImageOptions options = new DisplayImageOptions.Builder()
@@ -428,6 +428,11 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 
                     if(ApplicationAptoide.CUSTOMEDITORSCHOICE){
                         url = new URL("http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/editors.xml");
+
+                        if(((HttpURLConnection)url.openConnection()).getResponseCode()!=200){
+                            url = new URL("http://imgs.aptoide.com/apks/editors.xml");
+                        }
+
                     }else{
                         url = new URL("http://imgs.aptoide.com/apks/editors.xml");
                     }
@@ -481,10 +486,15 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 					Server server = new Server();
 					server.id = 1;
 					NetworkUtils utils = new NetworkUtils();
-					
+
 					URL url;
 					if(ApplicationAptoide.CUSTOMEDITORSCHOICE){
                         url = new URL("http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/top.xml");
+
+                        if(((HttpURLConnection)url.openConnection()).getResponseCode()!=200){
+                            url = new URL("http://apps.store.aptoide.com/top.xml");
+                        }
+
                     }else{
                         url = new URL("http://apps.store.aptoide.com/top.xml");
                     }
@@ -685,16 +695,21 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			MainActivity.this.service = ((LocalBinder) service).getService();
+            if(ApplicationAptoide.DEFAULTSTORE!=null){
+                MainActivity.this.service.addStore(Database.getInstance(), "http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/", null, null);
+            }
+            loadUi();
 			getInstalled();
 			getAllRepoStatus();
 			loadFeatured();
 
+
 			if(Login.isLoggedIn(mContext)){
 				loadRecommended();
 			}
-            if(ApplicationAptoide.DEFAULTSTORE!=null){
-                MainActivity.this.service.addStore(Database.getInstance(), "http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/", null, null);
-            }
+
+
+
 
 		}
 
@@ -744,7 +759,7 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 		}
 	};
 private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
-		
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			AlertDialog failedDialog = new AlertDialog.Builder(context).create();
@@ -819,9 +834,9 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		@Override
 		public void onClick(DialogInterface arg0, int which) {
 			dialogAddStore(url, ((EditText) dialog.findViewById(R.id.username))
-					.getText().toString(),
-					((EditText) dialog.findViewById(R.id.password)).getText()
-							.toString());
+                    .getText().toString(),
+                    ((EditText) dialog.findViewById(R.id.password)).getText()
+                            .toString());
 		}
 
 	}
@@ -923,8 +938,8 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 						e.printStackTrace();
 					} catch (IOException e) {
 						if(!ApplicationAptoide.MULTIPLESTORES){
-							
-							getApplicationContext().sendBroadcast(new Intent("PARSE_FAILED"));	
+
+							getApplicationContext().sendBroadcast(new Intent("PARSE_FAILED"));
 						}
 						e.printStackTrace();
 					} catch (JSONException e) {
@@ -1033,8 +1048,8 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		}
 
 	}
-	
-     
+
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
@@ -1068,12 +1083,12 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		menu.add(Menu.NONE, EnumOptionsMenu.DOWNLOADMANAGER.ordinal(),
 				EnumOptionsMenu.DOWNLOADMANAGER.ordinal(), R.string.download_manager).setIcon(
 				android.R.drawable.ic_menu_save);
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	
-	
+
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item
@@ -1200,7 +1215,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		final SharedPreferences sPref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		final Editor editor = sPref.edit();
-		
+
 		View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_order_popup,
 				null);
 		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(view);
@@ -1552,7 +1567,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 	protected void onCreate(Bundle savedInstanceState) {
 		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
-		
+
 		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
 		startService(serviceDownloadManagerIntent);
 
@@ -1694,263 +1709,11 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 				if(!ApplicationAptoide.MULTIPLESTORES){
 					registerReceiver(parseFailedReceiver  , new IntentFilter("PARSE_FAILED"));
 				}
-				
+
 				registerReceiver(newRepoReceiver, new IntentFilter(
 						"pt.caixamagica.aptoide.NEWREPO"));
 				registered=true;
-				setContentView(R.layout.activity_aptoide);
-				TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
-				pager = (ViewPager) findViewById(R.id.viewpager);
 
-                if(!ApplicationAptoide.MULTIPLESTORES){
-                    depth = ListDepth.CATEGORY1;
-                    store_id = 1;
-                }
-
-				featuredView = LayoutInflater.from(mContext).inflate(
-						R.layout.page_featured, null);
-
-				availableView = LayoutInflater.from(mContext).inflate(
-						R.layout.page_available, null);
-				updateView = LayoutInflater.from(mContext).inflate(
-						R.layout.page_updates, null);
-				breadcrumbs = (LinearLayout) availableView
-						.findViewById(R.id.breadcrumb_container);
-				installedView = new ListView(mContext);
-				updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
-
-				updateView.findViewById(R.id.update_button).setOnClickListener(new OnClickListener() {
-
-					@Override
-					public void onClick(View v) {
-						updateAll();
-					}
-				});
-				availableListView = (ListView) availableView
-						.findViewById(R.id.available_list);
-				availableListView.setFastScrollEnabled(true);
-				updatesListView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(
-						) {
-
-					@Override
-					public void onCreateContextMenu(ContextMenu menu, View v,
-							ContextMenuInfo menuInfo) {
-							menu.add(0,(int)((AdapterContextMenuInfo)menuInfo).id,0,mContext.getString(R.string.exclude_update)).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-
-								@Override
-								public boolean onMenuItemClick(MenuItem item) {
-									System.out.println(item.getItemId());
-//									((UpdatesAdapter.ViewHolder)view.getTag()).updateExcluded = true;
-									db.addToExcludeUpdate(item.getItemId());
-									updatesLoader.forceLoad();
-									return false;
-								}
-							});
-					}
-				});
-				availableView.findViewById(R.id.refresh_view_layout)
-						.findViewById(R.id.refresh_view)
-						.setOnClickListener(new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								refreshClick = true;
-								availableView.findViewById(
-										R.id.refresh_view_layout)
-										.setVisibility(View.GONE);
-								refreshAvailableList(false);
-
-							}
-						});
-				joinStores = (CheckBox) availableView
-						.findViewById(R.id.join_stores);
-				joinStores
-						.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-							@Override
-							public void onCheckedChanged(
-									CompoundButton buttonView, boolean isChecked) {
-								joinStores_boolean = isChecked;
-								// if (isChecked) {
-								// addBreadCrumb("All Stores", depth);
-								// } else {
-								// breadcrumbs.removeAllViews();
-								// }
-								refreshAvailableList(true);
-							}
-						});
-
-				availableAdapter = new AvailableListAdapter(mContext, null,
-						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-				installedAdapter = new InstalledAdapter(mContext, null,
-						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
-				updatesAdapter = new UpdatesAdapter(mContext, null,
-						CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-				bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
-				pb = (TextView) availableView.findViewById(R.id.loading_pb);
-				pb.setText(R.string.add_store_button_below);
-				addStoreButton = availableView.findViewById(R.id.add_store);
-				addStoreButton.setOnClickListener(addStoreListener);
-
-                if(!ApplicationAptoide.MULTIPLESTORES){
-                    addStoreButton.setVisibility(View.GONE);
-
-                }
-
-				availableListView
-						.setOnItemClickListener(new OnItemClickListener() {
-
-							@Override
-							public void onItemClick(AdapterView<?> parent,
-									View view, int position, long id) {
-								Intent i;
-								View v = availableListView.getChildAt(0);
-								scrollMemory.put(depth, new ListViewPosition((v == null) ? 0 : v.getTop(),availableListView.getFirstVisiblePosition()));
-								switch (depth) {
-								case STORES:
-									depth = ListDepth.CATEGORY1;
-									store_id = id;
-									break;
-								case CATEGORY1:
-									String category = ((Cursor) parent
-											.getItemAtPosition(position))
-											.getString(1);
-									if (category.equals("Top Apps")){
-										depth = ListDepth.TOPAPPS;
-									}else if(category.equals("Latest Apps")) {
-										depth = ListDepth.LATESTAPPS;
-									} else if (id == LATEST_LIKES) {
-										depth = ListDepth.LATEST_LIKES;
-									} else if (id == LATEST_COMMENTS) {
-										depth = ListDepth.LATEST_COMMENTS;
-									} else if (id == -3) {
-										if (!Login.isLoggedIn(mContext)) {
-											Toast toast= Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login_toast), Toast.LENGTH_SHORT);
-											toast.show();
-											return;
-										} else {
-											depth = ListDepth.RECOMMENDED;
-										}
-
-									} else if (id == -4) {
-										depth = ListDepth.ALLAPPLICATIONS;
-									}else if (id == -10){
-										Toast toast= Toast.makeText(mContext, mContext.getString(R.string.store_beginning_to_load), Toast.LENGTH_SHORT);
-										toast.show();
-										return;
-									} else {
-										depth = ListDepth.CATEGORY2;
-									}
-									category_id = id;
-									break;
-
-								case CATEGORY2:
-									depth = ListDepth.APPLICATIONS;
-									category2_id = id;
-									break;
-								case TOPAPPS:
-
-									i = new Intent(MainActivity.this,
-											ApkInfo.class);
-									i.putExtra("_id", id);
-									i.putExtra("top", true);
-									i.putExtra("category",
-											Category.TOP.ordinal());
-									startActivity(i);
-									return;
-								case LATESTAPPS:
-									i = new Intent(MainActivity.this,
-											ApkInfo.class);
-									i.putExtra("_id", id);
-									i.putExtra("top", true);
-									i.putExtra("category",
-											Category.LATEST.ordinal());
-									startActivity(i);
-									return;
-								case APPLICATIONS:
-								case ALLAPPLICATIONS:
-								case RECOMMENDED:
-									i = new Intent(MainActivity.this,
-											ApkInfo.class);
-									i.putExtra("_id", id);
-									i.putExtra("top", false);
-									i.putExtra("category",
-											Category.INFOXML.ordinal());
-									startActivity(i);
-									return;
-								case LATEST_COMMENTS:
-								case LATEST_LIKES:
-
-									String apkid = ((Cursor) parent
-											.getItemAtPosition(position))
-											.getString(1);
-
-									latestClick(apkid);
-									return;
-								default:
-									return;
-								}
-								addBreadCrumb(((Cursor) parent
-										.getItemAtPosition(position))
-										.getString(1), depth);
-								refreshAvailableList(true);
-							}
-						});
-				installedView.setOnItemClickListener(new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View arg1,
-							int arg2, long id) {
-						Intent i = new Intent(MainActivity.this, ApkInfo.class);
-						i.putExtra("_id", id);
-						i.putExtra("installed", true);
-						i.putExtra("category", Category.INFOXML.ordinal());
-						startActivity(i);
-					}
-				});
-//				getSupportActionBar().setIcon(R.drawable.brand_padding);
-//				getSupportActionBar().setTitle("");
-//				getSupportActionBar().setHomeButtonEnabled(false);
-				findViewById(R.id.btsearch).setOnClickListener(
-						new OnClickListener() {
-
-							@Override
-							public void onClick(View v) {
-								onSearchRequested();
-
-							}
-						});
-				updatesListView.setOnItemClickListener(new OnItemClickListener() {
-
-					@Override
-					public void onItemClick(AdapterView<?> arg0, View arg1,
-							int arg2, long id) {
-						Intent i = new Intent(MainActivity.this, ApkInfo.class);
-						i.putExtra("_id", id);
-						i.putExtra("updates", true);
-						i.putExtra("category", Category.INFOXML.ordinal());
-						startActivity(i);
-					}
-				});
-				// LoaderManager.enableDebugLogging(true);
-				availableLoader = getSupportLoaderManager().initLoader(
-						AVAILABLE_LOADER, null, this);
-
-				ArrayList<View> views = new ArrayList<View>();
-				views.add(featuredView);
-				views.add(availableView);
-				views.add(installedView);
-				views.add(updateView);
-
-				pager.setAdapter(new ViewPagerAdapter(mContext, views));
-				indicator.setViewPager(pager);
-				refreshAvailableList(true);
-
-                if(!ApplicationAptoide.MULTIPLESTORES){
-                    addBreadCrumb("Store", ListDepth.CATEGORY1);
-                }else{
-                    addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
-                }
 
 				if (sPref.getBoolean("firstrun", true)) {
 					// Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
@@ -2094,10 +1857,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 
 
 
-                if(!ApplicationAptoide.MATURECONTENTSWITCH){
-                    featuredView.findViewById(R.id.toggleButton1).setVisibility(View.GONE);
-                    featuredView.findViewById(R.id.adultcontent_label).setVisibility(View.GONE);
-                }
+
 
 			}
 
@@ -2105,7 +1865,268 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 
 	}
 
-	protected void latestClick(final String apkid) {
+    private void loadUi() {
+        setContentView(R.layout.activity_aptoide);
+        TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
+        pager = (ViewPager) findViewById(R.id.viewpager);
+
+        if(!ApplicationAptoide.MULTIPLESTORES){
+            depth = ListDepth.CATEGORY1;
+            store_id = 1;
+        }
+
+        featuredView = LayoutInflater.from(mContext).inflate(
+                R.layout.page_featured, null);
+
+        availableView = LayoutInflater.from(mContext).inflate(
+                R.layout.page_available, null);
+        updateView = LayoutInflater.from(mContext).inflate(
+                R.layout.page_updates, null);
+        breadcrumbs = (LinearLayout) availableView
+                .findViewById(R.id.breadcrumb_container);
+        installedView = new ListView(mContext);
+        updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
+
+        updateView.findViewById(R.id.update_button).setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                updateAll();
+            }
+        });
+        availableListView = (ListView) availableView
+                .findViewById(R.id.available_list);
+        availableListView.setFastScrollEnabled(true);
+        updatesListView.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener(
+        ) {
+
+            @Override
+            public void onCreateContextMenu(ContextMenu menu, View v,
+                                            ContextMenuInfo menuInfo) {
+                menu.add(0, (int) ((AdapterContextMenuInfo) menuInfo).id, 0, mContext.getString(R.string.exclude_update)).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        System.out.println(item.getItemId());
+//									((UpdatesAdapter.ViewHolder)view.getTag()).updateExcluded = true;
+                        db.addToExcludeUpdate(item.getItemId());
+                        updatesLoader.forceLoad();
+                        return false;
+                    }
+                });
+            }
+        });
+        availableView.findViewById(R.id.refresh_view_layout)
+                .findViewById(R.id.refresh_view)
+                .setOnClickListener(new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        refreshClick = true;
+                        availableView.findViewById(
+                                R.id.refresh_view_layout)
+                                .setVisibility(View.GONE);
+                        refreshAvailableList(false);
+
+                    }
+                });
+        joinStores = (CheckBox) availableView
+                .findViewById(R.id.join_stores);
+        joinStores
+                .setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+                    @Override
+                    public void onCheckedChanged(
+                            CompoundButton buttonView, boolean isChecked) {
+                        joinStores_boolean = isChecked;
+                        // if (isChecked) {
+                        // addBreadCrumb("All Stores", depth);
+                        // } else {
+                        // breadcrumbs.removeAllViews();
+                        // }
+                        refreshAvailableList(true);
+                    }
+                });
+
+        availableAdapter = new AvailableListAdapter(mContext, null,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        installedAdapter = new InstalledAdapter(mContext, null,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
+        updatesAdapter = new UpdatesAdapter(mContext, null,
+                CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
+        pb = (TextView) availableView.findViewById(R.id.loading_pb);
+        pb.setText(R.string.add_store_button_below);
+        addStoreButton = availableView.findViewById(R.id.add_store);
+        addStoreButton.setOnClickListener(addStoreListener);
+
+        if(!ApplicationAptoide.MULTIPLESTORES){
+            addStoreButton.setVisibility(View.GONE);
+
+        }
+
+        availableListView
+                .setOnItemClickListener(new OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> parent,
+                                            View view, int position, long id) {
+                        Intent i;
+                        View v = availableListView.getChildAt(0);
+                        scrollMemory.put(depth, new ListViewPosition((v == null) ? 0 : v.getTop(), availableListView.getFirstVisiblePosition()));
+                        switch (depth) {
+                            case STORES:
+                                depth = ListDepth.CATEGORY1;
+                                store_id = id;
+                                break;
+                            case CATEGORY1:
+                                String category = ((Cursor) parent
+                                        .getItemAtPosition(position))
+                                        .getString(1);
+                                if (category.equals("Top Apps")) {
+                                    depth = ListDepth.TOPAPPS;
+                                } else if (category.equals("Latest Apps")) {
+                                    depth = ListDepth.LATESTAPPS;
+                                } else if (id == LATEST_LIKES) {
+                                    depth = ListDepth.LATEST_LIKES;
+                                } else if (id == LATEST_COMMENTS) {
+                                    depth = ListDepth.LATEST_COMMENTS;
+                                } else if (id == -3) {
+                                    if (!Login.isLoggedIn(mContext)) {
+                                        Toast toast = Toast.makeText(mContext, mContext.getString(R.string.you_need_to_login_toast), Toast.LENGTH_SHORT);
+                                        toast.show();
+                                        return;
+                                    } else {
+                                        depth = ListDepth.RECOMMENDED;
+                                    }
+
+                                } else if (id == -4) {
+                                    depth = ListDepth.ALLAPPLICATIONS;
+                                } else if (id == -10) {
+                                    Toast toast = Toast.makeText(mContext, mContext.getString(R.string.store_beginning_to_load), Toast.LENGTH_SHORT);
+                                    toast.show();
+                                    return;
+                                } else {
+                                    depth = ListDepth.CATEGORY2;
+                                }
+                                category_id = id;
+                                break;
+
+                            case CATEGORY2:
+                                depth = ListDepth.APPLICATIONS;
+                                category2_id = id;
+                                break;
+                            case TOPAPPS:
+
+                                i = new Intent(MainActivity.this,
+                                        ApkInfo.class);
+                                i.putExtra("_id", id);
+                                i.putExtra("top", true);
+                                i.putExtra("category",
+                                        Category.TOP.ordinal());
+                                startActivity(i);
+                                return;
+                            case LATESTAPPS:
+                                i = new Intent(MainActivity.this,
+                                        ApkInfo.class);
+                                i.putExtra("_id", id);
+                                i.putExtra("top", true);
+                                i.putExtra("category",
+                                        Category.LATEST.ordinal());
+                                startActivity(i);
+                                return;
+                            case APPLICATIONS:
+                            case ALLAPPLICATIONS:
+                            case RECOMMENDED:
+                                i = new Intent(MainActivity.this,
+                                        ApkInfo.class);
+                                i.putExtra("_id", id);
+                                i.putExtra("top", false);
+                                i.putExtra("category",
+                                        Category.INFOXML.ordinal());
+                                startActivity(i);
+                                return;
+                            case LATEST_COMMENTS:
+                            case LATEST_LIKES:
+
+                                String apkid = ((Cursor) parent
+                                        .getItemAtPosition(position))
+                                        .getString(1);
+
+                                latestClick(apkid);
+                                return;
+                            default:
+                                return;
+                        }
+                        addBreadCrumb(((Cursor) parent
+                                .getItemAtPosition(position))
+                                .getString(1), depth);
+                        refreshAvailableList(true);
+                    }
+                });
+        installedView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                    int arg2, long id) {
+                Intent i = new Intent(MainActivity.this, ApkInfo.class);
+                i.putExtra("_id", id);
+                i.putExtra("installed", true);
+                i.putExtra("category", Category.INFOXML.ordinal());
+                startActivity(i);
+            }
+        });
+//				getSupportActionBar().setIcon(R.drawable.brand_padding);
+//				getSupportActionBar().setTitle("");
+//				getSupportActionBar().setHomeButtonEnabled(false);
+        findViewById(R.id.btsearch).setOnClickListener(
+                new OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        onSearchRequested();
+
+                    }
+                });
+        updatesListView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                    int arg2, long id) {
+                Intent i = new Intent(MainActivity.this, ApkInfo.class);
+                i.putExtra("_id", id);
+                i.putExtra("updates", true);
+                i.putExtra("category", Category.INFOXML.ordinal());
+                startActivity(i);
+            }
+        });
+        // LoaderManager.enableDebugLogging(true);
+        availableLoader = getSupportLoaderManager().initLoader(
+                AVAILABLE_LOADER, null, this);
+
+        ArrayList<View> views = new ArrayList<View>();
+        views.add(featuredView);
+        views.add(availableView);
+        views.add(installedView);
+        views.add(updateView);
+
+        pager.setAdapter(new ViewPagerAdapter(mContext, views));
+        indicator.setViewPager(pager);
+        refreshAvailableList(true);
+
+        if(!ApplicationAptoide.MULTIPLESTORES){
+            addBreadCrumb("Store", ListDepth.CATEGORY1);
+        }else{
+            addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
+        }
+
+        if(!ApplicationAptoide.MATURECONTENTSWITCH){
+            featuredView.findViewById(R.id.toggleButton1).setVisibility(View.GONE);
+            featuredView.findViewById(R.id.adultcontent_label).setVisibility(View.GONE);
+        }
+    }
+
+    protected void latestClick(final String apkid) {
 
 		new Thread(new Runnable() {
 
@@ -2291,7 +2312,9 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 			unregisterReceiver(loginReceiver);
 			unregisterReceiver(newRepoReceiver);
 			unregisterReceiver(storePasswordReceiver);
-		}
+            unregisterReceiver(parseFailedReceiver);
+
+        }
 
 //		stopService(serviceDownloadManagerIntent);
 		generateXML();

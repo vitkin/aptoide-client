@@ -2,16 +2,16 @@
 <aptoideboot>
     <aptoideconf>
 
-        <!--<partnertype>basic</partnertype>-->
-        <!--<partnerid>933e4fb9b00ddeb538b7c7fc8f8c9cdc</partnerid>-->
-        <!--<defaultstorename>savou</defaultstorename>-->
+        <partnertype>basic</partnertype>
+        <partnerid> 735f7a5ef72500285cf5c00b276e29b7</partnerid>
+        <defaultstorename>magalhaest2</defaultstorename>
         <brand>http://www.aptoide.com/</brand>
         <splashscreen>http://www.aptoide.com/</splashscreen>
-        <maturecontentswitch>true</maturecontentswitch>
+        <maturecontentswitch>false</maturecontentswitch>
         <maturecontentswitchvalue>true</maturecontentswitchvalue>
-        <multiplestores>true</multiplestores>
-        <searchstores>true</searchstores>
-        <customeditorschoice>false</customeditorschoice>
+        <multiplestores>false</multiplestores>
+        <searchstores>false</searchstores>
+        <customeditorschoice>true</customeditorschoice>
         <aptoidetheme>0</aptoidetheme>
 
     </aptoideconf>
