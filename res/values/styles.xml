@@ -50,10 +50,11 @@
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
+		<item name="android:background">@drawable/highlight_overlay</item>        
     </style>
 
     <style name="breadcrumbs_style_aptoide" parent="breadcrumbs_style">
-        <item name="android:background">@drawable/back_breadcrumb_light</item>
+        <item name="android:drawableLeft">@drawable/ic_ab_back_holo_light</item>
     </style>
 
     <style name="breadcrumbs_style_dark" parent="breadcrumbs_style">
@@ -204,7 +205,7 @@
     </style>
 
     <style name="title_bar_bgd_aptoide">
-        <item name="android:background">@drawable/title_bar_bgd_aptoide</item>
+        <item name="android:background">@drawable/title_bar_bgd</item>
     </style>
 
     <!--  -->
@@ -218,6 +219,7 @@
         <item name="android:padding">10dp</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:singleLine">true</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
     </style>
 
 </resources>
