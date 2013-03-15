@@ -9,7 +9,7 @@
         <splashscreen>http://www.aptoide.com/</splashscreen>
         <maturecontentswitch>false</maturecontentswitch>
         <maturecontentswitchvalue>true</maturecontentswitchvalue>
-        <multiplestores>false</multiplestores>
+        <multiplestores>true</multiplestores>
         <searchstores>false</searchstores>
         <customeditorschoice>true</customeditorschoice>
         <aptoidetheme>0</aptoidetheme>

@@ -30,7 +30,8 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:text="@string/aptoide_version"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/darker_gray" />
 
     <ScrollView
         android:id="@+id/scrollview"
@@ -53,7 +54,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/credits"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@android:color/darker_gray" />
         </LinearLayout>
     </ScrollView>
 
@@ -72,7 +74,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/about_site"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/darker_gray" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -97,7 +100,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/about_mail"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/darker_gray" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -25,7 +25,8 @@
             android:layout_marginLeft="2dp"
             android:layout_marginTop="2dp"
             android:text="@string/username"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/darker_gray" />
 
         <EditText
             android:id="@+id/username"
@@ -42,7 +43,8 @@
             android:layout_marginLeft="2dp"
             android:layout_marginTop="2dp"
             android:text="@string/password"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/darker_gray" />
 
         <EditText
             android:id="@+id/password"

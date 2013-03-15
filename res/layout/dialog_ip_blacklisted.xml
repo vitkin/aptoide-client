@@ -25,7 +25,8 @@
             android:focusableInTouchMode="true"
             android:linksClickable="true"
             android:text="@string/ip_blacklisted_extended"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@android:color/darker_gray" />
 
         <LinearLayout
             android:layout_width="fill_parent"
