@@ -20,15 +20,15 @@
     <ImageView
         android:id="@+id/iv_icon"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:src="@android:drawable/sym_def_app_icon"/>
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/sym_def_app_icon" />
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center_vertical|center_horizontal"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="12sp" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="?attr/custom_color" />
 
 </LinearLayout>

@@ -6,46 +6,19 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/actionbar_bgd"
-        android:orientation="horizontal"
-        android:padding="5dp" >
-
-        <TextView
-            android:id="@+id/registration_intro"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="22dp"
-            android:text="@string/registration"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
-
-        <TextView
-            android:id="@+id/bazaar_url"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/registration_intro"
-            android:layout_below="@+id/registration_intro"
-            android:text="@string/bazaar_url"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/light_custom_gray" />
-    </RelativeLayout>
+    <TextView
+        style="@style/header_aptoide"
+        android:text="@string/new_account" />
 
     <ScrollView
         android:id="@+id/scroller"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/header"
         android:padding="5dp" >
 
         <LinearLayout
@@ -53,8 +26,27 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/registration_intro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="5dp"
+                android:text="@string/registration"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/bazaar_url"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:text="@string/bazaar_url"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
             <LinearLayout
-                android:id="@+id/BorderLinearLayout"
+                android:id="@+id/signup_layout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -68,8 +60,7 @@
                     android:layout_marginTop="2dp"
                     android:layout_weight="1"
                     android:text="@string/email"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <EditText
                     android:id="@+id/email_box"
@@ -89,8 +80,7 @@
                     android:layout_marginTop="2dp"
                     android:layout_weight="1"
                     android:text="@string/password"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <EditText
                     android:id="@+id/password_box"
@@ -99,14 +89,14 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="1"
                     android:ems="10"
-                    android:hint="@string/password_tip"
+                    android:hint="@string/password"
                     android:inputType="textPassword"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/signup_layout"
-                android:layout_width="fill_parent"
+                android:id="@+id/signup_button_layout"
+                android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical" >
@@ -124,10 +114,9 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="4dp"
                     android:text="@string/accept_terms"
-                    android:textColor="@color/dark_custom_gray"
-                    android:textSize="15sp" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

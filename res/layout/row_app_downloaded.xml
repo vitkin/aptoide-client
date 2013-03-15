@@ -35,8 +35,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@color/dark_custom_gray" />
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <ImageView
             android:id="@+id/downloaded_facebook_share"
@@ -44,7 +43,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:src="@android:drawable/ic_menu_share" />
-
     </LinearLayout>
 
 </LinearLayout>

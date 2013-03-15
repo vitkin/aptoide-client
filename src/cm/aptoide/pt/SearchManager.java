@@ -7,9 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import cm.aptoide.pt.adapters.InstalledAdapter;
-import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt.R;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,33 +15,41 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import cm.aptoide.pt.adapters.InstalledAdapter;
+import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
+        
 
-public class SearchManager extends FragmentActivity implements LoaderCallbacks<Cursor>{
+public class SearchManager extends FragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
 	ListView lv;
 	String query;
 //	EditText searchBox;
 	Database db;
 	View v;
+	TextView results;
 	private InstalledAdapter adapter;
 
 	@Override
 	protected void onCreate(Bundle arg0) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(arg0);
+		
 		System.out.println("onCreate Search");
 		db = Database.getInstance();
 		setContentView(R.layout.searchmanager);
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle(getString(R.string.search_on_aptoide));
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if(getIntent().hasExtra("search")){
 			query = getIntent().getExtras().getString("search");
 		}else{
@@ -53,17 +58,22 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		}
 		lv = (ListView) findViewById(R.id.listView);
 //		searchBox = (EditText) findViewById(R.id.search_box);
-		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.search_aptoide, null);
+		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.footer_search_aptoide, null);
 		lv.addFooterView(v);
-
-        if(!ApplicationAptoide.SEARCHSTORES){
+		
+		results = (TextView) v.findViewById(R.id.results_text);
+		
+		Button searchButton =  (Button) v.findViewById(R.id.baz_src);
+		
+		if(!ApplicationAptoide.SEARCHSTORES){
             findViewById(R.id.baz_src).setVisibility(View.GONE);
         }
 
-		Button bazaar_search =  (Button) v.findViewById(R.id.baz_src);
-		bazaar_search.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
+        
+		searchButton.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
 
-		bazaar_search.setOnClickListener(new OnClickListener() {
+
+		searchButton.setOnClickListener(new OnClickListener() {
 
 			public void onClick(View v) {
 				String url = "http://m.aptoide.com/searchview.php?search="+query;
@@ -75,6 +85,7 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 		adapter = new InstalledAdapter(this,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,db);
 		lv.setAdapter(adapter);
 
+		
 //		searchBox.setText(query);
 //		searchBox.addTextChangedListener(new TextWatcher() {
 //
@@ -125,9 +136,27 @@ public class SearchManager extends FragmentActivity implements LoaderCallbacks<C
 	}
 	public void onLoadFinished(Loader<Cursor> arg0, Cursor arg1) {
 		adapter.swapCursor(arg1);
-
+		TypedValue a = new TypedValue();
+		getTheme().resolveAttribute(R.attr.custom_color, a, true);
+		if(adapter.getCount()<=0){
+			results.setText(getString(R.string.no_results_found));
+			results.setTextColor(a.data);
+		}else{
+			results.setText(getString(R.string.found)+" "+adapter.getCount()+" "+getString(R.string.results));
+			results.setTextColor(a.data);
+		}
+		
 	}
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		adapter.swapCursor(null);
 	}
+	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 }

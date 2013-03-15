@@ -25,8 +25,7 @@
             android:focusableInTouchMode="true"
             android:linksClickable="true"
             android:text="@string/ip_blacklisted_extended"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
             android:layout_width="fill_parent"
@@ -46,7 +45,6 @@
                 android:layout_weight="1"
                 android:text="@android:string/cancel" />
         </LinearLayout>
-
     </RelativeLayout>
 
 </ScrollView>

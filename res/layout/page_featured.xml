@@ -18,10 +18,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <TextView
+            style="?attr/labelBackground"
+            android:text="@string/editors_choice" />
+
         <LinearLayout
             android:id="@+id/images"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/highlight_overlay"
+            android:clickable="true"
             android:orientation="vertical" >
 
             <ImageView
@@ -97,7 +103,7 @@
         </LinearLayout>
 
         <TextView
-            style="@style/label_style"
+            style="?attr/labelBackground"
             android:text="@string/top_apps" />
 
         <LinearLayout
@@ -109,13 +115,13 @@
 
         <TextView
             android:id="@+id/recommended_label"
-            style="@style/label_style"
+            style="?attr/labelBackground"
             android:text="@string/recommended_apps" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/custom_inside_background_color"
+            android:background="?attr/custom_inside_background_color"
             android:orientation="vertical" >
 
             <LinearLayout

@@ -15,14 +15,17 @@ import org.apache.http.params.HttpConnectionParams;
 import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt.R;
 
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 
-public class ScreenshotsViewer extends FragmentActivity {
+public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivity */{
 	
 	String url;
 	int position;
@@ -32,15 +35,23 @@ public class ScreenshotsViewer extends FragmentActivity {
 	
 	@Override
 	protected void onCreate(Bundle arg0) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(arg0);
+		
 		setContentView(R.layout.screenshotsviewer);
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle(getString(R.string.screenshots));
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		context = this;
 		final ViewPager screenshots = (ViewPager) findViewById(R.id.screenShotsPager);
 		final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 		pi.setCentered(true);
 		pi.setSnap(true);
 		pi.setRadius(7.5f);
-		pi.setFillColor(Color.BLACK);
+		TypedValue a = new TypedValue();
+		getTheme().resolveAttribute(R.attr.custom_color, a, true);
+		pi.setFillColor(a.data);
 		
 		new Thread(new Runnable() {
 			
@@ -70,4 +81,12 @@ public class ScreenshotsViewer extends FragmentActivity {
 		}).start();
 	}
 
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 }

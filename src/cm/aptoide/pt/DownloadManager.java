@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt;
 
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.app.Activity;
@@ -60,7 +61,7 @@ import cm.aptoide.pt.services.AIDLServiceDownloadManager;
  * @author dsilveira
  *
  */
-public class DownloadManager extends Activity {
+public class DownloadManager extends Activity /*SherlockActivity */{
 	private boolean isRunning = false;
 	
 	private LinearLayout downloading;
@@ -263,6 +264,7 @@ public class DownloadManager extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		SetAptoideTheme.setAptoideTheme(this);
 		if(!isRunning){
 			isRunning = true;
 
@@ -271,7 +273,10 @@ public class DownloadManager extends Activity {
 	    	}
 			
 			setContentView(R.layout.download_manager);
-
+//			getSupportActionBar().setIcon(R.drawable.brand_padding);
+//			getSupportActionBar().setTitle(getString(R.string.download_manager));
+//			getSupportActionBar().setHomeButtonEnabled(true);
+//			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
 			downloading.setVisibility(View.GONE);
 			
@@ -382,8 +387,10 @@ public class DownloadManager extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
-		Log.d("Aptoide-DownloadManager", "menuOption: " + menuEntry + " itemid: " + item.getItemId());
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
 		switch (item.getItemId()) {
 		case 0:
 			Log.d("Aptoide-DownloadManager", "clear all");
@@ -402,7 +409,7 @@ public class DownloadManager extends Activity {
 		default:
 			break;
 		}
-
+		
 		return super.onOptionsItemSelected(item);
 	}
 }

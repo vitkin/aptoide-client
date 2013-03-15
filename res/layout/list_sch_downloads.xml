@@ -13,22 +13,17 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/scheduled_downloads_intro"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/actionbar_bgd"
-        android:padding="10dp"
-        android:text="@string/setting_schdwntitle"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/white" />
+        android:id="@+id/sch_downloads_header"
+        style="@style/header_aptoide"
+        android:text="@string/schDwnBtn" />
 
     <RelativeLayout
         android:id="@+id/list_layout"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/sch_down"
-        android:layout_below="@+id/scheduled_downloads_intro"
-        android:background="@color/custom_inside_background_color" >
+        android:layout_below="@+id/sch_downloads_header"
+        android:background="?attr/custom_inside_background_color" >
 
         <ListView
             android:id="@android:id/list"
@@ -44,15 +39,14 @@
             android:layout_centerInParent="true"
             android:layout_margin="5dp"
             android:text="@string/no_sch_downloads"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/darker_gray" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
     </RelativeLayout>
 
     <Button
         android:id="@+id/sch_down"
         style="@style/gray_button_style"
-        android:text="@string/schDown_installselected"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true" />
+        android:layout_alignParentLeft="true"
+        android:text="@string/schDown_installselected" />
 
 </RelativeLayout>

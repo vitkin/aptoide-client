@@ -186,6 +186,9 @@
   <string name="btn_chlog">Changelog</string>
   <string name="btn_search_market">Procurar no Market</string>
   <string name="search_on_aptoide">Procurar no Aptoide</string>
+  <string name="no_results_found">Sem resultados</string>
+  <string name="found">Encontrou</string>
+  <string name="results">resultado(s)</string>
   <string name="schDwnBtn">Agendar download</string>
   <string name="search_log">Procurar</string>
   <string name="search_stores">noutras Lojas</string>
@@ -209,7 +212,7 @@
   <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
   <string name="google_play">Google Play</string>
   <string name="show_less">Mostrar menos</string>
-  <string name="no_descript">Indisponível</string>
+  <string name="no_descript">Indisponíerrorvel</string>
   <string name="about_txt2">www.aptoide.com</string>
   <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Escolha a loja para remover</string>
@@ -223,6 +226,8 @@
   <string name="md5_error">A verificação do md5 falhou para a aplicação descarregada!\nPor favor, actualize as suas lojas antes de tentar novamente.</string>
   <string name="network_error">Ocorreu um erro ao obter a aplicação.\nPor favor, tente novamente.</string>
   <string name="error_404">O ficheiro não foi encontrado na loja fornecida.\nPor favor, tente novamente mais tarde.</string>
+  <string name="parse_error">Erro no carregamento!</string>
+  <string name="parse_error_loading">Ocorreu um erro no carregamento da loja.\nQuer tentar novamente?</string>
   <string name="error_no_market">Você não tem o Google Market instalado!</string>
   <string name="newrepo_alrt">Você deseja adicionar esta loja à sua lista?\n\n</string>
   <string name="installapp_alrt">Você deseja instalar: \n\n</string>
@@ -245,7 +250,7 @@
   <string name="registration">Aptoide Registration</string>
   <string name="bazaar_url">www.aptoide.com</string>
   <string name="username">Email</string>
-  <string name="password">Password&#8230;</string>
+  <string name="password">Password</string>
   <string name="register">Registar</string>
   <string name="schDown_invertselection">Instalar seleccionados</string>
   <string name="schDown_removeselected">Remover os seleccionados</string>

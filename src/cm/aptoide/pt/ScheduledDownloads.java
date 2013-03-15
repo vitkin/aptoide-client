@@ -9,6 +9,7 @@ package cm.aptoide.pt;
 
 import java.util.HashMap;
 
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.app.AlertDialog;
@@ -51,7 +52,7 @@ import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
-public class ScheduledDownloads extends FragmentActivity implements LoaderCallbacks<Cursor>{
+public class ScheduledDownloads extends FragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
 	private Database db;
 	HashMap<String,ScheduledDownload> scheduledDownloadsHashMap = new HashMap<String, ScheduledDownload>();
 	ListView lv;
@@ -98,9 +99,14 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 
 	@Override
 	protected void onCreate(Bundle savedInstance) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstance);
+		
 		setContentView(R.layout.list_sch_downloads);
-
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle(R.string.setting_schdwntitle);
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		if(!isRunning){
 			isRunning = true;
 
@@ -455,4 +461,13 @@ public class ScheduledDownloads extends FragmentActivity implements LoaderCallba
 		super.onDestroy();
 	}
 
+//	@Override
+//	public boolean onOptionsItemSelected(
+//			cm.aptoide.com.actionbarsherlock.view.MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 }

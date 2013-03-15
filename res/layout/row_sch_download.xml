@@ -10,9 +10,8 @@
     android:id="@+id/pkg"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_background"
-    android:padding="10dp"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="10dp" >
 
     <ImageView
         android:id="@+id/appicon"
@@ -40,8 +39,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/secondary_text_light" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/appversion"
@@ -50,8 +48,7 @@
             android:layout_gravity="center_horizontal"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@android:color/darker_gray" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
     <CheckBox

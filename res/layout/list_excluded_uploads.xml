@@ -13,41 +13,27 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/tv_excluded_uploads"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/actionbar_bgd"
-        android:padding="10dp"
-        android:text="@string/excluded_updates"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/white" />
+        android:id="@+id/excluded_updates_header"
+        style="@style/header_aptoide"
+        android:text="@string/excluded_updates" />
 
-    <RelativeLayout
-        android:id="@+id/list_layout"
+    <ListView
+        android:id="@+id/excluded_updates_list"
         android:layout_width="fill_parent"
-        android:layout_height="379dp"
+        android:layout_height="fill_parent"
         android:layout_above="@+id/restore_update"
-        android:layout_below="@+id/tv_excluded_uploads"
-        android:background="@color/custom_inside_background_color"
-        android:padding="5dp" >
+        android:layout_below="@+id/excluded_updates_header"
+        android:cacheColorHint="@android:color/transparent" >
+    </ListView>
 
-        <ListView
-            android:id="@+id/excluded_updates_list"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:cacheColorHint="@android:color/transparent" >
-        </ListView>
-
-        <TextView
-            android:id="@+id/tv_no_excluded_downloads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="5dp"
-            android:text="@string/no_excluded_updates"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/darker_gray" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_no_excluded_downloads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="5dp"
+        android:text="@string/no_excluded_updates"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
         android:id="@+id/restore_update"

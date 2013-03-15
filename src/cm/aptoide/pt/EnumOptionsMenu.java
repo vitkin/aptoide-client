@@ -28,7 +28,7 @@ public enum EnumOptionsMenu {
 	LOGIN,
 	DOWNLOADMANAGER,
 	SCHEDULED_DOWNLOADS,
-	ABOUT;
+	ABOUT, SEARCH;
 	
 	
 	public static EnumOptionsMenu reverseOrdinal(int ordinal){

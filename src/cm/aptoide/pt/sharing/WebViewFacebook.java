@@ -10,9 +10,6 @@ package cm.aptoide.pt.sharing;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import cm.aptoide.pt.R;
-
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import cm.aptoide.pt.R;
 
 public class WebViewFacebook extends Activity {  
 	

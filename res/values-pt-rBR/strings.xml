@@ -187,6 +187,9 @@
   <string name="btn_chlog">Mudanças</string>
   <string name="btn_search_market">Pesquisar Mercado</string>
   <string name="search_on_aptoide">Procurar no Aptoide</string>
+  <string name="no_results_found">Sem resultados</string>
+  <string name="found">Encontrou</string>
+  <string name="results">resultado(s)</string>
   <string name="schDwnBtn">Agendar download</string>
   <string name="search_log">Pesquisa</string>
   <string name="search_stores">em outras Lojas</string>
@@ -224,6 +227,8 @@
   <string name="md5_error">A checagem de md5 do aplicativo falhou!\nPor favor atualize suas lojas antes de tentar novamente.</string>
   <string name="network_error">Ocorreu um erro ao buscar a aplicação.\nPor favor tente novamente.</string>
   <string name="error_404">O arquivo não foi encontrado na loja informada.\nPor favor tente novamente mais tarde.</string>
+  <string name="parse_error">Erro no carregamento!</string>
+  <string name="parse_error_loading">Ocorreu um erro no carregamento da loja.\nQuer tentar novamente?</string>
   <string name="error_no_market">Você não possui o Google Market instalado!</string>
   <string name="newrepo_alrt">Deseja adicionar essa loja à sua lista?\n\n</string>
   <string name="installapp_alrt">Deseja instalar: \n\n</string>
@@ -245,7 +250,7 @@
   <string name="addSchDown">Adicionado a Downloads Agendados</string>
   <string name="registration">Registro no Bazaar</string>
   <string name="bazaar_url">www.aptoide.com</string>
-  <string name="username">e-mail</string>
+  <string name="username">E-mail</string>
   <string name="password">Senha</string>
   <string name="register">Inscreva-se</string>
   <string name="schDown_invertselection">Inverter seleção</string>

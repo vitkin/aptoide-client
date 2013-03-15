@@ -24,7 +24,8 @@
                 android:title="@string/setting_ethernet" />
         </PreferenceScreen>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/setting_filters_title" >
+    <PreferenceCategory android:key="filters" 
+        android:title="@string/setting_filters_title" >
         <Preference
             android:key="hwspecs"
             android:summary="@string/setting_hwspecstitle"

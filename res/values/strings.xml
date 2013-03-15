@@ -65,6 +65,7 @@
     <string name="app_name">Aptoide</string>
     <string name="available_tab">Available</string>
     <string name="featured_tab">Featured</string>
+    <string name="editors_choice">Editors\' Choice</string>
     <string name="top_apps">Top Apps</string>
     <string name="installed_tab">Installed</string>
     <string name="updates_tab">Updates</string>
@@ -202,6 +203,9 @@
     <string name="btn_chlog">Changelog</string>
     <string name="btn_search_market">Search Market</string>
     <string name="search_on_aptoide">Search on Aptoide</string>
+    <string name="no_results_found">No results found</string>
+    <string name="found">Found</string>
+    <string name="results">result(s)</string>
     <string name="schDwnBtn">Schedule Download</string>
     <string name="search_log">Search</string>
     <string name="search_stores">in other Stores</string>
@@ -235,13 +239,15 @@
     <string name="repo_edt_msg2">Edit store</string>
     <string name="md5_auto_update_error">Update package checksum failed!  Keeping current version.</string>
     <string name="network_auto_update_error">Update connection failed!  Keeping current version.</string>
-    <string name="aptoide_update">Aptoide Update&#8230;</string>
+    <string name="aptoide_update">Aptoide Update</string>
     <string name="auto_updating">Please wait while processing update download&#8230;</string>
     <string name="update_self_title">Update available</string>
     <string name="update_self_msg">There is a new version of aptoide available,\ndo you wish to update?</string>
     <string name="md5_error">The downloaded application md5 check failed!\nPlease update your stores before retrying.</string>
     <string name="network_error">There has been an error while fetching the application.\nPlease try again.</string>
     <string name="error_404">File was not found in the given store.\nPlease try again later.</string>
+    <string name="parse_error">Loading error!</string>
+    <string name="parse_error_loading">There was an error on loading your store.\nDo you want to try again?</string>
     <string name="error_no_market">You don\'t have Google Market installed!</string>
     <string name="newrepo_alrt">Do you want to add this store to your list?\n\n</string>
     <string name="installapp_alrt">Do you wish to install: \n\n</string>
@@ -267,6 +273,7 @@
     <string name="username">Email</string>
     <string name="password">Password</string>
     <string name="register">Sign Up</string>
+    <string name="forgot_password">Forgot Password?</string>
     <string name="schDown_invertselection">Invert Selection</string>
     <string name="schDown_removeselected">Remove Selected</string>
     <string name="schDown_sureremove">Are you sure you want to remove?</string>
@@ -287,13 +294,12 @@
     <string name="password">Password</string>
     <string name="accept_terms">By signing up you are agreeing to the Aptoide Terms of Service and Aptoide Content Policy for Developers</string>
     <string name="register">Sign Up</string>
-    <string name="username_tip">Type your username</string>
+    <string name="username_tip">Type your email</string>
     <string name="password_tip">Choose a password</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_out">Sign Out</string>
     <string name="bazaar_login">Aptoide Login</string>
     <string name="my_account">My account</string>
-    <string name="username">Username</string>
     <string name="please_wait">Please Wait&#8230;</string>
     <string name="subject">Name</string>
     <string name="body">Body&#8230;</string>

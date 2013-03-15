@@ -7,13 +7,15 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.pt.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
 
-public class HWSpecActivity extends Activity {
+public class HWSpecActivity extends Activity /*SherlockActivity */{
 
 	
 	private HWSpecifications specs ;
@@ -27,9 +29,15 @@ public class HWSpecActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
+
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.hwspecs);
 		
+		setContentView(R.layout.hwspecs);
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle(getString(R.string.setting_hwspecstitle));
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		sdkVer= (TextView) findViewById(R.id.sdkver);
 		screenSize = (TextView) findViewById(R.id.screenSize);
@@ -42,4 +50,12 @@ public class HWSpecActivity extends Activity {
 		
 	}
 
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 }

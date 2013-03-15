@@ -30,8 +30,7 @@
                 android:layout_gravity="center_horizontal"
                 android:padding="10dp"
                 android:text="@string/trusted_classification"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/white" />
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
                 android:id="@+id/tv_scanned_with"
@@ -41,7 +40,6 @@
                 android:padding="10dp"
                 android:text="@string/scanned_with_av"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -69,8 +67,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:text="@string/norton_av"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/white" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
 
             <LinearLayout
@@ -98,8 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:text="@string/fsecure_av"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/white" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
 
             <LinearLayout
@@ -126,8 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:text="@string/mcafee_av"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/white" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
 
             <TextView
@@ -138,7 +133,6 @@
                 android:padding="10dp"
                 android:text="@string/compared_with_another_market"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@android:color/white"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -165,8 +159,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:text="@string/google_play"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/white" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
 
             <TextView
@@ -175,15 +168,9 @@
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:text="@string/about_aptoide_antimalware"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/white" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
     </ScrollView>
 
-    <Button
-        android:id="@+id/bt_ok"
-        style="@style/gray_button_style"
-        android:layout_alignParentBottom="true"
-        android:text="@android:string/ok" />
 
 </RelativeLayout>

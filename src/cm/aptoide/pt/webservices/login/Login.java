@@ -40,28 +40,35 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.Database;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.SetAptoideTheme;
 import cm.aptoide.pt.util.Algorithms;
 import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.R;
 
-public class Login extends Activity {
+public class Login extends Activity /*SherlockActivity */{
 	ProgressDialog pd;
 	EditText username_box;
 	EditText password_box;
 	String username;
 	String password;
-
+//	Button forgot_password;
+	
 	static Context context;
 	private boolean succeed = false;
 	private static SharedPreferences sPref;
@@ -70,8 +77,14 @@ public class Login extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
+		
 		context = this;
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle(getString(R.string.my_account));
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		pd = new ProgressDialog(context);
 		if (isLoggedIn(context)) {
 			setContentView(R.layout.form_logout);
@@ -80,6 +93,15 @@ public class Login extends Activity {
 			setContentView(R.layout.form_login);
 			username_box = (EditText) findViewById(R.id.username);
 			password_box = (EditText) findViewById(R.id.password);
+//			forgot_password = (Button) findViewById(R.id.forgot_password);
+//			forgot_password.setOnClickListener(new OnClickListener() {
+//				
+//				@Override
+//				public void onClick(View v) {
+//					Intent passwordRecovery = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aptoide.com/account/password-recovery"));
+//					startActivity(passwordRecovery);
+//				}
+//			});
 //			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
 //
 //				username = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
@@ -100,8 +122,8 @@ public class Login extends Activity {
 	// }
 
 	public void createUser(View v) {
-		startActivityForResult(new Intent(this, CreateUser.class),
-				CreateUser.REQUEST_CODE);
+		startActivityForResult(new Intent(this, CreateUser.class), CreateUser.REQUEST_CODE);
+		Log.d("","click " + v.getId());
 	}
 
 	public void login(View v) {
@@ -368,5 +390,14 @@ public class Login extends Activity {
 		}
 
 	}
+	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 
 }

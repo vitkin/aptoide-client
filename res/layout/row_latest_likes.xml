@@ -9,7 +9,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_background"
     android:orientation="horizontal"
     android:padding="10dp" >
 
@@ -25,8 +24,7 @@
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_custom_gray" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/user_like"
@@ -38,7 +36,7 @@
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@color/custom_color" />
+         android:textColor="?attr/custom_color"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
 
 </RelativeLayout>

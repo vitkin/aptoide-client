@@ -10,7 +10,6 @@
     android:id="@+id/pkg"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_background"
     android:orientation="horizontal"
     android:padding="10dp" >
 
@@ -32,8 +31,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/secondary_text_light" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
             android:id="@+id/excluded_update_details"
@@ -57,8 +55,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/apk_id"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/tv_apkid"
@@ -68,8 +65,7 @@
                     android:layout_marginLeft="3dp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
 
             <LinearLayout
@@ -87,8 +83,7 @@
                     android:ellipsize="end"
                     android:singleLine="true"
                     android:text="@string/vercode"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/tv_vercode"
@@ -97,10 +92,8 @@
                     android:layout_marginLeft="3dp"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
-
         </LinearLayout>
     </LinearLayout>
 

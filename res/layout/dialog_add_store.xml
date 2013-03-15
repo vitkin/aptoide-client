@@ -22,8 +22,7 @@
             android:layout_height="wrap_content"
             android:ems="20"
             android:text="@string/new_store"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/primary_text_dark" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
             android:id="@+id/edit_uri"

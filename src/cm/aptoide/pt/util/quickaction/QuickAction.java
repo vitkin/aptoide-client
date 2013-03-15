@@ -35,8 +35,8 @@ import cm.aptoide.pt.R;
  * - Kevin Peck <kevinwpeck@gmail.com>
  */
 public class QuickAction extends PopupWindows implements OnDismissListener {
-	private ImageView mArrowUp;
-	private ImageView mArrowDown;
+//	private ImageView mArrowUp;
+//	private ImageView mArrowDown;
 	private HorizontalScrollView layout;
 	private Animation mTrackAnim;
 	private LayoutInflater inflater;
@@ -109,8 +109,8 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 
 		layout = (HorizontalScrollView) mRootView.findViewById(R.id.scroll);
 		
-		mArrowDown 	= (ImageView) mRootView.findViewById(R.id.arrow_down);
-		mArrowUp 	= (ImageView) mRootView.findViewById(R.id.arrow_up);
+//		mArrowDown 	= (ImageView) mRootView.findViewById(R.id.arrow_down);
+//		mArrowUp 	= (ImageView) mRootView.findViewById(R.id.arrow_up);
 
 		//This was previously defined on show() method, moved here to prevent force close that occured
 		//when tapping fastly on a view to show quickaction dialog.
@@ -149,7 +149,7 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 		String title 	= action.getTitle();
 		Drawable icon 	= action.getIcon();
 		
-		View container	= (View) inflater.inflate(R.layout.quick_action_item, null);
+		View container	= (View) inflater.inflate(R.layout.row_quick_action_item, null);
 		
 		ImageView img 	= (ImageView) container.findViewById(R.id.iv_icon);
 		TextView text 	= (TextView) container.findViewById(R.id.tv_title);
@@ -240,11 +240,11 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 
 //		showArrow(((onTop) ? R.id.arrow_down : R.id.arrow_up), anchorRect.centerX());
 		
-		if(onTop){
-			layout.setBackgroundResource(R.drawable.popup_inline_above);
-		}else{
-			layout.setBackgroundResource(R.drawable.popup_inline);
-		}
+//		if(onTop){
+//			layout.setBackgroundResource(R.drawable.popup_inline_above);
+//		}else{
+//			layout.setBackgroundResource(R.drawable.popup_inline);
+//		}
 		
 //		setAnimationStyle(screenWidth, anchorRect.centerX(), onTop);
 	
@@ -261,7 +261,7 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 	 * @param onTop flag to indicate where the popup should be displayed. Set TRUE if displayed on top of anchor and vice versa
 	 */
 	private void setAnimationStyle(int screenWidth, int requestedX, boolean onTop) {
-		int arrowPos = requestedX - mArrowUp.getMeasuredWidth()/2;
+//		int arrowPos = requestedX - mArrowUp.getMeasuredWidth()/2;
 
 		switch (mAnimStyle) {
 
@@ -278,20 +278,20 @@ public class QuickAction extends PopupWindows implements OnDismissListener {
 	 * @param whichArrow arrow type resource id
 	 * @param requestedX distance from left screen
 	 */
-	private void showArrow(int whichArrow, int requestedX) {
-        final View showArrow = (whichArrow == R.id.arrow_up) ? mArrowUp : mArrowDown;
-        final View hideArrow = (whichArrow == R.id.arrow_up) ? mArrowDown : mArrowUp;
-
-        final int arrowWidth = mArrowUp.getMeasuredWidth();
-
-        showArrow.setVisibility(View.VISIBLE);
-        
-        ViewGroup.MarginLayoutParams param = (ViewGroup.MarginLayoutParams)showArrow.getLayoutParams();
-        
-        param.leftMargin = requestedX - arrowWidth / 2;
-      
-        hideArrow.setVisibility(View.INVISIBLE);
-    }
+//	private void showArrow(int whichArrow, int requestedX) {
+//        final View showArrow = (whichArrow == R.id.arrow_up) ? mArrowUp : mArrowDown;
+//        final View hideArrow = (whichArrow == R.id.arrow_up) ? mArrowDown : mArrowUp;
+//
+//        final int arrowWidth = mArrowUp.getMeasuredWidth();
+//
+//        showArrow.setVisibility(View.VISIBLE);
+//        
+//        ViewGroup.MarginLayoutParams param = (ViewGroup.MarginLayoutParams)showArrow.getLayoutParams();
+//        
+//        param.leftMargin = requestedX - arrowWidth / 2;
+//      
+//        hideArrow.setVisibility(View.INVISIBLE);
+//    }
 	
 	/**
 	 * Set listener for window dismissed. This listener will only be fired if the quicakction dialog is dismissed

@@ -2,13 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:drawable="@android:drawable/list_selector_background" android:state_pressed="true"/>
-    <item android:drawable="@android:color/darker_gray" android:state_focused="true"/>
+    <item android:drawable="@android:color/transparent" android:state_focused="true"/>
     <item><shape>
-            <gradient android:angle="270" android:endColor="@android:color/white" android:startColor="@color/light_custom_gray" />
+            <gradient android:angle="270" android:endColor="@color/dark_custom_color_midnight" android:startColor="@color/custom_color_midnight" />
 			
             <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
 
-            <stroke android:width="0.2dp" android:color="@color/lighter_custom_gray" />
+            <stroke android:width="0.2dp" android:color="@color/light_custom_color_midnight" />
 
         </shape></item>
 

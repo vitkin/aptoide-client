@@ -13,26 +13,19 @@
     android:orientation="vertical" >
 
     <include
-        android:id="@+id/actionbar"
-        android:layout_height="wrap_content"
-        layout="@layout/actionbar" />
+    android:id="@+id/actionbar"
+    android:layout_height="wrap_content"
+    layout="@layout/actionbar" />
 
-    <RelativeLayout
-        android:id="@+id/title_list"
+    <cm.aptoide.com.viewpagerindicator.TitlePageIndicator
+        android:id="@+id/indicator"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/title_bar_bgd"
-        android:gravity="center" >
-
-        <cm.aptoide.com.viewpagerindicator.TitlePageIndicator
-            android:id="@+id/indicator"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            app:footerColor="@color/middle_custom_color"
-            app:footerLineHeight="2dp"
-            app:selectedColor="@color/middle_custom_color" />
-    </RelativeLayout>
+        style="?attr/viewPagerIndicatorBackground"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        app:footerColor="?attr/custom_color"
+        app:footerLineHeight="1dp"
+        app:selectedColor="?attr/custom_color" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/viewpager"

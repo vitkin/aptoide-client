@@ -11,40 +11,43 @@
     android:layout_height="fill_parent"
     android:layout_gravity="center_horizontal"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="10dp" >
+    android:orientation="vertical" >
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:padding="5dp" >
+    <TextView
+        style="@style/header_aptoide"
+        android:text="@string/add_comment" />
 
-        <!-- Remove focus from subject on create -->
-
-        <EditText
-            android:id="@+id/name"
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/subject"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="5dp" >
 
-        <EditText
-            android:id="@+id/comment"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@+id/name"
-            android:gravity="top"
-            android:hint="@string/body"
-            android:inputType="textMultiLine"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </RelativeLayout>
+            <!-- Remove focus from subject on create -->
 
-    <Button
-        android:id="@+id/submitComment"
-        style="@style/gray_button_style"
-        android:onClick="postComment"
-        android:text="@string/submit" />
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/subject"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/comment"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_below="@+id/name"
+                android:gravity="top"
+                android:hint="@string/body"
+                android:inputType="textMultiLine"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/submitComment"
+            style="@style/gray_button_style"
+            android:onClick="postComment"
+            android:text="@string/submit" />
 
 </LinearLayout>

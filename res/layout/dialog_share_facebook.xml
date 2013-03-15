@@ -19,20 +19,20 @@
         android:orientation="vertical"
         android:padding="5dp" >
 
-        <TextView android:id="@+id/post_message"
+        <TextView
+            android:id="@+id/post_message"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:padding="5dp"
             android:text="@string/want_to_share"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/white" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
             android:id="@+id/fb_message"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/post_message"
-            android:background="@drawable/dialog_background"
+            style="?attr/storeDialogBackground"
             android:orientation="vertical" >
 
             <TextView
@@ -43,8 +43,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="5dp"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/darker_gray" />
+                android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <LinearLayout
                 android:id="@+id/text"
@@ -76,34 +75,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:singleLine="true"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
 
                     <TextView
                         android:id="@+id/share_store"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:singleLine="true"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@android:color/darker_gray" />
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
-        <!-- <CheckBox -->
-        <!-- android:id="@+id/like_us" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_marginLeft="10dp" -->
-        <!-- android:checked="true" -->
-        <!-- android:text="@string/like_us_on_facebook" -->
-        <!-- android:textColor="@android:color/white" /> -->
-
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/fb_message"
             android:layout_gravity="center"
-			android:layout_below="@+id/fb_message"
             android:orientation="horizontal" >
 
             <Button
@@ -118,7 +106,6 @@
                 android:layout_weight="1"
                 android:text="@string/dialog_no" />
         </LinearLayout>
-
     </RelativeLayout>
 
 </ScrollView>

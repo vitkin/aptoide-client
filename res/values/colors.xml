@@ -7,12 +7,8 @@
     <color name="twitter_color">#2eb6e5</color>
     
     <color name="dark_custom_color">#3c5505</color>
-    <color name="middle_custom_color">#597f07</color>
-    <color name="light_custom_color">#77aa0a</color>
-    
     <color name="custom_color">#547c00</color>
-    <color name="darker_custom_color">#496d00</color>
-    <color name="lighter_custom_color">#659405</color>
+    <color name="light_custom_color">#77aa0a</color>
     
     <color name="dark_custom_gray">#4c4c4c</color>
     <color name="medium_custom_gray">#c6c7c6</color>
@@ -21,4 +17,12 @@
     
     <color name="custom_background_color">#edece9</color>
     <color name="custom_inside_background_color">@android:color/white</color>
+    
+   <color name="custom_background_color_midnight">#0f0f0f</color> 
+   <color name="custom_inside_background_color_midnight">#414042</color>
+   
+   <color name="custom_color_midnight">#01008a</color>
+   <color name="dark_custom_color_midnight">#000029</color>
+   <color name="light_custom_color_midnight">#027bf0</color>
+       
 </resources>

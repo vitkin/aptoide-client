@@ -2,6 +2,8 @@ package cm.aptoide.pt;
 
 import java.util.ArrayList;
 
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -23,7 +25,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ExcludedUpdatesActivity extends Activity {
+public class ExcludedUpdatesActivity extends Activity /*SherlockActivity */{
 	ArrayList<ExcludedUpdate> excludedUpdates = new ArrayList<ExcludedUpdate>();
 	Database db = Database.getInstance();
 	ListView lv;
@@ -34,8 +36,14 @@ public class ExcludedUpdatesActivity extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.list_excluded_uploads);
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle(getString(R.string.excluded_updates));
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		lv = (ListView) findViewById(R.id.excluded_updates_list);
 		tv_no_excluded_downloads = (TextView) findViewById(R.id.tv_no_excluded_downloads);
 		context = this;
@@ -206,4 +214,13 @@ public class ExcludedUpdatesActivity extends Activity {
 		}
 	}
 
+//	@Override
+//	public boolean onOptionsItemSelected(
+//			cm.aptoide.com.actionbarsherlock.view.MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 }

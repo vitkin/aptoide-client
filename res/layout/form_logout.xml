@@ -6,39 +6,20 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
-    android:background="@color/custom_background_color"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/logoutlayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:background="@drawable/actionbar_bgd" >
-
-        <TextView
-            android:id="@+id/sign_out"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="22dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="@string/my_account"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
-    </RelativeLayout>
+    <TextView
+        style="@style/header_aptoide"
+        android:text="@string/logout" />
 
     <ScrollView
         android:id="@+id/scroller"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/header"
-        android:background="@color/custom_background_color"
         android:orientation="vertical"
         android:padding="5dp" >
 
@@ -62,8 +43,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
                     android:text="@string/logged_as"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
                     android:id="@+id/username"
@@ -73,8 +53,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
                     android:text="@string/password"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
             </LinearLayout>
 
             <Button
@@ -86,4 +65,4 @@
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

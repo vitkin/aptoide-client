@@ -33,8 +33,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -90,9 +88,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
@@ -107,20 +105,24 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
 import cm.aptoide.pt.Server.State;
 import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.adapters.UpdatesAdapter;
 import cm.aptoide.pt.adapters.ViewPagerAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.MainService;
-import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.services.MainService.LocalBinder;
+import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.sharing.WebViewFacebook;
 import cm.aptoide.pt.sharing.WebViewTwitter;
 import cm.aptoide.pt.util.Algorithms;
@@ -131,15 +133,8 @@ import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.login.Login;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
-import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
-
-public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cursor> {
+public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
 	private Intent serviceDownloadManagerIntent;
 
 	private final static int AVAILABLE_LOADER = 0;
@@ -229,6 +224,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					for (int i = a; i != res_ids.length; i++) {
 						ImageView v = (ImageView) featuredView
 								.findViewById(res_ids[i]);
+						
 //						imageLoader.DisplayImage(-1,
 //								image_urls.get(i).get("url"), v, mContext);
 						DisplayImageOptions options = new DisplayImageOptions.Builder()
@@ -366,8 +362,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 										.findViewById(R.id.rating))
 										.setRating(stars);
 								txtSamItem.setPadding(10, 0, 0, 0);
-								((TextView) txtSamItem.findViewById(R.id.version))
-									.setText(getString(R.string.version) +" "+ valuesRecommended.get(i).get("vername"));
+//								((TextView) txtSamItem.findViewById(R.id.version))
+//									.setText(getString(R.string.version) +" "+ valuesRecommended.get(i).get("vername"));
 								((TextView) txtSamItem.findViewById(R.id.downloads))
 									.setText("(" + valuesRecommended.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 								txtSamItem.setTag(valuesRecommended.get(i).get(
@@ -485,11 +481,18 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					Server server = new Server();
 					server.id = 1;
 					NetworkUtils utils = new NetworkUtils();
+					
+					URL url;
+					if(ApplicationAptoide.CUSTOMEDITORSCHOICE){
+                        url = new URL("http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/top.xml");
+                    }else{
+                        url = new URL("http://apps.store.aptoide.com/top.xml");
+                    }
+
 					BufferedInputStream bis = new BufferedInputStream(
 							utils
 									.getInputStream(
-											new URL(
-													"http://apps.store.aptoide.com/top.xml"),
+											url,
 											null, null, mContext), 8 * 1024);
 					f = File.createTempFile("tempFile","");
 					OutputStream out = new FileOutputStream(f);
@@ -555,8 +558,8 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 							.inflate(R.layout.row_grid_item, null);
 					((TextView) txtSamItem.findViewById(R.id.name))
 							.setText(values.get(i).get("name"));
-					((TextView) txtSamItem.findViewById(R.id.version))
-							.setText(getString(R.string.version) +" "+ values.get(i).get("vername"));
+//					((TextView) txtSamItem.findViewById(R.id.version))
+//							.setText(getString(R.string.version) +" "+ values.get(i).get("vername"));
 					((TextView) txtSamItem.findViewById(R.id.downloads))
 							.setText("(" + values.get(i).get("downloads") + " " + getString(R.string.downloads) + ")");
 					String hashCode = (values.get(i).get("apkid") +"|"+values.get(i).get("vercode"))+"";
@@ -740,6 +743,31 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 			}
 		}
 	};
+private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			AlertDialog failedDialog = new AlertDialog.Builder(context).create();
+			failedDialog.setIcon(android.R.drawable.ic_dialog_alert);
+			failedDialog.setTitle(getText(R.string.parse_error));
+			failedDialog.setMessage(getText(R.string.parse_error_loading));
+			failedDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+						getAllRepoStatus();
+				}
+			});
+			failedDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					return;
+				}
+
+			});
+			failedDialog.setCancelable(false);
+			failedDialog.show();
+		}
+	};
 	private long store_id;
 
 	private CursorAdapter updatesAdapter;
@@ -894,6 +922,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
+						if(!ApplicationAptoide.MULTIPLESTORES){
+							
+							getApplicationContext().sendBroadcast(new Intent("PARSE_FAILED"));	
+						}
 						e.printStackTrace();
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -1001,10 +1033,15 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		}
 
 	}
-
+	
+     
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
+//		menu.add(Menu.NONE, EnumOptionsMenu.SEARCH.ordinal(),
+//				EnumOptionsMenu.SEARCH.ordinal(), "Search")
+//				.setIcon(R.drawable.ic_search)
+//				.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW);
 		menu.add(Menu.NONE, EnumOptionsMenu.LOGIN.ordinal(),
 				EnumOptionsMenu.LOGIN.ordinal(), R.string.my_account)
 				.setIcon(android.R.drawable.ic_menu_edit);
@@ -1031,9 +1068,12 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		menu.add(Menu.NONE, EnumOptionsMenu.DOWNLOADMANAGER.ordinal(),
 				EnumOptionsMenu.DOWNLOADMANAGER.ordinal(), R.string.download_manager).setIcon(
 				android.R.drawable.ic_menu_save);
+		
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item
@@ -1041,6 +1081,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		Log.d("AptoideUploader-OptionsMenu", "menuOption: " + menuEntry
 				+ " itemid: " + item.getItemId());
 		switch (menuEntry) {
+//		case SEARCH:
+//			onSearchRequested();
+//			break;
 		case LOGIN:
 			Intent loginIntent = new Intent(this, Login.class);
 			startActivity(loginIntent);
@@ -1157,7 +1200,7 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 		final SharedPreferences sPref = PreferenceManager
 				.getDefaultSharedPreferences(this);
 		final Editor editor = sPref.edit();
-
+		
 		View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_order_popup,
 				null);
 		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(view);
@@ -1507,8 +1550,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
-
+		
 		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
 		startService(serviceDownloadManagerIntent);
 
@@ -1647,6 +1691,10 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 				registerReceiver(storePasswordReceiver , new IntentFilter("401"));
 				registerReceiver(redrawInstalledReceiver, new IntentFilter(
 						"pt.caixamagica.aptoide.REDRAW"));
+				if(!ApplicationAptoide.MULTIPLESTORES){
+					registerReceiver(parseFailedReceiver  , new IntentFilter("PARSE_FAILED"));
+				}
+				
 				registerReceiver(newRepoReceiver, new IntentFilter(
 						"pt.caixamagica.aptoide.NEWREPO"));
 				registered=true;
@@ -1860,6 +1908,9 @@ public class MainActivity extends FragmentActivity implements LoaderCallbacks<Cu
 						startActivity(i);
 					}
 				});
+//				getSupportActionBar().setIcon(R.drawable.brand_padding);
+//				getSupportActionBar().setTitle("");
+//				getSupportActionBar().setHomeButtonEnabled(false);
 				findViewById(R.id.btsearch).setOnClickListener(
 						new OnClickListener() {
 

@@ -10,7 +10,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_margin="2dp"
-    android:background="@drawable/griditem_bgd"
+    style="?attr/topAppItemBackground"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center_horizontal"
@@ -34,28 +34,18 @@
         <TextView
             android:id="@+id/name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingLeft="2dp"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/version"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:paddingLeft="2dp"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_gravity="right"
             android:layout_marginRight="2dp"
             android:layout_weight="1"
@@ -72,7 +62,6 @@
                 android:paddingRight="2dp"
                 android:singleLine="true"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@android:color/darker_gray"
                 android:visibility="gone" />
 
             <RatingBar

@@ -7,7 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt.sharing;
 
-import cm.aptoide.pt.R;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +15,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import cm.aptoide.pt.R;
 
 public class WebViewTwitter extends Activity {
 
@@ -27,7 +27,6 @@ public class WebViewTwitter extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview_twitter);
-
         url = "http://mobile.twitter.com/aptoide";
 
         try {

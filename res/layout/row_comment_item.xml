@@ -9,8 +9,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     android:layout_margin="5dp"
+    android:orientation="vertical"
     android:paddingLeft="8dip"
     android:paddingRight="8dip" >
 
@@ -28,7 +28,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_custom_gray"
             android:textStyle="bold" />
 
         <TextView
@@ -40,16 +39,15 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:paddingLeft="5dp"
+            android:textColor="?attr/custom_color"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_custom_gray"
             android:textStyle="italic" />
     </LinearLayout>
 
     <TextView
         android:id="@+id/content"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/dark_custom_gray" />
+        android:layout_height="wrap_content" />
 
     <View
         android:layout_width="fill_parent"

@@ -6,48 +6,23 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="fill_parent"
-    android:background="@color/custom_background_color"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/loginlayout"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:layout_above="@+id/login_button"
+    android:layout_below="@+id/header"
     android:orientation="vertical" >
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:padding="2dp"
-        android:background="@drawable/actionbar_bgd" >
-
-        <Button
-            android:id="@+id/register_link"
-            style="@style/custom_button_style"
-            android:layout_alignParentRight="true"
-            android:onClick="createUser"
-            android:text="@string/register" />
-
-        <TextView
-            android:id="@+id/sign_in"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="22dp"
-            android:layout_toLeftOf="@+id/register_link"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="@string/my_account"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="@android:color/white" />
-    </RelativeLayout>
+    <TextView
+        style="@style/header_aptoide"
+        android:text="@string/setcredentials" />
 
     <ScrollView
         android:id="@+id/scroller"
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/login_button"
-        android:layout_below="@+id/header"
-        android:background="@color/custom_background_color"
         android:orientation="vertical"
         android:padding="5dp" >
 
@@ -69,8 +44,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
                     android:text="@string/username"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <EditText
                     android:id="@+id/username"
@@ -87,8 +61,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
                     android:text="@string/password"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:textColor="@android:color/darker_gray" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <EditText
                     android:id="@+id/password"
@@ -97,7 +70,6 @@
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:singleLine="true" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -112,7 +84,40 @@
                     android:onClick="login"
                     android:text="@string/sign_in" />
             </LinearLayout>
+
+            <!-- <View -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_height="1dp" -->
+            <!-- android:layout_margin="25dp" -->
+            <!-- android:background="@android:color/darker_gray" /> -->
+
+
+            <!-- <LinearLayout -->
+            <!-- android:id="@+id/signup_button" -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:orientation="horizontal" > -->
+
+
+            <!-- <Button -->
+            <!-- android:id="@+id/forgot_password" -->
+            <!-- style="@style/gray_button_style" -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_gravity="right" -->
+            <!-- android:layout_weight="1" -->
+            <!-- android:text="@string/forgot_password" /> -->
+
+
+            <!-- <Button -->
+            <!-- android:id="@+id/register_link" -->
+            <!-- style="@style/gray_button_style" -->
+            <!-- android:layout_width="match_parent" -->
+            <!-- android:layout_gravity="right" -->
+            <!-- android:layout_weight="1" -->
+            <!-- android:onClick="createUser" -->
+            <!-- android:text="@string/register" /> -->
+            <!-- </LinearLayout> -->
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+</LinearLayout>

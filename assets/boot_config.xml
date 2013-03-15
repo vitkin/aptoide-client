@@ -8,7 +8,7 @@
         <brand>http://www.aptoide.com/</brand>
         <splashscreen>http://www.aptoide.com/</splashscreen>
         <maturecontentswitch>true</maturecontentswitch>
-        <maturecontentswitchvalue>false</maturecontentswitchvalue>
+        <maturecontentswitchvalue>true</maturecontentswitchvalue>
         <multiplestores>true</multiplestores>
         <searchstores>true</searchstores>
         <customeditorschoice>false</customeditorschoice>

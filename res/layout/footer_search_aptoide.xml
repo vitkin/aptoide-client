@@ -9,16 +9,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@android:color/white"
     android:orientation="vertical"
     android:tag="bazaar" >
 
-    <ImageView
-        android:id="@+id/bzr"
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/results_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:cropToPadding="true"
-        android:src="@drawable/logotipo" />
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="5dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
         android:id="@+id/baz_src"

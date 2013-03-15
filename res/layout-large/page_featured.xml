@@ -18,10 +18,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
+        <TextView
+            style="?attr/labelBackground"
+            android:text="@string/editors_choice" />
+
         <LinearLayout
             android:id="@+id/first_images_row"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            
+            
             android:orientation="horizontal" >
 
             <ImageView
@@ -38,6 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                style="@style/editorschoice_item_style_aptoide"
                 android:orientation="vertical" >
 
                 <ImageView
@@ -96,7 +103,7 @@
         </LinearLayout>
 
         <TextView
-            style="@style/label_style"
+            style="?attr/labelBackground"
             android:text="@string/top_apps" />
 
         <LinearLayout
@@ -108,13 +115,13 @@
 
         <TextView
             android:id="@+id/recommended_label"
-            style="@style/label_style"
+            style="?attr/labelBackground"
             android:text="@string/recommended_apps" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/custom_inside_background_color"
+            android:background="?attr/custom_inside_background_color"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -144,6 +151,7 @@
             android:paddingTop="5dp" >
 
             <TextView
+                android:id="@+id/adultcontent_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

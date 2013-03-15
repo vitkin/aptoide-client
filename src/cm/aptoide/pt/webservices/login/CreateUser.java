@@ -27,10 +27,13 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.pt.util.Algorithms;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.SetAptoideTheme;
 
-public class CreateUser extends Activity {
+public class CreateUser extends Activity /*SherlockActivity */{
 	
 	EditText username_box;
 	EditText password_box;
@@ -45,8 +48,13 @@ public class CreateUser extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.form_create_user);
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle(getString(R.string.registration));
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		context = this;
 		username_box = (EditText) findViewById(R.id.email_box);
 		password_box = (EditText) findViewById(R.id.password_box);
@@ -176,5 +184,14 @@ public class CreateUser extends Activity {
 		}
 		
 	}
+	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);	
+//	}
 }
 

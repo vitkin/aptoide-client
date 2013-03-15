@@ -10,26 +10,26 @@
     android:id="@+id/cntrl"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="10dp"
+    android:baselineAligned="false"
     android:gravity="center_vertical|top"
-    android:orientation="horizontal" android:baselineAligned="false">
+    android:orientation="horizontal"
+    android:padding="10dp" >
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="12sp"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
         android:layout_weight="0.5"
         android:gravity="center_vertical"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp" >
 
         <TextView
             android:id="@+id/category_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:textColor="@color/dark_custom_gray"
             android:textSize="21sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -38,25 +38,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="12sp"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
         android:baselineAligned="false"
         android:gravity="center_vertical|right"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:paddingBottom="7dp"
+        android:paddingTop="7dp" >
 
         <ImageView
             android:id="@+id/appicon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:cropToPadding="true"
-            android:visibility="gone"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_ab_back_holo_light" />
-
+            android:src="@drawable/ic_ab_back_holo_light"
+            android:visibility="gone" />
     </LinearLayout>
 
-</LinearLayout>
-<!--
+</LinearLayout><!--
  * Copyright (C) 2009  Roberto Jacinto
  * roberto.jacinto@caixamagica.pt
  *

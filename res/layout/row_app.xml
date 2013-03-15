@@ -10,8 +10,8 @@
     android:id="@+id/app_hashid"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="10dp"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:padding="10dp" >
 
     <ImageView
         android:id="@+id/app_icon"
@@ -37,7 +37,6 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/secondary_text_light"
             android:textStyle="bold" />
 
         <TextView
@@ -49,7 +48,6 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/dark_custom_gray"
             android:textStyle="bold" />
 
         <TextView
@@ -60,8 +58,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/dark_custom_gray" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
             android:id="@+id/uptodate_versionname"
@@ -72,8 +69,7 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/dark_custom_gray" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -92,7 +88,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:textColor="@color/dark_custom_gray"
             android:textSize="12sp" />
 
         <RatingBar

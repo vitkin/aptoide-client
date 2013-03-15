@@ -49,8 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="@string/please_wait"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/darker_gray" >
+        android:textAppearance="?android:attr/textAppearanceMedium" >
     </TextView>
 
 </RelativeLayout>

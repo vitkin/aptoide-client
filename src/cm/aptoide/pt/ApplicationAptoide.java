@@ -81,6 +81,7 @@ public class ApplicationAptoide extends Application {
 
 	@Override
 	public void onCreate() {
+		SetAptoideTheme.setAptoideTheme(this);
 		managerPreferences = new ManagerPreferences(getApplicationContext());
 		setContext(getApplicationContext());
 		 // Create global configuration and initialize ImageLoader with this configuration

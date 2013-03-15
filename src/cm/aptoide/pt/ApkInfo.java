@@ -22,8 +22,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.ActivityNotFoundException;
@@ -36,6 +38,12 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -44,6 +52,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -92,13 +101,15 @@ import cm.aptoide.pt.webservices.taste.Likes;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
+
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import cm.aptoide.com.nostra13.universalimageloader.utils.FileUtils;
 import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 
-public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor> {
+public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
 
 
 
@@ -158,8 +169,13 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
     @Override
 	protected void onCreate(Bundle arg0) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(arg0);
 		setContentView(R.layout.app_info);
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle("");
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		if(!isRunning){
 			isRunning = true;
@@ -256,6 +272,7 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 		}
 	};
+	@SuppressLint("NewApi")
 	private void loadElements(long id) {
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
 		findViewById(R.id.downloading_name).setVisibility(View.GONE);
@@ -367,6 +384,12 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 
 				//Malware badges
 				loadMalwareBadges();
+				if (Build.VERSION.SDK_INT >= 11)
+				{
+				    invalidateOptionsMenu();
+				}
+				
+				
                 new checkPaymentTask().execute();
 
 
@@ -406,13 +429,23 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 												trustedDialog.setIcon(R.drawable.badge_scanned);
 												trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
 												trustedDialog.setCancelable(true);
-												Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
-												okButton.setOnClickListener(new View.OnClickListener(){
-													@Override
-													public void onClick(View v) {
-														trustedDialog.dismiss();
-													}
+												
+												trustedDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
+														new Dialog.OnClickListener() {
+
+															@Override
+															public void onClick(DialogInterface arg0, int arg1) {
+																trustedDialog.dismiss();
+															}
+													
 												});
+//												Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
+//												okButton.setOnClickListener(new View.OnClickListener(){
+//													@Override
+//													public void onClick(View v) {
+//														trustedDialog.dismiss();
+//													}
+//												});
 												trustedDialog.show();
 											}
 										});
@@ -519,6 +552,10 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 		default:
 			break;
 		}
+		if (item.getItemId() == android.R.id.home) {
+			finish();
+			return true;
+		}
 
 		return super.onOptionsItemSelected(item);
 	}
@@ -575,9 +612,11 @@ public class ApkInfo extends FragmentActivity implements LoaderCallbacks<Cursor>
 							if(thumbnailList!=null&&thumbnailList.length>0){
 								String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
 								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,hashCode,false));
-								pi.setFillColor(Color.DKGRAY);
+								TypedValue a = new TypedValue();
+								getTheme().resolveAttribute(R.attr.custom_color, a, true);
+								pi.setFillColor(a.data);
 								pi.setViewPager(screenshots);
-								pi.setRadius(6.5f);
+								pi.setRadius(4.5f);
 								findViewById(R.id.screenshots_container).setVisibility(View.VISIBLE);
 								findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
 								if(originalList.size()==1){
@@ -959,10 +998,14 @@ OnClickListener installListener = new OnClickListener() {
 				findViewById(R.id.icon_manage).setVisibility(View.GONE);
 				findViewById(R.id.downloading_name).setVisibility(View.GONE);
 				findViewById(R.id.btinstall).setOnClickListener(installListener);
+				break;
+				
 			case RESTARTING:
 				break;
 
 			case STOPPED:
+				break;
+				
 			case COMPLETED:
 				if(actionBar!=null){
 					actionBar.dismiss();
@@ -1179,7 +1222,6 @@ OnClickListener installListener = new OnClickListener() {
                 TextView tv = new TextView(context);
                 tv.setText(context.getString(R.string.no_comments));
                 tv.setPadding(8, 2, 2, 2);
-                tv.setTextColor(context.getResources().getColor(android.R.color.darker_gray));
                 viewComments.addView(tv);
             }
             for(Comment comment : result){

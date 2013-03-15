@@ -90,7 +90,7 @@ public class DialogShareOnFacebook extends Dialog{
 
 		requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		setTitle(R.string.share);
-
+		
 		setContentView(R.layout.dialog_share_facebook);
 		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.facebook_bt);
 

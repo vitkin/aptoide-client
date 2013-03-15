@@ -20,11 +20,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.util.Log;
@@ -44,6 +46,7 @@ public class Settings extends PreferenceActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
         addPreferencesFromResource(R.xml.preferences);
         mctx = this;
         new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
@@ -115,6 +118,12 @@ public class Settings extends PreferenceActivity{
 				return true;
 			}
 		});
+		
+		if(!ApplicationAptoide.MATURECONTENTSWITCH){
+			CheckBoxPreference mCheckBoxPref = (CheckBoxPreference) findPreference("matureChkBox");
+			PreferenceCategory mCategory = (PreferenceCategory) findPreference("filters");
+			mCategory.removePreference(mCheckBoxPref);
+		}
 		
 		Preference showExcluded = (Preference) findPreference("showexcludedupdates");
 		showExcluded.setIntent(new Intent(getBaseContext(), ExcludedUpdatesActivity.class));

@@ -27,32 +27,27 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/order_popup_title1"
-                android:textColor="@android:color/primary_text_dark"
                 android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/org_rct"
                 android:checked="false"
-                android:text="@string/order_popup_lst1"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/order_popup_lst1" />
 
             <RadioButton
                 android:id="@+id/org_abc"
                 android:checked="false"
-                android:text="@string/order_popup_lst2"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/order_popup_lst2" />
 
             <RadioButton
                 android:id="@+id/org_rat"
                 android:checked="false"
-                android:text="@string/order_popup_lst3"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/order_popup_lst3" />
 
             <RadioButton
                 android:id="@+id/org_dwn"
                 android:checked="false"
-                android:text="@string/order_popup_lst4"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/order_popup_lst4" />
 
             <RadioButton
                     android:id="@+id/org_price"
@@ -73,20 +68,17 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/order_popup_title2"
-                android:textColor="@android:color/primary_text_dark"
                 android:textStyle="bold" />
 
             <RadioButton
                 android:id="@+id/shw_ct"
                 android:checked="false"
-                android:text="@string/order_popup_catg1"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/order_popup_catg1" />
 
             <RadioButton
                 android:id="@+id/shw_all"
                 android:checked="true"
-                android:text="@string/order_popup_catg2"
-                android:textColor="@android:color/darker_gray" />
+                android:text="@string/order_popup_catg2" />
         </RadioGroup>
 
         <TextView
@@ -95,7 +87,6 @@
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="@string/order_popup_title3"
-            android:textColor="@android:color/primary_text_dark"
             android:textStyle="bold" />
 
         <ToggleButton

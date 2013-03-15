@@ -9,15 +9,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/list_background"
-    android:padding="10dp"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:padding="10dp" >
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/in_marks" />
+        style="?attr/quotesInDrawable" />
 
     <TextView
         android:id="@+id/comment"
@@ -28,15 +25,11 @@
         android:ellipsize="marquee"
         android:gravity="center_vertical"
         android:maxLines="2"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/dark_custom_gray" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:src="@drawable/out_marks" />
+        style="?attr/quotesOutDrawable"/>
 
     <LinearLayout
         android:id="@+id/comment_info"
@@ -54,8 +47,7 @@
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/custom_color" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
         <TextView
             android:id="@+id/comment_owner"
@@ -67,9 +59,8 @@
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/custom_color" />
-        
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
         <TextView
             android:id="@+id/time"
             android:layout_width="fill_parent"
@@ -81,9 +72,8 @@
             android:paddingLeft="6dp"
             android:paddingRight="6dp"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="@color/dark_custom_color" />
-
+             android:textColor="?attr/custom_color"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
 </LinearLayout><!--

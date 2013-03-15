@@ -17,41 +17,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/setting_sdk_version"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/primary_text_dark" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/sdkver"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/secondary_text_dark_nodisable" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/screenSizeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/setting_screen_size"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/primary_text_dark" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/screenSize"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/secondary_text_dark_nodisable" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/esglVerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/setting_esgl_version"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@android:color/primary_text_dark" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
         android:id="@+id/esglVer"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/secondary_text_dark_nodisable" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

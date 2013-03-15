@@ -9,8 +9,11 @@ package cm.aptoide.pt.webservices.comments;
 
 import java.net.URL;
 
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.SetAptoideTheme;
 
 import android.app.Activity;
 import android.content.Context;
@@ -19,7 +22,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
-public class AddComment extends Activity {
+public class AddComment extends Activity /*SherlockActivity */{
 
 	
 	public static final int ADD_COMMENT_REQUESTCODE = 0;
@@ -34,8 +37,14 @@ public class AddComment extends Activity {
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.form_add_comment);
+//		getSupportActionBar().setIcon(R.drawable.brand_padding);
+//		getSupportActionBar().setTitle("Add comment");
+//		getSupportActionBar().setHomeButtonEnabled(true);
+//		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		context = this;
 		this.repo = getIntent().getStringExtra("repo");
 		this.apkid = getIntent().getStringExtra("apkid");
@@ -107,4 +116,13 @@ public class AddComment extends Activity {
 		System.out.println("onsaveinstancestate");
 		outState.putString("comment", comment_box.getText().toString());
 	}
+	
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			finish();
+//			return true;
+//		}
+//		return super.onOptionsItemSelected(item);
+//	}
 }

@@ -1,6 +1,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- custom button styles -->
     <style name="custom_button_style">
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">@android:color/white</item>
@@ -9,13 +12,21 @@
         <item name="android:textSize">15sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:shadowRadius">2</item>
-        <item name="android:background">@drawable/custom_color_button</item>
         <item name="android:padding">10dp</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
         <item name="android:textStyle">bold</item>
     </style>
 
-    <style name="gray_button_style">
+    <style name="custom_button_style_aptoide" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_aptoide</item>
+    </style>
+
+    <style name="custom_button_style_midnight" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_midnight</item>
+    </style>
+
+    <!-- gray button styles -->
+    <style name="gray_button_style" parent="@android:style/Widget.Button">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/button</item>
@@ -28,41 +39,74 @@
         <item name="android:textStyle">normal</item>
     </style>
 
-    <style name="base">
-        <item name="android:padding">10dp</item>
-    </style>
-
-    <style name="title" parent="@style/base">
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="body" parent="@style/base">
-        <item name="android:textColor">#000000</item>
-        <item name="android:textStyle">normal</item>
-    </style>
-
-    <style name="dialog">
-        <item name="android:fullDark">@drawable/dialog_body</item>
-        <item name="android:topDark">@drawable/dialog_title</item>
-        <item name="android:centerDark">@drawable/dialog_body</item>
-        <item name="android:bottomDark">@drawable/dialog_footer</item>
-        <item name="android:fullBright">@drawable/dialog_body</item>
-        <item name="android:centerBright">@drawable/dialog_body</item>
-        <item name="android:bottomBright">@drawable/dialog_footer</item>
-        <item name="android:bottomMedium">@drawable/dialog_footer</item>
-        <item name="android:centerMedium">@drawable/dialog_body</item>
-    </style>
-
-    <style name="breadcrumbs_text">
+    <!-- breadcrumbs button styles -->
+    <style name="breadcrumbs_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#A0A0A0</item>
         <item name="android:typeface">normal</item>
+        <item name="android:textStyle">normal</item>        
         <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:singleLine">true</item>
     </style>
 
+    <style name="breadcrumbs_style_aptoide" parent="breadcrumbs_style">
+        <item name="android:background">@drawable/back_breadcrumb_light</item>
+    </style>
+
+    <style name="breadcrumbs_style_dark" parent="breadcrumbs_style">
+        <item name="android:background">@drawable/back_breadcrumb_dark</item>
+    </style>
+
+    <!-- quotes styles -->
+    <style name="quotes_in_style_aptoide">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/in_marks_light</item>
+    </style>
+
+    <style name="quotes_in_style_dark">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/in_marks_dark</item>
+    </style>
+
+    <style name="quotes_out_style_aptoide">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/out_marks_light</item>
+        <item name="android:gravity">right</item>
+    </style>
+
+    <style name="quotes_out_style_dark">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:src">@drawable/out_marks_dark</item>
+        <item name="android:gravity">right</item>
+    </style>
+
+    <!-- quick action styles -->
+    <style name="quick_action_style_aptoide">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/popup_inline</item>
+        <item name="android:fadingEdgeLength">0dip</item>
+        <item name="android:paddingLeft">1dip</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <style name="quick_action_style">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/popup_inline_midnight</item>
+        <item name="android:fadingEdgeLength">0dip</item>
+        <item name="android:paddingLeft">1dip</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <!-- animation styles -->
     <style name="Animations" />
 
     <style name="Animations.PopDownMenu" />
@@ -79,17 +123,101 @@
         <item name="@android:windowExitAnimation">@anim/disappear</item>
     </style>
 
+    <!-- label styles -->
     <style name="label_style">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
-        <item name="android:textColor">@color/dark_custom_color</item>
-        <item name="android:background">@drawable/label_bgd</item>
+        <item name="android:textColor">?attr/custom_color</item>
         <item name="android:paddingBottom">5.0sp</item>
         <item name="android:paddingLeft">5.0sp</item>
         <item name="android:paddingRight">5.0sp</item>
         <item name="android:paddingTop">10.0dip</item>
         <item name="android:gravity">left</item>
+    </style>
+
+    <style name="label_style_light" parent="label_style">
+        <item name="android:background">@drawable/label_bgd_light</item>
+    </style>
+
+    <style name="label_style_dark" parent="label_style">
+        <item name="android:background">@drawable/label_bgd_dark</item>
+    </style>
+
+    <!-- apk info header styles -->
+    <style name="apk_info_separator_style_aptoide">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:gravity">right</item>
+        <item name="android:background">@drawable/apk_info_separator_aptoide</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="apk_info_separator_style_midnight" parent="apk_info_separator_style_aptoide">
+        <item name="android:background">@drawable/apk_info_separator_midnight</item>
+    </style>
+
+    <!-- top app item background styles -->
+    <style name="top_app_item_style_aptoide">
+        <item name="android:background">@drawable/griditem_bgd_aptoide</item>
+    </style>
+
+    <style name="editorschoice_item_style_aptoide">
+        <item name="android:background">@drawable/highlight_overlay</item>
+    </style>
+
+    <style name="top_app_item_style_midnight">
+        <item name="android:background">@drawable/griditem_bgd_midnight</item>
+    </style>
+
+    <!-- store dialog styles -->
+    <style name="store_dialog_style_aptoide">
+        <item name="android:background">@drawable/dialog_background_light</item>
+    </style>
+
+    <style name="store_dialog_style_dark">
+        <item name="android:background">@drawable/dialog_background_dark</item>
+    </style>
+
+    <!-- ic update styles -->
+    <style name="ic_update_style_aptoide">
+        <item name="android:src">@drawable/ic_update</item>
+    </style>
+
+    <style name="ic_update_style_midnight">
+        <item name="android:src">@drawable/ic_update_midnight</item>
+    </style>
+
+    <!-- ic menu more styles -->
+    <style name="ic_menu_more_style_aptoide">
+        <item name="android:src">@drawable/ic_menu_more</item>
+    </style>
+
+    <style name="ic_menu_more_style_midnight">
+        <item name="android:src">@drawable/ic_menu_more_midnight</item>
+    </style>
+
+    <!-- view page indicator background styles -->
+    <style name="title_bar_bgd_dark">
+        <item name="android:background">@drawable/title_bar_bgd_dark</item>
+    </style>
+
+    <style name="title_bar_bgd_aptoide">
+        <item name="android:background">@drawable/title_bar_bgd_aptoide</item>
+    </style>
+
+    <!--  -->
+    <style name="header_aptoide">
+        <item name="android:background">@drawable/actionbar_bgd_aptoide</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:singleLine">true</item>
     </style>
 
 </resources>

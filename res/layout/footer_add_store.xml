@@ -17,8 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:text="@string/merge_all_stores"
-        android:textColor="@android:color/darker_gray" />
+        android:text="@string/merge_all_stores" />
 
     <Button
         android:id="@+id/add_store"
