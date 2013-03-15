@@ -102,7 +102,7 @@ import cm.aptoide.pt.webservices.taste.Likes;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 
-import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
+
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -388,9 +388,11 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 				{
 				    invalidateOptionsMenu();
 				}
-				
-				
-                new checkPaymentTask().execute();
+
+                if(!getIntent().hasExtra("installed")){
+                    new checkPaymentTask().execute();
+                }
+
 
 
 			}
@@ -429,7 +431,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 												trustedDialog.setIcon(R.drawable.badge_scanned);
 												trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
 												trustedDialog.setCancelable(true);
-												
+
 												trustedDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
 														new Dialog.OnClickListener() {
 
@@ -437,7 +439,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 															public void onClick(DialogInterface arg0, int arg1) {
 																trustedDialog.dismiss();
 															}
-													
+
 												});
 //												Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
 //												okButton.setOnClickListener(new View.OnClickListener(){
@@ -999,13 +1001,13 @@ OnClickListener installListener = new OnClickListener() {
 				findViewById(R.id.downloading_name).setVisibility(View.GONE);
 				findViewById(R.id.btinstall).setOnClickListener(installListener);
 				break;
-				
+
 			case RESTARTING:
 				break;
 
 			case STOPPED:
 				break;
-				
+
 			case COMPLETED:
 				if(actionBar!=null){
 					actionBar.dismiss();
