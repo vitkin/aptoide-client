@@ -395,10 +395,12 @@
                 android:orientation="vertical" >
             </LinearLayout>
 
-            <Button
+           <Button
                 android:id="@+id/more_comments"
-                style="@style/gray_button_style"
+                android:layout_width="fill_parent"
+                android:layout_height="30dp"
                 android:background="@drawable/highlight_overlay"
+                android:drawablePadding="12.0dip"
                 android:drawableRight="@drawable/ic_more_arrow_right"
                 android:gravity="fill_vertical|right"
                 android:paddingLeft="5.0sp"
