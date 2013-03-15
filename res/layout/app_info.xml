@@ -398,13 +398,13 @@
            <Button
                 android:id="@+id/more_comments"
                 android:layout_width="fill_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:background="@drawable/highlight_overlay"
-                android:drawablePadding="12.0dip"
                 android:drawableRight="@drawable/ic_more_arrow_right"
                 android:gravity="fill_vertical|right"
                 android:paddingLeft="5.0sp"
                 android:paddingRight="5.0sp"
+                android:textColor="@android:color/darker_gray"
                 android:text="@string/comment_see_all"
                 android:visibility="gone" />
 
