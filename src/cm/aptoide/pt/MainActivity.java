@@ -2312,8 +2312,9 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 			unregisterReceiver(loginReceiver);
 			unregisterReceiver(newRepoReceiver);
 			unregisterReceiver(storePasswordReceiver);
-            unregisterReceiver(parseFailedReceiver);
-
+            if(!ApplicationAptoide.MULTIPLESTORES){
+                unregisterReceiver(parseFailedReceiver);
+            }
         }
 
 //		stopService(serviceDownloadManagerIntent);
