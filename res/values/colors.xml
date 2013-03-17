@@ -24,5 +24,9 @@
    <color name="custom_color_midnight">#01008a</color>
    <color name="dark_custom_color_midnight">#000029</color>
    <color name="light_custom_color_midnight">#027bf0</color>
+   
+   <color name="custom_color_magalhaes">#00aeef</color>
+   <color name="dark_custom_color_magalhaes">#1b3e5f</color>
+   <color name="light_custom_color_magalhaes">#449def</color>
        
 </resources>

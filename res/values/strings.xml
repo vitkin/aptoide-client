@@ -109,6 +109,7 @@
     <string name="submit">Submit</string>
     <string name="new_account">New account</string>
     <string name="setcredentials">Aptoide Login</string>
+    <string name="login_above_or_signup">Login above or signup here:</string>
     <string name="logged_as">You are logged as:</string>
     <string name="usernotdef">User not defined</string>
     <string name="passwordnotdef">Password not defined</string>

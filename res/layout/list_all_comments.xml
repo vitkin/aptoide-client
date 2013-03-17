@@ -13,7 +13,7 @@
     android:orientation="vertical" >
 
     <TextView
-        style="@style/header_aptoide"
+        style="?attr/customHeaderTextViewBackground"
         android:text="@string/comment_see_all" />
 
     <ScrollView

@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <attr name="brandSplashscreenDrawable" format="reference" />
+    <attr name="brandActionbarDrawable" format="reference" />
+    <attr name="customSearchButton" format="reference" />
+    <attr name="icUpdateDrawable" format="reference" />
+    <attr name="icMenuMoreDrawable" format="reference" />
+    <attr name="quotesInDrawable" format="reference" />
+    <attr name="quotesOutDrawable" format="reference" />
+    
     <attr name="custom_color" format="color" />
     <attr name="dark_custom_color" format="color" />
     <attr name="light_custom_color" format="color" />
     <attr name="custom_inside_background_color" format="color" />
-    <attr name="apkInfoHeaderBackground" format="reference"/>
-    <attr name="topAppItemBackground" format="reference"/>
-    <attr name="storeDialogBackground" format="reference"/>
-    <attr name="labelBackground" format="reference"/>
-    <attr name="icUpdateDrawable" format="reference"/>
-    <attr name="icMenuMoreDrawable" format="reference"/>
-    <attr name="breadcrumbStyle" format="reference"/>
-    <attr name="quotesInDrawable" format="reference"/>
-    <attr name="quotesOutDrawable" format="reference"/>
-    <attr name="popQuickActionBackground" format="reference"/>
-    <attr name="viewPagerIndicatorBackground" format="reference"/>
+
+    <attr name="apkInfoHeaderBackground" format="reference" />
+    <attr name="customHeaderTextViewBackground" format="reference" />
+    <attr name="customActionbarBackground" format="reference" />
+    <attr name="topAppItemBackground" format="reference" />
+    <attr name="storeDialogBackground" format="reference" />
+    <attr name="labelBackground" format="reference" />
+    <attr name="popQuickActionBackground" format="reference" />
+    <attr name="viewPagerIndicatorBackground" format="reference" />
+    <attr name="breadcrumbStyle" format="reference" />
 </resources>

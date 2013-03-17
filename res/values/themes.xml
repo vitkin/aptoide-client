@@ -5,16 +5,20 @@
     <style name="Aptoide.Theme" parent="@style/Theme.Sherlock.Light.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
-<!--         <item name="actionBarStyle">@style/Aptoide.Widget.Styled.ActionBar</item> -->
-<!--         <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Widget.Styled.ActionBar</item> -->
-<!--         <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
-<!--         <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
-<!--         <item name="android:actionMenuTextColor" tools:ignore="NewApi">@android:color/white</item> -->
+        <!-- <item name="actionBarStyle">@style/Aptoide.Widget.Styled.ActionBar</item> -->
+        <!-- <item name="android:actionBarStyle" tools:ignore="NewApi">@style/Aptoide.Widget.Styled.ActionBar</item> -->
+        <!-- <item name="actionOverflowButtonStyle">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
+        <!-- <item name="android:actionOverflowButtonStyle" tools:ignore="NewApi">@style/Widget.Sherlock.ActionButton.Overflow</item> -->
+        <!-- <item name="android:actionMenuTextColor" tools:ignore="NewApi">@android:color/white</item> -->
         <item name="android:buttonStyle">@style/custom_button_style_aptoide</item>
         <item name="custom_color">@color/custom_color</item>
         <item name="dark_custom_color">@color/dark_custom_color</item>
         <item name="light_custom_color">@color/light_custom_color</item>
         <item name="custom_inside_background_color">@color/custom_inside_background_color</item>
+        <item name="customActionbarBackground">@style/custom_actionbar_style_aptoide</item>
+        <item name="customHeaderTextViewBackground">@style/custom_header_style_aptoide</item>
+        <item name="customSearchButton">@style/custom_search_button_style_aptoide</item>
+        <item name="brandActionbarDrawable">@style/brand_style_aptoide</item>
         <item name="apkInfoHeaderBackground">@style/apk_info_separator_style_aptoide</item>
         <item name="topAppItemBackground">@style/top_app_item_style_aptoide</item>
         <item name="storeDialogBackground">@style/store_dialog_style_aptoide</item>
@@ -28,12 +32,13 @@
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_aptoide</item>
     </style>
 
-<!--     <style name="Aptoide.Widget.Styled.ActionBar" parent="Widget.Sherlock.ActionBar"> -->
-<!--         <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item> -->
-<!--         <item name="titleTextStyle">@android:color/white</item> -->
-<!--         <item name="background">@drawable/actionbar_bgd_aptoide</item> -->
-<!--         <item name="android:background">@drawable/actionbar_bgd_aptoide</item> -->
-<!--     </style> -->
+    <!-- <style name="Aptoide.Widget.Styled.ActionBar" parent="Widget.Sherlock.ActionBar"> -->
+    <!-- <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item> -->
+    <!-- <item name="titleTextStyle">@android:color/white</item> -->
+    <!-- <item name="background">@drawable/actionbar_bgd_aptoide</item> -->
+    <!-- <item name="android:background">@drawable/actionbar_bgd_aptoide</item> -->
+    <!-- </style> -->
+
 
     <!-- Midnight theme -->
     <style name="Aptoide.Theme.Midnight" parent="@style/Theme.Sherlock">
@@ -48,6 +53,8 @@
         <item name="dark_custom_color">@color/dark_custom_color_midnight</item>
         <item name="light_custom_color">@color/light_custom_color_midnight</item>
         <item name="custom_inside_background_color">@color/custom_inside_background_color_midnight</item>
+        <item name="customHeaderTextViewBackground">@style/custom_header_style_midnight</item>
+        <item name="customActionbarBackground">@style/custom_actionbar_style_midnight</item>
         <item name="apkInfoHeaderBackground">@style/apk_info_separator_style_midnight</item>
         <item name="topAppItemBackground">@style/top_app_item_style_midnight</item>
         <item name="storeDialogBackground">@style/store_dialog_style_dark</item>
@@ -57,7 +64,7 @@
         <item name="breadcrumbStyle">@style/breadcrumbs_style_dark</item>
         <item name="quotesInDrawable">@style/quotes_in_style_dark</item>
         <item name="quotesOutDrawable">@style/quotes_out_style_dark</item>
-        <item name="popQuickActionBackground">@style/quick_action_style</item>
+        <item name="popQuickActionBackground">@style/quick_action_style_midnight</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_dark</item>
     </style>
 
@@ -66,6 +73,31 @@
         <item name="android:background">@drawable/actionbar_bgd_midnight</item>
         <item name="android:titleTextStyle" tools:ignore="NewApi">@android:color/white</item>
         <item name="titleTextStyle">@android:color/white</item>
+    </style>
+
+    <style name="Aptoide.Theme.Magalhaes" parent="@style/Theme.Sherlock.Light.NoActionBar">
+        <item name="android:windowBackground">@color/custom_background_color</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:buttonStyle">@style/custom_button_style_magalhaes</item>
+        <item name="custom_color">@color/custom_color_magalhaes</item>
+        <item name="dark_custom_color">@color/dark_custom_color_magalhaes</item>
+        <item name="light_custom_color">@color/light_custom_color_magalhaes</item>
+        <item name="custom_inside_background_color">@color/custom_inside_background_color</item>
+        <item name="customSearchButton">@style/custom_search_button_style_magalhaes</item>
+        <item name="brandActionbarDrawable">@style/brand_style_magalhaes</item>
+        <item name="customActionbarBackground">@style/custom_actionbar_style_magalhaes</item>
+        <item name="customHeaderTextViewBackground">@style/custom_header_style_magalhaes</item>
+        <item name="apkInfoHeaderBackground">@style/apk_info_separator_style_magalhaes</item>
+        <item name="topAppItemBackground">@style/top_app_item_style_aptoide</item>
+        <item name="storeDialogBackground">@style/store_dialog_style_aptoide</item>
+        <item name="labelBackground">@style/label_style_light</item>
+        <item name="icUpdateDrawable">@style/ic_update_style_magalhaes</item>
+        <item name="icMenuMoreDrawable">@style/ic_menu_more_style_magalhaes</item>
+        <item name="breadcrumbStyle">@style/breadcrumbs_style_aptoide</item>
+        <item name="quotesInDrawable">@style/quotes_in_style_aptoide</item>
+        <item name="quotesOutDrawable">@style/quotes_out_style_aptoide</item>
+        <item name="popQuickActionBackground">@style/quick_action_style_magalhaes</item>
+        <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_aptoide</item>
     </style>
 
 </resources>

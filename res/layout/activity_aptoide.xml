@@ -14,7 +14,6 @@
 
     <include
     android:id="@+id/actionbar"
-    android:layout_height="wrap_content"
     layout="@layout/actionbar" />
 
     <cm.aptoide.com.viewpagerindicator.TitlePageIndicator

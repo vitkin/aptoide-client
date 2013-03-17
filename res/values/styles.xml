@@ -25,6 +25,10 @@
         <item name="android:background">@drawable/custom_color_button_midnight</item>
     </style>
 
+    <style name="custom_button_style_magalhaes" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_magalhaes</item>
+    </style>
+
     <!-- gray button styles -->
     <style name="gray_button_style" parent="@android:style/Widget.Button">
         <item name="android:layout_width">fill_parent</item>
@@ -45,12 +49,12 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#A0A0A0</item>
         <item name="android:typeface">normal</item>
-        <item name="android:textStyle">normal</item>        
+        <item name="android:textStyle">normal</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:singleLine">true</item>
-		<item name="android:background">@drawable/highlight_overlay</item>        
+        <item name="android:background">@drawable/highlight_overlay</item>
     </style>
 
     <style name="breadcrumbs_style_aptoide" parent="breadcrumbs_style">
@@ -89,22 +93,24 @@
     </style>
 
     <!-- quick action styles -->
-    <style name="quick_action_style_aptoide">
+    <style name="quick_action_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:background">@drawable/popup_inline</item>
         <item name="android:fadingEdgeLength">0dip</item>
         <item name="android:paddingLeft">1dip</item>
         <item name="android:scrollbars">none</item>
     </style>
 
-    <style name="quick_action_style">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
+    <style name="quick_action_style_aptoide" parent="quick_action_style">
+        <item name="android:background">@drawable/popup_inline</item>
+    </style>
+
+    <style name="quick_action_style_midnight">
         <item name="android:background">@drawable/popup_inline_midnight</item>
-        <item name="android:fadingEdgeLength">0dip</item>
-        <item name="android:paddingLeft">1dip</item>
-        <item name="android:scrollbars">none</item>
+    </style>
+
+    <style name="quick_action_style_magalhaes">
+        <item name="android:background">@drawable/popup_inline_midnight</item>
     </style>
 
     <!-- animation styles -->
@@ -146,7 +152,7 @@
     </style>
 
     <!-- apk info header styles -->
-    <style name="apk_info_separator_style_aptoide">
+    <style name="apk_info_separator_style">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentTop">true</item>
@@ -155,8 +161,16 @@
         <item name="android:padding">5dp</item>
     </style>
 
-    <style name="apk_info_separator_style_midnight" parent="apk_info_separator_style_aptoide">
+    <style name="apk_info_separator_style_aptoide" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_aptoide</item>
+    </style>
+
+    <style name="apk_info_separator_style_midnight" parent="apk_info_separator_style">
         <item name="android:background">@drawable/apk_info_separator_midnight</item>
+    </style>
+
+    <style name="apk_info_separator_style_magalhaes" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_magalhaes</item>
     </style>
 
     <!-- top app item background styles -->
@@ -169,6 +183,10 @@
     </style>
 
     <style name="top_app_item_style_midnight">
+        <item name="android:background">@drawable/griditem_bgd_midnight</item>
+    </style>
+
+    <style name="top_app_item_style_magalhaes">
         <item name="android:background">@drawable/griditem_bgd_midnight</item>
     </style>
 
@@ -190,6 +208,10 @@
         <item name="android:src">@drawable/ic_update_midnight</item>
     </style>
 
+    <style name="ic_update_style_magalhaes">
+        <item name="android:src">@drawable/ic_update_magalhaes</item>
+    </style>
+
     <!-- ic menu more styles -->
     <style name="ic_menu_more_style_aptoide">
         <item name="android:src">@drawable/ic_menu_more</item>
@@ -197,6 +219,10 @@
 
     <style name="ic_menu_more_style_midnight">
         <item name="android:src">@drawable/ic_menu_more_midnight</item>
+    </style>
+
+    <style name="ic_menu_more_style_magalhaes">
+        <item name="android:src">@drawable/ic_menu_more_magalhaes</item>
     </style>
 
     <!-- view page indicator background styles -->
@@ -208,9 +234,8 @@
         <item name="android:background">@drawable/title_bar_bgd</item>
     </style>
 
-    <!--  -->
-    <style name="header_aptoide">
-        <item name="android:background">@drawable/actionbar_bgd_aptoide</item>
+    <!-- header background textview -->
+    <style name="custom_textview_header_style">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_alignParentTop">true</item>
@@ -220,6 +245,69 @@
         <item name="android:textColor">@android:color/white</item>
         <item name="android:singleLine">true</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Large</item>
+    </style>
+
+    <style name="custom_header_style_aptoide" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_aptoide</item>
+    </style>
+
+    <style name="custom_header_style_midnight" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_midnight</item>
+    </style>
+
+    <style name="custom_header_style_magalhaes" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_magalhaes</item>
+    </style>
+
+    <!-- actionbar background -->
+    <style name="custom_actionbar_style_aptoide">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_aptoide</item>
+    </style>
+
+    <style name="custom_actionbar_style_midnight">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_aptoide</item>
+    </style>
+
+    <style name="custom_actionbar_style_magalhaes">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_magalhaes</item>
+    </style>
+
+    <!-- search button background -->
+    <style name="custom_search_button_style">
+        <item name="android:layout_width">61dp</item>
+        <item name="android:layout_height">38dp</item>
+        <item name="android:padding">3dp</item>
+        <item name="android:src">@drawable/ic_search</item>
+    </style>
+
+    <style name="custom_search_button_style_aptoide" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_aptoide</item>
+    </style>
+
+    <style name="custom_search_button_style_magalhaes" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_magalhaes</item>
+    </style>
+    
+    <!-- brand -->
+    <style name="brand_style">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scaleType">fitStart</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="brand_style_aptoide" parent="brand_style">
+        <item name="android:src">@drawable/brand_aptoide</item>
+    </style>
+
+    <style name="brand_style_magalhaes" parent="brand_style">
+        <item name="android:src">@drawable/brand_magalhaes</item>
     </style>
 
 </resources>

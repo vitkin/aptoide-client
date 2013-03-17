@@ -14,7 +14,7 @@
 
     <TextView
         android:id="@+id/excluded_updates_header"
-        style="@style/header_aptoide"
+        style="?attr/customHeaderTextViewBackground"
         android:text="@string/excluded_updates" />
 
     <ListView

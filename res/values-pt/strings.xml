@@ -269,6 +269,7 @@
   <string name="sign_in">Login</string>
   <string name="sign_out">Terminar sessão</string>
   <string name="bazaar_login">Aptoide Login</string>
+  <string name="login_above_or_signup">Inicie a sessão ou registe-se aqui:</string>
   <string name="my_account">A minha conta</string>
   <string name="clearcache_sum">Apaga a cache (icons, screenshots) do cartão SD.</string>
   <string name="clearcontent_sum">Apaga o conteúdo da pasta .aptoide do cartão SD.</string>

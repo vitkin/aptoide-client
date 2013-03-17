@@ -14,7 +14,7 @@
 
     <TextView
         android:id="@+id/sch_downloads_header"
-        style="@style/header_aptoide"
+        style="?attr/customHeaderTextViewBackground"
         android:text="@string/schDwnBtn" />
 
     <RelativeLayout

@@ -17,6 +17,9 @@ public class SetAptoideTheme {
 			case APTOIDE_THEME_MIDNIGHT:
 				activity.setTheme(R.style.Aptoide_Theme_Midnight);
 				break;
+			case APTOIDE_THEME_MAGALHAES:
+				activity.setTheme(R.style.Aptoide_Theme_Magalhaes);
+				break;
 			default:
 				activity.setTheme(R.style.Aptoide_Theme);
 				break;

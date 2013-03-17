@@ -6,7 +6,6 @@
   which accompanies this distribution, and is available at
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/loginlayout"
     android:layout_width="fill_parent"
@@ -15,9 +14,24 @@
     android:layout_below="@+id/header"
     android:orientation="vertical" >
 
-    <TextView
-        style="@style/header_aptoide"
-        android:text="@string/setcredentials" />
+    <RelativeLayout
+        android:id="@+id/loginheader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            style="?attr/customHeaderTextViewBackground"
+            android:text="@string/setcredentials" />
+
+        <Button
+            android:id="@+id/register_link"
+            style="@style/custom_button_style"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:onClick="createUser"
+            android:text="@string/register" />
+
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/scroller"

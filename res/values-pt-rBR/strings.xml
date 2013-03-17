@@ -172,6 +172,7 @@
   <string name="recommended_text">Faça login para ver os melhores aplicativos para você</string>
   <string name="you_need_to_login">Necessita de login para ver os aplicativos recomendados para você</string>
   <string name="you_need_to_login_toast">Necessita de login</string>
+  <string name="login_above_or_signup">Inicie a sessão ou registe-se aqui:</string>
   <string name="no_recommended_apps">Não foram encontrados aplicativos. Precisamos de mais interação sua. Faça descarregamentos!</string>
   <string name="no_recommended_toast">Sem aplicativos recomendados</string>
   <string name="all_updated">Todas os aplicativos estão actualizados!</string>

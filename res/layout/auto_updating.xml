@@ -24,7 +24,7 @@
 
     <TextView
         android:id="@+id/sign_in"
-        style="@style/header_aptoide"
+        style="?attr/customHeaderTextViewBackground"
         android:text="@string/aptoide_update"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 

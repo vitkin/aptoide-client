@@ -23,7 +23,8 @@ package cm.aptoide.pt;
 public enum EnumAptoideThemes {
 	
 	APTOIDE_THEME,
-	APTOIDE_THEME_MIDNIGHT;
+	APTOIDE_THEME_MIDNIGHT, 
+	APTOIDE_THEME_MAGALHAES;
 	
 	
 	public static EnumAptoideThemes reverseOrdinal(int ordinal){
