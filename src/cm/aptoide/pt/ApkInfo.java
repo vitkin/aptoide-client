@@ -8,7 +8,6 @@
 package cm.aptoide.pt;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -18,14 +17,12 @@ import android.os.*;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
 import cm.aptoide.pt.webservices.comments.Comment;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
 import android.content.ActivityNotFoundException;
@@ -34,7 +31,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
@@ -78,8 +74,6 @@ import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.contentloaders.ViewApkLoader;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
-import cm.aptoide.pt.sharing.WebViewFacebook;
-import cm.aptoide.pt.sharing.WebViewTwitter;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
@@ -93,7 +87,6 @@ import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.comments.AddComment;
-import cm.aptoide.pt.webservices.comments.Comments;
 import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
@@ -106,7 +99,6 @@ import com.google.ads.AdView;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import cm.aptoide.com.nostra13.universalimageloader.utils.FileUtils;
 import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
@@ -165,6 +157,9 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 	};
     private double price;
     private boolean isPaid;
+    private ViewGroup viewLikes;
+    private ViewGroup viewLikesButton;
+    private View loading;
 
 
     @Override
@@ -172,6 +167,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(arg0);
 		setContentView(R.layout.app_info);
+
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle("");
 //		getSupportActionBar().setHomeButtonEnabled(true);
@@ -274,6 +270,19 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 	};
 	@SuppressLint("NewApi")
 	private void loadElements(long id) {
+        viewComments = (ViewGroup) findViewById(R.id.commentContainer);
+        viewComments.removeAllViews();
+        viewLikes = (ViewGroup) findViewById(R.id.likesLayout);
+        loading = LayoutInflater.from(context).inflate(R.layout.loadingfootercomments, null);
+        viewComments.addView(loading, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        viewLikesButton = (ViewGroup) findViewById(R.id.ratings);
+        ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.loading_likes));
+        ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
+
+
+
+
 		findViewById(R.id.downloading_icon).setVisibility(View.GONE);
 		findViewById(R.id.downloading_name).setVisibility(View.GONE);
 		findViewById(R.id.download_progress).setVisibility(View.GONE);
@@ -306,6 +315,26 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 				adView.loadAd(new AdRequest());
 				pd.dismiss();
 				viewApk = arg1;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadDescription();
+                    }
+                }).start();
+
+                if(viewApk.getLikes()!=-1){
+                    setLikes(viewApk.getLikes()+"", viewApk.getDislikes()+"");
+                }
+
+                if(viewApk.getComments().size()>0){
+                    setComments(viewApk.getComments());
+                    loading.setVisibility(View.GONE);
+                }
+
+                loadScreenshots();
+
+                //viewApk.getWebservicePath
+
 				int installedVercode = db.getInstalledAppVercode(viewApk.getApkid());
 
 				if(installedVercode<=viewApk.getVercode()&&installedVercode!=0){
@@ -322,8 +351,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 					}else{
 						((Button) findViewById(R.id.btinstall)).setText(R.string.install);
 					}
-
-					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
+                    findViewById(R.id.inst_version).setVisibility(View.GONE);
 				}
 
 				if(installedVercode==viewApk.getVercode()){
@@ -332,17 +360,13 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 					}else{
 						((Button) findViewById(R.id.btinstall)).setText(R.string.install);
 					}
-					((TextView) findViewById(R.id.inst_version)).setVisibility(View.GONE);
+					findViewById(R.id.inst_version).setVisibility(View.GONE);
 				}
 
-				final long repo_id = viewApk.getRepo_id();
+
 				repo_string = viewApk.getRepoName();
 				checkDownloadStatus();
-				if(category.equals(Category.ITEMBASED)||category.equals(Category.EDITORSCHOICE)||category.equals(Category.TOPFEATURED)){
-					webservicespath = "http://webservices.aptoide.com/";
-				}else{
-					webservicespath = db.getWebServicesPath(repo_id);
-				}
+				webservicespath = viewApk.getWebservicesPath();
 
 				try {
 					((RatingBar) findViewById(R.id.ratingbar)).setRating(Float.parseFloat(viewApk.getRating()));
@@ -355,7 +379,6 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 				((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 //				ImageLoader imageLoader = ImageLoader.getInstance(context);
 //				imageLoader.DisplayImage(viewApk.getIcon(),(ImageView) findViewById(R.id.app_icon), context, (viewApk.getApkid()+"|"+viewApk.getVercode()));
-				Log.d("APKInfo Icon Hash","hash: " + (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
 				DisplayImageOptions options = new DisplayImageOptions.Builder()
 				 .displayer(new FadeInBitmapDisplayer(1000))
 				 .showStubImage(android.R.drawable.sym_def_app_icon)
@@ -363,7 +386,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 				 .cacheInMemory()
 				 .cacheOnDisc()
 				 .build();
-				ImageLoader.getInstance().displayImage(viewApk.getIcon(), (ImageView) findViewById(R.id.app_icon), options, null, (viewApk.getApkid()+"|"+viewApk.getVercode()).hashCode()+"");
+				ImageLoader.getInstance().displayImage(viewApk.getIcon(), (ImageView) findViewById(R.id.app_icon), options, null, (viewApk.getApkid()+"|"+viewApk.getVercode()));
 
 
                 new GetApkInfo().execute();
@@ -392,6 +415,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 if(!getIntent().hasExtra("installed")){
                     new checkPaymentTask().execute();
                 }
+
 
 
 
@@ -565,44 +589,44 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 	/**
 	 *
 	 */
-	private void loadScreenshots(final JSONArray array) {
+	private void loadScreenshots() {
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try{
 
-					final ArrayList<String> originalList = new ArrayList<String>();;
-					switch (category) {
-					case TOP:
-					case LATEST:
-					case ITEMBASED:
-					case EDITORSCHOICE:
-					case TOPFEATURED:
-					case USERBASED:
-						db.getScreenshots(originalList,viewApk,category);
-						thumbnailList = new String[originalList.size()];
-
-						for ( int i = 0; i!= originalList.size();i++){
-							thumbnailList[i]=screenshotToThumb(originalList.get(i));
-						}
-
-						break;
-
-					case INFOXML:
-                        thumbnailList = new String[array.length()];
-						for ( int i = 0; i!= array.length();i++){
-							thumbnailList[i]=screenshotToThumb(array.getString(i));
-						}
-
-						for(int i=0;i < array.length();i++){
-							originalList.add(array.getString(i));
-						}
-						break;
-
-					default:
-						break;
-					}
+					final ArrayList<String> originalList = viewApk.getScreenshots();
+//					switch (category) {
+//					case TOP:
+//					case LATEST:
+//					case ITEMBASED:
+//					case EDITORSCHOICE:
+//					case TOPFEATURED:
+//					case USERBASED:
+//						db.getScreenshots(originalList,viewApk,category);
+//						thumbnailList = new String[originalList.size()];
+//
+//						for ( int i = 0; i!= originalList.size();i++){
+//							thumbnailList[i]=screenshotToThumb(originalList.get(i));
+//						}
+//
+//						break;
+//
+//					case INFOXML:
+//                        thumbnailList = new String[array.length()];
+//						for ( int i = 0; i!= array.length();i++){
+//							thumbnailList[i]=screenshotToThumb(array.getString(i));
+//						}
+//
+//						for(int i=0;i < array.length();i++){
+//							originalList.add(array.getString(i));
+//						}
+//						break;
+//
+//					default:
+//						break;
+//					}
 					final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
 					final CustomViewPager screenshots = (CustomViewPager) findViewById(R.id.screenShotsPager);
 
@@ -611,9 +635,9 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 					runOnUiThread(new Runnable() {
 
 						public void run() {
-							if(thumbnailList!=null&&thumbnailList.length>0){
+							if(originalList!=null&&originalList.size()>0){
 								String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,thumbnailList,originalList,hashCode,false));
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,originalList,hashCode,false));
 								TypedValue a = new TypedValue();
 								getTheme().resolveAttribute(R.attr.custom_color, a, true);
 								pi.setFillColor(a.data);
@@ -656,85 +680,87 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 				} catch (Exception e){
 					e.printStackTrace();
 				}
-				Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
 
-				description_text = "";
-				System.out.println(c.getCount());
-				if(c.moveToFirst()){
-					description_text = c.getString(0);
-				}else{
-					description_text=getString(R.string.no_descript);
-				}
-
-				c.close();
-
-
-				runOnUiThread(new Runnable() {
-
-					@Override
-					public void run() {
-
-						final TextView description = (TextView) findViewById(R.id.descript);
-						description.setText(description_text);
-						if(description.getLineCount()>10){
-							description.setMaxLines(10);
-							findViewById(R.id.show_all_description).setVisibility(View.VISIBLE);
-							findViewById(R.id.show_all_description).setOnClickListener(new OnClickListener() {
-
-
-								@Override
-								public void onClick(View v) {
-
-									if(collapsed){
-										collapsed=false;
-										scrollPosition = (int)((ScrollView)findViewById(R.id.app_info_scroller)).getScrollY();
-										description.setMaxLines(Integer.MAX_VALUE);
-										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
-										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
-									}else{
-										collapsed=true;
-										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
-										description.setMaxLines(10);
-										((ScrollView)findViewById(R.id.app_info_scroller)).scrollTo(0, scrollPosition);
-										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
-									}
-								}
-							});
-							findViewById(R.id.description_container).setOnClickListener(new OnClickListener() {
-
-
-								@Override
-								public void onClick(View v) {
-
-									if(collapsed){
-										collapsed=false;
-										scrollPosition = (int)((ScrollView)findViewById(R.id.app_info_scroller)).getScrollY();
-										description.setMaxLines(Integer.MAX_VALUE);
-										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
-										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
-									}else{
-										collapsed=true;
-										((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
-										description.setMaxLines(10);
-										((ScrollView)findViewById(R.id.app_info_scroller)).scrollTo(0, scrollPosition);
-										((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
-									}
-								}
-							});
-						}
-					}
-
-
-				});
 			}
 
 
 		}).start();
 	}
 
+    private void loadDescription() {
+        Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
+
+        description_text = "";
+        if(c.moveToFirst()){
+            description_text = c.getString(0);
+        }else{
+            description_text=getString(R.string.no_descript);
+        }
+
+        c.close();
 
 
-	/**
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+
+                final TextView description = (TextView) findViewById(R.id.descript);
+                description.setText(description_text);
+                if(description.getLineCount()>10){
+                    description.setMaxLines(10);
+                    findViewById(R.id.show_all_description).setVisibility(View.VISIBLE);
+                    findViewById(R.id.show_all_description).setOnClickListener(new OnClickListener() {
+
+
+                        @Override
+                        public void onClick(View v) {
+
+                            if(collapsed){
+                                collapsed=false;
+                                scrollPosition = ((ScrollView)findViewById(R.id.app_info_scroller)).getScrollY();
+                                description.setMaxLines(Integer.MAX_VALUE);
+                                ((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
+                                ((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
+                            }else{
+                                collapsed=true;
+                                ((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
+                                description.setMaxLines(10);
+                                ((ScrollView)findViewById(R.id.app_info_scroller)).scrollTo(0, scrollPosition);
+                                ((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
+                            }
+                        }
+                    });
+                    findViewById(R.id.description_container).setOnClickListener(new OnClickListener() {
+
+
+                        @Override
+                        public void onClick(View v) {
+
+                            if(collapsed){
+                                collapsed=false;
+                                scrollPosition = (int)((ScrollView)findViewById(R.id.app_info_scroller)).getScrollY();
+                                description.setMaxLines(Integer.MAX_VALUE);
+                                ((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_up, 0);
+                                ((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_less));
+                            }else{
+                                collapsed=true;
+                                ((TextView)findViewById(R.id.show_all_description)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_more_arrow_down, 0);
+                                description.setMaxLines(10);
+                                ((ScrollView)findViewById(R.id.app_info_scroller)).scrollTo(0, scrollPosition);
+                                ((TextView) findViewById(R.id.show_all_description)).setText(getString(R.string.show_more));
+                            }
+                        }
+                    });
+                }
+            }
+
+
+        });
+    }
+
+
+    /**
 	 *
 	 */
 	private void setClickListeners() {
@@ -1025,19 +1051,7 @@ OnClickListener installListener = new OnClickListener() {
 		}
 	};
 
-	protected String screenshotToThumb(String string) {
 
-		String[] splitedString = string.split("/");
-		StringBuilder db = new StringBuilder();
-		for (int i = 0; i != splitedString.length - 1; i++) {
-			db.append(splitedString[i]);
-			db.append("/");
-		}
-		db.append("thumbs/mobile/");
-		db.append(splitedString[splitedString.length - 1]);
-
-		return db.toString();
-	}
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
@@ -1142,37 +1156,11 @@ OnClickListener installListener = new OnClickListener() {
 		});
 	}
 
+    private ViewGroup viewComments;
+
     private class GetApkInfo extends AsyncTask<Void,Void,Void> {
 
         private WebserviceGetApkInfo webservice;
-        private ViewGroup viewComments;
-        private ViewGroup viewLikes;
-        private View loading;
-        private ViewGroup viewLikesButton;
-
-        /**
-         * Runs on the UI thread before {@link #doInBackground}.
-         *
-         * @see #onPostExecute
-         * @see #doInBackground
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();    //To change body of overridden methods use File | Settings | File Templates.
-            viewComments = (ViewGroup) findViewById(R.id.commentContainer);
-            viewComments.removeAllViews();
-
-           loading = LayoutInflater.from(context).inflate(R.layout.loadingfootercomments, null);
-            viewComments.addView(loading, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            viewLikes = (ViewGroup) findViewById(R.id.likesLayout);
-            viewLikesButton = (ViewGroup) findViewById(R.id.ratings);
-            ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.loading_likes));
-            ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
-
-
-
-
-        }
 
         /**
          * Override this method to perform a computation on a background thread. The
@@ -1192,7 +1180,7 @@ OnClickListener installListener = new OnClickListener() {
         protected Void doInBackground(Void... params) {
 
             try {
-                webservice = new WebserviceGetApkInfo(webservicespath,viewApk.getRepoName(),viewApk.getApkid(),viewApk.getVername(),Login.getToken(context));
+                webservice = new WebserviceGetApkInfo(webservicespath,viewApk,category,Login.getToken(context));
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (JSONException e) {
@@ -1218,31 +1206,28 @@ OnClickListener installListener = new OnClickListener() {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             try{
-            ArrayList<Comment> result = webservice.getComments();
-            loading.setVisibility(View.GONE);
-            if(result.isEmpty()){
-                TextView tv = new TextView(context);
-                tv.setText(context.getString(R.string.no_comments));
-                tv.setPadding(8, 2, 2, 2);
-                viewComments.addView(tv);
-            }
-            for(Comment comment : result){
-                View v = LayoutInflater.from(context).inflate(R.layout.row_comment_item, null);
-                ((TextView) v.findViewById(R.id.author)).setText(comment.username);
-                ((TextView) v.findViewById(R.id.content)).setText(comment.text);
-                ((TextView) v.findViewById(R.id.date)).setText(comment.timeStamp.toString());
-                viewComments.addView(v);
-            }
-            if(webservice.isSeeAll()){
-                findViewById(R.id.more_comments).setVisibility(View.VISIBLE);
-            }
+                ArrayList<Comment> result = webservice.getComments();
+                loading.setVisibility(View.GONE);
+                if(result.isEmpty()){
+                    TextView tv = new TextView(context);
+                    tv.setText(context.getString(R.string.no_comments));
+                    tv.setPadding(8, 2, 2, 2);
+                    viewComments.addView(tv);
+                }
+                setComments(result);
+                if(webservice.isSeeAll()){
+                    findViewById(R.id.more_comments).setVisibility(View.VISIBLE);
+                }
 
             }catch (Exception e){
                 e.printStackTrace();
             }
 
             try {
-                loadScreenshots(webservice.getScreenshots());
+                if(webservice.isScreenshotChanged()){
+                    viewApk.setScreenShots(db.getScreenshots(viewApk,category));
+                    loadScreenshots();
+                }
             } catch (Exception e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
@@ -1250,8 +1235,7 @@ OnClickListener installListener = new OnClickListener() {
             try{
                 TasteModel model = webservice.getLikes();
 
-                ((TextView) viewLikes.findViewById(R.id.likes)).setText(model.likes);
-                ((TextView) viewLikes.findViewById(R.id.dislikes)).setText(model.dislikes);
+                setLikes(model.likes,model.dislikes);
 
                 if(model.uservote!=null){
 
@@ -1262,22 +1246,44 @@ OnClickListener installListener = new OnClickListener() {
                         ((Button) viewLikesButton.findViewById(R.id.likesImage)).setCompoundDrawablesWithIntrinsicBounds(R.drawable.like_btn, 0, 0, 0);
                         ((Button) viewLikesButton.findViewById(R.id.dislikesImage)).setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.dislike_btn_over, 0);
                     }
-
-
                 }
 
             }catch (Exception e){
-                ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.tastenotavailable));
-                ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
-                TextView tv = new TextView(context);
-                tv.setText(context.getString(R.string.no_internet_connection));
-                viewComments.addView(tv);
+                if(viewApk.getLikes()==-1){
+                    ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.tastenotavailable));
+                    ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
+                }
+                if(viewApk.getComments().isEmpty()){
+                    TextView tv = new TextView(context);
+                    tv.setText(context.getString(R.string.no_internet_connection));
+                    viewComments.addView(tv);
+                    loading.setVisibility(View.GONE);
+                }
 
-                loading.setVisibility(View.GONE);
             }
 
 
         }
+
+
+    }
+
+
+
+    private void setComments(ArrayList<Comment> result) {
+        viewComments.removeAllViews();
+        for(Comment comment : result){
+            View v = LayoutInflater.from(context).inflate(R.layout.row_comment_item, null);
+            ((TextView) v.findViewById(R.id.author)).setText(comment.username);
+            ((TextView) v.findViewById(R.id.content)).setText(comment.text);
+            ((TextView) v.findViewById(R.id.date)).setText(comment.timeStamp.toString());
+            viewComments.addView(v);
+        }
+    }
+
+    public void setLikes(String likes, String dislikes) {
+        ((TextView) viewLikes.findViewById(R.id.likes)).setText(likes);
+        ((TextView) viewLikes.findViewById(R.id.dislikes)).setText(dislikes);
     }
 
     public class checkPaymentTask extends AsyncTask<Void, Void, JSONObject>{

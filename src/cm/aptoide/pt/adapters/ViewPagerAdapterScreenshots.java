@@ -32,17 +32,16 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 
 	private Context context;
 	ImageLoader imageLoader;
-	private String[] images;
 	ArrayList<String> url;
 	private String hashCode;
 	private boolean hd;
 	DisplayImageOptions options;
-	
-	public ViewPagerAdapterScreenshots(Context context,String[] images2,ArrayList<String> imagesurl, String hashCode, boolean hd) {
-		
+
+	public ViewPagerAdapterScreenshots(Context context,ArrayList<String> imagesurl, String hashCode, boolean hd) {
+
 		this.context=context;
 		imageLoader = ImageLoader.getInstance();
-		this.images=images2;
+
 		this.url=imagesurl;
 		this.hd=hd;
 		this.hashCode=hashCode.hashCode()+"";
@@ -53,40 +52,40 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 		 .cacheOnDisc()
 		 .build();
 	}
-	
+
 	@Override
 	public Object instantiateItem(ViewGroup container, final int position) {
 		final String hashCode=this.hashCode+"."+position;
 		final View v = LayoutInflater.from(context).inflate(R.layout.screenshots, null);
 		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshots_pb);
-		imageLoader.displayImage(images[position],(ImageView) v.findViewById(R.id.screenshot),options, new ImageLoadingListener() {
-			
+		imageLoader.displayImage(screenshotToThumb(url.get(position)),(ImageView) v.findViewById(R.id.screenshot),options, new ImageLoadingListener() {
+
 			@Override
 			public void onLoadingStarted() {
 				pb.setVisibility(View.VISIBLE);
 			}
-			
+
 			@Override
 			public void onLoadingFailed(FailReason failReason) {
 				((ImageView) v.findViewById(R.id.screenshot)).setImageResource(android.R.drawable.ic_delete);
 				pb.setVisibility(View.GONE);
 			}
-			
+
 			@Override
 			public void onLoadingComplete(Bitmap loadedImage) {
 				pb.setVisibility(View.GONE);
 			}
-			
+
 			@Override
 			public void onLoadingCancelled() {
 				// TODO Auto-generated method stub
-				
+
 			}
 		}, hashCode);
 		container.addView(v);
 		if(!hd){
 			v.setOnClickListener(new OnClickListener() {
-				
+
 				public void onClick(View v) {
 					Intent i = new Intent(context,ScreenshotsViewer.class);
 					i.putStringArrayListExtra("url", url);
@@ -97,28 +96,42 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 			});
 		}
 		return v;
-		
+
 	}
 	@Override
 	public int getCount() {
-		return images.length;
+		return url.size();
 	}
 
 	@Override
 	public boolean isViewFromObject(View arg0, Object arg1) {
 		return arg0.equals(arg1);
 	}
-	
+
 	@Override
 	public void destroyItem(ViewGroup container, int position, Object object) {
 		container.removeView((View) object);
-		
+
 	}
-	
-	
-	
-	
-	
-	
+
+    protected String screenshotToThumb(String string) {
+
+        String[] splitedString = string.split("/");
+        StringBuilder db = new StringBuilder();
+        for (int i = 0; i != splitedString.length - 1; i++) {
+            db.append(splitedString[i]);
+            db.append("/");
+        }
+        db.append("thumbs/mobile/");
+        db.append(splitedString[splitedString.length - 1]);
+
+        return db.toString();
+    }
+
+
+
+
+
+
 
 }

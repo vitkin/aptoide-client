@@ -27,31 +27,41 @@ public class DbStructure extends SQLiteOpenHelper {
 
 	public final static String TABLE_TOP_LATEST_REPO_INFO= "top_latest_repo_info";
 	public final static String TABLE_APK= "apk";
+    public final static String TABLE_APK_SCREENSHOTS= "apk_screenshots";
+    public final static String TABLE_APK_CACHE= "apk_cache";
 	public final static String TABLE_REPO= "repo";
 	public final static String TABLE_CATEGORY_1ST = "category_1st";
 	public final static String TABLE_CATEGORY_2ND = "category_2nd";
 	public final static String TABLE_TOP_REPO = "top_repo";
 	public final static String TABLE_TOP_APK = "top_apk";
 	public final static String TABLE_TOP_SCREENSHOTS = "top_screenshots";
+    public final static String TABLE_TOP_CACHE = "top_cache";
 	public final static String TABLE_LATEST_REPO = "latest_repo";
 	public final static String TABLE_LATEST_APK = "latest_apk";
 	public final static String TABLE_LATEST_SCREENSHOTS = "latest_screenshots";
+    public final static String TABLE_LATEST_CACHE = "latest_cache";
+
 	public final static String TABLE_REPO_CATEGORY_1ST = "repo_category_1st";
 	public final static String TABLE_REPO_CATEGORY_2ND = "repo_category_2nd";
 	public static final String TABLE_INSTALLED = "installed";
 	public static final String TABLE_FEATURED_TOP_APK = "featured_top_apk";
 	public static final String TABLE_FEATURED_TOP_REPO = "featured_top_repo";
 	public static final String TABLE_FEATURED_TOP_SCREENSHOTS = "featured_top_screenshots";
+    public static final String TABLE_FEATURED_TOP_CACHE = "featured_top_cache";
 	public static final String TABLE_FEATURED_EDITORSCHOICE_APK = "featured_editorschoice_apk";
 	public static final String TABLE_FEATURED_EDITORSCHOICE_REPO = "featured_editorschoice_repo";
 	public static final String TABLE_FEATURED_EDITORSCHOICE_SCREENSHOTS = "featured_editorschoice_screenshots";
+    public static final String TABLE_FEATURED_EDITORSCHOICE_CACHE = "featured_editorschoice_cache";
 	public static final String TABLE_ITEMBASED_APK = "itembased_apk";
-	public static final String TABLE_ITEMBASED_REPO = "itembased_repo";
+    public static final String TABLE_ITEMBASED_CACHE = "itembased_cache";
+    public static final String TABLE_ITEMBASED_REPO = "itembased_repo";
 	public static final String TABLE_HASHES = "hashes";
 	public static final String TABLE_ITEMBASED_SCREENSHOTS = "itembased_screenshots";
 	public static final String TABLE_SCHEDULED = "scheduled";
+    public static final String TABLE_COMMENTS_CACHE = "comments_cache" ;
 
-	public final static String COLUMN__ID = "_id";
+
+    public final static String COLUMN__ID = "_id";
 	public final static String COLUMN_APKID = "apkid";
 	public final static String COLUMN_NAME = "name";
 	public final static String COLUMN_VERNAME = "vername";
@@ -92,12 +102,15 @@ public class DbStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_PARENT_APKID = "parent_apkid";
 	public static final String TABLE_EXCLUDED_APKID = "excluded_apkid";
 	public static final String COLUMN_PRICE = "price";
+    public static final String COLUMN_DISLIKES = "dislikes" ;
+    public static final String COLUMN_LIKES = "likes" ;
+    public static final String COLUMN_MALWARE = "malware" ;
+    public static final String COLUMN_TYPE = "type";
+    public static final String COLUMN_TEXT = "text";
 
 
-
-
-	public DbStructure(Context context) {
-		super(context, "aptoide.db", null, 6);
+    public DbStructure(Context context) {
+		super(context, "aptoide.db", null, 7);
 	}
 
 	@Override
@@ -127,8 +140,29 @@ public class DbStructure extends SQLiteOpenHelper {
 								   .addColumn(new Column(SQLiteType.REAL, COLUMN_PRICE ))
 								   .createTable();
 
+        creator.newTable(TABLE_APK_SCREENSHOTS).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
+                                               .addColumn(new Column(SQLiteType.TEXT, COLUMN_REMOTE_PATH))
+                                               .addColumn(new Column(SQLiteType.INTEGER, COLUMN_REPO_ID))
+                                               .createTable();
 
-		creator.newTable(TABLE_CATEGORY_1ST).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
+        creator.newTable(TABLE_APK_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
+                                         .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
+                                         .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
+                                         .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                                         .createTable();
+
+        creator.newTable(TABLE_COMMENTS_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
+                                              .addColumn(new Column(SQLiteType.INTEGER, COLUMN_TYPE))
+                                              .addColumn(new Column(SQLiteType.TEXT, COLUMN_USERNAME))
+                                              .addColumn(new Column(SQLiteType.TEXT, COLUMN_TEXT))
+                                              .addColumn(new Column(SQLiteType.TEXT, COLUMN_DATE))
+                                              .createTable();
+
+
+
+
+
+        creator.newTable(TABLE_CATEGORY_1ST).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 											.addColumn(new Column(SQLiteType.TEXT,COLUMN_NAME).setUnique(OnConflict.IGNORE))
 											.createTable();
 
@@ -193,6 +227,12 @@ public class DbStructure extends SQLiteOpenHelper {
 										.addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME,""))
 										.createTable();
 
+        creator.newTable(TABLE_TOP_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .createTable();
+
 
 		creator.newTable(TABLE_LATEST_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 										  .addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))
@@ -230,6 +270,12 @@ public class DbStructure extends SQLiteOpenHelper {
 										   .addColumn(new Column(SQLiteType.TEXT, COLUMN_SCREENS_PATH,""))
 										   .addColumn(new Column(SQLiteType.TEXT, COLUMN_NAME,""))
 										   .createTable();
+
+        creator.newTable(TABLE_LATEST_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .createTable();
 
 		db.execSQL("create table " + TABLE_REPO_CATEGORY_1ST + " (repo_id integer, " + COLUMN_CATEGORY_1ST_ID+ " integer, primary key(repo_id, " + COLUMN_CATEGORY_1ST_ID+ ") on conflict ignore);");
 		db.execSQL("create table " + TABLE_REPO_CATEGORY_2ND + " (repo_id integer, " + COLUMN_CATEGORY_2ND_ID+ " integer, primary key(repo_id, " + COLUMN_CATEGORY_2ND_ID+ ") on conflict ignore);");
@@ -289,6 +335,12 @@ public class DbStructure extends SQLiteOpenHelper {
 												     	.addColumn(new Column(SQLiteType.TEXT,    COLUMN_REMOTE_PATH))
 												    	.createTable();
 
+        creator.newTable(TABLE_FEATURED_TOP_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .createTable();
+
 
 		creator.newTable(TABLE_FEATURED_EDITORSCHOICE_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 														  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_APKID))
@@ -328,6 +380,12 @@ public class DbStructure extends SQLiteOpenHelper {
 																  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_REMOTE_PATH))
 																  .createTable();
 
+        creator.newTable(TABLE_FEATURED_EDITORSCHOICE_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .createTable();
+
 
 
 		creator.newTable(TABLE_ITEMBASED_APK).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
@@ -359,6 +417,12 @@ public class DbStructure extends SQLiteOpenHelper {
 											  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_SCREENS_PATH,""))
 											  .addColumn(new Column(SQLiteType.TEXT,    COLUMN_NAME,""))
 											  .createTable();
+
+        creator.newTable(TABLE_ITEMBASED_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey().setUnique(OnConflict.REPLACE))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
+                .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .createTable();
 
 		creator.newTable(TABLE_HASHES).addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH))
 												.addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID).setPrimaryKey().setUnique(OnConflict.REPLACE))

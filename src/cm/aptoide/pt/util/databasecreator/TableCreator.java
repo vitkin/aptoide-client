@@ -7,23 +7,23 @@ import android.util.Log;
 
 
 public class TableCreator {
-	
+
 	private SQLiteDatabase database;
-	
+
 	public class TableBuilder{
-		
+
 		private ArrayList<Column> columns = new ArrayList<Column>();
 		private String tableName;
-		
+
 		public TableBuilder(String tableName) {
 			this.tableName = tableName;
 		}
-		
+
 		public TableBuilder addColumn(Column column) {
 			columns.add(column);
 			return this;
 		}
-		
+
 		public void createTable() throws IllegalArgumentException {
 			if(tableName==null){
 				throw new IllegalArgumentException("No table name especified");
@@ -31,13 +31,13 @@ public class TableCreator {
 			if(columns.size()==0){
 				throw new IllegalArgumentException("No columns especified");
 			}
-			String sql = "CREATE TABLE " + tableName + " (" + columnsToString(columns) + ")";
-			
+			String sql = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + columnsToString(columns) + ")";
+
 			Log.d("TableCreator","Executing SQL: " + sql);
-			
+
 			database.execSQL(sql);
 		}
-		
+
 		private String columnsToString(ArrayList<Column> columns) {
 			StringBuilder sb = new StringBuilder();
 			Iterator<Column> it = columns.iterator();
@@ -59,19 +59,19 @@ public class TableCreator {
 				if(column.isPrimaryKey()){
 					primaryKeys.add(column);
 				}
-				
+
 				if(!it.hasNext()){
 					if(primaryKeys.isEmpty()){
 						return "";
 					}else{
 						return ", PRIMARY KEY(" + columnsPrimaryKeysToString(primaryKeys) + ")";
 					}
-					 
+
 				}
-				
+
 			}
 		}
-		
+
 		private String columnsPrimaryKeysToString(ArrayList<Column> primaryKeys){
 			StringBuilder sb = new StringBuilder();
 			Iterator<Column> it = primaryKeys.iterator();
@@ -83,11 +83,11 @@ public class TableCreator {
 				}
 				sb.append(", ");
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	public TableCreator(SQLiteDatabase database) {
 		this.database = database;
 	}
@@ -95,5 +95,5 @@ public class TableCreator {
 	public TableBuilder newTable(String tableName) {
 		return new TableBuilder(tableName);
 	}
-	
+
 }

@@ -15,6 +15,7 @@ import cm.aptoide.pt.annotations.DatabaseField;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import cm.aptoide.pt.webservices.comments.Comment;
 
 public class ViewApk implements Parcelable {
 
@@ -47,6 +48,10 @@ public class ViewApk implements Parcelable {
 	private String repoName = "Aptoide";
 	private double price = 0;
     private boolean isPaid;
+    private String webservicesPath;
+    private int likes;
+    private int dislikes;
+    private ArrayList<Comment> comments;
 
 
     /**
@@ -402,5 +407,50 @@ public class ViewApk implements Parcelable {
 
     public void setPaid(boolean paid) {
         isPaid = paid;
+    }
+
+    public void setScreenShots(ArrayList<String> screenShots) {
+
+        this.screenshots = screenShots;
+
+    }
+
+    public void setWebservicesPath(String webservicesPath) {
+        this.webservicesPath = webservicesPath;
+    }
+
+    public String getWebservicesPath() {
+        return webservicesPath;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public int getLikes() {
+
+        return likes;
+    }
+
+    public void setDislikes(int dislikes) {
+
+        Log.d("TAAAG - dislikes", dislikes+"");
+
+        this.dislikes = dislikes;
+    }
+
+    public int getDislikes() {
+
+
+
+        return dislikes;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
     }
 }

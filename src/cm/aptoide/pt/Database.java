@@ -7,6 +7,8 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,6 +43,8 @@ import cm.aptoide.pt.views.ViewApkLatest;
 import cm.aptoide.pt.views.ViewApkTop;
 import cm.aptoide.pt.views.ViewApkUserBased;
 import cm.aptoide.pt.views.ViewLogin;
+import cm.aptoide.pt.webservices.TasteModel;
+import cm.aptoide.pt.webservices.comments.Comment;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -70,7 +74,47 @@ public class Database {
 		database = dbhandler.getWritableDatabase();
 	}
 
-	private static class SingletonHolder {
+    public void insertLikes(TasteModel likes, Category category, long id) {
+
+
+        ContentValues values = new ContentValues();
+        values.put(DbStructure.COLUMN_DISLIKES, likes.dislikes);
+        values.put(DbStructure.COLUMN_LIKES, likes.likes);
+        values.put(DbStructure.COLUMN__ID, id);
+
+        switch (category) {
+            case TOP:
+                database.insert(DbStructure.TABLE_TOP_CACHE, null, values);
+                break;
+            case LATEST:
+                database.insert(DbStructure.TABLE_LATEST_CACHE, null, values);
+                break;
+            case TOPFEATURED:
+                database.insert(DbStructure.TABLE_FEATURED_TOP_CACHE, null, values);
+                break;
+            case EDITORSCHOICE:
+                database.insert(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE, null, values);
+                break;
+            case INFOXML:
+                database.insert(DbStructure.TABLE_APK_CACHE, null, values);
+                break;
+            case ITEMBASED:
+            case USERBASED:
+                database.insert(DbStructure.TABLE_ITEMBASED_CACHE, null, values);
+                break;
+        }
+        yield();
+
+
+    }
+
+    public void deleteCommentsCache(long id, Category category) {
+
+        database.delete(DbStructure.TABLE_COMMENTS_CACHE,"_id = ? and type = ?", new String[]{id+"",category.name()});
+
+    }
+
+    private static class SingletonHolder {
 		public static final Database INSTANCE = new Database();
 	}
 
@@ -1467,6 +1511,11 @@ public class Database {
 			apk.setRepoName(c.getString(11));
 			apk.setId(id);
 			apk.setPrice(Double.parseDouble(c.getString(14)));
+            apk.setScreenShots(getScreenshots(apk, category));
+            apk.setWebservicesPath(getWebServicesPath(apk.getRepo_id(),category));
+            apk.setLikes(getLikes(apk,category));
+            apk.setDislikes(getDislikes(apk, category));
+            apk.setComments(getComments(apk,category));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1475,7 +1524,193 @@ public class Database {
 		return apk;
 	}
 
-	public Cursor getAllApkVersions(String apkid, long id, String vername,
+
+    public void insertComment (long id, Comment comment, Category category){
+
+
+        ContentValues values = new ContentValues();
+
+        values.put(DbStructure.COLUMN_TEXT,comment.text);
+        values.put(DbStructure.COLUMN_DATE,comment.timeStamp.toString());
+        values.put(DbStructure.COLUMN_USERNAME,comment.username);
+        values.put(DbStructure.COLUMN__ID, id );
+        values.put(DbStructure.COLUMN_TYPE, category.name());
+
+        Log.d("","Inserting COMMENT");
+
+        database.insert(DbStructure.TABLE_COMMENTS_CACHE, null, values);
+        yield();
+
+
+    }
+
+
+
+
+
+    private ArrayList<Comment> getComments(ViewApk viewApk, Category category) {
+
+
+        ArrayList<Comment> comments = new ArrayList<Comment>();
+
+
+        Cursor c = null;
+
+        try {
+            c = database.query(DbStructure.TABLE_COMMENTS_CACHE,
+                    new String[]{DbStructure.COLUMN_USERNAME,DbStructure.COLUMN_DATE,DbStructure.COLUMN_TEXT}, "_id = ? and type = ?",
+                    new String[]{viewApk.getId() + "" , category.name()},null,null,null);
+
+            SimpleDateFormat dateFormater = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+
+            for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+                Comment comment = new Comment();
+                comment.text = c.getString(2);
+                comment.username = c.getString(0);
+                comment.timeStamp = dateFormater.parse(c.getString(1));
+                comments.add(comment);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally{
+            if(c!=null){
+                c.close();
+            }
+        }
+
+        Log.d("TAAAG",comments.size()+"");
+
+        return comments;
+    }
+
+    private int getLikes(ViewApk apk, Category category) {
+
+        Cursor c = null;
+        int return_int = -1;
+
+        try{
+            switch (category) {
+                case EDITORSCHOICE:
+                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,
+                            new String[] { DbStructure.COLUMN_LIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_APK_CACHE,
+                            new String[] { DbStructure.COLUMN_LIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case ITEMBASED:
+                case USERBASED:
+                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,
+                            new String[] { DbStructure.COLUMN_LIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case LATEST:
+                    c = database.query(DbStructure.TABLE_LATEST_CACHE,
+                            new String[] { DbStructure.COLUMN_LIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case TOP:
+                    c = database.query(DbStructure.TABLE_TOP_CACHE,
+                            new String[] { DbStructure.COLUMN_LIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case TOPFEATURED:
+                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,
+                            new String[] { DbStructure.COLUMN_LIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                default:
+                    break;
+            }
+            if(c.moveToFirst()){
+                return_int = c.getInt(0);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(c!=null){
+                c.close();
+            }
+        }
+
+
+
+        return return_int;
+    }
+
+    private int getDislikes(ViewApk apk, Category category) {
+
+        Cursor c = null;
+        int return_int = -1;
+
+        try{
+            switch (category) {
+                case EDITORSCHOICE:
+                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,
+                            new String[] { DbStructure.COLUMN_DISLIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_APK_CACHE,
+                            new String[] { DbStructure.COLUMN_DISLIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case ITEMBASED:
+                case USERBASED:
+                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,
+                            new String[] { DbStructure.COLUMN_DISLIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case LATEST:
+                    c = database.query(DbStructure.TABLE_LATEST_CACHE,
+                            new String[] { DbStructure.COLUMN_DISLIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case TOP:
+                    c = database.query(DbStructure.TABLE_TOP_CACHE,
+                            new String[] { DbStructure.COLUMN_DISLIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                case TOPFEATURED:
+                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,
+                            new String[] { DbStructure.COLUMN_DISLIKES },
+                            "_id = ?", new String[] { apk.getId()+""}, null, null,
+                            null);
+                    break;
+                default:
+                    break;
+            }
+            if(c.moveToFirst()){
+                return_int = c.getInt(0);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(c!=null){
+                c.close();
+            }
+        }
+
+
+
+        return return_int;
+    }
+
+    public Cursor getAllApkVersions(String apkid, long id, String vername,
 			boolean b, long repo_id) {
 		Cursor c = null;
 		MatrixCursor mc = new MatrixCursor(
@@ -1504,66 +1739,43 @@ public class Database {
 		return mc;
 	}
 
-	public String getWebServicesPath(long repo_id, Category category) {
-		Cursor c = null;
-		String return_string = null;
-		yield();
+    public String getWebServicesPath(long repo_id, Category category) {
+        Cursor c = null;
+        String return_string = null;
+        yield();
 
-		try {
-			switch (category) {
-			case EDITORSCHOICE:
-				c = database.query(
-						DbStructure.TABLE_FEATURED_EDITORSCHOICE_REPO,
-						new String[] { DbStructure.COLUMN_SCREENS_PATH },
-						"_id = ?", new String[] { repo_id + "" }, null, null,
-						null);
-				break;
-			case INFOXML:
-				c = database.query(DbStructure.TABLE_REPO,
-						new String[] { DbStructure.COLUMN_SCREENS_PATH },
-						"_id = ?", new String[] { repo_id + "" }, null, null,
-						null);
-				break;
-			case ITEMBASED:
-			case USERBASED:
-				c = database.query(DbStructure.TABLE_ITEMBASED_REPO,
-						new String[] { DbStructure.COLUMN_SCREENS_PATH },
-						"_id = ?", new String[] { repo_id + "" }, null, null,
-						null);
-				break;
-			case LATEST:
-				c = database.query(DbStructure.TABLE_LATEST_REPO,
-						new String[] { DbStructure.COLUMN_SCREENS_PATH },
-						"_id = ?", new String[] { repo_id + "" }, null, null,
-						null);
-				break;
-			case TOP:
-				c = database.query(DbStructure.TABLE_TOP_REPO,
-						new String[] { DbStructure.COLUMN_SCREENS_PATH },
-						"_id = ?", new String[] { repo_id + "" }, null, null,
-						null);
-				break;
-			case TOPFEATURED:
-				c = database.query(DbStructure.TABLE_FEATURED_TOP_REPO,
-						new String[] { DbStructure.COLUMN_SCREENS_PATH },
-						"_id = ?", new String[] { repo_id + "" }, null, null,
-						null);
-				break;
-			default:
-				break;
-			}
-			if (c.moveToFirst()) {
-				return_string = c.getString(0);
-			} else {
-				return_string = "http://www.aptoide.com/";
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			c.close();
-		}
-		return return_string;
-	}
+        try {
+            switch (category) {
+
+
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_REPO,
+                            new String[] { DbStructure.COLUMN_WEBSERVICESPATH },
+                            "_id = ?", new String[] { repo_id + "" }, null, null,
+                            null);
+                    break;
+                case EDITORSCHOICE:
+                case ITEMBASED:
+                case USERBASED:
+                case LATEST:
+                case TOP:
+                case TOPFEATURED:
+                    return "http://webservices.aptoide.com/";
+                default:
+                    break;
+            }
+            if (c.moveToFirst()) {
+                return_string = c.getString(0);
+            } else {
+                return_string = "http://webservices.aptoide.com/";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(c!=null)c.close();
+        }
+        return return_string;
+    }
 
 	/**
 	 *
@@ -1837,6 +2049,12 @@ public class Database {
 				values.put("repo_id", apk.getRepo_id());
 				database.insert(DbStructure.TABLE_TOP_SCREENSHOTS, null, values);
 				break;
+
+                case INFOXML:
+                    values.put("repo_id", apk.getRepo_id());
+                    database.insert(DbStructure.TABLE_APK_SCREENSHOTS, null, values);
+                    break;
+
 			case TOPFEATURED:
 				database.insert(DbStructure.TABLE_FEATURED_TOP_SCREENSHOTS,
 						null, values);
@@ -1850,8 +2068,9 @@ public class Database {
 
 	}
 
-	public void getScreenshots(ArrayList<String> originalList, ViewApk viewApk,
+	public ArrayList<String> getScreenshots( ViewApk viewApk,
 			Category category) {
+        ArrayList<String> originalList = new ArrayList<String>();
 		Cursor c = null;
 		yield();
 		String screenspath = getScreenshotsPath(viewApk.getRepo_id(), category);
@@ -1889,21 +2108,40 @@ public class Database {
 						"_id = ?", new String[] { viewApk.getId() + "" }, null,
 						null, null);
 				break;
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_APK_SCREENSHOTS,
+                            new String[] { DbStructure.COLUMN_REMOTE_PATH },
+                            "_id = ?", new String[] { viewApk.getId() + "" }, null,
+                            null, null);
+                    break;
 			case USERBASED:
 				break;
 			default:
 				break;
 			}
 
-			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-				originalList.add(screenspath + c.getString(0));
-			}
+            if(c!=null){
+
+                if(category.equals(Category.INFOXML)){
+                    for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                        originalList.add(c.getString(0));
+                    }
+                }else{
+                    for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
+                        originalList.add(screenspath + c.getString(0));
+                    }
+                }
+
+
+            }
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			c.close();
+            if(c!=null)c.close();
 		}
+
+        return originalList;
 
 	}
 
@@ -1944,7 +2182,12 @@ public class Database {
 						"_id = ?", new String[] { repo_id + "" }, null, null,
 						null);
 				break;
-
+            case INFOXML:
+                c = database.query(DbStructure.TABLE_REPO,
+                        new String[] { DbStructure.COLUMN_SCREENS_PATH },
+                        "_id = ?", new String[] { repo_id + "" }, null, null,
+                        null);
+                break;
 			default:
 				break;
 			}

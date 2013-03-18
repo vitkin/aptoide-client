@@ -2,7 +2,10 @@ package cm.aptoide.pt.webservices;
 
 import android.util.Log;
 import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.Category;
+import cm.aptoide.pt.Database;
 import cm.aptoide.pt.util.NetworkUtils;
+import cm.aptoide.pt.views.ViewApk;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,8 +36,16 @@ public class WebserviceGetApkInfo {
     private ArrayList<Comment> comments;
     private Object likes;
     private boolean seeAll = false;
+    private boolean screenshotChanged;
 
-    public WebserviceGetApkInfo(String webservice, String repo_name, String apkid, String vername, String token ) throws IOException, JSONException {
+
+    private boolean changedScreenshots() {
+
+        return false;
+    }
+
+
+    public WebserviceGetApkInfo(String webservice,ViewApk apk, Category category, String token ) throws IOException, JSONException {
 
         StringBuilder url = new StringBuilder();
 
@@ -57,9 +68,9 @@ public class WebserviceGetApkInfo {
         }
         sb.append(")");
 
-        url.append("webservices/getApkInfo/").append(repo_name).append("/")
-                .append(apkid).append("/")
-                .append(vername).append("/")
+        url.append("webservices/getApkInfo/").append(apk.getRepoName()).append("/")
+                .append(apk.getApkid()).append("/")
+                .append(apk.getVername()).append("/")
                 .append("options=")
                 .append(sb.toString()).append("/")
                 .append("json");
@@ -75,6 +86,52 @@ public class WebserviceGetApkInfo {
         Log.e(url.toString(),sb.toString());
         response = new JSONObject(sb.toString());
 
+
+        try {
+            comments = getComments();
+            Database database = Database.getInstance();
+
+            Log.d("TAAAAAG", comments.size()+"");
+
+
+
+
+
+            if(category.equals(Category.INFOXML)){
+                JSONArray screenshots = getScreenshots();
+
+
+                ArrayList<String> loadedScreenshots =  apk.getScreenshots();
+
+
+                for(int i = 0; i != screenshots.length(); i++){
+                    if(!loadedScreenshots.contains(screenshots.getString(i))){
+                        apk.getScreenshots().clear();
+                        for(int j = 0; j != screenshots.length(); j++){
+                            apk.getScreenshots().add(screenshots.getString(j));
+                        }
+                        Database.getInstance().insertScreenshots(apk,category);
+                        screenshotChanged = true;
+                        break;
+                    }
+                }
+
+                Log.d("TAAAAG", loadedScreenshots.toString());
+                Log.d("TAAAAG", screenshots.toString());
+
+
+            }
+            database.deleteCommentsCache(apk.getId(), category);
+            for(Comment comment: comments){
+                database.insertComment(apk.getId(),comment,category);
+            }
+            database.insertLikes(getLikes(),category, apk.getId());
+
+        } catch (ParseException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
     }
 
     public boolean isSeeAll(){
@@ -84,11 +141,14 @@ public class WebserviceGetApkInfo {
 
 
     public ArrayList<Comment> getComments() throws JSONException, ParseException {
-        comments = new ArrayList<Comment>();
+
         SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         JSONArray array = response.getJSONArray("comments");
 
-
+        if(comments!=null){
+            return comments;
+        }
+        comments = new ArrayList<Comment>();
         for(int i = 0;i!=array.length();i++){
 
             Comment comment = new Comment();
@@ -109,6 +169,9 @@ public class WebserviceGetApkInfo {
 
 
     public JSONArray getScreenshots() throws JSONException {
+
+
+
         return response.getJSONArray("sshots");
     }
 
@@ -123,6 +186,14 @@ public class WebserviceGetApkInfo {
         }
 
         return model;
+    }
+
+    public boolean isScreenshotChanged() {
+        return screenshotChanged;
+    }
+
+    public void setScreenshotChanged(boolean screenshotChanged) {
+        this.screenshotChanged = screenshotChanged;
     }
 
     private class WebserviceOptions {

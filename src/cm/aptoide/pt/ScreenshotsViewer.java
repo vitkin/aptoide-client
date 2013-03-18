@@ -26,18 +26,18 @@ import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 
 public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivity */{
-	
+
 	String url;
 	int position;
 	private String[] images = new String[0];
 	Context context;
 	private String hashCode;
-	
+
 	@Override
 	protected void onCreate(Bundle arg0) {
 		SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(arg0);
-		
+
 		setContentView(R.layout.screenshotsviewer);
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle(getString(R.string.screenshots));
@@ -52,9 +52,9 @@ public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivit
 		TypedValue a = new TypedValue();
 		getTheme().resolveAttribute(R.attr.custom_color, a, true);
 		pi.setFillColor(a.data);
-		
+
 		new Thread(new Runnable() {
-			
+
 			ArrayList<String> uri;
 			public void run() {
 				try{
@@ -69,11 +69,11 @@ public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivit
 					runOnUiThread(new Runnable() {
 						public void run() {
 							if(images!=null&&images.length>0){
-								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,images,uri,hashCode,true));
+								screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,uri,hashCode,true));
 								pi.setViewPager(screenshots);
 								screenshots.setCurrentItem(getIntent().getIntExtra("position", 0));
 							}
-							
+
 						}
 					});
 				}
