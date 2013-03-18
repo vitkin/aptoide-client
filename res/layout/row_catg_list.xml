@@ -50,7 +50,6 @@
             android:layout_height="wrap_content"
             android:cropToPadding="true"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_ab_ahead_holo_light"
             android:visibility="gone" />
     </LinearLayout>
 

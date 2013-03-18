@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-     <item android:drawable="@drawable/overlay_pressed" android:state_pressed="true"/>
+    <item android:drawable="@drawable/overlay_pressed" android:state_pressed="true"/>
     <item android:drawable="@drawable/overlay_focused" android:state_focused="true"/>
     <item><shape>
             <gradient android:angle="270" android:endColor="@color/dark_custom_color_magalhaes" android:startColor="@color/custom_color_magalhaes" />
-			
+
             <padding android:bottom="5dp" android:left="5dp" android:right="5dp" android:top="5dp" />
 
             <stroke android:width="0.2dp" android:color="@color/light_custom_color_midnight" />
-
         </shape></item>
 
 </selector>

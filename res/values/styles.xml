@@ -62,7 +62,7 @@
     </style>
 
     <style name="breadcrumbs_style_dark" parent="breadcrumbs_style">
-        <item name="android:background">@drawable/back_breadcrumb_dark</item>
+        <item name="android:drawableLeft">@drawable/ic_ab_back_holo_dark</item>
     </style>
 
     <!-- quotes styles -->
@@ -191,7 +191,7 @@
     </style>
 
     <!-- store dialog styles -->
-    <style name="store_dialog_style_aptoide">
+    <style name="store_dialog_style_light">
         <item name="android:background">@drawable/dialog_background_light</item>
     </style>
 
@@ -226,11 +226,11 @@
     </style>
 
     <!-- view page indicator background styles -->
-    <style name="title_bar_bgd_dark">
+    <style name="title_bar_bgd_style_dark">
         <item name="android:background">@drawable/title_bar_bgd_dark</item>
     </style>
 
-    <style name="title_bar_bgd_aptoide">
+    <style name="title_bar_bgd_style_aptoide">
         <item name="android:background">@drawable/title_bar_bgd</item>
     </style>
 
@@ -269,7 +269,7 @@
     <style name="custom_actionbar_style_midnight">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/actionbar_bgd_aptoide</item>
+        <item name="android:background">@drawable/actionbar_bgd_midnight</item>
     </style>
 
     <style name="custom_actionbar_style_magalhaes">
@@ -290,10 +290,14 @@
         <item name="android:background">@drawable/actionbar_button_aptoide</item>
     </style>
 
+    <style name="custom_search_button_style_midnight" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_midnight</item>
+    </style>
+
     <style name="custom_search_button_style_magalhaes" parent="custom_search_button_style">
         <item name="android:background">@drawable/actionbar_button_magalhaes</item>
     </style>
-    
+
     <!-- brand -->
     <style name="brand_style">
         <item name="android:layout_width">wrap_content</item>
