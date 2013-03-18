@@ -59,6 +59,7 @@ public class SearchManager extends FragmentActivity/*SherlockFragmentActivity */
 		lv = (ListView) findViewById(R.id.listView);
 //		searchBox = (EditText) findViewById(R.id.search_box);
 		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.footer_search_aptoide, null);
+		v.setOnClickListener(null);
 		lv.addFooterView(v);
 		
 		results = (TextView) v.findViewById(R.id.results_text);

@@ -50,7 +50,7 @@ public class Constants {
 	public static final String PATH_CACHE_MYAPPS = PATH_CACHE + "myapps/";
 
 	public static final String APTOIDE_PACKAGE_NAME = "cm.aptoide.pt";
-	public static final String APTOIDE_CLASS_NAME = APTOIDE_PACKAGE_NAME+".MainActivity";
+	public static final String APTOIDE_CLASS_NAME = APTOIDE_PACKAGE_NAME+".Start";
 	public static final String SERVICE_DOWNLOAD_CLASS_NAME = APTOIDE_PACKAGE_NAME+".services.ServiceDownload";	
 	
 	public static final String FILE_PREFERENCES = "aptoide_preferences";

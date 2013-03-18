@@ -6,10 +6,10 @@
 
     <ImageView
         android:id="@+id/splashscreen"
+        style="?attr/brandSplashscreenPortraitDrawable"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/splashscreen" />
+        android:layout_marginTop="5dp" />
 
 </LinearLayout>

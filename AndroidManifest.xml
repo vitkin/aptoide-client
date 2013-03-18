@@ -1,13 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="cm.aptoide.pt"
-          android:versionCode="401"
-          android:versionName="4.0.1" android:installLocation="auto">
-    <uses-sdk android:minSdkVersion="5" android:targetSdkVersion="8" />
+    package="cm.aptoide.pt"
+    android:installLocation="auto"
+    android:versionCode="401"
+    android:versionName="4.0.1" >
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-sdk
+        android:minSdkVersion="5"
+        android:targetSdkVersion="8" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -15,54 +19,84 @@
     <uses-permission android:name="android.permission.ACCESS_COURSE_LOCATION" />
 
     <application
+        android:name=".ApplicationAptoide"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:name=".ApplicationAptoide">
-        <activity
-                android:name=".MainActivity"
-                android:launchMode="singleTask"
-                android:configChanges="orientation"
-                android:label="@string/app_name" >
+        android:label="@string/app_name" >
+        <activity android:name=".Start" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <meta-data
-                    android:name="android.app.default_searchable"
-                    android:value=".SearchManager" />
         </activity>
-
-        <activity android:name=".ApkInfo" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize">
-            <meta-data
-                    android:name="android.app.default_searchable"
-                    android:value=".SearchManager" />
-        </activity>
-
-        <activity android:name=".Settings" android:configChanges="orientation" android:theme="@android:style/Theme.Black.NoTitleBar"/>
-        <activity android:name=".ScheduledDownloads" android:configChanges="orientation">
-            <meta-data
-                    android:name="android.app.default_searchable"
-                    android:value=".SearchManager" />
-        </activity>
-        <activity android:name=".webservices.login.Login" android:configChanges="orientation"/>
-        <activity android:name=".ExcludedUpdatesActivity" android:configChanges="orientation"/>
-        <activity android:name=".webservices.comments.AddComment" android:configChanges="orientation"/>
-        <activity android:name=".webservices.comments.ViewComments" android:configChanges="orientation"/>
-        <activity android:name=".webservices.login.CreateUser" android:configChanges="orientation"/>
-        <activity android:name=".ScreenshotsViewer" android:configChanges="orientation"/>
-        <activity android:name=".DownloadManager" android:configChanges="orientation"/>
-        <activity android:name=".HWSpecActivity" android:configChanges="orientation"/>
-        <activity android:name=".sharing.WebViewFacebook" android:configChanges="orientation"/>
-        <activity android:name=".sharing.WebViewTwitter" android:configChanges="orientation"/>
-        <activity android:name=".Buy" android:configChanges="orientation"/>
-        <activity android:name=".CreditCard" android:configChanges="orientation"/>
-
         <activity
-                android:name=".SearchManager"
-                android:configChanges="orientation"
-                android:launchMode="singleTask"
-                android:exported="false"
-                android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:launchMode="singleTask" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchManager" />
+        </activity>
+        <activity
+            android:name=".ApkInfo"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchManager" />
+        </activity>
+        <activity
+            android:name=".Settings"
+            android:configChanges="orientation"
+            android:theme="@android:style/Theme.Black.NoTitleBar" />
+        <activity
+            android:name=".ScheduledDownloads"
+            android:configChanges="orientation" >
+            <meta-data
+                android:name="android.app.default_searchable"
+                android:value=".SearchManager" />
+        </activity>
+        <activity
+            android:name=".webservices.login.Login"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".ExcludedUpdatesActivity"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".webservices.comments.AddComment"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".webservices.comments.ViewComments"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".webservices.login.CreateUser"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".ScreenshotsViewer"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".DownloadManager"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".HWSpecActivity"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".sharing.WebViewFacebook"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".sharing.WebViewTwitter"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".Buy"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".CreditCard"
+            android:configChanges="orientation" />
+        <activity
+            android:name=".SearchManager"
+            android:configChanges="orientation"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
 
@@ -70,15 +104,13 @@
             </intent-filter>
 
             <meta-data
-                    android:name="android.app.searchable"
-                    android:resource="@xml/find" />
-
+                android:name="android.app.searchable"
+                android:resource="@xml/find" />
         </activity>
-
         <activity
-                android:name=".IntentReceiver"
-                android:configChanges="orientation"
-                android:label="@string/app_name">
+            android:name=".IntentReceiver"
+            android:configChanges="orientation"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -115,15 +147,16 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                        android:host="market.android.com"
-                        android:scheme="https" />
+                    android:host="market.android.com"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
 
-
-        <service android:name=".services.MainService"/>
-        <service android:name=".ExtrasService" android:process=":ExtrasService"/>
-        <service android:name=".services.ServiceDownloadManager"/>
+        <service android:name=".services.MainService" />
+        <service
+            android:name=".ExtrasService"
+            android:process=":ExtrasService" />
+        <service android:name=".services.ServiceDownloadManager" />
 
         <receiver android:name=".InstalledBroadcastReceiver" >
             <intent-filter>
@@ -133,7 +166,6 @@
                 <data android:scheme="package" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".ScheduledDownloadReceiver" >
             <intent-filter>
                 <action android:name="android.net.wifi.STATE_CHANGE" />
@@ -141,33 +173,27 @@
         </receiver>
 
         <provider
-                android:name=".ExtrasContentProvider"
-                android:exported="false"
-                android:authorities="extras.contentprovider" >
+            android:name=".ExtrasContentProvider"
+            android:authorities="extras.contentprovider"
+            android:exported="false" >
         </provider>
 
         <activity
-                android:name="com.google.ads.AdActivity"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
-
+            android:name="com.google.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         <activity
-                android:name="com.adsdk.sdk.banner.InAppWebView"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
-
+            android:name="com.adsdk.sdk.banner.InAppWebView"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         <activity
-                android:name="com.adsdk.sdk.mraid.MraidActivity"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
-
+            android:name="com.adsdk.sdk.mraid.MraidActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
         <activity
-                android:name="com.adsdk.sdk.video.RichMediaActivity"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-                android:hardwareAccelerated="false" />
-
+            android:name="com.adsdk.sdk.video.RichMediaActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:hardwareAccelerated="false" />
         <activity
-                android:name="com.paypal.android.MEP.PayPalActivity"
-                android:configChanges="keyboardHidden|orientation"
-                />
-
+            android:name="com.paypal.android.MEP.PayPalActivity"
+            android:configChanges="keyboardHidden|orientation" />
     </application>
 
 </manifest>

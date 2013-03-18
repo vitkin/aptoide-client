@@ -298,7 +298,7 @@
         <item name="android:background">@drawable/actionbar_button_magalhaes</item>
     </style>
 
-    <!-- brand -->
+    <!-- brand on action bar -->
     <style name="brand_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">match_parent</item>
@@ -312,6 +312,15 @@
 
     <style name="brand_style_magalhaes" parent="brand_style">
         <item name="android:src">@drawable/brand_magalhaes</item>
+    </style>
+
+    <!-- splashscreen -->
+    <style name="splashscreen_land_style_magalhaes">
+        <item name="android:src">@drawable/splashscreen_land</item>
+    </style>
+
+    <style name="splashscreen_portrait_style_magalhaes">
+        <item name="android:src">@drawable/splashscreen</item>
     </style>
 
 </resources>
