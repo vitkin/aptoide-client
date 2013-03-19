@@ -33,6 +33,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.Environment;
+import android.util.Log;
 import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
@@ -72,12 +73,14 @@ public class ApplicationAptoide extends Application {
     public static String BRANDICON;
     public static boolean MATURECONTENTSWITCH = true;
     public static String SPLASHSCREEN;
+    public static String SPLASHSCREEN_LAND;
     public static boolean MATURECONTENTSWITCHVALUE = true;
     public static boolean MULTIPLESTORES = true;
     public static boolean CUSTOMEDITORSCHOICE = false;
     public static boolean SEARCHSTORES = true;
+    public static String APTOIDETHEME = "";
 
-    enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME }
+    enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREEN_LAND }
 
 	@Override
 	public void onCreate() {
@@ -99,7 +102,7 @@ public class ApplicationAptoide extends Application {
             MULTIPLESTORES = sPref.getBoolean("MULTIPLESTORES",true);
             CUSTOMEDITORSCHOICE = sPref.getBoolean("CUSTOMEDITORSCHOICE",false);
             SEARCHSTORES = sPref.getBoolean("SEARCHSTORES",true);
-
+            APTOIDETHEME = sPref.getString("APTOIDETHEME","DEFAULT");
 
 
 
@@ -134,33 +137,47 @@ public class ApplicationAptoide extends Application {
                             switch (element) {
                                 case PARTNERID:
                                     PARTNERID = sb.toString();
-                                    System.out.println(PARTNERID + "TAAAAG");
+                                    Log.d("Partner ID", PARTNERID + "");
                                     break;
                                 case DEFAULTSTORENAME:
                                     DEFAULTSTORE = sb.toString();
+                                    Log.d("Default store", DEFAULTSTORE + "");
                                     break;
                                 case BRAND:
                                     BRANDICON = sb.toString();
+                                    Log.d("Brand icon", BRANDICON + "");
                                     break;
                                 case SPLASHSCREEN:
                                     SPLASHSCREEN = sb.toString();
+                                    Log.d("Splashscreen", SPLASHSCREEN+ "");
+                                    break;
+                                case SPLASHSCREEN_LAND:
+                                    SPLASHSCREEN_LAND = sb.toString();
+                                    Log.d("Splashscreen landscape", SPLASHSCREEN_LAND+ "");
                                     break;
                                 case MATURECONTENTSWITCH:
                                     MATURECONTENTSWITCH = Boolean.parseBoolean(sb.toString());
+                                    Log.d("Mature content Switch", MATURECONTENTSWITCH+ "");
                                     break;
                                 case MATURECONTENTSWITCHVALUE:
                                     MATURECONTENTSWITCHVALUE = Boolean.parseBoolean(sb.toString());
+                                    Log.d("Mature content value", MATURECONTENTSWITCHVALUE+ "");
                                     break;
                                 case MULTIPLESTORES:
                                     MULTIPLESTORES = Boolean.parseBoolean(sb.toString());
+                                    Log.d("Multiple stores", MULTIPLESTORES+ "");
                                     break;
                                 case CUSTOMEDITORSCHOICE:
                                     CUSTOMEDITORSCHOICE = Boolean.parseBoolean(sb.toString());
+                                    Log.d("Custom editors choice", CUSTOMEDITORSCHOICE+ "");
                                     break;
                                 case APTOIDETHEME:
+                                	APTOIDETHEME = sb.toString();
+                                	Log.d("Aptoide theme", APTOIDETHEME+ "");
                                     break;
                                 case SEARCHSTORES:
                                     SEARCHSTORES = Boolean.parseBoolean(sb.toString());
+                                    Log.d("Search stores", SEARCHSTORES+ "");
                                     break;
                             }
                         }catch (Exception e){
@@ -188,6 +205,7 @@ public class ApplicationAptoide extends Application {
             .putBoolean("MULTIPLESTORES",MULTIPLESTORES)
             .putBoolean("CUSTOMEDITORSCHOICE",CUSTOMEDITORSCHOICE)
             .putBoolean("SEARCHSTORES",SEARCHSTORES)
+            .putString("APTOIDETHEME", APTOIDETHEME)
             .commit();
 
         }

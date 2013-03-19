@@ -1,35 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true">
-        <shape>
-            <solid android:color="#ffa200" />
+
+    <item android:drawable="@drawable/overlay_pressed" android:state_pressed="true"/>
+    <item android:drawable="@drawable/overlay_focused" android:state_focused="true"/>
+    <item android:state_enabled="false"><shape android:shape="rectangle">
             <corners android:radius="3dp" />
+
+            <solid android:color="@android:color/darker_gray" />
+
             <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
-        </shape>
-    </item>
-    
-    <item android:state_focused="true">
-    	<shape android:shape="rectangle">
-            <corners android:radius="3dp" />
-			<gradient android:angle="90" android:startColor="#ffa200" android:endColor="#f77508" />
-			<padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
-		</shape>
-	</item>	
-	
-    <item android:state_enabled="false">
-    	<shape android:shape="rectangle">
-            <corners android:radius="3dp" />
-			<solid android:color="@android:color/darker_gray" />
-			<padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
-		</shape>
-	</item>	
-	
-    <item>
-        <shape>
+        </shape></item>
+    <item><shape>
             <gradient android:angle="270" android:endColor="#bdbebd" android:startColor="#efefef" />
+
             <stroke android:width="1dp" android:color="#c6c7c6" />
+
             <corners android:radius="4dp" />
+
             <padding android:bottom="10dp" android:left="10dp" android:right="10dp" android:top="10dp" />
-        </shape>
-    </item>
+        </shape></item>
+
 </selector>

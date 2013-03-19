@@ -18,15 +18,36 @@
     <color name="custom_background_color">#edece9</color>
     <color name="custom_inside_background_color">@android:color/white</color>
     
-   <color name="custom_background_color_midnight">#0f0f0f</color> 
-   <color name="custom_inside_background_color_midnight">#414042</color>
-   
-   <color name="custom_color_midnight">#01008a</color>
-   <color name="dark_custom_color_midnight">#000029</color>
-   <color name="light_custom_color_midnight">#027bf0</color>
+   <color name="custom_color_midnight">#547c90</color>
+   <color name="dark_custom_color_midnight">#3c557c</color>
+   <color name="light_custom_color_midnight">#011928</color>
    
    <color name="custom_color_magalhaes">#00aeef</color>
    <color name="dark_custom_color_magalhaes">#1b3e5f</color>
    <color name="light_custom_color_magalhaes">#449def</color>
-       
+   
+   <color name="custom_color_maroon">#8b0100</color>
+   <color name="dark_custom_color_maroon">#680000</color>
+   <color name="light_custom_color_maroon">#e20100</color>
+
+   <color name="custom_color_gold">#ac8506</color>
+   <color name="dark_custom_color_gold">#936d02</color>
+   <color name="light_custom_color_gold">#f3b411</color>
+   
+   <color name="custom_color_orange">#ff8c01</color>
+   <color name="dark_custom_color_orange">#cb6f01</color>
+   <color name="light_custom_color_orange">#ffb74d</color>
+   
+   <color name="custom_color_springgreen">#73be73</color>
+   <color name="dark_custom_color_springgreen">#5c985c</color>
+   <color name="light_custom_color_springgreen">#9ae380</color>
+   
+   <color name="custom_color_lightsky">#00a3b8</color>
+   <color name="dark_custom_color_lightsky">#005264</color>
+   <color name="light_custom_color_lightsky">#83e2fb</color>
+   
+   <color name="custom_color_pink">#ff8fa2</color>
+   <color name="dark_custom_color_pink">#ff6580</color>
+   <color name="light_custom_color_pink">#ffc0cb</color>
+   
 </resources>

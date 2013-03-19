@@ -1651,10 +1651,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 					file.mkdirs();
 				}
 
-				file = new File(LOCAL_PATH + "/icons");
-				if (!file.exists()) {
-					file.mkdirs();
-				}
+				
 
 				new Thread(new Runnable() {
 

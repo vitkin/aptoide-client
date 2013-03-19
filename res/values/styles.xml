@@ -29,6 +29,30 @@
         <item name="android:background">@drawable/custom_color_button_magalhaes</item>
     </style>
 
+    <style name="custom_button_style_maroon" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_maroon</item>
+    </style>
+
+    <style name="custom_button_style_gold" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_gold</item>
+    </style>
+
+    <style name="custom_button_style_orange" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_orange</item>
+    </style>
+
+    <style name="custom_button_style_springgreen" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_springgreen</item>
+    </style>
+
+    <style name="custom_button_style_lightsky" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_lightsky</item>
+    </style>
+
+    <style name="custom_button_style_pink" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_pink</item>
+    </style>
+
     <!-- gray button styles -->
     <style name="gray_button_style" parent="@android:style/Widget.Button">
         <item name="android:layout_width">fill_parent</item>
@@ -57,7 +81,7 @@
         <item name="android:background">@drawable/highlight_overlay</item>
     </style>
 
-    <style name="breadcrumbs_style_aptoide" parent="breadcrumbs_style">
+    <style name="breadcrumbs_style_light" parent="breadcrumbs_style">
         <item name="android:drawableLeft">@drawable/ic_ab_back_holo_light</item>
     </style>
 
@@ -105,7 +129,7 @@
         <item name="android:background">@drawable/popup_inline</item>
     </style>
 
-    <style name="quick_action_style_midnight">
+    <style name="quick_action_style_oem">
         <item name="android:background">@drawable/popup_inline_midnight</item>
     </style>
 
@@ -173,8 +197,32 @@
         <item name="android:background">@drawable/apk_info_separator_magalhaes</item>
     </style>
 
+    <style name="apk_info_separator_style_maroon" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_maroon</item>
+    </style>
+
+    <style name="apk_info_separator_style_gold" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_gold</item>
+    </style>
+
+    <style name="apk_info_separator_style_orange" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_orange</item>
+    </style>
+
+    <style name="apk_info_separator_style_springgreen" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_springgreen</item>
+    </style>
+
+    <style name="apk_info_separator_style_lightsky" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_lightsky</item>
+    </style>
+
+    <style name="apk_info_separator_style_pink" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_pink</item>
+    </style>
+
     <!-- top app item background styles -->
-    <style name="top_app_item_style_aptoide">
+    <style name="top_app_item_style_light">
         <item name="android:background">@drawable/griditem_bgd_aptoide</item>
     </style>
 
@@ -204,7 +252,7 @@
         <item name="android:src">@drawable/ic_update</item>
     </style>
 
-    <style name="ic_update_style_midnight">
+    <style name="ic_update_style_oem">
         <item name="android:src">@drawable/ic_update_midnight</item>
     </style>
 
@@ -217,7 +265,7 @@
         <item name="android:src">@drawable/ic_menu_more</item>
     </style>
 
-    <style name="ic_menu_more_style_midnight">
+    <style name="ic_menu_more_style_oem">
         <item name="android:src">@drawable/ic_menu_more_midnight</item>
     </style>
 
@@ -259,6 +307,30 @@
         <item name="android:background">@drawable/actionbar_bgd_magalhaes</item>
     </style>
 
+    <style name="custom_header_style_maroon" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_maroon</item>
+    </style>
+
+    <style name="custom_header_style_gold" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_gold</item>
+    </style>
+
+    <style name="custom_header_style_orange" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_orange</item>
+    </style>
+
+    <style name="custom_header_style_springgreen" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_springgreen</item>
+    </style>
+
+    <style name="custom_header_style_lightsky" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_lightsky</item>
+    </style>
+
+    <style name="custom_header_style_pink" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_pink</item>
+    </style>
+
     <!-- actionbar background -->
     <style name="custom_actionbar_style_aptoide">
         <item name="android:layout_width">match_parent</item>
@@ -276,6 +348,42 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/actionbar_bgd_magalhaes</item>
+    </style>
+
+    <style name="custom_actionbar_style_maroon">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_maroon</item>
+    </style>
+
+    <style name="custom_actionbar_style_gold">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_gold</item>
+    </style>
+
+    <style name="custom_actionbar_style_orange">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_orange</item>
+    </style>
+
+    <style name="custom_actionbar_style_springgreen">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_springgreen</item>
+    </style>
+
+    <style name="custom_actionbar_style_lightsky">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_lightsky</item>
+    </style>
+
+    <style name="custom_actionbar_style_pink">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_pink</item>
     </style>
 
     <!-- search button background -->
@@ -298,6 +406,30 @@
         <item name="android:background">@drawable/actionbar_button_magalhaes</item>
     </style>
 
+    <style name="custom_search_button_style_maroon" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_maroon</item>
+    </style>
+
+    <style name="custom_search_button_style_gold" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_gold</item>
+    </style>
+
+    <style name="custom_search_button_style_orange" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_orange</item>
+    </style>
+
+    <style name="custom_search_button_style_springgreen" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_springgreen</item>
+    </style>
+
+    <style name="custom_search_button_style_lightsky" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_lightsky</item>
+    </style>
+
+    <style name="custom_search_button_style_pink" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_pink</item>
+    </style>
+
     <!-- brand on action bar -->
     <style name="brand_style">
         <item name="android:layout_width">wrap_content</item>
@@ -312,15 +444,6 @@
 
     <style name="brand_style_magalhaes" parent="brand_style">
         <item name="android:src">@drawable/brand_magalhaes</item>
-    </style>
-
-    <!-- splashscreen -->
-    <style name="splashscreen_land_style_magalhaes">
-        <item name="android:src">@drawable/splashscreen_land</item>
-    </style>
-
-    <style name="splashscreen_portrait_style_magalhaes">
-        <item name="android:src">@drawable/splashscreen</item>
     </style>
 
 </resources>

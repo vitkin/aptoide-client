@@ -14,7 +14,8 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        style="?attr/quotesInDrawable" />
+        style="?attr/quotesInDrawable"
+        android:layout_gravity="left" />
 
     <TextView
         android:id="@+id/comment"
@@ -29,7 +30,8 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        style="?attr/quotesOutDrawable"/>
+        style="?attr/quotesOutDrawable"
+        android:layout_gravity="right" />
 
     <LinearLayout
         android:id="@+id/comment_info"
