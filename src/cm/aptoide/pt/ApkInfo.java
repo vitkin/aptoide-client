@@ -12,19 +12,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import android.app.Dialog;
-import android.os.*;
-import cm.aptoide.pt.webservices.TasteModel;
-import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
-import cm.aptoide.pt.webservices.comments.Comment;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
@@ -34,6 +30,7 @@ import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -69,6 +66,10 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.contentloaders.ViewApkLoader;
@@ -86,7 +87,10 @@ import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.webservices.TasteModel;
+import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
 import cm.aptoide.pt.webservices.comments.AddComment;
+import cm.aptoide.pt.webservices.comments.Comment;
 import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
@@ -94,12 +98,6 @@ import cm.aptoide.pt.webservices.taste.Likes;
 
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
-
-
-import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 
 public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
 
@@ -1032,7 +1030,6 @@ OnClickListener installListener = new OnClickListener() {
 				break;
 
 			case STOPPED:
-				break;
 
 			case COMPLETED:
 				if(actionBar!=null){

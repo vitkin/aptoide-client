@@ -1166,9 +1166,9 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 	@Override
 	protected void onActivityResult(int arg0, int arg1, Intent arg2) {
 		super.onActivityResult(arg0, arg1, arg2);
-		installedLoader.forceLoad();
-		updatesLoader.forceLoad();
-		availableLoader.forceLoad();
+		if(installedLoader!=null)installedLoader.forceLoad();
+		if(updatesLoader!=null)updatesLoader.forceLoad();
+		if(availableLoader!=null)availableLoader.forceLoad();
 		new Thread(new Runnable() {
 
 			@Override
