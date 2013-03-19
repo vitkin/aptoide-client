@@ -13,7 +13,7 @@ public class Start extends Activity {
 	/**
 	 * The thread to process splash screen events
 	 */
-	private Thread mSplashThread;    
+	private Thread mSplashThread;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -22,13 +22,13 @@ public class Start extends Activity {
 		super.onCreate(savedInstanceState);
 
 		if(ApplicationAptoide.PARTNERID != null){
-			
+
 			// Splash screen view
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 			getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 			setContentView(R.layout.splash);
 
-			final Start sPlashScreen = this;   
+			final Start sPlashScreen = this;
 
 			// The thread to wait for splash screen events
 			mSplashThread =  new Thread(){
@@ -40,7 +40,7 @@ public class Start extends Activity {
 							wait(3000);
 						}
 					}
-					catch(InterruptedException ex){                    
+					catch(InterruptedException ex){
 					}
 
 					finish();
@@ -49,16 +49,17 @@ public class Start extends Activity {
 					Intent intent = new Intent();
 					intent.setClass(sPlashScreen, MainActivity.class);
 					startActivity(intent);
-					//                stop();                    
+					//                stop();
 				}
 			};
 
-			mSplashThread.start();    
+			mSplashThread.start();
 		}else{
+            finish();
 			Intent intent = new Intent();
 			intent.setClass(Start.this, MainActivity.class);
-			startActivityForResult(intent, 0);
-			
+			startActivity(intent);
+
 		}
 	}
 
@@ -77,11 +78,5 @@ public class Start extends Activity {
 			}
 		}
 		return true;
-	}    
-	
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		finish();
 	}
-} 
+}
