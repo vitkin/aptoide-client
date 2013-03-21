@@ -6,17 +6,15 @@ import android.app.Activity;
 import android.content.Context;
 
 public class SetAptoideTheme {
-	
-	
+
 	public static void setAptoideTheme(Context activity) {
 
-		
-		String theme_string = "APTOIDE_THEME_" + ApplicationAptoide.APTOIDETHEME.toUpperCase(Locale.ENGLISH);
-		
-		
-		try{
+		String theme_string = "APTOIDE_THEME_"
+				+ ApplicationAptoide.APTOIDETHEME.toUpperCase(Locale.ENGLISH);
+
+		try {
 			EnumAptoideThemes theme = EnumAptoideThemes.valueOf(theme_string);
-			switch(theme){
+			switch (theme) {
 			case APTOIDE_THEME_DEFAULT:
 				activity.setTheme(R.style.Aptoide_Theme);
 				break;
@@ -44,16 +42,38 @@ public class SetAptoideTheme {
 			case APTOIDE_THEME_PINK:
 				activity.setTheme(R.style.Aptoide_Theme_Pink);
 				break;
+			case APTOIDE_THEME_BLUE:
+				activity.setTheme(R.style.Aptoide_Theme_Blue);
+				break;
+			case APTOIDE_THEME_RED:
+				activity.setTheme(R.style.Aptoide_Theme_Red);
+				break;
+			case APTOIDE_THEME_MAGENTA:
+				activity.setTheme(R.style.Aptoide_Theme_Magenta);
+				break;
+			case APTOIDE_THEME_SLATEGRAY:
+				activity.setTheme(R.style.Aptoide_Theme_SlateGray);
+				break;
+			case APTOIDE_THEME_SEAGREEN:
+				activity.setTheme(R.style.Aptoide_Theme_SeaGreen);
+				break;
+			case APTOIDE_THEME_SILVER:
+				activity.setTheme(R.style.Aptoide_Theme_Silver);
+				break;
+			case APTOIDE_THEME_DIMGRAY:
+				activity.setTheme(R.style.Aptoide_Theme_DimGray);
+				break;
+			case APTOIDE_THEME_TIMWE:
+				activity.setTheme(R.style.Aptoide_Theme_TimWe);
+				break;
 			default:
 				activity.setTheme(R.style.Aptoide_Theme);
 				break;
-		}
-		}catch (Exception e) {
+			}
+		} catch (Exception e) {
 			activity.setTheme(R.style.Aptoide_Theme);
 		}
-		
-		
+
 	}
-	
 
 }

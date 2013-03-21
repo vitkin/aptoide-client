@@ -50,4 +50,37 @@
    <color name="dark_custom_color_pink">#ff6580</color>
    <color name="light_custom_color_pink">#ffc0cb</color>
    
+   <color name="custom_color_blue">#0000ff</color>
+   <color name="dark_custom_color_blue">#00007c</color>
+   <color name="light_custom_color_blue">#0059e7</color>
+  
+   <color name="custom_color_red">#ea1000</color>
+   <color name="dark_custom_color_red">#a00000</color>
+   <color name="light_custom_color_red">#fa5f43</color>
+   
+   <color name="custom_color_magenta">#ef82ef</color>
+   <color name="dark_custom_color_magenta">#a85ca8</color>
+   <color name="light_custom_color_magenta">#ffbdff</color> 
+   
+   <color name="custom_color_slategray">#008081</color>
+   <color name="dark_custom_color_slategray">#1f6161</color>
+   <color name="light_custom_color_slategray">#1b9b9c</color> 
+   
+   <color name="custom_color_seagreen">#2e8b57</color>
+   <color name="dark_custom_color_seagreen">#35684d</color>
+   <color name="light_custom_color_seagreen">#3db873</color> 
+   
+   <color name="custom_color_silver">#a9a9a9</color>
+   <color name="dark_custom_color_silver">#6c6c6c</color>
+   <color name="light_custom_color_silver">#e9e9ee</color> 
+   
+   <color name="custom_color_dimgray">#808080</color>
+   <color name="dark_custom_color_dimgray">#3b3b3b</color>
+   <color name="light_custom_color_dimgray">#aaa9a9</color> 
+   
+    <color name="custom_color_timwe">#f89b1d</color>
+    <color name="dark_custom_color_timwe">#f14708</color>
+    <color name="light_custom_color_timwe">#f89b1d</color>
+    <color name="custom_background_color_timwe">#0f0f0f</color>
+    <color name="custom_inside_background_color_timwe">#414042</color>
 </resources>

@@ -53,6 +53,38 @@
         <item name="android:background">@drawable/custom_color_button_pink</item>
     </style>
 
+    <style name="custom_button_style_blue" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_blue</item>
+    </style>
+
+    <style name="custom_button_style_red" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_red</item>
+    </style>
+
+    <style name="custom_button_style_magenta" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_magenta</item>
+    </style>
+
+    <style name="custom_button_style_slategray" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_slategray</item>
+    </style>
+
+    <style name="custom_button_style_seagreen" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_seagreen</item>
+    </style>
+
+    <style name="custom_button_style_silver" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_silver</item>
+    </style>
+
+    <style name="custom_button_style_dimgray" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_dimgray</item>
+    </style>
+
+    <style name="custom_button_style_timwe" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_timwe</item>
+    </style>
+
     <!-- gray button styles -->
     <style name="gray_button_style" parent="@android:style/Widget.Button">
         <item name="android:layout_width">fill_parent</item>
@@ -90,7 +122,7 @@
     </style>
 
     <!-- quotes styles -->
-    <style name="quotes_in_style_aptoide">
+    <style name="quotes_in_style_light">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:src">@drawable/in_marks_light</item>
@@ -102,7 +134,7 @@
         <item name="android:src">@drawable/in_marks_dark</item>
     </style>
 
-    <style name="quotes_out_style_aptoide">
+    <style name="quotes_out_style_light">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:src">@drawable/out_marks_light</item>
@@ -221,21 +253,45 @@
         <item name="android:background">@drawable/apk_info_separator_pink</item>
     </style>
 
+    <style name="apk_info_separator_style_blue" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_blue</item>
+    </style>
+
+    <style name="apk_info_separator_style_red" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_red</item>
+    </style>
+
+    <style name="apk_info_separator_style_magenta" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_magenta</item>
+    </style>
+
+    <style name="apk_info_separator_style_slategray" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_slategray</item>
+    </style>
+
+    <style name="apk_info_separator_style_seagreen" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_seagreen</item>
+    </style>
+
+    <style name="apk_info_separator_style_silver" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_silver</item>
+    </style>
+
+    <style name="apk_info_separator_style_dimgray" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_dimgray</item>
+    </style>
+
+    <style name="apk_info_separator_style_timwe" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_timwe</item>
+    </style>
+
     <!-- top app item background styles -->
     <style name="top_app_item_style_light">
-        <item name="android:background">@drawable/griditem_bgd_aptoide</item>
+        <item name="android:background">@drawable/griditem_bgd_light</item>
     </style>
 
-    <style name="editorschoice_item_style_aptoide">
-        <item name="android:background">@drawable/highlight_overlay</item>
-    </style>
-
-    <style name="top_app_item_style_midnight">
-        <item name="android:background">@drawable/griditem_bgd_midnight</item>
-    </style>
-
-    <style name="top_app_item_style_magalhaes">
-        <item name="android:background">@drawable/griditem_bgd_midnight</item>
+    <style name="top_app_item_style_dark">
+        <item name="android:background">@drawable/griditem_bgd_dark</item>
     </style>
 
     <!-- store dialog styles -->
@@ -279,6 +335,10 @@
     </style>
 
     <style name="title_bar_bgd_style_aptoide">
+        <item name="android:background">@drawable/title_bar_bgd_aptoide</item>
+    </style>
+
+    <style name="title_bar_bgd_style_light">
         <item name="android:background">@drawable/title_bar_bgd</item>
     </style>
 
@@ -329,6 +389,38 @@
 
     <style name="custom_header_style_pink" parent="custom_textview_header_style">
         <item name="android:background">@drawable/actionbar_bgd_pink</item>
+    </style>
+
+    <style name="custom_header_style_blue" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_blue</item>
+    </style>
+
+    <style name="custom_header_style_red" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_red</item>
+    </style>
+
+    <style name="custom_header_style_magenta" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_magenta</item>
+    </style>
+
+    <style name="custom_header_style_slategray" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_slategray</item>
+    </style>
+
+    <style name="custom_header_style_seagreen" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_seagreen</item>
+    </style>
+
+    <style name="custom_header_style_silver" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_silver</item>
+    </style>
+
+    <style name="custom_header_style_dimgray" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_dimgray</item>
+    </style>
+
+    <style name="custom_header_style_timwe" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_timwe</item>
     </style>
 
     <!-- actionbar background -->
@@ -386,6 +478,54 @@
         <item name="android:background">@drawable/actionbar_bgd_pink</item>
     </style>
 
+    <style name="custom_actionbar_style_blue">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_blue</item>
+    </style>
+
+    <style name="custom_actionbar_style_red">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_red</item>
+    </style>
+
+    <style name="custom_actionbar_style_magenta">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_magenta</item>
+    </style>
+
+    <style name="custom_actionbar_style_slategray">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_slategray</item>
+    </style>
+
+    <style name="custom_actionbar_style_seagreen">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_seagreen</item>
+    </style>
+
+    <style name="custom_actionbar_style_silver">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_silver</item>
+    </style>
+
+    <style name="custom_actionbar_style_dimgray">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_dimgray</item>
+    </style>
+
+    <style name="custom_actionbar_style_timwe">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_timwe</item>
+    </style>
+
     <!-- search button background -->
     <style name="custom_search_button_style">
         <item name="android:layout_width">61dp</item>
@@ -428,6 +568,38 @@
 
     <style name="custom_search_button_style_pink" parent="custom_search_button_style">
         <item name="android:background">@drawable/actionbar_button_pink</item>
+    </style>
+
+    <style name="custom_search_button_style_blue" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_blue</item>
+    </style>
+
+    <style name="custom_search_button_style_red" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_red</item>
+    </style>
+
+    <style name="custom_search_button_style_magenta" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_magenta</item>
+    </style>
+
+    <style name="custom_search_button_style_slategray" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_slategray</item>
+    </style>
+
+    <style name="custom_search_button_style_seagreen" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_seagreen</item>
+    </style>
+
+    <style name="custom_search_button_style_silver" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_silver</item>
+    </style>
+
+    <style name="custom_search_button_style_dimgray" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_dimgray</item>
+    </style>
+
+    <style name="custom_search_button_style_timwe" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_timwe</item>
     </style>
 
     <!-- brand on action bar -->
