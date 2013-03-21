@@ -19,7 +19,6 @@
   <string name="chkBoxSchDwn">Zaplanowane Pobieranie</string>
   <string name="submit">Wyślij</string>
   <string name="subject">Nazwa</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Dostępne</string>
   <string name="installed_tab">Zainstalowane</string>
   <string name="updates_tab">Uaktualnienia</string>
@@ -31,7 +30,6 @@
   <string name="finished_download_alrt">Pobieranie zakończone</string>
   <string name="finished_download_message">Pobieranie zakończone</string>
   <string name="download_alrt">Pobieranie:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Nazwa aplikacji</string>
   <string name="tastenotavailable">Niedostępne</string>
   <string name="unabletoexecutecheknet">Nie można wykonać. Sprawdź połączenie z internetem.</string>
@@ -43,7 +41,7 @@
   <string name="user">Nazwa użytkownika&#8230;</string>
   <string name="pass">Hasło&#8230;</string>
   <string name="new_account">Nowe konto</string>
-  <string name="setcredentials">Ustawienia Aptoide</string>
+  <string name="setcredentials">Ustawienia</string>
   <string name="usernotdef">Brak nazwy użytkownika</string>
   <string name="passwordnotdef">Brak hasła</string>
   <string name="loggingin">Logowanie&#8230;</string>
@@ -75,11 +73,7 @@
   <string name="setting_schdwntitle">Zaplanowane pobrania</string>
   <string name="setting_schdwninstalltitle">Instalacja automatyczna</string>
   <string name="setting_schdwninstallsum">Zainstaluj wybrane aplikacje automatycznie jeśli dostępne jest połączenie WiFi</string>
-  <string name="credentialssettings">Ustawienia Aptoide</string>
-  <string name="clearcredentials">Wyczyść login</string>
-  <string name="clearcredentials_summary">Zmień swój aktualny login</string>
-  <string name="setcredentials_summary">Ustaw nowy login</string>
-  <string name="settings_title_bar">Ustawienia Aptoide</string>
+  <string name="settings_title_bar">Ustawienia</string>
   <string name="credentialscleared">Login wyczyszczony</string>
   <string name="credentialscleared_des">Twoje dane zostały zmienione</string>
   <string name="menu_update_repo">Lista uaktualnień</string>
@@ -110,8 +104,6 @@
   <string name="about_site">Strona domowa:</string>
   <string name="about_mail">Kontakt:</string>
   <string name="no_descript">Niedostępne</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Wybierz repozytorium do usunięcia</string>
   <string name="repo_edt_msg1">Wybierz repozytorium do edycji</string>
   <string name="repo_edt_msg2">Edytuj repozytorium</string>
@@ -119,7 +111,7 @@
   <string name="network_auto_update_error">Błąd połączenia z uaktualnieniem! Zachowana bieżąca wersja.</string>
   <string name="auto_updating">Proszę czekać na pobranie uaktualnienia&#8230;</string>
   <string name="update_self_title">Dostępne jest uaktualnienie</string>
-  <string name="update_self_msg">Dostępna jest nowa wersja Aptoide,\nczy chcesz uaktualnić?</string>
+  <string name="update_self_msg">Dostępna jest nowa wersja %s,\nczy chcesz uaktualnić?</string>
   <string name="md5_error">Błąd sumy kontrolnej MD5 pobranej aplikacji!\nUaktualnij swoje repozytoria przed ponownym pobraniem.</string>
   <string name="network_error">Błąd podczas pobierania aplikacji.\nSpróbuj ponownie.</string>
   <string name="error_404">W wybranym repozytorium nie odnaleziono pliku.\nSpróbuj ponownie pózniej.</string>
@@ -130,7 +122,6 @@
   <string name="remote_in_noSD">Nie masz karty SD albo nie pracuje właściwie\nWłóż kartę lub popraw jej włożenie i spróbuj ponownie.</string>
   <string name="remote_in_noSDspace">Masz za mało miejsca na karcie SD aby używać Aptoide\nUwolnij trochę miejsca i spróbuj ponownie.</string>
   <string name="updating_3g">Nie masz połączenia WiFi. Jeśli masz limitowany transfer danych mobilnych, zaleca się uruchomienie połaczenia WiFi.\nUaktualniać pomimo to?</string>
-  <string name="updating_cfrm">Potwierdzasz uaktualnianie repozytoriów?</string>
   <string name="aptoide_error">Brak kontaktu z serwerem. Sprawdź łącze internetowe.</string>
   <string name="no_sch_downloads">Brak zaplanowanych pobierań!</string>
   <string name="schDown_install">Czy chcesz zainstalować wszystkie zaplanowane pobierania?</string>
@@ -140,8 +131,7 @@
   <string name="schDown_nodownloadselect">Nie wybrano nic do pobrania</string>
   <string name="schDown_downerror">Błąd pobierania. Dodano repozytorium %1$s.</string>
   <string name="addSchDown">Dodano do Zaplanowanych Pobierań</string>
-  <string name="registration">Rejestracja w Bazaar</string>
-  <string name="bazaar_url">www.aptoide.com</string>
+  <string name="registration">Rejestracja</string>
   <string name="username">Email</string>
   <string name="password">Hasło</string>
   <string name="register">Logowanie</string>
@@ -157,7 +147,6 @@
     <item>Nie pobieraj</item>
   </string-array>
   <string name="password_tip">Pokaż hasło</string>
-  <string name="bazaar_login">Ustawienia Aptoide</string>
   <string name="schDown_added">Dodano do Zaplanowanych Pobierań</string>
   <string name="clear_cache_sucess">Twój komentarz został wysłany</string>
   <string name="aptoide_downloading">Pobieranie:</string>

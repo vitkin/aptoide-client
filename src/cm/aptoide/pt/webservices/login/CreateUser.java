@@ -22,16 +22,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
-import cm.aptoide.pt.util.Algorithms;
+import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.SetAptoideTheme;
+import cm.aptoide.pt.util.Algorithms;
 
 public class CreateUser extends Activity /*SherlockActivity */{
 	
@@ -39,6 +39,7 @@ public class CreateUser extends Activity /*SherlockActivity */{
 	EditText password_box;
 	String username;
 	String password;
+	TextView accept_terms;
 	
 	public static final int REQUEST_CODE = 20;
 	public static final String WEB_SERVICE_CREATEUSER = "http://webservices.aptoide.com/webservices/createUser";
@@ -58,6 +59,8 @@ public class CreateUser extends Activity /*SherlockActivity */{
 		context = this;
 		username_box = (EditText) findViewById(R.id.email_box);
 		password_box = (EditText) findViewById(R.id.password_box);
+		accept_terms = (TextView) findViewById(R.id.accept_terms);
+		accept_terms.setText(context.getString(R.string.accept_terms, ApplicationAptoide.MARKETNAME));
 	}
 	
 	public void signUp(View v){

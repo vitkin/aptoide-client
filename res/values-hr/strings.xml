@@ -35,7 +35,6 @@
   <string name="submit">Dodaj</string>
   <string name="body">Tijelo</string>
   <string name="subject">Ime</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Dostupno</string>
   <string name="featured_tab">Istaknuto</string>
   <string name="installed_tab">Instalirano</string>
@@ -48,7 +47,6 @@
   <string name="finished_download_alrt">Preuzimanje završeno</string>
   <string name="finished_download_message">Preuzimanje završeno</string>
   <string name="download_alrt">Preuzima se:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Ime aplikacije</string>
   <string name="tastenotavailable">Ne dostupno</string>
   <string name="unabletoexecutecheknet">Nije u mogućnosti pokrenuti. Provjerite internet status</string>
@@ -60,7 +58,7 @@
   <string name="user">Korisničko ime&#8230;</string>
   <string name="pass">Password&#8230;</string>
   <string name="new_account">Novi korisnik</string>
-  <string name="setcredentials">Aptoide Login</string>
+  <string name="setcredentials">Login</string>
   <string name="usernotdef">Korisnik nije definisan</string>
   <string name="passwordnotdef">Password nije definisan</string>
   <string name="loggingin">Prijavljivanje&#8230;</string>
@@ -97,11 +95,7 @@
   <string name="setting_schdwninstalltitle">Automatska instalacija</string>
   <string name="setting_schdwninstallsum">Instaliraj pripremljene download-e automatski kada wifi bude dostupan.</string>
   <string name="setting_clear_memory">Očisti memoriju</string>
-  <string name="credentialssettings">Aptoide Login</string>
-  <string name="clearcredentials">Očisti login</string>
-  <string name="clearcredentials_summary">Poništi trenutni login</string>
-  <string name="setcredentials_summary">Stavi novi login</string>
-  <string name="settings_title_bar">Aptoide postavke</string>
+  <string name="settings_title_bar">Postavke</string>
   <string name="credentialscleared">Login očišćen</string>
   <string name="credentialscleared_des">Vaše informacije su očišćene</string>
   <string name="menu_update_repo">Lista update-a</string>
@@ -137,8 +131,6 @@
   <string name="google_play">Google Play</string>
   <string name="show_less">Prikaži manje</string>
   <string name="no_descript">Nema dostupnog opisa</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Izaberite store koji želite ukloniti</string>
   <string name="repo_edt_msg1">Izaberite store koji želite edit-ovati.</string>
   <string name="repo_edt_msg2">Editujte store</string>
@@ -146,7 +138,7 @@
   <string name="network_auto_update_error">Konekcija update-a nije uspješna! Zadržavam sadašnju verziju.</string>
   <string name="auto_updating">Molimo sačekajte dok se proces update-a downloaduje.</string>
   <string name="update_self_title">Update dostupan</string>
-  <string name="update_self_msg">Dostupna je nova verzija apdoite-a,\nželite li update-ovati?</string>
+  <string name="update_self_msg">Dostupna je nova verzija %s,\nželite li update-ovati?</string>
   <string name="md5_error">Provjera download-ovane aplikacije md5 nije uspješna!\nMolimo da update-ujete svoje store-ove prije ponovnog pokušavanja.</string>
   <string name="network_error">Pojavio se error prilikom prikupljanja aplikacije.\nMolimo pokušajte ponovo.</string>
   <string name="error_404">File nije nađen u datom store-u.\nMolimo pokušajte kasnije.</string>
@@ -157,7 +149,6 @@
   <string name="remote_in_noSD">Nema te SD karticu, ili ne radi pravino\nMolimo priključite jednu, ili ponovno je ubacite, pa probajte ponovo.</string>
   <string name="remote_in_noSDspace">Nemate dovoljno prostora na SD kartici da koristite Aptoide\nMolimo da oslobodite prostora pa pokušajte ponovo.</string>
   <string name="updating_3g">Niste povezani na Wifi. Ako imati ograničen bandwidth, preporučljivo je da update-ujete koristeči Wifi konekciju.\nUpdate svakako?</string>
-  <string name="updating_cfrm">Potvrdite Aptoide store update?</string>
   <string name="aptoide_error">Ne može se konektovati na remote server. Molimo da pokušamo kasnije.</string>
   <string name="no_sch_downloads">Nema prijavljenih downloada!</string>
   <string name="size">Veličina</string>
@@ -168,8 +159,7 @@
   <string name="schDown_nodownloadselect">Nema selektovanih download-a</string>
   <string name="schDown_downerror">Download greška. Dodaj %1$s store.</string>
   <string name="addSchDown">Dodani download-i na raspored</string>
-  <string name="registration">Aptoide registracija</string>
-  <string name="bazaar_url">http://www.aptoide.com/</string>
+  <string name="registration">Registracija</string>
   <string name="username">Email</string>
   <string name="password">Password</string>
   <string name="register">Prijavi se</string>
@@ -184,18 +174,17 @@
     <item>Samo Wifi</item>
     <item>Nikada nemoj download-ovati.</item>
   </string-array>
-  <string name="accept_terms">Prijavljivanjem vi pristajete na Aptoide terms of service i Aptoide pravila o sadržaju za developere.</string>
+  <string name="accept_terms">Prijavljivanjem vi pristajete na %s terms of service i pravila o sadržaju za developere.</string>
   <string name="username_tip">Upišite svoj username</string>
   <string name="password_tip">Izaberite password</string>
   <string name="sign_in">Prijavi se</string>
-  <string name="bazaar_login">Aptoide login</string>
-  <string name="clearcache_sum">Izbriše Aptoide cache (ikone, screenshotove) sa SD kartice.</string>
+  <string name="clearcache_sum">Izbriše cache (ikone, screenshotove) sa SD kartice.</string>
   <string name="clearcontent_sum">Izbriše sadržaj od .aptoide foldera sa SD kartice.</string>
   <string name="clearcontent_title">Izbriše Aptoide datu i konfiguracije</string>
   <string name="clearcache_title">Izbrišite Aptoide cache</string>
   <string name="schDown_added">Dodani download-i na raspored</string>
   <string name="clear_cache_sucess">Sadržaj uspješno izbrisan</string>
-  <string name="aptoide_downloading">Aptoide download-uje</string>
+  <string name="aptoide_downloading">%s download-uje</string>
   <string name="x_app">%d app</string>
   <string name="x_apps">%d apps</string>
   <string name="starting_download">Pokrečem download</string>

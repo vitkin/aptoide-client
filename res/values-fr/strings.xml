@@ -31,7 +31,6 @@
   <string name="submit">Soumettre</string>
   <string name="body">Corps</string>
   <string name="subject">Nom</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Disponible</string>
   <string name="featured_tab">En vedette</string>
   <string name="installed_tab">Installé</string>
@@ -44,7 +43,6 @@
   <string name="finished_download_alrt">Téléchargement terminé</string>
   <string name="finished_download_message">Téléchargement terminé</string>
   <string name="download_alrt">Téléchargement en cours:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Nom de l\'application</string>
   <string name="tastenotavailable">Indisponible</string>
   <string name="unabletoexecutecheknet">Impossible d\'exécuter. Vérifier connexion.</string>
@@ -56,7 +54,7 @@
   <string name="user">Nom d\'utilisateur&#8230;</string>
   <string name="pass">Mot de passe&#8230;</string>
   <string name="new_account">Nouveau compte</string>
-  <string name="setcredentials">Login Aptoide</string>
+  <string name="setcredentials">Login</string>
   <string name="usernotdef">Utilisateur non défini</string>
   <string name="passwordnotdef">Mot de passe non défini</string>
   <string name="loggingin">Logging en cours&#8230;</string>
@@ -89,11 +87,7 @@
   <string name="setting_schdwntitle">Téléchargements planifiés</string>
   <string name="setting_schdwninstalltitle">Installer automatiquement</string>
   <string name="setting_schdwninstallsum">Installer automatiquement téléchargements programmés si WiFi</string>
-  <string name="credentialssettings">Login Aptoide</string>
-  <string name="clearcredentials">Effacer login</string>
-  <string name="clearcredentials_summary">Effacer login actuel</string>
-  <string name="setcredentials_summary">Créer nouveau login</string>
-  <string name="settings_title_bar">Paramètres Aptoide</string>
+  <string name="settings_title_bar">Paramètres</string>
   <string name="credentialscleared">Login effacé</string>
   <string name="credentialscleared_des">Vos informations de login sont effacées.</string>
   <string name="menu_update_repo">Liste des MàJ</string>
@@ -125,8 +119,6 @@
   <string name="about_site">Accueil:</string>
   <string name="about_mail">Contact:</string>
   <string name="no_descript">Pas de description</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Choisir dépôt à retirer</string>
   <string name="repo_edt_msg1">Choisir dépôt à éditer</string>
   <string name="repo_edt_msg2">Editer dépôt</string>
@@ -134,7 +126,7 @@
   <string name="network_auto_update_error">Echec connexion pour MàJ. Version actuelle conservée.</string>
   <string name="auto_updating">Patientez pendant le téléchargement&#8230;</string>
   <string name="update_self_title">MàJ disponible</string>
-  <string name="update_self_msg">Nouvelle version aptoide disponible.\nMettre à jour?</string>
+  <string name="update_self_msg">Nouvelle version %s disponible.\nMettre à jour?</string>
   <string name="md5_error">Le contrôle md5 de l\'application téléchargée a echoué!\nMettre à jour les dépôts avant de réessayer.</string>
   <string name="network_error">Erreur lors chargement de l\'application.\nRéessayer, svp.</string>
   <string name="error_404">Fichier non trouvé dans dépôt.\nRéessayer plus tard.</string>
@@ -145,7 +137,6 @@
   <string name="remote_in_noSD">Pas de carte SD ou fonctionnement inapproprié\nInsérer une carte ou réinsérer carte et réessayer.</string>
   <string name="remote_in_noSDspace">Pas assez de place sur carte SD pour utiliser Aptoide\nLibérer de l\'espace et réessayer.</string>
   <string name="updating_3g">Pas de connection Wifi. Si vous avez une bande passante mobile limitée, il est recommandé d\'utiliser une connection Wifi.\nMàj quand même?</string>
-  <string name="updating_cfrm">Confirmer MàJ des dépôts?</string>
   <string name="aptoide_error">Impossible de se connecter au serveur distant. Vérifier votre connexion internet.</string>
   <string name="no_sch_downloads">Pas de téléchargement planifié!</string>
   <string name="size">Taille</string>
@@ -156,8 +147,7 @@
   <string name="schDown_nodownloadselect">Pas de téléchargement sélectionné</string>
   <string name="schDown_downerror">Erreur de chargement. Ajouter %1$s dépôt.</string>
   <string name="addSchDown">Ajouter dans la planification</string>
-  <string name="registration">Enregistrement Aptoide</string>
-  <string name="bazaar_url">http://www.aptoide.com/</string>
+  <string name="registration">Enregistrement</string>
   <string name="username">Courriel</string>
   <string name="password">Mot de passe</string>
   <string name="register">Inscription</string>
@@ -172,18 +162,17 @@
     <item>Wifi seulement</item>
     <item>Jamais de téléchargement</item>
   </string-array>
-  <string name="accept_terms">En signat, vous acceptez les conditions générales Aptoide et la politique de contenu pour les développeurs.</string>
+  <string name="accept_terms">En signat, vous acceptez les conditions générales %s et la politique de contenu pour les développeurs.</string>
   <string name="username_tip">Ecrire votre nom d\'utilisateur</string>
   <string name="password_tip">Choisir un mot de passe</string>
   <string name="sign_in">S\'inscrire</string>
-  <string name="bazaar_login">Login Aptoide</string>
-  <string name="clearcache_sum">Vider le cache Aptoide (icônes, captures) de la carte SD.</string>
-  <string name="clearcontent_sum">Vider le contenu du répertoire .aptoide de la carte SD.</string>
-  <string name="clearcontent_title">Supprimer les données et configurations d\'Aptoide</string>
-  <string name="clearcache_title">Vider le cache d\'Aptoide</string>
+  <string name="clearcache_sum">Vider le cache (icônes, captures) de la carte SD.</string>
+  <string name="clearcontent_sum">Vider le contenu de la carte SD.</string>
+  <string name="clearcontent_title">Supprimer les données et configurations</string>
+  <string name="clearcache_title">Vider le cache</string>
   <string name="schDown_added">a été ajouté à la liste des téléchargements prévus.</string>
   <string name="clear_cache_sucess">Contenue effacé avec succès</string>
-  <string name="aptoide_downloading">Aptoide télécharge</string>
+  <string name="aptoide_downloading">%s télécharge</string>
   <string name="x_app">%d app</string>
   <string name="x_apps">%d apps</string>
   <string name="starting_download">Début téléchargement</string>

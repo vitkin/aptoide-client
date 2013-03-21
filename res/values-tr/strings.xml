@@ -19,7 +19,6 @@
   <string name="chkBoxSchDwn">İndirme programla</string>
   <string name="submit">Gönder</string>
   <string name="subject">İsim</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Mevcut</string>
   <string name="featured_tab">Öne çıkanlar</string>
   <string name="installed_tab">Kurulu</string>
@@ -32,7 +31,6 @@
   <string name="finished_download_alrt">İndirme tamamlandı</string>
   <string name="finished_download_message">İndirme tamamlandı</string>
   <string name="download_alrt">İndiriliyor:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Uygulamanın adı</string>
   <string name="tastenotavailable">Mevcut değil</string>
   <string name="unabletoexecutecheknet">Çalıştırılamıyor. İnternet durumunu kontrol ediniz.</string>
@@ -44,7 +42,7 @@
   <string name="user">Kullanıcı adı&#8230;</string>
   <string name="pass">Parola&#8230;</string>
   <string name="new_account">Yeni hesap</string>
-  <string name="setcredentials">Aptoide ayarları</string>
+  <string name="setcredentials">Ayarları</string>
   <string name="usernotdef">Kullanıcı tanımlanmamıştır</string>
   <string name="passwordnotdef">Parola tanımlanmamıştır</string>
   <string name="loggingin">Oturum açılıyor&#8230;</string>
@@ -76,11 +74,7 @@
   <string name="setting_schdwntitle">Programlanmış İndirmeler</string>
   <string name="setting_schdwninstalltitle">Otomatik Yükleme</string>
   <string name="setting_schdwninstallsum">Programlanmış indirmeleri bir WiFi bağlantısı bulunduğunda otomatik olarak yükle</string>
-  <string name="credentialssettings">Aptoide ayarları</string>
-  <string name="clearcredentials">Oturumu temizle</string>
-  <string name="clearcredentials_summary">Şimdiki oturum verilerini kaldır</string>
-  <string name="setcredentials_summary">Yeni oturum yapılandır</string>
-  <string name="settings_title_bar">Aptoide ayarları</string>
+  <string name="settings_title_bar">Ayarları</string>
   <string name="credentialscleared">Oturum verileri temizlendi</string>
   <string name="credentialscleared_des">Oturum verileriniz kaldırıldı</string>
   <string name="menu_update_repo">Liste güncellemesi</string>
@@ -111,8 +105,6 @@
   <string name="about_site">Resmî site:</string>
   <string name="about_mail">İrtibat:</string>
   <string name="no_descript">Mevcut değil</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Kaldırılacak mağaza seç</string>
   <string name="repo_edt_msg1">Düzenlenecek mağaza seç</string>
   <string name="repo_edt_msg2">Mağazayı düzenle</string>
@@ -120,7 +112,7 @@
   <string name="network_auto_update_error">Güncelleme bağlantısı başarısız! Mevcut sürüm korunuyor.</string>
   <string name="auto_updating">Güncelleme indirmesi sürmektedir, lütfen bekleyiniz&#8230;</string>
   <string name="update_self_title">Güncelleme mevcut</string>
-  <string name="update_self_msg">Yeni bir aptoide sürümü mevcuttur,\ngüncellemek ister misiniz?</string>
+  <string name="update_self_msg">Yeni bir %s sürümü mevcuttur,\ngüncellemek ister misiniz?</string>
   <string name="md5_error">İndirilen uygulamanın md5 kontrolü başarısız oldu!\nTekrar denemeden önce mağazalarınızı güncelleyiniz.</string>
   <string name="network_error">Uygulamanın alımı sırasında bir hata oluştu.\nTekrar deneyiniz.</string>
   <string name="error_404">Dosya belirtilen mağazada bulunamadı.\nLütfen bir süre sonra tekrar deneyiniz.</string>
@@ -131,7 +123,6 @@
   <string name="remote_in_noSD">SD kartınız yok ya da gerektiği gibi çalışmıyor\nYa yeni bir kart ya da mevcut kartınızı tekrar takıp deneyiniz.</string>
   <string name="remote_in_noSDspace">Aptoide\'i kullanmak için SD kartınızda kâfi alan bulunmamaktadır\nYeterli alan oluşturup tekrar deneyiniz.</string>
   <string name="updating_3g">Bağlantınız WiFi vasıtasıyla değildir. Mobil veri kotanız sınırlıysa güncellemeyi WiFi ile yapmanız tavsiye edilir.\nBuna rağmen devam edilsin mi?</string>
-  <string name="updating_cfrm">Aptoide mağaza güncellemesini teyit ediyor musunuz?</string>
   <string name="aptoide_error">Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol ediniz.</string>
   <string name="no_sch_downloads">Programlanmış hiçbir indirme yok!</string>
   <string name="schDown_install">Tüm programlanmış indirmeleri kurmak istiyor musunuz?</string>
@@ -141,8 +132,7 @@
   <string name="schDown_nodownloadselect">Hiçbir indirme seçilmedi</string>
   <string name="schDown_downerror">İndirme hatası. %1$s mağazasını ekleyiniz.</string>
   <string name="addSchDown">Programlanmış indirmelere eklendi</string>
-  <string name="registration">Bazaar kaydı</string>
-  <string name="bazaar_url">www.aptoide.com</string>
+  <string name="registration">Kaydı</string>
   <string name="username">E-posta</string>
   <string name="password">Parola</string>
   <string name="register">Hesap aç</string>
@@ -158,7 +148,6 @@
     <item>Hiçbir zaman indirme</item>
   </string-array>
   <string name="password_tip">Parolayı göster</string>
-  <string name="bazaar_login">Aptoide ayarları</string>
   <string name="schDown_added">Programlanmış indirmelere eklendi</string>
   <string name="clear_cache_sucess">Yorumunuz başarılı bir şekilde yollandı</string>
   <string name="aptoide_downloading">İndiriliyor:</string>

@@ -42,7 +42,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
-                android:text="@string/bazaar_url"
+                android:text="@string/aptoide_url"
+                android:autoLink="web"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <LinearLayout
@@ -113,7 +114,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_margin="4dp"
-                    android:text="@string/accept_terms"
                     android:textAppearance="?android:attr/textAppearanceSmall" />
             </LinearLayout>
         </LinearLayout>

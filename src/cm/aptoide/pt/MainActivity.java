@@ -2853,7 +2853,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 							public void onClick(DialogInterface dialog, int id) {
 								dialog.cancel();
 							}
-						}).setMessage(R.string.update_self_msg);
+						}).setMessage(getString(R.string.update_self_msg, ApplicationAptoide.MARKETNAME));
 
 		AlertDialog alert = alertBuilder.create();
 

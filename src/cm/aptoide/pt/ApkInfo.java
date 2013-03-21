@@ -453,7 +453,12 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 												trustedDialog.setIcon(R.drawable.badge_scanned);
 												trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
 												trustedDialog.setCancelable(true);
-
+												
+												TextView trustedClassification = (TextView) trustedView.findViewById(R.id.tv_trusted_classification);
+												trustedClassification.setText(getString(R.string.trusted_classification, ApplicationAptoide.MARKETNAME));
+												TextView aboutAptoideAntimalware = (TextView) trustedView.findViewById(R.id.tv_about_aptoide_antimalware);
+												aboutAptoideAntimalware.setText(getString(R.string.about_aptoide_antimalware, ApplicationAptoide.MARKETNAME));
+												
 												trustedDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
 														new Dialog.OnClickListener() {
 

@@ -11,14 +11,12 @@
   <string name="uninstall">Erneut Installieren</string>
   <string name="chkBoxSchDwn">Geplanter Download</string>
   <string name="submit">Senden</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Verfügbar</string>
   <string name="installed_tab">Installiert</string>
   <string name="updates_tab">Updates</string>
   <string name="add_repo_text">Updates</string>
   <string name="btn_add_repo">Keine Stores!</string>
   <string name="number_apks">Anwendungen:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Name der Anwendung</string>
   <string name="tastenotavailable">verfügbar</string>
   <string name="unabletoexecutecheknet">Durchführung nicht möglich. Bitte Verbindungsstatus überprüfen.</string>
@@ -30,7 +28,7 @@
   <string name="user">Benutzername&#8230;</string>
   <string name="pass">Passwort&#8230;</string>
   <string name="new_account">Neuer Account</string>
-  <string name="setcredentials">Aptoide</string>
+  <string name="setcredentials">Login</string>
   <string name="usernotdef">Kein Benutzer definiert</string>
   <string name="passwordnotdef">Passwort nicht definiert</string>
   <string name="loggingin">Anmelden&#8230;</string>
@@ -53,11 +51,6 @@
   <string name="setting_schdwntitle">Geplante Downloads</string>
   <string name="setting_schdwninstalltitle">Automatische Installation</string>
   <string name="setting_schdwninstallsum">Geplante Downloads automatisch installieren, wenn eine WiFi-Verbindung besteht</string>
-  <string name="credentialssettings">Aptoide</string>
-  <string name="clearcredentials">Login löschen</string>
-  <string name="clearcredentials_summary">Aktuellen Login zurücksetzen</string>
-  <string name="setcredentials_summary">Neuen Login erstellen</string>
-  <string name="settings_title_bar">Aptoide</string>
   <string name="credentialscleared">Login gelöscht</string>
   <string name="credentialscleared_des">Ihre Daten wurden zurückgesetzt</string>
   <string name="menu_update_repo">Updates</string>
@@ -68,11 +61,8 @@
   <string name="about_site">Home:</string>
   <string name="about_mail">Kontakt:</string>
   <string name="no_descript">verfügbar</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_edt_msg2">Keine Stores!</string>
   <string name="update_self_title">Downgrade verfügbar</string>
-  <string name="updating_cfrm">Stores Update überprüfen</string>
   <string name="no_sch_downloads">Keine geplanten Downloads!</string>
   <string name="schDown_install">Alle geplanten Downloads installieren?</string>
   <string name="schDown_installselected">Auswahl installieren</string>
@@ -81,8 +71,7 @@
   <string name="schDown_nodownloadselect">Keine Downloads ausgewählt</string>
   <string name="schDown_downerror">Download-Fehler. %1$s Store hinzufügen.</string>
   <string name="addSchDown">Download geplant</string>
-  <string name="registration">Aptoide Registration</string>
-  <string name="bazaar_url">www.aptoide.com</string>
+  <string name="registration">Registration</string>
   <string name="password">Passwort&#8230;</string>
   <string name="schDown_invertselection">Auswahl installieren</string>
   <string name="clear_dwn_title">Geplante Downloads</string>
@@ -92,7 +81,6 @@
     <item>Keine geplanten Downloads!</item>
   </string-array>
   <string name="password_tip">Passwort anzeigen</string>
-  <string name="bazaar_login">Aptoide</string>
   <string name="schDown_added">Download geplant</string>
   <string name="clear_cache_sucess">Ihr Kommentar wurde übermittelt</string>
   <string name="aptoide_downloading">Keine geplanten Downloads!</string>

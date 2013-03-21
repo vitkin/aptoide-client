@@ -14,7 +14,7 @@
         <searchstores>true</searchstores>
         <customeditorschoice>false</customeditorschoice>
         <aptoidetheme>default</aptoidetheme>
-
+		<marketname>Aptoide</marketname>
     </aptoideconf>
 
     <storeconf>

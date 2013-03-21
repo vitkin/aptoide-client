@@ -11,14 +11,12 @@
   <string name="uninstall">Переустановите</string>
   <string name="chkBoxSchDwn">Запланированные загрузки</string>
   <string name="submit">Отправить</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Доступно</string>
   <string name="installed_tab">Установлено</string>
   <string name="updates_tab">Обновления</string>
   <string name="add_repo_text">Обновления</string>
   <string name="btn_add_repo">У вас нет магазинов!</string>
   <string name="number_apks">Приложения:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Имя приложения</string>
   <string name="tastenotavailable">доступно</string>
   <string name="unabletoexecutecheknet">Невозможно выполнить. Проверьте статус интернета.</string>
@@ -30,7 +28,6 @@
   <string name="user">Имя пользователя&#8230;</string>
   <string name="pass">Пароль&#8230;</string>
   <string name="new_account">Новый аккаунт</string>
-  <string name="setcredentials">Aptoide</string>
   <string name="usernotdef">Пользователь не определен</string>
   <string name="passwordnotdef">Пароль не определен</string>
   <string name="loggingin">Вход в систему&#8230;</string>
@@ -53,11 +50,6 @@
   <string name="setting_schdwntitle">Запланированные загрузки</string>
   <string name="setting_schdwninstalltitle">Автоматическая установка</string>
   <string name="setting_schdwninstallsum">Устанавливать запланированные загрузки автоматически когда соединение по Wifi присутствует</string>
-  <string name="credentialssettings">Aptoide</string>
-  <string name="clearcredentials">Очистка логин</string>
-  <string name="clearcredentials_summary">Отключение текущего логина</string>
-  <string name="setcredentials_summary">Установить новый логин</string>
-  <string name="settings_title_bar">Aptoide</string>
   <string name="credentialscleared">Логин очищен</string>
   <string name="credentialscleared_des">Ваши учетные данные были нерешенны</string>
   <string name="menu_update_repo">Обновления</string>
@@ -68,8 +60,6 @@
   <string name="about_site">Домой:</string>
   <string name="about_mail">Контакты:</string>
   <string name="no_descript">доступно</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_edt_msg2">У вас нет магазинов!</string>
   <string name="update_self_title">Понижение доступно</string>
   <string name="no_sch_downloads">Нет запланированных загрузок!</string>
@@ -80,8 +70,7 @@
   <string name="schDown_nodownloadselect">Нет выбранных загрузок</string>
   <string name="schDown_downerror">Ошибка загрузки. Добавьте %1$s Магазин.</string>
   <string name="addSchDown">Добавленно в Запланированные Загрузки</string>
-  <string name="registration">Bazaar логин</string>
-  <string name="bazaar_url">www.aptoide.com</string>
+  <string name="registration">логин</string>
   <string name="password">Пароль&#8230;</string>
   <string name="schDown_invertselection">Установить выбранные</string>
   <string name="clear_dwn_title">Запланированные загрузки</string>
@@ -91,7 +80,6 @@
     <item>Нет запланированных загрузок!</item>
   </string-array>
   <string name="password_tip">Показать пароль</string>
-  <string name="bazaar_login">Aptoide</string>
   <string name="schDown_added">Добавленно в Запланированные Загрузки</string>
   <string name="clear_cache_sucess">Ваш комментарий успешно принят</string>
   <string name="aptoide_downloading">Нет запланированных загрузок!</string>

@@ -60,7 +60,6 @@
   <string name="submit">Submeter</string>
   <string name="body">Corpo da mensagem</string>
   <string name="subject">Nome</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Disponível</string>
   <string name="featured_tab">Destacado</string>
   <string name="top_apps">Top Apps</string>
@@ -76,7 +75,6 @@
   <string name="finished_download_alrt">Download terminado</string>
   <string name="finished_download_message">Download terminado</string>
   <string name="download_alrt">A descarregar:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Nome da aplicação</string>
   <string name="tastenotavailable">Indisponível</string>
   <string name="unabletoexecutecheknet">Erro. Verifique a ligação à internet.</string>
@@ -99,7 +97,7 @@
   <string name="user">User name&#8230;</string>
   <string name="pass">Password&#8230;</string>
   <string name="new_account">Nova conta</string>
-  <string name="setcredentials">Configurações do Aptoide</string>
+  <string name="setcredentials">Iniciar sessão</string>
   <string name="usernotdef">Uilizador não definido</string>
   <string name="passwordnotdef">Password não definida</string>
   <string name="loggingin">Logging in&#8230;</string>
@@ -146,11 +144,7 @@
   <string name="setting_schdwntitle">Downloads agendados</string>
   <string name="setting_schdwninstalltitle">Instalação automática</string>
   <string name="setting_schdwninstallsum">Instalar downloads agendados automaticamente quando uma ligação Wifi está presente.</string>
-  <string name="credentialssettings">Configurações do Aptoide</string>
-  <string name="clearcredentials">Limpar login</string>
-  <string name="clearcredentials_summary">Limpar login actual</string>
-  <string name="setcredentials_summary">Definir novo login</string>
-  <string name="settings_title_bar">Configurações do Aptoide</string>
+  <string name="settings_title_bar">Configurações</string>
   <string name="credentialscleared">Login limpo</string>
   <string name="credentialscleared_des">A suas credenciais foram limpas</string>
   <string name="menu_update_repo">Actualizações</string>
@@ -185,7 +179,6 @@
   <string name="btn_done">Feito</string>
   <string name="btn_chlog">Changelog</string>
   <string name="btn_search_market">Procurar no Market</string>
-  <string name="search_on_aptoide">Procurar no Aptoide</string>
   <string name="no_results_found">Sem resultados</string>
   <string name="found">Encontrou</string>
   <string name="results">resultado(s)</string>
@@ -203,18 +196,12 @@
   <string name="about_mail">Contacto:</string>
   <string name="is">é</string>
   <string name="trusted">Confiável</string>
-  <string name="trusted_classification">Esta aplicação foi verificada pela plataforma de Anti-Malware do Aptoide e não encontrou nenhum vírus.</string>
+  <string name="trusted_classification">Esta aplicação foi verificada pela plataforma de Anti-Malware do %s e não encontrou nenhum vírus.</string>
   <string name="scanned_with_av">Verificado com:</string>
   <string name="compared_with_another_market">Comparar com outro Android Marketplace:</string>
-  <string name="about_aptoide_antimalware">A plataforma de Anti-Malware do Aptoide analisa as aplicações em tempo real e remove potenciais ameaças em todas as lojas. Este sistema verifica todas as aplicações de todas as lojas e certifica-as comparando com outros Android Marketplaces.</string>
-  <string name="norton_av">Norton Anti-Virus 1.2</string>
-  <string name="fsecure_av">F&#8211;Secure 2&#8211;4 for Android</string>
-  <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
-  <string name="google_play">Google Play</string>
+  <string name="about_aptoide_antimalware">A plataforma de Anti-Malware do %s analisa as aplicações em tempo real e remove potenciais ameaças em todas as lojas. Este sistema verifica todas as aplicações de todas as lojas e certifica-as comparando com outros Android Marketplaces.</string>
   <string name="show_less">Mostrar menos</string>
   <string name="no_descript">Indisponíerrorvel</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Escolha a loja para remover</string>
   <string name="repo_edt_msg1">Escolha a loja para editar</string>
   <string name="repo_edt_msg2">Editar loja</string>
@@ -222,7 +209,7 @@
   <string name="network_auto_update_error">A ligação para a actualização falhou! A versão actual será mantida.</string>
   <string name="auto_updating">Por favor aguarde, enquanto o download da actualização é processado&#8230;</string>
   <string name="update_self_title">Actualização disponível</string>
-  <string name="update_self_msg">Existe uma nova versão do Aptoide disponível,\ndeseja actualizar?</string>
+  <string name="update_self_msg">Existe uma nova versão do %s disponível,\ndeseja actualizar?</string>
   <string name="md5_error">A verificação do md5 falhou para a aplicação descarregada!\nPor favor, actualize as suas lojas antes de tentar novamente.</string>
   <string name="network_error">Ocorreu um erro ao obter a aplicação.\nPor favor, tente novamente.</string>
   <string name="error_404">O ficheiro não foi encontrado na loja fornecida.\nPor favor, tente novamente mais tarde.</string>
@@ -235,7 +222,6 @@
   <string name="remote_in_noSD">Você não tem um SDcard, ou não está a funcionar correctamente\nPor favor, insira um, ou volte a inseri-lo e tente novamente.</string>
   <string name="remote_in_noSDspace">Você não tem espaço suficiente no seu SDcard para utilizar o Aptoide\nPor favor, liberte algum espaço e tente novamente.</string>
   <string name="updating_3g">Você não está ligado através de Wifi. Se você estiver limitado à largura de banda disponível para o seu tarifário de dados, nós aconselhamos que faça a actualização que estiver ligado a partir de Wifi.\n Actualizar de qualquer forma?</string>
-  <string name="updating_cfrm">Confirmar a actualização das lojas Aptoide?</string>
   <string name="aptoide_error">Não foi possível estabelecer ligação com o servidor remoto. Por favor, verifique a sua ligação à Internet.</string>
   <string name="no_sch_downloads">Sem downloads agendados!</string>
   <string name="size">Tamanho</string>
@@ -247,8 +233,7 @@
   <string name="schDown_nodownloadselect">Sem downloads seleccionados</string>
   <string name="schDown_downerror">Erro. Adicione %1$s Store.</string>
   <string name="addSchDown">Download agendado</string>
-  <string name="registration">Aptoide Registration</string>
-  <string name="bazaar_url">www.aptoide.com</string>
+  <string name="registration">Registration</string>
   <string name="username">Email</string>
   <string name="password">Password</string>
   <string name="register">Registar</string>
@@ -263,17 +248,16 @@
     <item>Só wifi</item>
     <item>Nunca descarregar</item>
   </string-array>
-  <string name="accept_terms">Ao registar-se, está a concordar com os Termos de Serviço do Aptoide e com a Política de Conteúdo para Desenvolvedores do Aptoide</string>
+  <string name="accept_terms">Ao registar-se, está a concordar com os Termos de Serviço do %s e com a Política de Conteúdo para Desenvolvedores</string>
   <string name="username_tip">Escreve o seu username</string>
   <string name="password_tip">Mostrar password</string>
   <string name="sign_in">Login</string>
   <string name="sign_out">Terminar sessão</string>
-  <string name="bazaar_login">Aptoide Login</string>
   <string name="login_above_or_signup">Inicie a sessão ou registe-se aqui:</string>
   <string name="my_account">A minha conta</string>
   <string name="clearcache_sum">Apaga a cache (icons, screenshots) do cartão SD.</string>
-  <string name="clearcontent_sum">Apaga o conteúdo da pasta .aptoide do cartão SD.</string>
-  <string name="clearcontent_title">Remover dados e configurações do Aptoide</string>
+  <string name="clearcontent_sum">Apaga o conteúdo do cartão SD.</string>
+  <string name="clearcontent_title">Remover dados e configurações </string>
   <string name="clearcache_title">Apagar cache</string>
   <string name="schDown_added">" foi adicionado à lista de agendados."</string>
   <string name="clear_cache_sucess">A cache foi apagada com sucesso</string>
@@ -300,7 +284,7 @@
   <string name="refresh_list">Actualizar</string>
   <string name="update_all">Actualizar todos</string>
   <string name="update_to">Actualizar para</string>
-  <string name="want_to_share">O Aptoide não publica sem a sua permissão. Respeitamos a privacidade do seu telefone. Quer publicar a seguinte mensagem?</string>
+  <string name="want_to_share">O %s não publica sem a sua permissão. Respeitamos a privacidade do seu telefone. Quer publicar a seguinte mensagem?</string>
   <string name="share">Partilhar</string>
   <string name="facebook_authentication_failed">A autenticação com o Facebook falhou!</string>
   <string name="facebook_authentication_cancelled">Autenticação com o Facebook cancelada!</string>

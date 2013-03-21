@@ -31,7 +31,6 @@
   <string name="submit">Lähetä</string>
   <string name="body">Runko</string>
   <string name="subject">Nimi</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Saatavissa</string>
   <string name="featured_tab">Suositellut</string>
   <string name="installed_tab">Asennetut</string>
@@ -44,7 +43,6 @@
   <string name="finished_download_alrt">Lataus valmis</string>
   <string name="finished_download_message">Lataus valmis</string>
   <string name="download_alrt">Ladataan:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Sovelluksen nimi</string>
   <string name="tastenotavailable">Ei saatavissa</string>
   <string name="unabletoexecutecheknet">Ei voida suorittaa. Tarkista internet-yhteytesi.</string>
@@ -56,7 +54,7 @@
   <string name="user">Käyttäjänimi&#8230;</string>
   <string name="pass">Salasana&#8230;</string>
   <string name="new_account">Uusi tili</string>
-  <string name="setcredentials">Aptoide-kirjautuminen</string>
+  <string name="setcredentials">Kirjautuminen</string>
   <string name="usernotdef">Käyttäjää ei määritelty</string>
   <string name="passwordnotdef">Salasanaa ei määritelty</string>
   <string name="loggingin">Kirjautuu&#8230;</string>
@@ -89,11 +87,7 @@
   <string name="setting_schdwntitle">Ajastetut lataukset</string>
   <string name="setting_schdwninstalltitle">Automaattinen asennus</string>
   <string name="setting_schdwninstallsum">Asenna ajastetut lataukset automaattisesti, kun Wifi-yhteys on käytettävissä</string>
-  <string name="credentialssettings">Aptoide-kirjautuminen</string>
-  <string name="clearcredentials">Tyhjennä kirjautuminen</string>
-  <string name="clearcredentials_summary">Poista nykyiset kirjautumistiedot</string>
-  <string name="setcredentials_summary">Aseta uusi kirjautuminen</string>
-  <string name="settings_title_bar">Aptoiden asetukset</string>
+  <string name="settings_title_bar">Asetukset</string>
   <string name="credentialscleared">Kirjautumistiedot tyhjennetty</string>
   <string name="credentialscleared_des">Tunnukset poistettu</string>
   <string name="menu_update_repo">Luettelopäivitys</string>
@@ -125,8 +119,6 @@
   <string name="about_site">Koti:</string>
   <string name="about_mail">Yhteys:</string>
   <string name="no_descript">Kuvausta ei saatavilla</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Valitse poistettava kauppa</string>
   <string name="repo_edt_msg1">Valitse muokattava kauppa</string>
   <string name="repo_edt_msg2">Muokkaa kauppaa</string>
@@ -134,7 +126,7 @@
   <string name="network_auto_update_error">Päivitetty yhteys epäonnistui! Nykyinen yhteys pidetään.</string>
   <string name="auto_updating">Odota, kun päivityksen latausta käsitellään&#8230;</string>
   <string name="update_self_title">Päivitys saatavissa</string>
-  <string name="update_self_msg">Aptoiden uusi versio löydetty,\nhaluaisitko päivittää versiosi?</string>
+  <string name="update_self_msg">%s uusi versio löydetty,\nhaluaisitko päivittää versiosi?</string>
   <string name="md5_error">Ladatun sovelluksen md5-tarkistus epäonnistui!\nPäivitä kauppasi ennen uutta yritystä.</string>
   <string name="network_error">Sovelluksen haussa tapahtui virhe.\nYritä uudelleen.</string>
   <string name="error_404">Tiedostoa ei löytynyt annetusta kaupasta.\nYritä uudelleen myöhemmin.</string>
@@ -145,7 +137,6 @@
   <string name="remote_in_noSD">Sinulla ei ole SD-korttia tai se toimii virheellisesti\nAseta uusi tai uudelleenaseta nykyinen ja yritä uudelleen.</string>
   <string name="remote_in_noSDspace">SD-kortillasi ei ole riittävästi tilaa Aptoiden käyttämiseksi\nVapauta tilaa ja yritä uudelleen.</string>
   <string name="updating_3g">Et ole Wifi-yhteydessä. Jos liittymässäsi on rajoitettu kaistanleveys, on suositeltavaa siirtyä Wifi-yhteyteen ennen päivitystä.\nPäivitetäänkö joka tapauksessa?</string>
-  <string name="updating_cfrm">Vahvista Aptoiden kauppojen päivitys?</string>
   <string name="aptoide_error">Etäpalvelimeen ei saada yhteyttä. Tarkista internet-yhteytesi.</string>
   <string name="no_sch_downloads">Ei ajastettuja latauksia!</string>
   <string name="size">Koko</string>
@@ -156,8 +147,7 @@
   <string name="schDown_nodownloadselect">Ei latauksia valittuna</string>
   <string name="schDown_downerror">Latausvirhe. Lisää %1$s kauppa.</string>
   <string name="addSchDown">Lisätty ajastettuihin latauksiin</string>
-  <string name="registration">Aptoide-rekisteröityminen</string>
-  <string name="bazaar_url">http://www.aptoide.com/</string>
+  <string name="registration">Rekisteröityminen</string>
   <string name="username">Sähköposti</string>
   <string name="password">Salasana</string>
   <string name="register">Rekisteröidy</string>
@@ -172,18 +162,18 @@
     <item>Ainoastaan Wifi</item>
     <item>Älä lataa koskaan</item>
   </string-array>
-  <string name="accept_terms">Rekisteröitymällä hyväksyt Aptoiden käyttöehdot sekä kehittäjien sisältöpolitiikan</string>
+  <string name="accept_terms">Rekisteröitymällä hyväksyt %s käyttöehdot sekä kehittäjien sisältöpolitiikan</string>
   <string name="username_tip">Syötä käyttäjänimesi</string>
   <string name="password_tip">Valitse salasana</string>
   <string name="sign_in">Kirjaudu</string>
-  <string name="bazaar_login">Aptoide-kirjautuminen</string>
+  <string name="bazaar_login">Kirjautuminen</string>
   <string name="clearcache_sum">Tyhjentää Aptoiden välimuistin (kuvakkeet, kuvaruutukopiot) SD-kortilta.</string>
   <string name="clearcontent_sum">Tyhjentää .aptoide-kansion sisällön SD-kortilta.</string>
   <string name="clearcontent_title">Poista Aptoiden tiedot ja asetukset</string>
   <string name="clearcache_title">Tyhjennä Aptoiden välimuisti</string>
   <string name="schDown_added">" lisättiin ajastettujen latausten luetteloon."</string>
   <string name="clear_cache_sucess">Sisältö poistettu onnistuneesti</string>
-  <string name="aptoide_downloading">Aptoidea ladataan</string>
+  <string name="aptoide_downloading">%s ladataan</string>
   <string name="x_app">%d sovellus</string>
   <string name="x_apps">%d sovellusta</string>
   <string name="starting_download">Aloitetaan latausta</string>

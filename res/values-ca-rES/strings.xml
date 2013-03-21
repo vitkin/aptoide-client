@@ -31,7 +31,6 @@
   <string name="submit">Enviar</string>
   <string name="body">Cos</string>
   <string name="subject">Nom</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Disponible</string>
   <string name="featured_tab">Recomanats</string>
   <string name="installed_tab">Instal·lat</string>
@@ -44,7 +43,6 @@
   <string name="finished_download_alrt">Descàrrega finalitzada</string>
   <string name="finished_download_message">Descàrrega completada</string>
   <string name="download_alrt">Descarregant</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Nom de l\'aplicació</string>
   <string name="tastenotavailable">No disponible</string>
   <string name="unabletoexecutecheknet">No es pot executar. Comprova estat d\'internet.</string>
@@ -56,7 +54,7 @@
   <string name="user">Nom d\'usuari&#8230;</string>
   <string name="pass">Contrasenya&#8230;</string>
   <string name="new_account">Nou compte</string>
-  <string name="setcredentials">Configuració d\'Aptoide</string>
+  <string name="setcredentials">Login</string>
   <string name="usernotdef">Usuari no definit</string>
   <string name="passwordnotdef">Contrasenya no definida</string>
   <string name="loggingin">Connectant-se&#8230;</string>
@@ -89,11 +87,7 @@
   <string name="setting_schdwntitle">Descàrregues programades</string>
   <string name="setting_schdwninstalltitle">Instal·lació automàtica</string>
   <string name="setting_schdwninstallsum">Instal·lar descàrregues programades automàticament quan hi hagi una connexió Wifi</string>
-  <string name="credentialssettings">Configuració d\'Aptoide</string>
-  <string name="clearcredentials">Netejar identificació</string>
-  <string name="clearcredentials_summary">Treure dades de connexió</string>
-  <string name="setcredentials_summary">Configurar dades de connexió</string>
-  <string name="settings_title_bar">Configuració d\'Aptoide</string>
+  <string name="settings_title_bar">Configuració</string>
   <string name="credentialscleared">Dades netejades</string>
   <string name="credentialscleared_des">S\'han tret els credencials</string>
   <string name="menu_update_repo">Actualitzar llista</string>
@@ -125,8 +119,6 @@
   <string name="about_site">Web:</string>
   <string name="about_mail">Contacte:</string>
   <string name="no_descript">No disponible</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Tria repositori a eliminar</string>
   <string name="repo_edt_msg1">Tria repositori per editar</string>
   <string name="repo_edt_msg2">Editar repositori</string>
@@ -134,7 +126,7 @@
   <string name="network_auto_update_error">Ha fallat la conexió! Mantenint versió actual.</string>
   <string name="auto_updating">Espereu mentre es descarrega l\'actualització&#8230;</string>
   <string name="update_self_title">Actualització disponible</string>
-  <string name="update_self_msg">Hi ha una nova versió d\'aptoide disponible,\nvols actualitzar?</string>
+  <string name="update_self_msg">Hi ha una nova versió de %s disponible,\nvols actualitzar?</string>
   <string name="md5_error">Ha fallat la comprovació md5 de l\'aplicació\nSi us plau actualitza els repositoris abans de reintentar</string>
   <string name="network_error">S\'ha produït un error al obtenir l\'aplicació.\nSi us plau intenta-ho un altre cop.</string>
   <string name="error_404">No s\'ha trobat el fitxer.\nSi us plau intenta-ho més tard.</string>
@@ -145,7 +137,6 @@
   <string name="remote_in_noSD">No tens targeta SD, o no està funcionant correctament\nSi us plau inserta\'n una i reintenta.</string>
   <string name="remote_in_noSDspace">No hi ha prou espai a la SD\nSi us plau allibera espai i intenta-ho un altre cop</string>
   <string name="updating_3g">No estas connectat mitjançant Wifi. Si tens connexió mòbil amb limit de dades, es suggereix actualitzar fent servir Wifi.\nVols actualitzar igualment?</string>
-  <string name="updating_cfrm">Confirmar actualització de magatzems?</string>
   <string name="aptoide_error">No s\'ha pogut connectar amb el servidor. Si us plau verifica la teva connexió.</string>
   <string name="no_sch_downloads">No hi ha descàrregues programades!</string>
   <string name="size">Mida</string>
@@ -156,8 +147,7 @@
   <string name="schDown_nodownloadselect">No hi ha descàrregues seleccionades</string>
   <string name="schDown_downerror">Error descarregant. Afegir magatzem %1$s.</string>
   <string name="addSchDown">Afegit a descàrregues programades</string>
-  <string name="registration">Registrar-se al bazaar</string>
-  <string name="bazaar_url">http://www.aptoide.com</string>
+  <string name="registration">Registrar-se</string>
   <string name="username">Correu-e</string>
   <string name="password">Contrasenya&#8230;</string>
   <string name="register">Registrar-se</string>
@@ -172,18 +162,17 @@
     <item>Només Wifi</item>
     <item>No descarregar mai</item>
   </string-array>
-  <string name="accept_terms">Connectan-te acceptes els Termes de Servei d\'Aptoide i la política de continguts d\'Aptoide per desenvolupadors</string>
+  <string name="accept_terms">Connectan-te acceptes els Termes de Servei de %s i la política de continguts per desenvolupadors</string>
   <string name="username_tip">Introdueix nom d\'usuari</string>
   <string name="password_tip">Introdueix contrasenya</string>
   <string name="sign_in">Connectar-se</string>
-  <string name="bazaar_login">Configuració d\'Aptoide</string>
-  <string name="clearcache_sum">Elimina cache d\'Aptoide de la targeta SD</string>
-  <string name="clearcontent_sum">Elimina el contingut del directori .aptoide de la targeta SD.</string>
-  <string name="clearcontent_title">Eliminar dades i configuracions d\'Aptoide</string>
-  <string name="clearcache_title">Netejar cache d\'Aptoide</string>
+  <string name="clearcache_sum">Elimina cache de la targeta SD</string>
+  <string name="clearcontent_sum">Elimina el contingut de la targeta SD.</string>
+  <string name="clearcontent_title">Eliminar dades i configuracions</string>
+  <string name="clearcache_title">Netejar cache </string>
   <string name="schDown_added">afegit a descàrregues programades.</string>
   <string name="clear_cache_sucess">El teu comentari s\'ha eliminat</string>
-  <string name="aptoide_downloading">Descarregant Aptoide</string>
+  <string name="aptoide_downloading">Descarregant %s</string>
   <string name="x_app">%d app</string>
   <string name="x_apps">%d apps</string>
   <string name="starting_download">Iniciant baixada</string>

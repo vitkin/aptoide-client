@@ -62,7 +62,7 @@ public class Start extends Activity {
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		if(ApplicationAptoide.PARTNERID != null){
+		if(ApplicationAptoide.SPLASHSCREEN != null){
 
 			// Splash screen view
 			requestWindowFeature(Window.FEATURE_NO_TITLE);

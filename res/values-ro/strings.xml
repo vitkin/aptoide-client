@@ -31,7 +31,6 @@
   <string name="submit">Susţine</string>
   <string name="body">Corp</string>
   <string name="subject">Nume</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Disponibil</string>
   <string name="featured_tab">Caracteristic</string>
   <string name="installed_tab">Instalat</string>
@@ -44,7 +43,6 @@
   <string name="finished_download_alrt">Descărcare terminată</string>
   <string name="finished_download_message">Descărcare terminată</string>
   <string name="download_alrt">Descărcare:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Numele aplicaţiei</string>
   <string name="tastenotavailable">Indisponibil</string>
   <string name="unabletoexecutecheknet">Nu se poate executa. Verifică stare internet.</string>
@@ -56,7 +54,7 @@
   <string name="user">Nume utilizator&#8230;</string>
   <string name="pass">Parolă&#8230;</string>
   <string name="new_account">Cont nou</string>
-  <string name="setcredentials">Logare Aptoide</string>
+  <string name="setcredentials">Logare</string>
   <string name="usernotdef">Utilizator nedefinit</string>
   <string name="passwordnotdef">Parolă nedefinită</string>
   <string name="loggingin">Logare în&#8230;</string>
@@ -89,10 +87,6 @@
   <string name="setting_schdwntitle">Descărcări programate</string>
   <string name="setting_schdwninstalltitle">Instalare automată</string>
   <string name="setting_schdwninstallsum">Instalează automat descărcările programate când este prezentă conexiune Wifi</string>
-  <string name="credentialssettings">Logare Aptoide</string>
-  <string name="clearcredentials">Ştergere logare</string>
-  <string name="clearcredentials_summary">Logare curentă nesetată</string>
-  <string name="setcredentials_summary">Setează o nouă logare</string>
   <string name="settings_title_bar">Setări Aptoide</string>
   <string name="credentialscleared">Logare ştearsă</string>
   <string name="credentialscleared_des">Acreditările dvs. sânt nesetate</string>
@@ -125,8 +119,6 @@
   <string name="about_site">Acasă:</string>
   <string name="about_mail">Contact:</string>
   <string name="no_descript">Informaţie indisponibilă</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Alegeţi magazin pentru ştergere</string>
   <string name="repo_edt_msg1">Alegeţi magazin pentru editare</string>
   <string name="repo_edt_msg2">Editare magazin</string>
@@ -134,7 +126,7 @@
   <string name="network_auto_update_error">Conexiune actualizare eşuată! Păstraţi versiunea curentă.</string>
   <string name="auto_updating">Vă rugăm aşteptaţi prelucrarea actualizării descărcate&#8230;</string>
   <string name="update_self_title">Actualizare disponibilă</string>
-  <string name="update_self_msg">Este disponibilă o versiune nouă Aptoide,\nvreţi să actualizaţi?</string>
+  <string name="update_self_msg">Este disponibilă o versiune nouă %s,\nvreţi să actualizaţi?</string>
   <string name="md5_error">Verificarea md5 a aplicaţiei descărcate a eşuat!\nVă rugăm actualizaţi magazinele şi reîncercaţi.</string>
   <string name="network_error">A apărut o eroare în timpul recuperării aplicaţiei.\nVă rugăm să încercaţi din nou.</string>
   <string name="error_404">Fişierul nu a fost găsit în magazinul oferit.\nVă rugăm să încercaţi mai târziu.</string>
@@ -145,7 +137,6 @@
   <string name="remote_in_noSD">Nu aveţi nici un card SD, sau nu funcţionează corespunzător\nVă rugăm introduceţi unul, sau reintroduceţi şi încercaţi din nou.</string>
   <string name="remote_in_noSDspace">Nu aveţi spaţiu suficient pe cardul SD pentru a folosi Aptoide\nVă rugăm eliberaţi spaţiu şi încercaţi din nou.</string>
   <string name="updating_3g">Nu sânteţi conectat prin Wifi.Dacă aveţi banda mobilă de date limitată, vă sugerăm să actualizaţi folosind conexiune Wifi.\nActualizaţi oricum?</string>
-  <string name="updating_cfrm">Confirmaţi actualizarea magazinelor Aptoide?</string>
   <string name="aptoide_error">Nu se poate conecta la serverul la distanţă.Vă rugăm verificaţi conexiunea la internet.</string>
   <string name="no_sch_downloads">Nu sânt descărcări programate!</string>
   <string name="size">Mărime</string>
@@ -156,8 +147,7 @@
   <string name="schDown_nodownloadselect">Nu sînt descărcări selectate</string>
   <string name="schDown_downerror">Descărcare eşuată. Adăugaţi %1$s la Magazin.</string>
   <string name="addSchDown">Adăugat la descărcări programate</string>
-  <string name="registration">Înregistrare Aptoide</string>
-  <string name="bazaar_url">http://www.aptoide.com/</string>
+  <string name="registration">Înregistrare</string>
   <string name="username">Email</string>
   <string name="password">Parolă</string>
   <string name="register">Semnează</string>
@@ -172,18 +162,18 @@
     <item>Doar Wifi</item>
     <item>Nu s-a descărcat niciodată</item>
   </string-array>
-  <string name="accept_terms">Prin înregistare sânteţi de acord cu serviciile Aptoide şi politica de conţinut pentru dezvoltatori</string>
+  <string name="accept_terms">Prin înregistare sânteţi de acord cu serviciile %s şi politica de conţinut pentru dezvoltatori</string>
   <string name="username_tip">Tastează numele de utilizator</string>
   <string name="password_tip">Alege o parolă</string>
   <string name="sign_in">Semnează</string>
-  <string name="bazaar_login">Logare Aptoide</string>
-  <string name="clearcache_sum">Ştege cache-urile Aptoide (iconiţe, capturile de ecran) de pe cardul SD.</string>
-  <string name="clearcontent_sum">Şterge conţinutul dosarului .aptoide de pe cardul SD.</string>
-  <string name="clearcontent_title">Înlătură datele Aptoide şi configurările</string>
-  <string name="clearcache_title">Curăţă cache-ul Aptoide</string>
+  <string name="bazaar_login">Logare</string>
+  <string name="clearcache_sum">Ştege cache-urile (iconiţe, capturile de ecran) de pe cardul SD.</string>
+  <string name="clearcontent_sum">Şterge conţinutul de pe cardul SD.</string>
+  <string name="clearcontent_title">Înlătură datele şi configurările</string>
+  <string name="clearcache_title">Curăţă cache-ul</string>
   <string name="schDown_added">adăugat în lista descărcărilor programate.</string>
   <string name="clear_cache_sucess">Conţinut şters cu succes</string>
-  <string name="aptoide_downloading">Descărcare Aptoide</string>
+  <string name="aptoide_downloading">Descărcare %s</string>
   <string name="x_app">%d aplicaţie</string>
   <string name="x_apps">%d aplicaţii</string>
   <string name="starting_download">Pornire descărcare</string>

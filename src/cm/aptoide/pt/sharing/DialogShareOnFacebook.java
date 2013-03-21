@@ -29,6 +29,7 @@ import cm.aptoide.com.facebook.android.DialogError;
 import cm.aptoide.com.facebook.android.Facebook;
 import cm.aptoide.com.facebook.android.Facebook.DialogListener;
 import cm.aptoide.com.facebook.android.FacebookError;
+import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
 
 
@@ -51,6 +52,7 @@ public class DialogShareOnFacebook extends Dialog{
 	
 	Activity activity;
 	private SharedPreferences sharedPreferences;
+	private TextView post_message;
 
 	public DialogShareOnFacebook(Activity activity, String facebookShareName, String facebookShareIcon, String facebookShareText, String facebookShareDescription, String facebookShareStoreLink) {
 		super(activity);
@@ -103,6 +105,9 @@ public class DialogShareOnFacebook extends Dialog{
 		share_visit.setText(descriptionToPost);
 		store_name = (TextView) findViewById(R.id.share_store);
 		store_name.setText(storeLinkToPost);
+		
+		post_message = (TextView) findViewById(R.id.post_message);
+		post_message.setText(getContext().getString(R.string.want_to_share, ApplicationAptoide.MARKETNAME));
 		
 		((Button)findViewById(R.id.FacebookShareButton)).setOnClickListener(new View.OnClickListener(){
 			@Override

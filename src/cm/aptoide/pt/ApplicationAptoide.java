@@ -79,8 +79,9 @@ public class ApplicationAptoide extends Application {
     public static boolean CUSTOMEDITORSCHOICE = false;
     public static boolean SEARCHSTORES = true;
     public static String APTOIDETHEME = "";
+    public static String MARKETNAME = "";
 
-    enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREEN_LAND }
+    enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREEN_LAND, MARKETNAME }
 
 	@Override
 	public void onCreate() {
@@ -88,8 +89,8 @@ public class ApplicationAptoide extends Application {
 		managerPreferences = new ManagerPreferences(getApplicationContext());
 		setContext(getApplicationContext());
 		 // Create global configuration and initialize ImageLoader with this configuration
-
-       SharedPreferences sPref = getSharedPreferences("settings", MODE_PRIVATE);
+		
+		SharedPreferences sPref = getSharedPreferences("settings", MODE_PRIVATE);
         if(sPref.contains("PARTNERID")){
 
             PARTNERID = sPref.getString("PARTNERID",null);
@@ -98,12 +99,13 @@ public class ApplicationAptoide extends Application {
             BRANDICON = sPref.getString("BRANDICON",null);
             MATURECONTENTSWITCH = sPref.getBoolean("MATURECONTENTSWITCH", true);
             SPLASHSCREEN = sPref.getString("SPLASHSCREEN", null);
+            SPLASHSCREEN_LAND = sPref.getString("SPLASHSCREEN_LAND", null);
             MATURECONTENTSWITCHVALUE = sPref.getBoolean("MATURECONTENTSWITCHVALUE", true);
             MULTIPLESTORES = sPref.getBoolean("MULTIPLESTORES",true);
             CUSTOMEDITORSCHOICE = sPref.getBoolean("CUSTOMEDITORSCHOICE",false);
             SEARCHSTORES = sPref.getBoolean("SEARCHSTORES",true);
             APTOIDETHEME = sPref.getString("APTOIDETHEME","DEFAULT");
-
+            MARKETNAME = sPref.getString("MARKETNAME",MARKETNAME);
 
 
 
@@ -175,6 +177,10 @@ public class ApplicationAptoide extends Application {
                                 	APTOIDETHEME = sb.toString();
                                 	Log.d("Aptoide theme", APTOIDETHEME+ "");
                                     break;
+                                case MARKETNAME:
+                                	MARKETNAME = sb.toString();
+                                	Log.d("Market name", MARKETNAME+ "");
+                                	break;
                                 case SEARCHSTORES:
                                     SEARCHSTORES = Boolean.parseBoolean(sb.toString());
                                     Log.d("Search stores", SEARCHSTORES+ "");

@@ -29,7 +29,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:padding="10dp"
-                android:text="@string/trusted_classification"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/darker_gray" />
 
@@ -138,6 +137,7 @@
                 android:padding="10dp"
                 android:text="@string/compared_with_another_market"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@android:color/darker_gray"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -173,7 +173,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:text="@string/about_aptoide_antimalware"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@android:color/darker_gray" />
         </LinearLayout>

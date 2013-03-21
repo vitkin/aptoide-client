@@ -19,7 +19,6 @@
   <string name="chkBoxSchDwn">جدولة التحميل</string>
   <string name="submit">تقديم</string>
   <string name="subject">الإسم</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">المتوفر</string>
   <string name="featured_tab">المميز</string>
   <string name="installed_tab">المثبت</string>
@@ -32,7 +31,6 @@
   <string name="finished_download_alrt">التحميل منتهي</string>
   <string name="finished_download_message">التحميل منتهي</string>
   <string name="download_alrt">التحميل:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">إسم التطبيق</string>
   <string name="tastenotavailable">غير متوفر</string>
   <string name="unabletoexecutecheknet">غير قادر على التنفيذ.التحقق من حالة الإنترنت</string>
@@ -44,7 +42,7 @@
   <string name="user">إسم المستخدم&#8230;</string>
   <string name="pass">كلمة المرور&#8230;</string>
   <string name="new_account">حساب جديد</string>
-  <string name="setcredentials">إعدادات Aptoide</string>
+  <string name="setcredentials">إعدادات </string>
   <string name="usernotdef">المستخدم لم يتم تعريفه</string>
   <string name="passwordnotdef">كلمة المرور لم يتم تعريفها</string>
   <string name="loggingin">التسجيل في &#8230;</string>
@@ -76,11 +74,7 @@
   <string name="setting_schdwntitle">جدولة التحميلات</string>
   <string name="setting_schdwninstalltitle">التثبيت التلقائي</string>
   <string name="setting_schdwninstallsum">تثبيت جدولة التحميلات تلقائيا عندما الواي فاي يتصل حاليا</string>
-  <string name="credentialssettings">إعدادات Aptoide</string>
-  <string name="clearcredentials">مسح تسجيل الدخول</string>
-  <string name="clearcredentials_summary">عدم تعيين تسجيل دخولك الحالي</string>
-  <string name="setcredentials_summary">تعيين تسجيل دخول جديد</string>
-  <string name="settings_title_bar">إعدادات Aptoide</string>
+  <string name="settings_title_bar">إعدادات</string>
   <string name="credentialscleared">تسجيل الدخول ممسوح</string>
   <string name="credentialscleared_des">"بيانات الإعتماد الخاصه بك "</string>
   <string name="menu_update_repo">قائمة التحديث</string>
@@ -111,8 +105,6 @@
   <string name="about_site">الرئيسيه:</string>
   <string name="about_mail">الإتصال:</string>
   <string name="no_descript">غير متوفر</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">إختر المخزن للحذف</string>
   <string name="repo_edt_msg1">إختر المخزن للتحرير</string>
   <string name="repo_edt_msg2">تحرير المخزن</string>
@@ -120,7 +112,7 @@
   <string name="network_auto_update_error">فشل بتحديث الإتصال ! الحفاظ على الإصدار الحالي</string>
   <string name="auto_updating">الرجاء الإنتظار عندما العمليه تحميل التحديث&#8230;</string>
   <string name="update_self_title">تحديث متوفر</string>
-  <string name="update_self_msg">هذه نسخه جديده من aptoide متوفره \nهل ترغب في التحديث؟</string>
+  <string name="update_self_msg">هذه نسخه جديده من %s متوفره \nهل ترغب في التحديث؟</string>
   <string name="md5_error">فشل التحقق من التطبيق الذي تم تنزيله n\\ md5 الرجاء تحديث المخازن الخاصة بك قبل إعادة المحاولة.</string>
   <string name="network_error">حدث خطأ أثناء إحضار التطبيق \nالرجاء المحاولة مرة أخرى.</string>
   <string name="error_404">لم يتم العثور على الملف في المخزن المعطى \nالرجاء المحاولة مرة أخرى لاحقاً</string>
@@ -129,9 +121,8 @@
   <string name="installapp_alrt">هل ترغب في التثبيت:\n\n</string>
   <string name="remote_in_noSD_title">لايوجود ذاكره</string>
   <string name="remote_in_noSD">إذا لم يكن لديك كرت ذاكره خارجيه او انه لايعمل بشكل صحيح \nالرجاء ادرج واحده, او اعد إدراجها وحاول مرة اخرى</string>
-  <string name="remote_in_noSDspace">لايوجود لديك مساحه كافيه على كرت ذاكرتك الخارجيه لإستخدام n\\ Aptoideالرجاء حرر بعض المساحه وحاول مرة اخرى</string>
+  <string name="remote_in_noSDspace">لايوجود لديك مساحه كافيه على كرت ذاكرتك الخارجيه لإستخدام n\\ Aptoide حرر بعض المساحه وحاول مرة اخرى</string>
   <string name="updating_3g">انت لم تتصل عبر الواي فاي , إذا كان لديك بيانات نقل محدودة النطاق, ينصح بالتحديث بإستخدام اتصال الواي فاي \nالتحديث على اي حال؟</string>
-  <string name="updating_cfrm">تأكيد تحديث مخازن Aptoide ؟</string>
   <string name="aptoide_error">لايمكن الإتصال بالخادم البعيد . الرجاء التحقق من إتصالك بالإنترنت</string>
   <string name="no_sch_downloads">لايوجود جدولة التحميلات!</string>
   <string name="schDown_install">هل تريد تثبيت كل جدولة التحميلات؟</string>
@@ -141,8 +132,7 @@
   <string name="schDown_nodownloadselect">لايوجود تحميلات مختاره</string>
   <string name="schDown_downerror">خطأ بالتحميل. إضافه %1$s للمخزن</string>
   <string name="addSchDown">المضاف لجدولة التحميلات</string>
-  <string name="registration">"تسجيل Bazaar "</string>
-  <string name="bazaar_url">www.aptoide.com</string>
+  <string name="registration">"تسجيل "</string>
   <string name="username">الإميل</string>
   <string name="password">كلمة المرور</string>
   <string name="register">التسجيل</string>
@@ -158,7 +148,7 @@
     <item>التحميل ابدا</item>
   </string-array>
   <string name="password_tip">إظهار كلمة المرور</string>
-  <string name="bazaar_login">إعدادات Aptoide</string>
+  <string name="bazaar_login">إعدادات</string>
   <string name="schDown_added">المضاف لجدولة التحميلات</string>
   <string name="clear_cache_sucess">تعليقك تم تقديمه بنجاح</string>
   <string name="aptoide_downloading">التحميل:</string>

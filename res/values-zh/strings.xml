@@ -10,16 +10,12 @@
   <string name="updates_tab">版本</string>
   <string name="add_repo_text">版本</string>
   <string name="btn_add_repo">未添加任何仓库!</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">程序名称</string>
   <string name="tastenotavailable">有效的</string>
-  <string name="setcredentials">Aptoide</string>
   <string name="order_popup_title1">未找到任何程序!</string>
   <string name="order_popup_title2">未找到任何程序!</string>
   <string name="order_popup_catg2">未找到任何程序!</string>
   <string name="update_repos">版本</string>
-  <string name="credentialssettings">Aptoide</string>
-  <string name="settings_title_bar">Aptoide</string>
   <string name="menu_update_repo">版本</string>
   <string name="menu_update_all">版本</string>
   <string name="no_repo">未添加任何仓库!</string>
@@ -27,17 +23,12 @@
   <string name="about_site">主页:</string>
   <string name="about_mail">联系:</string>
   <string name="no_descript">有效的</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_edt_msg2">未添加任何仓库!</string>
   <string name="update_self_title">有效的</string>
-  <string name="registration">Aptoide</string>
-  <string name="bazaar_url">www.aptoide.com</string>
   <string-array name="dwnif">
     <item>3G and Wifi</item>
     <item>Wifi only</item>
     <item>Never download</item>
   </string-array>
-  <string name="bazaar_login">Aptoide</string>
   <string name="contact">联系:</string>
 </resources>

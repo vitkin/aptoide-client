@@ -49,6 +49,7 @@ import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
 import cm.aptoide.pt.AIDLDownloadManager;
 import cm.aptoide.pt.AIDLDownloadObserver;
+import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.SetAptoideTheme;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
@@ -280,7 +281,7 @@ public class ServiceDownloadManager extends Service {
 
 	private void setNotification() {
 
-		String notificationTitle = getString(R.string.aptoide_downloading);
+		String notificationTitle = getString(R.string.aptoide_downloading, ApplicationAptoide.MARKETNAME);
 		int notificationIcon = android.R.drawable.stat_sys_download;
 		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.row_notification_progress_bar);
 

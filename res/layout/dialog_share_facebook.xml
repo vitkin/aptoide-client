@@ -24,7 +24,6 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:padding="5dp"
-            android:text="@string/want_to_share"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/darker_gray" />
 

@@ -22,8 +22,7 @@
 
     <Button
         android:id="@+id/baz_src"
-        style="@style/gray_button_style"
-        android:text="@string/search_on_aptoide" />
+        style="@style/gray_button_style" />
 
 </LinearLayout><!--
  * Copyright (C) 2011  Roberto Jacinto

@@ -60,7 +60,6 @@
   <string name="submit">Versturen</string>
   <string name="body">Commentaar</string>
   <string name="subject">Naam</string>
-  <string name="app_name">Aptoide</string>
   <string name="available_tab">Beschikbaar</string>
   <string name="featured_tab">Aanbevolen</string>
   <string name="top_apps">Beste Apps</string>
@@ -76,7 +75,6 @@
   <string name="finished_download_alrt">Download Klaar</string>
   <string name="finished_download_message">Download Klaar</string>
   <string name="download_alrt">Downloaden:</string>
-  <string name="srch_label">Aptoide</string>
   <string name="srch_hint">Naam van de applicatie</string>
   <string name="tastenotavailable">Niet beschikbaar</string>
   <string name="unabletoexecutecheknet">Kan niet uitvoeren. Controleer je internet status.</string>
@@ -99,7 +97,7 @@
   <string name="user">Gebruikersnaam&#8230;</string>
   <string name="pass">Wachtwoord&#8230;</string>
   <string name="new_account">Nieuwe account</string>
-  <string name="setcredentials">Aptoide login</string>
+  <string name="setcredentials">Login</string>
   <string name="usernotdef">Gebruiker niet bekend</string>
   <string name="passwordnotdef">Wachtwoord niet bekend</string>
   <string name="loggingin">Je wordt ingelogd&#8230;</string>
@@ -147,11 +145,7 @@
   <string name="setting_schdwninstalltitle">Automatische installatie</string>
   <string name="setting_schdwninstallsum">Automatisch geplande downloads installeren wanneer een Wifi-verbinding aanwezig is</string>
   <string name="setting_clear_memory">Schoon geheugen op</string>
-  <string name="credentialssettings">Aptoide login</string>
-  <string name="clearcredentials">Login opschonen</string>
-  <string name="clearcredentials_summary">Je huidige login verwijderen</string>
-  <string name="setcredentials_summary">Nieuwe login maken</string>
-  <string name="settings_title_bar">Aptoide instellingen</string>
+  <string name="settings_title_bar">Instellingen</string>
   <string name="credentialscleared">Login verwijderd</string>
   <string name="credentialscleared_des">Je gegevens zijn verwijderd</string>
   <string name="menu_update_repo">Lijst Updaten</string>
@@ -186,7 +180,6 @@
   <string name="btn_done">Klaar</string>
   <string name="btn_chlog">Veranderingen</string>
   <string name="btn_search_market">Zoek Market</string>
-  <string name="search_on_aptoide">Zoek op Aptoide</string>
   <string name="schDwnBtn">Geplande Downloads</string>
   <string name="search_log">Zoeken</string>
   <string name="search_stores">in andere voorraden</string>
@@ -201,18 +194,12 @@
   <string name="about_mail">Contact:</string>
   <string name="is">is</string>
   <string name="trusted">Vertrouwt</string>
-  <string name="trusted_classification">Deze applicatie is gescand door Aptoide Anti-Malware platform en heeft geen signalen van virussen gevonden.</string>
+  <string name="trusted_classification">Deze applicatie is gescand door %s Anti-Malware platform en heeft geen signalen van virussen gevonden.</string>
   <string name="scanned_with_av">Gescand met Anti- Virus:</string>
   <string name="compared_with_another_market">Vergeleken met andere Android Markten:</string>
-  <string name="about_aptoide_antimalware">Aptoide Anti-Malware platform analyseert applicaties terwijl ze aanstaan en schakelt alle mogelijke bedreigen uit over alle voorraden. Dit systeem scant alle nieuwe applicatie bestanden van de voorraden en certificeert ze door te vergelijken met bestanden van andere Android Markten</string>
-  <string name="norton_av">Norton Anti-Virus 1.2</string>
-  <string name="fsecure_av">F&#8211;Beveiliging 2&#8211;4 voor Android</string>
-  <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
-  <string name="google_play">Google Play</string>
+  <string name="about_aptoide_antimalware">%s Anti-Malware platform analyseert applicaties terwijl ze aanstaan en schakelt alle mogelijke bedreigen uit over alle voorraden. Dit systeem scant alle nieuwe applicatie bestanden van de voorraden en certificeert ze door te vergelijken met bestanden van andere Android Markten</string>
   <string name="show_less">Laat minder zien</string>
   <string name="no_descript">Geen omschrijving beschikbaar</string>
-  <string name="about_txt2">www.aptoide.com</string>
-  <string name="about_txt3">aptoide\@aptoide.com</string>
   <string name="repo_del_msg2">Kies voorraad om te verwijderen</string>
   <string name="repo_edt_msg1">Kies voorraad om te bewerken</string>
   <string name="repo_edt_msg2">Bewerk voorraad</string>
@@ -220,7 +207,7 @@
   <string name="network_auto_update_error">Update connectie is mislukt! Huidige versie wordt behouden.</string>
   <string name="auto_updating">Aub wachten terwijl update gedownload wordt&#8230;</string>
   <string name="update_self_title">Update mogelijk</string>
-  <string name="update_self_msg">Er is een nieuwe versie van Aptoide beschikbaar,\nWil je updaten?</string>
+  <string name="update_self_msg">Er is een nieuwe versie van %s beschikbaar,\nWil je updaten?</string>
   <string name="md5_error">De md5 controle van gedownloade applicatie is mislukt!\nUpdate eerst de voorraden probeer dan opnieuw.</string>
   <string name="network_error">Er is een fout ontstaan terwijl applicatie werd opgehaald.\nAub opnieuw proberen.</string>
   <string name="error_404">Bestand is niet gevonden in de voorraad.\nAub later weer proberen.</string>
@@ -231,7 +218,6 @@
   <string name="remote_in_noSD">Je hebt geen SD kaart of het werkt niet naar behoren\nAub nieuwe plaatsen of opnieuw plaatsen en weer proberen.</string>
   <string name="remote_in_noSDspace">Je hebt geen genoeg ruimte op je SD kaart om Aptoide te gebruiken\nAub ruimte vrijmaken en opnieuw proberen.</string>
   <string name="updating_3g">Je bent niet via Wifi verbonden. Als je een data limiet hebt, is het aangeraden om te updaten via Wifi verbinding.\nToch updaten?</string>
-  <string name="updating_cfrm">Wil je Aptoide voorraden update bevestigen?</string>
   <string name="aptoide_error">Kan niet verbinden met server. Aub controleer je internet verbinding.</string>
   <string name="no_sch_downloads">Geen geplande downloads!</string>
   <string name="size">Grootte</string>
@@ -243,8 +229,7 @@
   <string name="schDown_nodownloadselect">Geen downloads geselecteerd</string>
   <string name="schDown_downerror">Download fout. Voeg %1$s Voorraad.</string>
   <string name="addSchDown">Toegevoegd aan geplande downloads</string>
-  <string name="registration">Aptoide Registratie</string>
-  <string name="bazaar_url">http://www.aptoide.com/</string>
+  <string name="registration">Registratie</string>
   <string name="username">Email</string>
   <string name="password">Wachtwoord</string>
   <string name="register">Aanmelden</string>
@@ -259,20 +244,19 @@
     <item>Alleen Wifi</item>
     <item>Nooit downloaden</item>
   </string-array>
-  <string name="accept_terms">Door je aan te melden ga je akkoord met \"Aptoide Terms of Service and Aptoide Policy for Developers\"</string>
+  <string name="accept_terms">Door je aan te melden ga je akkoord met \"%s Terms of Service and Policy for Developers\"</string>
   <string name="username_tip">Typ je gebruikersnaam</string>
   <string name="password_tip">Kies een wachtwoord</string>
   <string name="sign_in">Inloggen</string>
   <string name="sign_out">Uitloggen</string>
-  <string name="bazaar_login">Aptoide Login</string>
   <string name="my_account">Mijn account</string>
   <string name="clearcache_sum">Verwijdert cache van Aptoide (iconen, screenshots) van SD kaart.</string>
-  <string name="clearcontent_sum">Verwijdert de inhoud van .aptoide map van SD kaart.</string>
-  <string name="clearcontent_title">Verwijder Aptoide data en instellingen</string>
-  <string name="clearcache_title">Leeg Aptoide cache</string>
+  <string name="clearcontent_sum">Verwijdert de inhoud van SD kaart.</string>
+  <string name="clearcontent_title">Verwijder data en instellingen</string>
+  <string name="clearcache_title">Leeg cache</string>
   <string name="schDown_added">toegevoegd aan geplande downloads.</string>
   <string name="clear_cache_sucess">inhoud met succes verwijderd</string>
-  <string name="aptoide_downloading">Aptoide downloaden:</string>
+  <string name="aptoide_downloading">%s downloaden:</string>
   <string name="x_app">%d app</string>
   <string name="x_apps">%d apps</string>
   <string name="starting_download">Begin met downloaden</string>
@@ -295,7 +279,7 @@
   <string name="refresh_list">Verversen</string>
   <string name="update_all">Alles updaten</string>
   <string name="update_to">"Updaten tot "</string>
-  <string name="want_to_share">Aptoide zal niks plaatsen zonder je toestemming. Wij respecteren je telefoon privacy. Wil je het volgende bericht delen?</string>
+  <string name="want_to_share">%s zal niks plaatsen zonder je toestemming. Wij respecteren je telefoon privacy. Wil je het volgende bericht delen?</string>
   <string name="share">Delen</string>
   <string name="facebook_authentication_failed">Authenticatie met Facebook mislukt!</string>
   <string name="facebook_authentication_cancelled">Authenticatie met Facebook gestopt!</string>
