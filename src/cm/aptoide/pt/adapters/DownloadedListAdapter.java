@@ -36,6 +36,7 @@ import android.widget.TextView;
 import cm.aptoide.pt.sharing.DialogShareOnFacebook;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
+import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
 
 public class DownloadedListAdapter extends BaseAdapter{
@@ -116,14 +117,14 @@ public class DownloadedListAdapter extends BaseAdapter{
 			public void onClick(View view) {
 				String facebookShareName = download.getAppInfo().getName()+"  "+download.getAppInfo().getVername();
 				String facebookShareIcon = download.getAppInfo().getIcon();
-				String facebookShareMessage = "I downloaded "+facebookShareName+" for Android to install on my phone!";
+				String facebookShareMessage = activity.getString(R.string.i_downloaded_to_install, facebookShareName);
 				String facebookShareDescription;
 				String facebookShareStoreLink;
 				if(download.getAppInfo().getRepoName().equals("Aptoide")){
-					facebookShareDescription = "Visit Aptoide and install the best apps";
-					facebookShareStoreLink = "http://www.aptoide.com/more/topapps";
+					facebookShareDescription = activity.getString(R.string.visit_and_install_the_best_apps, ApplicationAptoide.MARKETNAME);
+					facebookShareStoreLink = activity.getString(R.string.aptoide_url_topapps);
 				}else{
-					facebookShareDescription = "Visit "+download.getAppInfo().getRepoName()+" Android Store to download and install this app";
+					facebookShareDescription = activity.getString(R.string.visit_and_install, download.getAppInfo().getRepoName());
 					facebookShareStoreLink = "http://"+download.getAppInfo().getRepoName()+".store.aptoide.com";
 				}
 				

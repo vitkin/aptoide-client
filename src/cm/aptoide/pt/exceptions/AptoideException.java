@@ -47,6 +47,6 @@ public class AptoideException extends RuntimeException{
 	}
 
 	public String toString(){
-		return "Aptoide Exception due to: " + getMessage();
+		return "Exception due to: " + getMessage();
 	}
 }

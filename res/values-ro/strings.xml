@@ -135,7 +135,7 @@
   <string name="installapp_alrt">Doriţi să instalaţi: \n\n</string>
   <string name="remote_in_noSD_title">Lipsă memorie</string>
   <string name="remote_in_noSD">Nu aveţi nici un card SD, sau nu funcţionează corespunzător\nVă rugăm introduceţi unul, sau reintroduceţi şi încercaţi din nou.</string>
-  <string name="remote_in_noSDspace">Nu aveţi spaţiu suficient pe cardul SD pentru a folosi Aptoide\nVă rugăm eliberaţi spaţiu şi încercaţi din nou.</string>
+  <string name="remote_in_noSDspace">Nu aveţi spaţiu suficient pe cardul SD. Vă rugăm eliberaţi spaţiu şi încercaţi din nou.</string>
   <string name="updating_3g">Nu sânteţi conectat prin Wifi.Dacă aveţi banda mobilă de date limitată, vă sugerăm să actualizaţi folosind conexiune Wifi.\nActualizaţi oricum?</string>
   <string name="aptoide_error">Nu se poate conecta la serverul la distanţă.Vă rugăm verificaţi conexiunea la internet.</string>
   <string name="no_sch_downloads">Nu sânt descărcări programate!</string>

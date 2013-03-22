@@ -121,7 +121,7 @@
   <string name="installapp_alrt">هل ترغب في التثبيت:\n\n</string>
   <string name="remote_in_noSD_title">لايوجود ذاكره</string>
   <string name="remote_in_noSD">إذا لم يكن لديك كرت ذاكره خارجيه او انه لايعمل بشكل صحيح \nالرجاء ادرج واحده, او اعد إدراجها وحاول مرة اخرى</string>
-  <string name="remote_in_noSDspace">لايوجود لديك مساحه كافيه على كرت ذاكرتك الخارجيه لإستخدام n\\ Aptoide حرر بعض المساحه وحاول مرة اخرى</string>
+  <string name="remote_in_noSDspace">لم يكن لديك مساحة كافية على بطاقة SD. الرجاء تحرير بعض المساحة وحاول مرة أخرى.</string>
   <string name="updating_3g">انت لم تتصل عبر الواي فاي , إذا كان لديك بيانات نقل محدودة النطاق, ينصح بالتحديث بإستخدام اتصال الواي فاي \nالتحديث على اي حال؟</string>
   <string name="aptoide_error">لايمكن الإتصال بالخادم البعيد . الرجاء التحقق من إتصالك بالإنترنت</string>
   <string name="no_sch_downloads">لايوجود جدولة التحميلات!</string>

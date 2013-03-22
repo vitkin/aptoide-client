@@ -216,7 +216,7 @@
   <string name="installapp_alrt">Wil je installeren: \n\n</string>
   <string name="remote_in_noSD_title">Geen geheugen</string>
   <string name="remote_in_noSD">Je hebt geen SD kaart of het werkt niet naar behoren\nAub nieuwe plaatsen of opnieuw plaatsen en weer proberen.</string>
-  <string name="remote_in_noSDspace">Je hebt geen genoeg ruimte op je SD kaart om Aptoide te gebruiken\nAub ruimte vrijmaken en opnieuw proberen.</string>
+  <string name="remote_in_noSDspace">Je hebt geen genoeg ruimte op je SD kaart. Aub ruimte vrijmaken en opnieuw proberen.</string>
   <string name="updating_3g">Je bent niet via Wifi verbonden. Als je een data limiet hebt, is het aangeraden om te updaten via Wifi verbinding.\nToch updaten?</string>
   <string name="aptoide_error">Kan niet verbinden met server. Aub controleer je internet verbinding.</string>
   <string name="no_sch_downloads">Geen geplande downloads!</string>

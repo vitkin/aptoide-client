@@ -121,7 +121,7 @@
   <string name="installapp_alrt">Bunu kurmak istiyor musunuz: \n\n\n</string>
   <string name="remote_in_noSD_title">Yetersiz bellek</string>
   <string name="remote_in_noSD">SD kartınız yok ya da gerektiği gibi çalışmıyor\nYa yeni bir kart ya da mevcut kartınızı tekrar takıp deneyiniz.</string>
-  <string name="remote_in_noSDspace">Aptoide\'i kullanmak için SD kartınızda kâfi alan bulunmamaktadır\nYeterli alan oluşturup tekrar deneyiniz.</string>
+  <string name="remote_in_noSDspace">SD kartınızda yeterli alan yok. Biraz alan boşaltmak ve tekrar deneyin.</string>
   <string name="updating_3g">Bağlantınız WiFi vasıtasıyla değildir. Mobil veri kotanız sınırlıysa güncellemeyi WiFi ile yapmanız tavsiye edilir.\nBuna rağmen devam edilsin mi?</string>
   <string name="aptoide_error">Sunucuya bağlanılamadı. İnternet bağlantınızı kontrol ediniz.</string>
   <string name="no_sch_downloads">Programlanmış hiçbir indirme yok!</string>

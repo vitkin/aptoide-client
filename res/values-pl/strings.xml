@@ -120,7 +120,7 @@
   <string name="installapp_alrt">Czy chcesz zainstalować: \n\n</string>
   <string name="remote_in_noSD_title">Brak pamięci</string>
   <string name="remote_in_noSD">Nie masz karty SD albo nie pracuje właściwie\nWłóż kartę lub popraw jej włożenie i spróbuj ponownie.</string>
-  <string name="remote_in_noSDspace">Masz za mało miejsca na karcie SD aby używać Aptoide\nUwolnij trochę miejsca i spróbuj ponownie.</string>
+  <string name="remote_in_noSDspace">Masz za mało miejsca na karcie SD. Zwolnij trochę miejsca i spróbuj ponownie.</string>
   <string name="updating_3g">Nie masz połączenia WiFi. Jeśli masz limitowany transfer danych mobilnych, zaleca się uruchomienie połaczenia WiFi.\nUaktualniać pomimo to?</string>
   <string name="aptoide_error">Brak kontaktu z serwerem. Sprawdź łącze internetowe.</string>
   <string name="no_sch_downloads">Brak zaplanowanych pobierań!</string>

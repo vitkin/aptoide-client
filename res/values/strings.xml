@@ -240,7 +240,7 @@
     <string name="installapp_alrt">Do you wish to install: \n\n</string>
     <string name="remote_in_noSD_title">No memory</string>
     <string name="remote_in_noSD">You don\'t have an SDcard, or it isn\'t working properly\nPlease insert one, or re-insert it and try again.</string>
-    <string name="remote_in_noSDspace">You don\'t have enough space on your SDcard to use Aptoide\nPlease free up some space and try again.</string>
+    <string name="remote_in_noSDspace">You don\'t have enough space on your SDcard. Please free up some space and try again.</string>
     <string name="updating_3g">You are not connected through Wifi. If you have limited mobile data bandwidth, it is advised to update using a Wifi connection.\nUpdate anyway?</string>
     <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
     <string name="aptoide_error">Can\'t connect to the remote server. Please verify your Internet connection.</string>
@@ -324,6 +324,9 @@
     <string name="facebook_blank_response">Blank response.</string>
     <string name="facebook_like_failed">Like on Facebook failed!</string>
     <string name="facebook_like_cancelled">Like on Facebook cancelled!</string>
+    <string name="visit_and_install_the_best_apps">Visit %s and install the best apps</string>
+    <string name="visit_and_install">Visit %s Android Store to download and install this app</string>
+   	<string name="i_downloaded_to_install">I downloaded %s for Android to install on my phone!</string>
     <string name="loading_facebook">Loading Facebook&#8230;</string>
     <string name="loading_twitter">Loading Twitter&#8230;</string>
     <string name="facebook_downloaded_to_install">I downloaded %s for Android to install on my phone!</string>

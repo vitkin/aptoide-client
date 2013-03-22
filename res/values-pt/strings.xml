@@ -220,7 +220,7 @@
   <string name="installapp_alrt">Você deseja instalar: \n\n</string>
   <string name="remote_in_noSD_title">Não há memória</string>
   <string name="remote_in_noSD">Você não tem um SDcard, ou não está a funcionar correctamente\nPor favor, insira um, ou volte a inseri-lo e tente novamente.</string>
-  <string name="remote_in_noSDspace">Você não tem espaço suficiente no seu SDcard para utilizar o Aptoide\nPor favor, liberte algum espaço e tente novamente.</string>
+  <string name="remote_in_noSDspace">Você não tem espaço suficiente no seu SDcard. Por favor, liberte algum espaço e tente novamente.</string>
   <string name="updating_3g">Você não está ligado através de Wifi. Se você estiver limitado à largura de banda disponível para o seu tarifário de dados, nós aconselhamos que faça a actualização que estiver ligado a partir de Wifi.\n Actualizar de qualquer forma?</string>
   <string name="aptoide_error">Não foi possível estabelecer ligação com o servidor remoto. Por favor, verifique a sua ligação à Internet.</string>
   <string name="no_sch_downloads">Sem downloads agendados!</string>

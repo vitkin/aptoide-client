@@ -216,7 +216,7 @@
   <string name="installapp_alrt">Vuoi installare: \n\n</string>
   <string name="remote_in_noSD_title">Spazio esaurito</string>
   <string name="remote_in_noSD">Non hai una SDcard, o non sta funzionando correttamente\nInseriscine una, o re-inserisci quella presente e riprova.</string>
-  <string name="remote_in_noSDspace">Non hai abbastanza spazio libero sulla tua SDcard per usare Aptoide\nPer favore, libera dello spazio e riprova.</string>
+  <string name="remote_in_noSDspace">Non hai abbastanza spazio libero sulla tua SDcard. Per favore, libera dello spazio e riprova.</string>
   <string name="updating_3g">Non sei connesso tramite WiFi. Se hai un piano dati mobile limitato, è consigliabile utilizzare una connessione WiFi.\nAggiornare ugualmente?</string>
   <string name="aptoide_error">Impossibile connettersi al server remoto. Verificare la connessione internet.</string>
   <string name="no_sch_downloads">Nessun download pianificato!</string>

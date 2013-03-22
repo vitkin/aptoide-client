@@ -147,7 +147,7 @@
   <string name="installapp_alrt">Želite li instalirati: \n\n</string>
   <string name="remote_in_noSD_title">Nema memorije</string>
   <string name="remote_in_noSD">Nema te SD karticu, ili ne radi pravino\nMolimo priključite jednu, ili ponovno je ubacite, pa probajte ponovo.</string>
-  <string name="remote_in_noSDspace">Nemate dovoljno prostora na SD kartici da koristite Aptoide\nMolimo da oslobodite prostora pa pokušajte ponovo.</string>
+  <string name="remote_in_noSDspace">Nemate dovoljno prostora na SD kartici. Molimo da oslobodite prostora pa pokušajte ponovo.</string>
   <string name="updating_3g">Niste povezani na Wifi. Ako imati ograničen bandwidth, preporučljivo je da update-ujete koristeči Wifi konekciju.\nUpdate svakako?</string>
   <string name="aptoide_error">Ne može se konektovati na remote server. Molimo da pokušamo kasnije.</string>
   <string name="no_sch_downloads">Nema prijavljenih downloada!</string>

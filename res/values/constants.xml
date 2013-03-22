@@ -10,5 +10,5 @@
     <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
     <string name="google_play">Google Play </string>
     <string name="aptoide_email"> aptoide@aptoide.com</string>
-
+	<string name="aptoide_url_topapps">http://www.aptoide.com/more/topapps</string>
 </resources>

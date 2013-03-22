@@ -105,7 +105,7 @@ public class ApplicationAptoide extends Application {
             CUSTOMEDITORSCHOICE = sPref.getBoolean("CUSTOMEDITORSCHOICE",false);
             SEARCHSTORES = sPref.getBoolean("SEARCHSTORES",true);
             APTOIDETHEME = sPref.getString("APTOIDETHEME","DEFAULT");
-            MARKETNAME = sPref.getString("MARKETNAME",MARKETNAME);
+            MARKETNAME = sPref.getString("MARKETNAME", getString(R.string.app_name));
 
 
 

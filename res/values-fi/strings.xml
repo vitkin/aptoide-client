@@ -135,7 +135,7 @@
   <string name="installapp_alrt">Haluatko asentaa: \n\n</string>
   <string name="remote_in_noSD_title">Ei muistia</string>
   <string name="remote_in_noSD">Sinulla ei ole SD-korttia tai se toimii virheellisesti\nAseta uusi tai uudelleenaseta nykyinen ja yritä uudelleen.</string>
-  <string name="remote_in_noSDspace">SD-kortillasi ei ole riittävästi tilaa Aptoiden käyttämiseksi\nVapauta tilaa ja yritä uudelleen.</string>
+  <string name="remote_in_noSDspace">SD-kortillasi ei ole riittävästi tilaa. Vapauta tilaa ja yritä uudelleen.</string>
   <string name="updating_3g">Et ole Wifi-yhteydessä. Jos liittymässäsi on rajoitettu kaistanleveys, on suositeltavaa siirtyä Wifi-yhteyteen ennen päivitystä.\nPäivitetäänkö joka tapauksessa?</string>
   <string name="aptoide_error">Etäpalvelimeen ei saada yhteyttä. Tarkista internet-yhteytesi.</string>
   <string name="no_sch_downloads">Ei ajastettuja latauksia!</string>

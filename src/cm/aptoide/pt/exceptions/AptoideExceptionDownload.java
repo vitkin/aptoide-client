@@ -47,6 +47,6 @@ public class AptoideExceptionDownload extends RuntimeException{
 	}
 	@Override
 	public String toString(){
-		return "Aptoide Download Exception due to: " + getMessage();
+		return "Download Exception due to: " + getMessage();
 	}
 }

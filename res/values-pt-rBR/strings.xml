@@ -222,7 +222,7 @@
   <string name="installapp_alrt">Deseja instalar: \n\n</string>
   <string name="remote_in_noSD_title">Sem memória</string>
   <string name="remote_in_noSD">Você não possui um Cartão SD ou ele não está funcionando corretamente.\nPor favor insira um ou insira novamente e tente outra vez.</string>
-  <string name="remote_in_noSDspace">Você não tem espaço suficiente em seu Cartão SD para usar o Aptoide.\nPor favor libere espaço e tente novamente.</string>
+  <string name="remote_in_noSDspace">Não existe espaço suficiente em seu Cartão SD. Por favor libere espaço e tente novamente.</string>
   <string name="updating_3g">Você não está conectado através do Wi-Fi. Se você tem limite de banda móvel, é recomendável atualizar utilizando a conexão Wi-Fi.\nAtualizar mesmo assim?</string>
   <string name="aptoide_error">Não foi possível conectar-se ao servidor remoto. Por favor verifique a conexão da sua Internet.</string>
   <string name="no_sch_downloads">Não há downloads agendados!</string>

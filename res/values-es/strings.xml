@@ -154,7 +154,7 @@
   <string name="newrepo_alrt">Quieres añadir este repositorio a la lista?\n\n</string>
   <string name="remote_in_noSD_title">No hay memoria</string>
   <string name="remote_in_noSD">No tienes una tarjeta SD.\nPor favor inserta una e inténtalo de nuevo.</string>
-  <string name="remote_in_noSDspace">No tienes espacio suficiente en tu tarjet SD para usar Aptoide\nPor favor libéra algo de espacio e inténtalo de nuevo..</string>
+  <string name="remote_in_noSDspace">No tienes espacio suficiente en tu tarjet SD. Por favor libéra algo de espacio e inténtalo de nuevo..</string>
   <string name="updating_3g">Estás conectado por 3G o redes móviles. Es más recomendable que actualices usando una red wifi.\nActualizar de cualquier modo?</string>
   <string name="aptoide_error">No se puede conectar al servidor remoto</string>
   <string name="clear_dwn_title">Descargas</string>

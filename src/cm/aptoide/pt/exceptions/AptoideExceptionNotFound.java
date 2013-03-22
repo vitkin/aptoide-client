@@ -47,6 +47,6 @@ public class AptoideExceptionNotFound extends RuntimeException{
 	}
 	@Override
 	public String toString(){
-		return "Aptoide Not Found Exception due to: " + getMessage();
+		return "Not Found Exception due to: " + getMessage();
 	}
 }

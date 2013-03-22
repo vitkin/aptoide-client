@@ -135,7 +135,7 @@
   <string name="installapp_alrt">Voulez-vous installer: \n\n</string>
   <string name="remote_in_noSD_title">Pas de mémoire</string>
   <string name="remote_in_noSD">Pas de carte SD ou fonctionnement inapproprié\nInsérer une carte ou réinsérer carte et réessayer.</string>
-  <string name="remote_in_noSDspace">Pas assez de place sur carte SD pour utiliser Aptoide\nLibérer de l\'espace et réessayer.</string>
+  <string name="remote_in_noSDspace">Pas assez de place sur carte SD. Libérer de l\'espace et réessayer.</string>
   <string name="updating_3g">Pas de connection Wifi. Si vous avez une bande passante mobile limitée, il est recommandé d\'utiliser une connection Wifi.\nMàj quand même?</string>
   <string name="aptoide_error">Impossible de se connecter au serveur distant. Vérifier votre connexion internet.</string>
   <string name="no_sch_downloads">Pas de téléchargement planifié!</string>

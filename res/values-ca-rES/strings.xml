@@ -135,7 +135,7 @@
   <string name="installapp_alrt">Vols instal·lar: \n\n</string>
   <string name="remote_in_noSD_title">No hi ha memòria</string>
   <string name="remote_in_noSD">No tens targeta SD, o no està funcionant correctament\nSi us plau inserta\'n una i reintenta.</string>
-  <string name="remote_in_noSDspace">No hi ha prou espai a la SD\nSi us plau allibera espai i intenta-ho un altre cop</string>
+  <string name="remote_in_noSDspace">No hi ha prou espai a la SD. Si us plau allibera espai i intenta-ho un altre cop</string>
   <string name="updating_3g">No estas connectat mitjançant Wifi. Si tens connexió mòbil amb limit de dades, es suggereix actualitzar fent servir Wifi.\nVols actualitzar igualment?</string>
   <string name="aptoide_error">No s\'ha pogut connectar amb el servidor. Si us plau verifica la teva connexió.</string>
   <string name="no_sch_downloads">No hi ha descàrregues programades!</string>
