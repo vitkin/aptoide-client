@@ -10,10 +10,7 @@ package cm.aptoide.pt.util;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,20 +32,25 @@ public class NetworkUtils {
 	private static int TIME_OUT = 10000;
 
 
-	public BufferedInputStream getInputStream(URL url, String username, String password, Context mctx) throws IOException{
-		URLConnection connection = url.openConnection();
-		if(username!=null && password!=null){
+	public BufferedInputStream getInputStream(String url, String username, String password, Context mctx) throws IOException{
+
+        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+
+
+
+        if(username!=null && password!=null){
 			String basicAuth = "Basic " + new String(Base64.encode((username+":"+password).getBytes(),Base64.NO_WRAP ));
 			connection.setRequestProperty ("Authorization", basicAuth);
 		}
-
+        connection.setConnectTimeout(TIME_OUT);
+        connection.setReadTimeout(TIME_OUT);
 		connection.setRequestProperty("User-Agent", getUserAgentString(mctx));
-        System.out.println(getUserAgentString(mctx) + " TAAAAG");
+        System.out.println("Using user-agent: " + (getUserAgentString(mctx)));
 		BufferedInputStream bis = new BufferedInputStream(connection.getInputStream(), 8 * 1024);
 
-		if(ApplicationAptoide.DEBUG_MODE)Log.i("Aptoide-NetworkUtils", "Getting: "+url.toString());
-		connection.setConnectTimeout(TIME_OUT);
-		connection.setReadTimeout(TIME_OUT);
+//		if(ApplicationAptoide.DEBUG_MODE)
+            Log.i("Aptoide-NetworkUtils", "Getting: "+url.toString());
+
 		return bis;
 
 	}
@@ -87,7 +89,7 @@ public class NetworkUtils {
 		return -1;
 	}
 
-	public JSONObject getJsonObject(URL url, Context mctx) throws IOException, JSONException{
+	public JSONObject getJsonObject(String url, Context mctx) throws IOException, JSONException{
 		String line = null;
 		BufferedReader br = new BufferedReader(new java.io.InputStreamReader(getInputStream(url, null, null, mctx)));
 		StringBuilder sb = new StringBuilder();

@@ -46,7 +46,7 @@ public class MainService extends Service {
 	String defaultTopXmlPath = defaultPath+"/.aptoide/top.xml";
 	String defaultLatestXmlPath = defaultPath+"/.aptoide/latest.xml";
 	String defaultExtrasXmlPath = defaultPath+"/.aptoide/extras.xml";
-	
+
 	static ArrayList<String> serversParsing = new ArrayList<String>();
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -54,7 +54,7 @@ public class MainService extends Service {
 		return new LocalBinder();
 	}
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
-		
+
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			try{
@@ -62,31 +62,31 @@ public class MainService extends Service {
 			}catch (Exception e){
 				e.printStackTrace();
 			}
-			
+
 		}
 	};
-	
-	
+
+
 	public class LocalBinder extends Binder{
 		public MainService getService(){
 			return MainService.this;
 		}
 	}
-	
+
 //	public void parse(final Database db){
 //		new Thread() {
-//			
+//
 //
 //			public void run() {
-//				
+//
 //				ArrayList<Server> servers = ;
-//				
+//
 //				try {
 //					for(Server server : servers){
 //						if(serversParsing.get((int)server.id)==null){
-//							
+//
 //						}
-//						
+//
 //					}
 //					sendBroadcast(new Intent("starting"));
 //				} catch (Exception e) {
@@ -95,7 +95,7 @@ public class MainService extends Service {
 //			};
 //		}.start();
 //	}
-	
+
 	public String get(Server server,String xmlpath,String what, boolean delta) throws MalformedURLException, IOException{
 		getApplicationContext().sendBroadcast(new Intent("connecting"));
 		String hash = "";
@@ -108,10 +108,10 @@ public class MainService extends Service {
 			throw new AptoideException("401", new IOException());
 		}
 		String url = server.url + what + hash;
-		
-		
+
+
 		File f = new File(xmlpath);
-		InputStream in = utils.getInputStream(new URL(url), server.getLogin().getUsername(),
+		InputStream in = utils.getInputStream(url, server.getLogin().getUsername(),
 				server.getLogin().getPassword(),getApplicationContext());
 
 		int i = 0;
@@ -130,21 +130,21 @@ public class MainService extends Service {
 
 		return f.getAbsolutePath();
 	}
-//	
+//
 //	public String getTop(Server server,String xmlpath) throws MalformedURLException, IOException{
 //		File f = new File(xmlpath);
 //			getApplicationContext().sendBroadcast(new Intent("connecting"));
 //			String url = server.url + "top.xml";
 //			System.out.println(url);
 //	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
-//	    	
-//	    	
+//
+//
 //	    	int i = 0;
 //	    	while(f.exists()){
 //	    		f = new File(xmlpath+i++);
 //	    	}
 //			FileOutputStream out = new FileOutputStream(f);
-//			
+//
 //			byte[] buffer = new byte[1024];
 //			int len;
 //			getApplicationContext().sendBroadcast(new Intent("downloading"));
@@ -152,24 +152,24 @@ public class MainService extends Service {
 //				out.write(buffer, 0, len);
 //			}
 //			out.close();
-//		
+//
 //		return f.getAbsolutePath();
 //    }
-//	
+//
 //	public String getLatest(Server server,String xmlpath) throws MalformedURLException, IOException{
 //		File f = new File(xmlpath);
 //			getApplicationContext().sendBroadcast(new Intent("connecting"));
 //			String url = server.url + "latest.xml";
 //			System.out.println(url);
 //	    	InputStream in = getInputStream(new URL(url),server.username,server.password);
-//	    	
-//	    	
+//
+//
 //	    	int i = 0;
 //	    	while(f.exists()){
 //	    		f = new File(xmlpath+i++);
 //	    	}
 //			FileOutputStream out = new FileOutputStream(f);
-//			
+//
 //			byte[] buffer = new byte[1024];
 //			int len;
 //			getApplicationContext().sendBroadcast(new Intent("downloading"));
@@ -177,26 +177,26 @@ public class MainService extends Service {
 //				out.write(buffer, 0, len);
 //			}
 //			out.close();
-//		
+//
 //		return f.getAbsolutePath();
 //    }
 
 	public boolean isParsing() {
 		return isParsing ;
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		unregisterReceiver(receiver);
 		System.out.println("MainService OnDestroy");
 		try{
-			File[] files = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide").listFiles(); 
-			
+			File[] files = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide").listFiles();
+
 			for(File file : files){
 				if(file.getName().endsWith(".xml")&&!file.getName().contains("servers.xml")){
 					file.delete();
 				}
-			}	
+			}
 		}catch (Exception e){
 			e.printStackTrace();
 		}
@@ -219,13 +219,13 @@ public class MainService extends Service {
 	}
 
 	public void parseServer(final Database db, final Server server) throws MalformedURLException, IOException {
-		
-		
+
+
 		if(!serversParsing.contains(server.url)){
 			server.state=State.QUEUED;
 			db.updateStatus(server);
 			new Thread(new Runnable() {
-				
+
 				@Override
 				public void run() {
 						addStoreInfo(db, server);
@@ -246,11 +246,11 @@ public class MainService extends Service {
 					}
 				}
 			}).start();
-			
-			serversParsing.add(server.url);	
+
+			serversParsing.add(server.url);
 		}
 	}
-	
+
 	public boolean deleteStore(Database db, long id){
 		if(!serversParsing.contains(db.getServer(id, false).url)){
 			db.deleteServer(id,true);
@@ -258,7 +258,7 @@ public class MainService extends Service {
 		}
 		return false;
 	}
-	
+
 	public void parseTop(final Database db, final Server server) {
 		new Thread(new Runnable() {
 			public void run() {
@@ -274,9 +274,9 @@ public class MainService extends Service {
 				}
 			}
 		}).start();
-		
+
 	}
-	
+
 	public void parseExtras(final Server server){
 		new Thread(new Runnable() {
 			public void run() {
@@ -294,7 +294,7 @@ public class MainService extends Service {
 			}
 		}).start();
 	}
-	
+
 	public void parseLatest(final Database db, final Server server){
 			new Thread(new Runnable() {
 
@@ -309,12 +309,12 @@ public class MainService extends Service {
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-					
+
 				}
 			}).start();
 
 	}
-	
+
 	public void parseInfoXml(final Database db, final Server server) throws MalformedURLException, IOException{
 		String path = null;
 		path = get(server,defaultXmlPath,"info.xml",true);
@@ -325,7 +325,7 @@ public class MainService extends Service {
 	public void addStoreInfo(Database db, Server server) {
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(
-					String.format("http://webservices.aptoide.com/webservices/getRepositoryInfo/%s/json", 
+					String.format("http://webservices.aptoide.com/webservices/getRepositoryInfo/%s/json",
 							RepoUtils.split(server.url))).openConnection();
 			connection.connect();
 			int rc = connection.getResponseCode();
@@ -350,8 +350,8 @@ public class MainService extends Service {
 			e.printStackTrace();
 			db.addStoreInfo("",RepoUtils.split(server.url),"0",server.id);
 		}
-		
-		
+
+
 	}
 	public static String withSuffix(String input) {
 		long count = Long.parseLong(input);

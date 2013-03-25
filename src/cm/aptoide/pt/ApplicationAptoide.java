@@ -89,13 +89,12 @@ public class ApplicationAptoide extends Application {
 		managerPreferences = new ManagerPreferences(getApplicationContext());
 		setContext(getApplicationContext());
 		 // Create global configuration and initialize ImageLoader with this configuration
-		
+
 		SharedPreferences sPref = getSharedPreferences("settings", MODE_PRIVATE);
         if(sPref.contains("PARTNERID")){
 
             PARTNERID = sPref.getString("PARTNERID",null);
             DEFAULTSTORE = sPref.getString("DEFAULTSTORE",null);
-
             BRANDICON = sPref.getString("BRANDICON",null);
             MATURECONTENTSWITCH = sPref.getBoolean("MATURECONTENTSWITCH", true);
             SPLASHSCREEN = sPref.getString("SPLASHSCREEN", null);

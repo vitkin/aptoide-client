@@ -258,7 +258,7 @@ public class HelperDownload{
                             try{
 
                                 download.setFailReason(EnumDownloadFailReason.PAIDAPP_NOTFOUND);
-                                JSONObject object = new NetworkUtils().getJsonObject(new URL(remotePath), ApplicationAptoide.getContext());
+                                JSONObject object = new NetworkUtils().getJsonObject(remotePath, ApplicationAptoide.getContext());
                                 throw new AptoideExceptionDownload(object.getString("errors"));
 
                             }catch (JSONException e){

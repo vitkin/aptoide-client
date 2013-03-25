@@ -41,7 +41,7 @@ public class CreditCard extends Activity {
 	String paykey;
 
 //	int server = PayPal.ENV_SANDBOX;
-	String appID = "APP-80W284485P519543T";
+	String appID = "APP-0WB20234R97894824";
 	String userMail;
 	String token;
 	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
@@ -49,7 +49,7 @@ public class CreditCard extends Activity {
 	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct");
 	//http://dev.aptoide.com/webservices/payApk/e8b1d6a4dd8b5351c823cd1af95243ed70e9ad3f4f5f2f9c0e89b/rui.mateus@caixamagica.pt/diogo/com.smedio.mediaplayer/1.05.7/completed_payment/json
 	//String urlRedirect="https://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
-	String urlRedirect=" https://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
+	String urlRedirect=" https://www.paypal.com/webscr?cmd=_ap-payment&paykey=";
 	TextView tv;
 	boolean canceled=false;
 	WebView web;

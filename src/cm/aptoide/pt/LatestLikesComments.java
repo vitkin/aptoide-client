@@ -35,22 +35,22 @@ public class LatestLikesComments {
 	private String endPointComments = "http://webservices.aptoide.com/webservices/listRepositoryComments/%s/json";
 	private String endPointLikes = "http://webservices.aptoide.com/webservices/listRepositoryLikes/%s/json";
 	private Context context;
-	
+
 	public LatestLikesComments(long store_id, Database db, Context context) {
 		this.context=context;
 		this.repoName = RepoUtils.split(db.getServer(store_id,false).url);
-		
+
 	}
 
 	public Cursor getComments() {
 		endPointComments = String.format(endPointComments, repoName);
 		MatrixCursor cursor = new MatrixCursor(new String[]{"_id","apkid","name","text","username","time"});
-		
+
 		try {
 			NetworkUtils utils = new NetworkUtils();
-			JSONObject respJSON = utils.getJsonObject(new URL(endPointComments),context);
+			JSONObject respJSON = utils.getJsonObject(endPointComments,context);
 			JSONArray array = respJSON.getJSONArray("listing");
-			
+
 			for(int i = 0;i!=array.length();i++){
 				String apkid = ((JSONObject)array.get(i)).getString("apkid");
 				String name = ((JSONObject)array.get(i)).getString("name");
@@ -64,7 +64,7 @@ public class LatestLikesComments {
 				}
 				cursor.newRow().add(i).add(apkid).add(name).add(text).add(username).add(time);
 			}
-			
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -75,22 +75,22 @@ public class LatestLikesComments {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
+
+
 		return cursor;
 	}
 
 	public Cursor getLikes() {
 		endPointLikes = String.format(endPointLikes, repoName);
 		MatrixCursor cursor = new MatrixCursor(new String[]{"_id","apkid","name","like","username"});
-		
+
 		try {
 			HttpURLConnection connection = (HttpURLConnection) new URL(endPointLikes).openConnection();
 			connection.setConnectTimeout(5000);
@@ -105,9 +105,9 @@ public class LatestLikesComments {
 
 			JSONObject respJSON = new JSONObject(sb.toString());
 			JSONArray array = respJSON.getJSONArray("listing");
-			
+
 			for(int i = 0;i!=array.length();i++){
-				
+
 				String apkid = ((JSONObject)array.get(i)).getString("apkid");
 				String name = ((JSONObject)array.get(i)).getString("name");
 				String like = ((JSONObject)array.get(i)).getString("like");
@@ -116,9 +116,9 @@ public class LatestLikesComments {
 					username = "";
 				}
 				cursor.newRow().add(i).add(apkid).add(name).add(like).add(username);
-				
+
 			}
-			
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -128,12 +128,12 @@ public class LatestLikesComments {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
+
+
 		return cursor;
 	}
 
-	
-	
-	
+
+
+
 }

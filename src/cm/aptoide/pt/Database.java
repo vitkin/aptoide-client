@@ -34,17 +34,11 @@ import android.util.Log;
 import cm.aptoide.pt.DbStructure;
 import cm.aptoide.pt.Server.State;
 import cm.aptoide.pt.sharing.DialogBaseShareListener;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewApkFeaturedEditorsChoice;
-import cm.aptoide.pt.views.ViewApkFeaturedTop;
-import cm.aptoide.pt.views.ViewApkInfoXml;
-import cm.aptoide.pt.views.ViewApkItemBased;
-import cm.aptoide.pt.views.ViewApkLatest;
-import cm.aptoide.pt.views.ViewApkTop;
-import cm.aptoide.pt.views.ViewApkUserBased;
-import cm.aptoide.pt.views.ViewLogin;
+import cm.aptoide.pt.views.*;
+import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.comments.Comment;
+import org.json.JSONObject;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -111,6 +105,37 @@ public class Database {
     public void deleteCommentsCache(long id, Category category) {
 
         database.delete(DbStructure.TABLE_COMMENTS_CACHE,"_id = ? and type = ?", new String[]{id+"",category.name()});
+
+    }
+
+    public void insertMalwareInfo(MalwareStatus malwareStatus, Category category, long id) {
+
+        ContentValues values = new ContentValues();
+
+        values.put("malware", malwareStatus.getStatus());
+
+        switch (category) {
+            case TOP:
+                database.update(DbStructure.TABLE_TOP_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case LATEST:
+                database.update(DbStructure.TABLE_LATEST_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case TOPFEATURED:
+                database.update(DbStructure.TABLE_FEATURED_TOP_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case EDITORSCHOICE:
+                database.update(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case INFOXML:
+                database.update(DbStructure.TABLE_APK_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case ITEMBASED:
+            case USERBASED:
+                database.update(DbStructure.TABLE_ITEMBASED_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+        }
+
 
     }
 
@@ -1516,6 +1541,7 @@ public class Database {
             apk.setLikes(getLikes(apk,category));
             apk.setDislikes(getDislikes(apk, category));
             apk.setComments(getComments(apk,category));
+            apk.setMalwareStatus(getMalwareStatus(apk,category));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1523,6 +1549,53 @@ public class Database {
 		}
 		return apk;
 	}
+
+    private String getMalwareStatus(ViewApk apk, Category category) {
+
+        Cursor c = null;
+
+        String return_string = EnumApkMalware.UNKNOWN.name();
+
+        try{
+
+            switch (category) {
+                case TOP:
+                    c = database.query(DbStructure.TABLE_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case LATEST:
+                    c = database.query(DbStructure.TABLE_LATEST_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case TOPFEATURED:
+                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case EDITORSCHOICE:
+                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_APK_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case ITEMBASED:
+                case USERBASED:
+                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+            }
+
+            if(c!=null && c.moveToFirst()){
+                return_string = c.getString(0);
+            }
+
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(c!=null) c.close();
+        }
+
+
+        return return_string;  //To change body of created methods use File | Settings | File Templates.
+    }
 
 
     public void insertComment (long id, Comment comment, Category category){

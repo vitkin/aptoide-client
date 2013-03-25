@@ -52,6 +52,7 @@ public class ViewApk implements Parcelable {
     private int likes;
     private int dislikes;
     private ArrayList<Comment> comments;
+    private String malwareStatus;
 
 
     /**
@@ -452,5 +453,13 @@ public class ViewApk implements Parcelable {
 
     public ArrayList<Comment> getComments() {
         return comments;
+    }
+
+    public String getMalwareStatus() {
+        return malwareStatus;
+    }
+
+    public void setMalwareStatus(String malwareStatus) {
+        this.malwareStatus = malwareStatus;
     }
 }

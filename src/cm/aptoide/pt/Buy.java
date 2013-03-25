@@ -46,8 +46,8 @@ public class Buy extends Activity {
 
 	String pakey;
 
-	int server = PayPal.ENV_SANDBOX;
-	String appID = "APP-80W284485P519543T";
+	int server = PayPal.ENV_LIVE;
+	String appID = "APP-0WB20234R97894824";
 	String repo;
 	String apkid;
 	String versionName;
@@ -56,7 +56,7 @@ public class Buy extends Activity {
 	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
 	String urlPay = ("http://webservices.aptoide.com/webservices/payApk/");
 	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct/");
-	String urlRedirect="http://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
+	String urlRedirect="http://www.paypal.com/webscr?cmd=_ap-payment&paykey=";
 
 
 	TextView tv;
@@ -239,7 +239,7 @@ public class Buy extends Activity {
 
 		PayPalPreapproval preapproval = new PayPalPreapproval();
 		preapproval.setCurrencyType("EUR");
-		preapproval.setMemo("Pagamento");
+		preapproval.setMemo("Purchase of " +apkid);
 		preapproval.setMerchantName(getString(R.string.app_name));
 
 		return preapproval;

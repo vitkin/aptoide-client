@@ -283,10 +283,10 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 					SAXParser sp = spf.newSAXParser();
 					NetworkUtils utils = new NetworkUtils();
 					BufferedInputStream bis = new BufferedInputStream(
-							utils.getInputStream(new URL(
+							utils.getInputStream(
 									"http://webservices.aptoide.com/webservices/listUserBasedApks/"
 											+ Login.getToken(mContext)
-											+ "/10/xml"), null, null, mContext),
+											+ "/10/xml", null, null, mContext),
 							8 * 1024);
 					File f = File.createTempFile("abc", "abc");
 					OutputStream out = new FileOutputStream(f);
@@ -424,17 +424,17 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
 					NetworkUtils utils = new NetworkUtils();
-                    URL url;
+                    String url;
 
                     if(ApplicationAptoide.CUSTOMEDITORSCHOICE){
-                        url = new URL("http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/editors.xml");
+                        url = "http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/editors.xml";
 
-                        if(((HttpURLConnection)url.openConnection()).getResponseCode()!=200){
-                            url = new URL("http://imgs.aptoide.com/apks/editors.xml");
+                        if(((HttpURLConnection)new URL(url).openConnection()).getResponseCode()!=200){
+                            url ="http://imgs.aptoide.com/apks/editors.xml";
                         }
 
                     }else{
-                        url = new URL("http://imgs.aptoide.com/apks/editors.xml");
+                        url = "http://imgs.aptoide.com/apks/editors.xml";
                     }
 
 
@@ -487,16 +487,16 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
 					server.id = 1;
 					NetworkUtils utils = new NetworkUtils();
 
-					URL url;
+					String url;
 					if(ApplicationAptoide.CUSTOMEDITORSCHOICE){
-                        url = new URL("http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/top.xml");
+                        url = "http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/top.xml";
 
-                        if(((HttpURLConnection)url.openConnection()).getResponseCode()!=200){
-                            url = new URL("http://apps.store.aptoide.com/top.xml");
+                        if(((HttpURLConnection)new URL(url).openConnection()).getResponseCode()!=200){
+                            url = "http://apps.store.aptoide.com/top.xml";
                         }
 
                     }else{
-                        url = new URL("http://apps.store.aptoide.com/top.xml");
+                        url = "http://apps.store.aptoide.com/top.xml";
                     }
 
 					BufferedInputStream bis = new BufferedInputStream(
@@ -909,7 +909,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 						if (rc == 200) {
 							NetworkUtils utils = new NetworkUtils();
 							JSONObject json = utils.getJsonObject(
-									new URL(url), mContext);
+									url, mContext);
 
 							JSONArray array = json.getJSONArray("listing");
 
@@ -1651,7 +1651,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 					file.mkdirs();
 				}
 
-				
+
 
 				new Thread(new Runnable() {
 

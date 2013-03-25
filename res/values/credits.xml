@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
-   
-    <string name="aptoide_version">Version 4.0.1</string>
+
+    <string name="aptoide_version">Version 4.0.2</string>
     <string name="aptoide_brand">APTOiDE</string>
-    
+
     <string name="credits">
     \tAptoide Team:\n\n
     \t\t Rui Mateus\n
@@ -14,33 +14,33 @@
     \t\t duarte.silveira@aptoide.com\n\n
     \t\t Roberto Jacinto\n
     \t\t roberto.jacinto@aptoide.com\n\n
-    
+
     \tThank you to our translators:\n\n
     \t\t
-    
-    Arabic: Manaa Alshihe | 
-    Bosnian/Croatian/Serbian: Rijad \"rijads\", Toni Grubisic | 
-    Catalan: Marc Bres Gil | 
-    Chinese: Theodore Wte | 
-    Dutch: Ismail Gürol Celiktas, Stefan de Jong | 
+
+    Arabic: Manaa Alshihe |
+    Bosnian/Croatian/Serbian: Rijad \"rijads\", Toni Grubisic |
+    Catalan: Marc Bres Gil |
+    Chinese: Theodore Wte |
+    Dutch: Ismail Gürol Celiktas, Stefan de Jong |
     Finnish: Sami Kuusisto |
-    French: Alexis Bonvin | 
-    German: Martin Nehrdich | 
-    Hebrew: שלו מויאל\n | 
-    Italian: Pavo Baxter, Gabry Carne, Simili Giuseppe | 
-    Persian/Farsi: Masoud Abdar | 
+    French: Alexis Bonvin |
+    German: Martin Nehrdich |
+    Hebrew: שלו מויאל\n |
+    Italian: Pavo Baxter, Gabry Carne, Simili Giuseppe |
+    Persian/Farsi: Masoud Abdar |
     Polish: Stanislaw \"trurl3\", Tomasz Gregorczyk |
-    Portuguese (Brazil): Edu Salgado, Joao Redondo | 
+    Portuguese (Brazil): Edu Salgado, Joao Redondo |
  	Portuguese: Joao Redondo |
  	Romanian: Munteanu Ovidiu |
-    Russian: Kanat Yesseyev | 
-    Spanish: Francisco \"ppelao3k\", Jorge Conde | 
-	Turkish: Anonymous 
- 	
+    Russian: Kanat Yesseyev |
+    Spanish: Francisco \"ppelao3k\", Jorge Conde |
+	Turkish: Anonymous
+
  	\n\n
  	\t\tAptoide is using an adaptation of Universal-Image-Loader &#169; 2011, Sergey Tarasevich and View Pager Indicator &#169; 2012, Jake Wharton
  	</string>
-    
+
 </resources>
 
 <!--
@@ -56,7 +56,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.

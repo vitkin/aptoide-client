@@ -115,11 +115,11 @@ public class Likes {
 
 
 				NetworkUtils network = new NetworkUtils();
-				URL url;
+				String url;
 				if(isLoggedin){
-					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, params[0], params[1], params[2], Login.getToken(context)));
+					url = String.format(WEB_SERVICE_LIKES_LIST, params[0], params[1], params[2], Login.getToken(context));
 				}else{
-					url = new URL(String.format(WEB_SERVICE_LIKES_LIST, params[0], params[1], params[2]));
+					url = String.format(WEB_SERVICE_LIKES_LIST, params[0], params[1], params[2]);
 				}
 
 

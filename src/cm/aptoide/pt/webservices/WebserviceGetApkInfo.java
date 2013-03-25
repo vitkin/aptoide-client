@@ -14,7 +14,10 @@ import org.json.JSONObject;
 import cm.aptoide.pt.webservices.comments.Comment;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,18 +37,11 @@ public class WebserviceGetApkInfo {
     String arguments = "getApkInfo/<repo>/<apkid>/<apkversion>/options=(<options>)/<mode>";
     String defaultWebservice = "http://webservices.aptoide.com/webservices/";
     private ArrayList<Comment> comments;
-    private Object likes;
     private boolean seeAll = false;
     private boolean screenshotChanged;
 
 
-    private boolean changedScreenshots() {
-
-        return false;
-    }
-
-
-    public WebserviceGetApkInfo(String webservice,ViewApk apk, Category category, String token ) throws IOException, JSONException {
+    public WebserviceGetApkInfo(String webservice,ViewApk apk, Category category, String token, String md5 ) throws IOException, JSONException {
 
         StringBuilder url = new StringBuilder();
 
@@ -59,6 +55,8 @@ public class WebserviceGetApkInfo {
 
         if(token!=null)options.add(new WebserviceOptions("token", token));
         options.add(new WebserviceOptions("cmtlimit", "6"));
+        options.add(new WebserviceOptions("md5sum", md5));
+        options.add(new WebserviceOptions("payinfo", "true"));
 
         StringBuilder sb = new StringBuilder();
         sb.append("(");
@@ -70,20 +68,22 @@ public class WebserviceGetApkInfo {
 
         url.append("webservices/getApkInfo/").append(apk.getRepoName()).append("/")
                 .append(apk.getApkid()).append("/")
-                .append(apk.getVername()).append("/")
+                .append(URLEncoder.encode(apk.getVername(),"UTF-8")).append("/")
                 .append("options=")
                 .append(sb.toString()).append("/")
                 .append("json");
 
         NetworkUtils utils = new NetworkUtils();
         String line;
-        BufferedReader br = new BufferedReader(new java.io.InputStreamReader(utils.getInputStream(new URL(url.toString()), null, null, ApplicationAptoide.getContext())));
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(utils.getInputStream(url.toString(), null, null, ApplicationAptoide.getContext())));
         sb = new StringBuilder();
         while ((line = br.readLine()) != null){
             sb.append(line).append('\n');
         }
 
-        Log.e(url.toString(),sb.toString());
+        Log.e("REQUEST",url.toString());
+        Log.e("RESPONSE",sb.toString());
         response = new JSONObject(sb.toString());
 
 
@@ -126,6 +126,8 @@ public class WebserviceGetApkInfo {
                 database.insertComment(apk.getId(),comment,category);
             }
             database.insertLikes(getLikes(),category, apk.getId());
+            database.insertMalwareInfo(getMalwareStatus(),category, apk.getId());
+
 
         } catch (ParseException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -136,6 +138,14 @@ public class WebserviceGetApkInfo {
 
     public boolean isSeeAll(){
         return seeAll;
+
+    }
+
+    public MalwareStatus getMalwareStatus() throws JSONException {
+
+        JSONObject malwareResponse = response.getJSONObject("malware");
+
+        return new MalwareStatus(malwareResponse.getString("status"), malwareResponse.getString("reason"));
 
     }
 
@@ -194,6 +204,10 @@ public class WebserviceGetApkInfo {
 
     public void setScreenshotChanged(boolean screenshotChanged) {
         this.screenshotChanged = screenshotChanged;
+    }
+
+    public JSONObject getPayment() throws JSONException {
+        return response.getJSONObject("payment");
     }
 
     private class WebserviceOptions {
