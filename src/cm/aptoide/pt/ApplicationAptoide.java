@@ -73,7 +73,7 @@ public class ApplicationAptoide extends Application {
     public static String BRANDICON;
     public static boolean MATURECONTENTSWITCH = true;
     public static String SPLASHSCREEN;
-    public static String SPLASHSCREEN_LAND;
+    public static String SPLASHSCREENLAND;
     public static boolean MATURECONTENTSWITCHVALUE = true;
     public static boolean MULTIPLESTORES = true;
     public static boolean CUSTOMEDITORSCHOICE = false;
@@ -81,7 +81,7 @@ public class ApplicationAptoide extends Application {
     public static String APTOIDETHEME = "";
     public static String MARKETNAME = "";
 
-    enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREEN_LAND, MARKETNAME }
+    enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME }
 
 	@Override
 	public void onCreate() {
@@ -98,7 +98,7 @@ public class ApplicationAptoide extends Application {
             BRANDICON = sPref.getString("BRANDICON",null);
             MATURECONTENTSWITCH = sPref.getBoolean("MATURECONTENTSWITCH", true);
             SPLASHSCREEN = sPref.getString("SPLASHSCREEN", null);
-            SPLASHSCREEN_LAND = sPref.getString("SPLASHSCREEN_LAND", null);
+            SPLASHSCREENLAND = sPref.getString("SPLASHSCREEN_LAND", null);
             MATURECONTENTSWITCHVALUE = sPref.getBoolean("MATURECONTENTSWITCHVALUE", true);
             MULTIPLESTORES = sPref.getBoolean("MULTIPLESTORES",true);
             CUSTOMEDITORSCHOICE = sPref.getBoolean("CUSTOMEDITORSCHOICE",false);
@@ -152,9 +152,9 @@ public class ApplicationAptoide extends Application {
                                     SPLASHSCREEN = sb.toString();
                                     Log.d("Splashscreen", SPLASHSCREEN+ "");
                                     break;
-                                case SPLASHSCREEN_LAND:
-                                    SPLASHSCREEN_LAND = sb.toString();
-                                    Log.d("Splashscreen landscape", SPLASHSCREEN_LAND+ "");
+                                case SPLASHSCREENLAND:
+                                    SPLASHSCREENLAND = sb.toString();
+                                    Log.d("Splashscreen landscape", SPLASHSCREENLAND+ "");
                                     break;
                                 case MATURECONTENTSWITCH:
                                     MATURECONTENTSWITCH = Boolean.parseBoolean(sb.toString());

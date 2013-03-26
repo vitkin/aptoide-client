@@ -430,11 +430,11 @@ public class MainActivity extends FragmentActivity/*SherlockFragmentActivity */i
                         url = "http://" + ApplicationAptoide.DEFAULTSTORE +  ".store.aptoide.com/editors.xml";
 
                         if(((HttpURLConnection)new URL(url).openConnection()).getResponseCode()!=200){
-                            url ="http://imgs.aptoide.com/apks/editors.xml";
+                            url ="http://apps.store.aptoide.com/editors.xml";
                         }
 
                     }else{
-                        url = "http://imgs.aptoide.com/apks/editors.xml";
+                        url = "http://apps.store.aptoide.com/editors.xml";
                     }
 
 
