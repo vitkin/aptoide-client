@@ -91,7 +91,7 @@ public class WebserviceGetApkInfo {
             comments = getComments();
             Database database = Database.getInstance();
 
-            Log.d("TAAAAAG", comments.size()+"");
+            Log.d("WebserviceGetApkInfo", comments.size()+"");
 
 
 
@@ -116,8 +116,8 @@ public class WebserviceGetApkInfo {
                     }
                 }
 
-                Log.d("TAAAAG", loadedScreenshots.toString());
-                Log.d("TAAAAG", screenshots.toString());
+                Log.d("WebserviceGetApkInfo", loadedScreenshots.toString());
+                Log.d("WebserviceGetApkInfo", screenshots.toString());
 
 
             }
@@ -126,8 +126,7 @@ public class WebserviceGetApkInfo {
                 database.insertComment(apk.getId(),comment,category);
             }
             database.insertLikes(getLikes(),category, apk.getId());
-            database.insertMalwareInfo(getMalwareStatus(),category, apk.getId());
-
+            database.insertMalwareInfo(getMalwareInfo(),category, apk.getId());
 
         } catch (ParseException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -141,10 +140,10 @@ public class WebserviceGetApkInfo {
 
     }
 
-    public MalwareStatus getMalwareStatus() throws JSONException {
+    public MalwareStatus getMalwareInfo() throws JSONException {
 
         JSONObject malwareResponse = response.getJSONObject("malware");
-
+        
         return new MalwareStatus(malwareResponse.getString("status"), malwareResponse.getString("reason"));
 
     }

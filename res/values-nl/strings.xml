@@ -194,10 +194,9 @@
   <string name="about_mail">Contact:</string>
   <string name="is">is</string>
   <string name="trusted">Vertrouwt</string>
-  <string name="trusted_classification">Deze applicatie is gescand door %s Anti-Malware platform en heeft geen signalen van virussen gevonden.</string>
+  <string name="trusted_classification">Deze applicatie is gescand door Aptoide Anti-Malware platform en heeft geen signalen van virussen gevonden.</string>
   <string name="scanned_with_av">Gescand met Anti- Virus:</string>
-  <string name="compared_with_another_market">Vergeleken met andere Android Markten:</string>
-  <string name="about_aptoide_antimalware">%s Anti-Malware platform analyseert applicaties terwijl ze aanstaan en schakelt alle mogelijke bedreigen uit over alle voorraden. Dit systeem scant alle nieuwe applicatie bestanden van de voorraden en certificeert ze door te vergelijken met bestanden van andere Android Markten</string>
+  <string name="about_aptoide_antimalware">Aptoide Anti-Malware platform analyseert applicaties terwijl ze aanstaan en schakelt alle mogelijke bedreigen uit over alle voorraden. Dit systeem scant alle nieuwe applicatie bestanden van de voorraden en certificeert ze door te vergelijken met bestanden van andere Android Markten</string>
   <string name="show_less">Laat minder zien</string>
   <string name="no_descript">Geen omschrijving beschikbaar</string>
   <string name="repo_del_msg2">Kies voorraad om te verwijderen</string>
@@ -244,7 +243,7 @@
     <item>Alleen Wifi</item>
     <item>Nooit downloaden</item>
   </string-array>
-  <string name="accept_terms">Door je aan te melden ga je akkoord met \"%s Terms of Service and Policy for Developers\"</string>
+  <string name="accept_terms">Door je aan te melden ga je akkoord met \"Aptoide Terms of Service and Policy for Developers\"</string>
   <string name="username_tip">Typ je gebruikersnaam</string>
   <string name="password_tip">Kies een wachtwoord</string>
   <string name="sign_in">Inloggen</string>

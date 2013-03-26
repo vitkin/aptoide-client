@@ -162,7 +162,7 @@
     <item>Doar Wifi</item>
     <item>Nu s-a descărcat niciodată</item>
   </string-array>
-  <string name="accept_terms">Prin înregistare sânteţi de acord cu serviciile %s şi politica de conţinut pentru dezvoltatori</string>
+  <string name="accept_terms">Prin înregistare sânteţi de acord cu serviciile Aptoide şi politica de conţinut pentru dezvoltatori</string>
   <string name="username_tip">Tastează numele de utilizator</string>
   <string name="password_tip">Alege o parolă</string>
   <string name="sign_in">Semnează</string>

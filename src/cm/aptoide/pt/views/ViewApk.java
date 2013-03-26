@@ -15,6 +15,7 @@ import cm.aptoide.pt.annotations.DatabaseField;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.comments.Comment;
 
 public class ViewApk implements Parcelable {
@@ -52,7 +53,8 @@ public class ViewApk implements Parcelable {
     private int likes;
     private int dislikes;
     private ArrayList<Comment> comments;
-    private String malwareStatus;
+    private MalwareStatus malwareStatus;
+    
 
 
     /**
@@ -455,11 +457,13 @@ public class ViewApk implements Parcelable {
         return comments;
     }
 
-    public String getMalwareStatus() {
-        return malwareStatus;
-    }
+	
+	public MalwareStatus getMalwareStatus() {
+		return malwareStatus;
+	}
 
-    public void setMalwareStatus(String malwareStatus) {
-        this.malwareStatus = malwareStatus;
-    }
+	public void setMalwareStatus(MalwareStatus malwareStatus) {
+		this.malwareStatus = malwareStatus;
+	}
+	
 }

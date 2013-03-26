@@ -162,7 +162,7 @@
     <item>Només Wifi</item>
     <item>No descarregar mai</item>
   </string-array>
-  <string name="accept_terms">Connectan-te acceptes els Termes de Servei de %s i la política de continguts per desenvolupadors</string>
+  <string name="accept_terms">Connectan-te acceptes els Termes de Servei de Aptoide i la política de continguts per desenvolupadors</string>
   <string name="username_tip">Introdueix nom d\'usuari</string>
   <string name="password_tip">Introdueix contrasenya</string>
   <string name="sign_in">Connectar-se</string>

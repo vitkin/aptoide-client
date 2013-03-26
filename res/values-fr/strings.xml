@@ -162,7 +162,7 @@
     <item>Wifi seulement</item>
     <item>Jamais de téléchargement</item>
   </string-array>
-  <string name="accept_terms">En signat, vous acceptez les conditions générales %s et la politique de contenu pour les développeurs.</string>
+  <string name="accept_terms">En signat, vous acceptez les conditions générales Aptoide et la politique de contenu pour les développeurs.</string>
   <string name="username_tip">Ecrire votre nom d\'utilisateur</string>
   <string name="password_tip">Choisir un mot de passe</string>
   <string name="sign_in">S\'inscrire</string>

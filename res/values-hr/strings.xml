@@ -174,7 +174,7 @@
     <item>Samo Wifi</item>
     <item>Nikada nemoj download-ovati.</item>
   </string-array>
-  <string name="accept_terms">Prijavljivanjem vi pristajete na %s terms of service i pravila o sadržaju za developere.</string>
+  <string name="accept_terms">Prijavljivanjem vi pristajete na Aptoide terms of service i pravila o sadržaju za developere.</string>
   <string name="username_tip">Upišite svoj username</string>
   <string name="password_tip">Izaberite password</string>
   <string name="sign_in">Prijavi se</string>

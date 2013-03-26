@@ -198,10 +198,9 @@
   <string name="about_mail">Contato:</string>
   <string name="is">é</string>
   <string name="trusted">Fiável</string>
-  <string name="trusted_classification">Este aplicativo foi verificado pela plataforma de Anti-Malware do %s e não encontrou nenhum vírus.</string>
+  <string name="trusted_classification">Este aplicativo foi verificado pela plataforma de Anti-Malware do Aptoide e não encontrou nenhum vírus.</string>
   <string name="scanned_with_av">Verificado com:</string>
-  <string name="compared_with_another_market">Comparar com outro Android Marketplace:</string>
-  <string name="about_aptoide_antimalware">A plataforma de Anti-Malware do %s analisa os aplicativos em tempo real e remove potenciais ameaças em todas as lojas. Este sistema verifica todos os aplicativos de todas as lojas e certifica-os comparando com outros Android Marketplaces.</string>
+  <string name="about_aptoide_antimalware">A plataforma de Anti-Malware do Aptoide analisa os aplicativos em tempo real e remove potenciais ameaças em todas as lojas. Este sistema verifica todos os aplicativos de todas as lojas e certifica-os comparando com outros Android Marketplaces.</string>
   <string name="show_less">Mostrar menos</string>
   <string name="no_descript">Indisponível</string>
   <string name="repo_del_msg2">Escolha a loja a ser removida</string>
@@ -250,7 +249,7 @@
     <item>Apenas Wi-Fi</item>
     <item>Nunca fazer download</item>
   </string-array>
-  <string name="accept_terms">Ao registar-se, está a concordar com os Termos de Serviço do %s e com a Política de Conteúdo para Desenvolvedores</string>
+  <string name="accept_terms">Ao registar-se, está a concordar com os Termos de Serviço do Aptoide e com a Política de Conteúdo para Desenvolvedores</string>
   <string name="username_tip">Escreva o seu username</string>
   <string name="password_tip">Mostrar senha</string>
   <string name="sign_in">Iniciar sessão</string>

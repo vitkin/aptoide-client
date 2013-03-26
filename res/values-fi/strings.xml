@@ -162,7 +162,7 @@
     <item>Ainoastaan Wifi</item>
     <item>Älä lataa koskaan</item>
   </string-array>
-  <string name="accept_terms">Rekisteröitymällä hyväksyt %s käyttöehdot sekä kehittäjien sisältöpolitiikan</string>
+  <string name="accept_terms">Rekisteröitymällä hyväksyt Aptoide käyttöehdot sekä kehittäjien sisältöpolitiikan</string>
   <string name="username_tip">Syötä käyttäjänimesi</string>
   <string name="password_tip">Valitse salasana</string>
   <string name="sign_in">Kirjaudu</string>

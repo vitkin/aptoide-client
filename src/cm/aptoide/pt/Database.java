@@ -112,7 +112,8 @@ public class Database {
 
         ContentValues values = new ContentValues();
 
-        values.put("malware", malwareStatus.getStatus());
+        values.put(DbStructure.COLUMN_MALWARE_STATUS, malwareStatus.getStatus());
+        values.put(DbStructure.COLUMN_MALWARE_REASON, malwareStatus.getReason());
 
         switch (category) {
             case TOP:
@@ -1541,7 +1542,7 @@ public class Database {
             apk.setLikes(getLikes(apk,category));
             apk.setDislikes(getDislikes(apk, category));
             apk.setComments(getComments(apk,category));
-            apk.setMalwareStatus(getMalwareStatus(apk,category));
+            apk.setMalwareStatus(getMalware(apk,category));
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1549,8 +1550,59 @@ public class Database {
 		}
 		return apk;
 	}
+	
+	
+	
 
-    private String getMalwareStatus(ViewApk apk, Category category) {
+    private MalwareStatus getMalware(ViewApk apk, Category category) {
+    	
+    	Cursor c = null;
+
+        MalwareStatus malwareStatus = null;
+
+        try{
+
+            switch (category) {
+                case TOP:
+                    c = database.query(DbStructure.TABLE_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE_REASON, DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case LATEST:
+                    c = database.query(DbStructure.TABLE_LATEST_CACHE,new String[]{DbStructure.COLUMN_MALWARE_REASON, DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case TOPFEATURED:
+                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE_REASON, DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case EDITORSCHOICE:
+                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,new String[]{DbStructure.COLUMN_MALWARE_REASON, DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_APK_CACHE,new String[]{DbStructure.COLUMN_MALWARE_REASON, DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case ITEMBASED:
+                case USERBASED:
+                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,new String[]{DbStructure.COLUMN_MALWARE_REASON, DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+            }
+
+            if(c!=null && c.moveToFirst()){
+            	malwareStatus = new MalwareStatus(c.getString(1), c.getString(0));
+            }
+            
+            
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(c!=null) c.close();
+        }
+
+
+        return malwareStatus;
+	}
+
+	private String getMalwareStatus(ViewApk apk, Category category) {
 
         Cursor c = null;
 
@@ -1560,23 +1612,23 @@ public class Database {
 
             switch (category) {
                 case TOP:
-                    c = database.query(DbStructure.TABLE_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    c = database.query(DbStructure.TABLE_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
                     break;
                 case LATEST:
-                    c = database.query(DbStructure.TABLE_LATEST_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    c = database.query(DbStructure.TABLE_LATEST_CACHE,new String[]{DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
                     break;
                 case TOPFEATURED:
-                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,new String[]{DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
                     break;
                 case EDITORSCHOICE:
-                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,new String[]{DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
                     break;
                 case INFOXML:
-                    c = database.query(DbStructure.TABLE_APK_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    c = database.query(DbStructure.TABLE_APK_CACHE,new String[]{DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
                     break;
                 case ITEMBASED:
                 case USERBASED:
-                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,new String[]{DbStructure.COLUMN_MALWARE},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,new String[]{DbStructure.COLUMN_MALWARE_STATUS},"_id = ?", new String[]{apk.getId()+""},null,null,null);
                     break;
             }
 

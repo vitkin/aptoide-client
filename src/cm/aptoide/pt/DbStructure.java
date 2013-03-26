@@ -104,7 +104,8 @@ public class DbStructure extends SQLiteOpenHelper {
 	public static final String COLUMN_PRICE = "price";
     public static final String COLUMN_DISLIKES = "dislikes" ;
     public static final String COLUMN_LIKES = "likes" ;
-    public static final String COLUMN_MALWARE = "malware" ;
+    public static final String COLUMN_MALWARE_STATUS = "malware_status" ;
+    public static final String COLUMN_MALWARE_REASON = "malware_reason" ;
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_TEXT = "text";
 
@@ -148,7 +149,8 @@ public class DbStructure extends SQLiteOpenHelper {
         creator.newTable(TABLE_APK_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
                                          .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
                                          .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
-                                         .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                                         .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
+                                         .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
                                          .createTable();
 
         creator.newTable(TABLE_COMMENTS_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
@@ -230,7 +232,8 @@ public class DbStructure extends SQLiteOpenHelper {
         creator.newTable(TABLE_TOP_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
-                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
                 .createTable();
 
 
@@ -274,7 +277,8 @@ public class DbStructure extends SQLiteOpenHelper {
         creator.newTable(TABLE_LATEST_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
-                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
                 .createTable();
 
 		db.execSQL("create table " + TABLE_REPO_CATEGORY_1ST + " (repo_id integer, " + COLUMN_CATEGORY_1ST_ID+ " integer, primary key(repo_id, " + COLUMN_CATEGORY_1ST_ID+ ") on conflict ignore);");
@@ -338,7 +342,8 @@ public class DbStructure extends SQLiteOpenHelper {
         creator.newTable(TABLE_FEATURED_TOP_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
-                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
                 .createTable();
 
 
@@ -383,7 +388,8 @@ public class DbStructure extends SQLiteOpenHelper {
         creator.newTable(TABLE_FEATURED_EDITORSCHOICE_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setUnique(OnConflict.REPLACE))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
-                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
                 .createTable();
 
 
@@ -421,7 +427,8 @@ public class DbStructure extends SQLiteOpenHelper {
         creator.newTable(TABLE_ITEMBASED_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey().setUnique(OnConflict.REPLACE))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_DISLIKES))
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
-                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
                 .createTable();
 
 		creator.newTable(TABLE_HASHES).addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH))

@@ -194,10 +194,9 @@
   <string name="about_mail">Contatti:</string>
   <string name="is">è</string>
   <string name="trusted">Verificato</string>
-  <string name="trusted_classification">Questa applicazione è stata scansionata dalla piattaforma Anti-Malware di %s e non è affetta da alcun virus.</string>
+  <string name="trusted_classification">Questa applicazione è stata scansionata dalla piattaforma Anti-Malware di Aptoide e non è affetta da alcun virus.</string>
   <string name="scanned_with_av">Scansionata con Anti-Virus:</string>
-  <string name="compared_with_another_market">Confrontata con un altro Android Market:</string>
-  <string name="about_aptoide_antimalware">La piattaforma Anti-Malware di %s analizza le applicazioni in tempo reale e disabilita quelle potenzialmente dannose su tutti gli store. Questo sistema controlla tutti i files e i certificati dell\'applicazione confrontandoli con quelli di altri Market Android.</string>
+  <string name="about_aptoide_antimalware">La piattaforma Anti-Malware di Aptoide analizza le applicazioni in tempo reale e disabilita quelle potenzialmente dannose su tutti gli store. Questo sistema controlla tutti i files e i certificati dell\'applicazione confrontandoli con quelli di altri Market Android.</string>
   <string name="show_less">Mostra meno</string>
   <string name="no_descript">Nessuna descrizione disponibile</string>
   <string name="repo_del_msg2">Scegli lo store da rimovere</string>
@@ -244,7 +243,7 @@
     <item>Solo WiFi</item>
     <item>Non scaricare mai</item>
   </string-array>
-  <string name="accept_terms">Registrandoti, accetti i Termini di Servizio di %s e la Politica dei Contenuti per Sviluppatori.</string>
+  <string name="accept_terms">Registrandoti, accetti i Termini di Servizio di Aptoide e la Politica dei Contenuti per Sviluppatori.</string>
   <string name="username_tip">Inserisci il tuo username</string>
   <string name="password_tip">Scegli una password</string>
   <string name="sign_in">Accedi</string>

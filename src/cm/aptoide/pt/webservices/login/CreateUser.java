@@ -39,7 +39,6 @@ public class CreateUser extends Activity /*SherlockActivity */{
 	EditText password_box;
 	String username;
 	String password;
-	TextView accept_terms;
 	
 	public static final int REQUEST_CODE = 20;
 	public static final String WEB_SERVICE_CREATEUSER = "http://webservices.aptoide.com/webservices/createUser";
@@ -59,8 +58,6 @@ public class CreateUser extends Activity /*SherlockActivity */{
 		context = this;
 		username_box = (EditText) findViewById(R.id.email_box);
 		password_box = (EditText) findViewById(R.id.password_box);
-		accept_terms = (TextView) findViewById(R.id.accept_terms);
-		accept_terms.setText(context.getString(R.string.accept_terms, ApplicationAptoide.MARKETNAME));
 	}
 	
 	public void signUp(View v){

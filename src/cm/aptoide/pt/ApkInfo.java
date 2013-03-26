@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -86,6 +87,7 @@ import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
 import cm.aptoide.pt.webservices.comments.AddComment;
@@ -423,22 +425,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     @Override
                     public void run() {
                         try{
-//							NetworkUtils utils = new NetworkUtils();
-//							String uri = "http://www.aptoide.com/webservices/getApkMalwareInfo/" + viewApk.getMd5()+"/json";
-//							JSONObject respJSON = utils.getJsonObject(new URL(uri), ApkInfo.this);
-//							JSONObject listingResults = respJSON.getJSONObject("listing");
-//							final String malwareStatus = listingResults.getString("status");
-//							final String malwareReason = listingResults.getString("reason");
-//
-//							Log.d("ApkInfo-MalwareBadges", "status: "+malwareStatus+"");
-//							Log.d("ApkInfo-MalwareBadges", "reason: "+malwareReason+"");
-
                             loadMalware(viewApk.getMalwareStatus());
-
-
-
-
-
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -478,68 +465,90 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 
     }
 
-    public void loadMalware(final String response){
-        runOnUiThread(new Runnable() {
+    public void loadMalware(final MalwareStatus malwareStatus){
+    	runOnUiThread(new Runnable() {
 
-            @Override
-            public void run() {
-                EnumApkMalware apkStatus = EnumApkMalware.valueOf(response.toUpperCase(Locale.ENGLISH));
-                switch(apkStatus){
-                    case SCANNED:
-                        ((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.trusted));
-                        ((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
-                        LinearLayout badge_layout = (LinearLayout) findViewById(R.id.badge_layout);
-                        badge_layout.setOnClickListener(new OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_trusted, null);
-                                Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
-                                final AlertDialog trustedDialog = dialogBuilder.create();
-                                trustedDialog.setIcon(R.drawable.badge_scanned);
-                                trustedDialog.setTitle(viewApk.getName()+" "+getString(R.string.is)+" "+getString(R.string.trusted));
-                                trustedDialog.setCancelable(true);
-                                TextView trustedClassification = (TextView) trustedView.findViewById(R.id.tv_trusted_classification);
-                                trustedClassification.setText(getString(R.string.trusted_classification, ApplicationAptoide.MARKETNAME));
-                                TextView aboutAptoideAntimalware = (TextView) trustedView.findViewById(R.id.tv_about_aptoide_antimalware);
-                                aboutAptoideAntimalware.setText(getString(R.string.about_aptoide_antimalware, ApplicationAptoide.MARKETNAME));
+    		@Override
+    		public void run() {
+    			try{
+    				EnumApkMalware apkStatus = EnumApkMalware.valueOf(malwareStatus.getStatus().toUpperCase(Locale.ENGLISH));
+    				Log.d("ApkInfoMalware-malwareStatus", malwareStatus.getStatus());
+    				Log.d("ApkInfoMalware-malwareReason", malwareStatus.getReason());
 
-                                trustedDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok",
-                                        new Dialog.OnClickListener() {
+    				switch(apkStatus){
+    				case SCANNED:
+    					((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.trusted));
+    					((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_scanned);
+    					((LinearLayout) findViewById(R.id.badge_layout)).setOnClickListener(new OnClickListener() {
+    						@Override
+    						public void onClick(View v) {
+    							View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_anti_malware, null);
+    							Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
+    							final AlertDialog trustedDialog = dialogBuilder.create();
+    							trustedDialog.setIcon(R.drawable.badge_scanned);
+    							trustedDialog.setTitle(getString(R.string.app_trusted, viewApk.getName()));
+    							trustedDialog.setCancelable(true);
+    							
+    							TextView tvSignatureValidation = (TextView) trustedView.findViewById(R.id.tv_signature_validation);
+    							tvSignatureValidation.setText(getString(R.string.signature_verified));
+    							ImageView check_signature = (ImageView) trustedView.findViewById(R.id.check_signature);
+    							check_signature.setImageResource(R.drawable.yes);
 
-                                            @Override
-                                            public void onClick(DialogInterface arg0, int arg1) {
-                                                trustedDialog.dismiss();
-                                            }
+    							trustedDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {
+    								@Override
+    								public void onClick(DialogInterface arg0, int arg1) {
+    									trustedDialog.dismiss();
+    								}
+    							});
+    							trustedDialog.show();
+    						}
+    					});
+    					break;
+    					//    			case UNKNOWN:
+    					//    				((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.unknown));
+    					//    				((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
+    					//    				break;
+    				case WARN:
+    					((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.warning));
+    					((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
+    					((LinearLayout) findViewById(R.id.badge_layout)).setOnClickListener(new OnClickListener() {
+    						@Override
+    						public void onClick(View v) {
+    							View warnView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_anti_malware, null);
+    							Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(warnView);
+    							final AlertDialog warnDialog = dialogBuilder.create();
+    							warnDialog.setIcon(R.drawable.badge_warn);
+    							warnDialog.setTitle(getString(R.string.app_warning, viewApk.getName()));
+    							warnDialog.setCancelable(true);
+    							
+    							TextView tvSignatureValidation = (TextView) warnView.findViewById(R.id.tv_signature_validation);
+    							tvSignatureValidation.setText(getString(R.string.signature_not_verified));
+    							ImageView check_signature = (ImageView) warnView.findViewById(R.id.check_signature);
+    							check_signature.setImageResource(R.drawable.failed);
 
-                                        });
-//												Button okButton = (Button) trustedView.findViewById(R.id.bt_ok);
-//												okButton.setOnClickListener(new View.OnClickListener(){
-//													@Override
-//													public void onClick(View v) {
-//														trustedDialog.dismiss();
-//													}
-//												});
-                                trustedDialog.show();
-                            }
-                        });
-                        break;
-//									case UNKNOWN:
-//										((TextView) findViewById(R.id.app_badge_text)).setText("Unknown");
-//										((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_unknown);
-//										break;
-                                    case WARN:
-										((TextView) findViewById(R.id.app_badge_text)).setText("Warning");
-										((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_warn);
-										break;
-									case CRITICAL:
-										((TextView) findViewById(R.id.app_badge_text)).setText("Critical");
-										((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
-										break;
-                    default:
-                        break;
-                }
-            }
-        });
+    							warnDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {
+    								@Override
+    								public void onClick(DialogInterface arg0, int arg1) {
+    									warnDialog.dismiss();
+    								}
+    							});
+    							warnDialog.show();
+    						}
+    					});
+    					break;
+    					//    			case CRITICAL:
+    					//    				((TextView) findViewById(R.id.app_badge_text)).setText(getString(R.string.critical));
+    					//    				((ImageView) findViewById(R.id.app_badge)).setImageResource(R.drawable.badge_critical);
+    					//    				break;
+    				default:
+    					break;
+    				}
+    			}catch (Exception e) {
+    				e.printStackTrace();
+    			}
+    		}
+    		
+    	});
 
     }
 
@@ -1226,7 +1235,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 e.printStackTrace();
             }
             try {
-               loadMalware(webservice.getMalwareStatus().getStatus());
+               loadMalware(webservice.getMalwareInfo());
             } catch (Exception e) {
                 e.printStackTrace();
             }

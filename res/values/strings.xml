@@ -212,12 +212,18 @@
     <string name="description">@string/about_txt1</string>
     <string name="about_site">Home: </string>
     <string name="about_mail">Contact: </string>
-    <string name="is">is</string>
+    <string name="app_trusted">%s application is Trusted</string>
+    <string name="app_warning">%s application is Warn</string>
+    <string name="app_unknown">%s application is Unknown</string>
     <string name="trusted">Trusted</string>
-    <string name="trusted_classification">This application was scanned by %s Anti-Malware platform and did not catch any signal of virus.</string>
+    <string name="warning">Warn</string>
+    <string name="unknown">Unknown</string>
+    <string name="signature_verified">The application signature matches the one related to its developer.</string>
+    <string name="signature_not_verified">The application signature does not match the one related to its developer, thus the application may have been adulterated. </string>
+    <string name="trusted_classification">This application was scanned by Aptoide Anti-Malware platform and did not catch any signal of virus.</string>
     <string name="scanned_with_av">Scanned with Anti-Virus:</string>
-    <string name="compared_with_another_market">Compared with another Android Marketplace: </string>
-    <string name="about_aptoide_antimalware">%s Anti-Malware platform analyses applications in run-time and disables potential threats across all stores. This system scans all the new application files from the stores and certificates them by comparison against other Android Marketplaces.</string>
+    <string name="application_signature_analysis">Application signature analysis:</string>
+    <string name="about_aptoide_antimalware">Aptoide Anti-Malware platform analyses applications in run-time and disables potential threats across all stores. This system scans all the new application files from the stores and certificates them by comparison against other Android Marketplaces.</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
     <string name="no_descript">No description available</string>
@@ -275,7 +281,7 @@
 
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="accept_terms">By signing up you are agreeing to the %s Terms of Service and Content Policy for Developers</string>
+    <string name="accept_terms">By signing up you are agreeing to the Aptoide Terms of Service and Content Policy for Developers</string>
     <string name="register">Sign Up</string>
     <string name="username_tip">Type your email</string>
     <string name="password_tip">Choose a password</string>
