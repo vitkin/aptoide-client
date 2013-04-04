@@ -1,15 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-  <string name="start_loading">Yükleniyor&#8230;</string>
+  <string name="start_loading">Yükleniyor…</string>
   <string name="menu_settings">Ayarlar</string>
   <string name="my_stores">Mağazayı düzenle</string>
-  <string name="store_name">Kullanıcı adı&#8230;</string>
+  <string name="store_name">Kullanıcı adı…</string>
   <string name="category1">Kategoriye göre</string>
   <string name="category2">Kategoriye göre</string>
   <string name="add_store">Bir mağaza ekleyin!</string>
   <string name="new_store">Bir mağaza ekleyin!</string>
   <string name="add_repo_private">Özel</string>
-  <string name="extended_server">Genişletilmiş mağaza</string>
   <string name="downloads">İndirmeler</string>
   <string name="downloading_apps">İndiriliyor:</string>
   <string name="downloaded_apps">İndirmeler</string>
@@ -24,10 +23,11 @@
   <string name="installed_tab">Kurulu</string>
   <string name="updates_tab">Güncellemeler</string>
   <string name="add_repo_text">Yeni mağaza</string>
+  <string name="extended_server">Genişletilmiş mağaza</string>
   <string name="btn_add_repo">Bir mağaza ekleyin!</string>
   <string name="menu_rem_repo">Mağazayı kaldır</string>
   <string name="number_apks">Uygulamalar:</string>
-  <string name="please_wait">Bekleyiniz&#8230;</string>
+  <string name="please_wait">Bekleyiniz…</string>
   <string name="finished_download_alrt">İndirme tamamlandı</string>
   <string name="finished_download_message">İndirme tamamlandı</string>
   <string name="download_alrt">İndiriliyor:</string>
@@ -39,19 +39,19 @@
   <string name="dislikes">Beğenmemeler:</string>
   <string name="postingtaste">Girdiniz gönderiliyor</string>
   <string name="showpass">Parolayı göster</string>
-  <string name="user">Kullanıcı adı&#8230;</string>
-  <string name="pass">Parola&#8230;</string>
+  <string name="user">Kullanıcı adı…</string>
+  <string name="pass">Parola…</string>
   <string name="new_account">Yeni hesap</string>
   <string name="setcredentials">Ayarları</string>
   <string name="usernotdef">Kullanıcı tanımlanmamıştır</string>
   <string name="passwordnotdef">Parola tanımlanmamıştır</string>
-  <string name="loggingin">Oturum açılıyor&#8230;</string>
+  <string name="loggingin">Oturum açılıyor…</string>
   <string name="unabletoexecute">Çalıştırılamıyor</string>
   <string name="failedcredentials">Girilen verilerle oturum açılamadı</string>
-  <string name="loading_likes">Beğeniler yükleniyor&#8230;</string>
+  <string name="loading_likes">Beğeniler yükleniyor…</string>
   <string name="inresponseto">\@</string>
   <string name="enterbody">Yorumunuzu gövde kısmında giriniz</string>
-  <string name="postingcomment">Yorumunuz yollanıyor&#8230;</string>
+  <string name="postingcomment">Yorumunuz yollanıyor…</string>
   <string name="commentadded">Yorumunuz başarılı bir şekilde yollandı</string>
   <string name="order_popup_title1">Uygulamaları şu şekilde sırala:</string>
   <string name="order_popup_lst1">Önce en yenileri</string>
@@ -110,7 +110,7 @@
   <string name="repo_edt_msg2">Mağazayı düzenle</string>
   <string name="md5_auto_update_error">Güncelleme paketinin toplamı başarısız oldu! Mevcut sürüm korunuyor.</string>
   <string name="network_auto_update_error">Güncelleme bağlantısı başarısız! Mevcut sürüm korunuyor.</string>
-  <string name="auto_updating">Güncelleme indirmesi sürmektedir, lütfen bekleyiniz&#8230;</string>
+  <string name="auto_updating">Güncelleme indirmesi sürmektedir, lütfen bekleyiniz…</string>
   <string name="update_self_title">Güncelleme mevcut</string>
   <string name="update_self_msg">Yeni bir %s sürümü mevcuttur,\ngüncellemek ister misiniz?</string>
   <string name="md5_error">İndirilen uygulamanın md5 kontrolü başarısız oldu!\nTekrar denemeden önce mağazalarınızı güncelleyiniz.</string>

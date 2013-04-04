@@ -27,28 +27,28 @@ import android.util.Log;
 public class RepoParser {
 	static Object lock = new Object();
 	static ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
-		
+
 		@Override
 		public Thread newThread(Runnable r) {
-			
+
 			Thread t = new Thread(r);
-			
+
 			t.setPriority(3);
-			
+
 			return t;
 		}
 	});
-	
+
 	static Database db;
 	static RepoParser parser;
-	
+
 	private RepoParser(Database db) {
 		RepoParser.db=db;
 		System.out.println("New Parser");
 	}
-	
+
 	public static RepoParser getInstance(Database db){
-		
+
 			if(parser==null){
 				synchronized (lock) {
 					return new RepoParser(db);
@@ -56,28 +56,28 @@ public class RepoParser {
 			}else{
 				return parser;
 			}
-		
+
 	}
-	
+
 	public void parseTop(String xml, Server server){
 		Log.d("Parser", "Starting top.xml on serverid "+  server.id);
 		executor.submit(new TopParser(server,xml,Category.TOP));
 	}
-	
+
 	public void parseLatest(String xml, Server server){
 		Log.d("Parser", "Starting latest.xml on serverid "+  server.id);
 		executor.submit(new LatestParser(server,xml,Category.LATEST));
 	}
-	
+
 	public void parseInfoXML(String xml, Server server){
 		Log.d("Parser", "Starting info.xml on serverid "+  server.id);
 		executor.submit(new Parser(server,xml));
 	}
-	
-	public class Parser extends Thread{ 
+
+	public class Parser extends Thread{
 		Server server;
 		String xml;
-		
+
 		public Parser(Server server, String xml) {
 			this.server = server;
 			this.xml=xml;
@@ -102,14 +102,14 @@ public class RepoParser {
 
 		}
 	}
-	
-	
-	
-	public class TopParser extends Thread{ 
+
+
+
+	public class TopParser extends Thread{
 		Server server;
 		File xml;
 		Category category;
-		
+
 		public TopParser(Server server, String xml, Category category) {
 			this.server = server;
 			this.xml=new File(xml);
@@ -119,27 +119,30 @@ public class RepoParser {
 
 		public void run(){
 //			db.startTransation();
-			server.state = cm.aptoide.pt.Server.State.PARSINGTOP;
+			server.state = Server.State.PARSINGTOP;
 			db.updateStatus(server);
 			try{
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				parser.parse(xml, new HandlerTop(server));
+
 			}catch(Exception e){
-				
+
 			}finally{
 				xml.delete();
 			}
+            server.state = cm.aptoide.pt.Server.State.PARSED;
+            db.updateStatus(server);
 //			db.updateStatus(server);
 //			db.endTransation(server);
 		}
 	}
-	
-	public class LatestParser extends Thread{ 
+
+	public class LatestParser extends Thread{
 		Server server;
 		File xml;
 		Category category;
-		
+
 		public LatestParser(Server server, String xml, Category category) {
 			this.server = server;
 			this.xml=new File(xml);
@@ -149,18 +152,22 @@ public class RepoParser {
 
 		public void run(){
 //			db.startTransation();
+            server.state = Server.State.PARSINGLATEST;
+            db.updateStatus(server);
 			try{
 				SAXParserFactory factory = SAXParserFactory.newInstance();
 				SAXParser parser = factory.newSAXParser();
 				parser.parse(xml, new HandlerLatest(server));
 			}catch(Exception e){
-				
+
 			}finally{
 				xml.delete();
 			}
-			
+            server.state = cm.aptoide.pt.Server.State.PARSED;
+            db.updateStatus(server);
+
 //			db.endTransation(server);
 		}
 	}
-	
+
 }

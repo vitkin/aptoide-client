@@ -2,7 +2,7 @@
 <resources>
   <string name="menu_context_remove">Poista</string>
   <string name="menu_context_reparse">Poista</string>
-  <string name="start_loading">Ladataan&#8230;</string>
+  <string name="start_loading">Ladataan…</string>
   <string name="error_latest_apk">APK:ta ei löydy tietokannasta. Onko kaupan päivitys kesken?</string>
   <string name="error_delete_store">Kaupan poisto ei onnistu. Kaupan päivitys on vielä kesken.</string>
   <string name="menu_settings">Asetukset</string>
@@ -15,7 +15,6 @@
   <string name="empty_store_list">Sinulla ei ole yhtään kauppaa.</string>
   <string name="new_store">Lisää kauppa</string>
   <string name="add_repo_private">Yksityinen</string>
-  <string name="extended_server">Laajennettu kauppa</string>
   <string name="downloads">lataukset</string>
   <string name="merge_all_stores">Yhdistä kaikki kaupat</string>
   <string name="search_for_stores">Hae kauppoja</string>
@@ -36,10 +35,11 @@
   <string name="installed_tab">Asennetut</string>
   <string name="updates_tab">Päivitykset</string>
   <string name="add_repo_text">Uusi kauppa</string>
+  <string name="extended_server">Laajennettu kauppa</string>
   <string name="btn_add_repo">Lisää kauppa</string>
   <string name="menu_rem_repo">Poista kauppa</string>
   <string name="number_apks">Sovellukset:</string>
-  <string name="please_wait">Odota&#8230;</string>
+  <string name="please_wait">Odota…</string>
   <string name="finished_download_alrt">Lataus valmis</string>
   <string name="finished_download_message">Lataus valmis</string>
   <string name="download_alrt">Ladataan:</string>
@@ -51,19 +51,19 @@
   <string name="dislikes">Ei-tykkääjät:</string>
   <string name="postingtaste">Pyyntöäsi lähetetään</string>
   <string name="showpass">Näytä salasana</string>
-  <string name="user">Käyttäjänimi&#8230;</string>
-  <string name="pass">Salasana&#8230;</string>
+  <string name="user">Käyttäjänimi…</string>
+  <string name="pass">Salasana…</string>
   <string name="new_account">Uusi tili</string>
   <string name="setcredentials">Kirjautuminen</string>
   <string name="usernotdef">Käyttäjää ei määritelty</string>
   <string name="passwordnotdef">Salasanaa ei määritelty</string>
-  <string name="loggingin">Kirjautuu&#8230;</string>
+  <string name="loggingin">Kirjautuu…</string>
   <string name="unabletoexecute">Ei voida suorittaa</string>
   <string name="failedcredentials">Kirjautuminen annetuilla tunnuksilla epäonnistui</string>
-  <string name="loading_likes">Ladataan tykkääjiä&#8230;</string>
+  <string name="loading_likes">Ladataan tykkääjiä…</string>
   <string name="inresponseto">\@</string>
   <string name="enterbody">Syötä arvostelusi runko-osioon</string>
-  <string name="postingcomment">Julkaisee kommenttiasi&#8230;</string>
+  <string name="postingcomment">Julkaisee kommenttiasi…</string>
   <string name="commentadded">Kommenttisi on lähetetty onnistuneesti</string>
   <string name="order_popup_title1">Järjestä sovellukset:</string>
   <string name="order_popup_lst1">Uusin ensin</string>
@@ -124,7 +124,7 @@
   <string name="repo_edt_msg2">Muokkaa kauppaa</string>
   <string name="md5_auto_update_error">Päivityspaketin tarkastussumma epäonnistui! Pidetään nykyinen versio.</string>
   <string name="network_auto_update_error">Päivitetty yhteys epäonnistui! Nykyinen yhteys pidetään.</string>
-  <string name="auto_updating">Odota, kun päivityksen latausta käsitellään&#8230;</string>
+  <string name="auto_updating">Odota, kun päivityksen latausta käsitellään…</string>
   <string name="update_self_title">Päivitys saatavissa</string>
   <string name="update_self_msg">%s uusi versio löydetty,\nhaluaisitko päivittää versiosi?</string>
   <string name="md5_error">Ladatun sovelluksen md5-tarkistus epäonnistui!\nPäivitä kauppasi ennen uutta yritystä.</string>
@@ -166,7 +166,6 @@
   <string name="username_tip">Syötä käyttäjänimesi</string>
   <string name="password_tip">Valitse salasana</string>
   <string name="sign_in">Kirjaudu</string>
-  <string name="bazaar_login">Kirjautuminen</string>
   <string name="clearcache_sum">Tyhjentää Aptoiden välimuistin (kuvakkeet, kuvaruutukopiot) SD-kortilta.</string>
   <string name="clearcontent_sum">Tyhjentää .aptoide-kansion sisällön SD-kortilta.</string>
   <string name="clearcontent_title">Poista Aptoiden tiedot ja asetukset</string>

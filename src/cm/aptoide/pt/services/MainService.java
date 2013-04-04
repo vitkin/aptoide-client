@@ -222,8 +222,10 @@ public class MainService extends Service {
 
 
 		if(!serversParsing.contains(server.url)){
-			server.state=State.QUEUED;
-			db.updateStatus(server);
+            if(server.hash.length()==0){
+                server.state=State.QUEUED;
+                db.updateStatus(server);
+            }
 			new Thread(new Runnable() {
 
 				@Override

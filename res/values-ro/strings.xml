@@ -2,7 +2,7 @@
 <resources>
   <string name="menu_context_remove">Şterge</string>
   <string name="menu_context_reparse">Reîncărcare</string>
-  <string name="start_loading">Încărcare&#8230;</string>
+  <string name="start_loading">Încărcare…</string>
   <string name="error_latest_apk">Nici o aplicaţie disponibilă în baza de date.Magazinul încă se încarcă?</string>
   <string name="error_delete_store">Nu s-a putut şterge magazinul.Magazinul încă se încarcă.</string>
   <string name="menu_settings">Setări</string>
@@ -15,7 +15,6 @@
   <string name="empty_store_list">Nu aveţi nici un magazin.</string>
   <string name="new_store">Adaugă magazin</string>
   <string name="add_repo_private">Personal</string>
-  <string name="extended_server">Extensie magazin</string>
   <string name="downloads">descărcări</string>
   <string name="merge_all_stores">Uneşte toate magazinele</string>
   <string name="search_for_stores">Căutare magazine</string>
@@ -36,10 +35,11 @@
   <string name="installed_tab">Instalat</string>
   <string name="updates_tab">Actualizări</string>
   <string name="add_repo_text">Magazin nou</string>
+  <string name="extended_server">Extensie magazin</string>
   <string name="btn_add_repo">Adaugă magazin</string>
   <string name="menu_rem_repo">Şterge magazin</string>
   <string name="number_apks">Aplicaţii:</string>
-  <string name="please_wait">Vă rugăm aşteptaţi&#8230;</string>
+  <string name="please_wait">Vă rugăm aşteptaţi…</string>
   <string name="finished_download_alrt">Descărcare terminată</string>
   <string name="finished_download_message">Descărcare terminată</string>
   <string name="download_alrt">Descărcare:</string>
@@ -51,19 +51,19 @@
   <string name="dislikes">Nu îmi place:</string>
   <string name="postingtaste">Cererea dvs. este în curs de trimitere</string>
   <string name="showpass">Arată parola</string>
-  <string name="user">Nume utilizator&#8230;</string>
-  <string name="pass">Parolă&#8230;</string>
+  <string name="user">Nume utilizator…</string>
+  <string name="pass">Parolă…</string>
   <string name="new_account">Cont nou</string>
   <string name="setcredentials">Logare</string>
   <string name="usernotdef">Utilizator nedefinit</string>
   <string name="passwordnotdef">Parolă nedefinită</string>
-  <string name="loggingin">Logare în&#8230;</string>
+  <string name="loggingin">Logare în…</string>
   <string name="unabletoexecute">Nu se poate executa</string>
   <string name="failedcredentials">Conectare eşuată la acreditările indicate</string>
-  <string name="loading_likes">Încarcă \"Îmi place\"&#8230;</string>
+  <string name="loading_likes">Încarcă \"Îmi place\"…</string>
   <string name="inresponseto">\@</string>
   <string name="enterbody">Introduceţi recenzia în secţiunea corp</string>
-  <string name="postingcomment">Postează comentariu&#8230;</string>
+  <string name="postingcomment">Postează comentariu…</string>
   <string name="commentadded">Comentariul dvs. a fost trimis cu succes</string>
   <string name="order_popup_title1">Ordonează aplicaţiile după:</string>
   <string name="order_popup_lst1">Cele mai recente întâi</string>
@@ -124,7 +124,7 @@
   <string name="repo_edt_msg2">Editare magazin</string>
   <string name="md5_auto_update_error">Verificarea sumei pachetului actualizat eşuată! Păstraţi versiunea curentă.</string>
   <string name="network_auto_update_error">Conexiune actualizare eşuată! Păstraţi versiunea curentă.</string>
-  <string name="auto_updating">Vă rugăm aşteptaţi prelucrarea actualizării descărcate&#8230;</string>
+  <string name="auto_updating">Vă rugăm aşteptaţi prelucrarea actualizării descărcate…</string>
   <string name="update_self_title">Actualizare disponibilă</string>
   <string name="update_self_msg">Este disponibilă o versiune nouă %s,\nvreţi să actualizaţi?</string>
   <string name="md5_error">Verificarea md5 a aplicaţiei descărcate a eşuat!\nVă rugăm actualizaţi magazinele şi reîncercaţi.</string>
@@ -166,7 +166,6 @@
   <string name="username_tip">Tastează numele de utilizator</string>
   <string name="password_tip">Alege o parolă</string>
   <string name="sign_in">Semnează</string>
-  <string name="bazaar_login">Logare</string>
   <string name="clearcache_sum">Ştege cache-urile (iconiţe, capturile de ecran) de pe cardul SD.</string>
   <string name="clearcontent_sum">Şterge conţinutul de pe cardul SD.</string>
   <string name="clearcontent_title">Înlătură datele şi configurările</string>

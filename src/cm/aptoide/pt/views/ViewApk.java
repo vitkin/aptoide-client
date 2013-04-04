@@ -54,7 +54,7 @@ public class ViewApk implements Parcelable {
     private int dislikes;
     private ArrayList<Comment> comments;
     private MalwareStatus malwareStatus;
-    
+
 
 
     /**
@@ -100,6 +100,9 @@ public class ViewApk implements Parcelable {
 	}
 
 	public void setPrice(double price) {
+        if(price>0){
+            isPaid=true;
+        }
 		this.price  = price;
 	}
 
@@ -457,7 +460,7 @@ public class ViewApk implements Parcelable {
         return comments;
     }
 
-	
+
 	public MalwareStatus getMalwareStatus() {
 		return malwareStatus;
 	}
@@ -465,5 +468,5 @@ public class ViewApk implements Parcelable {
 	public void setMalwareStatus(MalwareStatus malwareStatus) {
 		this.malwareStatus = malwareStatus;
 	}
-	
+
 }

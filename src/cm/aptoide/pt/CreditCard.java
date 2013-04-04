@@ -41,7 +41,7 @@ public class CreditCard extends Activity {
 	String paykey;
 
 //	int server = PayPal.ENV_SANDBOX;
-	String appID = "APP-0WB20234R97894824";
+	String appID = "APP-6027308829574225E";
 	String userMail;
 	String token;
 	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
@@ -89,8 +89,12 @@ public class CreditCard extends Activity {
 				if(url.contains("return") && !wait){
 					wait=true;
 					Log.i("preapproval", "payment confirmed!");
+
+
+                    //comentar duas linhas
 					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/completed_payment/json";
 					send(urlPay, params);
+//                    finish();
 				}
 				if(url.contains("cancel") && !wait){
 					wait=true;
@@ -98,6 +102,7 @@ public class CreditCard extends Activity {
 					Log.i("preapproval", "payment failed!");
 					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/canceled_payment/json";
 					send(urlPay, params);
+                    finish();
 				}
 			}
 		});

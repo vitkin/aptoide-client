@@ -2508,9 +2508,21 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("QUEUED")) {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(getString(R.string.preparing_to_load));
 				}
-				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSING")) {
+				if (cursor.getString(cursor.getColumnIndex("status")).contains("PARSING")) {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + getString(R.string.loading_store));
 				}
+
+//                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("status")));
+//                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("url")));
+//
+//                if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSINGTOP")) {
+//                    ((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + "Updating Top");
+//                }
+//
+//                if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSINGLATEST")) {
+//                    ((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + "Updating Latest");
+//                }
+
 				if (cursor.getString(cursor.getColumnIndex("status")).equals(State.FAILED.name())){
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(R.string.loading_failed);
 				}

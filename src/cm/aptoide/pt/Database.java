@@ -1088,6 +1088,7 @@ public class Database {
 			values.put("hash", server.hash);
 		}
 		values.put("status", server.state.name());
+        Log.d("TAAAG", server.state.name() + " state " + server.url);
 		database.update("repo", values, "url =?", new String[] { server.url });
 		context.sendBroadcast(new Intent("status"));
 	}
@@ -1551,12 +1552,12 @@ public class Database {
 		}
 		return apk;
 	}
-	
-	
-	
+
+
+
 
     private MalwareStatus getMalware(ViewApk apk, Category category) {
-    	
+
     	Cursor c = null;
 
         MalwareStatus malwareStatus = null;
@@ -1588,8 +1589,8 @@ public class Database {
             if(c!=null && c.moveToFirst()){
             	malwareStatus = new MalwareStatus(c.getString(1), c.getString(0));
             }
-            
-            
+
+
 
 
 

@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
   <string name="my_stores">У вас нет магазинов!</string>
-  <string name="store_name">Имя пользователя&#8230;</string>
+  <string name="store_name">Имя пользователя…</string>
   <string name="add_store">У вас нет магазинов!</string>
   <string name="new_store">У вас нет магазинов!</string>
   <string name="downloads">Запланированные загрузки</string>
@@ -25,18 +25,18 @@
   <string name="dislikes">Не нравится:</string>
   <string name="postingtaste">Ваша заявка представляется</string>
   <string name="showpass">Показать пароль</string>
-  <string name="user">Имя пользователя&#8230;</string>
-  <string name="pass">Пароль&#8230;</string>
+  <string name="user">Имя пользователя…</string>
+  <string name="pass">Пароль…</string>
   <string name="new_account">Новый аккаунт</string>
   <string name="usernotdef">Пользователь не определен</string>
   <string name="passwordnotdef">Пароль не определен</string>
-  <string name="loggingin">Вход в систему&#8230;</string>
+  <string name="loggingin">Вход в систему…</string>
   <string name="unabletoexecute">Невозможно выполнить</string>
   <string name="failedcredentials">Ошибка входа</string>
-  <string name="loading_likes">Нравится загрузка&#8230;</string>
+  <string name="loading_likes">Нравится загрузка…</string>
   <string name="inresponseto">\\\@</string>
   <string name="enterbody">Введите ваш отзыв в разделе body</string>
-  <string name="postingcomment">Размещение комментария&#8230;</string>
+  <string name="postingcomment">Размещение комментария…</string>
   <string name="commentadded">Ваш комментарий успешно принят</string>
   <string name="order_popup_title1">Приложения:</string>
   <string name="order_popup_title2">Приложения:</string>
@@ -71,7 +71,7 @@
   <string name="schDown_downerror">Ошибка загрузки. Добавьте %1$s Магазин.</string>
   <string name="addSchDown">Добавленно в Запланированные Загрузки</string>
   <string name="registration">логин</string>
-  <string name="password">Пароль&#8230;</string>
+  <string name="password">Пароль…</string>
   <string name="schDown_invertselection">Установить выбранные</string>
   <string name="clear_dwn_title">Запланированные загрузки</string>
   <string-array name="dwnif">

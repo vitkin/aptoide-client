@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import com.mopub.mobileads.MoPubView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -97,8 +98,6 @@ import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
 
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
 
 public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
 
@@ -306,11 +305,14 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 };
 
             }
-
             @Override
             public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
-                AdView adView = (AdView)findViewById(R.id.adView);
-                adView.loadAd(new AdRequest());
+//                AdView adView = (AdView)findViewById(R.id.adView);
+//                adView.loadAd(new AdRequest());
+
+                mAdView = (MoPubView) findViewById(R.id.adview);
+                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
+                mAdView.loadAd();
                 pd.dismiss();
                 viewApk = arg1;
                 new Thread(new Runnable() {
@@ -464,6 +466,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 
 
     }
+    private MoPubView mAdView;
 
     public void loadMalware(final MalwareStatus malwareStatus){
     	runOnUiThread(new Runnable() {
@@ -488,7 +491,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
     							trustedDialog.setIcon(R.drawable.badge_scanned);
     							trustedDialog.setTitle(getString(R.string.app_trusted, viewApk.getName()));
     							trustedDialog.setCancelable(true);
-    							
+
     							TextView tvSignatureValidation = (TextView) trustedView.findViewById(R.id.tv_signature_validation);
     							tvSignatureValidation.setText(getString(R.string.signature_verified));
     							ImageView check_signature = (ImageView) trustedView.findViewById(R.id.check_signature);
@@ -520,7 +523,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
     							warnDialog.setIcon(R.drawable.badge_warn);
     							warnDialog.setTitle(getString(R.string.app_warning, viewApk.getName()));
     							warnDialog.setCancelable(true);
-    							
+
     							TextView tvSignatureValidation = (TextView) warnView.findViewById(R.id.tv_signature_validation);
     							tvSignatureValidation.setText(getString(R.string.signature_not_verified));
     							ImageView check_signature = (ImageView) warnView.findViewById(R.id.check_signature);
@@ -547,7 +550,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
     				e.printStackTrace();
     			}
     		}
-    		
+
     	});
 
     }
@@ -1106,6 +1109,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         }
         unbindService(serviceManagerConnection);
         handler = null;
+        mAdView.destroy();
     }
 
 
@@ -1179,7 +1183,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(!getIntent().hasExtra("installed")){
+            if(!getIntent().hasExtra("installed") && viewApk.isPaid()){
                 findViewById(R.id.btinstall).setEnabled(false);
                 ((Button)findViewById(R.id.btinstall)).setTextColor(Color.GRAY);
             }
@@ -1293,6 +1297,9 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     viewComments.addView(tv);
                     loading.setVisibility(View.GONE);
                 }
+                findViewById(R.id.btinstall).setOnClickListener( installListener );
+                ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+                Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
 
 
             }
@@ -1383,11 +1390,20 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 }
             }else{
                 try{
-                    double price = json.getDouble("amount");
-                    if(price > 0){
-                        findViewById(R.id.btinstall).setOnClickListener(buyListener );
-                        ((Button) findViewById(R.id.btinstall)).setText("Buy" + " $" + price);
+
+                    if(json.has("payStatus")){
+                        if(json.getString("payStatus").equals("pending")){
+                            ((Button) findViewById(R.id.btinstall)).setText("Pending");
+                            ((Button) findViewById(R.id.btinstall)).setEnabled(false);
+                        }
+                    }else{
+                        double price = json.getDouble("amount");
+                        if(price > 0){
+                            findViewById(R.id.btinstall).setOnClickListener(buyListener );
+                            ((Button) findViewById(R.id.btinstall)).setText("Buy" + " $" + price);
+                        }
                     }
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -1395,10 +1411,12 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
             }
         }catch (Exception e){
             e.printStackTrace();
-            findViewById(R.id.btinstall).setOnClickListener( installListener );
-            ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
-            Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
+            if(!getIntent().hasExtra("installed")){
+                findViewById(R.id.btinstall).setOnClickListener( installListener );
+                ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+            }
 
+//            Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
         }
     }
 

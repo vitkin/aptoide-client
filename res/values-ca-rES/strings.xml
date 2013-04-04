@@ -2,7 +2,7 @@
 <resources>
   <string name="menu_context_remove">Eliminar</string>
   <string name="menu_context_reparse">Recarregar</string>
-  <string name="start_loading">Carregant&#8230;</string>
+  <string name="start_loading">Carregant…</string>
   <string name="error_latest_apk">No hi ha APK a la base de dades. S\'està carregant el repositori encara?</string>
   <string name="error_delete_store">No s\'ha pogut eliminar el repositori. Encara està carregant</string>
   <string name="menu_settings">Configuració</string>
@@ -15,7 +15,6 @@
   <string name="empty_store_list">No hi ha repositoris.</string>
   <string name="new_store">Afegir repositori</string>
   <string name="add_repo_private">Privat</string>
-  <string name="extended_server">Repositori extés</string>
   <string name="downloads">descàrregues</string>
   <string name="merge_all_stores">Fusionar repositoris</string>
   <string name="search_for_stores">Cercar repositoris</string>
@@ -36,10 +35,11 @@
   <string name="installed_tab">Instal·lat</string>
   <string name="updates_tab">Actualitzacions</string>
   <string name="add_repo_text">Nou repositori</string>
+  <string name="extended_server">Repositori extés</string>
   <string name="btn_add_repo">Afegir repositori</string>
   <string name="menu_rem_repo">Eliminar repositori</string>
   <string name="number_apks">Aplicacions:</string>
-  <string name="please_wait">Espereu&#8230;</string>
+  <string name="please_wait">Espereu…</string>
   <string name="finished_download_alrt">Descàrrega finalitzada</string>
   <string name="finished_download_message">Descàrrega completada</string>
   <string name="download_alrt">Descarregant</string>
@@ -51,19 +51,19 @@
   <string name="dislikes">No agrada:</string>
   <string name="postingtaste">S\'està enviant la petició</string>
   <string name="showpass">Mostrar contrasenya</string>
-  <string name="user">Nom d\'usuari&#8230;</string>
-  <string name="pass">Contrasenya&#8230;</string>
+  <string name="user">Nom d\'usuari…</string>
+  <string name="pass">Contrasenya…</string>
   <string name="new_account">Nou compte</string>
   <string name="setcredentials">Login</string>
   <string name="usernotdef">Usuari no definit</string>
   <string name="passwordnotdef">Contrasenya no definida</string>
-  <string name="loggingin">Connectant-se&#8230;</string>
+  <string name="loggingin">Connectant-se…</string>
   <string name="unabletoexecute">No s\'ha pogut executar</string>
   <string name="failedcredentials">Error al connectar-se amb l\'usuari proporcionat</string>
-  <string name="loading_likes">Carregant agrada&#8230;</string>
+  <string name="loading_likes">Carregant agrada…</string>
   <string name="inresponseto">\\\@</string>
   <string name="enterbody">Introdueix la teva revisió a la secció del cos</string>
-  <string name="postingcomment">Pujant comentari&#8230;</string>
+  <string name="postingcomment">Pujant comentari…</string>
   <string name="commentadded">El teu comentari s\'ha enviat</string>
   <string name="order_popup_title1">Ordenar aplicacions per:</string>
   <string name="order_popup_lst1">Més recent primer</string>
@@ -124,7 +124,7 @@
   <string name="repo_edt_msg2">Editar repositori</string>
   <string name="md5_auto_update_error">Ha fallat la comprovació del paquet! Mantenint versió actual.</string>
   <string name="network_auto_update_error">Ha fallat la conexió! Mantenint versió actual.</string>
-  <string name="auto_updating">Espereu mentre es descarrega l\'actualització&#8230;</string>
+  <string name="auto_updating">Espereu mentre es descarrega l\'actualització…</string>
   <string name="update_self_title">Actualització disponible</string>
   <string name="update_self_msg">Hi ha una nova versió de %s disponible,\nvols actualitzar?</string>
   <string name="md5_error">Ha fallat la comprovació md5 de l\'aplicació\nSi us plau actualitza els repositoris abans de reintentar</string>
@@ -149,7 +149,7 @@
   <string name="addSchDown">Afegit a descàrregues programades</string>
   <string name="registration">Registrar-se</string>
   <string name="username">Correu-e</string>
-  <string name="password">Contrasenya&#8230;</string>
+  <string name="password">Contrasenya…</string>
   <string name="register">Registrar-se</string>
   <string name="schDown_invertselection">Invertir selecció</string>
   <string name="schDown_removeselected">Eliminar selecció</string>
@@ -169,7 +169,7 @@
   <string name="clearcache_sum">Elimina cache de la targeta SD</string>
   <string name="clearcontent_sum">Elimina el contingut de la targeta SD.</string>
   <string name="clearcontent_title">Eliminar dades i configuracions</string>
-  <string name="clearcache_title">Netejar cache </string>
+  <string name="clearcache_title">Netejar cache</string>
   <string name="schDown_added">afegit a descàrregues programades.</string>
   <string name="clear_cache_sucess">El teu comentari s\'ha eliminat</string>
   <string name="aptoide_downloading">Descarregant %s</string>

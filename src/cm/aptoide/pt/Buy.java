@@ -47,7 +47,8 @@ public class Buy extends Activity {
 	String pakey;
 
 	int server = PayPal.ENV_LIVE;
-	String appID = "APP-0WB20234R97894824";
+//	String appID = "APP-0WB20234R97894824";
+    String appID = "APP-6027308829574225E";
 	String repo;
 	String apkid;
 	String versionName;
@@ -55,8 +56,8 @@ public class Buy extends Activity {
 	String token ;
 	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
 	String urlPay = ("http://webservices.aptoide.com/webservices/payApk/");
-	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct/");
-	String urlRedirect="http://www.paypal.com/webscr?cmd=_ap-payment&paykey=";
+//	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct/");
+//	String urlRedirect="http://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
 
 
 	TextView tv;
@@ -277,14 +278,15 @@ public class Buy extends Activity {
 			tv.setText("Canceled.");
 			canceled=true;
 //			String params = token+"/"+userMail+"/validate"+"/"+pakey+"/false/json";
+
+            //Comentar duas linhas
             String params = token+"/validate"+"/"+pakey+"/false/json";
             send(url, params);
 		}else{
 			tv.setText("Key validated!");
 			Log.i("preapproval", "key validated");
 //			String params = token+"/"+userMail+"/validate"+"/"+pakey+"/true/json";
-            String params = token+"/validate"+"/"+pakey+"/true/json";
-
+            String params = token+"/json";
             send(url, params);
 		}
 	}
