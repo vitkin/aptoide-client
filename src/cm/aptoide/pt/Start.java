@@ -15,6 +15,7 @@ import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingList
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -152,11 +153,7 @@ public class Start extends Activity {
 		bmOptions.inSampleSize = 1;
 		Bitmap bbicon = null;
 		try {
-			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-				bbicon = BitmapFactory.decodeResource(getResources(), R.drawable.splashscreen_land);
-			}else{
-				bbicon = BitmapFactory.decodeResource(getResources(), R.drawable.splashscreen);
-			}
+				bbicon = BitmapFactory.decodeStream(getAssets().open(fileName));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

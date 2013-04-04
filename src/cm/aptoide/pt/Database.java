@@ -237,7 +237,7 @@ public class Database {
 			i++;
 			if (i % 300 == 0) {
 				Intent i = new Intent("update");
-				i.putExtra("server", apk.getRepo_id());
+				i.putExtra("serverid", apk.getRepo_id());
 				context.sendBroadcast(i);
 			}
 	}
@@ -386,6 +386,7 @@ public class Database {
 
 		if (i != 0 && server.id > 0) {
 			context.sendBroadcast(intent);
+			intent.putExtra("serverid", server.id);
 			intent.setAction("update");
 			context.sendBroadcast(intent);
 		}
