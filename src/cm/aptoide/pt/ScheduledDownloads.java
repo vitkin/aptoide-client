@@ -13,6 +13,7 @@ import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -242,8 +243,14 @@ public class ScheduledDownloads extends FragmentActivity/*SherlockFragmentActivi
 			}
 		});
 		if(getIntent().hasExtra("downloadAll")){
-			AlertDialog alrt = new AlertDialog.Builder(this).create();
-			alrt.setMessage(getText(R.string.schDown_install));
+			View simpleMessageView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_message, null);
+			Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleMessageView);
+			final AlertDialog alrt = dialogBuilder.create();
+			alrt.setIcon(android.R.drawable.ic_dialog_alert);
+			alrt.setTitle(getText(R.string.schDwnBtn));
+			alrt.setCancelable(true);
+			((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getText(R.string.schDown_install));
+			
 			alrt.setButton(Dialog.BUTTON_POSITIVE,getText(android.R.string.yes), new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
@@ -414,11 +421,19 @@ public class ScheduledDownloads extends FragmentActivity/*SherlockFragmentActivi
 	}
 
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
-		AlertDialog alrt = new AlertDialog.Builder(this).create();
+		
+		View simpleMessageView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_message, null);
+		Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleMessageView);
+		final AlertDialog alrt = dialogBuilder.create();
+		
 		switch (item.getItemId()) {
 		case 2:
 			if(isAllChecked()){
-				alrt.setMessage(getText(R.string.schDown_sureremove));
+				alrt.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+				alrt.setTitle(getText(R.string.schDwnBtn));
+				alrt.setCancelable(true);
+				((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getText(R.string.schDown_sureremove));
+				
 				alrt.setButton(Dialog.BUTTON_POSITIVE,getText(android.R.string.yes), new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 						for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){

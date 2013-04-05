@@ -24,8 +24,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:padding="5dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/darker_gray" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
             android:id="@+id/fb_message"

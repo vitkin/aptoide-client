@@ -89,8 +89,7 @@
 
         <View
             android:layout_width="1dip"
-            android:layout_height="fill_parent"
-            android:background="@android:color/darker_gray" />
+            android:layout_height="fill_parent" />
     </RelativeLayout>
 
 </LinearLayout>

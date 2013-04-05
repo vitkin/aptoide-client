@@ -132,6 +132,7 @@
     <string name="order_popup_lst4">Download number </string>
     <string name="order_popup_title2">Show applications</string>
     <string name="order_popup_title3">Adult Content</string>
+    <string name="are_you_adult">Are you at least 21 years old?</string>
     <string name="order_popup_catg1">By category </string>
     <string name="order_popup_catg2">All applications </string>
     <string name="dialog_yes">Yes</string>

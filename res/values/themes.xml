@@ -30,6 +30,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_aptoide</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_aptoide</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <!-- <style name="Aptoide.Widget.Styled.ActionBar" parent="Widget.Sherlock.ActionBar"> -->

@@ -23,8 +23,7 @@
             android:layout_gravity="center_horizontal"
             android:padding="10dp"
             android:text="@string/social_network_intro"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/darker_gray" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/find_facebook"

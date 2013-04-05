@@ -762,14 +762,19 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			AlertDialog failedDialog = new AlertDialog.Builder(context).create();
+			
+			View simpleMessageView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_message, null);
+			Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleMessageView);
+			final AlertDialog failedDialog = dialogBuilder.create();
 			failedDialog.setIcon(android.R.drawable.ic_dialog_alert);
 			failedDialog.setTitle(getText(R.string.parse_error));
-			failedDialog.setMessage(getText(R.string.parse_error_loading));
+			failedDialog.setCancelable(true);
+//			failedDialog.setMessage(getText(R.string.parse_error_loading));
+			((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getText(R.string.parse_error_loading));
 			failedDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-						getAllRepoStatus();
+						
 				}
 			});
 			failedDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
@@ -1488,12 +1493,14 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		public void onReceive(Context context, Intent intent) {
 			Log.d("Aptoide-MainActivity","onNewRepoReceive");
 			if (intent.hasExtra("newrepo")) {
-				ArrayList<String> repos = (ArrayList<String>) intent
-						.getSerializableExtra("newrepo");
+				ArrayList<String> repos = (ArrayList<String>) intent.getSerializableExtra("newrepo");
 				for (final String uri2 : repos) {
-					final AlertDialog alertDialog = new AlertDialog.Builder(
-							mContext).create();
-					alertDialog.setMessage(getString(R.string.newrepo_alrt)
+					View simpleMessageView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_message, null);
+					Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleMessageView);
+					final AlertDialog alertDialog = dialogBuilder.create();
+					alertDialog.setIcon(android.R.drawable.ic_menu_add);
+					alertDialog.setTitle(getString(R.string.add_store));
+					((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.newrepo_alrt)
 							+ uri2 + " ?");
 					alertDialog.setButton(Dialog.BUTTON_POSITIVE,
 							getString(android.R.string.yes),
@@ -1574,10 +1581,12 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
 
-			final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
+			View simpleMessageView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_message, null);
+			Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleMessageView);
+			final AlertDialog upd_alrt = dialogBuilder.create();
 			upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
 			upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
-			upd_alrt.setMessage(getText(R.string.remote_in_noSD));
+			((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getText(R.string.remote_in_noSD));
 			upd_alrt.setButton(Dialog.BUTTON_NEUTRAL, getText(android.R.string.ok),
 					new Dialog.OnClickListener() {
 						public void onClick(DialogInterface dialog, int which) {
@@ -1763,9 +1772,12 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 					ArrayList<String> repos = (ArrayList<String>) getIntent()
 							.getSerializableExtra("newrepo");
 					for (final String uri2 : repos) {
-						final AlertDialog alertDialog = new AlertDialog.Builder(
-								mContext).create();
-						alertDialog.setMessage(getString(R.string.newrepo_alrt)
+						View simpleMessageView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_message, null);
+						Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleMessageView);
+						final AlertDialog alertDialog = dialogBuilder.create();
+						alertDialog.setIcon(android.R.drawable.ic_menu_add);
+						alertDialog.setTitle(getString(R.string.add_store));
+						((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.newrepo_alrt)
 								+ uri2 + " ?");
 						alertDialog.setButton(Dialog.BUTTON_POSITIVE,
 								getString(android.R.string.yes),
@@ -1795,33 +1807,36 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORE==null) {
 
 
-                        final AlertDialog alertDialog = new AlertDialog.Builder(
-                                mContext).create();
-                        alertDialog.setMessage(getString(R.string.myrepo_alrt) + "\n"
-                                + "http://apps.store.aptoide.com/");
-                        alertDialog.setIcon(android.R.drawable.ic_menu_add);
-                        alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes",
-                                new DialogInterface.OnClickListener() {
+					View simpleMessageView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_message, null);
+					Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleMessageView);
+					final AlertDialog alertDialog = dialogBuilder.create();
+					alertDialog.setIcon(android.R.drawable.ic_menu_add);
+					alertDialog.setTitle(getString(R.string.add_store));
+					((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.myrepo_alrt) + "\n"
+							+ "http://apps.store.aptoide.com/");
+					alertDialog.setIcon(android.R.drawable.ic_menu_add);
+					alertDialog.setButton(Dialog.BUTTON_POSITIVE, "Yes",
+							new DialogInterface.OnClickListener() {
 
-                                    public void onClick(DialogInterface dialog,
-                                            int which) {
-                                        dialogAddStore(
-                                                "http://apps.store.aptoide.com",
-                                                null, null);
-                                    }
-                                });
+						public void onClick(DialogInterface dialog,
+								int which) {
+							dialogAddStore(
+									"http://apps.store.aptoide.com",
+									null, null);
+						}
+					});
 
-                        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                                getString(android.R.string.no),
-                                new DialogInterface.OnClickListener() {
+					alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+							getString(android.R.string.no),
+							new DialogInterface.OnClickListener() {
 
-                                    public void onClick(DialogInterface dialog,
-                                            int which) {
-                                        return;
-                                    }
+						public void onClick(DialogInterface dialog,
+								int which) {
+							return;
+						}
 
-                                });
-                        alertDialog.show();
+					});
+					alertDialog.show();
 
 				}
 
@@ -2663,9 +2678,13 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
 			if (isChecked) {
-				AlertDialog ad = new AlertDialog.Builder(mContext).create();
-				ad.setMessage("Are you at least 21 years old?");
-				ad.setButton(Dialog.BUTTON_POSITIVE,
+				View simpleMessageView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_message, null);
+				Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleMessageView);
+				final AlertDialog alertDialog = dialogBuilder.create();
+				alertDialog.setIcon(android.R.drawable.ic_menu_info_details);
+				alertDialog.setTitle(getString(R.string.adult_content));
+				((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.are_you_adult));
+				alertDialog.setButton(Dialog.BUTTON_POSITIVE,
 						getString(android.R.string.yes),
 						new Dialog.OnClickListener() {
 
@@ -2693,7 +2712,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 								}).start();
 							}
 						});
-				ad.setButton(Dialog.BUTTON_NEGATIVE,
+				alertDialog.setButton(Dialog.BUTTON_NEGATIVE,
 						getString(android.R.string.no),
 						new Dialog.OnClickListener() {
 
@@ -2708,7 +2727,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 
 							}
 						});
-				ad.show();
+				alertDialog.show();
 			} else {
 				editor.putBoolean("matureChkBox", true);
 				editor.commit();
@@ -2850,29 +2869,30 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 	}
 
 	private void requestUpdateSelf() {
-		AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-		alertBuilder
-				.setCancelable(false)
-				.setPositiveButton(R.string.dialog_yes,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
-								new DownloadSelfUpdate().execute();
-							}
-						})
-				.setNegativeButton(R.string.dialog_no,
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
-							}
-						}).setMessage(getString(R.string.update_self_msg, ApplicationAptoide.MARKETNAME));
+		View simpleMessageView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_message, null);
+		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleMessageView);
+		final AlertDialog requestUpdateDialog = dialogBuilder.create();
+		requestUpdateDialog.setIcon(R.drawable.ic_launcher);
+		requestUpdateDialog.setTitle(getText(R.string.update_self_title));
+		requestUpdateDialog.setCancelable(true);
+		((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.update_self_msg, ApplicationAptoide.MARKETNAME));
+		requestUpdateDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+				new DownloadSelfUpdate().execute();
+			}
+		});
+		requestUpdateDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				return;
+			}
 
-		AlertDialog alert = alertBuilder.create();
-
-		alert.setTitle(R.string.update_self_title);
-		alert.setIcon(R.drawable.ic_launcher);
-
-		alert.show();
+		});
+		requestUpdateDialog.setCancelable(false);
+		requestUpdateDialog.show();
+		
 	}
 
 	private class DownloadSelfUpdate extends AsyncTask<Void, Void, Void> {
