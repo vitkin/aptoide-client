@@ -806,7 +806,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 			}
 
 			if (!depth.equals(ListDepth.STORES)) {
-				Long server_id = intent.getExtras().getLong("server");
+				Long server_id = intent.getExtras().getLong("serverid");
 				if (refreshClick && server_id == store_id) {
 					refreshClick = false;
 					availableView.findViewById(R.id.refresh_view_layout)
