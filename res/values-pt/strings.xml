@@ -117,6 +117,7 @@
   <string name="order_popup_lst2">Alfabeticamente</string>
   <string name="order_popup_lst3">Classificação</string>
   <string name="order_popup_lst4">Número de downloads</string>
+  <string name="order_popup_lst5">Preço</string>
   <string name="order_popup_title2">Mostrar aplicações:</string>
   <string name="order_popup_title3">Conteúdo adulto</string>
   <string name="order_popup_catg1">Por categoria</string>
@@ -303,4 +304,6 @@
   <string name="excluded_updates_sum">Reponha as suas actualizações</string>
   <string name="settings_maxFileCache_title">Cache dos ficheiros descarregados (MB)</string>
   <string name="settings_maxFileCache_sum">Defina um limite máximo para guardar os seus ficheiros APK</string>
+  <string name="get_latest_version">Obter última versão</string>
+  <string name="version_info">Infomação da versão</string>
 </resources>

@@ -352,5 +352,6 @@
     <string name="paypal_message">You can pay using your credit card or your PayPal account with agreement. If you want to use your PayPal account without agreement, select Credit Card</string>
     <string name="order_popup_lst5">Price</string>
     <string name="paidapp_not_found">Error downloading app. Please try again or contact support.</string>
-
+    <string name="get_latest_version">Get Latest Version</string>
+	<string name="version_info">Version Info</string>
 </resources>

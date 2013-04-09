@@ -1242,8 +1242,9 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
             try{
 
                 if(webservice.hasLatestVersion()){
+                    LinearLayout getLatestLayout = (LinearLayout) findViewById(R.id.latest_version_layout);
+                    getLatestLayout.setVisibility(View.VISIBLE);
                     Button getLatest = (Button) findViewById(R.id.getLatest);
-                    getLatest.setVisibility(View.VISIBLE);
                     getLatest.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
