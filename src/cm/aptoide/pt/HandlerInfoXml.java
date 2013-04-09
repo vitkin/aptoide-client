@@ -460,6 +460,7 @@ public class HandlerInfoXml extends DefaultHandler {
 			System.out.println("Writing delta");
 			apk.getServer().hash = Md5Handler.md5Calc(new File(path));
 			System.out.println("Delta is:" +apk.getServer().hash);
+            db.updateDelta(apk.getServer());
 		}
 	}
 

@@ -1084,14 +1084,19 @@ public class Database {
 
 	public void updateStatus(Server server) {
 		ContentValues values = new ContentValues();
-		if (server.hash != null) {
-			values.put("hash", server.hash);
-		}
 		values.put("status", server.state.name());
         Log.d("TAAAG", server.state.name() + " state " + server.url);
 		database.update("repo", values, "url =?", new String[] { server.url });
 		context.sendBroadcast(new Intent("status"));
 	}
+
+    public void updateDelta(Server server){
+        if (server.hash != null) {
+            ContentValues values = new ContentValues();
+            values.put("hash", server.hash);
+            database.update("repo", values, "url =?", new String[] { server.url });
+        }
+    }
 
 	long insertTopApk(ViewApk apk) {
 		long return_long = 0;

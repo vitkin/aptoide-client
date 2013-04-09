@@ -44,12 +44,12 @@ public class CreditCard extends Activity {
 	String appID = "APP-6027308829574225E";
 	String userMail;
 	String token;
-	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
+//	String url = ("http://webservices.aptoide.com/webservices/hasPurchaseAuthorization");
 	String urlPay = ("http://webservices.aptoide.com/webservices/payApk");
 	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct");
 	//http://dev.aptoide.com/webservices/payApk/e8b1d6a4dd8b5351c823cd1af95243ed70e9ad3f4f5f2f9c0e89b/rui.mateus@caixamagica.pt/diogo/com.smedio.mediaplayer/1.05.7/completed_payment/json
 	//String urlRedirect="https://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
-	String urlRedirect=" https://www.paypal.com/webscr?cmd=_ap-payment&paykey=";
+	String urlRedirect="https://www.paypal.com/webapps/adaptivepayment/flow/pay?expType=mini&paykey=";
 	TextView tv;
 	boolean canceled=false;
 	WebView web;
@@ -92,16 +92,16 @@ public class CreditCard extends Activity {
 
 
                     //comentar duas linhas
-					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/completed_payment/json";
-					send(urlPay, params);
-//                    finish();
+//					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/completed_payment/json";
+//					send(urlPay, params);
+                    finish();
 				}
-				if(url.contains("cancel") && !wait){
+				if(url.contains("s3") && !wait){
 					wait=true;
 					failed=true;
 					Log.i("preapproval", "payment failed!");
-					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/canceled_payment/json";
-					send(urlPay, params);
+//					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/canceled_payment/json";
+//					send(urlPay, params);
                     finish();
 				}
 			}
@@ -189,7 +189,8 @@ public class CreditCard extends Activity {
 					if(respJSON.has("pay_key")){
 						paykey=respJSON.getString("pay_key");
 						web.loadUrl(urlRedirect+paykey);
-					}else if(respJSON.has("paypalStatus")){
+					}
+                    if(respJSON.has("paypalStatus")){
 						if(respJSON.getString("paypalStatus").equals("completed")){
 							System.out.println("Payed!");
 							setResult(RESULT_OK,null);

@@ -104,6 +104,8 @@
             android:gravity="center_horizontal"
             android:orientation="vertical" >
 
+            <Button android:id="@+id/getLatest" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Get Latest Version" android:visibility="gone"/>
+
             <!-- <include -->
             <!-- android:id="@+id/actionbar" -->
             <!-- android:layout_height="52dp" -->

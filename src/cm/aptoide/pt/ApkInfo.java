@@ -1238,6 +1238,38 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            try{
+
+                if(webservice.hasLatestVersion()){
+                    Button getLatest = (Button) findViewById(R.id.getLatest);
+                    getLatest.setVisibility(View.VISIBLE);
+                    getLatest.setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            String url = null;
+                            try {
+                                url = webservice.getLatestVersionURL();
+                                Intent i = new Intent(Intent.ACTION_VIEW);
+                                i.setData(Uri.parse(url));
+                                startActivity(i);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                    });
+
+
+
+                }
+
+            }catch (Exception e){
+
+            }
+
             try {
                loadMalware(webservice.getMalwareInfo());
             } catch (Exception e) {
@@ -1299,7 +1331,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 }
                 findViewById(R.id.btinstall).setOnClickListener( installListener );
                 ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
-                Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
+//                Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
 
 
             }

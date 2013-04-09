@@ -143,9 +143,18 @@ public class WebserviceGetApkInfo {
     public MalwareStatus getMalwareInfo() throws JSONException {
 
         JSONObject malwareResponse = response.getJSONObject("malware");
-        
+
         return new MalwareStatus(malwareResponse.getString("status"), malwareResponse.getString("reason"));
 
+    }
+
+    public String getLatestVersionURL() throws JSONException {
+        return response.getString("latest");
+
+    }
+
+    public boolean hasLatestVersion() {
+        return response.has("latest");
     }
 
 

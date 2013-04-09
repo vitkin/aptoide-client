@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import android.view.View;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -81,7 +82,7 @@ public class Buy extends Activity {
 		versionName = b.getString("versionName");
 		repo=b.getString("repo");
 //		String params = token+"/"+userMail+"/check/json";
-        String params = token+"/check/json";
+        String params = token+"/json";
 		send(url, params);
 		tv=(TextView) findViewById(R.id.tv);
 
@@ -162,13 +163,13 @@ public class Buy extends Activity {
 				respJSON = new JSONObject(response);
 
 				if(respJSON.getString("status").equals("OK")){
-					if(respJSON.has("listing")){
-						if(respJSON.getJSONObject("listing").has("preapprovalKey")){
-							pakey=respJSON.getJSONObject("listing").getString("preapprovalKey");
+
+						if(respJSON.has("preapprovalKey")){
+							pakey=respJSON.getString("preapprovalKey");
 							System.out.println("PreApprovalKey" + pakey);
 							tv.setText("Starting PayPal...");
 							startPayPal();
-						}
+
 					}else switch(operation){
 
 					case 1:
@@ -189,11 +190,13 @@ public class Buy extends Activity {
 				}
 				else if(respJSON.getString("status").equals("failure") || respJSON.getString("status").equals("FAIL")){
 					tv.setText("Operation failed");
+                    findViewById(R.id.progressBar1).setVisibility(View.GONE);
 				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
 				tv.setText("Operation failed");
+                findViewById(R.id.progressBar1).setVisibility(View.GONE);
 				Log.e("preapproval", "failed to create a JSON response object or get String");
 			}
 
@@ -277,11 +280,12 @@ public class Buy extends Activity {
 		if(resultCode!=RESULT_OK){
 			tv.setText("Canceled.");
 			canceled=true;
+            finish();
 //			String params = token+"/"+userMail+"/validate"+"/"+pakey+"/false/json";
 
             //Comentar duas linhas
-            String params = token+"/validate"+"/"+pakey+"/false/json";
-            send(url, params);
+//            String params = token+"/validate"+"/"+pakey+"/false/json";
+//            send(url, params);
 		}else{
 			tv.setText("Key validated!");
 			Log.i("preapproval", "key validated");
