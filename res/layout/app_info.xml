@@ -221,23 +221,21 @@
                         android:layout_height="wrap_content" />
                 </LinearLayout>
 
-                <TableLayout
+                <LinearLayout
                     android:id="@+id/versioninfo"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:stretchColumns="2" >
+                    android:orientation="vertical" >
 
-                    <TableRow
-                        android:id="@+id/tableRow1"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="0dp" >
+                        android:layout_height="match_parent" >
 
                         <TextView
                             android:id="@+id/versionInfo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:paddingBottom="2dp"
@@ -248,7 +246,7 @@
 
                         <TextView
                             android:id="@+id/app_store"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:ellipsize="end"
@@ -258,19 +256,16 @@
                             android:paddingRight="2dp"
                             android:singleLine="true"
                             android:textAppearance="?android:attr/textAppearanceSmall" />
-                    </TableRow>
+                    </LinearLayout>
 
-                    <TableRow
-                        android:id="@+id/tableRow2"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1" >
+                        android:layout_height="match_parent" >
 
                         <TextView
                             android:id="@+id/version_label"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:paddingBottom="2dp"
@@ -281,7 +276,7 @@
 
                         <TextView
                             android:id="@+id/inst_version"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:ellipsize="end"
@@ -292,8 +287,9 @@
                             android:singleLine="true"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:visibility="gone" />
-                    </TableRow>
-                </TableLayout>
+                    </LinearLayout>
+
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/version"
