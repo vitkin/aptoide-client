@@ -157,6 +157,8 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
     private ViewGroup viewLikes;
     private ViewGroup viewLikesButton;
     private View loading;
+    private String installString;
+    private boolean unstrustedPayment = false;
 
 
     @Override
@@ -272,7 +274,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         viewLikes = (ViewGroup) findViewById(R.id.likesLayout);
         loading = LayoutInflater.from(context).inflate(R.layout.loadingfootercomments, null);
         viewComments.addView(loading, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
+        installString = getString(R.string.install);
         viewLikesButton = (ViewGroup) findViewById(R.id.ratings);
         ((TextView) viewLikes.findViewById(R.id.likes)).setText(context.getString(R.string.loading_likes));
         ((TextView) viewLikes.findViewById(R.id.dislikes)).setText("");
@@ -341,25 +343,31 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
                     ((TextView) findViewById(R.id.inst_version)).setText(getString(R.string.installed_version)+": " + db.getInstalledAppVername(viewApk.getApkid()));
                     if(installedVercode<viewApk.getVercode()&&!getIntent().hasExtra("installed")){
-                        ((Button) findViewById(R.id.btinstall)).setText(R.string.update);
+                        installString = getString(R.string.update);
                     }else if(getIntent().hasExtra("installed")){
-                        ((Button) findViewById(R.id.btinstall)).setText(R.string.open);
+                        installString = getString(R.string.open);
                     }
+                    ((Button) findViewById(R.id.btinstall)).setText(installString);
+
                 }else if(installedVercode>viewApk.getVercode()){
                     if(getIntent().hasExtra("installed")){
-                        ((Button) findViewById(R.id.btinstall)).setText(R.string.open);
+                        installString = getString(R.string.open);
                     }else{
-                        ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+                        installString = getString(R.string.install);
+
                     }
+                    ((Button) findViewById(R.id.btinstall)).setText(installString);
+
                     findViewById(R.id.inst_version).setVisibility(View.GONE);
                 }
 
                 if(installedVercode==viewApk.getVercode()){
                     if(getIntent().hasExtra("installed")){
-                        ((Button) findViewById(R.id.btinstall)).setText(R.string.open);
+                        installString = getString(R.string.open);
                     }else{
-                        ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+                        installString = getString(R.string.install);
                     }
+                    ((Button) findViewById(R.id.btinstall)).setText(installString);
                     findViewById(R.id.inst_version).setVisibility(View.GONE);
                 }
 
@@ -847,7 +855,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 if(isChecked){
                     ((Button) findViewById(R.id.btinstall)).setText(R.string.schDwnBtn);
                 }else{
-                    ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+                    ((Button) findViewById(R.id.btinstall)).setText(installString);
                 }
             }
         });
@@ -1232,6 +1240,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+            unstrustedPayment = false;
             try {
                 if(!getIntent().hasExtra("installed"))
                     checkPayment(webservice.getPayment());
@@ -1330,8 +1339,16 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     viewComments.addView(tv);
                     loading.setVisibility(View.GONE);
                 }
-                findViewById(R.id.btinstall).setOnClickListener( installListener );
-                ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
+                if(viewApk.isPaid()){
+                    findViewById(R.id.btinstall).setOnClickListener( buyListener );
+                    ((Button) findViewById(R.id.btinstall)).setText("Buy $" + viewApk.getPrice());
+
+                    unstrustedPayment = true;
+                } else {
+                    ((Button) findViewById(R.id.btinstall)).setText(installString);
+                    findViewById(R.id.btinstall).setOnClickListener( installListener );
+                }
+
 //                Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
 
 
@@ -1432,7 +1449,8 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     }else{
                         double price = json.getDouble("amount");
                         if(price > 0){
-                            findViewById(R.id.btinstall).setOnClickListener(buyListener );
+                            findViewById(R.id.btinstall).setOnClickListener(buyListener);
+                            findViewById(R.id.btinstall).setEnabled(true);
                             ((Button) findViewById(R.id.btinstall)).setText("Buy" + " $" + price);
                         }
                     }
@@ -1445,24 +1463,32 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         }catch (Exception e){
             e.printStackTrace();
             if(!getIntent().hasExtra("installed")){
+                findViewById(R.id.btinstall).setEnabled(true);
                 findViewById(R.id.btinstall).setOnClickListener( installListener );
                 ((Button) findViewById(R.id.btinstall)).setText(R.string.install);
             }
-
 //            Toast.makeText(context, "Failed to check Payment", Toast.LENGTH_LONG).show();
         }
+
+
+
     }
 
     private OnClickListener buyListener = new OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            if(Login.isLoggedIn(context)){
-                AlertDialog method = new AlertDialog.Builder(context).create();
-                method.setTitle("Payment Method");
-                method.setMessage(getString(R.string.paypal_message));
 
-                method.setButton(Dialog.BUTTON_POSITIVE,"Credit Card", new DialogInterface.OnClickListener() {
+            if(Login.isLoggedIn(context)){
+
+                View simpleMessageView = LayoutInflater.from(context).inflate(R.layout.dialog_simple_message, null);
+                Builder dialogBuilder = new AlertDialog.Builder(context).setView(simpleMessageView);
+                final AlertDialog alertDialog = dialogBuilder.create();
+                alertDialog.setIcon(android.R.drawable.ic_menu_info_details);
+                alertDialog.setTitle("Payment Method");
+                ((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.paypal_message));
+
+                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Credit Card", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Intent i = new Intent(ApkInfo.this, CreditCard.class);
                         i.putExtra("apkid", viewApk.getApkid());
@@ -1471,7 +1497,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                         startActivityForResult(i, 1);
                     }});
 
-                method.setButton(Dialog.BUTTON_NEGATIVE,"PayPal", new DialogInterface.OnClickListener() {
+                alertDialog.setButton(Dialog.BUTTON_NEGATIVE,"PayPal", new DialogInterface.OnClickListener() {
 
 
 
@@ -1484,7 +1510,21 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     }
 
                 });
-                method.show();
+                alertDialog.show();
+                if(unstrustedPayment){
+                    final AlertDialog method2 = dialogBuilder.create();
+                    method2.setIcon(android.R.drawable.ic_menu_info_details);
+                    method2.setTitle("Payment Method");
+                    ((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText("We couldn't check the current price of this product. The price may have changed. Please confirm PayPal prices before payment.");
+                    method2.setTitle("Warning");
+                    method2.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    method2.show();
+                }
             }else{
                 startActivityForResult(new Intent(ApkInfo.this,Login.class), 1);
             }

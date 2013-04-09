@@ -2612,7 +2612,11 @@ public class Database {
 				+ searchQuery
 				+ "%' OR b.apkid LIKE '%"
 				+ searchQuery
-				+ "%') and b.repo_id = c._id";
+				+ "%') and b.repo_id = c._id "
+                + filters();
+
+
+
 
 		Cursor c = null;
 		try {

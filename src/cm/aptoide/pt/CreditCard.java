@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import android.app.ProgressDialog;
+import android.net.Uri;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -48,8 +50,8 @@ public class CreditCard extends Activity {
 	String urlPay = ("http://webservices.aptoide.com/webservices/payApk");
 	String urlCheck = ("http://webservices.aptoide.com/webservices/checkPaidProduct");
 	//http://dev.aptoide.com/webservices/payApk/e8b1d6a4dd8b5351c823cd1af95243ed70e9ad3f4f5f2f9c0e89b/rui.mateus@caixamagica.pt/diogo/com.smedio.mediaplayer/1.05.7/completed_payment/json
-	//String urlRedirect="https://www.sandbox.paypal.com/webscr?cmd=_ap-payment&paykey=";
-	String urlRedirect="https://www.paypal.com/webapps/adaptivepayment/flow/pay?expType=mini&paykey=";
+	String urlRedirect="https://www.paypal.com/webscr?cmd=_ap-payment&paykey=";
+//	String urlRedirect="https://www.paypal.com/webapps/adaptivepayment/flow/pay?expType=mini&paykey=";
 	TextView tv;
 	boolean canceled=false;
 	WebView web;
@@ -94,9 +96,11 @@ public class CreditCard extends Activity {
                     //comentar duas linhas
 //					String params = token+"/"+repo+"/"+apkid+"/"+versionName+"/completed_payment/json";
 //					send(urlPay, params);
+//                    String params =token+"/"+repo+"/"+apkid+"/"+versionName+"/try_pay/json";
+//                    send(urlPay, params);
                     finish();
-				}
-				if(url.contains("s3") && !wait){
+                }
+				if(url.contains("cancel") && !wait){
 					wait=true;
 					failed=true;
 					Log.i("preapproval", "payment failed!");
@@ -108,8 +112,12 @@ public class CreditCard extends Activity {
 		});
 
 		String params =token+"/"+repo+"/"+apkid+"/"+versionName+"/try_pay/json";
+        pd = new ProgressDialog(this);
+        pd.setMessage("Please wait...");
+        pd.show();
 		send(urlPay, params);
 	}
+    public ProgressDialog pd;
 
 
 	public void send(final String url, final String params){
@@ -171,7 +179,8 @@ public class CreditCard extends Activity {
 
 
 	private Handler handler2 = new Handler() {
-		@Override
+
+        @Override
 		public void handleMessage(Message msg) {
 
 			Bundle data=msg.getData();
@@ -189,6 +198,12 @@ public class CreditCard extends Activity {
 					if(respJSON.has("pay_key")){
 						paykey=respJSON.getString("pay_key");
 						web.loadUrl(urlRedirect+paykey);
+
+//                        String url = urlRedirect+paykey;
+//                        Intent i = new Intent(Intent.ACTION_VIEW);
+//                        i.setData(Uri.parse(url));
+//                        startActivity(i);
+
 					}
                     if(respJSON.has("paypalStatus")){
 						if(respJSON.getString("paypalStatus").equals("completed")){
@@ -211,7 +226,7 @@ public class CreditCard extends Activity {
 				finish();
 				Log.e("preapproval", "failed to create a JSON response object or get String");
 			}
-
+            if(pd.isShowing())pd.dismiss();
 		}
 	};
 
