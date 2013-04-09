@@ -9,7 +9,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/cm.aptoide.pt">
 
     <RelativeLayout
         android:id="@+id/apkinfoheader"
@@ -123,6 +123,7 @@
 
                 <cm.aptoide.pt.CustomViewPager
                     android:id="@+id/screenShotsPager"
+                    android:padding="2dp"
                     android:layout_width="fill_parent"
                     android:layout_height="158dp" />
 
@@ -144,12 +145,16 @@
                     android:layout_centerVertical="true"
                     android:paddingRight="10dp"
                     android:src="@drawable/indicator_next_arrow" />
+
+                <cm.aptoide.com.viewpagerindicator.CirclePageIndicator
+                    android:id="@+id/indicator"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/screenShotsPager" />
+
             </RelativeLayout>
 
-            <cm.aptoide.com.viewpagerindicator.CirclePageIndicator
-                android:id="@+id/indicator"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" />
+            
 
             <TextView
                 android:id="@+id/version_info_label"
