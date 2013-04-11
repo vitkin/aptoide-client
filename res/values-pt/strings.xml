@@ -305,5 +305,6 @@
   <string name="settings_maxFileCache_title">Cache dos ficheiros descarregados (MB)</string>
   <string name="settings_maxFileCache_sum">Defina um limite máximo para guardar os seus ficheiros APK</string>
   <string name="get_latest_version">Obter última versão</string>
+  <string name="get_latest_version_and_trusted">Obter última versão &amp; Fiável</string>
   <string name="version_info">Infomação da versão</string>
 </resources>

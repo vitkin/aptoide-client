@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -46,6 +47,9 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
+import android.text.SpannableString;
+import android.text.style.StyleSpan;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -1250,14 +1254,21 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 
             try{
 
-                if(webservice.hasLatestVersion()){
-                    LinearLayout getLatestLayout = (LinearLayout) findViewById(R.id.latest_version_layout);
-                    getLatestLayout.setVisibility(View.VISIBLE);
-                    Button getLatest = (Button) findViewById(R.id.getLatest);
+            	if(webservice.hasLatestVersion()){
+            		TextView getLatest = (TextView) findViewById(R.id.getLatest);
+            		String getLatestText = getString(R.string.get_latest_version);
+
+            		if(!webservice.getMalwareInfo().getStatus().toUpperCase(Locale.ENGLISH).equals("SCANNED")){
+            			getLatestText = getString(R.string.get_latest_version_and_trusted);
+            		}
+            		SpannableString spanString = new SpannableString(getLatestText);
+            		spanString.setSpan(new UnderlineSpan(), 0, spanString.length(), 0);
+            		getLatest.setText(spanString);
+            		getLatest.setVisibility(View.VISIBLE);
                     getLatest.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                        	
                             String url = null;
                             try {
                                 url = webservice.getLatestVersionURL();

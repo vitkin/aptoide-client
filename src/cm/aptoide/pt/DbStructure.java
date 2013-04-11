@@ -177,7 +177,7 @@ public class DbStructure extends SQLiteOpenHelper {
 
 		creator.newTable(TABLE_REPO).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID).setPrimaryKey())
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_URL,""))
-									.addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH,""))
+									.addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH,"firstHash"))
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_ICONS_PATH,""))
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_BASE_PATH,""))
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_STATUS,""))

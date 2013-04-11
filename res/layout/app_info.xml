@@ -7,9 +7,10 @@
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/cm.aptoide.pt"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" xmlns:app="http://schemas.android.com/apk/res/cm.aptoide.pt">
+    android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/apkinfoheader"
@@ -123,9 +124,9 @@
 
                 <cm.aptoide.pt.CustomViewPager
                     android:id="@+id/screenShotsPager"
-                    android:padding="2dp"
                     android:layout_width="fill_parent"
-                    android:layout_height="158dp" />
+                    android:layout_height="158dp"
+                    android:padding="2dp" />
 
                 <ImageView
                     android:id="@+id/left"
@@ -151,10 +152,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/screenShotsPager" />
-
             </RelativeLayout>
-
-            
 
             <TextView
                 android:id="@+id/version_info_label"
@@ -281,9 +279,8 @@
 
                         <TextView
                             android:id="@+id/inst_version"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:ellipsize="end"
                             android:maxLines="1"
                             android:paddingBottom="2dp"
@@ -292,8 +289,21 @@
                             android:singleLine="true"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:visibility="gone" />
-                    </LinearLayout>
 
+                        <TextView
+                            android:id="@+id/getLatest"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:autoLink="web"
+                            android:ellipsize="end"
+                            android:paddingBottom="2dp"
+                            android:paddingLeft="8dp"
+                            android:paddingRight="2dp"
+                            android:singleLine="true"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textColor="?attr/custom_color"
+                            android:visibility="gone" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -315,23 +325,6 @@
                         android:layout_height="wrap_content"
                         android:text="@string/chkBoxSchDwn"
                         android:textAppearance="?android:attr/textAppearanceSmall" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/latest_version_layout"
-                    android:layout_width="fill_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:paddingBottom="10dp"
-                    android:visibility="gone" >
-
-                    <Button
-                        android:id="@+id/getLatest"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="@string/get_latest_version" />
                 </LinearLayout>
             </LinearLayout>
 

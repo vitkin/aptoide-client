@@ -774,7 +774,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 			failedDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.btn_yes), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-						
+					getAllRepoStatus();
 				}
 			});
 			failedDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.btn_cancel), new DialogInterface.OnClickListener() {

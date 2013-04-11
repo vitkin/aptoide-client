@@ -296,5 +296,6 @@
   <string name="follow_twitter">Segue-nos no Twitter</string>
   <string name="social_networks">Redes Sociais</string>
   <string name="get_latest_version">Obter última versão</string>
+  <string name="get_latest_version_and_trusted">Obter última versão &amp; Fiável</string>
   <string name="version_info">Infomação da versão</string>
 </resources>
