@@ -12,7 +12,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.mopub.mobileads.MoPubView;
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -313,12 +314,12 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
             }
             @Override
             public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
-//                AdView adView = (AdView)findViewById(R.id.adView);
-//                adView.loadAd(new AdRequest());
+                AdView adView = (AdView)findViewById(R.id.adView);
+                adView.loadAd(new AdRequest());
 
-                mAdView = (MoPubView) findViewById(R.id.adview);
-                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
-                mAdView.loadAd();
+//                mAdView = (MoPubView) findViewById(R.id.adview);
+//                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
+//                mAdView.loadAd();
                 pd.dismiss();
                 viewApk = arg1;
                 new Thread(new Runnable() {
@@ -478,7 +479,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 
 
     }
-    private MoPubView mAdView;
+
 
     public void loadMalware(final MalwareStatus malwareStatus){
     	runOnUiThread(new Runnable() {
@@ -1121,7 +1122,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         }
         unbindService(serviceManagerConnection);
         handler = null;
-        mAdView.destroy();
+
     }
 
 
@@ -1268,7 +1269,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     getLatest.setOnClickListener(new OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                        	
+
                             String url = null;
                             try {
                                 url = webservice.getLatestVersionURL();
@@ -1366,6 +1367,8 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
             }
             findViewById(R.id.btinstall).setEnabled(true);
             ((Button)findViewById(R.id.btinstall)).setTextColor(Color.WHITE);
+
+
 
 
 

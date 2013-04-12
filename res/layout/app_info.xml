@@ -473,20 +473,20 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical" >
 
-        <!-- <com.google.ads.AdView -->
-        <!-- xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads" -->
-        <!-- android:id="@+id/adView" -->
-        <!-- android:layout_width="match_parent" -->
-        <!-- android:layout_height="wrap_content" -->
-        <!-- android:layout_gravity="center_horizontal" -->
-        <!-- ads:adSize="SMART_BANNER" -->
-        <!-- ads:adUnitId="6693e1e6c1d543f4" > -->
-        <!-- </com.google.ads.AdView> -->
+         <com.google.ads.AdView
+         xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+         android:id="@+id/adView"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_gravity="center_horizontal"
+         ads:adSize="SMART_BANNER"
+         ads:adUnitId="6693e1e6c1d543f4" >
+         </com.google.ads.AdView>
 
-        <com.mopub.mobileads.MoPubView
-            android:id="@+id/adview"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp" />
+        <!--<com.mopub.mobileads.MoPubView-->
+            <!--android:id="@+id/adview"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="50dp" />-->
     </LinearLayout>
 
 </RelativeLayout>
