@@ -222,7 +222,7 @@ public class MainService extends Service {
 
 
 		if(!serversParsing.contains(server.url)){
-            if(server.hash.length()==0){
+            if(server.hash.equals("firstHash")){
                 server.state=State.QUEUED;
                 db.updateStatus(server);
             }

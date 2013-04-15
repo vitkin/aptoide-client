@@ -40,7 +40,6 @@ public class DbStructure extends SQLiteOpenHelper {
 	public final static String TABLE_LATEST_APK = "latest_apk";
 	public final static String TABLE_LATEST_SCREENSHOTS = "latest_screenshots";
     public final static String TABLE_LATEST_CACHE = "latest_cache";
-
 	public final static String TABLE_REPO_CATEGORY_1ST = "repo_category_1st";
 	public final static String TABLE_REPO_CATEGORY_2ND = "repo_category_2nd";
 	public static final String TABLE_INSTALLED = "installed";
@@ -59,6 +58,8 @@ public class DbStructure extends SQLiteOpenHelper {
 	public static final String TABLE_ITEMBASED_SCREENSHOTS = "itembased_screenshots";
 	public static final String TABLE_SCHEDULED = "scheduled";
     public static final String TABLE_COMMENTS_CACHE = "comments_cache" ;
+
+
 
 
     public final static String COLUMN__ID = "_id";
@@ -511,21 +512,42 @@ public class DbStructure extends SQLiteOpenHelper {
 		}
 
 
-		db.execSQL("DROP TABLE IF EXISTS apk");
-		db.execSQL("DROP TABLE IF EXISTS category1");
-		db.execSQL("DROP TABLE IF EXISTS category2");
-		db.execSQL("DROP TABLE IF EXISTS repo");
-		db.execSQL("DROP TABLE IF EXISTS toprepo_extra");
-		db.execSQL("DROP TABLE IF EXISTS repo_category1");
-		db.execSQL("DROP TABLE IF EXISTS repo_category2");
-		db.execSQL("DROP TABLE IF EXISTS installed");
-		db.execSQL("DROP TABLE IF EXISTS dynamic_apk");
-		db.execSQL("DROP TABLE IF EXISTS itembasedapkrepo");
-		db.execSQL("DROP TABLE IF EXISTS itembasedapk");
-		db.execSQL("DROP TABLE IF EXISTS itembasedapk_hash");
-		db.execSQL("DROP TABLE IF EXISTS userbasedapk");
-		db.execSQL("DROP TABLE IF EXISTS scheduled");
-		db.execSQL("DROP TABLE IF EXISTS screenshots");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_COMMENTS_CACHE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SCHEDULED);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEMBASED_SCREENSHOTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_HASHES);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEMBASED_REPO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEMBASED_CACHE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEMBASED_APK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_EDITORSCHOICE_CACHE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_EDITORSCHOICE_SCREENSHOTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_EDITORSCHOICE_REPO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_EDITORSCHOICE_APK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_TOP_CACHE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_TOP_SCREENSHOTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_TOP_REPO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_FEATURED_TOP_APK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_INSTALLED);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPO_CATEGORY_2ND);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPO_CATEGORY_1ST);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LATEST_CACHE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LATEST_SCREENSHOTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LATEST_APK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_LATEST_REPO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOP_CACHE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOP_SCREENSHOTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOP_APK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOP_REPO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY_2ND);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_CATEGORY_1ST);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_REPO);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APK_CACHE);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APK_SCREENSHOTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_APK);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOP_LATEST_REPO_INFO);
+
+
+
 		onCreate(db);
 
 		for(Server oldServer : oldServers){

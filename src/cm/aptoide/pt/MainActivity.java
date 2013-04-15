@@ -762,7 +762,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			
+
 			View simpleMessageView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_message, null);
 			Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleMessageView);
 			final AlertDialog failedDialog = dialogBuilder.create();
@@ -2527,8 +2527,8 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + getString(R.string.loading_store));
 				}
 
-//                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("status")));
-//                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("url")));
+                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("status")));
+                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("url")));
 //
 //                if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSINGTOP")) {
 //                    ((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + "Updating Top");
@@ -2892,7 +2892,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		});
 		requestUpdateDialog.setCancelable(false);
 		requestUpdateDialog.show();
-		
+
 	}
 
 	private class DownloadSelfUpdate extends AsyncTask<Void, Void, Void> {
@@ -3002,8 +3002,9 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 						Log.d("Aptoide",
 								referenceMd5 + " VS " + Md5Handler.md5Calc(apk));
 						// msg_al.arg1 = 0;
-						// download_error_handler.sendMessage(msg_al);
-						throw new Exception(referenceMd5 + " VS "
+						// download_error_handler.sendMessage(msg_al);doUpdateSelf();
+
+                        throw new Exception(referenceMd5 + " VS "
 								+ Md5Handler.md5Calc(apk));
 					}
 				} catch (Exception e) {

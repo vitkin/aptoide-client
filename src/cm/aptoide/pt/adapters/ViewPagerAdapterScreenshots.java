@@ -58,7 +58,7 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 		final String hashCode=this.hashCode+"."+position;
 		final View v = LayoutInflater.from(context).inflate(R.layout.screenshots, null);
 		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshots_pb);
-		imageLoader.displayImage(screenshotToThumb(url.get(position)),(ImageView) v.findViewById(R.id.screenshot),options, new ImageLoadingListener() {
+		imageLoader.displayImage(hd?url.get(position):screenshotToThumb(url.get(position)),(ImageView) v.findViewById(R.id.screenshot),options, new ImageLoadingListener() {
 
 			@Override
 			public void onLoadingStarted() {

@@ -59,7 +59,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 	private ArrayList<String> server;
 	Database db;
 	private OnClickListener neutralListener =  new OnClickListener() {
-		
+
 		public void onClick(DialogInterface dialog, int which) {
 			return;
 		}
@@ -79,9 +79,9 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			// service using AIDL, so here we set the remote service interface.
 			serviceDownloadManager = AIDLServiceDownloadManager.Stub.asInterface(service);
 			serviceManagerIsBound = true;
-			
+
 			Log.v("Aptoide-IntentReceiver", "Connected to ServiceDownloadManager");
-	        
+
 			continueLoading();
 		}
 
@@ -90,14 +90,15 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			// unexpectedly disconnected -- that is, its process crashed.
 			serviceManagerIsBound = false;
 			serviceDownloadManager = null;
-			
+
 			Log.v("Aptoide-IntentReceiver", "Disconnected from ServiceDownloadManager");
 		}
 	};
-	
-	
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+        SetAptoideTheme.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		if(getIntent().getData()!=null){
 
@@ -107,19 +108,19 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				if(!serviceManagerIsBound){
 		    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
 		    	}
-				
+
 			}
-			
+
 		}
 	}
-		
+
 	private void continueLoading(){
 		TMP_MYAPP_FILE = getCacheDir()+"/myapp.myapp";
 		db=Database.getInstance();
 		String uri = getIntent().getDataString();
 		System.out.println(uri);
 		if(uri.startsWith("aptoiderepo")){
-			
+
 			ArrayList<String> repo = new ArrayList<String>();
 			repo.add(uri.substring(14));
 			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
@@ -132,6 +133,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				sendBroadcast(i);
 			}
 			finish();
+
 		}else if(uri.startsWith("aptoidexml")){
 			String repo = uri.substring(13);
 			parseXmlString(repo);
@@ -162,7 +164,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				System.out.println(getIntent().getDataString());
 				downloadMyappFile(getIntent().getDataString());
 				parseXmlMyapp(TMP_MYAPP_FILE);
-				
+
 				if(app!=null&&!app.isEmpty()){
 					View simpleMessageView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_message, null);
 					Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleMessageView);
@@ -171,9 +173,9 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 					alertDialog.setTitle(ApplicationAptoide.MARKETNAME);
 					alertDialog.setCancelable(true);
 					((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.installapp_alrt) +app.get("name")+"?");
-					
+
 					alertDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-						
+
 						public void onClick(DialogInterface dialog, int which) {
 							ViewApk apk = new ViewApk();
 							apk.setApkid(app.get("apkid"));
@@ -194,13 +196,13 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				}else{
 					proceed();
 				}
-			
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		}
-		
+
 	}
 
 	private void startMarketIntent(String param) {
@@ -215,7 +217,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			i = new Intent(this,SearchManager.class);
 			i.putExtra("search", param);
 		}
-		
+
 		startActivity(i);
 		finish();
 	}
@@ -234,28 +236,28 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			finish();
 		}
 	}
-	
-	
+
+
 	private void downloadMyappFile(String myappUri) throws Exception{
 		try{
-			
+
 			BufferedInputStream getit = new BufferedInputStream(new URL(myappUri).openStream(),1024);
 
 			File file_teste = new File(TMP_MYAPP_FILE);
 			if(file_teste.exists())
 				file_teste.delete();
-			
+
 			FileOutputStream saveit = new FileOutputStream(TMP_MYAPP_FILE);
 			BufferedOutputStream bout = new BufferedOutputStream(saveit,1024);
 			byte data[] = new byte[1024];
-			
+
 			int readed = getit.read(data,0,1024);
 			while(readed != -1) {
 				bout.write(data,0,readed);
 				readed = getit.read(data,0,1024);
 			}
-			
-			
+
+
 			bout.close();
 			getit.close();
 			saveit.close();
@@ -271,19 +273,19 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void parseXmlMyapp(String file) throws Exception{
 	    try {
-	    	
+
 	    	SAXParserFactory spf = SAXParserFactory.newInstance();
 			SAXParser sp = spf.newSAXParser();
-	    	
+
 			MyappHandler handler = new MyappHandler();
-			
+
 	    	sp.parse(new File(file),handler);
 	    	server = handler.getServers();
 	    	app = handler.getApp();
-	    	
+
 	    } catch (IOException e) {
 	    	e.printStackTrace();
 	    } catch (SAXException e) {
@@ -292,28 +294,28 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 	    	e.printStackTrace();
 		}
 	}
-	
+
 	private void parseXmlString(String file){
-		
+
 		SAXParserFactory spf = SAXParserFactory.newInstance();
-		
+
 	    try {
-	    	
+
 	    	SAXParser sp = spf.newSAXParser();
 	    	XMLReader xr = sp.getXMLReader();
 	    	MyappHandler handler = new MyappHandler();
 	    	xr.setContentHandler(handler);
-	    	
+
 	    	InputSource is = new InputSource();
 	    	is.setCharacterStream(new StringReader(file));
 	    	xr.parse(is);
 	    	server = handler.getServers();
 	    	app = handler.getApp();
-	    	
-	    	
+
+
 	    } catch (IOException e) {
 	    	e.printStackTrace();
-	    	
+
 	    } catch (SAXException e) {
 	    	e.printStackTrace();
 	    } catch (ParserConfigurationException e) {
@@ -324,7 +326,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 	public void onDismiss(DialogInterface dialog) {
 		proceed();
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		unbindService(serviceManagerConnection);
