@@ -117,7 +117,6 @@
   <string name="order_popup_lst2">Alfabeticamente</string>
   <string name="order_popup_lst3">Avaliação</string>
   <string name="order_popup_lst4">Número de download</string>
-  <string name="order_popup_lst5">Preço</string>
   <string name="order_popup_title2">Exibir aplicativos:</string>
   <string name="order_popup_title3">Conteúdo adulto</string>
   <string name="order_popup_catg1">Por categoria</string>
@@ -295,7 +294,4 @@
   <string name="find_us_on_facebook">"Encontra-nos no Facebook "</string>
   <string name="follow_twitter">Segue-nos no Twitter</string>
   <string name="social_networks">Redes Sociais</string>
-  <string name="get_latest_version">Obter última versão</string>
-  <string name="get_latest_version_and_trusted">Obter última versão &amp; Fiável</string>
-  <string name="version_info">Infomação da versão</string>
 </resources>

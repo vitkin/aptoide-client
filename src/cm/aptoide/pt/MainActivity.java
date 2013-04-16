@@ -2527,8 +2527,8 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + getString(R.string.loading_store));
 				}
 
-                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("status")));
-                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("url")));
+//                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("status")));
+//                Log.d("TAAAAG",cursor.getString(cursor.getColumnIndex("url")));
 //
 //                if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSINGTOP")) {
 //                    ((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads")) + " downloads" + " - " + "Updating Top");
