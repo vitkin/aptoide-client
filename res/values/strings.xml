@@ -355,4 +355,10 @@
     <string name="get_latest_version">Get Latest</string>
     <string name="get_latest_version_and_trusted">Get latest &amp; Trusted</string>
 	<string name="version_info">Version Info</string>
+    <string name="payment_method">Payment Method</string>
+    <string name="payment_warning_text">We couldn\'t check the current price of this product. The price may have
+        changed. Please confirm PayPal prices before payment.
+    </string>
+    <string name="payment_warning_title">Warning</string>
+    <string name="buy">Buy</string>
 </resources>

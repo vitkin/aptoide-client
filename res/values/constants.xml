@@ -5,9 +5,9 @@
     <string name="ip_blacklisted_email_contact">ipblacklist@aptoide.com</string>
     <string name="aptoide_url">http://www.aptoide.com/</string>
     <string name="store_path">.store.aptoide.com/</string>
-    <string name="norton_av">Norton Anti-Virus 1.2</string>
-    <string name="fsecure_av">F&#8211;Secure 2&#8211;4 for Android</string>
-    <string name="mcafee_av">McAfee Anti-Virus 1.5</string>
+    <string name="kaspersky_av">Kaspersky 9.1</string>
+    <string name="fsecure_av">F&#8211;Secure 8.1 for Android</string>
+    <string name="zoner_av">Zoner 1.7.2</string>
     <string name="google_play">Google Play </string>
     <string name="aptoide_email"> aptoide@aptoide.com</string>
 	<string name="aptoide_url_topapps">http://www.aptoide.com/more/topapps</string>

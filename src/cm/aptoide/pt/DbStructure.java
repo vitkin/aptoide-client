@@ -485,11 +485,11 @@ public class DbStructure extends SQLiteOpenHelper {
 //		db.execSQL("create table itembasedapk_hash (hash text, apkid text primary key, unique (apkid) on conflict replace);");
 //		db.execSQL("create table userbasedapk (_id integer primary key, apkid text, vercode integer);");
 //		db.execSQL("create table scheduled (_id integer primary key, name text, apkid text, vercode integer, vername text, remotepath text, md5 text );");
-		db.execSQL("CREATE INDEX mytest_id2_idx ON installed(apkid);");
-		db.execSQL("CREATE INDEX mytest_id_idx ON apk(apkid,vercode,category_2nd,repo_id);");
-		db.execSQL("CREATE INDEX mytest_id3_idx ON top_apk(apkid,vercode,repo_id);");
-		db.execSQL("CREATE INDEX mytest_id4_idx ON latest_apk(apkid,vercode,repo_id);");
-		db.execSQL("CREATE INDEX mytest_id5_idx ON itembased_apk(apkid,vercode,repo_id);");
+		db.execSQL("CREATE INDEX installed_index ON installed(apkid);");
+		db.execSQL("CREATE INDEX apk_index ON apk(apkid,vercode,category_2nd,repo_id);");
+		db.execSQL("CREATE INDEX top_apk_index ON top_apk(apkid,vercode,repo_id);");
+		db.execSQL("CREATE INDEX latest_apk_index ON latest_apk(apkid,vercode,repo_id);");
+		db.execSQL("CREATE INDEX itembased_apk_index ON itembased_apk(apkid,vercode,repo_id);");
 
 
 	}
@@ -545,10 +545,18 @@ public class DbStructure extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_APK_SCREENSHOTS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_APK);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TOP_LATEST_REPO_INFO);
+        db.execSQL("DROP INDEX IF EXISTS " + "apk.apk_index");
+        db.execSQL("DROP INDEX IF EXISTS " + "installed.installed_index");
+        db.execSQL("DROP INDEX IF EXISTS " + "top_apk.top_apk_index");
+        db.execSQL("DROP INDEX IF EXISTS " + "latest_apk.latest_apk_index");
+        db.execSQL("DROP INDEX IF EXISTS " + "itembased_apk.itembased_apk_index");
 
 
 
-		onCreate(db);
+
+
+
+        onCreate(db);
 
 		for(Server oldServer : oldServers){
 			ContentValues values = new ContentValues();

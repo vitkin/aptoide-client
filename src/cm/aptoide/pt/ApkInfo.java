@@ -1353,7 +1353,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 }
                 if(viewApk.isPaid()){
                     findViewById(R.id.btinstall).setOnClickListener( buyListener );
-                    ((Button) findViewById(R.id.btinstall)).setText("Buy $" + viewApk.getPrice());
+                    ((Button) findViewById(R.id.btinstall)).setText(getString(R.string.buy) + " $" + viewApk.getPrice());
 
                     unstrustedPayment = true;
                 } else {
@@ -1499,7 +1499,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 Builder dialogBuilder = new AlertDialog.Builder(context).setView(simpleMessageView);
                 final AlertDialog alertDialog = dialogBuilder.create();
                 alertDialog.setIcon(android.R.drawable.ic_menu_info_details);
-                alertDialog.setTitle("Payment Method");
+                alertDialog.setTitle(R.string.payment_method);
                 ((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.paypal_message));
 
                 alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Credit Card", new DialogInterface.OnClickListener() {
@@ -1526,11 +1526,11 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 });
                 alertDialog.show();
                 if(unstrustedPayment){
-                    final AlertDialog method2 = dialogBuilder.create();
+                    simpleMessageView = LayoutInflater.from(context).inflate(R.layout.dialog_simple_message, null);
+                    AlertDialog method2 = new AlertDialog.Builder(context).setView(simpleMessageView).create();
                     method2.setIcon(android.R.drawable.ic_menu_info_details);
-                    method2.setTitle("Payment Method");
-                    ((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText("We couldn't check the current price of this product. The price may have changed. Please confirm PayPal prices before payment.");
-                    method2.setTitle("Warning");
+                    ((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(R.string.payment_warning_text);
+                    method2.setTitle(R.string.payment_warning_title);
                     method2.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

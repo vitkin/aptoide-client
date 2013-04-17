@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
 
-    <string name="aptoide_version">Version 4.0.2</string>
+    <string name="aptoide_version">Version 4.0.2.1</string>
     <string name="aptoide_brand">APTOiDE</string>
 
     <string name="credits">
