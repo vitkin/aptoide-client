@@ -119,6 +119,10 @@
         <item name="android:background">@drawable/custom_color_button_digitallydifferent</item>
     </style>
 
+    <style name="custom_button_style_lazerplay" parent="custom_button_style">
+        <item name="android:background">@drawable/custom_color_button_lazerplay</item>
+    </style>
+
     <!-- gray button styles -->
     <style name="gray_button_style" parent="@android:style/Widget.Button">
         <item name="android:layout_width">fill_parent</item>
@@ -327,6 +331,10 @@
         <item name="android:background">@drawable/apk_info_separator_digitallydifferent</item>
     </style>
 
+    <style name="apk_info_separator_style_lazerplay" parent="apk_info_separator_style">
+        <item name="android:background">@drawable/apk_info_separator_lazerplay</item>
+    </style>
+
     <!-- top app item background styles -->
     <style name="top_app_item_style_light">
         <item name="android:background">@drawable/griditem_bgd_light</item>
@@ -473,6 +481,10 @@
         <item name="android:background">@drawable/actionbar_bgd_digitallydifferent</item>
     </style>
 
+    <style name="custom_header_style_lazerplay" parent="custom_textview_header_style">
+        <item name="android:background">@drawable/actionbar_bgd_lazerplay</item>
+    </style>
+
     <!-- actionbar background -->
     <style name="custom_actionbar_style_aptoide">
         <item name="android:layout_width">match_parent</item>
@@ -588,6 +600,12 @@
         <item name="android:background">@drawable/actionbar_bgd_digitallydifferent</item>
     </style>
 
+    <style name="custom_actionbar_style_lazerplay">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/actionbar_bgd_lazerplay</item>
+    </style>
+
     <!-- search button background -->
     <style name="custom_search_button_style">
         <item name="android:layout_width">61dp</item>
@@ -672,6 +690,10 @@
         <item name="android:background">@drawable/actionbar_button_digitallydifferent</item>
     </style>
 
+    <style name="custom_search_button_style_lazerplay" parent="custom_search_button_style">
+        <item name="android:background">@drawable/actionbar_button_lazerplay</item>
+    </style>
+
     <!-- brand on action bar -->
     <style name="brand_style">
         <item name="android:layout_width">wrap_content</item>
@@ -698,6 +720,10 @@
 
     <style name="brand_style_digitallydifferent" parent="brand_style">
         <item name="android:src">@drawable/brand_digitallydifferent</item>
+    </style>
+
+    <style name="brand_style_lazerplay" parent="brand_style">
+        <item name="android:src">@drawable/brand_lazerplay</item>
     </style>
 
 </resources>

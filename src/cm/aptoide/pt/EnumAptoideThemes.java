@@ -40,7 +40,8 @@ public enum EnumAptoideThemes {
 	APTOIDE_THEME_DIMGRAY, 
 	APTOIDE_THEME_TIMWE,
 	APTOIDE_THEME_DIGITALLYDIFFERENT,
-	APTOIDE_THEME_EOCEAN;
+	APTOIDE_THEME_EOCEAN,
+	APTOIDE_THEME_LAZERPLAY;
 	
 	
 	public static EnumAptoideThemes reverseOrdinal(int ordinal){

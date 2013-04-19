@@ -72,6 +72,9 @@ public class SetAptoideTheme {
 			case APTOIDE_THEME_EOCEAN:
 				activity.setTheme(R.style.Aptoide_Theme_EOcean);
 				break;
+			case APTOIDE_THEME_LAZERPLAY:
+				activity.setTheme(R.style.Aptoide_Theme_LazerPlay);
+				break;
 			default:
 				activity.setTheme(R.style.Aptoide_Theme);
 				break;
