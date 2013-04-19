@@ -1081,10 +1081,11 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 		    menu.add(Menu.NONE, EnumOptionsMenu.ABOUT.ordinal(),
 	    			EnumOptionsMenu.ABOUT.ordinal(), R.string.about).setIcon(
 	    			android.R.drawable.ic_menu_help);
+			menu.add(Menu.NONE, EnumOptionsMenu.FOLLOW.ordinal(),
+					EnumOptionsMenu.FOLLOW.ordinal(), R.string.social_networks).setIcon(
+					android.R.drawable.ic_menu_share);
         }
-		menu.add(Menu.NONE, EnumOptionsMenu.FOLLOW.ordinal(),
-				EnumOptionsMenu.FOLLOW.ordinal(), R.string.social_networks).setIcon(
-				android.R.drawable.ic_menu_share);
+	
 		menu.add(Menu.NONE, EnumOptionsMenu.DOWNLOADMANAGER.ordinal(),
 				EnumOptionsMenu.DOWNLOADMANAGER.ordinal(), R.string.download_manager).setIcon(
 				android.R.drawable.ic_menu_save);
