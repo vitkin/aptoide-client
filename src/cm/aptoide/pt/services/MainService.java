@@ -110,9 +110,14 @@ public class MainService extends Service {
 		String url = server.url + what + hash;
 
 
+		System.out.println(server);
+		System.out.println(server.getClass().getCanonicalName());
 		File f = new File(xmlpath);
-		InputStream in = utils.getInputStream(url, server.getLogin().getUsername(),
-				server.getLogin().getPassword(),getApplicationContext());
+		InputStream in = utils.getInputStream(
+				url, 
+				server.getLogin().getUsername(),
+				server.getLogin().getPassword(),
+				getApplicationContext());
 
 		int i = 0;
 		while (f.exists()) {

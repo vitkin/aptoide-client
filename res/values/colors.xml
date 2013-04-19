@@ -83,4 +83,14 @@
     <color name="light_custom_color_timwe">#f89b1d</color>
     <color name="custom_background_color_timwe">#0f0f0f</color>
     <color name="custom_inside_background_color_timwe">#414042</color>
+    
+    <color name="custom_color_eocean">#ff6a00</color>
+    <color name="dark_custom_color_eocean">#d35800</color>
+    <color name="light_custom_color_eocean">#ff9350</color>
+    <color name="custom_background_color_eocean">#0f0f0f</color>
+    <color name="custom_inside_background_color_eocean">#414042</color>
+    
+    <color name="dark_custom_color_digitallydifferent">#52742d</color>
+    <color name="light_custom_color_digitallydifferent">#99d855</color>
+    <color name="custom_color_digitallydifferent">#86bd4a</color>
 </resources>

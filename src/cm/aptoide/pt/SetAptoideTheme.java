@@ -66,6 +66,12 @@ public class SetAptoideTheme {
 			case APTOIDE_THEME_TIMWE:
 				activity.setTheme(R.style.Aptoide_Theme_TimWe);
 				break;
+			case APTOIDE_THEME_DIGITALLYDIFFERENT:
+				activity.setTheme(R.style.Aptoide_Theme_DigitallyDifferent);
+				break;
+			case APTOIDE_THEME_EOCEAN:
+				activity.setTheme(R.style.Aptoide_Theme_EOcean);
+				break;
 			default:
 				activity.setTheme(R.style.Aptoide_Theme);
 				break;
