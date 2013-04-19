@@ -69,6 +69,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <!-- <style name="Widget.Styled.ActionBar.Midnight" parent="Widget.Sherlock.ActionBar"> -->
@@ -101,6 +102,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_magalhaes</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Maroon" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -126,6 +128,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Gold" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -151,6 +154,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Orange" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -176,6 +180,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.SpringGreen" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -201,6 +206,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.LightSky" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -226,6 +232,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Pink" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -251,6 +258,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Blue" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -276,6 +284,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Red" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -301,6 +310,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Magenta" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -326,6 +336,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.SlateGray" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -351,6 +362,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.SeaGreen" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -376,6 +388,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.Silver" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -401,6 +414,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.DimGray" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -426,6 +440,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
     <style name="Aptoide.Theme.TimWe" parent="@style/Theme.Sherlock.NoActionBar">
@@ -451,6 +466,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_dark</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_dark</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_dark</item>
     </style>
 
       <style name="Aptoide.Theme.EOcean" parent="@style/Theme.Sherlock.NoActionBar">
@@ -476,6 +492,7 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_dark</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_dark</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_dark</item>
     </style>
 
     <style name="Aptoide.Theme.DigitallyDifferent" parent="@style/Theme.Sherlock.Light.NoActionBar">
@@ -501,5 +518,6 @@
         <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
         <item name="popQuickActionBackground">@style/quick_action_style_oem</item>
         <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 </resources>

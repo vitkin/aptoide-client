@@ -1,16 +1,29 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="alert_dialog_style_light">
-        <item name="android:fullDark">@drawable/dialog_body</item>
-        <item name="android:topDark">@drawable/dialog_title</item>
-        <item name="android:centerDark">@drawable/dialog_body</item>
-        <item name="android:bottomDark">@drawable/dialog_footer</item>
-        <item name="android:fullBright">@drawable/dialog_body</item>
-        <item name="android:centerBright">@drawable/dialog_body</item>
-        <item name="android:bottomBright">@drawable/dialog_footer</item>
-        <item name="android:bottomMedium">@drawable/dialog_footer</item>
-        <item name="android:centerMedium">@drawable/dialog_body</item>
+        <item name="android:fullDark">@drawable/dialog_body_light</item>
+        <item name="android:topDark">@drawable/dialog_title_light</item>
+        <item name="android:centerDark">@drawable/dialog_body_light</item>
+        <item name="android:bottomDark">@drawable/dialog_footer_light</item>
+        <item name="android:fullBright">@drawable/dialog_body_light</item>
+        <item name="android:centerBright">@drawable/dialog_body_light</item>
+        <item name="android:bottomBright">@drawable/dialog_footer_light</item>
+        <item name="android:bottomMedium">@drawable/dialog_footer_light</item>
+        <item name="android:centerMedium">@drawable/dialog_body_light</item>
         <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="alert_dialog_style_dark">
+        <item name="android:fullDark">@drawable/dialog_body_dark</item>
+        <item name="android:topDark">@drawable/dialog_title_dark</item>
+        <item name="android:centerDark">@drawable/dialog_body_dark</item>
+        <item name="android:bottomDark">@drawable/dialog_footer_dark</item>
+        <item name="android:fullBright">@drawable/dialog_body_dark</item>
+        <item name="android:centerBright">@drawable/dialog_body_dark</item>
+        <item name="android:bottomBright">@drawable/dialog_footer_dark</item>
+        <item name="android:bottomMedium">@drawable/dialog_footer_dark</item>
+        <item name="android:centerMedium">@drawable/dialog_body_dark</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <!-- custom button styles -->
