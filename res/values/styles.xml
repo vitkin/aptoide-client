@@ -688,6 +688,10 @@
         <item name="android:src">@drawable/brand_magalhaes</item>
     </style>
 
+    <style name="brand_style_timwe" parent="brand_style">
+        <item name="android:src">@drawable/brand_timwe</item>
+    </style>
+
     <style name="brand_style_eocean" parent="brand_style">
         <item name="android:src">@drawable/brand_eocean</item>
     </style>

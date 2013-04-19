@@ -452,7 +452,7 @@
         <item name="light_custom_color">@color/light_custom_color_timwe</item>
         <item name="custom_inside_background_color">@color/custom_inside_background_color_timwe</item>
         <item name="customSearchButton">@style/custom_search_button_style_timwe</item>
-        <item name="brandActionbarDrawable">@style/brand_style_aptoide</item>
+        <item name="brandActionbarDrawable">@style/brand_style_timwe</item>
         <item name="customActionbarBackground">@style/custom_actionbar_style_timwe</item>
         <item name="customHeaderTextViewBackground">@style/custom_header_style_timwe</item>
         <item name="apkInfoHeaderBackground">@style/apk_info_separator_style_timwe</item>
