@@ -123,7 +123,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 
 			ArrayList<String> repo = new ArrayList<String>();
 			repo.add(uri.substring(14));
-			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
+			Intent i = new Intent(IntentReceiver.this,Start.class);
 			i.putExtra("newrepo", repo);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
@@ -137,7 +137,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 		}else if(uri.startsWith("aptoidexml")){
 			String repo = uri.substring(13);
 			parseXmlString(repo);
-			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
+			Intent i = new Intent(IntentReceiver.this,Start.class);
 			i.putExtra("newrepo", repo);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
@@ -224,7 +224,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 
 	private void proceed() {
 		if(server!=null){
-			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
+			Intent i = new Intent(IntentReceiver.this,Start.class);
 			i.putExtra("newrepo", server);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
