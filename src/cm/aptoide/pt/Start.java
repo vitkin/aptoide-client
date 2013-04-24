@@ -3028,6 +3028,7 @@ private BroadcastReceiver parseFailedReceiver = new BroadcastReceiver() {
 	private void doUpdateSelf() {
 		Intent intent = new Intent();
 		intent.setAction(android.content.Intent.ACTION_VIEW);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.setDataAndType(Uri.parse("file://" + TMP_UPDATE_FILE),
 				"application/vnd.android.package-archive");
 
