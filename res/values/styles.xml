@@ -726,4 +726,8 @@
         <item name="android:src">@drawable/brand_lazerplay</item>
     </style>
 
+    <style name="brand_style_jblow" parent="brand_style">
+        <item name="android:src">@drawable/brand_jblow</item>
+    </style>
+
 </resources>

@@ -67,6 +67,7 @@ public class MainActivity extends Activity {
 	
 	
 	private DisplayImageOptions options = new DisplayImageOptions.Builder().displayer(new FadeInBitmapDisplayer(300)).build();
+	private boolean showingSplash=false;
 	
 	
 	/** Called when the activity is first created. */
@@ -110,6 +111,7 @@ public class MainActivity extends Activity {
 				try {
 					synchronized(this){
 						// Wait given period of time or exit on touch
+						showingSplash=true;
 						wait(3000);
 					}
 				}
@@ -138,8 +140,11 @@ public class MainActivity extends Activity {
 		if(ApplicationAptoide.PARTNERID != null){
 			if(evt.getAction() == MotionEvent.ACTION_DOWN)
 			{
-				synchronized(mSplashThread){
-					mSplashThread.notifyAll();
+				if(showingSplash) {
+					synchronized(mSplashThread){
+
+						mSplashThread.notifyAll();
+					}
 				}
 			}
 		}

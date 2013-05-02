@@ -547,4 +547,30 @@
         <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
     </style>
 
+    <style name="Aptoide.Theme.JBlow" parent="@style/Theme.Sherlock.Light.NoActionBar">
+        <item name="android:windowBackground">@color/custom_background_color</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:buttonStyle">@style/custom_button_style_magalhaes</item>
+        <item name="custom_color">@color/custom_color_magalhaes</item>
+        <item name="dark_custom_color">@color/dark_custom_color_magalhaes</item>
+        <item name="light_custom_color">@color/light_custom_color_magalhaes</item>
+        <item name="custom_inside_background_color">@color/custom_inside_background_color</item>
+        <item name="customSearchButton">@style/custom_search_button_style_magalhaes</item>
+        <item name="brandActionbarDrawable">@style/brand_style_jblow</item>
+        <item name="customActionbarBackground">@style/custom_actionbar_style_magalhaes</item>
+        <item name="customHeaderTextViewBackground">@style/custom_header_style_magalhaes</item>
+        <item name="apkInfoHeaderBackground">@style/apk_info_separator_style_magalhaes</item>
+        <item name="topAppItemBackground">@style/top_app_item_style_light</item>
+        <item name="storeDialogBackground">@style/store_dialog_style_light</item>
+        <item name="labelBackground">@style/label_style_light</item>
+        <item name="icUpdateDrawable">@style/ic_update_style_magalhaes</item>
+        <item name="icMenuMoreDrawable">@style/ic_menu_more_style_magalhaes</item>
+        <item name="breadcrumbStyle">@style/breadcrumbs_style_light</item>
+        <item name="quotesInDrawable">@style/quotes_in_style_light</item>
+        <item name="quotesOutDrawable">@style/quotes_out_style_light</item>
+        <item name="popQuickActionBackground">@style/quick_action_style_magalhaes</item>
+        <item name="viewPagerIndicatorBackground">@style/title_bar_bgd_style_light</item>
+        <item name="android:alertDialogStyle">@style/alert_dialog_style_light</item>
+    </style>
+
 </resources>
