@@ -7,40 +7,17 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Locale;
-
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
+import android.os.*;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -49,29 +26,14 @@ import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -86,13 +48,7 @@ import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
-import cm.aptoide.pt.views.EnumApkMalware;
-import cm.aptoide.pt.views.EnumDownloadFailReason;
-import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownload;
-import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.views.*;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
@@ -102,6 +58,13 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
+import com.mopub.mobileads.MoPubView;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 
 
 public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
@@ -164,6 +127,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
     private View loading;
     private String installString;
     private boolean unstrustedPayment = false;
+    private MoPubView mAdView;
 
 
     @Override
@@ -314,12 +278,12 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
             }
             @Override
             public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
-                AdView adView = (AdView)findViewById(R.id.adView);
-                adView.loadAd(new AdRequest());
+//                AdView adView = (AdView)findViewById(R.id.adView);
+//                adView.loadAd(new AdRequest());
 
-//                mAdView = (MoPubView) findViewById(R.id.adview);
-//                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
-//                mAdView.loadAd();
+                mAdView = (MoPubView) findViewById(R.id.adview);
+                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
+                mAdView.loadAd();
                 pd.dismiss();
                 viewApk = arg1;
                 new Thread(new Runnable() {
@@ -1122,6 +1086,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         }
         unbindService(serviceManagerConnection);
         handler = null;
+        mAdView.destroy();
 
     }
 

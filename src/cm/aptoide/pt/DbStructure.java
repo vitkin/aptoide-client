@@ -9,19 +9,18 @@ package cm.aptoide.pt;
 
 
 
-import java.util.ArrayList;
-
-import cm.aptoide.pt.util.databasecreator.Column;
-import cm.aptoide.pt.util.databasecreator.TableCreator;
-import cm.aptoide.pt.util.databasecreator.Column.OnConflict;
-import cm.aptoide.pt.util.databasecreator.Column.SQLiteType;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import cm.aptoide.pt.util.databasecreator.Column;
+import cm.aptoide.pt.util.databasecreator.Column.OnConflict;
+import cm.aptoide.pt.util.databasecreator.Column.SQLiteType;
+import cm.aptoide.pt.util.databasecreator.TableCreator;
+
+import java.util.ArrayList;
 
 public class DbStructure extends SQLiteOpenHelper {
 
@@ -550,11 +549,6 @@ public class DbStructure extends SQLiteOpenHelper {
         db.execSQL("DROP INDEX IF EXISTS " + "top_apk.top_apk_index");
         db.execSQL("DROP INDEX IF EXISTS " + "latest_apk.latest_apk_index");
         db.execSQL("DROP INDEX IF EXISTS " + "itembased_apk.itembased_apk_index");
-
-
-
-
-
 
         onCreate(db);
 
