@@ -18,7 +18,6 @@ import org.holoeverywhere.app.ProgressDialog;
 import org.holoeverywhere.widget.AdapterView;
 import org.holoeverywhere.widget.Button;
 import org.holoeverywhere.widget.CheckBox;
-import org.holoeverywhere.widget.CheckedTextView;
 import org.holoeverywhere.widget.LinearLayout;
 import org.holoeverywhere.widget.ProgressBar;
 import org.holoeverywhere.widget.Spinner;
@@ -59,13 +58,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-
-
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ImageView;
-
 import android.widget.RatingBar;
+import cm.aptoide.com.actionbarsherlock.view.Menu;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -97,15 +95,11 @@ import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
 
-import cm.aptoide.com.actionbarsherlock.view.Menu;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
-
-import com.adsdk.sdk.mraid.MoPubView;
-import com.google.ads.AdRequest;
-import com.google.ads.AdView;
+import com.mopub.mobileads.MoPubView;
 
 
-public class ApkInfo extends Activity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
+
+public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 
 
 	private MoPubView mAdView;

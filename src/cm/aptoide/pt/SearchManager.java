@@ -8,6 +8,7 @@
 package cm.aptoide.pt;
 
 import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.widget.Button;
 import org.holoeverywhere.widget.ListView;
 import org.holoeverywhere.widget.TextView;
@@ -16,7 +17,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -29,7 +29,7 @@ import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
         
 
-public class SearchManager extends FragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
+public class SearchManager extends Activity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
 	ListView lv;
 	String query;
 //	EditText searchBox;
