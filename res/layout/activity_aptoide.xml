@@ -13,14 +13,14 @@
     android:orientation="vertical" >
 
     <include
-    android:id="@+id/actionbar"
-    layout="@layout/actionbar" />
+        android:id="@+id/actionbar"
+        layout="@layout/actionbar" />
 
     <cm.aptoide.com.viewpagerindicator.TitlePageIndicator
         android:id="@+id/indicator"
+        style="?attr/viewPagerIndicatorBackground"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        style="?attr/viewPagerIndicatorBackground"
         android:textAppearance="?android:attr/textAppearanceMedium"
         app:footerColor="?attr/custom_color"
         app:footerLineHeight="1dp"

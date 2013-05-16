@@ -19,9 +19,14 @@
     <attr name="customHeaderTextViewBackground" format="reference" />
     <attr name="customActionbarBackground" format="reference" />
     <attr name="topAppItemBackground" format="reference" />
-    <attr name="storeDialogBackground" format="reference" />
+    <attr name="dialogBackground" format="reference" />
     <attr name="labelBackground" format="reference" />
     <attr name="popQuickActionBackground" format="reference" />
     <attr name="viewPagerIndicatorBackground" format="reference" />
     <attr name="breadcrumbStyle" format="reference" />
+    
+    <attr name="autoScaleTextViewStyle" format="reference" />
+    <declare-styleable name="AutoScaleTextView">
+	    <attr name="minTextSize" format="dimension" />
+	</declare-styleable>
 </resources>

@@ -28,7 +28,7 @@
 
         <LinearLayout
             android:id="@+id/fb_message"
-            style="?attr/storeDialogBackground"
+            style="?attr/dialogBackground"
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/post_message"

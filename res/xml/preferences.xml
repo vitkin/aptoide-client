@@ -24,7 +24,8 @@
                 android:title="@string/setting_ethernet" />
         </PreferenceScreen>
     </PreferenceCategory>
-    <PreferenceCategory android:key="filters" 
+    <PreferenceCategory
+        android:key="filters"
         android:title="@string/setting_filters_title" >
         <Preference
             android:key="hwspecs"
@@ -65,6 +66,14 @@
             android:key="maxFileCache"
             android:summary="@string/settings_maxFileCache_sum"
             android:title="@string/settings_maxFileCache_title" />
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:key="about"
+        android:title="@string/about" >
+        <Preference
+            android:key="aboutDialog"
+            android:title="@string/about" >
+        </Preference>
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -12,19 +12,21 @@
     android:gravity="top"
     android:orientation="vertical" >
 
-    <LinearLayout
-        android:id="@+id/breadcrumb_container"
+    <include
+        android:id="@+id/banner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-    </LinearLayout>
+        layout="@layout/banner_sticky"
+        android:visibility="gone" />
+
+    
 
     <ListView
         android:id="@+id/available_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/add_store_layout"
-        android:layout_below="@+id/breadcrumb_container" >
+        android:layout_below="@+id/banner" >
     </ListView>
 
     <include

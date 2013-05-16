@@ -7,7 +7,7 @@
   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/loginlayout"
+    android:id="@+id/forget_pass_layout"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:layout_above="@+id/login_button"
@@ -23,14 +23,13 @@
             style="?attr/customHeaderTextViewBackground"
             android:text="@string/setcredentials" />
 
-        <Button
-            android:id="@+id/register_link"
-            style="@style/custom_button_style"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:onClick="createUser"
-            android:text="@string/register" />
-
+        <!-- <Button -->
+        <!-- android:id="@+id/register_link" -->
+        <!-- style="@style/custom_button_style" -->
+        <!-- android:layout_alignParentRight="true" -->
+        <!-- android:layout_centerVertical="true" -->
+        <!-- android:onClick="createUser" -->
+        <!-- android:text="@string/register" /> -->
     </RelativeLayout>
 
     <ScrollView
@@ -94,43 +93,36 @@
 
                 <Button
                     android:id="@+id/login"
-                    style="@style/gray_button_style"
+                    style="@style/custom_button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
                     android:onClick="login"
                     android:text="@string/sign_in" />
             </LinearLayout>
 
-            <!-- <View -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="1dp" -->
-            <!-- android:layout_margin="25dp" -->
-            <!-- android:background="@android:color/darker_gray" /> -->
+            <LinearLayout
+                android:id="@+id/user_layout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
+                <Button
+                    android:id="@+id/new_to_aptoide"
+                    style="@style/register_button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:onClick="createUser" />
 
-            <!-- <LinearLayout -->
-            <!-- android:id="@+id/signup_button" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_height="wrap_content" -->
-            <!-- android:orientation="horizontal" > -->
-
-
-            <!-- <Button -->
-            <!-- android:id="@+id/forgot_password" -->
-            <!-- style="@style/gray_button_style" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_gravity="right" -->
-            <!-- android:layout_weight="1" -->
-            <!-- android:text="@string/forgot_password" /> -->
-
-
-            <!-- <Button -->
-            <!-- android:id="@+id/register_link" -->
-            <!-- style="@style/gray_button_style" -->
-            <!-- android:layout_width="match_parent" -->
-            <!-- android:layout_gravity="right" -->
-            <!-- android:layout_weight="1" -->
-            <!-- android:onClick="createUser" -->
-            <!-- android:text="@string/register" /> -->
-            <!-- </LinearLayout> -->
+                <TextView
+                    android:id="@+id/forgot_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:padding="10dp"
+                    android:textColor="@color/link_text_holo_light" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 

@@ -102,10 +102,12 @@
     <string name="error_occured">An error occurred. Please try again</string>
     <string name="comment_submitted">Comment submitted successfuly</string>
     <string name="showpass">Show password</string>
-    <string name="user">User name&#8230;</string>
+    <string name="user">Username&#8230;</string>
     <string name="pass">Password&#8230;</string>
     <string name="submit">Submit</string>
     <string name="new_account">New account</string>
+    <string name="new_to_aptoide">New to Aptoide? Create a free account</string>
+    <string name="forgot_passwd">Forgot password?</string>
     <string name="setcredentials">Login</string>
     <string name="login_above_or_signup">Login above or signup here:</string>
     <string name="logged_as">You are logged as:</string>
@@ -182,7 +184,7 @@
     <string name="recommended_text">Sign in to view the best apps for you</string>
     <string name="you_need_to_login">You need to login to see recommended apps for you</string>
     <string name="you_need_to_login_toast">You need to login</string>
-    <string name="no_recommended_apps">No recommended apps found. We need more interaction from you. Make some downloads!</string>
+    <string name="no_recommended_apps">No recommended apps found.</string>
     <string name="no_recommended_toast">No recommended apps found</string>
     <string name="all_updated">All apps are up to date</string>
     <string name="clear_all">Clear all</string>
@@ -265,7 +267,6 @@
     <string name="username">Email</string>
     <string name="password">Password</string>
     <string name="register">Sign Up</string>
-    <string name="forgot_password">Forgot Password?</string>
     <string name="schDown_invertselection">Invert Selection</string>
     <string name="schDown_removeselected">Remove Selected</string>
     <string name="schDown_sureremove">Are you sure you want to remove?</string>
@@ -349,6 +350,8 @@
     <string name="settings_maxFileCache_sum">Set a maximum size to keep your apk files</string>
     <string name="no_launcher_activity">No launcher activity found</string>
     <string name="retrying_registration">Completing registration process</string>
+    <string name="credit_card">Credit Card</string>
+    <string name="paypal">PayPal</string>
     <string name="paypal_message">You can pay using your credit card or your PayPal account with agreement. If you want to use your PayPal account without agreement, select Credit Card</string>
     <string name="order_popup_lst5">Price</string>
     <string name="paidapp_not_found">Error downloading app. Please try again or contact support.</string>
@@ -361,4 +364,54 @@
     </string>
     <string name="payment_warning_title">Warning</string>
     <string name="buy">Buy</string>
+    
+    <string name="applications">Applications</string>
+    <string name="comics">Comics</string>
+	<string name="communication">Communication</string>
+	<string name="entertainment">Entertainment</string>
+	<string name="finance">Finance</string>
+	<string name="health">Health</string>
+	<string name="lifestyle">Lifestyle</string>
+	<string name="multimedia">Multimedia</string>
+	<string name="news_and_weather">News &#8230; Weather</string>
+	<string name="productivity">Productivity</string>
+	<string name="reference">Reference</string>
+	<string name="shopping">Shopping</string>
+	<string name="social">Social</string>
+	<string name="sports">Sports</string>
+	<string name="themes">Themes</string>
+	<string name="tools">Tools</string>
+	<string name="travel">Travel</string>
+	<string name="demo">Demo</string>
+	<string name="software_libraries">Software Libraries</string>
+	<string name="weather">Weather</string>
+	<string name="travel_and_local">Travel &#8230; Local</string>
+	<string name="transportation">Transportation</string>
+	<string name="medical">Medical</string>
+	<string name="libraries_and_demo">Libraries &#8230; Demo</string>
+	<string name="transport">Transport</string>
+	<string name="news_and_magazine">News &#8230; Magazines</string>
+	<string name="music_and_audio">Music &#8230; Audio</string>
+	<string name="photography">Photography</string>
+	<string name="personalization">Personalization</string>
+	<string name="books_and_reference">Books &#8230; Reference</string>
+	<string name="health_and_fitness">Health &#8230; Fitness</string>
+	<string name="media_and_video">Media &#8230; Video</string>
+	<string name="education">Education</string>
+	<string name="business">Business</string>
+	
+	<string name="games">Games</string>
+	<string name="arcade_and_action">Arcade &#8230; Action</string>
+	<string name="brain_and_puzzle">Brain &#8230; Puzzle</string>
+	<string name="cards_and_casino">Cards &#8230; Casino</string>
+	<string name="casual">Casual</string>
+	<string name="sport_games">Sports Games</string>
+	<string name="racing">Racing</string>
+	
+	<string name="top_apps">Top Apps</string>
+	<string name="latest_apps">Latest Apps</string>
+	<string name="latest_comments">Latest Comments</string>
+	<string name="latest_likes">Latest Likes</string>
+	<string name="recommended_for_you">Recommended for you</string>
+    
 </resources>

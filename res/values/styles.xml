@@ -1,31 +1,5 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="alert_dialog_style_light">
-        <item name="android:fullDark">@drawable/dialog_body_light</item>
-        <item name="android:topDark">@drawable/dialog_title_light</item>
-        <item name="android:centerDark">@drawable/dialog_body_light</item>
-        <item name="android:bottomDark">@drawable/dialog_footer_light</item>
-        <item name="android:fullBright">@drawable/dialog_body_light</item>
-        <item name="android:centerBright">@drawable/dialog_body_light</item>
-        <item name="android:bottomBright">@drawable/dialog_footer_light</item>
-        <item name="android:bottomMedium">@drawable/dialog_footer_light</item>
-        <item name="android:centerMedium">@drawable/dialog_body_light</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
-
-    <style name="alert_dialog_style_dark">
-        <item name="android:fullDark">@drawable/dialog_body_dark</item>
-        <item name="android:topDark">@drawable/dialog_title_dark</item>
-        <item name="android:centerDark">@drawable/dialog_body_dark</item>
-        <item name="android:bottomDark">@drawable/dialog_footer_dark</item>
-        <item name="android:fullBright">@drawable/dialog_body_dark</item>
-        <item name="android:centerBright">@drawable/dialog_body_dark</item>
-        <item name="android:bottomBright">@drawable/dialog_footer_dark</item>
-        <item name="android:bottomMedium">@drawable/dialog_footer_dark</item>
-        <item name="android:centerMedium">@drawable/dialog_body_dark</item>
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
     <!-- custom button styles -->
     <style name="custom_button_style">
         <item name="android:focusable">true</item>
@@ -137,9 +111,23 @@
         <item name="android:textStyle">normal</item>
     </style>
 
+    <!-- new to aptoide and forget pass button styles -->
+    <style name="register_button_style" parent="@android:style/Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
+
     <!-- breadcrumbs button styles -->
     <style name="breadcrumbs_style">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#A0A0A0</item>
         <item name="android:typeface">normal</item>
@@ -147,7 +135,10 @@
         <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
+        <item name="android:clickable">false</item>
         <item name="android:singleLine">true</item>
+        <item name="android:gravity">left</item>
+        <item name="android:drawablePadding">25dp</item>
         <item name="android:background">@drawable/highlight_overlay</item>
     </style>
 
@@ -728,6 +719,12 @@
 
     <style name="brand_style_jblow" parent="brand_style">
         <item name="android:src">@drawable/brand_jblow</item>
+    </style>
+
+    <style name="autoScaleTextView">
+        <item name="@android:attr/background">@android:color/transparent</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="@attr/minTextSize">10dp</item>
     </style>
 
 </resources>
