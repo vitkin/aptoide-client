@@ -7,12 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
-import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
-import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
-import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import android.app.Activity;
+import org.holoeverywhere.app.Activity;
+
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -21,12 +17,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+
+import cm.aptoide.com.actionbarsherlock.view.Window;
 
 public class Start extends Activity {
-
+	
 	private final String SDCARD = Environment.getExternalStorageDirectory()
 			.getPath();
 	private String LOCAL_PATH = SDCARD + "/.aptoide";
@@ -38,13 +40,13 @@ public class Start extends Activity {
 	ImageView imageSplash;
 	boolean retry = false;
 	private ImageLoadingListener listener = new ImageLoadingListener() {
-
+		
 		@Override
 		public void onLoadingStarted() { }
-
+		
 		@Override
 		public void onLoadingFailed(FailReason failReason) {
-			Log.e("MainActivity-onLoadingFailed","Failed to load splashscreen");
+			Log.e("Start-onLoadingFailed","Failed to load splashscreen");
 			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
 				saveSplashscreenImageToSDCard("splashscreen_land.png");
 			}else{
@@ -52,21 +54,20 @@ public class Start extends Activity {
 			}
 			showSplash();
 		}
-
+		
 		@Override
 		public void onLoadingComplete(Bitmap loadedImage) {
 			showSplash();
 		}
-
+		
 		@Override
 		public void onLoadingCancelled() {	}
 	};
-
-
+	
+	
 	private DisplayImageOptions options = new DisplayImageOptions.Builder().displayer(new FadeInBitmapDisplayer(300)).build();
-	private boolean showingSplash=false;
-
-
+	
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,7 @@ public class Start extends Activity {
 			}else{
 				ImageLoader.getInstance().displayImage(ApplicationAptoide.SPLASHSCREEN, imageSplash, options, listener, null);
 			}
-
+			
 		}else{
             finish();
 			Intent intent = new Intent();
@@ -108,7 +109,6 @@ public class Start extends Activity {
 				try {
 					synchronized(this){
 						// Wait given period of time or exit on touch
-						showingSplash=true;
 						wait(3000);
 					}
 				}
@@ -137,11 +137,8 @@ public class Start extends Activity {
 		if(ApplicationAptoide.PARTNERID != null){
 			if(evt.getAction() == MotionEvent.ACTION_DOWN)
 			{
-				if(showingSplash) {
-					synchronized(mSplashThread){
-
-						mSplashThread.notifyAll();
-					}
+				synchronized(mSplashThread){
+					mSplashThread.notifyAll();
 				}
 			}
 		}
@@ -164,7 +161,7 @@ public class Start extends Activity {
 				.getExternalStorageDirectory().getAbsolutePath()
 				+ "/.aptoide";
 		File wallpaperDirectory = new File(extStorageDirectory);
-
+		
 		OutputStream outStream = null;
 		File file = new File(wallpaperDirectory, fileName);
 		// to get resource name
