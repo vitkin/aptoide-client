@@ -7,10 +7,9 @@
  ******************************************************************************/
 package cm.aptoide.pt.contentloaders;
 
-import cm.aptoide.pt.views.ViewApk;
 import android.content.Context;
-import android.database.Cursor;
 import android.support.v4.content.AsyncTaskLoader;
+import cm.aptoide.pt.views.ViewApk;
 
 /**
  * Used to write apps that run on platforms prior to Android 3.0.  When running

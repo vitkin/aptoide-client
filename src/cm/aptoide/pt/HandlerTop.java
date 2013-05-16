@@ -12,15 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.ContentValues;
-import android.content.pm.FeatureInfo;
-
-import cm.aptoide.pt.HandlerInfoXml.ElementHandler;
-import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewApkTop;
 
 

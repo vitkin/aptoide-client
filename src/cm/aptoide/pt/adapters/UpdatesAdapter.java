@@ -7,25 +7,24 @@
  ******************************************************************************/
 package cm.aptoide.pt.adapters;
 
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.widget.TextView;
 
 import android.content.Context;
 import android.database.Cursor;
 import android.os.RemoteException;
 import android.support.v4.widget.CursorAdapter;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.pt.Category;
+import cm.aptoide.pt.Database;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt.Category;
-import cm.aptoide.pt.Database;
-import cm.aptoide.pt.DbStructure;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 public class UpdatesAdapter extends CursorAdapter {
 

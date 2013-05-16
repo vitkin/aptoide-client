@@ -21,18 +21,15 @@ package cm.aptoide.pt.views;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
-import cm.aptoide.com.nostra13.universalimageloader.utils.FileUtils;
-
-import cm.aptoide.pt.util.Constants;
-import cm.aptoide.pt.util.Md5Handler;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import cm.aptoide.com.nostra13.universalimageloader.utils.FileUtils;
+import cm.aptoide.pt.util.Constants;
+import cm.aptoide.pt.util.Md5Handler;
 
 /**
  * ViewCache

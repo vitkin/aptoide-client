@@ -7,12 +7,10 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
-import cm.aptoide.pt.R;
-import android.app.Activity;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.TextView;
+
 import android.os.Bundle;
-import android.widget.TextView;
 
 
 public class HWSpecActivity extends Activity /*SherlockActivity */{
@@ -30,7 +28,7 @@ public class HWSpecActivity extends Activity /*SherlockActivity */{
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.hwspecs);

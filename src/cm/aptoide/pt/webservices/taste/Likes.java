@@ -7,41 +7,28 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.taste;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import org.holoeverywhere.app.ProgressDialog;
 
+import org.holoeverywhere.widget.TextView;
+import org.holoeverywhere.widget.Toast;
 import org.json.JSONObject;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-import cm.aptoide.pt.util.Algorithms;
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.webservices.EnumResponseStatus;
 import cm.aptoide.pt.webservices.login.Login;
-import cm.aptoide.pt.R;
 
 public class Likes {
 

@@ -10,10 +10,12 @@ package cm.aptoide.pt;
 import java.io.File;
 import java.text.DecimalFormat;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.app.AlertDialog.Builder;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.Dialog;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.Toast;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,18 +25,13 @@ import android.os.Environment;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceCategory;
+import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 import cm.aptoide.pt.preferences.ManagerPreferences;
 
 public class Settings extends PreferenceActivity{
@@ -48,9 +45,10 @@ public class Settings extends PreferenceActivity{
 		super.onCreate(savedInstanceState);
 		
         addPreferencesFromResource(R.xml.preferences);
+
         mctx = this;
         new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
-        preferences = new ManagerPreferences(this);
+        preferences = new ManagerPreferences(mctx);
 //        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
 //			
 //			@Override
@@ -62,7 +60,9 @@ public class Settings extends PreferenceActivity{
 //						((CheckBoxPreference)findPreference("3g")).isChecked()));
 //			}
 //		});
-        findPreference("clearcache").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        
+        
+        findPreference("clearcache").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			
 
 			@Override
@@ -74,7 +74,7 @@ public class Settings extends PreferenceActivity{
 				return false;
 			}
 		});
-		findPreference("clearapk").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		findPreference("clearapk").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
@@ -89,32 +89,25 @@ public class Settings extends PreferenceActivity{
 //		Preference hwspecs = (Preference) findPreference("hwspecs");
 //		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
 		Preference hwSpecs = (Preference) findPreference("hwspecs");
-		hwSpecs.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		hwSpecs.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mctx);
+				alertDialogBuilder.setTitle(getString(R.string.setting_hwspecstitle));
+				alertDialogBuilder
+					.setIcon(android.R.drawable.ic_menu_info_details)
+					.setMessage(getString(R.string.setting_sdk_version)+ ": "+HWSpecifications.getSdkVer()+"\n" +
+							    getString(R.string.setting_screen_size)+ ": "+HWSpecifications.getScreenSize(mctx)+"\n" +
+							    getString(R.string.setting_esgl_version)+ ": "+HWSpecifications.getEsglVer(mctx))
+					.setCancelable(false)
+					.setNeutralButton(getString(android.R.string.ok),new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,int id) {
+							return;
+						}
+					 });
+				AlertDialog alertDialog = alertDialogBuilder.create();
+				alertDialog.show();
 				
-				View hwSpecsView = LinearLayout.inflate(Settings.this, R.layout.dialog_hw_specs, null);
-				Builder dialogBuilder = new AlertDialog.Builder(Settings.this).setView(hwSpecsView);
-				final AlertDialog hwSpecsDialog = dialogBuilder.create();
-				hwSpecsDialog.setIcon(android.R.drawable.ic_menu_info_details);
-				hwSpecsDialog.setTitle(getString(R.string.setting_hwspecstitle));
-				
-				TextView sdkVer= (TextView) hwSpecsView.findViewById(R.id.sdkver);
-				TextView screenSize = (TextView) hwSpecsView.findViewById(R.id.screenSize);
-				TextView esglVer = (TextView) hwSpecsView.findViewById(R.id.esglVer);
-				
-				sdkVer.setText(HWSpecifications.getSdkVer()+"");
-				screenSize.setText(HWSpecifications.getScreenSize(getBaseContext())+"");
-				esglVer.setText(HWSpecifications.getEsglVer(getBaseContext()));
-				
-				hwSpecsDialog.setButton(Dialog.BUTTON_NEUTRAL,getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-					
-					public void onClick(DialogInterface dialog, int which) {
-						hwSpecsDialog.dismiss();
-					}
-				});
-				
-				hwSpecsDialog.show();
 				return true;
 			}
 		});
@@ -126,12 +119,12 @@ public class Settings extends PreferenceActivity{
 		}
 		
 		Preference showExcluded = (Preference) findPreference("showexcludedupdates");
-		showExcluded.setIntent(new Intent(getBaseContext(), ExcludedUpdatesActivity.class));
+		showExcluded.setIntent(new Intent(mctx, ExcludedUpdatesActivity.class));
 		
 		EditTextPreference maxFileCache = (EditTextPreference) findPreference("maxFileCache");
 		
 		maxFileCache.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
-		maxFileCache.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		maxFileCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
@@ -139,6 +132,41 @@ public class Settings extends PreferenceActivity{
 				return false;
 			}
 		});
+		
+
+		Preference about = (Preference) findPreference("aboutDialog");
+		about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+				View view = LayoutInflater.from(mctx).inflate(R.layout.dialog_about, null);
+				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mctx).setView(view);
+
+				final AlertDialog aboutDialog = alertDialogBuilder.create();
+
+
+				aboutDialog.setTitle(getString(R.string.about));
+				aboutDialog.setIcon(android.R.drawable.ic_menu_info_details);
+				aboutDialog.setCancelable(false);
+				aboutDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+				aboutDialog.show();
+
+				return true;
+			}
+		});
+			
+		if(ApplicationAptoide.PARTNERID!=null){
+			PreferenceScreen preferenceScreen = getPreferenceScreen();
+			Preference etp = (Preference) preferenceScreen.findPreference("aboutDialog");
+
+			PreferenceGroup preferenceGroup = (PreferenceGroup) findPreference("about");
+			preferenceGroup.removePreference(etp);
+			preferenceScreen.removePreference(preferenceGroup);
+			
+		}
 	}
 
 	public class DeleteDir extends AsyncTask<File, Void, Void>{

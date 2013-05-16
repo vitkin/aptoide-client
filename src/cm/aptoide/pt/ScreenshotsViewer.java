@@ -8,22 +8,18 @@
 package cm.aptoide.pt;
 
 import java.util.ArrayList;
+
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 
-import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
-import cm.aptoide.pt.R;
-
-import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
-import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
+import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
+import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
 
 public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivity */{
 
@@ -35,7 +31,7 @@ public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivit
 
 	@Override
 	protected void onCreate(Bundle arg0) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(arg0);
 
 		setContentView(R.layout.screenshotsviewer);

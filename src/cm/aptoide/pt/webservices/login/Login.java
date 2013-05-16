@@ -31,11 +31,17 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.EditText;
+import org.holoeverywhere.widget.TextView;
+import org.holoeverywhere.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -44,20 +50,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.SetAptoideTheme;
+import cm.aptoide.pt.AptoideThemePicker;
 import cm.aptoide.pt.util.Algorithms;
 import cm.aptoide.pt.views.ViewApk;
 
@@ -67,7 +69,8 @@ public class Login extends Activity /*SherlockActivity */{
 	EditText password_box;
 	String username;
 	String password;
-//	Button forgot_password;
+	TextView forgot_password;
+	Button createUser;
 	
 	static Context context;
 	private boolean succeed = false;
@@ -77,7 +80,7 @@ public class Login extends Activity /*SherlockActivity */{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		
 		context = this;
@@ -93,15 +96,24 @@ public class Login extends Activity /*SherlockActivity */{
 			setContentView(R.layout.form_login);
 			username_box = (EditText) findViewById(R.id.username);
 			password_box = (EditText) findViewById(R.id.password);
-//			forgot_password = (Button) findViewById(R.id.forgot_password);
-//			forgot_password.setOnClickListener(new OnClickListener() {
-//				
-//				@Override
-//				public void onClick(View v) {
-//					Intent passwordRecovery = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.aptoide.com/account/password-recovery"));
-//					startActivity(passwordRecovery);
-//				}
-//			});
+			
+			createUser = (Button) findViewById(R.id.new_to_aptoide);
+			SpannableString newUserString=new SpannableString(getString(R.string.new_to_aptoide));
+			newUserString.setSpan(new UnderlineSpan(), 0, newUserString.length(), 0);
+			createUser.setText(newUserString);
+			
+			forgot_password = (TextView) findViewById(R.id.forgot_password);
+			SpannableString forgetString = new SpannableString(getString(R.string.forgot_passwd));
+			forgetString.setSpan(new UnderlineSpan(), 0, forgetString.length(), 0);
+			forgot_password.setText(forgetString);
+			forgot_password.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Intent passwordRecovery = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.aptoide.com/account/password-recovery"));
+					startActivity(passwordRecovery);
+				}
+			});
 //			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
 //
 //				username = sPref.getString(Configs.LOGIN_USER_LOGIN, null);

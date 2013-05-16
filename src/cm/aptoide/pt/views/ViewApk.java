@@ -9,12 +9,10 @@ package cm.aptoide.pt.views;
 
 import java.util.ArrayList;
 
-import cm.aptoide.pt.Server;
-import cm.aptoide.pt.annotations.DatabaseField;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
+import cm.aptoide.pt.Server;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.comments.Comment;
 

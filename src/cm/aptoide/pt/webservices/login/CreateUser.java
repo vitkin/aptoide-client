@@ -14,23 +14,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.EditText;
+import org.holoeverywhere.widget.Toast;
 import org.json.JSONObject;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.SetAptoideTheme;
+import cm.aptoide.pt.AptoideThemePicker;
 import cm.aptoide.pt.util.Algorithms;
 
 public class CreateUser extends Activity /*SherlockActivity */{
@@ -48,7 +45,7 @@ public class CreateUser extends Activity /*SherlockActivity */{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.form_create_user);
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);

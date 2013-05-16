@@ -9,24 +9,24 @@ package cm.aptoide.pt.adapters;
 
 import java.util.ArrayList;
 
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.widget.ProgressBar;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.ScreenshotsViewer;
-
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
 import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.ScreenshotsViewer;
 
 public class ViewPagerAdapterScreenshots extends PagerAdapter {
 

@@ -1,11 +1,9 @@
 package cm.aptoide.pt;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import android.view.View;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -14,25 +12,22 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.preference.SharedPreferences;
+import org.holoeverywhere.widget.TextView;
 import org.json.JSONObject;
-
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.webservices.login.Login;
 
 import com.paypal.android.MEP.PayPal;
 import com.paypal.android.MEP.PayPalPreapproval;
-import com.paypal.android.MEP.PayPalResultDelegate;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.TextView;
+import android.view.View;
+import cm.aptoide.pt.webservices.login.Login;
+
 
 public class Buy extends Activity {
 
@@ -72,6 +67,7 @@ public class Buy extends Activity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.paypalbuy);
 		token = Login.getToken(this);

@@ -22,15 +22,16 @@ package cm.aptoide.pt.preferences;
 
 import java.util.UUID;
 
+import org.holoeverywhere.preference.PreferenceManager;
+import org.holoeverywhere.preference.SharedPreferences;
+
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.util.Log;
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
-import cm.aptoide.pt.R;
 
 /**
  * ManagerPreferences, manages aptoide's preferences I/O
@@ -153,10 +154,10 @@ public class ManagerPreferences{
 	
 	public ViewIconDownloadPermissions getIconDownloadPermissions(){
 		ViewIconDownloadPermissions permissions = new ViewIconDownloadPermissions(
-													getPreferences.getBoolean("wifi", true)
-													, getPreferences.getBoolean("ethernet", true)
-													, getPreferences.getBoolean("4g", true)
-													, getPreferences.getBoolean("3g", true) );
+													getPreferences.getBoolean("wifi", true), 
+													getPreferences.getBoolean("ethernet", true), 
+													getPreferences.getBoolean("4g", true), 
+													getPreferences.getBoolean("3g", true) );
 		return permissions;
 	}
 	

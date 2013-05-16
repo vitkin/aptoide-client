@@ -10,15 +10,16 @@ package cm.aptoide.pt.sharing;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import android.app.Activity;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.TextView;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import cm.aptoide.pt.R;
 
 public class WebViewFacebook extends Activity {  

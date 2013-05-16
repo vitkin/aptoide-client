@@ -7,6 +7,11 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.ListView;
+import org.holoeverywhere.widget.TextView;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -16,15 +21,10 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
         
@@ -40,7 +40,7 @@ public class SearchManager extends FragmentActivity/*SherlockFragmentActivity */
 
 	@Override
 	protected void onCreate(Bundle arg0) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(arg0);
 		
 		System.out.println("onCreate Search");

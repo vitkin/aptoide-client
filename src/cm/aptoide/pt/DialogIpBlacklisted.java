@@ -27,16 +27,17 @@ package cm.aptoide.pt;
 */
 
 
-import cm.aptoide.pt.R;
-import android.app.Dialog;
+import org.holoeverywhere.app.Dialog;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.TextView;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.TextView;
+
+import cm.aptoide.com.actionbarsherlock.view.Window;
 
 
 /**

@@ -17,7 +17,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -27,6 +33,9 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
+import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.ApplicationAptoide.StoreElements;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.ExtrasService;
 import cm.aptoide.pt.RepoParser;
@@ -46,7 +55,8 @@ public class MainService extends Service {
 	String defaultTopXmlPath = defaultPath+"/.aptoide/top.xml";
 	String defaultLatestXmlPath = defaultPath+"/.aptoide/latest.xml";
 	String defaultExtrasXmlPath = defaultPath+"/.aptoide/extras.xml";
-
+	String defaultBootConfigXmlPath = defaultPath+"/.aptoide/boot_config.xml";
+	
 	static ArrayList<String> serversParsing = new ArrayList<String>();
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -135,6 +145,7 @@ public class MainService extends Service {
 
 		return f.getAbsolutePath();
 	}
+	
 //
 //	public String getTop(Server server,String xmlpath) throws MalformedURLException, IOException{
 //		File f = new File(xmlpath);
@@ -236,6 +247,7 @@ public class MainService extends Service {
 				@Override
 				public void run() {
 						addStoreInfo(db, server);
+						parseBootConfig(db, server);
 						parseTop(db, server);
 						parseLatest(db, server);
 					try{
@@ -257,7 +269,94 @@ public class MainService extends Service {
 			serversParsing.add(server.url);
 		}
 	}
-
+	
+	protected void parseBootConfig(final Database db, final Server server) {
+		new Thread(new Runnable() {
+			public void run() {
+				String path;
+				try {
+					//			serversParsing.put((int)server.id, server);
+					path = get(server, defaultBootConfigXmlPath, "boot_config.xml", false);
+					SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+					
+					parser.parse(new File(path), new DefaultHandler(){
+						StringBuilder sb = new StringBuilder();
+						String avatar;
+						String theme;
+						String description;
+						String view;
+						String items;
+						
+						public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes attributes) throws SAXException {
+							sb.setLength(0);
+						};
+						
+						public void characters(char[] ch, int start, int length) throws SAXException {
+							sb.append(ch,start,length);
+						};
+						
+						public void endElement(String uri, String localName, String qName) throws SAXException {
+							
+							ApplicationAptoide.StoreElements element;
+							try{
+								element = StoreElements.valueOf(localName);
+							}catch (Exception e) {
+								element = StoreElements.none;
+							}
+							
+							switch (element) {
+							case avatar:
+								this.avatar = sb.toString();
+								break;
+							case description:
+								this.description = sb.toString();
+								Log.d("MainService-bootconfig-parser: description", description);
+								break;
+							case items:
+								this.items = sb.toString();
+								break;
+							case theme:
+								this.theme = sb.toString();
+								Log.d("MainService-bootconfig-parser: theme", theme);
+								break;
+							case view:
+								this.view = sb.toString();
+								break;
+							case storeconf:
+								db.updateStoreInfo(avatar, theme, description, view, items, server.id);
+								break;
+							default:
+								break;
+							}
+							
+							
+						};
+						
+						
+						
+						
+					});
+					
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (ParserConfigurationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SAXException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		
+		
+		
+	}
+	
+	
+	
 	public boolean deleteStore(Database db, long id){
 		if(!serversParsing.contains(db.getServer(id, false).url)){
 			db.deleteServer(id,true);

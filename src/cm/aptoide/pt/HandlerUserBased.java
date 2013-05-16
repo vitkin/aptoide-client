@@ -16,10 +16,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.ContentValues;
-
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewApkFeaturedEditorsChoice;
-import cm.aptoide.pt.views.ViewApkItemBased;
 import cm.aptoide.pt.views.ViewApkUserBased;
 
 public class HandlerUserBased extends DefaultHandler {

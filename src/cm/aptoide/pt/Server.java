@@ -7,12 +7,9 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.File;
-
-import cm.aptoide.pt.views.ViewLogin;
-
 import android.os.Parcel;
 import android.os.Parcelable;
+import cm.aptoide.pt.views.ViewLogin;
 
 public class Server implements Parcelable{
 	
@@ -32,6 +29,7 @@ public class Server implements Parcelable{
 	public String screenspath;
 	public String featuredgraphicPath;
 	public String name;
+	public String theme;
 	
 	private ViewLogin login;
 	

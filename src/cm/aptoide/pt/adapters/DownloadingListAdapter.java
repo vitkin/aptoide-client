@@ -19,27 +19,27 @@
  */
 package cm.aptoide.pt.adapters;
 
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.TextView;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 public class DownloadingListAdapter extends BaseAdapter{
 	private Context context;

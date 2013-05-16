@@ -23,21 +23,16 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import cm.aptoide.pt.util.Utils;
-import android.app.Activity;
+import org.holoeverywhere.app.Activity;
+
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import cm.aptoide.pt.util.Utils;
 
 public class ImageLoader2 {
     

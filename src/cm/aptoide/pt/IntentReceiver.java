@@ -21,14 +21,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -41,14 +39,11 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 public class IntentReceiver extends Activity implements OnDismissListener{
 //	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";
@@ -97,7 +92,7 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-        SetAptoideTheme.setAptoideTheme(this);
+        AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		if(getIntent().getData()!=null){
 
@@ -165,17 +160,14 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 				parseXmlMyapp(TMP_MYAPP_FILE);
 
 				if(app!=null&&!app.isEmpty()){
-					View simpleMessageView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_message, null);
-					Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleMessageView);
-					final AlertDialog alertDialog = dialogBuilder.create();
-					alertDialog.setIcon(android.R.drawable.ic_menu_more);
-					alertDialog.setTitle(ApplicationAptoide.MARKETNAME);
-					alertDialog.setCancelable(true);
-					((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.installapp_alrt) +app.get("name")+"?");
-
-					alertDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-
-						public void onClick(DialogInterface dialog, int which) {
+					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+					alertDialogBuilder.setTitle(ApplicationAptoide.MARKETNAME);
+					alertDialogBuilder
+					.setIcon(android.R.drawable.ic_menu_more)
+					.setMessage(getString(R.string.installapp_alrt) +app.get("name")+"?")
+					.setCancelable(false)
+					.setPositiveButton(getString(android.R.string.yes),new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,int id) {
 							ViewApk apk = new ViewApk();
 							apk.setApkid(app.get("apkid"));
 							apk.setName(app.get("name"));
@@ -187,11 +179,14 @@ public class IntentReceiver extends Activity implements OnDismissListener{
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}
+
 						}
-					});
-					alertDialog.setButton(Dialog.BUTTON_NEGATIVE,getString(android.R.string.no), neutralListener );
+					})
+					.setNegativeButton(getString(android.R.string.no), neutralListener);
+					AlertDialog alertDialog = alertDialogBuilder.create();
 					alertDialog.setOnDismissListener(this);
 					alertDialog.show();
+
 				}else{
 					proceed();
 				}

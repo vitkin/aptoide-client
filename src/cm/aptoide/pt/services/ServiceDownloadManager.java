@@ -41,18 +41,16 @@ import android.os.RemoteException;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
+import cm.aptoide.pt.AIDLDownloadManager;
+import cm.aptoide.pt.AIDLDownloadObserver;
+import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.views.EnumDownloadStatus;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.views.ViewListDownloads;
-import cm.aptoide.pt.AIDLDownloadManager;
-import cm.aptoide.pt.AIDLDownloadObserver;
-import cm.aptoide.pt.ApplicationAptoide;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.SetAptoideTheme;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 
 /**
  * ServiceDownloadManager, manages interaction between interface classes and services

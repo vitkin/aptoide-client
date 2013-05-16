@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import cm.aptoide.pt.Database;
 import android.graphics.Bitmap;
 import android.util.Log;
 

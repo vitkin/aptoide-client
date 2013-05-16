@@ -7,7 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,30 +14,29 @@ import java.util.HashMap;
 import java.util.List;
 
 import android.annotation.SuppressLint;
-import android.app.Application;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.CharArrayBuffer;
-import android.database.ContentObserver;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.database.MatrixCursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import cm.aptoide.pt.DbStructure;
 import cm.aptoide.pt.Server.State;
-import cm.aptoide.pt.sharing.DialogBaseShareListener;
-import cm.aptoide.pt.views.*;
+import cm.aptoide.pt.views.EnumApkMalware;
+import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.views.ViewApkFeaturedEditorsChoice;
+import cm.aptoide.pt.views.ViewApkFeaturedTop;
+import cm.aptoide.pt.views.ViewApkInfoXml;
+import cm.aptoide.pt.views.ViewApkItemBased;
+import cm.aptoide.pt.views.ViewApkLatest;
+import cm.aptoide.pt.views.ViewApkTop;
+import cm.aptoide.pt.views.ViewApkUserBased;
+import cm.aptoide.pt.views.ViewLogin;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.comments.Comment;
-import org.json.JSONObject;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -2757,6 +2755,57 @@ public class Database {
 
 		database.update(DbStructure.TABLE_REPO, values, DbStructure.COLUMN_URL
 				+ "=?", new String[] { url });
+	}
+
+	public void updateStoreInfo(String avatar, String theme,
+			String description, String view, String items, long id) {
+		ContentValues values = new ContentValues();
+		values.put(DbStructure.COLUMN_AVATAR_URL, avatar);
+		values.put(DbStructure.COLUMN_STORE_THEME, theme);
+		values.put(DbStructure.COLUMN_STORE_DESCRIPTION, description);
+		values.put(DbStructure.COLUMN_STORE_VIEW, view);
+		values.put(DbStructure.COLUMN_STORE_ITEMS, items);
+		
+		database.update(DbStructure.TABLE_REPO, values, DbStructure.COLUMN__ID + "= ?", new String[]{id+""});
+				
+		
+		
+	}
+
+	public String getStoreTheme(long store_id) {
+		
+		String return_string = "default";
+		
+		Cursor c = database.query(DbStructure.TABLE_REPO, new String[]{DbStructure.COLUMN_STORE_THEME}, DbStructure.COLUMN__ID + "=?", new String[]{store_id+""}, null, null, null);
+		if(c.moveToFirst()){
+			return_string = c.getString(0);
+		}
+		
+		return return_string;
+	}
+
+	public String getStoreAvatar(long store_id) {
+		
+		String return_string = "default";
+		
+		Cursor c = database.query(DbStructure.TABLE_REPO, new String[]{DbStructure.COLUMN_AVATAR_URL}, DbStructure.COLUMN__ID + "=?", new String[]{store_id+""}, null, null, null);
+		if(c.moveToFirst()){
+			return_string = c.getString(0);
+		}
+		
+		return return_string;
+	}
+
+	public String getStoreDescription(long store_id) {
+		
+		String return_string = "default";
+		
+		Cursor c = database.query(DbStructure.TABLE_REPO, new String[]{DbStructure.COLUMN_STORE_DESCRIPTION}, DbStructure.COLUMN__ID + "=?", new String[]{store_id+""}, null, null, null);
+		if(c.moveToFirst()){
+			return_string = c.getString(0);
+		}
+		
+		return return_string;
 	}
 
 }

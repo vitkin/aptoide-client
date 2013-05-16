@@ -2,28 +2,23 @@ package cm.aptoide.pt;
 
 import java.util.ArrayList;
 
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import org.holoeverywhere.ArrayAdapter;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.CheckBox;
+import org.holoeverywhere.widget.ListView;
+import org.holoeverywhere.widget.TextView;
+import org.holoeverywhere.widget.Toast;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
+
 
 public class ExcludedUpdatesActivity extends Activity /*SherlockActivity */{
 	ArrayList<ExcludedUpdate> excludedUpdates = new ArrayList<ExcludedUpdate>();
@@ -36,7 +31,7 @@ public class ExcludedUpdatesActivity extends Activity /*SherlockActivity */{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.list_excluded_uploads);

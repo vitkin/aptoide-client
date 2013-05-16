@@ -10,11 +10,13 @@ package cm.aptoide.pt.util.quickaction;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.widget.TextView;
+
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -23,7 +25,6 @@ import android.view.animation.Animation;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.PopupWindow.OnDismissListener;
-import android.widget.TextView;
 import cm.aptoide.pt.R;
 
 /**

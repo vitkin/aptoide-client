@@ -7,18 +7,44 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.AlertDialog.Builder;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.CheckBox;
+import org.holoeverywhere.widget.CheckedTextView;
+import org.holoeverywhere.widget.LinearLayout;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.Spinner;
+import org.holoeverywhere.widget.TextView;
+import org.holoeverywhere.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.*;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.*;
-import android.support.v4.app.FragmentActivity;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -29,11 +55,17 @@ import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.view.ViewGroup;
+
+
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageView;
+
+import android.widget.RatingBar;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -48,7 +80,13 @@ import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
-import cm.aptoide.pt.views.*;
+import cm.aptoide.pt.views.EnumApkMalware;
+import cm.aptoide.pt.views.EnumDownloadFailReason;
+import cm.aptoide.pt.views.EnumDownloadStatus;
+import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.views.ViewCache;
+import cm.aptoide.pt.views.ViewDownload;
+import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
@@ -58,16 +96,14 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-import com.mopub.mobileads.MoPubView;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
+import cm.aptoide.com.actionbarsherlock.view.Menu;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import com.google.ads.AdRequest;
+import com.google.ads.AdView;
 
 
-public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
+public class ApkInfo extends Activity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
 
 
 
@@ -127,12 +163,11 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
     private View loading;
     private String installString;
     private boolean unstrustedPayment = false;
-    private MoPubView mAdView;
 
 
     @Override
     protected void onCreate(Bundle arg0) {
-        SetAptoideTheme.setAptoideTheme(this);
+        AptoideThemePicker.setAptoideTheme(this);
         super.onCreate(arg0);
         setContentView(R.layout.app_info);
 
@@ -173,20 +208,20 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         if(category.equals(Category.INFOXML)){
             spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
             adapter = new SimpleCursorAdapter(this,
-                    android.R.layout.simple_spinner_item, null,
+            		cm.aptoide.pt.R.layout.simple_spinner_item, null,
                     new String[] { "vername" ,"repo_id"}, new int[] { android.R.id.text1 },
                     CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
             adapter.setViewBinder(new ViewBinder() {
 
                 @Override
                 public boolean setViewValue(View textView, Cursor cursor, int position) {
-                    ((TextView) textView).setText(getString(R.string.version)+" " + cursor.getString(position) +" - "+RepoUtils.split(db.getServer(cursor.getLong(3),false).url));
+                    ((android.widget.TextView) textView).setText(getString(R.string.version)+" " + cursor.getString(position) +" - "+RepoUtils.split(db.getServer(cursor.getLong(3),false).url));
                     return true;
                 }
             });
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            adapter.setDropDownViewResource(cm.aptoide.pt.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
-            spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                 @Override
                 public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -281,9 +316,9 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 //                AdView adView = (AdView)findViewById(R.id.adView);
 //                adView.loadAd(new AdRequest());
 
-                mAdView = (MoPubView) findViewById(R.id.adview);
-                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
-                mAdView.loadAd();
+//                mAdView = (MoPubView) findViewById(R.id.adview);
+//                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
+//                mAdView.loadAd();
                 pd.dismiss();
                 viewApk = arg1;
                 new Thread(new Runnable() {
@@ -347,8 +382,10 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 
                 try {
                     ((RatingBar) findViewById(R.id.ratingbar)).setRating(Float.parseFloat(viewApk.getRating()));
+                    ((RatingBar) findViewById(R.id.ratingbar)).setIsIndicator(true);
                 } catch (Exception e) {
                     ((RatingBar) findViewById(R.id.ratingbar)).setRating(0);
+                    ((RatingBar) findViewById(R.id.ratingbar)).setIsIndicator(true);
                 }
                 ((TextView) findViewById(R.id.app_store)).setText(getString(R.string.store)+": " +repo_string);
                 ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
@@ -869,6 +906,8 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                                         cache,
                                         db.getServer(viewApk.getRepo_id(), false).getLogin());
                             }
+                            
+                             
 
 
                             runOnUiThread(new Runnable() {
@@ -876,7 +915,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                                 @Override
                                 public void run() {
                                     ImageView manage = (ImageView) findViewById(R.id.icon_manage);
-                                    manage.setVisibility(View.GONE);
+////                                    manage.setVisibility(View.GONE);
                                     manage.setOnClickListener(new OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
@@ -884,7 +923,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                                         }
                                     });
                                     findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
-                                    findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+//                                    findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
                                     findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
                                 }
                             });
@@ -925,7 +964,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 
         if(!download.isNull()){
             ImageView manage = (ImageView) findViewById(R.id.icon_manage);
-            manage.setVisibility(View.GONE);
+//            manage.setVisibility(View.GONE);
             manage.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -938,7 +977,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                 e.printStackTrace();
             }
             findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
-            findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+//            findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
             findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
             ((ProgressBar) findViewById(R.id.downloading_progress)).setProgress(download.getProgress());
             ((TextView) findViewById(R.id.speed)).setText(download.getSpeedInKBpsString(this));
@@ -1020,7 +1059,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                         toast.show();
                     }
                     findViewById(R.id.download_progress).setVisibility(View.GONE);
-                    findViewById(R.id.icon_manage).setVisibility(View.GONE);
+//                    findViewById(R.id.icon_manage).setVisibility(View.GONE);
                     findViewById(R.id.downloading_name).setVisibility(View.GONE);
                     findViewById(R.id.btinstall).setOnClickListener(installListener);
                     break;
@@ -1034,7 +1073,7 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
                     }
                     findViewById(R.id.btinstall).setOnClickListener(installListener);
                     findViewById(R.id.download_progress).setVisibility(View.GONE);
-                    findViewById(R.id.icon_manage).setVisibility(View.GONE);
+//                    findViewById(R.id.icon_manage).setVisibility(View.GONE);
                     findViewById(R.id.downloading_name).setVisibility(View.GONE);
                     break;
 
@@ -1086,7 +1125,6 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
         }
         unbindService(serviceManagerConnection);
         handler = null;
-        mAdView.destroy();
 
     }
 
@@ -1460,49 +1498,50 @@ public class ApkInfo extends FragmentActivity /*SherlockFragmentActivity */imple
 
             if(Login.isLoggedIn(context)){
 
-                View simpleMessageView = LayoutInflater.from(context).inflate(R.layout.dialog_simple_message, null);
-                Builder dialogBuilder = new AlertDialog.Builder(context).setView(simpleMessageView);
-                final AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.setIcon(android.R.drawable.ic_menu_info_details);
-                alertDialog.setTitle(R.string.payment_method);
-                ((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(getString(R.string.paypal_message));
+            	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+            	alertDialogBuilder.setTitle(R.string.payment_method);
+            	alertDialogBuilder
+            		.setIcon(android.R.drawable.ic_menu_info_details)
+            		.setMessage(getString(R.string.paypal_message))
+            		.setCancelable(false)
+            		.setPositiveButton(getString(R.string.credit_card),new DialogInterface.OnClickListener() {
+            			public void onClick(DialogInterface dialog,int id) {
+            				 Intent i = new Intent(ApkInfo.this, CreditCard.class);
+                             i.putExtra("apkid", viewApk.getApkid());
+                             i.putExtra("versionName", viewApk.getVername());
+                             i.putExtra("repo", viewApk.getRepoName());
+                             startActivityForResult(i, 1);
 
-                alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Credit Card", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(ApkInfo.this, CreditCard.class);
-                        i.putExtra("apkid", viewApk.getApkid());
-                        i.putExtra("versionName", viewApk.getVername());
-                        i.putExtra("repo", viewApk.getRepoName());
-                        startActivityForResult(i, 1);
-                    }});
-
-                alertDialog.setButton(Dialog.BUTTON_NEGATIVE,"PayPal", new DialogInterface.OnClickListener() {
-
-
-
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(ApkInfo.this, Buy.class);
-                        i.putExtra("apkid", viewApk.getApkid());
-                        i.putExtra("versionName", viewApk.getVername());
-                        i.putExtra("repo", viewApk.getRepoName());
-                        startActivityForResult(i, 1);
-                    }
-
-                });
-                alertDialog.show();
+            			}
+            		 })
+            		.setNegativeButton(getString(R.string.paypal),new DialogInterface.OnClickListener() {
+            			public void onClick(DialogInterface dialog,int id) {
+            				  Intent i = new Intent(ApkInfo.this, Buy.class);
+                              i.putExtra("apkid", viewApk.getApkid());
+                              i.putExtra("versionName", viewApk.getVername());
+                              i.putExtra("repo", viewApk.getRepoName());
+                              startActivityForResult(i, 1);
+            			}
+            		});
+            	AlertDialog alertDialog = alertDialogBuilder.create();
+            	alertDialog.show();
+            	
                 if(unstrustedPayment){
-                    simpleMessageView = LayoutInflater.from(context).inflate(R.layout.dialog_simple_message, null);
-                    AlertDialog method2 = new AlertDialog.Builder(context).setView(simpleMessageView).create();
-                    method2.setIcon(android.R.drawable.ic_menu_info_details);
-                    ((TextView) simpleMessageView.findViewById(R.id.dialog_message)).setText(R.string.payment_warning_text);
-                    method2.setTitle(R.string.payment_warning_title);
-                    method2.setButton(DialogInterface.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    method2.show();
+                	AlertDialog.Builder alertDialogBuilder1 = new AlertDialog.Builder(context);
+                	alertDialogBuilder1.setTitle(R.string.payment_warning_title);
+                	alertDialogBuilder1
+                		.setIcon(android.R.drawable.ic_menu_info_details)
+                		.setMessage(R.string.payment_warning_text)
+                		.setCancelable(false)
+                		.setNeutralButton(getString(android.R.string.ok),new DialogInterface.OnClickListener() {
+                			public void onClick(DialogInterface dialog,int id) {
+                				dialog.cancel();
+
+                			}
+                		 });
+                	AlertDialog alertDialog1 = alertDialogBuilder1.create();
+                	alertDialog1.show();
+                	
                 }
             }else{
                 startActivityForResult(new Intent(ApkInfo.this,Login.class), 1);

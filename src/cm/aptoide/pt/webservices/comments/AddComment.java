@@ -7,20 +7,17 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.comments;
 
-import java.net.URL;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.EditText;
 
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
-import cm.aptoide.pt.webservices.login.Login;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.SetAptoideTheme;
-
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.AptoideThemePicker;
+import cm.aptoide.pt.webservices.login.Login;
+
 
 public class AddComment extends Activity /*SherlockActivity */{
 
@@ -37,7 +34,7 @@ public class AddComment extends Activity /*SherlockActivity */{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.form_add_comment);

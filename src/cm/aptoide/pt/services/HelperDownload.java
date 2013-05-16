@@ -31,7 +31,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeoutException;
 import java.util.zip.GZIPInputStream;
 
-import cm.aptoide.pt.ApplicationAptoide;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -40,12 +39,15 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.holoeverywhere.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.Gravity;
-import android.widget.Toast;
+import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.exceptions.AptoideExceptionDownload;
 import cm.aptoide.pt.exceptions.AptoideExceptionNotFound;
 import cm.aptoide.pt.util.Constants;
@@ -55,9 +57,6 @@ import cm.aptoide.pt.views.EnumDownloadStatus;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownload;
 import cm.aptoide.pt.views.ViewLogin;
-import cm.aptoide.pt.R;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * HelperDownload, manages the actual download processes, and updates the download manager about the status of each download

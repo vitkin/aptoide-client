@@ -11,26 +11,29 @@ package cm.aptoide.pt.sharing;
 import java.io.InputStream;
 import java.net.URL;
 
-import android.app.Activity;
-import android.app.Dialog;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Dialog;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.TextView;
+import org.holoeverywhere.widget.Toast;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
 import cm.aptoide.com.facebook.android.DialogError;
 import cm.aptoide.com.facebook.android.Facebook;
 import cm.aptoide.com.facebook.android.Facebook.DialogListener;
 import cm.aptoide.com.facebook.android.FacebookError;
 import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.AptoideThemePicker;
 import cm.aptoide.pt.R;
+
+import cm.aptoide.com.actionbarsherlock.view.Window;
 
 
 
@@ -80,6 +83,7 @@ public class DialogShareOnFacebook extends Dialog{
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		AptoideThemePicker.setAptoideTheme(activity);
 		super.onCreate(savedInstanceState);
 
 		facebook = new Facebook(APP_ID);

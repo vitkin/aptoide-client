@@ -19,10 +19,12 @@
 */
 package cm.aptoide.pt;
 
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.LinearLayout;
+import org.holoeverywhere.widget.ListView;
+import org.holoeverywhere.widget.TextView;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -33,27 +35,19 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.TextView;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.adapters.DownloadedListAdapter;
 import cm.aptoide.pt.adapters.DownloadingListAdapter;
 import cm.aptoide.pt.adapters.NotDownloadedListAdapter;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt.webservices.login.Login;
-import cm.aptoide.pt.AIDLDownloadManager;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
+
+import cm.aptoide.com.actionbarsherlock.view.Menu;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 
 /**
  * DownloadManager
@@ -263,8 +257,9 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 	}
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+	public void onCreate(Bundle savedInstanceState) {
+		AptoideThemePicker.setAptoideTheme(this);
+		super.onCreate(savedInstanceState);
 		if(!isRunning){
 			isRunning = true;
 
@@ -281,13 +276,13 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			downloading.setVisibility(View.GONE);
 			
 			downloaded = (LinearLayout) findViewById(R.id.downloaded_apps);
-//			downloaded.setVisibility(View.GONE);
+			downloaded.setVisibility(View.GONE);
 
 			notDownloaded = (LinearLayout) findViewById(R.id.failed_apps);
 			notDownloaded.setVisibility(View.GONE);
 
 			exitButton = (Button) findViewById(R.id.exit);
-			exitButton.setOnClickListener(new OnClickListener() {
+			exitButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					finish();
@@ -298,7 +293,6 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			noDownloads.setVisibility(View.VISIBLE);
 		}
 
-		super.onCreate(savedInstanceState);
 	}
 	
 	private void continueLoading(){
@@ -321,6 +315,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 					e.printStackTrace();
 				}
 			}
+
 		});
 		
 		ListView notUploadedList = (ListView) findViewById(R.id.failed_list);

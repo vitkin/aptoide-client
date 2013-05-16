@@ -25,36 +25,32 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URLConnection;
-import java.util.HashMap;
 import java.util.Locale;
-
-import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.os.Environment;
-import android.util.Log;
-import cm.aptoide.pt.preferences.ManagerPreferences;
-import cm.aptoide.pt.util.NetworkUtils;
-import cm.aptoide.pt.views.ViewIconDownloadPermissions;
-
-import cm.aptoide.com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
-import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
-import cm.aptoide.com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import cm.aptoide.com.nostra13.universalimageloader.core.assist.FlushedInputStream;
-import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageScaleType;
-import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import cm.aptoide.com.nostra13.universalimageloader.core.download.ImageDownloader;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.acra.*;
+import org.acra.annotation.*;
+import org.holoeverywhere.app.Application;
+import org.holoeverywhere.preference.SharedPreferences;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import android.content.Context;
+import android.os.Environment;
+import android.util.Log;
+import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.FlushedInputStream;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.nostra13.universalimageloader.core.download.ImageDownloader;
+import cm.aptoide.pt.preferences.ManagerPreferences;
+import cm.aptoide.pt.util.NetworkUtils;
 
 /**
  * ApplicationAptoide, centralizes, statically, calls to instantiated objects
@@ -62,6 +58,11 @@ import javax.xml.parsers.SAXParserFactory;
  * @author dsilveira
  *
  */
+//@ReportsCrashes(
+//   		formKey = "",
+//   		formUri = "http://www.backendofyourchoice.com/reportpath"
+//)
+
 public class ApplicationAptoide extends Application {
 
 	private ManagerPreferences managerPreferences;
@@ -81,11 +82,15 @@ public class ApplicationAptoide extends Application {
     public static String APTOIDETHEME = "";
     public static String MARKETNAME = "";
 
-    enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME }
+    static enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME }
+    public static enum StoreElements { storeconf ,  theme, avatar, description, view, items, none };
+    
+    
 
 	@Override
 	public void onCreate() {
-		SetAptoideTheme.setAptoideTheme(this);
+//		ACRA.init(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		managerPreferences = new ManagerPreferences(getApplicationContext());
 		setContext(getApplicationContext());
 		 // Create global configuration and initialize ImageLoader with this configuration
@@ -286,7 +291,10 @@ public class ApplicationAptoide extends Application {
 		public InputStream getStreamFromNetwork(URI imageUri) throws IOException {
 
 	        boolean download = NetworkUtils.isPermittedConnectionAvailable(context, managerPreferences.getIconDownloadPermissions());
-
+	        
+	        Log.d("AplicationAptoide", ""+download);
+	        Log.d("AplicationAptoide", ""+managerPreferences.getIconDownloadPermissions());
+	        
 	        if(download){
 	        	URLConnection conn = imageUri.toURL().openConnection();
 				conn.setConnectTimeout(connectTimeout);

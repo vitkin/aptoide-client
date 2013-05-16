@@ -9,12 +9,11 @@ package cm.aptoide.pt.adapters;
 
 import java.util.ArrayList;
 
-import cm.aptoide.pt.R;
-
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.view.View;
 import android.view.ViewGroup;
+import cm.aptoide.pt.R;
 
 public class ViewPagerAdapter extends PagerAdapter {
 

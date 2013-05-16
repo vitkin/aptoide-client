@@ -15,8 +15,6 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import cm.aptoide.pt.HandlerTop.ElementHandler;
-import cm.aptoide.pt.Server.State;
 import cm.aptoide.pt.util.Md5Handler;
 import cm.aptoide.pt.views.ViewApkInfoXml;
 

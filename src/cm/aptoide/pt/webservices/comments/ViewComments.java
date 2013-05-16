@@ -7,19 +7,18 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.comments;
 
-import android.app.Activity;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.widget.LinearLayout;
+
 import android.os.Bundle;
-import android.widget.LinearLayout;
-import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.pt.R;
-import cm.aptoide.pt.SetAptoideTheme;
+import cm.aptoide.pt.AptoideThemePicker;
 
 public class ViewComments extends Activity /*SherlockActivity */{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.list_all_comments);

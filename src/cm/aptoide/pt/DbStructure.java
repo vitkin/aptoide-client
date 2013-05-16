@@ -92,6 +92,10 @@ public class DbStructure extends SQLiteOpenHelper {
 	public final static String COLUMN_PASSWORD = "password";
 	public final static String COLUMN_AVATAR_URL = "avatar_url";
 	public final static String COLUMN_APKPATH = "apkpath";
+	public final static String COLUMN_STORE_THEME = "theme";
+	public static final String COLUMN_STORE_DESCRIPTION = "description";
+	public static final String COLUMN_STORE_VIEW = "view";
+	public static final String COLUMN_STORE_ITEMS = "items";
 
 	public final static String COLUMN_CATEGORY_1ST_ID = COLUMN_CATEGORY_1ST + "_id";
 	public final static String COLUMN_CATEGORY_2ND_ID = COLUMN_CATEGORY_2ND + "_id";
@@ -108,6 +112,7 @@ public class DbStructure extends SQLiteOpenHelper {
     public static final String COLUMN_MALWARE_REASON = "malware_reason" ;
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_TEXT = "text";
+	
 
 
     public DbStructure(Context context) {
@@ -189,6 +194,10 @@ public class DbStructure extends SQLiteOpenHelper {
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_SCREENS_PATH,""))
 									.addColumn(new Column(SQLiteType.INTEGER, COLUMN_DOWNLOADS,"0"))
 									.addColumn(new Column(SQLiteType.TEXT, COLUMN_APKPATH,""))
+									.addColumn(new Column(SQLiteType.TEXT, COLUMN_STORE_THEME,""))
+									.addColumn(new Column(SQLiteType.TEXT, COLUMN_STORE_DESCRIPTION,""))
+									.addColumn(new Column(SQLiteType.TEXT, COLUMN_STORE_VIEW,""))
+									.addColumn(new Column(SQLiteType.TEXT, COLUMN_STORE_ITEMS,""))
 									.createTable();
 
 

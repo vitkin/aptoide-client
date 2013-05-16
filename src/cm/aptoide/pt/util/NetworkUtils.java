@@ -10,7 +10,9 @@ package cm.aptoide.pt.util;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,8 +25,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Configs;
-import cm.aptoide.pt.views.ViewIconDownloadPermissions;
 import cm.aptoide.pt.R;
+import cm.aptoide.pt.views.ViewIconDownloadPermissions;
 
 public class NetworkUtils {
 
