@@ -227,7 +227,7 @@ public class MainService extends Service {
 			}
 			db.addStore(uri_str,username,password);
 			server = db.getServer(uri_str);
-			db.addStoreInfo("",RepoUtils.split(server.url),"0",server.id);
+			db.addStoreInfo("",RepoUtils.split(server.url),"0","default","","","",server.id);
 			parseServer(db, server);
 		} catch (Exception e){
 			e.printStackTrace();
@@ -247,7 +247,7 @@ public class MainService extends Service {
 				@Override
 				public void run() {
 						addStoreInfo(db, server);
-						parseBootConfig(db, server);
+//						parseBootConfig(db, server);
 						parseTop(db, server);
 						parseLatest(db, server);
 					try{
@@ -270,7 +270,7 @@ public class MainService extends Service {
 		}
 	}
 	
-	protected void parseBootConfig(final Database db, final Server server) {
+	private void parseBootConfig(final Database db, final Server server) {
 		new Thread(new Runnable() {
 			public void run() {
 				String path;
@@ -449,12 +449,16 @@ public class MainService extends Service {
 				String avatar = array.getString("avatar");
 				String name = array.getString("name");
 				String downloads = array.getString("downloads");
-				db.addStoreInfo(avatar,name,withSuffix(downloads),server.id);
+				String theme = array.getString("theme");
+				String description = array.getString("description");
+				String view = array.getString("view");
+				String items = array.getString("items");
+				db.addStoreInfo(avatar,name,withSuffix(downloads),theme,description,view,items,server.id);
 			}
 			connection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
-			db.addStoreInfo("",RepoUtils.split(server.url),"0",server.id);
+			db.addStoreInfo("",RepoUtils.split(server.url),"0","default","","","",server.id);
 		}
 
 

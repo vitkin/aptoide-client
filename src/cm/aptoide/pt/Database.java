@@ -2132,8 +2132,7 @@ public class Database {
 		database.insert(DbStructure.TABLE_HASHES, null, values);
 	}
 
-	public void addStoreInfo(String avatar, String name, String downloads,
-			long id) {
+	public void addStoreInfo(String avatar, String name, String downloads, String theme, String description, String view, String items, long id) {
 		ContentValues values = new ContentValues();
 		if (avatar == null) {
 			avatar = "";
@@ -2147,6 +2146,11 @@ public class Database {
 		values.put(DbStructure.COLUMN_AVATAR_URL, avatar);
 		values.put(DbStructure.COLUMN_NAME, name);
 		values.put(DbStructure.COLUMN_DOWNLOADS, downloads);
+		values.put(DbStructure.COLUMN_AVATAR_URL, avatar);
+		values.put(DbStructure.COLUMN_STORE_THEME, theme);
+		values.put(DbStructure.COLUMN_STORE_DESCRIPTION, description);
+		values.put(DbStructure.COLUMN_STORE_VIEW, view);
+		values.put(DbStructure.COLUMN_STORE_ITEMS, items);
 		database.update("repo", values, "_id=?", new String[] { id + "" });
 
 	}

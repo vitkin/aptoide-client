@@ -99,6 +99,8 @@ import cm.aptoide.pt.webservices.taste.Likes;
 
 import cm.aptoide.com.actionbarsherlock.view.Menu;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+
+import com.adsdk.sdk.mraid.MoPubView;
 import com.google.ads.AdRequest;
 import com.google.ads.AdView;
 
@@ -106,7 +108,7 @@ import com.google.ads.AdView;
 public class ApkInfo extends Activity /*SherlockFragmentActivity */implements LoaderCallbacks<Cursor> {
 
 
-
+	private MoPubView mAdView;
 
     private ViewApk viewApk = null;
     private Database db;
@@ -297,7 +299,7 @@ public class ApkInfo extends Activity /*SherlockFragmentActivity */implements Lo
 //		findViewById(R.id.inst_version).setVisibility(View.VISIBLE);
         getSupportLoaderManager().restartLoader(20, b, new LoaderCallbacks<ViewApk>() {
 
-            @Override
+			@Override
             public Loader<ViewApk> onCreateLoader(int arg0, final Bundle arg1) {
                 pd.show();
                 pd.setMessage(getString(R.string.please_wait));
@@ -316,9 +318,9 @@ public class ApkInfo extends Activity /*SherlockFragmentActivity */implements Lo
 //                AdView adView = (AdView)findViewById(R.id.adView);
 //                adView.loadAd(new AdRequest());
 
-//                mAdView = (MoPubView) findViewById(R.id.adview);
-//                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
-//                mAdView.loadAd();
+                mAdView = (MoPubView) findViewById(R.id.adview);
+                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
+                mAdView.loadAd();
                 pd.dismiss();
                 viewApk = arg1;
                 new Thread(new Runnable() {
@@ -1125,7 +1127,7 @@ public class ApkInfo extends Activity /*SherlockFragmentActivity */implements Lo
         }
         unbindService(serviceManagerConnection);
         handler = null;
-
+        mAdView.destroy();
     }
 
 
