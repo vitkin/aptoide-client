@@ -23,9 +23,8 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-
-        android:theme="@android:style/Theme.NoTitleBar" >
-        <activity android:name=".MainActivity" >
+        android:theme="@style/Aptoide.Theme" >
+        <activity android:name=".Start" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,8 +32,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Start"
-            android:configChanges="orientation|keyboardHidden"
+            android:name=".MainActivity"
+            android:configChanges="orientation"
             android:launchMode="singleTask" >
             <meta-data
                 android:name="android.app.default_searchable"
@@ -49,68 +48,55 @@
         </activity>
         <activity
             android:name=".Settings"
-            android:configChanges="orientation|keyboardHidden"
-
-            android:theme="@android:style/Theme.Black.NoTitleBar" />
+            android:label="@string/settings_title_bar"
+            android:configChanges="orientation" 
+            android:theme="@style/Holo.Theme.NoActionBar"/>
         <activity
             android:name=".ScheduledDownloads"
-            android:configChanges="orientation|keyboardHidden"
-                >
+            android:configChanges="orientation" >
             <meta-data
                 android:name="android.app.default_searchable"
                 android:value=".SearchManager" />
         </activity>
         <activity
             android:name=".webservices.login.Login"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".ExcludedUpdatesActivity"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".webservices.comments.AddComment"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".webservices.comments.ViewComments"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".webservices.login.CreateUser"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".ScreenshotsViewer"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".DownloadManager"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".HWSpecActivity"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".sharing.WebViewFacebook"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".sharing.WebViewTwitter"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".Buy"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".CreditCard"
-            android:configChanges="orientation|keyboardHidden"
-                />
+            android:configChanges="orientation" />
         <activity
             android:name=".SearchManager"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation"
             android:exported="false"
             android:launchMode="singleTask"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
@@ -126,7 +112,7 @@
         </activity>
         <activity
             android:name=".IntentReceiver"
-            android:configChanges="orientation|keyboardHidden"
+            android:configChanges="orientation"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -211,12 +197,6 @@
         <activity
             android:name="com.paypal.android.MEP.PayPalActivity"
             android:configChanges="keyboardHidden|orientation" />
-
-        <activity android:name="com.mopub.mobileads.MoPubActivity" android:configChanges="keyboardHidden|orientation"/>
-        <activity android:name="com.mopub.mobileads.MraidActivity" android:configChanges="keyboardHidden|orientation"/>
-        <activity android:name="com.mopub.mobileads.MraidBrowser" android:configChanges="keyboardHidden|orientation"/>
-
-
     </application>
 
 </manifest>
