@@ -25,7 +25,7 @@ import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
 import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-import cm.aptoide.com.actionbarsherlock.view.Window;
+import com.actionbarsherlock.view.Window;
 
 public class Start extends Activity {
 	

@@ -40,7 +40,7 @@ import org.holoeverywhere.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.MenuItem;
 
 import android.content.Context;
 import android.content.Intent;

@@ -37,7 +37,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 
-import cm.aptoide.com.actionbarsherlock.view.Window;
+import com.actionbarsherlock.view.Window;
 
 
 /**

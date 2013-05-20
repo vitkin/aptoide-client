@@ -46,8 +46,8 @@ import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.EnumDownloadStatus;
 
-import cm.aptoide.com.actionbarsherlock.view.Menu;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * DownloadManager

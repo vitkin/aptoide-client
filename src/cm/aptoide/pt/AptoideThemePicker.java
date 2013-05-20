@@ -15,7 +15,7 @@ public class AptoideThemePicker {
 			EnumAptoideThemes theme = EnumAptoideThemes.valueOf(theme_string);
 			switch (theme) {
 			case APTOIDE_THEME_DEFAULT:
-//				activity.setTheme(R.style.Aptoide_Theme);
+				activity.setTheme(R.style.Aptoide_Theme);
 				break;
 			case APTOIDE_THEME_MIDNIGHT:
 				activity.setTheme(R.style.Aptoide_Theme_Midnight);
@@ -75,11 +75,11 @@ public class AptoideThemePicker {
 				activity.setTheme(R.style.Aptoide_Theme_LazerPlay);
 				break;
 			default:
-//				activity.setTheme(R.style.Aptoide_Theme);
+				activity.setTheme(R.style.Aptoide_Theme);
 				break;
 			}
 		} catch (Exception e) {
-//			activity.setTheme(R.style.Aptoide_Theme);
+			activity.setTheme(R.style.Aptoide_Theme);
 		}
 
 	}

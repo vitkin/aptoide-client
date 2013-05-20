@@ -49,8 +49,8 @@ import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 
-import cm.aptoide.com.actionbarsherlock.view.Menu;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
 	private Database db;

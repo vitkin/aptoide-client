@@ -33,7 +33,7 @@ import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.AptoideThemePicker;
 import cm.aptoide.pt.R;
 
-import cm.aptoide.com.actionbarsherlock.view.Window;
+import com.actionbarsherlock.view.Window;
 
 
 

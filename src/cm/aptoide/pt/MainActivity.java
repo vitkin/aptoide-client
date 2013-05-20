@@ -34,9 +34,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import cm.aptoide.com.actionbarsherlock.view.ContextMenu;
-import cm.aptoide.com.actionbarsherlock.view.Menu;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.ContextMenu;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -2289,13 +2289,13 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			break;
 		}
 		pb.setVisibility(View.GONE);
-		if (availableListView.getAdapter().getCount() > 1 || joinStores_boolean) {
+		if (availableListView.getAdapter().getCount() > 2 || joinStores_boolean) {
 			joinStores.setVisibility(View.VISIBLE);
 		} else {
 			joinStores.setVisibility(View.INVISIBLE);
 		}
 
-		if (availableListView.getAdapter().getCount() > 0) {
+		if (availableListView.getAdapter().getCount() > 1) {
 			pb.setVisibility(View.GONE);
 		} else if (depth == ListDepth.STORES) {
 			pb.setVisibility(View.VISIBLE);
