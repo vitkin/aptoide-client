@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package cm.aptoide.pt.views;
 
@@ -10,7 +10,7 @@ package cm.aptoide.pt.views;
 public class ViewApkFeaturedEditorsChoice extends ViewApk {
 	private String featureGraphic;
 	private boolean highlighted = false;
-	
+
 
 	public String getFeatureGraphic() {
 		return featureGraphic;
@@ -28,4 +28,12 @@ public class ViewApkFeaturedEditorsChoice extends ViewApk {
 		this.highlighted = highlighted;
 	}
 
+    @Override
+    public void clear() {
+
+        setHighlighted(false);
+        setFeatureGraphic("");
+
+        super.clear();
+    }
 }

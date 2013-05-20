@@ -7,33 +7,56 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.concurrent.TimeoutException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import android.content.*;
+import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.*;
+import android.preference.PreferenceManager;
+import android.support.v4.app.LoaderManager.LoaderCallbacks;
+import android.support.v4.content.Loader;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.CursorAdapter;
+import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.util.Xml;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.*;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.*;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import cm.aptoide.com.actionbarsherlock.view.ContextMenu;
+import cm.aptoide.com.actionbarsherlock.view.Menu;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
+import cm.aptoide.pt.Server.State;
+import cm.aptoide.pt.adapters.InstalledAdapter;
+import cm.aptoide.pt.adapters.UpdatesAdapter;
+import cm.aptoide.pt.adapters.ViewPagerAdapter;
+import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt.services.AIDLServiceDownloadManager;
+import cm.aptoide.pt.services.MainService;
+import cm.aptoide.pt.services.MainService.LocalBinder;
+import cm.aptoide.pt.services.ServiceDownloadManager;
+import cm.aptoide.pt.sharing.WebViewFacebook;
+import cm.aptoide.pt.sharing.WebViewTwitter;
+import cm.aptoide.pt.util.*;
+import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.views.ViewCache;
+import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.webservices.login.Login;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -62,81 +85,15 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlSerializer;
 
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.database.Cursor;
-import android.media.AsyncPlayer;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.os.StatFs;
-import android.preference.PreferenceManager;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.Loader;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.CursorAdapter;
-import android.text.method.ScrollingMovementMethod;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.util.Xml;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
-import cm.aptoide.pt.Server.State;
-import cm.aptoide.pt.adapters.InstalledAdapter;
-import cm.aptoide.pt.adapters.UpdatesAdapter;
-import cm.aptoide.pt.adapters.ViewPagerAdapter;
-import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt.services.AIDLServiceDownloadManager;
-import cm.aptoide.pt.services.MainService;
-import cm.aptoide.pt.services.MainService.LocalBinder;
-import cm.aptoide.pt.services.ServiceDownloadManager;
-import cm.aptoide.pt.sharing.WebViewFacebook;
-import cm.aptoide.pt.sharing.WebViewTwitter;
-import cm.aptoide.pt.util.Algorithms;
-import cm.aptoide.pt.util.AutoScaleTextView;
-import cm.aptoide.pt.util.Md5Handler;
-import cm.aptoide.pt.util.NetworkUtils;
-import cm.aptoide.pt.util.RepoUtils;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt.webservices.login.Login;
-
-import cm.aptoide.com.actionbarsherlock.view.ContextMenu;
-import cm.aptoide.com.actionbarsherlock.view.Menu;
-import cm.aptoide.com.actionbarsherlock.view.MenuItem;
+import javax.xml.parsers.*;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	private Intent serviceDownloadManagerIntent;
@@ -149,14 +106,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	private final static int LATEST_LIKES = -1;
 
 	private HashMap<String, String> updateParams = new HashMap<String, String>();
-	private String LATEST_VERSION_CODE_URI = 
+	private String LATEST_VERSION_CODE_URI =
 			(ApplicationAptoide.PARTNERID==null) ?
 			"http://imgs.aptoide.com/latest_version.xml":
 				"http://imgs.aptoide.com/latest_oem_version.xml";
 	private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath()+ "/.aptoide/aptoideUpdate.apk";
 
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
-	
+
 	private String LOCAL_PATH = SDCARD + "/.aptoide";
 
 	private HashMap<ListDepth, ListViewPosition> scrollMemory = new HashMap<ListDepth, ListViewPosition>();
@@ -170,7 +127,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		}
 
 	};
-	int a = 0;
+
 
 	private class ListViewPosition {
 
@@ -182,47 +139,55 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			this.index = index;
 		}
 	}
-
+    int a = 0;
 	private void loadUIEditorsApps() {
 
-		final int[] res_ids = { R.id.central, R.id.topleft, R.id.topright,
-				R.id.bottomleft, R.id.bottomcenter, R.id.bottomright };
+		final int[] res_ids = { R.id.central, R.id.topleft, R.id.topright, R.id.bottomleft, R.id.bottomcenter, R.id.bottomright };
 		final ArrayList<HashMap<String, String>> image_urls = db.getFeaturedGraphics();
-		HashMap<String, String> image_url_highlight = db.getHighLightFeature();
-		if (image_url_highlight != null) {
-			a = 1;
-			ImageView v = (ImageView) featuredView.findViewById(res_ids[0]);
-			// imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v,
-			// mContext);
-			DisplayImageOptions options = new DisplayImageOptions.Builder()
-					.displayer(new FadeInBitmapDisplayer(1000)).cacheOnDisc()
-					.cacheInMemory().build();
-			cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader
-					.getInstance().displayImage(image_url_highlight.get("url"),
-							v, options);
-			v.setTag(image_url_highlight.get("id"));
-			v.setOnClickListener(new OnClickListener() {
+		final HashMap<String, String> image_url_highlight = db.getHighLightFeature();
 
-				@Override
-				public void onClick(View arg0) {
+        System.out.println(image_url_highlight + "ASDASDASDASD");
+        System.out.println(image_urls + "ASDASDASDASD");
 
-					Intent i = new Intent(MainActivity.this, ApkInfo.class);
-					i.putExtra("_id", Long.parseLong((String) arg0.getTag()));
-					i.putExtra("top", false);
-					i.putExtra("category", Category.EDITORSCHOICE.ordinal());
-					startActivity(i);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (image_url_highlight.size()>0) {
+                    a = 1;
+                    ImageView v = (ImageView) featuredView.findViewById(res_ids[0]);
+                    // imageLoader.DisplayImage(-1, image_url_highlight.get("url"), v,
+                    // mContext);
+                    DisplayImageOptions options = new DisplayImageOptions.Builder().displayer(new FadeInBitmapDisplayer(1000)).cacheOnDisc().cacheInMemory().build();
+                    cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(image_url_highlight.get("url"),v, options);
+                    v.setTag(image_url_highlight.get("id"));
+                    v.setOnClickListener(new OnClickListener() {
 
-				}
-			});
-			// v.setOnClickListener(featuredListener);
-		}
+                        @Override
+                        public void onClick(View arg0) {
+
+                            Intent i = new Intent(MainActivity.this, ApkInfo.class);
+                            i.putExtra("_id", Long.parseLong((String) arg0.getTag()));
+                            i.putExtra("top", false);
+                            i.putExtra("category", Category.EDITORSCHOICE.ordinal());
+                            startActivity(i);
+
+                        }
+                    });
+                    // v.setOnClickListener(featuredListener);
+                }
+            }
+        });
+
 
 		Collections.shuffle(image_urls);
 		runOnUiThread(new Runnable() {
 
 			public void run() {
-				try {
+
+
+
 					for (int i = a; i != res_ids.length; i++) {
+                        try {
 						ImageView v = (ImageView) featuredView
 								.findViewById(res_ids[i]);
 
@@ -232,9 +197,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 								.displayer(new FadeInBitmapDisplayer(1000))
 								.cacheOnDisc().cacheInMemory().build();
 						cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader
-								.getInstance().displayImage(
-										image_urls.get(i).get("url"), v,
-										options);
+								.getInstance().displayImage(image_urls.get(i - a).get("url"), v, options);
 
 						v.setTag(image_urls.get(i).get("id"));
 						v.setOnClickListener(new OnClickListener() {
@@ -252,11 +215,12 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 							}
 						});
 						// v.setOnClickListener(featuredListener);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
 					}
 
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+
 			}
 		});
 	}
@@ -275,6 +239,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 			public void run() {
 				loadUIRecommendedApps();
+                File f = null;
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
@@ -284,7 +249,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 									"http://webservices.aptoide.com/webservices/listUserBasedApks/"
 											+ Login.getToken(mContext)
 											+ "/10/xml", null, null, mContext), 8 * 1024);
-					File f = File.createTempFile("abc", "abc");
+					f = File.createTempFile("abc", "abc");
 					OutputStream out = new FileOutputStream(f);
 					byte buf[] = new byte[1024];
 					int len;
@@ -305,13 +270,18 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						// Database.database.endTransaction();
 						loadUIRecommendedApps();
 					}
-					f.delete();
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+
+                if(f!=null)f.delete();
+
 			}
 
 			private void loadUIRecommendedApps() {
+
+
 				valuesRecommended = db.getItemBasedApksRecommended("recommended");
 
 				runOnUiThread(new Runnable() {
@@ -407,26 +377,30 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 			public void run() {
 				loadUIEditorsApps();
+                File f = null;
+
 				try {
 					SAXParserFactory spf = SAXParserFactory.newInstance();
 					SAXParser sp = spf.newSAXParser();
 					NetworkUtils utils = new NetworkUtils();
 					String url;
+                    f = File.createTempFile("tempFile", "");
+                    String countryCode = Geolocation.getCountryCode(mContext);
+
 
 					if (ApplicationAptoide.CUSTOMEDITORSCHOICE) {
-						url = "http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/editors.xml";
+						url = getEditorsChoiceURL(ApplicationAptoide.DEFAULTSTORE,countryCode);
 
 						if (((HttpURLConnection) new URL(url).openConnection())
 								.getResponseCode() != 200) {
-							url = "http://apps.store.aptoide.com/editors.xml";
+							url = getEditorsChoiceURL("apps",countryCode);
 						}
 
 					} else {
-						url = "http://apps.store.aptoide.com/editors.xml";
+						url = getEditorsChoiceURL("apps",countryCode);
 					}
 
 					BufferedInputStream bis = new BufferedInputStream(utils.getInputStream(url, null, null, mContext), 8 * 1024);
-					File f = File.createTempFile("tempFile", "");
 					OutputStream out = new FileOutputStream(f);
 					byte buf[] = new byte[1024];
 					int len;
@@ -446,7 +420,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						loadUIEditorsApps();
 
 					}
-					f.delete();
+
 				} catch (SAXException e) {
 					// Database.database.setTransactionSuccessful();
 					// Database.database.endTransaction();
@@ -454,8 +428,19 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					e.printStackTrace();
 				}
 
+                if(f!=null) f.delete();
+
 			}
-		}).start();
+
+            private String getEditorsChoiceURL(String store,String countryCode) {
+
+                if(countryCode.length()>0){
+                    return "http://" + store + ".store.aptoide.com/editors.xml?country=" + countryCode;
+                }
+                return "http://" + store + ".store.aptoide.com/editors.xml";
+            }
+
+        }).start();
 
 		new Thread(new Runnable() {
 
@@ -1653,14 +1638,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 				registerReceiver(newRepoReceiver, new IntentFilter("pt.caixamagica.aptoide.NEWREPO"));
 				registered = true;
-				
+
 				categoriesStrings = new HashMap<String, Integer>();
-				
+
 //				categoriesStrings.put("Applications", R.string.applications);
-				
-				
-				
-				
+
+
+
+
 
 				if (sPref.getBoolean("firstrun", true)) {
 					// Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
@@ -1804,10 +1789,10 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		banner = (LinearLayout) availableView.findViewById(R.id.banner);
 //		breadcrumbs = (LinearLayout) availableView
 //				.findViewById(R.id.breadcrumb_container);
-		
+
 		breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container);
-		
-		
+
+
 		installedView = new ListView(mContext);
 		updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
 
@@ -1820,7 +1805,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		availableListView = (ListView) availableView.findViewById(R.id.available_list);
 		availableListView.setFastScrollEnabled(true);
 		availableListView.addHeaderView(breadcrumbs,null,false);
-		
+
 		registerForContextMenu(updatesListView);
 		updatesListView.setLongClickable(true);
 		// updatesListView.setOnCreateContextMenuListener(new
@@ -2091,7 +2076,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 //		});
 		breadcrumbs.addView(bt, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
@@ -2333,7 +2318,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);
 			bannerStoreName.setText(db.getStoreName(store_id));
 			String avatarURL = db.getStoreAvatar(store_id);
-			cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(avatarURL, bannerStoreAvatar); 
+			cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(avatarURL, bannerStoreAvatar);
 			bannerStoreDescription.setText(db.getStoreDescription(store_id));
 			bannerStoreDescription.setMovementMethod(new ScrollingMovementMethod());
 		}
@@ -2375,7 +2360,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	}
 
 	ImageLoader loader;
-	
+
 	private HashMap<String, Integer> categoriesStrings;
 
 	public class AvailableListAdapter extends CursorAdapter {
@@ -2387,20 +2372,20 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 		@Override
 		public void bindView(View view, Context context, Cursor cursor) {
-			
-			EnumCategories categoryEnum = null;
+
+
 			String categoryName = null;
 			int categoryNameResource = 0;
-			
+
 			switch (depth) {
 			case STORES:
 
 				LinearLayout store_background_dialog = (LinearLayout) view.findViewById(R.id.store_background_dialog);
 				setBackgroundDialogStoreTheme(cursor.getString(cursor.getColumnIndex(DbStructure.COLUMN_STORE_THEME)), store_background_dialog);
-				
+
 				Log.d("MainActivity-store_theme",cursor.getString(cursor.getColumnIndex(DbStructure.COLUMN_STORE_THEME)));
-				
-				
+
+
 				String hashcode = cursor.getString(cursor.getColumnIndex("avatar_url"));
 				cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(
 								cursor.getString(cursor.getColumnIndex("avatar_url")),
@@ -2470,7 +2455,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						.displayImage(cursor.getString(cursor.getColumnIndex("iconspath"))
 										+ cursor.getString(cursor.getColumnIndex("imagepath")),
 								holder.icon,
-								(cursor.getString(cursor.getColumnIndex("apkid")) + "|" + 
+								(cursor.getString(cursor.getColumnIndex("apkid")) + "|" +
 								 cursor.getString(cursor.getColumnIndex("vercode"))).hashCode()
 										+ "");
 
@@ -2492,7 +2477,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				if(categoryName==null) {
 					categoryName = getString(categoryNameResource);
 				}
-				
+
 				((TextView) view.findViewById(R.id.category_name)).setText(categoryName);
 				break;
 			case CATEGORY2:

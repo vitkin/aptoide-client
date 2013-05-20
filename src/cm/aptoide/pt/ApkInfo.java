@@ -7,43 +7,13 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.app.AlertDialog.Builder;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.AdapterView;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.CheckBox;
-import org.holoeverywhere.widget.LinearLayout;
-import org.holoeverywhere.widget.ProgressBar;
-import org.holoeverywhere.widget.Spinner;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
+import android.os.*;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -78,13 +48,7 @@ import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
-import cm.aptoide.pt.views.EnumApkMalware;
-import cm.aptoide.pt.views.EnumDownloadFailReason;
-import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownload;
-import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.views.*;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
@@ -94,8 +58,18 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-
 import com.mopub.mobileads.MoPubView;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.AlertDialog.Builder;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 
 
 
@@ -902,8 +876,8 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                                         cache,
                                         db.getServer(viewApk.getRepo_id(), false).getLogin());
                             }
-                            
-                             
+
+
 
 
                             runOnUiThread(new Runnable() {
@@ -1521,7 +1495,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
             		});
             	AlertDialog alertDialog = alertDialogBuilder.create();
             	alertDialog.show();
-            	
+
                 if(unstrustedPayment){
                 	AlertDialog.Builder alertDialogBuilder1 = new AlertDialog.Builder(context);
                 	alertDialogBuilder1.setTitle(R.string.payment_warning_title);
@@ -1537,7 +1511,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                 		 });
                 	AlertDialog alertDialog1 = alertDialogBuilder1.create();
                 	alertDialog1.show();
-                	
+
                 }
             }else{
                 startActivityForResult(new Intent(ApkInfo.this,Login.class), 1);
