@@ -34,6 +34,7 @@ import org.apache.http.util.EntityUtils;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.ProgressDialog;
 import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.CheckBox;
 import org.holoeverywhere.widget.EditText;
 import org.holoeverywhere.widget.TextView;
 import org.holoeverywhere.widget.Toast;
@@ -50,12 +51,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.InputType;
 import android.text.SpannableString;
+import android.text.method.PasswordTransformationMethod;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.R;
@@ -71,6 +76,7 @@ public class Login extends Activity /*SherlockActivity */{
 	String password;
 	TextView forgot_password;
 	Button createUser;
+	CheckBox checkShowPass;
 	
 	static Context context;
 	private boolean succeed = false;
@@ -93,27 +99,7 @@ public class Login extends Activity /*SherlockActivity */{
 			setContentView(R.layout.form_logout);
 			((TextView) findViewById(R.id.username)).setText(getUserLogin(this));
 		} else{
-			setContentView(R.layout.form_login);
-			username_box = (EditText) findViewById(R.id.username);
-			password_box = (EditText) findViewById(R.id.password);
-			
-			createUser = (Button) findViewById(R.id.new_to_aptoide);
-			SpannableString newUserString=new SpannableString(getString(R.string.new_to_aptoide));
-			newUserString.setSpan(new UnderlineSpan(), 0, newUserString.length(), 0);
-			createUser.setText(newUserString);
-			
-			forgot_password = (TextView) findViewById(R.id.forgot_password);
-			SpannableString forgetString = new SpannableString(getString(R.string.forgot_passwd));
-			forgetString.setSpan(new UnderlineSpan(), 0, forgetString.length(), 0);
-			forgot_password.setText(forgetString);
-			forgot_password.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-					Intent passwordRecovery = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.aptoide.com/account/password-recovery"));
-					startActivity(passwordRecovery);
-				}
-			});
+			drawLoginForm();
 //			if (sPref.getString(Configs.LOGIN_USER_LOGIN, null) != null) {
 //
 //				username = sPref.getString(Configs.LOGIN_USER_LOGIN, null);
@@ -125,6 +111,41 @@ public class Login extends Activity /*SherlockActivity */{
 		}
 		prefEdit = sPref.edit();
 
+	}
+
+	private void drawLoginForm() {
+		setContentView(R.layout.form_login);
+		username_box = (EditText) findViewById(R.id.username);
+		password_box = (EditText) findViewById(R.id.password);
+		checkShowPass = (CheckBox) findViewById(R.id.show_login_passwd);
+		checkShowPass.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		        if(isChecked) {
+		        	password_box.setTransformationMethod(null);
+		        } else {
+		        	password_box.setTransformationMethod(new PasswordTransformationMethod());
+		        }
+		    }
+		});
+		checkShowPass.setEnabled(true);
+			
+		createUser = (Button) findViewById(R.id.new_to_aptoide);
+		SpannableString newUserString=new SpannableString(getString(R.string.new_to_aptoide));
+		newUserString.setSpan(new UnderlineSpan(), 0, newUserString.length(), 0);
+		createUser.setText(newUserString);
+		
+		forgot_password = (TextView) findViewById(R.id.forgot_password);
+		SpannableString forgetString = new SpannableString(getString(R.string.forgot_passwd));
+		forgetString.setSpan(new UnderlineSpan(), 0, forgetString.length(), 0);
+		forgot_password.setText(forgetString);
+		forgot_password.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Intent passwordRecovery = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.aptoide.com/account/password-recovery"));
+				startActivity(passwordRecovery);
+			}
+		});
 	}
 
 	// @Override
@@ -161,7 +182,7 @@ public class Login extends Activity /*SherlockActivity */{
 		Database.getInstance().deleteItemBasedApks(apk);
 		Intent i = new Intent("login");
 		sendBroadcast(i);
-		onCreate(null);
+		drawLoginForm();
 	}
 
 	private void checkCredentials(String username, String password) {

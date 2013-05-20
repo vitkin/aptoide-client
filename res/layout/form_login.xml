@@ -83,6 +83,13 @@
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:singleLine="true" />
+
+                <CheckBox
+                    android:id="@+id/show_login_passwd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/showpass" />
+
             </LinearLayout>
 
             <LinearLayout

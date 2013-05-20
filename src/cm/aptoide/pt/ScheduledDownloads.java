@@ -466,7 +466,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 		default:
 			break;
 		}
-		return super.onOptionsItemSelected(item);
+		return true;
 	}
 	
 //	@Override

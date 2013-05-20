@@ -42,8 +42,8 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
-                android:text="@string/aptoide_url"
                 android:autoLink="web"
+                android:text="@string/aptoide_url"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <LinearLayout
@@ -93,6 +93,12 @@
                     android:hint="@string/password"
                     android:inputType="textPassword"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <CheckBox
+                    android:id="@+id/show_create_passwd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/showpass" />
             </LinearLayout>
 
             <LinearLayout

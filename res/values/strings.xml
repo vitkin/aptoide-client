@@ -305,6 +305,7 @@
     <string name="x_apps">%d apps</string>
     <string name="starting_download">Starting download</string>
     <string name="resuming_download">Resuming download</string>
+    <string name="finished_download">%s finished download</string>
     <string name="slow">slow</string>
     <string name="paused">paused</string>
     <string name="stopped">stopped</string>

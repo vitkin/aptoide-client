@@ -40,8 +40,7 @@
             android:maxLines="1"
             android:paddingLeft="2dp"
             android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <RelativeLayout
             android:layout_width="wrap_content"

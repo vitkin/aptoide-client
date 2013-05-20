@@ -405,6 +405,6 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			break;
 		}
 		
-		return super.onOptionsItemSelected(item);
+		return true;
 	}
 }

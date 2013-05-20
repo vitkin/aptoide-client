@@ -24,14 +24,20 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import android.app.Notification;
+import org.holoeverywhere.app.ProgressDialog;
+
+import android.app.DownloadManager;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.Parcel;
@@ -39,8 +45,11 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RemoteException;
 import android.preference.PreferenceManager;
+
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.RemoteViews;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.AIDLDownloadManager;
 import cm.aptoide.pt.AIDLDownloadObserver;
 import cm.aptoide.pt.ApplicationAptoide;
@@ -78,6 +87,7 @@ public class ServiceDownloadManager extends Service {
 	private ExecutorService cachedThreadPool;
 
 	private NotificationManager managerNotification;
+	private NotificationCompat.Builder mBuilder;
 	private WakeLock keepScreenOn;
 
 
@@ -276,46 +286,69 @@ public class ServiceDownloadManager extends Service {
 		super.onDestroy();
 	}
 
-
 	private void setNotification() {
 
-		String notificationTitle = getString(R.string.aptoide_downloading, ApplicationAptoide.MARKETNAME);
-		int notificationIcon = android.R.drawable.stat_sys_download;
-		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.row_notification_progress_bar);
+		managerNotification =
+		        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mBuilder = new NotificationCompat.Builder(this);
 
-		contentView.setImageViewResource(R.id.download_notification_icon, notificationIcon);
-		contentView.setTextViewText(R.id.download_notification_name, notificationTitle);
-		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgress() == 0?true:false));
-		if(ongoingDownloads.size()>1){
-			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads.size()));
-		}else{
-			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_app, ongoingDownloads.size()));
-		}
-
-    	Intent onClick = new Intent();
+		Intent onClick = new Intent();
 		onClick.setClassName(Constants.APTOIDE_PACKAGE_NAME, Constants.APTOIDE_PACKAGE_NAME+".DownloadManager");
 		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 		onClick.setAction(Constants.APTOIDE_PACKAGE_NAME+".FROM_NOTIFICATION");
 
     	// The PendingIntent to launch our activity if the user selects this notification
     	PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
+		mBuilder.setOngoing(true);
+    	mBuilder.setContentTitle(getString(R.string.aptoide_downloading, ApplicationAptoide.MARKETNAME))
+    	.setContentText(getString(R.string.x_app, ongoingDownloads.size()))
+    	.setSmallIcon(android.R.drawable.stat_sys_download);
+    	mBuilder.setContentIntent(onClickAction);
+    	mBuilder.setProgress((int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgress() == 0?true:false));
+    	// Displays the progress bar for the first time
+    	managerNotification.notify(globaDownloadStatus.hashCode(), mBuilder.build());
 
-    	Notification notification = new Notification(notificationIcon, notificationTitle, System.currentTimeMillis());
-    	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
-		notification.contentView = contentView;
-
-
-		// Set the info for the notification panel.
-    	notification.contentIntent = onClickAction;
-//    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
-
-
-		managerNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-    	// Send the notification.
-    	// We use the position because it is a unique number.  We use it later to cancel.
-    	managerNotification.notify(globaDownloadStatus.hashCode(), notification);
-
-//		Log.d("Aptoide-ApplicationServiceManager", "Notification Set");
+    	
+		           
+		
+		
+//		String notificationTitle = getString(R.string.aptoide_downloading, ApplicationAptoide.MARKETNAME);
+//		int notificationIcon = android.R.drawable.stat_sys_download;
+//		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.row_notification_progress_bar);
+//
+//		contentView.setImageViewResource(R.id.download_notification_icon, notificationIcon);
+//		contentView.setTextViewText(R.id.download_notification_name, notificationTitle);
+//		contentView.setProgressBar(R.id.download_notification_progress_bar, (int)globaDownloadStatus.getProgressTarget(), (int)globaDownloadStatus.getProgress(), (globaDownloadStatus.getProgress() == 0?true:false));
+//		if(ongoingDownloads.size()>1){
+//			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_apps, ongoingDownloads.size()));
+//		}else{
+//			contentView.setTextViewText(R.id.download_notification_number, getString(R.string.x_app, ongoingDownloads.size()));
+//		}
+//
+//    	Intent onClick = new Intent();
+//		onClick.setClassName(Constants.APTOIDE_PACKAGE_NAME, Constants.APTOIDE_PACKAGE_NAME+".DownloadManager");
+//		onClick.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+//		onClick.setAction(Constants.APTOIDE_PACKAGE_NAME+".FROM_NOTIFICATION");
+//
+//    	// The PendingIntent to launch our activity if the user selects this notification
+//    	PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
+//
+//    	Notification notification = new Notification(notificationIcon, notificationTitle, System.currentTimeMillis());
+//    	notification.flags |= Notification.FLAG_NO_CLEAR|Notification.FLAG_ONGOING_EVENT;
+//		notification.contentView = contentView;
+//
+//
+//		// Set the info for the notification panel.
+//    	notification.contentIntent = onClickAction;
+////    	notification.setLatestEventInfo(this, getText(R.string.aptoide), getText(R.string.add_repo_text), contentIntent);
+//
+//
+//		managerNotification = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+//    	// Send the notification.
+//    	// We use the position because it is a unique number.  We use it later to cancel.
+//    	managerNotification.notify(globaDownloadStatus.hashCode(), notification);
+//
+////		Log.d("Aptoide-ApplicationServiceManager", "Notification Set");
 	}
 
 
@@ -375,6 +408,7 @@ public class ServiceDownloadManager extends Service {
 			Log.d("ManagerDownloads", "download removed from ongoing: "+download);
 			if(download.isComplete()){
 				completedDownloads.put(download.hashCode(), download);
+				setCompletedNotification(download);
 				if(isDownloadManagerRegistered()){
 					try {
 						downloadManager.updateDownloadStatus(EnumDownloadStatus.COMPLETED.ordinal());
@@ -405,6 +439,33 @@ public class ServiceDownloadManager extends Service {
 		updateGlobalProgress();
 	}
 
+
+	private void setCompletedNotification(ViewDownloadManagement download) {
+
+		managerNotification =
+		        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		mBuilder = new NotificationCompat.Builder(this);
+
+		Intent onClick = new Intent();
+		onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		onClick.setDataAndType(Uri.fromFile(download.getCache().getFile()),"application/vnd.android.package-archive");
+
+    	// The PendingIntent to launch our activity if the user selects this notification
+    	PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
+    	mBuilder.setContentTitle(getString(R.string.finished_download, ApplicationAptoide.MARKETNAME))
+    	.setContentText(download.getAppInfo().getName());
+    	
+    	Bitmap bm = BitmapFactory.decodeFile(ImageLoader.getInstance().getDiscCache().get(download.getAppInfo().getApkid() + "|" + download.getAppInfo().getVercode()).getAbsolutePath());
+    	
+    	
+		mBuilder.setLargeIcon(bm);
+		mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+    	mBuilder.setContentIntent(onClickAction);
+    	mBuilder.setAutoCancel(true);
+    	managerNotification.notify(download.getAppInfo().getAppHashId(), mBuilder.build());
+		
+    	Log.d("Aptoide-Downloader","Set Finished notification");
+	}
 
 	private synchronized void updateGlobalProgress(){
 		globaDownloadStatus.setProgressTarget(100*ongoingDownloads.size());

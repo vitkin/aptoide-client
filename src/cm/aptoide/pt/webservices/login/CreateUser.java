@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.CheckBox;
 import org.holoeverywhere.widget.EditText;
 import org.holoeverywhere.widget.Toast;
 import org.json.JSONObject;
@@ -24,8 +25,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.AptoideThemePicker;
 import cm.aptoide.pt.util.Algorithms;
@@ -36,12 +40,14 @@ public class CreateUser extends Activity /*SherlockActivity */{
 	EditText password_box;
 	String username;
 	String password;
+	CheckBox checkShowPass;
 	
 	public static final int REQUEST_CODE = 20;
 	public static final String WEB_SERVICE_CREATEUSER = "http://webservices.aptoide.com/webservices/createUser";
 	
 	Context context;
 	private boolean suceed=false;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +61,17 @@ public class CreateUser extends Activity /*SherlockActivity */{
 		context = this;
 		username_box = (EditText) findViewById(R.id.email_box);
 		password_box = (EditText) findViewById(R.id.password_box);
+		checkShowPass = (CheckBox) findViewById(R.id.show_create_passwd);
+		checkShowPass.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked) {
+                	password_box.setTransformationMethod(null);
+                } else {
+                	password_box.setTransformationMethod(new PasswordTransformationMethod());
+                }
+            }
+        });
+		checkShowPass.setEnabled(true);
 	}
 	
 	public void signUp(View v){

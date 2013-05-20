@@ -582,12 +582,8 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
             default:
                 break;
         }
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
 
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     /**
