@@ -71,7 +71,6 @@ public class ApplicationAptoide extends Application {
 	public static File DEBUG_FILE;
     public static String PARTNERID;
     public static String DEFAULTSTORE;
-    public static String BRANDICON;
     public static boolean MATURECONTENTSWITCH = true;
     public static String SPLASHSCREEN;
     public static String SPLASHSCREENLAND;
@@ -81,10 +80,16 @@ public class ApplicationAptoide extends Application {
     public static boolean SEARCHSTORES = true;
     public static String APTOIDETHEME = "";
     public static String MARKETNAME = "";
-
-    static enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME }
-    public static enum StoreElements { storeconf ,  theme, avatar, description, view, items, none };
     
+    public static String STORETHEME = null;
+    public static String STORENAME = null;
+    public static String STOREAVATAR = null;
+    public static String STOREDESCRIPTION = null;
+    public static String STOREVIEW = null;
+    public static String STOREITEMS = null;
+
+    static enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
+    		STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS }
     
 
 	@Override
@@ -100,7 +105,6 @@ public class ApplicationAptoide extends Application {
 
             PARTNERID = sPref.getString("PARTNERID",null);
             DEFAULTSTORE = sPref.getString("DEFAULTSTORE",null);
-            BRANDICON = sPref.getString("BRANDICON",null);
             MATURECONTENTSWITCH = sPref.getBoolean("MATURECONTENTSWITCH", true);
             SPLASHSCREEN = sPref.getString("SPLASHSCREEN", null);
             SPLASHSCREENLAND = sPref.getString("SPLASHSCREEN_LAND", null);
@@ -110,7 +114,6 @@ public class ApplicationAptoide extends Application {
             SEARCHSTORES = sPref.getBoolean("SEARCHSTORES",true);
             APTOIDETHEME = sPref.getString("APTOIDETHEME","DEFAULT");
             MARKETNAME = sPref.getString("MARKETNAME", getString(R.string.app_name));
-
 
 
         }else{
@@ -149,10 +152,6 @@ public class ApplicationAptoide extends Application {
                                     DEFAULTSTORE = sb.toString();
                                     Log.d("Default store", DEFAULTSTORE + "");
                                     break;
-                                case BRAND:
-                                    BRANDICON = sb.toString();
-                                    Log.d("Brand icon", BRANDICON + "");
-                                    break;
                                 case SPLASHSCREEN:
                                     SPLASHSCREEN = sb.toString();
                                     Log.d("Splashscreen", SPLASHSCREEN+ "");
@@ -189,6 +188,32 @@ public class ApplicationAptoide extends Application {
                                     SEARCHSTORES = Boolean.parseBoolean(sb.toString());
                                     Log.d("Search stores", SEARCHSTORES+ "");
                                     break;
+                                    
+                                case STORETHEME:
+                                	STORETHEME = sb.toString();
+                                    Log.d("Store Theme", STORETHEME+ "");
+                                    break;
+                                case STOREAVATAR:
+                                	STOREAVATAR = sb.toString();
+                                    Log.d("Store avatar", STOREAVATAR+ "");
+                                    break;
+                                case STOREDESCRIPTION:
+                                	STOREDESCRIPTION = sb.toString();
+                                	Log.d("Store description", STOREDESCRIPTION+ "");
+                                	break;
+                                case STOREITEMS:
+                                	STOREITEMS = sb.toString();
+                                	Log.d("Store items", STOREITEMS+ "");
+                                	break;
+                                case STORENAME:
+                                	STORENAME = sb.toString();
+                                	Log.d("Store name", STORENAME+ "");
+                                	break;
+                                case STOREVIEW:
+                                	STOREVIEW = sb.toString();
+                                	Log.d("Store view", STOREVIEW+ "");
+                                	break;
+
                             }
                         }catch (Exception e){
                             e.printStackTrace();
@@ -206,18 +231,16 @@ public class ApplicationAptoide extends Application {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             }
 
-            sPref.edit().putString("PARTNERID",PARTNERID)
-            .putString("DEFAULTSTORE",DEFAULTSTORE)
-            .putString("BRANDICON",BRANDICON)
+            sPref.edit().putString("PARTNERID", PARTNERID)
+            .putString("DEFAULTSTORE", DEFAULTSTORE)
             .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
             .putString("SPLASHSCREEN", SPLASHSCREEN)
             .putBoolean("MATURECONTENTSWITCHVALUE", MATURECONTENTSWITCHVALUE)
-            .putBoolean("MULTIPLESTORES",MULTIPLESTORES)
-            .putBoolean("CUSTOMEDITORSCHOICE",CUSTOMEDITORSCHOICE)
-            .putBoolean("SEARCHSTORES",SEARCHSTORES)
+            .putBoolean("MULTIPLESTORES", MULTIPLESTORES)
+            .putBoolean("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE)
+            .putBoolean("SEARCHSTORES", SEARCHSTORES)
             .putString("APTOIDETHEME", APTOIDETHEME)
             .commit();
-
         }
 
         DEBUG_FILE = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/debug.log");

@@ -12,7 +12,10 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.*;
 import android.preference.PreferenceManager;
@@ -29,7 +32,6 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.*;
@@ -39,6 +41,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
+import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
 import cm.aptoide.pt.Server.State;
@@ -146,8 +150,8 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		final ArrayList<HashMap<String, String>> image_urls = db.getFeaturedGraphics();
 		final HashMap<String, String> image_url_highlight = db.getHighLightFeature();
 
-        System.out.println(image_url_highlight + "ASDASDASDASD");
-        System.out.println(image_urls + "ASDASDASDASD");
+//        System.out.println(image_url_highlight + "ASDASDASDASD");
+//        System.out.println(image_urls + "ASDASDASDASD");
 
         runOnUiThread(new Runnable() {
             @Override
@@ -662,10 +666,11 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			MainActivity.this.service = ((LocalBinder) service).getService();
-			if (ApplicationAptoide.DEFAULTSTORE != null) {
-				MainActivity.this.service.addStore(Database.getInstance(),
-						"http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/", null, null);
+			
+			if (ApplicationAptoide.DEFAULTSTORE != null && db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/")==null) {
+				MainActivity.this.service.addStore(Database.getInstance(),"http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/", null, null);
 			}
+			
 			loadUi();
 			getInstalled();
 			getAllRepoStatus();
@@ -1963,9 +1968,8 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				startActivity(i);
 			}
 		});
-		// getSupportActionBar().setIcon(R.drawable.brand_padding);
-		// getSupportActionBar().setTitle("");
-		// getSupportActionBar().setHomeButtonEnabled(false);
+	
+		
 		findViewById(R.id.btsearch).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1998,7 +2002,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		refreshAvailableList(true);
 
 		if (!ApplicationAptoide.MULTIPLESTORES) {
-			addBreadCrumb("Store", ListDepth.CATEGORY1);
+			addBreadCrumb(getString(R.string.store), ListDepth.CATEGORY1);
 		} else {
 			addBreadCrumb(getString(R.string.stores), ListDepth.STORES);
 		}
@@ -2061,7 +2065,6 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			itemAtPosition = itemAtPosition.split(".store")[0];
 		}
 		Button bt = (Button) LayoutInflater.from(mContext).inflate( R.layout.breadcrumb, null);
-//		Log.d("MainActivity-addBreadcrumb", "breadcrumb: " + itemAtPosition);
 		bt.setText(itemAtPosition);
 		bt.setTag(new BreadCrumb(depth, breadcrumbs.getChildCount() + 1));
 		System.out.println(breadcrumbs.getChildCount() + 1);
@@ -2314,11 +2317,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			unregisterForContextMenu(availableListView);
 			availableView.findViewById(R.id.add_store_layout).setVisibility(View.GONE);
 			banner.setVisibility(View.VISIBLE);
+
 			RelativeLayout background_layout = (RelativeLayout) banner.findViewById(R.id.banner_background_layout);
-					setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);
+			setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);
+
 			bannerStoreName.setText(db.getStoreName(store_id));
 			String avatarURL = db.getStoreAvatar(store_id);
 			cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(avatarURL, bannerStoreAvatar);
+
 			bannerStoreDescription.setText(db.getStoreDescription(store_id));
 			bannerStoreDescription.setMovementMethod(new ScrollingMovementMethod());
 		}
@@ -2686,8 +2692,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_gold);
 			break;
 		case APTOIDE_STORE_THEME_LIGHTSKY:
-			bannerLayout
-					.setBackgroundResource(R.drawable.actionbar_bgd_lightsky);
+			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_lightsky);
 			break;
 		case APTOIDE_STORE_THEME_MAGENTA:
 			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_magenta);
@@ -2719,7 +2724,25 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		case APTOIDE_STORE_THEME_SPRINGGREEN:
 			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_springgreen);
 			break;
-
+		case APTOIDE_STORE_THEME_MAGALHAES:
+			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_magalhaes);
+			break;
+		case APTOIDE_STORE_THEME_DIGITALLYDIFFERENT:
+			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_digitallydifferent);
+			break;
+		case APTOIDE_STORE_THEME_EOCEAN:
+			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_eocean);
+			break;
+		case APTOIDE_STORE_THEME_JBLOW:
+			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_silver);
+			break;
+		case APTOIDE_STORE_THEME_LAZERPLAY:
+			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_lazerplay);
+			break;
+		case APTOIDE_STORE_THEME_TIMEWE:
+			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_timwe);
+			break;
+			
 		default:
 			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_aptoide);
 			break;
@@ -2781,6 +2804,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		case APTOIDE_STORE_THEME_SLATEGRAY:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light_slategray);
 			break;
+	
 		default:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light);
 			break;

@@ -30,6 +30,7 @@ public class Server implements Parcelable{
 	public String featuredgraphicPath;
 	public String name;
 	public String theme;
+	public boolean oem; 
 	
 	private ViewLogin login;
 	

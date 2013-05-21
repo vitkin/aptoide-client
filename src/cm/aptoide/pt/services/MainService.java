@@ -35,7 +35,6 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import cm.aptoide.pt.ApplicationAptoide;
-import cm.aptoide.pt.ApplicationAptoide.StoreElements;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.ExtrasService;
 import cm.aptoide.pt.RepoParser;
@@ -227,7 +226,14 @@ public class MainService extends Service {
 			}
 			db.addStore(uri_str,username,password);
 			server = db.getServer(uri_str);
-			db.addStoreInfo("",RepoUtils.split(server.url),"0","default","","","",server.id);
+			
+			if(ApplicationAptoide.DEFAULTSTORE != null && uri_str.equals("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/")){
+				server.oem = true;
+				db.addStoreInfo(ApplicationAptoide.STOREAVATAR, ApplicationAptoide.STORENAME, "0", ApplicationAptoide.STORETHEME, ApplicationAptoide.STOREDESCRIPTION, ApplicationAptoide.STOREVIEW, ApplicationAptoide.STOREITEMS, db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/").id);
+			}else{
+				db.addStoreInfo("",RepoUtils.split(server.url),"0","","","","",server.id);
+			}
+			
 			parseServer(db, server);
 		} catch (Exception e){
 			e.printStackTrace();
@@ -270,90 +276,90 @@ public class MainService extends Service {
 		}
 	}
 	
-	private void parseBootConfig(final Database db, final Server server) {
-		new Thread(new Runnable() {
-			public void run() {
-				String path;
-				try {
-					//			serversParsing.put((int)server.id, server);
-					path = get(server, defaultBootConfigXmlPath, "boot_config.xml", false);
-					SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-					
-					parser.parse(new File(path), new DefaultHandler(){
-						StringBuilder sb = new StringBuilder();
-						String avatar;
-						String theme;
-						String description;
-						String view;
-						String items;
-						
-						public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes attributes) throws SAXException {
-							sb.setLength(0);
-						};
-						
-						public void characters(char[] ch, int start, int length) throws SAXException {
-							sb.append(ch,start,length);
-						};
-						
-						public void endElement(String uri, String localName, String qName) throws SAXException {
-							
-							ApplicationAptoide.StoreElements element;
-							try{
-								element = StoreElements.valueOf(localName);
-							}catch (Exception e) {
-								element = StoreElements.none;
-							}
-							
-							switch (element) {
-							case avatar:
-								this.avatar = sb.toString();
-								break;
-							case description:
-								this.description = sb.toString();
-								Log.d("MainService-bootconfig-parser: description", description);
-								break;
-							case items:
-								this.items = sb.toString();
-								break;
-							case theme:
-								this.theme = sb.toString();
-								Log.d("MainService-bootconfig-parser: theme", theme);
-								break;
-							case view:
-								this.view = sb.toString();
-								break;
-							case storeconf:
-								db.updateStoreInfo(avatar, theme, description, view, items, server.id);
-								break;
-							default:
-								break;
-							}
-							
-							
-						};
-						
-						
-						
-						
-					});
-					
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (ParserConfigurationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SAXException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}).start();
-		
-		
-		
-	}
+//	private void parseBootConfig(final Database db, final Server server) {
+//		new Thread(new Runnable() {
+//			public void run() {
+//				String path;
+//				try {
+//					//			serversParsing.put((int)server.id, server);
+//					path = get(server, defaultBootConfigXmlPath, "boot_config.xml", false);
+//					SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
+//					
+//					parser.parse(new File(path), new DefaultHandler(){
+//						StringBuilder sb = new StringBuilder();
+//						String avatar;
+//						String theme;
+//						String description;
+//						String view;
+//						String items;
+//						
+//						public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes attributes) throws SAXException {
+//							sb.setLength(0);
+//						};
+//						
+//						public void characters(char[] ch, int start, int length) throws SAXException {
+//							sb.append(ch,start,length);
+//						};
+//						
+//						public void endElement(String uri, String localName, String qName) throws SAXException {
+//							
+//							ApplicationAptoide.StoreElements element;
+//							try{
+//								element = StoreElements.valueOf(localName);
+//							}catch (Exception e) {
+//								element = StoreElements.none;
+//							}
+//							
+//							switch (element) {
+//							case avatar:
+//								this.avatar = sb.toString();
+//								break;
+//							case description:
+//								this.description = sb.toString();
+//								Log.d("MainService-bootconfig-parser: description", description);
+//								break;
+//							case items:
+//								this.items = sb.toString();
+//								break;
+//							case theme:
+//								this.theme = sb.toString();
+//								Log.d("MainService-bootconfig-parser: theme", theme);
+//								break;
+//							case view:
+//								this.view = sb.toString();
+//								break;
+//							case storeconf:
+//								db.updateStoreInfo(avatar, theme, description, view, items, server.id);
+//								break;
+//							default:
+//								break;
+//							}
+//							
+//							
+//						};
+//						
+//						
+//						
+//						
+//					});
+//					
+//				} catch (MalformedURLException e) {
+//					e.printStackTrace();
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				} catch (ParserConfigurationException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (SAXException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//		}).start();
+//		
+//		
+//		
+//	}
 	
 	
 	
@@ -458,7 +464,12 @@ public class MainService extends Service {
 			connection.disconnect();
 		} catch (Exception e) {
 			e.printStackTrace();
-			db.addStoreInfo("",RepoUtils.split(server.url),"0","default","","","",server.id);
+			if(server.oem){
+				db.addStoreInfo(ApplicationAptoide.STOREAVATAR, ApplicationAptoide.STORENAME, "0", ApplicationAptoide.STORETHEME, ApplicationAptoide.STOREDESCRIPTION, ApplicationAptoide.STOREVIEW, ApplicationAptoide.STOREITEMS, db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/").id);
+			}else{
+				db.addStoreInfo("",RepoUtils.split(server.url),"0","","","","",server.id);
+			}
+			
 		}
 
 

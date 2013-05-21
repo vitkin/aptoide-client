@@ -48,9 +48,9 @@ public class Start extends Activity {
 		public void onLoadingFailed(FailReason failReason) {
 			Log.e("Start-onLoadingFailed","Failed to load splashscreen");
 			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-				saveSplashscreenImageToSDCard("splashscreen_land.png");
+				saveSplashscreenImageToSDCard("offline_splashscreen_land.png");
 			}else{
-				saveSplashscreenImageToSDCard("splashscreen.png");
+				saveSplashscreenImageToSDCard("offline_splashscreen.png");
 			}
 			showSplash();
 		}
@@ -182,6 +182,9 @@ public class Start extends Activity {
 						outStream);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+			} catch(Exception e){
+				e.printStackTrace();
+				Log.e("Start-loading splash image", "Image error");
 			} finally {
 				try {
 					outStream.flush();

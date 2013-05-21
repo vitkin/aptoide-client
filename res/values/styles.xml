@@ -127,19 +127,15 @@
 
     <!-- breadcrumbs button styles -->
     <style name="breadcrumbs_style">
-        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textColor">#A0A0A0</item>
-        <item name="android:typeface">normal</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textAppearance">@android:style/TextAppearance.Small</item>
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
         <item name="android:clickable">false</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:gravity">left</item>
-        <item name="android:drawablePadding">25dp</item>
-        <item name="android:background">@drawable/highlight_overlay</item>
+        <item name="android:background">@drawable/label_bgd_light</item>
     </style>
 
     <style name="breadcrumbs_style_light" parent="breadcrumbs_style">
