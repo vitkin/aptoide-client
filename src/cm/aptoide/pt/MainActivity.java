@@ -2316,17 +2316,16 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		} else {
 			unregisterForContextMenu(availableListView);
 			availableView.findViewById(R.id.add_store_layout).setVisibility(View.GONE);
-			banner.setVisibility(View.VISIBLE);
-
-			RelativeLayout background_layout = (RelativeLayout) banner.findViewById(R.id.banner_background_layout);
-			setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);
-
-			bannerStoreName.setText(db.getStoreName(store_id));
-			String avatarURL = db.getStoreAvatar(store_id);
-			cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(avatarURL, bannerStoreAvatar);
-
-			bannerStoreDescription.setText(db.getStoreDescription(store_id));
-			bannerStoreDescription.setMovementMethod(new ScrollingMovementMethod());
+			if(ApplicationAptoide.MULTIPLESTORES){
+				banner.setVisibility(View.VISIBLE);
+				RelativeLayout background_layout = (RelativeLayout) banner.findViewById(R.id.banner_background_layout);
+				setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);				
+				bannerStoreName.setText(db.getStoreName(store_id));
+				String avatarURL = db.getStoreAvatar(store_id);
+				cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(avatarURL, bannerStoreAvatar);
+				bannerStoreDescription.setText(db.getStoreDescription(store_id));
+				bannerStoreDescription.setMovementMethod(new ScrollingMovementMethod());
+			}
 		}
 		availableView.findViewById(R.id.refresh_view_layout).setVisibility(View.GONE);
 		refreshClick = true;
