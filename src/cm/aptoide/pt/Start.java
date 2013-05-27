@@ -48,9 +48,9 @@ public class Start extends Activity {
 		public void onLoadingFailed(FailReason failReason) {
 			Log.e("Start-onLoadingFailed","Failed to load splashscreen");
 			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-				saveSplashscreenImageToSDCard("offline_splashscreen_land.png");
+				saveSplashscreenImageToSDCard("splashscreen_land.png");
 			}else{
-				saveSplashscreenImageToSDCard("offline_splashscreen.png");
+				saveSplashscreenImageToSDCard("splashscreen.png");
 			}
 			showSplash();
 		}
