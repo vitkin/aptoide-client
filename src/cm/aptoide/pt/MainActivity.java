@@ -2316,7 +2316,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		} else {
 			unregisterForContextMenu(availableListView);
 			availableView.findViewById(R.id.add_store_layout).setVisibility(View.GONE);
-			if(ApplicationAptoide.MULTIPLESTORES){
+			if(ApplicationAptoide.MULTIPLESTORES && !joinStores_boolean){
 				banner.setVisibility(View.VISIBLE);
 				RelativeLayout background_layout = (RelativeLayout) banner.findViewById(R.id.banner_background_layout);
 				setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);				
