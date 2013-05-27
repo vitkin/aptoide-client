@@ -717,6 +717,10 @@
         <item name="android:src">@drawable/brand_jblow</item>
     </style>
 
+    <style name="brand_style_educomp" parent="brand_style">
+        <item name="android:src">@drawable/brand_educomp</item>
+    </style>
+
     <style name="autoScaleTextView">
         <item name="@android:attr/background">@android:color/transparent</item>
         <item name="android:textColor">@android:color/white</item>

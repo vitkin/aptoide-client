@@ -74,6 +74,9 @@ public class AptoideThemePicker {
 			case APTOIDE_THEME_LAZERPLAY:
 				activity.setTheme(R.style.Aptoide_Theme_LazerPlay);
 				break;
+			case APTOIDE_THEME_EDUCOMP:
+				activity.setTheme(R.style.Aptoide_Theme_Educomp);
+				break;
 			default:
 				activity.setTheme(R.style.Aptoide_Theme);
 				break;
