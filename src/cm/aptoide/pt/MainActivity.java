@@ -1504,7 +1504,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 
 		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);

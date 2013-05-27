@@ -71,7 +71,7 @@ public class Start extends Activity {
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		SetAptoideTheme.setAptoideTheme(this);
+		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
 		File file = new File(LOCAL_PATH + "/icons");
 		if (!file.exists()) {
