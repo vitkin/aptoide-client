@@ -1778,7 +1778,6 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	TextView bannerStoreName;
 	AutoScaleTextView bannerStoreDescription;
 
-	private int brandDrawableResource;
 	private ImageView brandIv;
 
 	private void loadUi() {
@@ -1973,14 +1972,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			}
 		});
 	
-		brandDrawableResource = this.getResources().getIdentifier(ApplicationAptoide.BRAND, "drawable", this.getPackageName());
-		if(brandDrawableResource==0){
-			brandDrawableResource = this.getResources().getIdentifier("brand_aptoide", "drawable", this.getPackageName());
-			Log.d("MainActivity-brand", ApplicationAptoide.BRAND + ": resource not found, using default");
-		}
+		
 		
 		brandIv = (ImageView) findViewById(R.id.brand);
-		brandIv.setImageResource(brandDrawableResource);
+		if(ApplicationAptoide.BRAND!=null){
+			brandIv.setImageResource(getBrandDrawableResource());
+		}else{
+			brandIv.setImageResource(R.drawable.brand_aptoide);
+		}
 
 		findViewById(R.id.btsearch).setOnClickListener(new OnClickListener() {
 			@Override
@@ -2023,6 +2022,52 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			featuredView.findViewById(R.id.toggleButton1).setVisibility(View.GONE);
 			featuredView.findViewById(R.id.adultcontent_label).setVisibility(View.GONE);
 		}
+	}
+
+	private int getBrandDrawableResource() {
+		int brandDrawableResource;
+		
+		brandDrawableResource = this.getResources().getIdentifier(ApplicationAptoide.BRAND, "drawable", this.getPackageName());
+		if(brandDrawableResource==0){
+			brandDrawableResource = this.getResources().getIdentifier("brand_aptoide", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND + ": resource not found, using default");
+		}
+		
+		EnumAptoideThemes enumAptoideTheme = null;
+		String aptoideThemeString = "APTOIDE_THEME_"+ ApplicationAptoide.APTOIDETHEME.toUpperCase(Locale.ENGLISH);
+		try {
+			enumAptoideTheme = EnumAptoideThemes.valueOf(aptoideThemeString);
+		} catch (Exception e) {
+			enumAptoideTheme = EnumAptoideThemes.APTOIDE_THEME_DEFAULT;
+		}
+		switch(enumAptoideTheme){
+		case APTOIDE_THEME_DIGITALLYDIFFERENT:
+			brandDrawableResource = this.getResources().getIdentifier("brand_digitallydifferent", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_EOCEAN:
+			brandDrawableResource = this.getResources().getIdentifier("brand_eocean", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_JBLOW:
+			brandDrawableResource = this.getResources().getIdentifier("brand_jblow", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_LAZERPLAY:
+			brandDrawableResource = this.getResources().getIdentifier("brand_lazerplay", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_MAGALHAES:
+			brandDrawableResource = this.getResources().getIdentifier("brand_magalhaes", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+		case APTOIDE_THEME_TIMWE:
+			brandDrawableResource = this.getResources().getIdentifier("brand_timwe", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
+			break;
+			
+		}
+		return brandDrawableResource;
 	}
 
 	protected void latestClick(final String apkid) {
