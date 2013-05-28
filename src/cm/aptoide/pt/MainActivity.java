@@ -36,6 +36,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+
 import com.actionbarsherlock.view.ContextMenu;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -113,7 +114,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	private String LATEST_VERSION_CODE_URI =
 			(ApplicationAptoide.PARTNERID==null) ?
 			"http://imgs.aptoide.com/latest_version.xml":
-				"http://imgs.aptoide.com/latest_oem_version.xml";
+				"http://" + ApplicationAptoide.DEFAULTSTORE + ".aptoide.com/latest_version.xml";
 	private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath()+ "/.aptoide/aptoideUpdate.apk";
 
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
@@ -1777,6 +1778,9 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	TextView bannerStoreName;
 	AutoScaleTextView bannerStoreDescription;
 
+	private int brandDrawableResource;
+	private ImageView brandIv;
+
 	private void loadUi() {
 		setContentView(R.layout.activity_aptoide);
 		TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
@@ -1969,7 +1973,15 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			}
 		});
 	
+		brandDrawableResource = this.getResources().getIdentifier(ApplicationAptoide.BRAND, "drawable", this.getPackageName());
+		if(brandDrawableResource==0){
+			brandDrawableResource = this.getResources().getIdentifier("brand_aptoide", "drawable", this.getPackageName());
+			Log.d("MainActivity-brand", ApplicationAptoide.BRAND + ": resource not found, using default");
+		}
 		
+		brandIv = (ImageView) findViewById(R.id.brand);
+		brandIv.setImageResource(brandDrawableResource);
+
 		findViewById(R.id.btsearch).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

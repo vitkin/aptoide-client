@@ -74,6 +74,7 @@ public class ApplicationAptoide extends Application {
     public static boolean MATURECONTENTSWITCH = true;
     public static String SPLASHSCREEN;
     public static String SPLASHSCREENLAND;
+    public static String BRAND;
     public static boolean MATURECONTENTSWITCHVALUE = true;
     public static boolean MULTIPLESTORES = true;
     public static boolean CUSTOMEDITORSCHOICE = false;
@@ -88,7 +89,7 @@ public class ApplicationAptoide extends Application {
     public static String STOREVIEW = null;
     public static String STOREITEMS = null;
 
-    static enum Elements {PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
+    static enum Elements {PARTNERID, DEFAULTSTORE, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
     		STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS }
     
 
@@ -106,6 +107,7 @@ public class ApplicationAptoide extends Application {
             PARTNERID = sPref.getString("PARTNERID",null);
             DEFAULTSTORE = sPref.getString("DEFAULTSTORE",null);
             MATURECONTENTSWITCH = sPref.getBoolean("MATURECONTENTSWITCH", true);
+            BRAND = sPref.getString("BRAND", null);
             SPLASHSCREEN = sPref.getString("SPLASHSCREEN", null);
             SPLASHSCREENLAND = sPref.getString("SPLASHSCREEN_LAND", null);
             MATURECONTENTSWITCHVALUE = sPref.getBoolean("MATURECONTENTSWITCHVALUE", true);
@@ -148,9 +150,13 @@ public class ApplicationAptoide extends Application {
                                     PARTNERID = sb.toString();
                                     Log.d("Partner ID", PARTNERID + "");
                                     break;
-                                case DEFAULTSTORENAME:
+                                case DEFAULTSTORE:
                                     DEFAULTSTORE = sb.toString();
                                     Log.d("Default store", DEFAULTSTORE + "");
+                                    break;
+                                case BRAND:
+                                    BRAND = sb.toString();
+                                    Log.d("Brand", BRAND+ "");
                                     break;
                                 case SPLASHSCREEN:
                                     SPLASHSCREEN = sb.toString();
@@ -234,6 +240,8 @@ public class ApplicationAptoide extends Application {
             sPref.edit().putString("PARTNERID", PARTNERID)
             .putString("DEFAULTSTORE", DEFAULTSTORE)
             .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
+            .putString("BRAND", BRAND)
+            .putString("SPLASHSCREENLAND", SPLASHSCREENLAND)
             .putString("SPLASHSCREEN", SPLASHSCREEN)
             .putBoolean("MATURECONTENTSWITCHVALUE", MATURECONTENTSWITCHVALUE)
             .putBoolean("MULTIPLESTORES", MULTIPLESTORES)

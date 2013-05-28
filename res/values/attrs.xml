@@ -3,7 +3,6 @@
 
     <attr name="brandSplashscreenLandDrawable" format="reference" />
     <attr name="brandSplashscreenPortraitDrawable" format="reference" />
-    <attr name="brandActionbarDrawable" format="reference" />
     <attr name="customSearchButton" format="reference" />
     <attr name="icUpdateDrawable" format="reference" />
     <attr name="icMenuMoreDrawable" format="reference" />

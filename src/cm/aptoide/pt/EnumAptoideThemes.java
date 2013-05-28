@@ -42,8 +42,7 @@ public enum EnumAptoideThemes {
 	APTOIDE_THEME_DIGITALLYDIFFERENT,
 	APTOIDE_THEME_EOCEAN,
 	APTOIDE_THEME_LAZERPLAY,
-	APTOIDE_THEME_JBLOW, 
-	APTOIDE_THEME_EDUCOMP;
+	APTOIDE_THEME_JBLOW;
 	
 	
 	public static EnumAptoideThemes reverseOrdinal(int ordinal){

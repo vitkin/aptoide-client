@@ -4,8 +4,9 @@
         <!--<partnertype>basic</partnertype>-->
         <!--<partnerid>735f7a5ef72500285cf5c00b276e29b7</partnerid>-->
         <!--<defaultstorename>magalhaest2</defaultstorename>-->
-        <!--<splashscreen>https://dl.dropbox.com/u/54355993/splashscreen.png</splashscreen>-->
-        <!--<splashscreenland>https://dl.dropbox.com/u/54355993/splashscreen_land.png</splashscreenland>-->
+        <brand>brand_aptoide</brand>
+        <!--<splashscreen>https://dl.dropbox.com/u/54355993/magalhaes_splashscreen.png</splashscreen>-->
+        <!--<splashscreenland>https://dl.dropbox.com/u/54355993/magalhaes_splashscreen_land.png</splashscreenland>-->
         <maturecontentswitch>true</maturecontentswitch>
         <maturecontentswitchvalue>true</maturecontentswitchvalue>
         <multiplestores>true</multiplestores>

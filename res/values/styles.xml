@@ -681,46 +681,6 @@
         <item name="android:background">@drawable/actionbar_button_lazerplay</item>
     </style>
 
-    <!-- brand on action bar -->
-    <style name="brand_style">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:scaleType">fitStart</item>
-        <item name="android:gravity">center_vertical</item>
-    </style>
-
-    <style name="brand_style_aptoide" parent="brand_style">
-        <item name="android:src">@drawable/brand_aptoide</item>
-    </style>
-
-    <style name="brand_style_magalhaes" parent="brand_style">
-        <item name="android:src">@drawable/brand_magalhaes</item>
-    </style>
-
-    <style name="brand_style_timwe" parent="brand_style">
-        <item name="android:src">@drawable/brand_timwe</item>
-    </style>
-
-    <style name="brand_style_eocean" parent="brand_style">
-        <item name="android:src">@drawable/brand_eocean</item>
-    </style>
-
-    <style name="brand_style_digitallydifferent" parent="brand_style">
-        <item name="android:src">@drawable/brand_digitallydifferent</item>
-    </style>
-
-    <style name="brand_style_lazerplay" parent="brand_style">
-        <item name="android:src">@drawable/brand_lazerplay</item>
-    </style>
-
-    <style name="brand_style_jblow" parent="brand_style">
-        <item name="android:src">@drawable/brand_jblow</item>
-    </style>
-
-    <style name="brand_style_educomp" parent="brand_style">
-        <item name="android:src">@drawable/brand_educomp</item>
-    </style>
-
     <style name="autoScaleTextView">
         <item name="@android:attr/background">@android:color/transparent</item>
         <item name="android:textColor">@android:color/white</item>
