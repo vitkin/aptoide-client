@@ -1977,16 +1977,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		brandIv = (ImageView) findViewById(R.id.brand);
 		
 		
-		
-		if(ApplicationAptoide.BRAND!=null){
+		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("jblow")){
+			brandIv.setImageResource(R.drawable.brand_jblow);
+		}else if(ApplicationAptoide.BRAND!=null){
 			brandIv.setImageResource(getBrandDrawableResource());
 		}else{
 			brandIv.setImageResource(R.drawable.brand_aptoide);
 		}
-
-//		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("JBLOW")){
-//		brandIv.setImageResource(R.drawable.brand_jblow);
-//	}
+	
 		
 		findViewById(R.id.btsearch).setOnClickListener(new OnClickListener() {
 			@Override
