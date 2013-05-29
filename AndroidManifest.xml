@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="5"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="7" />
 
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
     <uses-permission android:name="android.permission.INTERNET" />
@@ -23,12 +23,12 @@
         android:name=".ApplicationAptoide"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon_brand_aptoide"
-        android:label="@string/app_name"
+        android:label="@string/app_name_aptoide"
         android:theme="@style/Aptoide.Theme.Default" >
-
+        
         <activity
-                    android:name=".Start"
-                    android:label="@string/app_name">
+            android:name=".Start"
+            android:label="@string/app_name_aptoide" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -37,7 +37,7 @@
         <activity-alias
                 android:enabled="true"
                 android:name=".Start-brand_aptoide"
-                android:label="@string/app_name"
+                android:label="@string/app_name_aptoide"
                 android:icon="@drawable/icon_brand_aptoide"
                 android:targetActivity=".Start">
             <intent-filter>
@@ -46,11 +46,83 @@
             </intent-filter>
         </activity-alias>
 
+       <activity-alias
+                android:enabled="false"
+                android:name=".Start-brand_digitallydifferent"
+                android:label="@string/app_name_digitallydifferent"
+                android:icon="@drawable/icon_brand_digitallydifferent"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <activity-alias
+                android:enabled="false"
+                android:name=".Start-brand_educomp"
+                android:label="@string/app_name_educomp"
+                android:icon="@drawable/icon_brand_educomp"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <activity-alias
+                android:enabled="false"
+                android:name=".Start-brand_eocean"
+                android:label="@string/app_name_eocean"
+                android:icon="@drawable/icon_brand_eocean"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+         <activity-alias
+                android:enabled="false"
+                android:name=".Start-brand_jblow"
+                android:label="@string/app_name_jblow"
+                android:icon="@drawable/icon_brand_jblow"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+             <activity-alias
+                android:enabled="false"
+                android:name=".Start-brand_lazerplay"
+                android:label="@string/app_name_lazerplay"
+                android:icon="@drawable/icon_brand_lazerplay"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
         <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_magalhaes"
-                android:label="Magalhães Market"
-                android:icon="@android:drawable/ic_media_play"
+                android:label="@string/app_name_magalhaes"
+                android:icon="@drawable/icon_brand_magalhaes"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+        <activity-alias
+                android:enabled="false"
+                android:name=".Start-brand_peoplenet"
+                android:label="@string/app_name_peoplenet"
+                android:icon="@drawable/icon_brand_peoplenet"
                 android:targetActivity=".Start">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,6 +130,19 @@
             </intent-filter>
         </activity-alias>
 
+                
+        <activity-alias
+                android:enabled="false"
+                android:name=".Start-brand_timwe"
+                android:label="@string/app_name_timwe"
+                android:icon="@drawable/icon_brand_timwe"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -75,9 +160,9 @@
         </activity>
         <activity
             android:name=".Settings"
-            android:label="@string/settings_title_bar"
             android:configChanges="orientation|keyboardHidden"
-            android:theme="@style/Holo.Theme.NoActionBar"/>
+            android:label="@string/settings_title_bar"
+            android:theme="@style/Holo.Theme.NoActionBar" />
         <activity
             android:name=".ScheduledDownloads"
             android:configChanges="orientation|keyboardHidden" >
@@ -139,8 +224,7 @@
         </activity>
         <activity
             android:name=".IntentReceiver"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="@string/app_name" >
+            android:configChanges="orientation|keyboardHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

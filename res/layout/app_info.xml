@@ -116,43 +116,53 @@
                 android:text="@string/screenshots"
                 android:visibility="gone" />
 
-            <RelativeLayout
-                android:id="@+id/screenshots_container"
+            <Gallery
+                android:id="@+id/gallery"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone" >
+                android:spacing="5dip"
+                android:visibility="gone" />
+            <!-- <RelativeLayout -->
+            <!-- android:id="@+id/screenshots_container" -->
+            <!-- android:layout_width="fill_parent" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:visibility="gone" > -->
 
-                <cm.aptoide.pt.CustomViewPager
-                    android:id="@+id/screenShotsPager"
-                    android:layout_width="fill_parent"
-                    android:layout_height="158dp"
-                    android:padding="2dp" />
 
-                <ImageView
-                    android:id="@+id/left"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:paddingLeft="10dp"
-                    android:src="@drawable/indicator_prev_arrow"
-                    android:visibility="gone" />
+            <!-- <cm.aptoide.pt.CustomViewPager -->
+            <!-- android:id="@+id/screenShotsPager" -->
+            <!-- android:layout_width="fill_parent" -->
+            <!-- android:layout_height="158dp" -->
+            <!-- android:padding="2dp" /> -->
 
-                <ImageView
-                    android:id="@+id/right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:paddingRight="10dp"
-                    android:src="@drawable/indicator_next_arrow" />
 
-                <cm.aptoide.com.viewpagerindicator.CirclePageIndicator
-                    android:id="@+id/indicator"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/screenShotsPager" />
-            </RelativeLayout>
+            <!-- <ImageView -->
+            <!-- android:id="@+id/left" -->
+            <!-- android:layout_width="wrap_content" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:layout_alignParentLeft="true" -->
+            <!-- android:layout_centerVertical="true" -->
+            <!-- android:paddingLeft="10dp" -->
+            <!-- android:src="@drawable/indicator_prev_arrow" -->
+            <!-- android:visibility="gone" /> -->
+
+
+            <!-- <ImageView -->
+            <!-- android:id="@+id/right" -->
+            <!-- android:layout_width="wrap_content" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:layout_alignParentRight="true" -->
+            <!-- android:layout_centerVertical="true" -->
+            <!-- android:paddingRight="10dp" -->
+            <!-- android:src="@drawable/indicator_next_arrow" /> -->
+
+
+            <!-- <cm.aptoide.com.viewpagerindicator.CirclePageIndicator -->
+            <!-- android:id="@+id/indicator" -->
+            <!-- android:layout_width="fill_parent" -->
+            <!-- android:layout_height="wrap_content" -->
+            <!-- android:layout_below="@+id/screenShotsPager" /> -->
+            <!-- </RelativeLayout> -->
 
             <TextView
                 android:id="@+id/version_info_label"
@@ -473,15 +483,15 @@
         android:layout_alignParentBottom="true"
         android:orientation="vertical" >
 
-         <!--<com.google.ads.AdView-->
-         <!--xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"-->
-         <!--android:id="@+id/adView"-->
-         <!--android:layout_width="match_parent"-->
-         <!--android:layout_height="wrap_content"-->
-         <!--android:layout_gravity="center_horizontal"-->
-         <!--ads:adSize="SMART_BANNER"-->
-         <!--ads:adUnitId="6693e1e6c1d543f4" >-->
-         <!--</com.google.ads.AdView>-->
+        <!-- <com.google.ads.AdView -->
+        <!-- xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads" -->
+        <!-- android:id="@+id/adView" -->
+        <!-- android:layout_width="match_parent" -->
+        <!-- android:layout_height="wrap_content" -->
+        <!-- android:layout_gravity="center_horizontal" -->
+        <!-- ads:adSize="SMART_BANNER" -->
+        <!-- ads:adUnitId="6693e1e6c1d543f4" > -->
+        <!-- </com.google.ads.AdView> -->
 
         <com.mopub.mobileads.MoPubView
             android:id="@+id/adview"

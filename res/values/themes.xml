@@ -427,7 +427,7 @@
         <item name="autoScaleTextViewStyle">@style/autoScaleTextView</item>
     </style>
 
-    <style name="Aptoide.Theme.TimWe" parent="@style/Holo.Theme.Light.NoActionBar">
+    <style name="Aptoide.Theme.TimWe" parent="@style/Holo.Theme.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color_timwe</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:buttonStyle">@style/custom_button_style_timwe</item>
@@ -452,7 +452,7 @@
         <item name="autoScaleTextViewStyle">@style/autoScaleTextView</item>
     </style>
 
-    <style name="Aptoide.Theme.EOcean" parent="@style/Holo.Theme.Light.NoActionBar">
+    <style name="Aptoide.Theme.EOcean" parent="@style/Holo.Theme.NoActionBar">
         <item name="android:windowBackground">@drawable/background_eocean</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:buttonStyle">@style/custom_button_style_eocean</item>
@@ -575,7 +575,7 @@
         <item name="autoScaleTextViewStyle">@style/autoScaleTextView</item>
     </style>
 
-    <style name="Aptoide.Theme.DarkOrange" parent="@style/Holo.Theme.Light.NoActionBar">
+    <style name="Aptoide.Theme.DarkOrange" parent="@style/Holo.Theme.NoActionBar">
         <item name="android:windowBackground">@color/custom_background_color_timwe</item>
         <item name="android:colorBackgroundCacheHint">@null</item>
         <item name="android:buttonStyle">@style/custom_button_style_timwe</item>

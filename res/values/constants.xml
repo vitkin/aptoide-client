@@ -1,6 +1,15 @@
 <resources>
 
-    <string name="app_name">Aptoide</string>
+    <string name="app_name_aptoide">Aptoide</string>
+    <string name="app_name_magalhaes">Magalhães Market</string>
+    <string name="app_name_lazerplay">Lazer Play Market</string>
+    <string name="app_name_timwe">Game Center</string>
+    <string name="app_name_digitallydifferent">Digitally Different Market</string>
+    <string name="app_name_eocean">E-ocean Market</string>
+    <string name="app_name_jblow">J-Blow Market</string>
+    <string name="app_name_educomp">Educomp Market</string>
+    <string name="app_name_peoplenet">Peoplenet Market</string>
+    
     <string name="email_encoding">message/rfc822</string>
     <string name="ip_blacklisted_email_contact">ipblacklist@aptoide.com</string>
     <string name="aptoide_url">http://www.aptoide.com/</string>

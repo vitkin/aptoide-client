@@ -118,7 +118,7 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/white"
+            android:background="?attr/custom_inside_background_color"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -147,7 +147,8 @@
             android:paddingBottom="5dp"
             android:paddingTop="5dp" >
 
-            <TextView android:id="@+id/adultcontent_label"
+            <TextView
+                android:id="@+id/adultcontent_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

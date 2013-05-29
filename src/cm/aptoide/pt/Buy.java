@@ -239,7 +239,7 @@ public class Buy extends Activity {
 		PayPalPreapproval preapproval = new PayPalPreapproval();
 		preapproval.setCurrencyType("EUR");
 		preapproval.setMemo("Purchase of " +apkid);
-		preapproval.setMerchantName(getString(R.string.app_name));
+		preapproval.setMerchantName(ApplicationAptoide.MARKETNAME);
 
 		return preapproval;
 	}

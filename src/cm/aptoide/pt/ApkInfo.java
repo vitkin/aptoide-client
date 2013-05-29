@@ -7,38 +7,65 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.AlertDialog.Builder;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.AdapterView;
+import org.holoeverywhere.widget.Button;
+import org.holoeverywhere.widget.CheckBox;
+import org.holoeverywhere.widget.LinearLayout;
+import org.holoeverywhere.widget.ProgressBar;
+import org.holoeverywhere.widget.Spinner;
+import org.holoeverywhere.widget.TextView;
+import org.holoeverywhere.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.*;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.CursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.widget.SimpleCursorAdapter.ViewBinder;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Gallery;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
-import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
+import cm.aptoide.pt.adapters.ImageGalleryAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
 import cm.aptoide.pt.contentloaders.ViewApkLoader;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
@@ -48,7 +75,15 @@ import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
-import cm.aptoide.pt.views.*;
+import cm.aptoide.pt.views.EnumApkMalware;
+import cm.aptoide.pt.views.EnumDownloadFailReason;
+import cm.aptoide.pt.views.EnumDownloadStatus;
+import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.views.ViewCache;
+import cm.aptoide.pt.views.ViewCacheObb;
+import cm.aptoide.pt.views.ViewDownload;
+import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.views.ViewObb;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
@@ -58,18 +93,10 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-import com.mopub.mobileads.MoPubView;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.app.AlertDialog.Builder;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.*;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.mopub.mobileads.MoPubView;
 
 
 
@@ -88,8 +115,11 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     boolean spinnerInstanciated = false;
     CheckBox scheduledDownloadChBox;
     private ViewDownloadManagement download;
-
-
+    
+    private Gallery gallery;
+    private ArrayList<String> imageUrls;
+    String hashCode;
+    
     private boolean isRunning = false;
 
     private AIDLServiceDownloadManager serviceDownloadManager = null;
@@ -601,7 +631,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
             public void run() {
                 try{
 
-                    final ArrayList<String> originalList = viewApk.getScreenshots();
+                	imageUrls = viewApk.getScreenshots();
 //					switch (category) {
 //					case TOP:
 //					case LATEST:
@@ -632,50 +662,60 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 //					default:
 //						break;
 //					}
-                    final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
-                    final CustomViewPager screenshots = (CustomViewPager) findViewById(R.id.screenShotsPager);
+//                    final CirclePageIndicator pi = (CirclePageIndicator) findViewById(R.id.indicator);
+//                    final CustomViewPager screenshots = (CustomViewPager) findViewById(R.id.screenShotsPager);
 
-
+            		gallery = (Gallery) findViewById(R.id.gallery);
 
                     runOnUiThread(new Runnable() {
 
                         public void run() {
-                            if(originalList!=null&&originalList.size()>0){
-                                String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
-                                screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,originalList,hashCode,false));
-                                TypedValue a = new TypedValue();
-                                getTheme().resolveAttribute(R.attr.custom_color, a, true);
-                                pi.setFillColor(a.data);
-                                pi.setViewPager(screenshots);
-                                pi.setRadius(4.5f);
-                                findViewById(R.id.screenshots_container).setVisibility(View.VISIBLE);
+                            if(imageUrls!=null&&imageUrls.size()>0){
+                            	hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
+                            	gallery.setVisibility(View.VISIBLE);
+                            	gallery.setAdapter(new ImageGalleryAdapter(context,imageUrls,hashCode,false));
+                            	gallery.setOnItemClickListener(new OnItemClickListener() {
+									@Override
+									public void onItemClick(android.widget.AdapterView<?> parent, View view, int position, long id) {
+										startImagePagerActivity(position);
+									}
+
+                        		});
+//                                String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
+//                                screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,imageUrls,hashCode,false));
+//                                TypedValue a = new TypedValue();
+//                                getTheme().resolveAttribute(R.attr.custom_color, a, true);
+//                                pi.setFillColor(a.data);
+//                                pi.setViewPager(screenshots);
+//                                pi.setRadius(4.5f);
+//                                findViewById(R.id.screenshots_container).setVisibility(View.VISIBLE);
                                 findViewById(R.id.screenshots_label).setVisibility(View.VISIBLE);
-                                if(originalList.size()==1){
-                                    findViewById(R.id.right).setVisibility(View.GONE);
-                                }
-                                pi.setOnPageChangeListener(new OnPageChangeListener() {
-
-                                    public void onPageSelected(int position) {
-
-                                        findViewById(R.id.left).setVisibility(View.VISIBLE);
-                                        findViewById(R.id.right).setVisibility(View.VISIBLE);
-
-                                        if(position==0){
-                                            findViewById(R.id.left).setVisibility(View.GONE);
-                                        }
-                                        if (position==originalList.size()-1){
-                                            findViewById(R.id.right).setVisibility(View.GONE);
-                                        }
-                                    }
-
-                                    public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-                                    }
-
-                                    public void onPageScrollStateChanged(int arg0) {
-
-                                    }
-                                });
+//                                if(imageUrls.size()==1){
+//                                    findViewById(R.id.right).setVisibility(View.GONE);
+//                                }
+//                                pi.setOnPageChangeListener(new OnPageChangeListener() {
+//
+//                                    public void onPageSelected(int position) {
+//
+//                                        findViewById(R.id.left).setVisibility(View.VISIBLE);
+//                                        findViewById(R.id.right).setVisibility(View.VISIBLE);
+//
+//                                        if(position==0){
+//                                            findViewById(R.id.left).setVisibility(View.GONE);
+//                                        }
+//                                        if (position==imageUrls.size()-1){
+//                                            findViewById(R.id.right).setVisibility(View.GONE);
+//                                        }
+//                                    }
+//
+//                                    public void onPageScrolled(int arg0, float arg1, int arg2) {
+//
+//                                    }
+//
+//                                    public void onPageScrollStateChanged(int arg0) {
+//
+//                                    }
+//                                });
                             }
 
                         }
@@ -691,7 +731,16 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 
         }).start();
     }
-
+    
+	private void startImagePagerActivity(int position) {
+		Intent intent = new Intent(this, ScreenshotsViewer.class);
+		intent.putStringArrayListExtra("url", imageUrls);
+		intent.putExtra("position", position);
+		intent.putExtra("hashCode", hashCode+".hd");
+		startActivity(intent);
+		
+	}
+	
     private void loadDescription() {
         Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
 
