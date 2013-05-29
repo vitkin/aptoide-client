@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class EnumCategories {
 
-	static HashMap<String, Integer> categories= new HashMap<String, Integer>(); 
+	static HashMap<String, Integer> categories= new HashMap<String, Integer>();
 
 	static{
 		categories.put("Applications", R.string.applications);
@@ -55,7 +55,7 @@ public class EnumCategories {
 		categories.put ("Latest Apps", R.string.latest_apps);
 		categories.put ("Latest Comments", R.string.latest_comments);
 		categories.put ("Latest Likes", R.string.latest_likes);
-		categories.put ("Recommended for you", R.string.recommended_for_you);
+		categories.put ("Recommended", R.string.recommended_for_you);
     }
 
 }

@@ -112,15 +112,18 @@ public class DbStructure extends SQLiteOpenHelper {
     public static final String COLUMN_MALWARE_REASON = "malware_reason" ;
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_TEXT = "text";
-	
+
 
 
     public DbStructure(Context context) {
 		super(context, "aptoide.db", null, 7);
+
 	}
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+
+
 
 		TableCreator creator = new TableCreator(db);
 
@@ -566,10 +569,14 @@ public class DbStructure extends SQLiteOpenHelper {
 			values.put(COLUMN_URL, oldServer.url);
 			values.put(COLUMN_NAME, oldServer.name);
 			values.put(COLUMN_STATUS, "PARSED");
-			values.put(COLUMN_HASH, "dummyHash");
+			values.put(COLUMN_HASH, "firstHash");
 			db.insert("repo", null, values);
 			Log.d("Database", oldServer.url);
 		}
+
+
+        ApplicationAptoide.setRestartLauncher(true);
+
 
 	}
 

@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -29,18 +29,18 @@ import android.os.Parcelable;
  *
  */
 public class ViewDownload implements Parcelable{
-	private String remotePath;
-	
+    private String remotePath;
+
 	private long progressTarget;
-	private long progress;
-	private int speedInKbps;
-	
+    private long progress;
+    private int speedInKbps;
+
 	private EnumDownloadStatus status;
 	private EnumDownloadFailReason failReason;
-	
-	
+
+
 	/**
-	 * 
+	 *
 	 * ViewDownload Constructor
 	 *
 	 * @param remoteUrl
@@ -50,15 +50,16 @@ public class ViewDownload implements Parcelable{
 		this.progress = 0;
 		this.speedInKbps = 0;
 		this.remotePath = remoteUrl;
+
 		this.status = EnumDownloadStatus.SETTING_UP;
 		this.failReason = EnumDownloadFailReason.NO_REASON;
 	}
-	
-	
+
+
 	public EnumDownloadStatus getStatus(){
 		return status;
 	}
-	
+
 	public void setStatus(EnumDownloadStatus status){
 		this.status = status;
 	}
@@ -74,43 +75,45 @@ public class ViewDownload implements Parcelable{
 	public long getProgress() {
 		return progress;
 	}
-	
+
 	public int getProgressPercentage(){
 		if(progressTarget == 0){
 			return 0;
 		}else{
-			return (int) (progress*100/progressTarget);			
+			return (int) (progress*100/progressTarget);
 		}
 	}
 
 	public void setProgress(long progress) {
 		this.progress = progress;
 	}
-	
+
 	public void incrementProgress(long progress){
 		this.progress += progress;
 	}
-	
+
 	public void setCompleted(){
+        this.setProgress(100);
+        this.setProgressTarget(100);
 		this.status = EnumDownloadStatus.COMPLETED;
 	}
-	
+
 	public boolean isComplete(){
 		return (status.equals(EnumDownloadStatus.COMPLETED));
 	}
-	
+
 	public boolean isFailed(){
 		return (status.equals(EnumDownloadStatus.FAILED));
 	}
-	
+
 	public int getSpeedInKBps(){
 		return speedInKbps;
 	}
-	
+
 	public void setSpeedInKBps(int speedInKbps){
 		this.speedInKbps = speedInKbps;
 	}
-	
+
 	public void incrementSpeed(int speedInKbps){
 		this.speedInKbps += speedInKbps;
 	}
@@ -118,16 +121,16 @@ public class ViewDownload implements Parcelable{
 	public String getRemotePath() {
 		return remotePath;
 	}
-	
+
 	public void setRemotePath(String remoteUrl){
 		this.remotePath = remoteUrl;
 	}
-	
+
 	public String getRemotePathTail(){
 		String[] remoteSplit = remotePath.split("/");
 		return remoteSplit[remoteSplit.length-1];
 	}
-	
+
 	public EnumDownloadFailReason getFailReason() {
 		return failReason;
 	}
@@ -150,8 +153,8 @@ public class ViewDownload implements Parcelable{
 		this.status = null;
 		this.failReason = null;
 	}
-	
-	
+
+
 	/**
 	 * ViewDownload object reuse reConstructor
 	 *
@@ -159,7 +162,7 @@ public class ViewDownload implements Parcelable{
 	 */
 	public void reuse(String remoteUrl) {
 		this.progressTarget = 0;
-		this.progress = 0;	
+		this.progress = 0;
 		this.speedInKbps = 0;
 		this.remotePath = remoteUrl;
 		this.status = EnumDownloadStatus.SETTING_UP;
@@ -189,12 +192,12 @@ public class ViewDownload implements Parcelable{
 	public String toString() {
 		return " progress: "+getProgressPercentage()+" speed: "+speedInKbps+" remote: "+getRemotePathTail();
 	}
-	
-	
-	
+
+
+
 	// Parcelable stuff //
-	
-	
+
+
 	public static final Parcelable.Creator<ViewDownload> CREATOR = new Parcelable.Creator<ViewDownload>() {
 		public ViewDownload createFromParcel(Parcel in) {
 			return new ViewDownload(in);
@@ -205,10 +208,10 @@ public class ViewDownload implements Parcelable{
 		}
 	};
 
-	/** 
+	/**
 	 * we're annoyingly forced to create this even if we clearly don't need it,
 	 *  so we just use the default return 0
-	 *  
+	 *
 	 *  @return 0
 	 */
 	@Override
@@ -238,5 +241,5 @@ public class ViewDownload implements Parcelable{
 		this.status = EnumDownloadStatus.reverseOrdinal(in.readInt());
 		this.failReason = EnumDownloadFailReason.reverseOrdinal(in.readInt());
 	}
-	
+
 }

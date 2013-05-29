@@ -7,33 +7,32 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import android.content.ContentValues;
+import cm.aptoide.pt.views.ViewApkLatest;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.content.ContentValues;
-import cm.aptoide.pt.views.ViewApkLatest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HandlerLatest extends DefaultHandler{
-	
+
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
-	
+
 	Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
 	ViewApkLatest apk;
 	StringBuilder sb  = new StringBuilder();
 	boolean insidePackage = false;
-	
+
 	void loadElements() {
 		elements.put("name", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -48,7 +47,7 @@ public class HandlerLatest extends DefaultHandler{
 				}
 			}
 		});
-		
+
 		elements.put("screenspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -59,9 +58,9 @@ public class HandlerLatest extends DefaultHandler{
 				server.screenspath=sb.toString();
 			}
 		});
-		
+
 		elements.put("repository", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -69,20 +68,20 @@ public class HandlerLatest extends DefaultHandler{
 
 			@Override
 			public void endElement() throws SAXException {
-				
-				if(!db.getRepoHash(server.id,Category.LATEST).equals(server.hash)){
-					System.out.println("Deleting " +Category.LATEST.name() +" apps ");
-					db.deleteTopOrLatest(server.id,Category.LATEST);
-				}else{
-					System.out.println("NOT Deleting " +Category.LATEST.name() +" apps ");
-					throw new SAXException();
-				}
+
+//				if(!db.getRepoHash(server.id,Category.LATEST).equals(server.hash)){
+//					System.out.println("Deleting " +Category.LATEST.name() +" apps ");
+//					db.deleteTopOrLatest(server.id,Category.LATEST);
+//				}else{
+//					System.out.println("NOT Deleting " +Category.LATEST.name() +" apps ");
+//					throw new SAXException();
+//				}
 				db.insertServerInfo(server, Category.LATEST);
 			}
 		});
-		
+
 		elements.put("date", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -93,9 +92,9 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setDate(sb.toString());
 			}
 		});
-		
+
 		elements.put("hash", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -103,15 +102,15 @@ public class HandlerLatest extends DefaultHandler{
 
 			@Override
 			public void endElement() throws SAXException {
-				server.hash=sb.toString();
+
 			}
 		});
-		
+
 		elements.put("package", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 				apk.clear();
 				insidePackage = true;
-				
+
 			}
 
 			@Override
@@ -123,7 +122,7 @@ public class HandlerLatest extends DefaultHandler{
 				insidePackage = false;
 			}
 		});
-		
+
 		elements.put("ver", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -134,7 +133,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setVername(sb.toString());
 			}
 		});
-		
+
 		elements.put("apkid", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -145,7 +144,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setApkid(sb.toString());
 			}
 		});
-		
+
 		elements.put("vercode", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -156,7 +155,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setVercode(Integer.parseInt(sb.toString()));
 			}
 		});
-		
+
 		elements.put("sz", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -167,7 +166,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setSize(sb.toString());
 			}
 		});
-		
+
 		elements.put("screen", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -178,7 +177,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.addScreenshot(sb.toString());
 			}
 		});
-		
+
 		elements.put("icon", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -189,7 +188,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setIconPath(sb.toString());
 			}
 		});
-		
+
 		elements.put("dwn", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -200,7 +199,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setDownloads(sb.toString());
 			}
 		});
-		
+
 		elements.put("rat", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -211,7 +210,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setRating(sb.toString());
 			}
 		});
-		
+
 		elements.put("path", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -222,7 +221,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setPath(sb.toString());
 			}
 		});
-		
+
 		elements.put("md5h", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -233,7 +232,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setMd5(sb.toString());
 			}
 		});
-		
+
 		elements.put("basepath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -244,7 +243,7 @@ public class HandlerLatest extends DefaultHandler{
 				server.basePath=sb.toString();
 			}
 		});
-		
+
 		elements.put("iconspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -255,7 +254,7 @@ public class HandlerLatest extends DefaultHandler{
 				server.iconsPath=sb.toString();
 			}
 		});
-		
+
 		elements.put("minSdk", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -266,7 +265,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setMinSdk(sb.toString());
 			}
 		});
-		
+
 		elements.put("minGles", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -277,7 +276,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setMinGlEs(sb.toString());
 			}
 		});
-		
+
 		elements.put("minScreen", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -288,7 +287,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setMinScreen(Filters.Screens.lookup(sb.toString()).ordinal());
 			}
 		});
-		
+
 		elements.put("age", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -299,7 +298,7 @@ public class HandlerLatest extends DefaultHandler{
 				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
 			}
 		});
-		
+
 		elements.put("cmt", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -318,13 +317,13 @@ public class HandlerLatest extends DefaultHandler{
 				}
 			}
 		});
-		
-		
+
+
 	}
-	
+
 	private static Database db = Database.getInstance();
 	private Server server;
-	
+
 	public HandlerLatest(Server server) {
 		loadElements();
 		this.server=server;
@@ -335,7 +334,7 @@ public class HandlerLatest extends DefaultHandler{
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
-		
+
 	}
 	@Override
 	public void startElement(String uri, String localName,
@@ -344,7 +343,7 @@ public class HandlerLatest extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 		sb.setLength(0);
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.startElement(attributes);
 		} else {
@@ -363,21 +362,21 @@ public class HandlerLatest extends DefaultHandler{
 	public void endElement(String uri, String localName,
 			String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		
+
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.endElement();
 		} else {
 //			System.out.println("Element not found:" + localName);
 		}
 	}
-	
+
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
 new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				if(values.size()>0){
@@ -392,6 +391,6 @@ new Thread(new Runnable() {
 	private static ContentValues value;
 	private static ContentValues[] value2 = new ContentValues[0];
 	private static ArrayList<ContentValues> values = new ArrayList<ContentValues>();
-	
-	
+
+
 }

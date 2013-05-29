@@ -123,8 +123,11 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     private AIDLDownloadObserver.Stub serviceDownloadManagerCallback = new AIDLDownloadObserver.Stub() {
         @Override
         public void updateDownloadStatus(ViewDownload update) throws RemoteException {
-            download.updateProgress(update);
-            handler.sendEmptyMessage(update.getStatus().ordinal());
+//            download.updateProgress(update);
+            if(handler!=null){
+                handler.sendEmptyMessage(download.getDownloadStatus().ordinal());
+            }
+
         }
     };
 
@@ -219,6 +222,8 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 
         }
     }
+
+
 
 
 
@@ -834,6 +839,15 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 
     }
 
+
+    private String mainObbName;
+    private String mainObbMd5;
+    private String patchObbName;
+    private String patchObbMd5;
+    private String mainObbUrl;
+    private String patchObbUrl;
+
+
     OnClickListener installListener = new OnClickListener() {
 
         @Override
@@ -841,74 +855,80 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
             findViewById(R.id.btinstall).setOnClickListener(null);
             new Thread(new Runnable() {
                 public void run() {
-                    if(scheduledDownloadChBox.isChecked()){
-                        db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(),viewApk.getName(),viewApk.getMd5(),viewApk.getIcon());
+                    if (scheduledDownloadChBox.isChecked()) {
+                        db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(), viewApk.getName(), viewApk.getMd5(), viewApk.getIcon());
                         runOnUiThread(new Runnable() {
 
                             @Override
                             public void run() {
-                                Toast toast= Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);
+                                Toast toast = Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);
                                 toast.show();
                             }
                         });
-                    }else{
-                        ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5(),viewApk.getApkid(),viewApk.getVername());
-                        if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
-                            try {
-                                serviceDownloadManager.callInstallApp(cache);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        }else{
-                            if(category.equals(Category.ITEMBASED)||category.equals(Category.TOP)||category.equals(Category.TOPFEATURED)||category.equals(Category.EDITORSCHOICE)){
-                                download = new ViewDownloadManagement(
-                                        viewApk.getPath(),
-                                        viewApk,
-                                        cache);
-                            }else{
-                                download = new ViewDownloadManagement(
-                                        viewApk.getPath(),
-                                        viewApk,
-                                        cache,
-                                        db.getServer(viewApk.getRepo_id(), false).getLogin());
-                            }
+                    } else {
 
+                        ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5(), viewApk.getApkid(), viewApk.getVername());
 
-
-
-                            runOnUiThread(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    ImageView manage = (ImageView) findViewById(R.id.icon_manage);
-////                                    manage.setVisibility(View.GONE);
-                                    manage.setOnClickListener(new OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            setupQuickActions(view);
-                                        }
-                                    });
-                                    findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
-//                                    findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
-                                    findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
-                                }
-                            });
-
-                            try {
-                                serviceDownloadManager.callStartDownloadAndObserve(download,serviceDownloadManagerCallback);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    findViewById(R.id.btinstall).setOnClickListener(installListener);
-                                }
-                            });
-
+                        ViewCacheObb mainObbCache = null;
+                        if(mainObbUrl!=null){
+                            mainObbCache = new ViewCacheObb((viewApk.getApkid()+".obb"+"|"+viewApk.getVercode()).hashCode(),mainObbName, mainObbMd5, cache, viewApk.getApkid());
                         }
+
+                        ViewCacheObb patchObbCache = null;
+                        if(patchObbUrl!=null){
+                            patchObbCache = new ViewCacheObb((viewApk.getApkid()+".obb2"+"|"+viewApk.getVercode()).hashCode(),patchObbName, patchObbMd5, cache, viewApk.getApkid());
+                        }
+                        ViewObb obb = null;
+
+                        if(mainObbCache!=null){
+                            obb = new ViewObb(mainObbUrl, patchObbUrl, mainObbCache, patchObbCache);
+                        }
+
+//                        if(mainObbCache!=null && mainObbCache.checkMd5()){
+//
+//                            if(patchObbCache!=null && patchObbCache.checkMd5()){
+//
+//                                if (cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()) {
+//
+//
+//
+//                                    try {
+//                                        serviceDownloadManager.callInstallApp(cache);
+//                                    } catch (RemoteException e) {
+//                                        e.printStackTrace();
+//                                    }
+//
+//                                }else{
+
+
+                                    download(cache, obb);
+
+//                                }
+//
+//                            }else{
+//
+//                                download(cache, obb);
+//
+//                            }
+//
+//
+//                        }else{
+//
+//
+//                            if (cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()) {
+//
+//                                try {
+//                                    serviceDownloadManager.callInstallApp(cache);
+//                                } catch (RemoteException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                            } else {
+//
+//                                download(cache, obb);
+//
+//                            }
+//                        }
                     }
                 }
             }).start();
@@ -916,19 +936,76 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
         }
     };
 
+    private void download(ViewCache cache, ViewObb obb) {
+        if (category.equals(Category.ITEMBASED) || category.equals(Category.TOP) || category.equals(Category.TOPFEATURED) || category.equals(Category.EDITORSCHOICE)) {
+
+            download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, obb);
+
+        } else {
+
+            download = new ViewDownloadManagement(viewApk.getPath(), viewApk, cache, db.getServer(viewApk.getRepo_id(), false).getLogin(), obb);
+
+        }
+
+
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                ImageView manage = (ImageView) findViewById(R.id.icon_manage);
+////                                    manage.setVisibility(View.GONE);
+                manage.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        setupQuickActions(view);
+                    }
+                });
+                findViewById(R.id.download_progress).setVisibility(View.VISIBLE);
+//                                    findViewById(R.id.icon_manage).setVisibility(View.VISIBLE);
+                findViewById(R.id.downloading_name).setVisibility(View.INVISIBLE);
+            }
+        });
+
+        try {
+
+            serviceDownloadManager.callStartDownloadAndObserve(download, serviceDownloadManagerCallback);
+
+//                                if(mainObbUrl!=null){
+//                                    ViewApk apk = new ViewApk(viewApk.getId(), viewApk.getApkid(), viewApk.getName() + " - MainOBB", 0, "", "0", "0", "", "", viewApk.getRepo_id());
+//                                    ViewDownloadManagement download = new ViewDownloadManagement(mainObbUrl, apk, mainObbCache, true, true);
+//                                    serviceDownloadManager.callStartDownload(download);
+//                                }
+//                                serviceDownloadManager.callStartDownload();
+//                                serviceDownloadManager.callStartDownload();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.btinstall).setOnClickListener(installListener);
+            }
+        });
+    }
+
     /**
      *
      */
     private void checkDownloadStatus() {
         try {
             download = serviceDownloadManager.callGetAppDownloading(viewApk.hashCode());
+
+
+
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
 
         Log.d("Aptoide-ApkInfo", "getAppDownloading: "+download);
 
-        if(!download.isNull()){
+        if(download.getDownloadStatus().equals(EnumDownloadStatus.DOWNLOADING)){
             ImageView manage = (ImageView) findViewById(R.id.icon_manage);
 //            manage.setVisibility(View.GONE);
             manage.setOnClickListener(new OnClickListener() {
@@ -950,6 +1027,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
             ((TextView) findViewById(R.id.speed)).setTextColor(Color.WHITE);
             ((TextView) findViewById(R.id.progress)).setText(download.getProgressString());
             ((TextView) findViewById(R.id.progress)).setTextColor(Color.WHITE);
+
         }
     }
 
@@ -1139,8 +1217,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                                     break;
 
                                 case STOP:
-                                    serviceDownloadManager
-                                            .callStopDownload(download.hashCode());
+                                    serviceDownloadManager.callStopDownload(download.hashCode());
                                     break;
 
                                 default:
@@ -1221,6 +1298,31 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            try{
+                if(webservice.hasOBB()){
+
+                    mainObbUrl = webservice.getMainOBB().getString("path");
+                    mainObbMd5 = webservice.getMainOBB().getString("md5sum");
+                    mainObbName = webservice.getMainOBB().getString("filename");
+
+                    if(webservice.hasPatchOBB()){
+
+                        patchObbUrl = webservice.getPatchOBB().getString("path");
+                        patchObbMd5 = webservice.getPatchOBB().getString("md5sum");
+                        patchObbName = webservice.getPatchOBB().getString("filename");
+
+                    }
+
+                }
+
+            }catch (Exception e){
+               Log.d("ApkInfo","Error building OBB Object");
+            }
+
+            Log.d("TAAAAAG", mainObbUrl + " " + mainObbName +" " + mainObbMd5);
+
+
 
             try{
 

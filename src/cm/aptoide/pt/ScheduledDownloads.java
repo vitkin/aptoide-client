@@ -7,27 +7,8 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.util.HashMap;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.CheckBox;
-import org.holoeverywhere.widget.ListView;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
-
-import android.content.ActivityNotFoundException;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -48,9 +29,14 @@ import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import org.holoeverywhere.LayoutInflater;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.widget.*;
+
+import java.util.HashMap;
 
 public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
 	private Database db;
@@ -101,7 +87,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 	protected void onCreate(Bundle savedInstance) {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstance);
-		
+
 		setContentView(R.layout.list_sch_downloads);
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle(R.string.setting_schdwntitle);
@@ -132,13 +118,13 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 			@Override
 			public void bindView(View convertView, Context arg1, Cursor c) {
 				// Planet to display
-				ScheduledDownload scheduledDownload = scheduledDownloadsHashMap.get(c.getString(0)); 
+				ScheduledDownload scheduledDownload = scheduledDownloadsHashMap.get(c.getString(0));
 
 				// The child views in each row.
-				CheckBox checkBoxScheduled ; 
+				CheckBox checkBoxScheduled ;
 				TextView textViewName ;
 				TextView textViewVersion ;
-				ImageView imageViewIcon ; 
+				ImageView imageViewIcon ;
 
 				// Create a new row view
 				if ( convertView.getTag() == null ) {
@@ -148,7 +134,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 					textViewVersion = (TextView) convertView.findViewById(R.id.appversion);
 					checkBoxScheduled = (CheckBox) convertView.findViewById(R.id.schDwnChkBox);
 					imageViewIcon = (ImageView) convertView.findViewById(R.id.appicon);
-					// Optimization: Tag the row with it's child views, so we don't have to 
+					// Optimization: Tag the row with it's child views, so we don't have to
 					// call findViewById() later when we reuse the row.
 					convertView.setTag( new Holder(textViewName,textViewVersion,checkBoxScheduled,imageViewIcon) );
 
@@ -159,7 +145,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 							ScheduledDownload schDownload = (ScheduledDownload) cb.getTag();
 							schDownload.setChecked( cb.isChecked() );
 						}
-					});        
+					});
 				}
 				// Reuse existing row view
 				else {
@@ -173,22 +159,22 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 
 				// Tag the CheckBox with the Planet it is displaying, so that we can
 				// access the planet in onClick() when the CheckBox is toggled.
-				checkBoxScheduled.setTag( scheduledDownload ); 
+				checkBoxScheduled.setTag( scheduledDownload );
 
 				// Display planet data
 				checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
-				textViewName.setText( scheduledDownload.getName() );  
+				textViewName.setText( scheduledDownload.getName() );
 				textViewVersion.setText( ""+scheduledDownload.getVername() );
 
 			      // Tag the CheckBox with the Planet it is displaying, so that we can
 			      // access the planet in onClick() when the CheckBox is toggled.
-			      checkBoxScheduled.setTag( scheduledDownload ); 
-			      
+			      checkBoxScheduled.setTag( scheduledDownload );
+
 			      // Display planet data
 			      checkBoxScheduled.setChecked( scheduledDownload.isChecked() );
-			      textViewName.setText( scheduledDownload.getName() );  
+			      textViewName.setText( scheduledDownload.getName() );
 			      textViewVersion.setText( ""+scheduledDownload.getVername() );
-			      
+
 			      // ((TextView) v.findViewById(R.id.isinst)).setText(c.getString(3));
 			      // ((TextView) v.findViewById(R.id.name)).setText(c.getString(2));
 			      String hashCode = (c.getString(2)+"|"+c.getString(3));
@@ -227,7 +213,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 							apk.setVername(schDown.getVername());
 							apk.setMd5(schDown.getMd5());
 							try {
-								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername())));
+								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername()), null));
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}
@@ -235,14 +221,14 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 					}
 
 				} else {
-					Toast toast= Toast.makeText(ScheduledDownloads.this, 
-							R.string.schDown_nodownloadselect, Toast.LENGTH_SHORT);  
+					Toast toast= Toast.makeText(ScheduledDownloads.this,
+							R.string.schDown_nodownloadselect, Toast.LENGTH_SHORT);
 					toast.show();
 				}
 			}
 		});
 		if(getIntent().hasExtra("downloadAll")){
-			
+
 			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 			alertDialogBuilder.setTitle(getText(R.string.schDwnBtn));
 			alertDialogBuilder
@@ -261,7 +247,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 							apk.setVername(schDown.getVername());
 							apk.setMd5(schDown.getMd5());
 							try {
-								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername())));
+								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername()), null));
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}
@@ -291,8 +277,8 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 		private int vercode = 0 ;
 		private boolean checked = false ;
 		private String iconPath = "";
-		
-		
+
+
 		public ScheduledDownload( String name, boolean checked ) {
 			this.name = name ;
 			this.checked = checked ;
@@ -310,7 +296,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 			this.checked = checked;
 		}
 		public String toString() {
-			return name ; 
+			return name ;
 		}
 		public void toggleChecked() {
 			checked = !checked ;
@@ -418,10 +404,10 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 		menu.clear();
 		menu.add(0, 0, 0, R.string.schDown_invertselection).setIcon(android.R.drawable.ic_menu_revert);
 		menu.add(0, 1, 0, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -458,27 +444,27 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 				AlertDialog alertDialog = alertDialogBuilder.create();
 				alertDialog.show();
 			} else {
-				Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);  
-				toast.show(); 
+				Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);
+				toast.show();
 			}
 			break;
-		
+
 		default:
 			break;
 		}
 		return true;
 	}
-	
+
 //	@Override
 //	public boolean onCreateOptionsMenu(Menu menu) {
 //		menu.add(Menu.NONE,1, 0, R.string.schDown_invertselection).setIcon(android.R.drawable.ic_menu_revert);
 //		menu.add(Menu.NONE,2, 0, R.string.schDown_removeselected).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 //		return true;
 //	}
-//	
+//
 //	@Override
 //	public boolean onMenuItemSelected(int featureId, android.view.MenuItem item) {
-//		
+//
 //		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 //		switch (item.getItemId()) {
 //		case 2:
@@ -507,8 +493,8 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 //				AlertDialog alertDialog = alertDialogBuilder.create();
 //				alertDialog.show();
 //			} else {
-//				Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);  
-//				toast.show(); 
+//				Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);
+//				toast.show();
 //			}
 //
 //			break;
@@ -525,7 +511,7 @@ public class ScheduledDownloads extends Activity/*SherlockFragmentActivity */imp
 //
 //		return super.onMenuItemSelected(featureId, item);
 //	}
-	
+
 	@Override
 	protected void onDestroy() {
 		unbindService(serviceManagerConnection);

@@ -365,7 +365,7 @@
     </string>
     <string name="payment_warning_title">Warning</string>
     <string name="buy">Buy</string>
-    
+
     <string name="applications">Applications</string>
     <string name="comics">Comics</string>
 	<string name="communication">Communication</string>
@@ -400,7 +400,7 @@
 	<string name="media_and_video">Media &amp; Video</string>
 	<string name="education">Education</string>
 	<string name="business">Business</string>
-	
+
 	<string name="games">Games</string>
 	<string name="arcade_and_action">Arcade &amp; Action</string>
 	<string name="brain_and_puzzle">Brain &amp; Puzzle</string>
@@ -408,11 +408,13 @@
 	<string name="casual">Casual</string>
 	<string name="sport_games">Sports Games</string>
 	<string name="racing">Racing</string>
-	
+
 	<string name="top_apps">Top Apps</string>
 	<string name="latest_apps">Latest Apps</string>
 	<string name="latest_comments">Latest Comments</string>
 	<string name="latest_likes">Latest Likes</string>
 	<string name="recommended_for_you">Recommended for you</string>
-    
+    <string name="patch_obb">Patch Expansion File</string>
+    <string name="main_obb">Main Expansion File</string>
+
 </resources>

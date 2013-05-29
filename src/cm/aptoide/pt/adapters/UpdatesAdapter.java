@@ -30,12 +30,12 @@ public class UpdatesAdapter extends CursorAdapter {
 
 	private AIDLServiceDownloadManager serviceDownloadManager = null;
 
-	
+
 
 	public UpdatesAdapter(Context context, Cursor c, int flags) {
 		super(context, c, flags);
 	}
-	
+
 	/**
 	 * @param serviceDownloadManager the serviceDownloadManager to set
 	 */
@@ -46,9 +46,9 @@ public class UpdatesAdapter extends CursorAdapter {
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		
+
 		View v = LayoutInflater.from(context).inflate(R.layout.row_app_update, null);
-		
+
 		return v;
 	}
 
@@ -71,13 +71,13 @@ public class UpdatesAdapter extends CursorAdapter {
 		final String vername = cursor.getString(2);
 		final int vercode = cursor.getInt(8);
 		final String md5 = cursor.getString(10);
-		final String apkpath = cursor.getString(11) + cursor.getString(12);  
+		final String apkpath = cursor.getString(11) + cursor.getString(12);
 		String iconspath = cursor.getString(9)+cursor.getString(4);
 		final String hash = (cursor.getString(cursor.getColumnIndex("apkid"))+"|"+cursor.getString(cursor.getColumnIndex("vercode")));
 		holder.name.setText(name);
 		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash);
 //		 try{
-//	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
+//	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));
 //	        }catch (Exception e) {
 //	        	holder.rating.setRating(0);
 //			}
@@ -87,19 +87,14 @@ public class UpdatesAdapter extends CursorAdapter {
 			public void onClick(View view) {
 				ViewApk apk = Database.getInstance().getApk(id, Category.INFOXML);
 				try {
-					serviceDownloadManager.callStartDownload(
-							new ViewDownloadManagement(
-							apkpath,
-							apk,
-							new ViewCache(apk.hashCode(), 
-									apk.getMd5(),apkId,vername)));
+					serviceDownloadManager.callStartDownload(new ViewDownloadManagement(apkpath,apk,new ViewCache(apk.hashCode(),apk.getMd5(),apkId,vername), null));
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-	
+
 	public static class ViewHolder {
 		TextView name;
 		TextView vername;

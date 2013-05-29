@@ -19,15 +19,6 @@
 */
 package cm.aptoide.pt.services;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.holoeverywhere.app.ProgressDialog;
-
-import android.app.DownloadManager;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -37,29 +28,23 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.os.IBinder;
-import android.os.Parcel;
-import android.os.PowerManager;
+import android.os.*;
 import android.os.PowerManager.WakeLock;
-import android.os.RemoteException;
 import android.preference.PreferenceManager;
-
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.AIDLDownloadManager;
 import cm.aptoide.pt.AIDLDownloadObserver;
 import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.util.Constants;
-import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownload;
-import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt.views.ViewListDownloads;
+import cm.aptoide.pt.views.*;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * ServiceDownloadManager, manages interaction between interface classes and services
@@ -131,7 +116,12 @@ public class ServiceDownloadManager extends Service {
 		public void callRegisterDownloadObserver(int appHashId, AIDLDownloadObserver downloadObserver) throws RemoteException {
 			Log.d("Aptoide-ServiceDownloadManager", "registered download observer");
 			try {
-				ongoingDownloads.get(appHashId).registerObserver(downloadObserver);
+                if(ongoingDownloads.get(appHashId)!=null){
+                    ongoingDownloads.get(appHashId).registerObserver(downloadObserver);
+                }else{
+                    completedDownloads.get(appHashId).registerObserver(downloadObserver);
+                }
+
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -150,7 +140,7 @@ public class ServiceDownloadManager extends Service {
 		@Override
 		public void callInstallApp(ViewCache apk) throws RemoteException {
 			Log.d("Aptoide-ServiceDownloadManager", "installing app");
-			installApp(apk);
+			installApp(apk, false);
 		}
 
 		@Override
@@ -162,6 +152,15 @@ public class ServiceDownloadManager extends Service {
 		@Override
 		public void callStartDownload(ViewDownloadManagement download) throws RemoteException {
 			Log.d("Aptoide-ServiceDownloadManager", "starting app download");
+
+            if(download.getPatchObb()!=null){
+                startDownload(download.getPatchObb());
+            }
+
+            if(download.getMainObb()!=null){
+                startDownload(download.getMainObb());
+            }
+
 			startDownload(download);
 		}
 
@@ -169,7 +168,8 @@ public class ServiceDownloadManager extends Service {
 		public void callStartDownloadAndObserve( ViewDownloadManagement download, AIDLDownloadObserver downloadObserver) throws RemoteException {
 			Log.d("Aptoide-ServiceDownloadManager", "starting app download and registering observer");
 			download.registerObserver(downloadObserver);
-			startDownload(download);
+			callStartDownload(download);
+
 		}
 
 		@Override
@@ -286,7 +286,7 @@ public class ServiceDownloadManager extends Service {
 		super.onDestroy();
 	}
 
-	private void setNotification() {
+	private synchronized void setNotification() {
 
 		managerNotification =
 		        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -308,10 +308,10 @@ public class ServiceDownloadManager extends Service {
     	// Displays the progress bar for the first time
     	managerNotification.notify(globaDownloadStatus.hashCode(), mBuilder.build());
 
-    	
-		           
-		
-		
+
+
+
+
 //		String notificationTitle = getString(R.string.aptoide_downloading, ApplicationAptoide.MARKETNAME);
 //		int notificationIcon = android.R.drawable.stat_sys_download;
 //		RemoteViews contentView = new RemoteViews(Constants.APTOIDE_PACKAGE_NAME, R.layout.row_notification_progress_bar);
@@ -352,7 +352,7 @@ public class ServiceDownloadManager extends Service {
 	}
 
 
-	private void dismissNotification(){
+	private synchronized void dismissNotification(){
 		try {
 			managerNotification.cancel(globaDownloadStatus.hashCode());
 		} catch (Exception e) { }
@@ -391,7 +391,7 @@ public class ServiceDownloadManager extends Service {
 //	}
 	public void updateDownloadStatus(int appId, ViewDownload update){
 		Log.d("Aptoide", "download update status *************** "+update.getStatus());
-		Log.d("Aptoide", "ongoing downloads *************** "+ongoingDownloads);
+		Log.d("Aptoide", "ongoing downloads *************** getAppId" +appId +ongoingDownloads);
 		ViewDownloadManagement updating = ongoingDownloads.get(appId);
 		updating.updateProgress(update);
 		try {
@@ -411,12 +411,18 @@ public class ServiceDownloadManager extends Service {
 				setCompletedNotification(download);
 				if(isDownloadManagerRegistered()){
 					try {
-						downloadManager.updateDownloadStatus(EnumDownloadStatus.COMPLETED.ordinal());
+						downloadManager.updateDownloadStatus(download.getDownloadStatus().ordinal());
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
 				}
-				installApp(download.getCache());
+
+                if(download.isInstall()){
+
+                    installApp(download.getCache(), download.isObb());
+                }
+
+
 			}else if(download.getDownloadStatus().equals(EnumDownloadStatus.FAILED)){
 				failedDownloads.put(appId, download);
 				if(isDownloadManagerRegistered()){
@@ -440,7 +446,7 @@ public class ServiceDownloadManager extends Service {
 	}
 
 
-	private void setCompletedNotification(ViewDownloadManagement download) {
+	private synchronized void setCompletedNotification(ViewDownloadManagement download) {
 
 		managerNotification =
 		        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -454,16 +460,16 @@ public class ServiceDownloadManager extends Service {
     	PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
     	mBuilder.setContentTitle(getString(R.string.finished_download, ApplicationAptoide.MARKETNAME))
     	.setContentText(download.getAppInfo().getName());
-    	
+
     	Bitmap bm = BitmapFactory.decodeFile(ImageLoader.getInstance().getDiscCache().get(download.getAppInfo().getApkid() + "|" + download.getAppInfo().getVercode()).getAbsolutePath());
-    	
-    	
+
+
 		mBuilder.setLargeIcon(bm);
 		mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
     	mBuilder.setContentIntent(onClickAction);
     	mBuilder.setAutoCancel(true);
     	managerNotification.notify(download.getAppInfo().getAppHashId(), mBuilder.build());
-		
+
     	Log.d("Aptoide-Downloader","Set Finished notification");
 	}
 
@@ -476,12 +482,12 @@ public class ServiceDownloadManager extends Service {
 			globaDownloadStatus.incrementSpeed(download.getSpeedInKBps());
 		}
 		if(ongoingDownloads.size() > 0){
-			if(!keepScreenOn.isHeld()){
-				keepScreenOn.acquire();
-			}
+//			if(!keepScreenOn.isHeld()){
+//				keepScreenOn.acquire();
+//			}
 			setNotification();
 		}else{
-			keepScreenOn.release();
+//			keepScreenOn.release();
 			dismissNotification();
 		}
 
@@ -490,14 +496,23 @@ public class ServiceDownloadManager extends Service {
 
 
 
-	public void installApp(ViewCache apk){
+	public void installApp(ViewCache apk, boolean isObb){
 //		if(isAppScheduledToInstall(appHashid)){
 //			unscheduleInstallApp(appHashid);
 //		}
+
+        ViewCache thisCache;
+
+        if(isObb){
+            thisCache = ((ViewCacheObb)apk).getParentCache();
+        }else{
+            thisCache = apk;
+        }
+
 		Intent install = new Intent(Intent.ACTION_VIEW);
 		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		install.setDataAndType(Uri.fromFile(apk.getFile()),"application/vnd.android.package-archive");
-		Log.d("Aptoide", "Installing app: "+apk.getLocalPath());
+		install.setDataAndType(Uri.fromFile(thisCache.getFile()),"application/vnd.android.package-archive");
+		Log.d("Aptoide", "Installing app: "+thisCache.getLocalPath());
 		startActivity(install);
 	}
 
@@ -512,11 +527,20 @@ public class ServiceDownloadManager extends Service {
 	 */
 	public ViewDownloadManagement getAppDownloading(int appHashId){
 		ViewDownloadManagement download = ongoingDownloads.get(appHashId);
+
+
+
 		if(download == null){
-			return new ViewDownloadManagement();
-		}else{
-			return download;
+
+            download = completedDownloads.get(appHashId);
+
+            if(download == null){
+                download =  new ViewDownloadManagement();
+            }
+
 		}
+
+        return download;
 	}
 
 	/**
@@ -526,12 +550,27 @@ public class ServiceDownloadManager extends Service {
 	 * @param ViewDownloadManagement
 	 */
 	public void startDownload(final ViewDownloadManagement viewDownload){
+
+
+
+
+
+
+
+
 		Log.d("Aptoide", "download being started *************** "+viewDownload.hashCode());
 		checkDirectorySize(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/apks");
-		ViewCache cache = viewDownload.getCache();
-		if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
-			installApp(cache);
-		}else{
+//		ViewCache cache = viewDownload.getCache();
+//		if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
+//
+//
+//
+//            if(viewDownload.isInstall()){
+//                installApp(cache, viewDownload.isObb());
+//            }
+//
+//
+//		}else{
 //			if(isPermittedConnectionAvailable()){
 				if(!ongoingDownloads.containsKey(viewDownload.hashCode())){
 					ongoingDownloads.put(viewDownload.hashCode(), viewDownload);
@@ -550,8 +589,22 @@ public class ServiceDownloadManager extends Service {
 					@Override
 					public void run() {
 						if(viewDownload.isLoginRequired()){
-							helperDownload.downloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin(), viewDownload.getAppInfo().isPaid());
+//                            if (viewDownload.getViewMainObbDownload() != null) {
+//                                helperDownload.downloadPrivateApk(viewDownload.getViewMainObbDownload(), viewDownload.getObb().getMainCache(), viewDownload.getLogin(), false);
+//                                if (viewDownload.getViewPatchObbDownload() != null) {
+//                                    helperDownload.downloadPrivateApk(viewDownload.getViewPatchObbDownload(), viewDownload.getObb().getPatchCache(), viewDownload.getLogin(), false);
+//                                }
+//                            }
+                            helperDownload.downloadPrivateApk(viewDownload.getDownload(), viewDownload.getCache(), viewDownload.getLogin(), viewDownload.getAppInfo().isPaid());
 						}else{
+
+//                            if (viewDownload.getViewMainObbDownload() != null) {
+//                                helperDownload.downloadApk(viewDownload.getViewMainObbDownload(), viewDownload.getObb().getMainCache(), false);
+//                                if (viewDownload.getViewPatchObbDownload() != null) {
+//                                    helperDownload.downloadApk(viewDownload.getViewPatchObbDownload(), viewDownload.getObb().getPatchCache(), false);
+//                                }
+//                            }
+
 							helperDownload.downloadApk(viewDownload.getDownload(), viewDownload.getCache(),viewDownload.getAppInfo().isPaid());
 						}
 					}
@@ -565,7 +618,7 @@ public class ServiceDownloadManager extends Service {
 					}
 				}
 //			}
-		}
+//		}
 	}
 
 	double getDirSize(File dir) {
@@ -615,17 +668,23 @@ public class ServiceDownloadManager extends Service {
 	 * @param appHashId
 	 */
 	public void pauseDownload(final int appHashId){
-		Log.d("Aptoide", "download being paused *************** "+appHashId);
-		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
-		helperDownload.pauseDownload(appHashId);
-		try {
-			if(isDownloadManagerRegistered()){
-				downloadManager.updateDownloadStatus(EnumDownloadStatus.PAUSED.ordinal());
-			}
-			ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+        if(ongoingDownloads.get(appHashId)!=null){
+
+            Log.d("Aptoide", "download being paused *************** "+appHashId);
+            ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.PAUSED);
+
+            helperDownload.pauseDownload(appHashId);
+            try {
+                if(isDownloadManagerRegistered()){
+                    downloadManager.updateDownloadStatus(EnumDownloadStatus.PAUSED.ordinal());
+                }
+                ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
 	}
 
 	/**
@@ -635,16 +694,18 @@ public class ServiceDownloadManager extends Service {
 	 */
 	public void resumeDownload(final int appHashId){
 		Log.d("Aptoide", "download being resumed *************** "+appHashId);
-		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
-		startDownload(ongoingDownloads.get(appHashId));
-		try {
-			if(isDownloadManagerRegistered()){
-				downloadManager.updateDownloadStatus(EnumDownloadStatus.RESUMING.ordinal());
-			}
-			ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        if(ongoingDownloads!=null){
+            ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.RESUMING);
+            startDownload(ongoingDownloads.get(appHashId));
+            try {
+                if (isDownloadManagerRegistered()) {
+                    downloadManager.updateDownloadStatus(EnumDownloadStatus.RESUMING.ordinal());
+                }
+                ongoingDownloads.get(appHashId).getObserver().updateDownloadStatus(ongoingDownloads.get(appHashId).getDownload());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	/**
@@ -653,22 +714,28 @@ public class ServiceDownloadManager extends Service {
 	 * @param appHashId
 	 */
 	public void stopDownload(final int appHashId){
-		Log.d("Aptoide", "download being stopped *************** "+appHashId);
-		ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
-		ViewDownloadManagement download = ongoingDownloads.remove(appHashId);
+
+        if(ongoingDownloads.get(appHashId)!=null){
+
+            Log.d("Aptoide", "download being stopped *************** "+appHashId);
+            ongoingDownloads.get(appHashId).getDownload().setStatus(EnumDownloadStatus.STOPPED);
+            ViewDownloadManagement download = ongoingDownloads.remove(appHashId);
 //		ViewDownloadManagement download = ongoingDownloads.get(appHashId);
-		if(download.getDownloadStatus().equals(EnumDownloadStatus.DOWNLOADING)){
-			helperDownload.stopDownload(appHashId);
-		}
-		updateGlobalProgress();
-		try {
-			if(isDownloadManagerRegistered()){
-				downloadManager.updateDownloadStatus(EnumDownloadStatus.STOPPED.ordinal());
-			}
-			download.getObserver().updateDownloadStatus(download.getDownload());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            if(download.getDownloadStatus().equals(EnumDownloadStatus.DOWNLOADING)){
+                helperDownload.stopDownload(appHashId);
+            }
+            updateGlobalProgress();
+            try {
+                if(isDownloadManagerRegistered()){
+                    downloadManager.updateDownloadStatus(EnumDownloadStatus.STOPPED.ordinal());
+                }
+                if(download.getObserver()!=null){
+                    download.getObserver().updateDownloadStatus(download.getDownload());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	/**

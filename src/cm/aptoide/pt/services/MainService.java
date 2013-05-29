@@ -7,24 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt.services;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.json.JSONObject;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -33,18 +15,18 @@ import android.content.IntentFilter;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
-import android.util.Log;
-import cm.aptoide.pt.ApplicationAptoide;
-import cm.aptoide.pt.Database;
-import cm.aptoide.pt.ExtrasService;
-import cm.aptoide.pt.RepoParser;
-import cm.aptoide.pt.Server;
+import cm.aptoide.pt.*;
 import cm.aptoide.pt.Server.State;
-import cm.aptoide.pt.ServerLatest;
-import cm.aptoide.pt.ServerTop;
 import cm.aptoide.pt.exceptions.AptoideException;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 
 public class MainService extends Service {
 //	Database db;
@@ -55,7 +37,7 @@ public class MainService extends Service {
 	String defaultLatestXmlPath = defaultPath+"/.aptoide/latest.xml";
 	String defaultExtrasXmlPath = defaultPath+"/.aptoide/extras.xml";
 	String defaultBootConfigXmlPath = defaultPath+"/.aptoide/boot_config.xml";
-	
+
 	static ArrayList<String> serversParsing = new ArrayList<String>();
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -123,7 +105,7 @@ public class MainService extends Service {
 		System.out.println(server.getClass().getCanonicalName());
 		File f = new File(xmlpath);
 		InputStream in = utils.getInputStream(
-				url, 
+				url,
 				server.getLogin().getUsername(),
 				server.getLogin().getPassword(),
 				getApplicationContext());
@@ -144,7 +126,7 @@ public class MainService extends Service {
 
 		return f.getAbsolutePath();
 	}
-	
+
 //
 //	public String getTop(Server server,String xmlpath) throws MalformedURLException, IOException{
 //		File f = new File(xmlpath);
@@ -226,14 +208,14 @@ public class MainService extends Service {
 			}
 			db.addStore(uri_str,username,password);
 			server = db.getServer(uri_str);
-			
+
 			if(ApplicationAptoide.DEFAULTSTORE != null && uri_str.equals("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/")){
 				server.oem = true;
 				db.addStoreInfo(ApplicationAptoide.STOREAVATAR, ApplicationAptoide.STORENAME, "0", ApplicationAptoide.STORETHEME, ApplicationAptoide.STOREDESCRIPTION, ApplicationAptoide.STOREVIEW, ApplicationAptoide.STOREITEMS, db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/").id);
 			}else{
 				db.addStoreInfo("",RepoUtils.split(server.url),"0","","","","",server.id);
 			}
-			
+
 			parseServer(db, server);
 		} catch (Exception e){
 			e.printStackTrace();
@@ -275,7 +257,7 @@ public class MainService extends Service {
 			serversParsing.add(server.url);
 		}
 	}
-	
+
 //	private void parseBootConfig(final Database db, final Server server) {
 //		new Thread(new Runnable() {
 //			public void run() {
@@ -284,7 +266,7 @@ public class MainService extends Service {
 //					//			serversParsing.put((int)server.id, server);
 //					path = get(server, defaultBootConfigXmlPath, "boot_config.xml", false);
 //					SAXParser parser = SAXParserFactory.newInstance().newSAXParser();
-//					
+//
 //					parser.parse(new File(path), new DefaultHandler(){
 //						StringBuilder sb = new StringBuilder();
 //						String avatar;
@@ -292,24 +274,24 @@ public class MainService extends Service {
 //						String description;
 //						String view;
 //						String items;
-//						
+//
 //						public void startElement(String uri, String localName, String qName, org.xml.sax.Attributes attributes) throws SAXException {
 //							sb.setLength(0);
 //						};
-//						
+//
 //						public void characters(char[] ch, int start, int length) throws SAXException {
 //							sb.append(ch,start,length);
 //						};
-//						
+//
 //						public void endElement(String uri, String localName, String qName) throws SAXException {
-//							
+//
 //							ApplicationAptoide.StoreElements element;
 //							try{
 //								element = StoreElements.valueOf(localName);
 //							}catch (Exception e) {
 //								element = StoreElements.none;
 //							}
-//							
+//
 //							switch (element) {
 //							case avatar:
 //								this.avatar = sb.toString();
@@ -334,15 +316,15 @@ public class MainService extends Service {
 //							default:
 //								break;
 //							}
-//							
-//							
+//
+//
 //						};
-//						
-//						
-//						
-//						
+//
+//
+//
+//
 //					});
-//					
+//
 //				} catch (MalformedURLException e) {
 //					e.printStackTrace();
 //				} catch (IOException e) {
@@ -356,13 +338,13 @@ public class MainService extends Service {
 //				}
 //			}
 //		}).start();
-//		
-//		
-//		
+//
+//
+//
 //	}
-	
-	
-	
+
+
+
 	public boolean deleteStore(Database db, long id){
 		if(!serversParsing.contains(db.getServer(id, false).url)){
 			db.deleteServer(id,true);
@@ -374,11 +356,25 @@ public class MainService extends Service {
 	public void parseTop(final Database db, final Server server) {
 		new Thread(new Runnable() {
 			public void run() {
-				String path2;
+				String path;
 				try {
 					//			serversParsing.put((int)server.id, server);
-					path2 = get(server, defaultTopXmlPath, "top.xml", false);
-					RepoParser.getInstance(db).parseTop(path2, new ServerTop(server));
+
+                    NetworkUtils utils = new NetworkUtils();
+
+                    long lastModified = utils.getLastModified(new URL(server.url + "top.xml"));
+
+                    if(Long.parseLong(db.getRepoHash(server.id, Category.TOP)) < lastModified){
+
+                        path = get(server, defaultTopXmlPath, "top.xml", false);
+
+                        Server serverTop = new ServerTop(server);
+
+                        serverTop.hash = lastModified + "";
+
+                        RepoParser.getInstance(db).parseTop(path, serverTop);
+
+                    }
 				} catch (MalformedURLException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
@@ -411,11 +407,24 @@ public class MainService extends Service {
 			new Thread(new Runnable() {
 
 				public void run() {
-					String path2 = null;
+					String path;
 					//			serversParsing.put((int)server.id, server);
 					try {
-						path2 = get(server, defaultLatestXmlPath, "latest.xml", false);
-						RepoParser.getInstance(db).parseLatest(path2, new ServerLatest(server));
+
+                        NetworkUtils utils = new NetworkUtils();
+
+                        long lastModified = utils.getLastModified(new URL(server.url + "latest.xml"));
+
+                        if(Long.parseLong(db.getRepoHash(server.id, Category.LATEST)) < lastModified){
+
+						    path = get(server, defaultLatestXmlPath, "latest.xml", false);
+                            Server serverLatest = new ServerLatest(server);
+                            serverLatest.hash = lastModified + "";
+
+                            RepoParser.getInstance(db).parseLatest(path, serverLatest);
+
+
+                        }
 					} catch (MalformedURLException e) {
 						e.printStackTrace();
 					} catch (IOException e) {
@@ -469,7 +478,7 @@ public class MainService extends Service {
 			}else{
 				db.addStoreInfo("",RepoUtils.split(server.url),"0","","","","",server.id);
 			}
-			
+
 		}
 
 

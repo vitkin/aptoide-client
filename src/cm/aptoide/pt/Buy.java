@@ -1,9 +1,14 @@
 package cm.aptoide.pt;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import cm.aptoide.pt.webservices.login.Login;
+import com.paypal.android.MEP.PayPal;
+import com.paypal.android.MEP.PayPalPreapproval;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -17,16 +22,9 @@ import org.holoeverywhere.preference.SharedPreferences;
 import org.holoeverywhere.widget.TextView;
 import org.json.JSONObject;
 
-import com.paypal.android.MEP.PayPal;
-import com.paypal.android.MEP.PayPalPreapproval;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.view.View;
-import cm.aptoide.pt.webservices.login.Login;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 public class Buy extends Activity {
@@ -74,7 +72,8 @@ public class Buy extends Activity {
 		userMail = Login.getUserLogin(this);
 		b = getIntent().getExtras();
 
-		apkid = b.getString("apkid");
+
+        apkid = b.getString("apkid");
 		versionName = b.getString("versionName");
 		repo=b.getString("repo");
 //		String params = token+"/"+userMail+"/check/json";

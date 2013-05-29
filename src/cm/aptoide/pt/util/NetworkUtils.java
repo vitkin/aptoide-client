@@ -7,16 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -27,6 +17,15 @@ import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Configs;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class NetworkUtils {
 
@@ -51,7 +50,7 @@ public class NetworkUtils {
 		BufferedInputStream bis = new BufferedInputStream(connection.getInputStream(), 8 * 1024);
 
 //		if(ApplicationAptoide.DEBUG_MODE)
-            Log.i("Aptoide-NetworkUtils", "Getting: "+url.toString());
+            Log.i("Aptoide-NetworkUtils", "Getting: "+url);
 
 		return bis;
 
@@ -170,5 +169,12 @@ public class NetworkUtils {
 		if(ApplicationAptoide.DEBUG_MODE)Log.d("ManagerDownloads", "isPermittedConnectionAvailable: "+connectionAvailable+"  permissions: "+permissions);
 		return connectionAvailable;
 	}
+
+    public long getLastModified(URL url) throws IOException {
+
+        return url.openConnection().getLastModified();
+
+    }
+
 
 }

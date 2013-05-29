@@ -19,27 +19,13 @@
 */
 package cm.aptoide.pt;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URLConnection;
-import java.util.Locale;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.acra.*;
-import org.acra.annotation.*;
-import org.holoeverywhere.app.Application;
-import org.holoeverywhere.preference.SharedPreferences;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -51,6 +37,24 @@ import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDis
 import cm.aptoide.com.nostra13.universalimageloader.core.download.ImageDownloader;
 import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.util.NetworkUtils;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.Application;
+import org.holoeverywhere.preference.SharedPreferences;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * ApplicationAptoide, centralizes, statically, calls to instantiated objects
@@ -81,23 +85,31 @@ public class ApplicationAptoide extends Application {
     public static boolean SEARCHSTORES = true;
     public static String APTOIDETHEME = "";
     public static String MARKETNAME = "";
-    
+
     public static String STORETHEME = null;
     public static String STORENAME = null;
     public static String STOREAVATAR = null;
     public static String STOREDESCRIPTION = null;
     public static String STOREVIEW = null;
     public static String STOREITEMS = null;
+    private static boolean restartLauncher;
 
-    static enum Elements {PARTNERID, DEFAULTSTORE, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
+    public static boolean isRestartLauncher() {
+        return restartLauncher;
+    }
+
+    public static void setRestartLauncher(boolean restartLauncher) {
+        ApplicationAptoide.restartLauncher = restartLauncher;
+    }
+
+    static enum Elements {APTOIDEBOOT, PARTNERID, DEFAULTSTORE, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
     		STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS }
-    
+
 
 	@Override
 	public void onCreate() {
 //		ACRA.init(this);
 		AptoideThemePicker.setAptoideTheme(this);
-		managerPreferences = new ManagerPreferences(getApplicationContext());
 		setContext(getApplicationContext());
 		 // Create global configuration and initialize ImageLoader with this configuration
 
@@ -115,7 +127,7 @@ public class ApplicationAptoide extends Application {
             CUSTOMEDITORSCHOICE = sPref.getBoolean("CUSTOMEDITORSCHOICE",false);
             SEARCHSTORES = sPref.getBoolean("SEARCHSTORES",true);
             APTOIDETHEME = sPref.getString("APTOIDETHEME","DEFAULT");
-            MARKETNAME = sPref.getString("MARKETNAME", getString(R.string.app_name));
+            MARKETNAME = sPref.getString("MARKETNAME", "Aptoide");
 
 
         }else{
@@ -194,7 +206,7 @@ public class ApplicationAptoide extends Application {
                                     SEARCHSTORES = Boolean.parseBoolean(sb.toString());
                                     Log.d("Search stores", SEARCHSTORES+ "");
                                     break;
-                                    
+
                                 case STORETHEME:
                                 	STORETHEME = sb.toString();
                                     Log.d("Store Theme", STORETHEME+ "");
@@ -248,7 +260,11 @@ public class ApplicationAptoide extends Application {
             .putBoolean("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE)
             .putBoolean("SEARCHSTORES", SEARCHSTORES)
             .putString("APTOIDETHEME", APTOIDETHEME)
+                    .putString("MARKETNAME", MARKETNAME)
             .commit();
+
+
+            setRestartLauncher(true);
         }
 
         DEBUG_FILE = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/debug.log");
@@ -286,11 +302,75 @@ public class ApplicationAptoide extends Application {
 
 
 		super.onCreate();
-	}
+
+        managerPreferences = new ManagerPreferences(getApplicationContext());
+
+    }
 
 	public ManagerPreferences getManagerPreferences(){
 		return managerPreferences;
 	}
+
+    public static void replaceOemIcon(){
+
+        if(context.getSharedPreferences("settings", MODE_PRIVATE).contains("PARTNERID")){
+            PackageManager pm = context.getPackageManager();
+
+            for (EnumOem enumOem : EnumOem.values()) {
+
+                if (enumOem.equals(EnumOem.valueOf(BRAND.toUpperCase(Locale.ENGLISH)))) {
+
+                    pm.setComponentEnabledSetting(new ComponentName(context, "cm.aptoide.pt.Start-" + enumOem.name().toLowerCase(Locale.ENGLISH)),
+                            PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                            PackageManager.DONT_KILL_APP);
+
+                    Log.d("ApplicationAptoide", "Setting " + enumOem.name().toLowerCase(Locale.ENGLISH) + " enabled");
+
+                } else {
+
+                    pm.setComponentEnabledSetting(new ComponentName(context, "cm.aptoide.pt.Start-" + enumOem.name().toLowerCase(Locale.ENGLISH)),
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                            PackageManager.DONT_KILL_APP);
+
+                    Log.d("ApplicationAptoide", "Setting " + enumOem.name().toLowerCase(Locale.ENGLISH) + " disabled");
+
+
+                }
+
+            }
+        }
+    }
+
+    public static void restartLauncher(Context context) {
+        try{
+
+            replaceOemIcon();
+            PackageManager pm = context.getPackageManager();
+            ActivityManager am = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);
+
+            try{
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD){
+                    Intent i = new Intent(Intent.ACTION_MAIN);
+                    i.addCategory(Intent.CATEGORY_HOME);
+                    i.addCategory(Intent.CATEGORY_DEFAULT);
+                    List<ResolveInfo> resolves = pm.queryIntentActivities(i, 0);
+                    for (ResolveInfo res : resolves) {
+                        if (res.activityInfo != null) {
+                            am.killBackgroundProcesses(res.activityInfo.packageName);
+                            Log.d("ApplicationAptoide", "Killing: " + res.activityInfo.packageName);
+                        }
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        Log.d("ApplicationAptoide", "End restartLauncher");
+
+
+    }
 
 	/**
 	 * @return the context
@@ -322,10 +402,10 @@ public class ApplicationAptoide extends Application {
 		public InputStream getStreamFromNetwork(URI imageUri) throws IOException {
 
 	        boolean download = NetworkUtils.isPermittedConnectionAvailable(context, managerPreferences.getIconDownloadPermissions());
-	        
+
 	        Log.d("AplicationAptoide", ""+download);
 	        Log.d("AplicationAptoide", ""+managerPreferences.getIconDownloadPermissions());
-	        
+
 	        if(download){
 	        	URLConnection conn = imageUri.toURL().openConnection();
 				conn.setConnectTimeout(connectTimeout);

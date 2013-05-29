@@ -7,36 +7,30 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import android.content.ContentValues;
+import cm.aptoide.pt.views.ViewApkFeaturedTop;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.xml.sax.Attributes;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import android.content.ContentValues;
-import android.content.pm.FeatureInfo;
-
-import cm.aptoide.pt.HandlerInfoXml.ElementHandler;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewApkFeaturedTop;
-
 
 public class HandlerFeaturedTop extends DefaultHandler{
-	
+
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
-	
+
 	final Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
 	final StringBuilder sb  = new StringBuilder();
 	private static boolean insidePackage = false;
 	void loadElements() {
 		elements.put("name", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -51,7 +45,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				}
 			}
 		});
-		
+
 		elements.put("screenspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -62,9 +56,9 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.getServer().screenspath=sb.toString();
 			}
 		});
-		
+
 		elements.put("repository", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -72,20 +66,20 @@ public class HandlerFeaturedTop extends DefaultHandler{
 
 			@Override
 			public void endElement() throws SAXException {
-				
-				if(!db.getRepoHash(apk.getServer().id,Category.TOPFEATURED).equals(apk.getServer().hash)){
-					System.out.println("Deleting featured top apps ");
-					db.deleteFeaturedTopApps();
-				}else{
-					System.out.println("NOT Deleting featured top apps ");
-					throw new SAXException();
-				}
+
+//				if(!db.getRepoHash(apk.getServer().id,Category.TOPFEATURED).equals(apk.getServer().hash)){
+//					System.out.println("Deleting featured top apps ");
+//					db.deleteFeaturedTopApps();
+//				}else{
+//					System.out.println("NOT Deleting featured top apps ");
+//					throw new SAXException();
+//				}
 				db.insertServerInfo(apk.getServer(), Category.TOPFEATURED);
 			}
 		});
-		
+
 		elements.put("date", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -96,9 +90,9 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setDate(sb.toString());
 			}
 		});
-		
+
 		elements.put("hash", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -109,12 +103,12 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.getServer().hash=sb.toString();
 			}
 		});
-		
+
 		elements.put("package", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 				apk.clear();
 				insidePackage = true;
-				
+
 			}
 
 			@Override
@@ -126,7 +120,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				insidePackage = false;
 			}
 		});
-		
+
 		elements.put("ver", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -137,7 +131,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setVername(sb.toString());
 			}
 		});
-		
+
 		elements.put("apkid", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -148,7 +142,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setApkid(sb.toString());
 			}
 		});
-		
+
 		elements.put("vercode", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -159,7 +153,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setVercode(Integer.parseInt(sb.toString()));
 			}
 		});
-		
+
 		elements.put("sz", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -170,7 +164,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setSize(sb.toString());
 			}
 		});
-		
+
 		elements.put("screen", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -181,7 +175,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.addScreenshot(sb.toString());
 			}
 		});
-		
+
 		elements.put("icon", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -192,7 +186,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setIconPath(sb.toString());
 			}
 		});
-		
+
 		elements.put("dwn", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -203,7 +197,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setDownloads(sb.toString());
 			}
 		});
-		
+
 		elements.put("rat", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -214,7 +208,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setRating(sb.toString());
 			}
 		});
-		
+
 		elements.put("path", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -225,7 +219,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setPath(sb.toString());
 			}
 		});
-		
+
 		elements.put("md5h", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -236,7 +230,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setMd5(sb.toString());
 			}
 		});
-		
+
 		elements.put("basepath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -247,7 +241,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.getServer().basePath=sb.toString();
 			}
 		});
-		
+
 		elements.put("iconspath", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -258,7 +252,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.getServer().iconsPath=sb.toString();
 			}
 		});
-		
+
 		elements.put("minSdk", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -269,7 +263,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setMinSdk(sb.toString());
 			}
 		});
-		
+
 		elements.put("minGles", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -280,7 +274,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setMinGlEs(sb.toString());
 			}
 		});
-		
+
 		elements.put("minScreen", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -291,7 +285,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setMinScreen(Filters.Screens.lookup(sb.toString()).ordinal());
 			}
 		});
-		
+
 		elements.put("age", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -302,7 +296,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
 			}
 		});
-		
+
 		elements.put("cmt", new ElementHandler() {
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -321,24 +315,24 @@ public class HandlerFeaturedTop extends DefaultHandler{
 				}
 			}
 		});
-		
-		
+
+
 	}
-	
+
 	private Database db = Database.getInstance();
 	private ViewApkFeaturedTop apk = new ViewApkFeaturedTop();
-	
+
 	public HandlerFeaturedTop(Server server) {
 		loadElements();
 		apk.setServer(server);
 		apk.setRepo_id(apk.getServer().id);
 	}
-	
+
 	@Override
 	public void startDocument() throws SAXException {
 		super.startDocument();
 	}
-	
+
 	@Override
 	public void startElement(String uri, String localName,
 			String qName, Attributes attributes)
@@ -346,7 +340,7 @@ public class HandlerFeaturedTop extends DefaultHandler{
 		super.startElement(uri, localName, qName, attributes);
 		sb.setLength(0);
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.startElement(attributes);
 		} else {
@@ -365,21 +359,21 @@ public class HandlerFeaturedTop extends DefaultHandler{
 	public void endElement(String uri, String localName,
 			String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		
+
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.endElement();
 		} else {
 //			System.out.println("Element not found:" + localName);
 		}
 	}
-	
+
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				if(values.size()>0){
@@ -394,6 +388,6 @@ public class HandlerFeaturedTop extends DefaultHandler{
 	private static ContentValues value;
 	private static ContentValues[] value2 = new ContentValues[0];
 	private static ArrayList<ContentValues> values = new ArrayList<ContentValues>();
-	
-	
+
+
 }

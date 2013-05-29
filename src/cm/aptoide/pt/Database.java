@@ -24,10 +24,7 @@ import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.comments.Comment;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Database {
 	public static SQLiteDatabase database = null;
@@ -483,7 +480,7 @@ public class Database {
 	}
 
 	public Cursor getCategory1(long store, boolean mergeStores, boolean allApps) {
-		Cursor d = null;
+		Cursor d;
 		yield();
 		if (mergeStores) {
 			d = database
@@ -548,14 +545,61 @@ public class Database {
 			c.addRow(new Object[] { -1, "Latest Likes" });
 		}
 
-		c.addRow(new Object[] { -3, "Recommended for you" });
+		c.addRow(new Object[] { -3, "Recommended" });
+
+
+        if(mergeStores){
+            d.close();
+
+            return c;
+        }
+        MatrixCursor cursorToSend = new MatrixCursor(new String[] { "_id",
+                DbStructure.COLUMN_NAME });
+
+
+        ArrayList<String> itemsToShow = getItems(store);
+
+
+
+
+        for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
+
+
+            if(itemsToShow.contains(c.getString(1).toUpperCase(Locale.ENGLISH))){
+
+                cursorToSend.newRow().add(c.getLong(0)).add(c.getString(1));
+
+            }
+
+
+        }
+
 
 		d.close();
+        c.close();
 
-		return c;
+		return cursorToSend;
 	}
 
-	static class Holder implements Comparable<Holder> {
+    private ArrayList<String> getItems(long store) {
+        Cursor items = database.query(DbStructure.TABLE_REPO, new String[]{DbStructure.COLUMN_STORE_ITEMS}, DbStructure.COLUMN__ID + "=?", new String[]{store+""},null,null, null);
+
+
+
+        ArrayList<String> itemsToShow = new ArrayList<String>();
+
+        if(items.moveToFirst()){
+
+            String[] itemsArray = items.getString(0).replaceAll("_", " ").toUpperCase(Locale.ENGLISH).split(",");
+
+            Collections.addAll(itemsToShow, itemsArray);
+
+        }
+        items.close();
+        return itemsToShow;
+    }
+
+    static class Holder implements Comparable<Holder> {
 		long id;
 		String name;
 
@@ -648,8 +692,10 @@ public class Database {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			c.close();
-		}
+            if (c != null) {
+                c.close();
+            }
+        }
 
 		return server;
 	}
@@ -684,8 +730,10 @@ public class Database {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			c.close();
-		}
+            if (c != null) {
+                c.close();
+            }
+        }
 
 		return server;
 	}
@@ -1329,8 +1377,7 @@ public class Database {
 			}
 			switch (category) {
 			case EDITORSCHOICE:
-				database.insert(DbStructure.TABLE_FEATURED_EDITORSCHOICE_REPO,
-						null, values);
+				database.insert(DbStructure.TABLE_FEATURED_EDITORSCHOICE_REPO, null, values);
 				break;
 			case INFOXML:
 				if (server.apkPath != null) {
@@ -1349,14 +1396,15 @@ public class Database {
 				database.insert(DbStructure.TABLE_ITEMBASED_REPO, null, values);
 				break;
 			case LATEST:
+                values.remove(DbStructure.COLUMN_HASH);
 				database.insert(DbStructure.TABLE_LATEST_REPO, null, values);
 				break;
 			case TOP:
-				database.insert(DbStructure.TABLE_TOP_REPO, null, values);
+                values.remove(DbStructure.COLUMN_HASH);
+                database.insert(DbStructure.TABLE_TOP_REPO, null, values);
 				break;
 			case TOPFEATURED:
-				database.insert(DbStructure.TABLE_FEATURED_TOP_REPO, null,
-						values);
+				database.insert(DbStructure.TABLE_FEATURED_TOP_REPO, null, values);
 				break;
 
 			default:
@@ -1385,9 +1433,35 @@ public class Database {
 
 	}
 
+    public void insertTopHash(long id, String date){
+
+        ContentValues values = new ContentValues();
+        values.put(DbStructure.COLUMN_HASH, date);
+        database.update(DbStructure.TABLE_TOP_REPO, values,DbStructure.COLUMN__ID + "=?", new String[]{id+""} );
+
+    }
+
+    public void insertLatestHash(long id, String date){
+
+        ContentValues values = new ContentValues();
+        values.put(DbStructure.COLUMN_HASH, date);
+        database.update(DbStructure.TABLE_LATEST_REPO, values,DbStructure.COLUMN__ID + "=?", new String[]{id+""} );
+
+    }
+
+
+    public void insertFeaturedTopHash(long date) {
+        ContentValues values = new ContentValues();
+
+
+        values.put(DbStructure.COLUMN_HASH, date);
+        database.update(DbStructure.TABLE_FEATURED_TOP_REPO, values,DbStructure.COLUMN__ID + "=?", new String[]{"1"} );
+
+    }
+
 	public String getRepoHash(long repo_id, Category category) {
 		Cursor c = null;
-		String return_string = "";
+		String return_string = "0";
 		yield();
 		try {
 			switch (category) {
@@ -2671,13 +2745,13 @@ public class Database {
 
 	}
 
-	public String getEditorsChoiceHash() {
-		String hash = "";
+	public long getEditorsChoiceHash() {
+		long hash = 0;
 		yield();
 		Cursor c = database.query(DbStructure.TABLE_HASHES, new String[]{DbStructure.COLUMN_HASH}, DbStructure.COLUMN_APKID + "=?", new String[]{"editorschoice"}, null, null, null);
 
 		if(c.moveToFirst()){
-			hash = c.getString(0);
+			hash = c.getLong(0);
 			c.close();
 		}
 
@@ -2711,7 +2785,7 @@ public class Database {
 		database.delete(DbStructure.TABLE_HASHES, DbStructure.COLUMN_APKID + "=?", new String[]{"editorschoice"});
 	}
 
-	public void insertEditorsChoiceHash(String hash) {
+	public void insertEditorsChoiceHash(long hash) {
 		ContentValues values = new ContentValues();
 		values.put(DbStructure.COLUMN_APKID, "editorschoice");
 		values.put(DbStructure.COLUMN_HASH, hash);

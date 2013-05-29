@@ -12,10 +12,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.*;
 import android.preference.PreferenceManager;
@@ -32,18 +29,13 @@ import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-
-import com.actionbarsherlock.view.ContextMenu;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
-import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import cm.aptoide.com.viewpagerindicator.TitlePageIndicator;
 import cm.aptoide.pt.Server.State;
@@ -62,6 +54,9 @@ import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.login.Login;
+import com.actionbarsherlock.view.ContextMenu;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -232,6 +227,8 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 	private void loadRecommended() {
 
+
+
 		if (Login.isLoggedIn(mContext)) {
 			((TextView) featuredView.findViewById(R.id.recommended_text)).setVisibility(View.GONE);
 		} else {
@@ -377,7 +374,12 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 	}
 
+
+
 	private void loadFeatured() {
+
+
+
 		new Thread(new Runnable() {
 
 			public void run() {
@@ -405,26 +407,34 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						url = getEditorsChoiceURL("apps",countryCode);
 					}
 
-					BufferedInputStream bis = new BufferedInputStream(utils.getInputStream(url, null, null, mContext), 8 * 1024);
-					OutputStream out = new FileOutputStream(f);
-					byte buf[] = new byte[1024];
-					int len;
-					while ((len = bis.read(buf)) > 0)
-						out.write(buf, 0, len);
-					out.close();
-					bis.close();
-					Server server = new Server();
-					String hash = Md5Handler.md5Calc(f);
-					if (!hash.equals(db.getEditorsChoiceHash())) {
-						// Database.database.beginTransaction();
-						db.deleteEditorsChoice();
-						sp.parse(f, new HandlerEditorsChoice(server));
-						db.insertEditorsChoiceHash(hash);
-						// Database.database.setTransactionSuccessful();
-						// Database.database.endTransaction();
-						loadUIEditorsApps();
 
-					}
+
+                    long date = utils.getLastModified(new URL(url));
+                    long cachedDate = db.getEditorsChoiceHash();
+
+                    Log.d("Getting","Date is " + date);
+                    Log.d("Getting","CachedDate is " + cachedDate);
+
+                    if (cachedDate < date) {
+
+                        BufferedInputStream bis = new BufferedInputStream(utils.getInputStream(url, null, null, mContext), 8 * 1024);
+                        OutputStream out = new FileOutputStream(f);
+                        byte buf[] = new byte[1024];
+                        int len;
+                        while ((len = bis.read(buf)) > 0)
+                            out.write(buf, 0, len);
+                        out.close();
+                        bis.close();
+                        Server server = new Server();
+                        // Database.database.beginTransaction();
+                        db.deleteEditorsChoice();
+                        sp.parse(f, new HandlerEditorsChoice(server));
+                        db.insertEditorsChoiceHash(date);
+                        // Database.database.setTransactionSuccessful();
+                        // Database.database.endTransaction();
+                        loadUIEditorsApps();
+
+                    }
 
 				} catch (SAXException e) {
 					// Database.database.setTransactionSuccessful();
@@ -473,19 +483,27 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						url = "http://apps.store.aptoide.com/top.xml";
 					}
 
-					BufferedInputStream bis = new BufferedInputStream(utils.getInputStream(url, null, null, mContext), 8 * 1024);
-					f = File.createTempFile("tempFile", "");
-					OutputStream out = new FileOutputStream(f);
-					byte buf[] = new byte[1024];
-					int len;
-					while ((len = bis.read(buf)) > 0)
-						out.write(buf, 0, len);
-					out.close();
-					bis.close();
-					// Database.database.beginTransaction();
-					sp.parse(f, new HandlerFeaturedTop(server));
-					loadUItopapps();
-					f.delete();
+                    long date = utils.getLastModified(new URL(url));
+                    long cachedDate = Long.parseLong(db.getRepoHash(server.id,Category.TOPFEATURED));
+
+                    if(cachedDate < date){
+
+                        BufferedInputStream bis = new BufferedInputStream(utils.getInputStream(url, null, null, mContext), 8 * 1024);
+                        f = File.createTempFile("tempFile", "");
+                        OutputStream out = new FileOutputStream(f);
+                        byte buf[] = new byte[1024];
+                        int len;
+                        while ((len = bis.read(buf)) > 0)
+                            out.write(buf, 0, len);
+                        out.close();
+                        bis.close();
+                        // Database.database.beginTransaction();
+
+                        sp.parse(f, new HandlerFeaturedTop(server));
+                        db.insertFeaturedTopHash(date);
+                        loadUItopapps();
+                        f.delete();
+                    }
 				} catch (ParserConfigurationException e) {
 					e.printStackTrace();
 				} catch (SAXException e) {
@@ -667,11 +685,11 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			MainActivity.this.service = ((LocalBinder) service).getService();
-			
+
 			if (ApplicationAptoide.DEFAULTSTORE != null && db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/")==null) {
 				MainActivity.this.service.addStore(Database.getInstance(),"http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/", null, null);
 			}
-			
+
 			loadUi();
 			getInstalled();
 			getAllRepoStatus();
@@ -1115,7 +1133,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					ViewApk apk = db.getApk(c.getLong(0), Category.INFOXML);
 					try {
 						ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername());
-						ViewDownloadManagement download = new ViewDownloadManagement(apk.getPath(), apk, cache, db.getServer(apk.getRepo_id(), false).getLogin());
+						ViewDownloadManagement download = new ViewDownloadManagement(apk.getPath(), apk, cache, db.getServer(apk.getRepo_id(), false).getLogin(), null);
 						serviceDownloadManager.callStartDownload(download);
 						Thread.sleep(1000);
 					} catch (RemoteException e) {
@@ -1971,9 +1989,9 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				startActivity(i);
 			}
 		});
-	
-		
-		
+
+
+
 		brandIv = (ImageView) findViewById(R.id.brand);
 		
 		
@@ -2027,17 +2045,18 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			featuredView.findViewById(R.id.toggleButton1).setVisibility(View.GONE);
 			featuredView.findViewById(R.id.adultcontent_label).setVisibility(View.GONE);
 		}
+
 	}
 
 	private int getBrandDrawableResource() {
 		int brandDrawableResource;
-		
+
 		brandDrawableResource = this.getResources().getIdentifier(ApplicationAptoide.BRAND, "drawable", this.getPackageName());
 		if(brandDrawableResource==0){
 			brandDrawableResource = this.getResources().getIdentifier("brand_aptoide", "drawable", this.getPackageName());
 			Log.d("MainActivity-brand", ApplicationAptoide.BRAND + ": resource not found, using default");
 		}
-		
+
 		EnumAptoideThemes enumAptoideTheme = null;
 		String aptoideThemeString = "APTOIDE_THEME_"+ ApplicationAptoide.APTOIDETHEME.toUpperCase(Locale.ENGLISH);
 		try {
@@ -2070,7 +2089,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			brandDrawableResource = this.getResources().getIdentifier("brand_timwe", "drawable", this.getPackageName());
 			Log.d("MainActivity-brand", ApplicationAptoide.BRAND);
 			break;
-			
+
 		}
 		return brandDrawableResource;
 	}
@@ -2264,10 +2283,15 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 		// stopService(serviceDownloadManagerIntent);
 		generateXML();
-		super.onDestroy();
+
+        super.onDestroy();
 	}
 
-	@Override
+
+
+
+
+    @Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			View v = availableListView.getChildAt(0);
@@ -2308,6 +2332,12 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 			}
 		}
+
+        if(ApplicationAptoide.isRestartLauncher()){
+            ApplicationAptoide.restartLauncher(MainActivity.this);
+            ApplicationAptoide.setRestartLauncher(false);
+        }
+
 		return super.onKeyDown(keyCode, event);
 	}
 
@@ -2381,7 +2411,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			if(ApplicationAptoide.MULTIPLESTORES && !joinStores_boolean){
 				banner.setVisibility(View.VISIBLE);
 				RelativeLayout background_layout = (RelativeLayout) banner.findViewById(R.id.banner_background_layout);
-				setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);				
+				setBackgroundLayoutStoreTheme(db.getStoreTheme(store_id),background_layout);
 				bannerStoreName.setText(db.getStoreName(store_id));
 				String avatarURL = db.getStoreAvatar(store_id);
 				cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(avatarURL, bannerStoreAvatar);
@@ -2803,7 +2833,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		case APTOIDE_STORE_THEME_TIMEWE:
 			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_timwe);
 			break;
-			
+
 		default:
 			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_aptoide);
 			break;
@@ -2865,7 +2895,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		case APTOIDE_STORE_THEME_SLATEGRAY:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light_slategray);
 			break;
-	
+
 		default:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light);
 			break;
@@ -2921,7 +2951,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
 		alertDialogBuilder
 				.setTitle(getText(R.string.update_self_title))
-				.setIcon(R.drawable.ic_launcher)
+				.setIcon(R.drawable.icon_brand_aptoide)
 				.setMessage(getString(R.string.update_self_msg, ApplicationAptoide.MARKETNAME))
 				.setCancelable(false)
 				.setPositiveButton(getString(android.R.string.yes),

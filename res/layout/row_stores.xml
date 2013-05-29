@@ -24,7 +24,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_margin="5dp"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/icon_brand_aptoide" />
 
         <RelativeLayout
             android:layout_width="0dip"
@@ -89,7 +89,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.

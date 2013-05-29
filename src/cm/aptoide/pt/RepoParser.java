@@ -7,18 +7,17 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import android.util.Log;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import android.util.Log;
-
 public class RepoParser {
-	static Object lock = new Object();
+	static final Object lock = new Object();
 	static ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
 
 		@Override
@@ -123,7 +122,8 @@ public class RepoParser {
 
 			}finally{
 				xml.delete();
-			}
+                db.insertTopHash(server.id, server.hash);
+            }
             server.state = cm.aptoide.pt.Server.State.PARSED;
             db.updateStatus(server);
 //			db.updateStatus(server);
@@ -155,6 +155,7 @@ public class RepoParser {
 
 			}finally{
 				xml.delete();
+                db.insertLatestHash(server.id, server.hash);
 			}
             server.state = cm.aptoide.pt.Server.State.PARSED;
             db.updateStatus(server);

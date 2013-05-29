@@ -19,18 +19,16 @@
 */
 package cm.aptoide.pt.services;
 
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.TimeZone;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
-import java.util.zip.GZIPInputStream;
-
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.exceptions.AptoideExceptionDownload;
+import cm.aptoide.pt.exceptions.AptoideExceptionNotFound;
+import cm.aptoide.pt.util.Constants;
+import cm.aptoide.pt.util.NetworkUtils;
+import cm.aptoide.pt.views.*;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -43,20 +41,18 @@ import org.holoeverywhere.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import cm.aptoide.pt.ApplicationAptoide;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.exceptions.AptoideExceptionDownload;
-import cm.aptoide.pt.exceptions.AptoideExceptionNotFound;
-import cm.aptoide.pt.util.Constants;
-import cm.aptoide.pt.util.NetworkUtils;
-import cm.aptoide.pt.views.EnumDownloadFailReason;
-import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownload;
-import cm.aptoide.pt.views.ViewLogin;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeoutException;
+import java.util.zip.GZIPInputStream;
 
 /**
  * HelperDownload, manages the actual download processes, and updates the download manager about the status of each download
@@ -120,12 +116,13 @@ public class HelperDownload{
 			@Override
 			public void run() {
 	    		Log.d("Aptoide-ManagerDownloads", "apk download: "+cache);
-				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
-	    			download.setCompleted();
-					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
-	    		}else{
+//				if(cache.isCached() && cache.hasMd5Sum() && cache.checkMd5()){
+//	    			download.setCompleted();
+//					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
+//	    		}else{
 					toastHandler.sendEmptyMessage(download.getStatus().equals(EnumDownloadStatus.RESUMING)?R.string.resuming_download:R.string.starting_download);
 	    			try {
+
 	    				download(download, cache, login, isPaid);
 	    			} catch (Exception e) {
 //	    				try {
@@ -137,7 +134,7 @@ public class HelperDownload{
 ////								e3.printStackTrace();
 //							}
 //	    				}
-	    			}
+//	    			}
 	    		}
 	    		ongoingDownloads.remove(cache.hashCode());
 			}
@@ -153,7 +150,16 @@ public class HelperDownload{
     		String remotePath = download.getRemotePath();
     		long targetBytes;
 
+            File targetFile = new File(localPath);
+            File parent = targetFile.getParentFile();
+
+            if(!parent.exists() && !parent.mkdirs()){
+                Log.d("Aptoide-DownloadManager","Couldn't create dir: " + parent);
+            }
+
     		FileOutputStream fileOutputStream = null;
+
+
 
     		try{
     			fileOutputStream = new FileOutputStream(localPath, !overwriteCache);
@@ -271,21 +277,22 @@ public class HelperDownload{
 
                         }
 
-	    				InputStream inputStream= null;
+	    				BufferedInputStream inputStream= null;
 
 	    				if((httpResponse.getEntity().getContentEncoding() != null) && (httpResponse.getEntity().getContentEncoding().getValue().equalsIgnoreCase("gzip"))){
 
 	    					Log.d("Aptoide-download","with gzip");
-	    					inputStream = new GZIPInputStream(httpResponse.getEntity().getContent());
+	    					inputStream = new BufferedInputStream(new GZIPInputStream(httpResponse.getEntity().getContent(),8*1024));
 
 	    				}else{
 
 //	    					Log.d("Aptoide-ManagerDownloads","No gzip");
-	    					inputStream = httpResponse.getEntity().getContent();
+
+	    					inputStream = new BufferedInputStream(httpResponse.getEntity().getContent(),8*1024);
 
 	    				}
 
-    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download);
+    					Log.d("Aptoide-download", "head download   id: "+cache.hashCode()+" "+download);
 //    					serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);
 
 	    				byte data[] = new byte[Constants.DOWNLOAD_CHUNK_SIZE];
@@ -299,13 +306,17 @@ public class HelperDownload{
     					float formatConversion = ((float)Constants.MILISECONDS_TO_SECONDS/Constants.KILO_BYTE);
 
 	    				while((bytesRead = inputStream.read(data, 0, Constants.DOWNLOAD_CHUNK_SIZE)) > 0) {
+
+
+
 	    					if(download.getStatus().equals(EnumDownloadStatus.STOPPED) || download.getStatus().equals(EnumDownloadStatus.PAUSED)) {
 			    				fileOutputStream.flush();
 			    				fileOutputStream.close();
 			    				inputStream.close();
-		    					Log.d("Aptoide-download", "download   id: "+cache.hashCode()+" "+download.getStatus());
+		    					Log.d("Aptoide-download", "stop download   id: "+cache.hashCode()+" "+download.getStatus());
 			    				return;
 	    					}
+
 	    					currentTime = Calendar.getInstance(TimeZone.getTimeZone(Constants.UTC_TIMEZONE)).getTimeInMillis();
 	    					fileOutputStream.write(data,0,bytesRead);
 							download.incrementProgress(bytesRead);
@@ -339,8 +350,6 @@ public class HelperDownload{
 	    						throw new AptoideExceptionDownload("md5 check failed!");
 	    					}
 	    				}
-
-
 
 	    				download.setCompleted();
 	    				serviceDownloadManager.updateDownloadStatus(cache.hashCode(), download);

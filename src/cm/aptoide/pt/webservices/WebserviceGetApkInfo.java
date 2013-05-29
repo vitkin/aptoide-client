@@ -6,18 +6,16 @@ import cm.aptoide.pt.Category;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.webservices.comments.Comment;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import cm.aptoide.pt.webservices.comments.Comment;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -157,6 +155,10 @@ public class WebserviceGetApkInfo {
         return response.has("latest");
     }
 
+    public boolean hasOBB() {
+        return response.has("obb");
+    }
+
 
     public ArrayList<Comment> getComments() throws JSONException, ParseException {
 
@@ -187,10 +189,19 @@ public class WebserviceGetApkInfo {
 
 
     public JSONArray getScreenshots() throws JSONException {
-
-
-
         return response.getJSONArray("sshots");
+    }
+
+    public JSONObject getMainOBB() throws JSONException {
+        return response.getJSONObject("obb").getJSONObject("main");
+    }
+
+    public JSONObject getPatchOBB() throws JSONException {
+        return response.getJSONObject("obb").getJSONObject("patch");
+    }
+
+    public boolean hasPatchOBB() throws JSONException {
+        return response.getJSONObject("obb").has("patch");
     }
 
     public TasteModel getLikes() throws JSONException {
