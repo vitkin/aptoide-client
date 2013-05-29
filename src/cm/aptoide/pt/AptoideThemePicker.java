@@ -32,8 +32,14 @@ public class AptoideThemePicker {
 			case APTOIDE_THEME_ORANGE:
 				activity.setTheme(R.style.Aptoide_Theme_Orange);
 				break;
+			case APTOIDE_THEME_DARKORANGE:
+				activity.setTheme(R.style.Aptoide_Theme_DarkOrange);
+				break;
 			case APTOIDE_THEME_SPRINGGREEN:
 				activity.setTheme(R.style.Aptoide_Theme_SpringGreen);
+				break;
+			case APTOIDE_THEME_GREENAPPLE:
+				activity.setTheme(R.style.Aptoide_Theme_GreenApple);
 				break;
 			case APTOIDE_THEME_LIGHTSKY:
 				activity.setTheme(R.style.Aptoide_Theme_LightSky);
@@ -43,6 +49,9 @@ public class AptoideThemePicker {
 				break;
 			case APTOIDE_THEME_BLUE:
 				activity.setTheme(R.style.Aptoide_Theme_Blue);
+				break;
+			case APTOIDE_THEME_HAPPYBLUE:
+				activity.setTheme(R.style.Aptoide_Theme_HappyBlue);
 				break;
 			case APTOIDE_THEME_RED:
 				activity.setTheme(R.style.Aptoide_Theme_Red);
