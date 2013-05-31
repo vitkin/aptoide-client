@@ -2478,8 +2478,11 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			case STORES:
 
 				LinearLayout store_background_dialog = (LinearLayout) view.findViewById(R.id.store_background_dialog);
-				setBackgroundDialogStoreTheme(cursor.getString(cursor.getColumnIndex(DbStructure.COLUMN_STORE_THEME)), store_background_dialog);
-
+				if(!joinStores_boolean){
+					setBackgroundDialogStoreTheme(cursor.getString(cursor.getColumnIndex(DbStructure.COLUMN_STORE_THEME)), store_background_dialog);
+				}else{
+					setBackgroundDialogStoreTheme("none", store_background_dialog);
+				}
 				Log.d("MainActivity-store_theme",cursor.getString(cursor.getColumnIndex(DbStructure.COLUMN_STORE_THEME)));
 
 
@@ -2846,13 +2849,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		try {
 			aptoideThemeDefault = EnumStoreTheme.valueOf(storeThemeString);
 		} catch (Exception e) {
-			aptoideThemeDefault = EnumStoreTheme.APTOIDE_STORE_THEME_DEFAULT;
+			aptoideThemeDefault = EnumStoreTheme.APTOIDE_STORE_THEME_NONE;
 		}
 
 		switch (aptoideThemeDefault) {
 		case APTOIDE_STORE_THEME_DEFAULT:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light_default);
 			break;
+			
 		case APTOIDE_STORE_THEME_GOLD:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light_gold);
 			break;
@@ -2895,7 +2899,9 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		case APTOIDE_STORE_THEME_SLATEGRAY:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light_slategray);
 			break;
-
+		case APTOIDE_STORE_THEME_NONE:
+			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light);
+			break;
 		default:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light);
 			break;
