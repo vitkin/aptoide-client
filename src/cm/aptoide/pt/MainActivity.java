@@ -1998,16 +1998,28 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("jblow")){
 			brandIv.setImageResource(R.drawable.brand_jblow);
+			ApplicationAptoide.BRAND = "brand_jblow";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("magalhaes")){
 			brandIv.setImageResource(R.drawable.brand_magalhaes);
+			ApplicationAptoide.BRAND = "brand_magalhaes";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("timwe")){
 			brandIv.setImageResource(R.drawable.brand_timwe);
+			ApplicationAptoide.BRAND = "brand_timwe";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("digitallydifferent")){
 			brandIv.setImageResource(R.drawable.brand_digitallydifferent);
+			ApplicationAptoide.BRAND = "brand_digitallydifferent";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("eocean")){
 			brandIv.setImageResource(R.drawable.brand_eocean);
+			ApplicationAptoide.BRAND = "brand_eocean";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("lazerplay")){
 			brandIv.setImageResource(R.drawable.brand_lazerplay);
+			ApplicationAptoide.BRAND = "brand_lazerplay";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
 		}else if(ApplicationAptoide.BRAND!=null){
 			brandIv.setImageResource(getBrandDrawableResource());
 		}else{
