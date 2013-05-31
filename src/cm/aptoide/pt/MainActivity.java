@@ -1789,7 +1789,29 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			}
 
 		}
-
+		
+		featuredView = LayoutInflater.from(mContext).inflate(R.layout.page_featured, null);
+		availableView = LayoutInflater.from(mContext).inflate(R.layout.page_available, null);
+		updateView = LayoutInflater.from(mContext).inflate(R.layout.page_updates, null);
+		banner = (LinearLayout) availableView.findViewById(R.id.banner);
+		breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container);
+		installedView = new ListView(mContext);
+		updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
+		
+		availableListView = (ListView) availableView.findViewById(R.id.available_list);
+		joinStores = (CheckBox) availableView.findViewById(R.id.join_stores);
+		
+		availableAdapter = new AvailableListAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		installedAdapter = new InstalledAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
+		updatesAdapter = new UpdatesAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		
+		pb = (TextView) availableView.findViewById(R.id.loading_pb);
+		addStoreButton = availableView.findViewById(R.id.add_store);
+		
+		bannerStoreAvatar = (ImageView) banner.findViewById(R.id.banner_store_avatar);
+		bannerStoreName = (TextView) banner.findViewById(R.id.banner_store_name);
+		bannerStoreDescription = (AutoScaleTextView) banner.findViewById(R.id.banner_store_description);
+		
 	}
 
 	ImageView bannerStoreAvatar;
@@ -1808,54 +1830,19 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			store_id = 1;
 		}
 
-		featuredView = LayoutInflater.from(mContext).inflate(R.layout.page_featured, null);
-
-		availableView = LayoutInflater.from(mContext).inflate(R.layout.page_available, null);
-		updateView = LayoutInflater.from(mContext).inflate(R.layout.page_updates, null);
-		banner = (LinearLayout) availableView.findViewById(R.id.banner);
-//		breadcrumbs = (LinearLayout) availableView
-//				.findViewById(R.id.breadcrumb_container);
-
-		breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container);
-
-
-		installedView = new ListView(mContext);
-		updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
-
 		updateView.findViewById(R.id.update_button).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				updateAll();
 			}
 		});
-		availableListView = (ListView) availableView.findViewById(R.id.available_list);
+		
 		availableListView.setFastScrollEnabled(true);
 		availableListView.addHeaderView(breadcrumbs,null,false);
 
 		registerForContextMenu(updatesListView);
 		updatesListView.setLongClickable(true);
-		// updatesListView.setOnCreateContextMenuListener(new
-		// OnCreateContextMenuListener() {
-		//
-		// @Override
-		// public void onCreateContextMenu(android.view.ContextMenu menu, View
-		// v, ContextMenuInfo menuInfo) {
-		// Log.d("onCreateContextMenu","onCreateContextMenu");
-		// menu.add(0, (int) ((AdapterContextMenuInfo) menuInfo).id, 0,
-		// mContext.getString(R.string.exclude_update))
-		// .setOnMenuItemClickListener(new OnMenuItemClickListener() {
-		//
-		// @Override
-		// public boolean onMenuItemClick(android.view.MenuItem item) {
-		// System.out.println(item.getItemId());
-		// // ((UpdatesAdapter.ViewHolder)view.getTag()).updateExcluded = true;
-		// db.addToExcludeUpdate(item.getItemId());
-		// updatesLoader.forceLoad();
-		// return false;
-		// }
-		// });
-		// }
-		// });
+		
 		availableView.findViewById(R.id.refresh_view_layout).findViewById(R.id.refresh_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1866,7 +1853,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 			}
 		});
-		joinStores = (CheckBox) availableView.findViewById(R.id.join_stores);
+		
 		joinStores.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
@@ -1881,22 +1868,17 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			}
 		});
 
-		availableAdapter = new AvailableListAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		installedAdapter = new InstalledAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
-		updatesAdapter = new UpdatesAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+		
 		bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
-		pb = (TextView) availableView.findViewById(R.id.loading_pb);
+		
 		pb.setText(R.string.add_store_button_below);
-		addStoreButton = availableView.findViewById(R.id.add_store);
+		
 		addStoreButton.setOnClickListener(addStoreListener);
 
 		if (!ApplicationAptoide.MULTIPLESTORES) {
 			addStoreButton.setVisibility(View.GONE);
 		}
 
-		bannerStoreAvatar = (ImageView) banner.findViewById(R.id.banner_store_avatar);
-		bannerStoreName = (TextView) banner.findViewById(R.id.banner_store_name);
-		bannerStoreDescription = (AutoScaleTextView) banner.findViewById(R.id.banner_store_description);
 
 		availableListView.setOnItemClickListener(new OnItemClickListener() {
 
