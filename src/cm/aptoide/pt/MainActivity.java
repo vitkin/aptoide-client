@@ -2020,6 +2020,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			brandIv.setImageResource(R.drawable.brand_lazerplay);
 			ApplicationAptoide.BRAND = "brand_lazerplay";
 			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("educomp")){
+			brandIv.setImageResource(R.drawable.brand_educomp);
+			ApplicationAptoide.BRAND = "brand_educomp";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("peoplenet")){
+			brandIv.setImageResource(R.drawable.brand_peoplenet);
+			ApplicationAptoide.BRAND = "brand_peoplenet";
+			getSharedPreferences("settings", MODE_PRIVATE).edit().putString("BRAND", ApplicationAptoide.BRAND).commit();
 		}else if(ApplicationAptoide.BRAND!=null){
 			brandIv.setImageResource(getBrandDrawableResource());
 		}else{

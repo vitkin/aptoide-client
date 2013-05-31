@@ -998,8 +998,7 @@ public class Database {
 			values.put("apkpath", server.apkPath);
 		}
 		if (values.size() > 0) {
-			database.update("repo", values, "_id = ?", new String[] { server.id
-					+ "" });
+			database.update("repo", values, "_id = ?", new String[] { server.id + "" });
 		}
 
 	}
@@ -1377,6 +1376,7 @@ public class Database {
 			}
 			switch (category) {
 			case EDITORSCHOICE:
+                values.remove(DbStructure.COLUMN_HASH);
 				database.insert(DbStructure.TABLE_FEATURED_EDITORSCHOICE_REPO, null, values);
 				break;
 			case INFOXML:
@@ -1404,6 +1404,7 @@ public class Database {
                 database.insert(DbStructure.TABLE_TOP_REPO, null, values);
 				break;
 			case TOPFEATURED:
+                values.remove(DbStructure.COLUMN_HASH);
 				database.insert(DbStructure.TABLE_FEATURED_TOP_REPO, null, values);
 				break;
 
