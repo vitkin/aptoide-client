@@ -1594,6 +1594,19 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 				}
 
+                if(!sPref.contains("version")){
+
+                    ApplicationAptoide.setRestartLauncher(true);
+                    try {
+                        sPref.edit().putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
+                    } catch (NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    sPref.edit().commit();
+
+
+                }
+
 				if (sPref.getString("myId", null) == null) {
 					String rand_id = UUID.randomUUID().toString();
 					editor.putString("myId", rand_id);
@@ -1798,7 +1811,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			}
 
 		}
-		
+
 		featuredView = LayoutInflater.from(mContext).inflate(R.layout.page_featured, null);
 		availableView = LayoutInflater.from(mContext).inflate(R.layout.page_available, null);
 		updateView = LayoutInflater.from(mContext).inflate(R.layout.page_updates, null);
@@ -1806,21 +1819,21 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container);
 		installedView = new ListView(mContext);
 		updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
-		
+
 		availableListView = (ListView) availableView.findViewById(R.id.available_list);
 		joinStores = (CheckBox) availableView.findViewById(R.id.join_stores);
-		
+
 		availableAdapter = new AvailableListAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 		installedAdapter = new InstalledAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
 		updatesAdapter = new UpdatesAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		
+
 		pb = (TextView) availableView.findViewById(R.id.loading_pb);
 		addStoreButton = availableView.findViewById(R.id.add_store);
-		
+
 		bannerStoreAvatar = (ImageView) banner.findViewById(R.id.banner_store_avatar);
 		bannerStoreName = (TextView) banner.findViewById(R.id.banner_store_name);
 		bannerStoreDescription = (AutoScaleTextView) banner.findViewById(R.id.banner_store_description);
-		
+
 	}
 
 	ImageView bannerStoreAvatar;
@@ -1843,13 +1856,13 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				updateAll();
 			}
 		});
-		
+
 		availableListView.setFastScrollEnabled(true);
 		availableListView.addHeaderView(breadcrumbs,null,false);
 
 		registerForContextMenu(updatesListView);
 		updatesListView.setLongClickable(true);
-		
+
 		availableView.findViewById(R.id.refresh_view_layout).findViewById(R.id.refresh_view).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -1860,7 +1873,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 			}
 		});
-		
+
 		joinStores.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,
@@ -1875,11 +1888,11 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 			}
 		});
 
-		
+
 		bindService(serviceDownloadManagerIntent, serviceManagerConnection, BIND_AUTO_CREATE);
-		
+
 		pb.setText(R.string.add_store_button_below);
-		
+
 		addStoreButton.setOnClickListener(addStoreListener);
 
 		if (!ApplicationAptoide.MULTIPLESTORES) {
@@ -2854,7 +2867,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		case APTOIDE_STORE_THEME_DEFAULT:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light_default);
 			break;
-			
+
 		case APTOIDE_STORE_THEME_GOLD:
 			store_background_dialog.setBackgroundResource(R.drawable.dialog_background_light_gold);
 			break;
