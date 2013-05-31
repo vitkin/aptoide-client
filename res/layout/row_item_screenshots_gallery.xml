@@ -18,6 +18,7 @@
         android:layout_height="178dp"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
+        android:background="@drawable/dialog_background_dark"
         android:scaleType="centerCrop" />
 
     <ProgressBar

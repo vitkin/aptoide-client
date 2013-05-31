@@ -120,7 +120,9 @@
                 android:id="@+id/gallery"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:spacing="5dip"
+                android:spacing="1dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:visibility="gone" />
             <!-- <RelativeLayout -->
             <!-- android:id="@+id/screenshots_container" -->

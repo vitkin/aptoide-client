@@ -514,7 +514,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     							TextView tvSignatureValidation = (TextView) trustedView.findViewById(R.id.tv_signature_validation);
     							tvSignatureValidation.setText(getString(R.string.signature_verified));
     							ImageView check_signature = (ImageView) trustedView.findViewById(R.id.check_signature);
-    							check_signature.setImageResource(R.drawable.yes);
+    							check_signature.setImageResource(R.drawable.ic_yes);
 
     							trustedDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {
     								@Override
@@ -546,7 +546,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     							TextView tvSignatureValidation = (TextView) warnView.findViewById(R.id.tv_signature_validation);
     							tvSignatureValidation.setText(getString(R.string.signature_not_verified));
     							ImageView check_signature = (ImageView) warnView.findViewById(R.id.check_signature);
-    							check_signature.setImageResource(R.drawable.failed);
+    							check_signature.setImageResource(R.drawable.ic_failed);
 
     							warnDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {
     								@Override
@@ -672,8 +672,9 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                         public void run() {
                             if(imageUrls!=null&&imageUrls.size()>0){
                             	hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
+                            	ImageGalleryAdapter galleryAdapter = new ImageGalleryAdapter(context,imageUrls,hashCode,false);
                             	gallery.setVisibility(View.VISIBLE);
-                            	gallery.setAdapter(new ImageGalleryAdapter(context,imageUrls,hashCode,false));
+                            	gallery.setAdapter(galleryAdapter);
                             	gallery.setOnItemClickListener(new OnItemClickListener() {
 									@Override
 									public void onItemClick(android.widget.AdapterView<?> parent, View view, int position, long id) {
@@ -681,6 +682,10 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 									}
 
                         		});
+                            	
+                            	System.out.println(galleryAdapter.getCount()/2);
+                            	gallery.setSelection(galleryAdapter.getCount()/2);
+                            	
 //                                String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
 //                                screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,imageUrls,hashCode,false));
 //                                TypedValue a = new TypedValue();

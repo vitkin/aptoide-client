@@ -187,11 +187,11 @@
     </style>
 
     <style name="quick_action_style_oem">
-        <item name="android:background">@drawable/popup_inline_midnight</item>
+        <item name="android:background">@drawable/popup_inline_oem</item>
     </style>
 
     <style name="quick_action_style_magalhaes">
-        <item name="android:background">@drawable/popup_inline_midnight</item>
+        <item name="android:background">@drawable/popup_inline_oem</item>
     </style>
 
     <!-- animation styles -->
@@ -346,7 +346,7 @@
     </style>
 
     <style name="ic_update_style_oem">
-        <item name="android:src">@drawable/ic_update_midnight</item>
+        <item name="android:src">@drawable/ic_update_oem</item>
     </style>
 
     <style name="ic_update_style_magalhaes">
@@ -359,7 +359,7 @@
     </style>
 
     <style name="ic_menu_more_style_oem">
-        <item name="android:src">@drawable/ic_menu_more_midnight</item>
+        <item name="android:src">@drawable/ic_menu_more_oem</item>
     </style>
 
     <style name="ic_menu_more_style_magalhaes">
