@@ -395,6 +395,8 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
                     String countryCode = Geolocation.getCountryCode(mContext);
 
 
+                    Log.d("Aptoide-Geolocation", "Using countrycode: " + countryCode);
+
 					if (ApplicationAptoide.CUSTOMEDITORSCHOICE) {
 						url = getEditorsChoiceURL(ApplicationAptoide.DEFAULTSTORE,countryCode);
 
@@ -1670,6 +1672,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 
 
+                boolean serversFileIsEmpty = false;
 
 				if (sPref.getBoolean("firstrun", true)) {
 					// Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
@@ -1702,7 +1705,12 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 							sp.parse(new File(LOCAL_PATH + "/servers.xml"), handler);
 							ArrayList<String> server = handler.getServers();
-							getIntent().putExtra("newrepo", server);
+                            if(server.isEmpty()){
+                                serversFileIsEmpty = true;
+                            }else{
+                                getIntent().putExtra("newrepo", server);
+                            }
+
 
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -1714,7 +1722,8 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					editor.commit();
 				}
 
-				if (getIntent().hasExtra("newrepo")) {
+
+                if (getIntent().hasExtra("newrepo")) {
 					ArrayList<String> repos = (ArrayList<String>) getIntent().getSerializableExtra("newrepo");
 					for (final String uri2 : repos) {
 						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
@@ -1744,7 +1753,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						AlertDialog alertDialog = alertDialogBuilder.create();
 						alertDialog.show();
 					}
-				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORE == null) {
+				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORE == null && serversFileIsEmpty) {
 
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 							mContext);
@@ -1818,9 +1827,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	TextView bannerStoreName;
 	AutoScaleTextView bannerStoreDescription;
 
-	private ImageView brandIv;
-
-	private void loadUi() {
+    private void loadUi() {
 		setContentView(R.layout.activity_aptoide);
 		TitlePageIndicator indicator = (TitlePageIndicator) findViewById(R.id.indicator);
 		pager = (ViewPager) findViewById(R.id.viewpager);
@@ -1973,10 +1980,9 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		});
 
 
+        ImageView brandIv = (ImageView) findViewById(R.id.brand);
 
-		brandIv = (ImageView) findViewById(R.id.brand);
-		
-		
+
 		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("jblow")){
 			brandIv.setImageResource(R.drawable.brand_jblow);
 		}else if(ApplicationAptoide.BRAND!=null){
@@ -1984,8 +1990,8 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		}else{
 			brandIv.setImageResource(R.drawable.brand_aptoide);
 		}
-	
-		
+
+
 		findViewById(R.id.btsearch).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

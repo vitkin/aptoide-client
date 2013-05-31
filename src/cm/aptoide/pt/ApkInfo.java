@@ -7,43 +7,13 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.app.AlertDialog.Builder;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.AdapterView;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.CheckBox;
-import org.holoeverywhere.widget.LinearLayout;
-import org.holoeverywhere.widget.ProgressBar;
-import org.holoeverywhere.widget.Spinner;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
+import android.os.*;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -75,15 +45,7 @@ import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
-import cm.aptoide.pt.views.EnumApkMalware;
-import cm.aptoide.pt.views.EnumDownloadFailReason;
-import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewCacheObb;
-import cm.aptoide.pt.views.ViewDownload;
-import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt.views.ViewObb;
+import cm.aptoide.pt.views.*;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
@@ -93,10 +55,20 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.mopub.mobileads.MoPubView;
+import org.holoeverywhere.app.Activity;
+import org.holoeverywhere.app.AlertDialog;
+import org.holoeverywhere.app.AlertDialog.Builder;
+import org.holoeverywhere.app.ProgressDialog;
+import org.holoeverywhere.widget.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 
 
 
@@ -115,11 +87,11 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     boolean spinnerInstanciated = false;
     CheckBox scheduledDownloadChBox;
     private ViewDownloadManagement download;
-    
+
     private Gallery gallery;
     private ArrayList<String> imageUrls;
     String hashCode;
-    
+
     private boolean isRunning = false;
 
     private AIDLServiceDownloadManager serviceDownloadManager = null;
@@ -393,7 +365,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                     ((RatingBar) findViewById(R.id.ratingbar)).setIsIndicator(true);
                 }
                 ((TextView) findViewById(R.id.app_store)).setText(getString(R.string.store)+": " +repo_string);
-                ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + " " + viewApk.getDownloads() + " "+ getString(R.string.size)+" "+ viewApk.getSize() + "KB");
+                ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ withSuffix(Long.parseLong(viewApk.getSize())*1024));
                 ((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
                 ((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 //				ImageLoader imageLoader = ImageLoader.getInstance(context);
@@ -736,16 +708,16 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 
         }).start();
     }
-    
+
 	private void startImagePagerActivity(int position) {
 		Intent intent = new Intent(this, ScreenshotsViewer.class);
 		intent.putStringArrayListExtra("url", imageUrls);
 		intent.putExtra("position", position);
 		intent.putExtra("hashCode", hashCode+".hd");
 		startActivity(intent);
-		
+
 	}
-	
+
     private void loadDescription() {
         Cursor c = getContentResolver().query(ExtrasContentProvider.CONTENT_URI, new String[]{ExtrasDbOpenHelper.COLUMN_COMMENTS_COMMENT}, ExtrasDbOpenHelper.COLUMN_COMMENTS_APKID+"=?", new String[]{viewApk.getApkid()}, null);
 
@@ -1359,14 +1331,24 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                     mainObbUrl = webservice.getMainOBB().getString("path");
                     mainObbMd5 = webservice.getMainOBB().getString("md5sum");
                     mainObbName = webservice.getMainOBB().getString("filename");
+                    int mainObbSize = webservice.getMainOBB().getInt("filesize");
 
+
+
+                    int patchObbSize = 0;
                     if(webservice.hasPatchOBB()){
 
                         patchObbUrl = webservice.getPatchOBB().getString("path");
                         patchObbMd5 = webservice.getPatchOBB().getString("md5sum");
                         patchObbName = webservice.getPatchOBB().getString("filename");
+                        patchObbSize = webservice.getMainOBB().getInt("filesize");
+
 
                     }
+                    ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ withSuffix((Long.parseLong(viewApk.getSize())*1024+mainObbSize+patchObbSize)));
+
+
+
 
                 }
 
@@ -1502,6 +1484,13 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 
     }
 
+    public static String withSuffix(long bytes) {
+        int unit = 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = ("KMGTPE").charAt(exp-1)+"";
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
 
 
     private void setComments(ArrayList<Comment> result) {

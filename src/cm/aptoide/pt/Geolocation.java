@@ -22,9 +22,13 @@ public class Geolocation {
     static String getCountryCode(Context context){
         String countryCode = "";
         try{
+
             TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             countryCode = manager.getSimCountryIso();
+            if(countryCode.length()<1){
+                countryCode = getCountryCodeByGps(context);
 
+            }
         }catch (Exception e){
 
             countryCode = getCountryCodeByGps(context);

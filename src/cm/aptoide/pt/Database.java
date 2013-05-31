@@ -550,7 +550,6 @@ public class Database {
 
         if(mergeStores){
             d.close();
-
             return c;
         }
         MatrixCursor cursorToSend = new MatrixCursor(new String[] { "_id",
@@ -560,6 +559,7 @@ public class Database {
         ArrayList<String> itemsToShow = getItems(store);
 
 
+        itemsToShow.add("ALL APPLICATIONS");
 
 
         for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
@@ -590,7 +590,7 @@ public class Database {
 
         if(items.moveToFirst()){
 
-            String[] itemsArray = items.getString(0).replaceAll("_", " ").toUpperCase(Locale.ENGLISH).split(",");
+            String[] itemsArray = items.getString(0).replaceAll("_", " ").toUpperCase(Locale.ENGLISH).trim().split(",");
 
             Collections.addAll(itemsToShow, itemsArray);
 

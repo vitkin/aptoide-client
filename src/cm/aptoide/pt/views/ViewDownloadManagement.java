@@ -227,7 +227,7 @@ public class ViewDownloadManagement implements Parcelable{
 
 	public EnumDownloadStatus getDownloadStatus(){
 
-        if(mainObb!=null && !mainObb.getDownloadStatus().equals(EnumDownloadStatus.COMPLETED)  && !patchObb.getDownloadStatus().equals(EnumDownloadStatus.PAUSED)){
+        if(mainObb!=null && !mainObb.getDownloadStatus().equals(EnumDownloadStatus.COMPLETED)  && !mainObb.getDownloadStatus().equals(EnumDownloadStatus.PAUSED)){
             return mainObb.getDownloadStatus();
         }
 
