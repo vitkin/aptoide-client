@@ -116,7 +116,7 @@ public class DbStructure extends SQLiteOpenHelper {
 
 
     public DbStructure(Context context) {
-		super(context, "aptoide.db", null, 7);
+		super(context, "aptoide.db", null, 8);
 
 	}
 
