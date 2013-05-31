@@ -1985,6 +1985,16 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 		if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("jblow")){
 			brandIv.setImageResource(R.drawable.brand_jblow);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("magalhaes")){
+			brandIv.setImageResource(R.drawable.brand_magalhaes);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("timwe")){
+			brandIv.setImageResource(R.drawable.brand_timwe);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("digitallydifferent")){
+			brandIv.setImageResource(R.drawable.brand_digitallydifferent);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("eocean")){
+			brandIv.setImageResource(R.drawable.brand_eocean);
+		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("lazerplay")){
+			brandIv.setImageResource(R.drawable.brand_lazerplay);
 		}else if(ApplicationAptoide.BRAND!=null){
 			brandIv.setImageResource(getBrandDrawableResource());
 		}else{
