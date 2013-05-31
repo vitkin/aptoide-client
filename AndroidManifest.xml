@@ -36,6 +36,18 @@
 
         <activity-alias
                 android:enabled="true"
+                android:name=".Start"
+                android:label="@string/app_name_aptoide"
+                android:icon="@drawable/icon_brand_aptoide"
+                android:targetActivity=".Start">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        
+         <activity-alias
+                android:enabled="false"
                 android:name=".Start-brand_aptoide"
                 android:label="@string/app_name_aptoide"
                 android:icon="@drawable/icon_brand_aptoide"
