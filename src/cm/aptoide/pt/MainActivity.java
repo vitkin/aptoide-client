@@ -109,7 +109,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	private String LATEST_VERSION_CODE_URI =
 			(ApplicationAptoide.PARTNERID==null) ?
 			"http://imgs.aptoide.com/latest_version.xml":
-				"http://" + ApplicationAptoide.DEFAULTSTORE + ".aptoide.com/latest_version.xml";
+				"http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/latest_version.xml";
 	private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath()+ "/.aptoide/aptoideUpdate.apk";
 
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
