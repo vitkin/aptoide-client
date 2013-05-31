@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -336,12 +337,17 @@ public class ApplicationAptoide extends Application {
 
 
                 }
+                
+                pm.setComponentEnabledSetting(new ComponentName(context, "cm.aptoide.pt.Start"),
+                        PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                        PackageManager.DONT_KILL_APP);
 
             }
         }
     }
 
-    public static void restartLauncher(Context context) {
+    @SuppressLint("NewApi")
+	public static void restartLauncher(Context context) {
         try{
 
             replaceOemIcon();
