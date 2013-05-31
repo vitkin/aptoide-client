@@ -1598,12 +1598,10 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
                     ApplicationAptoide.setRestartLauncher(true);
                     try {
-                        sPref.edit().putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
+                        editor.putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
                     } catch (NameNotFoundException e) {
                         e.printStackTrace();
                     }
-                    sPref.edit().commit();
-
 
                 }
 
