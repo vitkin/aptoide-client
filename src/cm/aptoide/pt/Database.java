@@ -1503,7 +1503,10 @@ public class Database {
 			}
 
 			if (c.moveToFirst()) {
-				return_string = c.getString(0);
+				if(c.getString(0).length()>0){
+					return_string = c.getString(0);
+				}
+				
 			}
 
 		} catch (Exception e) {

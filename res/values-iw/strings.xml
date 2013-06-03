@@ -24,7 +24,6 @@
   <string name="exit">יציאה</string>
   <string name="install">התקנה</string>
   <string name="uninstall">הסרה</string>
-  <string name="search_market">חפש במרקט</string>
   <string name="commentlabel">הוסף תגובה</string>
   <string name="chkBoxSchDwn">הוסף להמתנה</string>
   <string name="submit">שלח</string>
@@ -37,9 +36,9 @@
   <string name="add_repo_text">חנות חדשה</string>
   <string name="extended_server">חנות מורחבת</string>
   <string name="btn_add_repo">הוסף חנות</string>
-  <string name="menu_rem_repo">הסר חנות</string>
   <string name="number_apks">יישומים:</string>
   <string name="please_wait">אנא המתן…</string>
+  <string name="search_market">חפש במרקט</string>
   <string name="finished_download_alrt">ההורדה הסתיימה</string>
   <string name="finished_download_message">ההורדה הסתיימה</string>
   <string name="download_alrt">מוריד…</string>
@@ -47,12 +46,8 @@
   <string name="tastenotavailable">לא זמין</string>
   <string name="unabletoexecutecheknet">ביצוע הפעולה נכשל. בדוק חיבור לאינטרנט.</string>
   <string name="opinionsuccess">בקשתך נשלחה בהצלחה</string>
-  <string name="likes">אוהבים:</string>
-  <string name="dislikes">לא אוהבים:</string>
   <string name="postingtaste">בקשתך נשלחת…</string>
   <string name="showpass">הצג סיסמא</string>
-  <string name="user">שם משתמש…</string>
-  <string name="pass">סיסמא…</string>
   <string name="new_account">משתמש חדש</string>
   <string name="setcredentials">התחברות לאפטויד</string>
   <string name="usernotdef">משתמש לא מוגדר</string>
@@ -62,7 +57,6 @@
   <string name="failedcredentials">התחברות באמצעות הנתונים שהוזנו נכשלה.</string>
   <string name="loading_likes">טוען רשימת אוהבים…</string>
   <string name="inresponseto">\@</string>
-  <string name="enterbody">הכנס את התגובה שלך בגוף ההודעה…</string>
   <string name="postingcomment">מפרסם תגובה…</string>
   <string name="commentadded">תגובתך פורסמה בהצלחה</string>
   <string name="order_popup_title1">מיין יישומים לפי:</string>
@@ -74,10 +68,7 @@
   <string name="order_popup_title3">תוכן למובגרים:</string>
   <string name="order_popup_catg1">לפי קטגוריה</string>
   <string name="order_popup_catg2">כל היישומים</string>
-  <string name="dialog_yes">כן</string>
-  <string name="dialog_no">לא</string>
   <string name="update_repos">עדכן חנות</string>
-  <string name="email">אימייל</string>
   <string name="pass_confirmation">אישור סיסמא</string>
   <string name="setting_hwspecstitle">מאפייני חומרה</string>
   <string name="setting_hwspecssum">בדוק את מאפייני החומרה של המכשיר</string>
@@ -97,6 +88,7 @@
   <string name="menu_about">אודות</string>
   <string name="menu_search">חיפוש</string>
   <string name="menu_add_repo">חנות חדשה</string>
+  <string name="menu_rem_repo">הסר חנות</string>
   <string name="menu_edit_repo">ערוך חנות</string>
   <string name="btn_yes">כן</string>
   <string name="btn_no">לא</string>

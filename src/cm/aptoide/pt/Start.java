@@ -30,7 +30,7 @@ public class Start extends Activity {
 	/**
 	 * The thread to process splash screen events
 	 */
-	private Thread mSplashThread;
+	private Thread mSplashThread = new Thread();
 	ImageView imageSplash;
 
 	private ImageLoadingListener listener = new ImageLoadingListener() {

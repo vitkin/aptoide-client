@@ -486,7 +486,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					}
 
                     long date = utils.getLastModified(new URL(url));
-                    long cachedDate = Long.parseLong(db.getRepoHash(server.id,Category.TOPFEATURED));
+                    
+                    long cachedDate;
+                    try{
+                    	cachedDate = Long.parseLong(db.getRepoHash(server.id,Category.TOPFEATURED));
+                    }catch (Exception e) {
+						cachedDate = 0;
+					}
+                    
 
                     if(cachedDate < date){
 
@@ -2626,15 +2633,12 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				((TextView) view.findViewById(R.id.app_name)).setCompoundDrawablesWithIntrinsicBounds(0, 0, cursor.getString(cursor.getColumnIndex("like"))
 								.equals("TRUE") ? R.drawable.up
 								: R.drawable.down, 0);
-				((TextView) view.findViewById(R.id.user_like)).setText(getString(R.string.by)+ " "
-								+ cursor.getString(cursor.getColumnIndex("username")));
+				((TextView) view.findViewById(R.id.user_like)).setText(getString(R.string.like_or_comment_by_user, cursor.getString(cursor.getColumnIndex("username"))));
 				break;
 			case LATEST_COMMENTS:
-				((TextView) view.findViewById(R.id.comment_on_app)).setText(getString(R.string.on)+ " "
-								+ cursor.getString(cursor.getColumnIndex("name")));
+				((TextView) view.findViewById(R.id.comment_on_app)).setText(getString(R.string.comment_on_application, cursor.getString(cursor.getColumnIndex("name"))));
 				((TextView) view.findViewById(R.id.comment)).setText(cursor.getString(cursor.getColumnIndex("text")));
-				((TextView) view.findViewById(R.id.comment_owner)).setText(getString(R.string.by)+ ": "
-								+ cursor.getString(cursor.getColumnIndex("username")));
+				((TextView) view.findViewById(R.id.comment_owner)).setText(getString(R.string.like_or_comment_by_user, cursor.getString(cursor.getColumnIndex("username"))));
 				((TextView) view.findViewById(R.id.time)).setText(cursor.getString(cursor.getColumnIndex("time")));
 				break;
 			default:
@@ -2992,14 +2996,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				.setPositiveButton(getString(android.R.string.yes),
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
+								dialog.dismiss();
 								new DownloadSelfUpdate().execute();
 							}
 						})
 				.setNegativeButton(getString(android.R.string.no),
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								dialog.cancel();
+								dialog.dismiss();
 							}
 						});
 		AlertDialog alertDialog = alertDialogBuilder.create();

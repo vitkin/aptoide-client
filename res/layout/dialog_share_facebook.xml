@@ -97,13 +97,13 @@
                 android:id="@+id/FacebookShareButton"
                 style="@style/gray_button_style"
                 android:layout_weight="1"
-                android:text="@string/dialog_yes" />
+                android:text="@android:string/yes" />
 
             <Button
                 android:id="@+id/FacebookShareNotButton"
                 style="@style/gray_button_style"
                 android:layout_weight="1"
-                android:text="@string/dialog_no" />
+                android:text="@android:string/no" />
         </LinearLayout>
     </RelativeLayout>
 

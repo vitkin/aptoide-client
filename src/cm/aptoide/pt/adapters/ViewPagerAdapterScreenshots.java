@@ -57,8 +57,8 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 	public Object instantiateItem(ViewGroup container, final int position) {
 		final String hashCode=this.hashCode+"."+position;
 		final View v = LayoutInflater.from(context).inflate(R.layout.row_item_screenshots_big, null);
-		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshots_pb);
-		imageLoader.displayImage(hd?url.get(position):screenshotToThumb(url.get(position)),(ImageView) v.findViewById(R.id.screenshot),options, new ImageLoadingListener() {
+		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshots_loading_big);
+		imageLoader.displayImage(hd?url.get(position):screenshotToThumb(url.get(position)),(ImageView) v.findViewById(R.id.screenshot_image_big),options, new ImageLoadingListener() {
 
 			@Override
 			public void onLoadingStarted() {
@@ -67,7 +67,7 @@ public class ViewPagerAdapterScreenshots extends PagerAdapter {
 
 			@Override
 			public void onLoadingFailed(FailReason failReason) {
-				((ImageView) v.findViewById(R.id.screenshot)).setImageResource(android.R.drawable.ic_delete);
+				((ImageView) v.findViewById(R.id.screenshot_image_big)).setImageResource(android.R.drawable.ic_delete);
 				pb.setVisibility(View.GONE);
 			}
 

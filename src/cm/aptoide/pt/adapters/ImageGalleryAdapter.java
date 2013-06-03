@@ -151,8 +151,8 @@ public class ImageGalleryAdapter extends BaseAdapter {
 		}
 		
 		
-		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshots_pb);
-		imageLoader.displayImage(hd?url.get(position):screenshotToThumb(url.get(position)), (ImageView) v.findViewById(R.id.screenshot), options, new ImageLoadingListener() {
+		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshot_loading_item);
+		imageLoader.displayImage(hd?url.get(position):screenshotToThumb(url.get(position)), (ImageView) v.findViewById(R.id.screenshot_image_item), options, new ImageLoadingListener() {
 			
 			@Override
 			public void onLoadingStarted() { 
@@ -161,7 +161,7 @@ public class ImageGalleryAdapter extends BaseAdapter {
 			
 			@Override
 			public void onLoadingFailed(FailReason failReason) {
-				((ImageView) v.findViewById(R.id.screenshot)).setImageResource(android.R.drawable.ic_delete);
+				((ImageView) v.findViewById(R.id.screenshot_image_item)).setImageResource(android.R.drawable.ic_delete);
 				pb.setVisibility(View.GONE);
 				Log.d("onLoadingFailed", "Failed to load screenshot");
 			}

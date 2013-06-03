@@ -60,7 +60,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_marginTop="2dp"
                     android:layout_weight="1"
-                    android:text="@string/email"
+                    android:text="@string/username"
                     android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <EditText
@@ -68,7 +68,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:hint="@string/email"
+                    android:hint="@string/username"
                     android:inputType="textEmailAddress"
                     android:singleLine="true"
                     android:textAppearance="?android:attr/textAppearanceMedium" />

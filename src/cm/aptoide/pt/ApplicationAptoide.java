@@ -37,6 +37,7 @@ import cm.aptoide.com.nostra13.universalimageloader.core.assist.FlushedInputStre
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 import cm.aptoide.com.nostra13.universalimageloader.core.download.ImageDownloader;
 import cm.aptoide.pt.preferences.ManagerPreferences;
+import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.util.NetworkUtils;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Application;
@@ -94,6 +95,7 @@ public class ApplicationAptoide extends Application {
     public static String STOREVIEW = null;
     public static String STOREITEMS = null;
     private static boolean restartLauncher;
+	private static boolean reDoLauncherShorcut;
 
     public static boolean isRestartLauncher() {
         return restartLauncher;
@@ -305,6 +307,9 @@ public class ApplicationAptoide extends Application {
 		super.onCreate();
 
         managerPreferences = new ManagerPreferences(getApplicationContext());
+        if(reDoLauncherShorcut){
+        	managerPreferences.createLauncherShortcut(context);
+        }
 
     }
 
@@ -324,7 +329,10 @@ public class ApplicationAptoide extends Application {
                     pm.setComponentEnabledSetting(new ComponentName(context, "cm.aptoide.pt.Start-" + enumOem.name().toLowerCase(Locale.ENGLISH)),
                             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                             PackageManager.DONT_KILL_APP);
-
+                    
+                    Constants.APTOIDE_CLASS_NAME = "cm.aptoide.pt.Start-" + enumOem.name().toLowerCase(Locale.ENGLISH);
+                    reDoLauncherShorcut = true;
+                    
                     Log.d("ApplicationAptoide", "Setting " + enumOem.name().toLowerCase(Locale.ENGLISH) + " enabled");
 
                 } else {

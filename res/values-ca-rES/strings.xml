@@ -24,7 +24,6 @@
   <string name="exit">sortir</string>
   <string name="install">Instal·lar</string>
   <string name="uninstall">Desinstal·lar</string>
-  <string name="search_market">Cerca al Market</string>
   <string name="commentlabel">Afegir comentari</string>
   <string name="chkBoxSchDwn">Programar descàrrega</string>
   <string name="submit">Enviar</string>
@@ -37,9 +36,9 @@
   <string name="add_repo_text">Nou repositori</string>
   <string name="extended_server">Repositori extés</string>
   <string name="btn_add_repo">Afegir repositori</string>
-  <string name="menu_rem_repo">Eliminar repositori</string>
   <string name="number_apks">Aplicacions:</string>
   <string name="please_wait">Espereu…</string>
+  <string name="search_market">Cerca al Market</string>
   <string name="finished_download_alrt">Descàrrega finalitzada</string>
   <string name="finished_download_message">Descàrrega completada</string>
   <string name="download_alrt">Descarregant</string>
@@ -47,12 +46,8 @@
   <string name="tastenotavailable">No disponible</string>
   <string name="unabletoexecutecheknet">No es pot executar. Comprova estat d\'internet.</string>
   <string name="opinionsuccess">La teva petició s\'ha enviat correctament</string>
-  <string name="likes">Agrada:</string>
-  <string name="dislikes">No agrada:</string>
   <string name="postingtaste">S\'està enviant la petició</string>
   <string name="showpass">Mostrar contrasenya</string>
-  <string name="user">Nom d\'usuari…</string>
-  <string name="pass">Contrasenya…</string>
   <string name="new_account">Nou compte</string>
   <string name="setcredentials">Login</string>
   <string name="usernotdef">Usuari no definit</string>
@@ -62,7 +57,6 @@
   <string name="failedcredentials">Error al connectar-se amb l\'usuari proporcionat</string>
   <string name="loading_likes">Carregant agrada…</string>
   <string name="inresponseto">\\\@</string>
-  <string name="enterbody">Introdueix la teva revisió a la secció del cos</string>
   <string name="postingcomment">Pujant comentari…</string>
   <string name="commentadded">El teu comentari s\'ha enviat</string>
   <string name="order_popup_title1">Ordenar aplicacions per:</string>
@@ -74,11 +68,8 @@
   <string name="order_popup_title3">Contingut per a Adults:</string>
   <string name="order_popup_catg1">Per categoria</string>
   <string name="order_popup_catg2">Totes les aplicacions:</string>
-  <string name="dialog_yes">Si</string>
-  <string name="dialog_no">No</string>
   <string name="update_repos">Actualitzar repositori</string>
   <string name="update_main">La llista de repositoris ha canviat.\nVols actualitzar-los?</string>
-  <string name="email">Correu-e</string>
   <string name="pass_confirmation">Confirmació de constrasenya</string>
   <string name="setting_hwspecstitle">Especificacions de maquinari</string>
   <string name="setting_hwspecssum">Comprova les especificacions de maquinari</string>
@@ -98,6 +89,7 @@
   <string name="menu_about">Sobre</string>
   <string name="menu_search">Cerca</string>
   <string name="menu_add_repo">Nou repositori</string>
+  <string name="menu_rem_repo">Eliminar repositori</string>
   <string name="menu_edit_repo">Editar repositori</string>
   <string name="btn_yes">Si</string>
   <string name="btn_no">No</string>

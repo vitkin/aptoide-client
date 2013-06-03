@@ -34,7 +34,7 @@ public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivit
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(arg0);
 
-		setContentView(R.layout.screenshotsviewer);
+		setContentView(R.layout.screenshots_viewer);
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle(getString(R.string.screenshots));
 //		getSupportActionBar().setHomeButtonEnabled(true);
