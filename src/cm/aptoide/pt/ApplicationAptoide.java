@@ -39,6 +39,8 @@ import cm.aptoide.com.nostra13.universalimageloader.core.download.ImageDownloade
 import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.util.NetworkUtils;
+import org.acra.ACRA;
+import org.acra.annotation.ReportsCrashes;
 import org.holoeverywhere.app.Activity;
 import org.holoeverywhere.app.Application;
 import org.holoeverywhere.preference.SharedPreferences;
@@ -64,10 +66,14 @@ import java.util.Locale;
  * @author dsilveira
  *
  */
-//@ReportsCrashes(
-//   		formKey = "",
-//   		formUri = "http://www.backendofyourchoice.com/reportpath"
-//)
+@ReportsCrashes(
+        reportType = org.acra.sender.HttpSender.Type.JSON,
+        httpMethod = org.acra.sender.HttpSender.Method.PUT,
+//        formUriBasicAuthLogin="",
+//        formUriBasicAuthPassword="",
+   		formKey = "",
+   		formUri = "http://acra.aptoide.com/acraaptoide"
+)
 
 public class ApplicationAptoide extends Application {
 
@@ -88,6 +94,8 @@ public class ApplicationAptoide extends Application {
     public static String APTOIDETHEME = "";
     public static String MARKETNAME = "";
 
+    public static String ADUNITID = "18947d9a99e511e295fa123138070049";
+
     public static String STORETHEME = null;
     public static String STORENAME = null;
     public static String STOREAVATAR = null;
@@ -106,12 +114,16 @@ public class ApplicationAptoide extends Application {
     }
 
     static enum Elements {APTOIDEBOOT, PARTNERID, DEFAULTSTORE, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
-    		STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS }
+    		STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS, ADUNITID }
 
 
 	@Override
 	public void onCreate() {
-//		ACRA.init(this);
+		ACRA.init(this);
+//
+
+
+
 		AptoideThemePicker.setAptoideTheme(this);
 		setContext(getApplicationContext());
 		 // Create global configuration and initialize ImageLoader with this configuration
@@ -131,6 +143,7 @@ public class ApplicationAptoide extends Application {
             SEARCHSTORES = sPref.getBoolean("SEARCHSTORES",true);
             APTOIDETHEME = sPref.getString("APTOIDETHEME","DEFAULT");
             MARKETNAME = sPref.getString("MARKETNAME", "Aptoide");
+            ADUNITID = sPref.getString("ADUNITID", "18947d9a99e511e295fa123138070049");
 
 
         }else{
@@ -234,6 +247,10 @@ public class ApplicationAptoide extends Application {
                                 	STOREVIEW = sb.toString();
                                 	Log.d("Store view", STOREVIEW+ "");
                                 	break;
+                                case ADUNITID:
+                                    ADUNITID = sb.toString();
+                                    Log.d("AdUnitId", STOREVIEW+ "");
+                                    break;
 
                             }
                         }catch (Exception e){
@@ -245,11 +262,11 @@ public class ApplicationAptoide extends Application {
 
 
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             } catch (ParserConfigurationException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             } catch (SAXException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
 
             sPref.edit().putString("PARTNERID", PARTNERID)
@@ -263,7 +280,8 @@ public class ApplicationAptoide extends Application {
             .putBoolean("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE)
             .putBoolean("SEARCHSTORES", SEARCHSTORES)
             .putString("APTOIDETHEME", APTOIDETHEME)
-                    .putString("MARKETNAME", MARKETNAME)
+            .putString("MARKETNAME", MARKETNAME)
+            .putString("ADUNITID", ADUNITID)
             .commit();
 
 
@@ -329,10 +347,10 @@ public class ApplicationAptoide extends Application {
                     pm.setComponentEnabledSetting(new ComponentName(context, "cm.aptoide.pt.Start-" + enumOem.name().toLowerCase(Locale.ENGLISH)),
                             PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                             PackageManager.DONT_KILL_APP);
-                    
+
                     Constants.APTOIDE_CLASS_NAME = "cm.aptoide.pt.Start-" + enumOem.name().toLowerCase(Locale.ENGLISH);
                     reDoLauncherShorcut = true;
-                    
+
                     Log.d("ApplicationAptoide", "Setting " + enumOem.name().toLowerCase(Locale.ENGLISH) + " enabled");
 
                 } else {
@@ -345,7 +363,7 @@ public class ApplicationAptoide extends Application {
 
 
                 }
-                
+
                 pm.setComponentEnabledSetting(new ComponentName(context, "cm.aptoide.pt.Start"),
                         PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                         PackageManager.DONT_KILL_APP);

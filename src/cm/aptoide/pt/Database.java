@@ -2816,8 +2816,7 @@ public class Database {
 	}
 
 	public Cursor getExcludedApks() {
-		return database.query(DbStructure.TABLE_EXCLUDED_APKID, null, null,
-				null, null, null, null);
+		return database.query(DbStructure.TABLE_EXCLUDED_APKID, null, null, null, null, null, null);
 	}
 
 	public void updateServerCredentials(String url, String username,

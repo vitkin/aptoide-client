@@ -294,7 +294,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 //                adView.loadAd(new AdRequest());
 
                 mAdView = (MoPubView) findViewById(R.id.adview);
-                mAdView.setAdUnitId("18947d9a99e511e295fa123138070049"); // Enter your Ad Unit ID from www.mopub.com
+                mAdView.setAdUnitId(ApplicationAptoide.ADUNITID); // Enter your Ad Unit ID from www.mopub.com
                 mAdView.loadAd();
                 pd.dismiss();
                 viewApk = arg1;
@@ -654,10 +654,10 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 									}
 
                         		});
-                            	
+
                             	System.out.println(galleryAdapter.getCount()/2);
                             	gallery.setSelection(galleryAdapter.getCount()/2);
-                            	
+
 //                                String hashCode = (viewApk.getApkid()+"|"+viewApk.getVercode());
 //                                screenshots.setAdapter(new ViewPagerAdapterScreenshots(context,imageUrls,hashCode,false));
 //                                TypedValue a = new TypedValue();

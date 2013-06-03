@@ -61,7 +61,7 @@ public class ManagerPreferences{
 
     public void createLauncherShortcut(Context context){
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME);
+		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME + "-"+ApplicationAptoide.BRAND);
 		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 
 		final Intent intent = new Intent();

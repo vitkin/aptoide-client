@@ -486,14 +486,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					}
 
                     long date = utils.getLastModified(new URL(url));
-                    
+
                     long cachedDate;
                     try{
                     	cachedDate = Long.parseLong(db.getRepoHash(server.id,Category.TOPFEATURED));
                     }catch (Exception e) {
 						cachedDate = 0;
 					}
-                    
+
 
                     if(cachedDate < date){
 
@@ -1690,7 +1690,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 
 
-                boolean serversFileIsEmpty = false;
+                boolean serversFileIsEmpty = true;
 
 				if (sPref.getBoolean("firstrun", true)) {
 					// Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
