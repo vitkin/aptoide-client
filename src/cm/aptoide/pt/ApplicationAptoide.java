@@ -93,8 +93,7 @@ public class ApplicationAptoide extends Application {
     public static boolean SEARCHSTORES = true;
     public static String APTOIDETHEME = "";
     public static String MARKETNAME = "";
-
-    public static String ADUNITID = "18947d9a99e511e295fa123138070049";
+    public static String ADUNITID = "";
 
     public static String STORETHEME = null;
     public static String STORENAME = null;
@@ -113,7 +112,7 @@ public class ApplicationAptoide extends Application {
         ApplicationAptoide.restartLauncher = restartLauncher;
     }
 
-    static enum Elements {APTOIDEBOOT, PARTNERID, DEFAULTSTORE, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
+    static enum Elements { APTOIDEBOOT, PARTNERID, DEFAULTSTORE, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
     		STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS, ADUNITID }
 
 
@@ -249,7 +248,7 @@ public class ApplicationAptoide extends Application {
                                 	break;
                                 case ADUNITID:
                                     ADUNITID = sb.toString();
-                                    Log.d("AdUnitId", STOREVIEW+ "");
+                                    Log.d("AdUnitId", ADUNITID+ "");
                                     break;
 
                             }

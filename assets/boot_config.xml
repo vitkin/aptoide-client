@@ -14,6 +14,7 @@
         <customeditorschoice>false</customeditorschoice>
         <aptoidetheme>default</aptoidetheme>
 		<marketname>Aptoide</marketname>
+		<adunitid>18947d9a99e511e295fa123138070049</adunitid>
  
 		<!-- for OEM stores -->
         <storetheme>magalhaes</storetheme>
