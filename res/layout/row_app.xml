@@ -70,19 +70,19 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="center_vertical"
-        android:layout_weight="2"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/downloads"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
@@ -92,11 +92,12 @@
             android:id="@+id/stars"
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/downloads"
+            android:layout_weight="1"
             android:isIndicator="true"
             android:numStars="5" />
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>

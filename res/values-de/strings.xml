@@ -262,6 +262,7 @@
   <string name="my_account">Mein Account</string>
   <string name="clearcache_sum">Löscht Aptoide Cache (Symbole, Screenshots) von der SD-Karte.</string>
   <string name="clearcontent_sum">Löscht Aptoide Daten von der SD-Karte.</string>
+  <string name="cache_using_X_mb">Verwendet %s MB</string>
   <string name="clearcontent_title">Lösche Aptoide Daten und Konfigurationen</string>
   <string name="clearcache_title">Cache löschen</string>
   <string name="schDown_added">wurde zur geplanten Download-Liste hinzugefügt.</string>

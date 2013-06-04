@@ -60,8 +60,13 @@ public class ManagerPreferences{
 
 
     public void createLauncherShortcut(Context context){
+    	
+    	removePreviousShortcuts(context);
+		Log.d("ManagerPreferences", "Creating Icon " + Constants.APTOIDE_CLASS_NAME+"-"+ApplicationAptoide.BRAND );
+
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME + "-"+ApplicationAptoide.BRAND);
+		
+		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME+"-"+ApplicationAptoide.BRAND);
 		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 
 		final Intent intent = new Intent();
@@ -77,6 +82,23 @@ public class ManagerPreferences{
 		intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
 		context.sendBroadcast(intent);
 	}
+
+
+	private void removePreviousShortcuts(Context context) {
+		final Intent intent = new Intent();
+		Log.d("ManagerPreferences", "Removing Icon");
+		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+		
+		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME);
+		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
+		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+
+		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, ApplicationAptoide.MARKETNAME);
+		intent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
+		
+		context.sendBroadcast(intent);
+	}
+
 
 
 	public SharedPreferences getPreferences() {

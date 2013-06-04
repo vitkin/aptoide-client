@@ -260,8 +260,9 @@
   <string name="sign_in">تسجيل الدخول</string>
   <string name="sign_out">تسجيل الخروج</string>
   <string name="my_account">حسابي</string>
-  <string name="clearcache_sum">مسح ذاكرة الوسائط لأبتويد</string>
+  <string name="clearcache_sum">مسح الملفات المؤقتة(أيقونات،لقطات) من بطاقة الذاكرة</string>
   <string name="clearcontent_sum">يقوم بمسح البيانات من بطاقة الذاكرة</string>
+  <string name="cache_using_X_mb">باستخدام %s ميجابايت</string>
   <string name="clearcontent_title">"حذف بيانات وتشكيلات أبتويد "</string>
   <string name="clearcache_title">محو الذاكرة الوسيطة</string>
   <string name="schDown_added">تمت إضافته إلى التحميلات المجدولة.</string>
