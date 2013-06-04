@@ -48,7 +48,7 @@
   <string name="commentlabel">Shkruaj një Koment</string>
   <string name="like_or_comment_by_user">nga %s</string>
   <string name="comment_on_application">mbi %s</string>
-  <string name="no_comments">Nuk gjehet asnjë koment. Shkruaj i pari!</string>
+  <string name="no_comments">Nuk gjendet asnjë koment. Shkruaj i pari!</string>
   <string name="no_internet_connection">Nuk ka lidhje me internet.</string>
   <string name="comment_see_all">Shiko të Gjitha</string>
   <string name="chkBoxSchDwn">Planifiko Shkarkimin</string>

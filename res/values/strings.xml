@@ -266,6 +266,7 @@
     <string name="my_account">My account</string>
     <string name="clearcache_sum">Deletes cache (icons, screenshots) from the SD card.</string>
     <string name="clearcontent_sum">Deletes the data from the SD card.</string>
+    <string name="cache_using_X_mb">Using %s MB</string>
     <string name="clearcontent_title">Remove data and Configurations</string>
     <string name="clearcache_title">Clear cache</string>
     <string name="schDown_added">was added to scheduled download list.</string>

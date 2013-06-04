@@ -46,6 +46,7 @@
   <string name="open">Obrir</string>
   <string name="comments">Comentaris</string>
   <string name="commentlabel">Afegir comentari</string>
+  <string name="like_or_comment_by_user">per %s</string>
   <string name="no_comments">No s\'han trobat comentaris, sigues el primer!</string>
   <string name="no_internet_connection">No hi ha connexió a Internet</string>
   <string name="comment_see_all">Veure tot</string>

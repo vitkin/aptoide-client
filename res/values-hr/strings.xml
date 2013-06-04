@@ -299,6 +299,7 @@
   <string name="facebook_like_failed">Sviđanje na Facebook-u neuspjelo!</string>
   <string name="facebook_like_cancelled">Sviđanje na Facebook-u otkazano!</string>
   <string name="visit_and_install_the_best_apps">Posjetite %s i instalirajte najbolje aplikacije</string>
+  <string name="i_downloaded_to_install">Skinuo sam %s za android da se instalira na moj uredjaj!</string>
   <string name="loading_facebook">Učitavanje Facebook-a...</string>
   <string name="loading_twitter">Učitavanje Twitter-a...</string>
   <string name="social_network_intro">Vaše povratne informacije su nam bitne. Možete nas pronaći na Facebooku i/ili pratiti na Twitteru.</string>
@@ -314,6 +315,7 @@
   <string name="no_launcher_activity">Aktivnost nije pronadjena</string>
   <string name="retrying_registration">Zavrsavam proces registracije</string>
   <string name="credit_card">Kreditna kartica</string>
+  <string name="paypal_message">Mozete platiti kreditnom karticom ili paypal account-om uz sporazum. Ako zelite koristiti paypal bez sporazuma, izaberite kreditnu karticu.</string>
   <string name="applications">Aplikacije:</string>
   <string name="racing">Po ocjeni</string>
 </resources>

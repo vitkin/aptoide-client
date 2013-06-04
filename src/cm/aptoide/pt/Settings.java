@@ -241,8 +241,8 @@ public class Settings extends PreferenceActivity{
 	}
 	
 	private void redrawSizes(Double[] size) {
-		findPreference("clearapk").setSummary(getString(R.string.clearcontent_sum)+" (Using " +new DecimalFormat("#.##").format(size[0])+"MB)");
-		findPreference("clearcache").setSummary(getString(R.string.clearcache_sum)+" (Using " +new DecimalFormat("#.##").format(size[1])+"MB)");
+		findPreference("clearapk").setSummary(getString(R.string.clearcontent_sum)+" ("+getString(R.string.cache_using_X_mb, new DecimalFormat("#.##").format(size[0]))+")");
+		findPreference("clearcache").setSummary(getString(R.string.clearcache_sum)+" ("+getString(R.string.cache_using_X_mb, new DecimalFormat("#.##").format(size[1]))+")");
 	}
 	
 	

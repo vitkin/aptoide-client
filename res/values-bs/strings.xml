@@ -18,7 +18,7 @@
   <string name="cant_connect_to_store">Nemoguće povezivanje na store</string>
   <string name="verify_store">Provjeriti ime store-a</string>
   <string name="menu_settings">Postavke</string>
-  <string name="my_stores">Moji stores</string>
+  <string name="my_stores">Moji store-ovi</string>
   <string name="store_name">Ime Store-a</string>
   <string name="store">Store</string>
   <string name="category1">Kategorija 1</string>
@@ -42,7 +42,7 @@
   <string name="exit">izlaz</string>
   <string name="install">Instaliraj</string>
   <string name="uninstall">Ukloni</string>
-  <string name="update">Ažurirati</string>
+  <string name="update">Ažuriraj</string>
   <string name="open">Otvori</string>
   <string name="comments">Komentari</string>
   <string name="commentlabel">Dodaj Komentar</string>
@@ -118,11 +118,11 @@
   <string name="order_popup_lst3">Po ocjeni</string>
   <string name="order_popup_lst4">Po broju preuzimanja</string>
   <string name="order_popup_lst5">Cijena</string>
-  <string name="order_popup_title2">Pokaži aplikacije</string>
+  <string name="order_popup_title2">Pokaži aplikacije:</string>
   <string name="order_popup_title3">Sadržaj za odrasle</string>
   <string name="are_you_adult">Imate li najmanje 21 godinu starosti?</string>
   <string name="order_popup_catg1">Po kategoriji</string>
-  <string name="order_popup_catg2">Sve aplikacije</string>
+  <string name="order_popup_catg2">Sve aplikacije:</string>
   <string name="update_repos">Ažuriranje store-a</string>
   <string name="update_main">Popis store-ova koji se koriste je promijenjen.\nŽelite li ih ažurirati?</string>
   <string name="pass_confirmation">Potvrda zaporke</string>
@@ -168,7 +168,7 @@
   <string name="clear_all">Očisti sve</string>
   <string name="menu_add_repo">Novi Store</string>
   <string name="menu_rem_repo">Ukloni store</string>
-  <string name="menu_edit_repo">Uredi store</string>
+  <string name="menu_edit_repo">Uredi Store</string>
   <string name="btn_yes">Da</string>
   <string name="btn_no">Ne</string>
   <string name="btn_ok">U redu</string>
@@ -212,7 +212,7 @@
   <string name="repo_edt_msg2">Uredite store</string>
   <string name="md5_auto_update_error">Kontrolni zbroj ažuriranog paketa nije uspio! Zadržavam trenutnu verziju.</string>
   <string name="network_auto_update_error">Veza za ažuriranje nije uspjela! Zadržavam sadašnju verziju.</string>
-  <string name="aptoide_update">Azuriranja</string>
+  <string name="aptoide_update">Ažuriraj</string>
   <string name="auto_updating">Molimo pričekajte dok obrađujemo preuzeto ažuriranje...</string>
   <string name="update_self_title">Ažuriranje dostupno</string>
   <string name="update_self_msg">Dostupna je nova verzija %s,\nželite li ju ažurirati?</string>
@@ -289,7 +289,7 @@
   <string name="choose_email_client">Odaberite Email klijenta:</string>
   <string name="refresh_list">Osvježi</string>
   <string name="update_all">Ažuriraj sve</string>
-  <string name="update_to">Azuriranja</string>
+  <string name="update_to">Ažuriraj na</string>
   <string name="want_to_share">%s neze postati bez vaseg dopustenja. Postujemo vasu privatnost. Zelite li podjeliti sljedecu poruku?</string>
   <string name="share">Podijeli</string>
   <string name="facebook_authentication_failed">Autentifikacija sa Facebook-om nije uspjela!</string>
@@ -300,6 +300,7 @@
   <string name="facebook_like_failed">Sviđanje na Facebook-u neuspjelo!</string>
   <string name="facebook_like_cancelled">Sviđanje na Facebook-u otkazano!</string>
   <string name="visit_and_install_the_best_apps">Posjetite %s i instalirajte najbolje aplikacije</string>
+  <string name="i_downloaded_to_install">Skinuo sam %s za android da se instalira na moj uredjaj!</string>
   <string name="loading_facebook">Učitavanje Facebook-a...</string>
   <string name="loading_twitter">Učitavanje Twitter-a...</string>
   <string name="social_network_intro">Vaše povratne informacije su nam bitne. Možete nas pronaći na Facebooku i/ili pratiti na Twitteru.</string>
@@ -315,6 +316,7 @@
   <string name="no_launcher_activity">Aktivnost nije pronadjena</string>
   <string name="retrying_registration">Zavrsavam proces registracije</string>
   <string name="credit_card">Kreditna kartica</string>
+  <string name="paypal_message">Mozete platiti kreditnom karticom ili paypal account-om uz sporazum. Ako zelite koristiti paypal bez sporazuma, izaberite kreditnu karticu.</string>
   <string name="applications">Aplikacije:</string>
   <string name="racing">Po ocjeni</string>
 </resources>

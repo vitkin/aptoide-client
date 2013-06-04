@@ -2,9 +2,9 @@
 <resources>
   <string name="WidgetProvider_timestamp_today">Hoy</string>
   <string name="WidgetProvider_timestamp_yesterday">Ayer</string>
-  <string name="WidgetProvider_timestamp_hour_ago">Hace %s hora</string>
-  <string name="WidgetProvider_timestamp_hours_ago">Hace %s horas</string>
-  <string name="WidgetProvider_timestamp_minutes_ago">Hace %s minutos</string>
+  <string name="WidgetProvider_timestamp_hour_ago">hace %s hora</string>
+  <string name="WidgetProvider_timestamp_hours_ago">hace %s horas</string>
+  <string name="WidgetProvider_timestamp_minutes_ago">hace %s minutos</string>
   <string name="WidgetProvider_timestamp_just_now">Justo ahora</string>
   <string name="menu_context_remove">Eliminar</string>
   <string name="menu_context_reparse">Actualizar</string>

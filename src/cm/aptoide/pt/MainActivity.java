@@ -326,11 +326,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 								// txtSamItem.findViewById(R.id.version))
 								// .setText(getString(R.string.version) +" "+
 								// valuesRecommended.get(i).get("vername"));
-								((TextView) txtSamItem.findViewById(R.id.downloads)).setText("("
-												+ valuesRecommended.get(i).get(
-														"downloads") + " "
-												+ getString(R.string.downloads)
-												+ ")");
+								((TextView) txtSamItem.findViewById(R.id.downloads)).setText("("+ valuesRecommended.get(i).get("downloads") + " " + getString(R.string.downloads)+ ")");
 								txtSamItem.setTag(valuesRecommended.get(i).get("_id"));
 								txtSamItem.setLayoutParams(new LinearLayout.LayoutParams(
 												LinearLayout.LayoutParams.MATCH_PARENT,
@@ -567,14 +563,9 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					// ((TextView) txtSamItem.findViewById(R.id.version))
 					// .setText(getString(R.string.version) +" "+
 					// values.get(i).get("vername"));
-					((TextView) txtSamItem.findViewById(R.id.downloads)).setText("(" + values.get(i).get("downloads") + " "
-							+ getString(R.string.downloads) + ")");
+					((TextView) txtSamItem.findViewById(R.id.downloads)).setText("(" + values.get(i).get("downloads") + " "+ getString(R.string.downloads) + ")");
 					String hashCode = (values.get(i).get("apkid") + "|" + values.get(i).get("vercode")) + "";
-					cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader
-							.getInstance().displayImage(
-									values.get(i).get("icon"),
-									(ImageView) txtSamItem
-											.findViewById(R.id.icon), hashCode);
+					cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader.getInstance().displayImage(values.get(i).get("icon"),(ImageView) txtSamItem.findViewById(R.id.icon), hashCode);
 
 					// imageLoader.DisplayImage(-1, values.get(i).get("icon"),
 					// (ImageView) txtSamItem.findViewById(R.id.icon),
@@ -2530,14 +2521,14 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				((TextView) view.findViewById(R.id.store_name)).setText(cursor.getString(cursor.getColumnIndex("name")));
 
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("PARSED")) {
-					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads"))+ " downloads");
+					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads"))+ " " +getString(R.string.downloads));
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).equals("QUEUED")) {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(getString(R.string.preparing_to_load));
 				}
 				if (cursor.getString(cursor.getColumnIndex("status")).contains("PARSING")) {
 					((TextView) view.findViewById(R.id.store_dwn_number)).setText(cursor.getString(cursor.getColumnIndex("downloads"))
-									+ " downloads"
+									+ " " + getString(R.string.downloads)
 									+ " - "
 									+ getString(R.string.loading_store));
 				}
