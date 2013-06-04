@@ -262,6 +262,7 @@
   <string name="my_account">A minha conta</string>
   <string name="clearcache_sum">Apaga a cache (icons, screenshots) do cartão SD.</string>
   <string name="clearcontent_sum">Apaga a informação do cartão SD.</string>
+  <string name="cache_using_X_mb">Utilizando %s MB</string>
   <string name="clearcontent_title">Remover dados e configurações do Aptoide</string>
   <string name="clearcache_title">Apagar cache</string>
   <string name="schDown_added">foi adicionado à lista de descarregamentos agendados.</string>
