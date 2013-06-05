@@ -262,6 +262,7 @@
   <string name="my_account">Mijn account</string>
   <string name="clearcache_sum">Verwijdert cache (iconen, screenshots) van SD kaart.</string>
   <string name="clearcontent_sum">Verwijdert data van je SD kaart.</string>
+  <string name="cache_using_X_mb">Gebruikt %s MB</string>
   <string name="clearcontent_title">Verwijder data en instellingen</string>
   <string name="clearcache_title">Cache leegmaken</string>
   <string name="schDown_added">was toegevoegd aan geplande downloads.</string>
@@ -374,4 +375,5 @@
   <string name="recommended_for_you">Voor jou aangeraden</string>
   <string name="patch_obb">Patch Uitbreiding Bestand</string>
   <string name="main_obb">Belangrijkste Uitbreiding Bestand</string>
+  <string name="retrieving_update">Ontvangt update...</string>
 </resources>

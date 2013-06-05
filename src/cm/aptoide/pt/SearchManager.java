@@ -67,7 +67,7 @@ public class SearchManager extends Activity/*SherlockFragmentActivity */implemen
 		Button searchButton =  (Button) v.findViewById(R.id.baz_src);
 		
 		if(!ApplicationAptoide.SEARCHSTORES){
-            findViewById(R.id.baz_src).setVisibility(View.GONE);
+			searchButton.setVisibility(View.GONE);
         }
 
         

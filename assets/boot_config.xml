@@ -1,9 +1,8 @@
-
 <aptoideboot>
-
+	<aptoideconf>
         <!--<partnertype>basic</partnertype>-->
         <!--<partnerid>735f7a5ef72500285cf5c00b276e29b7</partnerid>-->
-        <!--<defaultstore>magalhaest2</defaultstore>-->
+        <!--<defaultstorename>magalhaest2</defaultstorename>-->
         <brand>brand_aptoide</brand>
         <!--<splashscreen>https://dl.dropbox.com/u/54355993/magalhaes_splashscreen.png</splashscreen>-->
         <!--<splashscreenland>https://dl.dropbox.com/u/54355993/magalhaes_splashscreen_land.png</splashscreenland>-->
@@ -15,7 +14,9 @@
         <aptoidetheme>default</aptoidetheme>
 		<marketname>Aptoide</marketname>
 		<adunitid>18947d9a99e511e295fa123138070049</adunitid>
- 
+ 	</aptoideconf>
+ 	
+	<storeconf>
 		<!-- for OEM stores -->
         <storetheme>magalhaes</storetheme>
         <storename>Magalhães T2</storename>
@@ -23,5 +24,5 @@
         <storedescription>Magalhães Market: free educational apps</storedescription>
         <storeview>list</storeview>
         <storeitems>applications,games,top_apps,latest_apps,latest_comments,latest_likes,favorites,recommended</storeitems>
-
+	</storeconf>
 </aptoideboot>

@@ -375,4 +375,5 @@
   <string name="recommended_for_you">Recomendado para si</string>
   <string name="patch_obb">Ficheiro adicional Patch</string>
   <string name="main_obb">Ficheiro adicional Main</string>
+  <string name="retrieving_update">Obtendo o último update...</string>
 </resources>

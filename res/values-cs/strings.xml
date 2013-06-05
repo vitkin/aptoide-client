@@ -262,6 +262,7 @@
   <string name="my_account">Můj účet</string>
   <string name="clearcache_sum">Smazat dočasné polořky (ikony, screenshoty) z SD karty.</string>
   <string name="clearcontent_sum">Smazat data z SD karty.</string>
+  <string name="cache_using_X_mb">Využívá %s MB</string>
   <string name="clearcontent_title">Odstranit data a nastavení</string>
   <string name="clearcache_title">Vyčistit dočasnou paměť</string>
   <string name="schDown_added">byl přidán do seznamu plánovaného stažení.</string>

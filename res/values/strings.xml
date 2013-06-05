@@ -384,5 +384,6 @@
 	<string name="recommended_for_you">Recommended for you</string>
     <string name="patch_obb">Patch Expansion File</string>
     <string name="main_obb">Main Expansion File</string>
+    <string name="retrieving_update">Retrieving update...</string>
 
 </resources>

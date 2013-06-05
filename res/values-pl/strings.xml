@@ -269,7 +269,7 @@
   <string name="clear_cache_sucess">Zawartość pomyślnie skasowana</string>
   <string name="aptoide_downloading">%s pobiera się</string>
   <string name="x_app">appka %d</string>
-  <string name="x_apps">aplikacje %d</string>
+  <string name="x_apps">appki %d</string>
   <string name="starting_download">Zacznij pobieranie</string>
   <string name="resuming_download">Podejmij pobieranie</string>
   <string name="finished_download">%s pobieranie zakończone</string>
@@ -315,7 +315,7 @@
   <string name="showexcludedupdates_title">Pokaż pominięte aktualizacje</string>
   <string name="excluded_updates_sum">Przywróć pominięte uaktualnienia</string>
   <string name="settings_maxFileCache_title">Pamięć podręczna pobranych aplikacji (MB)</string>
-  <string name="settings_maxFileCache_sum">Ustaw maksymalną wielkość dla plików swoich aplikacji</string>
+  <string name="settings_maxFileCache_sum">Ustaw maksymalną wielkość miwjsca dla plików swoich aplikacji</string>
   <string name="no_launcher_activity">Nie odnotowano aktywności launchera</string>
   <string name="retrying_registration">Zakończenie procesu rejestracji</string>
   <string name="credit_card">Karta kredytowa</string>
@@ -373,5 +373,7 @@
   <string name="latest_comments">Najnowsze komentarze</string>
   <string name="latest_likes">Najnowsze polubienia</string>
   <string name="recommended_for_you">Polecane dla Ciebie</string>
+  <string name="patch_obb">Plik rozszerzenia patcha</string>
   <string name="main_obb">Główny plik rozszerzenia</string>
+  <string name="retrieving_update">Pobieranie uaktualnienia...</string>
 </resources>

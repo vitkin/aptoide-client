@@ -65,7 +65,7 @@
   <string name="available_tab">Disponible</string>
   <string name="featured_tab">Destacado</string>
   <string name="editors_choice">Elección Editores</string>
-  <string name="top_apps">Apps más importantes</string>
+  <string name="top_apps">Aplicaciones Destacadas</string>
   <string name="installed_tab">Instaladas</string>
   <string name="updates_tab">Actualizaciones</string>
   <string name="add_private_store">Añadir tienda privada</string>
@@ -262,6 +262,7 @@
   <string name="my_account">Mi cuenta</string>
   <string name="clearcache_sum">Eliminar la cache (iconos, capturas de pantalla) de la tarjeta SD.</string>
   <string name="clearcontent_sum">Elimina la información de la tarjeta SD.</string>
+  <string name="cache_using_X_mb">Usando %s MB</string>
   <string name="clearcontent_title">Eliminar datos y configuracion</string>
   <string name="clearcache_title">Vaciar cache</string>
   <string name="schDown_added">añadido a la lista de descargas en espera.</string>
@@ -374,4 +375,5 @@
   <string name="recommended_for_you">Recomendado para ti</string>
   <string name="patch_obb">Archivo Expansión Parche</string>
   <string name="main_obb">Archivo Expansión Principal</string>
+  <string name="retrieving_update">Recuperando actualización...</string>
 </resources>

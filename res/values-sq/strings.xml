@@ -16,15 +16,15 @@
   <string name="error_latest_apk">Nuk ka APK në dispozicion. Është ende Dyqani i Aplikacioneve duke u ngarkuar?</string>
   <string name="error_delete_store">E pamundur për tu fshirë. Dyqani i Aplikacioneve është ende duke u ngarkuar.</string>
   <string name="cant_connect_to_store">Nuk mund të lidhet me Dyqanin e Aplikacioneve</string>
-  <string name="verify_store">Verifikoni emrin e Dyqanit të Aplikacioneve</string>
+  <string name="verify_store">Verifikoni emrin e dyqanit të aplikacioneve</string>
   <string name="menu_settings">Konfigurimet</string>
-  <string name="my_stores">Dyqanet e mia të Aplikacioneve</string>
+  <string name="my_stores">Dyqanet e mia të aplikacioneve</string>
   <string name="store_name">Emri i Dyqanit të Aplikacioneve</string>
-  <string name="store">Dyqanit i Aplikacioneve</string>
+  <string name="store">Dyqanit i aplikacioneve</string>
   <string name="category1">Kategoria 1</string>
   <string name="category2">Kategoria 2</string>
   <string name="add_store">Shto Dyqanin e Aplikacioneve</string>
-  <string name="add_store_button_below">Shto një Dyqan Aplikacionesh në butonin e mëposhtëm!</string>
+  <string name="add_store_button_below">Shto një dyqan aplikacionesh në butonin e mëposhtëm!</string>
   <string name="version">Versioni:</string>
   <string name="apk_id">APK ID:</string>
   <string name="vercode">Kodi i versionit:</string>
@@ -231,7 +231,6 @@
   <string name="aptoide_error">Nuk mund të lidhet me serverin. Ju lutem verifikoni lidhjen tuaj të internetit.</string>
   <string name="no_sch_downloads">Nuk ka shkarkime të planifikuara!</string>
   <string name="size">Përmasa</string>
-  <string name="installed_version">Inst. Ver.</string>
   <string name="schDown_install">Dëshironi të instaloni të gjithë shkarkimet e planifikuara?</string>
   <string name="schDown_installselected">Instaloni të Selektuarat</string>
   <string name="schDown_wireless_detected">Është gjetur Wireless: Dëshironi të shkarkoni gjithë aplikacionet në Shkakimet e Planifikuara?</string>

@@ -375,4 +375,5 @@
   <string name="recommended_for_you">Empfohlen für Dich</string>
   <string name="patch_obb">Patche Erweiterungsdatei</string>
   <string name="main_obb">Haupt Erweiterungsdatei</string>
+  <string name="retrieving_update">Empfange Update...</string>
 </resources>

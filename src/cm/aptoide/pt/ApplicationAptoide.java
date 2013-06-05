@@ -83,7 +83,7 @@ public class ApplicationAptoide extends Application {
 	public static boolean DEBUG_MODE = false;
 	public static File DEBUG_FILE;
     public static String PARTNERID;
-    public static String DEFAULTSTORE;
+    public static String DEFAULTSTORENAME;
     public static boolean MATURECONTENTSWITCH = true;
     public static String SPLASHSCREEN;
     public static String SPLASHSCREENLAND;
@@ -113,8 +113,8 @@ public class ApplicationAptoide extends Application {
         ApplicationAptoide.restartLauncher = restartLauncher;
     }
 
-    static enum Elements { APTOIDEBOOT, PARTNERID, DEFAULTSTORE, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
-    		STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS, ADUNITID }
+    static enum Elements { APTOIDEBOOT, APTOIDECONF, PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
+    		STORECONF, STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS, ADUNITID }
 
 
 	@Override
@@ -132,7 +132,7 @@ public class ApplicationAptoide extends Application {
         if(sPref.contains("PARTNERID") && sPref.getString("PARTNERID", null) != null){
 
             PARTNERID = sPref.getString("PARTNERID",null);
-            DEFAULTSTORE = sPref.getString("DEFAULTSTORE",null);
+            DEFAULTSTORENAME = sPref.getString("DEFAULTSTORE",null);
             MATURECONTENTSWITCH = sPref.getBoolean("MATURECONTENTSWITCH", true);
             BRAND = sPref.getString("BRAND", null);
             SPLASHSCREEN = sPref.getString("SPLASHSCREEN", null);
@@ -178,9 +178,9 @@ public class ApplicationAptoide extends Application {
                                     PARTNERID = sb.toString();
                                     Log.d("Partner ID", PARTNERID + "");
                                     break;
-                                case DEFAULTSTORE:
-                                    DEFAULTSTORE = sb.toString();
-                                    Log.d("Default store", DEFAULTSTORE + "");
+                                case DEFAULTSTORENAME:
+                                	DEFAULTSTORENAME = sb.toString();
+                                    Log.d("Default store", DEFAULTSTORENAME + "");
                                     break;
                                 case BRAND:
                                     BRAND = sb.toString();
@@ -270,7 +270,7 @@ public class ApplicationAptoide extends Application {
             }
 
             sPref.edit().putString("PARTNERID", PARTNERID)
-            .putString("DEFAULTSTORE", DEFAULTSTORE)
+            .putString("DEFAULTSTORE", DEFAULTSTORENAME)
             .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
             .putString("BRAND", BRAND)
             .putString("SPLASHSCREENLAND", SPLASHSCREENLAND)
@@ -393,8 +393,9 @@ public class ApplicationAptoide extends Application {
 	}
 
     public static void replaceOemIcon(){
-
-        if(context.getSharedPreferences("settings", MODE_PRIVATE).contains("PARTNERID")){
+    	android.content.SharedPreferences sPref = context.getSharedPreferences("settings", MODE_PRIVATE);
+    	
+        if(sPref.contains("PARTNERID") && sPref.getString("PARTNERID", null) != null){
             PackageManager pm = context.getPackageManager();
 
             for (EnumOem enumOem : EnumOem.values()) {

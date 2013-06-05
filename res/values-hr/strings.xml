@@ -93,7 +93,7 @@
   <string name="postingtaste">Vaš zahtjev se zaprima</string>
   <string name="another_comment_is_beeing_submited">Drugi komentar se zaprima, molimo pričekajte</string>
   <string name="error_occured">Pojavila se greška. Molimo pokušajte ponovo</string>
-  <string name="comment_submitted">Komentar uspješno zaprimljen.</string>
+  <string name="comment_submitted">Komentar uspješno zaprimljen</string>
   <string name="showpass">Pokaži zaporku</string>
   <string name="new_account">Novi račun</string>
   <string name="new_to_aptoide">Novi ste u Aptoide-u? Napravite besplatni račun</string>
@@ -117,6 +117,7 @@
   <string name="order_popup_lst2">Po abecedi</string>
   <string name="order_popup_lst3">Po ocjeni</string>
   <string name="order_popup_lst4">Po broju preuzimanja</string>
+  <string name="order_popup_lst5">Cijena</string>
   <string name="order_popup_title2">Pokaži aplikacije:</string>
   <string name="order_popup_title3">Sadržaj za odrasle</string>
   <string name="are_you_adult">Imate li najmanje 21 godinu starosti?</string>
@@ -302,6 +303,7 @@
   <string name="i_downloaded_to_install">Skinuo sam %s za android da se instalira na moj uredjaj!</string>
   <string name="loading_facebook">Učitavanje Facebook-a...</string>
   <string name="loading_twitter">Učitavanje Twitter-a...</string>
+  <string name="facebook_downloaded_to_install">Skinuo sam %s za android da se instalira na moj uredjaj!</string>
   <string name="social_network_intro">Vaše povratne informacije su nam bitne. Možete nas pronaći na Facebooku i/ili pratiti na Twitteru.</string>
   <string name="find_us_on_facebook">Pronađi nas na Facebook-u</string>
   <string name="follow_twitter">Prati nas na Twitter-u</string>

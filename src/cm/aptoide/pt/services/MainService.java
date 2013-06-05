@@ -209,9 +209,9 @@ public class MainService extends Service {
 			db.addStore(uri_str,username,password);
 			server = db.getServer(uri_str);
 
-			if(ApplicationAptoide.DEFAULTSTORE != null && uri_str.equals("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/")){
+			if(ApplicationAptoide.DEFAULTSTORENAME != null && uri_str.equals("http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/")){
 				server.oem = true;
-				db.addStoreInfo(ApplicationAptoide.STOREAVATAR, ApplicationAptoide.STORENAME, "0", ApplicationAptoide.STORETHEME, ApplicationAptoide.STOREDESCRIPTION, ApplicationAptoide.STOREVIEW, ApplicationAptoide.STOREITEMS, db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/").id);
+				db.addStoreInfo(ApplicationAptoide.STOREAVATAR, ApplicationAptoide.STORENAME, "0", ApplicationAptoide.STORETHEME, ApplicationAptoide.STOREDESCRIPTION, ApplicationAptoide.STOREVIEW, ApplicationAptoide.STOREITEMS, db.getServer("http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/").id);
 			}else{
 				db.addStoreInfo("",RepoUtils.split(server.url),"0","","","","",server.id);
 			}
@@ -476,7 +476,7 @@ public class MainService extends Service {
 		} catch (Exception e) {
 			e.printStackTrace();
 			if(server.oem){
-				db.addStoreInfo(ApplicationAptoide.STOREAVATAR, ApplicationAptoide.STORENAME, "0", ApplicationAptoide.STORETHEME, ApplicationAptoide.STOREDESCRIPTION, ApplicationAptoide.STOREVIEW, ApplicationAptoide.STOREITEMS, db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/").id);
+				db.addStoreInfo(ApplicationAptoide.STOREAVATAR, ApplicationAptoide.STORENAME, "0", ApplicationAptoide.STORETHEME, ApplicationAptoide.STOREDESCRIPTION, ApplicationAptoide.STOREVIEW, ApplicationAptoide.STOREITEMS, db.getServer("http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/").id);
 			}else{
 				db.addStoreInfo("",RepoUtils.split(server.url),"0","","","","",server.id);
 			}

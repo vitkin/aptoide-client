@@ -110,7 +110,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	private String LATEST_VERSION_CODE_URI =
 			(ApplicationAptoide.PARTNERID==null) ?
 			"http://imgs.aptoide.com/latest_version.xml":
-				"http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/latest_version.xml";
+				"http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/latest_version.xml";
 	private static final String TMP_UPDATE_FILE = Environment.getExternalStorageDirectory().getPath()+ "/.aptoide/aptoideUpdate.apk";
 
 	private final String SDCARD = Environment.getExternalStorageDirectory().getPath();
@@ -395,7 +395,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
                     Log.d("Aptoide-Geolocation", "Using countrycode: " + countryCode);
 
 					if (ApplicationAptoide.CUSTOMEDITORSCHOICE) {
-						url = getEditorsChoiceURL(ApplicationAptoide.DEFAULTSTORE,countryCode);
+						url = getEditorsChoiceURL(ApplicationAptoide.DEFAULTSTORENAME,countryCode);
 
 						if (((HttpURLConnection) new URL(url).openConnection())
 								.getResponseCode() != 200) {
@@ -471,7 +471,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 					String url;
 					if (ApplicationAptoide.CUSTOMEDITORSCHOICE) {
-						url = "http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/top.xml";
+						url = "http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/top.xml";
 
 						if (((HttpURLConnection) new URL(url).openConnection())
 								.getResponseCode() != 200) {
@@ -687,8 +687,8 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			MainActivity.this.service = ((LocalBinder) service).getService();
 
-			if (ApplicationAptoide.DEFAULTSTORE != null && db.getServer("http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/")==null) {
-				MainActivity.this.service.addStore(Database.getInstance(),"http://" + ApplicationAptoide.DEFAULTSTORE + ".store.aptoide.com/", null, null);
+			if (ApplicationAptoide.DEFAULTSTORENAME != null && db.getServer("http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/")==null) {
+				MainActivity.this.service.addStore(Database.getInstance(),"http://" + ApplicationAptoide.DEFAULTSTORENAME + ".store.aptoide.com/", null, null);
 			}
 
 			loadUi();
@@ -1705,7 +1705,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 					// sendBroadcast(intent);
 
 					if (new File(LOCAL_PATH + "/servers.xml").exists()
-							&& ApplicationAptoide.DEFAULTSTORE == null) {
+							&& ApplicationAptoide.DEFAULTSTORENAME == null) {
 						try {
 
 							SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -1763,7 +1763,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						AlertDialog alertDialog = alertDialogBuilder.create();
 						alertDialog.show();
 					}
-				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORE == null && serversFileIsEmpty) {
+				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORENAME == null && serversFileIsEmpty) {
 
 					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 							mContext);
@@ -3006,7 +3006,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 		@Override
 		protected void onPreExecute() {
-			this.dialog.setMessage("Retrieving update...");
+			this.dialog.setMessage(getString(R.string.retrieving_update));
 			this.dialog.show();
 			super.onPreExecute();
 			retrieveUpdateParameters();
