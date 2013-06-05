@@ -109,7 +109,6 @@
     <string name="check_your_credentials">Error. Please check your credentials</string>
     <string name="unkown_error">Unknown Error. Try again</string>
     <string name="loading_likes">Likes loading&#8230;</string>
-    <string name="inresponseto">\@</string>
     <string name="add_comment">Add comment</string>
     <string name="postingcomment">Posting your comment&#8230;</string>
     <string name="commentadded">Your comment as been successfully submitted</string>
@@ -163,8 +162,7 @@
     <string name="recommended_text">Sign in to view the best apps for you</string>
     <string name="you_need_to_login">You need to login to see recommended apps for you</string>
     <string name="you_need_to_login_toast">You need to login</string>
-    <string name="no_recommended_apps">No recommended apps found.</string>
-    <string name="no_recommended_toast">No recommended apps found</string>
+    <string name="no_recommended_apps">No recommended apps found</string>
     <string name="all_updated">All apps are up to date</string>
     <string name="clear_all">Clear all</string>
     <string name="menu_add_repo">New Store</string>
@@ -329,8 +327,7 @@
     <string name="get_latest_version_and_trusted">Get latest &amp; Trusted</string>
 	<string name="version_info">Version Info</string>
     <string name="payment_method">Payment Method</string>
-    <string name="payment_warning_text">We couldn\'t check the current price of this product. The price may have
-        changed. Please confirm PayPal prices before payment.
+    <string name="payment_warning_text">We couldn\'t check the current price of this product. The price may have changed. Please confirm PayPal prices before payment.
     </string>
     <string name="payment_warning_title">Warning</string>
     <string name="buy">Buy</string>

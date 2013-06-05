@@ -395,7 +395,7 @@ public class ApplicationAptoide extends Application {
     public static void replaceOemIcon(){
     	android.content.SharedPreferences sPref = context.getSharedPreferences("settings", MODE_PRIVATE);
     	
-        if(sPref.contains("PARTNERID") && sPref.getString("PARTNERID", null) != null){
+        if(sPref.contains("PARTNERID")){
             PackageManager pm = context.getPackageManager();
 
             for (EnumOem enumOem : EnumOem.values()) {
