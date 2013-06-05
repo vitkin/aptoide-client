@@ -415,6 +415,8 @@ public class MainService extends Service {
 
                         long lastModified = utils.getLastModified(new URL(server.url + "latest.xml"));
 
+
+
                         if(Long.parseLong(db.getRepoHash(server.id, Category.LATEST)) < lastModified){
 
 						    path = get(server, defaultLatestXmlPath, "latest.xml", false);

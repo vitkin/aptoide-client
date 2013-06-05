@@ -29,6 +29,7 @@ import cm.aptoide.pt.exceptions.AptoideExceptionNotFound;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.views.*;
+import org.acra.ACRA;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -227,7 +228,8 @@ public class HelperDownload{
 	    				download.setFailReason(EnumDownloadFailReason.TIMEOUT);
 	    				throw new TimeoutException(httpStatusCode+" "+httpResponse.getStatusLine().getReasonPhrase());
 					case 403:
-						fileOutputStream.close();
+                        ACRA.getErrorReporter().handleException(new Throwable("Download Returned 403 code"));
+                        fileOutputStream.close();
 	    				if(!resuming){
 	    					cache.clearCache();
 	    				}
