@@ -86,8 +86,8 @@
   <string name="an_error_check_net">Ocorreu um erro. Verifique a sua ligação.</string>
   <string name="there_was_an_error">Ocorreu um erro, por favor tente novamente</string>
   <string name="opinionsuccess">Sua solicitação foi enviada com sucesso</string>
-  <string name="like">Gostar</string>
-  <string name="dont_like">Não gostar</string>
+  <string name="like">Gosto</string>
+  <string name="dont_like">Não gosto</string>
   <string name="users_like_this">utilitários gostaram</string>
   <string name="users_dont_like_this">utilitários não gostaram</string>
   <string name="postingtaste">Sua solicitação está sendo enviada</string>

@@ -2973,7 +2973,6 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 				.setPositiveButton(getString(android.R.string.yes),
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog, int id) {
-								dialog.dismiss();
 								new DownloadSelfUpdate().execute();
 							}
 						})
