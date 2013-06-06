@@ -452,7 +452,7 @@ public class ServiceDownloadManager extends Service {
 		        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mBuilder = new NotificationCompat.Builder(this);
 
-		Intent onClick = new Intent();
+		Intent onClick = new Intent(Intent.ACTION_VIEW);
 		onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		onClick.setDataAndType(Uri.fromFile(download.getCache().getFile()),"application/vnd.android.package-archive");
 

@@ -389,7 +389,9 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 				/*likes.getLikes(repo_string, viewApk.getApkid(), viewApk.getVername(),(ViewGroup) findViewById(R.id.likesLayout),(ViewGroup) findViewById(R.id.ratings));*/
 
                 ItemBasedApks items = new ItemBasedApks(context,viewApk);
-                items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container),(LinearLayout)findViewById(R.id.itembasedapks_maincontainer),(TextView)findViewById(R.id.itembasedapks_label));
+                items.getItems((LinearLayout) findViewById(R.id.itembasedapks_container),
+                		(LinearLayout)findViewById(R.id.itembasedapks_maincontainer),
+                		(TextView)findViewById(R.id.itembasedapks_label));
 
                 if(!spinnerInstanciated){
                     loadApkVersions();
