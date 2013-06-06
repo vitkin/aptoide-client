@@ -58,7 +58,9 @@ public class MainService extends Service {
 	};
 
 
-	public class LocalBinder extends Binder{
+
+
+    public class LocalBinder extends Binder{
 		public MainService getService(){
 			return MainService.this;
 		}

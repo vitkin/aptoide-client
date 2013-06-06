@@ -26,7 +26,7 @@
         android:icon="@drawable/icon_brand_aptoide"
         android:label="@string/app_name_aptoide"
         android:theme="@style/Aptoide.Theme.Default" >
-        
+
         <activity
             android:name=".Start"
             android:label="@string/app_name_aptoide" >
@@ -46,7 +46,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
          <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_aptoide"
@@ -70,7 +70,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
         <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_educomp"
@@ -82,7 +82,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
         <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_eocean"
@@ -94,7 +94,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
          <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_jblow"
@@ -106,7 +106,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
              <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_lazerplay"
@@ -118,7 +118,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
         <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_magalhaes"
@@ -130,7 +130,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
         <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_peoplenet"
@@ -143,7 +143,7 @@
             </intent-filter>
         </activity-alias>
 
-                
+
         <activity-alias
                 android:enabled="false"
                 android:name=".Start-brand_timwe"
@@ -155,7 +155,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
-        
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -248,6 +248,7 @@
                 <data android:scheme="https" />
                 <data android:scheme="file" />
                 <data android:host="*" />
+                <data android:pathPattern=".*\\.myapp" />
                 <data android:mimeType="application/vnd.cm.aptoide.pt" />
             </intent-filter>
             <intent-filter>
