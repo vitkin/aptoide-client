@@ -82,7 +82,8 @@ public class ApplicationAptoide extends Application {
 	private static Context context;
 	public static boolean DEBUG_MODE = false;
 	public static File DEBUG_FILE;
-    public static String PARTNERID;
+	public static String PARTNERTYPE;
+	public static String PARTNERID;
     public static String DEFAULTSTORENAME;
     public static boolean MATURECONTENTSWITCH = true;
     public static String SPLASHSCREEN;
@@ -96,12 +97,11 @@ public class ApplicationAptoide extends Application {
     public static String MARKETNAME = "";
     public static String ADUNITID = "";
 
-    public static String STORETHEME = null;
-    public static String STORENAME = null;
-    public static String STOREAVATAR = null;
-    public static String STOREDESCRIPTION = null;
-    public static String STOREVIEW = null;
-    public static String STOREITEMS = null;
+    public static String THEME = null;
+    public static String AVATAR = null;
+    public static String DESCRIPTION = null;
+    public static String VIEW = null;
+    public static String ITEMS = null;
     private static boolean restartLauncher;
 	private static boolean reDoLauncherShorcut;
 
@@ -113,8 +113,8 @@ public class ApplicationAptoide extends Application {
         ApplicationAptoide.restartLauncher = restartLauncher;
     }
 
-    static enum Elements { APTOIDEBOOT, APTOIDECONF, PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME,
-    		STORECONF, STORETHEME, STORENAME, STOREAVATAR, STOREDESCRIPTION, STOREVIEW, STOREITEMS, ADUNITID }
+    static enum Elements { BOOTCONF, APTOIDECONF, PARTNERTYPE, PARTNERID, DEFAULTSTORENAME, BRAND, SPLASHSCREEN, MATURECONTENTSWITCH, MATURECONTENTSWITCHVALUE,SEARCHSTORES, MULTIPLESTORES, CUSTOMEDITORSCHOICE, APTOIDETHEME, SPLASHSCREENLAND, MARKETNAME, ADUNITID,
+    		STORECONF, THEME, AVATAR, DESCRIPTION, VIEW, ITEMS }
 
 
 	@Override
@@ -181,6 +181,10 @@ public class ApplicationAptoide extends Application {
                         try{
                         Elements element = Elements.valueOf(localName.toUpperCase(Locale.ENGLISH));
                             switch (element) {
+                            	case PARTNERTYPE:
+                            		PARTNERTYPE = sb.toString();
+                            		Log.d("Partner type", PARTNERTYPE + "");
+                                break;
                                 case PARTNERID:
                                     PARTNERID = sb.toString();
                                     Log.d("Partner ID", PARTNERID + "");
@@ -229,35 +233,31 @@ public class ApplicationAptoide extends Application {
                                     SEARCHSTORES = Boolean.parseBoolean(sb.toString());
                                     Log.d("Search stores", SEARCHSTORES+ "");
                                     break;
-
-                                case STORETHEME:
-                                	STORETHEME = sb.toString();
-                                    Log.d("Store Theme", STORETHEME+ "");
-                                    break;
-                                case STOREAVATAR:
-                                	STOREAVATAR = sb.toString();
-                                    Log.d("Store avatar", STOREAVATAR+ "");
-                                    break;
-                                case STOREDESCRIPTION:
-                                	STOREDESCRIPTION = sb.toString();
-                                	Log.d("Store description", STOREDESCRIPTION+ "");
-                                	break;
-                                case STOREITEMS:
-                                	STOREITEMS = sb.toString();
-                                	Log.d("Store items", STOREITEMS+ "");
-                                	break;
-                                case STORENAME:
-                                	STORENAME = sb.toString();
-                                	Log.d("Store name", STORENAME+ "");
-                                	break;
-                                case STOREVIEW:
-                                	STOREVIEW = sb.toString();
-                                	Log.d("Store view", STOREVIEW+ "");
-                                	break;
                                 case ADUNITID:
                                     ADUNITID = sb.toString();
                                     Log.d("AdUnitId", ADUNITID+ "");
                                     break;
+                                    
+                                case THEME:
+                                	THEME = sb.toString();
+                                    Log.d("Store Theme", THEME+ "");
+                                    break;
+                                case AVATAR:
+                                	AVATAR = sb.toString();
+                                    Log.d("Store avatar", AVATAR+ "");
+                                    break;
+                                case DESCRIPTION:
+                                	DESCRIPTION = sb.toString();
+                                	Log.d("Store description", DESCRIPTION+ "");
+                                	break;
+                                case ITEMS:
+                                	ITEMS = sb.toString();
+                                	Log.d("Store items", ITEMS+ "");
+                                	break;
+                                case VIEW:
+                                	VIEW = sb.toString();
+                                	Log.d("Store view", VIEW+ "");
+                                	break;
 
                             }
                         }catch (Exception e){

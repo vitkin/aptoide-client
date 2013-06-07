@@ -1,4 +1,4 @@
-<aptoideboot>
+<bootconf>
 	<aptoideconf>
         <!--<partnertype>basic</partnertype>-->
         <!--<partnerid>735f7a5ef72500285cf5c00b276e29b7</partnerid>-->
@@ -18,11 +18,10 @@
  	
 	<storeconf>
 		<!-- for OEM stores -->
-        <storetheme>magalhaes</storetheme>
-        <storename>Magalhães T2</storename>
-        <storeavatar>http://cdn1.aptoide.com/includes/themes/default/images/repo_default_icon.png</storeavatar>
-        <storedescription>Magalhães Market: free educational apps</storedescription>
-        <storeview>list</storeview>
-        <storeitems>applications,games,top_apps,latest_apps,latest_comments,latest_likes,favorites,recommended</storeitems>
+        <theme>magalhaes</theme>
+        <avatar>http://cdn1.aptoide.com/includes/themes/default/images/repo_default_icon.png</avatar>
+        <description>Magalhães Market: free educational apps</description>
+        <view>list</view>
+        <items>applications,games,top_apps,latest_apps,latest_comments,latest_likes,favorites,recommended</items>
 	</storeconf>
-</aptoideboot>
+</bootconf>
