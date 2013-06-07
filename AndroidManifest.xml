@@ -250,6 +250,7 @@
                 <data android:host="*" />
                 <data android:pathPattern=".*\\.myapp" />
                 <data android:mimeType="application/vnd.cm.aptoide.pt" />
+
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

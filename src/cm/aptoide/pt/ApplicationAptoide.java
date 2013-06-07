@@ -237,7 +237,7 @@ public class ApplicationAptoide extends Application {
                                     ADUNITID = sb.toString();
                                     Log.d("AdUnitId", ADUNITID+ "");
                                     break;
-                                    
+
                                 case THEME:
                                 	THEME = sb.toString();
                                     Log.d("Store Theme", THEME+ "");
@@ -276,8 +276,11 @@ public class ApplicationAptoide extends Application {
                 e.printStackTrace();
             }
 
-            sPref.edit().putString("PARTNERID", PARTNERID)
-            .putString("DEFAULTSTORE", DEFAULTSTORENAME)
+
+
+
+
+            sPref.edit().putString("PARTNERID", PARTNERID).putString("DEFAULTSTORE", DEFAULTSTORENAME)
             .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
             .putString("BRAND", BRAND)
             .putString("SPLASHSCREENLAND", SPLASHSCREENLAND)
@@ -291,8 +294,10 @@ public class ApplicationAptoide extends Application {
             .putString("ADUNITID", ADUNITID)
             .commit();
 
+            if(!PreferenceManager.getDefaultSharedPreferences(context).contains("version")){
+                setRestartLauncher(true);
+            }
 
-            setRestartLauncher(true);
         }
 
         DEBUG_FILE = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/debug.log");
@@ -401,7 +406,7 @@ public class ApplicationAptoide extends Application {
 
     public static void replaceOemIcon(){
     	android.content.SharedPreferences sPref = context.getSharedPreferences("settings", MODE_PRIVATE);
-    	
+
         if(sPref.contains("PARTNERID")){
             PackageManager pm = context.getPackageManager();
 
