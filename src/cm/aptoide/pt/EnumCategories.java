@@ -51,6 +51,8 @@ public class EnumCategories {
 		categories.put ("Sports Games", R.string.sport_games);
 		categories.put ("Racing", R.string.racing);
 
+		categories.put("All Applications", R.string.order_popup_catg2);
+		
 		categories.put ("Top Apps", R.string.top_apps);
 		categories.put ("Latest Apps", R.string.latest_apps);
 		categories.put ("Latest Comments", R.string.latest_comments);
