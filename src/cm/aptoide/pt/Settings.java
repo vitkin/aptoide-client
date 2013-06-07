@@ -144,7 +144,7 @@ public class Settings extends PreferenceActivity{
 				final AlertDialog aboutDialog = alertDialogBuilder.create();
 
 
-				aboutDialog.setTitle(getString(R.string.about));
+				aboutDialog.setTitle(getString(R.string.about_us));
 				aboutDialog.setIcon(android.R.drawable.ic_menu_info_details);
 				aboutDialog.setCancelable(false);
 				aboutDialog.setButton(Dialog.BUTTON_NEUTRAL, "Ok", new Dialog.OnClickListener() {

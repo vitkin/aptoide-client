@@ -341,7 +341,7 @@
 
             <TextView
                 style="?attr/labelBackground"
-                android:text="@string/app_about" />
+                android:text="@string/app_description" />
 
             <LinearLayout
                 android:id="@+id/description_container"

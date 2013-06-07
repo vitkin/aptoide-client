@@ -67,7 +67,7 @@ public class ManagerPreferences{
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
 		
 		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME+"-"+ApplicationAptoide.BRAND);
-		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
+//		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 
 		final Intent intent = new Intent();
 		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
@@ -90,7 +90,7 @@ public class ManagerPreferences{
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
 		
 		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME);
-		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
+//		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
 		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, ApplicationAptoide.MARKETNAME);

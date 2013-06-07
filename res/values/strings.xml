@@ -22,8 +22,6 @@
     <string name="my_stores">My stores</string>
     <string name="store_name">Store Name</string>
     <string name="store">Store</string>
-    <string name="category1">Category 1</string>
-    <string name="category2">Category 2</string>
     <string name="add_store">Add Store</string>
     <string name="add_store_button_below">Add a store in the button below!</string>
     <string name="version">Version:</string>
@@ -150,12 +148,11 @@
     <string name="menu_manage">Manage Store</string>
     <string name="menu_display_options">Display Options</string>
     <string name="menu_order">Change Order</string>
-    <string name="menu_about">About</string>
     <string name="menu_search">Search</string>
     <string name="adult_content">Adult Content</string>
     <string name="stores">Stores</string>
     <string name="screenshots">Screenshots</string>
-    <string name="app_about">About</string>
+    <string name="app_description">Description</string>
     <string name="rate_this_app">Rate this app</string>
     <string name="related_apps">Related Apps</string>
     <string name="recommended_apps">Recommended Apps</string>
@@ -168,14 +165,8 @@
     <string name="menu_add_repo">New Store</string>
     <string name="menu_rem_repo">Remove Store</string>
     <string name="menu_edit_repo">Edit Store</string>
-    <string name="btn_yes">Yes</string>
-    <string name="btn_no">No</string>
-    <string name="btn_ok">OK</string>
-    <string name="btn_add">Add</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="btn_done">Done</string>
     <string name="btn_chlog">Changelog</string>
-    <string name="btn_search_market">Search Market</string>
+    <string name="btn_search_market">Search other Markets</string>
     <string name="no_results_found">No results found</string>
     <string name="found">Found</string>
     <string name="results">result(s)</string>
@@ -187,17 +178,12 @@
     <string name="error_on_update">The update process could not be completed on the following store:</string>
     <string name="updating_norepos">There are no enabled stores in your list.\nPlease add a store or enable at least one that you already have.</string>
     <string name="update_done_msg1">Stores updated successfully.</string>
-    <string name="about">About</string>
-    <string name="about_txt1">Your package installer to Android phone.\n</string>
-    <string name="description">@string/about_txt1</string>
     <string name="about_site">Home: </string>
     <string name="about_mail">Contact: </string>
+    <string name="about_us">About us</string>
     <string name="app_trusted">%s application is Trusted</string>
     <string name="app_warning">%s application is Warn</string>
     <string name="app_unknown">%s application is Unknown</string>
-    <string name="trusted">Trusted</string>
-    <string name="warning">Warn</string>
-    <string name="unknown">Unknown</string>
     <string name="signature_verified">The application signature matches the one related to its developer.</string>
     <string name="signature_not_verified">The application signature does not match the one related to its developer, thus the application may have been adulterated. </string>
     <string name="trusted_classification">This application was scanned by Aptoide Anti-Malware platform and did not catch any signal of virus.</string>
@@ -221,7 +207,6 @@
     <string name="error_404">File was not found in the given store.\nPlease try again later.</string>
     <string name="parse_error">Loading error!</string>
     <string name="parse_error_loading">There was an error on loading your store.\nDo you want to try again?</string>
-    <string name="error_no_market">You don\'t have Google Market installed!</string>
     <string name="newrepo_alrt">Do you want to add this store to your list?\n\n</string>
     <string name="installapp_alrt">Do you wish to install: \n\n</string>
     <string name="remote_in_noSD_title">No memory</string>
@@ -231,13 +216,12 @@
     <string name="aptoide_error">Can\'t connect to the remote server. Please verify your Internet connection.</string>
     <string name="no_sch_downloads">No scheduled downloads!</string>
     <string name="size">Size</string>
-    <string name="installed_version">Inst. Ver.</string>
+    <string name="installed_version">Installed Version</string>
     <string name="schDown_install">Do you want to install all scheduled downloads?</string>
     <string name="schDown_installselected">Install Selected</string>
     <string name="schDown_wireless_detected">Wireless detected: Download all aplications on Scheduled Downloads?</string>
     <string name="schDown_nodownloads">No Scheduled Downloads</string>
     <string name="schDown_nodownloadselect">No Downloads Selected</string>
-    <string name="schDown_downerror">Download error. Add %1$s Store.</string>
     <string name="addSchDown">Added to Scheduled Downloads</string>
     <string name="registration">Registration</string>
     <string name="username">Email</string>
@@ -329,7 +313,7 @@
     <string name="payment_method">Payment Method</string>
     <string name="payment_warning_text">We couldn\'t check the current price of this product. The price may have changed. Please confirm PayPal prices before payment.
     </string>
-    <string name="payment_warning_title">Warning</string>
+    <string name="payment_warning_title">Warning!</string>
     <string name="buy">Buy</string>
 
     <string name="applications">Applications</string>
