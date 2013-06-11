@@ -301,7 +301,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 						if (valuesRecommended.isEmpty()) {
 							if (Login.isLoggedIn(mContext)) {
 								TextView tv = new TextView(mContext);
-								tv.setText(R.string.no_recommended_toast);
+								tv.setText(R.string.no_recommended_apps);
 								tv.setTextAppearance(mContext, android.R.attr.textAppearanceMedium);
 								tv.setPadding(10, 10, 10, 10);
 								ll.addView(tv);
