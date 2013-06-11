@@ -1,11 +1,14 @@
 package cm.aptoide.pt;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.webservices.login.Login;
 import com.paypal.android.MEP.PayPal;
 import com.paypal.android.MEP.PayPalPreapproval;
@@ -17,9 +20,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.preference.SharedPreferences;
-import org.holoeverywhere.widget.TextView;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 
-public class Buy extends Activity {
+public class Buy extends SherlockActivity {
 
 	/**
 	 *

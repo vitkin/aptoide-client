@@ -20,8 +20,8 @@
 
 package cm.aptoide.pt.views;
 
-import cm.aptoide.pt.R;
 import android.content.Context;
+import cm.aptoide.pt.R;
 
 /**
  * EnumDownloadFailReason, typeSafes Downloads fail reasons when status equals FAIL in Aptoide

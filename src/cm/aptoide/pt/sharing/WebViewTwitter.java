@@ -7,24 +7,23 @@
  ******************************************************************************/
 package cm.aptoide.pt.sharing;
 
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.widget.ProgressBar;
-import org.holoeverywhere.widget.TextView;
-
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.R;
 
-public class WebViewTwitter extends Activity {
+public class WebViewTwitter extends SherlockActivity {
 
 	private String url;
 	private WebView TwitterWebView;
 	private TextView waitingText;
 	private ProgressBar waitingBar;
-    
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview_twitter);
@@ -47,19 +46,19 @@ public class WebViewTwitter extends Activity {
             TwitterWebView.getSettings().setSavePassword(false);
             TwitterWebView.getSettings().setSaveFormData(false);
             TwitterWebView.getSettings().setSupportZoom(false);
-            
+
             TwitterWebView.setWebChromeClient(new WebChromeClient() {
     			public void onProgressChanged(WebView view, int progress)
     			{
                     setProgress(progress * 100);
-                    
+
                     if(progress == 100){
                     	waitingText.setVisibility(View.GONE);
                     	waitingBar.setVisibility(View.GONE);
                     }
     			}
     		});
-            
+
             TwitterWebView.loadUrl(url);
         } catch (Exception e) {
             e.printStackTrace();

@@ -7,21 +7,20 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.comments;
 
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.widget.EditText;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import cm.aptoide.pt.R;
+import android.widget.EditText;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.AptoideThemePicker;
+import cm.aptoide.pt.R;
 import cm.aptoide.pt.webservices.login.Login;
 
 
-public class AddComment extends Activity /*SherlockActivity */{
+public class AddComment extends SherlockActivity /*SherlockActivity */{
 
-	
+
 	public static final int ADD_COMMENT_REQUESTCODE = 0;
 	Context context;
 	private String webservicespath;
@@ -31,12 +30,12 @@ public class AddComment extends Activity /*SherlockActivity */{
 	private EditText comment_box;
 	private EditText name_box;
 	private String username;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.form_add_comment);
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle("Add comment");
@@ -52,13 +51,13 @@ public class AddComment extends Activity /*SherlockActivity */{
 		if(Login.getUserName(context)!=null){
 			name_box.setVisibility(View.GONE);
 		}
-		
+
 		if(Login.isLoggedIn(context)){
 			name_box.setText(Login.getUserLogin(context).split("@")[0]);
 		}
-		
+
 	}
-	
+
 	public void postComment(View v){
 		if(name_box.getText().length()>0){
 			username = name_box.getText().toString();
@@ -74,18 +73,18 @@ public class AddComment extends Activity /*SherlockActivity */{
 			}catch(Exception e){
 				e.printStackTrace();
 			}
-			
+
 		}else{
 			Intent i = new Intent(this,Login.class);
 			startActivityForResult(i, Login.REQUESTCODE);
 		}
-		
+
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		
+
 		switch (requestCode) {
 		case Login.REQUESTCODE:
 			switch (resultCode) {
@@ -104,16 +103,16 @@ public class AddComment extends Activity /*SherlockActivity */{
 		default:
 			break;
 		}
-		
+
 	}
-	
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		System.out.println("onsaveinstancestate");
 		outState.putString("comment", comment_box.getText().toString());
 	}
-	
+
 //	@Override
 //	public boolean onOptionsItemSelected(MenuItem item) {
 //		if (item.getItemId() == android.R.id.home) {

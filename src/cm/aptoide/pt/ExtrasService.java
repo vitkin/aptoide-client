@@ -7,27 +7,24 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import cm.aptoide.pt.util.Md5Handler;
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Environment;
 import android.os.IBinder;
 import android.text.Html;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 public class ExtrasService extends Service {
 
@@ -35,18 +32,18 @@ public class ExtrasService extends Service {
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+
 	private enum Enum {
 		APKID,CMT,DELTA,PKG, EXTRAS
 	}
 	private static ExecutorService executor = Executors.newFixedThreadPool(1, new ThreadFactory() {
-		
+
 		@Override
 		public Thread newThread(Runnable r) {
-			
+
 			Thread t = new Thread(r);
 			t.setPriority(1);
-			
+
 			return t;
 		}
 	});
@@ -55,7 +52,7 @@ public class ExtrasService extends Service {
 	public void onCreate() {
 		super.onCreate();
 	}
-	
+
 	@SuppressLint("NewApi")
 	@Override
 	@Deprecated
@@ -63,7 +60,7 @@ public class ExtrasService extends Service {
 		onStartCommand(intent, START_NOT_STICKY, startId);
 		super.onStart(intent, startId);
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		System.out.println("onStart");
@@ -73,8 +70,8 @@ public class ExtrasService extends Service {
 		}catch (Exception e){
 			e.printStackTrace();
 		}
-		
-		
+
+
 		if(!parsingList.contains(path)){
 			parsingList.add(path);
 			File xml = new File(path);
@@ -82,17 +79,17 @@ public class ExtrasService extends Service {
 			executor.submit(new ExtrasParser(xml,getApplicationContext(),""));
 			System.out.println("Extras starting");
 		}
-		
+
 		return START_NOT_STICKY;
 	}
-	
-	public class ExtrasParser extends Thread{ 
+
+	public class ExtrasParser extends Thread{
 		File xml;
 		private Context context;
 		private String md5;
-		
-		
-		
+
+
+
 		public ExtrasParser(File xml, Context context,String md5) {
 			this.xml=xml;
 			this.context=context;
@@ -116,9 +113,9 @@ public class ExtrasService extends Service {
 		}
 	}
 
-	
+
 	DefaultHandler handler = new DefaultHandler(){
-		
+
 		StringBuilder sb = new StringBuilder();
 		String apkid;
 		String cmt;
@@ -126,7 +123,7 @@ public class ExtrasService extends Service {
 		private ContentValues[] value2 = new ContentValues[0];
 		private ArrayList<ContentValues> values = new ArrayList<ContentValues>();
 		private int i = 0;
-		
+
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			switch (Enum.valueOf(localName.toUpperCase())) {
 			case PKG:
@@ -140,7 +137,7 @@ public class ExtrasService extends Service {
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			sb.append(ch,start,length);
 		};
-		
+
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			switch (Enum.valueOf(localName.toUpperCase())) {
 			case APKID:
@@ -166,7 +163,7 @@ public class ExtrasService extends Service {
 					getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
 					values.clear();
 				}
-				
+
 //				getContentResolver().insert(ExtrasContentProvider.CONTENT_URI, value);
 //				dbhandler.addComment(apkid,cmt);
 				apkid="";
@@ -183,9 +180,9 @@ public class ExtrasService extends Service {
 				getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
 				values.clear();
 			}
-			
+
 			System.out.println("Extras ended.");
 		};
 	};
-	
+
 }

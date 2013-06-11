@@ -7,25 +7,25 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 enum Elements {
-	
+
 	MYAPP,GETAPP,NAME,PNAME,MD5SUM,INTSIZE,NEWSERVER,SERVER, NOTFOUND, GET;
-	
+
 	public static Elements lookup(String element){
 		try{
 			return Elements.valueOf(element);
 		}catch (Exception e) {
 			return Elements.NOTFOUND;
 		}
-		
-		
+
+
 	}
 };
 
@@ -36,13 +36,13 @@ public class MyappHandler extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		
+
 		super.startElement(uri, localName, qName, attributes);
 		sb.setLength(0);
 		switch (Elements.lookup(localName.toUpperCase().trim())) {
 		case GETAPP:
 			app = new HashMap<String, String>();
-			
+
 			break;
 		case NEWSERVER:
 			break;
@@ -50,31 +50,31 @@ public class MyappHandler extends DefaultHandler {
 			break;
 		}
 	}
-	
+
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-		
+
 		super.characters(ch, start, length);
 		sb.append(ch,start,length);
-		
+
 	}
-	
+
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		
+
 		switch (Elements.lookup(localName.toUpperCase().trim())) {
 		case GET:
 			app.put("path", sb.toString());
 			break;
 		case GETAPP:
-			
+
 			break;
 		case INTSIZE:
 			app.put("size", sb.toString());
 			break;
-			
+
 		case MD5SUM:
 			app.put("md5sum", sb.toString());
 			break;
@@ -113,8 +113,8 @@ public class MyappHandler extends DefaultHandler {
 	public ArrayList<String> getServers() {
 		return servers;
 	}
-	
-	
-	
-	
+
+
+
+
 }

@@ -7,16 +7,15 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-
+import cm.aptoide.pt.util.Md5Handler;
+import cm.aptoide.pt.views.ViewApkInfoXml;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import cm.aptoide.pt.util.Md5Handler;
-import cm.aptoide.pt.views.ViewApkInfoXml;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class HandlerInfoXml extends DefaultHandler {

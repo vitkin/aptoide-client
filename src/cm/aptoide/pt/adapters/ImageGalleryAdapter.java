@@ -7,24 +7,22 @@
  ******************************************************************************/
 package cm.aptoide.pt.adapters;
 
-import java.util.ArrayList;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.widget.ProgressBar;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
 import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import cm.aptoide.pt.R;
+
+import java.util.ArrayList;
 
 public class ImageGalleryAdapter extends BaseAdapter {
 
@@ -49,7 +47,7 @@ public class ImageGalleryAdapter extends BaseAdapter {
 //		 .resetViewBeforeLoading()
 //		 .cacheOnDisc()
 //		 .build();
-		
+
 		options = new DisplayImageOptions.Builder()
 		.showImageForEmptyUri(android.R.drawable.sym_def_app_icon)
 		.cacheOnDisc()
@@ -145,36 +143,37 @@ public class ImageGalleryAdapter extends BaseAdapter {
 		String hashCode=this.hashCode+"."+position;
 		final View v;
 		if(convertView==null){
-			v = LayoutInflater.from(context).inflate(R.layout.row_item_screenshots_gallery, null);
+
+            v = LayoutInflater.from(context).inflate(R.layout.row_item_screenshots_gallery, null);
 		}else{
 			v = convertView;
 		}
-		
-		
+
+
 		final ProgressBar pb = (ProgressBar) v.findViewById(R.id.screenshot_loading_item);
 		imageLoader.displayImage(hd?url.get(position):screenshotToThumb(url.get(position)), (ImageView) v.findViewById(R.id.screenshot_image_item), options, new ImageLoadingListener() {
-			
+
 			@Override
-			public void onLoadingStarted() { 
+			public void onLoadingStarted() {
 				pb.setVisibility(View.VISIBLE);
 			}
-			
+
 			@Override
 			public void onLoadingFailed(FailReason failReason) {
 				((ImageView) v.findViewById(R.id.screenshot_image_item)).setImageResource(android.R.drawable.ic_delete);
 				pb.setVisibility(View.GONE);
 				Log.d("onLoadingFailed", "Failed to load screenshot");
 			}
-			
+
 			@Override
 			public void onLoadingComplete(Bitmap loadedImage) {
 				pb.setVisibility(View.GONE);
 			}
-			
+
 			@Override
 			public void onLoadingCancelled() {	}
 		}, hashCode);
-		
+
 		return v;
 	}
 
@@ -183,5 +182,5 @@ public class ImageGalleryAdapter extends BaseAdapter {
 		return url.size();
 	}
 
-	
+
 }

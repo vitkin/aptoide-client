@@ -11,17 +11,17 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.com.actionbarsherlock.view.Window;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.assist.FailReason;
 import cm.aptoide.com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
-import com.actionbarsherlock.view.Window;
-import org.holoeverywhere.app.Activity;
 
 import java.io.*;
 
-public class Start extends Activity {
+public class Start extends SherlockActivity {
 
 	private final String SDCARD = Environment.getExternalStorageDirectory()
 			.getPath();

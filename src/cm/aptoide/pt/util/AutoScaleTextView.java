@@ -1,21 +1,20 @@
 package cm.aptoide.pt.util;
 
 
-
-import cm.aptoide.pt.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
+import cm.aptoide.pt.R;
 
 /**
  * A custom Text View that lowers the text size when the text is to big for the TextView. Modified version of one found on stackoverflow
- * 
+ *
  * @author Andreas Krings - www.ankri.de
  * @version 1.0
- * 
+ *
  */
 public class AutoScaleTextView extends TextView
 {
@@ -52,7 +51,7 @@ public class AutoScaleTextView extends TextView
 
 	/**
 	 * Set the minimum text size for this view
-	 * 
+	 *
 	 * @param minTextSize
 	 *            The minimum text size
 	 */
@@ -63,7 +62,7 @@ public class AutoScaleTextView extends TextView
 
 	/**
 	 * Resize the text so that it fits
-	 * 
+	 *
 	 * @param text
 	 *            The text. Neither <code>null</code> nor empty.
 	 * @param textWidth

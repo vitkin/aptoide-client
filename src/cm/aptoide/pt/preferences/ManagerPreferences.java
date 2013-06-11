@@ -22,14 +22,13 @@ package cm.aptoide.pt.preferences;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import cm.aptoide.pt.ApplicationAptoide;
-import cm.aptoide.pt.R;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
-import org.holoeverywhere.preference.PreferenceManager;
-import org.holoeverywhere.preference.SharedPreferences;
 
 import java.util.UUID;
 
@@ -47,7 +46,8 @@ public class ManagerPreferences{
 
 
 	public ManagerPreferences(Context context) {
-		getPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        getPreferences = PreferenceManager.getDefaultSharedPreferences(context);
 		setPreferences = getPreferences.edit();
 		Log.v("Aptoide-ManagerPreferences", "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
 		if(getAptoideClientUUID() == null){
@@ -60,12 +60,12 @@ public class ManagerPreferences{
 
 
     public void createLauncherShortcut(Context context){
-    	
+
     	removePreviousShortcuts(context);
 		Log.d("ManagerPreferences", "Creating Icon " + Constants.APTOIDE_CLASS_NAME+"-"+ApplicationAptoide.BRAND );
 
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-		
+
 		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME+"-"+ApplicationAptoide.BRAND);
 //		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 
@@ -88,14 +88,14 @@ public class ManagerPreferences{
 		final Intent intent = new Intent();
 		Log.d("ManagerPreferences", "Removing Icon");
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
-		
+
 		shortcutIntent.setClassName(context, Constants.APTOIDE_CLASS_NAME);
 //		shortcutIntent.putExtra(context.getPackageName(), context.getString(R.string.description));
 		intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
 		intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, ApplicationAptoide.MARKETNAME);
 		intent.setAction("com.android.launcher.action.UNINSTALL_SHORTCUT");
-		
+
 		context.sendBroadcast(intent);
 	}
 

@@ -12,32 +12,25 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 package cm.aptoide.pt;
 
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.LinearLayout;
-import org.holoeverywhere.widget.ListView;
-import org.holoeverywhere.widget.TextView;
-
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
+import android.os.*;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.com.actionbarsherlock.view.Menu;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.adapters.DownloadedListAdapter;
 import cm.aptoide.pt.adapters.DownloadingListAdapter;
@@ -46,29 +39,26 @@ import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.EnumDownloadStatus;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
-
 /**
  * DownloadManager
  *
  * @author dsilveira
  *
  */
-public class DownloadManager extends Activity /*SherlockActivity */{
+public class DownloadManager extends SherlockActivity /*SherlockActivity */{
 	private boolean isRunning = false;
-	
+
 	private LinearLayout downloading;
 	private DownloadingListAdapter downloadingAdapter;
-	
+
 	private LinearLayout downloaded;
 	private DownloadedListAdapter downloadedAdapter;
-	
+
 	private LinearLayout notDownloaded;
 	private NotDownloadedListAdapter notDownloadedAdapter;
 
 	private Button exitButton;
-	
+
 	private TextView noDownloads;
 
 	private AIDLServiceDownloadManager serviceManager = null;
@@ -83,9 +73,9 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			// service using AIDL, so here we set the remote service interface.
 			serviceManager = AIDLServiceDownloadManager.Stub.asInterface(service);
 			serviceManagerIsBound = true;
-			
+
 			Log.v("Aptoide-DownloadManager", "Connected to ServiceDownloadManager");
-	        
+
 			try {
 				serviceManager.callRegisterDownloadManager(serviceManagerCallback);
 			} catch (RemoteException e) {
@@ -93,7 +83,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			}
 
 			continueLoading();
-			
+
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
@@ -101,11 +91,11 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			// unexpectedly disconnected -- that is, its process crashed.
 			serviceManagerIsBound = false;
 			serviceManager = null;
-			
+
 			Log.v("Aptoide-DownloadManager", "Disconnected from ServiceDownloadManager");
 		}
 	};
-	
+
 	private AIDLDownloadManager.Stub serviceManagerCallback = new AIDLDownloadManager.Stub() {
 
 		@Override
@@ -122,7 +112,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 							e.printStackTrace();
 						}
 						break;
-	
+
 					case DOWNLOADING:
 					case PAUSED:
 						try {
@@ -145,7 +135,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 							e.printStackTrace();
 						}
 						break;
-	
+
 					case COMPLETED:
 						try {
 							downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
@@ -154,19 +144,19 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 							e.printStackTrace();
 						}
 						break;
-	
+
 					default:
 						break;
 				}
 			}
         	interfaceTasksHandler.sendEmptyMessage(status);
 		}
-		
+
 	};
-	
+
 
 	private Handler interfaceTasksHandler = new Handler(){
-		
+
 		public void handleMessage(Message msg) {
 			switch (EnumDownloadStatus.reverseOrdinal(msg.what)) {
 				case RESTARTING:
@@ -181,7 +171,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 					}
 					notDownloaded.setVisibility(View.VISIBLE);
 					break;
-	
+
 				case DOWNLOADING:
 				case PAUSED:
 				case RESUMING:
@@ -194,7 +184,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 						downloaded.setVisibility(View.GONE);
 					}
 					break;
-	
+
 				case COMPLETED:
 					if (downloadingAdapter.isEmpty()) {
 						downloading.setVisibility(View.GONE);
@@ -206,18 +196,18 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 					}
 					downloaded.setVisibility(View.VISIBLE);
 					break;
-					
+
 				default:
 					break;
 				}
-			
+
 		}
 	};
-	
-	
+
+
 	private void prePopulateLists(){
 		try {
-			
+
 			if(serviceManager.callAreDownloadsOngoing()){
 				noDownloads.setVisibility(View.GONE);
 				downloadingAdapter.updateList(serviceManager.callGetDownloadsOngoing());
@@ -255,7 +245,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		AptoideThemePicker.setAptoideTheme(this);
@@ -266,7 +256,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			if(!serviceManagerIsBound){
 	    		bindService(new Intent(this, ServiceDownloadManager.class), serviceManagerConnection, Context.BIND_AUTO_CREATE);
 	    	}
-			
+
 			setContentView(R.layout.download_manager);
 //			getSupportActionBar().setIcon(R.drawable.brand_padding);
 //			getSupportActionBar().setTitle(getString(R.string.download_manager));
@@ -274,7 +264,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 //			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			downloading = (LinearLayout) findViewById(R.id.downloading_apps);
 			downloading.setVisibility(View.GONE);
-			
+
 			downloaded = (LinearLayout) findViewById(R.id.downloaded_apps);
 			downloaded.setVisibility(View.GONE);
 
@@ -294,16 +284,16 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 		}
 
 	}
-	
+
 	private void continueLoading(){
 		ListView uploadingList = (ListView) findViewById(R.id.downloading_list);
 		downloadingAdapter = new DownloadingListAdapter(this, serviceManager, ImageLoader.getInstance());
 		uploadingList.setAdapter(downloadingAdapter);
-		
+
 		ListView uploadedList = (ListView) findViewById(R.id.downloaded_list);
 		downloadedAdapter = new DownloadedListAdapter(this, ImageLoader.getInstance());
 		uploadedList.setAdapter(downloadedAdapter);
-		
+
 		uploadedList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -317,7 +307,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 			}
 
 		});
-		
+
 		ListView notUploadedList = (ListView) findViewById(R.id.failed_list);
 		notDownloadedAdapter = new NotDownloadedListAdapter(this, ImageLoader.getInstance());
 		notUploadedList.setAdapter(notDownloadedAdapter);
@@ -331,11 +321,11 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 				}
 			}
 		});
-		
+
 		prePopulateLists();
 		registerForContextMenu(uploadedList);
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		try {
@@ -346,8 +336,8 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 		unbindService(serviceManagerConnection);
 		super.onDestroy();
 	}
-	
-	
+
+
 //	@Override
 //	public void onCreateContextMenu(ContextMenu menu, View v,
 //			ContextMenuInfo menuInfo) {
@@ -371,12 +361,12 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 //
 //		return super.onContextItemSelected(item);
 //	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		menu.clear();
 		menu.add(Menu.NONE, 0, 0, R.string.clear_all).setIcon(android.R.drawable.ic_notification_clear_all);
-		
+
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -389,7 +379,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 		switch (item.getItemId()) {
 		case 0:
 			Log.d("Aptoide-DownloadManager", "clear all");
-			
+
 			if(downloadedAdapter.getCount()>0 || notDownloadedAdapter.getCount()>0){
 				try {
 					serviceManager.callClearDownloads();
@@ -404,7 +394,7 @@ public class DownloadManager extends Activity /*SherlockActivity */{
 		default:
 			break;
 		}
-		
+
 		return true;
 	}
 }

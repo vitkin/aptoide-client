@@ -1,9 +1,19 @@
 package cm.aptoide.pt;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.TextView;
+import android.widget.Toast;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.pt.webservices.login.Login;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
@@ -12,24 +22,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.util.EntityUtils;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.preference.SharedPreferences;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
 import org.json.JSONObject;
 
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import cm.aptoide.pt.webservices.login.Login;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
-public class CreditCard extends Activity {
+public class CreditCard extends SherlockActivity {
 
 	private boolean wait=false;
 	Activity ctx = this;

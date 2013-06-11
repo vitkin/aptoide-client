@@ -8,15 +8,8 @@
 package cm.aptoide.pt.sharing;
 
 
-import java.io.InputStream;
-import java.net.URL;
-
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.Dialog;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
-
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -24,7 +17,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+import cm.aptoide.com.actionbarsherlock.view.Window;
 import cm.aptoide.com.facebook.android.DialogError;
 import cm.aptoide.com.facebook.android.Facebook;
 import cm.aptoide.com.facebook.android.Facebook.DialogListener;
@@ -33,11 +30,12 @@ import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.AptoideThemePicker;
 import cm.aptoide.pt.R;
 
-import com.actionbarsherlock.view.Window;
+import java.io.InputStream;
+import java.net.URL;
 
 
 
-public class DialogShareOnFacebook extends Dialog{
+public class DialogShareOnFacebook extends Dialog {
 
 	private static final String APP_ID = "477114135645153";
 	private static final String[] PERMISSIONS = new String[] {"read_friendlists"};
@@ -52,7 +50,7 @@ public class DialogShareOnFacebook extends Dialog{
 	private ImageView icon_image;
 	private TextView store_name;
 	private TextView share_visit;
-	
+
 	Activity activity;
 	private SharedPreferences sharedPreferences;
 	private TextView post_message;
@@ -96,7 +94,7 @@ public class DialogShareOnFacebook extends Dialog{
 
 		requestWindowFeature(Window.FEATURE_LEFT_ICON);
 		setTitle(R.string.share);
-		
+
 		setContentView(R.layout.dialog_share_facebook);
 		setFeatureDrawableResource(Window.FEATURE_LEFT_ICON, R.drawable.facebook_bt);
 
@@ -109,10 +107,10 @@ public class DialogShareOnFacebook extends Dialog{
 		share_visit.setText(descriptionToPost);
 		store_name = (TextView) findViewById(R.id.share_store);
 		store_name.setText(storeLinkToPost);
-		
+
 		post_message = (TextView) findViewById(R.id.post_message);
 		post_message.setText(getContext().getString(R.string.want_to_share, ApplicationAptoide.MARKETNAME));
-		
+
 		((Button)findViewById(R.id.FacebookShareButton)).setOnClickListener(new View.OnClickListener(){
 			@Override
 			public void onClick(View v) {
@@ -146,7 +144,7 @@ public class DialogShareOnFacebook extends Dialog{
 		params.putString("description", description + " - " + storeLink);
 		params.putString("picture", icon);
 		params.putString("name", name);
-		
+
 		facebook.dialog(activity, "feed", params, new UpdateStatusListener());
 
 	}

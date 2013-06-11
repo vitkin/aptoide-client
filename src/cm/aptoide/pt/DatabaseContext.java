@@ -1,12 +1,12 @@
 package cm.aptoide.pt;
 
-import java.io.File;
-
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
 
 public class DatabaseContext extends ContextWrapper {
 	private static final String DEBUG_CONTEXT = "DatabaseContext";
@@ -16,9 +16,9 @@ public class DatabaseContext extends ContextWrapper {
 	}
 
 	@Override
-	public File getDatabasePath(String name) 
+	public File getDatabasePath(String name)
 	{
-	    File sdcard = Environment.getExternalStorageDirectory();    
+	    File sdcard = Environment.getExternalStorageDirectory();
 	    String dbfile = sdcard.getAbsolutePath() + File.separator+ ".aptoide" + File.separator + name;
 	    if (!dbfile.endsWith(".db"))
 	    {
@@ -42,7 +42,7 @@ public class DatabaseContext extends ContextWrapper {
 	}
 
 	@Override
-	public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory) 
+	public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory)
 	{
 	    SQLiteDatabase result = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null);
 	    // SQLiteDatabase result = super.openOrCreateDatabase(name, mode, factory);

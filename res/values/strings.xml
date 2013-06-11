@@ -367,5 +367,10 @@
     <string name="patch_obb">Patch Expansion File</string>
     <string name="main_obb">Main Expansion File</string>
     <string name="retrieving_update">Retrieving update...</string>
+    <string name="trusted">Trusted</string>
+    <string name="warning">Warning</string>
+    <string name="unknown">Unknown</string>
+    <string name="error_no_market">You don\'t have Google Market installed!</string>
+
 
 </resources>

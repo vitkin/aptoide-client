@@ -7,6 +7,9 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
@@ -24,16 +27,16 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Xml;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.*;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.*;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -43,7 +46,6 @@ import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.adapters.UpdatesAdapter;
 import cm.aptoide.pt.adapters.ViewPagerAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.MainService;
 import cm.aptoide.pt.services.MainService.LocalBinder;
@@ -55,27 +57,9 @@ import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.login.Login;
-import com.actionbarsherlock.view.ContextMenu;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.app.AlertDialog.Builder;
-import org.holoeverywhere.app.Dialog;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.CheckBox;
-import org.holoeverywhere.widget.EditText;
-import org.holoeverywhere.widget.LinearLayout;
-import org.holoeverywhere.widget.ListView;
-import org.holoeverywhere.widget.RadioButton;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
-import org.holoeverywhere.widget.ToggleButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -96,7 +80,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 
-public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class MainActivity extends SherlockFragmentActivity implements LoaderCallbacks<Cursor> {
 	private Intent serviceDownloadManagerIntent;
 
 	private final static int AVAILABLE_LOADER = 0;
@@ -1044,7 +1028,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
+	public boolean onPrepareOptionsMenu(cm.aptoide.com.actionbarsherlock.view.Menu menu) {
 		menu.clear();
 		// menu.add(Menu.NONE, EnumOptionsMenu.SEARCH.ordinal(),
 		// EnumOptionsMenu.SEARCH.ordinal(), "Search")
@@ -1083,8 +1067,10 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		return super.onPrepareOptionsMenu(menu);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+
+
+    @Override
+	public boolean onOptionsItemSelected(cm.aptoide.com.actionbarsherlock.view.MenuItem item) {
 		EnumOptionsMenu menuEntry = EnumOptionsMenu.reverseOrdinal(item.getItemId());
 		Log.d("MainActivity-OptionsMenu", "menuOption: " + menuEntry + " itemid: " + item.getItemId());
 		switch (menuEntry) {
@@ -1171,7 +1157,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 	public void showAbout() {
 		View aboutView = LayoutInflater.from(this).inflate(R.layout.dialog_about, null);
-		Builder dialogBuilder = new AlertDialog.Builder(this).setView(aboutView);
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this).setView(aboutView);
 		final AlertDialog aboutDialog = dialogBuilder.create();
 		aboutDialog.setIcon(android.R.drawable.ic_menu_help);
 		aboutDialog.setTitle(getString(R.string.about));
@@ -1198,7 +1184,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		final Editor editor = sPref.edit();
 
 		View view = LayoutInflater.from(mContext).inflate(R.layout.dialog_order_popup, null);
-		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(view);
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(view);
 		final AlertDialog orderDialog = dialogBuilder.create();
 		orderDialog.setIcon(android.R.drawable.ic_menu_sort_by_size);
 		orderDialog.setTitle(getString(R.string.menu_display_options));
@@ -1813,7 +1799,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 		availableView = LayoutInflater.from(mContext).inflate(R.layout.page_available, null);
 		updateView = LayoutInflater.from(mContext).inflate(R.layout.page_updates, null);
 		banner = (LinearLayout) availableView.findViewById(R.id.banner);
-		breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container);
+		breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container,null);
 		installedView = new ListView(mContext);
 		updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
 
@@ -2348,7 +2334,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
         if(ApplicationAptoide.isRestartLauncher()){
             ApplicationAptoide.restartLauncher(MainActivity.this);
             ApplicationAptoide.setRestartLauncher(false);
-            
+
         }
 
 		return super.onKeyDown(keyCode, event);
@@ -3117,7 +3103,7 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 	public void showFollow() {
 		View socialNetworksView = LayoutInflater.from(this).inflate(R.layout.dialog_social_networks, null);
-		Builder dialogBuilder = new AlertDialog.Builder(this).setView(socialNetworksView);
+		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this).setView(socialNetworksView);
 		final AlertDialog socialDialog = dialogBuilder.create();
 		socialDialog.setIcon(android.R.drawable.ic_menu_share);
 		socialDialog.setTitle(getString(R.string.social_networks));

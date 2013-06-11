@@ -8,7 +8,10 @@
 package cm.aptoide.pt;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.*;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -26,12 +29,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.Gallery;
-import android.widget.ImageView;
-import android.widget.RatingBar;
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
+import cm.aptoide.com.actionbarsherlock.view.Menu;
+import cm.aptoide.com.actionbarsherlock.view.MenuItem;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
@@ -55,14 +58,7 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
 import com.mopub.mobileads.MoPubView;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.app.AlertDialog.Builder;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -72,7 +68,7 @@ import java.util.Locale;
 
 
 
-public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
+public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks<Cursor> {
 
 
 	private MoPubView mAdView;
@@ -183,7 +179,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
         if(category.equals(Category.INFOXML)){
             spinner = (Spinner) findViewById(R.id.spinnerMultiVersion);
             adapter = new SimpleCursorAdapter(this,
-            		cm.aptoide.pt.R.layout.simple_spinner_item, null,
+            		android.R.layout.simple_spinner_item, null,
                     new String[] { "vername" ,"repo_id"}, new int[] { android.R.id.text1 },
                     CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
             adapter.setViewBinder(new ViewBinder() {
@@ -194,7 +190,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                     return true;
                 }
             });
-            adapter.setDropDownViewResource(cm.aptoide.pt.R.layout.simple_spinner_dropdown_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -490,7 +486,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     						@Override
     						public void onClick(View v) {
     							View trustedView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_anti_malware, null);
-    							Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
+    							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(trustedView);
     							final AlertDialog trustedDialog = dialogBuilder.create();
     							trustedDialog.setIcon(R.drawable.badge_scanned);
     							trustedDialog.setTitle(getString(R.string.app_trusted, viewApk.getName()));
@@ -522,7 +518,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     						@Override
     						public void onClick(View v) {
     							View warnView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_anti_malware, null);
-    							Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(warnView);
+    							AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(warnView);
     							final AlertDialog warnDialog = dialogBuilder.create();
     							warnDialog.setIcon(R.drawable.badge_warn);
     							warnDialog.setTitle(getString(R.string.app_warning, viewApk.getName()));
@@ -1487,8 +1483,12 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
 
 
             }
-            findViewById(R.id.btinstall).setEnabled(true);
-            ((Button)findViewById(R.id.btinstall)).setTextColor(Color.WHITE);
+
+            Button b = (Button) findViewById(R.id.btinstall);
+
+             b.setEnabled(true);
+
+            b.setTextColor(Color.WHITE);
 
 
 

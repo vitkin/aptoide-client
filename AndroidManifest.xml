@@ -175,7 +175,7 @@
             android:name=".Settings"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/settings_title_bar"
-            android:theme="@style/Holo.Theme.NoActionBar" />
+            android:theme="@style/Theme.Sherlock.NoActionBar" />
         <activity
             android:name=".ScheduledDownloads"
             android:configChanges="orientation|keyboardHidden" >

@@ -128,7 +128,7 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center_horizontal"
                     android:padding="10dp"
-                    android:textColor="@color/link_text_holo_light" />
+                    android:textColor="@color/custom_color_blue" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

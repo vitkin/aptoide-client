@@ -7,12 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.util.ArrayList;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.HttpConnectionParams;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -20,6 +14,11 @@ import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
 import cm.aptoide.com.viewpagerindicator.CirclePageIndicator;
 import cm.aptoide.pt.adapters.ViewPagerAdapterScreenshots;
+import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
+
+import java.util.ArrayList;
 
 public class ScreenshotsViewer extends FragmentActivity/*SherlockFragmentActivity */{
 

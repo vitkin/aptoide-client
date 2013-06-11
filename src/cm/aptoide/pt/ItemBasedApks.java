@@ -7,26 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Vector;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.SAXException;
-
-import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
-
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -42,10 +22,22 @@ import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.util.Base64;
 import cm.aptoide.pt.util.Md5Handler;
 import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.R;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Vector;
 
 public class ItemBasedApks {
 
@@ -55,7 +47,7 @@ public class ItemBasedApks {
 	private Database db;
 	private Vector<String> activeStores = new Vector<String>();
 	private OnClickListener featuredListener = new OnClickListener() {
-		
+
 		@Override
 		public void onClick(View v) {
 			Intent i = new Intent(context,ApkInfo.class);
@@ -65,8 +57,8 @@ public class ItemBasedApks {
 			context.startActivity(i);
 		}
 	};
-	
-	
+
+
 	public ItemBasedApks(Context context, ViewApk apk) {
 		this.context = context;
 		this.parent_apk=apk;
@@ -76,14 +68,14 @@ public class ItemBasedApks {
 	ProgressBar pb;
 	private ViewGroup parent_container;
 	private TextView label;
-	
+
 	public void getItems(ViewGroup container, ViewGroup parent_container, TextView label) {
 		this.container=container;
 		this.parent_container=parent_container;
 		this.label = label;
-		
+
 		Cursor c = db.getStores(false);
-		
+
 		for(c.moveToFirst();!c.isAfterLast();c.moveToNext()){
 			activeStores.add(c.getString(c.getColumnIndex("name")));
 		}
@@ -91,7 +83,7 @@ public class ItemBasedApks {
 		new ItemLoader().execute(parent_apk.getApkid());
 		new ItemBasedParser().execute(parent_apk.getApkid());
 	}
-	
+
 	public class ItemLoader extends AsyncTask<String, Void, ArrayList<HashMap<String, String>>>{
 
 		@Override
@@ -99,23 +91,23 @@ public class ItemBasedApks {
 				String... params) {
 			return db.getItemBasedApks(params[0]);
 		}
-		
+
 		@Override
 		protected void onPostExecute(ArrayList<HashMap<String, String>> result) {
 			super.onPostExecute(result);
 			loadItems(result);
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 	public class ItemBasedParser extends AsyncTask<String, Void, ArrayList<HashMap<String, String>> >{
 		private String xmlpath = Environment.getExternalStorageDirectory()+"/.aptoide/itembasedapks.xml";
 		private String url = "http://webservices.aptoide.com/webservices/listItemBasedApks/%s/10/%s/xml";
 		private boolean inTransaction = false;
-		
-		
+
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -123,13 +115,13 @@ public class ItemBasedApks {
 			lp.gravity=Gravity.CENTER_HORIZONTAL;
 			((LinearLayout) container).addView(pb,lp);
 			pb.setVisibility(View.VISIBLE);
-			
+
 		}
-		
+
 		@Override
 		protected ArrayList<HashMap<String, String>> doInBackground(String... params) {
 			String apkid = params[0];
-			
+
 			File f = new File(xmlpath);
 			InputStream in;
 			try {
@@ -142,7 +134,7 @@ public class ItemBasedApks {
 					activestores = activestores + repo;
 					repo_counter++;
 				}
-				
+
 				if(!activestores.contains("apps")){
 					if(repo_counter>0){
 						activestores=activestores + ",";
@@ -150,7 +142,7 @@ public class ItemBasedApks {
 					activestores=activestores+"apps";
 				}
 				in = getInputStream(new URL(String.format(url,apkid,activestores)), null, null);
-				
+
 				int i = 0;
 				while (f.exists()) {
 					f = new File(xmlpath + i++);
@@ -163,7 +155,7 @@ public class ItemBasedApks {
 					out.write(buffer, 0, len);
 				}
 				out.close();
-				
+
 				String md5hash = Md5Handler.md5Calc(f);
 //				Database.database.beginTransaction();
 				inTransaction = true;
@@ -181,7 +173,7 @@ public class ItemBasedApks {
 //					}
 					return db.getItemBasedApks(apkid);
 				}
-				
+
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -191,7 +183,7 @@ public class ItemBasedApks {
 			} catch (ParserConfigurationException e) {
 				e.printStackTrace();
 			} catch (Exception e) {
-				
+
 				e.printStackTrace();
 			} finally{
 				f.delete();
@@ -202,7 +194,7 @@ public class ItemBasedApks {
 //			}
 			return null;
 		};
-		
+
 		@Override
 		protected void onPostExecute(ArrayList<HashMap<String, String>> values) {
 			super.onPostExecute(values);
@@ -210,10 +202,10 @@ public class ItemBasedApks {
 			if(values!=null ){
 				loadItems(values);
 			}
-			
+
 		}
 	}
-	
+
 	public InputStream getInputStream(URL url,String username, String password) throws IOException {
 		System.out.println("Query:" + url.toString());
 		URLConnection connection = url.openConnection();
@@ -225,7 +217,7 @@ public class ItemBasedApks {
 				connection.getInputStream(), 8 * 1024);
 		connection.setConnectTimeout(10000);
 		connection.setReadTimeout(10000);
-		
+
 		return bis;
 
 	}
@@ -258,12 +250,12 @@ public class ItemBasedApks {
 				            txtSamItem.setTag(values.get(i).get("_id"));
 				            txtSamItem.setLayoutParams(new LayoutParams(120, LayoutParams.FILL_PARENT, 1));
 				            txtSamItem.setOnClickListener(featuredListener );
-		
+
 				            txtSamItem.measure(0, 0);
-				            
+
 //				            if (i%2==0) {
 //				                container.addView(llAlso);
-//		
+//
 //				                llAlso = new LinearLayout(context);
 //				                llAlso.setLayoutParams(new LayoutParams(
 //				                        LayoutParams.WRAP_CONTENT,
@@ -275,10 +267,10 @@ public class ItemBasedApks {
 //				            }
 				            container.addView(txtSamItem);
 				        }
-		
-				       
+
+
 	}
-	
-	
-	
+
+
+
 }

@@ -8,21 +8,6 @@
 package cm.aptoide.pt.contentloaders;
 
 
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -37,29 +22,38 @@ import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.Utils;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ImageLoader {
-    
+
     MemoryCache memoryCache=MemoryCache.getInstance();
     FileCache fileCache;
     private static Map<ImageView, String> imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
-    ExecutorService photoLoadThreadPool; 
+    ExecutorService photoLoadThreadPool;
     static Context context;
     boolean download = false;
-	
+
     private ImageLoader(Context context){
         fileCache=new FileCache(context);
         ImageLoader.context=context;
         photoLoadThreadPool=Executors.newFixedThreadPool(5);
         resetPermissions();
     }
-    
+
     public void resetPermissions(){
     	ManagerPreferences preferences= new ManagerPreferences(context);
         ViewIconDownloadPermissions permissions = preferences.getIconDownloadPermissions();
         download = NetworkUtils.isPermittedConnectionAvailable(context, permissions);
         Log.d("Aptoide400-ImageLoader","download is " +download);
     }
-    
+
     public void DisplayImage(String url, ImageView imageView,Context context, String hashCode)
     {
     	ImageLoader.context=context;
@@ -68,35 +62,35 @@ public class ImageLoader {
 //        if(bitmap!=null){
 //            imageView.setImageBitmap(bitmap);
 //        }else {
-        	
+
 //        	queuePhoto(url, imageView,hashCode);
             imageView.setImageResource(android.R.drawable.sym_def_app_icon);
-            
+
 //        }
     }
-        
+
     private void queuePhoto(String url, ImageView imageView,String hashCode)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
         photoLoadThreadPool.submit(new PhotosLoader(p,hashCode));
     }
-    
-    private Bitmap getBitmap(String url,String hash) 
+
+    private Bitmap getBitmap(String url,String hash)
     {
-    	
+
     	Log.d("IconLoader","getting hash: " + hash );
-    	
+
     	File f=fileCache.getFile(hash);
-    	
+
         //from SD cache
         if(f.exists()){
-        	Bitmap b = decodeFile(f);	
+        	Bitmap b = decodeFile(f);
         	if(b!=null)
                 return b;
         }
-        
-        
-        
+
+
+
         if (download) {
 			//from web
 			try {
@@ -130,7 +124,7 @@ public class ImageLoader {
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(fis,null,o);
-            
+
             //Find the correct scale value. It should be the power of 2.
             final int REQUIRED_SIZE=48;
             int width_tmp=o.outWidth, height_tmp=o.outHeight;
@@ -142,7 +136,7 @@ public class ImageLoader {
                 height_tmp/=2;
                 scale*=2;
             }
-            
+
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize=scale;
@@ -152,21 +146,21 @@ public class ImageLoader {
         }
         return null;
     }
-    
+
     //Task for the queue
     private class PhotoToLoad
     {
         public String url;
         public ImageView imageView;
         public PhotoToLoad(String u, ImageView i){
-            url=u; 
+            url=u;
             imageView=i;
         }
     }
     BitmapDisplayer bd;
     class PhotosLoader implements Runnable {
         PhotoToLoad photoToLoad;
-        
+
         long repo_id;
 
 		private String hash;
@@ -174,12 +168,12 @@ public class ImageLoader {
         	this.hash=hash;
             this.photoToLoad=photoToLoad;
         }
-        
+
         public void run() {
-        	
+
             if(imageViewReused(photoToLoad))
                 return;
-            
+
             Bitmap bmp;
             	bmp=getBitmap(photoToLoad.url,hash.hashCode()+"");
             memoryCache.put(photoToLoad.url, bmp);
@@ -190,14 +184,14 @@ public class ImageLoader {
             a.runOnUiThread(bd);
         }
     }
-    
+
     boolean imageViewReused(PhotoToLoad photoToLoad){
         String tag=imageViews.get(photoToLoad.imageView);
         if(tag==null || !tag.equals(photoToLoad.url))
             return true;
         return false;
     }
-    
+
     //Used to display bitmap in the UI thread
     class BitmapDisplayer implements Runnable
     {
@@ -211,7 +205,7 @@ public class ImageLoader {
             if(bitmap!=null){
                 photoToLoad.imageView.setImageBitmap(bitmap);
                 Drawable [] arrayDrawable = new Drawable[2];
-                
+
 				arrayDrawable[0] = context.getResources().getDrawable(android.R.drawable.sym_def_app_icon);
 				arrayDrawable[1] = new BitmapDrawable(bitmap);
 				TransitionDrawable transitionDrawable = new TransitionDrawable(arrayDrawable);
@@ -220,8 +214,8 @@ public class ImageLoader {
 				transitionDrawable.startTransition(250);
             }else{
             	photoToLoad.imageView.setImageResource(android.R.drawable.sym_def_app_icon);
-            	
-                
+
+
             }
         }
     }
@@ -231,9 +225,9 @@ public class ImageLoader {
         fileCache.clear();
     }
 
-    
-    
-    
+
+
+
     public void DisplayImage(String url, ImageView imageView)//, Context context)
     {
 //    	this.context=context;
@@ -241,41 +235,41 @@ public class ImageLoader {
         Bitmap bitmap=memoryCache.get(url);
         if(bitmap!=null){
             imageView.setImageBitmap(bitmap);
-        	
+
         }else
         {
             queuePhoto(url, imageView);
             imageView.setImageResource(android.R.drawable.sym_def_app_icon);
-            
+
         }
     }
-        
+
     private void queuePhoto(String url, ImageView imageView)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
         photoLoadThreadPool.execute(new PhotosCacheLoader(p));
     }
-    
-    private Bitmap getCacheBitmap(String url) 
+
+    private Bitmap getCacheBitmap(String url)
     {
     	File f = new File(url);
-        
+
         //from SD cache
         if(f.exists()){
-        	Bitmap b = decodeFile(f);	
+        	Bitmap b = decodeFile(f);
         	if(b!=null)
                 return b;
         }
         return null;
     }
-      
-    
+
+
     class PhotosCacheLoader implements Runnable {
         PhotoToLoad photoToLoad;
         PhotosCacheLoader(PhotoToLoad photoToLoad){
             this.photoToLoad=photoToLoad;
         }
-        
+
         public void run() {
             if(imageViewReused(photoToLoad))
                 return;
@@ -288,13 +282,13 @@ public class ImageLoader {
             a.runOnUiThread(bd);
         }
     }
-    
+
     static ImageLoader imageLoader;
-    
-    
+
+
     public static void reload(){
     	imageLoader = new ImageLoader(context);
     }
-    
-    
+
+
 }

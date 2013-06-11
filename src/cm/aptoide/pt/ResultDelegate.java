@@ -1,8 +1,8 @@
 package cm.aptoide.pt;
 
-import java.io.Serializable;
-
 import com.paypal.android.MEP.PayPalResultDelegate;
+
+import java.io.Serializable;
 
 
 public class ResultDelegate implements PayPalResultDelegate, Serializable {

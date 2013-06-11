@@ -7,32 +7,24 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.File;
-import java.text.DecimalFormat;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.AlertDialog;
-import org.holoeverywhere.app.Dialog;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.Toast;
-
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.CheckBoxPreference;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceCategory;
-import android.preference.PreferenceGroup;
-import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
+import android.preference.*;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Toast;
 import cm.aptoide.pt.preferences.ManagerPreferences;
+
+import java.io.File;
+import java.text.DecimalFormat;
 
 public class Settings extends PreferenceActivity{
 	String aptoide_path = Environment.getExternalStorageDirectory()+"/.aptoide/";
@@ -43,14 +35,14 @@ public class Settings extends PreferenceActivity{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
         addPreferencesFromResource(R.xml.preferences);
 
         mctx = this;
         new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
         preferences = new ManagerPreferences(mctx);
 //        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(new OnSharedPreferenceChangeListener() {
-//			
+//
 //			@Override
 //			public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 //					String key) {
@@ -60,32 +52,32 @@ public class Settings extends PreferenceActivity{
 //						((CheckBoxPreference)findPreference("3g")).isChecked()));
 //			}
 //		});
-        
-        
+
+
         findPreference("clearcache").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			
+
 
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				if(unlocked){
 					new DeleteDir().execute(new File(icon_path));
 				}
-				
+
 				return false;
 			}
 		});
 		findPreference("clearapk").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			
+
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				if(unlocked){
 					new DeleteDir().execute(new File(aptoide_path));
 				}
-				
+
 				return false;
 			}
 		});
-		
+
 //		Preference hwspecs = (Preference) findPreference("hwspecs");
 //		hwspecs.setIntent(new Intent(getBaseContext(), HWSpecActivity.class));
 		Preference hwSpecs = (Preference) findPreference("hwspecs");
@@ -107,32 +99,32 @@ public class Settings extends PreferenceActivity{
 					 });
 				AlertDialog alertDialog = alertDialogBuilder.create();
 				alertDialog.show();
-				
+
 				return true;
 			}
 		});
-		
+
 		if(!ApplicationAptoide.MATURECONTENTSWITCH){
 			CheckBoxPreference mCheckBoxPref = (CheckBoxPreference) findPreference("matureChkBox");
 			PreferenceCategory mCategory = (PreferenceCategory) findPreference("filters");
 			mCategory.removePreference(mCheckBoxPref);
 		}
-		
+
 		Preference showExcluded = (Preference) findPreference("showexcludedupdates");
 		showExcluded.setIntent(new Intent(mctx, ExcludedUpdatesActivity.class));
-		
+
 		EditTextPreference maxFileCache = (EditTextPreference) findPreference("maxFileCache");
-		
+
 		maxFileCache.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER);
 		maxFileCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-			
+
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				((EditTextPreference) preference).getEditText().setText(PreferenceManager.getDefaultSharedPreferences(mctx).getString("maxFileCache","200"));
 				return false;
 			}
 		});
-		
+
 
 		Preference about = (Preference) findPreference("aboutDialog");
 		about.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -157,7 +149,7 @@ public class Settings extends PreferenceActivity{
 				return true;
 			}
 		});
-			
+
 		if(ApplicationAptoide.PARTNERID!=null){
 			PreferenceScreen preferenceScreen = getPreferenceScreen();
 			Preference etp = (Preference) preferenceScreen.findPreference("aboutDialog");
@@ -165,7 +157,7 @@ public class Settings extends PreferenceActivity{
 			PreferenceGroup preferenceGroup = (PreferenceGroup) findPreference("about");
 			preferenceGroup.removePreference(etp);
 			preferenceScreen.removePreference(preferenceGroup);
-			
+
 		}
 	}
 
@@ -183,22 +175,22 @@ public class Settings extends PreferenceActivity{
 			deleteDirectory(params[0]);
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			pd.dismiss();
-			Toast toast= Toast.makeText(mctx, mctx.getString(R.string.clear_cache_sucess), Toast.LENGTH_SHORT);  
-			toast.show(); 
+			Toast toast= Toast.makeText(mctx, mctx.getString(R.string.clear_cache_sucess), Toast.LENGTH_SHORT);
+			toast.show();
 			new GetDirSize().execute(new File(aptoide_path),new File(icon_path));
 		}
-		
+
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	public class GetDirSize extends AsyncTask<File, Void, Double[]>{
 		double getDirSize(File dir) {
 			double size = 0;
@@ -224,28 +216,28 @@ public class Settings extends PreferenceActivity{
 		@Override
 		protected Double[] doInBackground(File... dir) {
 			Double [] sizes = new Double[2];
-			
+
 			for (int i = 0; i!=sizes.length;i++){
 				sizes[i]=this.getDirSize(dir[i]) / 1024 / 1024;
 			}
 			return sizes;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Double[] result) {
 			super.onPostExecute(result);
 			redrawSizes(result);
 			unlocked=true;
 		}
-		
+
 	}
-	
+
 	private void redrawSizes(Double[] size) {
 		findPreference("clearapk").setSummary(getString(R.string.clearcontent_sum)+" ("+getString(R.string.cache_using_X_mb, new DecimalFormat("#.##").format(size[0]))+")");
 		findPreference("clearcache").setSummary(getString(R.string.clearcache_sum)+" ("+getString(R.string.cache_using_X_mb, new DecimalFormat("#.##").format(size[1]))+")");
 	}
-	
-	
+
+
 	static public boolean deleteDirectory(File path) {
 	    if( path.exists() ) {
 	      File[] files = path.listFiles();
@@ -263,7 +255,7 @@ public class Settings extends PreferenceActivity{
 	    }
 	    return true ;
 	  }
-	
-	
+
+
 
 }

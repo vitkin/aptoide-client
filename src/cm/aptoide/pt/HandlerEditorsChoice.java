@@ -7,40 +7,39 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import android.content.ContentValues;
+import cm.aptoide.pt.views.ViewApkFeaturedEditorsChoice;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.content.ContentValues;
-import cm.aptoide.pt.views.ViewApkFeaturedEditorsChoice;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandlerEditorsChoice extends DefaultHandler {
-	
+
 	Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
 	protected Database db = Database.getInstance();
-	
+
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
-	
+
 	protected ViewApkFeaturedEditorsChoice apk;
 	StringBuilder sb  = new StringBuilder();
-	
+
 	public HandlerEditorsChoice(Server server){
-	
+
 		apk = new ViewApkFeaturedEditorsChoice();
 		apk.setServer(server);
 		loadSpecificElements();
 	}
 
 	void loadSpecificElements() {
-		
-		
+
+
 		elements.put("apklst", new ElementHandler() {
 
 			@Override
@@ -53,9 +52,9 @@ public class HandlerEditorsChoice extends DefaultHandler {
 
 			}
 		});
-		
+
 		elements.put("date", new ElementHandler() {
-			
+
 
 			public void startElement(Attributes atts) throws SAXException {
 
@@ -66,7 +65,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.setDate(sb.toString());
 			}
 		});
-		
+
 		elements.put("apkid", new ElementHandler() {
 
 			@Override
@@ -79,7 +78,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.setApkid(sb.toString());
 			}
 		});
-		
+
 		elements.put("ver", new ElementHandler() {
 
 			@Override
@@ -92,7 +91,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.setVername(sb.toString());
 			}
 		});
-		
+
 		elements.put("catg2", new ElementHandler() {
 
 			@Override
@@ -105,7 +104,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.setCategory2(sb.toString());
 			}
 		});
-		
+
 		elements.put("dwn", new ElementHandler() {
 
 			@Override
@@ -170,7 +169,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.setVercode(Integer.parseInt(sb.toString()));
 			}
 		});
-		
+
 		elements.put("iconspath", new ElementHandler() {
 
 			@Override
@@ -183,7 +182,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.getServer().iconsPath=sb.toString();
 			}
 		});
-		
+
 		elements.put("screenspath", new ElementHandler() {
 
 			@Override
@@ -209,7 +208,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.getServer().basePath=sb.toString();
 			}
 		});
-		
+
 		elements.put("md5h", new ElementHandler() {
 
 			@Override
@@ -222,7 +221,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.setMd5(sb.toString());
 			}
 		});
-		
+
 		elements.put("screen", new ElementHandler() {
 
 			@Override
@@ -280,7 +279,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
 			}
 		});
-		
+
 		elements.put("hash", new ElementHandler() {
 
 			@Override
@@ -306,8 +305,8 @@ public class HandlerEditorsChoice extends DefaultHandler {
 
 			}
 		});
-		
-		
+
+
 		elements.put("status", new ElementHandler() {
 
 			@Override
@@ -320,7 +319,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 
 			}
 		});
-		
+
 		elements.put("productscount", new ElementHandler() {
 
 			@Override
@@ -425,7 +424,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 			}
 		});
 
-		
+
 
 		elements.put("name", new ElementHandler() {
 
@@ -500,7 +499,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 
 	}
 	private static boolean insidePackage;
-	
+
 	@Override
 	public void startElement(String uri, String localName,
 			String qName, Attributes attributes)
@@ -508,7 +507,7 @@ public class HandlerEditorsChoice extends DefaultHandler {
 		super.startElement(uri, localName, qName, attributes);
 		sb.setLength(0);
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.startElement(attributes);
 		} else {
@@ -527,16 +526,16 @@ public class HandlerEditorsChoice extends DefaultHandler {
 	public void endElement(String uri, String localName,
 			String qName) throws SAXException {
 		super.endElement(uri, localName, qName);
-		
+
 		ElementHandler elementHandler = elements.get(localName);
-		 
+
 		if (elementHandler != null) {
 			elementHandler.endElement();
 		} else {
 //			System.out.println("Element not found:" + localName);
 		}
 	}
-	
+
 
 	@Override
 	public void endDocument() throws SAXException {

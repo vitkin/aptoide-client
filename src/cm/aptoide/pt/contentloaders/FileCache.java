@@ -8,14 +8,14 @@
 package cm.aptoide.pt.contentloaders;
 
 
-
-import java.io.File;
 import android.content.Context;
 
+import java.io.File;
+
 public class FileCache {
-    
+
     private File cacheDir;
-    
+
     public FileCache(Context context){
 //        //Find the dir to save cached images
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
@@ -25,7 +25,7 @@ public class FileCache {
         if(!cacheDir.exists())
             cacheDir.mkdirs();
     }
-    
+
     public File getFile(String hash){
         //I identify images by hashcode. Not a perfect solution, good for the demo.
         //Another possible solution (thanks to grantland)
@@ -33,9 +33,9 @@ public class FileCache {
 //    	System.out.println("Getting file:" +hash);
         File f = new File(cacheDir, hash);
         return f;
-        
+
     }
-    
+
     public void clear(){
         File[] files=cacheDir.listFiles();
         if(files==null)

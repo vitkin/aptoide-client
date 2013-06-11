@@ -8,23 +8,7 @@
 package cm.aptoide.pt.contentloaders;
 
 
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Collections;
-import java.util.Map;
-import java.util.WeakHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import org.holoeverywhere.app.Activity;
-
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -34,12 +18,21 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import cm.aptoide.pt.util.Utils;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.Collections;
+import java.util.Map;
+import java.util.WeakHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class ImageLoader2 {
-    
+
     MemoryCache memoryCache=MemoryCache.getInstance();
     FileCache fileCache;
     private Map<ImageView, String>  imageViews=Collections.synchronizedMap(new WeakHashMap<ImageView, String>());
-    ExecutorService executorService; 
+    ExecutorService executorService;
     Context context;
     boolean download = true;
     public ImageLoader2(Context context){
@@ -56,43 +49,43 @@ public class ImageLoader2 {
 //		}
         System.out.println("ICDOWN " + sPref.getString("icdown", "nasdd"));
     }
-    
+
     public void DisplayImage(long l, String url, ImageView imageView,Context context)
     {
     	this.context=context;
         imageViews.put(imageView, url);
         Bitmap bitmap=memoryCache.get(url);
-        
+
 //        if(bitmap!=null){
 //            imageView.setImageBitmap(bitmap);
-        	
+
 //        }else
 //        {
 //        	queuePhoto(l,url, imageView);
             imageView.setImageResource(android.R.drawable.sym_def_app_icon);
-            
+
 //        }
     }
-        
+
     private void queuePhoto(long l, String url, ImageView imageView)
     {
         PhotoToLoad p=new PhotoToLoad(url, imageView);
         executorService.submit(new PhotosLoader(p,l));
     }
-    
-    private Bitmap getBitmap(String url) 
+
+    private Bitmap getBitmap(String url)
     {
         File f=fileCache.getFile(url.hashCode()+"");
-        
+
         //from SD cache
         if(f.exists()){
-        	Bitmap b = decodeFile(f);	
+        	Bitmap b = decodeFile(f);
         	if(b!=null)
                 return b;
         }
-        
-        
-        
+
+
+
         if (download) {
 			//from web
 			try {
@@ -146,36 +139,36 @@ public class ImageLoader2 {
         } catch (FileNotFoundException e) {}
         return null;
     }
-    
+
     //Task for the queue
     private class PhotoToLoad
     {
         public String url;
         public ImageView imageView;
         public PhotoToLoad(String u, ImageView i){
-            url=u; 
+            url=u;
             imageView=i;
         }
     }
     BitmapDisplayer bd;
     class PhotosLoader implements Runnable {
         PhotoToLoad photoToLoad;
-        
+
         long repo_id;
         PhotosLoader(PhotoToLoad photoToLoad,long l){
             this.photoToLoad=photoToLoad;
             this.repo_id=l;
         }
-        
+
         public void run() {
-        	
+
             if(imageViewReused(photoToLoad))
                 return;
-            
+
             Bitmap bmp;
-            
+
             bmp=getBitmap(photoToLoad.url);
-            
+
             memoryCache.put(photoToLoad.url, bmp);
             if(imageViewReused(photoToLoad))
                 return;
@@ -184,14 +177,14 @@ public class ImageLoader2 {
             a.runOnUiThread(bd);
         }
     }
-    
+
     boolean imageViewReused(PhotoToLoad photoToLoad){
         String tag=imageViews.get(photoToLoad.imageView);
         if(tag==null || !tag.equals(photoToLoad.url))
             return true;
         return false;
     }
-    
+
     //Used to display bitmap in the UI thread
     class BitmapDisplayer implements Runnable
     {
@@ -203,13 +196,13 @@ public class ImageLoader2 {
             if(imageViewReused(photoToLoad))
                 return;
             if(bitmap!=null){
-                
+
 				photoToLoad.imageView.setImageBitmap(bitmap);
 				photoToLoad.imageView.startAnimation(AnimationUtils.loadAnimation(context, android.R.anim.fade_in));
             }else{
 //            	photoToLoad.imageView.setImageResource(android.R.drawable.sym_def_app_icon);
-            	
-                
+
+
             }
         }
     }
@@ -218,8 +211,8 @@ public class ImageLoader2 {
         memoryCache.clear();
         fileCache.clear();
     }
-    
+
     static ImageLoader2 imageLoader;
-    
+
 
 }

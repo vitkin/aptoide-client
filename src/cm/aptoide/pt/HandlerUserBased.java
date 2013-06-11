@@ -7,37 +7,36 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
+import android.content.ContentValues;
+import cm.aptoide.pt.views.ViewApkUserBased;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.content.ContentValues;
-import cm.aptoide.pt.views.ViewApkUserBased;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HandlerUserBased extends DefaultHandler {
-	
+
 	Map<String, ElementHandler> elements = new HashMap<String, ElementHandler>();
 	protected Database db = Database.getInstance();
-	
+
 	interface ElementHandler {
 		void startElement(Attributes atts) throws SAXException;
 		void endElement() throws SAXException;
 	}
-	
+
 	protected ViewApkUserBased apk;
 	StringBuilder sb  = new StringBuilder();
-	
+
 	public HandlerUserBased(){
 		apk = new ViewApkUserBased();
 		loadSpecificElements();
 	}
 
 	void loadSpecificElements() {
-		
+
 		elements.put("apklst", new ElementHandler() {
 
 			@Override
@@ -50,7 +49,7 @@ public class HandlerUserBased extends DefaultHandler {
 
 			}
 		});
-		
+
 		elements.put("apkid", new ElementHandler() {
 
 			@Override
@@ -63,7 +62,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.setApkid(sb.toString());
 			}
 		});
-		
+
 		elements.put("ver", new ElementHandler() {
 
 			@Override
@@ -76,7 +75,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.setVername(sb.toString());
 			}
 		});
-		
+
 		elements.put("catg2", new ElementHandler() {
 
 			@Override
@@ -89,7 +88,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.setCategory2(sb.toString());
 			}
 		});
-		
+
 		elements.put("dwn", new ElementHandler() {
 
 			@Override
@@ -154,7 +153,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.setVercode(Integer.parseInt(sb.toString()));
 			}
 		});
-		
+
 		elements.put("iconspath", new ElementHandler() {
 
 			@Override
@@ -167,7 +166,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.getServer().iconsPath=sb.toString();
 			}
 		});
-		
+
 		elements.put("screenspath", new ElementHandler() {
 
 			@Override
@@ -193,7 +192,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.getServer().basePath=sb.toString();
 			}
 		});
-		
+
 		elements.put("md5h", new ElementHandler() {
 
 			@Override
@@ -206,7 +205,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.setMd5(sb.toString());
 			}
 		});
-		
+
 		elements.put("screen", new ElementHandler() {
 
 			@Override
@@ -264,7 +263,7 @@ public class HandlerUserBased extends DefaultHandler {
 				apk.setAge(Filters.Ages.lookup(sb.toString()).ordinal());
 			}
 		});
-		
+
 		elements.put("hash", new ElementHandler() {
 
 			@Override
@@ -290,8 +289,8 @@ public class HandlerUserBased extends DefaultHandler {
 
 			}
 		});
-		
-		
+
+
 		elements.put("status", new ElementHandler() {
 
 			@Override
@@ -304,7 +303,7 @@ public class HandlerUserBased extends DefaultHandler {
 
 			}
 		});
-		
+
 		elements.put("productscount", new ElementHandler() {
 
 			@Override
@@ -456,7 +455,7 @@ public class HandlerUserBased extends DefaultHandler {
 
 	}
 	private static boolean insidePackage;
-	
+
 
 	@Override
 	public void endDocument() throws SAXException {

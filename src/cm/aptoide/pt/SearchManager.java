@@ -7,12 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.ListView;
-import org.holoeverywhere.widget.TextView;
-
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -21,15 +15,20 @@ import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
+import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-        
 
-public class SearchManager extends Activity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
+
+public class SearchManager extends SherlockFragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
 	ListView lv;
 	String query;
 //	EditText searchBox;
@@ -42,7 +41,7 @@ public class SearchManager extends Activity/*SherlockFragmentActivity */implemen
 	protected void onCreate(Bundle arg0) {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(arg0);
-		
+
 		System.out.println("onCreate Search");
 		db = Database.getInstance();
 		setContentView(R.layout.searchmanager);
@@ -61,16 +60,16 @@ public class SearchManager extends Activity/*SherlockFragmentActivity */implemen
 		v = LayoutInflater.from(getApplicationContext()).inflate(R.layout.footer_search_aptoide, null);
 		v.setOnClickListener(null);
 		lv.addFooterView(v);
-		
+
 		results = (TextView) v.findViewById(R.id.results_text);
-		
+
 		Button searchButton =  (Button) v.findViewById(R.id.baz_src);
-		
+
 		if(!ApplicationAptoide.SEARCHSTORES){
 			searchButton.setVisibility(View.GONE);
         }
 
-        
+
 		searchButton.setText(getString(R.string.search_log)+" '"+query+"' "+getString(R.string.search_stores));
 
 
@@ -86,7 +85,7 @@ public class SearchManager extends Activity/*SherlockFragmentActivity */implemen
 		adapter = new InstalledAdapter(this,null,CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER,db);
 		lv.setAdapter(adapter);
 
-		
+
 //		searchBox.setText(query);
 //		searchBox.addTextChangedListener(new TextWatcher() {
 //
@@ -146,12 +145,12 @@ public class SearchManager extends Activity/*SherlockFragmentActivity */implemen
 			results.setText(getString(R.string.found)+" "+adapter.getCount()+" "+getString(R.string.results));
 			results.setTextColor(a.data);
 		}
-		
+
 	}
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		adapter.swapCursor(null);
 	}
-	
+
 //	@Override
 //	public boolean onOptionsItemSelected(MenuItem item) {
 //		if (item.getItemId() == android.R.id.home) {

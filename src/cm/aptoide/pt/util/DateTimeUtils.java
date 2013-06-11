@@ -7,12 +7,12 @@
  ******************************************************************************/
 package cm.aptoide.pt.util;
 
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
-
 import android.content.Context;
 import android.text.format.DateUtils;
 import cm.aptoide.pt.R;
+
+import java.text.DateFormatSymbols;
+import java.util.Calendar;
 
 public class DateTimeUtils extends DateUtils {
 
@@ -106,4 +106,4 @@ public class DateTimeUtils extends DateUtils {
        }
    }
 
-} 
+}

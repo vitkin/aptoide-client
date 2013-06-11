@@ -7,20 +7,19 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.comments;
 
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.widget.LinearLayout;
-
 import android.os.Bundle;
-import cm.aptoide.pt.R;
+import android.widget.LinearLayout;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.AptoideThemePicker;
+import cm.aptoide.pt.R;
 
-public class ViewComments extends Activity /*SherlockActivity */{
+public class ViewComments extends SherlockActivity /*SherlockActivity */{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
-		
+
 		setContentView(R.layout.list_all_comments);
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle("All comments");
@@ -29,7 +28,7 @@ public class ViewComments extends Activity /*SherlockActivity */{
 		Comments comments = new Comments(this, getIntent().getStringExtra("webservicespath"));
 		comments.getComments(getIntent().getStringExtra("repo"), getIntent().getStringExtra("apkid"), getIntent().getStringExtra("vername"), (LinearLayout) findViewById(R.id.container),true);
 	}
-	
+
 //	@Override
 //	public boolean onOptionsItemSelected(MenuItem item) {
 //		if (item.getItemId() == android.R.id.home) {

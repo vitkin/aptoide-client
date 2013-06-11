@@ -7,27 +7,26 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.util.ArrayList;
-import java.util.Locale;
-
+import android.content.ContentValues;
+import android.content.Context;
+import android.text.Html;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.text.Html;
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class ExtrasHandler extends DefaultHandler {
 
 	Context context;
 	private String md5;
-	
+
 	public ExtrasHandler(Context context, String md5) {
 		this.context = context;
 		this.md5 = md5;
 	}
-	
+
 	private enum Enum {
 		APKID,CMT,DELTA,PKG, EXTRAS
 	}
@@ -38,7 +37,7 @@ public class ExtrasHandler extends DefaultHandler {
 		private ContentValues[] value2 = new ContentValues[0];
 		private ArrayList<ContentValues> values = new ArrayList<ContentValues>();
 		private int i = 0;
-		
+
 		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 			switch (Enum.valueOf(localName.toUpperCase(Locale.ENGLISH))) {
 			case PKG:
@@ -54,7 +53,7 @@ public class ExtrasHandler extends DefaultHandler {
 		public void characters(char[] ch, int start, int length) throws SAXException {
 			sb.append(ch,start,length);
 		};
-		
+
 		public void endElement(String uri, String localName, String qName) throws SAXException {
 			switch (Enum.valueOf(localName.toUpperCase(Locale.ENGLISH))) {
 			case APKID:
@@ -96,10 +95,10 @@ public class ExtrasHandler extends DefaultHandler {
 				context.getContentResolver().bulkInsert(ExtrasContentProvider.CONTENT_URI, values.toArray(value2));
 				values.clear();
 			}
-			
+
 			values.clear();
-			
+
 			System.out.println("Extras ended.");
 		};
-	
+
 }

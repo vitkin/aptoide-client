@@ -22,6 +22,7 @@ package cm.aptoide.pt.services;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.exceptions.AptoideExceptionDownload;
@@ -38,7 +39,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
-import org.holoeverywhere.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,7 +74,8 @@ public class HelperDownload{
 	private Handler toastHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			Toast.makeText(serviceDownloadManager.getApplicationContext(), msg.what, Toast.LENGTH_SHORT).show();
+
+            Toast.makeText(serviceDownloadManager.getApplicationContext(), msg.what, Toast.LENGTH_SHORT).show();
 		}
 	};
 

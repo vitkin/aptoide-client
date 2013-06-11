@@ -1,8 +1,8 @@
 package cm.aptoide.pt;
 
-import java.util.Locale;
-
 import android.content.Context;
+
+import java.util.Locale;
 
 public class AptoideThemePicker {
 

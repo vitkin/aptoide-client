@@ -12,23 +12,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 package cm.aptoide.pt.adapters;
 
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.widget.TextView;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.R;
 import cm.aptoide.pt.views.ViewDownloadManagement;
@@ -38,18 +37,18 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 
 	private Context context;
 	private ImageLoader imageLoader;
-	
+
 	private LayoutInflater layoutInflater;
 
 	private ViewListDownloads notDownloaded = null;
 	private ViewListDownloads updated = null;
-	
-	
+
+
 	private Handler updateListHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
         	notDownloaded = updated;
-    		notifyDataSetChanged();        	
+    		notifyDataSetChanged();
         }
 	};
 
@@ -65,7 +64,7 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 
 		layoutInflater = LayoutInflater.from(context);
 
-	} 
+	}
 
 	public static class NotUploadedRowViewHolder{
 		TextView app_name;
@@ -89,7 +88,7 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 		}else{
 			rowViewHolder = (NotUploadedRowViewHolder) convertView.getTag();
 		}
-		
+
 		ViewDownloadManagement download = notDownloaded.get(position);
 
 		rowViewHolder.app_name.setText(download.getAppInfo().getName()+"  "+download.getAppInfo().getVername());
@@ -121,16 +120,16 @@ public class NotDownloadedListAdapter extends BaseAdapter{
 	}
 
 	/**
-	 * 
+	 *
 	 * @param updatedList ViewListDownloads
 	 */
 	public void updateList(ViewListDownloads updatedList){
 		updated = updatedList;
 		updateListHandler.sendEmptyMessage(0);
 	}
-	
+
 	public void clearAll(){
 		notDownloaded.clear();
 	}
-	
+
 }

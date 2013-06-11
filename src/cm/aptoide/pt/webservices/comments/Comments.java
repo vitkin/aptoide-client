@@ -7,11 +7,26 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.comments;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.webservices.login.Login;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -22,44 +37,23 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.LinearLayout;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
-import android.os.AsyncTask;
-import android.view.View;
-import android.view.ViewGroup.LayoutParams;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.webservices.login.Login;
-
 public class Comments {
-	
+
 	LinearLayout view;
 	Activity context;
-	
+
 	private static final String listApkComments = "webservices/listApkComments/%1$s/%2$s/%3$s/xml";
 	private static final String addApkComment = "webservices/addApkComment";
 	private static final String DEFAULT_PATH = "http://webservices.aptoide.com/";
 	private static final String COMMENTS_TO_LOAD = "5";
 	public String WEB_SERVICE_COMMENTS_LIST;
 	public String WEB_SERVICE_COMMENTS_POST;
-	
+
 	private boolean submitting = false;
 	private String username = null;
-	
+
 	static AsyncTask<String, Void, ArrayList<Comment>> task;
-	
+
 	public Comments(Activity context, String webservicespath) {
 		this.context=context;
 		if(webservicespath==null){
@@ -67,10 +61,10 @@ public class Comments {
 		}
 		WEB_SERVICE_COMMENTS_LIST = webservicespath+listApkComments;
 		WEB_SERVICE_COMMENTS_POST = webservicespath+addApkComment;
-		
-		
+
+
 	}
-	
+
 	public void getComments(String repo, String apkid, String version,LinearLayout view,boolean all){
 		this.view=view;
 		if(task!=null){
@@ -82,10 +76,10 @@ public class Comments {
 		}else{
 			task = new CommentsGetter().execute(repo,apkid,version,COMMENTS_TO_LOAD);
 		}
-		
-		
+
+
 	}
-	
+
 	public class CommentsGetter extends AsyncTask<String, Void, ArrayList<Comment>>{
 		SimpleDateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		View loading;
@@ -96,12 +90,12 @@ public class Comments {
 		protected void onPreExecute() {
 			super.onPreExecute();
 			((LinearLayout) view).removeAllViews();
-			
+
 			loading = LayoutInflater.from(context).inflate(R.layout.loadingfootercomments, null);
 			((LinearLayout) view).addView(loading,new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-			
+
 		}
-		
+
 		@Override
 		protected ArrayList<Comment> doInBackground(final String... params) {
 			final ArrayList<Comment> comments = new ArrayList<Comment>();
@@ -111,7 +105,7 @@ public class Comments {
 				connection.setConnectTimeout(10000);
 				connection.setReadTimeout(10000);
 				BufferedInputStream bis = new BufferedInputStream(connection.getInputStream(),8*1024);
-				
+
 				SAXParserFactory spfact = SAXParserFactory.newInstance();
 				SAXParser parser = spfact.newSAXParser();
 				parser.parse(bis, new DefaultHandler(){
@@ -135,14 +129,14 @@ public class Comments {
 						super.characters(ch, start, length);
 						sb.append(ch,start,length);
 					}
-					
+
 					@Override
 					public void endElement(String uri, String localName,
 							String qName) throws SAXException {
 						super.endElement(uri, localName, qName);
-						
+
 						if(localName.equals("entry")){
-							
+
 							comments.add(comment);
 							i++;
 							if(i==MAX_COMMENTS){
@@ -164,10 +158,10 @@ public class Comments {
 								throw new SAXException();
 							}
 						}
-						
+
 					}
 				});
-				
+
                 bis.close();
 			}catch(UnknownHostException e){
 				internetConnection=false;
@@ -213,9 +207,9 @@ public class Comments {
 				((TextView) v.findViewById(R.id.date)).setText(dateFormater.format(comment.timeStamp));
 				((LinearLayout) view).addView(v);
 			}
-			
+
 		}
-		
+
 		@Override
 		protected void onCancelled() {
 			super.onCancelled();
@@ -228,28 +222,28 @@ public class Comments {
 				loading.setVisibility(View.GONE);
 				error=false;
 			}
-			
-			
+
+
 		}
-		
-		
+
+
 	}
 
 	public void postComment(String repo, String apkid, String version,String comment, String username) {
 		if(!submitting){
 			new CommentPoster().execute(Login.getToken(context),repo,apkid,version,comment,username);
 		}else{
-			Toast toast= Toast.makeText(context, 
-					context.getString(R.string.another_comment_is_beeing_submited), Toast.LENGTH_SHORT);  
+			Toast toast= Toast.makeText(context,
+					context.getString(R.string.another_comment_is_beeing_submited), Toast.LENGTH_SHORT);
 					toast.show();
 		}
 	}
-	
-	
+
+
 	public enum EnumCommentResponse {
 		OK, FAIL
 	}
-	
+
 	public class CommentPoster extends AsyncTask<String, Void, EnumCommentResponse>{
 		ProgressDialog pd;
 		@Override
@@ -258,12 +252,12 @@ public class Comments {
 			pd = new ProgressDialog(context);
 			pd.setMessage("Please wait.");
 			pd.show();
-			
+
 			submitting = true;
 		}
 		@Override
 		protected EnumCommentResponse doInBackground(String... params) {
-			
+
 			String data = null;
 			StringBuilder sb=null;
 			EnumCommentResponse response = null;
@@ -282,11 +276,11 @@ public class Comments {
 			    data += "&" + URLEncoder.encode("apkversion", "UTF-8") + "=" + URLEncoder.encode(params[3],"UTF-8");
 			    data += "&" + URLEncoder.encode("text", "UTF-8") + "=" + URLEncoder.encode(params[4],"UTF-8");
 			    data += "&" + URLEncoder.encode("mode", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8");
-			    
+
 			    OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
 			    wr.write(data);
 			    wr.flush();
-			    
+
 			    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 sb = new StringBuilder();
                 String line;
@@ -299,7 +293,7 @@ public class Comments {
 				System.out.println(connection.getURL());
 			    JSONObject object = new JSONObject(sb.toString());
 			    response = EnumCommentResponse.valueOf(object.getString("status").toUpperCase());
-			    
+
 			} catch (IOException e) {
 				e.printStackTrace();
 				return EnumCommentResponse.FAIL;
@@ -315,7 +309,7 @@ public class Comments {
 			}
 			return response;
 		}
-		
+
 		@Override
 		protected void onPostExecute(EnumCommentResponse result) {
 			super.onPostExecute(result);
@@ -324,21 +318,21 @@ public class Comments {
 			Toast toast;
 			switch (result) {
 			case OK:
-				toast= Toast.makeText(context, 
-						context.getString(R.string.comment_submitted), Toast.LENGTH_SHORT);  
+				toast= Toast.makeText(context,
+						context.getString(R.string.comment_submitted), Toast.LENGTH_SHORT);
 						toast.show();
 				context.finish();
 				break;
 			case FAIL:
-				toast= Toast.makeText(context, 
-						context.getString(R.string.there_was_an_error), Toast.LENGTH_SHORT);  
+				toast= Toast.makeText(context,
+						context.getString(R.string.there_was_an_error), Toast.LENGTH_SHORT);
 						toast.show();
 				break;
 			default:
 				break;
 			}
-			
+
 		}
-		
+
 	}
 }

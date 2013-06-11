@@ -7,16 +7,15 @@
  ******************************************************************************/
 package cm.aptoide.pt.adapters;
 
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.widget.TextView;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.os.RemoteException;
 import android.support.v4.widget.CursorAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.Category;
 import cm.aptoide.pt.Database;
@@ -47,7 +46,8 @@ public class UpdatesAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 
-		View v = LayoutInflater.from(context).inflate(R.layout.row_app_update, null);
+
+        View v = LayoutInflater.from(context).inflate(R.layout.row_app_update, null);
 
 		return v;
 	}

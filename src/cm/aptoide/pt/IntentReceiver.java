@@ -7,6 +7,7 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import android.app.AlertDialog;
 import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
@@ -15,13 +16,12 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.AlertDialog;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -34,7 +34,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class IntentReceiver extends Activity implements OnDismissListener{
+public class IntentReceiver extends SherlockActivity implements OnDismissListener{
 //	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";
 	String TMP_MYAPP_FILE;
 	private String SDCARD = Environment.getExternalStorageDirectory().getPath();

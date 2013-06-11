@@ -9,9 +9,7 @@ package cm.aptoide.pt;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
 
 public class ExtrasDbOpenHelper extends SQLiteOpenHelper {
 

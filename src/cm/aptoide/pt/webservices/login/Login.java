@@ -7,20 +7,31 @@
  ******************************************************************************/
 package cm.aptoide.pt.webservices.login;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.List;
-
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.SpannableString;
+import android.text.method.PasswordTransformationMethod;
+import android.text.style.UnderlineSpan;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.*;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
+import cm.aptoide.pt.AptoideThemePicker;
+import cm.aptoide.pt.Configs;
+import cm.aptoide.pt.Database;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.util.Algorithms;
+import cm.aptoide.pt.views.ViewApk;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -31,44 +42,20 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.ProgressDialog;
-import org.holoeverywhere.widget.Button;
-import org.holoeverywhere.widget.CheckBox;
-import org.holoeverywhere.widget.EditText;
-import org.holoeverywhere.widget.TextView;
-import org.holoeverywhere.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.actionbarsherlock.view.MenuItem;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.text.InputType;
-import android.text.SpannableString;
-import android.text.method.PasswordTransformationMethod;
-import android.text.style.UnderlineSpan;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import cm.aptoide.pt.Configs;
-import cm.aptoide.pt.Database;
-import cm.aptoide.pt.R;
-import cm.aptoide.pt.AptoideThemePicker;
-import cm.aptoide.pt.util.Algorithms;
-import cm.aptoide.pt.views.ViewApk;
-
-public class Login extends Activity /*SherlockActivity */{
+public class Login extends SherlockActivity /*SherlockActivity */{
 	ProgressDialog pd;
 	EditText username_box;
 	EditText password_box;
@@ -77,7 +64,7 @@ public class Login extends Activity /*SherlockActivity */{
 	TextView forgot_password;
 	Button createUser;
 	CheckBox checkShowPass;
-	
+
 	static Context context;
 	private boolean succeed = false;
 	private static SharedPreferences sPref;
@@ -88,7 +75,7 @@ public class Login extends Activity /*SherlockActivity */{
 	public void onCreate(Bundle savedInstanceState) {
 		AptoideThemePicker.setAptoideTheme(this);
 		super.onCreate(savedInstanceState);
-		
+
 		context = this;
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle(getString(R.string.my_account));
@@ -128,18 +115,18 @@ public class Login extends Activity /*SherlockActivity */{
 		    }
 		});
 		checkShowPass.setEnabled(true);
-			
+
 		createUser = (Button) findViewById(R.id.new_to_aptoide);
 		SpannableString newUserString=new SpannableString(getString(R.string.new_to_aptoide));
 		newUserString.setSpan(new UnderlineSpan(), 0, newUserString.length(), 0);
 		createUser.setText(newUserString);
-		
+
 		forgot_password = (TextView) findViewById(R.id.forgot_password);
 		SpannableString forgetString = new SpannableString(getString(R.string.forgot_passwd));
 		forgetString.setSpan(new UnderlineSpan(), 0, forgetString.length(), 0);
 		forgot_password.setText(forgetString);
 		forgot_password.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				Intent passwordRecovery = new Intent(Intent.ACTION_VIEW, Uri.parse("http://m.aptoide.com/account/password-recovery"));
@@ -423,7 +410,7 @@ public class Login extends Activity /*SherlockActivity */{
 		}
 
 	}
-	
+
 //	@Override
 //	public boolean onOptionsItemSelected(MenuItem item) {
 //		if (item.getItemId() == android.R.id.home) {

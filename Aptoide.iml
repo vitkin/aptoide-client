@@ -16,8 +16,17 @@
     <orderEntry type="jdk" jdkName="Android 4.2.2 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="libs" level="project" />
-    <orderEntry type="module" module-name="Aptoide-API" />
-    <orderEntry type="library" name="libs1" level="project" />
+    <orderEntry type="module" module-name="aptoide-support-libs" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Aptoide4.1chinese/aptoide-support-libs/libs" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://$USER_HOME$/Aptoide4.1chinese/aptoide-support-libs/libs" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

@@ -8,15 +8,14 @@
 package cm.aptoide.pt.contentloaders;
 
 
+import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import android.graphics.Bitmap;
-import android.util.Log;
 
 public class MemoryCache {
 
@@ -26,19 +25,19 @@ public class MemoryCache {
     private long size=0;//current allocated size
     private long limit=1000000;//max memory in bytes
 
-    private static class SingletonHolder { 
+    private static class SingletonHolder {
         public static final MemoryCache INSTANCE = new MemoryCache();
 	}
-	
+
 	public static MemoryCache getInstance(){
 			return SingletonHolder.INSTANCE;
 	}
-    
+
     public MemoryCache(){
         //use 25% of available heap size
         setLimit(Runtime.getRuntime().maxMemory()/4);
     }
-    
+
     public void setLimit(long new_limit){
         limit=new_limit;
         Log.i(TAG, "MemoryCache will use up to "+limit/1024./1024.+"MB");
@@ -65,7 +64,7 @@ public class MemoryCache {
     private void checkSize() {
 //        Log.i(TAG, "cache size="+size+" length="+cache.size());
         if(size>limit){
-            Iterator<Entry<String, Bitmap>> iter=cache.entrySet().iterator();//least recently accessed item will be the first one iterated  
+            Iterator<Entry<String, Bitmap>> iter=cache.entrySet().iterator();//least recently accessed item will be the first one iterated
             while(iter.hasNext()){
                 Entry<String, Bitmap> entry=iter.next();
                 size-=getSizeInBytes(entry.getValue());

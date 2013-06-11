@@ -7,32 +7,31 @@
  ******************************************************************************/
 package cm.aptoide.pt.adapters;
 
-import org.holoeverywhere.LayoutInflater;
-import org.holoeverywhere.widget.TextView;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.support.v4.widget.CursorAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.R;
 
 public class InstalledAdapter extends CursorAdapter {
 
-	
+
 	public InstalledAdapter(Context context, Cursor c, int flags,Database db) {
 		super(context, c, flags);
 	}
 
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
-		
+
 		View v = LayoutInflater.from(context).inflate(R.layout.row_app, null);
-		
+
 		return v;
 	}
 
@@ -55,7 +54,7 @@ public class InstalledAdapter extends CursorAdapter {
 				cursor.getString(cursor.getColumnIndex("vercode")));
 		ImageLoader.getInstance().displayImage(iconspath, holder.icon,hash);
 		 try{
-	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));	
+	        	holder.rating.setRating(Float.parseFloat(cursor.getString(5)));
 	        	holder.rating.setIsIndicator(true);
 	        }catch (Exception e) {
 	        	holder.rating.setRating(0);
@@ -64,7 +63,7 @@ public class InstalledAdapter extends CursorAdapter {
 		 holder.downloads.setText(cursor.getString(6));
 		holder.vername.setText(cursor.getString(2));
 	}
-	
+
 	private static class ViewHolder {
 		TextView name;
 		TextView vername;

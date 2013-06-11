@@ -20,10 +20,13 @@
 package cm.aptoide.pt;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
@@ -42,9 +45,6 @@ import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.util.NetworkUtils;
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
-import org.holoeverywhere.app.Activity;
-import org.holoeverywhere.app.Application;
-import org.holoeverywhere.preference.SharedPreferences;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;

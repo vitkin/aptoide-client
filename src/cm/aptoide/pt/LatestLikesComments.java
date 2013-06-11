@@ -8,6 +8,16 @@
 package cm.aptoide.pt;
 
 
+import android.content.Context;
+import android.database.Cursor;
+import android.database.MatrixCursor;
+import cm.aptoide.pt.util.DateTimeUtils;
+import cm.aptoide.pt.util.NetworkUtils;
+import cm.aptoide.pt.util.RepoUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,17 +26,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.util.Date;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.content.Context;
-import android.database.Cursor;
-import android.database.MatrixCursor;
-import cm.aptoide.pt.util.DateTimeUtils;
-import cm.aptoide.pt.util.NetworkUtils;
-import cm.aptoide.pt.util.RepoUtils;
 
 public class LatestLikesComments {
 
