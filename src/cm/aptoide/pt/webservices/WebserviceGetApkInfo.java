@@ -125,6 +125,16 @@ public class WebserviceGetApkInfo {
             }
             database.insertLikes(getLikes(),category, apk.getId());
             database.insertMalwareInfo(getMalwareInfo(),category, apk.getId());
+            if(hasOBB()){
+                JSONObject mainObb = getMainOBB();
+                database.insertMainObbInfo(mainObb.getString("path"), mainObb.getString("md5sum"), mainObb.getString("filesize"), mainObb.getString("filename"), apk.getId(), category);
+
+                if(hasPatchOBB()){
+                    JSONObject patchObb = getPatchOBB();
+                    database.insertPatchObbInfo(patchObb.getString("path"), patchObb.getString("md5sum"), patchObb.getString("filesize"), patchObb.getString("filename"), apk.getId(), category);
+                }
+
+            }
 
         } catch (ParseException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

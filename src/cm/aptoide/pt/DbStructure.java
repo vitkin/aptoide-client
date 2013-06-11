@@ -112,11 +112,18 @@ public class DbStructure extends SQLiteOpenHelper {
     public static final String COLUMN_MALWARE_REASON = "malware_reason" ;
     public static final String COLUMN_TYPE = "type";
     public static final String COLUMN_TEXT = "text";
-
+    public static final String COLUMN_MAINOBB_PATH = "main_obb_path" ;
+    public static final String COLUMN_MAINOBB_MD5 = "main_obb_md5" ;
+    public static final String COLUMN_MAINOBB_SIZE = "main_obb_size" ;
+    public static final String COLUMN_MAINOBB_FILENAME = "main_obb_filename" ;
+    public static final String COLUMN_PATCHOBB_PATH = "patch_obb_path" ;
+    public static final String COLUMN_PATCHOBB_MD5 = "patch_obb_md5" ;
+    public static final String COLUMN_PATCHOBB_SIZE = "patch_obb_size" ;
+    public static final String COLUMN_PATCHOBB_FILENAME = "patch_obb_filename" ;
 
 
     public DbStructure(Context context) {
-		super(context, "aptoide.db", null, 8);
+		super(context, "aptoide.db", null, 9);
 
 	}
 
@@ -159,6 +166,16 @@ public class DbStructure extends SQLiteOpenHelper {
                                          .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
                                          .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
                                          .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
+
+
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_FILENAME))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_FILENAME))
                                          .createTable();
 
         creator.newTable(TABLE_COMMENTS_CACHE).addColumn(new Column(SQLiteType.INTEGER, COLUMN__ID))
@@ -246,6 +263,15 @@ public class DbStructure extends SQLiteOpenHelper {
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
+
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_FILENAME))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_FILENAME))
                 .createTable();
 
 
@@ -291,6 +317,15 @@ public class DbStructure extends SQLiteOpenHelper {
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
+
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_FILENAME))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_FILENAME))
                 .createTable();
 
 		db.execSQL("create table " + TABLE_REPO_CATEGORY_1ST + " (repo_id integer, " + COLUMN_CATEGORY_1ST_ID+ " integer, primary key(repo_id, " + COLUMN_CATEGORY_1ST_ID+ ") on conflict ignore);");
@@ -356,6 +391,15 @@ public class DbStructure extends SQLiteOpenHelper {
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
+
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_FILENAME))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_FILENAME))
                 .createTable();
 
 
@@ -402,6 +446,15 @@ public class DbStructure extends SQLiteOpenHelper {
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
+
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_FILENAME))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_FILENAME))
                 .createTable();
 
 
@@ -441,6 +494,15 @@ public class DbStructure extends SQLiteOpenHelper {
                 .addColumn(new Column(SQLiteType.INTEGER, COLUMN_LIKES))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_STATUS))
                 .addColumn(new Column(SQLiteType.TEXT, COLUMN_MALWARE_REASON))
+
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_MAINOBB_FILENAME))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_PATH))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_MD5))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_SIZE))
+                .addColumn(new Column(SQLiteType.TEXT, COLUMN_PATCHOBB_FILENAME))
                 .createTable();
 
 		creator.newTable(TABLE_HASHES).addColumn(new Column(SQLiteType.TEXT, COLUMN_HASH))

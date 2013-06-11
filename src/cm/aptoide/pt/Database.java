@@ -88,7 +88,73 @@ public class Database {
 
     }
 
-    public void deleteCommentsCache(long id, Category category) {
+    public void insertPatchObbInfo(String patchObbUrl, String patchObbMd5,String patchObbSize, String patchObbFileName, long id, Category category) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(DbStructure.COLUMN_PATCHOBB_PATH, patchObbUrl);
+        values.put(DbStructure.COLUMN_PATCHOBB_MD5, patchObbMd5);
+        values.put(DbStructure.COLUMN_PATCHOBB_SIZE, patchObbSize);
+        values.put(DbStructure.COLUMN_PATCHOBB_FILENAME, patchObbFileName);
+
+        switch (category) {
+            case TOP:
+                database.update(DbStructure.TABLE_TOP_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case LATEST:
+                database.update(DbStructure.TABLE_LATEST_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case TOPFEATURED:
+                database.update(DbStructure.TABLE_FEATURED_TOP_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case EDITORSCHOICE:
+                database.update(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case INFOXML:
+                database.update(DbStructure.TABLE_APK_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case ITEMBASED:
+            case USERBASED:
+                database.update(DbStructure.TABLE_ITEMBASED_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+        }
+
+    }
+
+    public void insertMainObbInfo(String mainObbUrl, String mainObbMd5,String mainObbSize, String mainObbFileName, long id, Category category) {
+
+        ContentValues values = new ContentValues();
+
+        values.put(DbStructure.COLUMN_MAINOBB_PATH, mainObbUrl);
+        values.put(DbStructure.COLUMN_MAINOBB_MD5, mainObbMd5);
+        values.put(DbStructure.COLUMN_MAINOBB_SIZE, mainObbSize);
+        values.put(DbStructure.COLUMN_MAINOBB_FILENAME, mainObbFileName);
+
+        switch (category) {
+            case TOP:
+                database.update(DbStructure.TABLE_TOP_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case LATEST:
+                database.update(DbStructure.TABLE_LATEST_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case TOPFEATURED:
+                database.update(DbStructure.TABLE_FEATURED_TOP_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case EDITORSCHOICE:
+                database.update(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case INFOXML:
+                database.update(DbStructure.TABLE_APK_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+            case ITEMBASED:
+            case USERBASED:
+                database.update(DbStructure.TABLE_ITEMBASED_CACHE, values, "_id = ?", new String[]{id+""});
+                break;
+        }
+
+    }
+
+        public void deleteCommentsCache(long id, Category category) {
 
         database.delete(DbStructure.TABLE_COMMENTS_CACHE,"_id = ? and type = ?", new String[]{id+"",category.name()});
 
@@ -1506,7 +1572,7 @@ public class Database {
 				if(c.getString(0).length()>0){
 					return_string = c.getString(0);
 				}
-				
+
 			}
 
 		} catch (Exception e) {
@@ -1617,6 +1683,8 @@ public class Database {
             apk.setDislikes(getDislikes(apk, category));
             apk.setComments(getComments(apk,category));
             apk.setMalwareStatus(getMalware(apk,category));
+            setMainObb(apk,category);
+            setPatchObb(apk,category);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -1626,6 +1694,103 @@ public class Database {
 	}
 
 
+    private void setMainObb(ViewApk apk, Category category) {
+
+        Cursor c = null;
+
+        try{
+
+            switch (category) {
+                case TOP:
+                    c = database.query(DbStructure.TABLE_TOP_CACHE,new String[]{DbStructure.COLUMN_MAINOBB_PATH, DbStructure.COLUMN_MAINOBB_MD5, DbStructure.COLUMN_MAINOBB_SIZE, DbStructure.COLUMN_MAINOBB_FILENAME },"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case LATEST:
+                    c = database.query(DbStructure.TABLE_LATEST_CACHE,new String[]{DbStructure.COLUMN_MAINOBB_PATH, DbStructure.COLUMN_MAINOBB_MD5, DbStructure.COLUMN_MAINOBB_SIZE, DbStructure.COLUMN_MAINOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case TOPFEATURED:
+                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,new String[]{DbStructure.COLUMN_MAINOBB_PATH, DbStructure.COLUMN_MAINOBB_MD5, DbStructure.COLUMN_MAINOBB_SIZE, DbStructure.COLUMN_MAINOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case EDITORSCHOICE:
+                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,new String[]{DbStructure.COLUMN_MAINOBB_PATH, DbStructure.COLUMN_MAINOBB_MD5, DbStructure.COLUMN_MAINOBB_SIZE, DbStructure.COLUMN_MAINOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_APK_CACHE,new String[]{DbStructure.COLUMN_MAINOBB_PATH, DbStructure.COLUMN_MAINOBB_MD5, DbStructure.COLUMN_MAINOBB_SIZE, DbStructure.COLUMN_MAINOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case ITEMBASED:
+                case USERBASED:
+                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,new String[]{DbStructure.COLUMN_MAINOBB_PATH, DbStructure.COLUMN_MAINOBB_MD5, DbStructure.COLUMN_MAINOBB_SIZE, DbStructure.COLUMN_MAINOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+            }
+
+            if(c!=null && c.moveToFirst()){
+                apk.setMainObbUrl(c.getString(0));
+                apk.setMainObbMd5(c.getString(1));
+                apk.setMainObbFileSize(c.getInt(2));
+                apk.setMainObbFileName(c.getString(3));
+            }
+
+
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(c!=null) c.close();
+        }
+
+
+
+    }
+
+    private void setPatchObb(ViewApk apk, Category category) {
+
+        Cursor c = null;
+
+        try{
+
+            switch (category) {
+                case TOP:
+                    c = database.query(DbStructure.TABLE_TOP_CACHE,new String[]{DbStructure.COLUMN_PATCHOBB_PATH, DbStructure.COLUMN_PATCHOBB_MD5, DbStructure.COLUMN_PATCHOBB_SIZE, DbStructure.COLUMN_PATCHOBB_FILENAME },"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case LATEST:
+                    c = database.query(DbStructure.TABLE_LATEST_CACHE,new String[]{DbStructure.COLUMN_PATCHOBB_PATH, DbStructure.COLUMN_PATCHOBB_MD5, DbStructure.COLUMN_PATCHOBB_SIZE, DbStructure.COLUMN_PATCHOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case TOPFEATURED:
+                    c = database.query(DbStructure.TABLE_FEATURED_TOP_CACHE,new String[]{DbStructure.COLUMN_PATCHOBB_PATH, DbStructure.COLUMN_PATCHOBB_MD5, DbStructure.COLUMN_PATCHOBB_SIZE, DbStructure.COLUMN_PATCHOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case EDITORSCHOICE:
+                    c = database.query(DbStructure.TABLE_FEATURED_EDITORSCHOICE_CACHE,new String[]{DbStructure.COLUMN_PATCHOBB_PATH, DbStructure.COLUMN_PATCHOBB_MD5, DbStructure.COLUMN_PATCHOBB_SIZE, DbStructure.COLUMN_PATCHOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case INFOXML:
+                    c = database.query(DbStructure.TABLE_APK_CACHE,new String[]{DbStructure.COLUMN_PATCHOBB_PATH, DbStructure.COLUMN_PATCHOBB_MD5, DbStructure.COLUMN_PATCHOBB_SIZE, DbStructure.COLUMN_PATCHOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+                case ITEMBASED:
+                case USERBASED:
+                    c = database.query(DbStructure.TABLE_ITEMBASED_CACHE,new String[]{DbStructure.COLUMN_PATCHOBB_PATH, DbStructure.COLUMN_PATCHOBB_MD5, DbStructure.COLUMN_PATCHOBB_SIZE, DbStructure.COLUMN_PATCHOBB_FILENAME},"_id = ?", new String[]{apk.getId()+""},null,null,null);
+                    break;
+            }
+
+            if(c!=null && c.moveToFirst()){
+                apk.setPatchObbUrl(c.getString(0));
+                apk.setPatchObbMd5(c.getString(1));
+                apk.setPatchObbFileSize(c.getInt(2));
+                apk.setPatchObbFileName(c.getString(3));
+            }
+
+
+
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            if(c!=null) c.close();
+        }
+
+
+
+    }
 
 
     private MalwareStatus getMalware(ViewApk apk, Category category) {

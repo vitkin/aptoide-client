@@ -305,6 +305,17 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                     }
                 }).start();
 
+
+                mainObbUrl = viewApk.getMainObbUrl();
+                mainObbMd5 = viewApk.getMainObbMd5();
+                mainObbName = viewApk.getMainObbFileName();
+                mainObbSize = viewApk.getMainObbFileSize();
+
+                patchObbUrl = viewApk.getPatchObbUrl();
+                patchObbMd5 = viewApk.getPatchObbMd5();
+                patchObbName = viewApk.getPatchObbFileName();
+                patchObbSize = viewApk.getPatchObbFileSize();
+
                 if(viewApk.getLikes()!=-1){
                     setLikes(viewApk.getLikes()+"", viewApk.getDislikes()+"");
                 }
@@ -365,7 +376,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                     ((RatingBar) findViewById(R.id.ratingbar)).setIsIndicator(true);
                 }
                 ((TextView) findViewById(R.id.app_store)).setText(getString(R.string.store)+": " +repo_string);
-                ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ withSuffix(Long.parseLong(viewApk.getSize())*1024));
+                ((TextView) findViewById(R.id.versionInfo)).setText(getString(R.string.clear_dwn_title) + ": " + viewApk.getDownloads() + " "+ getString(R.string.size)+": "+ withSuffix((Long.parseLong(viewApk.getSize())*1024+mainObbSize+patchObbSize)));
                 ((TextView) findViewById(R.id.version_label)).setText(getString(R.string.version) + " "+ viewApk.getVername());
                 ((TextView) findViewById(R.id.app_name)).setText(viewApk.getName());
 //				ImageLoader imageLoader = ImageLoader.getInstance(context);
@@ -874,6 +885,8 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
     private String patchObbMd5;
     private String mainObbUrl;
     private String patchObbUrl;
+    private int mainObbSize = 0;
+    private int patchObbSize = 0;
 
 
     OnClickListener installListener = new OnClickListener() {
@@ -1333,11 +1346,11 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                     mainObbUrl = webservice.getMainOBB().getString("path");
                     mainObbMd5 = webservice.getMainOBB().getString("md5sum");
                     mainObbName = webservice.getMainOBB().getString("filename");
-                    int mainObbSize = webservice.getMainOBB().getInt("filesize");
+                    mainObbSize = webservice.getMainOBB().getInt("filesize");
 
 
 
-                    int patchObbSize = 0;
+
                     if(webservice.hasPatchOBB()){
 
                         patchObbUrl = webservice.getPatchOBB().getString("path");
@@ -1530,6 +1543,7 @@ public class ApkInfo extends Activity implements LoaderCallbacks<Cursor> {
                 String request = "http://webservices.aptoide.com/webservices/checkPaidApk/" +Login.getToken(context) +  "/"+ viewApk.getRepoName() +"/"+viewApk.getApkid() + "/" + viewApk.getVername()+"/json";
 
                 System.out.println(request);
+                json = utils.getJsonObject(request, ApkInfo.this);
                 json = utils.getJsonObject(request, ApkInfo.this);
             }catch (Exception e){
                 e.printStackTrace();

@@ -52,7 +52,14 @@ public class ViewApk implements Parcelable {
     private int dislikes;
     private ArrayList<Comment> comments;
     private MalwareStatus malwareStatus;
-
+    private String mainObbUrl;
+    private String mainObbMd5;
+    private String mainObbFileName;
+    private int mainObbFileSize;
+    private String patchObbUrl;
+    private String patchObbMd5;
+    private String patchObbFileName;
+    private int patchObbFileSize;
 
 
     /**
@@ -467,4 +474,67 @@ public class ViewApk implements Parcelable {
 		this.malwareStatus = malwareStatus;
 	}
 
+    public String getMainObbUrl() {
+        return mainObbUrl;
+    }
+
+    public void setMainObbUrl(String mainObbUrl) {
+        this.mainObbUrl = mainObbUrl;
+    }
+
+    public String getMainObbMd5() {
+        return mainObbMd5;
+    }
+
+    public void setMainObbMd5(String mainObbMd5) {
+        this.mainObbMd5 = mainObbMd5;
+    }
+
+    public String getMainObbFileName() {
+        return mainObbFileName;
+    }
+
+    public void setMainObbFileName(String mainObbFileName) {
+        this.mainObbFileName = mainObbFileName;
+    }
+
+    public int getMainObbFileSize() {
+        return mainObbFileSize;
+    }
+
+    public void setMainObbFileSize(int mainObbFileSize) {
+        this.mainObbFileSize = mainObbFileSize;
+    }
+
+    public String getPatchObbUrl() {
+        return patchObbUrl;
+    }
+
+    public void setPatchObbUrl(String patchObbUrl) {
+        this.patchObbUrl = patchObbUrl;
+    }
+
+    public void setPatchObbMd5(String patchObbMd5) {
+        this.patchObbMd5 = patchObbMd5;
+    }
+
+    public String getPatchObbMd5() {
+        return patchObbMd5;
+    }
+
+    public String getPatchObbFileName() {
+        return patchObbFileName;
+    }
+
+    public void setPatchObbFileName(String patchObbFileName) {
+        this.patchObbFileName = patchObbFileName;
+    }
+
+    public int getPatchObbFileSize() {
+        return patchObbFileSize;
+    }
+
+    public void setPatchObbFileSize(int patchObbFileSize) {
+        this.patchObbFileSize = patchObbFileSize;
+    }
 }
