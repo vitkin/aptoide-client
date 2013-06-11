@@ -64,7 +64,7 @@
   <string name="subject">Nimi</string>
   <string name="available_tab">Saatavissa</string>
   <string name="featured_tab">Esittelyssä</string>
-  <string name="editors_choice">Toimittajien valinta</string>
+  <string name="editors_choice">Toimittajien valinnat</string>
   <string name="top_apps">Huippusovellukset</string>
   <string name="installed_tab">Asennetut</string>
   <string name="updates_tab">Päivitykset</string>
@@ -262,6 +262,7 @@
   <string name="my_account">Oma tilini</string>
   <string name="clearcache_sum">Poistaa välimuistin (kuvakkeet, kuvaruutukopiot) SD-kortilta.</string>
   <string name="clearcontent_sum">Poistaa tiedot SD-kortilta.</string>
+  <string name="cache_using_X_mb">Käytössä %s Mb</string>
   <string name="clearcontent_title">Poista tiedot ja asetukset</string>
   <string name="clearcache_title">Tyhjennä välimuisti</string>
   <string name="schDown_added">lisättiin ajastettujen latausten luetteloon.</string>
@@ -374,4 +375,5 @@
   <string name="recommended_for_you">Suositeltu sinulle</string>
   <string name="patch_obb">Korjauslaajennustiedosto</string>
   <string name="main_obb">Päälaajennustiedosto</string>
+  <string name="retrieving_update">"Noudetaan päivitystä... "</string>
 </resources>

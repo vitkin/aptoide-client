@@ -88,7 +88,7 @@
   <string name="opinionsuccess">Kerkesa juaj u parashtrua me sukses</string>
   <string name="like">Pëlqej</string>
   <string name="dont_like">S\'pëlqej</string>
-  <string name="users_like_this">përdoruesit e pëlqejne këtë</string>
+  <string name="users_like_this">përdoruesit e pëlqejne këtë,</string>
   <string name="users_dont_like_this">përdoruesit nuk e pëlqejne këtë</string>
   <string name="postingtaste">Kerkesa e juaj po parashtrohet</string>
   <string name="another_comment_is_beeing_submited">Një koment tjetër po parashtrohet, ju lutem prisni</string>
@@ -150,12 +150,12 @@
   <string name="menu_manage">Menaxho Dyqanin e Aplikacioneve</string>
   <string name="menu_display_options">Shfaq Opsionet</string>
   <string name="menu_order">Ndrysho Renditjen</string>
-  <string name="menu_about">Rreth</string>
+  <string name="menu_about">Rreth programit</string>
   <string name="menu_search">Kërko</string>
   <string name="adult_content">Permbajtje Erotike</string>
   <string name="stores">Dyqanet e Aplikacioneve</string>
   <string name="screenshots">Fotografo Ekranin</string>
-  <string name="app_about">Rreth Programit</string>
+  <string name="app_about">Rreth</string>
   <string name="rate_this_app">Vlerëso këtë aplikacion</string>
   <string name="related_apps">Aplikacione të ngjashme</string>
   <string name="recommended_apps">Aplikacione të rekomanduara</string>
@@ -164,7 +164,7 @@
   <string name="you_need_to_login_toast">Duhet të futni të dhënat</string>
   <string name="no_recommended_apps">Nuk u gjet asnjë aplikacion i rekomanduar.</string>
   <string name="no_recommended_toast">Nuk u gjet asnjë aplikacion i rekomanduar</string>
-  <string name="all_updated">Të gjithë aplikacionet janë të azhornuar</string>
+  <string name="all_updated">Të gjithë aplikacionet janë të azhornuar!</string>
   <string name="clear_all">Pastro të gjitha</string>
   <string name="menu_add_repo">Dyqan i ri Aplikacionesh</string>
   <string name="menu_rem_repo">Hiq Dyqan Aplikacionesh</string>
@@ -216,7 +216,7 @@
   <string name="auto_updating">Ju lutem prisni ndërkohë që po proçesohet azhornimi…</string>
   <string name="update_self_title">Azhornimi i disponueshëm</string>
   <string name="update_self_msg">Ka një version të ri %s të disponueshem,\nDëshironi të azhornoheni?</string>
-  <string name="md5_error">Kontrolli i md5 për programin e shkarkuar ka dështuar1\nJu lutem azhornoni dyqanet e juaja përpara se ta riprovoni.</string>
+  <string name="md5_error">Kontrolli i md5 për programin e shkarkuar ka dështuar!\nJu lutem azhornoni dyqanet e juaja përpara se ta riprovoni.</string>
   <string name="network_error">Ka ndodhur një gabim gjatë tërheqjes së aplikacionit.\nJu lutem provoni përsëri.</string>
   <string name="error_404">Programi nuk u gjet në dyqanin e dhënë.\nJu lutem provoni përsëri më vonë.</string>
   <string name="parse_error">Gabim gjatë ngarkimit!</string>
@@ -236,7 +236,7 @@
   <string name="schDown_wireless_detected">Është gjetur Wireless: Dëshironi të shkarkoni gjithë aplikacionet në Shkakimet e Planifikuara?</string>
   <string name="schDown_nodownloads">Nuk ka Shkakime të Planifikuara</string>
   <string name="schDown_nodownloadselect">Nuk ka Shkakime të Selektuara</string>
-  <string name="schDown_downerror">Gabim gjatë shkarkimit. Shtoni %1$ Dyqan.</string>
+  <string name="schDown_downerror">Gabim gjatë shkarkimit. Shtoni %1$s Dyqan.</string>
   <string name="addSchDown">Shtuar tek Shkakimet e Planifikuara</string>
   <string name="registration">Regjistrimi</string>
   <string name="username">Email</string>
@@ -261,6 +261,7 @@
   <string name="my_account">Llogaria ime</string>
   <string name="clearcache_sum">Fshi cache (memorjen) në SD card.</string>
   <string name="clearcontent_sum">Fshi të dhënat nga SD card.</string>
+  <string name="cache_using_X_mb">Duke përdorur %s MB</string>
   <string name="clearcontent_title">Fshi të dhënat dhe konfigurimet</string>
   <string name="clearcache_title">Pastro cache</string>
   <string name="schDown_added">u shtua te lista e Shkakimeve të Planifikuara.</string>
@@ -373,4 +374,5 @@
   <string name="recommended_for_you">Të rekomanduara për ju</string>
   <string name="patch_obb">Fle i Ngjitur</string>
   <string name="main_obb">File Kryesor</string>
+  <string name="retrieving_update">Merrnim versionin e fundit...</string>
 </resources>

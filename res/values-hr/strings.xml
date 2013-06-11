@@ -122,7 +122,7 @@
   <string name="order_popup_title3">Sadržaj za odrasle</string>
   <string name="are_you_adult">Imate li najmanje 21 godinu starosti?</string>
   <string name="order_popup_catg1">Po kategoriji</string>
-  <string name="order_popup_catg2">Sve aplikacije:</string>
+  <string name="order_popup_catg2">Sve aplikacije</string>
   <string name="update_repos">Ažuriranje store-a</string>
   <string name="update_main">Popis store-ova koji se koriste je promijenjen.\nŽelite li ih ažurirati?</string>
   <string name="pass_confirmation">Potvrda zaporke</string>

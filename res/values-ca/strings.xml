@@ -47,6 +47,7 @@
   <string name="comments">Comentaris</string>
   <string name="commentlabel">Afegir comentari</string>
   <string name="like_or_comment_by_user">per %s</string>
+  <string name="comment_on_application">en %s</string>
   <string name="no_comments">No s\'han trobat comentaris, sigues el primer!</string>
   <string name="no_internet_connection">No hi ha connexió a Internet</string>
   <string name="comment_see_all">Veure tot</string>
@@ -113,7 +114,7 @@
   <string name="order_popup_title2">Mostrar aplicacions:</string>
   <string name="order_popup_title3">Contingut per a Adults:</string>
   <string name="order_popup_catg1">Per categoria</string>
-  <string name="order_popup_catg2">Totes les aplicacions:</string>
+  <string name="order_popup_catg2">Totes les aplicacions</string>
   <string name="update_repos">Actualitzar repositori</string>
   <string name="update_main">La llista de repositoris ha canviat.\nVols actualitzar-los?</string>
   <string name="pass_confirmation">Confirmació de constrasenya</string>

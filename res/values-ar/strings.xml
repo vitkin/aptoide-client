@@ -375,4 +375,5 @@
   <string name="recommended_for_you">موصي لك</string>
   <string name="patch_obb">ترقيع ملف التوسيع</string>
   <string name="main_obb">ملف التوسيع الرئيسي</string>
+  <string name="retrieving_update">جلب التحديث</string>
 </resources>

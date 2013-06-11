@@ -262,6 +262,7 @@
   <string name="my_account">Mon compte</string>
   <string name="clearcache_sum">Effacer le tampon (icônes, captures d\'écran) de la carte SD.</string>
   <string name="clearcontent_sum">Efface les données de la carte SD.</string>
+  <string name="cache_using_X_mb">En utilisant %s MB</string>
   <string name="clearcontent_title">Enlever les données et les configurations</string>
   <string name="clearcache_title">Nettoyer le tampon</string>
   <string name="schDown_added">a été ajouté à la liste des téléchargements programmés.</string>
@@ -374,4 +375,5 @@
   <string name="recommended_for_you">Recommandés pour vous</string>
   <string name="patch_obb">Fichier d\'extension Patch</string>
   <string name="main_obb">Fichier d\'extension Main</string>
+  <string name="retrieving_update">Obtenant mise à jour...</string>
 </resources>

@@ -122,7 +122,7 @@
   <string name="order_popup_title3">Volwassen inhoud:</string>
   <string name="are_you_adult">Ben je minimaal 21 jaar oud?</string>
   <string name="order_popup_catg1">Op categorie</string>
-  <string name="order_popup_catg2">Alle applicaties:</string>
+  <string name="order_popup_catg2">Alle applicaties</string>
   <string name="update_repos">Voorraad updaten</string>
   <string name="update_main">Lijst van voorraden is veranderd.\nWil je ze updaten?</string>
   <string name="pass_confirmation">Wachtwoord bevestiging</string>
