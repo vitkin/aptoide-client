@@ -69,10 +69,10 @@
     </PreferenceCategory>
     <PreferenceCategory
         android:key="about"
-        android:title="@string/about" >
+        android:title="@string/about_us" >
         <Preference
             android:key="aboutDialog"
-            android:title="@string/about" >
+            android:title="@string/about_us" >
         </Preference>
     </PreferenceCategory>
 
