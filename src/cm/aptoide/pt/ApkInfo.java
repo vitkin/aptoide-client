@@ -7,35 +7,17 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
+import android.content.*;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Message;
-import android.os.RemoteException;
+import android.os.*;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -48,20 +30,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.Gallery;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RatingBar;
-import android.widget.Spinner;
-import android.widget.TextView;
-import android.widget.Toast;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.actionbarsherlock.view.Menu;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
@@ -78,15 +49,7 @@ import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
-import cm.aptoide.pt.views.EnumApkMalware;
-import cm.aptoide.pt.views.EnumDownloadFailReason;
-import cm.aptoide.pt.views.EnumDownloadStatus;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewCacheObb;
-import cm.aptoide.pt.views.ViewDownload;
-import cm.aptoide.pt.views.ViewDownloadManagement;
-import cm.aptoide.pt.views.ViewObb;
+import cm.aptoide.pt.views.*;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
@@ -96,8 +59,13 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-
 import com.mopub.mobileads.MoPubView;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
 
 
 
@@ -1686,7 +1654,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
             	    	}
             	});
             	paymentMethodDialog.show();
-            	
+
 
                 if(unstrustedPayment){
                 	View simpleLayoutView2 = LayoutInflater.from(context).inflate(R.layout.dialog_simple_layout, null);

@@ -1471,7 +1471,7 @@ public class Database {
 				break;
 			case TOPFEATURED:
                 values.remove(DbStructure.COLUMN_HASH);
-				database.insert(DbStructure.TABLE_FEATURED_TOP_REPO, null, values);
+                database.insert(DbStructure.TABLE_FEATURED_TOP_REPO, null, values);
 				break;
 
 			default:

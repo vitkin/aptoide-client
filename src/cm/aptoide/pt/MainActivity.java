@@ -7,70 +7,18 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.concurrent.TimeoutException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlSerializer;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.IBinder;
-import android.os.RemoteException;
-import android.os.StatFs;
+import android.os.*;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -80,36 +28,15 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Xml;
-import android.view.ContextMenu;
+import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.ToggleButton;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
@@ -126,15 +53,33 @@ import cm.aptoide.pt.services.MainService.LocalBinder;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.sharing.WebViewFacebook;
 import cm.aptoide.pt.sharing.WebViewTwitter;
-import cm.aptoide.pt.util.Algorithms;
-import cm.aptoide.pt.util.AutoScaleTextView;
-import cm.aptoide.pt.util.Md5Handler;
-import cm.aptoide.pt.util.NetworkUtils;
-import cm.aptoide.pt.util.RepoUtils;
+import cm.aptoide.pt.util.*;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.login.Login;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
+
+import javax.xml.parsers.*;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.concurrent.TimeoutException;
 
 public class MainActivity extends SherlockFragmentActivity implements LoaderCallbacks<Cursor> {
 	private Intent serviceDownloadManagerIntent;
@@ -240,7 +185,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 						cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader
 								.getInstance().displayImage(image_urls.get(i - a).get("url"), v, options);
 
-						v.setTag(image_urls.get(i).get("id"));
+						v.setTag(image_urls.get(i-a).get("id"));
 						v.setOnClickListener(new OnClickListener() {
 
 							@Override
@@ -544,7 +489,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                         out.close();
                         bis.close();
                         // Database.database.beginTransaction();
-
+                        db.deleteFeaturedTopApps();
                         sp.parse(f, new HandlerFeaturedTop(server));
                         db.insertFeaturedTopHash(date);
                         loadUItopapps();
@@ -1776,10 +1721,10 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 						final AlertDialog addNewRepoDialog = dialogBuilder.create();
 						addNewRepoDialog.setTitle(getString(R.string.add_store));
 						addNewRepoDialog.setIcon(android.R.drawable.ic_menu_add);
-						
+
 						TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
 						message.setText((getString(R.string.newrepo_alrt)+ uri2 + " ?"));
-						
+
 						addNewRepoDialog.setCancelable(false);
 						addNewRepoDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
 							@Override
