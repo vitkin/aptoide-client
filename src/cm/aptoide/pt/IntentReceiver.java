@@ -7,32 +7,48 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
 import android.app.AlertDialog;
-import android.content.*;
+import android.app.AlertDialog.Builder;
+import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.*;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class IntentReceiver extends SherlockActivity implements OnDismissListener{
 //	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";
@@ -149,14 +165,19 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 				parseXmlMyapp(TMP_MYAPP_FILE);
 
 				if(app!=null&&!app.isEmpty()){
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-					alertDialogBuilder.setTitle(ApplicationAptoide.MARKETNAME);
-					alertDialogBuilder
-					.setIcon(android.R.drawable.ic_menu_more)
-					.setMessage(getString(R.string.installapp_alrt) +app.get("name")+"?")
-					.setCancelable(false)
-					.setPositiveButton(getString(android.R.string.yes),new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,int id) {
+					View simpleView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
+					Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleView);
+					final AlertDialog installAppDialog = dialogBuilder.create();
+					installAppDialog.setTitle(ApplicationAptoide.MARKETNAME);
+					installAppDialog.setIcon(android.R.drawable.ic_menu_more);
+					installAppDialog.setCancelable(false);
+					
+					TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+					message.setText(getString(R.string.installapp_alrt) +app.get("name")+"?");
+					
+					installAppDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface arg0, int arg1) {
 							ViewApk apk = new ViewApk();
 							apk.setApkid(app.get("apkid"));
 							apk.setName(app.get("name"));
@@ -168,13 +189,11 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}
-
-						}
-					})
-					.setNegativeButton(getString(android.R.string.no), neutralListener);
-					AlertDialog alertDialog = alertDialogBuilder.create();
-					alertDialog.setOnDismissListener(this);
-					alertDialog.show();
+					    }
+					});
+					installAppDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), neutralListener);
+					installAppDialog.setOnDismissListener(this);
+					installAppDialog.show();
 
 				}else{
 					proceed();

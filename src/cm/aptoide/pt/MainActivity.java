@@ -7,17 +7,70 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
+import java.util.concurrent.TimeoutException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
+
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.os.StatFs;
 import android.preference.PreferenceManager;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -27,15 +80,36 @@ import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Xml;
-import android.view.*;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.ToggleButton;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
@@ -52,33 +126,15 @@ import cm.aptoide.pt.services.MainService.LocalBinder;
 import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.sharing.WebViewFacebook;
 import cm.aptoide.pt.sharing.WebViewTwitter;
-import cm.aptoide.pt.util.*;
+import cm.aptoide.pt.util.Algorithms;
+import cm.aptoide.pt.util.AutoScaleTextView;
+import cm.aptoide.pt.util.Md5Handler;
+import cm.aptoide.pt.util.NetworkUtils;
+import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
 import cm.aptoide.pt.webservices.login.Login;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlSerializer;
-
-import javax.xml.parsers.*;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-import java.util.concurrent.TimeoutException;
 
 public class MainActivity extends SherlockFragmentActivity implements LoaderCallbacks<Cursor> {
 	private Intent serviceDownloadManagerIntent;
@@ -735,30 +791,27 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-					mContext);
-			alertDialogBuilder.setTitle(getText(R.string.parse_error));
-			alertDialogBuilder
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setMessage(getText(R.string.parse_error_loading))
-					.setCancelable(false)
-					.setPositiveButton(getString(android.R.string.yes),
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int id) {
-									getAllRepoStatus();
-								}
-							})
-					.setNegativeButton(getString(android.R.string.no),
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int id) {
-									dialog.cancel();
-								}
-							});
-			AlertDialog alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
+			View simpleView= LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+			Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+			final AlertDialog parseErrorDialog = dialogBuilder.create();
+			parseErrorDialog.setTitle(getText(R.string.parse_error));
+			parseErrorDialog.setIcon(android.R.drawable.ic_dialog_alert);
+			TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+			message.setText(getText(R.string.parse_error_loading));
+			parseErrorDialog.setCancelable(false);
+			parseErrorDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int arg1) {
+					getAllRepoStatus();
+			    }
+			});
+			parseErrorDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int arg1) {
+					dialog.cancel();
+			    }
+			});
+			parseErrorDialog.show();
 		}
 	};
 	private long store_id;
@@ -1443,29 +1496,27 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			if (intent.hasExtra("newrepo")) {
 				ArrayList<String> repos = (ArrayList<String>) intent.getSerializableExtra("newrepo");
 				for (final String uri2 : repos) {
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-					alertDialogBuilder.setTitle(getString(R.string.add_store));
-					alertDialogBuilder
-							.setIcon(android.R.drawable.ic_menu_add)
-							.setMessage(
-									getString(R.string.newrepo_alrt) + uri2
-											+ " ?")
-							.setCancelable(false)
-							.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-								public void onClick(
-										DialogInterface dialog, int id) {
-									dialogAddStore(uri2, null, null);
-								}
-							})
-							.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-								public void onClick(
-										DialogInterface dialog, int id) {
-									dialog.cancel();
-								}
-							});
-					AlertDialog alertDialog = alertDialogBuilder.create();
-					alertDialog.show();
-
+					View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+					Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+					final AlertDialog addNewStoreDialog = dialogBuilder.create();
+					addNewStoreDialog.setTitle(getString(R.string.add_store));
+					addNewStoreDialog.setIcon(android.R.drawable.ic_menu_add);
+					TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+					message.setText(getString(R.string.newrepo_alrt) + uri2 + " ?");
+					addNewStoreDialog.setCancelable(false);
+					addNewStoreDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface arg0, int arg1) {
+							dialogAddStore(uri2, null, null);
+					    }
+					});
+					addNewStoreDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int arg1) {
+							dialog.cancel();
+					    }
+					});
+					addNewStoreDialog.show();
 				}
 			}
 
@@ -1518,22 +1569,21 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
-
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-			alertDialogBuilder.setTitle(getText(R.string.remote_in_noSD_title));
-			alertDialogBuilder
-					.setIcon(android.R.drawable.ic_dialog_alert)
-					.setMessage(getText(R.string.remote_in_noSD))
-					.setCancelable(false)
-					.setNeutralButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int id) {
-							finish();
-						}
-					});
-			AlertDialog alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
-
+			View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+			Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+			final AlertDialog noSDDialog = dialogBuilder.create();
+			noSDDialog.setTitle(getText(R.string.remote_in_noSD_title));
+			noSDDialog.setIcon(android.R.drawable.ic_dialog_alert);
+			TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+			message.setText(getText(R.string.remote_in_noSD));
+			noSDDialog.setCancelable(false);
+			noSDDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					finish();
+			    }
+			});
+			noSDDialog.show();
 		} else {
 			StatFs stat = new StatFs(sdcard_file.getPath());
 			long blockSize = stat.getBlockSize();
@@ -1549,20 +1599,19 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			if (avail < 10) {
 				Log.d("Aptoide", "No space left on SDCARD...");
 				Log.d("Aptoide", "* * * * * * * * * *");
-
-				final AlertDialog upd_alrt = new AlertDialog.Builder(this).create();
-				upd_alrt.setIcon(android.R.drawable.ic_dialog_alert);
-				upd_alrt.setTitle(getText(R.string.remote_in_noSD_title));
-				upd_alrt.setMessage(getText(R.string.remote_in_noSDspace));
-				upd_alrt.setButton(Dialog.BUTTON_NEUTRAL,
-						getText(android.R.string.ok),
-						new Dialog.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								finish();
-							}
-						});
-				upd_alrt.show();
+				View simpleView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
+				Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleView);
+				final AlertDialog noSpaceDialog = dialogBuilder.create();
+				noSpaceDialog.setIcon(android.R.drawable.ic_dialog_alert);
+				TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+				message.setText(getText(R.string.remote_in_noSDspace));
+				noSpaceDialog.setButton(Dialog.BUTTON_NEUTRAL, getText(android.R.string.ok), new Dialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						finish();
+				    }
+				});
+				noSpaceDialog.show();
 			} else {
 
 				mContext = this;
@@ -1722,53 +1771,52 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                 if (getIntent().hasExtra("newrepo")) {
 					ArrayList<String> repos = (ArrayList<String>) getIntent().getSerializableExtra("newrepo");
 					for (final String uri2 : repos) {
-						AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-						alertDialogBuilder
-								.setTitle(getString(R.string.add_store))
-								.setIcon(android.R.drawable.ic_menu_add)
-								.setMessage((getString(R.string.newrepo_alrt)+ uri2 + " ?"))
-								.setCancelable(false)
-								.setPositiveButton(
-										getString(android.R.string.yes),
-										new DialogInterface.OnClickListener() {
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												dialogAddStore(uri2, null, null);
-											}
-										})
-								.setNegativeButton(
-										getString(android.R.string.no),
-										new DialogInterface.OnClickListener() {
-											public void onClick(
-													DialogInterface dialog,
-													int id) {
-												dialog.cancel();
-											}
-										});
-						AlertDialog alertDialog = alertDialogBuilder.create();
-						alertDialog.show();
+						View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+						Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+						final AlertDialog addNewRepoDialog = dialogBuilder.create();
+						addNewRepoDialog.setTitle(getString(R.string.add_store));
+						addNewRepoDialog.setIcon(android.R.drawable.ic_menu_add);
+						
+						TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+						message.setText((getString(R.string.newrepo_alrt)+ uri2 + " ?"));
+						
+						addNewRepoDialog.setCancelable(false);
+						addNewRepoDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								dialogAddStore(uri2, null, null);
+						    }
+						});
+						addNewRepoDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int arg1) {
+								dialog.cancel();
+						    }
+						});
+						addNewRepoDialog.show();
 					}
 				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORENAME == null && serversFileIsEmpty) {
-
-					AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-							mContext);
-					alertDialogBuilder.setTitle(getString(R.string.add_store))
-							.setIcon(android.R.drawable.ic_menu_add)
-							.setMessage(getString(R.string.myrepo_alrt) + "\n"+ "http://apps.store.aptoide.com/")
-							.setCancelable(false)
-							.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-								public void onClick( DialogInterface dialog, int id) {
-									dialogAddStore("http://apps.store.aptoide.com",null, null);
-								}
-							})
-							.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int id) {
-									dialog.cancel();
-								}
-							});
-					AlertDialog alertDialog = alertDialogBuilder.create();
-					alertDialog.show();
+					View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+					Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+					final AlertDialog addAppsRepoDialog = dialogBuilder.create();
+					addAppsRepoDialog.setTitle(getString(R.string.add_store));
+					addAppsRepoDialog.setIcon(android.R.drawable.ic_menu_add);
+					TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+					message.setText(getString(R.string.myrepo_alrt) + "\n"+ "http://apps.store.aptoide.com/");
+					addAppsRepoDialog.setCancelable(false);
+					addAppsRepoDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface arg0, int arg1) {
+							dialogAddStore("http://apps.store.aptoide.com",null, null);
+					    }
+					});
+					addAppsRepoDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int arg1) {
+							dialog.cancel();
+					    }
+					});
+					addAppsRepoDialog.show();
 				}
 
 				new Thread(new Runnable() {
@@ -1989,8 +2037,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			brandIv.setImageResource(R.drawable.brand_digitallydifferent);
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("eocean")){
 			brandIv.setImageResource(R.drawable.brand_eocean);
-		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("lazerplay")){
-			brandIv.setImageResource(R.drawable.brand_lazerplay);
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("educomp")){
 			brandIv.setImageResource(R.drawable.brand_educomp);
 		}else if(ApplicationAptoide.APTOIDETHEME.equalsIgnoreCase("peoplenet")){
@@ -2661,42 +2707,45 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		public void onCheckedChanged(CompoundButton buttonView,
 				boolean isChecked) {
 			if (isChecked) {
-				AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-				alertDialogBuilder
-						.setTitle(getString(R.string.adult_content))
-						.setIcon(android.R.drawable.ic_menu_info_details)
-						.setMessage(getString(R.string.are_you_adult))
-						.setCancelable(false)
-						.setPositiveButton(getString(android.R.string.yes), new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								editor.putBoolean("matureChkBox", false);
-								editor.commit();
-								pd = new ProgressDialog(mContext);
-								pd.setMessage(getString(R.string.please_wait));
-								pd.show();
-								new Thread(new Runnable() {
+				View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+				Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+				final AlertDialog adultContentDialog = dialogBuilder.create();
+				adultContentDialog.setTitle(getString(R.string.adult_content));
+				adultContentDialog.setIcon(android.R.drawable.ic_menu_info_details);
+				TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+				message.setText(getString(R.string.are_you_adult));
+				adultContentDialog.setCancelable(false);
+				adultContentDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						editor.putBoolean("matureChkBox", false);
+						editor.commit();
+						pd = new ProgressDialog(mContext);
+						pd.setMessage(getString(R.string.please_wait));
+						pd.show();
+						new Thread(new Runnable() {
+							public void run() {
+								// loadUItopapps();
+								redrawAll();
+								runOnUiThread(new Runnable() {
 									public void run() {
-										// loadUItopapps();
-										redrawAll();
-										runOnUiThread(new Runnable() {
-											public void run() {
-												pd.dismiss();
-											}
-										});
+										pd.dismiss();
 									}
-								}).start();
+								});
 							}
-						})
-						.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								((ToggleButton) featuredView .findViewById(R.id.toggleButton1)).setChecked(false);
-								// if(adult!=null){
-								// adult.setChecked(false);
-								// }
-							}
-						});
-				AlertDialog alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
+						}).start();
+				    }
+				});
+				adultContentDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
+						((ToggleButton) featuredView .findViewById(R.id.toggleButton1)).setChecked(false);
+						// if(adult!=null){
+						// adult.setChecked(false);
+						// }
+					}
+				});
+				adultContentDialog.show();
 
 			} else {
 				editor.putBoolean("matureChkBox", true);
@@ -2813,24 +2862,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			break;
 		case APTOIDE_STORE_THEME_SPRINGGREEN:
 			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_springgreen);
-			break;
-		case APTOIDE_STORE_THEME_MAGALHAES:
-			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_magalhaes);
-			break;
-		case APTOIDE_STORE_THEME_DIGITALLYDIFFERENT:
-			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_digitallydifferent);
-			break;
-		case APTOIDE_STORE_THEME_EOCEAN:
-			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_eocean);
-			break;
-		case APTOIDE_STORE_THEME_JBLOW:
-			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_silver);
-			break;
-		case APTOIDE_STORE_THEME_LAZERPLAY:
-			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_lazerplay);
-			break;
-		case APTOIDE_STORE_THEME_TIMEWE:
-			bannerLayout.setBackgroundResource(R.drawable.actionbar_bgd_timwe);
 			break;
 
 		default:
@@ -2949,27 +2980,27 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 	}
 
 	private void requestUpdateSelf() {
-
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(mContext);
-		alertDialogBuilder
-				.setTitle(getText(R.string.update_self_title))
-				.setIcon(R.drawable.icon_brand_aptoide)
-				.setMessage(getString(R.string.update_self_msg, ApplicationAptoide.MARKETNAME))
-				.setCancelable(false)
-				.setPositiveButton(getString(android.R.string.yes),
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								new DownloadSelfUpdate().execute();
-							}
-						})
-				.setNegativeButton(getString(android.R.string.no),
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int id) {
-								dialog.dismiss();
-							}
-						});
-		AlertDialog alertDialog = alertDialogBuilder.create();
-		alertDialog.show();
+		View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+		Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+		final AlertDialog updateSelfDialog = dialogBuilder.create();
+		updateSelfDialog.setTitle(getText(R.string.update_self_title));
+		updateSelfDialog.setIcon(R.drawable.icon_brand_aptoide);
+		TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+		message.setText(getString(R.string.update_self_msg, ApplicationAptoide.MARKETNAME));
+		updateSelfDialog.setCancelable(false);
+		updateSelfDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface arg0, int arg1) {
+				new DownloadSelfUpdate().execute();
+		    }
+		});
+		updateSelfDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int arg1) {
+				dialog.dismiss();
+		    }
+		});
+		updateSelfDialog.show();
 
 	}
 

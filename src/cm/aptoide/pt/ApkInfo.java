@@ -7,16 +7,35 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Locale;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.*;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
@@ -29,9 +48,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Gallery;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.actionbarsherlock.view.Menu;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
@@ -48,7 +78,15 @@ import cm.aptoide.pt.util.RepoUtils;
 import cm.aptoide.pt.util.quickaction.ActionItem;
 import cm.aptoide.pt.util.quickaction.EnumQuickActions;
 import cm.aptoide.pt.util.quickaction.QuickAction;
-import cm.aptoide.pt.views.*;
+import cm.aptoide.pt.views.EnumApkMalware;
+import cm.aptoide.pt.views.EnumDownloadFailReason;
+import cm.aptoide.pt.views.EnumDownloadStatus;
+import cm.aptoide.pt.views.ViewApk;
+import cm.aptoide.pt.views.ViewCache;
+import cm.aptoide.pt.views.ViewCacheObb;
+import cm.aptoide.pt.views.ViewDownload;
+import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.views.ViewObb;
 import cm.aptoide.pt.webservices.MalwareStatus;
 import cm.aptoide.pt.webservices.TasteModel;
 import cm.aptoide.pt.webservices.WebserviceGetApkInfo;
@@ -58,13 +96,8 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-import com.mopub.mobileads.MoPubView;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Locale;
+import com.mopub.mobileads.MoPubView;
 
 
 
@@ -1624,51 +1657,53 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         public void onClick(View v) {
 
             if(Login.isLoggedIn(context)){
-
-            	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-            	alertDialogBuilder.setTitle(R.string.payment_method);
-            	alertDialogBuilder
-            		.setIcon(android.R.drawable.ic_menu_info_details)
-            		.setMessage(getString(R.string.paypal_message))
-            		.setCancelable(false)
-            		.setPositiveButton(getString(R.string.credit_card),new DialogInterface.OnClickListener() {
-            			public void onClick(DialogInterface dialog,int id) {
-            				 Intent i = new Intent(ApkInfo.this, CreditCard.class);
-                             i.putExtra("apkid", viewApk.getApkid());
-                             i.putExtra("versionName", viewApk.getVername());
-                             i.putExtra("repo", viewApk.getRepoName());
-                             startActivityForResult(i, 1);
-
-            			}
-            		 })
-            		.setNegativeButton(getString(R.string.paypal),new DialogInterface.OnClickListener() {
-            			public void onClick(DialogInterface dialog,int id) {
-            				  Intent i = new Intent(ApkInfo.this, Buy.class);
-                              i.putExtra("apkid", viewApk.getApkid());
-                              i.putExtra("versionName", viewApk.getVername());
-                              i.putExtra("repo", viewApk.getRepoName());
-                              startActivityForResult(i, 1);
-            			}
-            		});
-            	AlertDialog alertDialog = alertDialogBuilder.create();
-            	alertDialog.show();
+            	View simpleLayoutView = LayoutInflater.from(ApkInfo.this).inflate(R.layout.dialog_simple_layout, null);
+            	Builder dialogBuilder = new AlertDialog.Builder(ApkInfo.this).setView(simpleLayoutView);
+            	final AlertDialog paymentMethodDialog = dialogBuilder.create();
+            	paymentMethodDialog.setTitle(R.string.payment_method);
+            	paymentMethodDialog.setIcon(android.R.drawable.ic_menu_info_details);
+            	TextView message = (TextView) simpleLayoutView.findViewById(R.id.dialog_message);
+    			message.setText(getString(R.string.paypal_message));
+            	paymentMethodDialog.setCancelable(false);
+            	paymentMethodDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.credit_card), new Dialog.OnClickListener() {
+            		@Override
+            		public void onClick(DialogInterface arg0, int arg1) {
+	            			 Intent i = new Intent(ApkInfo.this, CreditCard.class);
+	                         i.putExtra("apkid", viewApk.getApkid());
+	                         i.putExtra("versionName", viewApk.getVername());
+	                         i.putExtra("repo", viewApk.getRepoName());
+	                         startActivityForResult(i, 1);
+            	    	}
+            	});
+            	paymentMethodDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.paypal), new Dialog.OnClickListener() {
+            		@Override
+            		public void onClick(DialogInterface arg0, int arg1) {
+            			  Intent i = new Intent(ApkInfo.this, Buy.class);
+                          i.putExtra("apkid", viewApk.getApkid());
+                          i.putExtra("versionName", viewApk.getVername());
+                          i.putExtra("repo", viewApk.getRepoName());
+                          startActivityForResult(i, 1);
+            	    	}
+            	});
+            	paymentMethodDialog.show();
+            	
 
                 if(unstrustedPayment){
-                	AlertDialog.Builder alertDialogBuilder1 = new AlertDialog.Builder(context);
-                	alertDialogBuilder1.setTitle(R.string.payment_warning_title);
-                	alertDialogBuilder1
-                		.setIcon(android.R.drawable.ic_menu_info_details)
-                		.setMessage(R.string.payment_warning_text)
-                		.setCancelable(false)
-                		.setNeutralButton(getString(android.R.string.ok),new DialogInterface.OnClickListener() {
-                			public void onClick(DialogInterface dialog,int id) {
-                				dialog.cancel();
-
-                			}
-                		 });
-                	AlertDialog alertDialog1 = alertDialogBuilder1.create();
-                	alertDialog1.show();
-
+                	View simpleLayoutView2 = LayoutInflater.from(context).inflate(R.layout.dialog_simple_layout, null);
+                	Builder dialogBuilder2 = new AlertDialog.Builder(context).setView(simpleLayoutView2);
+                	final AlertDialog paymentWarningDialog = dialogBuilder2.create();
+                	paymentWarningDialog.setTitle(R.string.payment_warning_title);
+                	paymentWarningDialog.setIcon(android.R.drawable.ic_menu_info_details);
+                	TextView message2 = (TextView) simpleLayoutView.findViewById(R.id.dialog_message);
+        			message2.setText(getString(R.string.payment_warning_text));
+                	paymentWarningDialog.setCancelable(false);
+                	paymentWarningDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), new Dialog.OnClickListener() {
+                		@Override
+                		public void onClick(DialogInterface dialog, int arg1) {
+                			dialog.cancel();
+                	    }
+                	});
+                	paymentWarningDialog.show();
                 }
             }else{
                 startActivityForResult(new Intent(ApkInfo.this,Login.class), 1);

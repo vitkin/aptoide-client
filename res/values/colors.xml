@@ -94,7 +94,4 @@
     <color name="light_custom_color_digitallydifferent">#99d855</color>
     <color name="custom_color_digitallydifferent">#86bd4a</color>
     
-    <color name="custom_color_lazerplay">#6bb0eb</color>
-   	<color name="dark_custom_color_lazerplay">#227ccb</color>
-   	<color name="light_custom_color_lazerplay">#7eb9e9</color> 
 </resources>

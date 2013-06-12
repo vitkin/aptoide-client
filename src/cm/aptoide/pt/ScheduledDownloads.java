@@ -7,8 +7,18 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
+import java.util.HashMap;
+
 import android.app.AlertDialog;
-import android.content.*;
+import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -21,8 +31,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.com.actionbarsherlock.app.SherlockFragmentActivity;
 import cm.aptoide.com.actionbarsherlock.view.Menu;
 import cm.aptoide.com.actionbarsherlock.view.MenuItem;
@@ -33,8 +49,6 @@ import cm.aptoide.pt.services.ServiceDownloadManager;
 import cm.aptoide.pt.views.ViewApk;
 import cm.aptoide.pt.views.ViewCache;
 import cm.aptoide.pt.views.ViewDownloadManagement;
-
-import java.util.HashMap;
 
 public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragmentActivity */implements LoaderCallbacks<Cursor>{
 	private Database db;
@@ -226,43 +240,44 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 			}
 		});
 		if(getIntent().hasExtra("downloadAll")){
-
-			AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-			alertDialogBuilder.setTitle(getText(R.string.schDwnBtn));
-			alertDialogBuilder
-				.setIcon(android.R.drawable.ic_dialog_alert)
-				.setMessage(getText(R.string.schDown_install))
-				.setCancelable(false)
-				.setPositiveButton(getString(android.R.string.yes),new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
-							ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
-							ViewApk apk = new ViewApk();
-							apk.setApkid(schDown.getApkid());
-							apk.setName(schDown.getName());
-							apk.setIconPath(schDown.getIconPath());
-							apk.setVercode(schDown.getVercode());
-							apk.setVername(schDown.getVername());
-							apk.setMd5(schDown.getMd5());
-							try {
-								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername()), null));
-							} catch (RemoteException e) {
-								e.printStackTrace();
-							}
+			View simpleView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
+			Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleView);
+			final AlertDialog scheduleDownloadDialog = dialogBuilder.create();
+			scheduleDownloadDialog.setTitle(getText(R.string.schDwnBtn));
+			scheduleDownloadDialog.setIcon(android.R.drawable.ic_dialog_alert);
+			scheduleDownloadDialog.setCancelable(false);
+			TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+			message.setText(getText(R.string.schDown_install));
+			scheduleDownloadDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog,int id) {
+					for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
+						ScheduledDownload schDown = scheduledDownloadsHashMap.get(scheduledDownload);
+						ViewApk apk = new ViewApk();
+						apk.setApkid(schDown.getApkid());
+						apk.setName(schDown.getName());
+						apk.setIconPath(schDown.getIconPath());
+						apk.setVercode(schDown.getVercode());
+						apk.setVername(schDown.getVername());
+						apk.setMd5(schDown.getMd5());
+						try {
+							serviceDownloadManager.callStartDownload(new ViewDownloadManagement(schDown.getUrl(),apk,new ViewCache(apk.hashCode(), apk.getMd5(),apk.getApkid(),apk.getVername()), null));
+						} catch (RemoteException e) {
+							e.printStackTrace();
 						}
-						finish();
-						return;
+					}
+					finish();
+					return;
 
-					}
-				 })
-				.setNegativeButton(getString(android.R.string.no),new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						finish();
-						return;
-					}
-				});
-			AlertDialog alertDialog = alertDialogBuilder.create();
-			alertDialog.show();
+				}
+			 });
+			scheduleDownloadDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface arg0, int arg1) {
+					finish();
+					return;
+			    }
+			});
+			scheduleDownloadDialog.show();
 		}
 	}
 
@@ -408,7 +423,11 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+		View simpleView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
+		Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleView);
+		final AlertDialog scheduleDialog = dialogBuilder.create();
+		
+//		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 		switch (item.getItemId()) {
 		case 0:
 			for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
@@ -418,13 +437,14 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 			break;
 		case 1:
 			if(isAllChecked()){
-				alertDialogBuilder.setTitle(getText(R.string.schDwnBtn));
-				alertDialogBuilder
-				.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
-				.setMessage(getText(R.string.schDown_sureremove))
-				.setCancelable(false)
-				.setPositiveButton(getString(android.R.string.yes),new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
+				scheduleDialog.setTitle(getText(R.string.schDwnBtn));
+				scheduleDialog.setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+				scheduleDialog.setCancelable(false);
+				TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+				message.setText(getText(R.string.schDown_sureremove));
+				scheduleDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface arg0, int arg1) {
 						for(String scheduledDownload : scheduledDownloadsHashMap.keySet()){
 							if (scheduledDownloadsHashMap.get(scheduledDownload).checked){
 								db.deleteScheduledDownload(scheduledDownload);
@@ -432,15 +452,15 @@ public class ScheduledDownloads extends SherlockFragmentActivity/*SherlockFragme
 						}
 						getSupportLoaderManager().restartLoader(0, null, ScheduledDownloads.this);
 						return;
-					}
-				})
-				.setNegativeButton(getString(android.R.string.no),new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,int id) {
-						dialog.cancel();
-					}
+				    }
 				});
-				AlertDialog alertDialog = alertDialogBuilder.create();
-				alertDialog.show();
+				scheduleDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int arg1) {
+						dialog.cancel();
+				    }
+				});
+				scheduleDialog.show();
 			} else {
 				Toast toast= Toast.makeText(this, getString(R.string.schDown_nodownloadselect), Toast.LENGTH_SHORT);
 				toast.show();
