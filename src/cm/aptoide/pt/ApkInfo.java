@@ -1694,7 +1694,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                 	final AlertDialog paymentWarningDialog = dialogBuilder2.create();
                 	paymentWarningDialog.setTitle(R.string.payment_warning_title);
                 	paymentWarningDialog.setIcon(android.R.drawable.ic_menu_info_details);
-                	TextView message2 = (TextView) simpleLayoutView.findViewById(R.id.dialog_message);
+                	TextView message2 = (TextView) simpleLayoutView2.findViewById(R.id.dialog_message);
         			message2.setText(getString(R.string.payment_warning_text));
                 	paymentWarningDialog.setCancelable(false);
                 	paymentWarningDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(android.R.string.ok), new Dialog.OnClickListener() {
