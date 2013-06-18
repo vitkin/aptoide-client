@@ -1511,6 +1511,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
 		startService(serviceDownloadManagerIntent);
+        mContext = this;
 
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
@@ -1559,7 +1560,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 				noSpaceDialog.show();
 			} else {
 
-				mContext = this;
 				SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mContext);
 				editor = PreferenceManager.getDefaultSharedPreferences(mContext).edit();
 
@@ -1786,31 +1786,30 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 			}
 
-		}
 
-		featuredView = LayoutInflater.from(mContext).inflate(R.layout.page_featured, null);
-		availableView = LayoutInflater.from(mContext).inflate(R.layout.page_available, null);
-		updateView = LayoutInflater.from(mContext).inflate(R.layout.page_updates, null);
-		banner = (LinearLayout) availableView.findViewById(R.id.banner);
-		breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container,null);
-		installedView = new ListView(mContext);
-		updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
+            featuredView = LayoutInflater.from(mContext).inflate(R.layout.page_featured, null);
+            availableView = LayoutInflater.from(mContext).inflate(R.layout.page_available, null);
+            updateView = LayoutInflater.from(mContext).inflate(R.layout.page_updates, null);
+            banner = (LinearLayout) availableView.findViewById(R.id.banner);
+            breadcrumbs = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.breadcrumb_container, null);
+            installedView = new ListView(mContext);
+            updatesListView = (ListView) updateView.findViewById(R.id.updates_list);
 
-		availableListView = (ListView) availableView.findViewById(R.id.available_list);
-		joinStores = (CheckBox) availableView.findViewById(R.id.join_stores);
+            availableListView = (ListView) availableView.findViewById(R.id.available_list);
+            joinStores = (CheckBox) availableView.findViewById(R.id.join_stores);
 
-		availableAdapter = new AvailableListAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-		installedAdapter = new InstalledAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
-		updatesAdapter = new UpdatesAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+            availableAdapter = new AvailableListAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+            installedAdapter = new InstalledAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER, db);
+            updatesAdapter = new UpdatesAdapter(mContext, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
-		pb = (TextView) availableView.findViewById(R.id.loading_pb);
-		addStoreButton = availableView.findViewById(R.id.add_store);
+            pb = (TextView) availableView.findViewById(R.id.loading_pb);
+            addStoreButton = availableView.findViewById(R.id.add_store);
 
-		bannerStoreAvatar = (ImageView) banner.findViewById(R.id.banner_store_avatar);
-		bannerStoreName = (TextView) banner.findViewById(R.id.banner_store_name);
-		bannerStoreDescription = (AutoScaleTextView) banner.findViewById(R.id.banner_store_description);
-
-	}
+            bannerStoreAvatar = (ImageView) banner.findViewById(R.id.banner_store_avatar);
+            bannerStoreName = (TextView) banner.findViewById(R.id.banner_store_name);
+            bannerStoreDescription = (AutoScaleTextView) banner.findViewById(R.id.banner_store_description);
+        }
+    }
 
 	ImageView bannerStoreAvatar;
 	TextView bannerStoreName;

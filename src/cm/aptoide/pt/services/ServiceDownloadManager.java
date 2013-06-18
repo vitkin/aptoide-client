@@ -552,12 +552,6 @@ public class ServiceDownloadManager extends Service {
 	public void startDownload(final ViewDownloadManagement viewDownload){
 
 
-
-
-
-
-
-
 		Log.d("Aptoide", "download being started *************** "+viewDownload.hashCode());
 		checkDirectorySize(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/apks");
 //		ViewCache cache = viewDownload.getCache();

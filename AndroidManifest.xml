@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cm.aptoide.pt"
     android:installLocation="auto"
-    android:versionCode="405"
-    android:versionName="4.1.0" >
+    android:versionCode="406"
+    android:versionName="4.1.1" >
 
     <uses-sdk
         android:minSdkVersion="5"
@@ -323,6 +323,10 @@
         <activity
             android:name="com.paypal.android.MEP.PayPalActivity"
             android:configChanges="keyboardHidden|orientation" />
+
+        <activity android:name="com.mopub.mobileads.MoPubActivity" android:configChanges="keyboardHidden|orientation"/>
+        <activity android:name="com.mopub.mobileads.MraidActivity" android:configChanges="keyboardHidden|orientation"/>
+        <activity android:name="com.mopub.mobileads.MraidBrowser" android:configChanges="keyboardHidden|orientation"/>
     </application>
 
 </manifest>
