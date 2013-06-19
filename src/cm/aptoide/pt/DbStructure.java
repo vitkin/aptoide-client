@@ -524,6 +524,14 @@ public class DbStructure extends SQLiteOpenHelper {
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_REMOTE_PATH))
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MD5))
 										 .addColumn(new Column(SQLiteType.TEXT,    COLUMN_ICON))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MAINOBB_PATH))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MAINOBB_MD5))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MAINOBB_SIZE))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_MAINOBB_FILENAME))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_PATCHOBB_PATH))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_PATCHOBB_MD5))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_PATCHOBB_SIZE))
+                                         .addColumn(new Column(SQLiteType.TEXT,    COLUMN_PATCHOBB_FILENAME))
 										 .createTable();
 
 		creator.newTable(TABLE_EXCLUDED_APKID).addColumn(new Column(SQLiteType.TEXT, COLUMN_APKID))

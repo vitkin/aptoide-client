@@ -1573,18 +1573,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 				}
 
-                if(!sPref.contains("version")){
-
-                    ApplicationAptoide.setRestartLauncher(true);
-                    try {
-                        editor.putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
-                    } catch (NameNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-				if (sPref.getString("myId", null) == null) {
+                if (sPref.getString("myId", null) == null) {
 					String rand_id = UUID.randomUUID().toString();
 					editor.putString("myId", rand_id);
 				}

@@ -277,25 +277,27 @@ public class ApplicationAptoide extends Application {
             }
 
 
-
-
-
             sPref.edit().putString("PARTNERID", PARTNERID).putString("DEFAULTSTORE", DEFAULTSTORENAME)
-            .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
-            .putString("BRAND", BRAND)
-            .putString("SPLASHSCREENLAND", SPLASHSCREENLAND)
-            .putString("SPLASHSCREEN", SPLASHSCREEN)
-            .putBoolean("MATURECONTENTSWITCHVALUE", MATURECONTENTSWITCHVALUE)
-            .putBoolean("MULTIPLESTORES", MULTIPLESTORES)
-            .putBoolean("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE)
-            .putBoolean("SEARCHSTORES", SEARCHSTORES)
-            .putString("APTOIDETHEME", APTOIDETHEME)
-            .putString("MARKETNAME", MARKETNAME)
-            .putString("ADUNITID", ADUNITID)
-            .commit();
+                    .putBoolean("MATURECONTENTSWITCH", MATURECONTENTSWITCH)
+                    .putString("BRAND", BRAND)
+                    .putString("SPLASHSCREENLAND", SPLASHSCREENLAND)
+                    .putString("SPLASHSCREEN", SPLASHSCREEN)
+                    .putBoolean("MATURECONTENTSWITCHVALUE", MATURECONTENTSWITCHVALUE)
+                    .putBoolean("MULTIPLESTORES", MULTIPLESTORES)
+                    .putBoolean("CUSTOMEDITORSCHOICE", CUSTOMEDITORSCHOICE)
+                    .putBoolean("SEARCHSTORES", SEARCHSTORES)
+                    .putString("APTOIDETHEME", APTOIDETHEME)
+                    .putString("MARKETNAME", MARKETNAME)
+                    .putString("ADUNITID", ADUNITID)
+                    .commit();
 
-            if(!PreferenceManager.getDefaultSharedPreferences(context).contains("version")){
-                setRestartLauncher(true);
+            try {
+                if (PreferenceManager.getDefaultSharedPreferences(context).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+                    setRestartLauncher(true);
+                    PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode).commit();
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
             }
 
         }

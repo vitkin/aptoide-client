@@ -509,11 +509,19 @@ public class ServiceDownloadManager extends Service {
             thisCache = apk;
         }
 
+
+
+
+
+
 		Intent install = new Intent(Intent.ACTION_VIEW);
 		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		install.setDataAndType(Uri.fromFile(thisCache.getFile()),"application/vnd.android.package-archive");
 		Log.d("Aptoide", "Installing app: "+thisCache.getLocalPath());
 		startActivity(install);
+
+
+
 	}
 
 
@@ -635,9 +643,16 @@ public class ServiceDownloadManager extends Service {
 
 	private void checkDirectorySize(String dirPath) {
 		File dir = new File(dirPath);
+        if(!dir.exists()){
+            if(!dir.mkdirs()){
+                return;
+            }
+        }
 		double size = getDirSize(dir)/1024/1024;
 		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		if(size>=Integer.parseInt((sPref.getString("maxFileCache", "200")))){
+        long maxFileCache = Long.parseLong((sPref.getString("maxFileCache", "200")));
+
+		if(maxFileCache > 0 && size >= maxFileCache){
 			File[] files = dir.listFiles();
 			long latestTime = System.currentTimeMillis();
 			long currentTime = 0;

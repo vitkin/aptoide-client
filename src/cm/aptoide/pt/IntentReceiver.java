@@ -7,34 +7,12 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.content.*;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -46,9 +24,18 @@ import android.widget.TextView;
 import cm.aptoide.com.actionbarsherlock.app.SherlockActivity;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.ServiceDownloadManager;
-import cm.aptoide.pt.views.ViewApk;
-import cm.aptoide.pt.views.ViewCache;
-import cm.aptoide.pt.views.ViewDownloadManagement;
+import cm.aptoide.pt.views.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.*;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class IntentReceiver extends SherlockActivity implements OnDismissListener{
 //	private String TMP_MYAPP_FILE = Environment.getExternalStorageDirectory().getPath() + "/.aptoide/myapp";
@@ -171,10 +158,10 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 					installAppDialog.setTitle(ApplicationAptoide.MARKETNAME);
 					installAppDialog.setIcon(android.R.drawable.ic_menu_more);
 					installAppDialog.setCancelable(false);
-					
+
 					TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
 					message.setText(getString(R.string.installapp_alrt) +app.get("name")+"?");
-					
+
 					installAppDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface arg0, int arg1) {
@@ -184,8 +171,25 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 							apk.setVercode(0);
 							apk.setVername("");
 							apk.generateAppHashid();
+                            ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername());
+
+                            ViewCacheObb mainObbCache = null;
+                            if(app.get("main_path")!=null){
+                                mainObbCache = new ViewCacheObb((apk.getApkid()+".obb"+"|"+apk.getVercode()).hashCode(),app.get("main_filename"), app.get("main_md5sum"), cache, apk.getApkid());
+                            }
+
+                            ViewCacheObb patchObbCache = null;
+                            if(app.get("patch_path")!=null){
+                                patchObbCache = new ViewCacheObb((apk.getApkid()+".obb2"+"|"+apk.getVercode()).hashCode(),app.get("patch_filename"),  app.get("patch_md5sum"), cache, apk.getApkid());
+                            }
+                            ViewObb obb = null;
+
+                            if(mainObbCache!=null){
+                                obb = new ViewObb(app.get("main_path"), app.get("patch_path"), mainObbCache, patchObbCache);
+                            }
+
 							try {
-								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"),app.get("apkid"),""), null));
+								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"),app.get("apkid"),""), obb));
 							} catch (RemoteException e) {
 								e.printStackTrace();
 							}

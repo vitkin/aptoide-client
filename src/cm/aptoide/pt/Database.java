@@ -2782,8 +2782,7 @@ public class Database {
 		Cursor c = null;
 		yield();
 		try {
-			c = database.query(DbStructure.TABLE_SCHEDULED, null, null, null,
-					null, null, null);
+			c = database.query(DbStructure.TABLE_SCHEDULED, null, null, null,null, null, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -2791,8 +2790,22 @@ public class Database {
 		return c;
 	}
 
+    public boolean isScheduledDownloas(ViewApk apk) {
+
+        Cursor c = null;
+        yield();
+        try {
+            c = database.query(DbStructure.TABLE_SCHEDULED, new String[]{DbStructure.COLUMN__ID}, DbStructure.COLUMN_APKID + "= ?", new String[]{apk.getApkid()},null, null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return c != null && c.moveToFirst();
+
+    }
+
 	public void insertScheduledDownload(String apkid, int vercode,
-			String vername, String remotePath, String name, String md5, String icon) {
+			String vername, String remotePath, String name, String md5, String icon, String mainObbPath, String mainObbMd5sum, String mainObbFilename, String patchObbPath, String patchObbMd5sum, String patchObbFilename) {
 
 		Cursor c = database.query(DbStructure.TABLE_SCHEDULED, null,
 				"apkid = ? and vercode = ?",
@@ -2812,6 +2825,13 @@ public class Database {
 		values.put(DbStructure.COLUMN_VERNAME, vername);
 		values.put(DbStructure.COLUMN_REMOTE_PATH, remotePath);
 		values.put(DbStructure.COLUMN_ICON, icon);
+        values.put(DbStructure.COLUMN_MAINOBB_FILENAME, mainObbFilename);
+        values.put(DbStructure.COLUMN_MAINOBB_MD5, mainObbMd5sum);
+        values.put(DbStructure.COLUMN_MAINOBB_PATH, mainObbPath);
+        values.put(DbStructure.COLUMN_PATCHOBB_FILENAME, patchObbFilename);
+        values.put(DbStructure.COLUMN_PATCHOBB_MD5, patchObbMd5sum);
+        values.put(DbStructure.COLUMN_PATCHOBB_PATH, patchObbPath);
+
 
 		database.insert(DbStructure.TABLE_SCHEDULED, null, values);
 

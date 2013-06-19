@@ -289,7 +289,10 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
             public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
 //                AdView adView = (AdView)findViewById(R.id.adView);
 //                adView.loadAd(new AdRequest());
-
+                if(arg1==null){
+                    Toast.makeText(ApkInfo.this, getString(R.string.error_occured), Toast.LENGTH_LONG).show();
+                    finish();
+                }
                 mAdView = (MoPubView) findViewById(R.id.adview);
                 mAdView.setAdUnitId(ApplicationAptoide.ADUNITID); // Enter your Ad Unit ID from www.mopub.com
                 mAdView.loadAd();
@@ -807,6 +810,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
     private void setClickListeners() {
         if(getIntent().hasExtra("installed")){
             findViewById(R.id.btinstall).setOnClickListener(openListener );
+            scheduledDownloadChBox.setVisibility(View.GONE);
         }else if(getIntent().hasExtra("updates")){
             findViewById(R.id.btinstall).setOnClickListener(installListener);
         }else{
@@ -861,14 +865,17 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         });
 
         scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
+        scheduledDownloadChBox.setChecked(db.isScheduledDownloas(viewApk));
         scheduledDownloadChBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    ((Button) findViewById(R.id.btinstall)).setText(R.string.schDwnBtn);
+//                    ((Button) findViewById(R.id.btinstall)).setText(R.string.schDwnBtn);
+                    db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(), viewApk.getName(), viewApk.getMd5(), viewApk.getIcon(), mainObbUrl, mainObbMd5, mainObbName, patchObbUrl, patchObbMd5, patchObbName);
                 }else{
-                    ((Button) findViewById(R.id.btinstall)).setText(installString);
+//                    ((Button) findViewById(R.id.btinstall)).setText(installString);
+                    db.deleteScheduledDownload(viewApk.getApkid(), viewApk.getVername());
                 }
             }
         });
@@ -894,7 +901,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
             new Thread(new Runnable() {
                 public void run() {
                     if (scheduledDownloadChBox.isChecked()) {
-                        db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(), viewApk.getName(), viewApk.getMd5(), viewApk.getIcon());
+//                        db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(), viewApk.getName(), viewApk.getMd5(), viewApk.getIcon(), mainObbUrl, mainObbMd5, mainObbName, patchObbUrl, patchObbMd5, patchObbName);
                         runOnUiThread(new Runnable() {
 
                             @Override
@@ -903,6 +910,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                                 toast.show();
                             }
                         });
+                        findViewById(R.id.btinstall).setOnClickListener(installListener);
                     } else {
 
                         ViewCache cache = new ViewCache(viewApk.hashCode(), viewApk.getMd5(), viewApk.getApkid(), viewApk.getVername());
@@ -1207,7 +1215,10 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         }
         unbindService(serviceManagerConnection);
         handler = null;
-        mAdView.destroy();
+        if(mAdView!=null){
+            mAdView.destroy();
+        }
+
     }
 
 
