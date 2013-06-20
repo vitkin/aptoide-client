@@ -2728,9 +2728,8 @@ public class Database {
 		Cursor c = null;
 		yield();
 		try {
-			c = database
-					.rawQuery(
-							"select a._id, b.featuredgraphicspath, a.featuredgraphic ,a.apkid, a.vercode from featured_editorschoice_apk a, featured_editorschoice_repo b where b._id = a.repo_id and  a.highlighted = 0 ",
+			c = database.rawQuery(
+							"select a._id, b.featuredgraphicspath, a.featuredgraphic ,a.apkid, a.vercode from featured_editorschoice_apk a, featured_editorschoice_repo b where b._id = a.repo_id and  a.highlighted = 0 " + filters(),
 							null);
 
 			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
@@ -2759,7 +2758,7 @@ public class Database {
 		try {
 			c = database
 					.rawQuery(
-							"select a._id, b.featuredgraphicspath, a.featuredgraphic ,a.apkid, a.vercode from featured_editorschoice_apk a, featured_editorschoice_repo b where a.highlighted = 1 ",
+							"select a._id, b.featuredgraphicspath, a.featuredgraphic ,a.apkid, a.vercode from featured_editorschoice_apk a, featured_editorschoice_repo b where a.highlighted = 1 " + filters(),
 							null);
 
 			for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
