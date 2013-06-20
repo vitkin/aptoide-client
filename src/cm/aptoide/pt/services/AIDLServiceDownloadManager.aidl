@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
@@ -32,12 +32,12 @@ import cm.aptoide.pt.AIDLDownloadObserver;
  *
  */
 interface AIDLServiceDownloadManager {
-	
+
 	void callRegisterDownloadManager(in AIDLDownloadManager downloadManager);
 	void callUnregisterDownloadManager();
 	void callRegisterDownloadObserver(in int appHashId, in AIDLDownloadObserver downloadObserver);
 	void callUnregisterDownloadObserver(in int appHashId);
-	void callInstallApp(in ViewCache apk);
+	void callInstallApp(in ViewDownloadManagement apk);
 	ViewDownloadManagement callGetAppDownloading(in int appHashId);
 	void callStartDownload(in ViewDownloadManagement download);
 	void callStartDownloadAndObserve(in ViewDownloadManagement download, in AIDLDownloadObserver downloadObserver);
@@ -52,5 +52,5 @@ interface AIDLServiceDownloadManager {
 	boolean callAreDownloadsFailed();
 	ViewListDownloads callGetDownloadsFailed();
 	void callClearDownloads();
-	
+
 }

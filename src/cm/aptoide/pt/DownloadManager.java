@@ -300,7 +300,7 @@ public class DownloadManager extends SherlockActivity /*SherlockActivity */{
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				try {
-					serviceManager.callInstallApp(downloadedAdapter.getItem(position).getCache());
+					serviceManager.callInstallApp(downloadedAdapter.getItem(position));
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

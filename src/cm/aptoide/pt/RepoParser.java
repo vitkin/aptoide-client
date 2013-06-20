@@ -7,7 +7,6 @@
  ******************************************************************************/
 package cm.aptoide.pt;
 
-import android.content.Intent;
 import android.util.Log;
 
 import javax.xml.parsers.SAXParser;
@@ -90,9 +89,6 @@ public class RepoParser {
 				new File(xml).delete();
 			}
 			server.state = cm.aptoide.pt.Server.State.PARSED;
-			
-			ApplicationAptoide.getContext().sendBroadcast(new Intent("parse_completed"));
-			
 			db.updateStatus(server);
 			db.endTransation(server);
 

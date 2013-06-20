@@ -293,7 +293,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     Toast.makeText(ApkInfo.this, getString(R.string.error_occured), Toast.LENGTH_LONG).show();
                     finish();
                 }
-                mAdView = (MoPubView) findViewById(R.id.adview);
+                mAdView = (MoPubView)findViewById(R.id.adview);
                 mAdView.setAdUnitId(ApplicationAptoide.ADUNITID); // Enter your Ad Unit ID from www.mopub.com
                 mAdView.loadAd();
                 pd.dismiss();
@@ -305,7 +305,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     }
                 }).start();
 
-
+                Log.d("Aptoide-ApkInfo", "1");
                 mainObbUrl = viewApk.getMainObbUrl();
                 mainObbMd5 = viewApk.getMainObbMd5();
                 mainObbName = viewApk.getMainObbFileName();
@@ -320,6 +320,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     setLikes(viewApk.getLikes()+"", viewApk.getDislikes()+"");
                 }
 
+                Log.d("Aptoide-ApkInfo", "2");
                 if(viewApk.getComments().size()>0){
                     setComments(viewApk.getComments());
                     loading.setVisibility(View.GONE);
@@ -363,9 +364,10 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                     findViewById(R.id.inst_version).setVisibility(View.GONE);
                 }
 
-
+                Log.d("Aptoide-ApkInfo", "3");
                 repo_string = viewApk.getRepoName();
                 checkDownloadStatus();
+                Log.d("Aptoide-ApkInfo", "4");
                 webservicespath = viewApk.getWebservicesPath();
 
                 try {
@@ -390,9 +392,9 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                         .build();
                 ImageLoader.getInstance().displayImage(viewApk.getIcon(), (ImageView) findViewById(R.id.app_icon), options, null, (viewApk.getApkid()+"|"+viewApk.getVercode()));
 
-
+                Log.d("Aptoide-ApkInfo", "5");
                 new GetApkInfo().execute();
-
+                Log.d("Aptoide-ApkInfo", "6");
 
 				/*Comments comments = new Comments(context,webservicespath);
 				comments.getComments(repo_string, viewApk.getApkid(),viewApk.getVername(),(LinearLayout) findViewById(R.id.commentContainer), false);*/
@@ -808,10 +810,10 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
      *
      */
     private void setClickListeners() {
-    	
+
         scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
 
-    	
+
         if(getIntent().hasExtra("installed")){
             findViewById(R.id.btinstall).setOnClickListener(openListener );
             scheduledDownloadChBox.setVisibility(View.GONE);

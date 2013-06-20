@@ -19,6 +19,7 @@
 */
 package cm.aptoide.pt.services;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -41,7 +42,11 @@ import cm.aptoide.pt.R;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.views.*;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.lang.Process;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -138,7 +143,7 @@ public class ServiceDownloadManager extends Service {
 		}
 
 		@Override
-		public void callInstallApp(ViewCache apk) throws RemoteException {
+		public void callInstallApp(ViewDownloadManagement apk) throws RemoteException {
 			Log.d("Aptoide-ServiceDownloadManager", "installing app");
 			installApp(apk, false);
 		}
@@ -419,7 +424,7 @@ public class ServiceDownloadManager extends Service {
 
                 if(download.isInstall()){
 
-                    installApp(download.getCache(), download.isObb());
+                    installApp(download, download.isObb());
                 }
 
 
@@ -496,7 +501,7 @@ public class ServiceDownloadManager extends Service {
 
 
 
-	public void installApp(ViewCache apk, boolean isObb){
+	public void installApp(final ViewDownloadManagement apk, boolean isObb){
 //		if(isAppScheduledToInstall(appHashid)){
 //			unscheduleInstallApp(appHashid);
 //		}
@@ -504,9 +509,9 @@ public class ServiceDownloadManager extends Service {
         ViewCache thisCache;
 
         if(isObb){
-            thisCache = ((ViewCacheObb)apk).getParentCache();
+            thisCache = ((ViewCacheObb)apk.getCache()).getParentCache();
         }else{
-            thisCache = apk;
+            thisCache = apk.getCache();
         }
 
 
@@ -514,15 +519,147 @@ public class ServiceDownloadManager extends Service {
 
 
 
-		Intent install = new Intent(Intent.ACTION_VIEW);
-		install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		install.setDataAndType(Uri.fromFile(thisCache.getFile()),"application/vnd.android.package-archive");
-		Log.d("Aptoide", "Installing app: "+thisCache.getLocalPath());
-		startActivity(install);
+        if(canRunRootCommands()){
+
+            try {
+                final Process p = Runtime.getRuntime().exec("su");
+
+                DataOutputStream os = new DataOutputStream(p.getOutputStream());
+                // Execute commands that require root access
+                os.writeBytes("pm install " + apk.getCache().getLocalPath() + "\n");
+                os.flush();
+                mBuilder = new NotificationCompat.Builder(this);
+
+                Intent onClick = new Intent(Intent.ACTION_VIEW);
+                onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                onClick.setDataAndType(Uri.fromFile(apk.getCache().getFile()),"application/vnd.android.package-archive");
+
+                // The PendingIntent to launch our activity if the user selects this notification
+                PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
+                mBuilder.setContentTitle(ApplicationAptoide.MARKETNAME)
+                        .setContentText(getString(R.string.installing, apk.getAppInfo().getName()));
+
+                Bitmap bm = BitmapFactory.decodeFile(ImageLoader.getInstance().getDiscCache().get(apk.getAppInfo().getApkid() + "|" + apk.getAppInfo().getVercode()).getAbsolutePath());
+
+
+                mBuilder.setLargeIcon(bm);
+                mBuilder.setSmallIcon(android.R.drawable.stat_sys_download);
+                mBuilder.setContentIntent(onClickAction);
+                mBuilder.setAutoCancel(true);
+                managerNotification.notify(apk.getAppInfo().getAppHashId(), mBuilder.build());
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            p.waitFor();
+
+                            mBuilder = new NotificationCompat.Builder(getApplicationContext());
+
+                            Intent onClick = new Intent(Intent.ACTION_VIEW);
+                            onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            onClick.setDataAndType(Uri.fromFile(apk.getCache().getFile()),"application/vnd.android.package-archive");
+
+                            // The PendingIntent to launch our activity if the user selects this notification
+                            PendingIntent onClickAction = PendingIntent.getActivity(getApplicationContext(), 0, onClick, 0);
+                            mBuilder.setContentTitle(ApplicationAptoide.MARKETNAME)
+                                    .setContentText(getString(R.string.finished_install, apk.getAppInfo().getName()));
+
+                            Bitmap bm = BitmapFactory.decodeFile(ImageLoader.getInstance().getDiscCache().get(apk.getAppInfo().getApkid() + "|" + apk.getAppInfo().getVercode()).getAbsolutePath());
+
+
+                            mBuilder.setLargeIcon(bm);
+                            mBuilder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+                            mBuilder.setContentIntent(onClickAction);
+                            mBuilder.setAutoCancel(true);
+                            managerNotification.notify(apk.getAppInfo().getAppHashId(), mBuilder.build());
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
+
+
+                    }
+                }).start();
+                //a instalar app
+                // app instalada
+
+                os.writeBytes("exit\n");
+                os.flush();
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+
+        }else{
+
+            Intent install = new Intent(Intent.ACTION_VIEW);
+            install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            install.setDataAndType(Uri.fromFile(thisCache.getFile()),"application/vnd.android.package-archive");
+            Log.d("Aptoide", "Installing app: "+thisCache.getLocalPath());
+            startActivity(install);
+
+        }
 
 
 
 	}
+
+    public static boolean canRunRootCommands()
+    {
+        boolean retval = false;
+        Process suProcess;
+
+        try
+        {
+            suProcess = Runtime.getRuntime().exec("su");
+
+            DataOutputStream os = new DataOutputStream(suProcess.getOutputStream());
+            DataInputStream osRes = new DataInputStream(suProcess.getInputStream());
+
+            if (null != os && null != osRes)
+            {
+                // Getting the id of the current user to check if this is root
+                os.writeBytes("id\n");
+                os.flush();
+
+                String currUid = osRes.readLine();
+                boolean exitSu = false;
+                if (null == currUid)
+                {
+                    retval = false;
+                    exitSu = false;
+                    Log.d("ROOT", "Can't get root access or denied by user");
+                }
+                else if (true == currUid.contains("uid=0"))
+                {
+                    retval = true;
+                    exitSu = true;
+                    Log.d("ROOT", "Root access granted");
+                }
+                else
+                {
+                    retval = false;
+                    exitSu = true;
+                    Log.d("ROOT", "Root access rejected: " + currUid);
+                }
+
+                if (exitSu)
+                {
+                    os.writeBytes("exit\n");
+                    os.flush();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            // Can't get root !
+            // Probably broken pipe exception on trying to write to output stream (os) after su failed, meaning that the device is not rooted
+
+            retval = false;
+            Log.d("ROOT", "Root access rejected [" + e.getClass().getName() + "] : " + e.getMessage());
+        }
+
+        return retval;
+    }
 
 
 
