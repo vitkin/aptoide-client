@@ -105,7 +105,7 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 		db=Database.getInstance();
 		String uri = getIntent().getDataString();
 		System.out.println(uri);
-		if(uri.startsWith("aptoiderepo")){
+		if(uri.startsWith("aptoiderepo") && ApplicationAptoide.MULTIPLESTORES){
 
 			ArrayList<String> repo = new ArrayList<String>();
 			repo.add(uri.substring(14));
@@ -115,12 +115,10 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 			startActivity(i);
 			i = new Intent("pt.caixamagica.aptoide.NEWREPO");
 			i.putExtra("newrepo", repo);
-			if(ApplicationAptoide.MULTIPLESTORES){
-				sendBroadcast(i);
-			}
+			sendBroadcast(i);
 			finish();
 
-		}else if(uri.startsWith("aptoidexml")){
+		}else if(uri.startsWith("aptoidexml") && ApplicationAptoide.MULTIPLESTORES){
 			String repo = uri.substring(13);
 			parseXmlString(repo);
 			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
@@ -129,9 +127,7 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 			startActivity(i);
 			i = new Intent("pt.caixamagica.aptoide.NEWREPO");
 			i.putExtra("newrepo", repo);
-			if(ApplicationAptoide.MULTIPLESTORES){
-				sendBroadcast(i);
-			}
+			sendBroadcast(i);
 			finish();
 		}else if(uri.startsWith("market")){
 			String params = uri.split("&")[0];
@@ -146,67 +142,70 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 			String param = uri.split("=")[1];
 			startMarketIntent(param);
 		}else{
-			try{
-				System.out.println(getIntent().getDataString());
-				downloadMyappFile(getIntent().getDataString());
-				parseXmlMyapp(TMP_MYAPP_FILE);
+			if(ApplicationAptoide.SEARCHSTORES){			
+				try{
+					System.out.println(getIntent().getDataString());
+					downloadMyappFile(getIntent().getDataString());
+					parseXmlMyapp(TMP_MYAPP_FILE);
 
-				if(app!=null&&!app.isEmpty()){
-					View simpleView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
-					Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleView);
-					final AlertDialog installAppDialog = dialogBuilder.create();
-					installAppDialog.setTitle(ApplicationAptoide.MARKETNAME);
-					installAppDialog.setIcon(android.R.drawable.ic_menu_more);
-					installAppDialog.setCancelable(false);
+					if(app!=null&&!app.isEmpty()){
+						View simpleView = LayoutInflater.from(this).inflate(R.layout.dialog_simple_layout, null);
+						Builder dialogBuilder = new AlertDialog.Builder(this).setView(simpleView);
+						final AlertDialog installAppDialog = dialogBuilder.create();
+						installAppDialog.setTitle(ApplicationAptoide.MARKETNAME);
+						installAppDialog.setIcon(android.R.drawable.ic_menu_more);
+						installAppDialog.setCancelable(false);
 
-					TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
-					message.setText(getString(R.string.installapp_alrt) +app.get("name")+"?");
+						TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+						message.setText(getString(R.string.installapp_alrt) +app.get("name")+"?");
 
-					installAppDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							ViewApk apk = new ViewApk();
-							apk.setApkid(app.get("apkid"));
-							apk.setName(app.get("name"));
-							apk.setVercode(0);
-							apk.setVername("");
-							apk.generateAppHashid();
-                            ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername());
+						installAppDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface arg0, int arg1) {
+								ViewApk apk = new ViewApk();
+								apk.setApkid(app.get("apkid"));
+								apk.setName(app.get("name"));
+								apk.setVercode(0);
+								apk.setVername("");
+								apk.generateAppHashid();
+								ViewCache cache = new ViewCache(apk.hashCode(), apk.getMd5(), apk.getApkid(), apk.getVername());
 
-                            ViewCacheObb mainObbCache = null;
-                            if(app.get("main_path")!=null){
-                                mainObbCache = new ViewCacheObb((apk.getApkid()+".obb"+"|"+apk.getVercode()).hashCode(),app.get("main_filename"), app.get("main_md5sum"), cache, apk.getApkid());
-                            }
+								ViewCacheObb mainObbCache = null;
+								if(app.get("main_path")!=null){
+									mainObbCache = new ViewCacheObb((apk.getApkid()+".obb"+"|"+apk.getVercode()).hashCode(),app.get("main_filename"), app.get("main_md5sum"), cache, apk.getApkid());
+								}
 
-                            ViewCacheObb patchObbCache = null;
-                            if(app.get("patch_path")!=null){
-                                patchObbCache = new ViewCacheObb((apk.getApkid()+".obb2"+"|"+apk.getVercode()).hashCode(),app.get("patch_filename"),  app.get("patch_md5sum"), cache, apk.getApkid());
-                            }
-                            ViewObb obb = null;
+								ViewCacheObb patchObbCache = null;
+								if(app.get("patch_path")!=null){
+									patchObbCache = new ViewCacheObb((apk.getApkid()+".obb2"+"|"+apk.getVercode()).hashCode(),app.get("patch_filename"),  app.get("patch_md5sum"), cache, apk.getApkid());
+								}
+								ViewObb obb = null;
 
-                            if(mainObbCache!=null){
-                                obb = new ViewObb(app.get("main_path"), app.get("patch_path"), mainObbCache, patchObbCache);
-                            }
+								if(mainObbCache!=null){
+									obb = new ViewObb(app.get("main_path"), app.get("patch_path"), mainObbCache, patchObbCache);
+								}
 
-							try {
-								serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"),app.get("apkid"),""), obb));
-							} catch (RemoteException e) {
-								e.printStackTrace();
+								try {
+									serviceDownloadManager.callStartDownload(new ViewDownloadManagement(app.get("path"),apk,new ViewCache(apk.hashCode(), app.get("md5sum"),app.get("apkid"),""), obb));
+								} catch (RemoteException e) {
+									e.printStackTrace();
+								}
 							}
-					    }
-					});
-					installAppDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), neutralListener);
-					installAppDialog.setOnDismissListener(this);
-					installAppDialog.show();
+						});
+						installAppDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), neutralListener);
+						installAppDialog.setOnDismissListener(this);
+						installAppDialog.show();
 
-				}else{
-					proceed();
+					}else{
+						proceed();
+					}
+
+				}catch (Exception e) {
+					e.printStackTrace();
 				}
-
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-
+			}else{
+				proceed();
+			}
 		}
 
 	}
@@ -229,18 +228,18 @@ public class IntentReceiver extends SherlockActivity implements OnDismissListene
 	}
 
 	private void proceed() {
-		if(server!=null){
+		if(server!=null && ApplicationAptoide.MULTIPLESTORES){
 			Intent i = new Intent(IntentReceiver.this,MainActivity.class);
 			i.putExtra("newrepo", server);
 			i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
 			startActivity(i);
 			i = new Intent("pt.caixamagica.aptoide.NEWREPO");
 			i.putExtra("newrepo", server);
-			if(ApplicationAptoide.MULTIPLESTORES){
-				sendBroadcast(i);
-			}
-			finish();
+			sendBroadcast(i);
+			
 		}
+		
+		finish();
 	}
 
 

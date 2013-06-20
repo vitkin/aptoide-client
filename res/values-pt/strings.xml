@@ -124,7 +124,7 @@
   <string name="order_popup_catg1">Por categoria</string>
   <string name="order_popup_catg2">Todas as aplicações</string>
   <string name="update_repos">Actualizar a loja</string>
-  <string name="update_main">A lista de lojas em uso foram alteradas.\nVocê deseja actualizá-las?</string>
+  <string name="update_main">A lista de lojas em uso foram alteradas.\nDeseja actualizá-las?</string>
   <string name="pass_confirmation">Confirmação da password</string>
   <string name="setting_icon_download_rules">Regras de download de icons</string>
   <string name="setting_ethernet">Por cabo</string>

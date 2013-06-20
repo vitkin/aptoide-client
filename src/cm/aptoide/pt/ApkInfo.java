@@ -808,6 +808,10 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
      *
      */
     private void setClickListeners() {
+    	
+        scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
+
+    	
         if(getIntent().hasExtra("installed")){
             findViewById(R.id.btinstall).setOnClickListener(openListener );
             scheduledDownloadChBox.setVisibility(View.GONE);
@@ -864,7 +868,6 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
             }
         });
 
-        scheduledDownloadChBox = (CheckBox) findViewById(R.id.schedule_download_box);
         scheduledDownloadChBox.setChecked(db.isScheduledDownloas(viewApk));
         scheduledDownloadChBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 

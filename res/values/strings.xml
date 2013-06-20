@@ -372,5 +372,6 @@
     <string name="unknown">Unknown</string>
     <string name="error_no_market">You don\'t have Google Market installed!</string>
 
-
+	<string name="new_updates">There are %s new update(s) for your apps!</string>
+	<string name="has_updates">%s has update(s)!</string>
 </resources>
