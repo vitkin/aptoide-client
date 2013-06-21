@@ -940,18 +940,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 	protected void addStore(String uri_str, String username, String password) {
 
-		if (uri_str.contains("http//")) {
-			uri_str = uri_str.replaceFirst("http//", "http://");
-		}
-
-		if (uri_str.length() != 0 && uri_str.charAt(uri_str.length() - 1) != '/') {
-			uri_str = uri_str + '/';
-			Log.d("Aptoide-ManageRepo", "repo uri: " + uri_str);
-		}
-		if (!uri_str.startsWith("http://")) {
-			uri_str = "http://" + uri_str;
-			Log.d("Aptoide-ManageRepo", "repo uri: " + uri_str);
-		}
+        uri_str = RepoUtils.formatRepoUri(uri_str);
 		if (username != null && username.contains("@")) {
 			try {
 				password = Algorithms.computeSHA1sum(password);
@@ -1025,7 +1014,8 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 	}
 
-	@Override
+
+    @Override
 	public boolean onPrepareOptionsMenu(cm.aptoide.com.actionbarsherlock.view.Menu menu) {
 		menu.clear();
 		// menu.add(Menu.NONE, EnumOptionsMenu.SEARCH.ordinal(),
@@ -1441,27 +1431,33 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			if (intent.hasExtra("newrepo")) {
 				ArrayList<String> repos = (ArrayList<String>) intent.getSerializableExtra("newrepo");
 				for (final String uri2 : repos) {
-					View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
-					Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
-					final AlertDialog addNewStoreDialog = dialogBuilder.create();
-					addNewStoreDialog.setTitle(getString(R.string.add_store));
-					addNewStoreDialog.setIcon(android.R.drawable.ic_menu_add);
-					TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
-					message.setText(getString(R.string.newrepo_alrt) + uri2 + " ?");
-					addNewStoreDialog.setCancelable(false);
-					addNewStoreDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface arg0, int arg1) {
-							dialogAddStore(uri2, null, null);
-					    }
-					});
-					addNewStoreDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog, int arg1) {
-							dialog.cancel();
-					    }
-					});
-					addNewStoreDialog.show();
+                    if(Database.getInstance().getServer(RepoUtils.formatRepoUri(uri2))!=null){
+                        Toast.makeText(MainActivity.this, "Store already added", Toast.LENGTH_LONG).show();
+                    }else{
+                        View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+                        Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+                        final AlertDialog addNewRepoDialog = dialogBuilder.create();
+                        addNewRepoDialog.setTitle(getString(R.string.add_store));
+                        addNewRepoDialog.setIcon(android.R.drawable.ic_menu_add);
+
+                        TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+                        message.setText((getString(R.string.newrepo_alrt)+ uri2 + " ?"));
+
+                        addNewRepoDialog.setCancelable(false);
+                        addNewRepoDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface arg0, int arg1) {
+                                dialogAddStore(uri2, null, null);
+                            }
+                        });
+                        addNewRepoDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int arg1) {
+                                dialog.cancel();
+                            }
+                        });
+                        addNewRepoDialog.show();
+                    }
 				}
 			}
 
@@ -1705,29 +1701,35 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
                 if (getIntent().hasExtra("newrepo")) {
 					ArrayList<String> repos = (ArrayList<String>) getIntent().getSerializableExtra("newrepo");
 					for (final String uri2 : repos) {
-						View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
-						Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
-						final AlertDialog addNewRepoDialog = dialogBuilder.create();
-						addNewRepoDialog.setTitle(getString(R.string.add_store));
-						addNewRepoDialog.setIcon(android.R.drawable.ic_menu_add);
 
-						TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
-						message.setText((getString(R.string.newrepo_alrt)+ uri2 + " ?"));
+                        if(Database.getInstance().getServer(RepoUtils.formatRepoUri(uri2))!=null){
+                            Toast.makeText(this, "Store already added", Toast.LENGTH_LONG).show();
+                        }else{
+                            View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);
+                            Builder dialogBuilder = new AlertDialog.Builder(mContext).setView(simpleView);
+                            final AlertDialog addNewRepoDialog = dialogBuilder.create();
+                            addNewRepoDialog.setTitle(getString(R.string.add_store));
+                            addNewRepoDialog.setIcon(android.R.drawable.ic_menu_add);
 
-						addNewRepoDialog.setCancelable(false);
-						addNewRepoDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface arg0, int arg1) {
-								dialogAddStore(uri2, null, null);
-						    }
-						});
-						addNewRepoDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int arg1) {
-								dialog.cancel();
-						    }
-						});
-						addNewRepoDialog.show();
+                            TextView message = (TextView) simpleView.findViewById(R.id.dialog_message);
+                            message.setText((getString(R.string.newrepo_alrt)+ uri2 + " ?"));
+
+                            addNewRepoDialog.setCancelable(false);
+                            addNewRepoDialog.setButton(Dialog.BUTTON_POSITIVE, getString(android.R.string.yes), new Dialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    dialogAddStore(uri2, null, null);
+                                }
+                            });
+                            addNewRepoDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(android.R.string.no), new Dialog.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int arg1) {
+                                    dialog.cancel();
+                                }
+                            });
+                            addNewRepoDialog.show();
+                        }
+
 					}
 				} else if (db.getStores(false).getCount() == 0 && ApplicationAptoide.DEFAULTSTORENAME == null && serversFileIsEmpty) {
 					View simpleView = LayoutInflater.from(mContext).inflate(R.layout.dialog_simple_layout, null);

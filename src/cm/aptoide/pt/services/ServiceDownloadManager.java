@@ -42,12 +42,10 @@ import cm.aptoide.pt.R;
 import cm.aptoide.pt.util.Constants;
 import cm.aptoide.pt.views.*;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.Process;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -526,13 +524,11 @@ public class ServiceDownloadManager extends Service {
 
                 DataOutputStream os = new DataOutputStream(p.getOutputStream());
                 // Execute commands that require root access
-                os.writeBytes("pm install " + apk.getCache().getLocalPath() + "\n");
+                os.writeBytes("pm install -r " + apk.getCache().getLocalPath() + "\n");
                 os.flush();
                 mBuilder = new NotificationCompat.Builder(this);
 
-                Intent onClick = new Intent(Intent.ACTION_VIEW);
-                onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                onClick.setDataAndType(Uri.fromFile(apk.getCache().getFile()),"application/vnd.android.package-archive");
+                Intent onClick = new Intent();
 
                 // The PendingIntent to launch our activity if the user selects this notification
                 PendingIntent onClickAction = PendingIntent.getActivity(this, 0, onClick, 0);
@@ -551,13 +547,25 @@ public class ServiceDownloadManager extends Service {
                     @Override
                     public void run() {
                         try {
+
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+                            int read;
+                            char[] buffer = new char[4096];
+                            StringBuilder output = new StringBuilder();
+                            while ((read = reader.read(buffer)) > 0) {
+                                output.append(buffer, 0, read);
+                            }
+                            reader.close();
                             p.waitFor();
+
+                            String failure = output.toString();
+
+                            if (p.exitValue() != 255 && !failure.toLowerCase(Locale.ENGLISH).contains("failure")) {
+                                // Sucess :-)
 
                             mBuilder = new NotificationCompat.Builder(getApplicationContext());
 
-                            Intent onClick = new Intent(Intent.ACTION_VIEW);
-                            onClick.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            onClick.setDataAndType(Uri.fromFile(apk.getCache().getFile()),"application/vnd.android.package-archive");
+                            Intent onClick = new Intent(getPackageManager().getLaunchIntentForPackage(apk.getAppInfo().getApkid()));
 
                             // The PendingIntent to launch our activity if the user selects this notification
                             PendingIntent onClickAction = PendingIntent.getActivity(getApplicationContext(), 0, onClick, 0);
@@ -572,16 +580,24 @@ public class ServiceDownloadManager extends Service {
                             mBuilder.setContentIntent(onClickAction);
                             mBuilder.setAutoCancel(true);
                             managerNotification.notify(apk.getAppInfo().getAppHashId(), mBuilder.build());
+                            }else{
 
+                                managerNotification.cancel(apk.getAppInfo().getAppHashId());
+                                Intent install = new Intent(Intent.ACTION_VIEW);
+                                install.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                install.setDataAndType(Uri.fromFile(apk.getCache().getFile()),"application/vnd.android.package-archive");
+                                Log.d("Aptoide", "Installing app: "+apk.getCache().getLocalPath());
+                                startActivity(install);
+                            }
                         } catch (InterruptedException e) {
-                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
 
 
                     }
                 }).start();
-                //a instalar app
-                // app instalada
 
                 os.writeBytes("exit\n");
                 os.flush();
