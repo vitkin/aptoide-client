@@ -576,6 +576,9 @@ public class MainService extends Service {
 			Context context = getApplicationContext();
 			CharSequence contentTitle = ApplicationAptoide.MARKETNAME;
 			CharSequence contentText = getString(R.string.new_updates, updates.getCount()+"");
+			if(updates.getCount()<2){
+				contentText = getString(R.string.one_new_update, updates.getCount()+"");
+			}
 			Intent notificationIntent = new Intent(context, MainActivity.class);
 			notificationIntent.putExtra("new_updates", true);
 			

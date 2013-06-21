@@ -2187,6 +2187,13 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 							System.out.println(item.getItemId());
 							db.addToExcludeUpdate(item.getItemId());
 							updatesLoader.forceLoad();
+							if(updatesListView.getAdapter().getCount()<2){
+								service.clearUpdatesList();
+								service.cancelUpdatesNotification();
+							}else{
+								service.clearUpdatesList();
+								service.setUpdatesNotification(Database.getInstance().getUpdates(Order.DATE));
+							}
 							return false;
 						}
 					});
