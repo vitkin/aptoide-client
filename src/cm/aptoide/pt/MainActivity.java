@@ -684,7 +684,10 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			if (Login.isLoggedIn(mContext)) {
 				loadRecommended();
 			}
-
+			
+			if (getIntent().hasExtra("new_updates")) {
+				pager.setCurrentItem(3);
+			}
 		}
 
 		@Override
@@ -790,7 +793,14 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 		}
 	};
-
+	
+	protected void onNewIntent(Intent intent) {
+		if(intent.hasExtra("new_updates")){
+			Log.d("MainActivity-onNewIntent","new_updates");
+			pager.setCurrentItem(3);
+		}
+	};
+	
 	private ListView updatesListView;
 
 	public class AddStoreCredentialsListener implements DialogInterface.OnClickListener {
@@ -1416,12 +1426,28 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			try {
 				installedLoader.forceLoad();
 				updatesLoader.forceLoad();
+				service.clearUpdatesList();
+				service.setUpdatesNotification(Database.getInstance().getUpdates(Order.DATE));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 
 		}
 	};
+	
+	private BroadcastReceiver openUpdatesReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(Context arg0, Intent arg1) {
+			try {
+				Log.d("MainActivity-openUpdatesReceiver","change page");
+				pager.setCurrentItem(3);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+	};
+	
 	protected Order order;
 	private BroadcastReceiver newRepoReceiver = new BroadcastReceiver() {
 
@@ -1633,6 +1659,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 				registerReceiver(loginReceiver, new IntentFilter("login"));
 				registerReceiver(storePasswordReceiver, new IntentFilter("401"));
 				registerReceiver(redrawInstalledReceiver, new IntentFilter("pt.caixamagica.aptoide.REDRAW"));
+				registerReceiver(openUpdatesReceiver, new IntentFilter("open_updates"));
 				if (!ApplicationAptoide.MULTIPLESTORES) {
 					registerReceiver(parseFailedReceiver, new IntentFilter("PARSE_FAILED"));
 				}
@@ -2255,6 +2282,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			unregisterReceiver(loginReceiver);
 			unregisterReceiver(newRepoReceiver);
 			unregisterReceiver(storePasswordReceiver);
+			unregisterReceiver(openUpdatesReceiver);
 			if (!ApplicationAptoide.MULTIPLESTORES) {
 				unregisterReceiver(parseFailedReceiver);
 			}

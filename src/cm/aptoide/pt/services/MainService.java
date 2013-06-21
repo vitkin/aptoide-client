@@ -7,26 +7,47 @@
  ******************************************************************************/
 package cm.aptoide.pt.services;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
+import org.json.JSONObject;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
-import cm.aptoide.pt.*;
+import android.util.Log;
+import cm.aptoide.pt.ApplicationAptoide;
+import cm.aptoide.pt.Category;
+import cm.aptoide.pt.Database;
+import cm.aptoide.pt.DbStructure;
+import cm.aptoide.pt.ExtrasService;
+import cm.aptoide.pt.MainActivity;
+import cm.aptoide.pt.Order;
+import cm.aptoide.pt.R;
+import cm.aptoide.pt.RepoParser;
+import cm.aptoide.pt.Server;
 import cm.aptoide.pt.Server.State;
+import cm.aptoide.pt.ServerLatest;
+import cm.aptoide.pt.ServerTop;
 import cm.aptoide.pt.exceptions.AptoideException;
 import cm.aptoide.pt.util.NetworkUtils;
 import cm.aptoide.pt.util.RepoUtils;
-import org.json.JSONObject;
-
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
 
 public class MainService extends Service {
 //	Database db;
@@ -39,9 +60,12 @@ public class MainService extends Service {
 	String defaultBootConfigXmlPath = defaultPath+"/.aptoide/boot_config.xml";
 
 	static ArrayList<String> serversParsing = new ArrayList<String>();
+	private static final int ID_UPDATES_NOTIFICATION = 1;
+	private ArrayList<String> updatesList = new ArrayList<String>();
 	@Override
 	public IBinder onBind(Intent intent) {
 		registerReceiver(receiver , new IntentFilter("complete"));
+		registerReceiver(parseCompletedReceiver , new IntentFilter("parse_completed"));
 		return new LocalBinder();
 	}
 	private BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -57,7 +81,18 @@ public class MainService extends Service {
 		}
 	};
 
-
+	private BroadcastReceiver parseCompletedReceiver = new BroadcastReceiver() {
+		@Override
+		public void onReceive(final Context context, Intent intent) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Cursor updates = Database.getInstance().getUpdates(Order.DATE);
+					setUpdatesNotification(updates);
+				}
+			}).start();
+		}
+	};
 
 
     public class LocalBinder extends Binder{
@@ -187,6 +222,7 @@ public class MainService extends Service {
 	@Override
 	public void onDestroy() {
 		unregisterReceiver(receiver);
+		unregisterReceiver(parseCompletedReceiver);
 		System.out.println("MainService OnDestroy");
 		try{
 			File[] files = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide").listFiles();
@@ -350,6 +386,8 @@ public class MainService extends Service {
 	public boolean deleteStore(Database db, long id){
 		if(!serversParsing.contains(db.getServer(id, false).url)){
 			db.deleteServer(id,true);
+			clearUpdatesList();
+			cancelUpdatesNotification();
 			return true;
 		}
 		return false;
@@ -494,5 +532,60 @@ public class MainService extends Service {
 	    return String.format("%.1f %c",
 	                         count / Math.pow(1000, exp),
 	                         "kMGTPE".charAt(exp-1));
+	}
+	
+	public void clearUpdatesList(){
+		updatesList.clear();
+	}
+	
+	public void cancelUpdatesNotification(){
+		if (Context.NOTIFICATION_SERVICE!=null) {
+	        String ns = Context.NOTIFICATION_SERVICE;
+	        NotificationManager nMgr = (NotificationManager) getApplicationContext().getSystemService(ns);
+	        nMgr.cancel(ID_UPDATES_NOTIFICATION);
+	    }
+	}
+	
+	public void setUpdatesNotification(Cursor updates) {
+		boolean isNotification = false;
+		
+		if(!updates.isClosed()){
+			for(updates.moveToFirst(); !updates.isAfterLast(); updates.moveToNext()){
+				String updateApkid = updates.getString(updates.getColumnIndex(DbStructure.COLUMN_APKID));
+				if(!updatesList.contains(updateApkid)){
+					updatesList.add(updateApkid);
+					isNotification = true;
+				}
+
+			}
+		
+		}
+		
+		if(isNotification){
+			
+			NotificationManager managerNotification = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			int icon = android.R.drawable.stat_sys_download_done;
+			if(ApplicationAptoide.MARKETNAME.equals("Aptoide")){
+				icon = R.drawable.ic_notification;
+			}
+			CharSequence tickerText = getString(R.string.has_updates, ApplicationAptoide.MARKETNAME);
+			long when = System.currentTimeMillis();
+
+			Notification notification = new Notification(icon, tickerText, when);
+			
+			Context context = getApplicationContext();
+			CharSequence contentTitle = ApplicationAptoide.MARKETNAME;
+			CharSequence contentText = getString(R.string.new_updates, updates.getCount()+"");
+			Intent notificationIntent = new Intent(context, MainActivity.class);
+			notificationIntent.putExtra("new_updates", true);
+			
+			PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
+			notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
+			
+			managerNotification.notify(ID_UPDATES_NOTIFICATION, notification);
+			
+			
+			Log.d("Aptoide-MainActivity","Set updates notification");
+		}
 	}
 }

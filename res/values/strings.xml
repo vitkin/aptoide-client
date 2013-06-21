@@ -385,5 +385,6 @@
     <string name="finished_install">%s has been installed.</string>
     <string name="installing">%s is installing...</string>
 
-
+	<string name="new_updates">There are %s new update(s) for your apps!</string>
+	<string name="has_updates">%s has update(s)!</string>
 </resources>

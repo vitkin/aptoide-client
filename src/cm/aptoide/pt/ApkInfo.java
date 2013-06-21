@@ -59,9 +59,15 @@ import cm.aptoide.pt.webservices.comments.ViewComments;
 import cm.aptoide.pt.webservices.login.Login;
 import cm.aptoide.pt.webservices.taste.EnumUserTaste;
 import cm.aptoide.pt.webservices.taste.Likes;
-import com.mopub.mobileads.MoPubView;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.mopub.mobileads.MoPubView;
+
+
+
+
+
 
 import java.io.IOException;
 import java.util.ArrayList;
