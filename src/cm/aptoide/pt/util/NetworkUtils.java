@@ -15,7 +15,6 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Configs;
-import cm.aptoide.pt.R;
 import cm.aptoide.pt.views.ViewIconDownloadPermissions;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,12 +105,13 @@ public class NetworkUtils {
 		SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mctx);
 		String myid = sPref.getString("myId", "NoInfo");
 		String myscr = sPref.getInt("scW", 0)+"x"+sPref.getInt("scH", 0);
+        String verString = sPref.getString("versionName", "NoVersion");
         String partnerid = "";
         if(ApplicationAptoide.PARTNERID!=null){
             partnerid = "PartnerID:"+ApplicationAptoide.PARTNERID+";";
         }
 
-		return "aptoide-" + mctx.getString(R.string.ver_str)+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, "")+";"+partnerid;
+		return "aptoide-" + verString+";"+ Configs.TERMINAL_INFO+";"+myscr+";id:"+myid+";"+sPref.getString(Configs.LOGIN_USER_LOGIN, "")+";"+partnerid;
 	}
 
 

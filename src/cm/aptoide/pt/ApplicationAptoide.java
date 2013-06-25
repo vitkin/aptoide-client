@@ -31,7 +31,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -131,6 +130,7 @@ public class ApplicationAptoide extends Application {
 
 	@Override
 	public void onCreate() {
+        Log.d("onCreate", "Aptoide");
 		ACRA.init(this);
 //
 
@@ -303,16 +303,13 @@ public class ApplicationAptoide extends Application {
                     .putString("ADUNITID", ADUNITID)
                     .commit();
 
-            try {
-                if (PreferenceManager.getDefaultSharedPreferences(context).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
-                    setRestartLauncher(true);
-                    PreferenceManager.getDefaultSharedPreferences(context).edit().putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode).commit();
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
+
 
         }
+
+
+
+
 
         DEBUG_FILE = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/.aptoide/debug.log");
 
@@ -401,16 +398,12 @@ public class ApplicationAptoide extends Application {
 
 
         managerPreferences = new ManagerPreferences(getApplicationContext());
+        managerPreferences.removePreviousShortcuts(this, false);
+        managerPreferences.removePreviousShortcuts(this, true);
 
-
-
-        if(!PreferenceManager.getDefaultSharedPreferences(context).contains("version")) {
-        	reDoLauncherShorcut = true;
-        }
-
-        if(reDoLauncherShorcut){
-        	managerPreferences.createLauncherShortcut(context);
-        }
+//        if(reDoLauncherShorcut){
+//        	managerPreferences.createLauncherShortcut(context);
+//        }
 
     }
 
@@ -454,6 +447,7 @@ public class ApplicationAptoide extends Application {
 
             }
         }
+
     }
 
     @SuppressLint("NewApi")
@@ -483,6 +477,7 @@ public class ApplicationAptoide extends Application {
         }catch (Exception e){
             e.printStackTrace();
         }
+        new ManagerPreferences(getContext()).createLauncherShortcut(getContext());
         Log.d("ApplicationAptoide", "End restartLauncher");
 
 

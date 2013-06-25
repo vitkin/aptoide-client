@@ -47,6 +47,7 @@ import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.adapters.UpdatesAdapter;
 import cm.aptoide.pt.adapters.ViewPagerAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
+import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.MainService;
 import cm.aptoide.pt.services.MainService.LocalBinder;
@@ -684,7 +685,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			if (Login.isLoggedIn(mContext)) {
 				loadRecommended();
 			}
-			
+
 			if (getIntent().hasExtra("new_updates")) {
 				pager.setCurrentItem(3);
 			}
@@ -793,14 +794,14 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 		}
 	};
-	
+
 	protected void onNewIntent(Intent intent) {
 		if(intent.hasExtra("new_updates")){
 			Log.d("MainActivity-onNewIntent","new_updates");
 			pager.setCurrentItem(3);
 		}
 	};
-	
+
 	private ListView updatesListView;
 
 	public class AddStoreCredentialsListener implements DialogInterface.OnClickListener {
@@ -1434,7 +1435,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 		}
 	};
-	
+
 	private BroadcastReceiver openUpdatesReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context arg0, Intent arg1) {
@@ -1447,7 +1448,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 		}
 	};
-	
+
 	protected Order order;
 	private BroadcastReceiver newRepoReceiver = new BroadcastReceiver() {
 
@@ -1534,6 +1535,9 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		serviceDownloadManagerIntent = new Intent(this, ServiceDownloadManager.class);
 		startService(serviceDownloadManagerIntent);
         mContext = this;
+
+
+
 
 		File sdcard_file = new File(SDCARD);
 		if (!sdcard_file.exists() || !sdcard_file.canWrite()) {
@@ -1826,6 +1830,19 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
             bannerStoreAvatar = (ImageView) banner.findViewById(R.id.banner_store_avatar);
             bannerStoreName = (TextView) banner.findViewById(R.id.banner_store_name);
             bannerStoreDescription = (AutoScaleTextView) banner.findViewById(R.id.banner_store_description);
+
+            try {
+
+                if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+                    ApplicationAptoide.setRestartLauncher(true);
+                    new ManagerPreferences(this).removePreviousShortcuts(this, false);
+                    PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode).commit();
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "ERROR", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 
@@ -2343,13 +2360,12 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
 			}
 		}
+        Log.d("TAAAG", ApplicationAptoide.isRestartLauncher()+" restartLauncher");
 
         if(ApplicationAptoide.isRestartLauncher()){
             ApplicationAptoide.restartLauncher(MainActivity.this);
             ApplicationAptoide.setRestartLauncher(false);
-
         }
-
 		return super.onKeyDown(keyCode, event);
 	}
 
