@@ -1332,6 +1332,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 	private void getUpdates() {
 		updatesLoader = getSupportLoaderManager().initLoader(UPDATES_LOADER, null, MainActivity.this);
 		updatesListView.setAdapter(updatesAdapter);
+		((UpdatesAdapter) updatesAdapter).setLoader(updatesLoader);
 	}
 
 	@Override
@@ -1426,7 +1427,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			try {
 				installedLoader.forceLoad();
 				updatesLoader.forceLoad();
-				service.clearUpdatesList();
 				service.setUpdatesNotification(Database.getInstance().getUpdates(Order.DATE));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -2187,13 +2187,10 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 							System.out.println(item.getItemId());
 							db.addToExcludeUpdate(item.getItemId());
 							updatesLoader.forceLoad();
-							if(updatesListView.getAdapter().getCount()<2){
-								service.clearUpdatesList();
-								service.cancelUpdatesNotification();
-							}else{
-								service.clearUpdatesList();
-								service.setUpdatesNotification(Database.getInstance().getUpdates(Order.DATE));
-							}
+							Toast toast = Toast.makeText(mContext,
+									mContext.getString(R.string.add_to_excluded_updates_list),
+									Toast.LENGTH_SHORT);
+							toast.show();
 							return false;
 						}
 					});

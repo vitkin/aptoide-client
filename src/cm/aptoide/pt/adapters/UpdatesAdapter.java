@@ -8,15 +8,21 @@
 package cm.aptoide.pt.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.RemoteException;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.widget.CursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
+import cm.aptoide.pt.ApplicationAptoide;
 import cm.aptoide.pt.Category;
 import cm.aptoide.pt.Database;
 import cm.aptoide.pt.R;
@@ -28,6 +34,7 @@ import cm.aptoide.pt.views.ViewDownloadManagement;
 public class UpdatesAdapter extends CursorAdapter {
 
 	private AIDLServiceDownloadManager serviceDownloadManager = null;
+	private Loader<Cursor> loader;
 
 
 
@@ -53,7 +60,7 @@ public class UpdatesAdapter extends CursorAdapter {
 	}
 
 	@Override
-	public void bindView(View view, Context context, Cursor cursor) {
+	public void bindView(View view, final Context context, Cursor cursor) {
 		ViewHolder holder = (ViewHolder) view.getTag();
         if (holder == null) {
             holder = new ViewHolder();
@@ -61,6 +68,12 @@ public class UpdatesAdapter extends CursorAdapter {
             holder.icon= (ImageView) view.findViewById(R.id.app_icon);
             holder.vername= (TextView) view.findViewById(R.id.uptodate_versionname);
             holder.update = (ImageView) view.findViewById(R.id.app_update);
+           
+            if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE || 
+            		(context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+            	holder.ignore_update = (ImageView) view.findViewById(R.id.app_ignore_update);
+           	}
+            
 //            holder.downloads= (TextView) view.findViewById(R.id.downloads);
 //            holder.rating= (RatingBar) view.findViewById(R.id.stars);
             view.setTag(holder);
@@ -87,12 +100,35 @@ public class UpdatesAdapter extends CursorAdapter {
 			public void onClick(View view) {
 				ViewApk apk = Database.getInstance().getApk(id, Category.INFOXML);
 				try {
+					Log.d("UpdatesAdapter","about to call service download manager to "+apk.getName());
 					serviceDownloadManager.callStartDownload(new ViewDownloadManagement(apkpath,apk,new ViewCache(apk.hashCode(),apk.getMd5(),apkId,vername), null));
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		if ((context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE || 
+        		(context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_XLARGE) {
+			holder.ignore_update.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					ViewApk apk = Database.getInstance().getApk(id, Category.INFOXML);
+					Database.getInstance().addToExcludeUpdate((int)id);
+					if(loader!=null)loader.forceLoad();
+					Toast toast = Toast.makeText(context,
+							context.getString(R.string.added_to_excluded_updates_list, apk.getName()),
+							Toast.LENGTH_SHORT);
+					toast.show();
+				}
+			});
+		}
+	}
+	
+	public void setLoader(Loader<Cursor> thisLoader){
+		
+		this.loader=thisLoader;
+		
 	}
 
 	public static class ViewHolder {
@@ -100,6 +136,7 @@ public class UpdatesAdapter extends CursorAdapter {
 		TextView vername;
 		ImageView icon;
 		ImageView update;
+		ImageView ignore_update;
 		public boolean updateExcluded;
 //		RatingBar rating;
 //		TextView downloads;

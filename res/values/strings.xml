@@ -53,7 +53,9 @@
     <string name="chkBoxSchDwn">Schedule Download</string>
     <string name="exclude_update">Ignore Update</string>
     <string name="restore_updates">Restore Updates</string>
+    <string name="added_to_excluded_updates_list">%s was excluded from Updates</string>
     <string name="remove_from_excluded_updates_list">Remove from Excluded Updates list</string>
+    <string name="add_to_excluded_updates_list">This app was removed from Updates</string>
     <string name="excluded_updates">Excluded Updates</string>
     <string name="no_excluded_updates">No Excluded Updates</string>
     <string name="no_excluded_updates_selected">No Excluded Updates selected</string>
