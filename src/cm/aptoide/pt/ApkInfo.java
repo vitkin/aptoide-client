@@ -884,6 +884,8 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                 if(isChecked){
 //                    ((Button) findViewById(R.id.btinstall)).setText(R.string.schDwnBtn);
                     db.insertScheduledDownload(viewApk.getApkid(), viewApk.getVercode(), viewApk.getVername(), viewApk.getPath(), viewApk.getName(), viewApk.getMd5(), viewApk.getIcon(), mainObbUrl, mainObbMd5, mainObbName, patchObbUrl, patchObbMd5, patchObbName);
+                    Toast toast = Toast.makeText(context, context.getString(R.string.addSchDown), Toast.LENGTH_SHORT);
+                    toast.show();
                 }else{
 //                    ((Button) findViewById(R.id.btinstall)).setText(installString);
                     db.deleteScheduledDownload(viewApk.getApkid(), viewApk.getVername());
