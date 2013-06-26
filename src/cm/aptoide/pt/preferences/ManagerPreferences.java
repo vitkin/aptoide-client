@@ -71,8 +71,8 @@ public class ManagerPreferences{
 
         public void createLauncherShortcut(Context context){
 
-            removePreviousShortcuts(context, true);
-            removePreviousShortcuts(context, false);
+//            removePreviousShortcuts(context, true);
+//            removePreviousShortcuts(context, false);
 
             Log.d("ManagerPreferences", "Creating Icon " + Constants.APTOIDE_CLASS_NAME);
 
