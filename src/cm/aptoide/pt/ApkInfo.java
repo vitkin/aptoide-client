@@ -141,6 +141,19 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
     private View loading;
     private String installString;
     private boolean unstrustedPayment = false;
+    private BroadcastReceiver installedBroadcastReceiver = new InstalledBroadcastReceiver(){
+
+        @Override
+        public void onReceive(Context context, Intent arg1) {
+            super.onReceive(context, arg1);
+
+            if(viewApk!=null && arg1.getData().getEncodedSchemeSpecificPart().equals(viewApk.getApkid())){
+
+                findViewById(R.id.btinstall).setOnClickListener(openListener);
+                ((Button)findViewById(R.id.btinstall)).setText(R.string.open);
+            }
+        }
+    };
 
 
     @Override
@@ -148,6 +161,11 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
         AptoideThemePicker.setAptoideTheme(this);
         super.onCreate(arg0);
         setContentView(R.layout.app_info);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        intentFilter.addDataScheme("package");
+        registerReceiver(installedBroadcastReceiver, intentFilter);
 
 //		getSupportActionBar().setIcon(R.drawable.brand_padding);
 //		getSupportActionBar().setTitle("");
@@ -291,6 +309,9 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
                 };
 
             }
+
+
+
             @Override
             public void onLoadFinished(Loader<ViewApk> arg0, ViewApk arg1) {
 //                AdView adView = (AdView)findViewById(R.id.adView);
@@ -1227,6 +1248,7 @@ public class ApkInfo extends SherlockFragmentActivity implements LoaderCallbacks
             }
         }
         unbindService(serviceManagerConnection);
+        unregisterReceiver(installedBroadcastReceiver);
         handler = null;
         if(mAdView!=null){
             mAdView.destroy();

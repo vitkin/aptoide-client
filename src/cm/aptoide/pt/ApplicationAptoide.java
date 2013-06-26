@@ -33,7 +33,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
@@ -77,13 +76,13 @@ import java.util.Locale;
    		formKey = "",
    		formUri = "http://acra.aptoide.com/acraaptoide",
         mode = ReportingInteractionMode.NOTIFICATION,
-//        resToastText = R.string.crash_toast_text, // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
+        resToastText = R.string.crash_toast_text, // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
         resNotifTickerText = R.string.crash_notif_ticker_text,
         resNotifTitle = R.string.crash_notif_title,
         resNotifText = R.string.crash_notif_text,
         resNotifIcon = android.R.drawable.stat_notify_error, // optional. default is a warning sign
         resDialogText = R.string.crash_dialog_text,
-        resDialogIcon = android.R.drawable.ic_dialog_info, //optional. default is a warning sign
+        resDialogIcon = R.drawable.icon_brand_aptoide, //optional. default is a warning sign
         resDialogTitle = R.string.crash_dialog_title, // optional. default is your application name
         resDialogCommentPrompt = R.string.crash_dialog_comment_prompt, // optional. when defined, adds a user text field input with this text resource as a label
         resDialogOkToast = R.string.crash_dialog_ok_toast // optional. displays a Toast message when the user accepts to send a report.
@@ -400,8 +399,8 @@ public class ApplicationAptoide extends Application {
 
 
         managerPreferences = new ManagerPreferences(getApplicationContext());
-      
-        
+
+
         try {
 
             if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
@@ -412,8 +411,8 @@ public class ApplicationAptoide extends Application {
             e.printStackTrace();
         }
 
-        
-        
+
+
 //        if(reDoLauncherShorcut){
 //        	managerPreferences.createLauncherShortcut(context);
 //        }

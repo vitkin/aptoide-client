@@ -163,6 +163,7 @@ public class Login extends SherlockActivity /*SherlockActivity */{
 		prefEdit.remove(Configs.LOGIN_USER_LOGIN);
 		prefEdit.remove(Configs.LOGIN_USER_TOKEN);
 		prefEdit.remove(Configs.LOGIN_USER_USERNAME);
+        prefEdit.remove(Configs.LOGIN_DEFAULT_REPO);
 		prefEdit.commit();
 		ViewApk apk = new ViewApk();
 		apk.setApkid("recommended");
@@ -305,10 +306,9 @@ public class Login extends SherlockActivity /*SherlockActivity */{
 					succeed = true;
 					prefEdit.putString(Configs.LOGIN_PASSWORD, password_string);
 					prefEdit.putString(Configs.LOGIN_USER_LOGIN, username_string);
-					prefEdit.putString(Configs.LOGIN_USER_ID,
-							Algorithms.computeSHA1sum(username_string));
-					prefEdit.putString(Configs.LOGIN_USER_TOKEN,
-							array.getString("token"));
+					prefEdit.putString(Configs.LOGIN_USER_ID,Algorithms.computeSHA1sum(username_string));
+					prefEdit.putString(Configs.LOGIN_USER_TOKEN,array.getString("token"));
+                    prefEdit.putString(Configs.LOGIN_DEFAULT_REPO, array.getString("repo"));
 					prefEdit.remove(Configs.LOGIN_USER_USERNAME);
 					prefEdit.commit();
 					Intent i = new Intent("login");

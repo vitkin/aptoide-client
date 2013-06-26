@@ -47,7 +47,6 @@ import cm.aptoide.pt.adapters.InstalledAdapter;
 import cm.aptoide.pt.adapters.UpdatesAdapter;
 import cm.aptoide.pt.adapters.ViewPagerAdapter;
 import cm.aptoide.pt.contentloaders.SimpleCursorLoader;
-import cm.aptoide.pt.preferences.ManagerPreferences;
 import cm.aptoide.pt.services.AIDLServiceDownloadManager;
 import cm.aptoide.pt.services.MainService;
 import cm.aptoide.pt.services.MainService.LocalBinder;
@@ -544,7 +543,11 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 						LinearLayout.LayoutParams.MATCH_PARENT,
 						LinearLayout.LayoutParams.WRAP_CONTENT));
 				llAlso.setOrientation(LinearLayout.HORIZONTAL);
+
+                try{
+
 				for (int i = 0; i != values.size(); i++) {
+
 					LinearLayout txtSamItem = (LinearLayout) getLayoutInflater().inflate(R.layout.row_grid_item, null);
 					((TextView) txtSamItem.findViewById(R.id.name)).setText(values.get(i).get("name"));
 					// ((TextView) txtSamItem.findViewById(R.id.version))
@@ -597,6 +600,9 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 						llAlso.addView(txtSamItem);
 					}
 				}
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
 				ll.addView(llAlso);
 				SharedPreferences sPref = PreferenceManager
@@ -609,6 +615,7 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 				((ToggleButton) featuredView.findViewById(R.id.toggleButton1))
 						.setOnCheckedChangeListener(adultCheckedListener);
 			}
+
 		});
 	}
 
@@ -1630,26 +1637,29 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 						// application files dir
 						File dir = new File(LOCAL_PATH + "/apks");
 
-						// Optain list of files in the directory.
-						// listFiles() returns a list of File objects to each
-						// file found.
-						File[] files = dir.listFiles();
 
-						// Loop through all files
-						for (File f : files) {
+                        if(dir.mkdir()){
+                            // Optain list of files in the directory.
+                            // listFiles() returns a list of File objects to each
+                            // file found.
+                            File[] files = dir.listFiles();
 
-							// Get the last modified date. Miliseconds since
-							// 1970
-							long lastmodified = f.lastModified();
+                            // Loop through all files
+                            for (File f : files) {
 
-							// Do stuff here to deal with the file..
-							// For instance delete files older than 1 month
-							if (lastmodified + MAXFILEAGE < System
-									.currentTimeMillis()) {
-								f.delete();
-							}
-						}
-					}
+                                // Get the last modified date. Miliseconds since
+                                // 1970
+                                long lastmodified = f.lastModified();
+
+                                // Do stuff here to deal with the file..
+                                // For instance delete files older than 1 month
+                                if (lastmodified + MAXFILEAGE < System
+                                        .currentTimeMillis()) {
+                                    f.delete();
+                                }
+                            }
+                        }
+                    }
 				}).start();
 				db = Database.getInstance();
 
@@ -2411,18 +2421,21 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 			break;
 		}
 		pb.setVisibility(View.GONE);
-		if (availableListView.getAdapter().getCount() > 2 || joinStores_boolean) {
-			joinStores.setVisibility(View.VISIBLE);
-		} else {
-			joinStores.setVisibility(View.INVISIBLE);
-		}
 
-		if (availableListView.getAdapter().getCount() > 1) {
-			pb.setVisibility(View.GONE);
-		} else if (depth == ListDepth.STORES) {
-			pb.setVisibility(View.VISIBLE);
-			pb.setText(R.string.add_store_button_below);
-		}
+        if(availableAdapter!=null){
+            if (availableAdapter.getCount() > 2 || joinStores_boolean) {
+                joinStores.setVisibility(View.VISIBLE);
+            } else {
+                joinStores.setVisibility(View.INVISIBLE);
+            }
+
+            if (availableAdapter.getCount() > 1) {
+                pb.setVisibility(View.GONE);
+            } else if (depth == ListDepth.STORES) {
+                pb.setVisibility(View.VISIBLE);
+                pb.setText(R.string.add_store_button_below);
+            }
+        }
 
 	}
 
@@ -2464,7 +2477,9 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		alertDialog.setButton(Dialog.BUTTON_NEGATIVE, getString(R.string.new_store), addRepoListener);
 		alertDialog.setButton(Dialog.BUTTON_POSITIVE, getString(R.string.search_for_stores), searchStoresListener);
 		((EditText) alertDialogView.findViewById(R.id.edit_uri)).setText(storeUri);
-		alertDialog.show();
+        if(!isFinishing()){
+            alertDialog.show();
+        }
 	}
 
 	private void showAddStoreCredentialsDialog(String string) {
@@ -2472,7 +2487,15 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		AlertDialog credentialsDialog = new AlertDialog.Builder(mContext).setView(credentialsDialogView).create();
 		credentialsDialog.setTitle(getString(R.string.add_private_store) + " "+ RepoUtils.split(string));
 		credentialsDialog.setButton(Dialog.BUTTON_NEUTRAL, getString(R.string.new_store), new AddStoreCredentialsListener(string, credentialsDialogView));
-		credentialsDialog.show();
+        SharedPreferences sPref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        if(RepoUtils.split(string).equals(sPref.getString(Configs.LOGIN_DEFAULT_REPO,""))){
+            ((EditText)credentialsDialogView.findViewById(R.id.username)).setText(sPref.getString(Configs.LOGIN_USER_LOGIN,""));
+        }
+
+
+        if(!isFinishing()){
+            credentialsDialog.show();
+        }
 	}
 
 	private void showUpdateStoreCredentialsDialog(String string) {
