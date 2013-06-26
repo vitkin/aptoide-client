@@ -31,7 +31,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.Toast;
 import cm.aptoide.com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import cm.aptoide.com.nostra13.universalimageloader.core.DisplayImageOptions;
 import cm.aptoide.com.nostra13.universalimageloader.core.ImageLoader;
@@ -398,9 +400,20 @@ public class ApplicationAptoide extends Application {
 
 
         managerPreferences = new ManagerPreferences(getApplicationContext());
-        managerPreferences.removePreviousShortcuts(this, false);
-        managerPreferences.removePreviousShortcuts(this, true);
+      
+        
+        try {
 
+            if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
+                new ManagerPreferences(this).removePreviousShortcuts(this, false);
+                new ManagerPreferences(this).removePreviousShortcuts(this, true);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        
+        
 //        if(reDoLauncherShorcut){
 //        	managerPreferences.createLauncherShortcut(context);
 //        }

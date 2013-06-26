@@ -53,6 +53,7 @@ public class ManagerPreferences{
             Log.v("Aptoide-ManagerPreferences", "gotSharedPreferences: "+Constants.FILE_PREFERENCES);
             if(getAptoideClientUUID() == null){
     //			createLauncherShortcut(context);
+            	
                 setAptoideClientUUID( UUID.randomUUID().toString() );
                 try {
                     setAptoideVersionName(context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName);

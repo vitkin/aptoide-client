@@ -1835,7 +1835,6 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 
                 if (PreferenceManager.getDefaultSharedPreferences(this).getInt("version", 0) < getPackageManager().getPackageInfo(getPackageName(), 0).versionCode) {
                     ApplicationAptoide.setRestartLauncher(true);
-                    new ManagerPreferences(this).removePreviousShortcuts(this, false);
                     PreferenceManager.getDefaultSharedPreferences(this).edit().putInt("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode).commit();
                 }
             } catch (PackageManager.NameNotFoundException e) {
