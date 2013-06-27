@@ -2422,14 +2422,14 @@ public class MainActivity extends SherlockFragmentActivity implements LoaderCall
 		}
 		pb.setVisibility(View.GONE);
 
-        if(availableAdapter!=null){
-            if (availableAdapter.getCount() > 2 || joinStores_boolean) {
+        if(availableListView.getAdapter()!=null){
+            if (availableListView.getAdapter().getCount() > 2 || joinStores_boolean) {
                 joinStores.setVisibility(View.VISIBLE);
             } else {
                 joinStores.setVisibility(View.INVISIBLE);
             }
 
-            if (availableAdapter.getCount() > 1) {
+            if (availableListView.getAdapter().getCount() > 1) {
                 pb.setVisibility(View.GONE);
             } else if (depth == ListDepth.STORES) {
                 pb.setVisibility(View.VISIBLE);
