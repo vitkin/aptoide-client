@@ -21,8 +21,6 @@
   <string name="my_stores">متجري</string>
   <string name="store_name">إسم المتجر...</string>
   <string name="store">"المتجر "</string>
-  <string name="category1">الفئة 1</string>
-  <string name="category2">الفئة 2</string>
   <string name="add_store">إضافة متجر</string>
   <string name="add_store_button_below">أضف متجر إلى الزر بالأسفل!</string>
   <string name="version">الإصدار:</string>
@@ -108,7 +106,6 @@
   <string name="check_your_credentials">حدث خطأ. برجاء تحقق من اعتمادك</string>
   <string name="unkown_error">خطأ غير معروف. حاول مرة أخرى</string>
   <string name="loading_likes">تحميل الإعجاب...</string>
-  <string name="inresponseto">\@</string>
   <string name="add_comment">أضف تعليق</string>
   <string name="postingcomment">نشر تعليقك...</string>
   <string name="commentadded">تم نشر تعليقك بنجاح</string>
@@ -150,12 +147,10 @@
   <string name="menu_manage">إدارة المتجر</string>
   <string name="menu_display_options">خيارات العرض</string>
   <string name="menu_order">تغيير الترتيب</string>
-  <string name="menu_about">حول</string>
   <string name="menu_search">البحث</string>
   <string name="adult_content">محتوى للكبار فقط</string>
   <string name="stores">المتاجر</string>
   <string name="screenshots">لقطات</string>
-  <string name="app_about">عن</string>
   <string name="rate_this_app">قيِّم هذا التطبيق</string>
   <string name="related_apps">تطبيقات ذات صلة</string>
   <string name="recommended_apps">التطبيقات الموصى بها</string>
@@ -169,14 +164,7 @@
   <string name="menu_add_repo">متجر جديد</string>
   <string name="menu_rem_repo">حذف المتجر</string>
   <string name="menu_edit_repo">تعديل المتجر</string>
-  <string name="btn_yes">نعم</string>
-  <string name="btn_no">لا</string>
-  <string name="btn_ok">حسناَ</string>
-  <string name="btn_add">إضافه</string>
-  <string name="btn_cancel">إلغاء</string>
-  <string name="btn_done">تم</string>
   <string name="btn_chlog">التغيير</string>
-  <string name="btn_search_market">بحث في السوق</string>
   <string name="no_results_found">لا توجد نتائج</string>
   <string name="found">موجود</string>
   <string name="results">النتائج</string>
@@ -188,16 +176,11 @@
   <string name="error_on_update">تعذر اكتمال عملية التحديث على المتجر التالي:</string>
   <string name="updating_norepos">"لاتوجد  متاجر مفعلة في قائمتك الخاصة  \nالرجاء إضافة متجر أو تفعيل أحد المتاجر لديك على الأقل "</string>
   <string name="update_done_msg1">تم تحديث المتاجر بنجاح</string>
-  <string name="about">عن</string>
-  <string name="about_txt1">حزمك المثبته على هاتف اندرويد \n</string>
   <string name="about_site">الرئيسيه:</string>
   <string name="about_mail">الإتصال:</string>
   <string name="app_trusted">%s البرنامج موثوق به</string>
   <string name="app_warning">%s تطبيق مشكوك فيه</string>
   <string name="app_unknown">%s التطبيق غير معروف</string>
-  <string name="trusted">موثوق به</string>
-  <string name="warning">حذر</string>
-  <string name="unknown">غير معروف</string>
   <string name="signature_verified">توقيع التطبيق مطابق لتوقيع المطور.</string>
   <string name="signature_not_verified">توقيع التطبيق لا يتطابق مع توقيع المطور، وبالتالي فإن التطبيق قد يكون مغشوشا.</string>
   <string name="trusted_classification">"   تم فحص هذا التطبيق من قِبَل برامج أبتويد لمكافحة الفيروسات ولم تجد أي إشارة لوجود الفيروسات"</string>
@@ -221,7 +204,6 @@
   <string name="error_404">لم يتم العثور على الملف في المتجر المعطى \nالرجاء المحاولة لاحقاً</string>
   <string name="parse_error">خطأ تحميل</string>
   <string name="parse_error_loading">كان هناك خطأ في تحميل متجرك. \n هل تريد المحاولة مرة أخرى؟</string>
-  <string name="error_no_market">انت لم تثبت سوق قوقل</string>
   <string name="newrepo_alrt">هل تريد إضافة هذا المتجر الى قائمتك؟\n\n</string>
   <string name="installapp_alrt">هل ترغب في التثبيت:\n\n</string>
   <string name="remote_in_noSD_title">لا توجد ذاكره</string>
@@ -231,13 +213,11 @@
   <string name="aptoide_error">لايمكن الإتصال بالخادم البعيد . الرجاء التحقق من إتصالك بالإنترنت</string>
   <string name="no_sch_downloads">لا يوجد تحميلات مجدولة!</string>
   <string name="size">الحجم</string>
-  <string name="installed_version">نسخة المعاهد</string>
   <string name="schDown_install">هل تريد تثبيت كل التحميلات المجدولة؟</string>
   <string name="schDown_installselected">تثبيت المختار</string>
   <string name="schDown_wireless_detected">تم ايجاد الوايرليس. تحميل كل التطبيقات في التحميلات المجدولة؟</string>
   <string name="schDown_nodownloads">لايوجد تحميلات مجدولة</string>
   <string name="schDown_nodownloadselect">لم يتم اختيار التحميلات</string>
-  <string name="schDown_downerror">خطأ بالتحميل. أضف %1$s إلى المتجر</string>
   <string name="addSchDown">أضف إلى التحميلات المجدولة</string>
   <string name="registration">التسجيل</string>
   <string name="username">البريد الإلكتروني</string>
@@ -376,4 +356,8 @@
   <string name="patch_obb">ترقيع ملف التوسيع</string>
   <string name="main_obb">ملف التوسيع الرئيسي</string>
   <string name="retrieving_update">جلب التحديث</string>
+  <string name="trusted">موثوق به</string>
+  <string name="warning">تحذير</string>
+  <string name="unknown">غير معروف</string>
+  <string name="error_no_market">انت لم تثبت سوق قوقل</string>
 </resources>

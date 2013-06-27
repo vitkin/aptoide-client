@@ -8,8 +8,6 @@
   <string name="menu_settings">הגדרות</string>
   <string name="my_stores">החנויות שלי</string>
   <string name="store_name">שם החנות</string>
-  <string name="category1">קטגוריה 1</string>
-  <string name="category2">קטגוריה 2</string>
   <string name="add_store">הוסף חנות</string>
   <string name="version">גרסה:</string>
   <string name="empty_store_list">אין ברשותך חנויות.</string>
@@ -56,7 +54,6 @@
   <string name="unabletoexecute">ביצוע הפעולה נכשל</string>
   <string name="failedcredentials">התחברות באמצעות הנתונים שהוזנו נכשלה.</string>
   <string name="loading_likes">טוען רשימת אוהבים…</string>
-  <string name="inresponseto">\@</string>
   <string name="postingcomment">מפרסם תגובה…</string>
   <string name="commentadded">תגובתך פורסמה בהצלחה</string>
   <string name="order_popup_title1">מיין יישומים לפי:</string>
@@ -85,17 +82,10 @@
   <string name="menu_manage">נהל חנות</string>
   <string name="menu_display_options">אפשרויות תצוגה</string>
   <string name="menu_order">שנה סדר</string>
-  <string name="menu_about">אודות</string>
   <string name="menu_search">חיפוש</string>
   <string name="menu_add_repo">חנות חדשה</string>
   <string name="menu_rem_repo">הסר חנות</string>
   <string name="menu_edit_repo">ערוך חנות</string>
-  <string name="btn_yes">כן</string>
-  <string name="btn_no">לא</string>
-  <string name="btn_ok">אישור</string>
-  <string name="btn_add">הוספה</string>
-  <string name="btn_cancel">ביטול</string>
-  <string name="btn_done">בוצע</string>
   <string name="btn_chlog">רשימת שינוים</string>
   <string name="btn_search_market">חפש במרקט</string>
   <string name="schDwnBtn">הורדות ממתינות</string>
@@ -106,7 +96,6 @@
   <string name="error_on_update">תהליך העדכון נכשל עבור החנות הבאה:</string>
   <string name="updating_norepos">אין חנויות פעילות ברשימת החנויות שלך.\nאנא הוסף חנות לרשימה, או הפעל את אחת מהחנויות הקיימות.</string>
   <string name="update_done_msg1">החנויות עודכנו בהצלחה.</string>
-  <string name="about_txt1">מתקין החבילות שלך למכשיר האנדרואיד\n</string>
   <string name="about_site">בית:</string>
   <string name="about_mail">אימייל:</string>
   <string name="no_descript">אין תיאור זמין</string>
@@ -121,7 +110,6 @@
   <string name="md5_error">בדיקת נתוני md5 של היישום שהורד נכשלה!\nאנא עדכן את רשימת החנויות שלך, ולאחר מכן נסה שוב.</string>
   <string name="network_error">אירעה שגיאה בעת הניסיון לקרוא את היישום.\nאנא נסה שנית.</string>
   <string name="error_404">הקובץ לא נמצא בחנות המבוקשת.\nאנא נסה שנית מאוחר יותר.</string>
-  <string name="error_no_market">חנות היישומים של גוגל אינה מותקנת במכשירך!</string>
   <string name="newrepo_alrt">האם ברצונך להוסיף חנות זו לרשימה שלך?\n\n</string>
   <string name="installapp_alrt">האם ברצונך להתקין את: \n\n</string>
   <string name="remote_in_noSD_title">אין זיכרון</string>
@@ -131,7 +119,6 @@
   <string name="schDown_wireless_detected">רשת אלחוטית זמינה! להתחיל בביצוע ההורדות הממתינות?</string>
   <string name="schDown_nodownloads">אין הורדות ממתינות</string>
   <string name="schDown_nodownloadselect">לא נבחרו הורדות</string>
-  <string name="schDown_downerror">שגיאת הורדה. הוסף חנות %1$s</string>
   <string name="addSchDown">נוסף לרשימת ההמתנה</string>
   <string name="registration">התחברות לבזאר</string>
   <string name="password">סיסמא…</string>
@@ -149,4 +136,5 @@
   <string name="starting_download">אין הורדות ממתינות!</string>
   <string name="resuming_download">אין הורדות ממתינות!</string>
   <string name="contact">אימייל:</string>
+  <string name="error_no_market">חנות היישומים של גוגל אינה מותקנת במכשירך!</string>
 </resources>

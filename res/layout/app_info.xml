@@ -497,6 +497,7 @@
         <com.mopub.mobileads.MoPubView
             android:id="@+id/adview"
             android:layout_width="fill_parent"
+            android:fitsSystemWindows="true"
             android:layout_height="50dp" />
     </LinearLayout>
 

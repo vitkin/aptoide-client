@@ -21,8 +21,6 @@
   <string name="my_stores">Els meus repositoris</string>
   <string name="store_name">Nom de categoria</string>
   <string name="store">Repositori</string>
-  <string name="category1">Categoria 1</string>
-  <string name="category2">Categoria 2</string>
   <string name="add_store">Afegir repositori</string>
   <string name="add_store_button_below">Afegeix un repositori amb el botò de sota!</string>
   <string name="version">Versió:</string>
@@ -101,7 +99,6 @@
   <string name="unabletoexecute">No s\'ha pogut executar</string>
   <string name="failedcredentials">Error al connectar-se amb l\'usuari proporcionat</string>
   <string name="loading_likes">Carregant agrada...</string>
-  <string name="inresponseto">\\\@</string>
   <string name="add_comment">Afegir comentari</string>
   <string name="postingcomment">Pujant comentari...</string>
   <string name="commentadded">El teu comentari s\'ha enviat</string>
@@ -133,20 +130,13 @@
   <string name="menu_manage">Gestiona repositoris</string>
   <string name="menu_display_options">Mostrar opcions</string>
   <string name="menu_order">Canviar ordre</string>
-  <string name="menu_about">Sobre</string>
   <string name="menu_search">Cerca</string>
   <string name="adult_content">Contingut per a Adults:</string>
   <string name="stores">Repositori</string>
-  <string name="app_about">Sobre</string>
+  <string name="about">Sobre</string>
   <string name="menu_add_repo">Nou repositori</string>
   <string name="menu_rem_repo">Eliminar repositori</string>
   <string name="menu_edit_repo">Editar repositori</string>
-  <string name="btn_yes">Si</string>
-  <string name="btn_no">No</string>
-  <string name="btn_ok">D\'acord</string>
-  <string name="btn_add">Afegir</string>
-  <string name="btn_cancel">Cancel·lar</string>
-  <string name="btn_done">Fet</string>
   <string name="btn_chlog">Canvis</string>
   <string name="btn_search_market">Cerca al Market</string>
   <string name="schDwnBtn">Descàrregues programades</string>
@@ -157,8 +147,6 @@
   <string name="error_on_update">El procés d\'actualització no s\'ha pogut realitzar pel repositori:</string>
   <string name="updating_norepos">No hi ha repositoris actius a la teva llista.\nSi us plau, afegeix un repositori o activa\'n un que ja tinguis</string>
   <string name="update_done_msg1">Repositoris actualitzats correctament.</string>
-  <string name="about">Sobre</string>
-  <string name="about_txt1">El teu instal·lador de paquets per al telèfon Android.\n</string>
   <string name="about_site">Web:</string>
   <string name="about_mail">Contacte:</string>
   <string name="no_descript">No disponible</string>
@@ -174,7 +162,6 @@
   <string name="md5_error">Ha fallat la comprovació md5 de l\'aplicació\nSi us plau actualitza els repositoris abans de reintentar</string>
   <string name="network_error">S\'ha produït un error al obtenir l\'aplicació.\nSi us plau intenta-ho un altre cop.</string>
   <string name="error_404">No s\'ha trobat el fitxer.\nSi us plau intenta-ho més tard.</string>
-  <string name="error_no_market">No tens el Google Market instal·lat!</string>
   <string name="newrepo_alrt">Vols afegir aquest repositori a la teva llista?\n\n</string>
   <string name="installapp_alrt">Vols instal·lar: \n\n</string>
   <string name="remote_in_noSD_title">No hi ha memòria</string>
@@ -188,7 +175,6 @@
   <string name="schDown_wireless_detected">Wifi detectada: Descarregar totes les aplicacions a descàrregues programades?</string>
   <string name="schDown_nodownloads">No hi ha descàrregues programades</string>
   <string name="schDown_nodownloadselect">No hi ha descàrregues seleccionades</string>
-  <string name="schDown_downerror">Error descarregant. Afegir magatzem %1$s.</string>
   <string name="addSchDown">Afegit a descàrregues programades</string>
   <string name="username">Correu-e</string>
   <string name="password">Contrasenya...</string>
@@ -233,4 +219,5 @@
   <string name="showexcludedupdates_title">No hi ha actualitzacions excloses</string>
   <string name="applications">Aplicacions:</string>
   <string name="racing">Puntuació</string>
+  <string name="error_no_market">No tens el Google Market instal·lat!</string>
 </resources>
