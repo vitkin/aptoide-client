@@ -375,20 +375,17 @@
     <string name="error_no_market">You don\'t have Google Market installed!</string>
 
     <string name="crash_notif_ticker_text">Unexpected error, please send a report...</string>
-    <string name="crash_notif_title">Aptoide has crashed...</string>
     <string name="crash_notif_text">Please click here to help fix the issue.</string>
 
     <string name="crash_dialog_title">Aptoide has crashed</string>
-    <string name="crash_dialog_text">An unexpected error occurred forcing the
-        application to stop. Please help us fix this by sending us error data,
-        all you have to do is click OK.</string>
+    <string name="crash_dialog_text">An unexpected error occurred forcing the application to stop. Please help us fix this by sending us error data, all you have to do is click OK.</string>
     <string name="crash_dialog_comment_prompt">You might add your comments about the problem below:</string>
     <string name="crash_dialog_ok_toast">Thank you !</string>
     <string name="finished_install">%s has been installed.</string>
     <string name="installing">%s is installing...</string>
 
-	<string name="new_updates">There are %s new updates for your apps!</string>
-	<string name="one_new_update">There is %s new update for your apps!</string>
-	<string name="has_updates">%s has update(s)!</string>
-    <string name="crash_toast_text">Aptoide has crashed.</string>
+	<string name="new_updates">There are %s new updates available!</string>
+	<string name="one_new_update">There is %s new update available!</string>
+	<string name="has_updates">%s has new update(s) available!</string>
+    <string name="powered_by">Powered by</string>
 </resources>

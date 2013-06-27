@@ -76,7 +76,7 @@ import java.util.Locale;
    		formKey = "",
    		formUri = "http://acra.aptoide.com/acraaptoide",
         mode = ReportingInteractionMode.NOTIFICATION,
-        resToastText = R.string.crash_toast_text, // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
+        resToastText = R.string.crash_dialog_title, // optional, displayed as soon as the crash occurs, before collecting data which can take a few seconds
         resNotifTickerText = R.string.crash_notif_ticker_text,
         resNotifTitle = R.string.crash_notif_title,
         resNotifText = R.string.crash_notif_text,
